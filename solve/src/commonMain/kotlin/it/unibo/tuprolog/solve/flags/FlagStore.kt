@@ -7,11 +7,7 @@ import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 /** A storage for flags and their values */
-data class FlagStore constructor(private val flags: Map<String, Term>) : Map<String, Term> by flags {
-
-    private constructor(vararg flagValues: Pair<String, Term>) : this(mapOf(*flagValues))
-
-    private constructor(vararg notableFlagValues: NotableFlag) : this(notableFlagValues.map { it.toPair() }.toMap())
+data class FlagStore(private val flags: Map<String, Term>) : Map<String, Term> by flags {
 
     @JsName("get")
     operator fun get(notableFlag: NotableFlag): Term? =
@@ -61,8 +57,12 @@ data class FlagStore constructor(private val flags: Map<String, Term>) : Map<Str
         @JvmField
         val EMPTY = FlagStore(emptyMap())
 
+        @JvmStatic
+        @JsName("ofPair")
+        fun of(vararg flagValues: Pair<String, Term>) = FlagStore(mapOf(*flagValues))
+
         @JvmField
-        val DEFAULT = FlagStore(
+        val DEFAULT = FlagStore.of(
             Unknown,
             MaxArity,
             DoubleQuotes,
@@ -77,12 +77,8 @@ data class FlagStore constructor(private val flags: Map<String, Term>) : Map<Str
         @JvmStatic
         fun of(flags: Map<String, Term>) = FlagStore(flags)
 
-        @JsName("ofPair")
-        @JvmStatic
-        fun of(vararg flagValues: Pair<String, Term>) = FlagStore(*flagValues)
-
         @JsName("of")
         @JvmStatic
-        fun of(vararg notableFlagValues: NotableFlag) = FlagStore(*notableFlagValues)
+        fun of(vararg notableFlagValues: NotableFlag) = FlagStore(notableFlagValues.associate { it.toPair() })
     }
 }

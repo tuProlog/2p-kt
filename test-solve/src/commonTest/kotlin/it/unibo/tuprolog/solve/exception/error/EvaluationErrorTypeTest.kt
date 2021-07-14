@@ -17,7 +17,7 @@ internal class EvaluationErrorTypeTest {
     @Test
     fun evaluationErrorTypeEnumToAtomWorksAsExpected() {
         EvaluationError.Type.values().forEach {
-            assertEquals(Atom.of(it.toString().toLowerCase()), it.toTerm())
+            assertEquals(Atom.of(it.toString().lowercase()), it.toTerm())
         }
     }
 

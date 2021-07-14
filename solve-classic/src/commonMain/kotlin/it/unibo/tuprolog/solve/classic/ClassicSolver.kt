@@ -18,8 +18,8 @@ internal open class ClassicSolver : AbstractClassicSolver {
         flags: FlagStore = FlagStore.empty(),
         initialStaticKb: Theory = Theory.empty(),
         initialDynamicKb: Theory = MutableTheory.empty(),
-        inputChannels: InputStore = InputStore.default(),
-        outputChannels: OutputStore = OutputStore.default(),
+        inputChannels: InputStore = InputStore.fromStandard(),
+        outputChannels: OutputStore = OutputStore.fromStandard(),
         trustKb: Boolean = false
     ) : super(libraries, flags, initialStaticKb, initialDynamicKb, inputChannels, outputChannels, trustKb)
 

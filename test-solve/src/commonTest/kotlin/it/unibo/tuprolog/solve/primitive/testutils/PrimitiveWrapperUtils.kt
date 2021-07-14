@@ -19,6 +19,7 @@ internal object PrimitiveWrapperUtils {
 
     /** A default primitive result to be used in tests */
     internal val defaultPrimitiveResult = emptySequence<Nothing>()
+
     /** A test primitive */
     internal val primitive: Primitive = { defaultPrimitiveResult }
 
@@ -35,7 +36,7 @@ internal object PrimitiveWrapperUtils {
     /** All under test requests */
     private val allRequests by lazy {
         (WrapperUtils.allMatchingRawStruct + WrapperUtils.allNotMatchingStruct).flatten()
-            .map { createPrimitiveRequest(it.extractSignature(), it.argsList) }
+            .map { createPrimitiveRequest(it.extractSignature(), it.args) }
     }
 
     /** All ground requests */

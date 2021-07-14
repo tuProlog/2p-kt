@@ -142,7 +142,7 @@ internal class SolverUtilsTest {
         val toBeTested = solveRequest.newSolveRequest(newGoal)
 
         assertEquals(newGoal.extractSignature(), toBeTested.signature)
-        assertEquals(newGoal.argsList, toBeTested.arguments)
+        assertEquals(newGoal.args, toBeTested.arguments)
     }
 
     @Test

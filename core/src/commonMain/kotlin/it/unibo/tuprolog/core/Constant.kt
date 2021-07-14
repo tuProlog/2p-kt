@@ -13,6 +13,8 @@ interface Constant : Term {
 
     override fun freshCopy(scope: Scope): Constant
 
+    override fun asConstant(): Constant = this
+
     /**
      * Empty companion aimed at letting extensions be injected through extension methods
      */

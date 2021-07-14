@@ -40,6 +40,7 @@ interface TestNumberChars : SolverTest {
      **/
 
     fun testNumberCharsSpace()
+
     /**
      * number_chars(A,['4','.','2']), [[A <-- 4.2]]].
      *

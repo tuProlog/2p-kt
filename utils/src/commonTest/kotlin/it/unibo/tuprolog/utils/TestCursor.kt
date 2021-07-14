@@ -44,7 +44,7 @@ class TestCursor {
             assertEquals(
                 iterExpected.next(),
                 iterActual.next(),
-                "Items with index ${i - 1} to not correspond"
+                "Items with index ${i - 1} does not correspond"
             )
             i++
         }
@@ -104,5 +104,31 @@ class TestCursor {
         val cursor = items.cursor() + items.cursor()
         testCursor(cursor)
         assertCursorContains(cursor, items.toList() + items.toList())
+    }
+
+    @Test
+    fun testCursorDoNotRepeatSequence() {
+        var x: Int = 0
+        val cursor = items.asSequence().map { x++; x }.cursor().map { it * 2 }
+        testCursor(cursor)
+        assertCursorContains(cursor, items.map { it * 2 })
+        assertEquals(items.count(), x)
+    }
+
+    @Test
+    fun stressMapping() {
+        val N = 100000
+        var x: Int = 0
+        var cursor = items.cursor()
+        for (i in 0 until N) {
+            cursor = cursor.map {
+                x++
+                it + 1
+            }
+            assertTrue { x <= items.count() * (i + 1) }
+        }
+        testCursor(cursor)
+        assertCursorContains(cursor, items.map { it + N })
+        assertEquals(items.count() * N, x)
     }
 }

@@ -3,6 +3,7 @@
 - [Unification](./substitutions-and-unification.md)
 - [Clause databases and Theories](./clausedb-theories-and-RETE.md)
 - [Resolution](./solvers-and-solutions.md)
+- [Default predicates](./default-predicates.md)
 - [Errors and Exceptions](./errors-and-exceptions.md)
 - [Primitives and Functions](./primitives-and-functions.md)
 - [Libraries](./libraries.md)

@@ -11,8 +11,4 @@ interface NullRef : ObjectRef {
 
     override fun assign(objectConverter: TermToObjectConverter, propertyName: String, value: Term): Boolean =
         throw NullPointerException()
-
-    companion object {
-        const val NULL_FUNCTOR = "null"
-    }
 }

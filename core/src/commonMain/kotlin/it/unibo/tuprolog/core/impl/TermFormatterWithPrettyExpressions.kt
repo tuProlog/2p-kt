@@ -105,19 +105,21 @@ internal class TermFormatterWithPrettyExpressions private constructor (
         val prefix = struct.isPrefix()
         if (prefix != null) {
             return addingParenthesesIfForced(struct) {
-                "$functor${functor.suffix}${args[0].accept(childFormatter(prefix.second))}"
+                "$functor${functor.suffix}${getArgAt(0).accept(childFormatter(prefix.second))}"
             }
         }
         val postfix = struct.isPostfix()
         if (postfix != null) {
             return addingParenthesesIfForced(struct) {
-                "${args[0].accept(childFormatter(postfix.second))}${functor.prefix}$functor"
+                "${getArgAt(0).accept(childFormatter(postfix.second))}${functor.prefix}$functor"
             }
         }
         val infix = struct.isInfix()
         if (infix != null) {
             return addingParenthesesIfForced(struct) {
-                "${args[0].accept(childFormatter(infix.second))}${functor.prefix}$functor${functor.suffix}${args[1].accept(childFormatter(infix.second))}"
+                getArgAt(0).accept(childFormatter(infix.second)) +
+                    "${functor.prefix}$functor${functor.suffix}" +
+                    getArgAt(1).accept(childFormatter(infix.second))
             }
         }
         val lowerPriority = struct.isLowerPriority()

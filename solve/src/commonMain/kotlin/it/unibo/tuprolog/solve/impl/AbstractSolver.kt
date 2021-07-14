@@ -30,8 +30,8 @@ abstract class AbstractSolver<E : ExecutionContext>(
     flags: FlagStore = FlagStore.empty(),
     initialStaticKb: Theory = Theory.empty(),
     initialDynamicKb: Theory = MutableTheory.empty(),
-    inputChannels: InputStore = InputStore.default(),
-    outputChannels: OutputStore = OutputStore.default(),
+    inputChannels: InputStore = InputStore.fromStandard(),
+    outputChannels: OutputStore = OutputStore.fromStandard(),
     trustKb: Boolean = false
 ) : Solver {
 
@@ -64,8 +64,8 @@ abstract class AbstractSolver<E : ExecutionContext>(
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
         operators: OperatorSet,
-        inputChannels: InputStore = InputStore.default(),
-        outputChannels: OutputStore = OutputStore.default(),
+        inputChannels: InputStore = InputStore.fromStandard(),
+        outputChannels: OutputStore = OutputStore.fromStandard(),
         trustKb: Boolean = false
     ): E
 

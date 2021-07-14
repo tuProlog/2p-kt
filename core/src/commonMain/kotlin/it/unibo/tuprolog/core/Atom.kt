@@ -9,11 +9,14 @@ import it.unibo.tuprolog.core.impl.AtomImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
+import kotlin.collections.List as KtList
 
+/**
+ * Base type for constant, alphanumeric [Term]s, a.k.a. strings.
+ * An [Atom] is at the same time a [String]-valued [Constant] and a 0-argument [Struct], whose [functor] is equal
+ * to [value].
+ */
 interface Atom : Struct, Constant {
-
-    override val args: Array<Term>
-        get() = arrayOf()
 
     override val arity: Int
         get() = 0
@@ -36,7 +39,7 @@ interface Atom : Struct, Constant {
     override val value: String
         get() = functor
 
-    override val argsList: kotlin.collections.List<Term>
+    override val args: KtList<Term>
         get() = emptyList()
 
     override val variables: Sequence<Var>
@@ -45,6 +48,8 @@ interface Atom : Struct, Constant {
     override fun freshCopy(): Atom
 
     override fun freshCopy(scope: Scope): Atom
+
+    override fun asAtom(): Atom = this
 
     companion object {
 

@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.solve.classic.fsm
 
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
@@ -21,22 +19,24 @@ data class StatePrimitiveSelection(override val context: ClassicExecutionContext
 
     override fun computeNext(): State {
         return with(context) {
-            when (val goal = currentGoal!!) {
-                is Var -> {
+            val goal = currentGoal!!
+            when {
+                goal.isVariable -> {
                     exceptionalState(
                         InstantiationError.forGoal(
                             context = context,
                             procedure = context.procedure!!.extractSignature(),
-                            variable = goal
+                            variable = goal.castToVar()
                         )
                     )
                 }
-                is Struct -> {
-                    val signature = goal.extractSignature()
+                goal.isStruct -> {
+                    val goalStruct = goal.castToStruct()
+                    val signature = goalStruct.extractSignature()
 
                     if (libraries.hasPrimitive(signature)) {
                         val childContext = createChild()
-                        val request = childContext.toRequest(goal, signature)
+                        val request = childContext.toRequest(goalStruct, signature)
                         val primitive = libraries.primitives[signature]
                             ?: error("Inconsistent behaviour of Library.contains and Library.get")
                         try {

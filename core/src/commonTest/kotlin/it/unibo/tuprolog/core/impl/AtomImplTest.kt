@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
@@ -77,17 +78,17 @@ internal class AtomImplTest {
 
     @Test
     fun equalsWorksAsExpected() {
-        val trueStruct = StructImpl("true", emptyArray())
+        val trueStruct = StructImpl("true", emptyList())
         val trueAtom = AtomImpl("true")
         val trueTruth = Truth.TRUE
 
-        assertEquals(trueAtom, trueStruct)
+        assertEquals<Struct>(trueAtom, trueStruct)
         assertEquals<Atom>(trueAtom, trueTruth)
     }
 
     @Test
     fun structurallyEqualsWorksAsExpected() {
-        val trueStruct = StructImpl("true", emptyArray())
+        val trueStruct = StructImpl("true", emptyList())
         val trueAtom = AtomImpl("true")
         val trueTruth = Truth.TRUE
 

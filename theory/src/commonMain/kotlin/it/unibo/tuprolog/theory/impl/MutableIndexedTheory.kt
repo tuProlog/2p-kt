@@ -31,6 +31,8 @@ internal class MutableIndexedTheory private constructor(
         tags: Map<String, Any> = emptyMap()
     ) : this(clauses.asIterable(), tags)
 
+    override fun toMutableTheory(): MutableTheory = super<MutableTheory>.toMutableTheory()
+
     override val clauses: List<Clause> get() = queue.toList()
 
     override fun iterator(): Iterator<Clause> = queue.iterator()
@@ -42,16 +44,16 @@ internal class MutableIndexedTheory private constructor(
         queue.retrieve(clause).toRetractResult()
 
     private fun <C : ClauseCollection> RetrieveResult<C>.toRetractResult(): RetractResult<MutableIndexedTheory> =
-        when (this) {
-            is RetrieveResult.Success -> RetractResult.Success(this@MutableIndexedTheory, clauses)
+        when {
+            isSuccess -> RetractResult.Success(this@MutableIndexedTheory, clauses!!)
             else -> RetractResult.Failure(this@MutableIndexedTheory)
         }
 
     override fun retract(clauses: Iterable<Clause>): RetractResult<MutableIndexedTheory> {
         val retracted = clauses.asSequence()
             .map { queue.retrieve(it) }
-            .filterIsInstance<RetrieveResult.Success<*>>()
-            .flatMap { it.clauses.asSequence() }
+            .filter { it.isSuccess }
+            .flatMap { it.clauses!!.asSequence() }
             .toList()
         return if (retracted.isEmpty()) RetractResult.Failure(this)
         else RetractResult.Success(this, retracted)
@@ -95,12 +97,12 @@ internal class MutableIndexedTheory private constructor(
     override fun retract(clauses: Sequence<Clause>): RetractResult<MutableIndexedTheory> =
         retract(clauses.asIterable())
 
-    override fun abolish(indicator: Indicator): MutableIndexedTheory = super.abolish(indicator) as MutableIndexedTheory
+    override fun abolish(indicator: Indicator): MutableTheory = super.abolish(indicator).toMutableTheory()
 
     override fun toImmutableTheory(): Theory = Theory.indexedOf(this)
 
     override fun replaceTags(tags: Map<String, Any>): MutableIndexedTheory =
         if (tags === this.tags) this else MutableIndexedTheory(queue, tags)
 
-    override fun clone(): MutableTheory = super.clone() as MutableTheory
+    override fun clone(): MutableTheory = super.clone().toMutableTheory()
 }

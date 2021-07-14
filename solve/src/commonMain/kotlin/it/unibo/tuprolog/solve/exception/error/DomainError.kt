@@ -52,6 +52,29 @@ class DomainError(
 
     companion object {
 
+        @JsName("forFlagValues")
+        @JvmStatic
+        fun forFlagValues(
+            context: ExecutionContext,
+            procedure: Signature,
+            flagValues: Iterable<Term>,
+            actualValue: Term,
+            index: Int? = null
+        ): DomainError = message(
+            (index?.let { "The $it-th argument" } ?: "An argument") +
+                "of `${procedure.pretty()}` should be one of " +
+                flagValues.joinToString(", ", "{", "}") { "`${it.pretty()}`" } +
+                " but `${actualValue.pretty()}` has been provided instead"
+        ) { m, extra ->
+            DomainError(
+                message = m,
+                context = context,
+                expectedDomain = Expected.FLAG_VALUE,
+                actualValue = actualValue,
+                extraData = extra
+            )
+        }
+
         @JsName("forArgument")
         @JvmStatic
         fun forArgument(
@@ -119,7 +142,6 @@ class DomainError(
      * A class describing the expected domain whose absence caused the error
      */
     enum class Expected : ToTermConvertible {
-
         ATOM_PROPERTY,
         BUFFERING_MODE,
         CHARACTER_CODE_LIST,
@@ -129,6 +151,7 @@ class DomainError(
         FLAG_VALUE,
         FORMAT_CONTROL_SEQUENCE,
         IO_MODE,
+        WELL_FORMED_LIST,
         NON_EMPTY_LIST,
         NOT_LESS_THAN_ZERO,
         OPERATOR_PRIORITY,
@@ -161,7 +184,7 @@ class DomainError(
 
         /** The expected domain string description */
         @JsName("domain")
-        val domain: String by lazy { name.toLowerCase() }
+        val domain: String by lazy { name.lowercase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(domain)
@@ -173,7 +196,7 @@ class DomainError(
             /** Returns the Expected instance described by [domain]; creates a new instance only if [domain] was not predefined */
             @JsName("of")
             @JvmStatic
-            fun of(domain: String): Expected = valueOf(domain.toUpperCase())
+            fun of(domain: String): Expected = valueOf(domain.uppercase())
 
             /** Gets [Expected] instance from [term] representation, if possible */
             @JsName("fromTerm")

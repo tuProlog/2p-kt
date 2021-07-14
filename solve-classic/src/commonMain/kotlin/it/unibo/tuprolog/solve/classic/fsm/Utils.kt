@@ -6,8 +6,6 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.classic.appendPrimitives
@@ -17,26 +15,29 @@ import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 import kotlin.jvm.JvmName
 
-fun Sequence<Clause>.ensureRules(): Cursor<out Rule> =
+fun Sequence<Clause>.toRulesCursor(): Cursor<out Rule> =
+    ensureRules().cursor()
+
+fun Sequence<Clause>.ensureRules(): Sequence<Rule> =
     @Suppress("USELESS_CAST")
-    map { require(it is Rule); it as Rule }.cursor()
+    map { require(it.isRule); it.castToRule() }
 
 fun Term.unfoldGoals(): Sequence<Term> =
-    when (this) {
-        is Tuple -> toSequence().flatMap { it.unfoldGoals() }
+    when {
+        this.isTuple -> castToTuple().toSequence().flatMap { it.unfoldGoals() }
         else -> sequenceOf(this)
     }
 
 fun Term.toGoals(): Cursor<out Term> =
     unfoldGoals().map {
-        when (it) {
-            is Var -> Struct.of("call", it)
+        when {
+            it.isVariable -> Struct.of("call", it)
             else -> it
         }
     }.cursor()
 
 fun ClassicExecutionContext.createChild(inferProcedureFromGoals: Boolean = true): ClassicExecutionContext {
-    val currentGoal = this.currentGoal as Struct
+    val currentGoal = this.currentGoal!!.castToStruct()
 
     return copy(
         goals = currentGoal.toGoals(),
@@ -48,7 +49,7 @@ fun ClassicExecutionContext.createChild(inferProcedureFromGoals: Boolean = true)
 }
 
 fun ClassicExecutionContext.replaceWithChild(inferProcedureFromGoals: Boolean = true): ClassicExecutionContext {
-    val currentGoal = this.currentGoal as Struct
+    val currentGoal = this.currentGoal!!.castToStruct()
 
     return copy(
         goals = currentGoal.toGoals(),
@@ -107,4 +108,4 @@ fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
 fun ClassicExecutionContext.toRequest(
     goal: Struct,
     signature: Signature
-) = Solve.Request(signature, goal.argsList, this, executionMaxDuration = maxDuration)
+) = Solve.Request(signature, goal.args, this, executionMaxDuration = maxDuration)

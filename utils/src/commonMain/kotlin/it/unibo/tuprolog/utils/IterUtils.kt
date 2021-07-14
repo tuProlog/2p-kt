@@ -234,3 +234,23 @@ fun <T> List<T>.permutations(): Sequence<List<T>> =
             }
         }
     }
+
+fun <T> Sequence<T>.insertAt(index: Int, item: T, vararg items: T): Sequence<T> = sequence {
+    for ((i, x) in withIndex().asIterable()) {
+        if (i == index) {
+            yield(item)
+            yieldAll(items.asIterable())
+        }
+        yield(x)
+    }
+}
+
+fun <T> Sequence<T>.dropLast(): Sequence<T> = sequence {
+    val i = iterator()
+    while (i.hasNext()) {
+        val current = i.next()
+        if (i.hasNext()) {
+            yield(current)
+        }
+    }
+}

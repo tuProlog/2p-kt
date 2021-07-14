@@ -12,7 +12,11 @@ sealed class Result {
     object None : Result() {
         override fun toTerm(): Term? = null
 
-        override fun asObjectRef(): ObjectRef? = ObjectRef.NULL
+        override fun asObjectRef(): ObjectRef? = null
+
+        override fun isNone(): Boolean = true
+
+        override fun asNone(): None = this
     }
 
     data class Value(val value: Any?) : Result(), ToTermConvertible {
@@ -30,5 +34,17 @@ sealed class Result {
         override fun toTerm(): Term = termValue
 
         override fun asObjectRef(): ObjectRef = objectRef
+
+        override fun isValue(): Boolean = true
+
+        override fun asValue(): Value = this
     }
+
+    open fun isNone(): Boolean = false
+
+    open fun isValue(): Boolean = false
+
+    open fun asNone(): None? = null
+
+    open fun asValue(): Value? = null
 }

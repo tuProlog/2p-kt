@@ -9,8 +9,8 @@ fun main() {
     println(tuple)
     println(tuple.left)
     println(tuple.right)
-    println(tuple.right.`as`<Tuple>().left)
-    println(tuple.right.`as`<Tuple>().right)
+    println(tuple.right.castToTuple().left)
+    println(tuple.right.castToTuple().right)
 
     println(tuple.unfoldedList)
     println(tuple.unfoldedList == tuple.toList())

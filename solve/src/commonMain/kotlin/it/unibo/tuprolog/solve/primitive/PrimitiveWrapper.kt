@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.primitive
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
@@ -16,6 +17,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.NOT_LESS_THAN_ZERO
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.OPERATOR_SPECIFIER
+import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.WELL_FORMED_LIST
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVATE_PROCEDURE
@@ -25,8 +27,10 @@ import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.MAX_ARI
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOM
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOMIC
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.CHARACTER
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.INTEGER
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.LIST
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.PREDICATE_INDICATOR
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.MaxArity
@@ -96,16 +100,15 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             object : TermVisitor<TypeError?> {
                 override fun defaultValue(term: Term): Nothing? = null
 
-                override fun visit(term: Struct) = when {
+                override fun visitStruct(term: Struct) = when {
                     term.functor in Clause.notableFunctors && term.arity == 2 -> {
                         term.argsSequence.map { it.accept(this) }.filterNotNull().firstOrNull()
                     }
                     else -> defaultValue(term)
                 }
 
-                override fun visit(term: Numeric): TypeError {
-                    return TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
-                }
+                override fun visitNumeric(term: Numeric): TypeError =
+                    TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
             }
 
         fun <C : ExecutionContext> Solve.Request<C>.checkTermIsRecursivelyCallable(term: Term): TypeError? =
@@ -260,6 +263,12 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 else -> this
             }
 
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsConstant(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
+                !is Constant -> throw TypeError.forArgument(context, signature, ATOMIC, arg, index)
+                else -> this
+            }
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsGround(index: Int): Solve.Request<C> =
             arguments[index].let {
                 when {
@@ -337,8 +346,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 }
             }
 
-        private val MIN_CHAR = BigInteger.of(Char.MIN_VALUE.toInt())
-        private val MAX_CHAR = BigInteger.of(Char.MAX_VALUE.toInt())
+        private val MIN_CHAR = BigInteger.of(Char.MIN_VALUE.code)
+        private val MAX_CHAR = BigInteger.of(Char.MAX_VALUE.code)
 
         fun Integer.isCharacterCode(): Boolean = intValue !in MIN_CHAR..MAX_CHAR
 
@@ -347,6 +356,21 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 term !is Integer || term.isCharacterCode() ->
                     throw RepresentationError.of(context, signature, RepresentationError.Limit.CHARACTER_CODE)
                 else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringTermIsWellFormedList(term: Term): Solve.Request<C> =
+            when {
+                term !is LogicList || !term.isWellFormed -> throw DomainError.forTerm(context, WELL_FORMED_LIST, term)
+                else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedList(index: Int): Solve.Request<C> =
+            when (val term = arguments[index]) {
+                is LogicList -> when {
+                    term.isWellFormed -> this
+                    else -> throw DomainError.forArgument(context, signature, WELL_FORMED_LIST, term, index)
+                }
+                else -> throw TypeError.forArgument(context, signature, LIST, term, index)
             }
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCharCode(index: Int): Solve.Request<C> =

@@ -81,7 +81,7 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
     isChoicePointChild: Boolean = false
 ): Solve.Request<StreamsExecutionContext> = copy(
     newGoal.extractSignature(),
-    newGoal.argsList,
+    newGoal.args,
     context.copy(
         libraries = toPropagateContextData.libraries,
         flags = toPropagateContextData.flags,

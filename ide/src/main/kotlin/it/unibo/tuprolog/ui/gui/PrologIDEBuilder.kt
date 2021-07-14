@@ -13,7 +13,7 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
 
-data class PrologIdeBuilder(
+data class PrologIDEBuilder(
     val stage: Stage,
     var title: String = "tuProlog IDE",
     var icon: Image = TUPROLOG_LOGO,

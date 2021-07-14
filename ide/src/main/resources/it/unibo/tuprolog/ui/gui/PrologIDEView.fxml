@@ -8,7 +8,9 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -21,7 +23,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="767.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unibo.tuprolog.ui.gui.PrologIDEController">
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="767.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unibo.tuprolog.ui.gui.PrologIDEController">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
@@ -136,19 +138,26 @@
                                 <Label text="?-" />
                                 <TextField fx:id="txfQuery" onAction="#onActionPerformedOnQuery" onKeyTyped="#onKeyTypedOnQuery" HBox.hgrow="SOMETIMES">
                                     <HBox.margin>
-                                        <Insets right="10.0" />
+                                        <Insets />
                                     </HBox.margin>
                                 </TextField>
-                                <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#onNextButtonPressed" text="&gt;" />
-                                <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed" text="&gt;&gt;" />
-                                <Button fx:id="btnStop" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#onStopButtonPressed" text="X">
+                        <Separator orientation="VERTICAL" />
+                                <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#onNextButtonPressed" text="Solve">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin></Button>
+                                <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed" text="Solve all">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin></Button>
+                                <Button fx:id="btnStop" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#onStopButtonPressed" text="Stop">
                                     <HBox.margin>
-                                        <Insets left="10.0" />
+                                        <Insets />
                                     </HBox.margin>
                                 </Button>
-                                <Button fx:id="btnReset" mnemonicParsing="false" onAction="#onResetButtonPressed" text="R">
+                                <Button fx:id="btnReset" mnemonicParsing="false" onAction="#onResetButtonPressed" text="Reset">
                                     <HBox.margin>
-                                        <Insets left="10.0" />
+                                        <Insets />
                                     </HBox.margin>
                                 </Button>
                             </children>
@@ -163,7 +172,27 @@
                                 <Label fx:id="lblStatus" text="Idle" BorderPane.alignment="BOTTOM_LEFT" />
                             </left>
                             <right>
-                                <Label fx:id="lblCaret" text="Line: 1 | Column: 1" BorderPane.alignment="CENTER_RIGHT" />
+                        <HBox BorderPane.alignment="CENTER_RIGHT">
+                           <children>
+                              <Label text="Timeout:">
+                                 <HBox.margin>
+                                    <Insets right="5.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <Label fx:id="lblTimeout" text="5 s">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <Slider fx:id="sldTimeout" blockIncrement="00000.1" majorTickUnit="1.0" max="10.5" min="1.0" minorTickCount="1" value="3.69897">
+                                 <HBox.margin>
+                                    <Insets left="5.0" right="5.0" />
+                                 </HBox.margin>
+                              </Slider>
+                              <Separator orientation="VERTICAL" />
+                                      <Label fx:id="lblCaret" text="Line: 1 | Column: 1" />
+                           </children>
+                        </HBox>
                             </right>
                         </BorderPane>
                     </bottom>

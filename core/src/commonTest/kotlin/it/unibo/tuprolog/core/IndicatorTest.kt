@@ -28,8 +28,8 @@ internal class IndicatorTest {
             .filter { (name, arity) -> name.isAtom && arity.isInt }
             .map { (name, arity) ->
                 Indicator.of(
-                    name.`as`<Atom>().value,
-                    arity.`as`<Integer>().intValue.toInt()
+                    name.castToAtom().value,
+                    arity.castToInteger().intValue.toInt()
                 )
             }
 

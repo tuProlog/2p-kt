@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.libs.oop.OOP
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
@@ -20,7 +21,7 @@ class Alias private constructor(val alias: Struct, val ref: Ref) : RuleWrapper<E
 
         fun of(alias: Struct, ref: Ref) = Alias(alias, ref)
 
-        const val FUNCTOR = "alias"
+        const val FUNCTOR = OOP.ALIAS_FUNCTOR
     }
 
     init {

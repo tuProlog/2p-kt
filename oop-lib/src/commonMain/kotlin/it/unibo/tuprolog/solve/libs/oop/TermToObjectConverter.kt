@@ -13,6 +13,8 @@ interface TermToObjectConverter {
 
     fun admissibleTypes(term: Term): Set<KClass<*>>
 
+    fun priorityOfConversion(type: KClass<*>, term: Term): Int?
+
     fun mostAdequateType(term: Term): KClass<*>
 
     fun convert(term: Term): Any? =
@@ -22,7 +24,7 @@ interface TermToObjectConverter {
         @JvmStatic
         fun of(
             typeFactory: TypeFactory = TypeFactory.default,
-            dealiaser: (Struct) -> TypeRef? = { null }
+            dealiaser: (Struct) -> Ref? = { null }
         ): TermToObjectConverter = TermToObjectConverterImpl(typeFactory, dealiaser)
 
         @JvmStatic

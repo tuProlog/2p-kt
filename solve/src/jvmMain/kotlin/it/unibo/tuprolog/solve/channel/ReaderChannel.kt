@@ -9,7 +9,8 @@ class ReaderChannel(val reader: Reader) : AbstractInputChannel<String>() {
 
     constructor(inputStream: InputStream) : this(InputStreamReader(inputStream))
 
-    override fun readActually(): String = "${reader.read().toChar()}"
+    override fun readActually(): String? =
+        reader.read().takeIf { it >= 0 }?.toChar()?.toString()
 
     override val available: Boolean
         @Synchronized

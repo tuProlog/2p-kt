@@ -3,7 +3,6 @@ package it.unibo.tuprolog.unify
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.testutils.EquationUtils
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAllIdentities
@@ -128,7 +127,7 @@ internal class EquationTest {
 
     @Test
     fun equationAllOfShouldReturnCorrectNumberOfEquations() {
-        val correct = EquationUtils.allIdentityEquations.sumBy { (lhs, _) -> countDeepGeneratedEquations(lhs) }
+        val correct = EquationUtils.allIdentityEquations.sumOf { (lhs, _) -> countDeepGeneratedEquations(lhs) }
         val toBeTested = EquationUtils.allIdentityEquations.flatMap { Equation.allOf(it).asIterable() }.count()
 
         assertEquals(correct, toBeTested)
@@ -155,14 +154,14 @@ internal class EquationTest {
 
     @Test
     fun toPairWorksAsExpected() {
-        val toBeTested = EquationUtils.mixedAllEquations.map { Equation.of(it) }.map(Equation<*, *>::toPair)
+        val toBeTested = EquationUtils.mixedAllEquations.map { Equation.of(it) }.map(Equation::toPair)
 
         assertEquals(EquationUtils.mixedAllEquations, toBeTested)
     }
 
     @Test
     fun toTermWorksAsExpected() {
-        val toBeTested = EquationUtils.mixedAllEquations.map { Equation.of(it) }.map(Equation<*, *>::toTerm)
+        val toBeTested = EquationUtils.mixedAllEquations.map { Equation.of(it) }.map(Equation::toTerm)
 
         assertEquals(EquationUtils.mixedAllEquations.map { (lhs, rhs) -> Struct.of("=", lhs, rhs) }, toBeTested)
     }
@@ -174,7 +173,7 @@ internal class EquationTest {
             EquationUtils.comparisonEquations
 
         val correct = testableItems.map { (lhs, rhs) -> rhs to lhs }.map { Equation.of(it) }
-        val toBeTested = testableItems.map { Equation.of(it) }.map(Equation<*, *>::swap)
+        val toBeTested = testableItems.map { Equation.of(it) }.map(Equation::swap)
 
         assertEquals(correct, toBeTested)
     }
@@ -185,7 +184,7 @@ internal class EquationTest {
             EquationUtils.assignmentEquations.filterNot { (lhs, rhs) -> lhs.isVariable && rhs.isVariable }
 
         val correct = nonVarToVarAssignments.map { Equation.of(it) }
-        val toBeTested = nonVarToVarAssignments.map { Equation.of(it) }.map(Equation<*, *>::swap)
+        val toBeTested = nonVarToVarAssignments.map { Equation.of(it) }.map(Equation::swap)
 
         assertEquals(correct, toBeTested)
     }
@@ -235,13 +234,13 @@ internal class EquationTest {
         val toBeTested1 = (aAtom eq myVar).apply(Substitution.of(myVar, aAtom))
 
         assertEquals(correct1, toBeTested1)
-        assertTrue(toBeTested1 is Equation.Identity<*>)
+        assertTrue(toBeTested1 is Equation.Identity)
 
         val correct2 = (aAtom eq myVar)
         val toBeTested2 = (aAtom eq myVar).apply(Substitution.of(Var.of("A"), aAtom))
 
         assertEquals(correct2, toBeTested2)
-        assertTrue(toBeTested2 is Equation.Assignment<*, *>)
+        assertTrue(toBeTested2 is Equation.Assignment)
     }
 
     @Test
@@ -249,7 +248,7 @@ internal class EquationTest {
         val aAtom = Atom.of("a")
         val toBeTested = (aAtom eq Var.of("A")).apply(Substitution.of("A", aAtom)) { _, _ -> false }
 
-        assertFalse(toBeTested is Equation.Identity<*>)
+        assertFalse(toBeTested is Equation.Identity)
     }
 
     @Test
@@ -258,7 +257,7 @@ internal class EquationTest {
 
         @Suppress("UNCHECKED_CAST")
         val toBeTested = EquationUtils.assignmentEquations
-            .map { Equation.of(it) as Equation<Var, Term> }
+            .map { Equation.of(it) }
             .map { it.toSubstitution() }
 
         assertEquals(correct, toBeTested)
@@ -270,7 +269,7 @@ internal class EquationTest {
 
         @Suppress("UNCHECKED_CAST")
         val toBeTested = EquationUtils.assignmentEquations
-            .map { Equation.of(it) as Equation<Var, Term> }
+            .map { Equation.of(it) }
             .toSubstitution()
 
         assertEquals(correct, toBeTested)

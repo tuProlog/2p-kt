@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.function
 
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -15,4 +16,12 @@ import it.unibo.tuprolog.solve.primitive.Solve
 class ExpressionReducer<E : ExecutionContext>(
     request: Solve.Request<E>,
     index: Int? = null
-) : AbstractEvaluator<E, Term>(request, index)
+) : AbstractEvaluator<E, Term>(request, index) {
+    override fun unevaluable(struct: Struct): Term {
+        return if (struct.arity > 0) {
+            struct.setArgs(struct.argsSequence.map { it.accept(this).apply { dynamicCheck(struct) } })
+        } else {
+            struct
+        }
+    }
+}

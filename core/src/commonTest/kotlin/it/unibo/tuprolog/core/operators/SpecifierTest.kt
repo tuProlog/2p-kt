@@ -60,7 +60,7 @@ internal class SpecifierTest {
 
     @Test
     fun toTerm() {
-        val correctTerms = allSpecifiers.map { Atom.of(it.name.toLowerCase()) }
+        val correctTerms = allSpecifiers.map { Atom.of(it.name.lowercase()) }
         val toBeTested = allSpecifiers.map { it.toTerm() }
 
         onCorrespondingItems(correctTerms, toBeTested, ::assertEqualities)

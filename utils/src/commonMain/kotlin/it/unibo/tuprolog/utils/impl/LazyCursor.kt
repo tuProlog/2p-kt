@@ -1,14 +1,15 @@
 package it.unibo.tuprolog.utils.impl
 
-import it.unibo.tuprolog.utils.Cursor
-
 internal data class LazyCursor<T>(val delegate: Iterator<T>) : AbstractCursor<T>() {
 
-    private val wrapped: Cursor<T> by lazy {
+    private val wrapped: AbstractCursor<T> by lazy {
         NonLastCursor(delegate)
     }
 
-    override val next: Cursor<out T>
+    override val isLazy: Boolean
+        get() = true
+
+    override val next: AbstractCursor<out T>
         get() = wrapped.next
 
     override val current: T?
@@ -20,11 +21,7 @@ internal data class LazyCursor<T>(val delegate: Iterator<T>) : AbstractCursor<T>
     override val isOver: Boolean
         get() = false
 
-    override fun toString(): String {
-        return super<AbstractCursor>.toString()
-    }
+    override fun toString(): String = super<AbstractCursor>.toString()
 
-    override fun iterator(): Iterator<T> {
-        return wrapped.iterator()
-    }
+    override fun iterator(): Iterator<T> = wrapped.iterator()
 }

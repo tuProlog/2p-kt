@@ -124,7 +124,7 @@ internal class StateIntegrationTesting {
             val maxDuration = 100L
             val request = Solve.Request(
                 goal.extractSignature(),
-                goal.argsList,
+                goal.args,
                 StreamsExecutionContext(staticKb = infiniteComputationTheory),
                 executionMaxDuration = maxDuration
             )

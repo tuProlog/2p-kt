@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
 import it.unibo.tuprolog.core.impl.TupleImpl
 import kotlin.js.JsName
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -14,9 +15,6 @@ interface Tuple : Collection {
     override val functor: String
         get() = TUPLE_FUNCTOR
 
-    override val args: Array<Term>
-        get() = arrayOf(left, right)
-
     override val arity: Int
         get() = 2
 
@@ -25,6 +23,8 @@ interface Tuple : Collection {
 
     @JsName("right")
     val right: Term
+
+    override fun asTuple(): Tuple = this
 
     override fun toArray(): Array<Term> = unfoldedArray
 
@@ -41,18 +41,31 @@ interface Tuple : Collection {
         const val FUNCTOR = TUPLE_FUNCTOR
 
         @JvmStatic
-        @JsName("wrapIfNeededTrueDefault")
-        fun wrapIfNeeded(vararg terms: Term): Term =
-            wrapIfNeeded(*terms, default = { Truth.TRUE })
+        @JsName("wrapIfNeeded")
+        @JvmOverloads
+        fun wrapIfNeeded(vararg terms: Term, ifEmpty: () -> Term = { Truth.TRUE }): Term =
+            wrapIfNeeded(terms.asIterable(), ifEmpty)
 
         @JvmStatic
-        @JsName("wrapIfNeeded")
-        fun wrapIfNeeded(vararg terms: Term, default: () -> Term): Term =
-            when {
-                terms.isEmpty() -> default()
-                terms.size == 1 -> terms.single()
-                else -> of(terms.toList())
+        @JsName("wrapIterableIfNeeded")
+        @JvmOverloads
+        fun wrapIfNeeded(terms: Iterable<Term>, ifEmpty: () -> Term = { Truth.TRUE }): Term {
+            val i = terms.iterator()
+            if (!i.hasNext()) return ifEmpty()
+            val first = i.next()
+            if (!i.hasNext()) return first
+            val items = mutableListOf(first)
+            while (i.hasNext()) {
+                items.add(i.next())
             }
+            return of(items)
+        }
+
+        @JvmStatic
+        @JsName("wrapSequenceIfNeeded")
+        @JvmOverloads
+        fun wrapIfNeeded(terms: Sequence<Term>, ifEmpty: () -> Term = { Truth.TRUE }): Term =
+            wrapIfNeeded(terms.asIterable(), ifEmpty)
 
         @JvmStatic
         @JsName("of")
@@ -72,9 +85,9 @@ interface Tuple : Collection {
             require(terms.size >= 2) {
                 "Tuples require at least 2 terms"
             }
-
-            return terms.slice(0 until terms.lastIndex)
-                .foldRight(terms.last()) { l, r -> TupleImpl(l, r) } as Tuple
+            return terms.slice(0 until terms.lastIndex).foldRight(terms.last()) { l, r ->
+                TupleImpl(l, r)
+            }.castToTuple()
         }
     }
 }

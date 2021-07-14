@@ -53,7 +53,7 @@ object TestingClauseTheories {
         prolog {
             val synonymReplacer = object : TermVisitor<Term> {
                 override fun defaultValue(term: Term): Term = term
-                override fun visit(term: Struct): Term = when (term.functor) {
+                override fun visitStruct(term: Struct): Term = when (term.functor) {
                     oldFunctor -> withFunctor(term.args.single().accept(this))
                     else -> term.args.map { it.accept(this) }.let {
                         if (it.none()) term

@@ -26,6 +26,8 @@ interface Set : Collection {
 
     override fun freshCopy(scope: Scope): Set
 
+    override fun asSet(): Set = this
+
     companion object {
 
         const val FUNCTOR = Terms.SET_FUNCTOR

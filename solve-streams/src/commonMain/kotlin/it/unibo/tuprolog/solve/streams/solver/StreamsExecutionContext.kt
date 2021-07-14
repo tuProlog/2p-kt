@@ -27,8 +27,8 @@ internal data class StreamsExecutionContext(
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: Theory = Theory.empty(),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
-    override val inputChannels: InputStore = InputStore.default(),
-    override val outputChannels: OutputStore = OutputStore.default(),
+    override val inputChannels: InputStore = InputStore.fromStandard(),
+    override val outputChannels: OutputStore = OutputStore.fromStandard(),
     override val customData: CustomDataStore = CustomDataStore.empty(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     /** The key strategies that a solver should use during resolution process */

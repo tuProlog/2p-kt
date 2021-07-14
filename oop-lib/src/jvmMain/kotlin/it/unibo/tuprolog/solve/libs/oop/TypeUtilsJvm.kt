@@ -1,44 +1,94 @@
 package it.unibo.tuprolog.solve.libs.oop
 
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.libs.oop.exceptions.ConstructorInvocationException
-import it.unibo.tuprolog.solve.libs.oop.exceptions.MethodInvocationException
-import it.unibo.tuprolog.solve.libs.oop.exceptions.PropertyAssignmentException
+import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.RuntimePermissionException
+import it.unibo.tuprolog.solve.libs.oop.impl.OverloadSelectorImpl
+import it.unibo.tuprolog.utils.Cache
 import it.unibo.tuprolog.utils.Optional
-import java.lang.IllegalStateException
+import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
+import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
-import kotlin.reflect.KTypeParameter
-import kotlin.reflect.KVisibility
+import kotlin.reflect.KProperty0
+import kotlin.reflect.KProperty1
+import kotlin.reflect.KProperty2
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 
 actual val KClass<*>.companionObjectRef: Optional<out Any>
-    get() = Optional.of(companionObjectInstance)
+    get() = Optional.of(objectInstance ?: companionObjectInstance)
 
 actual val KClass<*>.companionObjectType: Optional<out KClass<*>>
-    get() = Optional.of(companionObject)
+    get() = Optional.of(
+        if (objectInstance != null) {
+            this
+        } else {
+            companionObject
+        }
+    )
+
+private val classCache = Cache.simpleLru<String, Optional<out KClass<*>>>(32)
 
 actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
     require(CLASS_NAME_PATTERN.matches(qualifiedName)) {
         "`$qualifiedName` must match ${CLASS_NAME_PATTERN.pattern} while it doesn't"
     }
-    return try {
-        Optional.of(Class.forName(qualifiedName).kotlin)
-    } catch (e: ClassNotFoundException) {
+    return classCache.getOrSet(qualifiedName) { kClassFromNameImpl(qualifiedName) }
+}
+
+private fun kClassFromNameImpl(qualifiedName: String): Optional<out KClass<*>> {
+    val kotlinKlass = KotlinToJavaTypeMap[qualifiedName]
+    return if (kotlinKlass != null) {
+        Optional.of(kotlinKlass)
+    } else {
+        javaClassForName(qualifiedName)?.let { return Optional.some(it.kotlin) }
+        var lastDot = qualifiedName.lastIndexOf('.')
+        var name = qualifiedName
+        while (lastDot >= 0) {
+            name = name.replaceAt(lastDot, '$')
+            javaClassForName(name)?.let { return Optional.some(it.kotlin) }
+            lastDot = name.lastIndexOf('.')
+        }
         Optional.none()
     }
 }
 
-private val classNamePattern = "^$id(\\.$id)*$".toRegex()
+private fun String.replaceAt(index: Int, char: Char): String {
+    if (index < 0 || index >= length) throw IndexOutOfBoundsException()
+    return substring(0, index) + char + substring(index + 1)
+}
+
+private fun javaClassForName(qualifiedName: String): Class<*>? =
+    try {
+        Class.forName(qualifiedName)
+    } catch (e: ClassNotFoundException) {
+        null
+    }
+
+private val classNamePattern = "^$id(\\.$id(\\$$id)*)*$".toRegex()
 
 actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern
+
+actual val Any.identifier: String
+    get() = System.identityHashCode(this).toString(16)
+
+internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
+    instance: Any?,
+    action: () -> T
+): T = try {
+    action()
+} catch (e: IllegalCallableAccessException) {
+    throw RuntimePermissionException(this, instance, e)
+} catch (e: InvocationTargetException) {
+    throw OopRuntimeException(this, instance, e.targetException ?: e.cause ?: e)
+} catch (e: IllegalArgumentException) {
+    throw OopRuntimeException(this, instance, e.cause ?: e)
+}
 
 actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
     supertypes.asSequence()
@@ -46,124 +96,18 @@ actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
         .filterIsInstance<KClass<*>>()
         .flatMap { sequenceOf(it) + it.allSupertypes(true) }
         .distinct()
-        .let {
-            if (strict) it else sequenceOf(this) + it
-        }
+        .let { if (strict) it else sequenceOf(this) + it }
 
 actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
     get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
         it.type.classifier as? KClass<*> ?: Any::class
     }
 
-private fun List<KParameter>.match(types: List<Set<KClass<*>>>): Boolean {
-    if (size != types.size) return false
-    for (i in this.indices) {
-        val possible = types[i]
-        when (val formal = this[i].type.classifier) {
-            is KClass<*> -> {
-                if (possible.none { formal isSupertypeOf it }) return false
-            }
-            is KTypeParameter -> return true
-            else -> return false
-        }
-    }
-    return true
-}
-
-actual fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
-    try {
-        members.filter { it.name == methodName }
-            .filter { it.visibility == KVisibility.PUBLIC }
-            .firstOrNull { method ->
-                method.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
-            } ?: throw MethodInvocationException(this, methodName, admissibleTypes)
-    } catch (e: IllegalStateException) {
-        allSupertypes(strict = true).firstOrNull()?.findMethod(methodName, admissibleTypes)
-            ?: throw MethodInvocationException(this, methodName, admissibleTypes)
-    }
-
-actual fun KClass<*>.findProperty(propertyName: String, admissibleTypes: Set<KClass<*>>): KMutableProperty<*> =
-    members.filter { it.name == propertyName }
-        .filter { it.visibility == KVisibility.PUBLIC }
-        .filterIsInstance<KMutableProperty<*>>()
-        .firstOrNull { property ->
-            property.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(listOf(admissibleTypes))
-        } ?: throw PropertyAssignmentException(this, propertyName, admissibleTypes)
-
-actual fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
-    constructors.filter { it.visibility == KVisibility.PUBLIC }
-        .firstOrNull { constructor ->
-            constructor.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
-        } ?: throw ConstructorInvocationException(this, admissibleTypes)
-
 actual val KClass<*>.fullName: String
     get() = qualifiedName!!
 
 actual val KClass<*>.name: String
     get() = simpleName!!
-
-private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>): List<KClass<*>> {
-    return formalParameterTypes.also { formalArgumentsTypes ->
-        require(formalParameterTypes.size == actualArguments.size) {
-            """
-            |
-            |Error while invoking $name the expected argument types 
-            |   ${formalArgumentsTypes.map { it.name }} 
-            |are not as many as the as the actual parameters (${formalArgumentsTypes.size} vs. ${actualArguments.size}):
-            |   $actualArguments
-            |
-            """.trimMargin()
-        }
-    }
-}
-
-actual fun KClass<*>.invoke(
-    objectConverter: TermToObjectConverter,
-    methodName: String,
-    arguments: List<Term>,
-    instance: Any?
-): Result {
-    val methodRef = findMethod(methodName, arguments.map { objectConverter.admissibleTypes(it) })
-    return methodRef.callWithPrologArguments(objectConverter, arguments, instance)
-}
-
-private fun KCallable<*>.callWithPrologArguments(
-    converter: TermToObjectConverter,
-    arguments: List<Term>,
-    instance: Any? = null
-): Result {
-    val formalArgumentsTypes = ensureArgumentsListIsOfSize(arguments)
-    val args = arguments.mapIndexed { i, it ->
-        converter.convertInto(formalArgumentsTypes[i], it)
-    }.toTypedArray()
-    try {
-        val result = if (instance == null) call(*args) else call(instance, *args)
-        return Result.Value(result)
-    } catch (e: IllegalCallableAccessException) {
-        throw RuntimePermissionException(this, instance, e)
-    }
-}
-
-actual fun KClass<*>.assign(
-    objectConverter: TermToObjectConverter,
-    propertyName: String,
-    value: Term,
-    instance: Any?
-): Result {
-    val setterRef = findProperty(propertyName, objectConverter.admissibleTypes(value)).setter
-    return setterRef.callWithPrologArguments(objectConverter, listOf(value), instance)
-}
-
-actual fun KClass<*>.create(
-    objectConverter: TermToObjectConverter,
-    arguments: List<Term>
-): Result {
-    val constructorRef = findConstructor(arguments.map { objectConverter.admissibleTypes(it) })
-    return constructorRef.callWithPrologArguments(objectConverter, arguments)
-}
-
-actual val Any.identifier: String
-    get() = System.identityHashCode(this).toString(16)
 
 actual fun KCallable<*>.pretty(): String =
     "$name(${parameters.map { it.pretty() }}): ${returnType.classifier.pretty()}"
@@ -181,3 +125,30 @@ private fun KParameter.pretty(): String =
         KParameter.Kind.EXTENSION_RECEIVER -> "<this>:${type.classifier.pretty()}"
         else -> "$name:${type.classifier}"
     }
+
+@Suppress("UNCHECKED_CAST")
+actual fun <T> KCallable<T>.invoke(instance: Any?, vararg args: Any?): T =
+    when (this) {
+        is KProperty0<T> -> get()
+        is KProperty1<*, T> -> {
+            val property = this as KProperty1<Any?, T>
+            property.get(instance)
+        }
+        is KProperty2<*, *, T> -> {
+            val property = this as KProperty2<Any?, Any?, T>
+            property.get(instance, args[0])
+        }
+        else -> {
+            if (instance == null) {
+                call(*args)
+            } else {
+                call(instance, *args)
+            }
+        }
+    }
+
+actual val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
+    get() = setter
+
+actual fun overloadSelector(type: KClass<*>, termToObjectConverter: TermToObjectConverter): OverloadSelector =
+    OverloadSelectorImpl(type, termToObjectConverter)

@@ -24,45 +24,45 @@ interface TermComparator<T : Term> : Comparator<T> {
     object DefaultComparator : TermComparator<Term> {
 
         private fun compareVarAndTerm(a: Var, b: Term): Int =
-            when (b) {
-                is Var -> VarComparator.compare(a, b)
+            when {
+                b.isVariable -> VarComparator.compare(a, b.castToVar())
                 else -> -1
             }
 
         private fun compareRealAndTerm(a: Real, b: Term): Int =
-            when (b) {
-                is Real -> RealComparator.compare(a, b)
-                is Var -> 1
+            when {
+                b.isReal -> RealComparator.compare(a, b.castToReal())
+                b.isVariable -> 1
                 else -> -1
             }
 
         private fun compareIntegerAndTerm(a: Integer, b: Term): Int =
-            when (b) {
-                is Integer -> IntegerComparator.compare(a, b)
-                is Var, is Real -> 1
+            when {
+                b.isInt -> IntegerComparator.compare(a, b.castToInteger())
+                b.isVariable || b.isReal -> 1
                 else -> -1
             }
 
         private fun compareAtomAndTerm(a: Atom, b: Term): Int =
-            when (b) {
-                is Atom -> AtomComparator.compare(a, b)
-                is Struct -> -1
+            when {
+                b.isAtom -> AtomComparator.compare(a, b.castToAtom())
+                b.isStruct -> -1
                 else -> 1
             }
 
         private fun compareStructAndTerm(a: Struct, b: Term): Int =
-            when (b) {
-                is Struct -> StructComparator.compare(a, b)
+            when {
+                b.isStruct -> StructComparator.compare(a, b.castToStruct())
                 else -> 1
             }
 
         override fun compare(a: Term, b: Term): Int =
-            when (a) {
-                is Var -> compareVarAndTerm(a, b)
-                is Real -> compareRealAndTerm(a, b)
-                is Integer -> compareIntegerAndTerm(a, b)
-                is Atom -> compareAtomAndTerm(a, b)
-                is Struct -> compareStructAndTerm(a, b)
+            when {
+                a.isVariable -> compareVarAndTerm(a.castToVar(), b)
+                a.isReal -> compareRealAndTerm(a.castToReal(), b)
+                a.isInt -> compareIntegerAndTerm(a.castToInteger(), b)
+                a.isAtom -> compareAtomAndTerm(a.castToAtom(), b)
+                a.isStruct -> compareStructAndTerm(a.castToStruct(), b)
                 else -> throw IllegalStateException("Cannot compare ${a::class} with ${b::class}. This is a bug.")
             }
     }

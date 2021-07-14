@@ -106,6 +106,18 @@ interface MutableSolver : Solver {
     @JsName("setFlagNotable")
     fun setFlag(flag: NotableFlag)
 
+    @JsName("setStandardInput")
+    fun setStandardInput(stdIn: InputChannel<String>)
+
+    @JsName("setStandardError")
+    fun setStandardError(stdErr: OutputChannel<String>)
+
+    @JsName("setStandardOutput")
+    fun setStandardOutput(stdOut: OutputChannel<String>)
+
+    @JsName("setWarnings")
+    fun setWarnings(warnings: OutputChannel<PrologWarning>)
+
     override fun copy(
         libraries: Libraries,
         flags: FlagStore,

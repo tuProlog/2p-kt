@@ -20,15 +20,16 @@ internal class AtomIndex(
 
     private val index: MutableMap<Atom, MutableList<SituatedIndexedClause>> = mutableMapOf()
 
-    override fun get(clause: Clause): Sequence<Clause> {
-        return if (clause.nestedFirstArgument().isAtom) {
+    override fun get(clause: Clause): Sequence<Clause> =
+        if (clause.nestedFirstArgument().isAtom) {
             index[clause.asInnerAtom()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
                 ?.map { it.innerClause }
                 ?: emptySequence()
-        } else extractGlobalSequence(clause)
-    }
+        } else {
+            extractGlobalSequence(clause)
+        }
 
     override fun assertA(clause: IndexedClause) {
         if (ordered) {
@@ -46,19 +47,18 @@ internal class AtomIndex(
         }
     }
 
-    override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? {
+    override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
         if (clause.nestedFirstArgument().isAtom) {
             index[clause.asInnerAtom()].let {
-                return if (it == null) {
+                if (it == null) {
                     null
                 } else {
                     extractFirst(clause, it)
                 }
             }
         } else {
-            return extractFirst(clause)
+            extractFirst(clause)
         }
-    }
 
     private fun extractFirst(clause: Clause): SituatedIndexedClause? =
         index.values.mapNotNull {
@@ -78,7 +78,9 @@ internal class AtomIndex(
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
                 ?: emptySequence()
-        } else extractGlobalIndexedSequence(clause)
+        } else {
+            extractGlobalIndexedSequence(clause)
+        }
     }
 
     override fun retractIndexed(indexed: SituatedIndexedClause) {
@@ -115,15 +117,12 @@ internal class AtomIndex(
     private fun Clause.nestedFirstArgument(): Term =
         this.head!!.nestedFirstArgument(nestingLevel + 1)
 
-    private fun Term.asAtom(): Atom =
-        this as Atom
-
     private fun Clause.asInnerAtom(): Atom =
-        this.nestedFirstArgument().asAtom()
+        this.nestedFirstArgument().castToAtom()
 
     private fun SituatedIndexedClause.asInnerAtom(): Atom =
-        this.innerClause.nestedFirstArgument() as Atom
+        this.innerClause.nestedFirstArgument().castToAtom()
 
     private fun IndexedClause.asInnerAtom(): Atom =
-        this.innerClause.nestedFirstArgument() as Atom
+        this.innerClause.nestedFirstArgument().castToAtom()
 }

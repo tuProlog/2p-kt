@@ -5,16 +5,11 @@ import kotlin.reflect.KClass
 
 class InvalidTermTypeException(
     input: Any?,
-    offendingSymbol: String,
-    expected: KClass<out Term>,
-    line: Int,
-    column: Int,
-    cause: Throwable? = null
-) : ParseException(
-    input,
-    offendingSymbol,
-    line,
-    column,
-    "Expecting ${expected.simpleName}, got `$offendingSymbol` instead",
-    cause
-)
+    val term: Term,
+    val type: KClass<out Term>,
+    offendingSymbol: String = input as? String ?: term.toString(),
+    line: Int = 1,
+    column: Int = 1,
+    message: String? = "Expected ${type.simpleName}, got: $offendingSymbol",
+    throwable: Throwable? = null
+) : ParseException(input, offendingSymbol, line, column, message, throwable)

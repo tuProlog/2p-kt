@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
@@ -34,9 +33,6 @@ class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, index
     AbstractEvaluator<E, Numeric>(request, index) {
 
     constructor(request: Solve.Request<E>) : this(request, null)
-
-    // this override is needed to treat "/" functor as an arithmetic one, among the others
-    override fun visit(term: Indicator): Numeric = super.visitStruct(term)
 
     /** This method implements all the check required by the Prolog Standard for expressions to be considered valid (statically) */
     override fun Term.staticCheck() {

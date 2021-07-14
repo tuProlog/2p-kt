@@ -10,43 +10,27 @@ protected constructor(
 
     override fun add(clause: Clause): Self {
         rete.assertZ(clause)
-        @Suppress("UNCHECKED_CAST")
-        return this as Self
+        return self
     }
 
     override fun addAll(clauses: Iterable<Clause>): Self {
         clauses.forEach { rete.assertZ(it) }
-        @Suppress("UNCHECKED_CAST")
-        return this as Self
+        return self
     }
 
     override fun retrieve(clause: Clause): RetrieveResult<out Self> {
         val retracted = rete.retractFirst(clause)
-
-        @Suppress("UNCHECKED_CAST")
         return when {
-            retracted.none() ->
-                RetrieveResult.Failure(this as Self)
-            else ->
-                RetrieveResult.Success(
-                    this as Self,
-                    retracted.toList()
-                )
+            retracted.none() -> RetrieveResult.Failure(self)
+            else -> RetrieveResult.Success(self, retracted.toList())
         }
     }
 
     override fun retrieveAll(clause: Clause): RetrieveResult<out Self> {
         val retracted = rete.retractAll(clause)
-
-        @Suppress("UNCHECKED_CAST")
         return when {
-            retracted.none() ->
-                RetrieveResult.Failure(this as Self)
-            else ->
-                RetrieveResult.Success(
-                    this as Self,
-                    retracted.toList()
-                )
+            retracted.none() -> RetrieveResult.Failure(self)
+            else -> RetrieveResult.Success(self, retracted.toList())
         }
     }
 }

@@ -7,192 +7,69 @@ interface TermVisitor<T> {
     @JsName("defaultValue")
     fun defaultValue(term: Term): T
 
-    @JsName("visitToTerm")
-    fun visit(term: Term): T =
-        when (term) {
-            is Var -> visit(term)
-            is Constant -> visit(term)
-            is Struct -> visit(term)
-            else -> visitTerm(term)
-        }
-
     @JsName("visitTerm")
     fun visitTerm(term: Term): T = defaultValue(term)
 
-    @JsName("visitToVar")
-    fun visit(term: Var): T = visitVar(term)
-
     @JsName("visitVar")
-    fun visitVar(term: Var): T = defaultValue(term)
-
-    @JsName("visitToConstant")
-    fun visit(term: Constant): T =
-        when (term) {
-            is Numeric -> visit(term)
-            is Atom -> visit(term)
-            else -> visitConstant(term)
-        }
+    fun visitVar(term: Var): T = visitTerm(term)
 
     @JsName("visitConstant")
-    fun visitConstant(term: Constant): T = defaultValue(term)
-
-    @JsName("visitToStruct")
-    fun visit(term: Struct): T =
-        when (term) {
-            is Collection -> visit(term)
-            is Atom -> visit(term)
-            is Clause -> visit(term)
-            is Indicator -> visit(term)
-            else -> visitStruct(term)
-        }
+    fun visitConstant(term: Constant): T = visitTerm(term)
 
     @JsName("visitStruct")
-    fun visitStruct(term: Struct): T = defaultValue(term)
-
-    @JsName("visitToCollection")
-    fun visit(term: Collection): T =
-        when (term) {
-            is List -> visit(term)
-            is Set -> visit(term)
-            is Tuple -> visit(term)
-            else -> visitCollection(term)
-        }
+    fun visitStruct(term: Struct): T = visitTerm(term)
 
     @JsName("visitCollection")
-    fun visitCollection(term: Collection): T = defaultValue(term)
-
-    @JsName("visitToAtom")
-    fun visit(term: Atom): T =
-        when (term) {
-            is Empty -> visit(term)
-            is Truth -> visit(term)
-            else -> visitAtom(term)
-        }
+    fun visitCollection(term: Collection): T = visitStruct(term)
 
     @JsName("visitAtom")
-    fun visitAtom(term: Atom): T = defaultValue(term)
-
-    @JsName("visitToTruth")
-    fun visit(term: Truth): T = visitTruth(term)
+    fun visitAtom(term: Atom): T = visitStruct(term)
 
     @JsName("visitTruth")
-    fun visitTruth(term: Truth): T = defaultValue(term)
-
-    @JsName("visitToNumeric")
-    fun visit(term: Numeric): T =
-        when (term) {
-            is Real -> visit(term)
-            is Integer -> visit(term)
-            else -> visitNumeric(term)
-        }
+    fun visitTruth(term: Truth): T = visitAtom(term)
 
     @JsName("visitNumeric")
-    fun visitNumeric(term: Numeric): T = defaultValue(term)
-
-    @JsName("visitToInteger")
-    fun visit(term: Integer): T = visitInteger(term)
+    fun visitNumeric(term: Numeric): T = visitConstant(term)
 
     @JsName("visitInteger")
-    fun visitInteger(term: Integer): T = defaultValue(term)
-
-    @JsName("visitToReal")
-    fun visit(term: Real): T = visitReal(term)
+    fun visitInteger(term: Integer): T = visitNumeric(term)
 
     @JsName("visitReal")
-    fun visitReal(term: Real): T = defaultValue(term)
-
-    @JsName("visitToSet")
-    fun visit(term: Set): T =
-        when (term) {
-            is EmptySet -> visit(term)
-            else -> visitSet(term)
-        }
+    fun visitReal(term: Real): T = visitNumeric(term)
 
     @JsName("visitSet")
-    fun visitSet(term: Set): T = defaultValue(term)
-
-    @JsName("visitToEmpty")
-    fun visit(term: Empty): T =
-        when (term) {
-            is EmptySet -> visit(term)
-            is EmptyList -> visit(term)
-            else -> visitEmpty(term)
-        }
+    fun visitSet(term: Set): T = visitCollection(term)
 
     @JsName("visitEmpty")
-    fun visitEmpty(term: Empty): T = defaultValue(term)
-
-    @JsName("visitToEmptySet")
-    fun visit(term: EmptySet): T = visitEmptySet(term)
+    fun visitEmpty(term: Empty): T = visitAtom(term)
 
     @JsName("visitEmptySet")
-    fun visitEmptySet(term: EmptySet): T = defaultValue(term)
-
-    @JsName("visitToList")
-    fun visit(term: List): T =
-        when (term) {
-            is Cons -> visit(term)
-            is EmptyList -> visit(term)
-            else -> visitList(term)
-        }
+    fun visitEmptySet(term: EmptySet): T = visitSet(term)
 
     @JsName("visitList")
-    fun visitList(term: List): T = defaultValue(term)
-
-    @JsName("visitToCons")
-    fun visit(term: Cons): T = visitCons(term)
+    fun visitList(term: List): T = visitCollection(term)
 
     @JsName("visitCons")
-    fun visitCons(term: Cons): T = defaultValue(term)
-
-    @JsName("visitToEmptyList")
-    fun visit(term: EmptyList): T = visitEmptyList(term)
+    fun visitCons(term: Cons): T = visitList(term)
 
     @JsName("visitEmptyList")
-    fun visitEmptyList(term: EmptyList): T = defaultValue(term)
-
-    @JsName("visitToTuple")
-    fun visit(term: Tuple): T = visitTuple(term)
+    fun visitEmptyList(term: EmptyList): T = visitList(term)
 
     @JsName("visitTuple")
-    fun visitTuple(term: Tuple): T = defaultValue(term)
-
-    @JsName("visitToIndicator")
-    fun visit(term: Indicator): T = visitIndicator(term)
+    fun visitTuple(term: Tuple): T = visitCollection(term)
 
     @JsName("visitIndicator")
-    fun visitIndicator(term: Indicator): T = defaultValue(term)
-
-    @JsName("visitToClause")
-    fun visit(term: Clause): T =
-        when (term) {
-            is Directive -> visit(term)
-            is Rule -> visit(term)
-            else -> visitClause(term)
-        }
+    fun visitIndicator(term: Indicator): T = visitStruct(term)
 
     @JsName("visitClause")
-    fun visitClause(term: Clause): T = defaultValue(term)
-
-    @JsName("visitToRule")
-    fun visit(term: Rule): T =
-        when (term) {
-            is Fact -> visitFact(term)
-            else -> visitRule(term)
-        }
+    fun visitClause(term: Clause): T = visitStruct(term)
 
     @JsName("visitRule")
-    fun visitRule(term: Rule): T = defaultValue(term)
-
-    @JsName("visitToFact")
-    fun visit(term: Fact): T = visitFact(term)
+    fun visitRule(term: Rule): T = visitClause(term)
 
     @JsName("visitFact")
-    fun visitFact(term: Fact): T = defaultValue(term)
-
-    @JsName("visitToDirective")
-    fun visit(term: Directive): T = visitDirective(term)
+    fun visitFact(term: Fact): T = visitRule(term)
 
     @JsName("visitDirective")
-    fun visitDirective(term: Directive): T = defaultValue(term)
+    fun visitDirective(term: Directive): T = visitClause(term)
 }

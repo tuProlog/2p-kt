@@ -25,7 +25,7 @@ internal object SolverTestUtils {
         primitives: Map<Signature, Primitive> = mapOf()
     ) = Solve.Request(
         query.extractSignature(),
-        query.argsList,
+        query.args,
         StreamsExecutionContext(
             libraries = Libraries.of(
                 Library.aliased(

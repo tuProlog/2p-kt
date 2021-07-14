@@ -58,15 +58,18 @@ class RepresentationError(
         fun of(
             context: ExecutionContext,
             signature: Signature,
-            limit: Limit
+            limit: Limit,
+            cause: Throwable? = null
         ): RepresentationError = message(
-            "Reached representation limit while executing `${signature.pretty()}`: $limit"
+            "Reached representation limit while executing `${signature.pretty()}`: $limit" +
+                cause?.message?.let { ". $it" }
         ) { m, extra ->
             RepresentationError(
                 message = m,
                 context = context,
                 limit = limit,
-                extraData = extra
+                extraData = extra,
+                cause = cause
             )
         }
 
@@ -88,7 +91,7 @@ class RepresentationError(
         TOO_MANY_VARIABLES;
 
         @JsName("limit")
-        val limit: String by lazy { this.name.toLowerCase() }
+        val limit: String by lazy { this.name.lowercase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(limit)
@@ -100,7 +103,7 @@ class RepresentationError(
             /** Returns the [Limit] instance described by [limit]; creates a new instance only if [limit] was not predefined */
             @JsName("of")
             @JvmStatic
-            fun of(limit: String): Limit = valueOf(limit.toUpperCase())
+            fun of(limit: String): Limit = valueOf(limit.uppercase())
 
             /** Gets [Limit] instance from [term] representation, if possible */
             @JsName("fromTerm")

@@ -1,14 +1,12 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.Castable
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -19,35 +17,89 @@ import it.unibo.tuprolog.core.List as LogicList
  *
  * LHS stands for Left-Hand side and RHS stands for Right-Hand side, of the Equation
  */
-sealed class Equation<out A : Term, out B : Term>(
+sealed class Equation(
     /** The left-hand side of the equation */
-    @JsName("lhs") open val lhs: A,
+    @JsName("lhs") open val lhs: Term,
     /** The right-hand side of the equation */
-    @JsName("rhs") open val rhs: B
-) : ToTermConvertible {
+    @JsName("rhs") open val rhs: Term
+) : ToTermConvertible, Castable<Equation> {
+
+    open val isIdentity: Boolean
+        get() = false
+
+    open fun asIdentity(): Identity? = null
+
+    fun castToIdentity(): Identity =
+        asIdentity() ?: throw ClassCastException("Cannot cast $this to ${Identity::class.simpleName}")
+
+    open val isAssignment: Boolean
+        get() = false
+
+    open fun asAssignment(): Assignment? = null
+
+    fun castToAssignment(): Assignment =
+        asAssignment() ?: throw ClassCastException("Cannot cast $this to ${Assignment::class.simpleName}")
+
+    open val isComparison: Boolean
+        get() = false
+
+    open fun asComparison(): Comparison? = null
+
+    fun castToComparison(): Comparison =
+        asComparison() ?: throw ClassCastException("Cannot cast $this to ${Comparison::class.simpleName}")
+
+    open val isContradiction: Boolean
+        get() = false
+
+    open fun asContradiction(): Contradiction? = null
+
+    fun castToContradiction(): Contradiction =
+        asContradiction() ?: throw ClassCastException("Cannot cast $this to ${Contradiction::class.simpleName}")
 
     /** An equation of identical [Term]s */
-    data class Identity<out T : Term>(override val lhs: T, override val rhs: T) : Equation<T, T>(lhs, rhs)
+    data class Identity(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs) {
+        override val isIdentity: Boolean
+            get() = true
+
+        override fun asIdentity(): Identity = this
+    }
 
     /** An equation stating [Var] = [Term] */
-    data class Assignment<out A : Var, out B : Term>(override val lhs: A, override val rhs: B) :
-        Equation<A, B>(lhs, rhs)
+    data class Assignment(override val lhs: Var, override val rhs: Term) : Equation(lhs, rhs) {
+        @JsName("toSubstitution")
+        fun toSubstitution(): Substitution.Unifier = Substitution.unifier(lhs, rhs)
+
+        override fun toPair(): Pair<Var, Term> = lhs to rhs
+
+        override val isAssignment: Boolean
+            get() = true
+
+        override fun asAssignment(): Assignment = this
+    }
 
     /** An equation comparing [Term]s, possibly different */
-    data class Comparison<out A : Term, out B : Term>(override val lhs: A, override val rhs: B) :
-        Equation<A, B>(lhs, rhs)
+    data class Comparison(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs) {
+        override val isComparison: Boolean
+            get() = true
+
+        override fun asComparison(): Comparison = this
+    }
 
     /** A contradicting equation, trying to equate non equal [Term]s */
-    data class Contradiction<out A : Term, out B : Term>(override val lhs: A, override val rhs: B) :
-        Equation<A, B>(lhs, rhs)
+    data class Contradiction(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs) {
+        override val isContradiction: Boolean
+            get() = true
+
+        override fun asContradiction(): Contradiction = this
+    }
 
     override fun toTerm(): Struct = Struct.of("=", lhs, rhs)
 
     @JsName("toPair")
-    fun toPair(): Pair<A, B> = Pair(lhs, rhs)
+    open fun toPair(): Pair<Term, Term> = Pair(lhs, rhs)
 
     @JsName("swap")
-    fun swap(): Equation<Term, Term> = of(rhs, lhs)
+    fun swap(): Equation = of(rhs, lhs)
 
     /**
      * Applies given [substitution] to the Equation left-hand and right-hand sides, returning the new Equation
@@ -59,127 +111,128 @@ sealed class Equation<out A : Term, out B : Term>(
     fun apply(
         substitution: Substitution,
         equalityChecker: (Term, Term) -> Boolean = Term::equals
-    ): Equation<Term, Term> =
-        of(lhs[substitution], rhs[substitution], equalityChecker)
+    ): Equation = of(lhs[substitution], rhs[substitution], equalityChecker)
 
     /** Equation companion object */
     companion object {
 
-        /** Creates an Equation with provided left-hand and right-hand sides */
+        /** Creates an [Equation] with provided left-hand and right-hand sides */
         @JvmStatic
         @JvmOverloads
         @JsName("of")
-        fun <A : Term, B : Term> of(
-            lhs: A,
-            rhs: B,
-            equalityChecker: (Term, Term) -> Boolean = Term::equals
-        ): Equation<Term, Term> =
+        fun of(lhs: Term, rhs: Term, equalityChecker: (Term, Term) -> Boolean = Term::equals): Equation =
             when {
-                lhs is Var && rhs is Var -> if (equalityChecker(lhs, rhs)) Identity(lhs, rhs) else Assignment(lhs, rhs)
-                lhs is Var -> Assignment(lhs, rhs)
-                rhs is Var -> Assignment(rhs, lhs)
-                lhs is Constant && rhs is Constant ->
-                    if (equalityChecker(lhs, rhs)) Identity(lhs, rhs)
-                    else Contradiction(lhs, rhs)
-                lhs is Constant || rhs is Constant -> Contradiction(lhs, rhs)
-                lhs is Struct && rhs is Struct && (lhs.arity != rhs.arity || lhs.functor != rhs.functor) ->
-                    Contradiction(lhs, rhs)
+                lhs.isVariable && rhs.isVariable -> {
+                    if (equalityChecker(lhs, rhs)) {
+                        Identity(lhs, rhs)
+                    } else {
+                        Assignment(lhs.castToVar(), rhs)
+                    }
+                }
+                lhs.isVariable -> Assignment(lhs.castToVar(), rhs)
+                rhs.isVariable -> Assignment(rhs.castToVar(), lhs)
+                lhs.isConstant && rhs.isConstant -> {
+                    if (equalityChecker(lhs, rhs)) {
+                        Identity(lhs, rhs)
+                    } else {
+                        Contradiction(lhs, rhs)
+                    }
+                }
+                lhs.isConstant || rhs.isConstant -> Contradiction(lhs, rhs)
+                lhs.isStruct && rhs.isStruct -> {
+                    val lhsStruct = lhs.castToStruct()
+                    val rhsStruct = rhs.castToStruct()
+                    if (lhsStruct.arity != rhsStruct.arity || lhsStruct.functor != rhsStruct.functor) {
+                        Contradiction(lhsStruct, rhsStruct)
+                    } else {
+                        Comparison(lhsStruct, rhsStruct)
+                    }
+                }
                 else -> Comparison(lhs, rhs)
             }
 
-        /** Creates an Equation from given [Pair] */
+        /** Creates an [Equation] from given [Pair] */
         @JvmStatic
         @JvmOverloads
         @JsName("ofPair")
-        fun <A : Term, B : Term> of(
-            pair: Pair<A, B>,
+        fun of(
+            pair: Pair<Term, Term>,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
-        ): Equation<Term, Term> =
-            of(pair.first, pair.second, equalityChecker)
+        ): Equation = of(pair.first, pair.second, equalityChecker)
 
         @JvmStatic
         @JvmOverloads
         @JsName("fromSequence")
-        fun <A : Term, B : Term> from(
-            pairs: Sequence<Pair<A, B>>,
+        fun from(
+            pairs: Sequence<Pair<Term, Term>>,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
-        ): Sequence<Equation<Term, Term>> =
-            pairs.flatMap { allOf(it, equalityChecker) }
+        ): Sequence<Equation> = pairs.flatMap { allOf(it, equalityChecker) }
 
         @JvmStatic
         @JvmOverloads
         @JsName("fromIterable")
-        fun <A : Term, B : Term> from(
-            pairs: Iterable<Pair<A, B>>,
+        fun from(
+            pairs: Iterable<Pair<Term, Term>>,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
-        ): Sequence<Equation<Term, Term>> = from(pairs.asSequence(), equalityChecker)
+        ): Sequence<Equation> = from(pairs.asSequence(), equalityChecker)
 
         @JvmStatic
         @JvmOverloads
         @JsName("from")
-        fun <A : Term, B : Term> from(
-            vararg pairs: Pair<A, B>,
+        fun from(
+            vararg pairs: Pair<Term, Term>,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
-        ): Sequence<Equation<Term, Term>> = from(sequenceOf(*pairs), equalityChecker)
+        ): Sequence<Equation> = from(sequenceOf(*pairs), equalityChecker)
 
         /** Creates all equations resulting from the deep inspection of given [Pair] of [Term]s */
         @JvmStatic
         @JvmOverloads
         @JsName("allOfPair")
-        fun <A : Term, B : Term> allOf(
-            pair: Pair<A, B>,
+        fun allOf(
+            pair: Pair<Term, Term>,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
-        ): Sequence<Equation<Term, Term>> =
-            allOf(pair.first, pair.second, equalityChecker)
+        ): Sequence<Equation> = allOf(pair.first, pair.second, equalityChecker)
 
-        private fun allOfLists(
-            lhs: LogicList,
-            rhs: LogicList,
-            equalityChecker: (Term, Term) -> Boolean = Term::equals
-        ): Sequence<Equation<Term, Term>> {
-            return lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
+        private fun allOfLists(lhs: LogicList, rhs: LogicList, equalityChecker: (Term, Term) -> Boolean = Term::equals): Sequence<Equation> =
+            lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
                 when {
-                    l is Cons && r is Cons -> sequenceOf(of(l.head, r.head, equalityChecker))
-                    l is LogicList && r is LogicList -> sequenceOf(of(l, r, equalityChecker))
+                    l.isCons && r.isCons -> sequenceOf(of(l.castToCons().head, r.castToCons().head, equalityChecker))
+                    l.isList && r.isList -> sequenceOf(of(l.castToList(), r.castToList(), equalityChecker))
                     else -> allOf(l, r, equalityChecker)
                 }
             }
-        }
 
-        private fun allOfTuples(
-            lhs: Tuple,
-            rhs: Tuple,
-            equalityChecker: (Term, Term) -> Boolean = Term::equals
-        ): Sequence<Equation<Term, Term>> {
-            return lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
+        private fun allOfTuples(lhs: Tuple, rhs: Tuple, equalityChecker: (Term, Term) -> Boolean = Term::equals): Sequence<Equation> =
+            lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
                 when {
-                    l is Tuple && r is Tuple -> sequenceOf(of(l.left, r.left, equalityChecker))
+                    l.isTuple && r.isTuple -> sequenceOf(of(l.castToTuple().left, r.castToTuple().left, equalityChecker))
                     else -> allOf(l, r, equalityChecker)
                 }
             }
-        }
 
         /** Creates all equations resulting from the deep inspection of provided left-hand and right-hand sides' [Term] */
         @JvmStatic
         @JvmOverloads
         @JsName("allOf")
-        fun <A : Term, B : Term> allOf(
-            lhs: A,
-            rhs: B,
-            equalityChecker: (Term, Term) -> Boolean = Term::equals
-        ): Sequence<Equation<Term, Term>> =
+        fun allOf(lhs: Term, rhs: Term, equalityChecker: (Term, Term) -> Boolean = Term::equals): Sequence<Equation> =
             when {
-                (lhs is Atom && rhs is Atom) -> {
+                lhs.isAtom && rhs.isAtom -> {
                     sequenceOf(of(lhs, rhs, equalityChecker))
                 }
-                lhs is LogicList && rhs is LogicList -> {
-                    allOfLists(lhs, rhs, equalityChecker)
+                lhs.isList && rhs.isList -> {
+                    allOfLists(lhs.castToList(), rhs.castToList(), equalityChecker)
                 }
-                lhs is Tuple && rhs is Tuple -> {
-                    allOfTuples(lhs, rhs, equalityChecker)
+                lhs.isTuple && rhs.isTuple -> {
+                    allOfTuples(lhs.castToTuple(), rhs.castToTuple(), equalityChecker)
                 }
-                lhs is Struct && rhs is Struct && lhs.arity == rhs.arity && lhs.functor == rhs.functor -> {
-                    lhs.argsSequence.zip(rhs.argsSequence).flatMap { allOf(it, equalityChecker) }
+                lhs.isStruct && rhs.isStruct -> {
+                    val lhsStruct = lhs.castToStruct()
+                    val rhsStruct = rhs.castToStruct()
+                    if (lhsStruct.arity == rhsStruct.arity && lhsStruct.functor == rhsStruct.functor) {
+                        lhsStruct.argsSequence.zip(rhsStruct.argsSequence).flatMap { allOf(it, equalityChecker) }
+                    } else {
+                        sequenceOf(of(lhs, rhs, equalityChecker))
+                    }
                 }
                 else -> {
                     sequenceOf(of(lhs, rhs, equalityChecker))

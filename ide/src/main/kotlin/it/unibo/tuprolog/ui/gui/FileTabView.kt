@@ -12,6 +12,7 @@ import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
 import java.io.File
 import java.io.IOException
+import kotlin.math.max
 
 @Suppress("UNUSED_PARAMETER")
 class FileTabView(
@@ -23,9 +24,17 @@ class FileTabView(
 
     companion object {
         private const val FXML = "FileTabView.fxml"
+        private const val MIN_FONT_SIZE = 13
+        private const val DEFAULT_FONT_SIZE = 16
     }
 
     private val syntaxColoring: SyntaxColoring
+
+    private var fontSize: Int = MIN_FONT_SIZE
+        set(value) {
+            field = max(value, MIN_FONT_SIZE)
+            codeArea.style = "-fx-font-size: $value"
+        }
 
     init {
         val loader = FXMLLoader(FileTabView::class.java.getResource(FXML))
@@ -38,8 +47,9 @@ class FileTabView(
             throw IllegalStateException(e)
         }
 
-        codeArea.appendText(initialText)
+        fontSize = DEFAULT_FONT_SIZE
 
+        codeArea.appendText(initialText)
         codeArea.paragraphGraphicFactory = LineNumberFactory.get(codeArea)
 
         syntaxColoring = SyntaxColoring(codeArea)
@@ -93,6 +103,13 @@ class FileTabView(
     fun onKeyTypedOnCodeArea(e: KeyEvent) {
         model.setFile(file, wholeText)
         ideController.onKeyTypedOnCurrentFile(e)
+        if (e.isControlDown) {
+            when (e.character) {
+                "+" -> fontSize++
+                "-" -> fontSize--
+                else -> {}
+            }
+        }
     }
 
     @FXML

@@ -27,7 +27,9 @@ internal class NumericIndex(
                 ?.filter { it.innerClause matches clause }
                 ?.map { it.innerClause }
                 ?: emptySequence()
-        } else extractGlobalSequence(clause)
+        } else {
+            extractGlobalSequence(clause)
+        }
     }
 
     override fun assertA(clause: IndexedClause) {
@@ -115,15 +117,12 @@ internal class NumericIndex(
     private fun Clause.nestedFirstArgument(): Term =
         this.head!!.nestedFirstArgument(nestingLevel + 1)
 
-    private fun Term.asNumeric(): Numeric =
-        this as Numeric
-
     private fun Clause.asInnerNumeric(): Numeric =
-        this.nestedFirstArgument().asNumeric()
+        this.nestedFirstArgument().castToNumeric()
 
     private fun SituatedIndexedClause.asInnerNumeric(): Numeric =
-        this.innerClause.nestedFirstArgument() as Numeric
+        this.innerClause.nestedFirstArgument().castToNumeric()
 
     private fun IndexedClause.asInnerNumeric(): Numeric =
-        this.innerClause.nestedFirstArgument() as Numeric
+        this.innerClause.nestedFirstArgument().castToNumeric()
 }

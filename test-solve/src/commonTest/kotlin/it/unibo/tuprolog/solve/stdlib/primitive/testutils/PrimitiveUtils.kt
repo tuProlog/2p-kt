@@ -28,7 +28,7 @@ internal object PrimitiveUtils {
     ): Solve.Request<ExecutionContext> =
         Solve.Request<ExecutionContext>(
             query.extractSignature(),
-            query.argsList,
+            query.args,
             contextWith(database)
         )
 }

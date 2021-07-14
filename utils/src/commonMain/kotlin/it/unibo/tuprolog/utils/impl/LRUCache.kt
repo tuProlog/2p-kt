@@ -14,6 +14,7 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
 
     private val cache = mutableMapOf<K, V>()
     private val insertionOrder = (0 until capacity).map { Optional.none<K>() }.toTypedArray()
+
     @Volatile
     private var nextFreeIndex = 0
 
@@ -24,10 +25,11 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
     @Synchronized
     override fun set(key: K, value: V): Optional<out Pair<K, V>> {
         val evicted: Optional<out Pair<K, V>> = insertionOrder[nextFreeIndex].let { evictedKey ->
-            if (evictedKey is Optional.Some) {
-                val evictedValue = cache[evictedKey.value]!!
-                cache.remove(evictedKey.value)
-                Optional.some(evictedKey.value to evictedValue)
+            if (evictedKey.isPresent) {
+                val evictedKeyValue = evictedKey.value!!
+                val evictedValue = cache[evictedKeyValue]!!
+                cache.remove(evictedKeyValue)
+                Optional.some(evictedKeyValue to evictedValue)
             } else {
                 Optional.none()
             }
@@ -79,12 +81,11 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
         val indexes = if (size < capacity) {
             (0 until size).asSequence()
         } else {
-            (0 until capacity).asSequence()
-                .map { (it + nextFreeIndex) % capacity }
+            (0 until capacity).asSequence().map { (it + nextFreeIndex) % capacity }
         }
         return indexes.map { insertionOrder[it] }
-            .filterIsInstance<Optional.Some<K>>()
-            .map { it.value }
+            .filter { it.isPresent }
+            .map { it.value!! }
             .map { it to cache[it]!! }
             .buffered()
     }

@@ -50,7 +50,7 @@ internal object AtomUtils {
     /** Asserts that no arguments are present in an Atom */
     internal fun assertNoArguments(atom: Atom) {
         assertTrue(atom.args.isEmpty())
-        assertTrue(atom.argsList.isEmpty())
+        assertTrue(atom.args.isEmpty())
         assertTrue(atom.argsSequence.toList().isEmpty())
     }
 }

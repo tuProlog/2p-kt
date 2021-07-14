@@ -9,25 +9,36 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.libs.oop.NullRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
+import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
+import it.unibo.tuprolog.solve.libs.oop.isPrimitiveType
 import it.unibo.tuprolog.solve.libs.oop.isSubtypeOf
 import it.unibo.tuprolog.solve.libs.oop.primitives.CAST_TEMPLATE
 import it.unibo.tuprolog.solve.libs.oop.primitives.DEALIASING_TEMPLATE
+import it.unibo.tuprolog.solve.libs.oop.subTypeDistance
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.utils.indexed
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
 
 internal class TermToObjectConverterImpl(
     private val typeFactory: TypeFactory,
-    private val dealiaser: (Struct) -> TypeRef?
+    private val dealiaser: (Struct) -> Ref?
 ) : TermToObjectConverter {
+
     override fun convertInto(type: KClass<*>, term: Term): Any? {
         return when (term) {
-            is NullRef, is Var -> null
+            is NullRef, is Var -> {
+                if (type.isPrimitiveType) {
+                    throw TermToObjectConversionException(term, type)
+                } else {
+                    null
+                }
+            }
             is ObjectRef -> {
                 if (term.`object`::class isSubtypeOf type) {
                     term.`object`
@@ -42,7 +53,13 @@ internal class TermToObjectConverterImpl(
             }
             is Atom -> when {
                 String::class isSubtypeOf type -> term.value
-                Char::class isSubtypeOf type -> term.value[0]
+                Char::class isSubtypeOf type -> {
+                    if (term.value.length == 1) {
+                        term.value[0]
+                    } else {
+                        throw TermToObjectConversionException(term, type)
+                    }
+                }
                 else -> throw TermToObjectConversionException(term, type)
             }
             is Real -> when {
@@ -65,6 +82,10 @@ internal class TermToObjectConverterImpl(
             is Struct ->
                 when {
                     term matches CAST_TEMPLATE -> explicitConversion(term, term[0], term[1])
+                    term matches DEALIASING_TEMPLATE -> when (val ref = dealiaser(term)) {
+                        is ObjectRef -> convertInto(type, ref)
+                        else -> throw TermToObjectConversionException(term)
+                    }
                     else -> throw TermToObjectConversionException(term)
                 }.also {
                     if (it != null && !(it::class isSubtypeOf type)) {
@@ -76,7 +97,14 @@ internal class TermToObjectConverterImpl(
     }
 
     private fun explicitConversion(castExpression: Struct, term: Term, type: Term): Any? {
-        return convertInto(getType(castExpression, type), term)
+        val targetType = getType(castExpression, type)
+        try {
+            return convertInto(targetType, term)
+        } catch (e: TermToObjectConversionException) {
+            throw e
+        } catch (_: Exception) {
+            throw TermToObjectConversionException(term, targetType)
+        }
     }
 
     private fun getType(castExpression: Struct, typeTerm: Term): KClass<*> =
@@ -86,74 +114,75 @@ internal class TermToObjectConverterImpl(
                 typeFactory.typeFromName(typeTerm.value) ?: throw TermToObjectConversionException(castExpression)
             }
             is Struct -> when {
-                typeTerm matches DEALIASING_TEMPLATE -> {
-                    dealiaser(typeTerm)?.type ?: throw TermToObjectConversionException(castExpression)
+                typeTerm matches DEALIASING_TEMPLATE -> when (val ref = dealiaser(typeTerm)) {
+                    is TypeRef -> ref.type
+                    else -> throw TermToObjectConversionException(castExpression)
                 }
                 else -> throw TermToObjectConversionException(castExpression)
             }
             else -> throw TermToObjectConversionException(castExpression)
         }
 
-    override fun possibleConversions(term: Term): Sequence<Any?> {
-        return admissibleTypes(term).asSequence().map { convertInto(it, term) }
-    }
+    override fun possibleConversions(term: Term): Sequence<Any?> =
+        admissibleTypes(term).asSequence().map { convertInto(it, term) }
 
-    override fun mostAdequateType(term: Term): KClass<*> {
-        return when (term) {
-            is NullRef, is Var -> Nothing::class
-            is ObjectRef -> term.`object`::class
-            is Truth -> Boolean::class
-            is Atom -> String::class
-            is Real -> BigDecimal::class
-            is Integer -> BigInteger::class
-            is Struct -> when {
-                term matches CAST_TEMPLATE -> getType(term, term[1])
-                else -> throw TermToObjectConversionException(term)
-            }
-            else -> throw TermToObjectConversionException(term)
-        }
-    }
+    override fun mostAdequateType(term: Term): KClass<*> = admissibleTypesByPriority(term).first()
 
-    override fun admissibleTypes(term: Term): Set<KClass<*>> {
+    override fun priorityOfConversion(type: KClass<*>, term: Term): Int? =
+        admissibleTypes(term).asSequence()
+            .map { type.subTypeDistance(it) }
+            .indexed()
+            .map { (index, dist) -> dist?.let { (index + 1) * (it + 1) } }
+            .filterNotNull()
+            .minByOrNull { it }
+
+    private fun admissibleTypesByPriority(term: Term): Sequence<KClass<*>> {
         return when (term) {
-            is NullRef, is Var -> setOf(Nothing::class)
-            is ObjectRef -> setOf(term.`object`::class)
-            is Truth -> setOf(Boolean::class, String::class)
-            is Atom -> mutableSetOf<KClass<*>>(String::class).also {
+            is NullRef, is Var -> sequenceOf(Nothing::class)
+            is ObjectRef -> sequenceOf(term.`object`::class)
+            is Truth -> sequenceOf(Boolean::class, String::class)
+            is Atom -> {
+                var admissible = sequenceOf<KClass<*>>(String::class)
                 if (term.value.length == 1) {
-                    it += Char::class
+                    admissible += sequenceOf(Char::class)
                 }
+                admissible
             }
-            is Real -> setOf(
-                Double::class,
-                BigDecimal::class,
-                Float::class
-            )
-            is Integer -> mutableSetOf<KClass<*>>(BigInteger::class, BigDecimal::class).also {
+            is Real -> sequenceOf(BigDecimal::class, Double::class, Float::class)
+            is Integer -> {
+                var admissible = sequenceOf<KClass<*>>(BigInteger::class)
                 if (term.intValue in BigInteger.of(Long.MIN_VALUE)..BigInteger.of(Long.MAX_VALUE)) {
-                    it += Long::class
+                    admissible += sequenceOf(Long::class)
                 }
                 if (term.intValue in BigInteger.of(Int.MIN_VALUE)..BigInteger.of(Int.MAX_VALUE)) {
-                    it += Int::class
+                    admissible += sequenceOf(Int::class)
                 }
                 if (term.intValue in BigInteger.of(Short.MIN_VALUE.toInt())..BigInteger.of(Short.MAX_VALUE.toInt())) {
-                    it += Short::class
+                    admissible += sequenceOf(Short::class)
                 }
                 if (term.intValue in BigInteger.of(Byte.MIN_VALUE.toInt())..BigInteger.of(Byte.MAX_VALUE.toInt())) {
-                    it += Byte::class
+                    admissible += sequenceOf(Byte::class)
                 }
+                admissible += sequenceOf(BigDecimal::class)
                 if (term.decimalValue in BigDecimal.of(Double.MIN_VALUE)..BigDecimal.of(Double.MAX_VALUE)) {
-                    it += Double::class
+                    admissible += sequenceOf(Double::class)
                 }
                 if (term.decimalValue in BigDecimal.of(Float.MIN_VALUE)..BigDecimal.of(Float.MAX_VALUE)) {
-                    it += Float::class
+                    admissible += sequenceOf(Float::class)
                 }
+                admissible
             }
             is Struct -> when {
-                term matches CAST_TEMPLATE -> setOf(getType(term, term[1]))
+                term matches CAST_TEMPLATE -> sequenceOf(getType(term, term[1]))
+                term matches DEALIASING_TEMPLATE -> when (val ref = dealiaser(term)) {
+                    is ObjectRef -> admissibleTypesByPriority(ref)
+                    else -> throw TermToObjectConversionException(term)
+                }
                 else -> throw TermToObjectConversionException(term)
             }
             else -> throw TermToObjectConversionException(term)
         }
     }
+
+    override fun admissibleTypes(term: Term): Set<KClass<*>> = admissibleTypesByPriority(term).toSet()
 }

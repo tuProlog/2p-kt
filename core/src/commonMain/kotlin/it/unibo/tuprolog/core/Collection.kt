@@ -5,6 +5,11 @@ import kotlin.js.JsName
 
 interface Collection : Struct {
 
+    override val isCollection: Boolean
+        get() = true
+
+    override fun asCollection(): Collection = this
+
     @JsName("unfoldedSequence")
     val unfoldedSequence: Sequence<Term>
 

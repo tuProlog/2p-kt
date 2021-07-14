@@ -6,12 +6,13 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.impl.SolutionImpl
+import it.unibo.tuprolog.utils.Castable
 import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /** A type representing a solution to a goal */
-interface Solution : Taggable<Solution> {
+interface Solution : Taggable<Solution>, Castable<Solution> {
 
     /** The query to which the solution refers */
     @JsName("query")
@@ -36,6 +37,51 @@ interface Solution : Taggable<Solution> {
 
     @JsName("isHalt")
     val isHalt: Boolean
+
+    /**
+     * Casts the current [Solution] to [Yes], if possible, or returns `null` otherwise
+     * @return the current [Solution], casted to [Yes], or `null`, if the current term is not an instance of [Yes]
+     */
+    @JsName("asYes")
+    fun asYes(): Yes? = null
+
+    /**
+     * Casts the current [Solution] to [Yes], if possible
+     * @throws ClassCastException if the current [Solution] is not an instance of [Yes]
+     * @return the current [Solution], casted to [Yes]
+     */
+    @JsName("castToYes")
+    fun castToYes(): Yes = asYes() ?: throw ClassCastException("Cannot cast $this to ${Yes::class.simpleName}")
+
+    /**
+     * Casts the current [Solution] to [No], if possible, or returns `null` otherwise
+     * @return the current [Solution], casted to [No], or `null`, if the current term is not an instance of [No]
+     */
+    @JsName("asNo")
+    fun asNo(): No? = null
+
+    /**
+     * Casts the current [Solution] to [No], if possible
+     * @throws ClassCastException if the current [Solution] is not an instance of [No]
+     * @return the current [Solution], casted to [No]
+     */
+    @JsName("castToNo")
+    fun castToNo(): No = asNo() ?: throw ClassCastException("Cannot cast $this to ${No::class.simpleName}")
+
+    /**
+     * Casts the current [Solution] to [Halt], if possible, or returns `null` otherwise
+     * @return the current [Solution], casted to [Halt], or `null`, if the current term is not an instance of [Halt]
+     */
+    @JsName("asHalt")
+    fun asHalt(): Halt? = null
+
+    /**
+     * Casts the current [Solution] to [Halt], if possible
+     * @throws ClassCastException if the current [Solution] is not an instance of [Halt]
+     * @return the current [Solution], casted to [Halt]
+     */
+    @JsName("castToHalt")
+    fun castToHalt(): Halt = asHalt() ?: throw ClassCastException("Cannot cast $this to ${Halt::class.simpleName}")
 
     @JsName("whenIs")
     fun <T> whenIs(
@@ -66,6 +112,8 @@ interface Solution : Taggable<Solution> {
         fun copy(query: Struct = this.query, substitution: Substitution.Unifier = this.substitution): Yes
 
         override fun cleanUp(): Yes
+
+        override fun asYes(): Yes = this
     }
 
     /** A type representing a failed solution */
@@ -80,6 +128,8 @@ interface Solution : Taggable<Solution> {
         fun copy(query: Struct = this.query): No
 
         override fun cleanUp(): No
+
+        override fun asNo(): No = this
     }
 
     /** A type representing a failed (halted) solution because of an exception */
@@ -92,6 +142,8 @@ interface Solution : Taggable<Solution> {
         fun copy(query: Struct = this.query, exception: TuPrologRuntimeException = this.exception): Halt
 
         override fun cleanUp(): Halt
+
+        override fun asHalt(): Halt = this
     }
 
     companion object {

@@ -33,8 +33,8 @@ object StreamsSolverFactory : SolverFactory {
             flags,
             staticKb,
             dynamicKb,
-            InputStore.default(stdIn),
-            OutputStore.default(stdOut, stdErr, warnings)
+            InputStore.fromStandard(stdIn),
+            OutputStore.fromStandard(stdOut, stdErr, warnings)
         )
 
     override fun mutableSolverOf(

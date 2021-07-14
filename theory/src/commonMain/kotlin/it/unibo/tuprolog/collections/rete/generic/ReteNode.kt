@@ -1,11 +1,59 @@
 package it.unibo.tuprolog.collections.rete.generic
 
+import it.unibo.tuprolog.collections.rete.generic.set.ArgNode
+import it.unibo.tuprolog.collections.rete.generic.set.ArityNode
+import it.unibo.tuprolog.collections.rete.generic.set.DirectiveNode
+import it.unibo.tuprolog.collections.rete.generic.set.FunctorNode
+import it.unibo.tuprolog.collections.rete.generic.set.NoArgsNode
+import it.unibo.tuprolog.collections.rete.generic.set.RuleNode
 import it.unibo.tuprolog.core.Clause
 import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.collections.rete.generic.set.RootNode as SetNode
 
 /** A class modeling a Rete Tree Node */
-internal interface ReteNode<K, E> {
+internal interface ReteNode<K, E : Clause> {
+
+    val isFunctorNode: Boolean
+
+    val isArgNode: Boolean
+
+    val isArityNode: Boolean
+
+    val isDirectiveNode: Boolean
+
+    val isRootNode: Boolean
+
+    val isRuleNode: Boolean
+
+    val isNoArgsNode: Boolean
+
+    fun asFunctorNode(): FunctorNode?
+
+    fun castToFunctorNode(): FunctorNode
+
+    fun asArgNode(): ArgNode?
+
+    fun castToArgNode(): ArgNode
+
+    fun asArityNode(): ArityNode?
+
+    fun castToArityNode(): ArityNode
+
+    fun asDirectiveNode(): DirectiveNode?
+
+    fun castToDirectiveNode(): DirectiveNode
+
+    fun asRootNode(): SetNode?
+
+    fun castToRootNode(): SetNode
+
+    fun asRuleNode(): RuleNode?
+
+    fun castToRuleNode(): RuleNode
+
+    fun asNoArgsNode(): NoArgsNode?
+
+    fun castToNoArgsNode(): NoArgsNode
 
     /** All direct children of this node */
     val children: MutableMap<K, ReteNode<*, E>>

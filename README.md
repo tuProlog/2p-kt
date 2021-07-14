@@ -6,8 +6,12 @@ Some quick links:
 * [GitHub Repository](https://github.com/tuProlog/2p-kt) (public mirrored repository where JVM binaries are hosted)
 * [NPM Repository](https://www.npmjs.com/org/tuprolog) (where JS releases are hosted)
 * [Maven Central Repository](https://search.maven.org/search?q=g:it.unibo.tuprolog) (where all stable releases are hosted)
-* [Bintray Repository](https://bintray.com/pika-lab/tuprolog) (where all releases are hosted, there including dev releases)
+* [Bintray Maven Repository](https://bintray.com/pika-lab/tuprolog) (where all releases are hosted, there including dev releases) __(discontinued)__
+* [GitHub Maven Repository](https://github.com/orgs/tuProlog/packages?repo_name=2p-kt) (where all releases are hosted, there including dev releases)
 * [Documentation](http://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/)
+
+> __Do not__ rely on the Bintray repository: Bintray services has been discontinued since May 2021, thus we won't be releasing 2P-Kt on Bintray anymore.
+> Kotlin and JVM packages will only be released on Maven Central and GitHub Packages.
 
 ## Intro
 
@@ -69,8 +73,8 @@ GitHub repository.
 The 2P-Kt modules for JVM, Android, or Kotlin users are currently available for import 
 on [Maven Central](https://search.maven.org/search?q=g:it.unibo.tuprolog), under the `it.unibo.tuprolog` group ID (not 
 to be confused with the `it.unibo.alice.tuprolog`, which contains the old Java-based implementation).
-The same modules are available through an _ad-hoc_ [Maven repository](https://bintray.com/pika-lab/tuprolog) as well, 
-hosted by Bintray.
+The same modules are available through an _ad-hoc_ [Maven repository](https://github.com/orgs/tuProlog/packages?repo_name=2p-kt) as well, 
+hosted by GitHub.
 
 The 2P-Kt modules for JS users, are available for import on NPM, under the [`@tuprolog` organization](https://www.npmjs.com/org/tuprolog).
 
@@ -103,13 +107,23 @@ There, one may query the 2P-Kt Prolog interpreter against the currently opened t
 loaded from the user's file system by pressing <kbd>File</kbd> and then <kbd>Open...</kbd>.
 
 To issue a query, the user must write it in the query text field, at the center of the application.
-By either pressing <kbd>Enter</kbd> while the cursor is on the query text field, or by clicking on the <kbd>&gt;</kbd> button, the user can start a new resolution process, aimed at solving the provided query.
-Further solutions can be explored by clicking on the <kbd>&gt;</kbd> over and over again.
-One may also compute all the unexplored solutions at once by clicking on the <kbd>&gt;&gt;</kbd> button.
+By either pressing <kbd>Enter</kbd> while the cursor is on the query text field, or by clicking on the <kbd>Solve</kbd> 
+(resp. <kbd>Solve all</kbd>) button, the user can start a new resolution process, aimed at solving the provided query.
+Further solutions can be explored by clicking on the <kbd>Next</kbd> (resp. <kbd>All next</kbd>) button over and over again.
+The <kbd>Next</kbd> (resp. <kbd>All next</kbd>) button shall appear in place of <kbd>Solve</kbd> (resp. <kbd>Solve all</kbd>)
+if and when further solutions are available for the current query.
+
+One may also compute all the unexplored solutions at once by clicking on the <kbd>Solve all</kbd> 
+(resp. <kbd>All next</kbd>) button.
+Avoid this option in case of your query is expected to compute an unlimited amount of solutions.
 
 To perform a novel query, they user may either:
 - write the new query in the query text field, and then press <kbd>Enter</kbd>, or
-- click on the <kbd>R</kbd> (Reset) button, write the new query in the query text field, and then press <kbd>&gt;</kbd>.
+- click on the <kbd>Stop</kbd> button, write the new query in the query text field, and then press the <kbd>Solve</kbd> 
+  (resp. <kbd>SolveNext</kbd>) button again.
+  
+The <kbd>Reset</kbd> button cleans up the status of the solver, clearing any side effect possibly provoked by previous
+queries (including assertions, retractions, prints, warnings, loading of libraries, operators, or flags).
 
 Finally, users may inspect the current status of the solver by leveraging the many tabs laying at the bottom of the IDE.
 There,
@@ -124,7 +138,7 @@ There,
 - the _Static_ (resp. _Dynamic_) _KB_ tab is aimed at letting the user inspect the current content of the Prolog interpreter's static (resp. dynamic) knowledge base.
 
 Any of these tabs may be automatically updated after a solution to some query is computed. 
-Whenever something changes w.r.t. the previous content of the tab, an asterisk will appear close to the tab name, to notify an update in that tab.  
+Whenever something changes w.r.t. the previous content of the tab, an asterisk will appear close to the tab name, to notify an update in that tab.
   
 #### Command Line Interface
 
@@ -154,7 +168,6 @@ A normal output should be as follows:
 For instance:
 
 ![A screenshot of the 2P-Kt CLI](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/.img/2p-kt-repl.png)
-
 
 Other options or modes of execution are supported.
 One can explore them via the program help, which can be displayed by running:
@@ -190,15 +203,17 @@ dependencies {
  ``` 
 In this way, the dependencies of `2P_MODULE` should be automatically imported. 
 
-The step above, requires you to tell Gradle to either use Maven Central or our Bintray repository (or both) as a source 
+The step above, requires you to tell Gradle to either use Maven Central or our GitHub repository (or both) as a source 
 for dependency lookup. You can do it as follows:
 ```kotlin
 // assumes Gradle's Kotlin DSL
 repositories {
+    maven("https://maven.pkg.github.com/tuProlog/2p-kt")
     mavenCentral()
-    maven("https://dl.bintray.com/pika-lab/tuprolog/")
 }
 ``` 
+
+> Authentication may be required in case the GitHub repository is exploited
 
 #### JVM-only projects with Gradle
 
@@ -223,17 +238,18 @@ you simply need to declare the corresponding dependency in your `pom.xml` file:
  ``` 
 In this way, the dependencies of `2P_MODULE` should be automatically imported. 
 
-The step above, requires you to tell Maven to either use Maven Central or our Bintray repository (or both) as a source 
+The step above, requires you to tell Maven to either use Maven Central or our GitHub repository (or both) as a source 
 for dependency lookup. You can do it as follows:
 ```xml
 <repositories>
     <repository>
-        <id>bintray-2p-repo</id>
-        <url>https://dl.bintray.com/pika-lab/tuprolog/</url>
+        <id>github-2p-repo</id>
+        <url>https://maven.pkg.github.com/tuProlog/2p-kt</url>
     </repository>
 </repositories>
 ``` 
 
+> Authentication may be required in case the GitHub repository is exploited
 
 #### JVM-only projects with Maven
 
@@ -263,7 +279,7 @@ Notice that the JS dependencies of `2P_MODULE` should be automatically imported.
 
 Working with the 2P-Kt codebase requires a number of tools to be installed and properly configured on your system:
 - JDK 11+ (please ensure the `JAVA_HOME` environment variable is properly) configured
-- Kotlin 1.4.20+
+- Kotlin 1.4.30+
 - Gradle 6.8+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
 - Git 2.20+
 

@@ -25,8 +25,8 @@ abstract class AbstractClassicSolver(
     flags: FlagStore = FlagStore.empty(),
     initialStaticKb: Theory = Theory.empty(),
     initialDynamicKb: Theory = MutableTheory.empty(),
-    inputChannels: InputStore = InputStore.default(),
-    outputChannels: OutputStore = OutputStore.default(),
+    inputChannels: InputStore = InputStore.fromStandard(),
+    outputChannels: OutputStore = OutputStore.fromStandard(),
     trustKb: Boolean = false
 ) : AbstractSolver<ClassicExecutionContext>(
     libraries,
@@ -55,8 +55,8 @@ abstract class AbstractClassicSolver(
         flags,
         staticKb,
         dynamicKb,
-        InputStore.default(stdIn),
-        OutputStore.default(stdOut, stdErr, warnings),
+        InputStore.fromStandard(stdIn),
+        OutputStore.fromStandard(stdOut, stdErr, warnings),
         trustKb
     )
 

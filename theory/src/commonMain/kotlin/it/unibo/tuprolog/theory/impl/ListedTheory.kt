@@ -47,9 +47,7 @@ internal class ListedTheory private constructor(
         }
     }
 
-    override fun toMutableTheory(): MutableTheory {
-        return MutableTheory.listedOf(this)
-    }
+    override fun toMutableTheory(): MutableTheory = MutableTheory.listedOf(this)
 
     override fun retract(clauses: Iterable<Clause>): RetractResult<ListedTheory> {
         val residual = dequeOf(this.clauses)

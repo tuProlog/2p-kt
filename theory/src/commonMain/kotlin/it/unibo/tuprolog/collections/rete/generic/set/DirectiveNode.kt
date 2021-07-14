@@ -8,6 +8,11 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 internal data class DirectiveNode(override val leafElements: MutableList<Directive> = mutableListOf()) :
     AbstractLeafReteNode<Directive>() {
 
+    override val isDirectiveNode: Boolean
+        get() = true
+
+    override fun asDirectiveNode(): DirectiveNode = this
+
     override val header = "Directives"
 
     override fun get(element: Directive): Sequence<Directive> = indexedElements.filter { it matches element }

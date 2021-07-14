@@ -21,6 +21,7 @@ internal object FunctionWrapperUtils {
 
     /** A default function result to be used in tests */
     internal val defaultFunctionResult = Compute.Response(Truth.TRUE)
+
     /** A test function */
     internal val function: PrologFunction = { defaultFunctionResult }
 
@@ -41,7 +42,7 @@ internal object FunctionWrapperUtils {
     /** All under test requests */
     private val allRequests by lazy {
         (WrapperUtils.allMatchingRawStruct + WrapperUtils.allNotMatchingStruct).flatten()
-            .map { createFunctionRequest(it.extractSignature(), it.argsList) }
+            .map { createFunctionRequest(it.extractSignature(), it.args) }
     }
 
     /** All ground requests */

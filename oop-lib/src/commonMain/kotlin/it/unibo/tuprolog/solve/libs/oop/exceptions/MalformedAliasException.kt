@@ -30,7 +30,7 @@ class MalformedAliasException(
             context,
             DEALIASING_EXPRESSION,
             culprit,
-            "Error in ${signature.toIndicator()}: ${message?.decapitalize()}"
+            "Error in ${signature.toIndicator()}: ${message?.replaceFirstChar { it.lowercase() }}"
         )
     }
 

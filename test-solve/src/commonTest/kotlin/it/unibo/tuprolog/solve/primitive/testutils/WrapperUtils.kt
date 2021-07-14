@@ -59,8 +59,10 @@ internal object WrapperUtils {
 
     /** All signatures under test */
     internal val allSignatures by lazy { signaturesToMatchingAndNotMatchingStruct.map { it.first } }
+
     /** All [Struct]s matching signatures */
     internal val allMatchingRawStruct by lazy { signaturesToMatchingAndNotMatchingStruct.map { it.second } }
+
     /** All [Struct]s not matching signatures */
     internal val allNotMatchingStruct by lazy { signaturesToMatchingAndNotMatchingStruct.map { it.third } }
 
@@ -70,7 +72,7 @@ internal object WrapperUtils {
         wrapped: WrappedType,
         requestCreator: (Signature, KtList<Term>) -> Request
     ) = signaturesToMatchingAndNotMatchingStruct.map { (signature, good, _) ->
-        wrapperCreator(signature, wrapped) to good.map { requestCreator(it.extractSignature(), it.argsList) }
+        wrapperCreator(signature, wrapped) to good.map { requestCreator(it.extractSignature(), it.args) }
     }
 
     /** Creates a map from under test Wrappers to not matching signature requests which therefore should be rejected */
@@ -79,6 +81,6 @@ internal object WrapperUtils {
         wrapped: WrappedType,
         requestCreator: (Signature, KtList<Term>) -> Request
     ) = signaturesToMatchingAndNotMatchingStruct.map { (signature, _, bad) ->
-        wrapperCreator(signature, wrapped) to bad.map { requestCreator(it.extractSignature(), it.argsList) }
+        wrapperCreator(signature, wrapped) to bad.map { requestCreator(it.extractSignature(), it.args) }
     }
 }

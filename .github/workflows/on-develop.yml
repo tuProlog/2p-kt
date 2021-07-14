@@ -6,13 +6,13 @@ on:
 env:
   jdk-version: openjdk@~1.15.0
   project-name: 2P-Kt
-  workflow: develop
+  workflow: release
   gradle-options: "--no-daemon --console=plain --stacktrace"
 jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-#      - &cache_jdk
+      #      - &cache_jdk
       - name: Cache JDK
         uses: actions/cache@v2
         with:
@@ -21,7 +21,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-jdk-
 
-#      - &install_jdk
+      #      - &install_jdk
       - uses: battila7/jdk-via-jabba@v1
         name: Restore JDK
         with:
@@ -35,7 +35,7 @@ jobs:
     needs:
       - setup
     steps:
-#      - &checkout_code
+      #      - &checkout_code
       - name: Checkout code
         uses: actions/checkout@v2
         with:
@@ -44,7 +44,7 @@ jobs:
       - name: Get All Tags
         run: git fetch --tags -f
 
-#      - *cache_jdk
+      #      - *cache_jdk
       - name: Cache JDK
         uses: actions/cache@v2
         with:
@@ -53,13 +53,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-jdk-
 
-#      - *install_jdk
+      #      - *install_jdk
       - uses: battila7/jdk-via-jabba@v1
         name: Restore JDK
         with:
           jdk: ${{ env.jdk-version }}
 
-#      - &cache_gradle
+      #      - &cache_gradle
       - name: Cache Gradle Data
         uses: actions/cache@v2
         with:
@@ -227,7 +227,7 @@ jobs:
       ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
       ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
     steps:
-#      - *checkout_code
+      #      - *checkout_code
       - name: Checkout code
         uses: actions/checkout@v2
         with:
@@ -236,7 +236,7 @@ jobs:
       - name: Get All Tags
         run: git fetch --tags -f
 
-#      - *cache_jdk
+      #      - *cache_jdk
       - name: Cache JDK
         uses: actions/cache@v2
         with:
@@ -245,13 +245,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-jdk-
 
-#      - *install_jdk
+      #      - *install_jdk
       - uses: battila7/jdk-via-jabba@v1
         name: Restore JDK
         with:
           jdk: ${{ env.jdk-version }}
 
-#      - *cache_gradle
+      #      - *cache_gradle
       - name: Cache Gradle Data
         uses: actions/cache@v2
         with:
@@ -269,7 +269,7 @@ jobs:
             ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
             ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-
 
-#      - name: Sign Archives
+      #      - name: Sign Archives
       #        run: ./gradlew ${{ env.gradle-options }} signAllPublications --parallel
 
       - name: Publish on GitHub Maven Repo
@@ -279,7 +279,7 @@ jobs:
           ORG_GRADLE_PROJECT_mavenUsername: ${{ github.actor }}
           ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy-maven-bintray:
+  deploy-maven-central:
     runs-on: ubuntu-latest
     needs:
       - prepare-artifacts
@@ -324,19 +324,20 @@ jobs:
             ~/gradle/wrapper
             **/build
             **/.gradle
-          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-bintray
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-central
           restore-keys: |
             ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
             ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-
 
-#      - name: Sign Archives
+      #      - name: Sign Archives
       #        run: ./gradlew ${{ env.gradle-options }} signAllPublications --parallel
 
-      - name: Publish on Bintray Maven Repo
-        run: ./gradlew ${{ env.gradle-options }} publishAllToBintray --parallel
+      - name: Publish on Maven Central Repo
+        run: ./gradlew ${{ env.gradle-options }} publishAllPublicationsToMavenRepository
+        #        if: contains(github.ref, 'master')
         env:
-          ORG_GRADLE_PROJECT_bintrayUser: ${{ secrets.BINTRAY_USER }}
-          ORG_GRADLE_PROJECT_bintrayKey: ${{ secrets.BINTRAY_KEY }}
+          ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.OSSRH_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.OSSRH_PASSWORD }}
 
   deploy-npm:
     runs-on: ubuntu-latest

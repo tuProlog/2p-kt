@@ -1,10 +1,8 @@
 package it.unibo.tuprolog.solve.classic.fsm
 
-import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.classic.ChoicePointContext
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
@@ -21,6 +19,7 @@ import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.buffered
+import it.unibo.tuprolog.utils.cursor
 
 data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
@@ -37,9 +36,15 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
             abstract val depthToCut: Int
             abstract val procedure: Struct?
 
+            open val isNone: Boolean
+                get() = false
+
             object None : CutLimit() {
                 override val depthToCut: Int = -1
                 override val procedure: Struct? = null
+
+                override val isNone: Boolean
+                    get() = true
             }
 
             class Actual(override val depthToCut: Int, override val procedure: Struct?) : CutLimit()
@@ -85,7 +90,7 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
             context.copy(goals = context.goals.next, step = nextStep())
         )
 
-    private fun Term.isCut(): Boolean = this is Atom && value == "!"
+    private fun Term.isCut(): Boolean = this.isAtom && this.castToAtom().value == "!"
 
     private fun ClassicExecutionContext.computeCutLimit(magicCut: Boolean = false): CutLimit {
         val cutLimit = if (magicCut) {
@@ -100,14 +105,18 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
         }
     }
 
+    private fun cutCanBeSkipped(cutLimit: CutLimit, executionContext: ClassicExecutionContext): Boolean =
+        cutLimit.isNone ||
+            cutLimit.depthToCut > executionContext.depth ||
+            cutLimit.depthToCut == executionContext.depth &&
+            cutLimit.procedure != executionContext.procedure
+
     private fun ChoicePointContext?.performCut(cutLimit: CutLimit): ChoicePointContext? =
         when {
             this === null -> {
                 null
             }
-            cutLimit is CutLimit.None ||
-                cutLimit.depthToCut > executionContext!!.depth ||
-                cutLimit.depthToCut == executionContext!!.depth && cutLimit.procedure != executionContext!!.procedure -> {
+            cutCanBeSkipped(cutLimit, executionContext!!) -> {
                 this
             }
             else -> {
@@ -126,36 +135,38 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
 
     private val ClassicExecutionContext.isTailRecursive: Boolean
         get() = goals.next.isOver && flags[LastCallOptimization] == ON && goals.current!!.let { currentGoal ->
-            (currentGoal as? Struct)?.extractSignature()?.let {
+            currentGoal.asStruct()?.extractSignature()?.let {
                 it == procedure?.extractSignature() && it != catchSignature
             } ?: false
         }
 
     override fun computeNext(): State {
-        return when (val currentGoal = context.currentGoal!!) {
-            is Var -> {
+        val currentGoal = context.currentGoal!!
+        return when {
+            currentGoal.isVariable -> {
                 exceptionalState(
                     InstantiationError.forGoal(
                         context = context,
                         procedure = context.procedure!!.extractSignature(),
-                        variable = currentGoal
+                        variable = currentGoal.castToVar()
                     )
                 )
             }
-            is Struct -> with(context) {
+            currentGoal.isStruct -> with(context) {
+                val currentGoalStruct = currentGoal.castToStruct()
                 val ruleSources = sequenceOf(libraries.theory, staticKb, dynamicKb)
 
                 when {
-                    currentGoal is Truth -> {
-                        if (currentGoal.isTrue) {
+                    currentGoalStruct.isTruth -> {
+                        if (currentGoalStruct.isTrue) {
                             ignoreState
                         } else {
                             failureState
                         }
                     }
 
-                    currentGoal.isCut() -> {
-                        val cutLimit = computeCutLimit(currentGoal is MagicCut)
+                    currentGoalStruct.isCut() -> {
+                        val cutLimit = computeCutLimit(currentGoalStruct is MagicCut)
                         ignoreState.let {
                             it.copy(
                                 context = it.context.copy(
@@ -165,12 +176,8 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
                         }
                     }
 
-                    ruleSources.any { currentGoal in it } -> {
-                        val rules = ruleSources
-                            .flatMap { it[currentGoal] }
-                            .map { it.freshCopy() }
-                            .buffered()
-                            .ensureRules()
+                    ruleSources.any { currentGoalStruct in it } -> {
+                        val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }.cursor()
                         if (context.isTailRecursive) {
                             StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
                         } else {
@@ -178,7 +185,7 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
                         }
                     }
 
-                    else -> missingProcedure(ruleSources, currentGoal.extractSignature())
+                    else -> missingProcedure(ruleSources, currentGoalStruct.extractSignature())
                 }
             }
             else -> {
@@ -193,6 +200,15 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
             }
         }
     }
+
+    private fun Theory.selectClauses(term: Struct): Sequence<Rule> =
+        get(term).map { it.freshCopy() }.ensureRules().let {
+            if (isMutable) {
+                it.buffered()
+            } else {
+                it
+            }
+        }
 
     override fun clone(context: ClassicExecutionContext): StateRuleSelection = copy(context = context)
 }

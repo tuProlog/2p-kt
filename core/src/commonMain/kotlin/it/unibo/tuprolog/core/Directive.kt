@@ -22,12 +22,18 @@ interface Directive : Clause {
 
     override fun freshCopy(scope: Scope): Directive
 
+    override fun asDirective(): Directive = this
+
     companion object {
+        @JvmStatic
+        @JsName("ofSequence")
+        fun of(bodies: Sequence<Term>): Directive = of(bodies.asIterable())
+
         @JvmStatic
         @JsName("ofIterable")
         fun of(bodies: Iterable<Term>): Directive {
             require(bodies.any()) { "Directive requires at least one body element" }
-            return DirectiveImpl(Tuple.wrapIfNeeded(*bodies.toList().toTypedArray()))
+            return DirectiveImpl(Tuple.wrapIfNeeded(bodies))
         }
 
         @JvmStatic

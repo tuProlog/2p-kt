@@ -3,13 +3,12 @@ package it.unibo.tuprolog.ui.repl
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.output.defaultCliktConsole
-import it.unibo.tuprolog.core.TermFormatter.Companion.prettyExpressions
 import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolutionFormatter
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.exception.TimeOutException
 
 object TuPrologUtils {
 
@@ -28,43 +27,21 @@ object TuPrologUtils {
     }
 
     private fun printYesSolution(sol: Solution.Yes, operatorSet: OperatorSet) {
-        val formatter = prettyExpressions(operatorSet)
-        TermUi.echo("yes: ${sol.solvedQuery.format(formatter)}.")
-        if (sol.substitution.isNotEmpty()) {
-            val substitutions = sol.substitution.entries.joinToString("\n    ") {
-                val prettyVariable = it.key.format(formatter)
-                val prettyValue = it.value.format(formatter)
-                "$prettyVariable = $prettyValue"
-            }
-            TermUi.echo("    $substitutions")
-        }
+        TermUi.echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
     }
 
     private fun printHaltSolution(sol: Solution.Halt, operatorSet: OperatorSet) {
         when (val ex = sol.exception) {
-            is TimeOutException -> {
-                TermUi.echo("timeout.")
-            }
             is HaltException -> {
                 TermUi.echo("goodbye.")
                 throw ProgramResult(ex.exitStatus)
             }
-            else -> {
-                if (ex.message == null) {
-                    TermUi.echo("halt.")
-                } else {
-                    TermUi.echo("halt: ${ex.message?.trim()}")
-                }
-                val sep = "\n    at "
-                val formatter = prettyExpressions(operatorSet)
-                val stacktrace = ex.prologStackTrace.joinToString(sep) { it.format(formatter) }
-                TermUi.echo("    at $stacktrace")
-            }
+            else -> TermUi.echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
         }
     }
 
     fun printParseException(e: ParseException) {
-        TermUi.echo("# ${e.message?.capitalize()}", err = true)
+        TermUi.echo("# ${e.message?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}", err = true)
     }
 
     private fun printEndOfSolutions() {
@@ -99,7 +76,7 @@ object TuPrologUtils {
 
     @Suppress("UNUSED_PARAMETER")
     private fun printNoSolution(sol: Solution.No, operatorSet: OperatorSet) {
-        TermUi.echo("no.")
+        TermUi.echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
     }
 
     fun printSolutions(solutions: Iterator<Solution>, operatorSet: OperatorSet) {

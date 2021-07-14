@@ -17,6 +17,11 @@ internal data class ArgNode(
         require(index >= 0) { "ArgNode index should be greater than or equal to 0" }
     }
 
+    override val isArgNode: Boolean
+        get() = true
+
+    override fun asArgNode(): ArgNode = this
+
     override val header = "Argument($index, $term)"
 
     override fun put(element: Rule, beforeOthers: Boolean) = when {
@@ -24,8 +29,11 @@ internal data class ArgNode(
             val nextArg = element.head[index + 1]
 
             val child = children.getOrElse(nextArg) {
-                children.retrieve<ArgNode> { head -> head != null && head structurallyEquals nextArg }
-                    .singleOrNull()
+                children.retrieve(
+                    keyFilter = { head -> head != null && head structurallyEquals nextArg },
+                    typeChecker = { it.isArgNode },
+                    caster = { it.castToArgNode() }
+                ).singleOrNull()
             }
 
             child ?: ArgNode(index + 1, nextArg)
@@ -38,7 +46,11 @@ internal data class ArgNode(
     override fun selectChildren(element: Rule): Sequence<ReteNode<*, Rule>?> = when {
         index < element.head.arity - 1 -> {
             val nextArg = element.head[index + 1]
-            children.retrieve<ArgNode> { head -> head != null && head matches nextArg }
+            children.retrieve(
+                keyFilter = { head -> head != null && head matches nextArg },
+                typeChecker = { it.isArgNode },
+                caster = { it.castToArgNode() }
+            )
         }
         else -> sequenceOf(children[null])
     }

@@ -36,61 +36,64 @@ import org.gciatto.kt.math.BigInteger
 internal expect val platformSpecificAliases: Array<Alias>
 
 object OOPLib : AliasedLibrary by
-    Library.aliased(
-        operatorSet = OperatorSet(
-            Operator(".", XFY, 800),
-            Operator(":=", XFX, 850),
-            Operator("as", XFX, 200),
-            Operator("$", FX, 100),
-        ),
-        theory = Theory.indexedOf(
-            sequenceOf(
-                ColonEquals.Cast,
-                ColonEquals.Invocation,
-                ColonEquals.Assignment,
-                Dot,
-                FluentReduce.Recursive,
-                FluentReduce.Couple,
-                FluentReduce.Trivial,
-                NewObject2,
-                PropertyReduce.Recursive,
-                PropertyReduce.Base,
-                Alias.forType("string", String::class),
-                Alias.forType("array", Array::class),
-                Alias.forType("arraylist", ArrayList::class),
-                Alias.forType("int", Int::class),
-                Alias.forType("integer", Int::class),
-                Alias.forType("double", Double::class),
-                Alias.forType("float", Float::class),
-                Alias.forType("long", Long::class),
-                Alias.forType("short", Short::class),
-                Alias.forType("byte", Byte::class),
-                Alias.forType("char", Char::class),
-                Alias.forType("bool", Boolean::class),
-                Alias.forType("boolean", Boolean::class),
-                Alias.forType("any", Any::class),
-                Alias.forType("nothing", Nothing::class),
-                Alias.forType("big_integer", BigInteger::class),
-                Alias.forType("big_decimal", BigDecimal::class),
-                *platformSpecificAliases
-            ).map { it.wrappedImplementation }
-        ),
-        primitives = sequenceOf<PrimitiveWrapper<*>>(
-            ArrayItems,
-            Assign,
-            Cast,
-            Type,
-            InvokeMethod,
-            InvokeStrict,
-            ListItems,
-            NewObject3,
-            NullRef,
-            ObjectRef,
-            Ref,
-            Register,
-            SetItems,
-            TypeRef,
-            Unregister
-        ).map { it.descriptionPair }.toMap(),
-        alias = "prolog.oop"
-    )
+Library.aliased(
+    operatorSet = OperatorSet(
+        Operator(".", XFY, 800),
+        Operator(":=", XFX, 850),
+        Operator("as", XFX, 200),
+        Operator("$", FX, 100),
+    ),
+    theory = Theory.indexedOf(
+        sequenceOf(
+            ColonEquals.Cast,
+            ColonEquals.Invocation,
+            ColonEquals.Assignment,
+            Dot,
+            FluentReduce.Recursive,
+            FluentReduce.Couple,
+            FluentReduce.Trivial,
+            NewObject2,
+            PropertyReduce.Recursive,
+            PropertyReduce.Base,
+            Alias.forType("string", String::class),
+            Alias.forType("array", Array::class),
+            Alias.forType("list", List::class),
+            Alias.forType("arraylist", ArrayList::class),
+            Alias.forType("map", Map::class),
+            Alias.forType("hashmap", LinkedHashMap::class),
+            Alias.forType("int", Int::class),
+            Alias.forType("integer", Int::class),
+            Alias.forType("double", Double::class),
+            Alias.forType("float", Float::class),
+            Alias.forType("long", Long::class),
+            Alias.forType("short", Short::class),
+            Alias.forType("byte", Byte::class),
+            Alias.forType("char", Char::class),
+            Alias.forType("bool", Boolean::class),
+            Alias.forType("boolean", Boolean::class),
+            Alias.forType("any", Any::class),
+            Alias.forType("nothing", Nothing::class),
+            Alias.forType("big_integer", BigInteger::class),
+            Alias.forType("big_decimal", BigDecimal::class),
+            *platformSpecificAliases
+        ).map { it.wrappedImplementation }
+    ),
+    primitives = sequenceOf<PrimitiveWrapper<*>>(
+        ArrayItems,
+        Assign,
+        Cast,
+        Type,
+        InvokeMethod,
+        InvokeStrict,
+        ListItems,
+        NewObject3,
+        NullRef,
+        ObjectRef,
+        Ref,
+        Register,
+        SetItems,
+        TypeRef,
+        Unregister
+    ).map { it.descriptionPair }.toMap(),
+    alias = "prolog.oop"
+)

@@ -21,8 +21,8 @@ open class SubstitutionException : TuPrologException {
 
     companion object {
         private fun prettyMessage(substitution: Substitution): String =
-            when (substitution) {
-                is Substitution.Fail -> "A unifier was expected, while a failed substitution was provided instead"
+            when {
+                substitution.isFailed -> "A unifier was expected, while a failed substitution was provided instead"
                 else -> "A unifier was expected, while $substitution was provided instead"
             }
     }

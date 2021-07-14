@@ -193,10 +193,10 @@ internal object ReteTreeAssertionUtils {
     }
 
     private fun Struct.addArguments(term: Term, vararg terms: Term): Struct =
-        Struct.of(functor, *args, term, *terms)
+        Struct.of(functor, *args.toTypedArray(), term, *terms)
 
     private fun Struct.addArguments(terms: Iterable<Term>): Struct =
-        Struct.of(functor, argsList + terms)
+        Struct.of(functor, args + terms)
 
     private fun Fact.addArguments(term: Term, vararg terms: Term): Fact =
         Fact.of(head.addArguments(term, *terms))

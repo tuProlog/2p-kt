@@ -25,9 +25,6 @@ interface Clause : Struct {
     @JsName("isWellFormed")
     val isWellFormed: Boolean
 
-    override val args: Array<Term>
-        get() = (if (head === null) arrayOf(body) else arrayOf(head!!, body))
-
     override val arity: Int
         get() = (if (head === null) 1 else 2)
 
@@ -47,20 +44,93 @@ interface Clause : Struct {
 
     override fun freshCopy(scope: Scope): Clause
 
+    override fun asClause(): Clause = this
+
+    @JsName("bodyItems")
+    val bodyItems: Iterable<Term>
+
+    @JsName("bodySize")
+    val bodySize: Int
+
+    @JsName("bodyAsTuple")
+    val bodyAsTuple: Tuple?
+
+    @JsName("getBodyItem")
+    fun getBodyItem(index: Int): Term
+
+    @JsName("setHead")
+    fun setHead(head: Struct): Rule
+
+    @JsName("setBody")
+    fun setBody(body: Term): Clause
+
+    @JsName("setHeadFunctor")
+    fun setHeadFunctor(functor: String): Clause
+
+    @JsName("setHeadArgs")
+    fun setHeadArgs(vararg arguments: Term): Clause
+
+    @JsName("setHeadArgsIterable")
+    fun setHeadArgs(arguments: Iterable<Term>): Clause
+
+    @JsName("setHeadArgsSequence")
+    fun setHeadArgs(arguments: Sequence<Term>): Clause
+
+    @JsName("insertHeadArg")
+    fun insertHeadArg(index: Int, argument: Term): Clause
+
+    @JsName("addFirstHeadArg")
+    fun addFirstHeadArg(argument: Term): Clause
+
+    @JsName("addLastHeadArg")
+    fun addLastHeadArg(argument: Term): Clause
+
+    @JsName("appendHeadArg")
+    fun appendHeadArg(argument: Term): Clause
+
+    @JsName("setBodyItems")
+    fun setBodyItems(argument: Term, vararg arguments: Term): Clause
+
+    @JsName("setBodyItemsIterable")
+    fun setBodyItems(arguments: Iterable<Term>): Clause
+
+    @JsName("setBodyItemsSequence")
+    fun setBodyItems(arguments: Sequence<Term>): Clause
+
+    @JsName("insertBodyItem")
+    fun insertBodyItem(index: Int, argument: Term): Clause
+
+    @JsName("addFirstBodyItem")
+    fun addFirstBodyItem(argument: Term): Clause
+
+    @JsName("addLastBodyItem")
+    fun addLastBodyItem(argument: Term): Clause
+
+    @JsName("appendBodyItem")
+    fun appendBodyItem(argument: Term): Clause
+
     companion object {
 
         const val FUNCTOR = CLAUSE_FUNCTOR
 
         @JvmStatic
         @JsName("of")
-        fun of(head: Struct? = null, vararg body: Term): Clause =
+        fun of(head: Struct? = null, vararg body: Term): Clause = of(head, body.asIterable())
+
+        @JvmStatic
+        @JsName("ofIterable")
+        fun of(head: Struct? = null, body: Iterable<Term>): Clause =
             when (head) {
                 null -> {
                     require(body.any()) { "If Clause head is null, at least one body element, is required" }
                     Directive.of(body.asIterable())
                 }
-                else -> Rule.of(head, *body)
+                else -> Rule.of(head, body)
             }
+
+        @JvmStatic
+        @JsName("ofSequence")
+        fun of(head: Struct? = null, body: Sequence<Term>): Clause = of(head, body.asIterable())
 
         /** Contains notable functor in determining if a Clause [isWellFormed] */
         @JvmStatic
@@ -72,9 +142,11 @@ interface Clause : Struct {
         @JsName("bodyWellFormedVisitor")
         val bodyWellFormedVisitor: TermVisitor<Boolean> = object : TermVisitor<Boolean> {
 
-            override fun defaultValue(term: Term): Boolean = term !is Numeric
+            override fun defaultValue(term: Term): Boolean = true
 
-            override fun visit(term: Struct): Boolean = when {
+            override fun visitNumeric(term: Numeric): Boolean = false
+
+            override fun visitStruct(term: Struct): Boolean = when {
                 term.functor in notableFunctors && term.arity == 2 ->
                     term.argsSequence
                         .map { arg -> arg.accept(this) }
@@ -88,18 +160,16 @@ interface Clause : Struct {
             object : TermVisitor<Term> {
                 override fun defaultValue(term: Term) = term
 
-                override fun visit(term: Struct): Term = when {
-                    term is Clause -> visit(term)
+                override fun visitStruct(term: Struct): Term = when {
                     term.functor in notableFunctors && term.arity == 2 ->
                         Struct.of(term.functor, term.argsSequence.map { arg -> arg.accept(this) })
-
                     else -> term
                 }
 
-                override fun visit(term: Clause): Term = of(term.head, visit(term.body))
+                override fun visitClause(term: Clause): Term = of(term.head, term.body.accept(this))
 
-                override fun visit(term: Var): Term = when (term) {
-                    in unifier -> visit(unifier[term]!!)
+                override fun visitVar(term: Var): Term = when (term) {
+                    in unifier -> unifier[term]!!.accept(this)
                     else -> Struct.of("call", term)
                 }
             }
@@ -110,6 +180,6 @@ interface Clause : Struct {
          * For example, the [Clause] `product(A) :- A, A` is transformed, after preparation for execution,
          * as the Term: `product(A) :- call(A), call(A)`
          */
-        internal val defaultPreparationForExecutionVisitor = preparationForExecutionVisitor()
+        internal val defaultPreparationForExecutionVisitor: TermVisitor<Term> = preparationForExecutionVisitor()
     }
 }

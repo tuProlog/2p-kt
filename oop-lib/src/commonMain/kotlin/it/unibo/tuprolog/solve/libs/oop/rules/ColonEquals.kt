@@ -3,8 +3,9 @@ package it.unibo.tuprolog.solve.libs.oop.rules
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.libs.oop.OOP.CALL_OPERATOR
+import it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR
 import it.unibo.tuprolog.solve.libs.oop.primitives.Assign
-import it.unibo.tuprolog.solve.libs.oop.primitives.CAST_OPERATOR
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.primitive.Var
 import it.unibo.tuprolog.solve.libs.oop.primitives.Cast as CastPrimitive
@@ -16,7 +17,7 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.Cast as CastPrimitive
  * ':='(C, V) :- property_reduce(C, R, P), assign(R, P, V).
  * ```
  */
-sealed class ColonEquals : RuleWrapper<ExecutionContext>(":=", 2) {
+sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
 
     object Cast : ColonEquals() {
 
