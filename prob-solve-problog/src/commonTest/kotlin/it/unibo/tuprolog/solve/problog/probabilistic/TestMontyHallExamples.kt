@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import kotlin.test.Test
 
-class TestGenericExamples {
+class TestMontyHallExamples {
 
     /***
      * https://dtai.cs.kuleuven.be/problog/tutorial/various/01_montyhall.html
