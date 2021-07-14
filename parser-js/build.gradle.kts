@@ -3,7 +3,7 @@ kotlin {
         val main by getting {
             dependencies {
                 api(kotlin("stdlib-js"))
-                api(npm("@tuprolog/parser-utils", "0.3.0"))
+                api(npm("@tuprolog/parser-utils", "0.3.1"))
             }
         }
 
