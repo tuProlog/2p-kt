@@ -44,6 +44,7 @@ CHAR
 
 BOOL
     : 'true'
+    | 'false'
     | 'fail'
     ;
 
