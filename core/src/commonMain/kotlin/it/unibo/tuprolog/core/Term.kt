@@ -126,7 +126,7 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
     val isTruth: Boolean get() = false
 
     /**
-     * Checks whether the current term is a collection, i.e., a list, a tuple, or a set.
+     * Checks whether the current term is a collection, i.e., a list, a tuple, or a block.
      * This method is guaranteed to return `true` if and only if the current term
      * is an instance of [Collection].
      * @return `true` if the current term is a collection, or `false`, otherwise
@@ -198,22 +198,22 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
     val isTuple: Boolean get() = false
 
     /**
-     * Checks whether the current term is a logic set.
+     * Checks whether the current term is a logic block.
      * This method is guaranteed to return `true` if and only if the current term
-     * is an instance of [Set].
-     * @return `true` if the current term is a logic set, or `false`, otherwise
+     * is an instance of [Block].
+     * @return `true` if the current term is a logic block, or `false`, otherwise
      */
-    @JsName("isSet")
-    val isSet: Boolean get() = false
+    @JsName("isBlock")
+    val isBlock: Boolean get() = false
 
     /**
-     * Checks whether the current term is an empty logic set.
+     * Checks whether the current term is an empty logic block.
      * This method is guaranteed to return `true` if and only if the current term
-     * is an instance of [EmptySet].
-     * @return `true` if the current term is an empty logic set, or `false`, otherwise
+     * is an instance of [EmptyBlock].
+     * @return `true` if the current term is an empty logic block, or `false`, otherwise
      */
-    @JsName("isEmptySet")
-    val isEmptySet: Boolean get() = false
+    @JsName("isEmptyBlock")
+    val isEmptyBlock: Boolean get() = false
 
     /**
      * Checks whether the current term is a clause, i.e., either a rule or a directive.
@@ -449,13 +449,13 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
         asEmptyList() ?: throw ClassCastException("Cannot cast $this to ${EmptyList::class.simpleName}")
 
     /**
-     * Casts the current [Term] to [EmptySet], if possible
-     * @throws ClassCastException if the current [Term] is not an instance of [EmptySet]
-     * @return the current [Term], casted to [EmptySet]
+     * Casts the current [Term] to [EmptyBlock], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [EmptyBlock]
+     * @return the current [Term], casted to [EmptyBlock]
      */
-    @JsName("castToEmptySet")
-    fun castToEmptySet(): EmptySet =
-        asEmptySet() ?: throw ClassCastException("Cannot cast $this to ${EmptySet::class.simpleName}")
+    @JsName("castToEmptyBlock")
+    fun castToEmptyBlock(): EmptyBlock =
+        asEmptyBlock() ?: throw ClassCastException("Cannot cast $this to ${EmptyBlock::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Fact], if possible
@@ -521,13 +521,13 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
         asRule() ?: throw ClassCastException("Cannot cast $this to ${Rule::class.simpleName}")
 
     /**
-     * Casts the current [Term] to [Set], if possible
-     * @throws ClassCastException if the current [Term] is not an instance of [Set]
-     * @return the current [Term], casted to [Set]
+     * Casts the current [Term] to [Block], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Block]
+     * @return the current [Term], casted to [Block]
      */
-    @JsName("castToSet")
-    fun castToSet(): Set =
-        asSet() ?: throw ClassCastException("Cannot cast $this to ${Set::class.simpleName}")
+    @JsName("castToBlock")
+    fun castToBlock(): Block =
+        asBlock() ?: throw ClassCastException("Cannot cast $this to ${Block::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Struct], if possible
@@ -624,11 +624,11 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
     fun asEmptyList(): EmptyList? = null
 
     /**
-     * Casts the current [Term] to [EmptySet], if possible, or returns `null` otherwise
-     * @return the current [Term], casted to [EmptySet], or `null`, if the current term is not an instance of [EmptySet]
+     * Casts the current [Term] to [EmptyBlock], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [EmptyBlock], or `null`, if the current term is not an instance of [EmptyBlock]
      */
-    @JsName("asEmptySet")
-    fun asEmptySet(): EmptySet? = null
+    @JsName("asEmptyBlock")
+    fun asEmptyBlock(): EmptyBlock? = null
 
     /**
      * Casts the current [Term] to [Fact], if possible, or returns `null` otherwise
@@ -680,11 +680,11 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
     fun asRule(): Rule? = null
 
     /**
-     * Casts the current [Term] to [Set], if possible, or returns `null` otherwise
-     * @return the current [Term], casted to [Set], or `null`, if the current term is not an instance of [Set]
+     * Casts the current [Term] to [Block], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Block], or `null`, if the current term is not an instance of [Block]
      */
-    @JsName("asSet")
-    fun asSet(): Set? = null
+    @JsName("asBlock")
+    fun asBlock(): Block? = null
 
     /**
      * Casts the current [Term] to [Struct], if possible, or returns `null` otherwise

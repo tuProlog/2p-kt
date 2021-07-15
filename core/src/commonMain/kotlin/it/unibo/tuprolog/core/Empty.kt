@@ -13,14 +13,14 @@ interface Empty : Atom {
 
         const val EMPTY_LIST_FUNCTOR = Terms.EMPTY_LIST_FUNCTOR
 
-        const val EMPTY_SET_FUNCTOR = Terms.EMPTY_SET_FUNCTOR
+        const val EMPTY_BLOCK_FUNCTOR = Terms.EMPTY_BLOCK_FUNCTOR
 
         @JvmStatic
         @JsName("list")
         fun list(): EmptyList = EmptyList()
 
         @JvmStatic
-        @JsName("set")
-        fun set(): EmptySet = EmptySet()
+        @JsName("block")
+        fun block(): EmptyBlock = EmptyBlock()
     }
 }

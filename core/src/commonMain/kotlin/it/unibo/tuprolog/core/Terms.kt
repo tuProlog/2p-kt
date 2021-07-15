@@ -43,7 +43,7 @@ object Terms {
 
     const val FAIL_FUNCTOR = "fail"
 
-    const val SET_FUNCTOR = "{}"
+    const val BLOCK_FUNCTOR = "{}"
 
     const val CLAUSE_FUNCTOR = ":-"
 
@@ -51,7 +51,7 @@ object Terms {
 
     const val EMPTY_LIST_FUNCTOR = "[]"
 
-    const val EMPTY_SET_FUNCTOR = SET_FUNCTOR
+    const val EMPTY_BLOCK_FUNCTOR = BLOCK_FUNCTOR
 
     const val INDICATOR_FUNCTOR = "/"
 

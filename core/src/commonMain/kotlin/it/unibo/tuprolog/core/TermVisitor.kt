@@ -37,14 +37,14 @@ interface TermVisitor<T> {
     @JsName("visitReal")
     fun visitReal(term: Real): T = visitNumeric(term)
 
-    @JsName("visitSet")
-    fun visitSet(term: Set): T = visitCollection(term)
+    @JsName("visitBlock")
+    fun visitBlock(term: Block): T = visitCollection(term)
 
     @JsName("visitEmpty")
     fun visitEmpty(term: Empty): T = visitAtom(term)
 
-    @JsName("visitEmptySet")
-    fun visitEmptySet(term: EmptySet): T = visitSet(term)
+    @JsName("visitEmptyBlock")
+    fun visitEmptyBlock(term: EmptyBlock): T = visitBlock(term)
 
     @JsName("visitList")
     fun visitList(term: List): T = visitCollection(term)

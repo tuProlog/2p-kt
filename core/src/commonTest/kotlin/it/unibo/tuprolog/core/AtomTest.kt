@@ -16,7 +16,7 @@ internal class AtomTest {
 
     @Test
     fun emptySetAtomDetected() {
-        assertEqualities(Atom.of("{}"), Empty.set())
+        assertEqualities(Atom.of("{}"), Empty.block())
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class AtomTest {
 
     @Test
     fun atomOfWorksWithNotableAtoms() {
-        val correctInstances = listOf(EmptyList(), EmptySet(), Truth.TRUE, Truth.FAIL, Truth.FALSE)
+        val correctInstances = listOf(EmptyList(), EmptyBlock(), Truth.TRUE, Truth.FAIL, Truth.FALSE)
         val toBeTested = AtomUtils.specialAtoms.map { Atom.of(it) }
 
         onCorrespondingItems(toBeTested, correctInstances, ::assertEqualities)

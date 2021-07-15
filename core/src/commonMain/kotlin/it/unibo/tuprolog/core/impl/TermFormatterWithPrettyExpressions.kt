@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Struct
@@ -67,7 +67,7 @@ internal class TermFormatterWithPrettyExpressions private constructor (
     override fun visitReal(term: Real): String =
         term.accept(delegate)
 
-    override fun visitEmptySet(term: EmptySet): String =
+    override fun visitEmptyBlock(term: EmptyBlock): String =
         term.accept(delegate)
 
     override fun visitEmptyList(term: EmptyList): String =

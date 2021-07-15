@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.MINUS_THREE
@@ -118,8 +118,8 @@ class TestProlog {
         assertDSLCreationIsCorrect(List.of(Atom.of("a"))) {
             sequenceOf("a").toTerm()
         }
-        assertDSLCreationIsCorrect(Set.of(Atom.of("a"))) {
-            setOf("a")
+        assertDSLCreationIsCorrect(Block.of(Atom.of("a"))) {
+            blockOf("a")
         }
         assertDSLCreationIsCorrect(Tuple.of(Atom.of("a"), Atom.of("b"))) {
             tupleOf("a", "b")
