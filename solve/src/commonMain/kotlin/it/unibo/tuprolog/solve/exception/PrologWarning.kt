@@ -15,7 +15,7 @@ abstract class PrologWarning(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>
-) : TuPrologRuntimeException(message, cause, contexts) {
+) : ResolutionException(message, cause, contexts) {
     constructor(
         message: String? = null,
         cause: Throwable? = null,

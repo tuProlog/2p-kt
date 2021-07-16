@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.classic.fsm
 
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
@@ -10,7 +10,7 @@ import it.unibo.tuprolog.utils.cursor
 
 data class StatePrimitiveSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
-    private fun exceptionalState(exception: TuPrologRuntimeException): StateException {
+    private fun exceptionalState(exception: ResolutionException): StateException {
         return StateException(
             exception,
             context.copy(step = nextStep())
@@ -42,7 +42,7 @@ data class StatePrimitiveSelection(override val context: ClassicExecutionContext
                         try {
                             val primitiveExecutions = primitive(request).cursor()
                             StatePrimitiveExecution(childContext.appendPrimitivesAndChoicePoints(primitiveExecutions))
-                        } catch (exception: TuPrologRuntimeException) {
+                        } catch (exception: ResolutionException) {
                             exceptionalState(exception.updateLastContext(childContext.skipThrow()))
                         }
                     } else {

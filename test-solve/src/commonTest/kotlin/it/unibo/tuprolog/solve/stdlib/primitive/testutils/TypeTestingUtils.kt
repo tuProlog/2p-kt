@@ -12,7 +12,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.PrologScope
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -172,7 +172,7 @@ object TypeTestingUtils {
         }
         else ->
             @Suppress("UNCHECKED_CAST")
-            (expectedResult as? KClass<out TuPrologRuntimeException>)
+            (expectedResult as? KClass<out ResolutionException>)
                 ?.let {
                     val message = "Requesting ${input.query} should result in an exception of type ${it.simpleName}"
                     assertFailsWith(expectedResult, message) {

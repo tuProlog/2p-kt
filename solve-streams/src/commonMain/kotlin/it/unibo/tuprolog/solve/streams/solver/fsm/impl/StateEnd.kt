@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.sideffects.SideEffectManager
@@ -66,7 +66,7 @@ internal sealed class StateEnd(
         }
 
         /** Shorthand property to access `solve.solution.exception` */
-        val exception: TuPrologRuntimeException by lazy { (solve.solution as Solution.Halt).exception }
+        val exception: ResolutionException by lazy { (solve.solution as Solution.Halt).exception }
     }
 }
 
@@ -98,7 +98,7 @@ internal fun IntermediateState.stateEndFalse(
 
 /** Transition from this intermediate state to [StateEnd.Halt], creating a [Solve.Response] with given data */
 internal fun IntermediateState.stateEndHalt(
-    exception: TuPrologRuntimeException,
+    exception: ResolutionException,
     sideEffectManager: SideEffectManager? = null,
     vararg sideEffects: SideEffect
 ) = StateEnd.Halt(

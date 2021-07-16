@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.classic.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.exception.PrologError
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.MessageError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
@@ -14,7 +14,7 @@ import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.plus
 
 data class StateException(
-    override val exception: TuPrologRuntimeException,
+    override val exception: ResolutionException,
     override val context: ClassicExecutionContext
 ) : ExceptionalState, AbstractState(context) {
 
@@ -28,7 +28,7 @@ data class StateException(
         }
     }
 
-    private fun TuPrologRuntimeException.toPublicException(): TuPrologRuntimeException =
+    private fun ResolutionException.toPublicException(): ResolutionException =
         when (this) {
             is MessageError -> SystemError.forUncaughtError(this)
             else -> this

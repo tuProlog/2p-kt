@@ -10,7 +10,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.exception.PrologError
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.jvm.JvmName
@@ -36,7 +36,7 @@ fun Struct.yes(vararg withSubstitution: Substitution) = Solution.yes(
 fun Struct.no() = Solution.no(this)
 
 /** Utility function to help writing tests; it creates a [Solution.Halt] with receiver query and provided exception */
-fun Struct.halt(withException: TuPrologRuntimeException) = Solution.halt(this, withException)
+fun Struct.halt(withException: ResolutionException) = Solution.halt(this, withException)
 
 /** Utility function to help writing tests; it forwards the `copy` method call to subclasses changing only the `query` field */
 fun Solution.changeQueryTo(query: Struct) = whenIs(

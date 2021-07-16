@@ -18,7 +18,7 @@ class HaltException(
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
     @JsName("exitStatus") val exitStatus: Int = 0
-) : TuPrologRuntimeException(message, cause, contexts) {
+) : ResolutionException(message, cause, contexts) {
 
     constructor(
         message: String? = null,

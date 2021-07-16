@@ -3,18 +3,18 @@ package it.unibo.tuprolog.solve.exception.warning
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import kotlin.js.JsName
 
 class InitializationIssue(
     @JsName("goal") val goal: Struct,
-    override val cause: TuPrologRuntimeException? = null,
+    override val cause: ResolutionException? = null,
     contexts: Array<ExecutionContext>
 ) : PrologWarning("Error while solving initialization goal $goal: ${cause ?: "failure"}", cause, contexts) {
 
     constructor(
         goal: Struct,
-        cause: TuPrologRuntimeException? = null,
+        cause: ResolutionException? = null,
         context: ExecutionContext
     ) : this(goal, cause, arrayOf(context))
 

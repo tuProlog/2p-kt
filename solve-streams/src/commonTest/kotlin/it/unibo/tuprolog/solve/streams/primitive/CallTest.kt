@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.streams.primitive
 
 import it.unibo.tuprolog.solve.assertOverFailure
 import it.unibo.tuprolog.solve.assertSolutionEquals
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.streams.primitive.testutils.CallUtils.assertErrorCauseChainComputedCorrectly
 import it.unibo.tuprolog.solve.streams.primitive.testutils.CallUtils.requestSolutionMap
 import it.unibo.tuprolog.solve.streams.primitive.testutils.CallUtils.requestToErrorSolutionMap
@@ -39,7 +39,7 @@ internal class CallTest {
     @Test
     fun callPrimitiveErrorContainsCorrectContext() {
         requestToErrorSolutionMap.forEach { (request, _) ->
-            assertOverFailure<TuPrologRuntimeException>({ Call.wrappedImplementation(request) }) {
+            assertOverFailure<ResolutionException>({ Call.wrappedImplementation(request) }) {
                 assertEquals(request.context, it.context)
             }
         }

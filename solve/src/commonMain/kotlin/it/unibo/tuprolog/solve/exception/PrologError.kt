@@ -43,7 +43,7 @@ abstract class PrologError(
     contexts: Array<ExecutionContext>,
     @JsName("type") open val type: Struct,
     @JsName("extraData") open val extraData: Term? = null
-) : TuPrologRuntimeException(message, cause, contexts) {
+) : ResolutionException(message, cause, contexts) {
 
     constructor(
         message: String? = null,
