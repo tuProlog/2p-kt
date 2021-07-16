@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import org.reactfx.EventStream
 import java.io.File
 import java.util.concurrent.ExecutorService
@@ -107,7 +107,7 @@ interface PrologIDEModel {
 
     val onStderrPrinted: EventStream<String>
 
-    val onWarning: EventStream<PrologWarning>
+    val onWarning: EventStream<Warning>
 
     val onError: EventStream<TuPrologException>
 }

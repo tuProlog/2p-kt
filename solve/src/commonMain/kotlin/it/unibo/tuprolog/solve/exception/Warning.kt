@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
  *
  * @author Giovanni
  */
-abstract class PrologWarning(
+abstract class Warning(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>
@@ -22,9 +22,9 @@ abstract class PrologWarning(
         context: ExecutionContext
     ) : this(message, cause, arrayOf(context))
 
-    abstract override fun updateContext(newContext: ExecutionContext, index: Int): PrologWarning
+    abstract override fun updateContext(newContext: ExecutionContext, index: Int): Warning
 
-    abstract override fun updateLastContext(newContext: ExecutionContext): PrologWarning
+    abstract override fun updateLastContext(newContext: ExecutionContext): Warning
 
-    abstract override fun pushContext(newContext: ExecutionContext): PrologWarning
+    abstract override fun pushContext(newContext: ExecutionContext): Warning
 }

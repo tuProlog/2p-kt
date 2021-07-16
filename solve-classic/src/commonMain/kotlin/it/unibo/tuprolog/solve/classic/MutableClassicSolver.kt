@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.getAllOperators
@@ -39,7 +39,7 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
         stdIn: InputChannel<String> = InputChannel.stdIn(),
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
-        warnings: OutputChannel<PrologWarning> = OutputChannel.warn(),
+        warnings: OutputChannel<Warning> = OutputChannel.warn(),
         trustKb: Boolean = false
     ) : super(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
 
@@ -216,7 +216,7 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
         }
     }
 
-    override fun setWarnings(warnings: OutputChannel<PrologWarning>) {
+    override fun setWarnings(warnings: OutputChannel<Warning>) {
         updateContext {
             copy(outputChannels = OutputStore.of(outputChannels, warnings))
         }
@@ -230,7 +230,7 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ) = MutableClassicSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun clone(): MutableClassicSolver = copy()

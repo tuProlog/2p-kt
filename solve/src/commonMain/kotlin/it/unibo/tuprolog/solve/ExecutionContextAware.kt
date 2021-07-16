@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
@@ -68,6 +68,6 @@ interface ExecutionContextAware {
      * Returns `null` if the channel is closed
      */
     @JsName("warnings")
-    val warnings: OutputChannel<PrologWarning>
+    val warnings: OutputChannel<Warning>
         get() = outputChannels.warnings
 }

@@ -55,8 +55,8 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSo
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.timeRelatedTheory
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
@@ -146,7 +146,7 @@ internal class TestSolverImpl(
                 fact { "parent"("jacob", "joseph") }
             )
 
-            val observedWarnings = mutableListOf<PrologWarning>()
+            val observedWarnings = mutableListOf<Warning>()
 
             var solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory,
@@ -196,7 +196,7 @@ internal class TestSolverImpl(
         prolog {
             val query = "missing_predicate"(X)
 
-            val observedWarnings = mutableListOf<PrologWarning>()
+            val observedWarnings = mutableListOf<Warning>()
 
             var solver = solverFactory.solverWithDefaultBuiltins(
                 flags = FlagStore.of(Unknown to ERROR),
