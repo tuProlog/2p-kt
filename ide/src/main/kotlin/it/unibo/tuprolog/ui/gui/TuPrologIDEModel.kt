@@ -11,10 +11,10 @@ import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
 
-interface PrologIDEModel {
+interface TuPrologIDEModel {
 
     companion object {
-        fun of(executor: ExecutorService = ForkJoinPool.commonPool()): PrologIDEModel = PrologIDEModelImpl(executor)
+        fun of(executor: ExecutorService = ForkJoinPool.commonPool()): TuPrologIDEModel = TuPrologIDEModelImpl(executor)
     }
 
     enum class State {

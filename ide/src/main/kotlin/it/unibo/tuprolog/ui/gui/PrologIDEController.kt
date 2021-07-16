@@ -8,7 +8,7 @@ import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.theory.Theory
 import javafx.application.Platform
 import javafx.event.ActionEvent
@@ -52,7 +52,7 @@ import kotlin.system.exitProcess
 @Suppress("UNUSED_PARAMETER", "unused")
 class PrologIDEController : Initializable {
 
-    private val model = PrologIDEModel.of()
+    private val model = TuPrologIDEModel.of()
 
     private var onClose = {}
 
@@ -221,7 +221,7 @@ class PrologIDEController : Initializable {
     private lateinit var lsvSolutions: ListView<Solution>
 
     @FXML
-    private lateinit var lsvWarnings: ListView<PrologWarning>
+    private lateinit var lsvWarnings: ListView<Warning>
 
     private val stage: Stage get() = root.scene.window as Stage
 
@@ -446,7 +446,7 @@ class PrologIDEController : Initializable {
         tabStderr.showNotification()
     }
 
-    private fun onWarning(warning: PrologWarning) = onUiThread {
+    private fun onWarning(warning: Warning) = onUiThread {
         lsvWarnings.items.add(warning)
         lsvWarnings.scrollTo(warning)
         tabWarnings.showNotification()
@@ -547,7 +547,7 @@ class PrologIDEController : Initializable {
 
     @FXML
     fun onNextButtonPressed(e: ActionEvent) {
-        if (model.state == PrologIDEModel.State.IDLE) {
+        if (model.state == TuPrologIDEModel.State.IDLE) {
             startNewResolution()
         } else {
             continueResolution()
@@ -561,7 +561,7 @@ class PrologIDEController : Initializable {
 
     @FXML
     fun onNextAllButtonPressed(e: ActionEvent) {
-        if (model.state == PrologIDEModel.State.IDLE) {
+        if (model.state == TuPrologIDEModel.State.IDLE) {
             startNewResolution(true)
         } else {
             continueResolution(true)

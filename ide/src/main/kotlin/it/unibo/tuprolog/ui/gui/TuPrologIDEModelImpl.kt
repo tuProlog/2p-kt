@@ -17,17 +17,17 @@ import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
-import it.unibo.tuprolog.ui.gui.PrologIDEModel.State
+import it.unibo.tuprolog.ui.gui.TuPrologIDEModel.State
 import it.unibo.tuprolog.utils.Cached
 import org.reactfx.EventSource
 import java.io.File
 import java.util.EnumSet
 import java.util.concurrent.ExecutorService
 
-internal class PrologIDEModelImpl(
+internal class TuPrologIDEModelImpl(
     override val executor: ExecutorService,
     var customizer: ((MutableSolver) -> Unit)? = {}
-) : PrologIDEModel {
+) : TuPrologIDEModel {
 
     private data class FileContent(var text: String, var changed: Boolean = true) {
         fun text(text: String) {

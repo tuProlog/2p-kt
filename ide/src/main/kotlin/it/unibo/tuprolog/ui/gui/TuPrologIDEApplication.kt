@@ -4,7 +4,7 @@ import javafx.application.Application
 import javafx.stage.Stage
 import kotlin.system.exitProcess
 
-class PrologIDEApplication : Application() {
+class TuPrologIDEApplication : Application() {
     override fun start(stage: Stage) {
         try {
             PrologIDEBuilder(stage).show()
@@ -21,7 +21,7 @@ class PrologIDEApplication : Application() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            launch(PrologIDEApplication::class.java)
+            launch(TuPrologIDEApplication::class.java)
         }
     }
 }
