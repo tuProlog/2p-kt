@@ -25,7 +25,7 @@ internal class IndicatorTest {
     @Test
     fun ofNameAndArityCreatesCorrectInstance() {
         val toBeTested = IndicatorUtils.mixedIndicators
-            .filter { (name, arity) -> name.isAtom && arity.isInt }
+            .filter { (name, arity) -> name.isAtom && arity.isInteger }
             .map { (name, arity) ->
                 Indicator.of(
                     name.castToAtom().value,

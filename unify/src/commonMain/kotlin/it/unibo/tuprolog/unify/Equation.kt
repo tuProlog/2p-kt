@@ -122,15 +122,15 @@ sealed class Equation(
         @JsName("of")
         fun of(lhs: Term, rhs: Term, equalityChecker: (Term, Term) -> Boolean = Term::equals): Equation =
             when {
-                lhs.isVariable && rhs.isVariable -> {
+                lhs.isVar && rhs.isVar -> {
                     if (equalityChecker(lhs, rhs)) {
                         Identity(lhs, rhs)
                     } else {
                         Assignment(lhs.castToVar(), rhs)
                     }
                 }
-                lhs.isVariable -> Assignment(lhs.castToVar(), rhs)
-                rhs.isVariable -> Assignment(rhs.castToVar(), lhs)
+                lhs.isVar -> Assignment(lhs.castToVar(), rhs)
+                rhs.isVar -> Assignment(rhs.castToVar(), lhs)
                 lhs.isConstant && rhs.isConstant -> {
                     if (equalityChecker(lhs, rhs)) {
                         Identity(lhs, rhs)

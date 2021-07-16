@@ -86,7 +86,7 @@ data class Signature(
             with(term) {
                 when {
                     functor == FUNCTOR && arity == 2 && args.first().isAtom -> when {
-                        args.last().isInt -> {
+                        args.last().isInteger -> {
                             Signature(
                                 args.first().castToAtom().value,
                                 args.last().castToInteger().intValue.toInt()
@@ -94,7 +94,7 @@ data class Signature(
                         }
                         args.last().let {
                             it is Struct && it.functor == varargStructFunctor && it.arity == 2 &&
-                                it.args.first().isInt &&
+                                it.args.first().isInteger &&
                                 it.args.last() == varargAtom
                         } -> {
                             Signature(

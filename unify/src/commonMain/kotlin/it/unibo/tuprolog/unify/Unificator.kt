@@ -89,7 +89,7 @@ interface Unificator {
             object : AbstractUnificator(context) {
                 override fun checkTermsEquality(first: Term, second: Term) =
                     when {
-                        first.isInt && second.isInt -> {
+                        first.isInteger && second.isInteger -> {
                             first.castToInteger().value.compareTo(second.castToInteger().value) == 0
                         }
                         first.isNumber && second.isNumber -> {

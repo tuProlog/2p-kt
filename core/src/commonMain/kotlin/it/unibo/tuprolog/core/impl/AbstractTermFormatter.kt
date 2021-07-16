@@ -44,7 +44,7 @@ internal abstract class AbstractTermFormatter(
 
     private fun isNumberedVar(term: Struct): Boolean =
         term.functor == "\$VAR" && term.arity == 1 && term[0].let {
-            it.isInt && it.castToInteger().value >= BigInteger.ZERO
+            it.isInteger && it.castToInteger().value >= BigInteger.ZERO
         }
 
     private fun numberedVar(integer: Integer): String {

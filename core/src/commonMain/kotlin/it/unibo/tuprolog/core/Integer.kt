@@ -9,7 +9,7 @@ import kotlin.jvm.JvmStatic
 
 interface Integer : Numeric {
 
-    override val isInt: Boolean
+    override val isInteger: Boolean
         get() = true
 
     override val value: BigInteger

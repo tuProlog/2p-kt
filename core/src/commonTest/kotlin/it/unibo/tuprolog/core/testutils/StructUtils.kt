@@ -101,7 +101,7 @@ internal object StructUtils {
     internal val mixedStructs by lazy { nonSpecialStructs + specialStructs }
 
     /** All under testing ground Structs, those containing at least one variable */
-    internal val groundStructs by lazy { mixedStructs.filterNot { (_, args) -> args.any { it.isVariable } } }
+    internal val groundStructs by lazy { mixedStructs.filterNot { (_, args) -> args.any { it.isVar } } }
 
     /** All not ground Structs, those not containing variables */
     internal val nonGroundStructs by lazy { mixedStructs - groundStructs }
@@ -113,5 +113,5 @@ internal object StructUtils {
     internal val mixedStructArguments by lazy { mixedStructs.map { (_, args) -> args } }
 
     /** All Struct variables */
-    internal val mixedStructVariables by lazy { mixedStructArguments.map { it.filter(Term::isVariable) } }
+    internal val mixedStructVariables by lazy { mixedStructArguments.map { it.filter(Term::isVar) } }
 }

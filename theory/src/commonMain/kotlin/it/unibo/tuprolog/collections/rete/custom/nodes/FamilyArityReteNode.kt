@@ -116,7 +116,7 @@ internal open class FamilyArityReteNode(
                     atomicIndex.retractAllIndexed(clause)
                 )
             }
-            innerFirst.isVariable -> {
+            innerFirst.isVar -> {
                 Utils.merge(
                     variableIndex.retractAllIndexed(clause),
                     numericIndex.retractAllIndexed(clause),
@@ -144,7 +144,7 @@ internal open class FamilyArityReteNode(
                 variableIndex.retractAllIndexed(clause),
                 atomicIndex.retractAllIndexed(clause)
             )
-            innerFirst.isVariable -> Utils.flattenIndexed(
+            innerFirst.isVar -> Utils.flattenIndexed(
                 variableIndex.retractAllIndexed(clause),
                 numericIndex.retractAllIndexed(clause),
                 atomicIndex.retractAllIndexed(clause),
@@ -170,7 +170,7 @@ internal open class FamilyArityReteNode(
                     variableIndex.getIndexed(clause),
                     atomicIndex.getIndexed(clause)
                 )
-            innerFirst.isVariable ->
+            innerFirst.isVar ->
                 Utils.merge(
                     variableIndex.getIndexed(clause),
                     numericIndex.getIndexed(clause),
@@ -196,7 +196,7 @@ internal open class FamilyArityReteNode(
                 variableIndex.getIndexed(clause),
                 atomicIndex.getIndexed(clause)
             )
-            innerFirst.isVariable -> Utils.flattenIndexed(
+            innerFirst.isVar -> Utils.flattenIndexed(
                 variableIndex.getIndexed(clause),
                 numericIndex.getIndexed(clause),
                 atomicIndex.getIndexed(clause),
@@ -220,7 +220,7 @@ internal open class FamilyArityReteNode(
                 variableIndex.getFirstIndexed(clause)
                     ?: atomicIndex.getFirstIndexed(clause)
             }
-            innerFirst.isVariable -> {
+            innerFirst.isVar -> {
                 variableIndex.getFirstIndexed(clause)
                     ?: numericIndex.getFirstIndexed(clause)
                     ?: atomicIndex.getFirstIndexed(clause)
@@ -248,7 +248,7 @@ internal open class FamilyArityReteNode(
                     variableIndex.getFirstIndexed(clause)
                 )
             }
-            innerFirst.isVariable -> Utils.comparePriority(
+            innerFirst.isVar -> Utils.comparePriority(
                 Utils.comparePriority(
                     numericIndex.getFirstIndexed(clause),
                     atomicIndex.getFirstIndexed(clause)
@@ -300,11 +300,11 @@ internal open class FamilyArityReteNode(
         return when {
             innerFirst.isNumber -> numericIndex
             innerFirst.isAtom -> atomicIndex
-            innerFirst.isVariable -> variableIndex
+            innerFirst.isVar -> variableIndex
             else -> compoundIndex
         }
     }
 
     private fun Clause.isGlobal(): Boolean =
-        this.head!!.nestedFirstArgument(nestingLevel + 1).isVariable
+        this.head!!.nestedFirstArgument(nestingLevel + 1).isVar
 }

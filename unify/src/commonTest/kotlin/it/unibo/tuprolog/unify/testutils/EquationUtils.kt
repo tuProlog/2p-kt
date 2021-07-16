@@ -100,7 +100,7 @@ internal object EquationUtils {
     internal val assignmentEquationsShuffled by lazy {
         assignmentEquations.mapIndexed { i, (variable, term) ->
             // if rhs Term is variable, do not shuffle! Because will _not_ be automatically swapped back like others
-            if (i % 2 == 0 || term.isVariable) {
+            if (i % 2 == 0 || term.isVar) {
                 variable to term
             } else {
                 term to variable

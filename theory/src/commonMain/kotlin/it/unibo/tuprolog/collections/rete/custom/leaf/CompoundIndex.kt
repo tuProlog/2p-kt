@@ -156,7 +156,7 @@ internal class CompoundIndex(
         this.innerClause.head!!.functorOfNestedFirstArgument(nestingLevel)
 
     private fun Clause.isGlobal(): Boolean =
-        this.head!!.nestedFirstArgument(nestingLevel).isVariable
+        this.head!!.nestedFirstArgument(nestingLevel).isVar
 
     override fun invalidateCache() {
         theoryCache.invalidate()

@@ -94,8 +94,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      * is an instance of [Var].
      * @return `true` if the current term is a variable, or `false`, otherwise
      */
-    @JsName("isVariable")
-    val isVariable: Boolean get() = false
+    @JsName("isVar")
+    val isVar: Boolean get() = false
 
     /**
      * Checks whether the current term is ground.
@@ -167,8 +167,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      * is an instance of [Integer].
      * @return `true` if the current term is an integer number, or `false`, otherwise
      */
-    @JsName("isInt")
-    val isInt: Boolean get() = false
+    @JsName("isInteger")
+    val isInteger: Boolean get() = false
 
     /**
      * Checks whether the current term is a real number.

@@ -33,7 +33,7 @@ internal class VarImpl(
 
     override val isNameWellFormed: Boolean by lazy { VAR_NAME_PATTERN.matches(name) }
 
-    override fun structurallyEquals(other: Term): Boolean = other.isVariable
+    override fun structurallyEquals(other: Term): Boolean = other.isVar
 
     override fun copyWithTags(tags: Map<String, Any>): Var = VarImpl(name, identifier, tags)
 
@@ -67,7 +67,7 @@ internal class VarImpl(
         }
 
     override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        other.isVariable && equalsToVar(other.castToVar(), useVarCompleteName)
+        other.isVar && equalsToVar(other.castToVar(), useVarCompleteName)
 
     override val hashCodeCache: Int by lazy { completeName.hashCode() }
 

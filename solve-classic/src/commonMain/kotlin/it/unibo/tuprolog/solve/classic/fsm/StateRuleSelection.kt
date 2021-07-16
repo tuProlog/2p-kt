@@ -143,7 +143,7 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
     override fun computeNext(): State {
         val currentGoal = context.currentGoal!!
         return when {
-            currentGoal.isVariable -> {
+            currentGoal.isVar -> {
                 exceptionalState(
                     InstantiationError.forGoal(
                         context = context,

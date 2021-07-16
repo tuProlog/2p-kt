@@ -21,7 +21,7 @@ data class StatePrimitiveSelection(override val context: ClassicExecutionContext
         return with(context) {
             val goal = currentGoal!!
             when {
-                goal.isVariable -> {
+                goal.isVar -> {
                     exceptionalState(
                         InstantiationError.forGoal(
                             context = context,
