@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -26,7 +26,7 @@ class EvaluationError(
     contexts: Array<ExecutionContext>,
     @JsName("errorType") val errorType: Type,
     extraData: Term? = null
-) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
+) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
     constructor(
         message: String? = null,

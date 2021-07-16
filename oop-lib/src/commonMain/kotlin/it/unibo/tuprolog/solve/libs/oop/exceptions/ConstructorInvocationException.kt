@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.libs.oop.fullName
 import kotlin.reflect.KClass
@@ -17,10 +17,10 @@ class ConstructorInvocationException(
     "There is no constructor on type ${type.fullName} which accepts " +
         "[${admissibleTypes.pretty()}] as formal arguments"
 ) {
-    override fun toPrologError(
+    override fun toLogicError(
         context: ExecutionContext,
         signature: Signature
-    ): PrologError {
+    ): LogicError {
         return ExistenceError.of(
             context,
             ExistenceError.ObjectType.OOP_CONSTRUCTOR,

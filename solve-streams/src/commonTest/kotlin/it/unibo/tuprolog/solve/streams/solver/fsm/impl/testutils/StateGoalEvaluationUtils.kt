@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.streams.solver.fsm.impl.testutils
 
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
@@ -68,7 +68,7 @@ internal object StateGoalEvaluationUtils {
         )
     }
 
-    /** Map containing primitive requests that throw [PrologError] instances */
+    /** Map containing primitive requests that throw [LogicError] instances */
     internal val primitiveRequestThrowingPrologError by lazy {
         listOf(
             createRequestForPrimitiveResponding { throw InstantiationError(context = it.context) },

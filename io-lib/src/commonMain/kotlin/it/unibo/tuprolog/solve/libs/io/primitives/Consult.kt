@@ -20,9 +20,9 @@ object Consult : UnaryPredicate.NonBacktrackable<ExecutionContext>("consult") {
             val text = url.readAsText()
             return setTheory(text)
         } catch (e: InvalidUrlException) {
-            throw e.toPrologError(context, signature, first, 0)
+            throw e.toLogicError(context, signature, first, 0)
         } catch (e: IOException) {
-            throw e.toPrologError(context)
+            throw e.toLogicError(context)
         }
     }
 }

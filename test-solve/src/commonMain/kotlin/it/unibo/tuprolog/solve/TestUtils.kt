@@ -9,7 +9,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
@@ -88,15 +88,15 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
                 reportMsg(expected, actual, "Wrong exception type")
             )
             when (val expectedEx = expected.exception) {
-                is PrologError -> {
+                is LogicError -> {
                     assertTrue(
                         reportMsg(
                             expected,
                             actual,
-                            "Exception is not PrologError"
+                            "Exception is not LogicError"
                         )
-                    ) { actual.exception is PrologError }
-                    val actualEx = actual.exception as PrologError
+                    ) { actual.exception is LogicError }
+                    val actualEx = actual.exception as LogicError
                     assertTrue(reportMsg(expected, actual, "The error structs do not match")) {
                         expectedEx.errorStruct.equals(actualEx.errorStruct, false)
                     }

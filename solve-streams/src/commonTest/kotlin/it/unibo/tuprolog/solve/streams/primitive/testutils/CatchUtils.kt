@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheory
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TestingClauseTheories.catchTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.changeQueriesTo
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.streams.stdlib.primitive.Call
 import it.unibo.tuprolog.solve.streams.stdlib.primitive.Catch
 import it.unibo.tuprolog.solve.streams.stdlib.primitive.Conjunction
@@ -61,7 +61,7 @@ internal object CatchUtils {
                     Catch.functor(callRequest.arguments.single(), "X", true).run {
                         createSolveRequest(this, callRequest.context.libraries.theory, updatedPrimitives) to
                             solutions.map {
-                                yes("X" to (it.exception as PrologError).errorStruct)
+                                yes("X" to (it.exception as LogicError).errorStruct)
                             }
                     }
                 }

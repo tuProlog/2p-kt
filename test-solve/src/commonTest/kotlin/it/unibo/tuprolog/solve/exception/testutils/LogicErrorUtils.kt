@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils.errorStructOf
 import it.unibo.tuprolog.solve.exception.error.EvaluationError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
@@ -13,11 +13,11 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.test.assertEquals
 
 /**
- * Utils singleton to help testing [PrologError]
+ * Utils singleton to help testing [LogicError]
  *
  * @author Enrico
  */
-internal object PrologErrorUtils {
+internal object LogicErrorUtils {
 
     internal const val aMessage = TuPrologRuntimeExceptionUtils.aMessage
     internal val aCause = TuPrologRuntimeExceptionUtils.aCause
@@ -44,7 +44,7 @@ internal object PrologErrorUtils {
         expectedContext: ExecutionContext,
         expectedType: Struct,
         expectedExtraData: Term?,
-        actualException: PrologError
+        actualException: LogicError
     ) {
         TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(
             expectedMessage,
@@ -56,13 +56,13 @@ internal object PrologErrorUtils {
         assertEquals(expectedExtraData, actualException.extraData)
     }
 
-    /** Asserts that [PrologError.errorStruct] returns correctly constructed structure */
-    internal fun assertErrorStructCorrect(prologError: PrologError) {
+    /** Asserts that [LogicError.errorStruct] returns correctly constructed structure */
+    internal fun assertErrorStructCorrect(logicError: LogicError) {
         assertEquals(
-            prologError.extraData
-                ?.let { errorStructOf(prologError.type, it) }
-                ?: errorStructOf(prologError.type),
-            prologError.errorStruct
+            logicError.extraData
+                ?.let { errorStructOf(logicError.type, it) }
+                ?: errorStructOf(logicError.type),
+            logicError.errorStruct
         )
     }
 }

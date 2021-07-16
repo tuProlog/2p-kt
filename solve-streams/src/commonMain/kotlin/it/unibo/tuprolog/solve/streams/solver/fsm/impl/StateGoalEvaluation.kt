@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.streams.StreamsSolver
@@ -34,10 +34,10 @@ internal class StateGoalEvaluation(
                 responses = primitive(solve) // execute primitive
             } catch (exception: HaltException) {
                 yield(stateEndHalt(exception))
-            } catch (prologError: PrologError) {
-                // if primitive throws PrologError try to solve corresponding throw/1 request
+            } catch (logicError: LogicError) {
+                // if primitive throws LogicError try to solve corresponding throw/1 request
 
-                responses = StreamsSolver.solveToResponses(solve.newThrowSolveRequest(prologError))
+                responses = StreamsSolver.solveToResponses(solve.newThrowSolveRequest(logicError))
             }
 
             var allSideEffectsSoFar = emptyList<SideEffect>()
@@ -54,7 +54,7 @@ internal class StateGoalEvaluation(
     private companion object {
 
         /** Utility function to create "throw/1" solve requests */
-        private fun Solve.Request<StreamsExecutionContext>.newThrowSolveRequest(error: PrologError) =
+        private fun Solve.Request<StreamsExecutionContext>.newThrowSolveRequest(error: LogicError) =
             newSolveRequest(
                 Struct.of(Throw.functor, error.errorStruct),
                 baseSideEffectManager = error.context.getSideEffectManager() ?: context.sideEffectManager,

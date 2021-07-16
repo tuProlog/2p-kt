@@ -26,7 +26,7 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /**
- * Base class for Standard Prolog Errors and possibly other custom Primitive errors
+ * Base class for errors which may occur during resolution, possibly because of [Primitive]s execution
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
@@ -37,7 +37,7 @@ import kotlin.jvm.JvmStatic
  * @author Giovanni
  * @author Enrico
  */
-abstract class PrologError(
+abstract class LogicError(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
@@ -63,17 +63,17 @@ abstract class PrologError(
     private fun generateErrorStruct() =
         extraData?.let { errorStructOf(type, it) } ?: errorStructOf(type)
 
-    abstract override fun updateContext(newContext: ExecutionContext, index: Int): PrologError
+    abstract override fun updateContext(newContext: ExecutionContext, index: Int): LogicError
 
-    abstract override fun updateLastContext(newContext: ExecutionContext): PrologError
+    abstract override fun updateLastContext(newContext: ExecutionContext): LogicError
 
-    abstract override fun pushContext(newContext: ExecutionContext): PrologError
+    abstract override fun pushContext(newContext: ExecutionContext): LogicError
 
     override fun toString(): String = errorStruct.toString()
 
     companion object {
 
-        internal fun <E : PrologError> message(message: String, f: (String, Atom) -> E): E =
+        internal fun <E : LogicError> message(message: String, f: (String, Atom) -> E): E =
             f(message, Atom.of(message))
 
         internal fun Term.pretty(): String =
@@ -83,9 +83,9 @@ abstract class PrologError(
             toIndicator().toString()
 
         /**
-         * Factory method for [PrologError]s
+         * Factory method for [LogicError]s
          *
-         * It creates correct subclass instance if [type] detected, otherwise defaulting to a [PrologError] instance
+         * It creates correct subclass instance if [type] detected, otherwise defaulting to a [LogicError] instance
          */
         @JvmStatic
         @JsName("of")
@@ -95,7 +95,7 @@ abstract class PrologError(
             context: ExecutionContext,
             type: Struct,
             extraData: Term? = null
-        ): PrologError = of(message, cause, arrayOf(context), type, extraData)
+        ): LogicError = of(message, cause, arrayOf(context), type, extraData)
 
         private fun customError(
             message: String? = null,
@@ -103,14 +103,14 @@ abstract class PrologError(
             contexts: Array<ExecutionContext>,
             type: Struct,
             extraData: Term? = null
-        ): PrologError = object : PrologError(message ?: type.pretty(), cause, contexts, type, extraData) {
-            override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+        ): LogicError = object : LogicError(message ?: type.pretty(), cause, contexts, type, extraData) {
+            override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
                 of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
 
-            override fun updateLastContext(newContext: ExecutionContext): PrologError =
+            override fun updateLastContext(newContext: ExecutionContext): LogicError =
                 updateContext(newContext, this.contexts.lastIndex)
 
-            override fun pushContext(newContext: ExecutionContext): PrologError =
+            override fun pushContext(newContext: ExecutionContext): LogicError =
                 of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
         }
 
@@ -122,7 +122,7 @@ abstract class PrologError(
             contexts: Array<ExecutionContext>,
             type: Struct,
             extraData: Term? = null
-        ): PrologError = with(type) {
+        ): LogicError = with(type) {
             val actualMessage = message ?: type.pretty()
             try {
                 when {

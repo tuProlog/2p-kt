@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.classic.stdlib.rule.Catch
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.MessageError
 import it.unibo.tuprolog.solve.exception.error.SystemError
@@ -21,7 +21,7 @@ data class StateException(
     private fun Struct.isCatch(): Boolean =
         arity == 3 && functor == Catch.functor
 
-    private fun PrologError.getExceptionContent(): Term {
+    private fun LogicError.getExceptionContent(): Term {
         return when (this) {
             is MessageError -> content
             else -> errorStruct
@@ -46,7 +46,7 @@ data class StateException(
             context.parent!!.copy(step = nextStep())
         )
 
-    private fun handleStruct(catchGoal: Struct, error: PrologError): State =
+    private fun handleStruct(catchGoal: Struct, error: LogicError): State =
         when {
             catchGoal.isCatch() -> {
                 val catcher = catchGoal[1] mguWith error.getExceptionContent()
@@ -80,7 +80,7 @@ data class StateException(
 
     override fun computeNext(): State {
         return when (exception) {
-            is PrologError -> {
+            is LogicError -> {
                 val catchGoal = context.currentGoal!!
                 when {
                     catchGoal.isStruct -> handleStruct(catchGoal.castToStruct(), exception)
