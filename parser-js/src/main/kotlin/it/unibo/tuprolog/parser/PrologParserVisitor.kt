@@ -20,5 +20,5 @@ open external class PrologParserVisitor<T> {
     open fun visitVariable(ctx: VariableContext): T
     open fun visitStructure(ctx: StructureContext): T
     open fun visitList(ctx: ListContext): T
-    open fun visitSet(ctx: SetContext): T
+    open fun visitBlock(ctx: BlockContext): T
 }
