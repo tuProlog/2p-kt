@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
@@ -25,7 +25,7 @@ object ClassicSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ): Solver = ClassicSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
@@ -36,6 +36,6 @@ object ClassicSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ): MutableSolver = MutableClassicSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 }

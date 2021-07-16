@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.classic.fsm.State
 import it.unibo.tuprolog.solve.classic.fsm.StateInit
 import it.unibo.tuprolog.solve.currentTimeInstant
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.impl.AbstractSolver
@@ -48,7 +48,7 @@ abstract class AbstractClassicSolver(
         stdIn: InputChannel<String> = InputChannel.stdIn(),
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
-        warnings: OutputChannel<PrologWarning> = OutputChannel.warn(),
+        warnings: OutputChannel<Warning> = OutputChannel.warn(),
         trustKb: Boolean = false
     ) : this(
         libraries,
@@ -115,7 +115,7 @@ abstract class AbstractClassicSolver(
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ): AbstractClassicSolver
 
     abstract override fun clone(): AbstractClassicSolver

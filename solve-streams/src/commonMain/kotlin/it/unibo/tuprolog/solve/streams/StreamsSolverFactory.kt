@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
@@ -26,7 +26,7 @@ object StreamsSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ): Solver =
         StreamsSolver(
             libraries,
@@ -45,7 +45,7 @@ object StreamsSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ): MutableSolver {
         TODO("Not yet implemented")
     }

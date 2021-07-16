@@ -7,7 +7,7 @@ import kotlin.js.JsName
  *
  * @author Enrico
  */
-interface ToTermConvertible {
+interface TermConvertible {
 
     /** Converts this instance to a Prolog [Term] */
     @JsName("toTerm")

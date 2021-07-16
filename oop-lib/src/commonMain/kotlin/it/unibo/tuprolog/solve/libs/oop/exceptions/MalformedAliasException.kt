@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.TermFormatter.Companion.prettyExpressions
 import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.DEALIASING_EXPRESSION
 import it.unibo.tuprolog.solve.libs.oop.primitives.DEALIASING_TEMPLATE
@@ -22,10 +22,10 @@ class MalformedAliasException(
     }"
 ) {
 
-    override fun toPrologError(
+    override fun toLogicError(
         context: ExecutionContext,
         signature: Signature
-    ): PrologError {
+    ): LogicError {
         return TypeError.of(
             context,
             DEALIASING_EXPRESSION,

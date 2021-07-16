@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.libs.oop.name
 import kotlin.jvm.JvmOverloads
 import kotlin.reflect.KClass
@@ -16,10 +16,7 @@ abstract class OopException : TuPrologException {
 
     constructor(cause: Throwable?) : super(cause)
 
-    abstract fun toPrologError(
-        context: ExecutionContext,
-        signature: Signature
-    ): PrologError
+    abstract fun toLogicError(context: ExecutionContext, signature: Signature): LogicError
 
     protected abstract val culprit: Term
 

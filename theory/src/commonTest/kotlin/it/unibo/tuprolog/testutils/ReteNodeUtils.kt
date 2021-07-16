@@ -42,7 +42,7 @@ internal object ReteNodeUtils {
         Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
         Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
         Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
-        Rule.of(Struct.of("a", Atom.of("a")), Empty.set()),
+        Rule.of(Struct.of("a", Atom.of("a")), Empty.block()),
         Rule.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
         Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
         Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous())
@@ -93,7 +93,7 @@ internal object ReteNodeUtils {
             Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
             Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
             Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
-            Directive.of(Struct.of("a", Atom.of("a")), Empty.set()),
+            Directive.of(Struct.of("a", Atom.of("a")), Empty.block()),
             Directive.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
             Directive.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
             Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous())

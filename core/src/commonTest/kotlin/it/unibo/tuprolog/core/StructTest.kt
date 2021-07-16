@@ -79,10 +79,10 @@ internal class StructTest {
     @Test
     fun structOfCreatesSetIfNeeded() {
         val setStructs = StructUtils.mixedStructs.filter { (functor, args) ->
-            args.size == 1 && Set.FUNCTOR == functor
+            args.size == 1 && Block.FUNCTOR == functor
         }
 
-        val correctInstances = setStructs.map { (_, args) -> Set.of(args) }
+        val correctInstances = setStructs.map { (_, args) -> Block.of(args) }
         val toBeTested = setStructs.map { (functor, args) -> Struct.of(functor, args) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)

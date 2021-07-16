@@ -1,16 +1,16 @@
 package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
@@ -37,9 +37,9 @@ object TermFormatterUtils {
         Var.of("A").let { List.of(it, it, it) } to "[A, A, A]",
         List.from(items = listOf(Var.of("A"), Var.of("A"), Var.of("A")), last = Var.of("A")) to "[A, A1, A2 | A3]",
         Var.of("A").let { List.from(items = listOf(it, it, it), last = it) } to "[A, A, A | A]",
-        Set.empty() to EmptySet.FUNCTOR,
-        Set.of(Var.of("A"), Var.of("A"), Var.of("A")) to "{A, A1, A2}",
-        Var.of("A").let { Set.of(it, it, it) } to "{A, A, A}"
+        Block.empty() to EmptyBlock.FUNCTOR,
+        Block.of(Var.of("A"), Var.of("A"), Var.of("A")) to "{A, A1, A2}",
+        Var.of("A").let { Block.of(it, it, it) } to "{A, A, A}"
     )
 
     val expectedFormatsWithPrettyVariables: Map<Term, String> = common + mapOf(
@@ -64,7 +64,7 @@ object TermFormatterUtils {
         Struct.of("f", Tuple.of(Var.of("A"), Var.of("B")), Var.of("A")) to "f((A, B), A1)",
         Struct.of("f", Var.of("A"), Tuple.of(Var.of("B"), Var.of("A"))) to "f(A, (B, A1))",
         Tuple.of(Tuple.of(Var.of("A"), Var.of("B")), Tuple.of(Var.of("A"), Var.of("B"))) to "(A, B), A1, B1",
-        Set.of(Tuple.of(Var.of("A"), Var.of("B")), Tuple.of(Var.of("A"), Var.of("B"))) to "{(A, B), A1, B1}",
+        Block.of(Tuple.of(Var.of("A"), Var.of("B")), Tuple.of(Var.of("A"), Var.of("B"))) to "{(A, B), A1, B1}",
         List.of(Tuple.of(Var.of("A"), Var.of("B")), Tuple.of(Var.of("A"), Var.of("B"))) to "[(A, B), (A1, B1)]",
         List.of(Tuple.of(Var.of("A"), Var.of("B")), Var.of("A"), Var.of("B")) to "[(A, B), A1, B1]",
         List.from(

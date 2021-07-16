@@ -7,12 +7,12 @@ import it.unibo.tuprolog.solve.channel.OutputStore.Companion.STDERR
 import it.unibo.tuprolog.solve.channel.OutputStore.Companion.STDOUT
 import it.unibo.tuprolog.solve.channel.impl.ChannelStoreUtils.ensureAliasRefersToChannel
 import it.unibo.tuprolog.solve.channel.impl.ChannelStoreUtils.setCurrent
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 
 internal class OutputStoreImpl(
     override val stdOut: OutputChannel<String>,
     override val stdErr: OutputChannel<String>,
-    override val warnings: OutputChannel<PrologWarning> = OutputChannel.warn(),
+    override val warnings: OutputChannel<Warning> = OutputChannel.warn(),
     outputChannels: Map<String, OutputChannel<String>> = emptyMap()
 ) : AbstractChannelStore<String, OutputChannel<String>, OutputStore>(checkChannels(stdOut, stdErr, outputChannels)),
     OutputStore {

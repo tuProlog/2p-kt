@@ -245,7 +245,7 @@ internal sealed class SubstitutionImpl : Substitution {
             fun Var.trimVariableChain(mappings: Map<Var, Term>): Term {
                 val alreadyUsedKeys = mutableSetOf(this) // to prevent infinite loop
                 var current: Term = mappings.getValue(this)
-                while (current.isVariable && current in mappings && current !in alreadyUsedKeys) {
+                while (current.isVar && current in mappings && current !in alreadyUsedKeys) {
                     current.castToVar().let {
                         alreadyUsedKeys += it
                         current = mappings.getValue(it)
@@ -258,7 +258,7 @@ internal sealed class SubstitutionImpl : Substitution {
                 size < 2 -> this
                 else ->
                     this.mapValues { (varKey, term) ->
-                        term.takeIf { !it.isVariable } ?: varKey.trimVariableChain(this)
+                        term.takeIf { !it.isVar } ?: varKey.trimVariableChain(this)
                     }
             }
         }

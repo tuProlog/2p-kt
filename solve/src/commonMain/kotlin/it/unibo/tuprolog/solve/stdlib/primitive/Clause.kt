@@ -20,7 +20,7 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(0)
         ensuringArgumentIsStruct(0)
-        if (!second.isVariable) {
+        if (!second.isVar) {
             ensuringArgumentIsCallable(1)
         }
         val head = first.castToStruct()

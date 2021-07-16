@@ -11,23 +11,23 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
-import it.unibo.tuprolog.ui.gui.PrologIDEModel.State
+import it.unibo.tuprolog.ui.gui.TuPrologIDEModel.State
 import it.unibo.tuprolog.utils.Cached
 import org.reactfx.EventSource
 import java.io.File
 import java.util.EnumSet
 import java.util.concurrent.ExecutorService
 
-internal class PrologIDEModelImpl(
+internal class TuPrologIDEModelImpl(
     override val executor: ExecutorService,
     var customizer: ((MutableSolver) -> Unit)? = {}
-) : PrologIDEModel {
+) : TuPrologIDEModel {
 
     private data class FileContent(var text: String, var changed: Boolean = true) {
         fun text(text: String) {
@@ -327,7 +327,7 @@ internal class PrologIDEModelImpl(
 
     override val onStderrPrinted: EventSource<String> = EventSource()
 
-    override val onWarning: EventSource<PrologWarning> = EventSource()
+    override val onWarning: EventSource<Warning> = EventSource()
 
     override val onError: EventSource<TuPrologException> = EventSource()
 }

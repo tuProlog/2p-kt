@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.EmptySet
+import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
@@ -10,16 +10,16 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Test class for [EmptySetImpl] and [EmptySet]
+ * Test class for [EmptyBlockImpl] and [EmptyBlock]
  *
  * @author Enrico
  */
-internal class EmptySetImplTest {
+internal class EmptyBlockImplTest {
 
-    private val testedObj = EmptySetImpl()
+    private val testedObj = EmptyBlockImpl()
 
     @Test
-    fun emptySetFunctor() {
+    fun emptyBlockFunctor() {
         assertEquals("{}", testedObj.functor)
     }
 
@@ -30,7 +30,7 @@ internal class EmptySetImplTest {
 
     @Test
     fun testIsPropertiesAndTypes() {
-        TermTypeAssertionUtils.assertIsEmptySet(testedObj)
+        TermTypeAssertionUtils.assertIsEmptyBlock(testedObj)
     }
 
     @Test
@@ -44,12 +44,12 @@ internal class EmptySetImplTest {
     }
 
     @Test
-    fun emptySetFreshCopyShouldReturnTheInstanceItself() {
+    fun emptyBlockFreshCopyShouldReturnTheInstanceItself() {
         ConstantUtils.assertFreshCopyIsItself(testedObj)
     }
 
     @Test
-    fun emptySetFreshCopyWithScopeShouldReturnTheInstanceItself() {
+    fun emptyBlockFreshCopyWithScopeShouldReturnTheInstanceItself() {
         ConstantUtils.assertFreshCopyWithScopeIsItself(testedObj)
     }
 }

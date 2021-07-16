@@ -10,17 +10,17 @@ import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 /**
- * Test class for [TuPrologRuntimeException]
+ * Test class for [ResolutionException]
  *
  * @author Enrico
  */
-internal class TuPrologRuntimeExceptionTest {
+internal class ResolutionExceptionTest {
 
-    private val exception = TuPrologRuntimeException(aMessage, aCause, aContext)
+    private val exception = ResolutionException(aMessage, aCause, aContext)
 
     @Test
     fun constructorInsertsMessageIfOnlyCauseSpecified() {
-        val exception = TuPrologRuntimeException(aCause, aContext)
+        val exception = ResolutionException(aCause, aContext)
 
         assertEquals(aCause.toString(), exception.message)
     }

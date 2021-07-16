@@ -269,7 +269,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = current_prolog_flag("max_arity", A) and (
+            val query = current_flag("max_arity", A) and (
                 (X `is` (A + 1)) and functor(T, "foo", X)
                 )
             val solutions = solver.solve(query, mediumDuration).toList()

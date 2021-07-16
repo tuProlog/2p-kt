@@ -3,10 +3,10 @@ package it.unibo.tuprolog.solve.exception.error
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 
 /**
- * The [MessageError] is used whenever no other [PrologError] instance is suitable for representing the error
+ * The [MessageError] is used whenever no other [LogicError] instance is suitable for representing the error
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
@@ -20,7 +20,7 @@ class MessageError internal constructor( // TODO: 16/01/2020 test this class
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
     extraData: Term? = null
-) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
+) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
     constructor(
         message: String? = null,

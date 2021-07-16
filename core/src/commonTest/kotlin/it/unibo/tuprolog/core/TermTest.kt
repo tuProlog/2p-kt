@@ -77,12 +77,12 @@ class TermTest {
         MyStruct("f", listOf(X)),
         Struct.of("g", X),
         List.of(X),
-        Set.of(X),
+        Block.of(X),
         Tuple.of(X, X),
         Fact.of(MyStruct("f", listOf(X))),
         Fact.of(Struct.of("g", X)),
         Fact.of(List.of(X)),
-        Fact.of(Set.of(X)),
+        Fact.of(Block.of(X)),
         Fact.of(Tuple.of(X, X))
     )
 
@@ -90,12 +90,12 @@ class TermTest {
         MyStruct("f", listOf(Integer.ONE)),
         Struct.of("g", Integer.ONE),
         List.of(Integer.ONE),
-        Set.of(Integer.ONE),
+        Block.of(Integer.ONE),
         Tuple.of(Integer.ONE, Integer.ONE),
         Fact.of(MyStruct("f", listOf(Integer.ONE))),
         Fact.of(Struct.of("g", Integer.ONE)),
         Fact.of(List.of(Integer.ONE)),
-        Fact.of(Set.of(Integer.ONE)),
+        Fact.of(Block.of(Integer.ONE)),
         Fact.of(Tuple.of(Integer.ONE, Integer.ONE))
     )
 

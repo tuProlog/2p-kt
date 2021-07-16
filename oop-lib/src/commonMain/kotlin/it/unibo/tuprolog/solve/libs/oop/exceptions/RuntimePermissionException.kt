@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.libs.oop.fullName
 import it.unibo.tuprolog.solve.libs.oop.pretty
@@ -24,10 +24,10 @@ class RuntimePermissionException(
     cause
 ) {
 
-    override fun toPrologError(
+    override fun toLogicError(
         context: ExecutionContext,
         signature: Signature
-    ): PrologError {
+    ): LogicError {
         return PermissionError.of(
             context,
             signature,

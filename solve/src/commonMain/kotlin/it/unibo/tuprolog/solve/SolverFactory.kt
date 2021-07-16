@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
@@ -43,7 +43,7 @@ interface SolverFactory {
         get() = OutputChannel.stdErr()
 
     @JsName("defaultWarningsChannel")
-    val defaultWarningsChannel: OutputChannel<PrologWarning>
+    val defaultWarningsChannel: OutputChannel<Warning>
         get() = OutputChannel.warn()
 
     @JsName("solver")
@@ -55,7 +55,7 @@ interface SolverFactory {
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
-        warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
+        warnings: OutputChannel<Warning> = defaultWarningsChannel
     ): Solver
 
     @JsName("solverOfLibrariesAndKBs")
@@ -153,7 +153,7 @@ interface SolverFactory {
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
-        warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
+        warnings: OutputChannel<Warning> = defaultWarningsChannel
     ): Solver = solverOf(
         otherLibraries + defaultBuiltins,
         flags,
@@ -245,7 +245,7 @@ interface SolverFactory {
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
-        warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
+        warnings: OutputChannel<Warning> = defaultWarningsChannel
     ): MutableSolver
 
     @JsName("mutableSolverOfLibrariesAndKBs")
@@ -343,7 +343,7 @@ interface SolverFactory {
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
-        warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
+        warnings: OutputChannel<Warning> = defaultWarningsChannel
     ): MutableSolver =
         mutableSolverOf(otherLibraries + defaultBuiltins, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 

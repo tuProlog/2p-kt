@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Empty
@@ -20,7 +21,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import it.unibo.tuprolog.core.Set.Companion as LogicSet
 
 /**
  * Test class for [StructImpl] and [Struct]
@@ -205,24 +205,24 @@ internal class StructImplTest {
     }
 
     @Test
-    fun setDetected() {
-        val isSet: (Struct) -> Boolean =
+    fun blockDetected() {
+        val isBlock: (Struct) -> Boolean =
             { aStruct ->
-                aStruct.functor == LogicSet.FUNCTOR && aStruct.arity == 1 ||
-                    aStruct.functor == Empty.EMPTY_SET_FUNCTOR && aStruct.arity == 0
+                aStruct.functor == Block.FUNCTOR && aStruct.arity == 1 ||
+                    aStruct.functor == Empty.EMPTY_BLOCK_FUNCTOR && aStruct.arity == 0
             }
 
-        mixedStructInstances.filter(isSet).forEach { assertTrue { it.isSet } }
-        mixedStructInstances.filterNot(isSet).forEach { assertFalse { it.isSet } }
+        mixedStructInstances.filter(isBlock).forEach { assertTrue { it.isBlock } }
+        mixedStructInstances.filterNot(isBlock).forEach { assertFalse { it.isBlock } }
     }
 
     @Test
-    fun emptySetDetected() {
-        val isEmptySet: (Struct) -> Boolean =
-            { aStruct -> aStruct.functor == Empty.EMPTY_SET_FUNCTOR && aStruct.arity == 0 }
+    fun emptyBlockDetected() {
+        val isEmptyBlock: (Struct) -> Boolean =
+            { aStruct -> aStruct.functor == Empty.EMPTY_BLOCK_FUNCTOR && aStruct.arity == 0 }
 
-        mixedStructInstances.filter(isEmptySet).forEach { assertTrue { it.isEmptySet } }
-        mixedStructInstances.filterNot(isEmptySet).forEach { assertFalse { it.isEmptySet } }
+        mixedStructInstances.filter(isEmptyBlock).forEach { assertTrue { it.isEmptyBlock } }
+        mixedStructInstances.filterNot(isEmptyBlock).forEach { assertFalse { it.isEmptyBlock } }
     }
 
     @Test

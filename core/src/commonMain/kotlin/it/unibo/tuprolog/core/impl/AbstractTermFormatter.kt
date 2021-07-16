@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Cons
@@ -11,7 +12,6 @@ import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
@@ -44,7 +44,7 @@ internal abstract class AbstractTermFormatter(
 
     private fun isNumberedVar(term: Struct): Boolean =
         term.functor == "\$VAR" && term.arity == 1 && term[0].let {
-            it.isInt && it.castToInteger().value >= BigInteger.ZERO
+            it.isInteger && it.castToInteger().value >= BigInteger.ZERO
         }
 
     private fun numberedVar(integer: Integer): String {
@@ -93,7 +93,7 @@ internal abstract class AbstractTermFormatter(
             }
         }
 
-    override fun visitSet(term: Set): String =
+    override fun visitBlock(term: Block): String =
         visitStructImpl(term) {
             term.unfoldedSequence.joinToString(", ", "{", "}") { it.accept(childFormatter()) }
         }

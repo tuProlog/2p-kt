@@ -3,12 +3,12 @@ package it.unibo.tuprolog.solve.exception.testutils
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import kotlin.test.assertNotEquals
 import kotlin.test.assertSame
 
 /**
- * Utils singleton to help testing [TuPrologRuntimeException]
+ * Utils singleton to help testing [ResolutionException]
  *
  * @author Enrico
  */
@@ -31,7 +31,7 @@ internal object TuPrologRuntimeExceptionUtils {
         expectedMessage: String?,
         expectedCause: Throwable?,
         expectedContext: ExecutionContext,
-        actualException: TuPrologRuntimeException
+        actualException: ResolutionException
     ) {
         assertSame(expectedMessage, actualException.message)
         assertSame(expectedCause, actualException.cause)

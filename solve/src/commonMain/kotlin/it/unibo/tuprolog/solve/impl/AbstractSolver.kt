@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.directives.ClausePartition
 import it.unibo.tuprolog.solve.directives.partition
 import it.unibo.tuprolog.solve.directives.plus
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -182,7 +182,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ): AbstractSolver<E>
 
     abstract override fun clone(): AbstractSolver<E>

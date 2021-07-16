@@ -74,8 +74,8 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
     override fun visitStructure(ctx: PrologParser.StructureContext): Term {
         if (ctx.isList) {
             return scope.listOf()
-        } else if (ctx.isSet) {
-            return scope.setOf()
+        } else if (ctx.isBlock) {
+            return scope.blockOf()
         }
         return if (ctx.arity == 0) {
             scope.atomOf(ctx.functor.text)
@@ -96,11 +96,11 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
         }
     }
 
-    override fun visitSet(ctx: PrologParser.SetContext): Term {
+    override fun visitBlock(ctx: PrologParser.BlockContext): Term {
         return if (ctx.length == 1) {
-            scope.setOf(ctx.items[0].accept(this))
+            scope.blockOf(ctx.items[0].accept(this))
         } else {
-            scope.setOf(ctx.items.map(this::visitExpression))
+            scope.blockOf(ctx.items.map(this::visitExpression))
         }
     }
 

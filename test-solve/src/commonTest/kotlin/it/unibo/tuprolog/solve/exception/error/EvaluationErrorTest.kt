@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.exception.error
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils.assertErrorStructCorrect
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.assertErrorStructCorrect
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -15,7 +15,7 @@ internal class EvaluationErrorTest {
 
     private val testErrorType = EvaluationError.Type.FLOAT_OVERFLOW
     private val aCallableTypeError = EvaluationError(
-        context = PrologErrorUtils.aContext,
+        context = LogicErrorUtils.aContext,
         errorType = testErrorType
     )
     private val correctTypeFunctor = "evaluation_error"

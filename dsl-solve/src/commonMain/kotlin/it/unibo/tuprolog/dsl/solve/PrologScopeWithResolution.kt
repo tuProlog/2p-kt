@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
@@ -29,7 +29,7 @@ interface PrologScopeWithResolution : PrologScopeWithTheories, MutableSolver {
         stdIn: InputChannel<String> = solverFactory.defaultInputChannel,
         stdOut: OutputChannel<String> = solverFactory.defaultOutputChannel,
         stdErr: OutputChannel<String> = solverFactory.defaultErrorChannel,
-        warnings: OutputChannel<PrologWarning> = solverFactory.defaultWarningsChannel
+        warnings: OutputChannel<Warning> = solverFactory.defaultWarningsChannel
     ): MutableSolver = solverFactory.mutableSolverWithDefaultBuiltins(
         otherLibraries,
         flags,

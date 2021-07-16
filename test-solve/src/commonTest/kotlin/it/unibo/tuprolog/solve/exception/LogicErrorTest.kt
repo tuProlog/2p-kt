@@ -1,41 +1,41 @@
 package it.unibo.tuprolog.solve.exception
 
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils.aCause
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils.aContext
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils.aDifferentContext
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils.aMessage
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils.aType
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils.assertEqualPrologErrorData
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils.assertErrorStructCorrect
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils.someExtraData
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.aCause
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.aContext
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.aDifferentContext
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.aMessage
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.aType
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.assertEqualPrologErrorData
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.assertErrorStructCorrect
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.someExtraData
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
- * Test class for [PrologError]
+ * Test class for [LogicError]
  *
  * @author Enrico
  */
-internal class PrologErrorTest {
+internal class LogicErrorTest {
 
-    /** A non specific PrologError instance */
-    private val underTestPrologError = object : PrologError(aMessage, aCause, aContext, aType, someExtraData) {
-        override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+    /** A non specific LogicError instance */
+    private val underTestPrologError = object : LogicError(aMessage, aCause, aContext, aType, someExtraData) {
+        override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
             of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
 
-        override fun updateLastContext(newContext: ExecutionContext): PrologError =
+        override fun updateLastContext(newContext: ExecutionContext): LogicError =
             updateContext(newContext, contexts.lastIndex)
 
-        override fun pushContext(newContext: ExecutionContext): PrologError =
+        override fun pushContext(newContext: ExecutionContext): LogicError =
             of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
     }
 
     /** Specific prolog error instances */
-    private val prologErrorTypeToInstanceMap = PrologErrorUtils.recognizedSubTypes.map { (typeParam, _) ->
-        typeParam to PrologError.of(aMessage, aCause, aContext, typeParam, someExtraData)
+    private val prologErrorTypeToInstanceMap = LogicErrorUtils.recognizedSubTypes.map { (typeParam, _) ->
+        typeParam to LogicError.of(aMessage, aCause, aContext, typeParam, someExtraData)
     }
 
     @Test
@@ -45,14 +45,14 @@ internal class PrologErrorTest {
 
     @Test
     fun defaultsAreNull() {
-        val toBeTested = object : PrologError(context = aContext, type = aType) {
-            override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+        val toBeTested = object : LogicError(context = aContext, type = aType) {
+            override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
                 of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
 
-            override fun updateLastContext(newContext: ExecutionContext): PrologError =
+            override fun updateLastContext(newContext: ExecutionContext): LogicError =
                 updateContext(newContext, contexts.lastIndex)
 
-            override fun pushContext(newContext: ExecutionContext): PrologError =
+            override fun pushContext(newContext: ExecutionContext): LogicError =
                 of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
         }
         assertNull(toBeTested.message)
@@ -62,14 +62,14 @@ internal class PrologErrorTest {
 
     @Test
     fun constructorInsertsMessageIfOnlyCauseSpecified() {
-        val prologError = object : PrologError(aCause, aContext, aType, someExtraData) {
-            override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+        val prologError = object : LogicError(aCause, aContext, aType, someExtraData) {
+            override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
                 of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
 
-            override fun updateLastContext(newContext: ExecutionContext): PrologError =
+            override fun updateLastContext(newContext: ExecutionContext): LogicError =
                 updateContext(newContext, contexts.lastIndex)
 
-            override fun pushContext(newContext: ExecutionContext): PrologError =
+            override fun pushContext(newContext: ExecutionContext): LogicError =
                 of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
         }
 
@@ -80,14 +80,14 @@ internal class PrologErrorTest {
     fun errorIsComputedCorrectly() {
         assertErrorStructCorrect(underTestPrologError)
         assertErrorStructCorrect(
-            object : PrologError(context = aContext, type = aType) {
-                override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+            object : LogicError(context = aContext, type = aType) {
+                override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
                     of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
 
-                override fun updateLastContext(newContext: ExecutionContext): PrologError =
+                override fun updateLastContext(newContext: ExecutionContext): LogicError =
                     updateContext(newContext, contexts.lastIndex)
 
-                override fun pushContext(newContext: ExecutionContext): PrologError =
+                override fun pushContext(newContext: ExecutionContext): LogicError =
                     of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
             }
         )
@@ -106,8 +106,8 @@ internal class PrologErrorTest {
 
     @Test
     fun ofCreatesCorrectSubInstanceIfDetected() {
-        PrologErrorUtils.recognizedSubTypes.forEach { (typeParam, expectedType) ->
-            val actualError = PrologError.of(context = aContext, type = typeParam)
+        LogicErrorUtils.recognizedSubTypes.forEach { (typeParam, expectedType) ->
+            val actualError = LogicError.of(context = aContext, type = typeParam)
             assertEquals(expectedType, actualError::class)
         }
     }

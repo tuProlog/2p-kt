@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.EmptySet
-import it.unibo.tuprolog.core.Set
+import it.unibo.tuprolog.core.Block
+import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Tuple
 
-internal class SetUnfolder(set: Set) : Iterator<Term> {
+internal class BlockUnfolder(block: Block) : Iterator<Term> {
 
-    private var current: Term? = set
+    private var current: Term? = block
 
     private var setUnfolded = false
 
@@ -26,13 +26,13 @@ internal class SetUnfolder(set: Set) : Iterator<Term> {
         }
     }
 
-    private val setUnfolderVisitor = object : TermVisitor<Term> {
-        override fun visitEmptySet(term: EmptySet): Term {
+    private val blockUnfolderVisitor = object : TermVisitor<Term> {
+        override fun visitEmptyBlock(term: EmptyBlock): Term {
             current = null
             return term
         }
 
-        override fun visitSet(term: Set): Term {
+        override fun visitBlock(term: Block): Term {
             current = term[0]
             setUnfolded = true
             return term
@@ -45,5 +45,5 @@ internal class SetUnfolder(set: Set) : Iterator<Term> {
     }
 
     override fun next(): Term =
-        current?.accept(if (setUnfolded) tupleUnfolderVisitor else setUnfolderVisitor) ?: throw NoSuchElementException()
+        current?.accept(if (setUnfolded) tupleUnfolderVisitor else blockUnfolderVisitor) ?: throw NoSuchElementException()
 }

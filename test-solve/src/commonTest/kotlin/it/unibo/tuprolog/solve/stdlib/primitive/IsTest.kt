@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ArithmeticUtils.isQueryToResult
 import kotlin.reflect.KClass
 import kotlin.test.Test
@@ -40,7 +40,7 @@ internal class IsTest {
                     try {
                         Is.wrappedImplementation(input)
                         fail("Expected: $expectedResult but no exception was thrown")
-                    } catch (e: TuPrologRuntimeException) {
+                    } catch (e: ResolutionException) {
                         assertEquals(expectedResult as KClass<*>, e::class)
                     }
             }

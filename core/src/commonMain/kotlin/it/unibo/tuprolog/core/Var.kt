@@ -7,7 +7,7 @@ import kotlin.jvm.JvmStatic
 
 interface Var : Term {
 
-    override val isVariable: Boolean
+    override val isVar: Boolean
         get() = true
 
     override val variables: Sequence<Var>

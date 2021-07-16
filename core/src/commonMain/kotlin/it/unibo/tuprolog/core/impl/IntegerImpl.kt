@@ -32,13 +32,13 @@ internal class IntegerImpl(
         value.compareTo(other.value) == 0
 
     override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        other.isInt && equalsToInteger(other.castToInteger())
+        other.isInteger && equalsToInteger(other.castToInteger())
 
     override val hashCodeCache: Int by lazy { value.hashCode() }
 
     override fun compareValueTo(other: Numeric): Int =
         when {
-            other.isInt -> value.compareTo(other.castToInteger().value)
+            other.isInteger -> value.compareTo(other.castToInteger().value)
             else -> super<NumericImpl>.compareValueTo(other)
         }
 

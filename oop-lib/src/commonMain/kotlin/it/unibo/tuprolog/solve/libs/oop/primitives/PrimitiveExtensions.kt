@@ -122,7 +122,7 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
     try {
         return action()
     } catch (e: OopException) {
-        throw e.toPrologError(context, signature)
+        throw e.toLogicError(context, signature)
     } catch (e: Throwable) {
         throw SystemError.forUncaughtException(context, e)
     }

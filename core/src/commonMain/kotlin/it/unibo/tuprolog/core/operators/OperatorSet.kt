@@ -3,7 +3,7 @@ package it.unibo.tuprolog.core.operators
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
 
-/** Class representing a Set of [Operator]s */
+/** Class representing a [Set] of [Operator]s */
 class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.toHashSet() {
 
     /** Needed to support equals and hashCode */

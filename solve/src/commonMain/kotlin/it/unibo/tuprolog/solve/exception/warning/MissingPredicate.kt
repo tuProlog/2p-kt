@@ -2,14 +2,14 @@ package it.unibo.tuprolog.solve.exception.warning
 
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import kotlin.js.JsName
 
 class MissingPredicate(
     cause: Throwable?,
     contexts: Array<ExecutionContext>,
     @JsName("signature") val signature: Signature
-) : PrologWarning("No such a predicate: ${signature.toIndicator()}", cause, contexts) {
+) : Warning("No such a predicate: ${signature.toIndicator()}", cause, contexts) {
 
     constructor(
         cause: Throwable?,

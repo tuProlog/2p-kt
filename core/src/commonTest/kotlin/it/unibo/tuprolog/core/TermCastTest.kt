@@ -14,9 +14,9 @@ class TermCastTest {
         Struct.of("f", Var.of("X")),
         Var.of("X"),
         EmptyList(),
-        EmptySet(),
+        EmptyBlock(),
         List.of(Integer.ZERO, Real.ZERO),
-        Set.of(Integer.ZERO, Real.ZERO),
+        Block.of(Integer.ZERO, Real.ZERO),
         Tuple.of(Integer.ZERO, Real.ZERO),
         Indicator.of("a", 2),
         Directive.of(Atom.of("b")),
@@ -44,7 +44,7 @@ class TermCastTest {
             assertNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -52,7 +52,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -67,7 +67,7 @@ class TermCastTest {
             assertNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -75,7 +75,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -90,7 +90,7 @@ class TermCastTest {
             assertNotNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -98,7 +98,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -113,7 +113,7 @@ class TermCastTest {
             assertNotNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -121,7 +121,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNotNull(term.asTruth())
@@ -136,7 +136,7 @@ class TermCastTest {
             assertNotNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNotNull(term.asInteger())
@@ -144,7 +144,7 @@ class TermCastTest {
             assertNotNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -159,7 +159,7 @@ class TermCastTest {
             assertNotNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -167,7 +167,7 @@ class TermCastTest {
             assertNotNull(term.asNumeric())
             assertNotNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -175,14 +175,14 @@ class TermCastTest {
             assertNull(term.asVar())
         }
 
-        override fun visitSet(term: Set) {
+        override fun visitBlock(term: Block) {
             assertNull(term.asAtom())
             assertNull(term.asClause())
             assertNull(term.asCons())
             assertNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -190,7 +190,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNotNull(term.asSet())
+            assertNotNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -198,14 +198,14 @@ class TermCastTest {
             assertNull(term.asVar())
         }
 
-        override fun visitEmptySet(term: EmptySet) {
+        override fun visitEmptyBlock(term: EmptyBlock) {
             assertNotNull(term.asAtom())
             assertNull(term.asClause())
             assertNull(term.asCons())
             assertNotNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNotNull(term.asEmptySet())
+            assertNotNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -213,7 +213,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNotNull(term.asSet())
+            assertNotNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -228,7 +228,7 @@ class TermCastTest {
             assertNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -236,7 +236,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -251,7 +251,7 @@ class TermCastTest {
             assertNotNull(term.asConstant())
             assertNull(term.asDirective())
             assertNotNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -259,7 +259,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -274,7 +274,7 @@ class TermCastTest {
             assertNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -282,7 +282,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -297,7 +297,7 @@ class TermCastTest {
             assertNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNotNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -305,7 +305,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -320,7 +320,7 @@ class TermCastTest {
             assertNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -328,7 +328,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNotNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -343,7 +343,7 @@ class TermCastTest {
             assertNull(term.asConstant())
             assertNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNotNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -351,7 +351,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNotNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -366,7 +366,7 @@ class TermCastTest {
             assertNull(term.asConstant())
             assertNotNull(term.asDirective())
             assertNull(term.asEmptyList())
-            assertNull(term.asEmptySet())
+            assertNull(term.asEmptyBlock())
             assertNull(term.asFact())
             assertNull(term.asIndicator())
             assertNull(term.asInteger())
@@ -374,7 +374,7 @@ class TermCastTest {
             assertNull(term.asNumeric())
             assertNull(term.asReal())
             assertNull(term.asRule())
-            assertNull(term.asSet())
+            assertNull(term.asBlock())
             assertNotNull(term.asStruct())
             assertNotNull(term.asTerm())
             assertNull(term.asTruth())
@@ -393,7 +393,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToConstant() }
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -401,7 +401,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertFailsWith(ClassCastException::class) { term.castToStruct() }
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -416,7 +416,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToConstant() }
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -424,7 +424,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -439,7 +439,7 @@ class TermCastTest {
             assertNotNull(term.castToConstant())
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -447,7 +447,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -462,7 +462,7 @@ class TermCastTest {
             assertNotNull(term.castToConstant())
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -470,7 +470,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertNotNull(term.castToTruth())
@@ -485,7 +485,7 @@ class TermCastTest {
             assertNotNull(term.castToConstant())
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertNotNull(term.castToInteger())
@@ -493,7 +493,7 @@ class TermCastTest {
             assertNotNull(term.castToNumeric())
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertFailsWith(ClassCastException::class) { term.castToStruct() }
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -508,7 +508,7 @@ class TermCastTest {
             assertNotNull(term.castToConstant())
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -516,7 +516,7 @@ class TermCastTest {
             assertNotNull(term.castToNumeric())
             assertNotNull(term.castToReal())
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertFailsWith(ClassCastException::class) { term.castToStruct() }
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -524,14 +524,14 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToVar() }
         }
 
-        override fun visitSet(term: Set) {
+        override fun visitBlock(term: Block) {
             assertFailsWith(ClassCastException::class) { term.castToAtom() }
             assertFailsWith(ClassCastException::class) { term.castToClause() }
             assertFailsWith(ClassCastException::class) { term.castToCons() }
             assertFailsWith(ClassCastException::class) { term.castToConstant() }
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -539,7 +539,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertNotNull(term.castToSet())
+            assertNotNull(term.castToBlock())
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -547,14 +547,14 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToVar() }
         }
 
-        override fun visitEmptySet(term: EmptySet) {
+        override fun visitEmptyBlock(term: EmptyBlock) {
             assertNotNull(term.castToAtom())
             assertFailsWith(ClassCastException::class) { term.castToClause() }
             assertFailsWith(ClassCastException::class) { term.castToCons() }
             assertNotNull(term.castToConstant())
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertNotNull(term.castToEmptySet())
+            assertNotNull(term.castToEmptyBlock())
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -562,7 +562,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertNotNull(term.castToSet())
+            assertNotNull(term.castToBlock())
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -577,7 +577,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToConstant() }
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -585,7 +585,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -600,7 +600,7 @@ class TermCastTest {
             assertNotNull(term.castToConstant())
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertNotNull(term.castToEmptyList())
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -608,7 +608,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -623,7 +623,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToConstant() }
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -631,7 +631,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -646,7 +646,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToConstant() }
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertNotNull(term.castToIndicator())
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -654,7 +654,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -669,7 +669,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToConstant() }
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -677,7 +677,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertNotNull(term.castToRule())
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -692,7 +692,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToConstant() }
             assertFailsWith(ClassCastException::class) { term.castToDirective() }
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertNotNull(term.castToFact())
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -700,7 +700,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertNotNull(term.castToRule())
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -715,7 +715,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToConstant() }
             assertNotNull(term.castToDirective())
             assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-            assertFailsWith(ClassCastException::class) { term.castToEmptySet() }
+            assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
             assertFailsWith(ClassCastException::class) { term.castToFact() }
             assertFailsWith(ClassCastException::class) { term.castToIndicator() }
             assertFailsWith(ClassCastException::class) { term.castToInteger() }
@@ -723,7 +723,7 @@ class TermCastTest {
             assertFailsWith(ClassCastException::class) { term.castToNumeric() }
             assertFailsWith(ClassCastException::class) { term.castToReal() }
             assertFailsWith(ClassCastException::class) { term.castToRule() }
-            assertFailsWith(ClassCastException::class) { term.castToSet() }
+            assertFailsWith(ClassCastException::class) { term.castToBlock() }
             assertNotNull(term.castToStruct())
             assertNotNull(term.castToTerm())
             assertFailsWith(ClassCastException::class) { term.castToTruth() }
@@ -782,18 +782,18 @@ class TermCastTest {
             assertSame(term, term.`as`<Real>())
         }
 
-        override fun visitSet(term: Set) {
-            assertSame(term, term.castToSet())
-            assertSame(term, term.asSet())
-            assertSame(term, term.castTo<Set>())
-            assertSame(term, term.`as`<Set>())
+        override fun visitBlock(term: Block) {
+            assertSame(term, term.castToBlock())
+            assertSame(term, term.asBlock())
+            assertSame(term, term.castTo<Block>())
+            assertSame(term, term.`as`<Block>())
         }
 
-        override fun visitEmptySet(term: EmptySet) {
-            assertSame(term, term.castToEmptySet())
-            assertSame(term, term.asEmptySet())
-            assertSame(term, term.castTo<EmptySet>())
-            assertSame(term, term.`as`<EmptySet>())
+        override fun visitEmptyBlock(term: EmptyBlock) {
+            assertSame(term, term.castToEmptyBlock())
+            assertSame(term, term.asEmptyBlock())
+            assertSame(term, term.castTo<EmptyBlock>())
+            assertSame(term, term.`as`<EmptyBlock>())
         }
 
         override fun visitCons(term: Cons) {

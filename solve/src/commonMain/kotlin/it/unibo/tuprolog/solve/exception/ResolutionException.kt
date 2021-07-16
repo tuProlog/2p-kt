@@ -3,17 +3,18 @@ package it.unibo.tuprolog.solve.exception
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Solver
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 
 /**
- * An exception that could occur during Solver execution
+ * An exception that could occur during [Solver] execution
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
  * @param contexts a stack of contexts localising the exception
  */
-open class TuPrologRuntimeException(
+open class ResolutionException(
     message: String? = null,
     cause: Throwable? = null,
     @JsName("contexts") val contexts: Array<ExecutionContext>
@@ -60,16 +61,16 @@ open class TuPrologRuntimeException(
      */
     @JsName("updateContext")
     @JvmOverloads
-    open fun updateContext(newContext: ExecutionContext, index: Int = 0): TuPrologRuntimeException =
-        TuPrologRuntimeException(message, cause, contexts.setItem(index, newContext))
+    open fun updateContext(newContext: ExecutionContext, index: Int = 0): ResolutionException =
+        ResolutionException(message, cause, contexts.setItem(index, newContext))
 
     @JsName("updateLastContext")
-    open fun updateLastContext(newContext: ExecutionContext): TuPrologRuntimeException =
+    open fun updateLastContext(newContext: ExecutionContext): ResolutionException =
         updateContext(newContext, contexts.lastIndex)
 
     @JsName("pushContext")
-    open fun pushContext(newContext: ExecutionContext): TuPrologRuntimeException =
-        TuPrologRuntimeException(message, cause, contexts.addLast(newContext))
+    open fun pushContext(newContext: ExecutionContext): ResolutionException =
+        ResolutionException(message, cause, contexts.addLast(newContext))
 
     protected fun Array<ExecutionContext>.setItem(index: Int, item: ExecutionContext): Array<ExecutionContext> =
         copyOf().also { it[index] = item }

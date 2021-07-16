@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
-object CurrentPrologFlag : BinaryRelation.WithoutSideEffects<ExecutionContext>("current_prolog_flag") {
+object CurrentFlag : BinaryRelation.WithoutSideEffects<ExecutionContext>("current_flag") {
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term

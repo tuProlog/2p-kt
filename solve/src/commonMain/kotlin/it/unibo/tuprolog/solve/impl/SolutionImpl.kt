@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import kotlin.jvm.JvmStatic
 
 /** A class representing a solution to a goal */
@@ -24,7 +24,7 @@ internal sealed class SolutionImpl(
     override val isHalt: Boolean
         get() = false
 
-    override val exception: TuPrologRuntimeException?
+    override val exception: ResolutionException?
         get() = null
 
     override fun <T> whenIs(
@@ -145,14 +145,14 @@ internal sealed class SolutionImpl(
     class HaltImpl(
         query: Struct,
         /** The exception that made the resolution to halt */
-        override val exception: TuPrologRuntimeException,
+        override val exception: ResolutionException,
         tags: Map<String, Any> = emptyMap()
     ) : SolutionImpl(query, tags), Solution.Halt {
 
         constructor(
             signature: Signature,
             arguments: List<Term>,
-            exception: TuPrologRuntimeException,
+            exception: ResolutionException,
             tags: Map<String, Any> = emptyMap()
         ) : this(signature withArgs arguments, exception, tags) {
             noVarargSignatureCheck(signature)
@@ -186,7 +186,7 @@ internal sealed class SolutionImpl(
         override val isHalt: Boolean
             get() = true
 
-        override fun copy(query: Struct, exception: TuPrologRuntimeException) = HaltImpl(query, exception, tags)
+        override fun copy(query: Struct, exception: ResolutionException) = HaltImpl(query, exception, tags)
 
         override fun toString(): String = "Halt(query=$query, exception=$exception)"
 

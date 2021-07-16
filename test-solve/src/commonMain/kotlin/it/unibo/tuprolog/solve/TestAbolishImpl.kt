@@ -83,7 +83,7 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = (current_prolog_flag("max_arity", A) and ((X `is` (A + 1)) and abolish("foo" / X)))
+            val query = (current_flag("max_arity", A) and ((X `is` (A + 1)) and abolish("foo" / X)))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

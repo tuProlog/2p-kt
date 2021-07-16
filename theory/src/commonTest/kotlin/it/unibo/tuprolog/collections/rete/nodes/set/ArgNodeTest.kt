@@ -127,7 +127,7 @@ internal class ArgNodeTest {
     fun putClauseCreatesDifferentChildrenForDifferentArguments() {
         zeroIndexEmptyArgNodes.forEach {
             it.put(Fact.of(Struct.of("f", aAtom, Empty.list())))
-            it.put(Fact.of(Struct.of("f", aAtom, Empty.set())))
+            it.put(Fact.of(Struct.of("f", aAtom, Empty.block())))
 
             assertEquals(2, it.children.count())
         }

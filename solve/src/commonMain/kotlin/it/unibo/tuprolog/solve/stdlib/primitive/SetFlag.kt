@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
-object SetPrologFlag : BinaryRelation.NonBacktrackable<ExecutionContext>("set_prolog_flag") {
+object SetFlag : BinaryRelation.NonBacktrackable<ExecutionContext>("set_flag") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {
         ensuringArgumentIsInstantiated(0)
         ensuringArgumentIsAtom(0)

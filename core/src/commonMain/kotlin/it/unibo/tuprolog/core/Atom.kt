@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.Terms.EMPTY_BLOCK_FUNCTOR
 import it.unibo.tuprolog.core.Terms.EMPTY_LIST_FUNCTOR
-import it.unibo.tuprolog.core.Terms.EMPTY_SET_FUNCTOR
 import it.unibo.tuprolog.core.Terms.FAIL_FUNCTOR
 import it.unibo.tuprolog.core.Terms.FALSE_FUNCTOR
 import it.unibo.tuprolog.core.Terms.TRUE_FUNCTOR
@@ -24,8 +24,8 @@ interface Atom : Struct, Constant {
     override val isAtom: Boolean
         get() = true
 
-    override val isEmptySet: Boolean
-        get() = EMPTY_SET_FUNCTOR == value
+    override val isEmptyBlock: Boolean
+        get() = EMPTY_BLOCK_FUNCTOR == value
 
     override val isEmptyList: Boolean
         get() = EMPTY_LIST_FUNCTOR == value
@@ -71,7 +71,7 @@ interface Atom : Struct, Constant {
         fun of(value: String): Atom =
             when (value) {
                 EMPTY_LIST_FUNCTOR -> Empty.list()
-                EMPTY_SET_FUNCTOR -> Empty.set()
+                EMPTY_BLOCK_FUNCTOR -> Empty.block()
                 TRUE_FUNCTOR -> Truth.TRUE
                 FAIL_FUNCTOR -> Truth.FAIL
                 FALSE_FUNCTOR -> Truth.FALSE
