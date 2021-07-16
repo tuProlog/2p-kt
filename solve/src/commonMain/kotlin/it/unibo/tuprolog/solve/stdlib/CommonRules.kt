@@ -4,10 +4,12 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.rule.Append
 import it.unibo.tuprolog.solve.stdlib.rule.Arrow
+import it.unibo.tuprolog.solve.stdlib.rule.CurrentPrologFlag
 import it.unibo.tuprolog.solve.stdlib.rule.Member
 import it.unibo.tuprolog.solve.stdlib.rule.Not
 import it.unibo.tuprolog.solve.stdlib.rule.Once
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
+import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
 import it.unibo.tuprolog.theory.Theory
 
 object CommonRules {
@@ -22,7 +24,9 @@ object CommonRules {
         Member.Recursive,
         Append.Base,
         Append.Recursive,
-        Once
+        Once,
+        SetPrologFlag,
+        CurrentPrologFlag
     )
 
     val theory: Theory

@@ -16,6 +16,8 @@ interface TestDirectives : SolverTest {
 
     fun testWrongDirectives()
 
+    fun testSetFlag2()
+
     fun testSetPrologFlag2()
 
     fun testOp3()

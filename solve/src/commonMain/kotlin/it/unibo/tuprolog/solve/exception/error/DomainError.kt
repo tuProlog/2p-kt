@@ -161,7 +161,7 @@ class DomainError(
         OS_FILE_PROPERTY,
         OS_PATH,
         PREDICATE_PROPERTY,
-        PROLOG_FLAG,
+        FLAG,
         READ_OPTION,
         SELECTABLE_ITEM,
         SOCKET_ADDRESS,

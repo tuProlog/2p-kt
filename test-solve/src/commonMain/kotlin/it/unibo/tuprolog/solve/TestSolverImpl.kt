@@ -79,19 +79,27 @@ import it.unibo.tuprolog.solve.stdlib.primitive.AssertA
 import it.unibo.tuprolog.solve.stdlib.primitive.AssertZ
 import it.unibo.tuprolog.solve.stdlib.primitive.Atom
 import it.unibo.tuprolog.solve.stdlib.primitive.AtomChars
+import it.unibo.tuprolog.solve.stdlib.primitive.AtomCodes
+import it.unibo.tuprolog.solve.stdlib.primitive.AtomConcat
+import it.unibo.tuprolog.solve.stdlib.primitive.AtomLength
 import it.unibo.tuprolog.solve.stdlib.primitive.Atomic
+import it.unibo.tuprolog.solve.stdlib.primitive.BagOf
 import it.unibo.tuprolog.solve.stdlib.primitive.Between
 import it.unibo.tuprolog.solve.stdlib.primitive.Callable
 import it.unibo.tuprolog.solve.stdlib.primitive.Clause
 import it.unibo.tuprolog.solve.stdlib.primitive.Compound
 import it.unibo.tuprolog.solve.stdlib.primitive.CopyTerm
+import it.unibo.tuprolog.solve.stdlib.primitive.CurrentFlag
 import it.unibo.tuprolog.solve.stdlib.primitive.CurrentOp
-import it.unibo.tuprolog.solve.stdlib.primitive.CurrentPrologFlag
 import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.solve.stdlib.primitive.FindAll
 import it.unibo.tuprolog.solve.stdlib.primitive.Functor
+import it.unibo.tuprolog.solve.stdlib.primitive.GetDurable
+import it.unibo.tuprolog.solve.stdlib.primitive.GetEphemeral
+import it.unibo.tuprolog.solve.stdlib.primitive.GetPersistent
 import it.unibo.tuprolog.solve.stdlib.primitive.Ground
 import it.unibo.tuprolog.solve.stdlib.primitive.Halt
+import it.unibo.tuprolog.solve.stdlib.primitive.Halt1
 import it.unibo.tuprolog.solve.stdlib.primitive.Integer
 import it.unibo.tuprolog.solve.stdlib.primitive.Is
 import it.unibo.tuprolog.solve.stdlib.primitive.Natural
@@ -99,10 +107,20 @@ import it.unibo.tuprolog.solve.stdlib.primitive.NewLine
 import it.unibo.tuprolog.solve.stdlib.primitive.NonVar
 import it.unibo.tuprolog.solve.stdlib.primitive.NotUnifiableWith
 import it.unibo.tuprolog.solve.stdlib.primitive.Number
+import it.unibo.tuprolog.solve.stdlib.primitive.NumberChars
+import it.unibo.tuprolog.solve.stdlib.primitive.NumberCodes
+import it.unibo.tuprolog.solve.stdlib.primitive.Op
 import it.unibo.tuprolog.solve.stdlib.primitive.Repeat
 import it.unibo.tuprolog.solve.stdlib.primitive.Retract
 import it.unibo.tuprolog.solve.stdlib.primitive.RetractAll
+import it.unibo.tuprolog.solve.stdlib.primitive.Reverse
+import it.unibo.tuprolog.solve.stdlib.primitive.SetDurable
+import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
+import it.unibo.tuprolog.solve.stdlib.primitive.SetFlag
+import it.unibo.tuprolog.solve.stdlib.primitive.SetOf
+import it.unibo.tuprolog.solve.stdlib.primitive.SetPersistent
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
+import it.unibo.tuprolog.solve.stdlib.primitive.SubAtom
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThan
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThanOrEqualTo
 import it.unibo.tuprolog.solve.stdlib.primitive.TermIdentical
@@ -117,10 +135,12 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Var
 import it.unibo.tuprolog.solve.stdlib.primitive.Write
 import it.unibo.tuprolog.solve.stdlib.rule.Append
 import it.unibo.tuprolog.solve.stdlib.rule.Arrow
+import it.unibo.tuprolog.solve.stdlib.rule.CurrentPrologFlag
 import it.unibo.tuprolog.solve.stdlib.rule.Member
 import it.unibo.tuprolog.solve.stdlib.rule.Not
 import it.unibo.tuprolog.solve.stdlib.rule.Once
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
+import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
@@ -260,12 +280,8 @@ internal class TestSolverImpl(
                 assertHasPredicateInAPI("throw", 1)
                 assertHasPredicateInAPI(",", 2)
                 assertHasPredicateInAPI("\\+", 1)
-                assertHasPredicateInAPI(Arrow)
-                assertHasPredicateInAPI(Member.SIGNATURE)
-                assertHasPredicateInAPI(Not)
-                assertHasPredicateInAPI(Semicolon.SIGNATURE)
-                assertHasPredicateInAPI(Append.SIGNATURE)
                 assertHasPredicateInAPI(Abolish)
+                assertHasPredicateInAPI(Append.SIGNATURE)
                 assertHasPredicateInAPI(Arg)
                 assertHasPredicateInAPI(ArithmeticEqual)
                 assertHasPredicateInAPI(ArithmeticGreaterThan)
@@ -273,38 +289,61 @@ internal class TestSolverImpl(
                 assertHasPredicateInAPI(ArithmeticLowerThan)
                 assertHasPredicateInAPI(ArithmeticLowerThanOrEqualTo)
                 assertHasPredicateInAPI(ArithmeticNotEqual)
+                assertHasPredicateInAPI(Arrow)
                 assertHasPredicateInAPI(Assert)
                 assertHasPredicateInAPI(AssertA)
                 assertHasPredicateInAPI(AssertZ)
                 assertHasPredicateInAPI(Atom)
                 assertHasPredicateInAPI(AtomChars)
+                assertHasPredicateInAPI(AtomCodes)
+                assertHasPredicateInAPI(AtomConcat)
+                assertHasPredicateInAPI(AtomLength)
                 assertHasPredicateInAPI(Atomic)
+                assertHasPredicateInAPI(BagOf)
                 assertHasPredicateInAPI(Between)
                 assertHasPredicateInAPI(Callable)
                 assertHasPredicateInAPI(Clause)
                 assertHasPredicateInAPI(Compound)
                 assertHasPredicateInAPI(CopyTerm)
+                assertHasPredicateInAPI(CurrentFlag)
                 assertHasPredicateInAPI(CurrentOp)
                 assertHasPredicateInAPI(CurrentPrologFlag)
                 assertHasPredicateInAPI(EnsureExecutable)
                 assertHasPredicateInAPI(FindAll)
                 assertHasPredicateInAPI(FloatPrimitive)
                 assertHasPredicateInAPI(Functor)
+                assertHasPredicateInAPI(GetDurable)
+                assertHasPredicateInAPI(GetEphemeral)
+                assertHasPredicateInAPI(GetPersistent)
                 assertHasPredicateInAPI(Ground)
                 assertHasPredicateInAPI(Halt)
+                assertHasPredicateInAPI(Halt1)
                 assertHasPredicateInAPI(Integer)
                 assertHasPredicateInAPI(Is)
+                assertHasPredicateInAPI(Member.SIGNATURE)
                 assertHasPredicateInAPI(Natural)
                 assertHasPredicateInAPI(NewLine)
                 assertHasPredicateInAPI(NonVar)
+                assertHasPredicateInAPI(Not)
                 assertHasPredicateInAPI(NotUnifiableWith)
                 assertHasPredicateInAPI(Number)
+                assertHasPredicateInAPI(NumberChars)
+                assertHasPredicateInAPI(NumberCodes)
                 assertHasPredicateInAPI(Once)
+                assertHasPredicateInAPI(Op)
                 assertHasPredicateInAPI(Repeat)
                 assertHasPredicateInAPI(Retract)
                 assertHasPredicateInAPI(RetractAll)
+                assertHasPredicateInAPI(Reverse)
+                assertHasPredicateInAPI(Semicolon.SIGNATURE)
+                assertHasPredicateInAPI(SetDurable)
+                assertHasPredicateInAPI(SetEphemeral)
+                assertHasPredicateInAPI(SetFlag)
+                assertHasPredicateInAPI(SetOf)
+                assertHasPredicateInAPI(SetPersistent)
+                assertHasPredicateInAPI(SetPrologFlag)
                 assertHasPredicateInAPI(Sleep)
-                assertHasPredicateInAPI(Signature("sub_atom", 5))
+                assertHasPredicateInAPI(SubAtom)
                 assertHasPredicateInAPI(TermGreaterThan)
                 assertHasPredicateInAPI(TermGreaterThanOrEqualTo)
                 assertHasPredicateInAPI(TermIdentical)

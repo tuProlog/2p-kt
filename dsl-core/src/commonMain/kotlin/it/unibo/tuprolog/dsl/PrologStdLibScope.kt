@@ -214,6 +214,11 @@ interface PrologStdLibScope : PrologAwareScope {
     fun copy_term(term: Any, copy: Any): Struct =
         structOf("copy_term", term.toTerm(), copy.toTerm())
 
+    @JsName("current_flag2")
+    fun current_flag(name: Any, value: Any): Struct =
+        structOf("current_flag", name.toTerm(), value.toTerm())
+
+    @Deprecated("Despite current_prolog_flag/2 is a standard predicate, we suggest using current_flag/2", ReplaceWith("current_flag"))
     @JsName("current_prolog_flag2")
     fun current_prolog_flag(name: Any, value: Any): Struct =
         structOf("current_prolog_flag", name.toTerm(), value.toTerm())
@@ -242,6 +247,11 @@ interface PrologStdLibScope : PrologAwareScope {
     fun consult(url: Any): Struct =
         structOf("consult", url.toTerm())
 
+    @JsName("set_flag2")
+    fun set_flag(name: Any, value: Any): Struct =
+        structOf("set_flag", name.toTerm(), value.toTerm())
+
+    @Deprecated("Despite set_prolog_flag/2 is a standard predicate, we suggest using set_flag/2", ReplaceWith("set_flag"))
     @JsName("set_prolog_flag2")
     fun set_prolog_flag(name: Any, value: Any): Struct =
         structOf("set_prolog_flag", name.toTerm(), value.toTerm())
