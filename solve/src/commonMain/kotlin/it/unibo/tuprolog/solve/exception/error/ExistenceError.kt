@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.exception.error
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
@@ -148,7 +148,7 @@ class ExistenceError(
     /**
      * A class describing the expected type whose absence caused the error
      */
-    enum class ObjectType : ToTermConvertible {
+    enum class ObjectType : TermConvertible {
 
         PROCEDURE,
         SOURCE_SINK,

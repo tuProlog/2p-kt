@@ -3,7 +3,7 @@ package it.unibo.tuprolog.core.operators
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.toAtom
 import it.unibo.tuprolog.core.toTerm
@@ -11,9 +11,9 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
-/** Class representing a Prolog Operator */
+/** Class representing a logic operator */
 class Operator(val functor: String, val specifier: Specifier, val priority: Int) :
-    Comparable<Operator>, ToTermConvertible {
+    Comparable<Operator>, TermConvertible {
 
     override fun compareTo(other: Operator): Int =
         when {

@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import org.gciatto.kt.math.BigDecimal
@@ -20,7 +20,7 @@ internal interface AnyToTermConverter {
     @JsName("toTerm")
     fun toTerm(any: Any): Term = when (any) {
         is Term -> any
-        is ToTermConvertible -> any.toTerm()
+        is TermConvertible -> any.toTerm()
         is BigInteger -> prologScope.numOf(any)
         is BigDecimal -> prologScope.numOf(any)
         is Number -> when {

@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.exception.error
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
@@ -90,7 +90,7 @@ class PermissionError(
     /**
      * A class describing the operation which caused the error
      */
-    enum class Operation : ToTermConvertible {
+    enum class Operation : TermConvertible {
         ACCESS,
         ADD_ALIAS,
         CLOSE,
@@ -130,7 +130,7 @@ class PermissionError(
     /**
      * A class describing the type of the tried permission
      */
-    enum class Permission : ToTermConvertible {
+    enum class Permission : TermConvertible {
         BINARY_STREAM,
         FLAG,
         OPERATOR,

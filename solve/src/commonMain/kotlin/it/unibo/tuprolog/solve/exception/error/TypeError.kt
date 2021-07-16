@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.exception.error
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
@@ -143,7 +143,7 @@ class TypeError(
      *
      * @author Enrico
      */
-    enum class Expected : ToTermConvertible {
+    enum class Expected : TermConvertible {
         ATOM,
         ATOMIC,
         BOOLEAN,

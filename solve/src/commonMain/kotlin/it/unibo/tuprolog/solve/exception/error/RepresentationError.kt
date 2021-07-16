@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.exception.error
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
@@ -80,7 +80,7 @@ class RepresentationError(
     /**
      * Names of possible limits
      */
-    enum class Limit : ToTermConvertible {
+    enum class Limit : TermConvertible {
         CHARACTER,
         CHARACTER_CODE,
         IN_CHARACTER_CODE,

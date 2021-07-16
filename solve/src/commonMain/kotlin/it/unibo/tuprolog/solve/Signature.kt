@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import kotlin.js.JsName
 
 /** The signature of a query Struct or a Primitive */
@@ -16,7 +16,7 @@ data class Signature(
     val arity: Int,
     @JsName("vararg")
     val vararg: Boolean = false
-) : ToTermConvertible {
+) : TermConvertible {
 
     init {
         require(arity >= 0) { "Signature arity should be greater than or equals to 0: $arity" }

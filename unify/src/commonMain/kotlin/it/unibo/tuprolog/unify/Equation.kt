@@ -3,7 +3,7 @@ package it.unibo.tuprolog.unify
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.Castable
@@ -22,7 +22,7 @@ sealed class Equation(
     @JsName("lhs") open val lhs: Term,
     /** The right-hand side of the equation */
     @JsName("rhs") open val rhs: Term
-) : ToTermConvertible, Castable<Equation> {
+) : TermConvertible, Castable<Equation> {
 
     open val isIdentity: Boolean
         get() = false
