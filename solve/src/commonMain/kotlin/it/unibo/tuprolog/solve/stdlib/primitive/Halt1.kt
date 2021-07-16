@@ -10,6 +10,6 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 object Halt1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("halt") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsNonNegativeInteger(0)
-        throw HaltException(context = context, exitStatus = (first as Integer).intValue.toInt())
+        throw HaltException(context = context, exitStatus = (first.castToInteger()).intValue.toInt())
     }
 }

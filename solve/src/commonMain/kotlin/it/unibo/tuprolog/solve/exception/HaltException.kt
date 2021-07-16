@@ -14,28 +14,28 @@ import kotlin.js.JsName
  * @author Enrico
  */
 class HaltException(
-    message: String? = null,
+    @JsName("exitStatus") val exitStatus: Int = 0,
+    message: String? = "Resolution has been halted with exit code $exitStatus",
     cause: Throwable? = null,
-    contexts: Array<ExecutionContext>,
-    @JsName("exitStatus") val exitStatus: Int = 0
+    contexts: Array<ExecutionContext>
 ) : ResolutionException(message, cause, contexts) {
 
     constructor(
-        message: String? = null,
+        exitStatus: Int = 0,
+        message: String? = "Resolution has been halted with exit code $exitStatus",
         cause: Throwable? = null,
-        context: ExecutionContext,
-        exitStatus: Int = 0
-    ) : this(message, cause, arrayOf(context), exitStatus)
+        context: ExecutionContext
+    ) : this(exitStatus, message, cause, arrayOf(context))
 
-    constructor(cause: Throwable?, context: ExecutionContext, exitStatus: Int = 0) :
-        this(cause?.toString(), cause, context, exitStatus)
+    constructor(exitStatus: Int = 0, cause: Throwable?, context: ExecutionContext) :
+        this(exitStatus, cause?.toString(), cause, context)
 
     override fun updateContext(newContext: ExecutionContext, index: Int): HaltException =
-        HaltException(message, cause, contexts.setItem(index, newContext), exitStatus)
+        HaltException(exitStatus, message, cause, contexts.setItem(index, newContext))
 
     override fun updateLastContext(newContext: ExecutionContext): HaltException =
         updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): HaltException =
-        HaltException(message, cause, contexts.addLast(newContext), exitStatus)
+        HaltException(exitStatus, message, cause, contexts.addLast(newContext))
 }
