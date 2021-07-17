@@ -5,14 +5,13 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.exception.ResolutionException
-import it.unibo.tuprolog.solve.impl.SolutionImpl
 import it.unibo.tuprolog.utils.Castable
 import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /** A type representing a solution to a goal */
-interface Solution : Taggable<Solution>, Castable<Solution> {
+sealed interface Solution : Taggable<Solution>, Castable<Solution> {
 
     /** The query to which the solution refers */
     @JsName("query")
@@ -101,7 +100,7 @@ interface Solution : Taggable<Solution>, Castable<Solution> {
     fun valueOf(variable: String): Term?
 
     /** A type representing the successful solution */
-    interface Yes : Solution {
+    sealed interface Yes : Solution {
         override val substitution: Substitution.Unifier
 
         override val solvedQuery: Struct
@@ -117,7 +116,7 @@ interface Solution : Taggable<Solution>, Castable<Solution> {
     }
 
     /** A type representing a failed solution */
-    interface No : Solution {
+    sealed interface No : Solution {
         override val substitution: Substitution.Fail
 
         override val solvedQuery: Nothing?
@@ -133,7 +132,7 @@ interface Solution : Taggable<Solution>, Castable<Solution> {
     }
 
     /** A type representing a failed (halted) solution because of an exception */
-    interface Halt : Solution {
+    sealed interface Halt : Solution {
         override val exception: ResolutionException
 
         override fun replaceTags(tags: Map<String, Any>): Halt
