@@ -76,7 +76,7 @@ Library.aliased(
             Alias.forType("big_integer", BigInteger::class),
             Alias.forType("big_decimal", BigDecimal::class),
             *platformSpecificAliases
-        ).map { it.wrappedImplementation }
+        ).map { it.implementation }
     ),
     primitives = sequenceOf<PrimitiveWrapper<*>>(
         ArrayItems,

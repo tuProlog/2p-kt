@@ -19,7 +19,6 @@ abstract class FunctionWrapper<C : ExecutionContext> : AbstractWrapper<LogicFunc
 
     /** Checked PrologFunction implementation */
     @Suppress("UNCHECKED_CAST")
-    final override val wrappedImplementation: LogicFunction by lazy {
-        functionOf(signature, ::uncheckedImplementation as LogicFunction)
-    }
+    final override val implementation: LogicFunction =
+        LogicFunction.enforcingSignature(signature, ::uncheckedImplementation)
 }

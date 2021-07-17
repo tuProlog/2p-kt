@@ -22,7 +22,7 @@ internal class IsTest {
         isQueryToResult.forEach { (input, expectedResult) ->
             when (expectedResult) {
                 is Substitution.Unifier -> {
-                    Is.wrappedImplementation(input).single().solution.let {
+                    Is.implementation(input).single().solution.let {
                         assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
                             it is Solution.Yes
                         }
@@ -30,7 +30,7 @@ internal class IsTest {
                     }
                 }
                 is Substitution.Fail -> {
-                    Is.wrappedImplementation(input).single().solution.let {
+                    Is.implementation(input).single().solution.let {
                         assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
                             it is Solution.No
                         }
@@ -38,7 +38,7 @@ internal class IsTest {
                 }
                 else ->
                     try {
-                        Is.wrappedImplementation(input)
+                        Is.implementation(input)
                         fail("Expected: $expectedResult but no exception was thrown")
                     } catch (e: ResolutionException) {
                         assertEquals(expectedResult as KClass<*>, e::class)

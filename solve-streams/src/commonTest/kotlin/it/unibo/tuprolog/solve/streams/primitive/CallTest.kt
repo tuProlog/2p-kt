@@ -23,7 +23,7 @@ internal class CallTest {
     @Test
     fun callForwardsResponsesFromArgumentExecutionIfWellFormedGoalAndNotVariable() {
         requestSolutionMap.forEach { (request, solutionList) ->
-            val toBeTested = Call.wrappedImplementation(request).toList()
+            val toBeTested = Call.implementation(request).toList()
 
             assertSolutionEquals(solutionList, toBeTested.map { it.solution })
         }
@@ -32,14 +32,14 @@ internal class CallTest {
     @Test
     fun callThrowExceptionIfCallArgIsVariableOrNotWellFormed() {
         requestToErrorSolutionMap.forEach { (request, solutionList) ->
-            assertFailsWith(solutionList.single().deepCause()::class) { Call.wrappedImplementation(request) }
+            assertFailsWith(solutionList.single().deepCause()::class) { Call.implementation(request) }
         }
     }
 
     @Test
     fun callPrimitiveErrorContainsCorrectContext() {
         requestToErrorSolutionMap.forEach { (request, _) ->
-            assertOverFailure<ResolutionException>({ Call.wrappedImplementation(request) }) {
+            assertOverFailure<ResolutionException>({ Call.implementation(request) }) {
                 assertEquals(request.context, it.context)
             }
         }
@@ -48,7 +48,7 @@ internal class CallTest {
     @Test
     fun callShouldLimitCutPowersToTheInnerGoal() {
         requestToSolutionOfCallWithCut.forEach { (request, solutionList) ->
-            val toBeTested = Call.wrappedImplementation(request).toList()
+            val toBeTested = Call.implementation(request).toList()
 
             assertSolutionEquals(solutionList, toBeTested.map { it.solution })
         }

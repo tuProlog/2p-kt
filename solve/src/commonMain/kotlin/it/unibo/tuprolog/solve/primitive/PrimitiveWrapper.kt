@@ -48,7 +48,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
     /** Checked primitive implementation */
     @Suppress("UNCHECKED_CAST")
-    final override val wrappedImplementation: Primitive =
+    final override val implementation: Primitive =
         primitiveOf(signature, ::uncheckedImplementation as Primitive)
 
     companion object {

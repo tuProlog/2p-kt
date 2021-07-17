@@ -36,7 +36,7 @@ internal class AbstractWrapperTest {
     @Test
     fun descriptionPairCorrect() {
         allUnderTest.forEach {
-            assertEquals(Pair(signature, it.wrappedImplementation), it.descriptionPair)
+            assertEquals(Pair(signature, it.implementation), it.descriptionPair)
         }
     }
 
@@ -53,7 +53,7 @@ internal class AbstractWrapperTest {
             constructor(name: String, arity: Int, value: T) :
                 this(Signature(name, arity, false), value)
 
-            override val wrappedImplementation: T = value
+            override val implementation: T = value
         }
     }
 }

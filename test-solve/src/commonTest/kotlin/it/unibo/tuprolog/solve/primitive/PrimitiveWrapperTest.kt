@@ -29,7 +29,7 @@ internal class PrimitiveWrapperTest {
             .forEach { (wrapper, acceptedRequests) ->
                 acceptedRequests.forEach {
                     if (wrapper.signature.vararg) return // TODO remove this "if" after solving TODO in "Signature"
-                    assertEquals(defaultPrimitiveResult, wrapper.wrappedImplementation(it))
+                    assertEquals(defaultPrimitiveResult, wrapper.implementation(it))
                 }
             }
     }
@@ -39,7 +39,7 @@ internal class PrimitiveWrapperTest {
         wrapperToNotMatchingSignatureRequest(::createPrimitiveWrapper, primitive, ::createPrimitiveRequest)
             .forEach { (wrapper, badRequests) ->
                 badRequests.forEach {
-                    assertFailsWith<IllegalArgumentException> { wrapper.wrappedImplementation(it) }
+                    assertFailsWith<IllegalArgumentException> { wrapper.implementation(it) }
                 }
             }
     }

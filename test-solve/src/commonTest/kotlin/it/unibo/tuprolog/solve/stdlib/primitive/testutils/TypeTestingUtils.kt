@@ -165,10 +165,10 @@ object TypeTestingUtils {
         expectedResult: Any
     ) = when (expectedResult) {
         true -> assertTrue("Requesting ${input.query} should result in positive response!") {
-            unaryPredicate.wrappedImplementation(input).single().solution is Solution.Yes
+            unaryPredicate.implementation(input).single().solution is Solution.Yes
         }
         false -> assertTrue("Requesting ${input.query} should result in negative response!") {
-            unaryPredicate.wrappedImplementation(input).single().solution is Solution.No
+            unaryPredicate.implementation(input).single().solution is Solution.No
         }
         else ->
             @Suppress("UNCHECKED_CAST")
@@ -176,7 +176,7 @@ object TypeTestingUtils {
                 ?.let {
                     val message = "Requesting ${input.query} should result in an exception of type ${it.simpleName}"
                     assertFailsWith(expectedResult, message) {
-                        unaryPredicate.wrappedImplementation(input).single()
+                        unaryPredicate.implementation(input).single()
                     }
                 } ?: fail("Bad written test data!")
     }
