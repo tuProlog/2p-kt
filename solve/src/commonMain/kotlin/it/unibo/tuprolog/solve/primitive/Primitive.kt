@@ -5,16 +5,35 @@ import it.unibo.tuprolog.solve.Signature
 import kotlin.js.JsName
 
 /** A typealias for a primitive function that accepts a [Solve.Request] and returns a Sequence of [Solve.Response]s */
-typealias Primitive = (Solve.Request<ExecutionContext>) -> Sequence<Solve.Response>
+fun interface Primitive {
+    @JsName("solve")
+    fun solve(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response>
 
-/**
- * Creates a new [Primitive], behaving exactly as given [uncheckedPrimitive], but accepting only provided [supportedSignature]
- * as [Solve.Request] signature, throwing [IllegalArgumentException] otherwise
- */
-@JsName("primitiveOf")
-fun primitiveOf(supportedSignature: Signature, uncheckedPrimitive: Primitive): Primitive = {
-    when (it.signature) { // TODO see TODO in "Signature"; here should be called that method to check if primitive could execute
-        supportedSignature -> uncheckedPrimitive(it)
-        else -> throw IllegalArgumentException("This primitive supports only this signature `$supportedSignature`")
+    companion object {
+        @JsName("of")
+        fun of(function: (Solve.Request<ExecutionContext>) -> Sequence<Solve.Response>): Primitive = Primitive(function)
+
+        /**
+         * Creates a new [Primitive], behaving exactly as given [uncheckedPrimitive], but accepting only provided [supportedSignature]
+         * as [Solve.Request] signature, throwing [IllegalArgumentException] otherwise
+         */
+        @JsName("enforcingSignature")
+        fun <C : ExecutionContext> enforcingSignature(
+            supportedSignature: Signature,
+            uncheckedPrimitive: (Solve.Request<C>) -> Sequence<Solve.Response>
+        ): Primitive = Primitive {
+            // TODO see TODO in "Signature"; here should be called that method to check if primitive could execute
+            @Suppress("UNCHECKED_CAST")
+            when (it.signature) {
+                supportedSignature -> uncheckedPrimitive(it as Solve.Request<C>)
+                else -> throw IllegalArgumentException("This primitive supports only this signature `$supportedSignature`")
+            }
+        }
+
+        @JsName("enforcingSignatureForPrimitive")
+        fun enforcingSignature(
+            supportedSignature: Signature,
+            uncheckedPrimitive: Primitive
+        ): Primitive = enforcingSignature<ExecutionContext>(supportedSignature, uncheckedPrimitive::solve)
     }
 }

@@ -48,8 +48,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
     /** Checked primitive implementation */
     @Suppress("UNCHECKED_CAST")
-    final override val implementation: Primitive =
-        primitiveOf(signature, ::uncheckedImplementation as Primitive)
+    final override val implementation: Primitive = Primitive.enforcingSignature(signature, ::uncheckedImplementation)
 
     companion object {
 
@@ -87,7 +86,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 this(Signature(name, arity, vararg), uncheckedPrimitive)
 
             override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
-                uncheckedPrimitive(request)
+                uncheckedPrimitive.solve(request)
         }
 
         private fun ensurerVisitor(context: ExecutionContext, procedure: Signature): TermVisitor<TypeError?> =
