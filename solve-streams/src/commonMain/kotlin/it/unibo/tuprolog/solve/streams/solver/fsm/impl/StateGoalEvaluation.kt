@@ -31,7 +31,7 @@ internal class StateGoalEvaluation(
             // primitive with request signature present
             var responses: Sequence<Solve.Response>? = null
             try {
-                responses = primitive(solve) // execute primitive
+                responses = primitive.solve(solve) // execute primitive
             } catch (exception: HaltException) {
                 yield(stateEndHalt(exception))
             } catch (logicError: LogicError) {

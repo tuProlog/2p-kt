@@ -27,7 +27,7 @@ abstract class RuleWrapper<C : ExecutionContext>(signature: Signature) : Abstrac
 
     protected val variables = VariableProvider()
 
-    final override val wrappedImplementation: Rule by lazy {
+    final override val implementation: Rule by lazy {
         val headArgs = scope.head
         require(headArgs.size == signature.arity)
         val body = scope.body
@@ -39,6 +39,6 @@ abstract class RuleWrapper<C : ExecutionContext>(signature: Signature) : Abstrac
     open val Scope.body: Term get() = truthOf(true)
 
     final override fun toString(): String {
-        return "RuleWrapper(signature=${signature.toIndicator()}, rule=$wrappedImplementation)"
+        return "RuleWrapper(signature=${signature.toIndicator()}, rule=$implementation)"
     }
 }

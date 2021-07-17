@@ -26,7 +26,7 @@ internal object FunctionUtils {
 
     /** Helper function that invokes the function wrapper implementation with provided arguments */
     internal fun FunctionWrapper<ExecutionContext>.computeOf(vararg argument: Term): Term =
-        wrappedImplementation(createComputeRequest(signature, *argument)).result
+        implementation.compute(createComputeRequest(signature, *argument)).result
 
     /** Utility function to assert that a unaryMathFunction rejects non integer parameters */
     internal fun assertRejectsNonIntegerParameters(unaryMathFunction: UnaryMathFunction) {

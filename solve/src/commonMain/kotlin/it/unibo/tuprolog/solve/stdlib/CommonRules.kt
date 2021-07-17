@@ -30,5 +30,5 @@ object CommonRules {
     )
 
     val theory: Theory
-        get() = Theory.indexedOf(wrappers.map { it.wrappedImplementation })
+        get() = Theory.indexedOf(wrappers.map { it.implementation })
 }

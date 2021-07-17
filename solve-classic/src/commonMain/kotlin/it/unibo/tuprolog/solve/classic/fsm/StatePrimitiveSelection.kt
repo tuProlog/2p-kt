@@ -40,7 +40,7 @@ data class StatePrimitiveSelection(override val context: ClassicExecutionContext
                         val primitive = libraries.primitives[signature]
                             ?: error("Inconsistent behaviour of Library.contains and Library.get")
                         try {
-                            val primitiveExecutions = primitive(request).cursor()
+                            val primitiveExecutions = primitive.solve(request).cursor()
                             StatePrimitiveExecution(childContext.appendPrimitivesAndChoicePoints(primitiveExecutions))
                         } catch (exception: ResolutionException) {
                             exceptionalState(exception.updateLastContext(childContext.skipThrow()))

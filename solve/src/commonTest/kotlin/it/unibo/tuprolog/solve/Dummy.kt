@@ -18,7 +18,7 @@ object Dummy {
 
         override val substitution: Substitution.Unifier = Substitution.empty()
 
-        override val prologStackTrace: List<Struct> = emptyList()
+        override val logicStackTrace: List<Struct> = emptyList()
 
         override val customData: CustomDataStore = CustomDataStore.empty()
 

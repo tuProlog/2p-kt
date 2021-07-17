@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.stdlib
 
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.FunctionWrapper
-import it.unibo.tuprolog.solve.function.PrologFunction
+import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.stdlib.function.AbsoluteValue
 import it.unibo.tuprolog.solve.stdlib.function.Addition
 import it.unibo.tuprolog.solve.stdlib.function.ArcTangent
@@ -67,5 +67,5 @@ object CommonFunctions {
             Truncate
         )
 
-    val functions: Map<Signature, PrologFunction> = wrappers.map { it.descriptionPair }.toMap()
+    val functions: Map<Signature, LogicFunction> = wrappers.map { it.descriptionPair }.toMap()
 }

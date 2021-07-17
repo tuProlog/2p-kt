@@ -50,7 +50,7 @@ import kotlin.math.round
 import kotlin.system.exitProcess
 
 @Suppress("UNUSED_PARAMETER", "unused")
-class PrologIDEController : Initializable {
+class TuPrologIDEController : Initializable {
 
     private val model = TuPrologIDEModel.of()
 

@@ -7,7 +7,7 @@ import kotlin.system.exitProcess
 class TuPrologIDEApplication : Application() {
     override fun start(stage: Stage) {
         try {
-            PrologIDEBuilder(stage).show()
+            TuPrologIDEBuilder(stage).show()
         } catch (e: Throwable) {
             e.printStackTrace()
             throw Error(e)

@@ -21,17 +21,17 @@ internal object PrimitiveWrapperUtils {
     internal val defaultPrimitiveResult = emptySequence<Nothing>()
 
     /** A test primitive */
-    internal val primitive: Primitive = { defaultPrimitiveResult }
+    internal val primitive: Primitive = Primitive { defaultPrimitiveResult }
 
     /** A function to create a Solve.Request with provided [signature] and [argList] */
     internal fun createPrimitiveRequest(signature: Signature, argList: List<Term>) =
         Solve.Request(signature, argList, DummyInstances.executionContext)
 
     /** Utility function to create a primitive wrapper */
-    internal inline fun createPrimitiveWrapper(
+    internal fun createPrimitiveWrapper(
         signature: Signature,
-        crossinline uncheckedImplementation: Primitive
-    ): PrimitiveWrapper<ExecutionContext> = PrimitiveWrapper.wrap(signature) { uncheckedImplementation(it) }
+        uncheckedImplementation: Primitive
+    ): PrimitiveWrapper<ExecutionContext> = PrimitiveWrapper.wrap(signature) { uncheckedImplementation.solve(it) }
 
     /** All under test requests */
     private val allRequests by lazy {

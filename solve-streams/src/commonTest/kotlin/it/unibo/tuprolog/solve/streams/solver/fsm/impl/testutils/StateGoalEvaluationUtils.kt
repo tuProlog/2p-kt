@@ -30,7 +30,7 @@ internal object StateGoalEvaluationUtils {
     /** Creates a request launching exactly given primitive behaviour */
     internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive): Solve.Request<StreamsExecutionContext> {
         val testPrimitive = PrimitiveWrapper.wrap<StreamsExecutionContext>("testPrimitive", 0) {
-            primitiveBehaviour(it)
+            primitiveBehaviour.solve(it)
         }
 
         return testPrimitive.run {

@@ -91,7 +91,7 @@ sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
                 status.text = "halt:"
                 query.text = solution.exception.message
                 with(children) {
-                    solution.exception.prologStackTrace.map { it.format(formatter) }.forEach {
+                    solution.exception.logicStackTrace.map { it.format(formatter) }.forEach {
                         val lbl = Label("at $it")
                         add(lbl)
                         setMargin(lbl, ITEM_MARGIN)

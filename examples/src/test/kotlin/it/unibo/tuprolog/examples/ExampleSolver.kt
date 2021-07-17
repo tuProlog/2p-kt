@@ -17,11 +17,13 @@ import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.classic.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.function.Compute
+import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
+import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.theory.Theory
 import org.junit.Ignore
@@ -268,12 +270,12 @@ class ExampleSolver {
             operatorSet = OperatorSet(),
             theory = Theory.empty(),
             primitives = mapOf(
-                Signature("f", 2) to { request: Solve.Request<ExecutionContext> ->
+                Signature("f", 2) to Primitive { request: Solve.Request<ExecutionContext> ->
                     TODO("compute response sequence here")
                 }
             ),
             functions = mapOf(
-                Signature("+", 2) to { request: Compute.Request<ExecutionContext> ->
+                Signature("+", 2) to LogicFunction { request: Compute.Request<ExecutionContext> ->
                     TODO("compute response here")
                 }
             )
