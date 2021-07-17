@@ -16,7 +16,6 @@ internal class SolutionFormatterImpl(private val termFormatter: TermFormatter) :
             is HaltException -> "halt: ${e.exitStatus}"
             else -> formatException(e)
         }
-        else -> throw IllegalStateException("Invalid solution type: $value")
     }
 
     private fun formatException(e: ResolutionException): String =
