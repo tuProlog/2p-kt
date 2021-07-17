@@ -13,7 +13,7 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
 
-data class PrologIDEBuilder(
+data class TuPrologIDEBuilder(
     val stage: Stage,
     var title: String = "tuProlog IDE",
     var icon: Image = TUPROLOG_LOGO,
@@ -95,7 +95,7 @@ data class PrologIDEBuilder(
     fun customTab(tab: Tab) = customTab(tab) { /* do nothing */ }
 
     fun show() {
-        val loader = FXMLLoader(javaClass.getResource("PrologIDEView.fxml"))
+        val loader = FXMLLoader(javaClass.getResource("TuPrologIDEView.fxml"))
         val root = loader.load<Parent>()
         stage.scene = Scene(root)
         stage.title = this.title
@@ -103,7 +103,7 @@ data class PrologIDEBuilder(
         stage.onCloseRequest = EventHandler { e -> if (!this.onClose()) e.consume() }
         stage.scene.stylesheets.addAll(this.stylesheets)
 
-        val controller = loader.getController() as PrologIDEController
+        val controller = loader.getController() as TuPrologIDEController
         controller.setOnAbout(this.onAbout)
         controller.setOnClose { if (this.onClose()) this.stage.close() }
         customTabs.forEach {
