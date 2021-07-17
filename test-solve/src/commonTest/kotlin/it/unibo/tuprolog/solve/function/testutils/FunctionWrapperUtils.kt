@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.FunctionWrapper
-import it.unibo.tuprolog.solve.function.PrologFunction
+import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils
 import kotlin.test.assertTrue
 
@@ -23,7 +23,7 @@ internal object FunctionWrapperUtils {
     internal val defaultFunctionResult = Compute.Response(Truth.TRUE)
 
     /** A test function */
-    internal val function: PrologFunction = { defaultFunctionResult }
+    internal val function: LogicFunction = { defaultFunctionResult }
 
     /** A function to create a Compute.Request with provided [signature] and [argList] */
     internal fun createFunctionRequest(signature: Signature, argList: List<Term>) =
@@ -32,7 +32,7 @@ internal object FunctionWrapperUtils {
     /** Utility function to create a function wrapper */
     internal inline fun createFunctionWrapper(
         signature: Signature,
-        crossinline uncheckedImplementation: PrologFunction
+        crossinline uncheckedImplementation: LogicFunction
     ): FunctionWrapper<ExecutionContext> =
         object : FunctionWrapper<ExecutionContext>(signature) {
             override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response =

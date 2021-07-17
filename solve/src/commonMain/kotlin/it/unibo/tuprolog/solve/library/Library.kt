@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.library
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.function.PrologFunction
+import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.impl.LibraryAliasedImpl
 import it.unibo.tuprolog.solve.library.impl.LibraryImpl
 import it.unibo.tuprolog.solve.primitive.Primitive
@@ -28,7 +28,7 @@ interface Library {
 
     /** The library prolog functions, identified by their signature */
     @JsName("functions")
-    val functions: Map<Signature, PrologFunction>
+    val functions: Map<Signature, LogicFunction>
 
     /**
      * Checks whether this library contains the provided signature.
@@ -79,7 +79,7 @@ interface Library {
             operatorSet: OperatorSet = OperatorSet(),
             theory: Theory = Theory.empty(),
             primitives: Map<Signature, Primitive> = emptyMap(),
-            functions: Map<Signature, PrologFunction> = emptyMap()
+            functions: Map<Signature, LogicFunction> = emptyMap()
         ): Library = LibraryImpl(operatorSet, theory, primitives, functions)
 
         /** Creates an instance of [AliasedLibrary] with given parameters */
@@ -89,7 +89,7 @@ interface Library {
             operatorSet: OperatorSet = OperatorSet(),
             theory: Theory = Theory.empty(),
             primitives: Map<Signature, Primitive> = emptyMap(),
-            functions: Map<Signature, PrologFunction> = emptyMap(),
+            functions: Map<Signature, LogicFunction> = emptyMap(),
             alias: String
         ): AliasedLibrary = LibraryAliasedImpl(operatorSet, theory, primitives, functions, alias)
 

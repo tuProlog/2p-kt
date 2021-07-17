@@ -5,11 +5,11 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 
 /**
- * A class wrapping a [PrologFunction] implementation
+ * A class wrapping a [LogicFunction] implementation
  *
  * @author Enrico
  */
-abstract class FunctionWrapper<C : ExecutionContext> : AbstractWrapper<PrologFunction> {
+abstract class FunctionWrapper<C : ExecutionContext> : AbstractWrapper<LogicFunction> {
 
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)
@@ -19,7 +19,7 @@ abstract class FunctionWrapper<C : ExecutionContext> : AbstractWrapper<PrologFun
 
     /** Checked PrologFunction implementation */
     @Suppress("UNCHECKED_CAST")
-    final override val wrappedImplementation: PrologFunction by lazy {
-        functionOf(signature, ::uncheckedImplementation as PrologFunction)
+    final override val wrappedImplementation: LogicFunction by lazy {
+        functionOf(signature, ::uncheckedImplementation as LogicFunction)
     }
 }

@@ -10,7 +10,7 @@ import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.Compute
-import it.unibo.tuprolog.solve.function.PrologFunction
+import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
@@ -30,7 +30,7 @@ internal object LibraryUtils {
         val opSet: OperatorSet,
         val theory: Theory,
         val primitives: Map<Signature, Primitive>,
-        val functions: Map<Signature, PrologFunction>
+        val functions: Map<Signature, LogicFunction>
     )
 
     private val plusOperator = Operator("+", Specifier.YFX, 500)
@@ -118,20 +118,20 @@ internal object LibraryUtils {
         opSet: OperatorSet,
         theory: Theory,
         primitives: Map<Signature, Primitive>,
-        functions: Map<Signature, PrologFunction>,
+        functions: Map<Signature, LogicFunction>,
         alias: String
     ): AliasedLibrary = Library.aliased(opSet, theory, primitives, functions, alias)
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
-        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, PrologFunction>) -> Library
+        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>) -> Library
     ): Library = constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions)
 
     /** Utility function to construct a library with alias from raw data */
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
-        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, PrologFunction>, String) -> AliasedLibrary
+        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>, String) -> AliasedLibrary
     ): AliasedLibrary =
         constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions, rawLibrary.name)
 

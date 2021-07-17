@@ -11,11 +11,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 /**
- * Test class for [PrologFunction]
+ * Test class for [LogicFunction]
  *
  * @author Enrico
  */
-internal class PrologFunctionTest {
+internal class LogicFunctionTest {
 
     @Test
     fun functionOfReturnsPrologFunctionBehavingExactlyAsProvidedOne() {
