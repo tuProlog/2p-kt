@@ -3,7 +3,6 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.EmptyList
@@ -11,6 +10,7 @@ import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Recursive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -70,7 +70,7 @@ internal abstract class AbstractTermFormatter(
             actualVisit(term)
         }
 
-    override fun visitCollection(term: Collection): String =
+    override fun visitCollection(term: Recursive): String =
         visitStructImpl(term) { defaultValue(term) }
 
     override fun visitList(term: List): String = visitCollection(term)

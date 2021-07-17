@@ -126,13 +126,13 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
     val isTruth: Boolean get() = false
 
     /**
-     * Checks whether the current term is a collection, i.e., a list, a tuple, or a block.
+     * Checks whether the current term is a recursive structure, i.e., a list, a tuple, or a block.
      * This method is guaranteed to return `true` if and only if the current term
-     * is an instance of [Collection].
-     * @return `true` if the current term is a collection, or `false`, otherwise
+     * is an instance of [Recursive].
+     * @return `true` if the current term is a recursive structure, or `false`, otherwise
      */
-    @JsName("isCollection")
-    val isCollection: Boolean get() = false
+    @JsName("isRecursive")
+    val isRecursive: Boolean get() = false
 
     /**
      * Checks whether the current term is an atom.
@@ -539,13 +539,13 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
         asStruct() ?: throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
 
     /**
-     * Casts the current [Term] to [Collection], if possible
-     * @throws ClassCastException if the current [Term] is not an instance of [Collection]
-     * @return the current [Term], casted to [Collection]
+     * Casts the current [Term] to [Recursive], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Recursive]
+     * @return the current [Term], casted to [Recursive]
      */
-    @JsName("castToCollection")
-    fun castToCollection(): Collection =
-        asCollection() ?: throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
+    @JsName("castToRecursive")
+    fun castToRecursive(): Recursive =
+        asRecursive() ?: throw ClassCastException("Cannot cast $this to ${Recursive::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Term]
@@ -694,11 +694,11 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
     fun asStruct(): Struct? = null
 
     /**
-     * Casts the current [Term] to [Collection], if possible, or returns `null` otherwise
-     * @return the current [Term], casted to [Collection], or `null`, if the current term is not an instance of [Collection]
+     * Casts the current [Term] to [Recursive], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Recursive], or `null`, if the current term is not an instance of [Recursive]
      */
-    @JsName("asCollection")
-    fun asCollection(): Collection? = null
+    @JsName("asRecursive")
+    fun asRecursive(): Recursive? = null
 
     /**
      * Casts the current [Term] to [Term]

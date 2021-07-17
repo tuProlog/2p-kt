@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.Collection
+import it.unibo.tuprolog.core.Recursive
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -12,11 +12,11 @@ import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.collections.Collection as KtCollection
 import kotlin.collections.List as KtList
 
-internal abstract class CollectionImpl(
+internal abstract class RecursiveImpl(
     functor: String,
     args: KtList<Term>,
     tags: Map<String, Any>
-) : AbstractStruct(functor, args, tags), Collection {
+) : AbstractStruct(functor, args, tags), Recursive {
 
     override val unfoldedList: KtList<Term> by lazy { dequeOf(unfoldedSequence) }
 
@@ -33,21 +33,21 @@ internal abstract class CollectionImpl(
     override val variables: Sequence<Var>
         get() = unfoldedSequence.flatMap { it.variables }
 
-    abstract override fun copyWithTags(tags: Map<String, Any>): Collection
+    abstract override fun copyWithTags(tags: Map<String, Any>): Recursive
 
-    override fun freshCopy(): Collection = super.freshCopy().castToCollection()
+    override fun freshCopy(): Recursive = super.freshCopy().castToRecursive()
 
-    override fun freshCopy(scope: Scope): Collection = super.freshCopy(scope).castToCollection()
+    override fun freshCopy(scope: Scope): Recursive = super.freshCopy(scope).castToRecursive()
 
     override fun itemsAreStructurallyEqual(other: Struct): Boolean =
-        other.asCollection()?.let {
+        other.asRecursive()?.let {
             itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
                 a.structurallyEquals(b)
             }
         } ?: false
 
     override fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
-        other.asCollection()?.let {
+        other.asRecursive()?.let {
             itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
                 a.equals(b, useVarCompleteName)
             }

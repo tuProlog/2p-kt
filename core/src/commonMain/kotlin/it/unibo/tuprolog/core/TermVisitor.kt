@@ -20,7 +20,7 @@ interface TermVisitor<T> {
     fun visitStruct(term: Struct): T = visitTerm(term)
 
     @JsName("visitCollection")
-    fun visitCollection(term: Collection): T = visitStruct(term)
+    fun visitCollection(term: Recursive): T = visitStruct(term)
 
     @JsName("visitAtom")
     fun visitAtom(term: Atom): T = visitStruct(term)
