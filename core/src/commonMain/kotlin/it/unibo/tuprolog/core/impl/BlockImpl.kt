@@ -11,7 +11,7 @@ import it.unibo.tuprolog.utils.setTags
 internal open class BlockImpl(
     private val item: Term?,
     tags: Map<String, Any> = emptyMap()
-) : CollectionImpl(BLOCK_FUNCTOR, listOfNotNull(item), tags), Block {
+) : RecursiveImpl(BLOCK_FUNCTOR, listOfNotNull(item), tags), Block {
 
     override val isGround: Boolean = checkGroundness()
 

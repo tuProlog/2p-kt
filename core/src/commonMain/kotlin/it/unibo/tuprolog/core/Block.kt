@@ -5,7 +5,7 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
-interface Block : Collection {
+interface Block : Recursive {
 
     override val isBlock: Boolean
         get() = true

@@ -3,12 +3,12 @@ package it.unibo.tuprolog.core
 import kotlin.collections.List
 import kotlin.js.JsName
 
-interface Collection : Struct {
+interface Recursive : Struct {
 
-    override val isCollection: Boolean
+    override val isRecursive: Boolean
         get() = true
 
-    override fun asCollection(): Collection = this
+    override fun asRecursive(): Recursive = this
 
     @JsName("unfoldedSequence")
     val unfoldedSequence: Sequence<Term>
@@ -34,7 +34,7 @@ interface Collection : Struct {
     @JsName("unfold")
     fun unfold(): Sequence<Term>
 
-    override fun freshCopy(): Collection
+    override fun freshCopy(): Recursive
 
-    override fun freshCopy(scope: Scope): Collection
+    override fun freshCopy(scope: Scope): Recursive
 }

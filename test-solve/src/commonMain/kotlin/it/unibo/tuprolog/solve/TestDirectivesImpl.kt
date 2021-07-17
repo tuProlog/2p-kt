@@ -19,6 +19,7 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Suppress("DEPRECATION")
 class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirectives {
 
     override fun testDynamic1() {
