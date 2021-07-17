@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.function.LogicFunction
 import kotlin.js.JsName
 
 /**
