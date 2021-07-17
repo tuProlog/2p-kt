@@ -29,7 +29,7 @@ internal class ConjunctionTest {
 
     @Test
     fun conjunctionOfTrueReturnsTrue() {
-        val responses = Conjunction.implementation(trueAndTrueSolveRequest)
+        val responses = Conjunction.implementation.solve(trueAndTrueSolveRequest)
 
         assertOnlyOneSolution(trueAndTrueSolveRequest.query.yes(), responses)
     }
@@ -37,7 +37,7 @@ internal class ConjunctionTest {
     @Test
     fun conjunctionComputesCorrectlyAllSolutions() {
         myRequestToSolutions.forEach { (goal, solutions) ->
-            val responses = Conjunction.implementation(createSolveRequest(goal, twoMatchesDB)).asIterable()
+            val responses = Conjunction.implementation.solve(createSolveRequest(goal, twoMatchesDB)).asIterable()
 
             assertSolutionEquals(solutions, responses.map { it.solution })
         }
@@ -46,7 +46,7 @@ internal class ConjunctionTest {
     @Test
     fun conjunctionFailsIfSomePredicateFails() {
         failedRequests.forEach { request ->
-            val responses = Conjunction.implementation(request)
+            val responses = Conjunction.implementation.solve(request)
 
             assertOnlyOneSolution(request.query.no(), responses)
         }
@@ -84,7 +84,7 @@ internal class ConjunctionTest {
                 )
             )
 
-            val responses = Conjunction.implementation(request)
+            val responses = Conjunction.implementation.solve(request)
 
             assertOnlyOneSolution(request.query.yes(secondSubstitution), responses)
         }

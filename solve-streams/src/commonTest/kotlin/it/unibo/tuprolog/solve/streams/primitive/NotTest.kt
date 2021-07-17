@@ -25,7 +25,7 @@ internal class NotTest {
     @Test
     fun notRevertsProvidedNoResponse() {
         val query = prolog { "\\+"(false) }
-        val solutions = Not.implementation(
+        val solutions = Not.implementation.solve(
             createSolveRequest(query, primitives = mapOf(Not.descriptionPair, Call.descriptionPair))
         ).map { it.solution }.asIterable()
 
@@ -35,7 +35,7 @@ internal class NotTest {
     @Test
     fun notRevertsProvidedYesResponse() {
         val query = prolog { "\\+"(true) }
-        val solutions = Not.implementation(
+        val solutions = Not.implementation.solve(
             createSolveRequest(query, primitives = mapOf(Not.descriptionPair, Call.descriptionPair))
         ).map { it.solution }.asIterable()
 
@@ -45,7 +45,7 @@ internal class NotTest {
     @Test
     fun notReturnsOnlyOneFailResponseIfMoreTrueOnes() {
         val query = prolog { "\\+"("a") }
-        val solutions = Not.implementation(
+        val solutions = Not.implementation.solve(
             createSolveRequest(
                 query,
                 primitives = mapOf(Not.descriptionPair, Call.descriptionPair),
@@ -60,7 +60,7 @@ internal class NotTest {
     @Ignore
     fun notReturnsAsIsAnHaltSolution() {
         val query = prolog { "\\+"(1) }
-        val solutions = Not.implementation(
+        val solutions = Not.implementation.solve(
             createSolveRequest(
                 query,
                 primitives = mapOf(Not.descriptionPair, Call.descriptionPair, Throw.descriptionPair)

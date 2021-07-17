@@ -47,8 +47,8 @@ internal object LibraryUtils {
     private fun myOtherPrimitive(@Suppress("UNUSED_PARAMETER") r: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
         throw NotImplementedError()
 
-    private val primitives = mapOf(Signature("myPrimitive1", 1) to ::myPrimitive)
-    private val primitivesOverridden = mapOf(Signature("myPrimitive1", 1) to ::myOtherPrimitive)
+    private val primitives = mapOf(Signature("myPrimitive1", 1) to Primitive(::myPrimitive))
+    private val primitivesOverridden = mapOf(Signature("myPrimitive1", 1) to Primitive(::myOtherPrimitive))
 
     private fun myFunction(@Suppress("UNUSED_PARAMETER") r: Compute.Request<ExecutionContext>): Compute.Response =
         throw NotImplementedError()
@@ -56,8 +56,8 @@ internal object LibraryUtils {
     private fun myOtherFunction(@Suppress("UNUSED_PARAMETER") r: Compute.Request<ExecutionContext>): Compute.Response =
         throw NotImplementedError()
 
-    private val functions = mapOf(Signature("myFunc1", 1) to ::myFunction)
-    private val functionsOverridden = mapOf(Signature("myFunc1", 1) to ::myOtherFunction)
+    private val functions = mapOf(Signature("myFunc1", 1) to LogicFunction(::myFunction))
+    private val functionsOverridden = mapOf(Signature("myFunc1", 1) to LogicFunction(::myOtherFunction))
 
     /** An empty library */
     internal val emptyLibrary by lazy {

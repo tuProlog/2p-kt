@@ -20,12 +20,12 @@ internal class HaltTest {
 
     @Test
     fun haltPrimitiveThrowsHaltException() {
-        assertFailsWith<HaltException> { Halt.implementation(haltSolveRequest) }
+        assertFailsWith<HaltException> { Halt.implementation.solve(haltSolveRequest) }
     }
 
     @Test
     fun haltPrimitiveExceptionContainsCorrectContext() {
-        assertOverFailure<ResolutionException>({ Halt.implementation(haltSolveRequest) }) {
+        assertOverFailure<ResolutionException>({ Halt.implementation.solve(haltSolveRequest) }) {
             assertEquals(haltSolveRequest.context, it.context)
         }
     }

@@ -26,15 +26,15 @@ internal object TermOrderingUtils {
         expectedResult: Any
     ) = when (expectedResult) {
         true -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            standardOrderRelation.implementation(input).single().solution is Solution.Yes
+            standardOrderRelation.implementation.solve(input).single().solution is Solution.Yes
         }
         false -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            standardOrderRelation.implementation(input).single().solution is Solution.No
+            standardOrderRelation.implementation.solve(input).single().solution is Solution.No
         }
         else ->
             @Suppress("UNCHECKED_CAST")
             (expectedResult as? KClass<out ResolutionException>)
-                ?.let { assertFailsWith(expectedResult) { standardOrderRelation.implementation(input) } }
+                ?.let { assertFailsWith(expectedResult) { standardOrderRelation.implementation.solve(input) } }
                 ?: fail("Bad written test data!")
     }
 

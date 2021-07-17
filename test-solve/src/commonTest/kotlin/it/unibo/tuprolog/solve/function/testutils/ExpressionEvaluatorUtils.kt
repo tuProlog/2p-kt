@@ -35,17 +35,17 @@ internal object ExpressionEvaluatorUtils {
         listOf<Triple<Term, LogicFunction, Term>>(
             Triple(
                 Atom.of("a"),
-                { request -> request.replyWith(Atom.of("b")) },
+                LogicFunction { request -> request.replyWith(Atom.of("b")) },
                 Atom.of("b")
             ),
             Triple(
                 Struct.of("extractAnotherTerm", Atom.of("b")),
-                { request -> with(request) { replyWith(Struct.of("resultTerm", arguments.single())) } },
+                LogicFunction { request -> with(request) { replyWith(Struct.of("resultTerm", arguments.single())) } },
                 Struct.of("resultTerm", Atom.of("b"))
             ),
             Triple(
                 Struct.of("concat", Atom.of("a"), Atom.of("b")),
-                { request ->
+                LogicFunction { request ->
                     with(request) {
                         replyWith(
                             Atom.of(
@@ -62,7 +62,7 @@ internal object ExpressionEvaluatorUtils {
                     Struct.of("concat", Atom.of("a"), Atom.of("b")),
                     Struct.of("concat", Atom.of("a"), Atom.of("b"))
                 ),
-                { request ->
+                LogicFunction { request ->
                     with(request) {
                         replyWith(
                             Atom.of(

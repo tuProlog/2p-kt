@@ -34,7 +34,7 @@ internal class CutAndConjunctionIntegrationTest {
                     simpleFactTheory,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
                 )
-                val solutions = Conjunction.implementation(request).map { it.solution }.asIterable()
+                val solutions = Conjunction.implementation.solve(request).map { it.solution }.asIterable()
 
                 assertSolutionEquals(solutionList, solutions)
             }
@@ -55,7 +55,7 @@ internal class CutAndConjunctionIntegrationTest {
                     simpleFactTheory,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
                 )
-                val solutions = Conjunction.implementation(request).map { it.solution }.asIterable()
+                val solutions = Conjunction.implementation.solve(request).map { it.solution }.asIterable()
 
                 assertSolutionEquals(solutionList, solutions)
             }
@@ -68,7 +68,7 @@ internal class CutAndConjunctionIntegrationTest {
             val query = "g"("A") and "g"("B") and "!"
             val request =
                 createSolveRequest(query, simpleFactTheory, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
-            val responses = Conjunction.implementation(request)
+            val responses = Conjunction.implementation.solve(request)
 
             assertOnlyOneSolution(query.yes("A" to "a", "B" to "a"), responses)
         }
@@ -80,7 +80,7 @@ internal class CutAndConjunctionIntegrationTest {
             val query = "g"("A") and "!" and "g"("B")
             val request =
                 createSolveRequest(query, simpleFactTheory, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
-            val responses = Conjunction.implementation(request).map { it.solution }.asIterable()
+            val responses = Conjunction.implementation.solve(request).map { it.solution }.asIterable()
 
             assertSolutionEquals(
                 ktListOf(
@@ -98,7 +98,7 @@ internal class CutAndConjunctionIntegrationTest {
             val query = "g"("A") and "!" and "g"("B") and "!"
             val request =
                 createSolveRequest(query, simpleFactTheory, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
-            val responses = Conjunction.implementation(request)
+            val responses = Conjunction.implementation.solve(request)
 
             assertOnlyOneSolution(query.yes("A" to "a", "B" to "a"), responses)
         }
@@ -118,7 +118,7 @@ internal class CutAndConjunctionIntegrationTest {
             )
             val query = "g"("A") and "!" and "g"("B")
             val request = createSolveRequest(query, database, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
-            val responses = Conjunction.implementation(request).map { it.solution }.asIterable()
+            val responses = Conjunction.implementation.solve(request).map { it.solution }.asIterable()
 
             assertSolutionEquals(
                 ktListOf(

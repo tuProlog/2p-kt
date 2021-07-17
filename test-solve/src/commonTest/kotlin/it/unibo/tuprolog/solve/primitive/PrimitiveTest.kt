@@ -19,7 +19,8 @@ internal class PrimitiveTest {
 
     @Test
     fun primitiveOfReturnsPrimitiveBehavingExactlyAsProvidedOne() {
-        wrapperToMatchingSignatureRequest(Primitive::enforcingSignature, primitive, ::createPrimitiveRequest).zip(allSignatures)
+        wrapperToMatchingSignatureRequest(Primitive.Companion::enforcingSignature, primitive, ::createPrimitiveRequest)
+            .zip(allSignatures)
             .forEach { (primitiveToGoodRequests, primitiveSignature) ->
                 val (checkedPrimitive, goodRequests) = primitiveToGoodRequests
                 goodRequests.forEach {
@@ -37,7 +38,7 @@ internal class PrimitiveTest {
 
     @Test
     fun primitiveOfComplainsIfDifferentRequestSignatureIsDetected() {
-        wrapperToNotMatchingSignatureRequest(Primitive::enforcingSignature, primitive, ::createPrimitiveRequest)
+        wrapperToNotMatchingSignatureRequest(Primitive.Companion::enforcingSignature, primitive, ::createPrimitiveRequest)
             .forEach { (checkedPrimitive, badRequests) ->
                 badRequests.forEach {
                     assertFailsWith<IllegalArgumentException> { checkedPrimitive.solve(it) }

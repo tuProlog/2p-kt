@@ -19,12 +19,12 @@ internal class LogicFunctionTest {
 
     @Test
     fun functionOfReturnsPrologFunctionBehavingExactlyAsProvidedOne() {
-        wrapperToMatchingSignatureRequest(::functionOf, function, ::createFunctionRequest).zip(allSignatures)
+        wrapperToMatchingSignatureRequest(LogicFunction.Companion::enforcingSignature, function, ::createFunctionRequest).zip(allSignatures)
             .forEach { (functionToGoodRequests, functionSignature) ->
                 val (checkedFunction, goodRequests) = functionToGoodRequests
                 goodRequests.forEach {
                     if (functionSignature.vararg) return
-                    assertEquals(defaultFunctionResult, checkedFunction(it))
+                    assertEquals(defaultFunctionResult, checkedFunction.compute(it))
                 }
             }
         // TODO delete above test and enable the code below after solving TODO in "Signature"
@@ -37,10 +37,10 @@ internal class LogicFunctionTest {
 
     @Test
     fun functionOfComplainsIfDifferentRequestSignatureIsDetected() {
-        wrapperToNotMatchingSignatureRequest(::functionOf, function, ::createFunctionRequest)
+        wrapperToNotMatchingSignatureRequest(LogicFunction.Companion::enforcingSignature, function, ::createFunctionRequest)
             .forEach { (checkedFunction, badRequests) ->
                 badRequests.forEach {
-                    assertFailsWith<IllegalArgumentException> { checkedFunction(it) }
+                    assertFailsWith<IllegalArgumentException> { checkedFunction.compute(it) }
                 }
             }
     }

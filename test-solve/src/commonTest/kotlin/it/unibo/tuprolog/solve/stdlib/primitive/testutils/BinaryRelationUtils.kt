@@ -20,15 +20,15 @@ object BinaryRelationUtils {
         expectedResult: Any
     ) = when (expectedResult) {
         true -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            termRelation.implementation(input).single().solution is Solution.Yes
+            termRelation.implementation.solve(input).single().solution is Solution.Yes
         }
         false -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            termRelation.implementation(input).single().solution is Solution.No
+            termRelation.implementation.solve(input).single().solution is Solution.No
         }
         else ->
             @Suppress("UNCHECKED_CAST")
             (expectedResult as? KClass<out ResolutionException>)
-                ?.let { assertFailsWith(expectedResult) { termRelation.implementation(input) } }
+                ?.let { assertFailsWith(expectedResult) { termRelation.implementation.solve(input) } }
                 ?: fail("Bad written test data!")
     }
 }

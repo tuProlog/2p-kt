@@ -23,20 +23,20 @@ internal object FunctionWrapperUtils {
     internal val defaultFunctionResult = Compute.Response(Truth.TRUE)
 
     /** A test function */
-    internal val function: LogicFunction = { defaultFunctionResult }
+    internal val function: LogicFunction = LogicFunction { defaultFunctionResult }
 
     /** A function to create a Compute.Request with provided [signature] and [argList] */
     internal fun createFunctionRequest(signature: Signature, argList: List<Term>) =
         Compute.Request(signature, argList, DummyInstances.executionContext)
 
     /** Utility function to create a function wrapper */
-    internal inline fun createFunctionWrapper(
+    internal fun createFunctionWrapper(
         signature: Signature,
-        crossinline uncheckedImplementation: LogicFunction
+        uncheckedImplementation: LogicFunction
     ): FunctionWrapper<ExecutionContext> =
         object : FunctionWrapper<ExecutionContext>(signature) {
             override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response =
-                uncheckedImplementation(request)
+                uncheckedImplementation.compute(request)
         }
 
     /** All under test requests */

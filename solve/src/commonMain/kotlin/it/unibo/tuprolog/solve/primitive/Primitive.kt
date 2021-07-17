@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.primitive
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /** A typealias for a primitive function that accepts a [Solve.Request] and returns a Sequence of [Solve.Response]s */
 fun interface Primitive {
@@ -11,6 +12,7 @@ fun interface Primitive {
 
     companion object {
         @JsName("of")
+        @JvmStatic
         fun of(function: (Solve.Request<ExecutionContext>) -> Sequence<Solve.Response>): Primitive = Primitive(function)
 
         /**
@@ -18,6 +20,7 @@ fun interface Primitive {
          * as [Solve.Request] signature, throwing [IllegalArgumentException] otherwise
          */
         @JsName("enforcingSignature")
+        @JvmStatic
         fun <C : ExecutionContext> enforcingSignature(
             supportedSignature: Signature,
             uncheckedPrimitive: (Solve.Request<C>) -> Sequence<Solve.Response>
@@ -31,6 +34,7 @@ fun interface Primitive {
         }
 
         @JsName("enforcingSignatureForPrimitive")
+        @JvmStatic
         fun enforcingSignature(
             supportedSignature: Signature,
             uncheckedPrimitive: Primitive
