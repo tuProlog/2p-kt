@@ -17,9 +17,9 @@ internal object TuPrologRuntimeExceptionUtils {
     internal const val aMessage = "ciao"
     internal val aCause = IllegalArgumentException()
 
-    /** A context with emptySequence [ExecutionContext.prologStackTrace] field */
+    /** A context with emptySequence [ExecutionContext.logicStackTrace] field */
     internal val aContext = object : ExecutionContext by DummyInstances.executionContext {
-        override val prologStackTrace: List<Struct> = emptyList()
+        override val logicStackTrace: List<Struct> = emptyList()
     }
 
     /** Different instance from [aContext] with same behaviour */

@@ -72,7 +72,7 @@ fun main() {
                 }
                 is Solution.Halt -> {
                     println("halt: ${it.exception.message}")
-                    for (err in it.exception.prologStackTrace) {
+                    for (err in it.exception.logicStackTrace) {
                         println("\t $err")
                     }
                 }

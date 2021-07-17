@@ -34,7 +34,7 @@ internal class LogicErrorTest {
     }
 
     /** Specific prolog error instances */
-    private val prologErrorTypeToInstanceMap = LogicErrorUtils.recognizedSubTypes.map { (typeParam, _) ->
+    private val logicErrorTypeToInstanceMap = LogicErrorUtils.recognizedSubTypes.map { (typeParam, _) ->
         typeParam to LogicError.of(aMessage, aCause, aContext, typeParam, someExtraData)
     }
 
@@ -62,7 +62,7 @@ internal class LogicErrorTest {
 
     @Test
     fun constructorInsertsMessageIfOnlyCauseSpecified() {
-        val prologError = object : LogicError(aCause, aContext, aType, someExtraData) {
+        val logicError = object : LogicError(aCause, aContext, aType, someExtraData) {
             override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
                 of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
 
@@ -73,7 +73,7 @@ internal class LogicErrorTest {
                 of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
         }
 
-        assertEquals(aCause.toString(), prologError.message)
+        assertEquals(aCause.toString(), logicError.message)
     }
 
     @Test
@@ -95,7 +95,7 @@ internal class LogicErrorTest {
 
     @Test
     fun updateContextReturnsExceptionWithSameContentsButUpdatedContext() {
-        val allPrologErrorInstances = prologErrorTypeToInstanceMap + (aType to underTestPrologError)
+        val allPrologErrorInstances = logicErrorTypeToInstanceMap + (aType to underTestPrologError)
 
         allPrologErrorInstances.forEach { (type, prologError) ->
             val toBeTested = prologError.updateContext(aDifferentContext)

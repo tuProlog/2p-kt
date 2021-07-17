@@ -38,10 +38,10 @@ open class ResolutionException(
         get() = contexts[0]
 
     /** The exception stacktrace; shorthand for `context.prologStackTrace` */
-    @JsName("prologStackTrace")
-    val prologStackTrace: List<Struct>
+    @JsName("logicStackTrace")
+    val logicStackTrace: List<Struct>
         get() = when (contexts.size) {
-            1 -> context.prologStackTrace
+            1 -> context.logicStackTrace
             else ->
                 (
                     sequenceOf(*contexts).take(contexts.size - 1).flatMap { it.fullStackTraceButLast } +
@@ -50,10 +50,10 @@ open class ResolutionException(
         }
 
     private val ExecutionContext.fullStackTrace: Sequence<Struct>
-        get() = prologStackTrace.asSequence()
+        get() = logicStackTrace.asSequence()
 
     private val ExecutionContext.fullStackTraceButLast: Sequence<Struct>
-        get() = prologStackTrace.run { slice(0 until lastIndex) }.asSequence()
+        get() = logicStackTrace.run { slice(0 until lastIndex) }.asSequence()
 
     /**
      * Creates a new exception instance with the context with in position [index] updated to [newContext].

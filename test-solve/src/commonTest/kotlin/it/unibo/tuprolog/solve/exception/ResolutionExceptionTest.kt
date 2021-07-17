@@ -26,8 +26,8 @@ internal class ResolutionExceptionTest {
     }
 
     @Test
-    fun prologStackTraceAccessesContextCorrespondingField() {
-        assertSame(emptyList(), exception.prologStackTrace)
+    fun logicStackTraceAccessesContextCorrespondingField() {
+        assertSame(emptyList(), exception.logicStackTrace)
     }
 
     @Test

@@ -82,7 +82,7 @@ data class ClassicExecutionContext(
         baseInterestingVars + currInterestingVars
     }
 
-    override val prologStackTrace: KtList<Struct> by lazy {
+    override val logicStackTrace: KtList<Struct> by lazy {
         pathToRoot.filter { it.isActivationRecord }
             .map { it.procedure ?: Struct.of("?-", query) }
             .toList()

@@ -113,7 +113,7 @@ class TuPrologCmd(vararg additionalLibraries: AliasedLibrary) : CliktCommand(
             TermUi.echo("# ${w.message}", err = true)
             val sep = "\n    at "
             val formatter = TermFormatter.Companion.prettyExpressions(w.context.operators)
-            val stacktrace = w.prologStackTrace.joinToString(sep) { it.format(formatter) }
+            val stacktrace = w.logicStackTrace.joinToString(sep) { it.format(formatter) }
             TermUi.echo("#    at $stacktrace", err = true)
         }
         val libraries = if (oop) {

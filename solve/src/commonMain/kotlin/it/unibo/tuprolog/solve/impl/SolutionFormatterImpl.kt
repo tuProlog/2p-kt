@@ -21,7 +21,7 @@ internal class SolutionFormatterImpl(private val termFormatter: TermFormatter) :
 
     private fun formatException(e: ResolutionException): String =
         "halt: ${e.message ?: "<no message>"}" +
-            e.prologStackTrace.joinToString(STACK_ITEM_SEPARATOR, STACK_ITEM_SEPARATOR) { termFormatter.format(it) }
+            e.logicStackTrace.joinToString(STACK_ITEM_SEPARATOR, STACK_ITEM_SEPARATOR) { termFormatter.format(it) }
 
     private fun formatYes(value: Solution.Yes): String =
         "yes: ${termFormatter.format(value.solvedQuery)}" +

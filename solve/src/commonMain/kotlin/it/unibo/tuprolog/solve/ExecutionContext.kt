@@ -25,8 +25,8 @@ interface ExecutionContext : ExecutionContextAware {
     val substitution: Substitution.Unifier
 
     /** The Prolog call stacktrace till this ExecutionContext */
-    @JsName("prologStackTrace")
-    val prologStackTrace: List<Struct>
+    @JsName("logicStackTrace")
+    val logicStackTrace: List<Struct>
 
     @JsName("customData")
     val customData: CustomDataStore
