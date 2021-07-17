@@ -1,9 +1,6 @@
-package it.unibo.tuprolog.core.impl
+package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Substitution.Unifier
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.TagsOperator
 import kotlin.collections.Collection as KtCollection
 
