@@ -12,16 +12,16 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.isDotGraphRepresentation
 import it.unibo.tuprolog.solve.isProbabilistic
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
+import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.BinaryDecisionDiagramExplanation
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbQuery
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.toProbConfigTerm
 import it.unibo.tuprolog.solve.problog.lib.rules.Prob
-import it.unibo.tuprolog.solve.setDotGraphRepresentation
+import it.unibo.tuprolog.solve.setBinaryDecisionDiagram
 import it.unibo.tuprolog.solve.setProbability
 import it.unibo.tuprolog.theory.Theory
 
@@ -93,12 +93,15 @@ internal open class ProblogSolver(
                     )
                     else -> newSolution.setProbability(Double.NaN)
                 }
-                if (options.isDotGraphRepresentation &&
-                    bddTerm is ProbExplanationTerm
-                ) {
-                    newSolution = newSolution.setDotGraphRepresentation(
-                        bddTerm.explanation.formatToGraphviz()
-                    )
+
+                // Set the Binary Decision Diagram property
+                if (bddTerm != null && bddTerm is ProbExplanationTerm) {
+                    val explanation = bddTerm.explanation
+                    if (explanation is BinaryDecisionDiagramExplanation) {
+                        newSolution = newSolution.setBinaryDecisionDiagram(
+                            explanation.diagram
+                        )
+                    }
                 }
                 newSolution
             }

@@ -14,12 +14,16 @@ import kotlin.test.assertTrue
 typealias ExpectedSolution = Pair<Struct, Double>
 typealias QueryWithSolutions = Pair<Struct, Iterable<ExpectedSolution>>
 
-object TestUtils {
+internal object TestUtils {
 
-    private const val doublePrecisionEpsilon = 0.01
+    private const val DEFAULT_DOUBLE_PRECISION = 0.01
 
-    private fun tolerantDoubleEquals(first: Double, second: Double): Boolean {
-        return abs(first / second - 1) < doublePrecisionEpsilon
+    fun assertEqualsDouble(
+        first: Double,
+        second: Double,
+        precision: Double = DEFAULT_DOUBLE_PRECISION
+    ): Boolean {
+        return abs(first / second - 1) < precision
     }
 
     fun assertQueryWithSolutions(
@@ -31,8 +35,10 @@ object TestUtils {
 
         queryWithSolutions.forEach {
             val expectedSolutions = it.second.toList()
-            val solutions = solver.solve(it.first, SolveOptions.DEFAULT.setProbabilistic(true))
-                .filterIsInstance<Solution.Yes>().toList()
+            val solutions = solver
+                .solve(it.first, SolveOptions.DEFAULT.setProbabilistic(true))
+                .filterIsInstance<Solution.Yes>()
+                .toList()
 
             var currentActual: ExpectedSolution? = null
             var currentExpected: ExpectedSolution? = null
@@ -44,10 +50,16 @@ object TestUtils {
                 expectedSolutions
                     .any { s ->
                         !solutions.any { sol ->
-                            val solution = ExpectedSolution(sol.solvedQuery, sol.probability)
+                            val solution = ExpectedSolution(
+                                sol.solvedQuery,
+                                sol.probability
+                            )
                             currentActual = solution
                             currentExpected = s
-                            s.first == solution.first && tolerantDoubleEquals(s.second, solution.second)
+                            s.first == solution.first && assertEqualsDouble(
+                                s.second,
+                                solution.second
+                            )
                         }
                     },
                 """Failed to assert expected solution: expected=$currentExpected, actual=$currentActual"""

@@ -41,38 +41,6 @@ internal fun <T> runOperationAndCatchErrors(action: () -> T): T {
 }
 
 /**
- * Formats a [BinaryDecisionDiagram] using Graphviz DOT notation
- * (https://graphviz.org/). This provides a fast and widely supported solution
- * to visualize the contents of a BDD.
- */
-@JsName("toDotString")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toDotString(): String {
-    return runOperationAndCatchErrors {
-        val checkSet = mutableSetOf<Int>()
-        val labelBuilder = StringBuilder()
-        val graphBuilder = StringBuilder()
-
-        val falseValue = false.hashCode()
-        val trueValue = true.hashCode()
-        labelBuilder.append("$falseValue [shape=circle, label=\"0\"]\n")
-        labelBuilder.append("$trueValue [shape=circle, label=\"1\"]\n")
-        this.expansion(falseValue, trueValue) { node, low, high ->
-            val nodeValue = Triple(node, low, high).hashCode()
-            if (nodeValue !in checkSet) {
-                labelBuilder.append(
-                    "$nodeValue [shape=record, label=\"$node\"]\n"
-                )
-                graphBuilder.append("$nodeValue -> $low [style=dashed]\n")
-                graphBuilder.append("$nodeValue -> $high\n")
-                checkSet.add(nodeValue)
-            }
-            nodeValue
-        }
-        "digraph  {\n$labelBuilder$graphBuilder}"
-    }
-}
-
-/**
  * Applies a given operation over a [BinaryDecisionDiagram] using
  * the Shannon Expansion. The result is a reduction of a given diagram,
  * determined by applying an operation recursively over a BDD with
@@ -133,5 +101,50 @@ fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
             builder.buildTerminal(false),
             builder.buildTerminal(true),
         ) { node, low, high -> builder.buildVariable(mapper(node), low, high) }
+    }
+}
+
+/**
+ * Formats a [BinaryDecisionDiagram] using Graphviz DOT notation
+ * (https://graphviz.org/). This provides a fast and widely supported solution
+ * to visualize the contents of a BDD.
+ */
+@JsName("toDotString")
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toDotString(): String {
+    return runOperationAndCatchErrors {
+        val checkSet = mutableSetOf<Int>()
+        val labelBuilder = StringBuilder()
+        val graphBuilder = StringBuilder()
+
+        val falseValue = false.hashCode()
+        val trueValue = true.hashCode()
+        labelBuilder.append("$falseValue [shape=circle, label=\"0\"]\n")
+        labelBuilder.append("$trueValue [shape=circle, label=\"1\"]\n")
+        this.expansion(falseValue, trueValue) { node, low, high ->
+            val nodeValue = Triple(node, low, high).hashCode()
+            if (nodeValue !in checkSet) {
+                labelBuilder.append(
+                    "$nodeValue [shape=record, label=\"$node\"]\n"
+                )
+                graphBuilder.append("$nodeValue -> $low [style=dashed]\n")
+                graphBuilder.append("$nodeValue -> $high\n")
+                checkSet.add(nodeValue)
+            }
+            nodeValue
+        }
+        "digraph  {\n$labelBuilder$graphBuilder}"
+    }
+}
+
+/**
+ * Returns the number of variable nodes contained in a [BinaryDecisionDiagram].
+ */
+@JsName("countVariableNodes")
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.countVariableNodes(): Int {
+    return runOperationAndCatchErrors {
+        this.expansion(0, 0) {
+            _, low, high ->
+            1 + low + high
+        }
     }
 }
