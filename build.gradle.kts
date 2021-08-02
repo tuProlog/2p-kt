@@ -4,6 +4,7 @@ import io.github.gciatto.kt.mpp.ProjectExtensions.ktProjects
 import java.time.Duration
 
 plugins {
+    kotlin("multiplatform")
     id("io.github.gciatto.kt-mpp-pp")
     id("org.danilopianini.git-sensitive-semantic-versioning")
     id("de.marcphilipp.nexus-publish")

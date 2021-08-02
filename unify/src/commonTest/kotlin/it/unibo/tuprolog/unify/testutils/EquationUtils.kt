@@ -174,40 +174,40 @@ internal object EquationUtils {
     }
 
     /** Asserts that all given equations are Identities instances */
-    internal fun <T : Equation<*, *>> assertAllIdentities(equationSequence: Sequence<T>) =
+    internal fun <T : Equation> assertAllIdentities(equationSequence: Sequence<T>) =
         assertTrue("${equationSequence.toList()} all Identities") {
-            equationSequence.all { it is Equation.Identity<*> }
+            equationSequence.all { it is Equation.Identity }
         }
 
     /** Asserts that there's no Identity in given equation sequence */
-    internal fun <T : Equation<*, *>> assertNoIdentities(equationSequence: Sequence<T>) =
+    internal fun <T : Equation> assertNoIdentities(equationSequence: Sequence<T>) =
         assertTrue("${equationSequence.toList()} no Identity") {
-            equationSequence.none { it is Equation.Identity<*> }
+            equationSequence.none { it is Equation.Identity }
         }
 
     /** Asserts that there's at least one Contradiction in given equation sequence */
-    internal fun <T : Equation<*, *>> assertAnyContradiction(equationSequence: Sequence<T>) =
+    internal fun <T : Equation> assertAnyContradiction(equationSequence: Sequence<T>) =
         assertTrue("${equationSequence.toList()} at least one Contradiction") {
-            equationSequence.any { it is Equation.Contradiction<*, *> }
+            equationSequence.any { it is Equation.Contradiction }
         }
 
     /** Asserts that there's no Comparison in given equation sequence */
-    internal fun <T : Equation<*, *>> assertNoComparisons(equationSequence: Sequence<T>) =
+    internal fun <T : Equation> assertNoComparisons(equationSequence: Sequence<T>) =
         assertTrue("${equationSequence.toList()} no Comparison") {
-            equationSequence.none { it is Equation.Comparison<*, *> }
+            equationSequence.none { it is Equation.Comparison }
         }
 
     /** Asserts that there's at least one Assignment in given equation sequence */
-    internal fun <T : Equation<*, *>> assertAnyAssignment(equationSequence: Sequence<T>) =
+    internal fun <T : Equation> assertAnyAssignment(equationSequence: Sequence<T>) =
         assertTrue("${equationSequence.toList()} at least one Assignment") {
-            equationSequence.any { it is Equation.Assignment<*, *> }
+            equationSequence.any { it is Equation.Assignment }
         }
 
     /** A function to count in how many equations will be transformed a term */
     internal fun countDeepGeneratedEquations(term: Term): Int = when (term) {
         is Var -> 1
         is Constant -> 1
-        is Struct -> term.argsSequence.sumBy { countDeepGeneratedEquations(it) }
+        is Struct -> term.argsSequence.sumOf { countDeepGeneratedEquations(it) }
         else -> fail("Should never be there")
     }
 }

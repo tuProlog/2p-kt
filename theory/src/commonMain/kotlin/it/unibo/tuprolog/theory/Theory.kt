@@ -33,12 +33,12 @@ interface Theory : Iterable<Clause>, Taggable<Theory> {
     /** Only [clauses] that are [Rule]s */
     @JsName("rules")
     val rules: Iterable<Rule>
-        get() = clauses.filterIsInstance<Rule>()
+        get() = clauses.asSequence().map { it.asRule() }.filterNotNull().asIterable()
 
     /** Only [clauses] that are [Directive]s */
     @JsName("directives")
     val directives: Iterable<Directive>
-        get() = clauses.filterIsInstance<Directive>()
+        get() = clauses.asSequence().map { it.asDirective() }.filterNotNull().asIterable()
 
     /** The amount of clauses in this [Theory] */
     @JsName("size")

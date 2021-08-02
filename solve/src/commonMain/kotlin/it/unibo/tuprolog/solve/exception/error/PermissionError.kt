@@ -103,7 +103,7 @@ class PermissionError(
         REPOSITION;
 
         @JsName("operation")
-        val operation: String by lazy { this.name.toLowerCase() }
+        val operation: String by lazy { this.name.lowercase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(operation)
@@ -115,7 +115,7 @@ class PermissionError(
             /** Returns the [Operation] instance described by [operation]; creates a new instance only if [operation] was not predefined */
             @JsName("of")
             @JvmStatic
-            fun of(operation: String): Operation = valueOf(operation.toUpperCase())
+            fun of(operation: String): Operation = valueOf(operation.uppercase())
 
             /** Gets [Operation] instance from [term] representation, if possible */
             @JsName("fromTerm")
@@ -143,7 +143,7 @@ class PermissionError(
         TEXT_STREAM;
 
         @JsName("permission")
-        val permission: String by lazy { this.name.toLowerCase() }
+        val permission: String by lazy { this.name.lowercase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(permission)
@@ -155,7 +155,7 @@ class PermissionError(
             /** Returns the [Permission] instance described by [permission]; creates a new instance only if [permission] was not predefined */
             @JsName("of")
             @JvmStatic
-            fun of(permission: String): Permission = valueOf(permission.toUpperCase())
+            fun of(permission: String): Permission = valueOf(permission.uppercase())
 
             /** Gets [Permission] instance from [term] representation, if possible */
             @JsName("fromTerm")

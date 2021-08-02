@@ -18,7 +18,7 @@ import it.unibo.tuprolog.core.List as LogicList
  */
 object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
     private fun decompose(first: Struct, second: Term): Substitution {
-        val decomposed = LogicList.of(Atom.of(first.functor), *first.args)
+        val decomposed = LogicList.of(Atom.of(first.functor), *first.args.toTypedArray())
         return second mguWith decomposed
     }
 

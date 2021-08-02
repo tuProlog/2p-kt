@@ -43,7 +43,7 @@ object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
                     ensuringArgumentIsList(1)
                 }
                 val charArray = (first as Atom).value
-                val result = LogicList.of(charArray.map { Integer.of(it.toInt()) })
+                val result = LogicList.of(charArray.map { Integer.of(it.code) })
                 second mguWith result
             }
         }

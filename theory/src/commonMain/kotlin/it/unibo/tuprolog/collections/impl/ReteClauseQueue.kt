@@ -68,4 +68,7 @@ internal class ReteClauseQueue private constructor(
     override fun hashCode(): Int {
         return hashCodeCache
     }
+
+    override val self: ReteClauseQueue
+        get() = this
 }

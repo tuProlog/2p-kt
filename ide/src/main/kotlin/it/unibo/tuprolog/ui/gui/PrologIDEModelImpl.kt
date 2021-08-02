@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.exception.TuPrologException
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.MutableSolver
@@ -22,9 +23,11 @@ import org.reactfx.EventSource
 import java.io.File
 import java.util.EnumSet
 import java.util.concurrent.ExecutorService
-import kotlin.system.exitProcess
 
-internal class PrologIDEModelImpl(override val executor: ExecutorService, var customizer: ((MutableSolver) -> Unit)?) : PrologIDEModel {
+internal class PrologIDEModelImpl(
+    override val executor: ExecutorService,
+    var customizer: ((MutableSolver) -> Unit)? = {}
+) : PrologIDEModel {
 
     private data class FileContent(var text: String, var changed: Boolean = true) {
         fun text(text: String) {
@@ -36,12 +39,17 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService, var cu
     }
 
     private var tempFiles = 0
+
     private val files = mutableMapOf<File, FileContent>()
+
     private var solutions: Iterator<Solution>? = null
+
     private var solutionCount = 0
+
     private var lastGoal: Struct? = null
+
     private var stdin: String = ""
-    override var timeout: TimeDuration = 5000
+
     override var query: String = ""
 
     override var currentFile: File? = null
@@ -50,6 +58,15 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService, var cu
                 files[field]?.changed = true
             }
             field = value
+        }
+
+    override var timeout: TimeDuration = 5000
+        set(value) {
+            val changed = field != value
+            field = value
+            if (changed) {
+                onTimeoutChanged.push(value)
+            }
         }
 
     override fun newFile(): File =
@@ -104,7 +121,7 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService, var cu
     }
 
     override fun quit() {
-        exitProcess(0)
+        onQuit.push(Unit)
     }
 
     @Volatile
@@ -150,6 +167,12 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService, var cu
             }
             solver.invalidate()
             solver.regenerate()
+            onReset.push(SolverEvent(Unit, solver.value))
+            try {
+                loadCurrentFileAsStaticKB(onlyIfChanged = false)
+            } catch (e: SyntaxException) {
+                onError.push(e)
+            }
         }
     }
 
@@ -175,24 +198,45 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService, var cu
                 solutionCount = 0
                 onNewQuery.push(SolverEvent(lastGoal!!, solver.value))
                 continuation()
-            } catch (e: ParseException) {
+            } catch (e: SyntaxException) {
                 onError.push(e)
             }
         }
     }
 
     private fun newResolution(): Iterator<Solution> {
-        solver.value.let { s ->
-            currentFile?.let { files[it] }.let {
-                if (it?.changed != false) {
-                    val theory = it?.text()?.parseAsTheory(s.operators) ?: Theory.empty()
-                    s.resetDynamicKb()
-                    s.loadStaticKb(theory)
+        loadCurrentFileAsStaticKB()
+        solver.value.let {
+            lastGoal = parseQueryAsStruct(it.operators)
+            return it.solve(lastGoal!!, timeout).iterator()
+        }
+    }
+
+    private fun parseQueryAsStruct(operators: OperatorSet): Struct {
+        try {
+            return query.parseAsStruct(operators)
+        } catch (e: ParseException) {
+            throw SyntaxException.InQuerySyntaxError(query, e)
+        }
+    }
+
+    private fun loadCurrentFileAsStaticKB(onlyIfChanged: Boolean = true) {
+        solver.value.let { solver ->
+            currentFile?.let { file ->
+                files[file].let { content ->
+                    if (!onlyIfChanged || content?.changed != false) {
+                        try {
+                            val theory = content?.text()?.parseAsTheory(solver.operators) ?: Theory.empty()
+                            solver.resetDynamicKb()
+                            solver.loadStaticKb(theory)
+                            onNewStaticKb.push(SolverEvent(Unit, solver))
+                        } catch (e: ParseException) {
+                            content?.changed = true
+                            throw SyntaxException.InTheorySyntaxError(file, e)
+                        }
+                    }
                 }
             }
-            lastGoal = query.parseAsStruct(s.operators)
-            onNewStaticKb.push(SolverEvent(Unit, s))
-            return s.solve(lastGoal!!, timeout).iterator()
         }
     }
 
@@ -249,9 +293,11 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService, var cu
         }
     }
 
-//    override var goal: Struct
-//        get() = TODO("Not yet implemented")
-//        set(value) {}
+    override val onQuit: EventSource<Unit> = EventSource()
+
+    override val onReset: EventSource<SolverEvent<Unit>> = EventSource()
+
+    override val onTimeoutChanged: EventSource<TimeDuration> = EventSource()
 
     override val onFileSelected: EventSource<File> = EventSource()
 

@@ -169,7 +169,7 @@ class TypeError(
         /**
          * The type expected string description
          */
-        private val type: String by lazy { name.toLowerCase() }
+        private val type: String by lazy { name.lowercase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(type)
@@ -180,7 +180,7 @@ class TypeError(
             /** Returns the Expected instance described by [type]; creates a new instance only if [type] was not predefined */
             @JsName("of")
             @JvmStatic
-            fun of(type: String): Expected = valueOf(type.toUpperCase())
+            fun of(type: String): Expected = valueOf(type.uppercase())
 
             /** Gets [Expected] instance from [term] representation, if possible */
             @JsName("fromTerm")

@@ -15,9 +15,6 @@ interface Tuple : Collection {
     override val functor: String
         get() = TUPLE_FUNCTOR
 
-    override val args: Array<Term>
-        get() = arrayOf(left, right)
-
     override val arity: Int
         get() = 2
 
@@ -88,9 +85,9 @@ interface Tuple : Collection {
             require(terms.size >= 2) {
                 "Tuples require at least 2 terms"
             }
-
-            return terms.slice(0 until terms.lastIndex)
-                .foldRight(terms.last()) { l, r -> TupleImpl(l, r) } as Tuple
+            return terms.slice(0 until terms.lastIndex).foldRight(terms.last()) { l, r ->
+                TupleImpl(l, r)
+            }.castToTuple()
         }
     }
 }

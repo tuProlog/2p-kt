@@ -27,7 +27,7 @@ internal class StructTest {
 
     @Test
     fun structOfShouldCreateSubClassInstanceWithSpecialStructs() {
-        val specialStructInstances = StructUtils.specialStructs.map { (functor, args) -> Struct.of(functor, *args) }
+        val specialStructInstances = StructUtils.specialStructs.map { (functor, args) -> Struct.of(functor, args) }
         specialStructInstances.forEach { assertNotEquals(StructImpl::class, it::class) }
     }
 
@@ -47,7 +47,7 @@ internal class StructTest {
         }
 
         val correctInstances = consStructs.map { (_, args) -> Cons.of(args.first(), args.last()) }
-        val toBeTested = consStructs.map { (functor, args) -> Struct.of(functor, *args) }
+        val toBeTested = consStructs.map { (functor, args) -> Struct.of(functor, args) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -59,7 +59,7 @@ internal class StructTest {
         }
 
         val correctInstances = ruleStructs.map { (_, args) -> Rule.of(args.first() as Struct, args.last()) }
-        val toBeTested = ruleStructs.map { (functor, args) -> Struct.of(functor, *args) }
+        val toBeTested = ruleStructs.map { (functor, args) -> Struct.of(functor, args) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -71,7 +71,7 @@ internal class StructTest {
         }
 
         val correctInstances = tupleStructs.map { (_, args) -> Tuple.of(args.toList()) }
-        val toBeTested = tupleStructs.map { (functor, args) -> Struct.of(functor, *args) }
+        val toBeTested = tupleStructs.map { (functor, args) -> Struct.of(functor, args) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -82,8 +82,8 @@ internal class StructTest {
             args.size == 1 && Set.FUNCTOR == functor
         }
 
-        val correctInstances = setStructs.map { (_, args) -> Set.of(*args) }
-        val toBeTested = setStructs.map { (functor, args) -> Struct.of(functor, *args) }
+        val correctInstances = setStructs.map { (_, args) -> Set.of(args) }
+        val toBeTested = setStructs.map { (functor, args) -> Struct.of(functor, args) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -95,7 +95,7 @@ internal class StructTest {
         }
 
         val correctInstances = directiveStructs.map { (_, args) -> Directive.of(args.first()) }
-        val toBeTested = directiveStructs.map { (functor, args) -> Struct.of(functor, *args) }
+        val toBeTested = directiveStructs.map { (functor, args) -> Struct.of(functor, args) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -105,7 +105,7 @@ internal class StructTest {
         val atomStructs = StructUtils.mixedStructs.filter { (_, args) -> args.isEmpty() }
 
         val correctInstances = atomStructs.map { (functor, _) -> Atom.of(functor) }
-        val toBeTested = atomStructs.map { (functor, args) -> Struct.of(functor, *args) }
+        val toBeTested = atomStructs.map { (functor, args) -> Struct.of(functor, args) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -117,7 +117,7 @@ internal class StructTest {
         }
 
         val correctInstances = indicatorStructs.map { (_, args) -> Indicator.of(args.first(), args.last()) }
-        val toBeTested = indicatorStructs.map { (functor, args) -> Struct.of(functor, *args) }
+        val toBeTested = indicatorStructs.map { (functor, args) -> Struct.of(functor, args) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

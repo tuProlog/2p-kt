@@ -43,7 +43,7 @@ internal class JsTermObjectifier : TermObjectifier {
     override fun visitStruct(term: Struct): Any =
         jsObject(
             "fun" to term.functor,
-            "args" to term.argsList.map { it.accept(this) }
+            "args" to term.args.map { it.accept(this) }
         )
 
     override fun visitAtom(term: Atom): String =

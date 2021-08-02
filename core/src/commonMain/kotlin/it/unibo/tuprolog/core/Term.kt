@@ -3,7 +3,6 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.utils.Castable
 import it.unibo.tuprolog.utils.Taggable
-import it.unibo.tuprolog.utils.setTags
 import kotlin.js.JsName
 
 /**
@@ -116,6 +115,24 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      */
     @JsName("isStruct")
     val isStruct: Boolean get() = false
+
+    /**
+     * Checks whether the current term is a truth value.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [Truth].
+     * @return `true` if the current term is a truth value, or `false`, otherwise
+     */
+    @JsName("isTruth")
+    val isTruth: Boolean get() = false
+
+    /**
+     * Checks whether the current term is a collection, i.e., a list, a tuple, or a set.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [Collection].
+     * @return `true` if the current term is a collection, or `false`, otherwise
+     */
+    @JsName("isCollection")
+    val isCollection: Boolean get() = false
 
     /**
      * Checks whether the current term is an atom.
@@ -320,13 +337,7 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      * @throws [SubstitutionApplicationException] if the provided substitution is of type [Substitution.Fail]
      */
     @JsName("applySubstitution")
-    fun apply(substitution: Substitution): Term = when {
-        substitution is Substitution.Fail -> throw SubstitutionApplicationException(this, substitution)
-        substitution.isEmpty() || this.isGround -> this
-        this is Var -> substitution[this] ?: this
-        this is Struct -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) }).setTags(tags)
-        else -> this
-    }
+    fun apply(substitution: Substitution): Term
 
     /**
      * Applies one or more [Substitution]s to the current term, producing a new [Term] which differs from the current
@@ -381,7 +392,7 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      * @return an object of type [T], produced by [visitor] through its visit
      */
     @JsName("accept")
-    fun <T> accept(visitor: TermVisitor<T>): T = visitor.visit(this)
+    fun <T> accept(visitor: TermVisitor<T>): T
 
     /**
      * Casts the current [Term] to [Atom], if possible
@@ -528,6 +539,15 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
         asStruct() ?: throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
 
     /**
+     * Casts the current [Term] to [Collection], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Collection]
+     * @return the current [Term], casted to [Collection]
+     */
+    @JsName("castToCollection")
+    fun castToCollection(): Collection =
+        asCollection() ?: throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
+
+    /**
      * Casts the current [Term] to [Term]
      * @return the current [Term]
      */
@@ -672,6 +692,13 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      */
     @JsName("asStruct")
     fun asStruct(): Struct? = null
+
+    /**
+     * Casts the current [Term] to [Collection], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Collection], or `null`, if the current term is not an instance of [Collection]
+     */
+    @JsName("asCollection")
+    fun asCollection(): Collection? = null
 
     /**
      * Casts the current [Term] to [Term]

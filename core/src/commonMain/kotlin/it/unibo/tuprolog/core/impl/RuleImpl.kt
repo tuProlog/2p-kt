@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 
 internal open class RuleImpl(
     override val head: Struct,
@@ -13,12 +14,12 @@ internal open class RuleImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): Rule = RuleImpl(head, body, tags)
 
-    override fun freshCopy(): Rule = super.freshCopy() as Rule
+    override fun freshCopy(): Rule = super.freshCopy().castToRule()
 
-    override fun freshCopy(scope: Scope): Rule = super.freshCopy(scope) as Rule
+    override fun freshCopy(scope: Scope): Rule = super.freshCopy(scope).castToRule()
 
     override val headArgs: Iterable<Term>
-        get() = head.argsList
+        get() = head.args
 
     override val headArity: Int
         get() = head.arity
@@ -57,4 +58,6 @@ internal open class RuleImpl(
     override fun addLastBodyItem(argument: Term): Rule = super.addLastBodyItem(argument).castToRule()
 
     override fun appendBodyItem(argument: Term): Rule = super.appendBodyItem(argument).castToRule()
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitRule(this)
 }

@@ -91,7 +91,7 @@ class RepresentationError(
         TOO_MANY_VARIABLES;
 
         @JsName("limit")
-        val limit: String by lazy { this.name.toLowerCase() }
+        val limit: String by lazy { this.name.lowercase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(limit)
@@ -103,7 +103,7 @@ class RepresentationError(
             /** Returns the [Limit] instance described by [limit]; creates a new instance only if [limit] was not predefined */
             @JsName("of")
             @JvmStatic
-            fun of(limit: String): Limit = valueOf(limit.toUpperCase())
+            fun of(limit: String): Limit = valueOf(limit.uppercase())
 
             /** Gets [Limit] instance from [term] representation, if possible */
             @JsName("fromTerm")

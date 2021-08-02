@@ -52,8 +52,7 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
 
     override fun get(substitution: Substitution, vararg substitutions: Substitution): Term = this
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-        visitor.visit(this)
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitAtom(this)
 
     override fun assign(objectConverter: TermToObjectConverter, propertyName: String, value: Term): Boolean {
         when (val companionObjectRef = type.companionObjectRef) {

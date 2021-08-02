@@ -25,13 +25,18 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
 
     /** Creates a new OperatorSet removing from this the other operators */
     @JsName("minus")
-    operator fun minus(operator: Operator): OperatorSet =
-        OperatorSet(this as Set<Operator> - operator)
+    operator fun minus(operator: Operator): OperatorSet {
+        val thiz: Set<Operator> = this
+        return OperatorSet(thiz - operator)
+    }
 
     /** Creates a new OperatorSet removing from this the other operators */
     @JsName("minusOperatorSet")
-    operator fun minus(other: OperatorSet): OperatorSet =
-        OperatorSet(((this as Set<Operator>) - (other as Set<Operator>)))
+    operator fun minus(other: OperatorSet): OperatorSet {
+        val thiz: Set<Operator> = this
+        val otherSet: Set<Operator> = other
+        return OperatorSet(thiz - otherSet)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

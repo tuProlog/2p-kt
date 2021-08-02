@@ -34,4 +34,9 @@ class TestStreamsClause : TestClause, SolverFactory by StreamsSolverFactory {
     override fun testClauseAtomBody() {
         prototype.testClauseAtomBody()
     }
+
+    @Test
+    override fun testClauseVariables() {
+        prototype.testClauseVariables()
+    }
 }

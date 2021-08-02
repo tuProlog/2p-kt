@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.theory.Theory
 import javafx.application.Platform
@@ -14,6 +15,7 @@ import javafx.event.ActionEvent
 import javafx.event.Event
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
@@ -21,6 +23,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
 import javafx.scene.control.ProgressBar
+import javafx.scene.control.Slider
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.scene.control.TableColumn
@@ -33,14 +36,20 @@ import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Region
+import javafx.scene.text.Text
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.fxmisc.richtext.CodeArea
 import java.io.File
 import java.net.URL
+import java.time.Duration
+import java.util.Locale
 import java.util.ResourceBundle
+import kotlin.math.pow
+import kotlin.math.round
+import kotlin.system.exitProcess
 
-@Suppress("UNUSED_PARAMETER")
+@Suppress("UNUSED_PARAMETER", "unused")
 class PrologIDEController : Initializable {
 
     private val model = PrologIDEModel.of()
@@ -48,6 +57,12 @@ class PrologIDEController : Initializable {
     private var onClose = {}
 
     private var onAbout = {}
+
+    @FXML
+    private lateinit var sldTimeout: Slider
+
+    @FXML
+    private lateinit var lblTimeout: Label
 
     @FXML
     private lateinit var root: Parent
@@ -240,6 +255,13 @@ class PrologIDEController : Initializable {
         model.onFileSelected.subscribe(this::onFileSelected)
         model.onNewSolver.subscribe(this::onNewSolver)
         model.onNewStaticKb.subscribe(this::onNewStaticKb)
+        model.onTimeoutChanged.subscribe(this::onTimeoutChanged)
+        model.onReset.subscribe(this::onReset)
+        model.onQuit.subscribe(this::onQuit)
+
+        sldTimeout.valueProperty().addListener { _, _, value -> onTimeoutSliderMoved(value) }
+
+        updateTimeoutView(model.timeout)
 
         lsvSolutions.setCellFactory { ListCellView { SolutionView.of(it) } }
         lsvWarnings.setCellFactory { ListCellView { Label(it.message) } }
@@ -260,6 +282,53 @@ class PrologIDEController : Initializable {
             streamsTabs.forEach { it.hideNotification() }
         }
     }
+
+    private fun onQuit(e: Unit) {
+        exitProcess(0)
+    }
+
+    private fun onReset(e: SolverEvent<Unit>) {
+        // currentFileTab?.let { model.setCurrentFile(it.wholeText) }
+        lsvWarnings.items.clear()
+        txaStdout.clear()
+        txaStderr.clear()
+        lsvSolutions.items.clear()
+    }
+
+    private fun onTimeoutSliderMoved(value: Number) {
+        model.timeout = round(10.0.pow(value.toDouble())).toLong()
+    }
+
+    private fun onTimeoutChanged(newTimeout: TimeDuration) {
+        updateTimeoutView(newTimeout)
+    }
+
+    private fun updateTimeoutView(timeout: TimeDuration) {
+        val duration = Duration.ofMillis(timeout)
+        lblTimeout.text = duration.pretty()
+    }
+
+    private fun Duration.pretty(): String {
+        val milliseconds = toMillisPart()
+        val seconds = toSecondsPart()
+        val minutes = toMinutesPart()
+        val hours = toHoursPart()
+        val days = toDaysPart() % 365
+        val years = toDaysPart() / 365
+        return sequenceOf(
+            years.pretty("y"),
+            days.pretty("d"),
+            hours.pretty("h"),
+            minutes.pretty("m"),
+            seconds.pretty("s"),
+            milliseconds.pretty("ms")
+        ).filterNotNull().joinToString()
+    }
+
+    private fun Long.pretty(unit: String): String? =
+        if (this == 0L) null else "$this$unit"
+
+    private fun Int.pretty(unit: String): String? = toLong().pretty(unit)
 
     private fun onNewSolver(e: SolverEvent<Unit>) = onUiThread {
         updateContextSensitiveView(e)
@@ -356,14 +425,15 @@ class PrologIDEController : Initializable {
             }
             tabLibraries.showNotification()
         }
-        if (event.staticKb != lastEvent?.staticKb) {
+        if (lastEvent?.staticKb?.let { event.staticKb.equals(it, useVarCompleteName = false) } == false) {
             txaStaticKb.text = event.staticKb.pretty()
             tabStaticKb.showNotification()
         }
-        if (event.dynamicKb != lastEvent?.dynamicKb) {
+        if (lastEvent?.dynamicKb?.let { event.dynamicKb.equals(it, useVarCompleteName = false) } == false) {
             txaDynamicKb.text = event.dynamicKb.pretty()
             tabDynamicKb.showNotification()
         }
+        lastEvent = event
     }
 
     private fun updatingContextSensitiveView(event: SolverEvent<*>, action: () -> Unit) {
@@ -384,11 +454,31 @@ class PrologIDEController : Initializable {
 
     private fun onError(exception: Exception) = onUiThread {
         val dialog = Alert(Alert.AlertType.ERROR)
-        dialog.headerText = exception::class.java.simpleName
-        dialog.title = "Error"
-        dialog.contentText = exception.message?.capitalize()
+        dialog.title = exception::class.java.simpleName
+        when (exception) {
+            is SyntaxException.InTheorySyntaxError -> {
+                dialog.headerText = "Syntax error in ${exception.file.name}"
+                dialog.dialogPane.content = exception.message.toMonospacedText()
+            }
+            is SyntaxException.InQuerySyntaxError -> {
+                dialog.headerText = "Syntax error in query"
+                dialog.dialogPane.content = exception.message.toMonospacedText()
+            }
+            else -> {
+                dialog.headerText = "Error"
+                dialog.dialogPane.content = exception.message?.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                }?.toMonospacedText()
+            }
+        }
         dialog.dialogPane.minHeight = Region.USE_PREF_SIZE
+        dialog.dialogPane.minWidth = Region.USE_PREF_SIZE
         dialog.showAndWait()
+    }
+
+    private fun String?.toMonospacedText(): Node {
+        if (this == null) return Text()
+        return Text(this).also { it.style = "-fx-font-family: monospaced" }
     }
 
     private fun onNewSolution(e: SolverEvent<Solution>) = onUiThread {
@@ -404,6 +494,8 @@ class PrologIDEController : Initializable {
             cleanUpAfterResolution()
             btnStop.isDisable = false
             txaStdin.isDisable = true
+            btnNext.text = "Next"
+            btnNextAll.text = "All next"
         }
     }
 
@@ -412,6 +504,8 @@ class PrologIDEController : Initializable {
             lblStatus.text = "Idle"
             btnStop.isDisable = true
             txaStdin.isDisable = false
+            btnNext.text = "Solve"
+            btnNextAll.text = "Solve all"
         }
     }
 
@@ -482,9 +576,6 @@ class PrologIDEController : Initializable {
     @FXML
     fun onResetButtonPressed(e: ActionEvent) {
         model.reset()
-        currentFileTab?.let { model.setCurrentFile(it.wholeText) }
-        txaStdout.clear()
-        txaStderr.clear()
     }
 
     private fun continueResolution(all: Boolean = false) {
@@ -616,37 +707,27 @@ class PrologIDEController : Initializable {
 
     @FXML
     fun onUndoPressed(e: ActionEvent) {
-        currentFileTab?.let {
-            it.codeArea.undo()
-        }
+        currentFileTab?.codeArea?.undo()
     }
 
     @FXML
     fun onRedoPressed(e: ActionEvent) {
-        currentFileTab?.let {
-            it.codeArea.redo()
-        }
+        currentFileTab?.codeArea?.redo()
     }
 
     @FXML
     fun onCutPressed(e: ActionEvent) {
-        currentFileTab?.let {
-            it.codeArea.cut()
-        }
+        currentFileTab?.codeArea?.cut()
     }
 
     @FXML
     fun onCopyPressed(e: ActionEvent) {
-        currentFileTab?.let {
-            it.codeArea.copy()
-        }
+        currentFileTab?.codeArea?.copy()
     }
 
     @FXML
     fun onPastePressed(e: ActionEvent) {
-        currentFileTab?.let {
-            it.codeArea.paste()
-        }
+        currentFileTab?.codeArea?.paste()
     }
 
     @FXML
@@ -658,16 +739,12 @@ class PrologIDEController : Initializable {
 
     @FXML
     fun onSelectAllPressed(e: ActionEvent) {
-        currentFileTab?.let {
-            it.codeArea.selectAll()
-        }
+        currentFileTab?.codeArea?.selectAll()
     }
 
     @FXML
     fun onUnselectAllPressed(e: ActionEvent) {
-        currentFileTab?.let {
-            it.codeArea.deselect()
-        }
+        currentFileTab?.codeArea?.deselect()
     }
 
     @FXML

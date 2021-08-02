@@ -25,7 +25,7 @@ fun Term.toClause(source: Any? = null, line: Int = 0, column: Int = 0): Clause =
     when (this) {
         is Clause -> this
         is Struct -> Fact.of(this)
-        else -> throw InvalidTermTypeException(source, toString(), Clause::class, line, column)
+        else -> throw InvalidTermTypeException(source, this, Clause::class, line = line, column = column)
     }
 
 @JsName("parseTermWithOperators")

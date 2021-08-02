@@ -70,12 +70,12 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
         fun fromTerm(struct: Struct): Operator? = with(struct) {
             when {
                 functor == FUNCTOR && arity == 3 &&
-                    args[0] is Integer && args[1] is Atom && args[2] is Atom -> {
+                    getArgAt(0).isInt && getArgAt(1).isAtom && getArgAt(2).isAtom -> {
                     try {
                         Operator(
-                            args[2].castToAtom().value,
-                            Specifier.fromTerm(args[1]),
-                            args[0].castToNumeric().intValue.toInt()
+                            getArgAt(2).castToAtom().value,
+                            Specifier.fromTerm(getArgAt(1)),
+                            getArgAt(0).castToNumeric().intValue.toInt()
                         )
                     } catch (ex: IllegalArgumentException) {
                         null

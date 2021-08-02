@@ -19,6 +19,16 @@ interface List : Collection {
     @JsName("last")
     val last: Term
 
+    /**
+     * Estimated length of this list.
+     * This property is part of the [List] interface to enable efficiency tweaks.
+     * It is NOT intended for external usage
+     *
+     * DO NOT assume this returns the correct length of the current list.
+     */
+    @JsName("estimatedLength")
+    val estimatedLength: Int
+
     override val unfoldedSequence: Sequence<Term>
 
     override val unfoldedList: KtList<Term>
@@ -56,16 +66,24 @@ interface List : Collection {
 
         @JvmStatic
         @JsName("ofIterable")
-        fun of(items: Iterable<Term>): List = from(items.toList(), empty())
+        fun of(items: Iterable<Term>): List =
+            when (items) {
+                is KtList<Term> -> from(items, empty())
+                else -> from(items.cursor(), empty())
+            }
+
+        @JvmStatic
+        @JsName("ofList")
+        fun of(items: KtList<Term>): List = from(items, empty())
 
         @JvmStatic
         @JsName("ofSequence")
-        fun of(items: Sequence<Term>): List = from(items.toList(), empty())
+        fun of(items: Sequence<Term>): List = from(items.cursor(), empty())
 
         @JvmStatic
         @JsName("from")
         fun from(vararg items: Term, last: Term?): List =
-            from(items.cursor(), last)
+            from(items.toList(), last)
 
         @JvmStatic
         @JsName("fromNullTerminated")
@@ -75,7 +93,10 @@ interface List : Collection {
         @JvmStatic
         @JsName("fromIterable")
         fun from(items: Iterable<Term>, last: Term?): List =
-            from(items.cursor(), last)
+            when (items) {
+                is KtList<Term> -> from(items, last)
+                else -> from(items.cursor(), last)
+            }
 
         @JvmStatic
         @JsName("fromIterableNullTerminated")
@@ -94,8 +115,23 @@ interface List : Collection {
 
         @JvmStatic
         @JsName("fromList")
-        fun from(items: KtList<Term>, last: Term?): List =
-            from(items.cursor(), last)
+        fun from(items: KtList<Term>, last: Term?): List {
+            if (items.isEmpty()) {
+                return (last ?: empty()).asList()
+                    ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
+            }
+            val i = items.asReversed().iterator()
+            var right = if (last == null) {
+                i.next()
+                items.last()
+            } else {
+                last
+            }
+            while (i.hasNext()) {
+                right = Cons.of(i.next(), right)
+            }
+            return right.castToList()
+        }
 
         @JvmStatic
         @JsName("fromListNullTerminated")
@@ -107,7 +143,7 @@ interface List : Collection {
         fun from(items: Cursor<out Term>, last: Term?): List {
             return when {
                 items.isOver ->
-                    (last ?: empty()) as? List
+                    (last ?: empty()).asList()
                         ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
                 last == null -> LazyConsWithImplicitLast(items)
                 else -> LazyConsWithExplicitLast(items, last)

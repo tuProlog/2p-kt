@@ -5,8 +5,14 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** A leaf node containing [Rule]s */
-internal data class RuleNode(override val leafElements: MutableList<Rule> = mutableListOf()) :
-    AbstractLeafReteNode<Rule>() {
+internal data class RuleNode(
+    override val leafElements: MutableList<Rule> = mutableListOf()
+) : AbstractLeafReteNode<Rule>() {
+
+    override val isRuleNode: Boolean
+        get() = true
+
+    override fun asRuleNode(): RuleNode = this
 
     override val header = "Rules"
 

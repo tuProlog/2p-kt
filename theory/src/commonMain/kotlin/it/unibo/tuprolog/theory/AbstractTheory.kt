@@ -23,7 +23,7 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
     override fun contains(indicator: Indicator): Boolean =
         get(indicator).any()
 
-    override fun get(head: Struct): Sequence<Rule> = get(Rule.of(head, Var.anonymous())).map { it as Rule }
+    override fun get(head: Struct): Sequence<Rule> = get(Rule.of(head, Var.anonymous())).map { it.castToRule() }
 
     override fun get(indicator: Indicator): Sequence<Rule> {
         require(indicator.isWellFormed) { "The provided indicator is not well formed: $indicator" }
@@ -33,7 +33,7 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
                 Struct.of(indicator.indicatedName!!, (1..indicator.indicatedArity!!).map { Var.anonymous() }),
                 Var.anonymous()
             )
-        ).map { it as Rule }
+        ).map { it.castToRule() }
     }
 
     override fun abolish(indicator: Indicator): Theory {
@@ -44,10 +44,12 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
 
     override fun toString(): String = "${this::class.simpleName}{ ${clauses.joinToString(". ")} }"
 
-    override fun toString(asPrologText: Boolean): String = when (asPrologText) {
-        true -> clauses.joinToString(".\n", "", ".\n")
-        false -> toString()
-    }
+    override fun toString(asPrologText: Boolean): String =
+        if (asPrologText) {
+            clauses.joinToString(".\n", "", ".\n")
+        } else {
+            toString()
+        }
 
     override fun iterator(): Iterator<Clause> = clauses.iterator()
 

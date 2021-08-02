@@ -44,7 +44,7 @@ object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes")
                     ensuringArgumentIsList(1)
                 }
                 val numberString = first.toString()
-                val result = LogicList.of(numberString.map { Integer.of(it.toInt()) })
+                val result = LogicList.of(numberString.map { Integer.of(it.code) })
                 second mguWith result
             }
         }

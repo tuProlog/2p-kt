@@ -14,7 +14,7 @@ import java.util.concurrent.ForkJoinPool
 interface PrologIDEModel {
 
     companion object {
-        fun of(executor: ExecutorService = ForkJoinPool.commonPool()): PrologIDEModel = PrologIDEModelImpl(executor) {}
+        fun of(executor: ExecutorService = ForkJoinPool.commonPool()): PrologIDEModel = PrologIDEModelImpl(executor)
     }
 
     enum class State {
@@ -72,6 +72,12 @@ interface PrologIDEModel {
     var query: String
 
 //    var goal: Struct
+
+    val onReset: EventStream<SolverEvent<Unit>>
+
+    val onQuit: EventStream<Unit>
+
+    val onTimeoutChanged: EventStream<TimeDuration>
 
     val onFileSelected: EventStream<File>
 

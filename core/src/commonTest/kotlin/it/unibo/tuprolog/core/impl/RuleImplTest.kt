@@ -84,11 +84,10 @@ internal class RuleImplTest {
 
     @Test
     fun argsCorrect() {
-        val correctArgs = RuleUtils.mixedRules.map { (head, body) -> arrayOf(head, body) }
+        val correctArgs = RuleUtils.mixedRules.map { (head, body) -> listOf(head, body) }
 
         onCorrespondingItems(correctArgs, mixedRulesInstances.map { it.args }) { expected, actual ->
-            assertEquals(expected.toList(), actual.toList())
-            assertTrue { expected.contentDeepEquals(actual) }
+            assertEquals(expected, actual)
         }
     }
 

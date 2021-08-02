@@ -39,7 +39,7 @@ internal class StateInit(
                         StateGoalEvaluation(
                             solve.copy(
                                 signature = preparedGoal.extractSignature(),
-                                arguments = preparedGoal.argsList,
+                                arguments = preparedGoal.args,
                                 context = with(solve.context) { copy(sideEffectManager = initializedSideEffectsManager) }
                             )
                         )

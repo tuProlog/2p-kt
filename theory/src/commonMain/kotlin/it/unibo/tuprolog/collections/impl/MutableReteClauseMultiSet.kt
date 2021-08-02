@@ -36,4 +36,7 @@ internal class MutableReteClauseMultiSet private constructor(
     override fun hashCode(): Int {
         return MutableClauseMultiSet.hashCode(this)
     }
+
+    override val self: MutableReteClauseMultiSet
+        get() = this
 }

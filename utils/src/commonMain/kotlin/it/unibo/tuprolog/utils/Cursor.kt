@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.utils
 
 import it.unibo.tuprolog.utils.impl.EmptyCursor
-import it.unibo.tuprolog.utils.impl.MapperCursor
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -18,24 +17,14 @@ interface Cursor<T> {
     @JsName("isOver")
     val isOver: Boolean
 
+    @JsName("isLazy")
+    val isLazy: Boolean
+
     @JsName("map")
-    fun <R> map(mapper: (T) -> R): Cursor<out R> {
-        return MapperCursor(this, mapper)
-    }
+    fun <R> map(mapper: (T) -> R): Cursor<out R>
 
     @JsName("iterator")
-    fun iterator(): Iterator<T> =
-        object : Iterator<T> {
-            private var current: Cursor<out T> = this@Cursor
-
-            override fun hasNext(): Boolean = !current.isOver
-
-            override fun next(): T {
-                val result = current.current
-                current = current.next
-                return result!!
-            }
-        }
+    fun iterator(): Iterator<T>
 
     @JsName("asIterable")
     fun asIterable(): Iterable<T> = Iterable { iterator() }

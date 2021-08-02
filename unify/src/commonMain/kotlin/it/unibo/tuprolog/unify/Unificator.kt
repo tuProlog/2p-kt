@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import kotlin.js.JsName
@@ -91,8 +89,12 @@ interface Unificator {
             object : AbstractUnificator(context) {
                 override fun checkTermsEquality(first: Term, second: Term) =
                     when {
-                        first is Integer && second is Integer -> first.value.compareTo(second.value) == 0
-                        first is Numeric && second is Numeric -> first.decimalValue.compareTo(second.decimalValue) == 0
+                        first.isInt && second.isInt -> {
+                            first.castToInteger().value.compareTo(second.castToInteger().value) == 0
+                        }
+                        first.isNumber && second.isNumber -> {
+                            first.castToNumeric().decimalValue.compareTo(second.castToNumeric().decimalValue) == 0
+                        }
                         else -> first == second
                     }
             }

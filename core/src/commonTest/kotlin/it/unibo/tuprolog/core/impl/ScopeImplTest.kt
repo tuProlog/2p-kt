@@ -237,8 +237,8 @@ internal class ScopeImplTest {
 
     @Test
     fun structOfFunctorAndVarargs() {
-        val correctInstances = StructUtils.mixedStructs.map { (functor, args) -> Struct.of(functor, *args) }
-        val toBeTested = StructUtils.mixedStructs.map { (functor, args) -> emptyScopeInstance.structOf(functor, *args) }
+        val correctInstances = StructUtils.mixedStructs.map { (functor, args) -> Struct.of(functor, args) }
+        val toBeTested = StructUtils.mixedStructs.map { (functor, args) -> emptyScopeInstance.structOf(functor, args) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

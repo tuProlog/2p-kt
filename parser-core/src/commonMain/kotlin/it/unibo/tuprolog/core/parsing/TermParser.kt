@@ -28,7 +28,7 @@ interface TermParser {
 
     @JsName("parseStructWithOperators")
     fun parseStruct(input: String, operators: OperatorSet): Struct =
-        parseTerm(input, operators) as Struct
+        parseAs(input, operators)
 
     @JsName("parseStruct")
     fun parseStruct(input: String): Struct =
@@ -36,7 +36,7 @@ interface TermParser {
 
     @JsName("parseConstantWithOperators")
     fun parseConstant(input: String, operators: OperatorSet): Constant =
-        parseTerm(input, operators) as Constant
+        parseAs(input, operators)
 
     @JsName("parseConstant")
     fun parseConstant(input: String): Constant =
@@ -44,7 +44,7 @@ interface TermParser {
 
     @JsName("parseVarWithOperators")
     fun parseVar(input: String, operators: OperatorSet): Var =
-        parseTerm(input, operators) as Var
+        parseAs(input, operators)
 
     @JsName("parseVar")
     fun parseVar(input: String): Var =
@@ -52,7 +52,7 @@ interface TermParser {
 
     @JsName("parseAtomWithOperators")
     fun parseAtom(input: String, operators: OperatorSet): Atom =
-        parseTerm(input, operators) as Atom
+        parseAs(input, operators)
 
     @JsName("parseAtom")
     fun parseAtom(input: String): Atom =
@@ -60,7 +60,7 @@ interface TermParser {
 
     @JsName("parseNumericWithOperators")
     fun parseNumeric(input: String, operators: OperatorSet): Numeric =
-        parseTerm(input, operators) as Numeric
+        parseAs(input, operators)
 
     @JsName("parseNumeric")
     fun parseNumeric(input: String): Numeric =
@@ -68,7 +68,7 @@ interface TermParser {
 
     @JsName("parseIntegerWithOperators")
     fun parseInteger(input: String, operators: OperatorSet): Integer =
-        parseTerm(input, operators) as Integer
+        parseAs(input, operators)
 
     @JsName("parseInteger")
     fun parseInteger(input: String): Integer =
@@ -76,7 +76,7 @@ interface TermParser {
 
     @JsName("parseRealWithOperators")
     fun parseReal(input: String, operators: OperatorSet): Real =
-        parseTerm(input, operators) as Real
+        parseAs(input, operators)
 
     @JsName("parseReal")
     fun parseReal(input: String): Real =
@@ -115,5 +115,10 @@ interface TermParser {
         @JvmStatic
         @JsName("withOperators")
         fun withOperators(vararg operators: Operator) = withOperators(OperatorSet(*operators))
+
+        private inline fun <reified T : Term> TermParser.parseAs(input: String, operators: OperatorSet) =
+            parseTerm(input, operators).let {
+                it as? T ?: throw InvalidTermTypeException(input, it, T::class)
+            }
     }
 }

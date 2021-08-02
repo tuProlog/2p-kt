@@ -18,7 +18,7 @@ internal object SolutionUtils {
     private val solutionScope = Scope.empty()
     internal val aQuery = with(solutionScope) { Struct.of("f", varOf("A")) }
     internal val querySignature = aQuery.extractSignature()
-    internal val queryArgList = aQuery.argsList
+    internal val queryArgList = aQuery.args
     internal val aSubstitution = with(solutionScope) { Substitution.of(varOf("A"), Struct.of("c", varOf("B"))) }
     internal val theQuerySolved = with(solutionScope) { Struct.of("f", Struct.of("c", varOf("B"))) }
     internal val anException = TuPrologRuntimeException(context = DummyInstances.executionContext)

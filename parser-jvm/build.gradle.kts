@@ -1,4 +1,5 @@
 plugins {
+    java
     antlr
 }
 
@@ -11,8 +12,8 @@ dependencies {
 }
 
 configurations {
-    compile {
-        setExtendsFrom(emptyList())
+    api {
+        setExtendsFrom(emptyList()) // removes undesired dependency from antlr configuration
     }
 }
 
@@ -20,6 +21,7 @@ tasks.generateGrammarSource {
     maxHeapSize = "64m"
     arguments = arguments + listOf("-visitor", "-long-messages")
     outputDirectory = File("${project.buildDir}/generated-src/antlr/main/it/unibo/tuprolog/parser")
+    tasks.compileKotlin.orNull?.dependsOn(this)
 }
 
 tasks.getByName<Jar>("sourcesJar") {

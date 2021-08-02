@@ -1,10 +1,17 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
+import kotlin.js.JsName
 
 @Suppress("EqualsOrHashCode")
 internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap()) : Term {
+
+    @JsName("termMark")
+    val termMark: Int
+        get() = MARK
 
     protected abstract val hashCodeCache: Int
 
@@ -26,4 +33,19 @@ internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap(
         }
 
     protected abstract fun copyWithTags(tags: Map<String, Any>): Term
+
+    override fun apply(substitution: Substitution): Term = when {
+        substitution.isSuccess -> {
+            if (isUnifierSkippable(substitution.castToUnifier())) {
+                this
+            } else {
+                applyNonEmptyUnifier(substitution.castToUnifier())
+            }
+        }
+        else -> throw SubstitutionApplicationException(this, substitution)
+    }
+
+    protected open fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty() || this.isGround
+
+    protected open fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term = this
 }

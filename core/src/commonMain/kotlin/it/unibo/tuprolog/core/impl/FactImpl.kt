@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Truth
 
 internal class FactImpl(
@@ -17,9 +18,9 @@ internal class FactImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): Fact = FactImpl(head, tags)
 
-    override fun freshCopy(): Fact = super.freshCopy() as Fact
+    override fun freshCopy(): Fact = super.freshCopy().castToFact()
 
-    override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope) as Fact
+    override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope).castToFact()
 
     override fun setHeadFunctor(functor: String): Fact = super.setHeadFunctor(functor).castToFact()
 
@@ -36,4 +37,6 @@ internal class FactImpl(
     override fun addLastHeadArg(argument: Term): Fact = super.addLastHeadArg(argument).castToFact()
 
     override fun appendHeadArg(argument: Term): Fact = super.appendHeadArg(argument).castToFact()
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitFact(this)
 }

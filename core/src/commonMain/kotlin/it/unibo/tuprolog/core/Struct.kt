@@ -26,7 +26,11 @@ interface Struct : Term {
         get() = true
 
     override val isClause: Boolean
-        get() = CLAUSE_FUNCTOR == functor
+        get() = CLAUSE_FUNCTOR == functor && when (arity) {
+            2 -> getArgAt(0).isStruct
+            1 -> true
+            else -> false
+        }
 
     override val isRule: Boolean
         get() = isClause && arity == 2
@@ -35,7 +39,7 @@ interface Struct : Term {
         get() = isClause && arity == 1
 
     override val isFact: Boolean
-        get() = isRule && args[1].isTrue
+        get() = isRule && getArgAt(1).isTrue
 
     override val isTuple: Boolean
         get() = functor == TUPLE_FUNCTOR && arity == 2
@@ -137,14 +141,8 @@ interface Struct : Term {
     val isFunctorWellFormed: Boolean
 
     /**
-     * Array of arguments of this [Struct].
-     */
-    @JsName("args")
-    val args: Array<Term>
-
-    /**
      * The total amount of arguments of this [Struct].
-     * This is equal to the length of [args] and to the size of [argsList].
+     * This is equal to the length of [args].
      */
     @JsName("arity")
     val arity: Int
@@ -161,21 +159,20 @@ interface Struct : Term {
      * List of arguments of this [Struct].
      */
     @JsName("argsList")
-    val argsList: KtList<Term>
-        get() = listOf(*args)
+    val args: KtList<Term>
 
     /**
      * Sequence of arguments of this [Struct].
      */
     @JsName("argsSequence")
     val argsSequence: Sequence<Term>
-        get() = sequenceOf(*args)
+        get() = args.asSequence()
 
     /**
      * Gets the [index]-th argument if this [Struct].
      * @param index is the index the argument which should be retrieved
      * @throws IndexOutOfBoundsException if [index] is lower than 0 or greater or equal to [arity]
-     * @return the [Term] having position [index] in [argsList]
+     * @return the [Term] having position [index] in [args]
      */
     @JsName("getArgAt")
     fun getArgAt(index: Int): Term = args[index]
@@ -341,14 +338,14 @@ interface Struct : Term {
         fun of(functor: String, args: KtList<Term>): Struct =
             when {
                 args.size == 2 && CONS_FUNCTOR == functor -> Cons.of(args.first(), args.last())
-                args.size == 2 && CLAUSE_FUNCTOR == functor && args.first() is Struct ->
-                    Rule.of(args.first() as Struct, args.last())
+                args.size == 2 && CLAUSE_FUNCTOR == functor && args.first().isStruct ->
+                    Rule.of(args.first().castToStruct(), args.last())
                 args.size == 2 && TUPLE_FUNCTOR == functor -> Tuple.of(args)
                 args.size == 2 && INDICATOR_FUNCTOR == functor -> Indicator.of(args.first(), args.last())
                 args.size == 1 && SET_FUNCTOR == functor -> Set.of(args)
                 args.size == 1 && CLAUSE_FUNCTOR == functor -> Directive.of(args.first())
                 args.isEmpty() -> Atom.of(functor)
-                else -> StructImpl(functor, args.toTypedArray(), emptyMap())
+                else -> StructImpl(functor, args, emptyMap())
             }
 
         /**

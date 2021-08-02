@@ -3,16 +3,15 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Var
 
 internal open class AtomImpl(
     override val functor: String,
     tags: Map<String, Any> = emptyMap()
-) : StructImpl(functor, emptyArray(), tags), Atom {
+) : AbstractStruct(functor, emptyList(), tags), Atom {
 
-    override val args: Array<Term> = super<StructImpl>.args
-
-    override val argsList: List<Term>
+    override val args: List<Term>
         get() = emptyList()
 
     override val isGround: Boolean
@@ -26,4 +25,6 @@ internal open class AtomImpl(
     override fun freshCopy(): Atom = this
 
     override fun freshCopy(scope: Scope): Atom = this
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitAtom(this)
 }

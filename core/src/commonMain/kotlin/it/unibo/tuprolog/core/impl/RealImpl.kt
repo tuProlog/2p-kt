@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -20,17 +21,17 @@ internal class RealImpl(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is Real) return false
-        return equalsToReal(other)
+        val real = asTerm(other)?.asReal()
+        if (real === null) return false
+        return equalsToReal(real)
     }
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun equalsToReal(other: Real) =
         value.compareTo(other.value) == 0
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
-        return other is Real && equalsToReal(other)
-    }
+    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
+        other.isReal && equalsToReal(other.castToReal())
 
     override val hashCodeCache: Int by lazy { value.stripTrailingZeros().hashCode() }
 
@@ -39,4 +40,6 @@ internal class RealImpl(
     override fun freshCopy(): Real = this
 
     override fun freshCopy(scope: Scope): Real = this
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitReal(this)
 }

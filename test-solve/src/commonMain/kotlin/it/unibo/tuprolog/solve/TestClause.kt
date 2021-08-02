@@ -54,4 +54,18 @@ interface TestClause : SolverTest {
      * producing exception `permission_error(access,private_procedure,atom/1)`.
      */
     fun testClauseAtomBody()
+
+    /**
+     * Tests the queries
+     * ```prolog
+     * f(X) :- g(X).
+     * ?- clause(f(A),B).
+     * ```
+     * succeeds in such a way that `B=g(A)`, whereas
+     * ```
+     * ?- clause(f(1), Z).
+     * ```
+     * succeeds in such a way that `Z=g(1)`
+     */
+    fun testClauseVariables()
 }

@@ -1,8 +1,11 @@
 package it.unibo.tuprolog.collections.rete.generic
 
+import it.unibo.tuprolog.core.Clause
+
 /** A non-leaf Rete Node */
-internal abstract class AbstractIntermediateReteNode<K, E>(override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf()) :
-    AbstractReteNode<K, E>(children) {
+internal abstract class AbstractIntermediateReteNode<K, E : Clause>(
+    override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf()
+) : AbstractReteNode<K, E>(children) {
 
     override val indexedElements: Sequence<E>
         get() = children.asSequence().flatMap { it.value.indexedElements }
@@ -19,10 +22,15 @@ internal abstract class AbstractIntermediateReteNode<K, E>(override val children
         }.asSequence()
 
     /** Retrieves from receiver map those values of [ChildNodeType] that have a key respecting [keyFilter] */
-    protected inline fun <reified ChildNodeType> MutableMap<K, ReteNode<*, E>>.retrieve(keyFilter: (K) -> Boolean) =
-        filterValues { node -> node is ChildNodeType }
-            .filterKeys(keyFilter)
-            .values.asSequence()
+    protected fun <ChildNodeType> MutableMap<K, ReteNode<*, E>>.retrieve(
+        keyFilter: (K) -> Boolean,
+        typeChecker: (ReteNode<*, E>) -> Boolean,
+        caster: (ReteNode<*, E>) -> ChildNodeType
+    ): Sequence<ChildNodeType> = filterValues(typeChecker)
+        .filterKeys(keyFilter)
+        .values
+        .asSequence()
+        .map(caster)
 
     /**
      *  A [Sequence.fold] function that stops when accumulated operation results' count becomes greater or equal to [limit];

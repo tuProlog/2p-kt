@@ -60,7 +60,7 @@ enum class Specifier : ToTermConvertible {
     override fun toTerm(): Atom = atomRepresentation
 
     private val atomRepresentation
-        get() = Atom.of(name.toLowerCase())
+        get() = Atom.of(name.lowercase())
 
     companion object {
         /** Set of prefix specifiers */
@@ -88,7 +88,7 @@ enum class Specifier : ToTermConvertible {
         @JsName("fromAtom")
         fun fromTerm(atom: Atom): Specifier {
             try {
-                return valueOf(atom.value.toUpperCase())
+                return valueOf(atom.value.uppercase())
             } catch (e: IllegalStateException) { // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
                 throw IllegalArgumentException(e.message, e.cause)
             }
@@ -102,8 +102,8 @@ enum class Specifier : ToTermConvertible {
         @JvmStatic
         @JsName("fromTerm")
         fun fromTerm(term: Term): Specifier =
-            when (term) {
-                is Atom -> fromTerm(term)
+            when {
+                term.isAtom -> fromTerm(term.castToAtom())
                 else -> throw IllegalArgumentException("Argument `$term` must be an atom")
             }
     }
