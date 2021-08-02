@@ -2,12 +2,14 @@ package it.unibo.tuprolog.examples;
 
 import it.unibo.tuprolog.core.Integer;
 import it.unibo.tuprolog.core.Struct;
+import it.unibo.tuprolog.core.Term;
 import it.unibo.tuprolog.core.Var;
 import it.unibo.tuprolog.solve.MutableSolver;
 import it.unibo.tuprolog.solve.Solution;
 import it.unibo.tuprolog.solve.Solver;
 import it.unibo.tuprolog.theory.Theory;
 import it.unibo.tuprolog.theory.parsing.ClausesReader;
+import org.gciatto.kt.math.BigInteger;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -30,7 +32,10 @@ public class ReadEditSolveJvm {
         while (solutionIterator.hasNext()) {
             Solution solution = solutionIterator.next();
             if (solution.isYes()) {
-                assertEquals(Integer.of(15), solution.getSubstitution().getByName("X"));
+                Term value = solution.getSubstitution().getByName("X");
+                BigInteger valueAsBigInteger = value.asInteger().getValue();
+                int actualValue = valueAsBigInteger.toInt();
+                assertEquals(30, actualValue);
             }
         }
     }
@@ -46,7 +51,10 @@ public class ReadEditSolveJvm {
         Struct query = Struct.of("increment", Integer.of(15), Var.of("X"));
         Solution solution = solver.solveOnce(query);
         if (solution.isYes()) {
-            assertEquals(Integer.of(15), solution.getSubstitution().getByName("X"));
+            Term value = solution.getSubstitution().getByName("X");
+            BigInteger valueAsBigInteger = value.asInteger().getValue();
+            int actualValue = valueAsBigInteger.toInt();
+            assertEquals(30, actualValue);
         }
     }
 }

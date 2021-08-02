@@ -20,7 +20,10 @@ class ReadEditSolveKt {
         val query = Struct.of("increment", Integer.of(15), Var.of("X"))
         for (solution in solver.solve(query)) {
             if (solution.isYes) {
-                assertEquals(Integer.of(15), solution.substitution.getByName("X"))
+                val value = solution.substitution.getByName("X")
+                val valueAsBigInteger = value?.asInteger()?.value
+                val actualValue = valueAsBigInteger?.toInt()
+                assertEquals(30, actualValue)
             }
         }
     }
@@ -36,7 +39,10 @@ class ReadEditSolveKt {
         val query = Struct.of("increment", Integer.of(15), Var.of("X"))
         val solution = solver.solveOnce(query)
         if (solution.isYes) {
-            assertEquals(Integer.of(15), solution.substitution.getByName("X"))
+            val value = solution.substitution.getByName("X")
+            val valueAsBigInteger = value?.asInteger()?.value
+            val actualValue = valueAsBigInteger?.toInt()
+            assertEquals(30, actualValue)
         }
     }
 }
