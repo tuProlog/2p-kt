@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.theory.Theory
@@ -255,13 +256,13 @@ class PrologIDEController : Initializable {
         model.onFileSelected.subscribe(this::onFileSelected)
         model.onNewSolver.subscribe(this::onNewSolver)
         model.onNewStaticKb.subscribe(this::onNewStaticKb)
-        model.onTimeoutChanged.subscribe(this::onTimeoutChanged)
+        model.onSolveOptionsChanged.subscribe(this::onSolveOptionsChanged)
         model.onReset.subscribe(this::onReset)
         model.onQuit.subscribe(this::onQuit)
 
         sldTimeout.valueProperty().addListener { _, _, value -> onTimeoutSliderMoved(value) }
 
-        updateTimeoutView(model.timeout)
+        updateTimeoutView(model.solveOptions.timeout)
 
         lsvSolutions.setCellFactory { ListCellView { SolutionView.of(it) } }
         lsvWarnings.setCellFactory { ListCellView { Label(it.message) } }
@@ -296,11 +297,13 @@ class PrologIDEController : Initializable {
     }
 
     private fun onTimeoutSliderMoved(value: Number) {
-        model.timeout = round(10.0.pow(value.toDouble())).toLong()
+        model.solveOptions = model.solveOptions.setTimeout(
+            round(10.0.pow(value.toDouble())).toLong()
+        )
     }
 
-    private fun onTimeoutChanged(newTimeout: TimeDuration) {
-        updateTimeoutView(newTimeout)
+    private fun onSolveOptionsChanged(newSolveOptions: SolveOptions) {
+        updateTimeoutView(newSolveOptions.timeout)
     }
 
     private fun updateTimeoutView(timeout: TimeDuration) {
@@ -759,7 +762,12 @@ class PrologIDEController : Initializable {
     fun customizeModel(setup: ModelConfigurator) = setup(model)
 
     fun addTab(tab: Tab) {
-        this.tabsStreams.tabs.add(tab)
+        val index = this.tabsStreams.tabs.indexOfFirst { it.id == tab.id }
+        if (index >= 0) {
+            this.tabsStreams.tabs[index] = tab
+        } else {
+            this.tabsStreams.tabs.add(tab)
+        }
     }
 
     fun setOnClose(onClose: () -> Unit) {

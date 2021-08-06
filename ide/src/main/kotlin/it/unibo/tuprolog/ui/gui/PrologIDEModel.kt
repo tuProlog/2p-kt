@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import org.reactfx.EventStream
 import java.io.File
@@ -21,13 +21,13 @@ interface PrologIDEModel {
         IDLE, COMPUTING, SOLUTION
     }
 
-    var timeout: TimeDuration
+    var solveOptions: SolveOptions
 
     val state: State
 
     val executor: ExecutorService
 
-    fun customizeSolver(customizer: (MutableSolver) -> Unit)
+    fun customizeSolver(customizer: (MutableSolver) -> MutableSolver)
 
     fun newFile(): File
 
@@ -77,7 +77,7 @@ interface PrologIDEModel {
 
     val onQuit: EventStream<Unit>
 
-    val onTimeoutChanged: EventStream<TimeDuration>
+    val onSolveOptionsChanged: EventStream<SolveOptions>
 
     val onFileSelected: EventStream<File>
 

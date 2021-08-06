@@ -30,7 +30,7 @@ println("${rootProject.name} version: $version")
 kotlinMultiplatform {
     projectLongName.set("2P-Kt")
     preventPublishingOfRootProject.set(true)
-    jvmOnlyProjects("examples", "ide", "parser-jvm")
+    jvmOnlyProjects("examples", "ide", "parser-jvm", "prob-ide")
     jsOnlyProjects("parser-js")
     otherProjects("documentation")
     ktProjects(allOtherSubprojects)

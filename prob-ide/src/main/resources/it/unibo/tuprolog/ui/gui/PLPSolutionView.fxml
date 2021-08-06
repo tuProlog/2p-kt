@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.control.Button?>
+<fx:root type="VBox" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1"
+         xmlns:fx="http://javafx.com/fxml/1">
+   <HBox alignment="CENTER_LEFT">
+      <HBox alignment="CENTER_LEFT">
+         <Circle fx:id="led" fill="LIME" radius="10.0" stroke="BLACK" strokeType="INSIDE">
+            <HBox.margin>
+               <Insets right="10.0"/>
+            </HBox.margin>
+         </Circle>
+         <Label fx:id="status" alignment="CENTER_RIGHT" text="yes:"/>
+         <Label fx:id="query" text="member(1, [1, 2, 3])">
+            <HBox.margin>
+               <Insets left="10.0"/>
+            </HBox.margin>
+         </Label>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT">
+         <Label fx:id="probability" text="probability: 100.00%">
+            <HBox.margin>
+               <Insets left="30.0"/>
+            </HBox.margin>
+         </Label>
+         <Button fx:id="btnShowBinaryDecisionDiagram" mnemonicParsing="false" text="Binary Decision Diagram">
+            <HBox.margin>
+               <Insets left="30.0"/>
+            </HBox.margin>
+         </Button>
+      </HBox>
+   </HBox>
+   <VBox fx:id="substitutions">
+   </VBox>
+</fx:root>

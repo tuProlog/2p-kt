@@ -113,6 +113,7 @@ data class PrologIDEBuilder(
         controller.customizeModel { model ->
             model.customizeSolver { solver ->
                 customLibraries.forEach { solver.loadLibrary(it) }
+                solver
             }
             customTabs.forEach { it.modelConfigurator(model) }
         }

@@ -7,7 +7,7 @@ import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutorService
 
 internal class PrologIDEModelImpl(
     override val executor: ExecutorService,
-    var customizer: ((MutableSolver) -> Unit)? = {}
+    var customizer: ((MutableSolver) -> MutableSolver)? = null
 ) : PrologIDEModel {
 
     private data class FileContent(var text: String, var changed: Boolean = true) {
@@ -60,14 +60,15 @@ internal class PrologIDEModelImpl(
             field = value
         }
 
-    override var timeout: TimeDuration = 5000
+    override var solveOptions: SolveOptions =
+        SolveOptions.DEFAULT.setTimeout(5000)
         set(value) {
-            val changed = field != value
-            field = value
-            if (changed) {
-                onTimeoutChanged.push(value)
+                val changed = field != value
+                field = value
+                if (changed) {
+                    onSolveOptionsChanged.push(value)
+                }
             }
-        }
 
     override fun newFile(): File =
         File.createTempFile("untitled-${++tempFiles}-", ".pl").also {
@@ -128,7 +129,7 @@ internal class PrologIDEModelImpl(
     override var state: State = State.IDLE
         private set
 
-    override fun customizeSolver(customizer: (MutableSolver) -> Unit) {
+    override fun customizeSolver(customizer: (MutableSolver) -> MutableSolver) {
         this.customizer = customizer
         this.solver.invalidate()
         this.solver.regenerate()
@@ -143,15 +144,18 @@ internal class PrologIDEModelImpl(
     }
 
     private val solver = Cached.of {
-        MutableSolver.classicWithDefaultBuiltins(
+        var newSolver = MutableSolver.classicWithDefaultBuiltins(
             libraries = Libraries.of(OOPLib, IOLib),
             stdIn = InputChannel.of(stdin),
             stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
             stdErr = OutputChannel.of { onStderrPrinted.push(it) },
             warnings = OutputChannel.of { onWarning.push(it) },
-        ).also { solver ->
-            this.customizer?.let { it(solver) }
-            onNewSolver.push(SolverEvent(Unit, solver))
+        )
+        if (this.customizer != null) {
+            newSolver = this.customizer!!(newSolver)
+        }
+        newSolver.also {
+            onNewSolver.push(SolverEvent(Unit, it))
         }
     }
 
@@ -208,7 +212,7 @@ internal class PrologIDEModelImpl(
         loadCurrentFileAsStaticKB()
         solver.value.let {
             lastGoal = parseQueryAsStruct(it.operators)
-            return it.solve(lastGoal!!, timeout).iterator()
+            return it.solve(lastGoal!!, solveOptions).iterator()
         }
     }
 
@@ -297,7 +301,7 @@ internal class PrologIDEModelImpl(
 
     override val onReset: EventSource<SolverEvent<Unit>> = EventSource()
 
-    override val onTimeoutChanged: EventSource<TimeDuration> = EventSource()
+    override val onSolveOptionsChanged: EventSource<SolveOptions> = EventSource()
 
     override val onFileSelected: EventSource<File> = EventSource()
 
