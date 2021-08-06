@@ -20,7 +20,7 @@ interface TermVisitor<T> {
     fun visitStruct(term: Struct): T = visitTerm(term)
 
     @JsName("visitCollection")
-    fun visitCollection(term: Collection): T = visitStruct(term)
+    fun visitCollection(term: Recursive): T = visitStruct(term)
 
     @JsName("visitAtom")
     fun visitAtom(term: Atom): T = visitStruct(term)
@@ -37,14 +37,14 @@ interface TermVisitor<T> {
     @JsName("visitReal")
     fun visitReal(term: Real): T = visitNumeric(term)
 
-    @JsName("visitSet")
-    fun visitSet(term: Set): T = visitCollection(term)
+    @JsName("visitBlock")
+    fun visitBlock(term: Block): T = visitCollection(term)
 
     @JsName("visitEmpty")
     fun visitEmpty(term: Empty): T = visitAtom(term)
 
-    @JsName("visitEmptySet")
-    fun visitEmptySet(term: EmptySet): T = visitSet(term)
+    @JsName("visitEmptyBlock")
+    fun visitEmptyBlock(term: EmptyBlock): T = visitBlock(term)
 
     @JsName("visitList")
     fun visitList(term: List): T = visitCollection(term)

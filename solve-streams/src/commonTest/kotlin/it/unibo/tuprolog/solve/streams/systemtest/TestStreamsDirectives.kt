@@ -37,6 +37,11 @@ class TestStreamsDirectives : TestDirectives, SolverFactory by StreamsSolverFact
     }
 
     @Test
+    override fun testSetFlag2() {
+        prototype.testSetFlag2()
+    }
+
+    @Test
     override fun testSetPrologFlag2() {
         prototype.testSetPrologFlag2()
     }

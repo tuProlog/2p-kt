@@ -1,17 +1,17 @@
 package it.unibo.tuprolog.serialize
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
@@ -69,13 +69,13 @@ internal class JsTermObjectifier : TermObjectifier {
             }
         )
 
-    override fun visitSet(term: Set): Any =
+    override fun visitBlock(term: Block): Any =
         jsObject(
             "set" to term.toList().map { it.accept(this) }
         )
 
-    override fun visitEmptySet(term: EmptySet): Any =
-        visitSet(term)
+    override fun visitEmptyBlock(term: EmptyBlock): Any =
+        visitBlock(term)
 
     override fun visitList(term: List): Any {
         val listed = term.toList()

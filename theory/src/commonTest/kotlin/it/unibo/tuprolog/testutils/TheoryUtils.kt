@@ -37,7 +37,7 @@ internal object TheoryUtils {
     /** Contains rules queries that have Variable as body, to be used when testing the methods accepting only heads */
     internal val rulesQueryWithVarBodyResultsMap =
         clausesQueryResultsMap
-            .filterKeys { it is Rule && it.body.isVariable }
+            .filterKeys { it is Rule && it.body.isVar }
             .mapKeys { it.key as Rule }
 
     /** Contains rules queries that only specify the functor and arity of the head, leaving body and head functor arguments variables */

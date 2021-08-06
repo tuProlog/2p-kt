@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.dsl
 
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Directive
@@ -13,7 +14,6 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import kotlin.js.JsName
 import it.unibo.tuprolog.core.List as LogicList
-import it.unibo.tuprolog.core.Set as LogicSet
 
 interface PrologScope : PrologStdLibScope, VariablesAwareScope {
 
@@ -114,9 +114,9 @@ interface PrologScope : PrologStdLibScope, VariablesAwareScope {
     fun listOf(vararg terms: Any): LogicList =
         this.listOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    @JsName("setOfAny")
-    fun setOf(vararg terms: Any): LogicSet =
-        this.setOf(*terms.map { it.toTerm() }.toTypedArray())
+    @JsName("blockOf")
+    fun blockOf(vararg terms: Any): Block =
+        this.blockOf(*terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("factOfAny")
     fun factOf(term: Any): Fact = factOf(term.toTerm() as Struct)

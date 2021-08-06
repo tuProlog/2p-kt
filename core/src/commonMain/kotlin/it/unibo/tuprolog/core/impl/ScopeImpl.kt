@@ -1,11 +1,12 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
@@ -22,7 +23,6 @@ import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.jvm.Synchronized
 import it.unibo.tuprolog.core.List as LogicList
-import it.unibo.tuprolog.core.Set as LogicSet
 
 @Suppress("RemoveRedundantQualifierName")
 internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scope {
@@ -73,18 +73,18 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override val fail: Truth
         get() = Truth.FAIL
 
-    override fun setOf(terms: Iterable<Term>): LogicSet =
-        LogicSet.of(terms)
+    override fun blockOf(terms: Iterable<Term>): Block =
+        Block.of(terms)
 
-    override fun setOf(terms: Sequence<Term>): LogicSet =
-        LogicSet.of(terms)
+    override fun blockOf(terms: Sequence<Term>): Block =
+        Block.of(terms)
 
     override fun <T> ktSetOf(vararg items: T): Set<T> = kotlin.collections.setOf(*items)
 
     override fun <T> ktEmptySet(): Set<T> = kotlin.collections.emptySet()
 
-    override fun setOf(vararg terms: Term): LogicSet =
-        LogicSet.of(*terms)
+    override fun blockOf(vararg terms: Term): Block =
+        Block.of(*terms)
 
     override fun listOf(terms: Iterable<Term>): LogicList =
         LogicList.of(terms)
@@ -104,8 +104,8 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override val emptyList: EmptyList
         get() = EmptyList()
 
-    override val emptySet: EmptySet
-        get() = EmptySet()
+    override val emptyBlock: EmptyBlock
+        get() = EmptyBlock()
 
     override fun listOf(vararg terms: Term): LogicList =
         LogicList.of(*terms)

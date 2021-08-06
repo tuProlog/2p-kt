@@ -35,6 +35,6 @@ open external class PrologParserListener {
     open fun exitStructure(ctx: StructureContext)
     open fun enterList(ctx: ListContext)
     open fun exitList(ctx: ListContext)
-    open fun enterSet(ctx: SetContext)
-    open fun exitSet(ctx: SetContext)
+    open fun enterBlock(ctx: BlockContext)
+    open fun exitBlock(ctx: BlockContext)
 }

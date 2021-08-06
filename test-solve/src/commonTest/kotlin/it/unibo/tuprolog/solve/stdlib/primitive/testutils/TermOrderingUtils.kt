@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThan
@@ -26,15 +26,15 @@ internal object TermOrderingUtils {
         expectedResult: Any
     ) = when (expectedResult) {
         true -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            standardOrderRelation.wrappedImplementation(input).single().solution is Solution.Yes
+            standardOrderRelation.implementation.solve(input).single().solution is Solution.Yes
         }
         false -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            standardOrderRelation.wrappedImplementation(input).single().solution is Solution.No
+            standardOrderRelation.implementation.solve(input).single().solution is Solution.No
         }
         else ->
             @Suppress("UNCHECKED_CAST")
-            (expectedResult as? KClass<out TuPrologRuntimeException>)
-                ?.let { assertFailsWith(expectedResult) { standardOrderRelation.wrappedImplementation(input) } }
+            (expectedResult as? KClass<out ResolutionException>)
+                ?.let { assertFailsWith(expectedResult) { standardOrderRelation.implementation.solve(input) } }
                 ?: fail("Bad written test data!")
     }
 

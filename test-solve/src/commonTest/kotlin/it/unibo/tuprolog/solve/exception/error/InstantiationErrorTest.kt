@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.exception.error
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
  */
 internal class InstantiationErrorTest {
 
-    private val underTestError = InstantiationError(context = PrologErrorUtils.aContext)
+    private val underTestError = InstantiationError(context = LogicErrorUtils.aContext)
     private val correctTypeFunctor = "instantiation_error"
 
     @Test
@@ -22,7 +22,7 @@ internal class InstantiationErrorTest {
 
     @Test
     fun instantiationErrorToThrowStructCorrect() {
-        PrologErrorUtils.assertErrorStructCorrect(underTestError)
+        LogicErrorUtils.assertErrorStructCorrect(underTestError)
     }
 
     @Test

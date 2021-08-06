@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Tuple
@@ -41,11 +41,11 @@ class TestSolutionMetadata {
         Struct.of("q", Integer.ONE),
         Struct.of("q", Real.ONE_TENTH),
         EmptyList(),
-        EmptySet(),
+        EmptyBlock(),
         Cons.of(Real.ONE_HALF, X),
         Struct.of("g", X),
         List.of(X),
-        Set.of(X),
+        Block.of(X),
         Tuple.of(X, X)
     ).map { it.setTag(yetAnotherKey, someValue2) }
 

@@ -27,7 +27,7 @@ internal object RuleUtils {
             Struct.of("money", Integer.of(100)) to Atom.of("win"),
             Atom.of("a") to Struct.of("?", Integer.of(1), Integer.of(2)),
             Atom.of("b") to Struct.of(",", Real.of(0.5), Real.of(0.6), Real.of(0.7)),
-            Empty.set() to Struct.of(";", Integer.of(2)),
+            Empty.block() to Struct.of(";", Integer.of(2)),
             Empty.list() to Struct.of("->", Integer.of(4))
         )
     }

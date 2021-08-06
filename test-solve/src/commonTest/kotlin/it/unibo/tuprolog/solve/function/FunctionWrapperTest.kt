@@ -23,7 +23,7 @@ internal class FunctionWrapperTest {
             .forEach { (wrapper, acceptedRequests) ->
                 acceptedRequests.forEach {
                     if (wrapper.signature.vararg) return // TODO remove this "if" after solving TODO in "Signature"
-                    assertEquals(defaultFunctionResult, wrapper.wrappedImplementation(it))
+                    assertEquals(defaultFunctionResult, wrapper.implementation.compute(it))
                 }
             }
     }
@@ -33,7 +33,7 @@ internal class FunctionWrapperTest {
         wrapperToNotMatchingSignatureRequest(::createFunctionWrapper, function, ::createFunctionRequest)
             .forEach { (wrapper, badRequests) ->
                 badRequests.forEach {
-                    assertFailsWith<IllegalArgumentException> { wrapper.wrappedImplementation(it) }
+                    assertFailsWith<IllegalArgumentException> { wrapper.implementation.compute(it) }
                 }
             }
     }

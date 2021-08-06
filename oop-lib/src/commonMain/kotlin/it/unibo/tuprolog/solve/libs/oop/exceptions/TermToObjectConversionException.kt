@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.libs.oop.exceptions
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.libs.oop.fullName
 import kotlin.reflect.KClass
@@ -19,7 +19,7 @@ class TermToObjectConversionException(
 ) {
     constructor(term: Term) : this(term, null)
 
-    override fun toPrologError(context: ExecutionContext, signature: Signature): PrologError {
+    override fun toLogicError(context: ExecutionContext, signature: Signature): LogicError {
         return RepresentationError.of(
             context,
             signature,

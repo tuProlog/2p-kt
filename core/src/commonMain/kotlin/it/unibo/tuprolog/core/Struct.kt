@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.Terms.BLOCK_FUNCTOR
 import it.unibo.tuprolog.core.Terms.CLAUSE_FUNCTOR
 import it.unibo.tuprolog.core.Terms.CONS_FUNCTOR
+import it.unibo.tuprolog.core.Terms.EMPTY_BLOCK_FUNCTOR
 import it.unibo.tuprolog.core.Terms.EMPTY_LIST_FUNCTOR
-import it.unibo.tuprolog.core.Terms.EMPTY_SET_FUNCTOR
 import it.unibo.tuprolog.core.Terms.FAIL_FUNCTOR
 import it.unibo.tuprolog.core.Terms.INDICATOR_FUNCTOR
-import it.unibo.tuprolog.core.Terms.SET_FUNCTOR
 import it.unibo.tuprolog.core.Terms.TRUE_FUNCTOR
 import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
 import it.unibo.tuprolog.core.impl.StructImpl
@@ -53,11 +53,11 @@ interface Struct : Term {
     override val isCons: Boolean
         get() = CONS_FUNCTOR == functor && arity == 2
 
-    override val isSet: Boolean
-        get() = (SET_FUNCTOR == functor && arity == 1) || isEmptySet
+    override val isBlock: Boolean
+        get() = (BLOCK_FUNCTOR == functor && arity == 1) || isEmptyBlock
 
-    override val isEmptySet: Boolean
-        get() = EMPTY_SET_FUNCTOR == functor && arity == 0
+    override val isEmptyBlock: Boolean
+        get() = EMPTY_BLOCK_FUNCTOR == functor && arity == 0
 
     override val isEmptyList: Boolean
         get() = EMPTY_LIST_FUNCTOR == functor && arity == 0
@@ -326,7 +326,7 @@ interface Struct : Term {
          * - [Directive.of]
          * - [Tuple.of]
          * - [Indicator.of]
-         * - [Set.of]
+         * - [Block.of]
          *
          * depending on the value of [functor] and on the amount and sorts of items in [args].
          * @param functor is the [String] to be used as functor of the new [Struct]
@@ -342,7 +342,7 @@ interface Struct : Term {
                     Rule.of(args.first().castToStruct(), args.last())
                 args.size == 2 && TUPLE_FUNCTOR == functor -> Tuple.of(args)
                 args.size == 2 && INDICATOR_FUNCTOR == functor -> Indicator.of(args.first(), args.last())
-                args.size == 1 && SET_FUNCTOR == functor -> Set.of(args)
+                args.size == 1 && BLOCK_FUNCTOR == functor -> Block.of(args)
                 args.size == 1 && CLAUSE_FUNCTOR == functor -> Directive.of(args.first())
                 args.isEmpty() -> Atom.of(functor)
                 else -> StructImpl(functor, args, emptyMap())
@@ -357,7 +357,7 @@ interface Struct : Term {
          * - [Directive.of]
          * - [Tuple.of]
          * - [Indicator.of]
-         * - [Set.of]
+         * - [Block.of]
          *
          * depending on the value of [functor] and on the amount and sorts provided [Term]s.
          * @param functor is the [String] to be used as functor of the new [Struct]
@@ -377,7 +377,7 @@ interface Struct : Term {
          * - [Directive.of]
          * - [Tuple.of]
          * - [Indicator.of]
-         * - [Set.of]
+         * - [Block.of]
          *
          * depending on the value of [functor] and on the amount and sorts of items in [args].
          * @param functor is the [String] to be used as functor of the new [Struct]
@@ -397,7 +397,7 @@ interface Struct : Term {
          * - [Directive.of]
          * - [Tuple.of]
          * - [Indicator.of]
-         * - [Set.of]
+         * - [Block.of]
          *
          * depending on the value of [functor] and on the amount and sorts of items in [args].
          * @param functor is the [String] to be used as functor of the new [Struct]

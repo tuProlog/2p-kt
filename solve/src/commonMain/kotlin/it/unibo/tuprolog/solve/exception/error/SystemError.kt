@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.exception.error
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -22,7 +22,7 @@ class SystemError constructor(
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
     extraData: Term? = null
-) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
+) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
     constructor(
         message: String? = null,
@@ -68,7 +68,7 @@ class SystemError constructor(
                 )
             }
 
-        private fun PrologError.pretty(): String =
+        private fun LogicError.pretty(): String =
             when (this) {
                 is MessageError -> content.pretty()
                 else -> errorStruct.pretty()
@@ -76,7 +76,7 @@ class SystemError constructor(
 
         @JsName("forUncaughtError")
         @JvmStatic
-        fun forUncaughtError(exception: PrologError): SystemError =
+        fun forUncaughtError(exception: LogicError): SystemError =
             message("Uncaught exception `${exception.pretty()}`") { m, extra ->
                 SystemError(m, exception, exception.contexts, extra)
             }

@@ -3,10 +3,10 @@ package it.unibo.tuprolog.solve.exception.error
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -28,7 +28,7 @@ class DomainError(
     @JsName("expectedDomain") val expectedDomain: Expected,
     @JsName("culprit") val culprit: Term,
     extraData: Term? = null
-) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
+) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
     constructor(
         message: String? = null,
@@ -141,7 +141,7 @@ class DomainError(
     /**
      * A class describing the expected domain whose absence caused the error
      */
-    enum class Expected : ToTermConvertible {
+    enum class Expected : TermConvertible {
         ATOM_PROPERTY,
         BUFFERING_MODE,
         CHARACTER_CODE_LIST,
@@ -161,7 +161,7 @@ class DomainError(
         OS_FILE_PROPERTY,
         OS_PATH,
         PREDICATE_PROPERTY,
-        PROLOG_FLAG,
+        FLAG,
         READ_OPTION,
         SELECTABLE_ITEM,
         SOCKET_ADDRESS,

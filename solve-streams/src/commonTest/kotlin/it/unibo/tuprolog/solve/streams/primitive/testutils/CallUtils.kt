@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.changeQueriesTo
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
@@ -147,8 +147,8 @@ internal object CallUtils {
         var actualCause = nextState.exception.cause
 
         while (expectedCause != null) {
-            val expectedCauseStruct = (expectedCause as? PrologError)?.errorStruct
-            val actualCauseStruct = (actualCause as? PrologError)?.errorStruct
+            val expectedCauseStruct = (expectedCause as? LogicError)?.errorStruct
+            val actualCauseStruct = (actualCause as? LogicError)?.errorStruct
 
             assertNotNull(expectedCauseStruct)
             assertNotNull(actualCauseStruct)

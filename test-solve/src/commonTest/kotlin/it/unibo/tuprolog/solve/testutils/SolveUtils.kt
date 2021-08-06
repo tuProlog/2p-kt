@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -57,7 +57,7 @@ internal object SolveUtils {
     }
 
     internal val solutionSubstitution = Substitution.of("A", Truth.TRUE)
-    internal val solutionException = TuPrologRuntimeException(context = DummyInstances.executionContext)
+    internal val solutionException = ResolutionException(context = DummyInstances.executionContext)
 
     // Response parameters
     internal val aSolution = Solution.no(Truth.FAIL)

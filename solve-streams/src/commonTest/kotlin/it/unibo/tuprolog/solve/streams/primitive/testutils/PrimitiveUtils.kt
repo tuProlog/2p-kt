@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.streams.primitive.testutils
 
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.primitive.Solve
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
@@ -34,7 +34,7 @@ internal object PrimitiveUtils {
         return exceptionCause
     }
 
-    /** Utility function to assert the [PrologError] type correctness of [Solution.Halt] */
-    internal fun assertPrologError(expected: KClass<out PrologError>, actualSolution: Solution) =
+    /** Utility function to assert the [LogicError] type correctness of [Solution.Halt] */
+    internal fun assertPrologError(expected: KClass<out LogicError>, actualSolution: Solution) =
         assertEquals(expected, (actualSolution as Solution.Halt).exception::class)
 }

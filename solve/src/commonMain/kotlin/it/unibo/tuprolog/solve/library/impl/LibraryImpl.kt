@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.library.impl
 
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.function.PrologFunction
+import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.Theory
@@ -16,7 +16,7 @@ open class LibraryImpl(
     override val operators: OperatorSet,
     override val theory: Theory,
     override val primitives: Map<Signature, Primitive>,
-    override val functions: Map<Signature, PrologFunction>
+    override val functions: Map<Signature, LogicFunction>
 ) : Library {
 
     override fun equals(other: Any?): Boolean {

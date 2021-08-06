@@ -4,15 +4,14 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.impl.SolutionImpl
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.utils.Castable
 import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /** A type representing a solution to a goal */
-interface Solution : Taggable<Solution>, Castable<Solution> {
+sealed interface Solution : Taggable<Solution>, Castable<Solution> {
 
     /** The query to which the solution refers */
     @JsName("query")
@@ -23,7 +22,7 @@ interface Solution : Taggable<Solution>, Castable<Solution> {
     val substitution: Substitution
 
     @JsName("exception")
-    val exception: TuPrologRuntimeException?
+    val exception: ResolutionException?
 
     /** The [Struct] representing the solution, or `null` in case of a non-successful solution */
     @JsName("solvedQuery")
@@ -101,7 +100,7 @@ interface Solution : Taggable<Solution>, Castable<Solution> {
     fun valueOf(variable: String): Term?
 
     /** A type representing the successful solution */
-    interface Yes : Solution {
+    sealed interface Yes : Solution {
         override val substitution: Substitution.Unifier
 
         override val solvedQuery: Struct
@@ -117,7 +116,7 @@ interface Solution : Taggable<Solution>, Castable<Solution> {
     }
 
     /** A type representing a failed solution */
-    interface No : Solution {
+    sealed interface No : Solution {
         override val substitution: Substitution.Fail
 
         override val solvedQuery: Nothing?
@@ -133,13 +132,13 @@ interface Solution : Taggable<Solution>, Castable<Solution> {
     }
 
     /** A type representing a failed (halted) solution because of an exception */
-    interface Halt : Solution {
-        override val exception: TuPrologRuntimeException
+    sealed interface Halt : Solution {
+        override val exception: ResolutionException
 
         override fun replaceTags(tags: Map<String, Any>): Halt
 
         @JsName("copy")
-        fun copy(query: Struct = this.query, exception: TuPrologRuntimeException = this.exception): Halt
+        fun copy(query: Struct = this.query, exception: ResolutionException = this.exception): Halt
 
         override fun cleanUp(): Halt
 
@@ -170,14 +169,14 @@ interface Solution : Taggable<Solution>, Castable<Solution> {
 
         @JvmStatic
         @JsName("halt")
-        fun halt(query: Struct, exception: TuPrologRuntimeException): Halt = SolutionImpl.HaltImpl(query, exception)
+        fun halt(query: Struct, exception: ResolutionException): Halt = SolutionImpl.HaltImpl(query, exception)
 
         @JvmStatic
         @JsName("haltBySignature")
         fun halt(
             signature: Signature,
             arguments: List<Term>,
-            exception: TuPrologRuntimeException,
+            exception: ResolutionException,
         ): Halt = SolutionImpl.HaltImpl(signature, arguments, exception)
     }
 }

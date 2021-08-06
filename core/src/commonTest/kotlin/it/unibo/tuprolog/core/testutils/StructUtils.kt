@@ -1,11 +1,12 @@
 package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
@@ -19,7 +20,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
-import it.unibo.tuprolog.core.Set as LogicSet
 
 /**
  * Utils singleton for testing [Struct]
@@ -73,7 +73,7 @@ internal object StructUtils {
             "{}" to listOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
             "[]" to listOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
             "." to listOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar")),
-            "," to listOf<Term>(EmptyList(), EmptySet(), Truth.TRUE),
+            "," to listOf<Term>(EmptyList(), EmptyBlock(), Truth.TRUE),
             "/" to listOf<Term>(Truth.FALSE),
             "sameVar" to Scope.empty { ktListOf<Term>(varOf("X"), varOf("X")) }
         )
@@ -83,14 +83,14 @@ internal object StructUtils {
     internal val specialStructs by lazy {
         listOf(
             Cons.FUNCTOR to listOf<Term>(Var.of("H"), Var.of("T")),
-            LogicSet.FUNCTOR to listOf(Tuple.wrapIfNeeded(Atom.of("My atom"))),
+            Block.FUNCTOR to listOf(Tuple.wrapIfNeeded(Atom.of("My atom"))),
             Tuple.FUNCTOR to listOf<Term>(Atom.of("left"), Atom.of("right")),
             Clause.FUNCTOR to listOf<Term>(Atom.of("rule1"), Atom.of("rule2")),
             Clause.FUNCTOR to listOf<Term>(Atom.of("myDirective")),
             Clause.FUNCTOR to listOf<Term>(Atom.of("myFact"), Truth.TRUE),
             "myAtom" to listOf(),
             Empty.EMPTY_LIST_FUNCTOR to listOf(),
-            Empty.EMPTY_SET_FUNCTOR to listOf(),
+            Empty.EMPTY_BLOCK_FUNCTOR to listOf(),
             Truth.TRUE_FUNCTOR to listOf(),
             Truth.FAIL_FUNCTOR to listOf(),
             Indicator.FUNCTOR to listOf<Term>(Atom.of("func"), Integer.of(4))
@@ -101,7 +101,7 @@ internal object StructUtils {
     internal val mixedStructs by lazy { nonSpecialStructs + specialStructs }
 
     /** All under testing ground Structs, those containing at least one variable */
-    internal val groundStructs by lazy { mixedStructs.filterNot { (_, args) -> args.any { it.isVariable } } }
+    internal val groundStructs by lazy { mixedStructs.filterNot { (_, args) -> args.any { it.isVar } } }
 
     /** All not ground Structs, those not containing variables */
     internal val nonGroundStructs by lazy { mixedStructs - groundStructs }
@@ -113,5 +113,5 @@ internal object StructUtils {
     internal val mixedStructArguments by lazy { mixedStructs.map { (_, args) -> args } }
 
     /** All Struct variables */
-    internal val mixedStructVariables by lazy { mixedStructArguments.map { it.filter(Term::isVariable) } }
+    internal val mixedStructVariables by lazy { mixedStructArguments.map { it.filter(Term::isVar) } }
 }

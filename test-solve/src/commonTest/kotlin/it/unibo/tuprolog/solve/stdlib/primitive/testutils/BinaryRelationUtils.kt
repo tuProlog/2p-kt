@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import kotlin.reflect.KClass
@@ -20,15 +20,15 @@ object BinaryRelationUtils {
         expectedResult: Any
     ) = when (expectedResult) {
         true -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            termRelation.wrappedImplementation(input).single().solution is Solution.Yes
+            termRelation.implementation.solve(input).single().solution is Solution.Yes
         }
         false -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            termRelation.wrappedImplementation(input).single().solution is Solution.No
+            termRelation.implementation.solve(input).single().solution is Solution.No
         }
         else ->
             @Suppress("UNCHECKED_CAST")
-            (expectedResult as? KClass<out TuPrologRuntimeException>)
-                ?.let { assertFailsWith(expectedResult) { termRelation.wrappedImplementation(input) } }
+            (expectedResult as? KClass<out ResolutionException>)
+                ?.let { assertFailsWith(expectedResult) { termRelation.implementation.solve(input) } }
                 ?: fail("Bad written test data!")
     }
 }

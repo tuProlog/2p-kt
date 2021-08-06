@@ -27,8 +27,8 @@ import it.unibo.tuprolog.solve.stdlib.primitive.CharCode
 import it.unibo.tuprolog.solve.stdlib.primitive.Clause
 import it.unibo.tuprolog.solve.stdlib.primitive.Compound
 import it.unibo.tuprolog.solve.stdlib.primitive.CopyTerm
+import it.unibo.tuprolog.solve.stdlib.primitive.CurrentFlag
 import it.unibo.tuprolog.solve.stdlib.primitive.CurrentOp
-import it.unibo.tuprolog.solve.stdlib.primitive.CurrentPrologFlag
 import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.solve.stdlib.primitive.FindAll
 import it.unibo.tuprolog.solve.stdlib.primitive.Float
@@ -55,9 +55,9 @@ import it.unibo.tuprolog.solve.stdlib.primitive.RetractAll
 import it.unibo.tuprolog.solve.stdlib.primitive.Reverse
 import it.unibo.tuprolog.solve.stdlib.primitive.SetDurable
 import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
+import it.unibo.tuprolog.solve.stdlib.primitive.SetFlag
 import it.unibo.tuprolog.solve.stdlib.primitive.SetOf
 import it.unibo.tuprolog.solve.stdlib.primitive.SetPersistent
-import it.unibo.tuprolog.solve.stdlib.primitive.SetPrologFlag
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
 import it.unibo.tuprolog.solve.stdlib.primitive.SubAtom
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThan
@@ -101,7 +101,7 @@ object CommonPrimitives {
             Compound,
             CopyTerm,
             CurrentOp,
-            CurrentPrologFlag,
+            CurrentFlag,
             EnsureExecutable,
             FindAll,
             Float,
@@ -130,7 +130,7 @@ object CommonPrimitives {
             SetEphemeral,
             SetOf,
             SetPersistent,
-            SetPrologFlag,
+            SetFlag,
             Sleep,
             SubAtom,
             TermGreaterThan,

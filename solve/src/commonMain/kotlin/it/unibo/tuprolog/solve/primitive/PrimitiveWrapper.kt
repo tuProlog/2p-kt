@@ -48,8 +48,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
     /** Checked primitive implementation */
     @Suppress("UNCHECKED_CAST")
-    final override val wrappedImplementation: Primitive =
-        primitiveOf(signature, ::uncheckedImplementation as Primitive)
+    final override val implementation: Primitive = Primitive.enforcingSignature(signature, ::uncheckedImplementation)
 
     companion object {
 
@@ -87,7 +86,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 this(Signature(name, arity, vararg), uncheckedPrimitive)
 
             override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
-                uncheckedPrimitive(request)
+                uncheckedPrimitive.solve(request)
         }
 
         private fun ensurerVisitor(context: ExecutionContext, procedure: Signature): TermVisitor<TypeError?> =
@@ -110,7 +109,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         /** Utility function to ensure that all arguments of Solve.Request are instantiated and *not* (still) Variables */
         fun <C : ExecutionContext> Solve.Request<C>.ensuringAllArgumentsAreInstantiated(): Solve.Request<C> =
-            arguments.withIndex().firstOrNull { it.value.isVariable }?.let {
+            arguments.withIndex().firstOrNull { it.value.isVar }?.let {
                 ensureIsInstantiated(it.value, it.index)
             } ?: this
 
@@ -169,14 +168,14 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 candidate.isIndicator -> {
                     val (name, arity) = candidate.castToIndicator()
                     when {
-                        name.isVariable -> {
+                        name.isVar -> {
                             throw InstantiationError.forArgument(context, signature, name.castToVar(), index)
                         }
-                        arity.isVariable -> {
+                        arity.isVar -> {
                             throw InstantiationError.forArgument(context, signature, arity.castToVar(), index)
                         }
                         !name.isAtom -> throw TypeError.forArgument(context, signature, ATOM, name, index)
-                        !arity.isInt -> throw TypeError.forArgument(context, signature, INTEGER, arity, index)
+                        !arity.isInteger -> throw TypeError.forArgument(context, signature, INTEGER, arity, index)
                         arity.castToInteger().value < BigInteger.ZERO ->
                             throw DomainError.forArgument(context, signature, NOT_LESS_THAN_ZERO, arity, index)
                         context.flags[MaxArity]?.castToInteger()?.value?.let {
@@ -240,7 +239,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVariable(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
-                !arg.isVariable -> throw TypeError.forArgument(
+                !arg.isVar -> throw TypeError.forArgument(
                     context,
                     signature,
                     TypeError.Expected.VARIABLE,
@@ -325,7 +324,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInteger(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             when {
-                !arg.isInt -> throw TypeError.forArgument(context, signature, INTEGER, arg, index)
+                !arg.isInteger -> throw TypeError.forArgument(context, signature, INTEGER, arg, index)
                 else -> return this
             }
         }
@@ -352,7 +351,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNonNegativeInteger(index: Int): Solve.Request<C> =
             ensuringArgumentIsInteger(index).arguments[index].let { arg ->
                 when {
-                    !arg.isInt || arg.castToInteger().intValue < BigInteger.ZERO -> throw DomainError.forArgument(
+                    !arg.isInteger || arg.castToInteger().intValue < BigInteger.ZERO -> throw DomainError.forArgument(
                         context,
                         signature,
                         NOT_LESS_THAN_ZERO,
@@ -371,7 +370,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringTermIsCharCode(term: Term): Solve.Request<C> =
             when {
-                !term.isInt || term.castToInteger().isCharacterCode() ->
+                !term.isInteger || term.castToInteger().isCharacterCode() ->
                     throw RepresentationError.of(context, signature, RepresentationError.Limit.CHARACTER_CODE)
                 else -> this
             }

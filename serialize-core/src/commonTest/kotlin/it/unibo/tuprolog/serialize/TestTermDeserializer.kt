@@ -112,7 +112,7 @@ class TestTermDeserializer {
         val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
         assertEquals(MimeType.Json, deserializer.mimeType)
         deserializer.assertTermDeserializationWorks("{\"set\":[\"hello\",1, false]}") {
-            setOf(atomOf("hello"), numOf(1), truthOf(false))
+            blockOf(atomOf("hello"), numOf(1), truthOf(false))
         }
     }
 
@@ -129,7 +129,7 @@ class TestTermDeserializer {
                 |
                 """.trimMargin()
         deserializer.assertTermDeserializationWorks(actual) {
-            setOf(atomOf("hello"), numOf(1), truthOf(true))
+            blockOf(atomOf("hello"), numOf(1), truthOf(true))
         }
     }
 

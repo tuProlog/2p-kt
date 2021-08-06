@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.exception.SubstitutionException
-import it.unibo.tuprolog.core.impl.SubstitutionImpl
 import it.unibo.tuprolog.utils.Castable
 import it.unibo.tuprolog.utils.Taggable
 import it.unibo.tuprolog.utils.TagsOperator
@@ -15,7 +14,7 @@ import kotlin.collections.Collection as KtCollection
  * - [Substitution.Unifier], which represent one possible assignment for a possibly empty set of [Var]s
  * - [Substitution.Fail], which represent the lack of possible assignments for any set of [Var]s
  */
-interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable<Substitution> {
+sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable<Substitution> {
 
     /** Whether this [Substitution] is a successful one (i.e., a [Unifier]) */
     @JsName("isSuccess")
@@ -163,7 +162,7 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable<Substi
     fun filter(predicate: (key: Var, value: Term) -> Boolean): Substitution
 
     /** A type for successful [Substitution]s (a.k.a. unifiers) actually assigning [Var]s to [Term]s */
-    interface Unifier : Substitution {
+    sealed interface Unifier : Substitution {
 
         override fun minus(keys: Iterable<Var>): Unifier
 
@@ -187,7 +186,7 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable<Substi
     }
 
     /** A type for __failed__ [Substitution]s, assigning no [Var] */
-    interface Fail : Substitution {
+    sealed interface Fail : Substitution {
         override fun getOriginal(variable: Var): Nothing? = null
 
         override fun minus(other: Substitution): Fail

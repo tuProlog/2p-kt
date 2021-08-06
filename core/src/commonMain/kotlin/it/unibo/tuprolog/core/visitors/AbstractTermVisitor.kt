@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core.visitors
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 
@@ -11,7 +11,7 @@ abstract class AbstractTermVisitor<T> : TermVisitor<T> {
 
     override fun visitAtom(term: Atom): T = join(term, this::visitStruct, this::visitConstant)
 
-    override fun visitEmptySet(term: EmptySet): T = join(term, this::visitSet, this::visitEmpty)
+    override fun visitEmptyBlock(term: EmptyBlock): T = join(term, this::visitBlock, this::visitEmpty)
 
     override fun visitEmptyList(term: EmptyList): T = join(term, this::visitList, this::visitEmpty)
 }

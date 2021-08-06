@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.EmptyBlockImpl
 import it.unibo.tuprolog.core.impl.EmptyListImpl
-import it.unibo.tuprolog.core.impl.EmptySetImpl
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,7 +18,7 @@ class EmptyTest {
     }
 
     @Test
-    fun setMethodShouldReturnEmptySet() {
-        assertEquals(EmptySetImpl(), Empty.set())
+    fun blockMethodShouldReturnEmptySet() {
+        assertEquals(EmptyBlockImpl(), Empty.block())
     }
 }

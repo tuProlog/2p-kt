@@ -80,7 +80,7 @@ external class PrologParser(input: TokenStream) {
     fun variable(): VariableContext
     fun structure(): StructureContext
     fun list(): ListContext
-    fun set(): SetContext
+    fun set(): BlockContext
 }
 
 external class SingletonTermContext : ParserRuleContext {
@@ -155,12 +155,12 @@ external class TermContext : ParserRuleContext {
     val isList: Boolean
     val isStruct: Boolean
     val isExpr: Boolean
-    val isSet: Boolean
+    val isBlock: Boolean
 
     fun variable(): VariableContext
     fun structure(): StructureContext
     fun list(): ListContext
-    fun set(): SetContext
+    fun set(): BlockContext
     fun number(): NumberContext
     fun expression(): ExpressionContext
 }
@@ -195,7 +195,7 @@ external class StructureContext : ParserRuleContext {
     val arity: Int
     val isTruth: Boolean
     val isList: Boolean
-    val isSet: Boolean
+    val isBlock: Boolean
     val isString: Boolean
     val isCut: Boolean
     val functor: Token
@@ -215,7 +215,7 @@ external class ListContext : ParserRuleContext {
     fun expression(): ExpressionContext
 }
 
-external class SetContext : ParserRuleContext {
+external class BlockContext : ParserRuleContext {
     val length: Int
     val _expression: ExpressionContext
     val items: Array<ExpressionContext>

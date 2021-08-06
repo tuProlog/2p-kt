@@ -7,7 +7,7 @@ import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
-interface Tuple : Collection {
+interface Tuple : Recursive {
 
     override val isTuple: Boolean
         get() = true

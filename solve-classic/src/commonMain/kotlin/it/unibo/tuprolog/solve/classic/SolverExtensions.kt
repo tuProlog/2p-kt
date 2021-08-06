@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
@@ -22,7 +22,7 @@ fun Solver.Companion.classic(
     stdIn: InputChannel<String> = ClassicSolverFactory.defaultInputChannel,
     stdOut: OutputChannel<String> = ClassicSolverFactory.defaultOutputChannel,
     stdErr: OutputChannel<String> = ClassicSolverFactory.defaultErrorChannel,
-    warnings: OutputChannel<PrologWarning> = ClassicSolverFactory.defaultWarningsChannel
+    warnings: OutputChannel<Warning> = ClassicSolverFactory.defaultWarningsChannel
 ): Solver =
     ClassicSolverFactory.solverOf(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
@@ -35,7 +35,7 @@ fun Solver.Companion.classicWithDefaultBuiltins(
     stdIn: InputChannel<String> = ClassicSolverFactory.defaultInputChannel,
     stdOut: OutputChannel<String> = ClassicSolverFactory.defaultOutputChannel,
     stdErr: OutputChannel<String> = ClassicSolverFactory.defaultErrorChannel,
-    warnings: OutputChannel<PrologWarning> = ClassicSolverFactory.defaultWarningsChannel
+    warnings: OutputChannel<Warning> = ClassicSolverFactory.defaultWarningsChannel
 ): Solver =
     ClassicSolverFactory.solverWithDefaultBuiltins(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
@@ -48,7 +48,7 @@ fun MutableSolver.Companion.classic(
     stdIn: InputChannel<String> = ClassicSolverFactory.defaultInputChannel,
     stdOut: OutputChannel<String> = ClassicSolverFactory.defaultOutputChannel,
     stdErr: OutputChannel<String> = ClassicSolverFactory.defaultErrorChannel,
-    warnings: OutputChannel<PrologWarning> = ClassicSolverFactory.defaultWarningsChannel
+    warnings: OutputChannel<Warning> = ClassicSolverFactory.defaultWarningsChannel
 ): MutableSolver =
     ClassicSolverFactory.mutableSolverOf(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
@@ -61,6 +61,6 @@ fun MutableSolver.Companion.classicWithDefaultBuiltins(
     stdIn: InputChannel<String> = ClassicSolverFactory.defaultInputChannel,
     stdOut: OutputChannel<String> = ClassicSolverFactory.defaultOutputChannel,
     stdErr: OutputChannel<String> = ClassicSolverFactory.defaultErrorChannel,
-    warnings: OutputChannel<PrologWarning> = ClassicSolverFactory.defaultWarningsChannel
+    warnings: OutputChannel<Warning> = ClassicSolverFactory.defaultWarningsChannel
 ): MutableSolver =
     ClassicSolverFactory.mutableSolverWithDefaultBuiltins(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)

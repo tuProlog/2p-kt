@@ -138,7 +138,7 @@ class TestTermSerializer {
         assertEquals(MimeType.Json, serializer.mimeType)
 
         serializer.assertTermSerializationWorks("{\"set\":[\"hello\",1]}") {
-            setOf(atomOf("hello"), numOf(1))
+            blockOf(atomOf("hello"), numOf(1))
         }
     }
 
@@ -155,7 +155,7 @@ class TestTermSerializer {
                 |- false
                 """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
-            setOf(atomOf("hello"), truthOf(false))
+            blockOf(atomOf("hello"), truthOf(false))
         }
 
         expected =
@@ -165,7 +165,7 @@ class TestTermSerializer {
                 |- 1
                 """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
-            setOf(atomOf("hello"), numOf(1))
+            blockOf(atomOf("hello"), numOf(1))
         }
     }
 

@@ -54,7 +54,7 @@ internal data class StreamsExecutionContext(
     override val procedure: Struct?
         get() = sideEffectManager.logicalParentRequests.map { it.query }.firstOrNull()
 
-    override val prologStackTrace: List<Struct> by lazy {
+    override val logicStackTrace: List<Struct> by lazy {
         sideEffectManager.logicalParentRequests.asSequence().map { it.query }.toList()
     }
 

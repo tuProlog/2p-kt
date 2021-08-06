@@ -28,15 +28,15 @@ class TestSubstitutionsMetadata {
         Substitution.unifier(Y, Integer.ONE),
         Substitution.unifier(Y, Real.ONE_TENTH),
         Substitution.unifier(Y, EmptyList()),
-        Substitution.unifier(Y, EmptySet()),
+        Substitution.unifier(Y, EmptyBlock()),
         Substitution.unifier(Y, Cons.of(Real.ONE_HALF, X)),
         Substitution.unifier(Y, Struct.of("g", X)),
         Substitution.unifier(Y, List.of(X)),
-        Substitution.unifier(Y, Set.of(X)),
+        Substitution.unifier(Y, Block.of(X)),
         Substitution.unifier(Y, Tuple.of(X, X)),
         Substitution.unifier(Y, Fact.of(Struct.of("f", X))),
         Substitution.unifier(Y, Fact.of(List.of(X))),
-        Substitution.unifier(Y, Fact.of(Set.of(X))),
+        Substitution.unifier(Y, Fact.of(Block.of(X))),
         Substitution.unifier(Y, Fact.of(Tuple.of(X, X))),
         Substitution.unifier(Y, Directive.of(Struct.of("h", X), Tuple.of(X, X))),
         Substitution.unifier(Y, Rule.of(Struct.of("h", X), Tuple.of(X, X))),
@@ -46,15 +46,15 @@ class TestSubstitutionsMetadata {
         Substitution.of(Z, Integer.ONE),
         Substitution.of(Z, Real.ONE_TENTH),
         Substitution.of(Z, EmptyList()),
-        Substitution.of(Z, EmptySet()),
+        Substitution.of(Z, EmptyBlock()),
         Substitution.of(Z, Cons.of(Real.ONE_HALF, X)),
         Substitution.of(Z, Struct.of("g", X)),
         Substitution.of(Z, List.of(X)),
-        Substitution.of(Z, Set.of(X)),
+        Substitution.of(Z, Block.of(X)),
         Substitution.of(Z, Tuple.of(X, X)),
         Substitution.of(Z, Fact.of(Struct.of("f", X))),
         Substitution.of(Z, Fact.of(List.of(X))),
-        Substitution.of(Z, Fact.of(Set.of(X))),
+        Substitution.of(Z, Fact.of(Block.of(X))),
         Substitution.of(Z, Fact.of(Tuple.of(X, X))),
         Substitution.of(Z, Directive.of(Struct.of("h", X), Tuple.of(X, X))),
         Substitution.of(Z, Rule.of(Struct.of("h", X), Tuple.of(X, X))),
@@ -206,7 +206,7 @@ class TestSubstitutionsMetadata {
 
     @Test
     fun plusWithFunctionPreservesTags() {
-        summingMergesTags(Substitution.of(X to EmptySet()).setTag(yetAnotherKey, someOtherValue)) {
+        summingMergesTags(Substitution.of(X to EmptyBlock()).setTag(yetAnotherKey, someOtherValue)) {
             plus(it) { x, y -> x + y }
         }
     }

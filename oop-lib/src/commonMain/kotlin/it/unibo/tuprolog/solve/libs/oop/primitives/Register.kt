@@ -18,7 +18,7 @@ object Register : BinaryRelation.NonBacktrackable<ExecutionContext>("register") 
             throw InstantiationError.forArgument(context, signature, second.variables.first(), 0)
         }
         return replySuccess {
-            addStaticClauses(Alias.of(second as Struct, first as Ref).wrappedImplementation)
+            addStaticClauses(Alias.of(second as Struct, first as Ref).implementation)
         }
     }
 }

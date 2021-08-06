@@ -5,6 +5,9 @@ import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution.Unifier
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.stdlib.primitive.Op
+import it.unibo.tuprolog.solve.stdlib.primitive.SetFlag
+import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
 
 interface DirectiveSelector : DirectiveListener {
 
@@ -36,11 +39,13 @@ interface DirectiveSelector : DirectiveListener {
 
         val LOAD = scope.structOf("load", Name)
 
-        val OP = scope.structOf("op", Priority, Specifier, Name)
+        val OP = scope.structOf(Op.functor, Priority, Specifier, Name)
 
-        val SET_PROLOG_FLAG = scope.structOf("set_prolog_flag", Name, Value)
+        val SET_FLAG = scope.structOf(SetFlag.functor, Name, Value)
 
-        private val PATTERNS = listOf(DYNAMIC, STATIC, INITIALIZATION, SOLVE, INCLUDE, LOAD, OP, SET_PROLOG_FLAG)
+        val SET_PROLOG_FLAG = scope.structOf(SetPrologFlag.functor, Name, Value)
+
+        private val PATTERNS = listOf(DYNAMIC, STATIC, INITIALIZATION, SOLVE, INCLUDE, LOAD, OP, SET_FLAG, SET_PROLOG_FLAG)
     }
 
     override val patterns: List<Term> get() = PATTERNS
@@ -52,7 +57,7 @@ interface DirectiveSelector : DirectiveListener {
             INITIALIZATION, SOLVE -> onSolve(directive, unifier[Goal]!!)
             INCLUDE, LOAD -> onLoad(directive, unifier[Name]!!)
             OP -> onOperator(directive, unifier[Priority]!!, unifier[Specifier]!!, unifier[Name]!!)
-            SET_PROLOG_FLAG -> onSetFlag(directive, unifier[Name]!!, unifier[Value]!!)
+            SET_FLAG, SET_PROLOG_FLAG -> onSetFlag(directive, unifier[Name]!!, unifier[Value]!!)
             else -> super.listenDirectiveMatchingPattern(directive, pattern, unifier)
         }
     }

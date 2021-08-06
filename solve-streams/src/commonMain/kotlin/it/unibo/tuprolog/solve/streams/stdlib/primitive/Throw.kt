@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
@@ -42,7 +42,7 @@ internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
                     else -> {
                         val errorCause = throwArgument.extractErrorCauseChain(request.context)
                         when {
-                            // if unhandled error is a PrologError, rethrow outside
+                            // if unhandled error is a LogicError, rethrow outside
                             errorCause != null -> throw errorCause
 
                             // if current unhandled exception is some other error, launch it as message
@@ -51,8 +51,8 @@ internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
                     }
                 }
             }
-        } catch (prologError: PrologError) {
-            sequenceOf(request.replyException(prologError))
+        } catch (logicError: LogicError) {
+            sequenceOf(request.replyException(logicError))
         }
 
     /** Utility function to extract error type from a term that should be `error(TYPE_STRUCT, ...)` */
@@ -65,9 +65,9 @@ internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
     }
 
     /** Utility function to extract error, with filled cause field, till the error root */
-    private fun Term.extractErrorCauseChain(withContext: ExecutionContext): PrologError? =
+    private fun Term.extractErrorCauseChain(withContext: ExecutionContext): LogicError? =
         extractErrorTypeAndExtra()?.let { (type, extra) ->
-            PrologError.of(
+            LogicError.of(
                 context = withContext,
                 type = type,
                 extraData = extra,

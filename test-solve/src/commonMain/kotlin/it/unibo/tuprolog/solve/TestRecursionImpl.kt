@@ -131,9 +131,9 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
                 sol
             )
             if (lastCallOptimization) {
-                assertEquals(2, (sol as Solution.Halt).exception.prologStackTrace.size)
+                assertEquals(2, (sol as Solution.Halt).exception.logicStackTrace.size)
             } else {
-                assertEquals(n + 2, (sol as Solution.Halt).exception.prologStackTrace.size)
+                assertEquals(n + 2, (sol as Solution.Halt).exception.logicStackTrace.size)
             }
         }
     }

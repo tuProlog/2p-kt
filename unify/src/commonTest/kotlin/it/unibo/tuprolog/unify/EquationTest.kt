@@ -181,7 +181,7 @@ internal class EquationTest {
     @Test
     fun swapCannotInvertAssignments() {
         val nonVarToVarAssignments =
-            EquationUtils.assignmentEquations.filterNot { (lhs, rhs) -> lhs.isVariable && rhs.isVariable }
+            EquationUtils.assignmentEquations.filterNot { (lhs, rhs) -> lhs.isVar && rhs.isVar }
 
         val correct = nonVarToVarAssignments.map { Equation.of(it) }
         val toBeTested = nonVarToVarAssignments.map { Equation.of(it) }.map(Equation::swap)

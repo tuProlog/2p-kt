@@ -6,7 +6,6 @@ import org.gciatto.kt.math.BigInteger
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
-import it.unibo.tuprolog.core.Set as LogicSet
 
 interface Scope {
 
@@ -19,8 +18,8 @@ interface Scope {
     @JsName("emptyList")
     val emptyList: EmptyList
 
-    @JsName("emptySet")
-    val emptySet: EmptySet
+    @JsName("emptyBlock")
+    val emptyBlock: EmptyBlock
 
     @Suppress("PropertyName")
     @JsName("_")
@@ -100,13 +99,13 @@ interface Scope {
     fun listFrom(terms: Sequence<Term>, last: Term? = null): LogicList
 
     @JsName("setOf")
-    fun setOf(vararg terms: Term): LogicSet
+    fun blockOf(vararg terms: Term): Block
 
     @JsName("setOfIterable")
-    fun setOf(terms: Iterable<Term>): LogicSet
+    fun blockOf(terms: Iterable<Term>): Block
 
     @JsName("setOfSequence")
-    fun setOf(terms: Sequence<Term>): LogicSet
+    fun blockOf(terms: Sequence<Term>): Block
 
     @JsName("ktSetOf")
     fun <T> ktSetOf(vararg items: T): Set<T>

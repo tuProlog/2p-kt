@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ArithmeticUtils.isQueryToResult
 import kotlin.reflect.KClass
 import kotlin.test.Test
@@ -22,7 +22,7 @@ internal class IsTest {
         isQueryToResult.forEach { (input, expectedResult) ->
             when (expectedResult) {
                 is Substitution.Unifier -> {
-                    Is.wrappedImplementation(input).single().solution.let {
+                    Is.implementation.solve(input).single().solution.let {
                         assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
                             it is Solution.Yes
                         }
@@ -30,7 +30,7 @@ internal class IsTest {
                     }
                 }
                 is Substitution.Fail -> {
-                    Is.wrappedImplementation(input).single().solution.let {
+                    Is.implementation.solve(input).single().solution.let {
                         assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
                             it is Solution.No
                         }
@@ -38,9 +38,9 @@ internal class IsTest {
                 }
                 else ->
                     try {
-                        Is.wrappedImplementation(input)
+                        Is.implementation.solve(input)
                         fail("Expected: $expectedResult but no exception was thrown")
-                    } catch (e: TuPrologRuntimeException) {
+                    } catch (e: ResolutionException) {
                         assertEquals(expectedResult as KClass<*>, e::class)
                     }
             }

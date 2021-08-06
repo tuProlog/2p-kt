@@ -41,7 +41,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
 
             assertEquals(
                 ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
-                (solution as Solution.Halt).exception.prologStackTrace.map { it.indicator }
+                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }
             )
         }
     }
@@ -67,7 +67,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
 
             assertEquals(
                 ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
-                (solution as Solution.Halt).exception.prologStackTrace.map { it.indicator }
+                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }
             )
         }
     }
@@ -93,7 +93,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
 
             assertEquals(
                 ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
-                (solution as Solution.Halt).exception.prologStackTrace.map { it.indicator }
+                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }
             )
         }
     }
@@ -118,7 +118,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
 
             assertEquals(
                 ktListOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
-                (solution as Solution.Halt).exception.prologStackTrace.map { it.indicator }
+                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }
             )
         }
     }

@@ -57,8 +57,8 @@ internal class AtomImplTest {
     }
 
     @Test
-    fun emptySetAtomDetected() {
-        assertTrue(AtomImpl("{}").isEmptySet)
+    fun emptyBlockAtomDetected() {
+        assertTrue(AtomImpl("{}").isEmptyBlock)
     }
 
     @Test

@@ -5,6 +5,6 @@ package it.unibo.tuprolog.ui.gui;
  */
 public class Main {
     public static void main(String[] args) {
-        PrologIDEApplication.main(args);
+        TuPrologIDEApplication.main(args);
     }
 }

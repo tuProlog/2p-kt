@@ -1,13 +1,14 @@
 package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
@@ -24,7 +25,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertTrue
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
-import it.unibo.tuprolog.core.Set as LogicSet
 
 /**
  * Utils to assert types in tests, that works only on properties defined in [Term] interface
@@ -38,13 +38,13 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Term)
         assertTrue(any is Var)
 
-        assertTrue(any.isVariable)
+        assertTrue(any.isVar)
 
         assertFalse(
             any.isGround,
             any.isNumber,
             any.isReal,
-            any.isInt,
+            any.isInteger,
             any.isClause,
             any.isDirective,
             any.isFact,
@@ -53,9 +53,9 @@ internal object TermTypeAssertionUtils {
             any.isStruct,
             any.isAtom,
             any.isList,
-            any.isSet,
+            any.isBlock,
             any.isEmptyList,
-            any.isEmptySet,
+            any.isEmptyBlock,
             any.isTrue,
             any.isFail,
             any.isTuple,
@@ -82,7 +82,7 @@ internal object TermTypeAssertionUtils {
         )
 
         assertFalse(
-            any.isVariable,
+            any.isVar,
             any.isClause,
             any.isDirective,
             any.isFact,
@@ -91,9 +91,9 @@ internal object TermTypeAssertionUtils {
             any.isStruct,
             any.isAtom,
             any.isList,
-            any.isSet,
+            any.isBlock,
             any.isEmptyList,
-            any.isEmptySet,
+            any.isEmptyBlock,
             any.isTrue,
             any.isFail,
             any.isTuple,
@@ -113,7 +113,7 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(any.isReal)
 
-        assertFalse(any.isInt)
+        assertFalse(any.isInteger)
     }
 
     /** Checks passed term to be an Integer or fails otherwise */
@@ -122,7 +122,7 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(any is Integer)
 
-        assertTrue(any.isInt)
+        assertTrue(any.isInteger)
 
         assertFalse(any.isReal)
     }
@@ -135,10 +135,10 @@ internal object TermTypeAssertionUtils {
         assertTrue(any.isStruct)
 
         assertFalse(
-            any.isVariable,
+            any.isVar,
             any.isNumber,
             any.isReal,
-            any.isInt,
+            any.isInteger,
             any.isClause,
             any.isDirective,
             any.isFact,
@@ -146,9 +146,9 @@ internal object TermTypeAssertionUtils {
             any.isCons,
             any.isAtom,
             any.isList,
-            any.isSet,
+            any.isBlock,
             any.isEmptyList,
-            any.isEmptySet,
+            any.isEmptyBlock,
             any.isTrue,
             any.isFail,
             any.isTuple,
@@ -181,13 +181,13 @@ internal object TermTypeAssertionUtils {
         assertFalse(
             any.isNumber,
             any.isReal,
-            any.isInt,
+            any.isInteger,
             any.isClause,
             any.isDirective,
             any.isFact,
             any.isRule,
             any.isCons,
-            any.isVariable,
+            any.isVar,
             any.isTuple,
             any.isIndicator,
             any is Numeric,
@@ -207,11 +207,11 @@ internal object TermTypeAssertionUtils {
             any.isTrue,
             any.isFail,
             any.isList,
-            any.isSet,
+            any.isBlock,
             any.isEmptyList,
-            any.isEmptySet,
+            any.isEmptyBlock,
             any is LogicList,
-            any is LogicSet,
+            any is Block,
             any is Empty,
             any is Truth
         )
@@ -228,13 +228,13 @@ internal object TermTypeAssertionUtils {
         assertFalse(
             any.isTrue && any.isFail,
             any.isList,
-            any.isSet,
+            any.isBlock,
             any.isEmptyList,
-            any.isEmptySet,
-            any is LogicSet,
+            any.isEmptyBlock,
+            any is Block,
             any is LogicList,
             any is Empty,
-            any is EmptySet,
+            any is EmptyBlock,
             any is EmptyList
         )
     }
@@ -251,10 +251,10 @@ internal object TermTypeAssertionUtils {
         )
 
         assertFalse(
-            any.isVariable,
+            any.isVar,
             any.isNumber,
             any.isReal,
-            any.isInt,
+            any.isInteger,
             any.isClause,
             any.isDirective,
             any.isFact,
@@ -262,9 +262,9 @@ internal object TermTypeAssertionUtils {
             any.isCons,
             any.isAtom,
             any.isList,
-            any.isSet,
+            any.isBlock,
             any.isEmptyList,
-            any.isEmptySet,
+            any.isEmptyBlock,
             any.isTrue,
             any.isFail,
             any.isConstant,
@@ -292,10 +292,10 @@ internal object TermTypeAssertionUtils {
 
         assertFalse(
             any.isTuple,
-            any.isVariable,
+            any.isVar,
             any.isNumber,
             any.isReal,
-            any.isInt,
+            any.isInteger,
             any.isClause,
             any.isDirective,
             any.isFact,
@@ -303,9 +303,9 @@ internal object TermTypeAssertionUtils {
             any.isCons,
             any.isAtom,
             any.isList,
-            any.isSet,
+            any.isBlock,
             any.isEmptyList,
-            any.isEmptySet,
+            any.isEmptyBlock,
             any.isTrue,
             any.isFail,
             any.isConstant,
@@ -333,18 +333,18 @@ internal object TermTypeAssertionUtils {
         )
 
         assertFalse(
-            any.isVariable,
+            any.isVar,
             any.isNumber,
             any.isReal,
-            any.isInt,
+            any.isInteger,
             any.isClause,
             any.isDirective,
             any.isFact,
             any.isRule,
             any.isAtom,
-            any.isSet,
+            any.isBlock,
             any.isEmptyList,
-            any.isEmptySet,
+            any.isEmptyBlock,
             any.isTrue,
             any.isFail,
             any.isTuple,
@@ -358,22 +358,22 @@ internal object TermTypeAssertionUtils {
         )
     }
 
-    /** Checks passed term to be a Set or fails otherwise */
-    fun assertIsSet(any: Any) {
+    /** Checks passed term to be a Block or fails otherwise */
+    fun assertIsBlock(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Struct)
-        assertTrue(any is LogicSet)
+        assertTrue(any is Block)
 
         assertTrue(
             any.isStruct,
-            any.isSet
+            any.isBlock
         )
 
         assertFalse(
-            any.isVariable,
+            any.isVar,
             any.isNumber,
             any.isReal,
-            any.isInt,
+            any.isInteger,
             any.isClause,
             any.isDirective,
             any.isFact,
@@ -382,7 +382,7 @@ internal object TermTypeAssertionUtils {
             any.isAtom,
             any.isList,
             any.isEmptyList,
-            any.isEmptySet,
+            any.isEmptyBlock,
             any.isTrue,
             any.isFail,
             any.isTuple,
@@ -423,23 +423,23 @@ internal object TermTypeAssertionUtils {
         )
 
         assertFalse(
-            any.isEmptySet,
-            any.isSet,
-            any is LogicSet,
-            any is EmptySet
+            any.isEmptyBlock,
+            any.isBlock,
+            any is Block,
+            any is EmptyBlock
         )
     }
 
-    /** Checks passed term to be an EmptySet or fails otherwise */
-    fun assertIsEmptySet(any: Any) {
+    /** Checks passed term to be an EmptyBlock or fails otherwise */
+    fun assertIsEmptyBlock(any: Any) {
         commonEmptyAssertions(any)
 
-        assertTrue(any is LogicSet)
-        assertTrue(any is EmptySet)
+        assertTrue(any is Block)
+        assertTrue(any is EmptyBlock)
 
         assertTrue(
-            any.isEmptySet,
-            any.isSet
+            any.isEmptyBlock,
+            any.isBlock
         )
 
         assertFalse(
@@ -462,16 +462,16 @@ internal object TermTypeAssertionUtils {
         )
 
         assertFalse(
-            any.isVariable,
+            any.isVar,
             any.isNumber,
             any.isReal,
-            any.isInt,
+            any.isInteger,
             any.isCons,
             any.isAtom,
             any.isList,
-            any.isSet,
+            any.isBlock,
             any.isEmptyList,
-            any.isEmptySet,
+            any.isEmptyBlock,
             any.isTrue,
             any.isFail,
             any.isTuple,
@@ -480,7 +480,7 @@ internal object TermTypeAssertionUtils {
             any is Var,
             any is Numeric,
             any is Cons,
-            any is LogicSet,
+            any is Block,
             any is LogicList,
             any is Atom,
             any is Constant,

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.unify.testutils
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Empty
@@ -18,7 +19,6 @@ import it.unibo.tuprolog.unify.Equation
 import kotlin.test.assertTrue
 import kotlin.test.fail
 import it.unibo.tuprolog.core.List.Companion as LogicList
-import it.unibo.tuprolog.core.Set.Companion as LogicSet
 
 /**
  * Utils singleton for testing [Equation]
@@ -34,7 +34,7 @@ internal object EquationUtils {
             Truth.FALSE to Truth.FALSE,
             Truth.FAIL to Truth.FAIL,
             Empty.list() to Empty.list(),
-            Empty.set() to Empty.set(),
+            Empty.block() to Empty.block(),
             Atom.of("a") to Atom.of("a"),
             Atom.of("X") to Atom.of("X"),
             Real.of("1.5") to Real.of("1.5"),
@@ -54,7 +54,7 @@ internal object EquationUtils {
                     listFrom(arrayListOf(atomOf("a")), last = varOf("V"))
             },
             Var.anonymous().let { anonymous ->
-                LogicSet.of(Numeric.of(1.5), anonymous) to LogicSet.of(Numeric.of(1.5), anonymous)
+                Block.of(Numeric.of(1.5), anonymous) to Block.of(Numeric.of(1.5), anonymous)
             },
             Scope.empty { structOf("f", varOf("A")) to structOf("f", varOf("A")) },
             Scope.empty { factOf(structOf("aa", varOf("A"))) to factOf(structOf("aa", varOf("A"))) },
@@ -82,7 +82,7 @@ internal object EquationUtils {
             Var.of("X") to Truth.FALSE,
             Var.of("X") to Truth.FAIL,
             Var.of("X") to Empty.list(),
-            Var.of("X") to Empty.set(),
+            Var.of("X") to Empty.block(),
             Var.of("X") to Atom.of("a"),
             Var.of("X") to Atom.of("X"),
             Var.of("X") to Var.of("X"),
@@ -100,7 +100,7 @@ internal object EquationUtils {
     internal val assignmentEquationsShuffled by lazy {
         assignmentEquations.mapIndexed { i, (variable, term) ->
             // if rhs Term is variable, do not shuffle! Because will _not_ be automatically swapped back like others
-            if (i % 2 == 0 || term.isVariable) {
+            if (i % 2 == 0 || term.isVar) {
                 variable to term
             } else {
                 term to variable
@@ -129,8 +129,8 @@ internal object EquationUtils {
             Truth.FAIL to Truth.TRUE,
             Truth.FAIL to Truth.FALSE,
             Truth.FALSE to Truth.FAIL,
-            Empty.list() to Empty.set(),
-            Empty.set() to Empty.list(),
+            Empty.list() to Empty.block(),
+            Empty.block() to Empty.list(),
             Atom.of("a") to Atom.of("b"),
             Atom.of("X") to Atom.of("Y"),
             Real.of("1.5") to Real.of("1.3"),
@@ -145,7 +145,7 @@ internal object EquationUtils {
             LogicList.of(Atom.of("b"), Var.of("V")) to LogicList.of(Atom.of("a"), Var.of("V")),
             LogicList.from(listOf(Atom.of("a")), last = Var.of("V")) to
                 LogicList.from(listOf(Atom.of("b")), last = Var.of("V")),
-            LogicSet.of(Real.of(1.5), Var.anonymous()) to LogicSet.of(Integer.of(1), Var.anonymous()),
+            Block.of(Real.of(1.5), Var.anonymous()) to Block.of(Integer.of(1), Var.anonymous()),
             Struct.of("f", Atom.of("A")) to Struct.of("f", Atom.of("B")),
             Fact.of(Struct.of("aa", Atom.of("A"))) to Fact.of(Struct.of("aa", Var.of("A"), Var.of("A"))),
             Directive.of(Atom.of("here"), Struct.of("f", Truth.TRUE)) to

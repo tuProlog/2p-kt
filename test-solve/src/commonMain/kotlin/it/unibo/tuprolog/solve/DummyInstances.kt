@@ -30,7 +30,7 @@ object DummyInstances {
         override val inputChannels: Nothing by lazy { throw NotImplementedError() }
         override val outputChannels: Nothing by lazy { throw NotImplementedError() }
         override val substitution: Substitution.Unifier = Substitution.empty()
-        override val prologStackTrace: Nothing by lazy { throw NotImplementedError() }
+        override val logicStackTrace: Nothing by lazy { throw NotImplementedError() }
         override val customData: Nothing by lazy { throw NotImplementedError() }
 
         override fun createSolver(
