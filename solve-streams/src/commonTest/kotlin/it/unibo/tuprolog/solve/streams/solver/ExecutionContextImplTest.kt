@@ -16,7 +16,7 @@ import kotlin.test.assertNull
 internal class ExecutionContextImplTest {
 
     @Test
-    fun prologStackTraceCorrectlyComputed() {
+    fun logicStackTraceCorrectlyComputed() {
         val sideEffectManagerWithLogicalParents = SideEffectManagerImpl(
             logicalParentRequests = listOf(
                 createSolveRequest(Atom.of("ciao")),
@@ -27,7 +27,7 @@ internal class ExecutionContextImplTest {
 
         assertEquals(
             sequenceOf(Atom.of("ciao"), Atom.of("ciao2")).toList(),
-            toBeTested.prologStackTrace.toList()
+            toBeTested.logicStackTrace.toList()
         )
     }
 

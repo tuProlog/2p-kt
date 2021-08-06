@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Directive
@@ -16,6 +17,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
+import it.unibo.tuprolog.core.testutils.BlockUtils
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import it.unibo.tuprolog.core.testutils.DirectiveUtils
 import it.unibo.tuprolog.core.testutils.FactUtils
@@ -25,7 +27,6 @@ import it.unibo.tuprolog.core.testutils.RealUtils
 import it.unibo.tuprolog.core.testutils.RuleUtils
 import it.unibo.tuprolog.core.testutils.ScopeUtils
 import it.unibo.tuprolog.core.testutils.ScopeUtils.assertScopeCorrectContents
-import it.unibo.tuprolog.core.testutils.SetUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import it.unibo.tuprolog.core.testutils.TupleUtils
@@ -40,7 +41,6 @@ import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
-import it.unibo.tuprolog.core.Set as LogicSet
 
 /**
  * Test class for [ScopeImpl] and [Scope]
@@ -172,17 +172,17 @@ internal class ScopeImplTest {
     // /////////////////////
 
     @Test
-    fun setOfIterable() {
-        val correctInstances = SetUtils.mixedSets.map { LogicSet.of(it.asIterable()) }
-        val toBeTested = SetUtils.mixedSets.map { emptyScopeInstance.setOf(it.asIterable()) }
+    fun blockOfIterable() {
+        val correctInstances = BlockUtils.mixedBlocks.map { Block.of(it.asIterable()) }
+        val toBeTested = BlockUtils.mixedBlocks.map { emptyScopeInstance.blockOf(it.asIterable()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
 
     @Test
-    fun setOfVarargs() {
-        val correctInstances = SetUtils.mixedSets.map { LogicSet.of(*it) }
-        val toBeTested = SetUtils.mixedSets.map { emptyScopeInstance.setOf(*it) }
+    fun blockOfVarargs() {
+        val correctInstances = BlockUtils.mixedBlocks.map { Block.of(*it) }
+        val toBeTested = BlockUtils.mixedBlocks.map { emptyScopeInstance.blockOf(*it) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

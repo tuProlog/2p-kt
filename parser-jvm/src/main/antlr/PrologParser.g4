@@ -162,13 +162,13 @@ returns[int priority]
     ;
 
 term
-locals[boolean isNum, boolean isVar, boolean isList, boolean isStruct, boolean isExpr, boolean isSet]
+locals[boolean isNum, boolean isVar, boolean isList, boolean isStruct, boolean isExpr, boolean isBlock]
     : LPAR expression[P0, WITH_COMMA] { $isExpr = true; } RPAR
     | number { $isNum = true; }
     | variable { $isVar = true; }
     | structure { $isStruct = true; }
     | list { $isList = true;  }
-    | set { $isSet = true;  }
+    | block { $isBlock = true;  }
     ;
 
 number
@@ -198,15 +198,15 @@ locals[boolean isAnonymous]
     ;
 
 structure
-locals[int arity = 0, boolean isTruth, boolean isList, boolean isSet, boolean isString, boolean isCut]
+locals[int arity = 0, boolean isTruth, boolean isList, boolean isBlock, boolean isString, boolean isCut]
     : functor=BOOL { $isTruth = true; }
     | functor=EMPTY_LIST { $isList = true; }
     | functor=CUT { $isCut = true; }
-    | functor=EMPTY_SET { $isSet = true; }
+    | functor=EMPTY_SET { $isBlock = true; }
     | functor=DQ_STRING { $isString = true; }
     | LPAR functor=(OPERATOR|COMMA|PIPE|SIGN) RPAR
     | functor=SQ_STRING { $isString = true; } (LPAR args+=expression[P0, NO_COMMA] { $arity++; } (COMMA args+=expression[P0, NO_COMMA] { $arity++; })* RPAR)?
-    | functor=(ATOM|EMPTY_SET) (LPAR args+=expression[P0, NO_COMMA] { $arity++; } (COMMA args+=expression[P0, NO_COMMA] { $arity++; })* RPAR)?
+    | functor=(BOOL|ATOM|EMPTY_SET) (LPAR args+=expression[P0, NO_COMMA] { $arity++; } (COMMA args+=expression[P0, NO_COMMA] { $arity++; })* RPAR)?
     | { !lookaheadIs(PREFIX) }? functor=(OPERATOR|COMMA|PIPE|SIGN) LPAR args+=expression[P0, NO_COMMA] { $arity++; } (COMMA args+=expression[P0, NO_COMMA] { $arity++; })* RPAR?
     ;
 
@@ -215,7 +215,7 @@ locals[int length = 0, boolean hasTail]
     : LSQUARE items+=expression[P0, NO_COMMA_PIPE] { $length++; } (COMMA items+=expression[P0, NO_COMMA_PIPE] { $length++; })* (PIPE { $hasTail = true; } tail=expression[P0, WITH_COMMA])? RSQUARE
     ;
 
-set
+block
 locals[int length = 0]
     : LBRACE items+=expression[P0, NO_COMMA] { $length++; } (COMMA items+=expression[P0, NO_COMMA] { $length++; })* RBRACE
     ;

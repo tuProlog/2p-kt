@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
  */
 internal class HaltExceptionTest {
 
-    private val exception = HaltException(aMessage, aCause, aContext, anExitStatus)
+    private val exception = HaltException(anExitStatus, aMessage, aCause, aContext)
 
     @Test
     fun holdsInsertedData() {
@@ -25,7 +25,7 @@ internal class HaltExceptionTest {
 
     @Test
     fun constructorInsertsMessageIfOnlyCauseSpecified() {
-        val exception = HaltException(aCause, aContext, anExitStatus)
+        val exception = HaltException(anExitStatus, aCause, aContext)
 
         assertEquals(aCause.toString(), exception.message)
     }

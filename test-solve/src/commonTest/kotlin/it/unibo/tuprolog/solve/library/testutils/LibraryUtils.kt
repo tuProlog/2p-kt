@@ -10,7 +10,7 @@ import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.Compute
-import it.unibo.tuprolog.solve.function.PrologFunction
+import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
@@ -30,7 +30,7 @@ internal object LibraryUtils {
         val opSet: OperatorSet,
         val theory: Theory,
         val primitives: Map<Signature, Primitive>,
-        val functions: Map<Signature, PrologFunction>
+        val functions: Map<Signature, LogicFunction>
     )
 
     private val plusOperator = Operator("+", Specifier.YFX, 500)
@@ -47,8 +47,8 @@ internal object LibraryUtils {
     private fun myOtherPrimitive(@Suppress("UNUSED_PARAMETER") r: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
         throw NotImplementedError()
 
-    private val primitives = mapOf(Signature("myPrimitive1", 1) to ::myPrimitive)
-    private val primitivesOverridden = mapOf(Signature("myPrimitive1", 1) to ::myOtherPrimitive)
+    private val primitives = mapOf(Signature("myPrimitive1", 1) to Primitive(::myPrimitive))
+    private val primitivesOverridden = mapOf(Signature("myPrimitive1", 1) to Primitive(::myOtherPrimitive))
 
     private fun myFunction(@Suppress("UNUSED_PARAMETER") r: Compute.Request<ExecutionContext>): Compute.Response =
         throw NotImplementedError()
@@ -56,8 +56,8 @@ internal object LibraryUtils {
     private fun myOtherFunction(@Suppress("UNUSED_PARAMETER") r: Compute.Request<ExecutionContext>): Compute.Response =
         throw NotImplementedError()
 
-    private val functions = mapOf(Signature("myFunc1", 1) to ::myFunction)
-    private val functionsOverridden = mapOf(Signature("myFunc1", 1) to ::myOtherFunction)
+    private val functions = mapOf(Signature("myFunc1", 1) to LogicFunction(::myFunction))
+    private val functionsOverridden = mapOf(Signature("myFunc1", 1) to LogicFunction(::myOtherFunction))
 
     /** An empty library */
     internal val emptyLibrary by lazy {
@@ -118,20 +118,20 @@ internal object LibraryUtils {
         opSet: OperatorSet,
         theory: Theory,
         primitives: Map<Signature, Primitive>,
-        functions: Map<Signature, PrologFunction>,
+        functions: Map<Signature, LogicFunction>,
         alias: String
     ): AliasedLibrary = Library.aliased(opSet, theory, primitives, functions, alias)
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
-        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, PrologFunction>) -> Library
+        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>) -> Library
     ): Library = constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions)
 
     /** Utility function to construct a library with alias from raw data */
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
-        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, PrologFunction>, String) -> AliasedLibrary
+        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>, String) -> AliasedLibrary
     ): AliasedLibrary =
         constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions, rawLibrary.name)
 

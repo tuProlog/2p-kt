@@ -54,7 +54,7 @@ class TestPrologParser {
             sc.arity == sc.args.count() &&
                 sc.arity == 0 &&
                 !sc.isList &&
-                !sc.isSet &&
+                !sc.isBlock &&
                 !sc.isTruth &&
                 sc.functor.text == "a" &&
                 sc.functor.type == PrologLexer.ATOM

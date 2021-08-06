@@ -31,7 +31,7 @@ fun Term.unfoldGoals(): Sequence<Term> =
 fun Term.toGoals(): Cursor<out Term> =
     unfoldGoals().map {
         when {
-            it.isVariable -> Struct.of("call", it)
+            it.isVar -> Struct.of("call", it)
             else -> it
         }
     }.cursor()

@@ -18,7 +18,7 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
     /** Implements the so called occur-check; checks if the [variable] is present in [term] */
     private fun occurrenceCheck(variable: Var, term: Term): Boolean =
         when {
-            term.isVariable -> checkTermsEquality(variable, term)
+            term.isVar -> checkTermsEquality(variable, term)
             term.isStruct -> term.variables.any { occurrenceCheck(variable, it) }
             else -> false
         }

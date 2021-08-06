@@ -14,6 +14,7 @@ import it.unibo.tuprolog.parser.Associativity.XFX
 import it.unibo.tuprolog.parser.Associativity.XFY
 import it.unibo.tuprolog.parser.Associativity.YF
 import it.unibo.tuprolog.parser.Associativity.YFX
+import it.unibo.tuprolog.parser.BlockContext
 import it.unibo.tuprolog.parser.ClauseContext
 import it.unibo.tuprolog.parser.ExpressionContext
 import it.unibo.tuprolog.parser.IntegerContext
@@ -22,7 +23,6 @@ import it.unibo.tuprolog.parser.NumberContext
 import it.unibo.tuprolog.parser.OuterContext
 import it.unibo.tuprolog.parser.PrologParserVisitor
 import it.unibo.tuprolog.parser.RealContext
-import it.unibo.tuprolog.parser.SetContext
 import it.unibo.tuprolog.parser.SingletonExpressionContext
 import it.unibo.tuprolog.parser.SingletonTermContext
 import it.unibo.tuprolog.parser.StructureContext
@@ -96,8 +96,8 @@ class PrologVisitor : PrologParserVisitor<Term>() {
     override fun visitStructure(ctx: StructureContext): Term {
         if (ctx.isList) {
             return scope.listOf()
-        } else if (ctx.isSet) {
-            return scope.setOf()
+        } else if (ctx.isBlock) {
+            return scope.blockOf()
         }
         return if (ctx.arity == 0) {
             scope.atomOf(ctx.functor.text)
@@ -118,11 +118,11 @@ class PrologVisitor : PrologParserVisitor<Term>() {
         }
     }
 
-    override fun visitSet(ctx: SetContext): Term {
+    override fun visitBlock(ctx: BlockContext): Term {
         return if (ctx.length == 1) {
-            scope.setOf(ctx.items[0].accept<Term>(this))
+            scope.blockOf(ctx.items[0].accept<Term>(this))
         } else {
-            scope.setOf(ctx.items.map(this::visitExpression))
+            scope.blockOf(ctx.items.map(this::visitExpression))
         }
     }
 

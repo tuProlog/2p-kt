@@ -8,6 +8,6 @@ internal object SpecificRules {
     )
 
     val theory: Theory = Theory.indexedOf(
-        wrappers.map { it.wrappedImplementation }
+        wrappers.map { it.implementation }
     )
 }

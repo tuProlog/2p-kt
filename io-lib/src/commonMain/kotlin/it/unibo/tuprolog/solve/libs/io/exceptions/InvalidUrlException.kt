@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class InvalidUrlException : TuPrologException {
@@ -12,12 +12,12 @@ class InvalidUrlException : TuPrologException {
     constructor(message: String?, cause: Throwable?) : super(message, cause)
     constructor(cause: Throwable?) : super(cause)
 
-    fun toPrologError(
+    fun toLogicError(
         context: ExecutionContext,
         signature: Signature,
         culprit: Term,
         index: Int
-    ): PrologError {
+    ): LogicError {
         return TypeError.forArgument(context, signature, TypeError.Expected.URL, culprit, index)
     }
 }

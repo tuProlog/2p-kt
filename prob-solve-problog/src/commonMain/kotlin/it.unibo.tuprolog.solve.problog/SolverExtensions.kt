@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
@@ -22,7 +22,7 @@ fun Solver.Companion.problogClassic(
     stdIn: InputChannel<String> = ProblogSolverFactory.defaultInputChannel,
     stdOut: OutputChannel<String> = ProblogSolverFactory.defaultOutputChannel,
     stdErr: OutputChannel<String> = ProblogSolverFactory.defaultErrorChannel,
-    warnings: OutputChannel<PrologWarning> = ProblogSolverFactory.defaultWarningsChannel
+    warnings: OutputChannel<Warning> = ProblogSolverFactory.defaultWarningsChannel
 ): Solver =
     ProblogSolverFactory.solverOf(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
@@ -35,7 +35,7 @@ fun Solver.Companion.problogClassicWithDefaultBuiltins(
     stdIn: InputChannel<String> = ProblogSolverFactory.defaultInputChannel,
     stdOut: OutputChannel<String> = ProblogSolverFactory.defaultOutputChannel,
     stdErr: OutputChannel<String> = ProblogSolverFactory.defaultErrorChannel,
-    warnings: OutputChannel<PrologWarning> = ProblogSolverFactory.defaultWarningsChannel
+    warnings: OutputChannel<Warning> = ProblogSolverFactory.defaultWarningsChannel
 ): Solver =
     ProblogSolverFactory.solverWithDefaultBuiltins(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
@@ -48,7 +48,7 @@ fun MutableSolver.Companion.problogClassic(
     stdIn: InputChannel<String> = ProblogSolverFactory.defaultInputChannel,
     stdOut: OutputChannel<String> = ProblogSolverFactory.defaultOutputChannel,
     stdErr: OutputChannel<String> = ProblogSolverFactory.defaultErrorChannel,
-    warnings: OutputChannel<PrologWarning> = ProblogSolverFactory.defaultWarningsChannel
+    warnings: OutputChannel<Warning> = ProblogSolverFactory.defaultWarningsChannel
 ): MutableSolver =
     ProblogSolverFactory.mutableSolverOf(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
@@ -61,6 +61,6 @@ fun MutableSolver.Companion.problogClassicWithDefaultBuiltins(
     stdIn: InputChannel<String> = ProblogSolverFactory.defaultInputChannel,
     stdOut: OutputChannel<String> = ProblogSolverFactory.defaultOutputChannel,
     stdErr: OutputChannel<String> = ProblogSolverFactory.defaultErrorChannel,
-    warnings: OutputChannel<PrologWarning> = ProblogSolverFactory.defaultWarningsChannel
+    warnings: OutputChannel<Warning> = ProblogSolverFactory.defaultWarningsChannel
 ): MutableSolver =
     ProblogSolverFactory.mutableSolverWithDefaultBuiltins(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)

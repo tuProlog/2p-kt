@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.dsl.solve
 
-import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.Solution
@@ -43,7 +42,7 @@ class TestNQueens {
 
         solve("solution"(n, (1..n).map { it and "Y$it" }))
             .filterIsInstance<Solution.Yes>()
-            .map { it.solvedQuery[1] as Collection }
+            .map { it.solvedQuery[1].castToRecursive() }
             .map { it.toList() }
             .map { list ->
                 list.map { it as Tuple }

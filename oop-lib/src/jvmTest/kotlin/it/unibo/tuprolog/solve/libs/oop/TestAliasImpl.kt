@@ -146,10 +146,10 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
                 ktListOf(registerQuery1.yes()),
                 solver.solveList(registerQuery1)
             )
-            assertTrue { bInstanceAlias.wrappedImplementation in solver.staticKb }
+            assertTrue { bInstanceAlias.implementation in solver.staticKb }
             assertTrue { solver.dynamicKb.size == 0L }
 
-            val aliasQuery1 = bInstanceAlias.wrappedImplementation.head
+            val aliasQuery1 = bInstanceAlias.implementation.head
             assertSolutionEquals(
                 ktListOf(aliasQuery1.yes()),
                 solver.solveList(aliasQuery1)
@@ -160,10 +160,10 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
                 ktListOf(registerQuery2.yes()),
                 solver.solveList(registerQuery2)
             )
-            assertTrue { bTypeAlias.wrappedImplementation in solver.staticKb }
+            assertTrue { bTypeAlias.implementation in solver.staticKb }
             assertTrue { solver.dynamicKb.size == 0L }
 
-            val aliasQuery2 = bTypeAlias.wrappedImplementation.head
+            val aliasQuery2 = bTypeAlias.implementation.head
             assertSolutionEquals(
                 ktListOf(aliasQuery2.yes()),
                 solver.solveList(aliasQuery2)

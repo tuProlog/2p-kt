@@ -30,7 +30,7 @@ internal class CutTest {
     fun cutPrimitiveReturnsAlwaysYesResponseWithRequestSubstitution() {
         val unchangedSubstitution = Substitution.of("A", Truth.TRUE)
         val context = StreamsExecutionContext(substitution = unchangedSubstitution)
-        val solutions = Cut.wrappedImplementation(cutRequest(context))
+        val solutions = Cut.implementation.solve(cutRequest(context))
 
         assertOnlyOneSolution(Atom.of("!").yes(unchangedSubstitution), solutions)
     }
@@ -38,7 +38,7 @@ internal class CutTest {
     @Test
     fun cutPrimitiveModifiesSideEffectManager() {
         val request = cutRequest()
-        val response = Cut.wrappedImplementation(request).single()
+        val response = Cut.implementation.solve(request).single()
 
         assertNotSame(request.context.getSideEffectManager(), response.sideEffectManager)
     }

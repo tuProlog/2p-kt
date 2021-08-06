@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.AliasedLibrary
@@ -116,7 +116,7 @@ interface MutableSolver : Solver {
     fun setStandardOutput(stdOut: OutputChannel<String>)
 
     @JsName("setWarnings")
-    fun setWarnings(warnings: OutputChannel<PrologWarning>)
+    fun setWarnings(warnings: OutputChannel<Warning>)
 
     override fun copy(
         libraries: Libraries,
@@ -126,7 +126,7 @@ interface MutableSolver : Solver {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ): MutableSolver
 
     override fun clone(): MutableSolver

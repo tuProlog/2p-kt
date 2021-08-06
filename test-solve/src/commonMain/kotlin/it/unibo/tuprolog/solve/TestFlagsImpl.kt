@@ -9,6 +9,8 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.flags.LastCallOptimization
 import it.unibo.tuprolog.solve.flags.MaxArity
 import it.unibo.tuprolog.solve.flags.Unknown
+import it.unibo.tuprolog.solve.stdlib.primitive.CurrentFlag
+import it.unibo.tuprolog.solve.stdlib.primitive.SetFlag
 import it.unibo.tuprolog.utils.indexed
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -21,7 +23,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
             assertEquals(LastCallOptimization.ON, LastCallOptimization.defaultValue)
 
-            val query = current_prolog_flag(LastCallOptimization.name, LastCallOptimization.ON)
+            val query = current_flag(LastCallOptimization.name, LastCallOptimization.ON)
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
@@ -36,7 +38,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
             assertEquals(Unknown.WARNING, Unknown.defaultValue)
 
-            val query = current_prolog_flag(Unknown.name, Unknown.WARNING)
+            val query = current_flag(Unknown.name, Unknown.WARNING)
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
@@ -50,7 +52,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             for (value in Unknown.admissibleValues) {
-                val query = set_prolog_flag(Unknown.name, value) and current_prolog_flag(Unknown.name, V)
+                val query = set_flag(Unknown.name, value) and current_flag(Unknown.name, V)
 
                 assertSolutionEquals(
                     ktListOf(query.yes(V to value)),
@@ -64,7 +66,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val solutions = solver.solve(current_prolog_flag(F, `_`), shortDuration).toList()
+            val solutions = solver.solve(current_flag(F, `_`), shortDuration).toList()
 
             assertTrue { solutions.isNotEmpty() }
 
@@ -73,12 +75,12 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
             }
 
             for (term in ktListOf(5, "f"("x"), 2.3).map { it.toTerm() }) {
-                var query = current_prolog_flag(term, `_`)
+                var query = current_flag(term, `_`)
                 assertSolutionEquals(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
-                            Signature("current_prolog_flag", 2),
+                            CurrentFlag.signature,
                             TypeError.Expected.ATOM,
                             term,
                             0
@@ -87,12 +89,12 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
                     solver.solveOnce(query, shortDuration)
                 )
 
-                query = set_prolog_flag(term, "value")
+                query = set_flag(term, "value")
                 assertSolutionEquals(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
-                            Signature("set_prolog_flag", 2),
+                            SetFlag.signature,
                             TypeError.Expected.ATOM,
                             term,
                             0
@@ -111,7 +113,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
                 assertFalse { solver.flags.containsKey(flag) }
 
-                val query = current_prolog_flag(flag, V)
+                val query = current_flag(flag, V)
 
                 assertSolutionEquals(
                     query.no(),
@@ -128,7 +130,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
                 assertFalse { solver.flags.containsKey(flag) }
 
-                val query = set_prolog_flag(flag, value) and current_prolog_flag(flag, X)
+                val query = set_flag(flag, value) and current_flag(flag, X)
 
                 assertSolutionEquals(
                     query.yes(X to value),
@@ -147,7 +149,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
             assertTrue { defaultFlags.isNotEmpty() }
 
-            val query = current_prolog_flag(F, X)
+            val query = current_flag(F, X)
 
             val selectedFlags = solver.solve(query, shortDuration)
                 .filterIsInstance<Solution.Yes>()
@@ -162,14 +164,14 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = set_prolog_flag(F, "value")
+            val query = set_flag(F, "value")
 
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
-                            Signature("set_prolog_flag", 2),
+                            SetFlag.signature,
                             F,
                             index = 0
                         )
@@ -184,7 +186,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = set_prolog_flag(LastCallOptimization.name, truthOf(true))
+            val query = set_flag(LastCallOptimization.name, truthOf(true))
 
             assertFalse { LastCallOptimization.admissibleValues.contains(truthOf(true)) }
 
@@ -193,7 +195,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
                     query.halt(
                         DomainError.forFlagValues(
                             DummyInstances.executionContext,
-                            Signature("set_prolog_flag", 2),
+                            SetFlag.signature,
                             LastCallOptimization.admissibleValues.asIterable(),
                             truthOf(true),
                             index = 1
@@ -209,14 +211,14 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = set_prolog_flag(MaxArity.name, 10)
+            val query = set_flag(MaxArity.name, 10)
 
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
                         PermissionError.of(
                             DummyInstances.executionContext,
-                            Signature("set_prolog_flag", 2),
+                            SetFlag.signature,
                             PermissionError.Operation.MODIFY,
                             PermissionError.Permission.FLAG,
                             atomOf(MaxArity.name)

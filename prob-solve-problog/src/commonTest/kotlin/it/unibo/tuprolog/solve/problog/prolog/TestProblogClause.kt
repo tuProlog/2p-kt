@@ -32,4 +32,9 @@ class TestProblogClause : TestClause, SolverFactory by ProblogSolverFactory {
     override fun testClauseAtomBody() {
         prototype.testClauseAtomBody()
     }
+
+    @Test
+    override fun testClauseVariables() {
+        prototype.testClauseVariables()
+    }
 }

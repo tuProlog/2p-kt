@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.classic.classic
 import it.unibo.tuprolog.solve.classic.stdlib.rule.Call
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
@@ -50,7 +50,7 @@ object ProblogSolverFactory : SolverFactory {
             ProblogLib.theory + Theory.indexedOf(
                 sequenceOf(
                     Call
-                ).map { it.wrappedImplementation }
+                ).map { it.implementation }
             )
         }
     }
@@ -74,7 +74,7 @@ object ProblogSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ): Solver =
         ProblogSolver(
             Solver.classic(
@@ -97,7 +97,7 @@ object ProblogSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ): MutableSolver =
         MutableProblogSolver(
             MutableSolver.classic(

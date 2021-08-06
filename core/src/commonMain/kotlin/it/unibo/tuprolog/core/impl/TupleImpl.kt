@@ -12,7 +12,7 @@ internal class TupleImpl(
     override val left: Term,
     override val right: Term,
     tags: Map<String, Any> = emptyMap()
-) : CollectionImpl(TUPLE_FUNCTOR, listOf(left, right), tags), Tuple {
+) : RecursiveImpl(TUPLE_FUNCTOR, listOf(left, right), tags), Tuple {
 
     override val isGround: Boolean = checkGroundness()
 

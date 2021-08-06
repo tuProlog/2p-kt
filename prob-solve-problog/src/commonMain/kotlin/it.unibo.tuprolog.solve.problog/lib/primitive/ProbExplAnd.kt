@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.problog.lib.primitive
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
@@ -44,6 +44,6 @@ internal object ProbExplAnd : TernaryRelation.NonBacktrackable<ExecutionContext>
             } else {
                 replyWith(first mguWith ProbExplanationTerm(explanation))
             }
-        } else replyException(TuPrologRuntimeException("Can't compute $functor", context = context))
+        } else replyException(ResolutionException("Can't compute $functor", context = context))
     }
 }

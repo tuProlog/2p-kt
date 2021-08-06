@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.exception.error
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils
-import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils.assertErrorStructCorrect
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils
+import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.assertErrorStructCorrect
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,7 +17,7 @@ internal class TypeErrorTest {
     private val callableTypeErrorActualValue = Integer.of(1)
     private val testErrorType = TypeError.Expected.CALLABLE
     private val aCallableTypeError = TypeError(
-        context = PrologErrorUtils.aContext,
+        context = LogicErrorUtils.aContext,
         expectedType = testErrorType,
         culprit = callableTypeErrorActualValue
     )

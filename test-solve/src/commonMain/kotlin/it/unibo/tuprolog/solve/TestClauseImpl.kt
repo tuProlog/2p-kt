@@ -114,4 +114,34 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
             )
         }
     }
+
+    override fun testClauseVariables() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins(
+                theoryOf(
+                    rule { "f"(X) impliedBy "g"(X) }
+                )
+            )
+
+            var query = clause("f"(A), B)
+            var solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes(B to "g"(A))
+                ),
+                solutions
+            )
+
+            query = clause("f"(1), Z)
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes(Z to "g"(1))
+                ),
+                solutions
+            )
+        }
+    }
 }

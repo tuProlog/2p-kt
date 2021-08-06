@@ -17,7 +17,7 @@ import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.libs.io.IOLib
@@ -109,11 +109,11 @@ class TuPrologCmd(vararg additionalLibraries: AliasedLibrary) : CliktCommand(
     fun getSolver(): Solver {
         TermUi.echo("# 2P-Kt version ${Info.VERSION}")
         val theory: Theory = this.loadTheory()
-        val outputChannel = OutputChannel.of<PrologWarning> { w ->
+        val outputChannel = OutputChannel.of<Warning> { w ->
             TermUi.echo("# ${w.message}", err = true)
             val sep = "\n    at "
             val formatter = TermFormatter.Companion.prettyExpressions(w.context.operators)
-            val stacktrace = w.prologStackTrace.joinToString(sep) { it.format(formatter) }
+            val stacktrace = w.logicStackTrace.joinToString(sep) { it.format(formatter) }
             TermUi.echo("#    at $stacktrace", err = true)
         }
         val libraries = if (oop) {

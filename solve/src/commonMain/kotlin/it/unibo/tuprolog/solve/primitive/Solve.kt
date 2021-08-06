@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.currentTimeInstant
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
@@ -173,7 +173,7 @@ sealed class Solve {
         /** Creates a new halt [Response] to this Request, with cause exception */
         @JsName("replyException")
         fun replyException(
-            exception: TuPrologRuntimeException,
+            exception: ResolutionException,
             sideEffectManager: SideEffectManager? = null,
             vararg sideEffects: SideEffect
         ) = Response(
@@ -185,7 +185,7 @@ sealed class Solve {
         /** Creates a new halt [Response] to this Request, with cause exception */
         @JsName("replyExceptionBuildingSideEffects")
         fun replyException(
-            exception: TuPrologRuntimeException,
+            exception: ResolutionException,
             sideEffectManager: SideEffectManager? = null,
             buildSideEffects: SideEffectsBuilder.() -> Unit
         ) = Response(

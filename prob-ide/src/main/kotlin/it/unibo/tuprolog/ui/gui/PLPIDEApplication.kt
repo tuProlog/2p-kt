@@ -29,7 +29,7 @@ class PLPIDEApplication : Application() {
         solutionsListView.setCellFactory { ListCellView { PLPSolutionView.of(it) } }
 
         try {
-            PrologIDEBuilder(
+            TuPrologIDEBuilder(
                 stage,
                 title = "tuProlog IDE for Probabilistic Logic Programming",
                 customTabs = listOf(
@@ -49,7 +49,7 @@ class PLPIDEApplication : Application() {
     }
 
     private fun configureModel(
-        model: PrologIDEModel,
+        model: TuPrologIDEModel,
         listView: ListView<Solution>,
         listTab: Tab,
     ) {

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete.custom
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.Fact
@@ -21,7 +22,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.test.fail
 import it.unibo.tuprolog.core.List.Companion as LogicList
-import it.unibo.tuprolog.core.Set.Companion as LogicSet
 import kotlin.collections.List as KtList
 import kotlin.collections.Set as KtSet
 
@@ -302,7 +302,7 @@ internal object ReteTreeAssertionUtils {
         Truth.TRUE,
         Truth.FAIL,
         Truth.FALSE,
-        Empty.set(),
+        Empty.block(),
         Empty.list(),
         Atom.of("!"),
         Atom.of("1"),
@@ -317,9 +317,9 @@ internal object ReteTreeAssertionUtils {
         LogicList.from(Atom.of("a"), Atom.of("b"), Atom.of("c"), last = Var.anonymous()),
         Tuple.of(Atom.of("a"), Atom.of("b")),
         Tuple.of(Atom.of("a"), Atom.of("b"), Atom.of("c")),
-        LogicSet.of(Atom.of("a")),
-        LogicSet.of(Atom.of("a"), Atom.of("b")),
-        LogicSet.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
+        Block.of(Atom.of("a")),
+        Block.of(Atom.of("a"), Atom.of("b")),
+        Block.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
     ).map(Fact.Companion::of)
 
     val facts = interleave(
@@ -465,7 +465,7 @@ internal object ReteTreeAssertionUtils {
             Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
             Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
             Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
-            Directive.of(Struct.of("a", Atom.of("a")), Empty.set()),
+            Directive.of(Struct.of("a", Atom.of("a")), Empty.block()),
             Directive.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
             Directive.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
             Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous())

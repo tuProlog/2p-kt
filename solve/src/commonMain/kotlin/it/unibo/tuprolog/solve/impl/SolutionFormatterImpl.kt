@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolutionFormatter
 import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.TimeOutException
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 
 internal class SolutionFormatterImpl(private val termFormatter: TermFormatter) : SolutionFormatter {
     override fun format(value: Solution): String = when (value) {
@@ -16,12 +16,11 @@ internal class SolutionFormatterImpl(private val termFormatter: TermFormatter) :
             is HaltException -> "halt: ${e.exitStatus}"
             else -> formatException(e)
         }
-        else -> throw IllegalStateException("Invalid solution type: $value")
     }
 
-    private fun formatException(e: TuPrologRuntimeException): String =
+    private fun formatException(e: ResolutionException): String =
         "halt: ${e.message ?: "<no message>"}" +
-            e.prologStackTrace.joinToString(STACK_ITEM_SEPARATOR, STACK_ITEM_SEPARATOR) { termFormatter.format(it) }
+            e.logicStackTrace.joinToString(STACK_ITEM_SEPARATOR, STACK_ITEM_SEPARATOR) { termFormatter.format(it) }
 
     private fun formatYes(value: Solution.Yes): String =
         "yes: ${termFormatter.format(value.solvedQuery)}" +

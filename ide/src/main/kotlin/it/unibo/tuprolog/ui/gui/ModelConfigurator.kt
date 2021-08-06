@@ -1,3 +1,3 @@
 package it.unibo.tuprolog.ui.gui
 
-typealias ModelConfigurator = (PrologIDEModel) -> Unit
+typealias ModelConfigurator = (TuPrologIDEModel) -> Unit

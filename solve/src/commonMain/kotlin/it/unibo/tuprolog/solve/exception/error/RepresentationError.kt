@@ -3,10 +3,10 @@ package it.unibo.tuprolog.solve.exception.error
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.LogicError
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -26,7 +26,7 @@ class RepresentationError(
     contexts: Array<ExecutionContext>,
     @JsName("limit") val limit: Limit,
     extraData: Term? = null
-) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
+) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
     constructor(
         message: String? = null,
@@ -80,7 +80,7 @@ class RepresentationError(
     /**
      * Names of possible limits
      */
-    enum class Limit : ToTermConvertible {
+    enum class Limit : TermConvertible {
         CHARACTER,
         CHARACTER_CODE,
         IN_CHARACTER_CODE,

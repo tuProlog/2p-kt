@@ -17,8 +17,8 @@ import kotlin.math.max
 @Suppress("UNUSED_PARAMETER")
 class FileTabView(
     file: File,
-    private val model: PrologIDEModel,
-    private val ideController: PrologIDEController,
+    private val model: TuPrologIDEModel,
+    private val ideController: TuPrologIDEController,
     initialText: String = ""
 ) : Tab() {
 

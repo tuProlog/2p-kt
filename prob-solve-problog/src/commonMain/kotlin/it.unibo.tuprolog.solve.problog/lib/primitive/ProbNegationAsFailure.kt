@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
@@ -30,7 +30,7 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
 
         return if (!second.isGround) {
             replyException(
-                TuPrologRuntimeException(
+                ResolutionException(
                     "Probabilistic negation does not support non-ground goals: $second",
                     context = context
                 )
@@ -44,7 +44,7 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
                 val explanationTerm = solution.substitution[explanationTermVar]
                 if (explanationTerm == null || explanationTerm !is ProbExplanationTerm) {
                     replyException(
-                        TuPrologRuntimeException(
+                        ResolutionException(
                             "No valid explanation has been solved for goal: $second",
                             context = context
                         )

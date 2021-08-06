@@ -94,7 +94,7 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
 
     private fun deobjectifySet(value: Map<*, *>): Term {
         val items = value["set"] as? List<*> ?: throw DeobjectificationException(value)
-        return scope.setOf(
+        return scope.blockOf(
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
             }

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.streams.primitive
 
 import it.unibo.tuprolog.solve.assertOverFailure
 import it.unibo.tuprolog.solve.assertSolutionEquals
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.streams.primitive.testutils.CallUtils.assertErrorCauseChainComputedCorrectly
 import it.unibo.tuprolog.solve.streams.primitive.testutils.CallUtils.requestSolutionMap
 import it.unibo.tuprolog.solve.streams.primitive.testutils.CallUtils.requestToErrorSolutionMap
@@ -23,7 +23,7 @@ internal class CallTest {
     @Test
     fun callForwardsResponsesFromArgumentExecutionIfWellFormedGoalAndNotVariable() {
         requestSolutionMap.forEach { (request, solutionList) ->
-            val toBeTested = Call.wrappedImplementation(request).toList()
+            val toBeTested = Call.implementation.solve(request).toList()
 
             assertSolutionEquals(solutionList, toBeTested.map { it.solution })
         }
@@ -32,14 +32,14 @@ internal class CallTest {
     @Test
     fun callThrowExceptionIfCallArgIsVariableOrNotWellFormed() {
         requestToErrorSolutionMap.forEach { (request, solutionList) ->
-            assertFailsWith(solutionList.single().deepCause()::class) { Call.wrappedImplementation(request) }
+            assertFailsWith(solutionList.single().deepCause()::class) { Call.implementation.solve(request) }
         }
     }
 
     @Test
     fun callPrimitiveErrorContainsCorrectContext() {
         requestToErrorSolutionMap.forEach { (request, _) ->
-            assertOverFailure<TuPrologRuntimeException>({ Call.wrappedImplementation(request) }) {
+            assertOverFailure<ResolutionException>({ Call.implementation.solve(request) }) {
                 assertEquals(request.context, it.context)
             }
         }
@@ -48,7 +48,7 @@ internal class CallTest {
     @Test
     fun callShouldLimitCutPowersToTheInnerGoal() {
         requestToSolutionOfCallWithCut.forEach { (request, solutionList) ->
-            val toBeTested = Call.wrappedImplementation(request).toList()
+            val toBeTested = Call.implementation.solve(request).toList()
 
             assertSolutionEquals(solutionList, toBeTested.map { it.solution })
         }

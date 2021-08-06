@@ -16,11 +16,11 @@ object ParsingExamples {
         "[1 | X]" to prolog { consOf(1, "X") },
         "[1, a | X]" to prolog { consOf(1, consOf("a", "X")) },
         "[a, 2, X]" to prolog { listOf("a", 2, "X") },
-        "{}" to prolog { emptySet },
-        "{ }" to prolog { emptySet },
-        "{ 1 }" to prolog { setOf(1) },
-        "{ 1, a }" to prolog { setOf(1, "a") },
-        "{ 1, a, X }" to prolog { setOf(1, "a", "X") },
+        "{}" to prolog { emptyBlock },
+        "{ }" to prolog { emptyBlock },
+        "{ 1 }" to prolog { blockOf(1) },
+        "{ 1, a }" to prolog { blockOf(1, "a") },
+        "{ 1, a, X }" to prolog { blockOf(1, "a", "X") },
         "abc" to prolog { atomOf("abc") },
         "Abc" to prolog { varOf("Abc") },
         "'abc'" to prolog { atomOf("abc") },
@@ -69,7 +69,13 @@ object ParsingExamples {
         "'+'(1, 2)" to prolog { structOf("+", 1, 2) },
         "'-'(1, 2)" to prolog { structOf("-", 1, 2) },
         "'$'(1, 2)" to prolog { structOf("$", 1, 2) },
-        "'F'(1, 2)" to prolog { structOf("F", 1, 2) }
+        "'F'(1, 2)" to prolog { structOf("F", 1, 2) },
+        "'true'(3)" to prolog { structOf("true", 3) },
+        "'false'(4)" to prolog { structOf("false", 4) },
+        "'fail'(5)" to prolog { structOf("fail", 5) },
+        "true(0)" to prolog { structOf("true", 0) },
+        "false(1)" to prolog { structOf("false", 1) },
+        "fail(2)" to prolog { structOf("fail", 2) }
     )
 
     val expressions: Sequence<Pair<String, Term>> = sequenceOf(

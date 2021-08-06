@@ -124,7 +124,7 @@ class PrologParserTest {
             sc.arity == sc.args.count() &&
                 sc.arity == 0 &&
                 !sc.isList &&
-                !sc.isSet &&
+                !sc.isBlock &&
                 !sc.isTruth &&
                 sc.functor.text == "a" &&
                 sc.functor.type == PrologLexer.ATOM
@@ -139,7 +139,7 @@ class PrologParserTest {
             val s = tc.structure()
             assertTrue(
                 s.arity == s.args.count() &&
-                    s.arity == 0 && s.isString && !s.isSet && !s.isList && !s.isTruth &&
+                    s.arity == 0 && s.isString && !s.isBlock && !s.isList && !s.isTruth &&
                     s.functor.text == "a" &&
                     (s.functor.type == PrologLexer.DQ_STRING || s.functor.type == PrologLexer.SQ_STRING)
             )
@@ -160,7 +160,7 @@ class PrologParserTest {
     }
 
     @Test
-    fun testFalse() {
+    fun testFail() {
         val tc = parseTerm("fail").term()
         assertTrue(tc.isStruct && !tc.isExpr && !tc.isList && !tc.isNum && !tc.isVar)
         val s = tc.structure()
@@ -168,6 +168,19 @@ class PrologParserTest {
             s.arity == s.args.count() &&
                 s.isTruth && !s.isList && !s.isString &&
                 s.functor.text == "fail" &&
+                s.functor.type == PrologLexer.BOOL
+        )
+    }
+
+    @Test
+    fun testFalse() {
+        val tc = parseTerm("false").term()
+        assertTrue(tc.isStruct && !tc.isExpr && !tc.isList && !tc.isNum && !tc.isVar)
+        val s = tc.structure()
+        assertTrue(
+            s.arity == s.args.count() &&
+                s.isTruth && !s.isList && !s.isString &&
+                s.functor.text == "false" &&
                 s.functor.type == PrologLexer.BOOL
         )
     }

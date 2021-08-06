@@ -47,7 +47,7 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
                 }
             } else {
                 ensuringArgumentIsInteger(1)
-                if (fourth.isVariable) {
+                if (fourth.isVar) {
                     sequence<Substitution> {
                         if (third is Var) {
                             val result = (first as Atom).value.substring((second as Integer).intValue.toInt())
@@ -79,8 +79,8 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
         } else {
             ensuringArgumentIsAtom(0)
             ensuringArgumentIsAtom(4)
-            if (second.isVariable) {
-                if (fourth.isVariable) {
+            if (second.isVar) {
+                if (fourth.isVar) {
                     sequence {
                         val result = (fifth as Atom).value
                         val before = (first as Atom).value.substringBefore(result, "").length
@@ -103,7 +103,7 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
                 }
             } else {
                 ensuringArgumentIsInteger(1)
-                if (fourth.isVariable) {
+                if (fourth.isVar) {
                     sequence<Substitution> {
                         val result = (fifth as Atom).value
                         val after = (first as Atom).value.substringAfter(result, "").length

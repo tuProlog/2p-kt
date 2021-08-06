@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.data.CustomDataStore
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.MutableTheory
@@ -18,7 +18,7 @@ object Dummy {
 
         override val substitution: Substitution.Unifier = Substitution.empty()
 
-        override val prologStackTrace: List<Struct> = emptyList()
+        override val logicStackTrace: List<Struct> = emptyList()
 
         override val customData: CustomDataStore = CustomDataStore.empty()
 
@@ -72,5 +72,5 @@ object Dummy {
         override val outputChannels: OutputStore = OutputStore.fromStandard()
     }
 
-    object RuntimeException : TuPrologRuntimeException(null, Context)
+    object RuntimeException : ResolutionException(null, Context)
 }

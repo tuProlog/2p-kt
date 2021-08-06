@@ -59,7 +59,7 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
                 val truth = it.substitution[evidenceTruthVar]
                 val term = it.substitution[evidenceTermVar]
 
-                if (term == null || term.isVariable || truth == null || truth !is Truth) {
+                if (term == null || term.isVar || truth == null || truth !is Truth) {
                     ProbExplanation.FALSE
                 } else {
                     val explanationVar = Var.of(EXPLANATION_VAR_NAME)

@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.theory.Theory
 
 object DirectiveTestsUtils {
@@ -38,10 +38,10 @@ object DirectiveTestsUtils {
     fun solverInitializersWithEventsList(
         solverFactory: SolverFactory
     ): List<Pair<(Theory) -> Solver, MutableList<Any>>> {
-        fun <R> stdOut(action: (MutableList<Any>, OutputChannel<String>, OutputChannel<PrologWarning>) -> R): R {
+        fun <R> stdOut(action: (MutableList<Any>, OutputChannel<String>, OutputChannel<Warning>) -> R): R {
             val events = mutableListOf<Any>()
             val outputChannel = OutputChannel.of<String> { events.add(it) }
-            val warningChannel = OutputChannel.of<PrologWarning> { events.add(it) }
+            val warningChannel = OutputChannel.of<Warning> { events.add(it) }
             return action(events, outputChannel, warningChannel)
         }
         return listOf(

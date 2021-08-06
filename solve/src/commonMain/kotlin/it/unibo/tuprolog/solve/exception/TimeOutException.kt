@@ -19,7 +19,7 @@ class TimeOutException(
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
     @JsName("exceededDuration") val exceededDuration: TimeDuration
-) : TuPrologRuntimeException(message, cause, contexts) {
+) : ResolutionException(message, cause, contexts) {
 
     constructor(
         message: String? = null,

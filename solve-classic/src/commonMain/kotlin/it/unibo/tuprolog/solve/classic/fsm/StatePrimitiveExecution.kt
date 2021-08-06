@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.classic.fsm
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.utils.Cursor
 
 data class StatePrimitiveExecution(override val context: ClassicExecutionContext) : AbstractState(context) {
@@ -42,7 +42,7 @@ data class StatePrimitiveExecution(override val context: ClassicExecutionContext
             },
             otherwise = { throw IllegalStateException("This should never happen") }
         ) ?: StateBacktracking(context.copyFromCurrentPrimitive())
-    } catch (exception: TuPrologRuntimeException) {
+    } catch (exception: ResolutionException) {
         StateException(exception.updateLastContext(context.skipThrow()), context.copy(step = nextStep()))
     }
 

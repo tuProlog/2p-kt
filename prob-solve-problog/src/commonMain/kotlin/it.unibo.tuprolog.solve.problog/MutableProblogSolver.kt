@@ -7,7 +7,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.AliasedLibrary
@@ -112,7 +112,7 @@ internal class MutableProblogSolver(
         solver.setStandardOutput(stdOut)
     }
 
-    override fun setWarnings(warnings: OutputChannel<PrologWarning>) {
+    override fun setWarnings(warnings: OutputChannel<Warning>) {
         solver.setWarnings(warnings)
     }
 
@@ -124,7 +124,7 @@ internal class MutableProblogSolver(
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
+        warnings: OutputChannel<Warning>
     ): MutableSolver {
         return MutableProblogSolver(
             solver.copy(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)

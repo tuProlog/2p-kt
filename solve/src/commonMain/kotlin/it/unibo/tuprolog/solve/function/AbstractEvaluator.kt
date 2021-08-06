@@ -37,8 +37,8 @@ abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
 
     override fun visitStruct(term: Struct): T = casting {
         val functionSignature = term.extractSignature()
-        loadedFunctions[functionSignature]?.let {
-            it(
+        loadedFunctions[functionSignature]?.let { function ->
+            function.compute(
                 Compute.Request(
                     functionSignature,
                     term.argsSequence.map { it.accept(this).apply { dynamicCheck(term) } }.toList(),

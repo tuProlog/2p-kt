@@ -25,21 +25,21 @@ interface TermComparator<T : Term> : Comparator<T> {
 
         private fun compareVarAndTerm(a: Var, b: Term): Int =
             when {
-                b.isVariable -> VarComparator.compare(a, b.castToVar())
+                b.isVar -> VarComparator.compare(a, b.castToVar())
                 else -> -1
             }
 
         private fun compareRealAndTerm(a: Real, b: Term): Int =
             when {
                 b.isReal -> RealComparator.compare(a, b.castToReal())
-                b.isVariable -> 1
+                b.isVar -> 1
                 else -> -1
             }
 
         private fun compareIntegerAndTerm(a: Integer, b: Term): Int =
             when {
-                b.isInt -> IntegerComparator.compare(a, b.castToInteger())
-                b.isVariable || b.isReal -> 1
+                b.isInteger -> IntegerComparator.compare(a, b.castToInteger())
+                b.isVar || b.isReal -> 1
                 else -> -1
             }
 
@@ -58,9 +58,9 @@ interface TermComparator<T : Term> : Comparator<T> {
 
         override fun compare(a: Term, b: Term): Int =
             when {
-                a.isVariable -> compareVarAndTerm(a.castToVar(), b)
+                a.isVar -> compareVarAndTerm(a.castToVar(), b)
                 a.isReal -> compareRealAndTerm(a.castToReal(), b)
-                a.isInt -> compareIntegerAndTerm(a.castToInteger(), b)
+                a.isInteger -> compareIntegerAndTerm(a.castToInteger(), b)
                 a.isAtom -> compareAtomAndTerm(a.castToAtom(), b)
                 a.isStruct -> compareStructAndTerm(a.castToStruct(), b)
                 else -> throw IllegalStateException("Cannot compare ${a::class} with ${b::class}. This is a bug.")

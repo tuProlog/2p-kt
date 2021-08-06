@@ -2,7 +2,7 @@ package it.unibo.tuprolog.core.operators
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -19,7 +19,7 @@ import kotlin.jvm.JvmStatic
  * | fy     |         | xfy   | right         |
  *
  */
-enum class Specifier : ToTermConvertible {
+enum class Specifier : TermConvertible {
     /** Postfix and no-associative */
     XF,
 

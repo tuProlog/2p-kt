@@ -54,7 +54,7 @@ internal class ProbTerm(
         return if (substitution.isEmpty() || this.isGround) {
             this
         } else {
-            val newExtraVars = if (!extraVariables.any { it.isVariable }) {
+            val newExtraVars = if (!extraVariables.any { it.isVar }) {
                 extraVariables
             } else {
                 extraVariables
@@ -66,7 +66,7 @@ internal class ProbTerm(
     }
 
     override val isGround: Boolean by lazy {
-        term.isGround && !extraVariables.any { it.isVariable }
+        term.isGround && !extraVariables.any { it.isVar }
     }
 
     private val cachedHashCode: Int by lazy {

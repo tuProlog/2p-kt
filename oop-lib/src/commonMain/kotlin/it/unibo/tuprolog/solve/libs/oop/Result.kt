@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.TermConvertible
 
 sealed class Result {
 
@@ -19,7 +19,7 @@ sealed class Result {
         override fun asNone(): None = this
     }
 
-    data class Value(val value: Any?) : Result(), ToTermConvertible {
+    data class Value(val value: Any?) : Result(), TermConvertible {
 
         private val termValue by lazy {
             ObjectToTermConverter.default.convert(value)

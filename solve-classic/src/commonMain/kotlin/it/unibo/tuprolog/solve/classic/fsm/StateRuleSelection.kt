@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.classic.ChoicePointContext
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.classic.stdlib.rule.Catch
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
@@ -54,7 +54,7 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
     private val failureState: StateBacktracking
         get() = StateBacktracking(context.copy(step = nextStep()))
 
-    private fun exceptionalState(exception: TuPrologRuntimeException): StateException =
+    private fun exceptionalState(exception: ResolutionException): StateException =
         StateException(exception, context.copy(step = nextStep()))
 
     private fun missingProcedure(ruleSources: Sequence<Theory>, missing: Signature): State =
@@ -143,7 +143,7 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
     override fun computeNext(): State {
         val currentGoal = context.currentGoal!!
         return when {
-            currentGoal.isVariable -> {
+            currentGoal.isVar -> {
                 exceptionalState(
                     InstantiationError.forGoal(
                         context = context,

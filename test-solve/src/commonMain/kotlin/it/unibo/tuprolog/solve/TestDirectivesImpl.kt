@@ -19,6 +19,7 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Suppress("DEPRECATION")
 class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirectives {
 
     override fun testDynamic1() {
@@ -123,6 +124,25 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     override fun testInitialization1() = testInit("initialization")
 
     override fun testSolve1() = testInit("solve")
+
+    override fun testSetFlag2() {
+        prolog {
+            for (solverOf in solverInitializers(solverFactory)) {
+                val solver = solverOf(
+                    theoryOf(
+                        directive { set_flag("a", 1) },
+                        directive { set_flag("b", 2) },
+                        directive { set_flag("c", 3) },
+                    )
+                )
+
+                assertTrue { solver.flags.size >= 3 }
+                assertEquals(Integer.of(1), solver.flags["a"])
+                assertEquals(Integer.of(2), solver.flags["b"])
+                assertEquals(Integer.of(3), solver.flags["c"])
+            }
+        }
+    }
 
     override fun testSetPrologFlag2() {
         prolog {
