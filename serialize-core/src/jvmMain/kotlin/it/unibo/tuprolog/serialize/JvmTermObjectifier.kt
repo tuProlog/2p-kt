@@ -65,7 +65,7 @@ internal class JvmTermObjectifier : TermObjectifier {
 
     override fun visitBlock(term: Block): Map<String, Any> =
         mapOf(
-            "set" to term.toList().map { it.accept(this) }
+            "block" to term.toList().map { it.accept(this) }
         )
 
     override fun visitEmptyBlock(term: EmptyBlock): Map<String, Any> =

@@ -35,11 +35,12 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
             value.containsKey("var") -> deobjectifyVariable(value)
             value.containsKey("fun") && value.containsKey("args") -> deobjectifyStructure(value)
             value.containsKey("list") -> deobjectifyList(value)
-            value.containsKey("set") -> deobjectifySet(value)
+            value.containsKey("block") -> deobjectifyBlock(value)
             value.containsKey("tuple") -> deobjectifyTuple(value)
             value.containsKey("integer") -> deobjectifyInteger(value)
             value.containsKey("real") -> deobjectifyReal(value)
             value.containsKey("head") || value.containsKey("body") -> deobjectifyClause(value)
+            value.containsKey("set") -> deobjectifyBlock(value, "set")
             else -> throw DeobjectificationException(value)
         }
     }
@@ -92,8 +93,8 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
         )
     }
 
-    private fun deobjectifySet(value: Map<*, *>): Term {
-        val items = value["set"] as? List<*> ?: throw DeobjectificationException(value)
+    private fun deobjectifyBlock(value: Map<*, *>, name: String = "block"): Term {
+        val items = value[name] as? List<*> ?: throw DeobjectificationException(value)
         return scope.blockOf(
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
