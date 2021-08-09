@@ -28,6 +28,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.ensuringArgumentIsInteger;
+import static it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.ensuringArgumentIsVariable;
 import static kotlin.collections.MapsKt.emptyMap;
 import static kotlin.collections.MapsKt.mapOf;
 import static kotlin.sequences.SequencesKt.generateSequence;
@@ -94,9 +96,10 @@ public class PrimitiveExamplesJvm {
                 @NotNull Term second,
                 @NotNull Term third
         ) {
-            PrimitiveWrapper.ensuringArgumentIsInteger(request,0);
-            PrimitiveWrapper.ensuringArgumentIsInteger(request, 1);
-            PrimitiveWrapper.ensuringArgumentIsVariable(request, 2);
+            ensuringArgumentIsInteger(request,0);
+            ensuringArgumentIsInteger(request, 1);
+            ensuringArgumentIsVariable(request, 2);
+
             Integer min = first.castToInteger();
             Integer max = second.castToInteger();
 
