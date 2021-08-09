@@ -59,14 +59,11 @@ public class PrimitiveExamplesJvm {
 
     @Test
     public void loggingPrimitiveExample() {
-        final AliasedLibrary library = Library.aliased(
-                OperatorSet.EMPTY,
-                Theory.empty(),
-                mapOf(LoggingPrimitive.INSTANCE.getDescriptionPair()),
-                emptyMap(),
-                "prolog.logging"
+        AliasedLibrary library = Library.aliased(
+                "prolog.logging",
+                mapOf(LoggingPrimitive.INSTANCE.getDescriptionPair())
         );
-        final Theory theory = ClausesParser.getWithDefaultOperators().parseTheory(
+        Theory theory = ClausesParser.getWithDefaultOperators().parseTheory(
                 "a(X) :- b(X).\n" +
                         "b(X) :- log_msg(X)."
         );
@@ -111,12 +108,9 @@ public class PrimitiveExamplesJvm {
 
     @Test
     public void intRangePrimitiveExample() {
-        final AliasedLibrary library = Library.aliased(
-                OperatorSet.EMPTY,
-                Theory.empty(),
-                mapOf(IntRangePrimitive.INSTANCE.getDescriptionPair()),
-                emptyMap(),
-                "prolog.ranges"
+        AliasedLibrary library = Library.aliased(
+                "prolog.ranges",
+                mapOf(IntRangePrimitive.INSTANCE.getDescriptionPair())
         );
         MutableSolver solver = Solver.getClassic().mutableSolverOf();
         solver.loadLibrary(library);

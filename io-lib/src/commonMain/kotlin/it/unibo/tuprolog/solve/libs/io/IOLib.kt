@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Library.Companion.toMapEnsuringNoDuplicates
@@ -50,13 +49,10 @@ import it.unibo.tuprolog.solve.libs.io.primitives.WriteEq1
 import it.unibo.tuprolog.solve.libs.io.primitives.WriteEq2
 import it.unibo.tuprolog.solve.libs.io.primitives.WriteTerm2
 import it.unibo.tuprolog.solve.libs.io.primitives.WriteTerm3
-import it.unibo.tuprolog.theory.Theory
 
 object IOLib : AliasedLibrary by
 Library.aliased(
-    operatorSet = OperatorSet(),
-    theory = Theory.empty(),
-    functions = emptyMap(),
+    alias = "prolog.io",
     primitives = sequenceOf(
         AtEndOfStream0,
         AtEndOfStream1,
@@ -104,6 +100,5 @@ Library.aliased(
         WriteEq2,
         WriteTerm2,
         WriteTerm3
-    ).map { it.descriptionPair }.toMapEnsuringNoDuplicates(),
-    alias = "prolog.io"
+    ).map { it.descriptionPair }.toMapEnsuringNoDuplicates()
 )

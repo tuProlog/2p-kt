@@ -120,7 +120,7 @@ internal object LibraryUtils {
         primitives: Map<Signature, Primitive>,
         functions: Map<Signature, LogicFunction>,
         alias: String
-    ): AliasedLibrary = Library.aliased(opSet, theory, primitives, functions, alias)
+    ): AliasedLibrary = Library.aliased(alias, primitives, theory, opSet, functions)
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(

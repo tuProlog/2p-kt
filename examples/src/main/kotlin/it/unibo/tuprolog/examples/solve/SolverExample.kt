@@ -49,8 +49,8 @@ fun main() {
         val solver = Solver.classicWithDefaultBuiltins(
             libraries = Libraries.of(
                 Library.aliased(
-                    primitives = mapOf(gtSignature to Primitive(::gt)),
-                    alias = "it.unibo.lrizzato.myprimives"
+                    alias = "it.unibo.lrizzato.myprimives",
+                    primitives = mapOf(gtSignature to Primitive(::gt))
                 )
             ),
             staticKb = theoryOf(
