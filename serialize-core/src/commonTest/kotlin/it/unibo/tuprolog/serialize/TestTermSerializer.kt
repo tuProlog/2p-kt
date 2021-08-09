@@ -133,24 +133,24 @@ class TestTermSerializer {
     }
 
     @Test
-    fun testSetSerializationInJSON() {
+    fun testBlockSerializationInJSON() {
         val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
         assertEquals(MimeType.Json, serializer.mimeType)
 
-        serializer.assertTermSerializationWorks("{\"set\":[\"hello\",1]}") {
+        serializer.assertTermSerializationWorks("{\"block\":[\"hello\",1]}") {
             blockOf(atomOf("hello"), numOf(1))
         }
     }
 
     @Test
-    fun testSetSerializationInYAML() {
+    fun testBlockSerializationInYAML() {
         val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
 
         assertEquals(MimeType.Yaml, serializer.mimeType)
 
         var expected =
             """
-                |set:
+                |block:
                 |- hello
                 |- false
                 """.trimMargin()
@@ -160,7 +160,7 @@ class TestTermSerializer {
 
         expected =
             """
-                |set:
+                |block:
                 |- hello
                 |- 1
                 """.trimMargin()
