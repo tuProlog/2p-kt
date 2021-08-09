@@ -97,9 +97,9 @@ public class PrimitiveExamplesJvm {
                 @NotNull Term second,
                 @NotNull Term third
         ) {
-            PrimitiveWrapper.Companion.ensuringArgumentIsInteger(request,0);
-            PrimitiveWrapper.Companion.ensuringArgumentIsInteger(request, 1);
-            PrimitiveWrapper.Companion.ensuringArgumentIsVariable(request, 2);
+            PrimitiveWrapper.ensuringArgumentIsInteger(request,0);
+            PrimitiveWrapper.ensuringArgumentIsInteger(request, 1);
+            PrimitiveWrapper.ensuringArgumentIsVariable(request, 2);
             Integer min = first.castToInteger();
             Integer max = second.castToInteger();
 

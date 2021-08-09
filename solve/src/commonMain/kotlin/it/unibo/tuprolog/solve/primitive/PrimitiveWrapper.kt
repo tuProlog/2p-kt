@@ -31,6 +31,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.PREDICATE_INDI
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.MaxArity
 import org.gciatto.kt.math.BigInteger
+import kotlin.jvm.JvmStatic
 
 /**
  * Wrapper class for [Primitive] implementation
@@ -57,12 +58,14 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Signature] and a [Primitive] function
          */
+        @JvmStatic
         fun <C : ExecutionContext> wrap(signature: Signature, primitive: Primitive): PrimitiveWrapper<C> =
             FromFunction(signature, primitive)
 
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Primitive] function
          */
+        @JvmStatic
         fun <C : ExecutionContext> wrap(
             name: String,
             arity: Int,
@@ -73,6 +76,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Primitive] function
          */
+        @JvmStatic
         fun <C : ExecutionContext> wrap(name: String, arity: Int, primitive: Primitive): PrimitiveWrapper<C> =
             wrap(name, arity, false, primitive)
 
@@ -104,10 +108,12 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                     TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
             }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.checkTermIsRecursivelyCallable(term: Term): TypeError? =
             term.accept(ensurerVisitor(context, signature))
 
         /** Utility function to ensure that all arguments of Solve.Request are instantiated and *not* (still) Variables */
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringAllArgumentsAreInstantiated(): Solve.Request<C> =
             arguments.withIndex().firstOrNull { it.value.isVar }?.let {
                 ensureIsInstantiated(it.value, it.index)
@@ -126,6 +132,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 )
             } ?: this
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringProcedureHasPermission(
             signature: Signature?,
             operation: PermissionError.Operation
@@ -153,6 +160,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             return this
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringClauseProcedureHasPermission(
             clause: Clause,
             operation: PermissionError.Operation
@@ -161,6 +169,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             return ensuringProcedureHasPermission(headSignature, operation)
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedIndicator(index: Int): Solve.Request<C> {
             ensuringArgumentIsInstantiated(index)
             val candidate = arguments[index]
@@ -188,14 +197,17 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.notImplemented(
             message: String = "Primitive for ${signature.name}/${signature.arity} is not implemented, yet"
         ): Solve.Response = throw SystemError.forUncaughtException(context, NotImplementedError(message))
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.notSupported(
             message: String = "Operation ${signature.name}/${signature.arity} is not supported"
         ): Solve.Response = throw SystemError.forUncaughtException(context, IllegalStateException(message))
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedClause(index: Int): Solve.Request<C> {
             ensuringArgumentIsInstantiated(index)
             ensuringArgumentIsStruct(index)
@@ -214,9 +226,11 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInstantiated(index: Int): Solve.Request<C> =
             ensureIsInstantiated(arguments[index], index)
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNumeric(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
@@ -225,6 +239,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStruct(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
@@ -233,9 +248,11 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCallable(index: Int): Solve.Request<C> =
             ensuringArgumentIsStruct(index)
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVariable(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
@@ -250,6 +267,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCompound(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
@@ -264,6 +282,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsAtom(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
@@ -272,6 +291,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsConstant(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
@@ -280,6 +300,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsGround(index: Int): Solve.Request<C> =
             arguments[index].let {
                 when {
@@ -290,6 +311,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 }
             }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsChar(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
@@ -306,6 +328,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsSpecifier(index: Int): Solve.Request<C> =
             arguments[index].let { arg ->
                 when {
@@ -321,6 +344,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 }
             }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInteger(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             when {
@@ -329,6 +353,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsList(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
@@ -337,6 +362,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsArity(index: Int): Solve.Request<C> =
             ensuringArgumentIsNonNegativeInteger(index).run {
                 val arity = arguments[index].castToInteger()
@@ -348,6 +374,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 return this
             }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNonNegativeInteger(index: Int): Solve.Request<C> =
             ensuringArgumentIsInteger(index).arguments[index].let { arg ->
                 when {
@@ -366,8 +393,10 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         private val MAX_CHAR = BigInteger.of(Char.MAX_VALUE.code)
 
+        @JvmStatic
         fun Integer.isCharacterCode(): Boolean = intValue !in MIN_CHAR..MAX_CHAR
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringTermIsCharCode(term: Term): Solve.Request<C> =
             when {
                 !term.isInteger || term.castToInteger().isCharacterCode() ->
@@ -375,6 +404,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 else -> this
             }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringTermIsWellFormedList(term: Term): Solve.Request<C> =
             when {
                 !term.isList || !term.castToList().isWellFormed ->
@@ -382,6 +412,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 else -> this
             }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedList(index: Int): Solve.Request<C> {
             val term = arguments[index]
             return when {
@@ -393,6 +424,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
         }
 
+        @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCharCode(index: Int): Solve.Request<C> =
             ensuringArgumentIsInteger(index).ensuringTermIsCharCode(arguments[index])
     }
