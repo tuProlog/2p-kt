@@ -11,6 +11,7 @@ import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.binaryDecisionDiagram
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.hasBinaryDecisionDiagram
 import it.unibo.tuprolog.solve.probability
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -19,7 +20,6 @@ import javafx.scene.Node
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
-import javafx.scene.control.TextArea
 import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
@@ -94,9 +94,16 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
                 setMargin(assignment, ITEM_MARGIN)
             }
 
+            // Show computed probability value
             probability.text = "Probability: %.2f".format(solution.probability * 100)
-            btnShowBinaryDecisionDiagram.isVisible = true
-            btnShowBinaryDecisionDiagram.setOnAction { this.onShowBinaryDecisionDiagramPressed() }
+
+            // Show button for Binary Decision Diagrams, if available
+            if (solution.hasBinaryDecisionDiagram) {
+                btnShowBinaryDecisionDiagram.isVisible = true
+                btnShowBinaryDecisionDiagram.setOnAction { this.onShowBinaryDecisionDiagramPressed() }
+            } else {
+                btnShowBinaryDecisionDiagram.isVisible = false
+            }
         }
     }
 
@@ -140,15 +147,6 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
 
     fun onShowBinaryDecisionDiagramPressed() {
         solution.binaryDecisionDiagram?.let {
-            val textArea = TextArea(it.toDotString())
-            textArea.isEditable = false
-
-//            val image = ImageView(bddToImage(it))
-//
-//            val container = HBox()
-//            container.children.add(textArea)
-//            container.children.add(image)
-
             val dialog = Alert(Alert.AlertType.INFORMATION)
             dialog.title = "Binary Decision Diagram"
             dialog.dialogPane.content = GraphRenderView(it.toDotString())

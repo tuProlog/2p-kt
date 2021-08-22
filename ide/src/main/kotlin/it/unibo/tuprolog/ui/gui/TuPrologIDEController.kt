@@ -761,6 +761,10 @@ class TuPrologIDEController : Initializable {
 
     fun customizeModel(setup: ModelConfigurator) = setup(model)
 
+    /**
+     * Adds a [Tab] to the UI. If a [Tab] with the same [Tab.id] as [tab] is
+     * already present, it gets substituted.
+     */
     fun addTab(tab: Tab) {
         val index = this.tabsStreams.tabs.indexOfFirst { it.id == tab.id }
         if (index >= 0) {
