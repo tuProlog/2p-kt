@@ -133,12 +133,16 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                 }
                 /* Edge case: retract family */
                 "retract", "retractall" -> {
+                    val goalArg = goal[0]
                     yield(
                         third mguWith Struct.of(
                             goal.functor,
-                            if (goal[0].isClause || goal[0].safeToStruct().extractSignature() in context.libraries) {
-                                goal[0]
-                            } else goal[0].withExplanation(first)
+                            if (goalArg.isClause ||
+                                (goalArg is Struct && goalArg.functor == ":-") ||
+                                goalArg.safeToStruct().extractSignature() in context.libraries
+                            ) {
+                                goalArg
+                            } else goalArg.withExplanation(first)
                         )
                     )
                 }
