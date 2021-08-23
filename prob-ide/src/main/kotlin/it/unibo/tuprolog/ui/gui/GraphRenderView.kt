@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.ui.gui
 
-import guru.nidi.graphviz.engine.Format
-import guru.nidi.graphviz.engine.Graphviz
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -15,6 +13,7 @@ import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 import javafx.stage.FileChooser
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -46,6 +45,23 @@ class GraphRenderView(
         btnSave.isVisible = false
         imageView.isVisible = false
         textArea.text = dotGraph
+        btnRender.isDisable = !GraphvizRenderer.isAvailable
+
+        if (!GraphvizRenderer.isReady) {
+            showMessage(
+                "The image renderer is still initializing...\n" +
+                    "Close and reopen this panel in few seconds.",
+                true
+            )
+        } else if (!GraphvizRenderer.isAvailable) {
+            showMessage(
+                "The image renderer is not available.\n" +
+                    "Please check the docs at: https://github.com/nidi3/graphviz-java",
+                true
+            )
+        } else {
+            showMessage("The image rendered is ready.", false)
+        }
     }
 
     @FXML
@@ -77,20 +93,20 @@ class GraphRenderView(
         content.putString(dotGraph)
         content.putHtml(dotGraph)
         clipboard.setContent(content)
-        labelMsg.text = "Text has been copied to clipboard."
-        labelMsg.isVisible = true
+        showMessage("Text has been copied to clipboard.", false)
     }
 
     private fun renderToImage() {
+        if (!GraphvizRenderer.isAvailable) {
+            return
+        }
+
         progressBar.isVisible = true
-        labelMsg.isVisible = false
+        showMessage("Rendering graph image...", false)
         this.let {
             CompletableFuture.supplyAsync {
                 val outputStream = ByteArrayOutputStream()
-                Graphviz
-                    .fromString(dotGraph)
-                    .render(Format.PNG)
-                    .toOutputStream(outputStream)
+                GraphvizRenderer.renderAsPNG(dotGraph, outputStream)
                 imageBytes = outputStream.toByteArray()
 
                 Platform.runLater {
@@ -98,6 +114,7 @@ class GraphRenderView(
                     imageView.isVisible = true
                     btnSave.isVisible = true
                     progressBar.isVisible = false
+                    hideMessage()
                     it.scene.window.sizeToScene()
                 }
             }
@@ -114,7 +131,19 @@ class GraphRenderView(
             )
             fileChooser.initialFileName = "bdd-${System.currentTimeMillis()}.png"
             val file = fileChooser.showSaveDialog(scene.window)
+            showMessage("Saving image to file...", false)
             file?.writeBytes(imageBytes!!)
+            showMessage("File saved successfully.", false)
         }
+    }
+
+    private fun showMessage(text: String, error: Boolean) {
+        labelMsg.text = text
+        labelMsg.textFill = Color.color(if (error) 1.0 else 0.0, 0.0, 0.0)
+        labelMsg.isVisible = true
+    }
+
+    private fun hideMessage() {
+        labelMsg.isVisible = false
     }
 }
