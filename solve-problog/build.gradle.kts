@@ -4,7 +4,7 @@ kotlin {
             dependencies {
                 api(project(":bdd"))
                 api(project(":solve-classic"))
-                api(project(":prob-solve"))
+                api(project(":solve-plp"))
             }
         }
 

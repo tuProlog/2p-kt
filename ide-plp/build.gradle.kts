@@ -12,8 +12,8 @@ val arguments: String? by project
 
 dependencies {
     api(project(":ide"))
-    api(project(":prob-solve-problog"))
-    api("guru.nidi:graphviz-java:0.18.1")
+    api(project(":solve-problog"))
+    api("guru.nidi:graphviz-java:_")
 
     runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:win")
     runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")

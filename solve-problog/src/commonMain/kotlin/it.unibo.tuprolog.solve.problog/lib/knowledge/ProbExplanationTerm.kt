@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.problog.lib.knowledge
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 
@@ -17,6 +18,8 @@ internal class ProbExplanationTerm(
 
     override val isConstant: Boolean
         get() = false
+
+    override fun asConstant(): Constant = this
 
     override fun freshCopy(): ProbExplanationTerm {
         return ProbExplanationTerm(explanation.apply { it.freshCopy() })
