@@ -37,12 +37,24 @@ internal expect val platformSpecificAliases: Array<Alias>
 
 object OOPLib : AliasedLibrary by
 Library.aliased(
-    operatorSet = OperatorSet(
-        Operator(".", XFY, 800),
-        Operator(":=", XFX, 850),
-        Operator("as", XFX, 200),
-        Operator("$", FX, 100),
-    ),
+    alias = "prolog.oop",
+    primitives = sequenceOf<PrimitiveWrapper<*>>(
+        ArrayItems,
+        Assign,
+        Cast,
+        Type,
+        InvokeMethod,
+        InvokeStrict,
+        ListItems,
+        NewObject3,
+        NullRef,
+        ObjectRef,
+        Ref,
+        Register,
+        SetItems,
+        TypeRef,
+        Unregister
+    ).map { it.descriptionPair }.toMap(),
     theory = Theory.indexedOf(
         sequenceOf(
             ColonEquals.Cast,
@@ -78,22 +90,10 @@ Library.aliased(
             *platformSpecificAliases
         ).map { it.implementation }
     ),
-    primitives = sequenceOf<PrimitiveWrapper<*>>(
-        ArrayItems,
-        Assign,
-        Cast,
-        Type,
-        InvokeMethod,
-        InvokeStrict,
-        ListItems,
-        NewObject3,
-        NullRef,
-        ObjectRef,
-        Ref,
-        Register,
-        SetItems,
-        TypeRef,
-        Unregister
-    ).map { it.descriptionPair }.toMap(),
-    alias = "prolog.oop"
+    operatorSet = OperatorSet(
+        Operator(".", XFY, 800),
+        Operator(":=", XFX, 850),
+        Operator("as", XFX, 200),
+        Operator("$", FX, 100),
+    )
 )

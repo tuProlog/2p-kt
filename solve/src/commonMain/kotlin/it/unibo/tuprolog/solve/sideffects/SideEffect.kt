@@ -174,7 +174,7 @@ abstract class SideEffect {
                 if (it is AliasedLibrary) {
                     it
                 } else {
-                    Library.of(it, alias)
+                    Library.of(alias, it)
                 }
             }
         }

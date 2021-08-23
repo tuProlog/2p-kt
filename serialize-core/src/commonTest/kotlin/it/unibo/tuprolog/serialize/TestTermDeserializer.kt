@@ -108,21 +108,21 @@ class TestTermDeserializer {
     }
 
     @Test
-    fun testSetDeserializationInJSON() {
+    fun testBlockDeserializationInJSON() {
         val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
         assertEquals(MimeType.Json, deserializer.mimeType)
-        deserializer.assertTermDeserializationWorks("{\"set\":[\"hello\",1, false]}") {
+        deserializer.assertTermDeserializationWorks("{\"block\":[\"hello\",1, false]}") {
             blockOf(atomOf("hello"), numOf(1), truthOf(false))
         }
     }
 
     @Test
-    fun testSetDeserializationInYAML() {
+    fun testBlockDeserializationInYAML() {
         val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
         assertEquals(MimeType.Yaml, deserializer.mimeType)
         val actual =
             """
-                |set:
+                |block:
                 |- "hello"
                 |- 1
                 |- true

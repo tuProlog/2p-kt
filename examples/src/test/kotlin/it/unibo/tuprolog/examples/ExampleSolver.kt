@@ -267,13 +267,13 @@ class ExampleSolver {
         val myLibrary = object : AliasedLibrary by
         Library.aliased(
             alias = "alias.of.the.lib",
-            operatorSet = OperatorSet(),
-            theory = Theory.empty(),
             primitives = mapOf(
                 Signature("f", 2) to Primitive { request: Solve.Request<ExecutionContext> ->
                     TODO("compute response sequence here")
                 }
             ),
+            theory = Theory.empty(),
+            operatorSet = OperatorSet(),
             functions = mapOf(
                 Signature("+", 2) to LogicFunction { request: Compute.Request<ExecutionContext> ->
                     TODO("compute response here")

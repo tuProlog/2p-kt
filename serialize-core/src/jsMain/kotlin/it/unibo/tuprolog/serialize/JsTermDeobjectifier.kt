@@ -31,11 +31,12 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
             hasProperty(value, "var") -> deobjectifyVariable(value)
             hasProperty(value, "fun") && hasProperty(value, "args") -> deobjectifyStructure(value)
             hasProperty(value, "list") -> deobjectifyList(value)
-            hasProperty(value, "set") -> deobjectifySet(value)
+            hasProperty(value, "block") -> deobjectifyBlock(value)
             hasProperty(value, "tuple") -> deobjectifyTuple(value)
             hasProperty(value, "integer") -> deobjectifyInteger(value)
             hasProperty(value, "real") -> deobjectifyReal(value)
             hasProperty(value, "head") || hasProperty(value, "body") -> deobjectifyClause(value)
+            hasProperty(value, "set") -> deobjectifyBlock(value, "set")
             else -> throw DeobjectificationException(value)
         }
     }
@@ -92,8 +93,8 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
         )
     }
 
-    private fun deobjectifySet(value: dynamic): Term {
-        val items = value["set"] as? Array<*> ?: throw DeobjectificationException(value)
+    private fun deobjectifyBlock(value: dynamic, name: String = "block"): Term {
+        val items = value[name] as? Array<*> ?: throw DeobjectificationException(value)
         return scope.blockOf(
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))

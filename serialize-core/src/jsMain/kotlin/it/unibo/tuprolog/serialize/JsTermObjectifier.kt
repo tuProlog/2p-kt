@@ -71,7 +71,7 @@ internal class JsTermObjectifier : TermObjectifier {
 
     override fun visitBlock(term: Block): Any =
         jsObject(
-            "set" to term.toList().map { it.accept(this) }
+            "block" to term.toList().map { it.accept(this) }
         )
 
     override fun visitEmptyBlock(term: EmptyBlock): Any =
