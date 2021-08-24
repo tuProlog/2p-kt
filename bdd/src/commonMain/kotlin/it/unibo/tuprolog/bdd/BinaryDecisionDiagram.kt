@@ -52,9 +52,7 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
 
         override val isTerminal: Boolean get() = true
 
-        override fun <E> accept(
-            visitor: BinaryDecisionDiagramVisitor<T, E>
-        ): E = visitor.visit(this)
+        override fun <E> accept(visitor: BinaryDecisionDiagramVisitor<T, E>): E = visitor.visit(this)
     }
 
     /**
@@ -79,18 +77,15 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
 
         override val isTerminal: Boolean get() = false
 
-        override fun <E> accept(
-            visitor: BinaryDecisionDiagramVisitor<T, E>
-        ): E = visitor.visit(this)
+        override fun <E> accept(visitor: BinaryDecisionDiagramVisitor<T, E>): E = visitor.visit(this)
     }
 
     companion object {
         /** Creates a new [BinaryDecisionDiagram] [Variable] from the given
          * value */
         @JsName("variableOf")
-        fun <E : Comparable<E>> variableOf(value: E): BinaryDecisionDiagram<E> {
-            return variableOf(value, terminalOf(false), terminalOf(true))
-        }
+        fun <E : Comparable<E>> variableOf(value: E): BinaryDecisionDiagram<E> =
+            variableOf(value, terminalOf(false), terminalOf(true))
 
         /** Creates a new [Variable] node from the given
          * value and low-high nodes. */
@@ -99,21 +94,12 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
             value: E,
             low: BinaryDecisionDiagram<E>,
             high: BinaryDecisionDiagram<E>
-        ): BinaryDecisionDiagram<E> {
-            return BinaryDecisionDiagramBuilder
-                .defaultOf<E>()
-                .buildVariable(value, low, high)
-        }
+        ): BinaryDecisionDiagram<E> = BinaryDecisionDiagramBuilder.defaultOf<E>().buildVariable(value, low, high)
 
         /** Creates a new [Terminal] node from
          * the given boolean value. */
         @JsName("terminalOf")
-        fun <E : Comparable<E>> terminalOf(
-            truth: Boolean
-        ): BinaryDecisionDiagram<E> {
-            return BinaryDecisionDiagramBuilder
-                .defaultOf<E>()
-                .buildTerminal(truth)
-        }
+        fun <E : Comparable<E>> terminalOf(truth: Boolean): BinaryDecisionDiagram<E> =
+            BinaryDecisionDiagramBuilder.defaultOf<E>().buildTerminal(truth)
     }
 }

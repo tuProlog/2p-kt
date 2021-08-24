@@ -22,20 +22,14 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
      * the provided input.
      * */
     @JsName("buildVariable")
-    fun buildVariable(
-        value: T,
-        low: BinaryDecisionDiagram<T>,
-        high: BinaryDecisionDiagram<T>
-    ): BinaryDecisionDiagram<T>
+    fun buildVariable(value: T, low: BinaryDecisionDiagram<T>, high: BinaryDecisionDiagram<T>): BinaryDecisionDiagram<T>
 
     /**
      * Returns an instance of [BinaryDecisionDiagram.Terminal] with
      * the provided input.
      * */
     @JsName("buildTerminal")
-    fun buildTerminal(
-        truth: Boolean
-    ): BinaryDecisionDiagram<T>
+    fun buildTerminal(truth: Boolean): BinaryDecisionDiagram<T>
 
     companion object {
         /**
@@ -81,8 +75,5 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
     }
 }
 
-/* Everything seems to be working, so perhaps this is an error of the IDE? */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
-internal expect fun <E : Comparable<E>>
-createDefaultBinaryDecisionDiagramBuilder():
-    BinaryDecisionDiagramBuilder<E>
+internal fun <E : Comparable<E>> createDefaultBinaryDecisionDiagramBuilder(): BinaryDecisionDiagramBuilder<E> =
+    BinaryDecisionDiagramBuilder.simpleOf()
