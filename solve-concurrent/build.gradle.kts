@@ -9,6 +9,7 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 implementation(project(":dsl-theory"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
             }
         }
 
