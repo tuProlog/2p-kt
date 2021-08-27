@@ -8,7 +8,8 @@ Some quick links:
 * [Maven Central Repository](https://search.maven.org/search?q=g:it.unibo.tuprolog) (where all stable releases are hosted)
 * [Bintray Maven Repository](https://bintray.com/pika-lab/tuprolog) (where all releases are hosted, there including dev releases) __(discontinued)__
 * [GitHub Maven Repository](https://github.com/orgs/tuProlog/packages?repo_name=2p-kt) (where all releases are hosted, there including dev releases)
-* [Documentation](http://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/)
+* [Documentation](http://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/) (work in progress)
+* [Presentation](https://github.com/tuProlog/2p-kt-presentation/releases/latest) (currently describing the main API of 2P-Kt)
 
 > __Do not__ rely on the Bintray repository: Bintray services has been discontinued since May 2021, thus we won't be releasing 2P-Kt on Bintray anymore.
 > Kotlin and JVM packages will only be released on Maven Central and GitHub Packages.
@@ -21,7 +22,7 @@ Some quick links:
 logic programming framework written in Java.
 
 2P-Kt is a Kotlin-based and multi-platform reboot of 2P.
-It aims at becoming an open ecosystem for Symbolic Artificial Intelligence (AI).
+It consists of an open ecosystem for Symbolic Artificial Intelligence (AI).
 For this reason, 2P-Kt consists of a number of incrementally inter-dependent modules aimed at supporting symbolic 
 manipulation and reasoning in an extensible and flexible way.
 
@@ -38,11 +39,17 @@ by featuring:
 
 * a module for in-memory indexing and storing logic theories, as well as other sorts of collections of logic clauses, namely `theory`,
 
-* a module providing ISO Prolog resolution of logic queries, namely `solve`, coming with two implementations 
-(i.e. `solve-classic` and `solve-streams`),
+* a module providing generic API for resolution of logic queries, namely `solve`, coming with several implementations 
+(e.g. `solve-classic` and `solve-streams`, targetting Prolog ISO Standard compliant resolution),
+
+* a module providing generic API for the probabilistic resolution of logic queries via _probabilistic logic programming_
+  (PLP), namely `solve-plp`, coming with an implementation targetting [ProbLog](https://dtai.cs.kuleuven.be/problog/) 
+  (`solve-problog`)
+  - leveraging on module `:bdd`, which provides a multi-platform implementation of [binary decision diagrams](https://en.wikipedia.org/wiki/Binary_decision_diagram) (BDD) 
     
 * a number of modules (i.e., the many `dsl-*` modules) supporting a Prolog-like, Domain Specific Language (DSL) 
 aimed at bridging the logic programming with the Kotlin object-oriented \& functional environment,
+  - further details are provided in [this paper](http://ceur-ws.org/Vol-2706/paper14.pdf)
 
 * two parsing modules: one aimed at parsing terms, namely `parser-core`, and the other aimed at parsing theories, 
 namely `parser-theory`,
@@ -52,10 +59,12 @@ other aimed at  (de)serialising terms theories, namely `serialize-theory`,
 
 * a module for using Prolog via a command-line interface, namely `repl`,
 
-* a module for using Prolog via a graphical user interface (GUI), namely `ide`.
+* a module for using Prolog via a graphical user interface (GUI), namely `ide`,
+
+* a module for using PLP (and, in particular, ProbLob) via a GUI, namely `ide-plp`.
     
 The modular, unopinionated architecture of 2P-Kt is deliberately aimed at supporting and encouraging extensions towards 
-other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, Problog, etc.
+other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, concurrent LP, etc.
 
 Furthermore, 2P-Kt is developed as in _pure_, __multi-platform__ Kotlin project. 
 This brings two immediate advantages:
