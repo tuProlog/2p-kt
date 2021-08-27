@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.library.impl.LibraryImpl
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 /** Represents a Prolog library */
@@ -75,28 +76,30 @@ interface Library {
         /** Creates an instance of [Library] with given parameters */
         @JvmStatic
         @JsName("unaliased")
+        @JvmOverloads
         fun unaliased(
-            operatorSet: OperatorSet = OperatorSet(),
-            theory: Theory = Theory.empty(),
             primitives: Map<Signature, Primitive> = emptyMap(),
+            theory: Theory = Theory.empty(),
+            operatorSet: OperatorSet = OperatorSet(),
             functions: Map<Signature, LogicFunction> = emptyMap()
         ): Library = LibraryImpl(operatorSet, theory, primitives, functions)
 
         /** Creates an instance of [AliasedLibrary] with given parameters */
         @JvmStatic
         @JsName("aliased")
+        @JvmOverloads
         fun aliased(
-            operatorSet: OperatorSet = OperatorSet(),
-            theory: Theory = Theory.empty(),
+            alias: String,
             primitives: Map<Signature, Primitive> = emptyMap(),
-            functions: Map<Signature, LogicFunction> = emptyMap(),
-            alias: String
+            theory: Theory = Theory.empty(),
+            operatorSet: OperatorSet = OperatorSet(),
+            functions: Map<Signature, LogicFunction> = emptyMap()
         ): AliasedLibrary = LibraryAliasedImpl(operatorSet, theory, primitives, functions, alias)
 
         /** Creates an instance of [AliasedLibrary] starting from [Library] and an alias */
         @JvmStatic
         @JsName("of")
-        fun of(library: Library, alias: String): AliasedLibrary =
+        fun of(alias: String, library: Library): AliasedLibrary =
             LibraryAliasedImpl(library.operators, library.theory, library.primitives, library.functions, alias)
     }
 }

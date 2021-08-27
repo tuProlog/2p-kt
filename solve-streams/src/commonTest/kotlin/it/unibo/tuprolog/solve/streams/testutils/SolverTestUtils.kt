@@ -30,8 +30,8 @@ internal object SolverTestUtils {
             libraries = Libraries.of(
                 Library.aliased(
                     alias = "solve.solver.test",
-                    theory = database,
-                    primitives = primitives
+                    primitives = primitives,
+                    theory = database
                 )
             )
         )

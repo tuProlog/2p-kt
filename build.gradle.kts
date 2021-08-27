@@ -30,7 +30,7 @@ println("${rootProject.name} version: $version")
 kotlinMultiplatform {
     projectLongName.set("2P-Kt")
     preventPublishingOfRootProject.set(true)
-    jvmOnlyProjects("examples", "ide", "parser-jvm")
+    jvmOnlyProjects("examples", "ide", "parser-jvm", "ide-plp")
     jsOnlyProjects("parser-js")
     otherProjects("documentation")
     ktProjects(allOtherSubprojects)
@@ -42,6 +42,7 @@ kotlinMultiplatform {
     developer("Davide Greco", "davide.greco4@studio.unibo.it")
     developer("Silvia Lanzoni", "silvia.lanzoni5@studio.unibo.it")
     developer("Lorenzo Rizzato", "lorenzo.rizzato@studio.unibo.it")
+    developer("Jason Dellaluce", "jason.dellaluce@studio.unibo.it")
 }
 
 kotlin {
