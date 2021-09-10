@@ -20,6 +20,13 @@ interface State {
 
     val context: ConcurrentExecutionContext
 
+    fun nextStep(): Long = context.step + 1
+
+    fun nextDepth(): Int = context.depth + 1
+
+    // todo if useless remove
+    fun previousDepth(): Int = context.depth - 1
+
     @JsName("clone")
     fun clone(context: ConcurrentExecutionContext = this.context): State
 }
