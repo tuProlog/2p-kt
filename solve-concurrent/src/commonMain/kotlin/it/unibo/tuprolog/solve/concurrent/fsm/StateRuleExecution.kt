@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.concurrent.fsm
 
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 
-data class StateRuleExecution(override val context: ConcurrentExecutionContext) : State{
+data class StateRuleExecution(override val context: ConcurrentExecutionContext) : State {
     override fun next(): Iterable<State> {
         TODO("Not yet implemented")
     }

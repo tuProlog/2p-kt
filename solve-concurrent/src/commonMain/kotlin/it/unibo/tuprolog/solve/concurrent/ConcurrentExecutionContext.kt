@@ -6,14 +6,20 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.MutableSolver
+import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.sideffects.SideEffect
+import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.Cursor
@@ -119,20 +125,20 @@ data class ConcurrentExecutionContext(
 
     override fun toString(): String {
         return "ConcurrentExecutionContext(" +
-                "query=$query, " +
-                "procedure=$procedure, " +
-                "substitution=$substitution, " +
-                "goals=$goals, " +
-                "rules=$rules, " +
-                "primitives=$primitives, " +
-                "startTime=$startTime, " +
-                "operators=${operators.joinToString(",", "{", "}") { "'${it.functor}':${it.specifier}" }}, " +
-                "inputChannels=${inputChannels.keys}, " +
-                "outputChannels=${outputChannels.keys}, " +
-                "maxDuration=$maxDuration, " +
-                // "choicePoints=$choicePoints, " +
-                "depth=$depth, " +
-                "step=$step" +
-                ")"
+            "query=$query, " +
+            "procedure=$procedure, " +
+            "substitution=$substitution, " +
+            "goals=$goals, " +
+            "rules=$rules, " +
+            "primitives=$primitives, " +
+            "startTime=$startTime, " +
+            "operators=${operators.joinToString(",", "{", "}") { "'${it.functor}':${it.specifier}" }}, " +
+            "inputChannels=${inputChannels.keys}, " +
+            "outputChannels=${outputChannels.keys}, " +
+            "maxDuration=$maxDuration, " +
+            // "choicePoints=$choicePoints, " +
+            "depth=$depth, " +
+            "step=$step" +
+            ")"
     }
 }

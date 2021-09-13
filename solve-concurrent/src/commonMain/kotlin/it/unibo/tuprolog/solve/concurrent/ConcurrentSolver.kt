@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContextAware
+import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
@@ -11,7 +13,6 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import kotlinx.coroutines.flow.Flow
-//import kotlin.coroutines.CoroutineContext
 import kotlin.js.JsName
 
 interface ConcurrentSolver<E : ExecutionContext> : ExecutionContextAware {
