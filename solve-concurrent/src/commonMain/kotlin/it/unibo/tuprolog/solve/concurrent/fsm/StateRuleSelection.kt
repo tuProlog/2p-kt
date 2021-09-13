@@ -17,7 +17,6 @@ import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.buffered
-import it.unibo.tuprolog.utils.cursor
 
 data class StateRuleSelection(override val context: ConcurrentExecutionContext) : State {
 
@@ -68,46 +67,53 @@ data class StateRuleSelection(override val context: ConcurrentExecutionContext) 
     override fun next(): Iterable<State> {
         val currentGoal = context.currentGoal!!
         return when {
-                currentGoal.isVar ->
-                    listOf(exceptionalState(
+            currentGoal.isVar ->
+                listOf(
+                    exceptionalState(
                         InstantiationError.forGoal(
                             context = context,
                             procedure = context.procedure!!.extractSignature(),
                             variable = currentGoal.castToVar()
                         )
-                    ))
-                currentGoal.isStruct -> with(context) {
-                    val currentGoalStruct = currentGoal.castToStruct()
-                    val ruleSources = sequenceOf(libraries.theory, staticKb, dynamicKb)
-                    when {
-                        currentGoalStruct.isTruth -> {
-                            listOf(if (currentGoalStruct.isTrue) {
+                    )
+                )
+            currentGoal.isStruct -> with(context) {
+                val currentGoalStruct = currentGoal.castToStruct()
+                val ruleSources = sequenceOf(libraries.theory, staticKb, dynamicKb)
+                when {
+                    currentGoalStruct.isTruth -> {
+                        listOf(
+                            if (currentGoalStruct.isTrue) {
                                 ignoreState
                             } else {
                                 failureState
-                            })
-                        }
-                        ruleSources.any { currentGoalStruct in it } -> {
-                            val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }
-                            rules.map {
-                                if(context.isTailRecursive)
-                                    StateRuleExecution(context.replaceWithChildAppendingRules(it))
-                                else
-                                    StateRuleExecution(context.createChildAppendingRules(it))
-                            }.asIterable()
-                        }
-                        else -> listOf(missingProcedure(ruleSources, currentGoalStruct.extractSignature()))
+                            }
+                        )
                     }
+                    ruleSources.any { currentGoalStruct in it } -> {
+                        val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }
+                        rules.map {
+                            if (context.isTailRecursive) {
+                                StateRuleExecution(context.replaceWithChildAppendingRules(it))
+                            } else {
+                                StateRuleExecution(context.createChildAppendingRules(it))
+                            }
+                        }.asIterable()
+                    }
+                    else -> listOf(missingProcedure(ruleSources, currentGoalStruct.extractSignature()))
                 }
-                else -> listOf(exceptionalState(
+            }
+            else -> listOf(
+                exceptionalState(
                     TypeError.forGoal(
                         context = context,
                         procedure = context.procedure!!.extractSignature(),
                         expectedType = TypeError.Expected.CALLABLE,
                         culprit = currentGoal
                     )
-                ))
-            }
+                )
+            )
+        }
     }
 
     private val ConcurrentExecutionContext.isTailRecursive: Boolean
