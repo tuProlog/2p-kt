@@ -1,7 +1,9 @@
 package it.unibo.tuprolog
 
+import it.unibo.tuprolog.ui.gui.Main
+
 object IDE {
     fun main(args: Array<String>) {
-        it.unibo.tuprolog.ui.gui.Main.main(args)
+        Main.main(args)
     }
 }

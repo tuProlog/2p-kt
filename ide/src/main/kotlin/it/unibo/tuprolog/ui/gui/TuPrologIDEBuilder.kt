@@ -13,6 +13,10 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
 
+/**
+ * NOTE ([customTabs]: If a [CustomTab.tab] has a [Tab.id] that is already existing
+ * in the IDE, it substitutes the existing [Tab] instead of being added to the tab list.
+ */
 data class TuPrologIDEBuilder(
     val stage: Stage,
     var title: String = "tuProlog IDE",
@@ -113,6 +117,7 @@ data class TuPrologIDEBuilder(
         controller.customizeModel { model ->
             model.customizeSolver { solver ->
                 customLibraries.forEach { solver.loadLibrary(it) }
+                solver
             }
             customTabs.forEach { it.modelConfigurator(model) }
         }
