@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 data class StateException(
     override val exception: ResolutionException,
     override val context: ConcurrentExecutionContext
-    ): ExceptionalState {
+) : ExceptionalState {
 
     private fun ResolutionException.toPublicException(): ResolutionException =
         when (this) {
@@ -62,17 +62,19 @@ data class StateException(
     */
 
     override fun next(): Iterable<State> {
-        return listOf( when (exception) {
-            is LogicError -> {
-                val catchGoal = context.currentGoal!!
-                when {
-                    catchGoal.isStruct -> handleStruct(catchGoal.castToStruct(), exception)
-                    context.isRoot -> finalState
-                    else -> handleExceptionInParentContext
+        return listOf(
+            when (exception) {
+                is LogicError -> {
+                    val catchGoal = context.currentGoal!!
+                    when {
+                        catchGoal.isStruct -> handleStruct(catchGoal.castToStruct(), exception)
+                        context.isRoot -> finalState
+                        else -> handleExceptionInParentContext
+                    }
                 }
+                else -> finalState
             }
-            else -> finalState
-        })
+        )
     }
 
     override fun clone(context: ConcurrentExecutionContext): State = copy(exception = exception, context = context)

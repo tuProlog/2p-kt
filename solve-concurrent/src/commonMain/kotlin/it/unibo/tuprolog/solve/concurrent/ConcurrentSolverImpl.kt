@@ -13,13 +13,19 @@ import it.unibo.tuprolog.solve.concurrent.fsm.State
 import it.unibo.tuprolog.solve.concurrent.fsm.StateGoalSelection
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.impl.AbstractSolver
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlin.jvm.Synchronized
 
 internal open class ConcurrentSolverImpl(
@@ -30,7 +36,7 @@ internal open class ConcurrentSolverImpl(
     override val operators: OperatorSet,
     override val inputChannels: InputStore = InputStore.fromStandard(),
     override val outputChannels: OutputStore = OutputStore.fromStandard()
-): ConcurrentSolver<ConcurrentExecutionContext> {
+) : ConcurrentSolver<ConcurrentExecutionContext> {
 
     @get:Synchronized
     @set:Synchronized
@@ -39,7 +45,7 @@ internal open class ConcurrentSolverImpl(
     private fun collector(state: State, channel: SendChannel<State>, scope: CoroutineScope) {
         scope.launch {
             channel.send(state)
-            state.next().forEach { collector(it,channel, scope) }
+            state.next().forEach { collector(it, channel, scope) }
         }
     }
 
