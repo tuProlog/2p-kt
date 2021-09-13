@@ -38,7 +38,7 @@ data class ConcurrentExecutionContext(
     override val substitution: Substitution.Unifier = Substitution.empty(),
     val query: Struct = Truth.TRUE,
     val goals: Cursor<out Term> = Cursor.empty(),
-    val rule: Rule? = null, // todo convert to single Rule
+    val rule: Rule? = null,
     val primitives: Cursor<out Solve.Response> = Cursor.empty(), // todo convert to single Solve.Response
     val startTime: TimeInstant = 0,
     val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,

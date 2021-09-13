@@ -15,21 +15,23 @@ data class StateRuleExecution(override val context: ConcurrentExecutionContext) 
 
     override fun next(): Iterable<State> {
         val substitution = context.goals.current!! mguWith context.rule!!.head
-        return listOf(when {
-            substitution.isSuccess -> {
-                val newSubstitution = (context.substitution + substitution).castToUnifier()
-                val subGoals = context.rule.prepareForExecution(newSubstitution).body[newSubstitution]
-                StateGoalSelection(
-                    context.copy(
-                        goals = subGoals.toGoals(),
-                        rule = null,
-                        substitution = newSubstitution,
-                        step = nextStep()
+        return listOf(
+            when {
+                substitution.isSuccess -> {
+                    val newSubstitution = (context.substitution + substitution).castToUnifier()
+                    val subGoals = context.rule.prepareForExecution(newSubstitution).body[newSubstitution]
+                    StateGoalSelection(
+                        context.copy(
+                            goals = subGoals.toGoals(),
+                            rule = null,
+                            substitution = newSubstitution,
+                            step = nextStep()
+                        )
                     )
-                )
+                }
+                else -> failureState
             }
-            else -> failureState
-        })
+        )
     }
 
     override fun clone(context: ConcurrentExecutionContext): State = copy(context = context)
