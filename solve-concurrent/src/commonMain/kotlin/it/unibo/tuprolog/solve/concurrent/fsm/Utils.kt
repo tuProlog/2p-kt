@@ -53,17 +53,17 @@ fun ConcurrentExecutionContext.replaceWithChild(inferProcedureFromGoals: Boolean
 }
 
 fun ConcurrentExecutionContext.createChildAppendingRules(
-    rules: Cursor<out Rule>,
+    rule: Rule,
     inferProcedureFromGoals: Boolean = true
 ) : ConcurrentExecutionContext {
     val tempExecutionContext = createChild(inferProcedureFromGoals)
-    return tempExecutionContext.copy(rules = rules)
+    return tempExecutionContext.copy(rule = rule)
 }
 
 fun ConcurrentExecutionContext.replaceWithChildAppendingRules(
-    rules: Cursor<out Rule>,
+    rule: Rule,
     inferProcedureFromGoals: Boolean = true
 ) : ConcurrentExecutionContext {
     val tempExecutionContext = replaceWithChild(inferProcedureFromGoals)
-    return tempExecutionContext.copy(rules = rules)
+    return tempExecutionContext.copy(rule = rule)
 }

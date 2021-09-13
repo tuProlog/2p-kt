@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
-import it.unibo.tuprolog.utils.Cursor
 
 data class StateRuleExecution(override val context: ConcurrentExecutionContext) : State {
 
@@ -15,15 +14,15 @@ data class StateRuleExecution(override val context: ConcurrentExecutionContext) 
         )
 
     override fun next(): Iterable<State> {
-        val substitution = context.goals.current!! mguWith context.rules.current!!.head
+        val substitution = context.goals.current!! mguWith context.rule!!.head
         return listOf(when {
             substitution.isSuccess -> {
                 val newSubstitution = (context.substitution + substitution).castToUnifier()
-                val subGoals = context.rules.current!!.prepareForExecution(newSubstitution).body[newSubstitution]
+                val subGoals = context.rule.prepareForExecution(newSubstitution).body[newSubstitution]
                 StateGoalSelection(
                     context.copy(
                         goals = subGoals.toGoals(),
-                        rules = Cursor.empty(),
+                        rule = null,
                         substitution = newSubstitution,
                         step = nextStep()
                     )
