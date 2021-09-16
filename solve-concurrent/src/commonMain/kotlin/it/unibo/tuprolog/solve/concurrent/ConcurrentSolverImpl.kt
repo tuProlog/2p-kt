@@ -27,7 +27,6 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 import kotlin.jvm.Synchronized
-
 import kotlinx.coroutines.channels.Channel as KtChannel
 
 internal open class ConcurrentSolverImpl(
@@ -39,7 +38,13 @@ internal open class ConcurrentSolverImpl(
     outputChannels: OutputStore = OutputStore.fromStandard(),
     trustKb: Boolean = false
 ) : ConcurrentSolver, AbstractSolver<ConcurrentExecutionContext>(
-    libraries, flags, initialStaticKb, initialDynamicKb, inputChannels, outputChannels, trustKb
+    libraries,
+    flags,
+    initialStaticKb,
+    initialDynamicKb,
+    inputChannels,
+    outputChannels,
+    trustKb
 ) {
 
     constructor(
