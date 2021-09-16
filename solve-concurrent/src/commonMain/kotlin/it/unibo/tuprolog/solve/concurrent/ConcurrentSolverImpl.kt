@@ -11,6 +11,8 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.concurrent.fsm.EndState
 import it.unibo.tuprolog.solve.concurrent.fsm.State
 import it.unibo.tuprolog.solve.concurrent.fsm.StateGoalSelection
+import it.unibo.tuprolog.solve.concurrent.fsm.toGoals
+import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -78,14 +80,13 @@ internal open class ConcurrentSolverImpl(
     @set:Synchronized
     override lateinit var currentContext: ConcurrentExecutionContext
 
-    @Suppress("SuspendFunctionOnCoroutineScope")
-    private suspend fun CoroutineScope.handleStateTransition(state: State, solutionChannel: SendChannel<Solution>) {
+    private fun CoroutineScope.handleAsyncStateTransition(state: State, solutionChannel: SendChannel<Solution>) {
         launch {
             if (state is EndState) {
                 solutionChannel.send(state.solution)
             } else {
                 state.next().forEach {
-                    handleStateTransition(it, solutionChannel)
+                    handleAsyncStateTransition(it, solutionChannel)
                 }
             }
         }
@@ -97,12 +98,30 @@ internal open class ConcurrentSolverImpl(
         solutionChannel: SendChannel<Solution>
     ) {
         val initialState = initialState(goal, options)
-        launch {
-            handleStateTransition(initialState, solutionChannel)
-        }
+        handleAsyncStateTransition(initialState, solutionChannel)
+//        launch {
+//            handleAsyncStateTransition(initialState, solutionChannel)
+//        }
     }
 
-    private fun initialState(goal: Struct, options: SolveOptions): State = StateGoalSelection(currentContext)
+    private fun initialState(goal: Struct, options: SolveOptions): State {
+        currentContext = ConcurrentExecutionContext(
+            goals = goal.toGoals(),
+            step = 1,
+            query = goal,
+            libraries = libraries,
+            flags = flags,
+            staticKb = staticKb.toImmutableTheory(),
+            dynamicKb = dynamicKb.toMutableTheory(),
+            operators = operators,
+            inputChannels = inputChannels,
+            outputChannels = outputChannels,
+            customData = currentContext.customData,
+            maxDuration = options.timeout,
+            startTime = currentTimeInstant()
+        )
+        return StateGoalSelection(currentContext)
+    }
 
     override fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution> {
         val resolutionScope = CoroutineScope(Dispatchers.Default)
