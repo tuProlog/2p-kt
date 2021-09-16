@@ -12,12 +12,16 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
             }
         }
-
         val commonTest by getting {
             dependencies {
                 api(project(":test-solve"))
             }
         }
+        // val jvmTest by getting {
+        //     dependencies {
+        //         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:_")
+        //     }
+        // }
     }
 }
 

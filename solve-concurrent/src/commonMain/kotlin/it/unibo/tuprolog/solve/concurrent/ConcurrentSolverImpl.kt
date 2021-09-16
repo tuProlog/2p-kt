@@ -13,69 +13,137 @@ import it.unibo.tuprolog.solve.concurrent.fsm.State
 import it.unibo.tuprolog.solve.concurrent.fsm.StateGoalSelection
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.getAllOperators
+import it.unibo.tuprolog.solve.impl.AbstractSolver
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.jvm.Synchronized
 
+import kotlinx.coroutines.channels.Channel as KtChannel
+
 internal open class ConcurrentSolverImpl(
-    override val libraries: Libraries = Libraries.empty(),
-    override val flags: FlagStore = FlagStore.empty(),
-    override val staticKb: Theory = Theory.empty(),
-    override val dynamicKb: Theory = MutableTheory.empty(),
-    override val operators: OperatorSet,
-    override val inputChannels: InputStore = InputStore.fromStandard(),
-    override val outputChannels: OutputStore = OutputStore.fromStandard()
-) : ConcurrentSolver<ConcurrentExecutionContext> {
+    libraries: Libraries = Libraries.empty(),
+    flags: FlagStore = FlagStore.empty(),
+    initialStaticKb: Theory = Theory.empty(),
+    initialDynamicKb: Theory = MutableTheory.empty(),
+    inputChannels: InputStore = InputStore.fromStandard(),
+    outputChannels: OutputStore = OutputStore.fromStandard(),
+    trustKb: Boolean = false
+) : ConcurrentSolver, AbstractSolver<ConcurrentExecutionContext>(
+    libraries, flags, initialStaticKb, initialDynamicKb, inputChannels, outputChannels, trustKb
+) {
+
+    constructor(
+        libraries: Libraries = Libraries.empty(),
+        flags: FlagStore = FlagStore.empty(),
+        staticKb: Theory = Theory.empty(),
+        dynamicKb: Theory = MutableTheory.empty(),
+        stdIn: InputChannel<String> = InputChannel.stdIn(),
+        stdOut: OutputChannel<String> = OutputChannel.stdOut(),
+        stdErr: OutputChannel<String> = OutputChannel.stdErr(),
+        warnings: OutputChannel<Warning> = OutputChannel.warn(),
+        trustKb: Boolean = false
+    ) : this(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        InputStore.fromStandard(stdIn),
+        OutputStore.fromStandard(stdOut, stdErr, warnings),
+        trustKb
+    )
+
+    // private fun CoroutineScope.collector(state: State, channel: SendChannel<State>) {
+    //     launch {
+    //         channel.send(state)
+    //         state.next().forEach { collector(it, channel) }
+    //     }
+    // }
+
+    // @OptIn(ExperimentalCoroutinesApi::class)
+    // suspend fun solveImpl(goal: Struct, options: SolveOptions): Flow<Solution> =
+    //     channelFlow<State> { collector(initialState(), channel, this) }
+    //         .filterIsInstance<EndState>()
+    //         .map { currentContext = it.context; it.solution }
+    //         .flowOn(Dispatchers.Default)
 
     @get:Synchronized
     @set:Synchronized
     override lateinit var currentContext: ConcurrentExecutionContext
 
-    private fun collector(state: State, channel: SendChannel<State>, scope: CoroutineScope) {
-        scope.launch {
-            channel.send(state)
-            state.next().forEach { collector(it, channel, scope) }
+    @Suppress("SuspendFunctionOnCoroutineScope")
+    private suspend fun CoroutineScope.handleStateTransition(state: State, solutionChannel: SendChannel<Solution>) {
+        launch {
+            if (state is EndState) {
+                solutionChannel.send(state.solution)
+            } else {
+                state.next().forEach {
+                    handleStateTransition(it, solutionChannel)
+                }
+            }
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun solveImpl(goal: Struct, options: SolveOptions): Flow<Solution> =
-        channelFlow<State> { collector(initialState(), channel, this) }
-            .filterIsInstance<EndState>()
-            .map { currentContext = it.context; it.solution }
-            .flowOn(Dispatchers.Default)
+    private fun CoroutineScope.startAsyncResolution(
+        goal: Struct,
+        options: SolveOptions,
+        solutionChannel: SendChannel<Solution>
+    ) {
+        val initialState = initialState(goal, options)
+        launch {
+            handleStateTransition(initialState, solutionChannel)
+        }
+    }
 
-    private fun initialState(): State = StateGoalSelection(currentContext)
+    private fun initialState(goal: Struct, options: SolveOptions): State = StateGoalSelection(currentContext)
 
-    override suspend fun solveConcurrently(goal: Struct): Flow<Solution> = solveImpl(goal, SolveOptions.DEFAULT)
+    override fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution> {
+        val resolutionScope = CoroutineScope(Dispatchers.Default)
+        val channel = KtChannel<Solution>()
+        resolutionScope.startAsyncResolution(goal, options, channel)
+        return channel
+    }
+
+    override fun solveImpl(goal: Struct, options: SolveOptions): Sequence<Solution> {
+        return solveConcurrently(goal, options).toSequence()
+    }
 
     override fun copy(
         libraries: Libraries,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
-        operators: OperatorSet,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ) = ConcurrentSolverImpl(libraries, flags, staticKb, dynamicKb, operators, InputStore.fromStandard(stdIn), OutputStore.fromStandard(stdOut, stdErr, warnings))
+    ) = ConcurrentSolverImpl(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun clone(): ConcurrentSolverImpl = copy()
 
-    /*
-    @JsName("solveWithOptions")
-    fun solve(goal: Struct, options: SolveOptions): Flow<Solution>
-    */
+    override fun initializeContext(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        operators: OperatorSet,
+        inputChannels: InputStore,
+        outputChannels: OutputStore,
+        trustKb: Boolean
+    ): ConcurrentExecutionContext = ConcurrentExecutionContext(
+        libraries = libraries,
+        flags = flags,
+        staticKb = if (trustKb) staticKb.toImmutableTheory() else Theory.empty(),
+        dynamicKb = if (trustKb) dynamicKb.toMutableTheory() else MutableTheory.empty(),
+        operators = getAllOperators(libraries).toOperatorSet(),
+        inputChannels = inputChannels,
+        outputChannels = outputChannels
+    )
 }
