@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.concurrent.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.AliasedLibrary
@@ -13,7 +14,7 @@ import it.unibo.tuprolog.theory.Theory
 
 object ConcurrentSolverFactory : SolverFactory {
     override val defaultBuiltins: AliasedLibrary
-        get() = TODO("Not yet implemented")
+        get() = DefaultBuiltins
 
     override fun solverOf(
         libraries: Libraries,
@@ -24,7 +25,7 @@ object ConcurrentSolverFactory : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ): Solver = ConcurrentSolverImpl()
+    ): Solver = ConcurrentSolverImpl(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
         libraries: Libraries,
