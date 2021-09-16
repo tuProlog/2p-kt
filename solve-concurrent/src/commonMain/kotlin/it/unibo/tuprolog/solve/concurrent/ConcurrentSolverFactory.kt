@@ -36,7 +36,5 @@ object ConcurrentSolverFactory : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ): MutableSolver {
-        TODO("Not yet implemented")
-    }
+    ): MutableSolver = MutableConcurrentSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 }
