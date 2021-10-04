@@ -1,7 +1,15 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.solve.Solution
-import kotlin.test.assertEquals
+import it.unibo.tuprolog.solve.SolverTest
+
+interface FromSequence<T> : SolverTest {
+    fun fromSequence(sequence: Sequence<Solution>) : T
+}
+
+object ConcurrentFromSequence : FromSequence<MultiSet>{
+    override fun fromSequence(sequence: Sequence<Solution>): MultiSet = MultiSet(sequence)
+}
 
 class MultiSet(private val map: Map<Solution, Int> = mapOf()) {
 
@@ -27,11 +35,4 @@ class MultiSet(private val map: Map<Solution, Int> = mapOf()) {
     override fun hashCode(): Int {
         return 31 * map.hashCode()
     }
-}
-
-fun assertUnorderedSolutionEquals(
-    expected: MultiSet,
-    actual: MultiSet
-){
-    assertEquals(expected, actual)
 }
