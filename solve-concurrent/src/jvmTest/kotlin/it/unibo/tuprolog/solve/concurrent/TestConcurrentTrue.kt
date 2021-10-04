@@ -13,7 +13,7 @@ class TestConcurrentTrue : SolverTest, SolverFactory by ConcurrentSolverFactory 
             val solver = solverWithDefaultBuiltins()
             val query = atomOf("true")
 
-            val solutions = MultiSet(solver.solve(query))
+            val solutions = MultiSet(solver.solve(query,mediumDuration))
 
             assertUnorderedSolutionEquals(
                 MultiSet(query.yes()),
