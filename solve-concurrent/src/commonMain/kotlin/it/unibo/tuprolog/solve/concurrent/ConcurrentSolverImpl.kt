@@ -67,33 +67,16 @@ internal open class ConcurrentSolverImpl(
         trustKb
     )
 
-    // private fun CoroutineScope.collector(state: State, channel: SendChannel<State>) {
-    //     launch {
-    //         channel.send(state)
-    //         state.next().forEach { collector(it, channel) }
-    //     }
-    // }
-
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // suspend fun solveImpl(goal: Struct, options: SolveOptions): Flow<Solution> =
-    //     channelFlow<State> { collector(initialState(), channel, this) }
-    //         .filterIsInstance<EndState>()
-    //         .map { currentContext = it.context; it.solution }
-    //         .flowOn(Dispatchers.Default)
-
     @get:Synchronized
     @set:Synchronized
     override lateinit var currentContext: ConcurrentExecutionContext
 
     private fun CoroutineScope.handleAsyncStateTransition(state: State, solutionChannel: SendChannel<Solution>) {
         launch {
-            if (state is EndState) {
+            if (state is EndState)
                 solutionChannel.send(state.solution)
-            } else {
-                state.next().forEach {
-                    handleAsyncStateTransition(it, solutionChannel)
-                }
-            }
+            else
+                state.next().forEach { handleAsyncStateTransition(it, solutionChannel) }
         }
     }
 
@@ -103,10 +86,9 @@ internal open class ConcurrentSolverImpl(
         solutionChannel: SendChannel<Solution>
     ) {
         val initialState = initialState(goal, options)
-        handleAsyncStateTransition(initialState, solutionChannel)
-//        launch {
-//            handleAsyncStateTransition(initialState, solutionChannel)
-//        }
+        launch {
+            handleAsyncStateTransition(initialState, solutionChannel)
+        }.invokeOnCompletion { solutionChannel.close() }
     }
 
     private fun initialState(goal: Struct, options: SolveOptions): State {
