@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.SolverTest
 
 interface FromSequence<T> : SolverTest {
     fun fromSequence(sequence: Sequence<Solution>) : T
+    fun fromSequence(solution: Solution): T = fromSequence(sequenceOf(solution))
 }
 
 object ConcurrentFromSequence : FromSequence<MultiSet>{
