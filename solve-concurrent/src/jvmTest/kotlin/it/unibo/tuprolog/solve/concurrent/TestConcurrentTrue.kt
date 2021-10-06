@@ -3,6 +3,8 @@ package it.unibo.tuprolog.solve.concurrent
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.yes
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.Test
 
 interface TestConcurrentTrue<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
@@ -24,6 +26,7 @@ class TestConcurrentTrueImpl :
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    override fun testTrue() = super.testTrue()
+    override fun testTrue() = runBlockingTest { super.testTrue() }
 }

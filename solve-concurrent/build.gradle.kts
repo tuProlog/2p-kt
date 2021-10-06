@@ -17,11 +17,11 @@ kotlin {
                 api(project(":test-solve"))
             }
         }
-        // val jvmTest by getting {
-        //     dependencies {
-        //         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:_")
-        //     }
-        // }
+        val jvmTest by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:_")
+            }
+        }
     }
 }
 
