@@ -64,7 +64,7 @@ fun Solution.key(): KeySolution = KeySolution(this)
 class MultiSet(private val map: Map<KeySolution, Int> = mapOf()) : WithAssertingEquals {
 
     constructor(set: Set<Solution>) : this(
-        set.map{ it.key() }
+        set.map { it.key() }
             .fold(mapOf()) { map, solution -> map + (solution to (map[solution] ?: 1)) }
     )
 
