@@ -6,18 +6,16 @@ import it.unibo.tuprolog.solve.yes
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-interface TestConcurrentTrue<T> : FromSequence<T>, SolverFactory {
+interface TestConcurrentTrue<T: WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testTrue() {
         prolog {
             val solver = solverWithDefaultBuiltins()
             val query = atomOf("true")
+            val solutions = fromSequence(solver.solve(query,mediumDuration))
+            val expected = fromSequence(sequenceOf(query.yes()))
 
-            assertEquals(
-                fromSequence(solver.solve(query,mediumDuration)),
-                fromSequence(sequenceOf(query.yes()))
-            )
-
+            expected.assertingEquals(solutions)
         }
     }
 }
