@@ -25,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.jvm.Synchronized
 import kotlinx.coroutines.channels.Channel as KtChannel
@@ -71,24 +72,31 @@ internal open class ConcurrentSolverImpl(
     @set:Synchronized
     override lateinit var currentContext: ConcurrentExecutionContext
 
+    private val resolutionScope = CoroutineScope(Dispatchers.Default)
+
     private fun CoroutineScope.handleAsyncStateTransition(state: State, solutionChannel: SendChannel<Solution>) {
         launch {
-            if (state is EndState)
+            if (state is EndState && (!state.solution.isNo || state.context.isRoot))
                 solutionChannel.send(state.solution)
             else
                 state.next().forEach { handleAsyncStateTransition(it, solutionChannel) }
         }
     }
 
-    private fun CoroutineScope.startAsyncResolution(
+    private suspend fun startAsyncResolution(
         goal: Struct,
         options: SolveOptions,
         solutionChannel: SendChannel<Solution>
     ) {
         val initialState = initialState(goal, options)
-        launch {
+
+        resolutionScope.launch {
             handleAsyncStateTransition(initialState, solutionChannel)
-        }.invokeOnCompletion { solutionChannel.close() }
+        }.join()
+//        resolutionScope.launch {
+//            solutionChannel.send(Solution.no(goal))
+//        }.join()
+        solutionChannel.close()
     }
 
     private fun initialState(goal: Struct, options: SolveOptions): State {
@@ -111,14 +119,13 @@ internal open class ConcurrentSolverImpl(
     }
 
     override fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution> {
-        val resolutionScope = CoroutineScope(Dispatchers.Default)
-        val channel = KtChannel<Solution>()
-        resolutionScope.startAsyncResolution(goal, options, channel)
+        val channel = KtChannel<Solution>(KtChannel.UNLIMITED)
+        resolutionScope.launch { startAsyncResolution(goal, options, channel) }
         return channel
     }
 
     override fun solveImpl(goal: Struct, options: SolveOptions): Sequence<Solution> {
-        return solveConcurrently(goal, options).toSequence()
+        return solveConcurrently(goal, options).toSequence(resolutionScope)
     }
 
     override fun copy(
