@@ -1,9 +1,12 @@
+@file:JvmName("TestConcurrentUtils")
+
 package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolverTest
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
+import kotlin.jvm.JvmName
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -18,11 +21,11 @@ interface FromSequence<T: WithAssertingEquals> : SolverTest {
     fun fromSequence(solution: Solution): T = fromSequence(sequenceOf(solution))
 }
 
-object ConcurrentFromSequence : FromSequence<MultiSet>{
+object ConcurrentFromSequence : FromSequence<MultiSet> {
     override fun fromSequence(sequence: Sequence<Solution>): MultiSet = MultiSet(sequence)
 }
 
-class KeySolution(val solution: Solution){
+class KeySolution(val solution: Solution) {
 
     private fun ResolutionException.similar(other: Any?): Boolean {
         if (this === other) return true

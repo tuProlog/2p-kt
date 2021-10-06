@@ -1,16 +1,22 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.dsl.prolog
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.DummyInstances
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.halt
+import it.unibo.tuprolog.solve.no
+import it.unibo.tuprolog.solve.yes
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
-import org.junit.Test
-import kotlin.test.assertEquals
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
+import kotlin.test.Test
 import kotlin.test.assertNotEquals
 
 class TestMultiSet {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testEmptyMultiSet(){
+    fun testEmptyMultiSet() = runBlockingTest {
         val multiSet1 = MultiSet()
         val multiSet2 = MultiSet()
         multiSet1.assertingEquals(multiSet2)
@@ -19,8 +25,9 @@ class TestMultiSet {
 //        assertEquals(multiSet1,multiSet2)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testMultiSet(){
+    fun testMultiSet() = runBlockingTest {
         prolog {
             val query = "X" `=` 1 and `var`("X")
             val solutions = sequenceOf(query.no())
@@ -49,8 +56,9 @@ class TestMultiSet {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testDifferentMultiSet(){
+    fun testDifferentMultiSet() = runBlockingTest {
         prolog {
             val query = "X" `=` 1 and `var`("X")
             val query2 = `var`("X") and ("X" `=` 1)
