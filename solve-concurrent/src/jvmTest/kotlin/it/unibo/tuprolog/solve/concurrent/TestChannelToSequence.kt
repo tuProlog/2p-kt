@@ -13,7 +13,7 @@ class TestChannelToSequence {
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
 
     @Test
-    fun testEmptyChannel(){
+    fun testEmptyChannel() {
         val channel: Channel<String> = Channel()
         val job = scope.launch { channel.close() }
         val emptySeq = channel.toSequence(scope)
@@ -26,7 +26,7 @@ class TestChannelToSequence {
     }
 
     @Test
-    fun testEarlyClose(){
+    fun testEarlyClose() {
         val channel: Channel<String> = Channel()
         scope.launch {
             channel.close()
@@ -38,11 +38,11 @@ class TestChannelToSequence {
     }
 
     @Test
-    fun testChannelToSequence(){
+    fun testChannelToSequence() {
         val times = 100
         val channel: Channel<String> = Channel(Channel.UNLIMITED)
         scope.launch {
-            for(c in 0 until  times)
+            for (c in 0 until times)
                 channel.send("$c")
             channel.close()
         }

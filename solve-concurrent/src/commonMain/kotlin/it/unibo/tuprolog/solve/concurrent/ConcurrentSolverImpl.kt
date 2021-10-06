@@ -25,7 +25,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.jvm.Synchronized
 import kotlinx.coroutines.channels.Channel as KtChannel
@@ -76,10 +75,11 @@ internal open class ConcurrentSolverImpl(
 
     private fun CoroutineScope.handleAsyncStateTransition(state: State, solutionChannel: SendChannel<Solution>) {
         launch {
-            if (state is EndState && (!state.solution.isNo || state.context.isRoot))
+            if (state is EndState && (!state.solution.isNo || state.context.isRoot)) {
                 solutionChannel.send(state.solution)
-            else
+            } else {
                 state.next().forEach { handleAsyncStateTransition(it, solutionChannel) }
+            }
         }
     }
 

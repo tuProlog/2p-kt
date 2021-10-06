@@ -11,14 +11,14 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.LinkedBlockingQueue
 
 // todo clean, old (hopefully useless) implementation
-//actual fun <T> ReceiveChannel<T>.toSequence(coroutineScope: CoroutineScope): Sequence<T> =
+// actual fun <T> ReceiveChannel<T>.toSequence(coroutineScope: CoroutineScope): Sequence<T> =
 //    consumeAsFlow().toSequence(coroutineScope)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 actual fun <T> ReceiveChannel<T>.toSequence(coroutineScope: CoroutineScope): Sequence<T> {
     val queue = LinkedBlockingQueue<Any?>()
     coroutineScope.launch {
-        while (! this@toSequence.isClosedForReceive)
+        while (!this@toSequence.isClosedForReceive)
             queue.add(receive())
         queue.add(PoisonPill)
     }
