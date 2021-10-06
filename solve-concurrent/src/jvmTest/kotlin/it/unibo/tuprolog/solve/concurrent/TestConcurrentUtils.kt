@@ -16,8 +16,8 @@ interface WithAssertingEquals {
     fun assertingEquals(other: Any?)
 }
 
-interface FromSequence<T: WithAssertingEquals> : SolverTest {
-    fun fromSequence(sequence: Sequence<Solution>) : T
+interface FromSequence<T : WithAssertingEquals> : SolverTest {
+    fun fromSequence(sequence: Sequence<Solution>): T
     fun fromSequence(solution: Solution): T = fromSequence(sequenceOf(solution))
 }
 
@@ -31,7 +31,7 @@ class KeySolution(val solution: Solution) {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        return if(this is LogicError && other is LogicError) {
+        return if (this is LogicError && other is LogicError) {
             errorStruct.equals(other.errorStruct, false) && message == other.message
         } else true
     }
@@ -43,27 +43,30 @@ class KeySolution(val solution: Solution) {
         other as KeySolution
         val queryEqual = solution.query == other.solution.query
         val substitutionEqual = solution.substitution == other.solution.substitution
-        val exceptionEqual = if(solution is Solution.Halt && other.solution is Solution.Halt)
-                solution.exception.similar(other.solution.exception) else true
+        val exceptionEqual = if (solution is Solution.Halt && other.solution is Solution.Halt) {
+            solution.exception.similar(other.solution.exception)
+        } else true
         return queryEqual && substitutionEqual && exceptionEqual
     }
 
     override fun hashCode(): Int {
         var result = solution.query.hashCode()
         result = 31 * result + solution.substitution.hashCode()
-        if (solution is Solution.Halt)
+        if (solution is Solution.Halt) {
             result = 31 * result + solution.exception.hashCode()
+        }
         return result
     }
 }
 
 fun Solution.key(): KeySolution = KeySolution(this)
 
-class MultiSet(private val map: Map<KeySolution, Int> = mapOf()): WithAssertingEquals {
+class MultiSet(private val map: Map<KeySolution, Int> = mapOf()) : WithAssertingEquals {
 
     constructor(set: Set<Solution>) : this(
-        set.map{it.key()}
-            .fold(mapOf()){ map,solution -> map + (solution to (map[solution] ?: 1)) })
+        set.map{ it.key() }
+            .fold(mapOf()) { map, solution -> map + (solution to (map[solution] ?: 1)) }
+    )
 
     constructor(sequence: Sequence<Solution>) : this(sequence.toSet())
 
@@ -72,7 +75,7 @@ class MultiSet(private val map: Map<KeySolution, Int> = mapOf()): WithAssertingE
     fun add(solution: Solution): MultiSet = MultiSet(map + (solution.key() to (map[solution.key()] ?: 1)))
 
     override fun assertingEquals(other: Any?) {
-        if(this === other) {
+        if (this === other) {
             assertSame(this, other)
             return
         }
@@ -84,7 +87,7 @@ class MultiSet(private val map: Map<KeySolution, Int> = mapOf()): WithAssertingE
         map.forEach { (key, value) ->
             val foundValue: Int? = actual.map[key]
             assertNotNull(foundValue, "Expected solution not found in actual")
-            assertEquals(foundValue, value,"Expected solution count did not match actual solution size")
+            assertEquals(foundValue, value, "Expected solution count did not match actual solution size")
         }
 //        assertEquals(this, actual)
     }
@@ -97,7 +100,7 @@ class MultiSet(private val map: Map<KeySolution, Int> = mapOf()): WithAssertingE
 
         // todo check if solutions equality works
         // Check quantity and quality of Solutions
-        return (other.map.size == map.size) && (other.map.all { (key,value) -> map[key]?.equals(value)?:false })
+        return (other.map.size == map.size) && (other.map.all { (key, value) -> map[key]?.equals(value) ?: false })
     }
 
     override fun hashCode(): Int {

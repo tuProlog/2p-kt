@@ -3,10 +3,10 @@ package it.unibo.tuprolog.solve.concurrent
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
-import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.Test
@@ -46,12 +46,14 @@ class TestMultiSet {
             )
             MultiSet(solutions2).assertingEquals(MultiSet(solutions2))
 
-            val solutionHalt = sequenceOf(query.halt(
-                ExistenceError.forProcedure(
-                    DummyInstances.executionContext,
-                    Signature("nofoo", 1)
+            val solutionHalt = sequenceOf(
+                query.halt(
+                    ExistenceError.forProcedure(
+                        DummyInstances.executionContext,
+                        Signature("nofoo", 1)
+                    )
                 )
-            ))
+            )
             MultiSet(solutionHalt).assertingEquals(MultiSet(solutionHalt))
         }
     }
@@ -68,9 +70,9 @@ class TestMultiSet {
             val multiSet1 = MultiSet(solutions)
             val multiSet2 = MultiSet(solutions2)
             val multiSet3 = MultiSet(solutions3)
-            assertNotEquals(multiSet1,multiSet2)
-            assertNotEquals(multiSet1,multiSet3)
-            assertNotEquals(multiSet2,multiSet3)
+            assertNotEquals(multiSet1, multiSet2)
+            assertNotEquals(multiSet1, multiSet3)
+            assertNotEquals(multiSet2, multiSet3)
         }
     }
 }
