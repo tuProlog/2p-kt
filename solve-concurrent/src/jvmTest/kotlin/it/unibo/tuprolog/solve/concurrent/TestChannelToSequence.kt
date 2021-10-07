@@ -16,27 +16,22 @@ class TestChannelToSequence {
     @Test
     fun testEmptyChannel() = runBlockingTest {
         val channel: Channel<String> = Channel()
-        val job = launch { channel.close() }
         val emptySeq = channel.toSequence(this)
-        assertTrue(emptySeq.count() == 0)
-        launch {
-            job.join()
-            assertTrue(channel.isClosedForReceive)
-            assertTrue(channel.isClosedForSend)
-        }
+        assertTrue(channel.close())
+        assertTrue(emptySeq.none())
+        assertTrue(channel.isClosedForReceive)
+        assertTrue(channel.isClosedForSend)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun testEarlyClose() = runBlockingTest {
         val channel: Channel<String> = Channel()
-        launch {
-            channel.close()
-            val seq = channel.toSequence(this)
-            assertTrue(seq.count() == 0)
-            assertTrue(channel.isClosedForReceive)
-            assertTrue(channel.isClosedForSend)
-        }
+        channel.close()
+        val seq = channel.toSequence(this)
+        assertTrue(seq.count() == 0)
+        assertTrue(channel.isClosedForReceive)
+        assertTrue(channel.isClosedForSend)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

@@ -57,6 +57,8 @@ class KeySolution(val solution: Solution) {
         }
         return result
     }
+
+    override fun toString(): String = "KeySolution: $solution"
 }
 
 fun Solution.key(): KeySolution = KeySolution(this)
@@ -86,8 +88,17 @@ class MultiSet(private val map: Map<KeySolution, Int> = mapOf()) : WithAsserting
         assertEquals(map.size, actual.map.size, "Expected size did not match actual size")
         map.forEach { (key, value) ->
             val foundValue: Int? = actual.map[key]
-            assertNotNull(foundValue, "Expected solution not found in actual")
-            assertEquals(foundValue, value, "Expected solution count did not match actual solution size")
+            assertNotNull(
+                foundValue,
+                "Expected solution not found in actual. Expected: $key \n" +
+                    "Actual solutions: ${actual.map.keys.fold("") { init, actualKey -> "$init $actualKey" }} \n"
+            )
+            assertEquals(
+                foundValue,
+                value,
+                "Expected solution count ($value) did not match " +
+                    "actual solution count ($foundValue)"
+            )
         }
 //        assertEquals(this, actual)
     }
