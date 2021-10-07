@@ -18,9 +18,14 @@ import java.util.concurrent.LinkedBlockingQueue
 actual fun <T> ReceiveChannel<T>.toSequence(coroutineScope: CoroutineScope): Sequence<T> {
     val queue = LinkedBlockingQueue<Any?>()
     coroutineScope.launch {
-        while (!this@toSequence.isClosedForReceive)
-            queue.add(receive())
-        queue.add(PoisonPill)
+        val iterator = this@toSequence.iterator()
+        try {
+            while (iterator.hasNext()) {
+                queue.add(iterator.next())
+            }
+        } finally {
+            queue.add(PoisonPill)
+        }
     }
     return sequence {
         while (true) {
