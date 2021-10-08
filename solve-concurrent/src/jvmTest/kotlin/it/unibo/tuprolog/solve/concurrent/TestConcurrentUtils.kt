@@ -17,10 +17,10 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertSame
 
 fun multiRunConcurrentTest(
-    times:Int = 5,
+    times: Int = 5,
     coroutineContext: CoroutineContext = Dispatchers.Default,
-    block: suspend CoroutineScope.()->Unit
-) = (0 until times).forEach { _ -> runBlocking(coroutineContext){ block() } }
+    block: suspend CoroutineScope.() -> Unit
+) = (0 until times).forEach { _ -> runBlocking(coroutineContext) { block() } }
 
 interface WithAssertingEquals {
     fun assertingEquals(other: Any?)
@@ -125,8 +125,8 @@ class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf())
 
         other as MultiSet
 
-        return (other.solutionOccurrences.size == solutionOccurrences.size)
-            && (other.solutionOccurrences.all { (key, value) -> solutionOccurrences[key]?.equals(value) ?: false })
+        return (other.solutionOccurrences.size == solutionOccurrences.size) &&
+            (other.solutionOccurrences.all { (key, value) -> solutionOccurrences[key]?.equals(value) ?: false })
     }
 
     override fun hashCode(): Int {

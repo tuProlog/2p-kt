@@ -100,9 +100,9 @@ class TestConcurrentAndImpl :
     @Test
     override fun testTermIsFreeVariable() = multiRunConcurrentTest { super.testTermIsFreeVariable() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testWithSubstitution() = multiRunConcurrentTest { super.testWithSubstitution() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testWithSubstitution() = multiRunConcurrentTest { super.testWithSubstitution() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
