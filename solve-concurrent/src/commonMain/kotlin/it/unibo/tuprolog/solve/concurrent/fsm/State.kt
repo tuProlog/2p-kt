@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve.concurrent.fsm
 
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
+import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Throw
 import kotlin.js.JsName
 
 interface State {
@@ -29,4 +31,7 @@ interface State {
 
     @JsName("clone")
     fun clone(context: ConcurrentExecutionContext = this.context): State
+
+    fun ConcurrentExecutionContext.skipThrow(): ExecutionContext =
+        pathToRoot.first { it.procedure?.functor != Throw.functor }
 }
