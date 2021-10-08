@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.Test
 import kotlin.test.assertNotEquals
 
@@ -16,24 +15,22 @@ class TestMultiSet {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testEmptyMultiSet() = runBlockingTest {
+    fun testEmptyMultiSet() = multiRunConcurrentTest {
         val multiSet1 = MultiSet()
         val multiSet2 = MultiSet()
         multiSet1.assertingEquals(multiSet2)
         val empty = MultiSet(sequenceOf())
         multiSet1.assertingEquals(empty)
-//        assertEquals(multiSet1,multiSet2)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testMultiSet() = runBlockingTest {
+    fun testMultiSet() = multiRunConcurrentTest {
         prolog {
             val query = "X" `=` 1 and `var`("X")
             val solutions = sequenceOf(query.no())
             val multiSet1 = MultiSet(solutions)
             val multiSet2 = MultiSet(solutions)
-//            assertEquals(multiSet1,multiSet2)
             multiSet1.assertingEquals(multiSet2)
 
             val query2 = `var`("X") and ("X" `=` 1)
@@ -60,7 +57,7 @@ class TestMultiSet {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testDifferentMultiSet() = runBlockingTest {
+    fun testDifferentMultiSet() = multiRunConcurrentTest {
         prolog {
             val query = "X" `=` 1 and `var`("X")
             val query2 = `var`("X") and ("X" `=` 1)
