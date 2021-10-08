@@ -23,9 +23,11 @@ import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.launch
 import kotlin.jvm.Synchronized
 import kotlinx.coroutines.channels.Channel as KtChannel
@@ -77,21 +79,17 @@ internal open class ConcurrentSolverImpl(
     private fun CoroutineScope.handleAsyncStateTransition(state: State, solutionChannel: SendChannel<Solution>): Job =
         launch {
             // todo fix solution.no filtering
-            if (state is EndState && (!state.solution.isNo || state.context.isRoot)) {
+            if (state is EndState && !state.solution.isNo) {
                 solutionChannel.send(state.solution)
             } else {
                 state.next().forEach { handleAsyncStateTransition(it, solutionChannel) }
             }
         }
 
-
     private suspend fun startAsyncResolution(
-        goal: Struct,
-        options: SolveOptions,
+        initialState: State,
         solutionChannel: SendChannel<Solution>
     ) {
-        val initialState = initialState(goal, options)
-
         resolutionScope.handleAsyncStateTransition(initialState, solutionChannel).join()
         // resolutionScope.launch {
         //     handleAsyncStateTransition(initialState, solutionChannel)
@@ -120,9 +118,24 @@ internal open class ConcurrentSolverImpl(
 
     override fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution> {
         val channel = KtChannel<Solution>(KtChannel.UNLIMITED)
-        resolutionScope.launch { startAsyncResolution(goal, options, channel) }
-        return channel
+        val initialState = initialState(goal, options)
+        resolutionScope.launch { startAsyncResolution(initialState, channel) }
+        // val channel2 = resolutionScope.appendNo(channel, initialState.context.query)
+        return resolutionScope.appendNo(channel, initialState.context.query)
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun CoroutineScope.appendNo(solutions: ReceiveChannel<Solution>, query: Struct): ReceiveChannel<Solution> =
+        produce(resolutionScope.coroutineContext, KtChannel.UNLIMITED) {
+            var counter = 0
+            for (solution in solutions) {
+                counter += 1
+                send(solution)
+            }
+            if (counter == 0) {
+                send(Solution.no(query))
+            }
+        }
 
     override fun solveImpl(goal: Struct, options: SolveOptions): Sequence<Solution> {
         return solveConcurrently(goal, options).toSequence(resolutionScope)
