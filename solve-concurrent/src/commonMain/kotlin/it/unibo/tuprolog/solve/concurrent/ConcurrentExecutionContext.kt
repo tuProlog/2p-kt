@@ -39,7 +39,7 @@ data class ConcurrentExecutionContext(
     val query: Struct = Truth.TRUE,
     val goals: Cursor<out Term> = Cursor.empty(),
     val rule: Rule? = null,
-    val primitives: Cursor<out Solve.Response> = Cursor.empty(), // todo convert to single Solve.Response
+    val primitive: Solve.Response? = null,
     val startTime: TimeInstant = 0,
     val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
     val parent: ConcurrentExecutionContext? = null,
@@ -130,7 +130,7 @@ data class ConcurrentExecutionContext(
             "substitution=$substitution, " +
             "goals=$goals, " +
             "rules=$rule, " +
-            "primitives=$primitives, " +
+            "primitives=$primitive, " +
             "startTime=$startTime, " +
             "operators=${operators.joinToString(",", "{", "}") { "'${it.functor}':${it.specifier}" }}, " +
             "inputChannels=${inputChannels.keys}, " +
