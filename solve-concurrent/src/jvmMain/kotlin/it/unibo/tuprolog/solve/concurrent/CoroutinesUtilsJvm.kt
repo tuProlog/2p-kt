@@ -23,6 +23,9 @@ actual fun <T> ReceiveChannel<T>.toSequence(coroutineScope: CoroutineScope): Seq
             while (iterator.hasNext()) {
                 queue.add(iterator.next())
             }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            throw e
         } finally {
             queue.add(PoisonPill)
         }
