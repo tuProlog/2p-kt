@@ -6,7 +6,9 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 import kotlin.jvm.JvmName
@@ -67,3 +69,8 @@ fun ConcurrentExecutionContext.replaceWithChildAppendingRules(
     val tempExecutionContext = replaceWithChild(inferProcedureFromGoals)
     return tempExecutionContext.copy(rule = rule)
 }
+
+fun ConcurrentExecutionContext.toRequest(
+    goal: Struct,
+    signature: Signature
+) = Solve.Request(signature, goal.args, this, executionMaxDuration = maxDuration)
