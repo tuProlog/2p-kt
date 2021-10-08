@@ -36,8 +36,8 @@ data class StateGoalSelection(override val context: ConcurrentExecutionContext) 
             } else {
                 val goalsWithSubstitution = context.goals.map { it[context.substitution] }
                 // todo implement StatePrimitiveSelection
-                // StatePrimitiveSelection(context.copy(goals = goalsWithSubstitution, step = nextStep()))
-                StateRuleSelection(context.copy(goals = goalsWithSubstitution, step = nextStep()))
+                StatePrimitiveSelection(context.copy(goals = goalsWithSubstitution, step = nextStep()))
+                // StateRuleSelection(context.copy(goals = goalsWithSubstitution, step = nextStep()))
             }
         )
     }
