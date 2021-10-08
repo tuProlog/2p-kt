@@ -23,6 +23,7 @@ import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
@@ -71,17 +72,18 @@ internal open class ConcurrentSolverImpl(
     @set:Synchronized
     override lateinit var currentContext: ConcurrentExecutionContext
 
-    private val resolutionScope = CoroutineScope(Dispatchers.Default)
+    override val resolutionScope = CoroutineScope(Dispatchers.Default)
 
-    private fun CoroutineScope.handleAsyncStateTransition(state: State, solutionChannel: SendChannel<Solution>) {
+    private fun CoroutineScope.handleAsyncStateTransition(state: State, solutionChannel: SendChannel<Solution>): Job =
         launch {
+            // todo fix solution.no filtering
             if (state is EndState && (!state.solution.isNo || state.context.isRoot)) {
                 solutionChannel.send(state.solution)
             } else {
                 state.next().forEach { handleAsyncStateTransition(it, solutionChannel) }
             }
         }
-    }
+
 
     private suspend fun startAsyncResolution(
         goal: Struct,
@@ -90,12 +92,10 @@ internal open class ConcurrentSolverImpl(
     ) {
         val initialState = initialState(goal, options)
 
-        resolutionScope.launch {
-            handleAsyncStateTransition(initialState, solutionChannel)
-        }.join()
-//        resolutionScope.launch {
-//            solutionChannel.send(Solution.no(goal))
-//        }.join()
+        resolutionScope.handleAsyncStateTransition(initialState, solutionChannel).join()
+        // resolutionScope.launch {
+        //     handleAsyncStateTransition(initialState, solutionChannel)
+        // }.join()
         solutionChannel.close()
     }
 

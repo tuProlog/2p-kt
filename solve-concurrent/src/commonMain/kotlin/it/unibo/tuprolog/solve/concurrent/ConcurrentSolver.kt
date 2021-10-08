@@ -10,10 +10,13 @@ import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlin.js.JsName
 
 interface ConcurrentSolver : Solver {
+
+    val resolutionScope: CoroutineScope
 
     @JsName("solveConcurrently")
     fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution>
