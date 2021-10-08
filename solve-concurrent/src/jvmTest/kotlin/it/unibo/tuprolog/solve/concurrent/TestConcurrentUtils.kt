@@ -6,11 +6,21 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolverTest
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertSame
+
+fun multiRunConcurrentTest(
+    times:Int = 5,
+    coroutineContext: CoroutineContext = Dispatchers.Default,
+    block: suspend CoroutineScope.()->Unit
+) = (0 until times).forEach { _ -> runBlocking(coroutineContext){ block() } }
 
 interface WithAssertingEquals {
     fun assertingEquals(other: Any?)
@@ -36,6 +46,13 @@ class KeySolution(val solution: Solution) {
         } else true
     }
 
+    private val ResolutionException.hash: Int
+        get() = if (this is LogicError) {
+            31 * errorStruct.hashCode() + message.hashCode()
+        } else {
+            hashCode()
+        }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
@@ -53,7 +70,7 @@ class KeySolution(val solution: Solution) {
         var result = solution.query.hashCode()
         result = 31 * result + solution.substitution.hashCode()
         if (solution is Solution.Halt) {
-            result = 31 * result + solution.exception.hashCode()
+            result = 31 * result + solution.exception.hash
         }
         return result
     }
@@ -63,18 +80,18 @@ class KeySolution(val solution: Solution) {
 
 fun Solution.key(): KeySolution = KeySolution(this)
 
-class MultiSet(private val map: Map<KeySolution, Int> = mapOf()) : WithAssertingEquals {
+class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf()) : WithAssertingEquals {
 
-    constructor(set: Set<Solution>) : this(
-        set.map { it.key() }
-            .fold(mapOf()) { map, solution -> map + (solution to (map[solution] ?: 1)) }
+    constructor(solutions: Iterable<Solution>) : this(solutions.asSequence())
+
+    constructor(solutions: Sequence<Solution>) : this(
+        solutions.map { it.key() }.groupBy { it }.mapValues { it.value.size }
     )
 
-    constructor(sequence: Sequence<Solution>) : this(sequence.toSet())
+    constructor(vararg solutions: Solution) : this(solutions.asIterable())
 
-    constructor(solution: Solution) : this(mapOf(solution.key() to 1))
-
-    fun add(solution: Solution): MultiSet = MultiSet(map + (solution.key() to (map[solution.key()] ?: 1)))
+    fun add(solution: Solution): MultiSet =
+        MultiSet(solutionOccurrences + (solution.key() to (solutionOccurrences[solution.key()] ?: 1)))
 
     override fun assertingEquals(other: Any?) {
         if (this === other) {
@@ -85,13 +102,13 @@ class MultiSet(private val map: Map<KeySolution, Int> = mapOf()) : WithAsserting
 
         val actual = other as MultiSet
 
-        assertEquals(map.size, actual.map.size, "Expected size did not match actual size")
-        map.forEach { (key, value) ->
-            val foundValue: Int? = actual.map[key]
+        assertEquals(solutionOccurrences.size, actual.solutionOccurrences.size, "Expected size did not match actual size")
+        solutionOccurrences.forEach { (key, value) ->
+            val foundValue: Int? = actual.solutionOccurrences[key]
             assertNotNull(
                 foundValue,
                 "Expected solution not found in actual. Expected: $key \n" +
-                    "Actual solutions: ${actual.map.keys.fold("") { init, actualKey -> "$init $actualKey" }} \n"
+                    "Actual solutions: ${actual.solutionOccurrences.keys.fold("") { init, actualKey -> "$init $actualKey" }} \n"
             )
             assertEquals(
                 foundValue,
@@ -100,7 +117,6 @@ class MultiSet(private val map: Map<KeySolution, Int> = mapOf()) : WithAsserting
                     "actual solution count ($foundValue)"
             )
         }
-//        assertEquals(this, actual)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -109,12 +125,11 @@ class MultiSet(private val map: Map<KeySolution, Int> = mapOf()) : WithAsserting
 
         other as MultiSet
 
-        // todo check if solutions equality works
-        // Check quantity and quality of Solutions
-        return (other.map.size == map.size) && (other.map.all { (key, value) -> map[key]?.equals(value) ?: false })
+        return (other.solutionOccurrences.size == solutionOccurrences.size)
+            && (other.solutionOccurrences.all { (key, value) -> solutionOccurrences[key]?.equals(value) ?: false })
     }
 
     override fun hashCode(): Int {
-        return 31 * map.hashCode()
+        return 31 * solutionOccurrences.hashCode()
     }
 }
