@@ -3,18 +3,15 @@ package it.unibo.tuprolog.solve.concurrent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TestChannelToSequence {
 
-//    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testEmptyChannel() = runBlockingTest {
+    fun testEmptyChannel() = multiRunConcurrentTest {
         val channel: Channel<String> = Channel()
         val emptySeq = channel.toSequence(this)
         assertTrue(channel.close())
@@ -25,7 +22,7 @@ class TestChannelToSequence {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testEarlyClose() = runBlockingTest {
+    fun testEarlyClose() = multiRunConcurrentTest {
         val channel: Channel<String> = Channel()
         channel.close()
         val seq = channel.toSequence(this)
@@ -36,7 +33,23 @@ class TestChannelToSequence {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testChannelToSequence() = runBlockingTest {
+    fun testConcurrentSend() = multiRunConcurrentTest {
+        val channel: Channel<String> = Channel()
+        launch {
+            channel.send("a")
+            channel.send("b")
+            channel.send("c")
+            channel.close()
+        }
+        val set = channel.toSequence(this).toSet()
+        assertEquals(setOf("a", "b", "c"), set)
+        assertTrue(channel.isClosedForReceive)
+        assertTrue(channel.isClosedForSend)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun testChannelToSequence() = multiRunConcurrentTest {
         val times = 100
         val channel: Channel<String> = Channel(Channel.UNLIMITED)
         launch {

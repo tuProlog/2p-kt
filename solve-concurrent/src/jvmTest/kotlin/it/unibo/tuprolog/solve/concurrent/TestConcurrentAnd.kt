@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.Test
 
 interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
@@ -99,21 +98,21 @@ class TestConcurrentAndImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    override fun testTermIsFreeVariable() = runBlockingTest { super.testTermIsFreeVariable() }
+    override fun testTermIsFreeVariable() = multiRunConcurrentTest { super.testTermIsFreeVariable() }
 
     // @OptIn(ExperimentalCoroutinesApi::class)
     // @Test
-    // override fun testWithSubstitution() = runBlockingTest { super.testWithSubstitution() }
+    // override fun testWithSubstitution() = multiRunConcurrentTest { super.testWithSubstitution() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    override fun testFailIsCallable() = runBlockingTest { super.testFailIsCallable() }
+    override fun testFailIsCallable() = multiRunConcurrentTest { super.testFailIsCallable() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    override fun testNoFooIsCallable() = runBlockingTest { super.testNoFooIsCallable() }
+    override fun testNoFooIsCallable() = multiRunConcurrentTest { super.testNoFooIsCallable() }
 
     // @OptIn(ExperimentalCoroutinesApi::class)
     // @Test
-    // override fun testTrueVarCallable() = runBlockingTest { super.testTrueVarCallable() }
+    // override fun testTrueVarCallable() = multiRunConcurrentTest { super.testTrueVarCallable() }
 }
