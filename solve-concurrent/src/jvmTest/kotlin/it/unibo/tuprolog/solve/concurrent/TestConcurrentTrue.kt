@@ -3,8 +3,6 @@ package it.unibo.tuprolog.solve.concurrent
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.yes
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlin.test.Test
 
 interface TestConcurrentTrue<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
