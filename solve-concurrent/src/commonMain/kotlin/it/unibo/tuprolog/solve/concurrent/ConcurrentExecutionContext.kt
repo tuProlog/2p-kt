@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.MutableSolver
@@ -46,6 +47,9 @@ data class ConcurrentExecutionContext(
     val depth: Int = 0,
     val step: Long = 0
 ) : ExecutionContext {
+    init {
+        require((depth == 0 && parent == null) || (depth > 0 && parent != null))
+    }
 
     val isRoot: Boolean
         get() = depth == 0
@@ -65,6 +69,14 @@ data class ConcurrentExecutionContext(
     val currentGoal: Term?
         get() = if (goals.isOver) null else goals.current
 
+    val interestingVariables: Set<Var> by lazy {
+        val baseInterestingVars: Set<Var> = parent?.interestingVariables ?: query.variables.toSet()
+        val currInterestingVars: Set<Var> =
+            if (goals.isOver) emptySet() else goals.current?.variables?.toSet() ?: emptySet()
+
+        baseInterestingVars + currInterestingVars
+    }
+
     override val logicStackTrace: KtList<Struct> by lazy {
         pathToRoot.filter { it.isActivationRecord }
             .map { it.procedure ?: Struct.of("?-", query) }
@@ -78,7 +90,7 @@ data class ConcurrentExecutionContext(
         dynamicKb: Theory,
         inputChannels: InputStore,
         outputChannels: OutputStore
-    ): Solver = TODO() // ConcurrentSolver is not a subtype of Solver
+    ): Solver = ConcurrentSolverImpl(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb = true) // ConcurrentSolver is not a subtype of Solver
 
     override fun createMutableSolver(
         libraries: Libraries,
