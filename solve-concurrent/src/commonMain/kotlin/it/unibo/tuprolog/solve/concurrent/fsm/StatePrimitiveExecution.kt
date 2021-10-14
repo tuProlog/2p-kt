@@ -9,11 +9,10 @@ import it.unibo.tuprolog.utils.Cursor
 
 data class StatePrimitiveExecution(override val context: ConcurrentExecutionContext) : State {
 
-    private val failureState: EndState
-        get() = StateEnd(
-            solution = Solution.no(context.query),
-            context = context.copy(step = nextStep())
-        )
+    private fun failureState(context: ConcurrentExecutionContext = this.context): EndState = StateEnd(
+        solution = Solution.no(context.query),
+        context = context.copy(step = nextStep())
+    )
 
     private fun ConcurrentExecutionContext.copyFromCurrentPrimitive(
         goals: Cursor<out Term>? = null,
@@ -43,15 +42,13 @@ data class StatePrimitiveExecution(override val context: ConcurrentExecutionCont
                     )
                 },
                 no = {
-                    // todo check differences
-                    // StateBacktracking(context.parent!!.copyFromCurrentPrimitive())
-                    failureState
+                    failureState(context.parent!!.copyFromCurrentPrimitive())
                 },
                 halt = {
                     StateException(it.exception.updateLastContext(context.skipThrow()), context.copyFromCurrentPrimitive())
                 },
                 otherwise = { throw IllegalStateException("This should never happen") }
-            ) ?: failureState // todo check differences StateBacktracking(context.copyFromCurrentPrimitive())
+            ) ?: failureState(context.parent!!.copyFromCurrentPrimitive())
         } catch (exception: ResolutionException) {
             StateException(exception.updateLastContext(context.skipThrow()), context.copy(step = nextStep()))
         }
