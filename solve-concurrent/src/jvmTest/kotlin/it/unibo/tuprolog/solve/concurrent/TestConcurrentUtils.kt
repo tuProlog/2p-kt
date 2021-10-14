@@ -28,6 +28,7 @@ interface WithAssertingEquals {
 
 interface FromSequence<T : WithAssertingEquals> : SolverTest {
     fun fromSequence(sequence: Sequence<Solution>): T
+    fun fromSequence(solutions: Iterable<Solution>): T = fromSequence(solutions.asSequence())
     fun fromSequence(solution: Solution): T = fromSequence(sequenceOf(solution))
 }
 
