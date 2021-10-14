@@ -7,7 +7,7 @@ object SpecificRules {
         Catch,
         Call,
         Comma,
-        Cut,
+        // Cut, todo uncomment when handled
         NegationAsFailure.Fail,
         NegationAsFailure.Success
     )
