@@ -10,8 +10,6 @@ import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlin.test.Test
 
 interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
