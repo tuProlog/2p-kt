@@ -58,15 +58,6 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
             val expected = fromSequence(query.yes("X" to "a", "Y" to "b"))
 
             expected.assertingEquals(solutions)
-
-            // assertSolutionEquals(
-            //     with(query) {
-            //         ktListOf(
-            //             yes("X" to "a", "Y" to "b")
-            //         )
-            //     },
-            //     solutions
-            // )
         }
     }
 
@@ -127,13 +118,6 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
             val expected = fromSequence(query.yes("X" to 1))
 
             expected.assertingEquals(solutions)
-
-            // assertSolutionEquals(
-            //     ktListOf(
-            //         query.yes("X" to 1)
-            //     ),
-            //     solutions
-            // )
         }
     }
 
@@ -155,20 +139,6 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
             )
 
             expected.assertingEquals(solutions)
-
-            // assertSolutionEquals(
-            //     ktListOf(
-            //         query.halt(
-            //             InstantiationError.forArgument(
-            //                 DummyInstances.executionContext,
-            //                 Signature("arg", 3),
-            //                 varOf("X"),
-            //                 index = 1
-            //             )
-            //         )
-            //     ),
-            //     solutions
-            // )
         }
     }
 
@@ -191,21 +161,6 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
             )
 
             expected.assertingEquals(solutions)
-
-            // assertSolutionEquals(
-            //     ktListOf(
-            //         query.halt(
-            //             TypeError.forArgument(
-            //                 DummyInstances.executionContext,
-            //                 Signature("arg", 3),
-            //                 TypeError.Expected.COMPOUND,
-            //                 atomOf("atom"),
-            //                 index = 1
-            //             )
-            //         )
-            //     ),
-            //     solutions
-            // )
         }
     }
 
@@ -228,21 +183,6 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
             )
 
             expected.assertingEquals(solutions)
-
-            // assertSolutionEquals(
-            //     ktListOf(
-            //         query.halt(
-            //             TypeError.forArgument(
-            //                 DummyInstances.executionContext,
-            //                 Signature("arg", 3),
-            //                 TypeError.Expected.COMPOUND,
-            //                 numOf(3),
-            //                 index = 1
-            //             )
-            //         )
-            //     ),
-            //     solutions
-            // )
         }
     }
 
@@ -265,21 +205,6 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
             )
 
             expected.assertingEquals(solutions)
-
-            // assertSolutionEquals(
-            //     ktListOf(
-            //         query.halt(
-            //             DomainError.forArgument(
-            //                 DummyInstances.executionContext,
-            //                 Signature("arg", 3),
-            //                 DomainError.Expected.NOT_LESS_THAN_ZERO,
-            //                 numOf(-3),
-            //                 index = 0
-            //             )
-            //         )
-            //     ),
-            //     solutions
-            // )
         }
     }
 
@@ -302,21 +227,6 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
             )
 
             expected.assertingEquals(solutions)
-
-            // assertSolutionEquals(
-            //     ktListOf(
-            //         query.halt(
-            //             TypeError.forArgument(
-            //                 DummyInstances.executionContext,
-            //                 Signature("arg", 3),
-            //                 TypeError.Expected.INTEGER,
-            //                 atomOf("a"),
-            //                 index = 0
-            //             )
-            //         )
-            //     ),
-            //     solutions
-            // )
         }
     }
 }
