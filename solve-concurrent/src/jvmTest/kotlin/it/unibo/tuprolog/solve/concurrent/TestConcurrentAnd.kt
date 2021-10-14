@@ -112,7 +112,7 @@ class TestConcurrentAndImpl :
     @Test
     override fun testNoFooIsCallable() = multiRunConcurrentTest { super.testNoFooIsCallable() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testTrueVarCallable() = multiRunConcurrentTest { super.testTrueVarCallable() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testTrueVarCallable() = multiRunConcurrentTest { super.testTrueVarCallable() }
 }
