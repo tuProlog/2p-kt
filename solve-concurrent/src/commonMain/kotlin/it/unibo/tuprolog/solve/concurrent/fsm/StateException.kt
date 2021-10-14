@@ -1,16 +1,31 @@
 package it.unibo.tuprolog.solve.concurrent.fsm
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
+import it.unibo.tuprolog.solve.concurrent.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.MessageError
 import it.unibo.tuprolog.solve.exception.error.SystemError
+import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+import it.unibo.tuprolog.utils.plus
 
 data class StateException(
     override val exception: ResolutionException,
     override val context: ConcurrentExecutionContext
 ) : ExceptionalState {
+
+    private fun Struct.isCatch(): Boolean =
+        arity == 3 && functor == Catch.functor
+
+    private fun LogicError.getExceptionContent(): Term {
+        return when (this) {
+            is MessageError -> content
+            else -> errorStruct
+        }
+    }
 
     private fun ResolutionException.toPublicException(): ResolutionException =
         when (this) {
@@ -21,23 +36,25 @@ data class StateException(
     private val finalState: EndState
         get() = StateHalt(
             exception.toPublicException(),
-            context.copy(step = context.step + 1)
+            context.copy(step = nextStep())
         )
 
     private val handleExceptionInParentContext: StateException
         get() = StateException(
             exception,
-            context.parent!!.copy(step = context.step + 1)
+            context.parent!!.copy(step = nextStep())
         )
 
     private fun handleStruct(catchGoal: Struct, error: LogicError): State =
         when {
-            // todo catchGoal.isCatch() -> {similar to classic}
+            catchGoal.isCatch() -> {
+                val catcher = catchGoal[1] mguWith error.getExceptionContent()
+                handleCatch(catchGoal, catcher)
+            }
             context.isRoot -> finalState
             else -> handleExceptionInParentContext
         }
 
-    /* todo
     private fun handleCatch(catchGoal: Struct, catcher: Substitution) =
         when {
             catcher.isSuccess -> {
@@ -49,8 +66,8 @@ data class StateException(
                 StateGoalSelection(
                     context.copy(
                         goals = newGoals,
-                        rules = Cursor.empty(),
-                        primitives = Cursor.empty(),
+                        rule = null,
+                        primitive = null,
                         substitution = newSubstitution.castToUnifier(),
                         step = nextStep()
                     )
@@ -59,7 +76,6 @@ data class StateException(
             context.isRoot -> finalState
             else -> handleExceptionInParentContext
         }
-    */
 
     override fun next(): Iterable<State> {
         return listOf(
