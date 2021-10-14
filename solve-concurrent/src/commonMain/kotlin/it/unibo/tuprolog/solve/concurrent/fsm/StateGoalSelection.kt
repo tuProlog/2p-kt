@@ -19,7 +19,7 @@ data class StateGoalSelection(override val context: ConcurrentExecutionContext) 
                                 flags = context.flags,
                                 dynamicKb = context.dynamicKb,
                                 staticKb = context.staticKb,
-                                substitution = context.substitution, // todo check if useful .filter(it.interestingVariables),
+                                substitution = context.substitution.filter(it.interestingVariables),
                                 goals = it.goals.next, // go on with parent's goals
                                 procedure = it.procedure,
                                 step = nextStep(),
@@ -35,12 +35,10 @@ data class StateGoalSelection(override val context: ConcurrentExecutionContext) 
                 }
             } else {
                 val goalsWithSubstitution = context.goals.map { it[context.substitution] }
-                // todo implement StatePrimitiveSelection
                 StatePrimitiveSelection(context.copy(goals = goalsWithSubstitution, step = nextStep()))
-                // StateRuleSelection(context.copy(goals = goalsWithSubstitution, step = nextStep()))
             }
         )
     }
 
-    override fun clone(context: ConcurrentExecutionContext): State = copy(context = context)
+    override fun clone(context: ConcurrentExecutionContext): StateGoalSelection = copy(context = context)
 }
