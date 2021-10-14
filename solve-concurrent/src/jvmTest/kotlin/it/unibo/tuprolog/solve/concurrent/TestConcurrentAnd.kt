@@ -23,10 +23,6 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
             val expected = fromSequence(query.no())
 
             expected.assertingEquals(solutions)
-//            assertEquals(
-//                fromSequence(query.no()),
-//                fromSequence(solutions)
-//            )
         }
     }
 
@@ -38,11 +34,6 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
             val expected = fromSequence(query.yes("X" to 1))
 
             expected.assertingEquals(solutions)
-//            assertEquals(
-//                expected,
-//                solutions,
-//                "Expected: $expected, Actual: $solutions"
-//            )
         }
     }
 
@@ -89,30 +80,4 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
             expected.assertingEquals(solutions)
         }
     }
-}
-
-class TestConcurrentAndImpl :
-    TestConcurrentAnd<MultiSet>,
-    SolverFactory by ConcurrentSolverFactory,
-    FromSequence<MultiSet> by ConcurrentFromSequence {
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    override fun testTermIsFreeVariable() = multiRunConcurrentTest { super.testTermIsFreeVariable() }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    override fun testWithSubstitution() = multiRunConcurrentTest { super.testWithSubstitution() }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    override fun testFailIsCallable() = multiRunConcurrentTest { super.testFailIsCallable() }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    override fun testNoFooIsCallable() = multiRunConcurrentTest { super.testNoFooIsCallable() }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    override fun testTrueVarCallable() = multiRunConcurrentTest { super.testTrueVarCallable() }
 }

@@ -19,13 +19,3 @@ interface TestConcurrentTrue<T : WithAssertingEquals> : FromSequence<T>, SolverF
         }
     }
 }
-
-class TestConcurrentTrueImpl :
-    TestConcurrentTrue<MultiSet>,
-    SolverFactory by ConcurrentSolverFactory,
-    FromSequence<MultiSet> by ConcurrentFromSequence {
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    override fun testTrue() = multiRunConcurrentTest { super.testTrue() }
-}
