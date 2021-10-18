@@ -79,7 +79,7 @@ internal open class ConcurrentSolverImpl(
     private fun CoroutineScope.handleAsyncStateTransition(state: State, solutionChannel: SendChannel<Solution>): Job =
         launch {
             // todo fix solution.no filtering
-            if (state is EndState && !state.solution.isNo) {
+            if (state is EndState/* && !state.solution.isNo*/) {
                 solutionChannel.send(state.solution)
             } else {
                 state.next().forEach { handleAsyncStateTransition(it, solutionChannel) }
