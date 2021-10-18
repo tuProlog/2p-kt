@@ -1,6 +1,7 @@
 import io.github.gciatto.kt.mpp.ProjectExtensions.jsProjects
 import io.github.gciatto.kt.mpp.ProjectExtensions.jvmProjects
 import io.github.gciatto.kt.mpp.ProjectExtensions.ktProjects
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import java.time.Duration
 
 plugins {
@@ -89,5 +90,15 @@ kotlin {
             }
         }
         clientTimeout.set(Duration.ofMinutes(10))
+    }
+}
+
+(ktProjects + jvmProjects).forEach {
+    it.tasks.withType<KotlinJvmCompile> {
+        val compatibility = kotlinOptions.jvmTarget
+        it.tasks.withType<JavaCompile> {
+            sourceCompatibility = compatibility
+            targetCompatibility = compatibility
+        }
     }
 }
