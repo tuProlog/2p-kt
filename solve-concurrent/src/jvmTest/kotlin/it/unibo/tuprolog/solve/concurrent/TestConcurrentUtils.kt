@@ -2,6 +2,10 @@
 
 package it.unibo.tuprolog.solve.concurrent
 
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolverTest
 import it.unibo.tuprolog.solve.exception.LogicError
@@ -54,13 +58,87 @@ class KeySolution(val solution: Solution) {
             hashCode()
         }
 
+    private val Substitution.Unifier.hash: Int
+        get() = entries.fold(0) { base, entry ->
+            base + entry.key.hashCode() + entry.value.hash
+        }
+
+    private val Term.hash: Int
+        get() {
+            when {
+                isCons -> castToCons().unfoldedList.hash
+                isTuple -> castToTuple().unfoldedList.hash
+                else -> this.hashCode()
+            }
+            return 0
+        }
+
+    private val List<Term>.hash: Int
+        get() {
+            var hashCode = 0
+            forEach { hashCode += it.hash }
+            return hashCode
+        }
+
+    private fun List<Term>.similar(other: List<Term>): Boolean {
+        if (this === other) return true
+        if (size != other.size) return false
+
+        return all {
+            other.any { otherIt ->
+                otherIt.similar(it)
+            }
+        }
+    }
+
+    private fun Tuple.similar(other: Tuple): Boolean {
+        if (this === other) return true
+        return unfoldedList.similar(other.unfoldedList)
+    }
+
+    private fun Cons.similar(other: Cons): Boolean {
+        if (this === other) return true
+        return unfoldedList.similar(other.unfoldedList)
+    }
+
+    private fun Term.similar(other: Term): Boolean = when {
+        isTuple -> {
+            other.asTuple()?.similar(castToTuple()) ?: false
+        }
+        isCons -> {
+            other.asCons()?.similar(castToCons()) ?: false
+        }
+        isVar -> {
+            other.asVar()?.equals(castToVar(), false) ?: false
+        }
+        else -> this == other
+    }
+
+    private fun Substitution.Unifier.similar(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as Substitution.Unifier
+        if (isSuccess != other.isSuccess) return false
+        return all { itMap ->
+            val value = other.toList().firstOrNull {
+                it.first.equals(itMap.key, false)
+            }?.second ?: return false
+            itMap.value.similar(value)
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
         other as KeySolution
         val queryEqual = solution.query == other.solution.query
-        val substitutionEqual = solution.substitution == other.solution.substitution
+        val substitutionEqual = solution.substitution.whenIs(
+            { it.similar(other.solution.substitution) },
+            { it == other.solution.substitution },
+            { it == other.solution.substitution }
+        )
         val exceptionEqual = if (solution is Solution.Halt && other.solution is Solution.Halt) {
             solution.exception.similar(other.solution.exception)
         } else true
@@ -69,7 +147,11 @@ class KeySolution(val solution: Solution) {
 
     override fun hashCode(): Int {
         var result = solution.query.hashCode()
-        result = 31 * result + solution.substitution.hashCode()
+        result = 31 * result + solution.substitution.whenIs(
+            { it.hash },
+            { it.hashCode() },
+            { it.hashCode() }
+        )
         if (solution is Solution.Halt) {
             result = 31 * result + solution.exception.hash
         }
