@@ -3,6 +3,7 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
@@ -21,7 +22,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertSame
 
 fun multiRunConcurrentTest(
-    times: Int = 5,
+    times: Int = 3,
     coroutineContext: CoroutineContext = Dispatchers.Default,
     block: suspend CoroutineScope.() -> Unit
 ) = (0 until times).forEach { _ -> runBlocking(coroutineContext) { block() } }
@@ -60,7 +61,8 @@ class KeySolution(val solution: Solution) {
 
     private val Substitution.Unifier.hash: Int
         get() = entries.fold(0) { base, entry ->
-            base + entry.key.hashCode() + entry.value.hash
+            // base + entry.key.hashCode() + entry.value.hash
+            base + entry.value.hash
         }
 
     private val Term.hash: Int
@@ -68,6 +70,8 @@ class KeySolution(val solution: Solution) {
             when {
                 isCons -> castToCons().unfoldedList.hash
                 isTuple -> castToTuple().unfoldedList.hash
+                // isVar -> castToVar().name.hashCode() todo check if needed and correct
+                isStruct -> castToStruct().args.hash
                 else -> this.hashCode()
             }
             return 0
@@ -101,6 +105,11 @@ class KeySolution(val solution: Solution) {
         return unfoldedList.similar(other.unfoldedList)
     }
 
+    private fun Struct.similar(other: Struct): Boolean {
+        if (this === other) return true
+        return args.similar(other.args)
+    }
+
     private fun Term.similar(other: Term): Boolean = when {
         isTuple -> {
             other.asTuple()?.similar(castToTuple()) ?: false
@@ -111,6 +120,9 @@ class KeySolution(val solution: Solution) {
         isVar -> {
             other.asVar()?.equals(castToVar(), false) ?: false
         }
+        isStruct -> {
+            other.asStruct()?.similar(castToStruct()) ?: false
+        }
         else -> this == other
     }
 
@@ -120,11 +132,18 @@ class KeySolution(val solution: Solution) {
 
         other as Substitution.Unifier
         if (isSuccess != other.isSuccess) return false
+        if (this.size != other.size) return false
         return all { itMap ->
-            val value = other.toList().firstOrNull {
-                it.first.equals(itMap.key, false)
-            }?.second ?: return false
-            itMap.value.similar(value)
+            other.values.any { itMap.value.similar(it) }
+            /*
+            * Substitution.Unifier {X = 1, Y = 2} in concurrent solver
+            * should be equal to Substitution.Unifier {X = 2, Y = 1}
+            * */
+            // todo clean
+            // val value = other.toList().firstOrNull {
+            //     it.first.equals(itMap.key, false)
+            // }?.second ?: return false
+            // itMap.value.similar(value)
         }
     }
 
@@ -185,21 +204,32 @@ class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf())
 
         val actual = other as MultiSet
 
-        assertEquals(solutionOccurrences.size, actual.solutionOccurrences.size, "Expected size did not match actual size")
+        val failMsg = "Expected solutions: ${printSolutions()} \nActual solutions: ${actual.printSolutions()}"
+
+        assertEquals(
+            solutionOccurrences.entries.filter { !it.key.solution.isNo }.size,
+            actual.solutionOccurrences.entries.filter { !it.key.solution.isNo }.size,
+            "Expected MultiSet size did not match actual MultiSet size.\n$failMsg"
+        )
+        // assertEquals(solutionOccurrences.size,
+        //     actual.solutionOccurrences.size,
+        //     "Expected MultiSet size did not match actual MultiSet size.\n$failMsg")
         solutionOccurrences.forEach { (key, value) ->
-            val foundValue: Int? = actual.solutionOccurrences[key]
+            val foundValue: Int? = actual.solutionOccurrences[key]?.let { if (key.solution.isNo) 1 else it }
             assertNotNull(
                 foundValue,
-                "Expected solution not found in actual. Expected: $key \n" +
-                    "Actual solutions: ${actual.solutionOccurrences.keys.fold("") { init, actualKey -> "$init $actualKey" }} \n"
+                "Expected solution not found in actual. Missing expected solution: $key\n$failMsg"
             )
             assertEquals(
-                foundValue,
                 value,
-                "Expected solution count ($value) did not match " +
-                    "actual solution count ($foundValue)"
+                foundValue,
+                "Expected solution count ($value) did not match actual solution count ($foundValue).\n$failMsg"
             )
         }
+    }
+
+    private fun printSolutions(): String = solutionOccurrences.entries.fold("") { base, kv ->
+        "${base}Solution:${kv.key} Times:${kv.value}\n"
     }
 
     override fun equals(other: Any?): Boolean {
