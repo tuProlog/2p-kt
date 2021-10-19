@@ -38,8 +38,7 @@ class TestMultiSet {
                 query2.yes("X" to 1),
                 query2.yes("X" to 1),
                 query.no(),
-                query2.yes("X" to 1),
-                query.no()
+                query2.yes("X" to 1)
             )
             MultiSet(solutions2).assertingEquals(MultiSet(solutions2))
 
