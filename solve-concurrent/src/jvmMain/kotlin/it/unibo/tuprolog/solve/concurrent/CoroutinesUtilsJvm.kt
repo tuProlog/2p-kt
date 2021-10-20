@@ -36,6 +36,7 @@ actual fun <T> ReceiveChannel<T>.toSequence(coroutineScope: CoroutineScope): Seq
             if (current == PoisonPill) {
                 break
             } else {
+                @Suppress("UNCHECKED_CAST")
                 yield(current as T)
             }
         }
@@ -55,6 +56,7 @@ actual fun <T> Flow<T>.toSequence(coroutineScope: CoroutineScope): Sequence<T> {
             if (current == PoisonPill) {
                 break
             } else {
+                @Suppress("UNCHECKED_CAST")
                 yield(current as T)
             }
         }
