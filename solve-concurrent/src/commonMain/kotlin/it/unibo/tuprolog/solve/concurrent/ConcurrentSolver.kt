@@ -22,17 +22,14 @@ interface ConcurrentSolver : Solver {
     @JsName("solveConcurrently")
     fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution>
 
-    @JsName("solveOnceWithTimeout")
     override fun solveOnce(goal: Struct, timeout: TimeDuration): Solution =
         solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout))
             .firstOrNull { !it.isNo } ?: Solution.no(goal)
 
-    @JsName("solveOnce")
     override fun solveOnce(goal: Struct): Solution =
         solve(goal, SolveOptions.someLazily(1))
             .firstOrNull { !it.isNo } ?: Solution.no(goal)
 
-    @JsName("solveOnceWithOptions")
     override fun solveOnce(goal: Struct, options: SolveOptions): Solution =
         solve(goal, options.setLimit(1))
             .firstOrNull { !it.isNo } ?: Solution.no(goal)
