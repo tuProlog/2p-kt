@@ -22,7 +22,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertSame
 
 fun multiRunConcurrentTest(
-    times: Int = 1,
+    times: Int = 5,
     coroutineContext: CoroutineContext = Dispatchers.Default,
     block: suspend CoroutineScope.() -> Unit
 ) = (0 until times).forEach { _ -> runBlocking(coroutineContext) { block() } }
