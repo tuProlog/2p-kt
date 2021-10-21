@@ -17,14 +17,14 @@ class TestConcurrentFlagsImpl :
     @Test
     override fun defaultUnknownIsWarning() = multiRunConcurrentTest { super.defaultUnknownIsWarning() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun settingUnknownToAdmissibleValueSucceeds() =
-    //     multiRunConcurrentTest { super.settingUnknownToAdmissibleValueSucceeds() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun settingUnknownToAdmissibleValueSucceeds() =
+        multiRunConcurrentTest { super.settingUnknownToAdmissibleValueSucceeds() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun flagsNamesMustBeAtoms() = multiRunConcurrentTest { super.flagsNamesMustBeAtoms() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun flagsNamesMustBeAtoms() = multiRunConcurrentTest { super.flagsNamesMustBeAtoms() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
@@ -39,18 +39,18 @@ class TestConcurrentFlagsImpl :
     override fun gettingFlagsByVariableEnumeratesFlags() =
         multiRunConcurrentTest { super.gettingFlagsByVariableEnumeratesFlags() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun settingFlagsByVariableGeneratesInstantiationError() =
-    //     multiRunConcurrentTest { super.settingFlagsByVariableGeneratesInstantiationError() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun settingFlagsByVariableGeneratesInstantiationError() =
+        multiRunConcurrentTest { super.settingFlagsByVariableGeneratesInstantiationError() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun settingWrongValueToLastCallOptimizationProvokesDomainError() =
-    //     multiRunConcurrentTest { super.settingWrongValueToLastCallOptimizationProvokesDomainError() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun settingWrongValueToLastCallOptimizationProvokesDomainError() =
+        multiRunConcurrentTest { super.settingWrongValueToLastCallOptimizationProvokesDomainError() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun attemptingToEditMaxArityFlagProvokesPermissionError() =
-    //     multiRunConcurrentTest { super.attemptingToEditMaxArityFlagProvokesPermissionError() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun attemptingToEditMaxArityFlagProvokesPermissionError() =
+        multiRunConcurrentTest { super.attemptingToEditMaxArityFlagProvokesPermissionError() }
 }

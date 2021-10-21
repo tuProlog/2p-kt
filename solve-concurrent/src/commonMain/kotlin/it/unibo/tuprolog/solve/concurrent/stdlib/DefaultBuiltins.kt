@@ -50,7 +50,11 @@ import it.unibo.tuprolog.solve.stdlib.primitive.NumberCodes
 import it.unibo.tuprolog.solve.stdlib.primitive.Op
 import it.unibo.tuprolog.solve.stdlib.primitive.Repeat
 import it.unibo.tuprolog.solve.stdlib.primitive.Reverse
+import it.unibo.tuprolog.solve.stdlib.primitive.SetDurable
+import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
+import it.unibo.tuprolog.solve.stdlib.primitive.SetFlag
 import it.unibo.tuprolog.solve.stdlib.primitive.SetOf
+import it.unibo.tuprolog.solve.stdlib.primitive.SetPersistent
 import it.unibo.tuprolog.solve.stdlib.primitive.SubAtom
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThan
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThanOrEqualTo
@@ -123,11 +127,11 @@ object DefaultBuiltins : AliasedLibrary by CommonBuiltins {
             // Retract,
             // RetractAll,
             Reverse,
-            // SetDurable,
-            // SetEphemeral,
+            SetDurable,
+            SetEphemeral,
             SetOf,
-            // SetPersistent,
-            // SetFlag,
+            SetPersistent,
+            SetFlag,
             // Sleep,
             SubAtom,
             TermGreaterThan,
