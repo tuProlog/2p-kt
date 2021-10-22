@@ -44,10 +44,10 @@ class TestConcurrentSubAtomImpl :
     override fun testSubAtomTypeErrorBeforeIsNotInteger() =
         multiRunConcurrentTest { super.testSubAtomTypeErrorBeforeIsNotInteger() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testSubAtomTypeErrorLengthIsNotInteger() =
-    //     multiRunConcurrentTest { super.testSubAtomTypeErrorLengthIsNotInteger() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testSubAtomTypeErrorLengthIsNotInteger() =
+        multiRunConcurrentTest { super.testSubAtomTypeErrorLengthIsNotInteger() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

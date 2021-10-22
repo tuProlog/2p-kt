@@ -12,9 +12,9 @@ class TestConcurrentCallImpl :
 
     override val errorSignature: Signature = Signature("ensure_executable", 1)
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testCallCut() = multiRunConcurrentTest { super.testCallCut() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testCallCut() = multiRunConcurrentTest { super.testCallCut() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
@@ -28,13 +28,13 @@ class TestConcurrentCallImpl :
     @Test
     override fun testCallFailCall() = multiRunConcurrentTest { super.testCallFailCall() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testCallWriteX() = multiRunConcurrentTest { super.testCallWriteX() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testCallWriteX() = multiRunConcurrentTest { super.testCallWriteX() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testCallWriteCall() = multiRunConcurrentTest { super.testCallWriteCall() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testCallWriteCall() = multiRunConcurrentTest { super.testCallWriteCall() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
@@ -48,9 +48,9 @@ class TestConcurrentCallImpl :
     @Test
     override fun testCallFailOne() = multiRunConcurrentTest { super.testCallFailOne() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testCallWriteOne() = multiRunConcurrentTest { super.testCallWriteOne() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testCallWriteOne() = multiRunConcurrentTest { super.testCallWriteOne() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

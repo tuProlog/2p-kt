@@ -30,9 +30,9 @@ class TestConcurrentFlagsImpl :
     @Test
     override fun gettingMissingFlagsFails() = multiRunConcurrentTest { super.gettingMissingFlagsFails() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun settingMissingFlagsSucceeds() = multiRunConcurrentTest { super.settingMissingFlagsSucceeds() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun settingMissingFlagsSucceeds() = multiRunConcurrentTest { super.settingMissingFlagsSucceeds() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
