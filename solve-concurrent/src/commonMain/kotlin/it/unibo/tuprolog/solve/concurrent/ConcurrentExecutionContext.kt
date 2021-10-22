@@ -106,7 +106,14 @@ data class ConcurrentExecutionContext(
         dynamicKb: Theory,
         inputChannels: InputStore,
         outputChannels: OutputStore
-    ): MutableSolver = TODO() // ConcurrentSolver is not a subtype of MutableSolver
+    ): MutableSolver = MutableConcurrentSolver(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        inputChannels,
+        outputChannels
+    ) // ConcurrentSolver is not a subtype of MutableSolver
 
     override fun update(
         libraries: Libraries,
