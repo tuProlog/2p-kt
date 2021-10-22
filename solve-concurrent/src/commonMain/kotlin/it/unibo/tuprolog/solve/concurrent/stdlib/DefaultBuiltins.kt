@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.concurrent.stdlib
 
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Naf
 import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Or
 import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.concurrent.stdlib.rule.SpecificRules
@@ -116,6 +117,7 @@ object DefaultBuiltins : AliasedLibrary by CommonBuiltins {
             Halt1,
             Integer,
             Is,
+            Naf, // TODO remove rule for \+ from default builtins
             Natural,
             NewLine,
             NonVar,
@@ -124,7 +126,7 @@ object DefaultBuiltins : AliasedLibrary by CommonBuiltins {
             NumberChars,
             NumberCodes,
             Op,
-            Or,
+            Or, // TODO removes rule for -> and ; from default builtins
             Repeat,
             // Retract,
             // RetractAll,

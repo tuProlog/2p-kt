@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
@@ -20,18 +19,6 @@ interface ConcurrentSolver : Solver {
 
     @JsName("solveConcurrently")
     fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution>
-
-    override fun solveOnce(goal: Struct, timeout: TimeDuration): Solution =
-        solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout))
-            .firstOrNull { !it.isNo } ?: Solution.no(goal)
-
-    override fun solveOnce(goal: Struct): Solution =
-        solve(goal, SolveOptions.someLazily(1))
-            .firstOrNull { !it.isNo } ?: Solution.no(goal)
-
-    override fun solveOnce(goal: Struct, options: SolveOptions): Solution =
-        solve(goal, options.setLimit(1))
-            .firstOrNull { !it.isNo } ?: Solution.no(goal)
 
     override fun copy(
         libraries: Libraries,
