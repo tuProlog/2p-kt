@@ -17,9 +17,9 @@ class TestConcurrentCustomDataImpl :
     // @Test
     // override fun testEphemeralData() = multiRunConcurrentTest { super.testEphemeralData() }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    override fun testDurableData() = multiRunConcurrentTest { super.testDurableData() }
+    // @OptIn(ExperimentalCoroutinesApi::class)
+    // @Test
+    // override fun testDurableData() = multiRunConcurrentTest { super.testDurableData() }
 
     // @OptIn(ExperimentalCoroutinesApi::class)
     // @Test

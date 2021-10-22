@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.concurrent.stdlib
 
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Or
 import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.concurrent.stdlib.rule.SpecificRules
 import it.unibo.tuprolog.solve.library.AliasedLibrary
@@ -123,6 +124,7 @@ object DefaultBuiltins : AliasedLibrary by CommonBuiltins {
             NumberChars,
             NumberCodes,
             Op,
+            Or,
             Repeat,
             // Retract,
             // RetractAll,
