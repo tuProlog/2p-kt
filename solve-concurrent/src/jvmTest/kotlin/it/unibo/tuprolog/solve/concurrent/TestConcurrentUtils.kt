@@ -12,9 +12,10 @@ import it.unibo.tuprolog.solve.SolverTest
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
 import kotlin.jvm.JvmName
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -23,9 +24,10 @@ import kotlin.test.assertSame
 
 fun multiRunConcurrentTest(
     times: Int = 5,
-    coroutineContext: CoroutineContext = Dispatchers.Default,
+    scope: CoroutineScope =
+        CoroutineScope(SupervisorJob() + Executors.newCachedThreadPool().asCoroutineDispatcher()),
     block: suspend CoroutineScope.() -> Unit
-) = (0 until times).forEach { _ -> runBlocking(coroutineContext) { block() } }
+) = (0 until times).forEach { _ -> scope.launch { block() } }
 
 interface WithAssertingEquals {
     fun assertingEquals(other: Any?)
