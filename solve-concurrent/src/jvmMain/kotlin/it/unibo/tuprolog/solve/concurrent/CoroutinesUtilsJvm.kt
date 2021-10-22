@@ -1,13 +1,14 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 
 // todo clean, old (hopefully useless) implementation
@@ -63,5 +64,7 @@ actual fun <T> Flow<T>.toSequence(coroutineScope: CoroutineScope): Sequence<T> {
     }
 }
 
+private val executionContext = Executors.newCachedThreadPool()
+
 internal actual val backgroundScope: CoroutineScope =
-    CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    CoroutineScope(SupervisorJob() + executionContext.asCoroutineDispatcher())

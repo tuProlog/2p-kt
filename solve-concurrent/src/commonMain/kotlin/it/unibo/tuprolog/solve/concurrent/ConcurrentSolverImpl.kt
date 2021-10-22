@@ -23,11 +23,9 @@ import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.jvm.Synchronized
 import kotlinx.coroutines.channels.Channel as KtChannel
@@ -74,26 +72,20 @@ internal open class ConcurrentSolverImpl(
     @set:Synchronized
     override lateinit var currentContext: ConcurrentExecutionContext
 
-    override val resolutionScope = CoroutineScope(Dispatchers.Default)
+    // override val resolutionScope = CoroutineScope(Dispatchers.Default)
 
-    private fun CoroutineScope.handleAsyncStateTransition(state: State, solutionChannel: SendChannel<Solution>): Job =
+    private fun CoroutineScope.handleAsyncStateTransition(state: State, handle: ConcurrentResolutionHandle): Job =
         launch {
             if (state is EndState) {
-                solutionChannel.send(state.solution)
+                handle.publishSolutionAndTerminateResolutionIfNeed(state.solution, this)
             } else {
-                state.next().forEach { handleAsyncStateTransition(it, solutionChannel) }
+                state.next().forEach { handleAsyncStateTransition(it, handle) }
             }
         }
 
-    private suspend fun startAsyncResolution(
-        initialState: State,
-        solutionChannel: SendChannel<Solution>
-    ) {
-        resolutionScope.handleAsyncStateTransition(initialState, solutionChannel).join()
-        // resolutionScope.launch {
-        //     handleAsyncStateTransition(initialState, solutionChannel)
-        // }.join()
-        solutionChannel.close()
+    private suspend fun startAsyncResolution(initialState: State, handle: ConcurrentResolutionHandle) = coroutineScope {
+        handleAsyncStateTransition(initialState, handle).join()
+        handle.closeSolutionChannelWithNoSolutionIfNeeded(initialState.context.query)
     }
 
     private fun initialState(goal: Struct, options: SolveOptions): State {
@@ -118,26 +110,30 @@ internal open class ConcurrentSolverImpl(
     override fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution> {
         val channel = KtChannel<Solution>(KtChannel.UNLIMITED)
         val initialState = initialState(goal, options)
-        resolutionScope.launch { startAsyncResolution(initialState, channel) }
+        val handle = ConcurrentResolutionHandle(options, channel)
+        val resolutionScope = CoroutineScope(Dispatchers.Default)
+        resolutionScope.launch {
+            startAsyncResolution(initialState, handle)
+        }
         // val channel2 = resolutionScope.appendNo(channel, initialState.context.query)
-        return resolutionScope.appendNo(channel, initialState.context.query)
+        return channel //.appendNo(channel, initialState.context.query)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun CoroutineScope.appendNo(solutions: ReceiveChannel<Solution>, query: Struct): ReceiveChannel<Solution> =
-        produce(resolutionScope.coroutineContext, KtChannel.UNLIMITED) {
-            var counter = 0
-            for (solution in solutions) {
-                counter += 1
-                send(solution)
-            }
-            if (counter == 0) {
-                send(Solution.no(query))
-            }
-        }
+    // @OptIn(ExperimentalCoroutinesApi::class)
+    // private fun CoroutineScope.appendNo(solutions: ReceiveChannel<Solution>, query: Struct): ReceiveChannel<Solution> =
+    //     produce(resolutionScope.coroutineContext, KtChannel.UNLIMITED) {
+    //         var counter = 0
+    //         for (solution in solutions) {
+    //             counter += 1
+    //             send(solution)
+    //         }
+    //         if (counter == 0) {
+    //             send(Solution.no(query))
+    //         }
+    //     }
 
     override fun solveImpl(goal: Struct, options: SolveOptions): Sequence<Solution> {
-        return solveConcurrently(goal, options).toSequence(resolutionScope)
+        return solveConcurrently(goal, options).toSequence()
     }
 
     override fun copy(
