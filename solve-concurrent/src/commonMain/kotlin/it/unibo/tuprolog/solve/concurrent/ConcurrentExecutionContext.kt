@@ -9,7 +9,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.MutableSolver
-import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
@@ -90,7 +89,15 @@ data class ConcurrentExecutionContext(
         dynamicKb: Theory,
         inputChannels: InputStore,
         outputChannels: OutputStore
-    ): Solver = ConcurrentSolverImpl(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb = true) // ConcurrentSolver is not a subtype of Solver
+    ): ConcurrentSolver = ConcurrentSolverImpl(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        inputChannels,
+        outputChannels,
+        trustKb = true
+    ) // ConcurrentSolver is not a subtype of Solver
 
     override fun createMutableSolver(
         libraries: Libraries,
