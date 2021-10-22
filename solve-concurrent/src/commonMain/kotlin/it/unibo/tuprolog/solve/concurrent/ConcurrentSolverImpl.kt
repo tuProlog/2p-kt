@@ -27,6 +27,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import kotlin.jvm.Synchronized
 import kotlinx.coroutines.channels.Channel as KtChannel
 
@@ -79,9 +80,32 @@ internal open class ConcurrentSolverImpl(
             if (state is EndState) {
                 handle.publishSolutionAndTerminateResolutionIfNeed(state.solution, this)
             } else {
-                state.next().forEach { handleAsyncStateTransition(it, handle) }
+                for (it in state.next()) {
+                    handleAsyncStateTransition(it, handle)
+                    yield()
+                }
             }
         }
+
+    private fun Sequence<Solution>.ensureAtMostOneNegative(): Sequence<Solution> = sequence {
+        var lastNegative: Solution.No? = null
+        // var atLeastOneNonNegative = false
+        val i = iterator()
+        while (i.hasNext()) {
+            when (val it = i.next()) {
+                is Solution.No -> {
+                    lastNegative = it
+                }
+                else -> {
+                    // atLeastOneNonNegative = true
+                    yield(it)
+                }
+            }
+        }
+        // if (!atLeastOneNonNegative) {
+        lastNegative?.let { yield(it) }
+        // }
+    }
 
     private suspend fun startAsyncResolution(initialState: State, handle: ConcurrentResolutionHandle) = coroutineScope {
         handleAsyncStateTransition(initialState, handle).join()
@@ -133,7 +157,7 @@ internal open class ConcurrentSolverImpl(
     //     }
 
     override fun solveImpl(goal: Struct, options: SolveOptions): Sequence<Solution> {
-        return solveConcurrently(goal, options).toSequence()
+        return solveConcurrently(goal, options).toSequence().ensureAtMostOneNegative()
     }
 
     override fun copy(

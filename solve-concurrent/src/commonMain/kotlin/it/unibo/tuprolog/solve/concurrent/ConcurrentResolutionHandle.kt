@@ -13,12 +13,6 @@ data class ConcurrentResolutionHandle(
     val solutionChannel: SendChannel<Solution>,
     val solutionCounter: AtomicInt = AtomicInt.zero()
 ) {
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun terminateResolutionIfNeeded(resolutionScope: CoroutineScope) {
-        if (solveOptions.isLimited && solutionCounter.value >= solveOptions.limit) {
-            terminateResolution(resolutionScope)
-        }
-    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun terminateResolution(resolutionScope: CoroutineScope) {
@@ -35,7 +29,7 @@ data class ConcurrentResolutionHandle(
     ): Boolean {
         if (solutionChannel.isClosedForSend) return false
         solutionChannel.send(solution)
-        if (solutionCounter.incAndGet() >= solveOptions.limit && solveOptions.isLimited) {
+        if (!solution.isNo && solutionCounter.incAndGet() >= solveOptions.limit && solveOptions.isLimited) {
             terminateResolution(resolutionScope)
         }
         return true
