@@ -13,17 +13,17 @@ class TestConcurrentOrImpl :
     @Test
     override fun testTrueOrFalse() = multiRunConcurrentTest { super.testTrueOrFalse() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testCutFalseOrTrue() = multiRunConcurrentTest { super.testCutFalseOrTrue() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testCutFalseOrTrue() = multiRunConcurrentTest { super.testCutFalseOrTrue() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testCutCall() = multiRunConcurrentTest { super.testCutCall() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testCutCall() = multiRunConcurrentTest { super.testCutCall() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testCutAssignedValue() = multiRunConcurrentTest { super.testCutAssignedValue() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testCutAssignedValue() = multiRunConcurrentTest { super.testCutAssignedValue() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

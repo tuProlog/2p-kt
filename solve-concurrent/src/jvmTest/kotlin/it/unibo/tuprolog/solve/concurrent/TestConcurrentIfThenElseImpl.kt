@@ -9,9 +9,9 @@ class TestConcurrentIfThenElseImpl :
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testIfTrueElseFail() = multiRunConcurrentTest { super.testIfTrueElseFail() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testIfTrueElseFail() = multiRunConcurrentTest { super.testIfTrueElseFail() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
@@ -25,19 +25,19 @@ class TestConcurrentIfThenElseImpl :
     @Test
     override fun testIfFailElseFail() = multiRunConcurrentTest { super.testIfFailElseFail() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testIfXTrueElseX() = multiRunConcurrentTest { super.testIfXTrueElseX() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testIfXTrueElseX() = multiRunConcurrentTest { super.testIfXTrueElseX() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testIfFailElseX() = multiRunConcurrentTest { super.testIfFailElseX() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testIfThenElseOrWithDoubleSub() = multiRunConcurrentTest { super.testIfThenElseOrWithDoubleSub() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testIfThenElseOrWithDoubleSub() = multiRunConcurrentTest { super.testIfThenElseOrWithDoubleSub() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testIfOrElseTrue() = multiRunConcurrentTest { super.testIfOrElseTrue() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testIfOrElseTrue() = multiRunConcurrentTest { super.testIfOrElseTrue() }
 }

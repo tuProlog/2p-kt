@@ -12,13 +12,13 @@ class TestConcurrentNotProvableImpl :
 
     override val errorSignature: Signature = Signature("ensure_executable", 1)
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testNPTrue() = multiRunConcurrentTest { super.testNPTrue() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testNPTrue() = multiRunConcurrentTest { super.testNPTrue() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testNPCut() = multiRunConcurrentTest { super.testNPCut() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testNPCut() = multiRunConcurrentTest { super.testNPCut() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

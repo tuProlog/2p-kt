@@ -28,9 +28,9 @@ class TestConcurrentFindAllImpl :
     @Test
     override fun testFindXinSameXValues() = multiRunConcurrentTest { super.testFindXinSameXValues() }
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // @Test
-    // override fun testResultListIsCorrect() = multiRunConcurrentTest { super.testResultListIsCorrect() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun testResultListIsCorrect() = multiRunConcurrentTest { super.testResultListIsCorrect() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
