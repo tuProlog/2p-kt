@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.concurrent
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestConcurrentFindAllImpl :
@@ -30,6 +31,7 @@ class TestConcurrentFindAllImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
+    @Ignore // nondeterministic order, this test may pass or fail unpredictably. It's the Schrödinger's test
     override fun testResultListIsCorrect() = multiRunConcurrentTest { super.testResultListIsCorrect() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
