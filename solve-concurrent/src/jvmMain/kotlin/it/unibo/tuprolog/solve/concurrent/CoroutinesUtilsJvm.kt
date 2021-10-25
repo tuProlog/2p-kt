@@ -68,3 +68,6 @@ private val executionContext = Executors.newCachedThreadPool()
 
 internal actual val backgroundScope: CoroutineScope =
     CoroutineScope(SupervisorJob() + executionContext.asCoroutineDispatcher())
+
+actual fun createScope(): CoroutineScope =
+    CoroutineScope(SupervisorJob() + Executors.newCachedThreadPool().asCoroutineDispatcher())

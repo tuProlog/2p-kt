@@ -22,7 +22,6 @@ import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.coroutineScope
@@ -135,7 +134,7 @@ internal open class ConcurrentSolverImpl(
         val channel = KtChannel<Solution>(KtChannel.UNLIMITED)
         val initialState = initialState(goal, options)
         val handle = ConcurrentResolutionHandle(options, channel)
-        val resolutionScope = CoroutineScope(Dispatchers.Default)
+        val resolutionScope = createScope()
         resolutionScope.launch {
             startAsyncResolution(initialState, handle)
         }
