@@ -6,6 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore
 class TestConcurrentSolverImpl :
     TestConcurrentSolver<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,

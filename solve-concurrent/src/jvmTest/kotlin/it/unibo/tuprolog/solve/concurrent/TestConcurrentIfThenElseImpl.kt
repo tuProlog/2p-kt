@@ -42,5 +42,6 @@ class TestConcurrentIfThenElseImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
+    @Ignore // nondeterministic order, this test may pass or fail unpredictably. It's the Schrödinger's test
     override fun testIfOrElseTrue() = multiRunConcurrentTest { super.testIfOrElseTrue() }
 }

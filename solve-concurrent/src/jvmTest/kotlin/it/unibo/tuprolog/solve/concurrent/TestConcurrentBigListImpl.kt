@@ -15,5 +15,5 @@ class TestConcurrentBigListImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    override fun testBigListGeneration() = multiRunConcurrentTest { super.testBigListGeneration() }
+    override fun testBigListGeneration() = multiRunConcurrentTest(1) { super.testBigListGeneration() }
 }
