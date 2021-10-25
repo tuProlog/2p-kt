@@ -69,6 +69,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.TermSame
 import it.unibo.tuprolog.solve.stdlib.primitive.UnifiesWith
 import it.unibo.tuprolog.solve.stdlib.primitive.Univ
 import it.unibo.tuprolog.solve.stdlib.primitive.Var
+import it.unibo.tuprolog.solve.stdlib.primitive.Write
 import it.unibo.tuprolog.theory.Theory
 
 object DefaultBuiltins : AliasedLibrary by CommonBuiltins {
@@ -150,7 +151,7 @@ object DefaultBuiltins : AliasedLibrary by CommonBuiltins {
             UnifiesWith,
             Univ,
             Var,
-            // Write
+            Write
         ).map { it.descriptionPair }.toMap()
     }
 }
