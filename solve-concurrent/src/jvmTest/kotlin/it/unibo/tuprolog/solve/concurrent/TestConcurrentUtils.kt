@@ -8,9 +8,13 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverTest
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.concurrent.ConcurrentFromSequence.fromSequence
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
+import it.unibo.tuprolog.solve.logKBs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -20,6 +24,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertSame
+
+private inline val loggingOn get() = false
 
 fun multiRunConcurrentTest(
     times: Int = 5,
@@ -245,4 +251,28 @@ class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf())
     override fun hashCode(): Int {
         return 31 * solutionOccurrences.hashCode()
     }
+
+    override fun toString(): String = printSolutions()
+}
+
+fun assertConcurrentSolverSolutionsCorrect(
+    solver: Solver,
+    goalToSolutions: List<Pair<Struct, List<Solution>>>,
+    maxDuration: TimeDuration
+) {
+    goalToSolutions.forEach { (goal, solutionList) ->
+        if (loggingOn) solver.logKBs()
+
+        val solutions = fromSequence(solver.solve(goal, maxDuration))
+        val expected = fromSequence(solutionList)
+        expected.assertingEquals(solutions)
+
+        if (loggingOn) logGoalAndSolutions(goal, solutions)
+    }
+}
+
+fun <T> logGoalAndSolutions(goal: Struct, solutions: T) {
+    println("?- $goal.")
+    println(solutions.toString()) // todo replace with better print
+    println("".padEnd(80, '-'))
 }
