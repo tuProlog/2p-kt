@@ -25,7 +25,7 @@ object ConcurrentSolverPerformance {
         return ClausesReader.withDefaultOperators.readTheory(inputStream)
     }
 
-    private fun computeTime(block: ()->Unit): Long {
+    private fun computeTime(block: () -> Unit): Long {
         val start = currentTimeInstant()
         block()
         val end = currentTimeInstant()
