@@ -13,6 +13,8 @@ internal expect val backgroundScope: CoroutineScope
 
 expect fun createScope(): CoroutineScope
 
+expect fun closeExecution()
+
 expect fun <T> ReceiveChannel<T>.toSequence(coroutineScope: CoroutineScope = backgroundScope): Sequence<T>
 
 expect fun <T> Flow<T>.toSequence(coroutineScope: CoroutineScope = backgroundScope): Sequence<T>

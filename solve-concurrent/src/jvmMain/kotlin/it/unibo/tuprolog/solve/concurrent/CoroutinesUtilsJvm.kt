@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.TimeUnit
 
 // todo clean, old (hopefully useless) implementation
 // actual fun <T> ReceiveChannel<T>.toSequence(coroutineScope: CoroutineScope): Sequence<T> =
@@ -70,4 +71,9 @@ internal actual val backgroundScope: CoroutineScope =
     CoroutineScope(SupervisorJob() + executionContext.asCoroutineDispatcher())
 
 actual fun createScope(): CoroutineScope =
-    CoroutineScope(SupervisorJob() + Executors.newCachedThreadPool().asCoroutineDispatcher())
+    CoroutineScope(SupervisorJob() + executionContext.asCoroutineDispatcher())
+
+actual fun closeExecution() {
+    executionContext.awaitTermination(5, TimeUnit.SECONDS)
+    executionContext.shutdown()
+}

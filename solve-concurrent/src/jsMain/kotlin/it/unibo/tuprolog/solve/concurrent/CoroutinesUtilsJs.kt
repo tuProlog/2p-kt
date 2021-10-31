@@ -18,3 +18,7 @@ actual fun <T> Flow<T>.toSequence(coroutineScope: CoroutineScope): Sequence<T> {
 actual fun createScope(): CoroutineScope {
     TODO("Not yet implemented")
 }
+
+actual fun closeExecution() {
+    TODO("Not yet implemented")
+}
