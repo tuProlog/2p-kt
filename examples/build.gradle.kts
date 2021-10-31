@@ -1,5 +1,6 @@
 dependencies {
     api(project(":solve-classic"))
+    api(project(":solve-concurrent"))
     api(project(":dsl-theory"))
     api(project(":parser-theory"))
     api(project(":io-lib"))
