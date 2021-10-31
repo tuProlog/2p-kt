@@ -20,6 +20,7 @@ data class ConcurrentResolutionHandle(
             solutionChannel.close()
         }
         resolutionScope.cancel("Solution limit has been reached: ${solveOptions.limit}")
+        closeExecution()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -58,8 +59,7 @@ data class ConcurrentResolutionHandle(
             if (solutionCounter.value == 0) {
                 publishNoSolution(goal)
             }
-            solutionChannel.close()
-            return true
+            return solutionChannel.close()
         }
         return false
     }
