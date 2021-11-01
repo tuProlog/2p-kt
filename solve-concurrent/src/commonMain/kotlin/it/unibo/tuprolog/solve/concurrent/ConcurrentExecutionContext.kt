@@ -97,7 +97,7 @@ data class ConcurrentExecutionContext(
         inputChannels,
         outputChannels,
         trustKb = true
-    ) // ConcurrentSolver is not a subtype of Solver
+    )
 
     override fun createMutableSolver(
         libraries: Libraries,
@@ -113,7 +113,7 @@ data class ConcurrentExecutionContext(
         dynamicKb,
         inputChannels,
         outputChannels
-    ) // ConcurrentSolver is not a subtype of MutableSolver
+    )
 
     override fun update(
         libraries: Libraries,

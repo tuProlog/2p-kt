@@ -15,8 +15,6 @@ import kotlin.js.JsName
 
 interface ConcurrentSolver : Solver {
 
-    // val resolutionScope: CoroutineScope
-
     @JsName("solveConcurrently")
     fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution>
 
