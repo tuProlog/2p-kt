@@ -65,15 +65,19 @@ actual fun <T> Flow<T>.toSequence(coroutineScope: CoroutineScope): Sequence<T> {
     }
 }
 
+private val backgroundExecutionContext = Executors.newCachedThreadPool()
 private val executionContext = Executors.newCachedThreadPool()
 
 internal actual val backgroundScope: CoroutineScope =
-    CoroutineScope(SupervisorJob() + executionContext.asCoroutineDispatcher())
+    CoroutineScope(SupervisorJob() + backgroundExecutionContext.asCoroutineDispatcher())
 
 actual fun createScope(): CoroutineScope =
     CoroutineScope(SupervisorJob() + executionContext.asCoroutineDispatcher())
 
+// todo need checks, computation never ends with shorter timeout of executionContext.awaitTermination
 actual fun closeExecution() {
-    executionContext.awaitTermination(5, TimeUnit.SECONDS)
+    executionContext.awaitTermination(30, TimeUnit.SECONDS)
     executionContext.shutdown()
+    backgroundExecutionContext.awaitTermination(2, TimeUnit.SECONDS)
+    backgroundExecutionContext.shutdown()
 }
