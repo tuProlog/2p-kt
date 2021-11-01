@@ -67,7 +67,6 @@ class KeySolution(val solution: Solution) {
 
     private val Substitution.Unifier.hash: Int
         get() = entries.fold(0) { base, entry ->
-            // base + entry.key.hashCode() + entry.value.hash
             base + entry.value.hash
         }
 
@@ -141,15 +140,6 @@ class KeySolution(val solution: Solution) {
         if (this.size != other.size) return false
         return all { itMap ->
             other.values.any { itMap.value.similar(it) }
-            /*
-            * Substitution.Unifier {X = 1, Y = 2} in concurrent solver
-            * should be equal to Substitution.Unifier {X = 2, Y = 1}
-            * */
-            // todo clean
-            // val value = other.toList().firstOrNull {
-            //     it.first.equals(itMap.key, false)
-            // }?.second ?: return false
-            // itMap.value.similar(value)
         }
     }
 
@@ -217,9 +207,6 @@ class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf())
             actual.solutionOccurrences.entries.filter { !it.key.solution.isNo }.size,
             "Expected MultiSet size did not match actual MultiSet size.\n$failMsg"
         )
-        // assertEquals(solutionOccurrences.size,
-        //     actual.solutionOccurrences.size,
-        //     "Expected MultiSet size did not match actual MultiSet size.\n$failMsg")
         solutionOccurrences.forEach { (key, value) ->
             val foundValue: Int? = actual.solutionOccurrences[key]?.let { if (key.solution.isNo) 1 else it }
             assertNotNull(

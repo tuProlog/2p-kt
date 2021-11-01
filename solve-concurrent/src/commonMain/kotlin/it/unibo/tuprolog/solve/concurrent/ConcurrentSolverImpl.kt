@@ -72,8 +72,6 @@ internal open class ConcurrentSolverImpl(
     @set:Synchronized
     override lateinit var currentContext: ConcurrentExecutionContext
 
-    // override val resolutionScope = CoroutineScope(Dispatchers.Default)
-
     private fun CoroutineScope.handleAsyncStateTransition(state: State, handle: ConcurrentResolutionHandle): Job =
         launch {
             if (state is EndState) {
@@ -88,7 +86,6 @@ internal open class ConcurrentSolverImpl(
 
     private fun Sequence<Solution>.ensureAtMostOneNegative(): Sequence<Solution> = sequence {
         var lastNegative: Solution.No? = null
-        // var atLeastOneNonNegative = false
         val i = iterator()
         while (i.hasNext()) {
             when (val it = i.next()) {
@@ -96,14 +93,11 @@ internal open class ConcurrentSolverImpl(
                     lastNegative = it
                 }
                 else -> {
-                    // atLeastOneNonNegative = true
                     yield(it)
                 }
             }
         }
-        // if (!atLeastOneNonNegative) {
         lastNegative?.let { yield(it) }
-        // }
     }
 
     private suspend fun startAsyncResolution(initialState: State, handle: ConcurrentResolutionHandle) = coroutineScope {
@@ -138,22 +132,8 @@ internal open class ConcurrentSolverImpl(
         resolutionScope.launch {
             startAsyncResolution(initialState, handle)
         }
-        // val channel2 = resolutionScope.appendNo(channel, initialState.context.query)
-        return channel // .appendNo(channel, initialState.context.query)
+        return channel
     }
-
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // private fun CoroutineScope.appendNo(solutions: ReceiveChannel<Solution>, query: Struct): ReceiveChannel<Solution> =
-    //     produce(resolutionScope.coroutineContext, KtChannel.UNLIMITED) {
-    //         var counter = 0
-    //         for (solution in solutions) {
-    //             counter += 1
-    //             send(solution)
-    //         }
-    //         if (counter == 0) {
-    //             send(Solution.no(query))
-    //         }
-    //     }
 
     override fun solveImpl(goal: Struct, options: SolveOptions): Sequence<Solution> {
         return solveConcurrently(goal, options).toSequence().ensureAtMostOneNegative()

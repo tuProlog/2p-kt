@@ -40,15 +40,6 @@ data class ConcurrentResolutionHandle(
     val isSolutionChannelClosed: Boolean
         get() = solutionChannel.isClosedForSend
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun closeSolutionChannel(): Boolean {
-        if (!isSolutionChannelClosed) {
-            solutionChannel.close()
-            return true
-        }
-        return false
-    }
-
     suspend fun publishNoSolution(goal: Struct) {
         solutionChannel.send(Solution.no(goal))
     }
