@@ -69,7 +69,7 @@ public class PrimitiveExamplesJvm {
                 "a(X) :- b(X).\n" +
                         "b(X) :- log_msg(X)."
         );
-        MutableSolver solver = Solver.getClassic().mutableSolverOf(theory);
+        MutableSolver solver = Solver.getProlog().mutableSolverOf(theory);
         solver.loadLibrary(library);
 
         logs.clear();
@@ -103,7 +103,7 @@ public class PrimitiveExamplesJvm {
             Integer min = first.castToInteger();
             Integer max = second.castToInteger();
 
-            Sequence<BigInteger> range = generateSequence(min.getValue(), x -> x.plus(BigInteger.Companion.of(1)));
+            Sequence<BigInteger> range = generateSequence(min.getValue(), x -> x.plus(BigInteger.ONE));
             range = takeWhile(range, x -> x.compareTo(max.getValue()) <= 0);
             return map(range, x -> Unificator.getDefault().mgu(third, Integer.of(x)));
         }
@@ -115,7 +115,7 @@ public class PrimitiveExamplesJvm {
                 "prolog.ranges",
                 mapOf(IntRangePrimitive.INSTANCE.getDescriptionPair())
         );
-        MutableSolver solver = Solver.getClassic().mutableSolverOf();
+        MutableSolver solver = Solver.getProlog().mutableSolverOf();
         solver.loadLibrary(library);
 
         List<Solution> sol = solver.solveList(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")));

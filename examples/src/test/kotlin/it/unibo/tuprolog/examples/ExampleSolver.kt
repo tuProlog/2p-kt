@@ -32,7 +32,7 @@ import kotlin.test.Test
 class ExampleSolver {
     @Test
     fun exampleYesSolutionList() {
-        val prolog = Solver.classic.solverWithDefaultBuiltins(
+        val prolog = Solver.prolog.solverWithDefaultBuiltins(
             staticKb = Theory.indexedOf(
                 Fact.of(Struct.of("f", Atom.of("a"))),
                 Fact.of(Struct.of("f", Atom.of("b"))),
@@ -57,7 +57,7 @@ class ExampleSolver {
 
     @Test
     fun exampleYesSolutions() {
-        val prolog = Solver.classic.solverWithDefaultBuiltins(
+        val prolog = Solver.prolog.solverWithDefaultBuiltins(
             staticKb = Theory.indexedOf(
                 Fact.of(Struct.of("f", Atom.of("a"))),
                 Fact.of(Struct.of("f", Atom.of("b"))),
@@ -83,7 +83,7 @@ class ExampleSolver {
 
     @Test
     fun exampleTimeoutSolutions() {
-        val prolog = Solver.classic.solverWithDefaultBuiltins(
+        val prolog = Solver.prolog.solverWithDefaultBuiltins(
             staticKb = Theory.indexedOf(
                 Fact.of(Struct.of("f", Atom.of("a"))),
                 Fact.of(Struct.of("f", Atom.of("b"))),
@@ -104,7 +104,7 @@ class ExampleSolver {
 
     @Test
     fun exampleNoSolutions() {
-        val prolog = Solver.classic.solverOf()
+        val prolog = Solver.prolog.solverOf()
 
         val goal = Struct.of("f", Var.of("X"))
 
@@ -115,7 +115,7 @@ class ExampleSolver {
 
     @Test
     fun exampleHaltSolutions() {
-        val prolog = Solver.classic.solverWithDefaultBuiltins()
+        val prolog = Solver.prolog.solverWithDefaultBuiltins()
 
         val solution = prolog.solveOnce(Struct.of("halt", Integer.of(2)))
 
@@ -125,7 +125,7 @@ class ExampleSolver {
 
     @Test
     fun manySolutionsLazy() {
-        val prolog = Solver.classic.solverOf(
+        val prolog = Solver.prolog.solverOf(
             staticKb = Theory.of(
                 { factOf(structOf("nat", atomOf("z"))) },
                 {
@@ -146,7 +146,7 @@ class ExampleSolver {
     @Test
     @Ignore
     fun manySolutionsEager() {
-        val prolog = Solver.classic.solverOf(
+        val prolog = Solver.prolog.solverOf(
             staticKb = Theory.of(
                 { factOf(structOf("nat", atomOf("z"))) },
                 {
@@ -175,7 +175,7 @@ class ExampleSolver {
         val fact = Struct.of("g", Integer.ONE) // g(1).
 
         // solvers require information to be provided at instantiation time:
-        val solver: Solver = Solver.classic.solverOf(
+        val solver: Solver = Solver.prolog.solverOf(
             libraries = Libraries.of(DefaultBuiltins),
             staticKb = theory
         )
@@ -184,7 +184,7 @@ class ExampleSolver {
         println(solver.dynamicKb) // MutableIndexedTheory{ g(1) :- true }
 
         // mutable solvers can be lately configured:
-        val mutableSolver: MutableSolver = Solver.classic.mutableSolverOf()
+        val mutableSolver: MutableSolver = Solver.prolog.mutableSolverOf()
 
         mutableSolver.loadLibrary(DefaultBuiltins)
         mutableSolver.loadStaticKb(theory)
@@ -204,7 +204,7 @@ class ExampleSolver {
             Fact.of(Struct.of("g", Integer.of(2))), // g(2).
         )
 
-        val solver = Solver.classic.solverWithDefaultBuiltins(
+        val solver = Solver.prolog.solverWithDefaultBuiltins(
             staticKb = theory1,
             dynamicKb = theory2
         )
@@ -224,7 +224,7 @@ class ExampleSolver {
             Fact.of(Struct.of("g", Integer.of(2))), // g(2).
         )
 
-        val solver = Solver.classic.mutableSolverWithDefaultBuiltins()
+        val solver = Solver.prolog.mutableSolverWithDefaultBuiltins()
         println(solver.staticKb) // IndexedTheory{  }
         println(solver.dynamicKb) // MutableIndexedTheory{  }
 
@@ -244,7 +244,7 @@ class ExampleSolver {
             Fact.of(Struct.of("g", Integer.of(2))), // g(2).
         )
 
-        val solver = Solver.classic.solverWithDefaultBuiltins(
+        val solver = Solver.prolog.solverWithDefaultBuiltins(
             staticKb = theory
         )
 
@@ -254,7 +254,7 @@ class ExampleSolver {
 
     @Test
     fun usingLibraries() {
-        val solver = Solver.classic.solverOf(
+        val solver = Solver.prolog.solverOf(
             libraries = Libraries.of(DefaultBuiltins, IOLib, OOPLib)
         )
 

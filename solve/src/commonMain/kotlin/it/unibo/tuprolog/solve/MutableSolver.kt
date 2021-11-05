@@ -131,17 +131,5 @@ interface MutableSolver : Solver {
 
     override fun clone(): MutableSolver
 
-    companion object {
-        @JvmStatic
-        @JsName("classic")
-        val classic: SolverFactory by lazy {
-            classicSolverFactory()
-        }
-
-        @JvmStatic
-        @JsName("streams")
-        val streams: SolverFactory by lazy {
-            streamsSolverFactory()
-        }
-    }
+    companion object
 }
