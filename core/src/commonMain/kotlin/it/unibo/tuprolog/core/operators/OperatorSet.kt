@@ -56,10 +56,12 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
     companion object {
 
         @JvmField
+        @JsName("EMPTY")
         val EMPTY = OperatorSet(emptySequence())
 
         /** Arithmetic Operator's OperatorSet */
         @JvmField
+        @JsName("ARITHMETIC")
         val ARITHMETIC = OperatorSet(
             sequenceOf("+", "-", "\\").map { Operator(it, Specifier.FY, 200) } +
                 sequenceOf("^").map { Operator(it, Specifier.XFY, 200) } +
@@ -70,6 +72,7 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
 
         /** Arithmetic Comparison Operator's OperatorSet */
         @JvmField
+        @JsName("ARITHMETIC_COMPARISON")
         val ARITHMETIC_COMPARISON = OperatorSet(
             sequenceOf("=:=", "=\\=", "<", "=<", ">", ">=")
                 .map { Operator(it, Specifier.XFX, 700) }
@@ -77,6 +80,7 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
 
         /** Term Comparison Operator's OperatorSet */
         @JvmField
+        @JsName("TERM_COMPARISON")
         val TERM_COMPARISON = OperatorSet(
             sequenceOf("=", "\\=").map { Operator(it, Specifier.XFX, 700) } +
                 sequenceOf("==", "\\==", "@<", "@=<", "@>", "@>=").map { Operator(it, Specifier.XFX, 700) } +
@@ -86,6 +90,7 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
 
         /** Control Flow Operator's OperatorSet */
         @JvmField
+        @JsName("CONTROL_FLOW")
         val CONTROL_FLOW = OperatorSet(
             sequenceOf(",").map { Operator(it, Specifier.XFY, 1000) } +
                 sequenceOf("->").map { Operator(it, Specifier.XFY, 1050) } +
@@ -95,6 +100,7 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
 
         /** Clauses Operator's OperatorSet */
         @JvmField
+        @JsName("CLAUSES")
         val CLAUSES = OperatorSet(
             sequenceOf(":-", "?-").map { Operator(it, Specifier.FX, 1200) } +
                 sequenceOf(":-", "-->").map { Operator(it, Specifier.XFX, 1200) }
@@ -102,6 +108,7 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
 
         /** Standard OperatorSet */
         @JvmField
+        @JsName("STANDARD")
         val STANDARD = OperatorSet(
             ARITHMETIC.asSequence() +
                 ARITHMETIC_COMPARISON.asSequence() +
@@ -112,6 +119,7 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
 
         /** Default OperatorSet */
         @JvmField
+        @JsName("DEFAULT")
         val DEFAULT = STANDARD
     }
 }

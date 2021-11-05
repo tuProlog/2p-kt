@@ -10,6 +10,7 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Taggable
 import it.unibo.tuprolog.utils.setTag
+import kotlin.js.JsName
 import kotlin.jvm.JvmName
 import kotlin.math.max
 import kotlin.math.min
@@ -35,6 +36,7 @@ val <T : Taggable<T>, U : T> U.probability: Double
 /**
  * Assigns a probability value to this object.
  */
+@JsName("setProbability")
 fun <T : Taggable<T>, U : T> U.setProbability(
     value: Double
 ): U = setTag(PROBABILITY_TAG, normalizeProbability(value))
@@ -55,10 +57,12 @@ val SolveOptions.isProbabilistic: Boolean
 /**
  * Sets the probabilistic computation option to [value].
  */
+@JsName("setProbabilistic")
 fun SolveOptions.setProbabilistic(
     value: Boolean
 ) = setOption(PROBABILISTIC_OPTION_TAG, value)
 
+@JsName("probabilistic")
 fun SolveOptions.probabilistic() = setProbabilistic(true)
 
 /**
@@ -77,6 +81,7 @@ val Solution.binaryDecisionDiagram: BinaryDecisionDiagram<out Term>?
  * Returns a new [Solution] obtained by assigning the [value] instance
  * of [BinaryDecisionDiagram] to [this] [Solution].
  */
+@JsName("setBinaryDecisionDiagram")
 fun Solution.setBinaryDecisionDiagram(
     value: BinaryDecisionDiagram<out Term>
 ) = setTag(BINARY_DECISION_DIAGRAM_TAG, value)
