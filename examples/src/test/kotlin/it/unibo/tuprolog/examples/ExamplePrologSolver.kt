@@ -29,7 +29,7 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class ExampleSolver {
+class ExamplePrologSolver {
     @Test
     fun exampleYesSolutionList() {
         val prolog = Solver.prolog.solverWithDefaultBuiltins(
