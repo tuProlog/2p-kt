@@ -14,6 +14,7 @@ import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.jvm.JvmName
+import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -209,3 +210,5 @@ fun logGoalAndSolutions(goal: Struct, solutions: Iterable<Solution>) {
 expect fun internalsOf(x: () -> Any): String
 
 expect fun log(x: () -> Any): Unit
+
+expect fun <T : Any> assertClassNameIs(`class`: KClass<T>, name: String)

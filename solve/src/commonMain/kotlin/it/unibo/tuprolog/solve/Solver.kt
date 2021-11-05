@@ -66,12 +66,29 @@ interface Solver : ExecutionContextAware {
     companion object {
         @JvmStatic
         @JsName("classic")
+        @Deprecated(
+            message = "This method is being renamed into \"prolog\" and its usage in this form is now deprecated",
+            replaceWith = ReplaceWith("Solver.prolog")
+        )
         val classic: SolverFactory by lazy {
             classicSolverFactory()
         }
 
         @JvmStatic
+        @JsName("prolog")
+        val prolog: SolverFactory by lazy {
+            classicSolverFactory()
+        }
+
+        @JvmStatic
+        @JsName("problog")
+        val problog: SolverFactory by lazy {
+            problogSolverFactory()
+        }
+
+        @JvmStatic
         @JsName("streams")
+        @Deprecated("The \"Streams\" solver is experimental and not mature enough for general purpose usage")
         val streams: SolverFactory by lazy {
             streamsSolverFactory()
         }
