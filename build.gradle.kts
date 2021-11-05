@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 import io.github.gciatto.kt.mpp.ProjectExtensions.jsProjects
 import io.github.gciatto.kt.mpp.ProjectExtensions.jvmProjects
 import io.github.gciatto.kt.mpp.ProjectExtensions.ktProjects
@@ -9,6 +11,7 @@ plugins {
     id("io.github.gciatto.kt-mpp-pp")
     id("org.danilopianini.git-sensitive-semantic-versioning")
     id("de.marcphilipp.nexus-publish")
+    id("com.github.johnrengelman.shadow")
 }
 
 group = "it.unibo.tuprolog"
@@ -80,6 +83,16 @@ kotlin {
     }
 }
 
+val shadowJar by tasks.getting(ShadowJar::class) {
+    dependsOn("jvmMainClasses")
+    archiveBaseName.set(rootProject.name)
+    archiveClassifier.set("full")
+    from(kotlin.jvm().compilations.getByName("main").output)
+    from(files("${rootProject.projectDir}/LICENSE"))
+}
+
+configureUploadToGithub(shadowJar)
+
 (ktProjects + jvmProjects + jsProjects + rootProject).forEach {
     it.apply(plugin = "de.marcphilipp.nexus-publish")
     it.nexusPublishing {
@@ -93,7 +106,7 @@ kotlin {
     }
 }
 
-(ktProjects + jvmProjects).forEach {
+(ktProjects + jvmProjects + rootProject).forEach {
     it.tasks.withType<KotlinJvmCompile> {
         val compatibility = kotlinOptions.jvmTarget
         it.tasks.withType<JavaCompile> {
