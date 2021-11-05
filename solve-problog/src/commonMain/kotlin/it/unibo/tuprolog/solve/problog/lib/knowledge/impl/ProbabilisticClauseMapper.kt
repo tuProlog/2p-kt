@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.exception.TuPrologException
+import it.unibo.tuprolog.solve.problog.ANNOTATION_FUNCTOR
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
@@ -22,7 +23,7 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplAnd
  */
 internal object ProbabilisticClauseMapper : ClauseMapper {
     override fun isCompatible(clause: Clause): Boolean {
-        return clause is Rule && clause.head.functor == ProblogLib.PROB_FUNCTOR
+        return clause is Rule && clause.head.functor == ANNOTATION_FUNCTOR
     }
 
     override fun apply(clause: Clause): List<Clause> {

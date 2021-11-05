@@ -13,7 +13,6 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
-import kotlin.jvm.JvmStatic
 
 /**
  * General type for mutable logic [Solver]s.

@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.problog.lib.ProblogLib
+import it.unibo.tuprolog.solve.problog.ANNOTATION_FUNCTOR
 import kotlin.math.round
 
 /**
@@ -30,7 +30,7 @@ internal class ProbTerm(
     val probability: Double,
     val term: Term,
     val extraVariables: Set<Term> = emptySet(),
-) : Term by Struct.of(ProblogLib.PROB_FUNCTOR, Numeric.of(probability), term) {
+) : Term by Struct.of(ANNOTATION_FUNCTOR, Numeric.of(probability), term) {
 
     override fun freshCopy(): ProbTerm {
         val termCopy = term.freshCopy()

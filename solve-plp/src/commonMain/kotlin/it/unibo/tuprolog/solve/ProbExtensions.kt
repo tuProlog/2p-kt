@@ -59,6 +59,8 @@ fun SolveOptions.setProbabilistic(
     value: Boolean
 ) = setOption(PROBABILISTIC_OPTION_TAG, value)
 
+fun SolveOptions.probabilistic() = setProbabilistic(true)
+
 /**
  * Returns true if the solution contains a [BinaryDecisionDiagram].
  */
