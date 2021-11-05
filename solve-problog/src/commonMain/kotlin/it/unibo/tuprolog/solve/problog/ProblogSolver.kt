@@ -29,35 +29,36 @@ internal open class ProblogSolver(
     private val solver: Solver
 ) : Solver by solver {
 
-    override fun solve(
+    private fun solveNonProbabilistically(
         goal: Struct,
         options: SolveOptions
     ): Sequence<Solution> {
-        // Solve in Prolog mode
-        if (!options.isProbabilistic) {
-            val anonVar = Var.anonymous()
-            return solver.solve(
-                Tuple.of(
-                    Struct.of(
-                        ProbSetConfig.functor,
-                        options.toProbConfigTerm()
-                    ),
-                    Struct.of(Prob.functor, anonVar, goal),
+        val anonVar = Var.anonymous()
+        return solver.solve(
+            Tuple.of(
+                Struct.of(
+                    ProbSetConfig.functor,
+                    options.toProbConfigTerm()
                 ),
-                options
-            ).map {
-                when (it) {
-                    is Solution.Yes -> Solution.yes(
-                        goal,
-                        it.substitution.filter { key, _ -> key != anonVar }
-                    )
-                    is Solution.Halt -> Solution.halt(goal, it.exception)
-                    else -> Solution.no(goal)
-                }
+                Struct.of(Prob.functor, anonVar, goal),
+            ),
+            options
+        ).map {
+            when (it) {
+                is Solution.Yes -> Solution.yes(
+                    goal,
+                    it.substitution.filter { key, _ -> key != anonVar }
+                )
+                is Solution.Halt -> Solution.halt(goal, it.exception)
+                else -> Solution.no(goal)
             }
         }
+    }
 
-        // Solve in Problog mode
+    private fun solveProbabilistically(
+        goal: Struct,
+        options: SolveOptions
+    ): Sequence<Solution> {
         val probabilityVar = Var.of("Prob")
         val bddVar = Var.of("BDD")
         return solver.solve(
@@ -107,6 +108,16 @@ internal open class ProblogSolver(
             }
         }
     }
+
+    override fun solve(
+        goal: Struct,
+        options: SolveOptions
+    ): Sequence<Solution> =
+        if (!options.isProbabilistic) {
+            solveNonProbabilistically(goal, options)
+        } else {
+            solveProbabilistically(goal, options)
+        }
 
     override fun solve(
         goal: Struct,
