@@ -9,7 +9,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
     override fun testBagXInDifferentValues() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = bagof("X", ("X" `=` 1) or ("X" `=` 2), "S")
+            val query = bagof("X", ("X" eq 1) or ("X" eq 2), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -23,7 +23,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = bagof("X", ("X" `=` 1) or ("X" `=` 2), "X")
+            val query = bagof("X", ("X" eq 1) or ("X" eq 2), "X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -37,7 +37,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = bagof("X", ("X" `=` "Y") or ("X" `=` "Z"), "L")
+            val query = bagof("X", ("X" eq "Y") or ("X" eq "Z"), "L")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -65,7 +65,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = bagof("X", "Y" `^` (("X" `=` 1) or ("Y" `=` 2)), "S")
+            val query = bagof("X", "Y" sup (("X" eq 1) or ("Y" eq 2)), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

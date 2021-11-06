@@ -23,7 +23,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ("X" `=` (intOf(1) + intOf(2))) and ("Y" `is` ("X" * intOf(3)))
+            val query = ("X" eq (intOf(1) + intOf(2))) and ("Y" `is` ("X" * intOf(3)))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

@@ -58,8 +58,8 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-//            val query = ";"(("X" `=` 1 and "!"), "X" `=` 2)
-            val query = ("X" `=` 1 and "!") or ("X" `=` 2)
+//            val query = ";"(("X" eq 1 and "!"), "X" eq 2)
+            val query = ("X" eq 1 and "!") or ("X" eq 2)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -73,8 +73,8 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-//            val query = ";"("X" `=` 1, "X" `=` 2)
-            val query = ("X" `=` 1) or ("X" `=` 2)
+//            val query = ";"("X" eq 1, "X" eq 2)
+            val query = ("X" eq 1) or ("X" eq 2)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

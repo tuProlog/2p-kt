@@ -134,37 +134,28 @@ interface PrologStdLibScope : PrologAwareScope {
     infix fun Any.univ(other: Any): Struct = structOf("=..", this.toTerm(), other.toTerm())
 
     @JsName("eq2")
-    infix fun Any.`=`(right: Any): Struct =
+    infix fun Any.eq(right: Any): Struct =
         structOf("=", this.toTerm(), right.toTerm())
 
     @JsName("neq2")
-    infix fun Any.`!=`(right: Any): Struct =
+    infix fun Any.neq(right: Any): Struct =
         structOf("\\=", this.toTerm(), right.toTerm())
 
     @JsName("id2")
-    infix fun Any.`==`(right: Any): Struct =
+    infix fun Any.id(right: Any): Struct =
         structOf("==", this.toTerm(), right.toTerm())
 
     @JsName("nid2")
-    infix fun Any.`!==`(right: Any): Struct =
+    infix fun Any.nid(right: Any): Struct =
         structOf("\\==", this.toTerm(), right.toTerm())
 
     @JsName("arithEq2")
-    infix fun Any.`===`(right: Any): Struct =
+    infix fun Any.arithEq(right: Any): Struct =
         structOf("=:=", this.toTerm(), right.toTerm())
 
     @JsName("arithNeq2")
-    infix fun Any.`=!=`(right: Any): Struct =
+    infix fun Any.arithNeq(right: Any): Struct =
         structOf("=\\=", this.toTerm(), right.toTerm())
-
-    @Suppress("DANGEROUS_CHARACTERS")
-    @JsName("power")
-    infix fun Any.`**`(right: Any): Struct =
-        structOf("**", this.toTerm(), right.toTerm())
-
-    @JsName("pow")
-    infix fun Any.`^`(right: Any): Struct =
-        structOf("^", this.toTerm(), right.toTerm())
 
     @JsName("member2")
     fun member(item: Any, list: Any): Struct =

@@ -26,7 +26,7 @@ internal class TestOnceImpl(
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ("once"("!") and (("X" `=` 1) or ("X" `=` 2)))
+            val query = ("once"("!") and (("X" eq 1) or ("X" eq 2)))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
