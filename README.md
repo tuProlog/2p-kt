@@ -11,7 +11,7 @@ Some quick links:
 * [Documentation](http://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/) (work in progress)
 * [Presentation](https://github.com/tuProlog/2p-kt-presentation/releases/latest) (currently describing the main API of 2P-Kt)
 
-> __Do not__ rely on the Bintray repository: Bintray services has been discontinued since May 2021, thus we won't be releasing 2P-Kt on Bintray anymore.
+> __Do not__ rely on the Bintray repository: Bintray services have been discontinued since May 2021, thus we won't be releasing 2P-Kt on Bintray anymore.
 > Kotlin and JVM packages will only be released on Maven Central and GitHub Packages.
 
 ## Intro
