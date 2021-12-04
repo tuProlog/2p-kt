@@ -1,6 +1,7 @@
 # 2P-Kt
 
 ### Some quick links:
+
 * [Home Page](http://tuprolog.unibo.it)
 * [GitLab Repository](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin) (used by developers)
 * [GitHub Repository](https://github.com/tuProlog/2p-kt) (public mirrored repository where JVM binaries are hosted)
