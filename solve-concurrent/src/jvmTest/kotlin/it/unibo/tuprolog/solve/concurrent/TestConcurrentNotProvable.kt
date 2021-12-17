@@ -54,7 +54,7 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = ((("X" `=` 1) or ("X" `=` 2)) and "not"(("!" and fail)))
+            val query = ((("X" eq 1) or ("X" eq 2)) and "not"(("!" and fail)))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(
                 sequenceOf(
@@ -71,7 +71,7 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = "not"(4 `=` 5)
+            val query = "not"(4 eq 5)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 

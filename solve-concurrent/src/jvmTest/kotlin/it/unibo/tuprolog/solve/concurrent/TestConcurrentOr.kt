@@ -47,7 +47,7 @@ interface TestConcurrentOr<T : WithAssertingEquals> : FromSequence<T>, SolverFac
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = ("X" `=` 1 and "!") or ("X" `=` 2)
+            val query = ("X" eq 1 and "!") or ("X" eq 2)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to 1))
 
@@ -59,7 +59,7 @@ interface TestConcurrentOr<T : WithAssertingEquals> : FromSequence<T>, SolverFac
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = ("X" `=` 1) or ("X" `=` 2)
+            val query = ("X" eq 1) or ("X" eq 2)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(
                 sequenceOf(

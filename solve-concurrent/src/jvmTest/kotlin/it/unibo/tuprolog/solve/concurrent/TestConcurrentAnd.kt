@@ -16,7 +16,7 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     fun testTermIsFreeVariable() {
         prolog {
             val solver = solverWithDefaultBuiltins()
-            val query = "X" `=` 1 and `var`("X")
+            val query = "X" eq 1 and `var`("X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.no())
 
@@ -27,7 +27,7 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     fun testWithSubstitution() {
         prolog {
             val solver = solverWithDefaultBuiltins()
-            val query = `var`("X") and ("X" `=` 1)
+            val query = `var`("X") and ("X" eq 1)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to 1))
 
@@ -71,7 +71,7 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = "X" `=` true and call("X")
+            val query = "X" eq true and call("X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to true))
 

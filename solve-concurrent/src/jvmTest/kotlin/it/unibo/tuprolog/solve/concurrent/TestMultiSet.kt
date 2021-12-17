@@ -27,13 +27,13 @@ class TestMultiSet {
     @Test
     fun testMultiSet() = multiRunConcurrentTest {
         prolog {
-            val query = "X" `=` 1 and `var`("X")
+            val query = "X" equalsTo 1 and `var`("X")
             val solutions = sequenceOf(query.no())
             val multiSet1 = MultiSet(solutions)
             val multiSet2 = MultiSet(solutions)
             multiSet1.assertingEquals(multiSet2)
 
-            val query2 = `var`("X") and ("X" `=` 1)
+            val query2 = `var`("X") and ("X" equalsTo 1)
             val solutions2 = sequenceOf(
                 query2.yes("X" to 1),
                 query2.yes("X" to 1),
@@ -58,8 +58,8 @@ class TestMultiSet {
     @Test
     fun testDifferentMultiSet() = multiRunConcurrentTest {
         prolog {
-            val query = "X" `=` 1 and `var`("X")
-            val query2 = `var`("X") and ("X" `=` 1)
+            val query = "X" equalsTo 1 and `var`("X")
+            val query2 = `var`("X") and ("X" equalsTo 1)
             val solutions = sequenceOf(query.no())
             val solutions2 = sequenceOf(query2.yes("X" to 1))
             val solutions3 = sequenceOf(query2.no())

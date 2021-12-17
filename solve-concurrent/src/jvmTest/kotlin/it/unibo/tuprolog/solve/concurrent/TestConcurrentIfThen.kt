@@ -47,7 +47,7 @@ interface TestConcurrentIfThen<T : WithAssertingEquals> : FromSequence<T>, Solve
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = "->"(true, "X" `=` 1)
+            val query = "->"(true, "X" eq 1)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to 1))
 
@@ -59,7 +59,7 @@ interface TestConcurrentIfThen<T : WithAssertingEquals> : FromSequence<T>, Solve
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = "->"(("X" `=` 1) or ("X" `=` 2), true)
+            val query = "->"(("X" eq 1) or ("X" eq 2), true)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to 1))
 
@@ -71,7 +71,7 @@ interface TestConcurrentIfThen<T : WithAssertingEquals> : FromSequence<T>, Solve
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = "->"(true, ("X" `=` 1) or ("X" `=` 2))
+            val query = "->"(true, ("X" eq 1) or ("X" eq 2))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(
                 sequenceOf(

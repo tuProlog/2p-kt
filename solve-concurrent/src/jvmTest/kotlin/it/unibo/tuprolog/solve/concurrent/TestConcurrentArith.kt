@@ -16,32 +16,32 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            var query = 0 `=!=` 1
+            var query = 0 arithNeq 1
             var solutions = fromSequence(solver.solve(query, mediumDuration))
             var expected = fromSequence(query.yes())
 
             expected.assertingEquals(solutions)
 
-            query = 1.0 `=!=` 1
+            query = 1.0 arithNeq 1
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(query.no())
 
             expected.assertingEquals(solutions)
 
-            query = (numOf(3) * 2) `=!=` (numOf(7) - 1)
+            query = (numOf(3) * 2) arithNeq (numOf(7) - 1)
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(query.no())
 
             expected.assertingEquals(solutions)
 
-            query = "N" `=!=` 5
+            query = N arithNeq 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(
                 query.halt(
                     InstantiationError.forArgument(
                         DummyInstances.executionContext,
                         Signature("=\\=", 2),
-                        varOf("N"),
+                        N,
                         index = 0
                     )
                 )
@@ -49,7 +49,7 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             expected.assertingEquals(solutions)
 
-            query = "floot"(1) `=!=` 5
+            query = "floot"(1) arithNeq 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(
                 query.halt(
@@ -71,32 +71,32 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            var query = 0 `===` 1
+            var query = 0 arithEq 1
             var solutions = fromSequence(solver.solve(query, mediumDuration))
             var expected = fromSequence(query.no())
 
             expected.assertingEquals(solutions)
 
-            query = 1.0 `===` 1
+            query = 1.0 arithEq 1
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(query.yes())
 
             expected.assertingEquals(solutions)
 
-            query = (numOf(3) * 2) `===` (numOf(7) - 1)
+            query = (numOf(3) * 2) arithEq (numOf(7) - 1)
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(query.yes())
 
             expected.assertingEquals(solutions)
 
-            query = "N" `===` 5
+            query = N arithEq 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(
                 query.halt(
                     InstantiationError.forArgument(
                         DummyInstances.executionContext,
                         Signature("=:=", 2),
-                        varOf("N"),
+                        N,
                         index = 0
                     )
                 )
@@ -104,7 +104,7 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             expected.assertingEquals(solutions)
 
-            query = "floot"(1) `===` 5
+            query = "floot"(1) arithEq 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(
                 query.halt(
@@ -120,7 +120,7 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             expected.assertingEquals(solutions)
 
-            query = 0.333 `===` (numOf(1) / 3)
+            query = 0.333 arithEq (numOf(1) / 3)
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(query.no())
 
@@ -150,14 +150,14 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             expected.assertingEquals(solutions)
 
-            query = "X" greaterThan 5
+            query = X greaterThan 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(
                 query.halt(
                     InstantiationError.forArgument(
                         DummyInstances.executionContext,
                         Signature(">", 2),
-                        varOf("X"),
+                        X,
                         index = 0
                     )
                 )
@@ -205,14 +205,14 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             expected.assertingEquals(solutions)
 
-            query = "X" greaterThanOrEqualsTo 5
+            query = X greaterThanOrEqualsTo 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(
                 query.halt(
                     InstantiationError.forArgument(
                         DummyInstances.executionContext,
                         Signature(">=", 2),
-                        varOf("X"),
+                        X,
                         index = 0
                     )
                 )
@@ -260,14 +260,14 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             expected.assertingEquals(solutions)
 
-            query = "X" lowerThan 5
+            query = X lowerThan 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(
                 query.halt(
                     InstantiationError.forArgument(
                         DummyInstances.executionContext,
                         Signature("<", 2),
-                        varOf("X"),
+                        X,
                         index = 0
                     )
                 )
@@ -315,14 +315,14 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             expected.assertingEquals(solutions)
 
-            query = "X" lowerThanOrEqualsTo 5
+            query = X lowerThanOrEqualsTo 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(
                 query.halt(
                     InstantiationError.forArgument(
                         DummyInstances.executionContext,
                         Signature("=<", 2),
-                        varOf("X"),
+                        X,
                         index = 0
                     )
                 )
