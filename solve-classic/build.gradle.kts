@@ -8,7 +8,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":solve"))
-                api(project(":dsl-theory"))
+                implementation(project(":dsl-theory"))
             }
         }
 

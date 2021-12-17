@@ -1,18 +1,36 @@
 # 2P-Kt
 
-Some quick links:
+### Some quick links:
+
 * [Home Page](http://tuprolog.unibo.it)
 * [GitLab Repository](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin) (used by developers)
 * [GitHub Repository](https://github.com/tuProlog/2p-kt) (public mirrored repository where JVM binaries are hosted)
 * [NPM Repository](https://www.npmjs.com/org/tuprolog) (where JS releases are hosted)
 * [Maven Central Repository](https://search.maven.org/search?q=g:it.unibo.tuprolog) (where all stable releases are hosted)
-* [Bintray Maven Repository](https://bintray.com/pika-lab/tuprolog) (where all releases are hosted, there including dev releases) __(discontinued)__
 * [GitHub Maven Repository](https://github.com/orgs/tuProlog/packages?repo_name=2p-kt) (where all releases are hosted, there including dev releases)
 * [Documentation](http://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/) (work in progress)
 * [Presentation](https://github.com/tuProlog/2p-kt-presentation/releases/latest) (currently describing the main API of 2P-Kt)
 
-> __Do not__ rely on the Bintray repository: Bintray services has been discontinued since May 2021, thus we won't be releasing 2P-Kt on Bintray anymore.
-> Kotlin and JVM packages will only be released on Maven Central and GitHub Packages.
+### Reference Publication
+
+Ciatto, G., Calegari, R., and Omicini, A. (2021). _2P-Kt: A logic-based ecosystem for symbolic AI_. SoftwareX, 16, 100817. 
+DOI: [10.1016/j.softx.2021.100817](https://doi.org/10.1016/j.softx.2021.100817).
+
+```bibtex
+@article{2pkt-swx16,
+	author = {Ciatto, Giovanni and Calegari, Roberta and Omicini, Andrea},
+	doi = {10.1016/j.softx.2021.100817},
+	issn = {2352-7110},
+	journal = {SoftwareX},
+	keywords = {logic programming, artificial intelligence, Prolog, Kotlin, tuProlog},
+	month = dec,
+	pages = {100817:1--7},
+	title = {{\textsf{2}P-\textsc{Kt}}: A Logic-Based Ecosystem for Symbolic {AI}},
+	url = {https://www.sciencedirect.com/science/article/pii/S2352711021001126},
+	volume = 16,
+	year = 2021
+}
+```
 
 ## Intro
 

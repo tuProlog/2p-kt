@@ -9,13 +9,18 @@ interface SolveOptions {
     val isLazy: Boolean
 
     @JsName("isEager")
-    val isEager: Boolean get() = !isLazy
+    val isEager: Boolean
+        get() = !isLazy
 
     @JsName("timeout")
     val timeout: TimeDuration
 
     @JsName("limit")
     val limit: Int
+
+    @JsName("isLimited")
+    val isLimited: Boolean
+        get() = limit >= 0
 
     @JsName("customOptions")
     val customOptions: Map<String, Any>
