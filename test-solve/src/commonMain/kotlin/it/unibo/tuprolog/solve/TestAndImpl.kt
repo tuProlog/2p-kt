@@ -11,7 +11,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "X" `=` 1 and `var`("X")
+            val query = "X" eq 1 and `var`("X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -25,7 +25,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = `var`("X") and ("X" `=` 1)
+            val query = `var`("X") and ("X" eq 1)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -76,7 +76,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "X" `=` true and call("X")
+            val query = "X" eq true and call("X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

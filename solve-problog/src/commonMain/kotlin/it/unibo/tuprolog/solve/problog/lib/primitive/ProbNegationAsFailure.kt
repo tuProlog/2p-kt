@@ -5,11 +5,13 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
+import it.unibo.tuprolog.solve.setProbabilistic
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -37,7 +39,10 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
             )
         } else {
             val explanationTermVar = Var.of("Explanation")
-            val solution = solve(Struct.of(ProbSolve.functor, explanationTermVar, second)).firstOrNull()
+            val solution = subSolver().solve(
+                Struct.of(ProbSolve.functor, explanationTermVar, second),
+                SolveOptions.DEFAULT.setProbabilistic(false)
+            ).firstOrNull()
             if (solution == null) {
                 replyFail()
             } else {

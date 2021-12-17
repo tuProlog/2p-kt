@@ -27,9 +27,6 @@ val shadowJar by tasks.getting(ShadowJar::class) {
     dependsOn("jvmMainClasses")
     archiveBaseName.set("${rootProject.name}-${project.name}")
     archiveClassifier.set("redist")
-    configurations = listOf(
-        kotlin.jvm().compilations.getByName("main").compileDependencyFiles as Configuration
-    )
     from(kotlin.jvm().compilations.getByName("main").output)
     from(files("${rootProject.projectDir}/LICENSE"))
     manifest {
@@ -47,7 +44,7 @@ tasks.create("run", JavaExec::class.java) {
         kotlin.jvm().compilations.getByName("main").compileDependencyFiles
     )
     standardInput = System.`in`
-    main = mainKlass
+    mainClass.set(mainKlass)
     arguments.let {
         if (it != null) {
             args = it.split("\\s+".toRegex()).filterNot { a -> a.isBlank() }

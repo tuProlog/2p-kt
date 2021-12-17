@@ -17,10 +17,10 @@ class TestNQueens {
         staticKb(
             rule {
                 "no_attack"(("X1" and "Y1"), ("X2" and "Y2")) `if` (
-                    ("X1" `=!=` "X2") and
-                        ("Y1" `=!=` "Y2") and
-                        (("Y2" - "Y1") `=!=` ("X2" - "X1")) and
-                        (("Y2" - "Y1") `=!=` ("X1" - "X2"))
+                    ("X1" arithNeq "X2") and
+                        ("Y1" arithNeq "Y2") and
+                        (("Y2" - "Y1") arithNeq ("X2" - "X1")) and
+                        (("Y2" - "Y1") arithNeq ("X1" - "X2"))
                     )
             },
             fact { "no_attack_all"(`_`, emptyList) },

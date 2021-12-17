@@ -54,12 +54,8 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                 "\\+", "not" -> yield(
                     /* Optimize Prolog-only queries */
                     if (context.isPrologMode()) {
-                        (
-                            third mguWith Struct.of(
-                                goal.functor,
-                                Struct.of(Prob.functor, Var.anonymous(), goal[0])
-                            )
-                            ) + (first mguWith ProbExplanation.TRUE.toTerm())
+                        (third mguWith Struct.of(goal.functor, Struct.of(Prob.functor, Var.anonymous(), goal[0]))) +
+                            (first mguWith ProbExplanation.TRUE.toTerm())
                     } else {
                         third mguWith Struct.of(ProbNegationAsFailure.functor, first, goal[0])
                     }

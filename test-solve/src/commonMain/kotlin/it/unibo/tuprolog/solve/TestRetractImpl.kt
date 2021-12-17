@@ -33,7 +33,7 @@ internal class TestRetractImpl(private val solverFactory: SolverFactory) : TestR
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = retract((atom(`_`) `if` ("X" `==` emptyList)))
+            val query = retract((atom(`_`) `if` ("X" id emptyList)))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

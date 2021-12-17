@@ -14,7 +14,7 @@ internal class TestFindAllImpl(
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", ("X" `=` 1) or ("X" `=` 2), "S")
+            val query = findall("X", ("X" eq 1) or ("X" eq 2), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -28,7 +28,7 @@ internal class TestFindAllImpl(
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("+"("X", "Y"), "X" `=` 1, "S")
+            val query = findall("+"("X", "Y"), "X" eq 1, "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -56,7 +56,7 @@ internal class TestFindAllImpl(
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", ("X" `=` 1) or ("X" `=` 1), "S")
+            val query = findall("X", ("X" eq 1) or ("X" eq 1), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -70,7 +70,7 @@ internal class TestFindAllImpl(
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", ("X" `=` 2) or ("X" `=` 1), listOf(1, 2))
+            val query = findall("X", ("X" eq 2) or ("X" eq 1), listOf(1, 2))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -84,7 +84,7 @@ internal class TestFindAllImpl(
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", ("X" `=` 1) or ("X" `=` 2), listOf("X", "Y"))
+            val query = findall("X", ("X" eq 1) or ("X" eq 2), listOf("X", "Y"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

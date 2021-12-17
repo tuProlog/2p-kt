@@ -12,7 +12,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = 0 `=!=` 1
+            var query = 0 arithNeq 1
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -20,7 +20,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                 solutions
             )
 
-            query = 1.0 `=!=` 1
+            query = 1.0 arithNeq 1
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -28,7 +28,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                 solutions
             )
 
-            query = (numOf(3) * 2) `=!=` (numOf(7) - 1)
+            query = (numOf(3) * 2) arithNeq (numOf(7) - 1)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -36,7 +36,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                 solutions
             )
 
-            query = "N" `=!=` 5
+            query = "N" arithNeq 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -53,7 +53,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                 solutions
             )
 
-            query = "floot"(1) `=!=` 5
+            query = "floot"(1) arithNeq 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -77,7 +77,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = 0 `===` 1
+            var query = 0 arithEq 1
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -85,7 +85,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                 solutions
             )
 
-            query = 1.0 `===` 1
+            query = 1.0 arithEq 1
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -93,7 +93,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                 solutions
             )
 
-            query = (numOf(3) * 2) `===` (numOf(7) - 1)
+            query = (numOf(3) * 2) arithEq (numOf(7) - 1)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -101,7 +101,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                 solutions
             )
 
-            query = "N" `===` 5
+            query = "N" arithEq 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -118,7 +118,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                 solutions
             )
 
-            query = "floot"(1) `===` 5
+            query = "floot"(1) arithEq 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -136,7 +136,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                 solutions
             )
 
-            query = 0.333 `===` (numOf(1) / 3)
+            query = 0.333 arithEq (numOf(1) / 3)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

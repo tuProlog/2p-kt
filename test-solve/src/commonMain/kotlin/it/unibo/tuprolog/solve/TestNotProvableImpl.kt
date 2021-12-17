@@ -60,7 +60,7 @@ class TestNotProvableImpl(
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ((("X" `=` 1) or ("X" `=` 2)) and "not"(("!" and fail)))
+            val query = ((("X" eq 1) or ("X" eq 2)) and "not"(("!" and fail)))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -79,7 +79,7 @@ class TestNotProvableImpl(
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "not"(4 `=` 5)
+            val query = "not"(4 eq 5)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

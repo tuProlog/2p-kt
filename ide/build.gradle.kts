@@ -32,7 +32,7 @@ javafx {
 val entryPoint = "it.unibo.tuprolog.ui.gui.Main"
 
 application {
-    mainClassName = entryPoint
+    mainClass.set(entryPoint)
 }
 
 val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
@@ -43,9 +43,7 @@ val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
     sourceSets.main {
         runtimeClasspath.filter { it.exists() }
             .map { if (it.isDirectory) it else zipTree(it) }
-            .forEach {
-                from(it)
-            }
+            .forEach { from(it) }
     }
     from(files("${rootProject.projectDir}/LICENSE"))
     dependsOn("classes")

@@ -8,7 +8,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = setof("X", ("X" `=` 1) or ("X" `=` 2), "S")
+            val query = setof("X", ("X" eq 1) or ("X" eq 2), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -22,7 +22,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = setof("X", ("X" `=` 1) or ("X" `=` 2), "X")
+            val query = setof("X", ("X" eq 1) or ("X" eq 2), "X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -36,7 +36,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = setof("X", ("X" `=` 2) or ("X" `=` 1), "X")
+            val query = setof("X", ("X" eq 2) or ("X" eq 1), "X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -50,7 +50,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = setof("X", ("X" `=` 2) or ("X" `=` 2), "L")
+            val query = setof("X", ("X" eq 2) or ("X" eq 2), "L")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -78,7 +78,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = setof("X", "Y" `^` ((("X" `=` 1) or ("Y" `=` 1)) or (("X" `=` 2) or ("Y" `=` 2))), "S")
+            val query = setof("X", "Y" sup ((("X" eq 1) or ("Y" eq 1)) or (("X" eq 2) or ("Y" eq 2))), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

@@ -51,7 +51,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ("foo" `=` "Foo") and nonvar("Foo")
+            val query = ("foo" eq "Foo") and nonvar("Foo")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

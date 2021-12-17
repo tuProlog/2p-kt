@@ -13,7 +13,6 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
-import kotlin.jvm.JvmStatic
 
 /**
  * General type for mutable logic [Solver]s.
@@ -131,17 +130,5 @@ interface MutableSolver : Solver {
 
     override fun clone(): MutableSolver
 
-    companion object {
-        @JvmStatic
-        @JsName("classic")
-        val classic: SolverFactory by lazy {
-            classicSolverFactory()
-        }
-
-        @JvmStatic
-        @JsName("streams")
-        val streams: SolverFactory by lazy {
-            streamsSolverFactory()
-        }
-    }
+    companion object
 }

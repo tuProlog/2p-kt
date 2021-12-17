@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.exception.TuPrologException
-import it.unibo.tuprolog.solve.problog.lib.ProblogLib
+import it.unibo.tuprolog.solve.problog.ANNOTATION_FUNCTOR
 import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
@@ -54,7 +54,7 @@ internal object AnnotatedDisjunctionClauseMapper : ClauseMapper {
             ProbabilisticClauseMapper.mapRuleInternal(
                 Rule.of(
                     Struct.of(
-                        ProblogLib.PROB_FUNCTOR,
+                        ANNOTATION_FUNCTOR,
                         Numeric.of(curProb / (1.0 - (probSum - curProb))),
                         curRuleHead
                     ),
@@ -74,7 +74,7 @@ internal object AnnotatedDisjunctionClauseMapper : ClauseMapper {
 
     private fun collectAllHeads(head: Term, accumulator: MutableList<Struct>) {
         if (head is Struct && head.arity == 2) {
-            if (head.functor != Semicolon.FUNCTOR && head.functor != ProblogLib.PROB_FUNCTOR) {
+            if (head.functor != Semicolon.FUNCTOR && head.functor != ANNOTATION_FUNCTOR) {
                 throw TuPrologException("Badly formatted disjoint annotation: $head")
             }
             if (head.functor == Semicolon.FUNCTOR) {
@@ -86,7 +86,7 @@ internal object AnnotatedDisjunctionClauseMapper : ClauseMapper {
         var curHead = head
         if (head is Struct) {
             curHead = if (head.functor == Semicolon.FUNCTOR) head[0] else head
-            if (curHead is Struct && curHead.functor == ProblogLib.PROB_FUNCTOR) {
+            if (curHead is Struct && curHead.functor == ANNOTATION_FUNCTOR) {
                 val curHeadProbTerm = curHead[0]
                 curHeadProb = when (curHeadProbTerm) {
                     is Numeric -> curHeadProbTerm.decimalValue.toDouble()
@@ -95,6 +95,6 @@ internal object AnnotatedDisjunctionClauseMapper : ClauseMapper {
                 curHead = curHead[1]
             }
         }
-        accumulator.add(Struct.of(ProblogLib.PROB_FUNCTOR, Numeric.of(curHeadProb), curHead))
+        accumulator.add(Struct.of(ANNOTATION_FUNCTOR, Numeric.of(curHeadProb), curHead))
     }
 }

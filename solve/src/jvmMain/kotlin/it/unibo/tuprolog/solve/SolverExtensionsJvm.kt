@@ -23,3 +23,6 @@ actual fun classicSolverFactory(): SolverFactory =
 
 actual fun streamsSolverFactory(): SolverFactory =
     solverFactory("it.unibo.tuprolog.solve.streams.StreamsSolverFactory")
+
+actual fun problogSolverFactory(): SolverFactory =
+    solverFactory("it.unibo.tuprolog.solve.problog.ProblogSolverFactory")

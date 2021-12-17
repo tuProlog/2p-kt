@@ -1,4 +1,4 @@
-@file:JvmName("CLI")
+@file:JvmName("PrologCLI")
 
 package it.unibo.tuprolog
 

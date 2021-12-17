@@ -63,7 +63,7 @@ internal class TestIfThenElseImpl(private val solverFactory: SolverFactory) : Te
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ";"("->"(true, ("X" `=` 1)), "X" `=` 2)
+            val query = ";"("->"(true, ("X" eq 1)), "X" eq 2)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -77,7 +77,7 @@ internal class TestIfThenElseImpl(private val solverFactory: SolverFactory) : Te
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ";"("->"(fail, ("X" `=` 1)), "X" `=` 2)
+            val query = ";"("->"(fail, ("X" eq 1)), "X" eq 2)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -91,7 +91,7 @@ internal class TestIfThenElseImpl(private val solverFactory: SolverFactory) : Te
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ";"("->"(true, ("X" `=` 1) or ("X" `=` 2)), true)
+            val query = ";"("->"(true, ("X" eq 1) or ("X" eq 2)), true)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -110,7 +110,7 @@ internal class TestIfThenElseImpl(private val solverFactory: SolverFactory) : Te
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ";"("->"(("X" `=` 1) or ("X" `=` 2), true), true)
+            val query = ";"("->"(("X" eq 1) or ("X" eq 2), true), true)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

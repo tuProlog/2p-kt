@@ -19,3 +19,9 @@ actual fun streamsSolverFactory(): SolverFactory =
         "@tuprolog/2p-solve-streams:it.unibo.tuprolog.solve.streams.StreamsSolverFactory",
         "2p-solve-streams:it.unibo.tuprolog.solve.streams.StreamsSolverFactory"
     )
+
+actual fun problogSolverFactory(): SolverFactory =
+    solverFactory(
+        "@tuprolog/2p-solve-problog:it.unibo.tuprolog.solve.problog.ProblogSolverFactory",
+        "2p-solve-problog:it.unibo.tuprolog.solve.problog.ProblogSolverFactory"
+    )

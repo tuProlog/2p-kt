@@ -5,3 +5,5 @@ internal expect fun solverFactory(className: String, vararg classNames: String):
 expect fun classicSolverFactory(): SolverFactory
 
 expect fun streamsSolverFactory(): SolverFactory
+
+expect fun problogSolverFactory(): SolverFactory
