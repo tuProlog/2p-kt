@@ -28,7 +28,7 @@ interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFac
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = ("X" `=` (intOf(1) + intOf(2))) and ("Y" `is` ("X" * intOf(3)))
+            val query = ("X" eq (intOf(1) + intOf(2))) and ("Y" `is` ("X" * intOf(3)))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to intOf(1) + intOf(2), "Y" to intOf(9)))
 

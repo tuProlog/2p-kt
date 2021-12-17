@@ -11,7 +11,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = setof("X", ("X" `=` 1) or ("X" `=` 2), "S")
+            val query = setof("X", ("X" eq 1) or ("X" eq 2), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("S" to listOf(1, 2)))
 
@@ -23,7 +23,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = setof("X", ("X" `=` 1) or ("X" `=` 2), "X")
+            val query = setof("X", ("X" eq 1) or ("X" eq 2), "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to listOf(1, 2)))
 
@@ -35,7 +35,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = setof("X", ("X" `=` 2) or ("X" `=` 1), "X")
+            val query = setof("X", ("X" eq 2) or ("X" eq 1), "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to listOf(1, 2)))
 
@@ -47,7 +47,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = setof("X", ("X" `=` 2) or ("X" `=` 2), "L")
+            val query = setof("X", ("X" eq 2) or ("X" eq 2), "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to listOf(2)))
 
@@ -71,7 +71,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = setof("X", "Y" `^` ((("X" `=` 1) or ("Y" `=` 1)) or (("X" `=` 2) or ("Y" `=` 2))), "S")
+            val query = setof("X", "Y" sup ((("X" eq 1) or ("Y" eq 1)) or (("X" eq 2) or ("Y" eq 2))), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("S" to listOf(1, 2)))
 

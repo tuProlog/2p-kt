@@ -16,7 +16,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = bagof("X", ("X" `=` 1) or ("X" `=` 2), "S")
+            val query = bagof("X", ("X" eq 1) or ("X" eq 2), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("S" to listOf(1, 2)))
 
@@ -28,7 +28,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = bagof("X", ("X" `=` 1) or ("X" `=` 2), "X")
+            val query = bagof("X", ("X" eq 1) or ("X" eq 2), "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to listOf(1, 2)))
 
@@ -40,7 +40,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = bagof("X", ("X" `=` "Y") or ("X" `=` "Z"), "L")
+            val query = bagof("X", ("X" eq "Y") or ("X" eq "Z"), "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("L" to listOf("Y", "Z")))
 
@@ -64,7 +64,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = bagof("X", "Y" `^` (("X" `=` 1) or ("Y" `=` 2)), "S")
+            val query = bagof("X", "Y" sup (("X" eq 1) or ("Y" eq 2)), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("S" to listOf(1)))
 

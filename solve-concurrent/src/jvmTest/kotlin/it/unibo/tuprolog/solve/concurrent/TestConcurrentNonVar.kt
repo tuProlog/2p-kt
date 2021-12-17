@@ -47,7 +47,7 @@ interface TestConcurrentNonVar<T : WithAssertingEquals> : FromSequence<T>, Solve
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = ("foo" `=` "Foo") and nonvar("Foo")
+            val query = ("foo" eq "Foo") and nonvar("Foo")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("Foo" to "foo"))
 

@@ -11,7 +11,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = 1 `=` 1
+            val query = 1 eq 1
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 
@@ -23,7 +23,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = "X" `=` 1
+            val query = "X" eq 1
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to 1))
 
@@ -35,7 +35,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = "X" `=` "Y"
+            val query = "X" eq "Y"
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to "Y"))
 
@@ -47,7 +47,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = (("X" `=` "Y") and ("X" `=` "abc"))
+            val query = (("X" eq "Y") and ("X" eq "abc"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to "abc", "Y" to "abc"))
 
@@ -59,7 +59,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = "f"("X", "def") `=` "f"("def", "Y")
+            val query = "f"("X", "def") eq "f"("def", "Y")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to "def", "Y" to "def"))
 
@@ -71,7 +71,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = 1 `=` 2
+            val query = 1 eq 2
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.no())
 
@@ -83,7 +83,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = 1 `=` realOf(1.0)
+            val query = 1 eq realOf(1.0)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.no())
 
@@ -95,7 +95,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = ("g"("X")) `=` ("f"("a"("X")))
+            val query = ("g"("X")) eq ("f"("a"("X")))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.no())
 
@@ -107,7 +107,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = ("f"("X", 1)) `=` ("f"("a"("X")))
+            val query = ("f"("X", 1)) eq ("f"("a"("X")))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.no())
 
@@ -119,7 +119,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = ("f"("X", "Y", "X")) `=` ("f"("a"("X"), "a"("Y"), "Y", 2))
+            val query = ("f"("X", "Y", "X")) eq ("f"("a"("X"), "a"("Y"), "Y", 2))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.no())
 
@@ -131,7 +131,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = ("f"("A", "B", "C")) `=` ("f"("g"("B", "B"), "g"("C", "C"), "g"("D", "D")))
+            val query = ("f"("A", "B", "C")) eq ("f"("g"("B", "B"), "g"("C", "C"), "g"("D", "D")))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(
                 query.yes(

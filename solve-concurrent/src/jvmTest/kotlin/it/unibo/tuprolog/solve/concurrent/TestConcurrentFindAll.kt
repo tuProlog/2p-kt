@@ -18,7 +18,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = findall("X", ("X" `=` 1) or ("X" `=` 2), "S")
+            val query = findall("X", ("X" eq 1) or ("X" eq 2), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("S" to listOf(1, 2)))
 
@@ -30,7 +30,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = findall("+"("X", "Y"), "X" `=` 1, "S")
+            val query = findall("+"("X", "Y"), "X" eq 1, "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("S" to listOf(1 + "Y")))
 
@@ -54,7 +54,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = findall("X", ("X" `=` 1) or ("X" `=` 1), "S")
+            val query = findall("X", ("X" eq 1) or ("X" eq 1), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("S" to listOf(1, 1)))
 
@@ -66,7 +66,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = findall("X", ("X" `=` 2) or ("X" `=` 1), listOf(1, 2))
+            val query = findall("X", ("X" eq 2) or ("X" eq 1), listOf(1, 2))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.no())
 
@@ -78,7 +78,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
         prolog {
             val solver = solverWithDefaultBuiltins()
 
-            val query = findall("X", ("X" `=` 1) or ("X" `=` 2), listOf("X", "Y"))
+            val query = findall("X", ("X" eq 1) or ("X" eq 2), listOf("X", "Y"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to 1, "Y" to 2))
 
