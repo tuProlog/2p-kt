@@ -2,14 +2,14 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
-    id("com.github.johnrengelman.shadow")
+    id(libs.plugins.shadowJar.get().pluginId)
 }
 
 kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("com.github.ajalt:clikt-multiplatform:_")
+                api(libs.clikt)
                 api(project(":core"))
                 api(project(":oop-lib"))
                 api(project(":io-lib"))

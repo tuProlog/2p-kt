@@ -1,19 +1,10 @@
-import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
-
 rootProject.name = "2p"
 
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath("de.fayard:dependencies:0.+")
-    }
-}
+enableFeaturePreview("VERSION_CATALOGS")
 
-bootstrapRefreshVersionsAndDependencies()
+dependencyResolutionManagement {
+//    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+}
 
 include("documentation")
 include("utils")

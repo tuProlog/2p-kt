@@ -1,11 +1,11 @@
 plugins {
-    id("com.eden.orchidPlugin")
+    alias(libs.plugins.orchid)
 }
 
 configurations {
     val orchidRuntimeOnly by getting {
         resolutionStrategy {
-            force("net.sourceforge.plantuml:plantuml:_")
+            force(libs.plantuml)
         }
     }
     create("plantuml") {
@@ -14,18 +14,17 @@ configurations {
 }
 
 dependencies {
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidDocs:_")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidKotlindoc:_")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidPluginDocs:_")
+    orchidRuntimeOnly(libs.orchid.docs)
+    orchidRuntimeOnly(libs.orchid.kotlinDocs)
+    orchidRuntimeOnly(libs.orchid.pluginDocs)
 
     val plantuml by configurations.getting
 
-    plantuml("net.sourceforge.plantuml:plantuml:_")
+    plantuml(libs.plantuml)
 }
 
 repositories {
     mavenCentral()
-    jcenter()
     maven("https://kotlin.bintray.com/kotlinx")
 }
 
