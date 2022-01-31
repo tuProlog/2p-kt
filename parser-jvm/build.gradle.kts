@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:_")
-    api("org.antlr:antlr4-runtime:_")
+    antlr(libs.antlr.full)
+    api(libs.antlr.runtime)
 
     implementation(kotlin("stdlib-jdk8"))
     testImplementation(kotlin("test-junit"))

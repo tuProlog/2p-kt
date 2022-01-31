@@ -7,11 +7,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import java.time.Duration
 
 plugins {
-    kotlin("multiplatform")
-    id("io.github.gciatto.kt-mpp-pp")
-    id("org.danilopianini.git-sensitive-semantic-versioning")
-    id("de.marcphilipp.nexus-publish")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.ktMppPP)
+    alias(libs.plugins.gitSemVer)
+    alias(libs.plugins.nexusPublish)
+    alias(libs.plugins.shadowJar)
 }
 
 group = "it.unibo.tuprolog"

@@ -3,8 +3,8 @@ import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
     application
-    id("org.openjfx.javafxplugin")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.javafx)
+    id(libs.plugins.shadowJar.get().pluginId)
 }
 
 val javaFxVersion: String by project
@@ -13,11 +13,14 @@ val arguments: String? by project
 dependencies {
     api(project(":ide"))
     api(project(":solve-problog"))
-    api("guru.nidi:graphviz-java:_")
+    api(libs.graphviz)
 
-    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:win")
-    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")
-    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:mac")
+    libs.javafx.graphics.get().let {
+        val dependencyNotation = "${it.module.group}:${it.module.name}:${it.versionConstraint.preferredVersion}"
+        listOf("win", "linux", "mac").forEach { platform ->
+            runtimeOnly("$dependencyNotation:$platform")
+        }
+    }
 
     testImplementation(kotlin("test-junit"))
 }

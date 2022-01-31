@@ -9,7 +9,7 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 implementation(project(":dsl-theory"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
         val commonTest by getting {
@@ -19,7 +19,7 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:_")
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
     }

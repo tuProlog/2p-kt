@@ -19,7 +19,7 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation(npm("sync-request", "6.1.0"))
+                implementation(npm("sync-request", libs.versions.npm.syncRequest.get()))
             }
         }
 
@@ -30,7 +30,7 @@ kotlin {
             listOf(commonMain, jsMain, commonTest, jsTest).forEach { sourceSet ->
                 from(sourceSet.resources.files)
             }
-            into(testCompileTask.outputFile.parentFile.parentFile)
+            into(testCompileTask.outputFileProperty.get().parentFile.parentFile)
             testCompileTask.dependsOn(this)
         }
     }

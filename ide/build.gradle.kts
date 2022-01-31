@@ -3,8 +3,8 @@ import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
     application
-    id("org.openjfx.javafxplugin")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.javafx)
+    id(libs.plugins.shadowJar.get().pluginId)
 }
 
 val javaFxVersion: String by project
@@ -15,11 +15,14 @@ dependencies {
     api(project(":oop-lib"))
     api(project(":parser-theory"))
     api(project(":solve-classic"))
-    api("org.fxmisc.richtext:richtextfx:_")
+    api(libs.richtextFx)
 
-    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:win")
-    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")
-    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:mac")
+    libs.javafx.graphics.get().let {
+        val dependencyNotation = "${it.module.group}:${it.module.name}:${it.versionConstraint.preferredVersion}"
+        listOf("win", "linux", "mac").forEach { platform ->
+            runtimeOnly("$dependencyNotation:$platform")
+        }
+    }
 
     testImplementation(kotlin("test-junit"))
 }

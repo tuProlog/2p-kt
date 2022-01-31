@@ -1,0 +1,46 @@
+[versions]
+kotlin = "1.6.10"
+jvm = "1.8"
+node = "16.13.2"
+npmPublish = "2.1.1"
+jackson = "2.13.0"
+orchid = "0.21.0"
+antlr = "4.9.2"
+kotlinx-coroutines = "1.5.1"
+javafx = "16"
+npm-yaml = "1.10.0" # yaml
+npm-tuprolog-parserUtils = "0.4.1" # @tuprolog/parser-utils
+npm-syncRequest = "6.1.0" # sync-request
+
+
+[plugins]
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
+ktMppPP = "io.github.gciatto.kt-mpp-pp:0.3.5"
+npmPublish = { id = "dev.petuska.npm.publish", version.ref = "npmPublish" }
+nexusPublish = "de.marcphilipp.nexus-publish:0.4.0"
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+dokka = "org.jetbrains.dokka:1.6.10"
+orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
+shadowJar = "com.github.johnrengelman.shadow:7.1.0"
+javafx = "org.openjfx.javafxplugin:0.0.10"
+
+[libraries]
+javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javafx" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
+jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+clikt = "com.github.ajalt:clikt-multiplatform:2.8.0"
+graphviz = "guru.nidi:graphviz-java:0.18.1"
+ktMath = "io.github.gciatto:kt-math:0.4.0"
+orchid-docs = { module = "io.github.javaeden.orchid:OrchidDocs", version.ref = "orchid" }
+orchid-kotlinDocs = { module = "io.github.javaeden.orchid:OrchidKotlindoc", version.ref = "orchid" }
+orchid-pluginDocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", version.ref = "orchid" }
+plantuml = "net.sourceforge.plantuml:plantuml:1.2020.2"
+antlr-full = { module = "org.antlr:antlr4", version.ref = "antlr" }
+antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
+richtextFx = "org.fxmisc.richtext:richtextfx:0.10.6"
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
