@@ -1,3 +1,7 @@
+plugins {
+    `kotlin-js-only`
+}
+
 kotlin {
     sourceSets {
         val main by getting {

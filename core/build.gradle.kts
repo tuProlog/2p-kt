@@ -1,5 +1,9 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask
+// import org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask
+
+plugins {
+    `kotlin-jvm-js`
+}
 
 val tuPrologPackage get() = rootProject.group.toString()
 val tuPrologPackageDir get() = tuPrologPackage.replace('.', File.separatorChar)
@@ -36,7 +40,7 @@ kotlin {
             }
 
             tasks.withType<KotlinCompile<*>>().forEach(addDependecyAction)
-            tasks.withType<GenerateReportsTask>().forEach(addDependecyAction)
+            // tasks.withType<GenerateReportsTask>().forEach(addDependecyAction)
         }
     }
 }

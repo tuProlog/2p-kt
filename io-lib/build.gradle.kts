@@ -1,5 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
+plugins {
+    `kotlin-jvm-js`
+}
+
 kotlin {
     sourceSets {
         val commonMain by getting {
