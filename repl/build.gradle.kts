@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
+    `kotlin-jvm-js`
     id(libs.plugins.shadowJar.get().pluginId)
 }
 
@@ -33,8 +33,6 @@ val shadowJar by tasks.getting(ShadowJar::class) {
         attributes("Main-Class" to mainKlass)
     }
 }
-
-configureUploadToGithub(shadowJar)
 
 tasks.create("run", JavaExec::class.java) {
     group = "application"

@@ -27,6 +27,8 @@ shadowJar = "com.github.johnrengelman.shadow:7.1.0"
 javafx = "org.openjfx.javafxplugin:0.0.10"
 
 [libraries]
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+npmPublish = { module = "dev.petuska:npm-publish", version.ref = "npmPublish" }
 javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javafx" }
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }

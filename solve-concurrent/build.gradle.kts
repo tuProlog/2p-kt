@@ -1,5 +1,9 @@
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
+plugins {
+    `kotlin-jvm-js`
+}
+
 val jvmStackSize: String by project
 val jvmMaxHeapSize: String by project
 

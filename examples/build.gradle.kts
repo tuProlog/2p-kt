@@ -1,3 +1,7 @@
+plugins {
+    `kotlin-jvm-only`
+}
+
 dependencies {
     api(project(":solve-classic"))
     api(project(":solve-problog"))
@@ -9,3 +13,5 @@ dependencies {
     api(kotlin("stdlib-jdk8"))
     testImplementation(kotlin("test-junit"))
 }
+
+jvmVersion(libs.versions.jvm)

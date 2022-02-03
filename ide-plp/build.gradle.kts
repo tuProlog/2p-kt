@@ -1,13 +1,12 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
+    `kotlin-jvm-only`
     application
     alias(libs.plugins.javafx)
     id(libs.plugins.shadowJar.get().pluginId)
 }
 
-val javaFxVersion: String by project
 val arguments: String? by project
 
 dependencies {
@@ -26,7 +25,7 @@ dependencies {
 }
 
 javafx {
-    version = javaFxVersion
+    version = libs.versions.javafx.get()
     modules = listOf("javafx.controls", "javafx.fxml", "javafx.graphics")
 }
 
@@ -49,5 +48,3 @@ val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
     from(files("${rootProject.projectDir}/LICENSE"))
     dependsOn("classes")
 }
-
-configureUploadToGithub(shadowJar)
