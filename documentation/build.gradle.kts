@@ -24,6 +24,7 @@ dependencies {
 }
 
 repositories {
+    jcenter()
     mavenCentral()
     maven("https://kotlin.bintray.com/kotlinx")
 }
