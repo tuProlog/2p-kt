@@ -4,7 +4,7 @@ plugins {
     `kotlin-jvm-only`
     application
     alias(libs.plugins.javafx)
-    id(libs.plugins.shadowJar.get().pluginId)
+    alias(libs.plugins.shadowJar)
 }
 
 val arguments: String? by project

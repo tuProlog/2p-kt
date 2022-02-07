@@ -43,12 +43,37 @@ fun Project.packageJson(handler: PackageJson.() -> Unit) {
     }
 }
 
-fun Project.subprojects(first: String, vararg others: String): Set<Project> {
-    val names = setOf(first, *others)
+fun Project.subprojects(names: Iterable<String>): Set<Project> {
     return subprojects.filter { it.name in names }.toSet()
 }
 
-fun Iterable<Project>.except(first: String, vararg others: String, action: Project.() -> Unit = {}): Set<Project> {
+fun Project.subprojects(first: String, vararg others: String): Set<Project> {
     val names = setOf(first, *others)
-    return filter { it.name !in names }.map { it.action(); it }.toSet()
+    return subprojects(names)
+}
+
+fun Project.subprojects(names: Iterable<String>, except: Iterable<String> = emptySet(), action: Project.() -> Unit) {
+    subprojects {
+        if (name.let { it in names && it !in except }) {
+            action()
+        }
+    }
+}
+
+fun Project.subprojects(names: Iterable<String>, except: String, action: Project.() -> Unit) {
+    subprojects(names, setOf(except), action)
+}
+
+fun Project.subprojects(first: String, vararg others: String, action: Project.() -> Unit) {
+    val names = setOf(first, *others)
+    subprojects(names, emptySet(), action)
+}
+
+fun Iterable<Project>.except(names: Iterable<String>): Set<Project> {
+    return filter { it.name !in names }.toSet()
+}
+
+fun Iterable<Project>.except(first: String, vararg others: String): Set<Project> {
+    val names = setOf(first, *others)
+    return except(names)
 }

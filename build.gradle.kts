@@ -1,17 +1,9 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-//import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
-//import io.github.gciatto.kt.mpp.ProjectExtensions.jsProjects
-//import io.github.gciatto.kt.mpp.ProjectExtensions.jvmProjects
-//import io.github.gciatto.kt.mpp.ProjectExtensions.ktProjects
-//import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
-import java.time.Duration
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
     `kotlin-jvm-js`
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.dokka)
-    alias(libs.plugins.shadowJar)
     `publish-on-maven`
     `publish-on-npm`
     `print-versions`
@@ -62,11 +54,6 @@ subprojects {
     version = rootProject.version
 }
 
-val otherProjects = subprojects("documentation")
-val jsProjects = subprojects("parser-js")
-val jvmProjects = subprojects("examples", "ide", "ide-plp")
-val ktProjects = allprojects.toSet() - (otherProjects + jsProjects + jvmProjects)
-
 //kotlinMultiplatform {
 //    projectLongName.set("2P-Kt")
 //    preventPublishingOfRootProject.set(true)
@@ -84,31 +71,3 @@ val ktProjects = allprojects.toSet() - (otherProjects + jsProjects + jvmProjects
 //    developer("Lorenzo Rizzato", "lorenzo.rizzato@studio.unibo.it")
 //    developer("Jason Dellaluce", "jason.dellaluce@studio.unibo.it")
 //}
-
-// kotlin {
-//     sourceSets {
-//         val commonMain by getting {
-//             dependencies {
-//                 ktProjects.except("test-solve") {
-//                     api(project(path))
-//                 }
-//             }
-//
-//         }
-//         val jvmMain by getting {
-//             dependencies {
-//                 jvmProjects.except("examples") {
-//                     api(project(path))
-//                 }
-//             }
-//         }
-//     }
-// }
-
-val shadowJar by tasks.getting(ShadowJar::class) {
-    dependsOn("jvmMainClasses")
-    archiveBaseName.set(rootProject.name)
-    archiveClassifier.set("full")
-    from(kotlin.jvm().compilations.getByName("main").output)
-    from(files("${rootProject.projectDir}/LICENSE"))
-}
