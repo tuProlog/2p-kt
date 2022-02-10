@@ -12,7 +12,7 @@ javafx = "16"
 npm-yaml = "1.10.0" # yaml
 npm-tuprolog-parserUtils = "0.4.1" # @tuprolog/parser-utils
 npm-syncRequest = "6.1.0" # sync-request
-
+ktlint = "10.2.1"
 
 [plugins]
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
@@ -26,8 +26,11 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 shadowJar = "com.github.johnrengelman.shadow:7.1.0"
 javafx = "org.openjfx.javafxplugin:0.0.10"
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+ktlint-idea = { id = "org.jlleitschuh.gradle.ktlint-idea", version.ref = "ktlint" }
 
 [libraries]
+ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 npmPublish = { module = "dev.petuska:npm-publish", version.ref = "npmPublish" }
 dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }

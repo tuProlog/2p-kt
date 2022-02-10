@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-// import org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask
 
 plugins {
     `kotlin-jvm-js`
