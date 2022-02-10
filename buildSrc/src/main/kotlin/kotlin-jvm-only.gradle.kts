@@ -18,3 +18,8 @@ tasks.withType<KotlinCompile> {
 java {
     withSourcesJar()
 }
+
+tasks.register("jvmTest") {
+    group = "verification"
+    dependsOn("test")
+}

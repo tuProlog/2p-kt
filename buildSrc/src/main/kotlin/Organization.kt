@@ -4,7 +4,7 @@ data class Organization(val name: String, val url: String) {
     companion object {
         fun Project.getOrg(key: String): Organization {
             val name = property("${key}Name")?.toString() ?: error("Missing property ${key}Name")
-            val url = property("${key}Url")?.toString() ?: error("Missing property ${key}Url")
+            val url = findProperty("${key}Url")?.toString() ?: error("Missing property ${key}Url")
             return Organization(name, url)
         }
     }
