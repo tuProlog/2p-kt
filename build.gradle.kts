@@ -1,9 +1,10 @@
-//import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaPlugin
 
 plugins {
     `kotlin-jvm-js`
+    `kotlin-joint-doc`
     alias(libs.plugins.gitSemVer)
-    alias(libs.plugins.dokka)
     `publish-on-maven`
     `publish-on-npm`
     `print-versions`
@@ -25,23 +26,6 @@ allprojects {
         mavenCentral()
     }
 }
-
-//packageJson {
-//    version = project.npmCompliantVersion
-//    dependencies {
-//        "kotlin" to libs.versions.kotlin.get()
-//    }
-//}
-//
-//tasks.withType<DokkaTask>().matching { "Html" in it.name }.all {
-//    val dokkaHtml = this
-//    tasks.create<Jar>("dokkaHtmlJar") {
-//        group = "documentation"
-//        archiveClassifier.set("javadoc")
-//        from(dokkaHtml.outputDirectory)
-//        dependsOn(dokkaHtml)
-//    }
-//}
 
 group = "it.unibo.tuprolog"
 

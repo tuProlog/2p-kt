@@ -2,6 +2,9 @@ import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
 plugins {
     `kotlin-jvm-js`
+    `kotlin-doc`
+    `publish-on-maven`
+    `publish-on-npm`
 }
 
 val jvmStackSize: String by project
