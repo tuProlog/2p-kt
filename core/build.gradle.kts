@@ -3,6 +3,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 plugins {
     `kotlin-jvm-js`
+    `kotlin-doc`
+    `publish-on-maven`
+    `publish-on-npm`
 }
 
 val tuPrologPackage get() = rootProject.group.toString()

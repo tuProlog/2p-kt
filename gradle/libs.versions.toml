@@ -1,5 +1,6 @@
 [versions]
 kotlin = "1.6.10"
+dokka = "1.6.10"
 jvm = "1.8"
 node = "16.13.2"
 npmPublish = "2.1.1"
@@ -21,7 +22,7 @@ nexusPublish = "de.marcphilipp.nexus-publish:0.4.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-dokka = "org.jetbrains.dokka:1.6.10"
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 shadowJar = "com.github.johnrengelman.shadow:7.1.0"
 javafx = "org.openjfx.javafxplugin:0.0.10"
@@ -29,6 +30,7 @@ javafx = "org.openjfx.javafxplugin:0.0.10"
 [libraries]
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 npmPublish = { module = "dev.petuska:npm-publish", version.ref = "npmPublish" }
+dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javafx" }
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
@@ -46,3 +48,7 @@ antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 richtextFx = "org.fxmisc.richtext:richtextfx:0.10.6"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-stdlib-jvm = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlin-stdlib-js = { module = "org.jetbrains.kotlin:kotlin-stdlib-js", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }

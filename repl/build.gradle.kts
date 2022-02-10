@@ -3,6 +3,9 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     `kotlin-jvm-js`
     alias(libs.plugins.shadowJar)
+    `kotlin-doc`
+    `publish-on-maven`
+    `publish-on-npm`
 }
 
 kotlin {

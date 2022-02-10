@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    alias(libs.plugins.kotlin.jvm)
 }
 
 repositories {
@@ -7,21 +8,23 @@ repositories {
     gradlePluginPortal()
 }
 
-val javaVersion = JavaVersion.current()
-
-java {
-    targetCompatibility = javaVersion
-    sourceCompatibility = javaVersion
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        allWarningsAsErrors = true
-        jvmTarget = javaVersion.toString()
-    }
-}
+//val javaVersion = JavaVersion.current()
+//
+//java {
+//    targetCompatibility = javaVersion
+//    sourceCompatibility = javaVersion
+//}
+//
+//tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+//    kotlinOptions {
+//        allWarningsAsErrors = false
+//        jvmTarget = javaVersion.toString()
+//        languageVersion = "1.6"
+//    }
+//}
 
 dependencies {
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.npmPublish)
+    implementation(libs.dokka)
 }

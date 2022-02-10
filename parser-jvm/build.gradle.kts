@@ -1,6 +1,8 @@
 plugins {
     `kotlin-jvm-only`
     antlr
+    `kotlin-doc`
+    `publish-on-maven`
 }
 
 dependencies {
