@@ -31,3 +31,8 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs = ktCompilerArgs.split(";").toList()
     }
 }
+
+tasks.register("jsTest") {
+    group = "verification"
+    dependsOn("test")
+}

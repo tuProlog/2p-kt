@@ -12,9 +12,9 @@ data class Developer(val name: String, val url: String?, val email: String?, val
     companion object {
         fun Project.getDev(key: String): Developer {
             val name = property("${key}Name")?.toString() ?: error("Missing property ${key}Name")
-            val url = property("${key}Url")?.toString()
-            val email = property("${key}Email")?.toString()
-            val orgKey = property("${key}Org")?.toString()
+            val url = findProperty("${key}Url")?.toString()
+            val email = findProperty("${key}Email")?.toString()
+            val orgKey = findProperty("${key}Org")?.toString()
             val org = orgKey?.let { getOrg(it) }
             return Developer(name, url, email, org)
         }
