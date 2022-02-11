@@ -1,0 +1,101 @@
+name: deploy
+on:
+  workflow_run:
+    workflows:
+      - check
+    types:
+      - completed
+    branches:
+      - master
+env:
+  PROJECT_NAME: 2p-kt
+  WORKFLOW: deploy
+  GRADLE_OPTIONS: "--console=plain --stacktrace"
+jobs:
+  github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    # && github.event.ref_type == 'tag'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+      - name: Get All Tags
+        run: git fetch --tags -f
+
+      - name: Generate Jars
+        run: gradle ${{ env.gradle-options }} shadowJar --parallel
+
+      - name: Generate Documentation
+        run: gradle ${{ env.gradle-options }} dokkaHtmlMultiModuleZip --parallel
+
+      - name: Get Version
+        id: get-version
+        run: echo ::set-output name=version::$(gradle --console=plain -q printVersion)
+
+      - name: Release Assets
+        id: upload-release-assets
+        run: |
+          set -x
+          ASSETS=()
+          for A in **/build/**/*redist*.jar **/build/**/*javadoc*.zip; do
+            ASSETS+=("-a" "$A")
+            echo "Releasing $A"
+          done
+          RELEASE_TAG='${{ steps.get-version.outputs.version }}'
+          hub release create "${ASSETS[@]}" -m "$RELEASE_TAG" "$RELEASE_TAG"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-on-central:
+    runs-on: ubuntu-latest
+    name: Deploy on Central
+    if: github.event.workflow_run.conclusion == 'success'
+    # && github.event.ref_type == 'tag'
+    env:
+      ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+      ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+      # ORG_GRADLE_PROJECT_mavenRepo: ${{ secrets.MAVEN_REPO }}
+      ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.MAVEN_USER }}
+      ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MAVEN_PASSWORD }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Get All Tags
+        run: git fetch --tags -f
+
+      - name: Generate Documentation
+        run: gradle ${{ env.GRADLE_OPTIONS }} dokkaHtml
+
+      - name: Sign All Artifacts
+        run: gradle ${{ env.GRADLE_OPTIONS }} signAllPublications
+
+      - name: Publish All Artifacts on Central
+        run: gradle ${{ env.GRADLE_OPTIONS }} publishAllPublicationsToMavenRepository
+
+  deploy-on-npm:
+    runs-on: ubuntu-latest
+    name: Deploy on NPM
+    if: github.event.workflow_run.conclusion == 'success'
+    # && github.event.ref_type == 'tag'
+    env:
+      ORG_GRADLE_PROJECT_npmToken: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Get All Tags
+        run: git fetch --tags -f
+
+      - name: Publish All Artifacts on NPM
+        run: gradle ${{ env.GRADLE_OPTIONS }} publishJsNpmPublicationToNpm
