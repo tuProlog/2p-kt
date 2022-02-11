@@ -49,10 +49,12 @@ val plantUmlFiles = fileTree("$projectDir/src/orchid/resources/assets/diagrams")
 if (!plantUmlFiles.isEmpty) {
     val generateUmlDiagramsInSvg by tasks.creating(JavaExec::class) {
         inputs.files(plantUmlFiles)
-        outputs.files(plantUmlFiles
-            .map { it.changeExtension("svg").absolutePath }
-            .map { it.replace("diagrams", "generated") }
-            .map(::File))
+        outputs.files(
+            plantUmlFiles
+                .map { it.changeExtension("svg").absolutePath }
+                .map { it.replace("diagrams", "generated") }
+                .map(::File)
+        )
         classpath = configurations.getByName("plantuml")
         main = "net.sourceforge.plantuml.Run"
         args("-tsvg", "-o", "$projectDir/src/orchid/resources/assets/generated")
