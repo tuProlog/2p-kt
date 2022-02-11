@@ -1,0 +1,136 @@
+name: check
+on:
+  push:
+    branches:
+      - '**'
+env:
+  PROJECT_NAME: 2p-kt
+  WORKFLOW: check
+  GRADLE_OPTIONS: "--console=plain --stacktrace"
+jobs:
+  check-style:
+    runs-on: ubuntu-latest
+    name: Check code style
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Publish All Artifacts on NPM
+        run: gradle ${{ env.GRADLE_OPTIONS }} publishJsNpmPublicationToNpm
+
+      - name: Show Env
+        run: gradle ${{ env.GRADLE_OPTIONS }} --version
+
+      - name: Restore Gradle Dependencies
+        run: gradle ${{ env.GRADLE_OPTIONS }}
+
+      - name: Check Code Style
+        run: gradle ${{ env.GRADLE_OPTIONS }} ktlintCheck
+
+      - name: Archive reports on failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: ktlint-reports
+          path: build/reports/ktlint/*
+
+  test-jvm:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        java-version:
+          - 11
+          - 16
+          - 17
+        jdk-dist:
+          - adopt-hotspot
+          - adopt-openj9
+    #          - zulu
+    runs-on: ${{ matrix.os }}
+    name: Run tests via ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}, on ${{ matrix.os }}
+    steps:
+      - name: Set ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}
+        uses: actions/setup-java@v2
+        with:
+          distribution: ${{ matrix.jdk-dist }}
+          java-version: ${{ matrix.java-version }}
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Get All Tags
+        run: git fetch --tags -f
+
+      - name: Show Env
+        run: gradle ${{ env.GRADLE_OPTIONS }} --version
+
+      - name: Restore Gradle Dependencies
+        run: gradle ${{ env.GRADLE_OPTIONS }}
+
+      - name: Build Main Classes
+        run: gradle ${{ env.GRADLE_OPTIONS }} jvmMainClasses
+
+      - name: Build Test Classes
+        run: gradle ${{ env.GRADLE_OPTIONS }} jvmTestClasses
+
+      - name: Test JVM
+        run: gradle ${{ env.GRADLE_OPTIONS }} jvmTest
+
+  test-js:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        node-version:
+          - '12.22.9'
+          - '14.18.3'
+          - '16.13.2'
+        java-version: [ 17 ]
+        jdk-dist: [ adopt-hotspot ]
+    runs-on: ${{ matrix.os }}
+    name: Run tests via NodeJS ${{ matrix.node-version }}, on ${{ matrix.os }}
+    env:
+      ORG_GRADLE_PROJECT_nodeVersion: ${{ matrix.node-version }}
+    steps:
+      - name: Set ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}
+        uses: actions/setup-java@v2
+        with:
+          distribution: ${{ matrix.jdk-dist }}
+          java-version: ${{ matrix.java-version }}
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Get All Tags
+        run: git fetch --tags -f
+
+      - name: Show Env
+        run: gradle ${{ env.GRADLE_OPTIONS }} --version
+
+      - name: Install Node
+        run: gradle ${{ env.GRADLE_OPTIONS }} kotlinNodeJsSetup
+
+      - name: Restore Gradle and Node Dependencies
+        run: gradle ${{ env.GRADLE_OPTIONS }} kotlinNpmInstall
+
+      - name: Build Main Classes
+        run: gradle ${{ env.GRADLE_OPTIONS }} jsMainClasses
+
+      - name: Build Test Classes
+        run: gradle ${{ env.GRADLE_OPTIONS }} jsTestClasses
+
+      - name: Test JS
+        run: gradle ${{ env.GRADLE_OPTIONS }} jsTest

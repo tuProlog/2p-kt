@@ -5,8 +5,8 @@ import org.jetbrains.dokka.gradle.DokkaTask
 
 apply<DokkaPlugin>()
 
-fun createJavadocJarTask(dependingOn: AbstractDokkaTask) {
-    tasks.create<Jar>("${dependingOn.name}Jar") {
+inline fun <reified A : Zip> createJavadocArchiveTask(dependingOn: AbstractDokkaTask) {
+    tasks.create<A>("${dependingOn.name}${A::class.simpleName}") {
         group = "documentation"
         archiveClassifier.set("javadoc")
         from(dependingOn.outputDirectory)
@@ -16,10 +16,10 @@ fun createJavadocJarTask(dependingOn: AbstractDokkaTask) {
 
 if (project == rootProject) {
     tasks.withType<DokkaMultiModuleTask>().all {
-        createJavadocJarTask(dependingOn = this)
+        createJavadocArchiveTask<Zip>(dependingOn = this)
     }
 } else {
     tasks.withType<DokkaTask>().all {
-        createJavadocJarTask(dependingOn = this)
+        createJavadocArchiveTask<Jar>(dependingOn = this)
     }
 }
