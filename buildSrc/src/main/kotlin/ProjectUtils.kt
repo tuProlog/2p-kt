@@ -65,7 +65,7 @@ fun Project.subprojects(first: String, vararg others: String): Set<Project> {
 }
 
 fun Project.subprojects(names: Iterable<String>, except: Iterable<String> = emptySet(), action: Project.() -> Unit) {
-    subprojects {
+    rootProject.subprojects {
         if (name.let { it in names && it !in except }) {
             action()
         }

@@ -121,6 +121,9 @@ abstract class AbstractSolver<E : ExecutionContext>(
                 is Solution.Halt -> {
                     warnings.write(InitializationIssue(goal, solution.exception, solution.exception.contexts))
                 }
+                else -> {
+                    // does nothing
+                }
             }
         }
     }
