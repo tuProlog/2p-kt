@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.gitSemVer)
     `kotlin-mp`
-    `kotlin-joint-doc`
+    `kotlin-doc`
     `publish-on-maven`
     `publish-on-npm`
     `print-versions`
