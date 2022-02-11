@@ -8,19 +8,21 @@ plugins {
     alias(libs.plugins.shadowJar)
 }
 
+val thisProject = project.name
+
 kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                subprojects(ktProjects, except = "test-solve") {
-                    api(project(path))
+                subprojects(ktProjects, except = setOf("test-solve", thisProject)) {
+                    api(this)
                 }
             }
         }
         val jvmMain by getting {
             dependencies {
                 subprojects(jvmProjects, except = "examples") {
-                    api(project(path))
+                    api(this)
                 }
             }
         }
