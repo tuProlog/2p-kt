@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 plugins {
-    `kotlin-jvm-js`
+    `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
     `publish-on-npm`

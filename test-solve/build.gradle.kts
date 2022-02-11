@@ -1,5 +1,5 @@
 plugins {
-    `kotlin-jvm-js`
+    `kotlin-mp`
 }
 
 kotlin {
