@@ -1,10 +1,7 @@
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.dokka.gradle.DokkaPlugin
-
 plugins {
+    alias(libs.plugins.gitSemVer)
     `kotlin-jvm-js`
     `kotlin-joint-doc`
-    alias(libs.plugins.gitSemVer)
     `publish-on-maven`
     `publish-on-npm`
     `print-versions`
@@ -25,6 +22,7 @@ allprojects {
     repositories {
         mavenCentral()
     }
+    apply(plugin = "kotlin-style-checker")
 }
 
 group = "it.unibo.tuprolog"

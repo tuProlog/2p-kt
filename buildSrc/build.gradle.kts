@@ -27,5 +27,5 @@ dependencies {
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.npmPublish)
     implementation(libs.dokka)
-//    implementation(libs.ktlint)
+    implementation(libs.ktlint)
 }
