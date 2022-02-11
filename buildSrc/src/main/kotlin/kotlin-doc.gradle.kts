@@ -1,14 +1,25 @@
+import org.jetbrains.dokka.gradle.AbstractDokkaTask
+import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 import org.jetbrains.dokka.gradle.DokkaPlugin
 import org.jetbrains.dokka.gradle.DokkaTask
 
 apply<DokkaPlugin>()
 
-tasks.withType<DokkaTask>().all {
-    val dokkaHtml = this
-    tasks.create<Jar>("${name}Jar") {
+fun createJavadocJarTask(dependingOn: AbstractDokkaTask) {
+    tasks.create<Jar>("${dependingOn.name}Jar") {
         group = "documentation"
         archiveClassifier.set("javadoc")
-        from(dokkaHtml.outputDirectory)
-        dependsOn(dokkaHtml)
+        from(dependingOn.outputDirectory)
+        dependsOn(dependingOn)
+    }
+}
+
+if (project == rootProject) {
+    tasks.withType<DokkaMultiModuleTask>().all {
+        createJavadocJarTask(dependingOn = this)
+    }
+} else {
+    tasks.withType<DokkaTask>().all {
+        createJavadocJarTask(dependingOn = this)
     }
 }
