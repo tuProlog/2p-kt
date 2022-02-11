@@ -17,9 +17,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Publish All Artifacts on NPM
-        run: gradle ${{ env.GRADLE_OPTIONS }} publishJsNpmPublicationToNpm
-
       - name: Show Env
         run: gradle ${{ env.GRADLE_OPTIONS }} --version
 
