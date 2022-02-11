@@ -28,4 +28,5 @@ dependencies {
     implementation(libs.npmPublish)
     implementation(libs.dokka)
     implementation(libs.ktlint)
+    implementation(libs.detekt)
 }

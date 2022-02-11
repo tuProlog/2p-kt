@@ -23,6 +23,7 @@ allprojects {
         mavenCentral()
     }
     apply(plugin = "kotlin-style-checker")
+    apply(plugin = "kotlin-bug-finder")
 }
 
 group = "it.unibo.tuprolog"
