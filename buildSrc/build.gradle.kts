@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    `java-gradle-plugin`
     alias(libs.plugins.kotlin.jvm)
 }
 
@@ -29,4 +30,16 @@ dependencies {
     implementation(libs.dokka)
     implementation(libs.ktlint)
     implementation(libs.detekt)
+    implementation(libs.javalin)
+}
+
+gradlePlugin {
+    plugins {
+        create("mock-service") {
+            id = "mock-service"
+            displayName = "Mock Service"
+            description = "Mock Service Plugin for starting WS in Gradle"
+            implementationClass = "MockServicePlugin"
+        }
+    }
 }
