@@ -75,17 +75,17 @@ class TestUrl {
 
     @Test
     fun testTextRetrieval() {
-        val url = Url.of("https://www.example.com")
+        val url = Url.of("http://localhost:8080/hello")
         val text = url.readAsText()
 
         assertTrue {
-            text.contains("<html>")
+            text.contains("hello")
         }
     }
 
     @Test
     fun testBinRetrieval() {
-        val url = Url.of("https://www.example.com")
+        val url = Url.of("http://localhost:8080/hello")
         val bytes = url.readAsByteArray()
         assertTrue {
             bytes.isNotEmpty()

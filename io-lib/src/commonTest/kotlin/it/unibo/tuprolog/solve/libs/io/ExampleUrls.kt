@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.libs.io
 
 object ExampleUrls {
-    private const val baseUrl = "https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/-/snippets/2048665/raw/master"
+    private const val baseUrl = "http://localhost:8080"
 
     const val PARENTS = "$baseUrl/parents.pl"
 
