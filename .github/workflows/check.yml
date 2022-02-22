@@ -31,7 +31,7 @@ jobs:
         if: failure()
         with:
           name: ktlint-reports
-          path: build/reports/ktlint/*
+          path: '**/build/reports/ktlint/*'
 
   test-jvm:
     strategy:
@@ -80,6 +80,15 @@ jobs:
 
       - name: Test JVM
         run: gradle ${{ env.GRADLE_OPTIONS }} jvmTest
+
+      - name: Archive reports on failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: jvm-tests-reports
+          path: |
+            **/build/reports/tests/jvmTest/*
+            **/build/reports/tests/test/*
 
   test-js:
     strategy:
@@ -130,3 +139,12 @@ jobs:
 
       - name: Test JS
         run: gradle ${{ env.GRADLE_OPTIONS }} jsTest
+
+      - name: Archive reports on failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: js-tests-reports
+          path: |
+            **/build/reports/tests/jsTest/*
+            **/build/reports/tests/test/*
