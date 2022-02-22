@@ -1,3 +1,7 @@
+plugins {
+    id("com.gradle.enterprise") version "3.8.1"
+}
+
 rootProject.name = "2p"
 
 enableFeaturePreview("VERSION_CATALOGS")
@@ -36,3 +40,11 @@ include(":ide-plp")
 include(":ide")
 include(":examples")
 include(":full")
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+        publishOnFailure()
+    }
+}
