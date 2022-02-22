@@ -30,7 +30,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: ktlint-reports-${{ matrix.node-version }}-${{ matrix.os }}
+          name: ktlint-reports
           path: '**/build/reports/ktlint/*'
 
   test-jvm:
