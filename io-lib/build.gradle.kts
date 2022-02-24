@@ -59,11 +59,16 @@ mockService {
 
     val parents = getCommonResource("Parents.pl")
     val parentsWrong = getCommonResource("WrongParents.pl")
+    val random = getCommonResource("random.bin")
 
     routes {
         get("/hello") { it.result("hello") }
         get("/parents.pl") { it.result(parents.inputStream()) }
         get("/parents-wrong.pl") { it.result(parentsWrong.inputStream()) }
+        get("/random.bin") {
+            it.contentType("application/octet-stream")
+            it.result(random.inputStream())
+        }
     }
 }
 
