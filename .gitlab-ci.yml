@@ -1,4 +1,4 @@
-image: pikalab/ci:ubuntu-jdk11-git-gradle-graphviz
+image: pikalab/ci:jdk-gradle-git-graphviz
 
 variables:
   GOPTS: "--no-daemon --console=plain"
@@ -22,10 +22,6 @@ variables:
   GITHUB_PUBLISH_TASK: "githubRelease"
   PAGES_TASK: "orchidBuild"
   ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
-
-before_script:
-  - chmod +x gradlew
-  - source $HOME/.sdkman/bin/sdkman-init.sh
 
 cache:
   paths:
