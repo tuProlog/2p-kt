@@ -1,15 +1,18 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
-    id("com.github.johnrengelman.shadow")
+    `kotlin-mp`
+    `kotlin-doc`
+    `publish-on-maven`
+    `publish-on-npm`
+    alias(libs.plugins.shadowJar)
 }
 
 kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("com.github.ajalt:clikt-multiplatform:_")
+                api(libs.clikt)
                 api(project(":core"))
                 api(project(":oop-lib"))
                 api(project(":io-lib"))
@@ -33,8 +36,6 @@ val shadowJar by tasks.getting(ShadowJar::class) {
         attributes("Main-Class" to mainKlass)
     }
 }
-
-configureUploadToGithub(shadowJar)
 
 tasks.create("run", JavaExec::class.java) {
     group = "application"

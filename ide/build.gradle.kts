@@ -1,13 +1,14 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
+    `kotlin-jvm-only`
     application
-    id("org.openjfx.javafxplugin")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.javafx)
+    alias(libs.plugins.shadowJar)
+    `kotlin-doc`
+    `publish-on-maven`
 }
 
-val javaFxVersion: String by project
 val arguments: String? by project
 
 dependencies {
@@ -15,17 +16,20 @@ dependencies {
     api(project(":oop-lib"))
     api(project(":parser-theory"))
     api(project(":solve-classic"))
-    api("org.fxmisc.richtext:richtextfx:_")
+    api(libs.richtextFx)
 
-    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:win")
-    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")
-    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:mac")
+    libs.javafx.graphics.get().let {
+        val dependencyNotation = "${it.module.group}:${it.module.name}:${it.versionConstraint.preferredVersion}"
+        listOf("win", "linux", "mac").forEach { platform ->
+            runtimeOnly("$dependencyNotation:$platform")
+        }
+    }
 
     testImplementation(kotlin("test-junit"))
 }
 
 javafx {
-    version = javaFxVersion
+    version = libs.versions.javafx.get()
     modules = listOf("javafx.controls", "javafx.fxml", "javafx.graphics")
 }
 
@@ -48,5 +52,3 @@ val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
     from(files("${rootProject.projectDir}/LICENSE"))
     dependsOn("classes")
 }
-
-configureUploadToGithub(shadowJar)

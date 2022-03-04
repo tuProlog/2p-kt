@@ -1,3 +1,7 @@
+plugins {
+    `kotlin-mp`
+}
+
 kotlin {
     sourceSets {
         val commonMain by getting {

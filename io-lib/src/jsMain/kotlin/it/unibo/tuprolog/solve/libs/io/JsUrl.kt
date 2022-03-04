@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.QUERY
 import it.unibo.tuprolog.solve.libs.io.Url.Companion.ensureValidPort
 import it.unibo.tuprolog.solve.libs.io.Url.Companion.parse
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
+import org.khronos.webgl.ArrayBuffer
 
 class JsUrl : Url {
     constructor(url: String) {
@@ -50,7 +51,11 @@ class JsUrl : Url {
     }
 
     override fun readAsByteArray(): ByteArray {
-        return readAsText().encodeToByteArray()
+        if (isFile) {
+            return readBin(path)
+        } else {
+            return fetch<ArrayBuffer>(url).toByteArray()
+        }
     }
 
     override fun equals(other: Any?): Boolean {

@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
+import it.unibo.tuprolog.test.assertAlmostEquals
 import kotlin.math.E
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,9 +23,9 @@ internal class ExponentialTest {
 
     @Test
     fun computationCorrect() {
-        assertEquals(
+        assertAlmostEquals(
             Numeric.of(E),
-            Exponential.computeOf(Integer.of(1))
+            Exponential.computeOf(Integer.of(1)).castToNumeric()
         )
     }
 }

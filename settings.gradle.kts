@@ -1,45 +1,50 @@
-import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
+plugins {
+    id("com.gradle.enterprise") version "3.8.1"
+}
 
 rootProject.name = "2p"
 
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath("de.fayard:dependencies:0.+")
-    }
+enableFeaturePreview("VERSION_CATALOGS")
+
+dependencyResolutionManagement {
+//    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 }
 
-bootstrapRefreshVersionsAndDependencies()
+include(":documentation")
+include(":utils")
+include(":core")
+include(":unify")
+include(":theory")
+include(":bdd")
+include(":dsl-core")
+include(":dsl-unify")
+include(":dsl-theory")
+include(":dsl-solve")
+include(":solve")
+include(":solve-classic")
+include(":solve-streams")
+include(":solve-concurrent")
+include(":test-solve")
+include(":parser-core")
+include(":parser-jvm")
+include(":parser-js")
+include(":parser-theory")
+include(":solve-plp")
+include(":solve-problog")
+include(":serialize-core")
+include(":serialize-theory")
+include(":repl")
+include(":oop-lib")
+include(":io-lib")
+include(":ide-plp")
+include(":ide")
+include(":examples")
+include(":full")
 
-include("documentation")
-include("utils")
-include("core")
-include("unify")
-include("theory")
-include("bdd")
-include("dsl-core")
-include("dsl-unify")
-include("dsl-theory")
-include("dsl-solve")
-include("solve")
-include("solve-classic")
-include("solve-streams")
-include("test-solve")
-include("parser-core")
-include("parser-jvm")
-include("parser-js")
-include("parser-theory")
-include("solve-plp")
-include("solve-problog")
-include("serialize-core")
-include("serialize-theory")
-include("repl")
-include("oop-lib")
-include("io-lib")
-include("ide-plp")
-include("ide")
-include("examples")
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+        publishOnFailure()
+    }
+}

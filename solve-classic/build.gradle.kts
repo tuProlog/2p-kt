@@ -1,5 +1,12 @@
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
+plugins {
+    `kotlin-mp`
+    `kotlin-doc`
+    `publish-on-maven`
+    `publish-on-npm`
+}
+
 val jvmStackSize: String by project
 val jvmMaxHeapSize: String by project
 
@@ -8,7 +15,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":solve"))
-                api(project(":dsl-theory"))
+                implementation(project(":dsl-theory"))
             }
         }
 

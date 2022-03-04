@@ -1,11 +1,11 @@
 plugins {
-    id("com.eden.orchidPlugin")
+    alias(libs.plugins.orchid)
 }
 
 configurations {
     val orchidRuntimeOnly by getting {
         resolutionStrategy {
-            force("net.sourceforge.plantuml:plantuml:_")
+            force(libs.plantuml)
         }
     }
     create("plantuml") {
@@ -14,18 +14,18 @@ configurations {
 }
 
 dependencies {
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidDocs:_")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidKotlindoc:_")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidPluginDocs:_")
+    orchidRuntimeOnly(libs.orchid.docs)
+    orchidRuntimeOnly(libs.orchid.kotlinDocs)
+    orchidRuntimeOnly(libs.orchid.pluginDocs)
 
     val plantuml by configurations.getting
 
-    plantuml("net.sourceforge.plantuml:plantuml:_")
+    plantuml(libs.plantuml)
 }
 
 repositories {
-    mavenCentral()
     jcenter()
+    mavenCentral()
     maven("https://kotlin.bintray.com/kotlinx")
 }
 
@@ -49,10 +49,12 @@ val plantUmlFiles = fileTree("$projectDir/src/orchid/resources/assets/diagrams")
 if (!plantUmlFiles.isEmpty) {
     val generateUmlDiagramsInSvg by tasks.creating(JavaExec::class) {
         inputs.files(plantUmlFiles)
-        outputs.files(plantUmlFiles
-            .map { it.changeExtension("svg").absolutePath }
-            .map { it.replace("diagrams", "generated") }
-            .map(::File))
+        outputs.files(
+            plantUmlFiles
+                .map { it.changeExtension("svg").absolutePath }
+                .map { it.replace("diagrams", "generated") }
+                .map(::File)
+        )
         classpath = configurations.getByName("plantuml")
         main = "net.sourceforge.plantuml.Run"
         args("-tsvg", "-o", "$projectDir/src/orchid/resources/assets/generated")

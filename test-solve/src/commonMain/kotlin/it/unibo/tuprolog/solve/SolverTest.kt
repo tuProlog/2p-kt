@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve
 interface SolverTest {
     /** A short test max duration */
     val shortDuration: TimeDuration
-        get() = 250L
+        get() = 500L
 
     /** A medium test max duration */
     val mediumDuration: TimeDuration

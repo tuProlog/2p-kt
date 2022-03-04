@@ -1,3 +1,10 @@
+plugins {
+    `kotlin-mp`
+    `kotlin-doc`
+    `publish-on-maven`
+    `publish-on-npm`
+}
+
 kotlin {
     sourceSets {
         val commonMain by getting {
@@ -15,10 +22,10 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                implementation("com.fasterxml.jackson.core:jackson-core:_")
-                implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:_")
-                implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:_")
-                implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:_")
+                implementation(libs.jackson.core)
+                implementation(libs.jackson.xml)
+                implementation(libs.jackson.yaml)
+                implementation(libs.jackson.jsr310)
             }
         }
     }

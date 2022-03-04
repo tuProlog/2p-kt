@@ -1,4 +1,4 @@
-image: pikalab/ci:ubuntu-jdk11-git-gradle-graphviz
+image: pikalab/ci:jdk-gradle-git-graphviz
 
 variables:
   GOPTS: "--no-daemon --console=plain"
@@ -6,7 +6,8 @@ variables:
   BEFORE_TASK: ""
   AFTER_TASK: ""
   GCMD: "gradle"
-  BUILD_TASK: "clean assemble --parallel"
+  CLEAN_TASK: "clean"
+  BUILD_TASK: "assemble --parallel"
   CHECK_CODE_TASK: "ktlintCheck --parallel"
   TEST_TASK: "check -x dokkaHtml"
   TEST_JVM_TASK: "jvmTest -x dokkaHtml"
@@ -21,10 +22,6 @@ variables:
   GITHUB_PUBLISH_TASK: "githubRelease"
   PAGES_TASK: "orchidBuild"
   ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
-
-before_script:
-  - chmod +x gradlew
-  - source $HOME/.sdkman/bin/sdkman-init.sh
 
 cache:
   paths:
@@ -58,6 +55,7 @@ Check Code Style:
 Compile:
   stage: build
   script:
+    - $GCMD $BEFORE_TASK $CLEAN_TASK $AFTER_TASK $GOPTS
     - $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
   only:
     - branches

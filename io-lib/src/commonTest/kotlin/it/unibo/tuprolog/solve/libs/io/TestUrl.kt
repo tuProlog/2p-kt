@@ -49,9 +49,9 @@ class TestUrl {
         val url = Url.of(ExampleUrls.WRONG_PARENTS)
         val text = url.readAsText()
 
-        assertEquals(
+        assertSameLines(
             ExampleFiles.WRONG_PARENTS,
-            text.trim()
+            text
         )
     }
 
@@ -61,9 +61,9 @@ class TestUrl {
         println(url)
         val text = url.readAsText()
 
-        assertEquals(
+        assertSameLines(
             ExampleFiles.PARENTS,
-            text.trim()
+            text
         )
 
         val parsed = ClausesParser.withDefaultOperators.parseTheory(text)
@@ -75,21 +75,20 @@ class TestUrl {
 
     @Test
     fun testTextRetrieval() {
-        val url = Url.of("https://www.example.com")
+        val url = Url.of("http://localhost:8080/hello")
         val text = url.readAsText()
 
         assertTrue {
-            text.contains("<html>")
+            text.contains("hello")
         }
     }
 
     @Test
     fun testBinRetrieval() {
-        val url = Url.of("https://www.example.com")
+        val url = Url.of("http://localhost:8080/random.bin")
         val bytes = url.readAsByteArray()
-        assertTrue {
-            bytes.isNotEmpty()
-        }
+        assertTrue(bytes.isNotEmpty())
+        assertEquals(1024, bytes.size)
     }
 
     @Test
@@ -117,29 +116,23 @@ class TestUrl {
     @Test
     fun testLocalFileRetrievalAsText() {
         var url = findResource("Parents.pl")
-        assertEquals(
+        assertSameLines(
             ExampleFiles.PARENTS,
-            url.readAsText().trim()
+            url.readAsText()
         )
         url = findResource("WrongParents.pl")
-        assertEquals(
+        assertSameLines(
             ExampleFiles.WRONG_PARENTS,
-            url.readAsText().trim()
+            url.readAsText()
         )
     }
 
     @Test
     fun testLocalFileRetrievalAsBytes() {
-        var url = findResource("Parents.pl")
-        assertEquals(
-            url.readAsText().trim(),
-            url.readAsByteArray().decodeToString().trim()
-        )
-        url = findResource("WrongParents.pl")
-        assertEquals(
-            url.readAsText().trim(),
-            url.readAsByteArray().decodeToString().trim()
-        )
+        val url = findResource("random.bin")
+        val bytes = url.readAsByteArray()
+        assertTrue(bytes.isNotEmpty())
+        assertEquals(1024, bytes.size)
     }
 
     @Test

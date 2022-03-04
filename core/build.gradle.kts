@@ -1,5 +1,11 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask
+
+plugins {
+    `kotlin-mp`
+    `kotlin-doc`
+    `publish-on-maven`
+    `publish-on-npm`
+}
 
 val tuPrologPackage get() = rootProject.group.toString()
 val tuPrologPackageDir get() = tuPrologPackage.replace('.', File.separatorChar)
@@ -8,7 +14,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("io.github.gciatto:kt-math:_")
+                api(libs.ktMath)
                 api(project(":utils"))
             }
 
@@ -36,7 +42,7 @@ kotlin {
             }
 
             tasks.withType<KotlinCompile<*>>().forEach(addDependecyAction)
-            tasks.withType<GenerateReportsTask>().forEach(addDependecyAction)
+            // tasks.withType<GenerateReportsTask>().forEach(addDependecyAction)
         }
     }
 }
