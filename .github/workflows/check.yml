@@ -52,7 +52,7 @@ jobs:
     name: Run tests via ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}, on ${{ matrix.os }}
     steps:
       - name: Set ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
@@ -108,7 +108,7 @@ jobs:
       ORG_GRADLE_PROJECT_nodeVersion: ${{ matrix.node-version }}
     steps:
       - name: Set ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
