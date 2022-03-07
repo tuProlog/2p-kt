@@ -12,7 +12,7 @@ javafx = "16"
 npm-yaml = "1.10.0" # yaml
 npm-tuprolog-parserUtils = "0.4.1" # @tuprolog/parser-utils
 npm-syncRequest = "6.1.0" # sync-request
-ktlint = "10.0.0"
+ktlint = "10.2.1"
 detekt = "1.19.0"
 
 [plugins]
