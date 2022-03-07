@@ -1,3 +1,5 @@
+kotlin-js-store/
+
 core/src/commonMain/kotlin/it/unibo/tuprolog/Info.kt
 
 *.hprof
