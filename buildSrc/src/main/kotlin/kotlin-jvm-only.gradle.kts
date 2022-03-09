@@ -23,3 +23,13 @@ tasks.register("jvmTest") {
     group = "verification"
     dependsOn("test")
 }
+
+tasks.register("jvmMainClasses") {
+    group = "build"
+    dependsOn("classes")
+}
+
+tasks.register("jvmTestClasses") {
+    group = "build"
+    dependsOn("testClasses")
+}

@@ -36,3 +36,13 @@ tasks.register("jsTest") {
     group = "verification"
     dependsOn("test")
 }
+
+tasks.register("jsMainClasses") {
+    group = "build"
+    dependsOn("mainClasses")
+}
+
+tasks.register("jsTestClasses") {
+    group = "build"
+    dependsOn("testClasses")
+}
