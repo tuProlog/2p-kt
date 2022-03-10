@@ -83,7 +83,7 @@ jobs:
         run: ./gradlew ${{ env.gradle-options }} ktlintCheck --parallel
 
       - name: Archive KtLint Reports
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: ktlint-reports
@@ -145,7 +145,7 @@ jobs:
         run: ./gradlew ${{ env.gradle-options }} jvmTest
 
       - name: Archive JVM Test Reports
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure() || success()
         with:
           name: jvm-test-reports
@@ -156,7 +156,7 @@ jobs:
 
       - name: Archive JS Test Reports
         if: failure() || success()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: js-test-reports
           path: '**/build/reports/tests/jsTest'
