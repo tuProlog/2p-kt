@@ -66,7 +66,7 @@ class TestUrl {
             text
         )
 
-        val parsed = ClausesParser.withDefaultOperators.parseTheory(text)
+        val parsed = ClausesParser.withDefaultOperators().parseTheory(text)
 
         assertTrue {
             ExampleTheories.PARENTS.equals(parsed, useVarCompleteName = false)

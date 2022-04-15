@@ -6,14 +6,12 @@ import it.unibo.tuprolog.core.Struct;
 import it.unibo.tuprolog.core.Substitution;
 import it.unibo.tuprolog.core.Term;
 import it.unibo.tuprolog.core.Var;
-import it.unibo.tuprolog.core.operators.OperatorSet;
 import it.unibo.tuprolog.solve.ExecutionContext;
 import it.unibo.tuprolog.solve.MutableSolver;
 import it.unibo.tuprolog.solve.Solution;
 import it.unibo.tuprolog.solve.Solver;
 import it.unibo.tuprolog.solve.library.AliasedLibrary;
 import it.unibo.tuprolog.solve.library.Library;
-import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper;
 import it.unibo.tuprolog.solve.primitive.Solve;
 import it.unibo.tuprolog.solve.primitive.TernaryRelation;
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate;
@@ -28,9 +26,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.ensuringArgumentIsInteger;
-import static it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.ensuringArgumentIsVariable;
-import static kotlin.collections.MapsKt.emptyMap;
 import static kotlin.collections.MapsKt.mapOf;
 import static kotlin.sequences.SequencesKt.generateSequence;
 import static kotlin.sequences.SequencesKt.map;
@@ -65,7 +60,7 @@ public class PrimitiveExamplesJvm {
                 "prolog.logging",
                 mapOf(LoggingPrimitive.INSTANCE.getDescriptionPair())
         );
-        Theory theory = ClausesParser.getWithDefaultOperators().parseTheory(
+        Theory theory = ClausesParser.withDefaultOperators().parseTheory(
                 "a(X) :- b(X).\n" +
                         "b(X) :- log_msg(X)."
         );
