@@ -22,7 +22,7 @@ import kotlin.jvm.JvmName
 internal expect fun termParserWithOperators(operators: OperatorSet, scope: Scope = Scope.empty()): TermParser
 
 private val defaultParser: TermParser
-    get() = TermParser.withDefaultOperators
+    get() = TermParser.withDefaultOperators()
 
 @JsName("termToClause")
 fun Term.toClause(source: Any? = null, line: Int = 0, column: Int = 0): Clause =

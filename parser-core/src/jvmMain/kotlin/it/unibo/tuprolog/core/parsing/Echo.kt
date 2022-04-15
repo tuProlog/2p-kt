@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.format
 
 fun main() {
-    val parser = TermParser.withStandardOperators
+    val parser = TermParser.withStandardOperators()
 
     while (true) {
         print("> ")
