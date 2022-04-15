@@ -3,9 +3,13 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Constant
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -15,6 +19,9 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface TermParser {
+
+    @JsName("scope")
+    val scope: Scope
 
     @JsName("defaultOperatorSet")
     val defaultOperatorSet: OperatorSet
@@ -83,17 +90,36 @@ interface TermParser {
         parseReal(input, defaultOperatorSet)
 
     @JsName("parseClauseWithOperators")
-    fun parseClause(input: String, operators: OperatorSet): Clause {
-        require(operators.any { it.functor == Clause.FUNCTOR }) {
-            "Error while parsing string as Clause: the provided operator set has no " +
-                "operator for '${Clause.FUNCTOR}'/1 or '${Clause.FUNCTOR}'/1"
-        }
-        return parseTerm(input, operators).toClause()
-    }
+    fun parseClause(input: String, operators: OperatorSet): Clause =
+        parseAs(input, operators)
 
     @JsName("parseClause")
     fun parseClause(input: String): Clause =
         parseClause(input, defaultOperatorSet)
+
+    @JsName("parseRuleWithOperators")
+    fun parseRule(input: String, operators: OperatorSet): Rule =
+        parseAs(input, operators)
+
+    @JsName("parseRule")
+    fun parseRule(input: String): Rule =
+        parseRule(input, defaultOperatorSet)
+
+    @JsName("parseFactWithOperators")
+    fun parseFact(input: String, operators: OperatorSet): Fact =
+        parseAs(input, operators)
+
+    @JsName("parseFact")
+    fun parseFact(input: String): Fact =
+        parseFact(input, defaultOperatorSet)
+
+    @JsName("parseDirectiveWithOperators")
+    fun parseDirective(input: String, operators: OperatorSet): Directive =
+        parseAs(input, operators)
+
+    @JsName("parseDirective")
+    fun parseDirective(input: String): Directive =
+        parseDirective(input, defaultOperatorSet)
 
     companion object {
         @JvmStatic
