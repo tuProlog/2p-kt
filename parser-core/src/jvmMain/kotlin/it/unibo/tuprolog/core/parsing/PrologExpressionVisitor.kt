@@ -17,9 +17,7 @@ import it.unibo.tuprolog.parser.dynamic.Associativity.YF
 import it.unibo.tuprolog.parser.dynamic.Associativity.YFX
 import org.gciatto.kt.math.BigInteger
 
-class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
-
-    private val scope: Scope = Scope.empty()
+class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : PrologParserBaseVisitor<Term>() {
 
     override fun visitSingletonTerm(ctx: PrologParser.SingletonTermContext): Term =
         visitTerm(ctx.term())

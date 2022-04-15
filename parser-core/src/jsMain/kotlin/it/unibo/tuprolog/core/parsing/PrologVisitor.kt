@@ -30,8 +30,7 @@ import it.unibo.tuprolog.parser.TermContext
 import it.unibo.tuprolog.parser.VariableContext
 import org.gciatto.kt.math.BigInteger
 
-class PrologVisitor : PrologParserVisitor<Term>() {
-    private val scope: Scope = Scope.empty()
+class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisitor<Term>() {
 
     override fun visitSingletonTerm(ctx: SingletonTermContext): Term =
         visitTerm(ctx.term())
@@ -241,7 +240,6 @@ class PrologVisitor : PrologParserVisitor<Term>() {
         return result
     }
 
-    // Prova refactoring List Kotlin
     private fun infixRight(terms: List<Term>, ops: List<String>): Term {
         var i = terms.size - 1
         var j = ops.size - 1
