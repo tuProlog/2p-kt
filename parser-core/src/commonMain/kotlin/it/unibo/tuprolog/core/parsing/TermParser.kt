@@ -16,6 +16,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import kotlin.js.JsName
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 interface TermParser {
@@ -124,23 +125,30 @@ interface TermParser {
     companion object {
         @JvmStatic
         @JsName("withNoOperator")
-        val withNoOperator = termParserWithOperators(OperatorSet.EMPTY)
+        @JvmOverloads
+        fun withNoOperator(scope: Scope = Scope.empty()) = withOperators(OperatorSet.EMPTY, scope)
 
         @JvmStatic
         @JsName("withStandardOperators")
-        val withStandardOperators = withOperators(OperatorSet.STANDARD)
+        @JvmOverloads
+        fun withStandardOperators(scope: Scope = Scope.empty()) = withOperators(OperatorSet.STANDARD, scope)
 
         @JvmStatic
         @JsName("withDefaultOperators")
-        val withDefaultOperators = withOperators(OperatorSet.DEFAULT)
+        @JvmOverloads
+        fun withDefaultOperators(scope: Scope = Scope.empty()) = withOperators(OperatorSet.DEFAULT, scope)
 
         @JvmStatic
         @JsName("withOperatorSet")
-        fun withOperators(operators: OperatorSet) = termParserWithOperators(operators)
+        @JvmOverloads
+        fun withOperators(operators: OperatorSet, scope: Scope = Scope.empty()) =
+            termParserWithOperators(operators, scope)
 
         @JvmStatic
         @JsName("withOperators")
-        fun withOperators(vararg operators: Operator) = withOperators(OperatorSet(*operators))
+        @JvmOverloads
+        fun withOperators(vararg operators: Operator, scope: Scope = Scope.empty()) =
+            withOperators(OperatorSet(*operators), scope)
 
         private inline fun <reified T : Term> TermParser.parseAs(input: String, operators: OperatorSet) =
             parseTerm(input, operators).let {
