@@ -27,7 +27,7 @@ class TestClausesParser {
 
     @Test
     fun testTheoryParsing() {
-        val db = with(ClausesParser.withStandardOperators) {
+        val db = with(ClausesParser.withStandardOperators()) {
             parseTheory("f(1).\nf(2).\n:- f(X), g(X).\nf(X) :- g(X).")
         }
 
@@ -50,7 +50,7 @@ class TestClausesParser {
     fun testTheoryParsingError() {
         val input = "f(a).\nf(b)"
         try {
-            with(ClausesParser.withStandardOperators) {
+            with(ClausesParser.withStandardOperators()) {
                 parseTheory(input)
             }
             fail("${ParseException::class} should be thrown")
@@ -71,7 +71,7 @@ class TestClausesParser {
             |1 :: 2 :: nil.
         """.trimMargin()
 
-        val th = with(ClausesParser.withStandardOperators) {
+        val th = with(ClausesParser.withStandardOperators()) {
             parseTheory(input)
         }
 
@@ -103,7 +103,7 @@ class TestClausesParser {
             |1 ++ 2 -- 3 ++ 4.
         """.trimMargin()
 
-        val th = with(ClausesParser.withStandardOperators) {
+        val th = with(ClausesParser.withStandardOperators()) {
             parseTheory(input)
         }
 

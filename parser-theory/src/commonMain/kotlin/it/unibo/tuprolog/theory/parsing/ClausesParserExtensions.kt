@@ -10,7 +10,7 @@ import kotlin.jvm.JvmName
 
 internal expect fun clausesParserWithOperators(operators: OperatorSet): ClausesParser
 
-private val defaultParser = ClausesParser.withDefaultOperators
+private val defaultParser = ClausesParser.withDefaultOperators()
 
 @JsName("parseTheoryWithOperators")
 fun Theory.Companion.parse(input: String, operators: OperatorSet): Theory =

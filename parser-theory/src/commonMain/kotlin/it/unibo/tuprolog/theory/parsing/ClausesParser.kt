@@ -37,15 +37,15 @@ interface ClausesParser {
     companion object {
         @JvmStatic
         @JsName("withNoOperator")
-        val withNoOperator = withOperators()
+        fun withNoOperator() = withOperators(OperatorSet.EMPTY)
 
         @JvmStatic
         @JsName("withStandardOperators")
-        val withStandardOperators = withOperators(OperatorSet.STANDARD)
+        fun withStandardOperators() = withOperators(OperatorSet.STANDARD)
 
         @JvmStatic
         @JsName("withDefaultOperators")
-        val withDefaultOperators = withOperators(OperatorSet.DEFAULT)
+        fun withDefaultOperators() = withOperators(OperatorSet.DEFAULT)
 
         @JvmStatic
         @JsName("withOperatorSet")
