@@ -5,10 +5,13 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Constant
+import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -16,9 +19,10 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
-internal expect fun termParserWithOperators(operators: OperatorSet): TermParser
+internal expect fun termParserWithOperators(operators: OperatorSet, scope: Scope = Scope.empty()): TermParser
 
-private val defaultParser = TermParser.withDefaultOperators
+private val defaultParser: TermParser
+    get() = TermParser.withDefaultOperators
 
 @JsName("termToClause")
 fun Term.toClause(source: Any? = null, line: Int = 0, column: Int = 0): Clause =
@@ -171,3 +175,51 @@ fun String.parseAsClause(operators: OperatorSet): Clause =
 @JsName("parseStringAsClause")
 fun String.parseAsClause(): Clause =
     defaultParser.parseClause(this)
+
+@JsName("parseRuleWithOperators")
+fun Rule.Companion.parse(input: String, operators: OperatorSet): Rule =
+    defaultParser.parseRule(input, operators)
+
+@JsName("parseRule")
+fun Rule.Companion.parse(input: String): Rule =
+    defaultParser.parseRule(input)
+
+@JsName("parseStringAsRuleWithOperators")
+fun String.parseAsRule(operators: OperatorSet): Rule =
+    defaultParser.parseRule(this, operators)
+
+@JsName("parseStringAsRule")
+fun String.parseAsRule(): Rule =
+    defaultParser.parseRule(this)
+
+@JsName("parseFactWithOperators")
+fun Fact.Companion.parse(input: String, operators: OperatorSet): Fact =
+    defaultParser.parseFact(input, operators)
+
+@JsName("parseFact")
+fun Fact.Companion.parse(input: String): Fact =
+    defaultParser.parseFact(input)
+
+@JsName("parseStringAsFactWithOperators")
+fun String.parseAsFact(operators: OperatorSet): Fact =
+    defaultParser.parseFact(this, operators)
+
+@JsName("parseStringAsFact")
+fun String.parseAsFact(): Fact =
+    defaultParser.parseFact(this)
+
+@JsName("parseDirectiveWithOperators")
+fun Directive.Companion.parse(input: String, operators: OperatorSet): Directive =
+    defaultParser.parseDirective(input, operators)
+
+@JsName("parseDirective")
+fun Directive.Companion.parse(input: String): Directive =
+    defaultParser.parseDirective(input)
+
+@JsName("parseStringAsDirectiveWithOperators")
+fun String.parseAsDirective(operators: OperatorSet): Directive =
+    defaultParser.parseDirective(this, operators)
+
+@JsName("parseStringAsDirective")
+fun String.parseAsDirective(): Directive =
+    defaultParser.parseDirective(this)
