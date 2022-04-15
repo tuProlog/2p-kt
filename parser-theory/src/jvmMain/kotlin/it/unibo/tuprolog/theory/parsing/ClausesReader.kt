@@ -43,13 +43,13 @@ interface ClausesReader {
 
     companion object {
         @JvmStatic
-        val withNoOperator: ClausesReader = withOperators()
+        fun withNoOperator(): ClausesReader = withOperators(OperatorSet.EMPTY)
 
         @JvmStatic
-        val withStandardOperators: ClausesReader = withOperators(OperatorSet.STANDARD)
+        fun withStandardOperators(): ClausesReader = withOperators(OperatorSet.STANDARD)
 
         @JvmStatic
-        val withDefaultOperators: ClausesReader = withOperators(OperatorSet.DEFAULT)
+        fun withDefaultOperators(): ClausesReader = withOperators(OperatorSet.DEFAULT)
 
         @JvmStatic
         fun withOperators(operators: OperatorSet): ClausesReader = ClausesReaderImpl(operators)

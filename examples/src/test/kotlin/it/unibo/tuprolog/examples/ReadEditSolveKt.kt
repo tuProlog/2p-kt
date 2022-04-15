@@ -12,7 +12,7 @@ class ReadEditSolveKt {
     @Test
     fun main() {
         val inputStream = ReadEditSolveKt::class.java.getResourceAsStream("increment.pl")!!
-        val clauseReader = ClausesReader.withDefaultOperators
+        val clauseReader = ClausesReader.withDefaultOperators()
         val theory = clauseReader.readTheory(inputStream)
         val solver = Solver.prolog.mutableSolverWithDefaultBuiltins(theory)
         val fact = Struct.of("diff", Integer.of(15))
@@ -31,7 +31,7 @@ class ReadEditSolveKt {
     @Test
     fun simple() {
         val inputStream = ReadEditSolveKt::class.java.getResourceAsStream("increment.pl")!!
-        val clauseReader = ClausesReader.withDefaultOperators
+        val clauseReader = ClausesReader.withDefaultOperators()
         val theory = clauseReader.readTheory(inputStream)
         val solver = Solver.prolog.mutableSolverWithDefaultBuiltins(theory)
         val fact = Struct.of("diff", Integer.of(15))
