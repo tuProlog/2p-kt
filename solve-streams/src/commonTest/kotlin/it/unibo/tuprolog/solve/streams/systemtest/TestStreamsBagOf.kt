@@ -10,6 +10,7 @@ class TestStreamsBagOf : TestBagOf, SolverFactory by StreamsSolverFactory {
     private val prototype = TestBagOf.prototype(this)
 
     @Test
+    @Ignore
     override fun testBagXInDifferentValues() {
         prototype.testBagXInDifferentValues()
     }
