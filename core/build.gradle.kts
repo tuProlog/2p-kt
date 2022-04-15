@@ -1,3 +1,4 @@
+import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 plugins {
@@ -37,13 +38,13 @@ kotlin {
                 outputs.file(infoKtFile)
             }
 
-            val addDependecyAction: (Task) -> Unit = {
+            val addDependencyAction: (Task) -> Unit = {
                 it.dependsOn(createInfoKt)
                 it.inputs.file(infoKtFile)
             }
 
-            tasks.withType<KotlinCompile<*>>().forEach(addDependecyAction)
-            // tasks.withType<GenerateReportsTask>().forEach(addDependecyAction)
+            tasks.withType<KotlinCompile<*>>().forEach(addDependencyAction)
+            tasks.withType<AbstractDokkaTask>().forEach(addDependencyAction)
         }
     }
 }
