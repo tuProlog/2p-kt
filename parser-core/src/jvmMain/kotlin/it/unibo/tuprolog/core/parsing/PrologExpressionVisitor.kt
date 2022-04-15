@@ -135,7 +135,7 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
                     )
                 }
                 return with(BigInteger.of(clean[0].code)) {
-                    if (ctx?.sign?.text?.contains("-") ?: false) {
+                    if (ctx.sign?.text?.contains("-") ?: false) {
                         -this
                     } else {
                         this
