@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core.parsing
 
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -8,6 +9,8 @@ import java.io.Reader
 import java.io.StringReader
 
 interface TermReader {
+    val scope: Scope
+
     val defaultOperatorSet: OperatorSet
 
     fun readTerm(reader: Reader, operators: OperatorSet): Term?
@@ -40,7 +43,7 @@ interface TermReader {
         val withDefaultOperators: TermReader = withOperators(OperatorSet.DEFAULT)
 
         @JvmStatic
-        fun withOperators(operators: OperatorSet): TermReader = TermReaderImpl(operators)
+        fun withOperators(operators: OperatorSet): TermReader = TermReaderImpl(Scope.empty(), operators)
 
         @JvmStatic
         fun withOperators(vararg operators: Operator): TermReader = withOperators(OperatorSet(*operators))
