@@ -34,18 +34,29 @@ interface TermReader {
     fun readTerms(string: String): Sequence<Term> = readTerms(string, defaultOperatorSet)
 
     companion object {
-        val withNoOperator: TermReader = withOperators(OperatorSet.EMPTY)
+        @JvmStatic
+        @JvmOverloads
+        fun withNoOperator(scope: Scope = Scope.empty()): TermReader =
+            withOperators(OperatorSet.EMPTY, scope)
 
         @JvmStatic
-        val withStandardOperators: TermReader = withOperators(OperatorSet.STANDARD)
+        @JvmOverloads
+        fun withStandardOperators(scope: Scope = Scope.empty()): TermReader =
+            withOperators(OperatorSet.STANDARD, scope)
 
         @JvmStatic
-        val withDefaultOperators: TermReader = withOperators(OperatorSet.DEFAULT)
+        @JvmOverloads
+        fun withDefaultOperators(scope: Scope = Scope.empty()): TermReader =
+            withOperators(OperatorSet.DEFAULT, scope)
 
         @JvmStatic
-        fun withOperators(operators: OperatorSet): TermReader = TermReaderImpl(Scope.empty(), operators)
+        @JvmOverloads
+        fun withOperators(operators: OperatorSet, scope: Scope = Scope.empty()): TermReader =
+            TermReaderImpl(scope, operators)
 
         @JvmStatic
-        fun withOperators(vararg operators: Operator): TermReader = withOperators(OperatorSet(*operators))
+        @JvmOverloads
+        fun withOperators(vararg operators: Operator, scope: Scope = Scope.empty()): TermReader =
+            withOperators(OperatorSet(*operators), scope)
     }
 }
