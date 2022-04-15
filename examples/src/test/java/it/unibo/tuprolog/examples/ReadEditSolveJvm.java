@@ -22,7 +22,7 @@ public class ReadEditSolveJvm {
     @Test
     public void main() {
         InputStream inputStream = ReadEditSolveJvm.class.getResourceAsStream("increment.pl");
-        ClausesReader clausesReader = ClausesReader.getWithDefaultOperators();
+        ClausesReader clausesReader = ClausesReader.withDefaultOperators();
         Theory theory = clausesReader.readTheory(inputStream);
         MutableSolver solver = Solver.getProlog().mutableSolverWithDefaultBuiltins(theory);
         Struct fact = Struct.of("diff", Integer.of(15));
@@ -43,7 +43,7 @@ public class ReadEditSolveJvm {
     @Test
     public void simple() {
         InputStream inputStream = ReadEditSolveJvm.class.getResourceAsStream("increment.pl");
-        ClausesReader clausesReader = ClausesReader.getWithDefaultOperators();
+        ClausesReader clausesReader = ClausesReader.withDefaultOperators();
         Theory theory = clausesReader.readTheory(inputStream);
         MutableSolver solver = Solver.getProlog().mutableSolverWithDefaultBuiltins(theory);
         Struct fact = Struct.of("diff", Integer.of(15));
