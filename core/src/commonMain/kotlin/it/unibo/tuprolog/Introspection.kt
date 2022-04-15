@@ -1,4 +1,5 @@
 @file:JvmName("Introspection")
+
 package it.unibo.tuprolog
 
 import kotlin.jvm.JvmName
