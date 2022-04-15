@@ -22,7 +22,7 @@ object ConcurrentSolverPerformance {
 
     private fun loadTheoryFromFile(fileName: String): Theory {
         val inputStream = ConcurrentSolverPerformance::class.java.getResourceAsStream(fileName)!!
-        return ClausesReader.withDefaultOperators.readTheory(inputStream)
+        return ClausesReader.withDefaultOperators().readTheory(inputStream)
     }
 
     private fun computeTime(block: () -> Unit): Long {
