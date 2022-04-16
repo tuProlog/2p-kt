@@ -13,7 +13,7 @@ npm-yaml = "1.10.0" # yaml
 npm-tuprolog-parserUtils = "0.4.1" # @tuprolog/parser-utils
 npm-syncRequest = "6.1.0" # sync-request
 ktlint = "10.0.0"
-detekt = "1.19.0"
+detekt = "1.20.0"
 
 [plugins]
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
