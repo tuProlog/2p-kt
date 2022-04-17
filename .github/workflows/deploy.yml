@@ -74,8 +74,8 @@ jobs:
       - name: Generate Documentation
         run: gradle ${{ env.GRADLE_OPTIONS }} dokkaHtml
 
-      - name: Sign All Artifacts
-        run: gradle ${{ env.GRADLE_OPTIONS }} signAllPublications
+#      - name: Sign All Artifacts
+#        run: gradle ${{ env.GRADLE_OPTIONS }} signAllPublications
 
       - name: Publish All Artifacts on Central
         run: gradle ${{ env.GRADLE_OPTIONS }} publishAllPublicationsToMavenRepository
