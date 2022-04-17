@@ -5,8 +5,8 @@ import org.jetbrains.dokka.gradle.DokkaTask
 
 apply<DokkaPlugin>()
 
-inline fun <reified A : Zip> createJavadocArchiveTask(dependingOn: AbstractDokkaTask) {
-    tasks.create<A>("${dependingOn.name}${A::class.simpleName}") {
+inline fun <reified A : Zip> createJavadocArchiveTask(dependingOn: AbstractDokkaTask): A {
+    return tasks.create<A>("${dependingOn.name}${A::class.simpleName}") {
         group = "documentation"
         archiveClassifier.set("javadoc")
         from(dependingOn.outputDirectory)
