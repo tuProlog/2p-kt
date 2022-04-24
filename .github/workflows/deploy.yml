@@ -16,7 +16,8 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
-    # && github.event.ref_type == 'tag'
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -99,3 +100,44 @@ jobs:
 
       - name: Publish All Artifacts on NPM
         run: gradle ${{ env.GRADLE_OPTIONS }} publishJsNpmPublicationToNpm
+
+  publish-aur-update:
+    needs: github-release
+    runs-on: ubuntu-latest
+    name: Update AUR
+    if: github.event.workflow_run.conclusion == 'success'
+    env:
+      AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
+      SSHPASS: ${{ secrets.AUR_PASSPHRASE }}
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p $HOME/.ssh
+          echo $AUR_PRIVATE_KEY | base64 --decode > $HOME/.ssh/aur
+          eval `ssh-agent`
+          sshpass -P passphrase -e ssh-add .ssh/aur
+
+      - name: Configure Git
+        run: |
+          git config --global user.name '${{ secrets.AUR_MAINTAINER_NAME }}'
+          git config --global user.email '${{ secrets.AUR_MAINTAINER_EMAIL }}'
+
+      - name: Clone AUR repo
+        run: git clone --depth '${{ secrets.AUR_REPO }}' aur
+
+      - name: Regenerate PKGBUILD
+        working-directory: ./aur
+        run: ./generate.sh ${{ needs.github-release.outputs.version }} > PKGBUILD
+
+      - name: Regenerate .SRCINFO
+        id: makepkg
+        uses: smallstep/pkgbuild-action@v1.0.1
+        with:
+          pkgdir: ./aur
+
+      - name: Commit & Push
+        working-directory: ./aur
+        run: |
+          git add .
+          git commit -m "release $PROJECT_NAME v${{ needs.github-release.outputs.version }}"
+          git push
