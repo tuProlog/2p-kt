@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.6.21"
-dokka = "1.6.20"
+dokka = "1.6.21"
 jvm = "1.8"
 node = "16.13.2"
 npmPublish = "2.1.2"
