@@ -131,7 +131,7 @@ jobs:
 
       - name: Regenerate .SRCINFO
         id: makepkg
-        uses: smallstep/pkgbuild-action@v1.0.1
+        uses: smallstep/pkgbuild-action@v1.0.2
         with:
           pkgdir: ./aur
 
