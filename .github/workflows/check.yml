@@ -27,7 +27,7 @@ jobs:
         run: gradle ${{ env.GRADLE_OPTIONS }} ktlintCheck
 
       - name: Archive reports on failure
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: ktlint-reports
@@ -83,7 +83,7 @@ jobs:
         run: gradle ${{ env.GRADLE_OPTIONS }} jvmTest
 
       - name: Archive reports on failure
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: tests-reports-${{ matrix.node-version }}-${{ matrix.os }}
@@ -142,7 +142,7 @@ jobs:
         run: gradle ${{ env.GRADLE_OPTIONS }} jsTest
 
       - name: Archive reports on failure
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: tests-reports-${{ matrix.node-version }}-${{ matrix.os }}
