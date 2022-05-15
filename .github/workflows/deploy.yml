@@ -115,7 +115,7 @@ jobs:
           mkdir -p $HOME/.ssh
           echo $AUR_PRIVATE_KEY | base64 --decode > $HOME/.ssh/aur
           eval `ssh-agent`
-          sshpass -P passphrase -e ssh-add .ssh/aur
+          sshpass -P passphrase -e ssh-add $HOME/.ssh/aur
 
       - name: Configure Git
         run: |
