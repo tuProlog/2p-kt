@@ -238,7 +238,10 @@ class TuPrologIDEController : Initializable {
         get() = tabsStreams.tabs.asSequence()
 
     private val currentFileTab: FileTabView?
-        get() = fileTabs.firstOrNull { it.file == model.currentFile }
+        get() = model.currentFile?.let { tabForFile(it) }
+
+    private fun tabForFile(file: File): FileTabView? =
+        fileTabs.firstOrNull { it.file == file }
 
     @FXML
     override fun initialize(location: URL, resources: ResourceBundle?) {
@@ -696,9 +699,12 @@ class TuPrologIDEController : Initializable {
         fileChooser.initialDirectory = File(System.getProperty("user.home"))
         fileChooser.title = "Save file as..."
         val file = fileChooser.showSaveDialog(stage)
-        model.renameFile(model.currentFile!!, file)
-        model.saveFile(file)
-        currentFileTab?.file = file
+        model.currentFile?.let {
+            model.renameFile(it, file)
+            model.saveFile(file)
+            model.selectFile(file)
+            tabForFile(it)?.file = file
+        }
     }
 
     @FXML
