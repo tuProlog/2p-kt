@@ -43,7 +43,7 @@ jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-y
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 clikt = "com.github.ajalt:clikt-multiplatform:2.8.0"
 graphviz = "guru.nidi:graphviz-java:0.18.1"
-ktMath = "io.github.gciatto:kt-math:0.4.0"
+ktMath = "io.github.gciatto:kt-math:0.6.0"
 orchid-docs = { module = "io.github.javaeden.orchid:OrchidDocs", version.ref = "orchid" }
 orchid-kotlinDocs = { module = "io.github.javaeden.orchid:OrchidKotlindoc", version.ref = "orchid" }
 orchid-pluginDocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", version.ref = "orchid" }
