@@ -60,8 +60,8 @@ jobs:
       ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
       ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
       # ORG_GRADLE_PROJECT_mavenRepo: ${{ secrets.MAVEN_REPO }}
-      ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.MAVEN_USER }}
-      ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MAVEN_PASSWORD }}
+      ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.OSSRH_USERNAME }}
+      ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.OSSRH_PASSWORD }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
