@@ -25,9 +25,7 @@ object Throw : UnaryPredicate<ExecutionContext>("throw") {
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> {
         return sequenceOf(
             ensuringAllArgumentsAreInstantiated()
-                .replyException(
-                    handleError(context, arguments[0])
-                )
+                .replyException(handleError(context, arguments[0]))
         )
     }
 }
