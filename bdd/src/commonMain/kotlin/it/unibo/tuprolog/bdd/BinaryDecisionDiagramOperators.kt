@@ -118,12 +118,11 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.applyThenExpansion(
  * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
  */
 @JsName("not")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.not():
-    BinaryDecisionDiagram<T> {
-        return runOperationAndCatchErrors {
-            this.apply { a -> !a }
-        }
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.not(): BinaryDecisionDiagram<T> {
+    return runOperationAndCatchErrors {
+        this.apply { a -> !a }
     }
+}
 
 /**
  * Performs the "Not" unary boolean operation over a [BinaryDecisionDiagram]

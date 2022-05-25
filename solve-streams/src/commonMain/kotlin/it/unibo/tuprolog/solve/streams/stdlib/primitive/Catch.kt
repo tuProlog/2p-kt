@@ -30,13 +30,11 @@ internal object Catch : PrimitiveWrapper<StreamsExecutionContext>("catch", 3) {
                         val recoverGoalArgument = request.arguments.last().apply(goalResponse.solution.substitution)
 
                         // attaching recover goal's solve request to catch/3 parent, to not re-execute this catch/3 if error thrown
-                        val recoverGoalSolveRequest = request
-                            .newSolveRequest(
-                                call(recoverGoalArgument),
-                                goalResponse.solution.substitution - request.context.substitution,
-                                requestIssuingInstant = currentTimeInstant()
-                            )
-                            .ensureNoMoreSelectableCatch(request.context)
+                        val recoverGoalSolveRequest = request.newSolveRequest(
+                            call(recoverGoalArgument),
+                            goalResponse.solution.substitution - request.context.substitution,
+                            requestIssuingInstant = currentTimeInstant()
+                        ).ensureNoMoreSelectableCatch(request.context)
 
                         yieldAll(StreamsSolver.solveToResponses(recoverGoalSolveRequest).map { request.replyWith(it) })
                     }
