@@ -93,6 +93,7 @@ jobs:
 
   test-js:
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest

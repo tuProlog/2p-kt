@@ -1,0 +1,33 @@
+name: deploy-js
+on:
+  workflow_run:
+    workflows:
+      - check
+    types:
+      - completed
+    branches:
+      - master
+env:
+  PROJECT_NAME: 2p-kt
+  WORKFLOW: deploy-ks
+  GRADLE_OPTIONS: "--console=plain --stacktrace"
+jobs:
+  deploy-on-npm:
+    runs-on: ubuntu-latest
+    name: Deploy on NPM
+    if: github.event.workflow_run.conclusion == 'success'
+    # && github.event.ref_type == 'tag'
+    env:
+      ORG_GRADLE_PROJECT_npmToken: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Get All Tags
+        run: git fetch --tags -f
+
+      - name: Publish All Artifacts on NPM
+        run: gradle ${{ env.GRADLE_OPTIONS }} publishJsNpmPublicationToNpm
