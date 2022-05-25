@@ -48,11 +48,9 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
 
         val evidenceTermVar = Var.of("TermVar")
         val evidenceTruthVar = Var.of("TruthVar")
-        val result = subSolver()
-            .solve(
-                Struct.of(EVIDENCE_PREDICATE, evidenceTermVar, evidenceTruthVar),
-                context.getSolverOptions().setLimit(SolveOptions.ALL_SOLUTIONS).setLazy(false)
-            )
+        val subQuery = Struct.of(EVIDENCE_PREDICATE, evidenceTermVar, evidenceTruthVar)
+        val subOptions = context.getSolverOptions().setLimit(SolveOptions.ALL_SOLUTIONS).setLazy(false)
+        val result = subSolver().solve(subQuery, subOptions)
             .filterIsInstance<Solution.Yes>()
             .toList()
             .map {

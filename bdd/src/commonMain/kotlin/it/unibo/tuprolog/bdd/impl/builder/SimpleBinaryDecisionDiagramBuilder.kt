@@ -27,8 +27,8 @@ internal class SimpleBinaryDecisionDiagramBuilder<T : Comparable<T>> :
 
     override fun buildTerminal(truth: Boolean):
         BinaryDecisionDiagram<T> {
-            return SimpleBinaryDecisionDiagramTerminal(
-                truth,
-            )
-        }
+        return SimpleBinaryDecisionDiagramTerminal(
+            truth,
+        )
+    }
 }

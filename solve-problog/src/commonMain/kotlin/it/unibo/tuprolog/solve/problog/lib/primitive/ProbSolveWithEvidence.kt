@@ -39,12 +39,9 @@ internal object ProbSolveWithEvidence : TernaryRelation.WithoutSideEffects<Execu
             /* No need to compute evidence for Prolog-only queries */
             ProbExplanation.TRUE.toTerm()
         } else {
-            subSolver()
-                .solve(
-                    Struct.of(ProbSolveEvidence.functor, evidenceExplanationVar),
-                    context.getSolverOptions()
-                )
-                .first().substitution[evidenceExplanationVar]
+            val subQuery = Struct.of(ProbSolveEvidence.functor, evidenceExplanationVar)
+            val solution = subSolver().solveOnce(subQuery, context.getSolverOptions())
+            solution.substitution[evidenceExplanationVar]
         }
 
         val goalExplanationVar = Var.of("GoalExplanation")
