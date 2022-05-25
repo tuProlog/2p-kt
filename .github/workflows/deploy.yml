@@ -81,26 +81,6 @@ jobs:
       - name: Publish All Artifacts on Central
         run: gradle ${{ env.GRADLE_OPTIONS }} publishAllPublicationsToMavenRepository
 
-  deploy-on-npm:
-    runs-on: ubuntu-latest
-    name: Deploy on NPM
-    if: github.event.workflow_run.conclusion == 'success'
-    # && github.event.ref_type == 'tag'
-    env:
-      ORG_GRADLE_PROJECT_npmToken: ${{ secrets.NPM_TOKEN }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          submodules: recursive
-
-      - name: Get All Tags
-        run: git fetch --tags -f
-
-      - name: Publish All Artifacts on NPM
-        run: gradle ${{ env.GRADLE_OPTIONS }} publishJsNpmPublicationToNpm
-
   publish-aur-update:
     needs: github-release
     runs-on: ubuntu-latest
@@ -114,6 +94,7 @@ jobs:
         run: |
           mkdir -p $HOME/.ssh
           echo $AUR_PRIVATE_KEY | base64 --decode > $HOME/.ssh/aur
+          chmod go-rwx $HOME/.ssh/aur
           eval `ssh-agent`
           sshpass -P passphrase -e ssh-add $HOME/.ssh/aur
 
