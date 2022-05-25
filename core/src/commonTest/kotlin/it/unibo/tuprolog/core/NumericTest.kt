@@ -29,17 +29,16 @@ internal class NumericTest {
         }
     }
 
-    /** This map contains a mapping between real numbers and their version with some trailing zeros (i.e. 10.0 to 10.00) */
+    /** This map contains a mapping between real numbers and their version with some trailing zeros (e.g. 10.0 to 10.00) */
     private val realToRealWithTrailingZerosMap by lazy {
-        RealUtils.decimalsAsFloats
-            .map { BigDecimal.of(it) }
-            .map {
-                BigDecimal.of(it.unscaledValue.toLong(), it.scale) to
-                    BigDecimal.of(it.unscaledValue.toLong() * 10, it.scale + 1)
-            } +
-            RealUtils.stringNumbers
+              RealUtils.stringNumbers
                 .filterNot { "E" in it || "e" in it }
-                .map { BigDecimal.of(it) to BigDecimal.of(it + "00") }
+                .flatMap {
+                    listOf(
+                        BigDecimal.of(it) to BigDecimal.of(it + "0"),
+                        BigDecimal.of(it) to BigDecimal.of(it + "00"),
+                    )
+                }
     }
 
     @Test
