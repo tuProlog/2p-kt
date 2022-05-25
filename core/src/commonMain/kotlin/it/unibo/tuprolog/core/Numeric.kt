@@ -73,7 +73,12 @@ interface Numeric : Constant {
         @JsName("of")
         fun of(value: Number): Numeric = when (value) {
             // avoiding string format is necessary for "floats", to maintain full precision during conversions
+            is Double -> of(value)
+            is Int -> of(value)
             is Float -> of(value)
+            is Long -> of(value)
+            is Short -> of(value)
+            is Byte -> of(value)
             else -> of(value.toString())
         }
 
