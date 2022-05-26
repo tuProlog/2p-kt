@@ -9,8 +9,7 @@ on:
       - master
 env:
   PROJECT_NAME: 2p-kt
-  WORKFLOW: deploy-ks
-  GRADLE_OPTIONS: "--console=plain --stacktrace"
+  WORKFLOW: deploy-js
 jobs:
   deploy-on-npm:
     runs-on: ubuntu-latest
@@ -20,14 +19,13 @@ jobs:
     env:
       ORG_GRADLE_PROJECT_npmToken: ${{ secrets.NPM_TOKEN }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: DanySK/action-checkout@0.2.1
+
+      - name: Check Code Style
+        uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
-          fetch-depth: 0
-          submodules: recursive
-
-      - name: Get All Tags
-        run: git fetch --tags -f
-
-      - name: Publish All Artifacts on NPM
-        run: gradle ${{ env.GRADLE_OPTIONS }} publishJsNpmPublicationToNpm
+          build-command: true
+          check-command: true
+          deploy-command: gradle publishJsNpmPublicationToNpm
+          gradle-termination-command: gradle --stop

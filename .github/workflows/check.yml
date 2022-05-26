@@ -6,32 +6,20 @@ on:
 env:
   PROJECT_NAME: 2p-kt
   WORKFLOW: check
-  GRADLE_OPTIONS: "--console=plain --stacktrace"
 jobs:
   check-style:
     runs-on: ubuntu-latest
-    name: Check code style
+    name: Check Code Style
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Show Env
-        run: gradle ${{ env.GRADLE_OPTIONS }} --version
-
-      - name: Restore Gradle Dependencies
-        run: gradle ${{ env.GRADLE_OPTIONS }}
+      - name: Checkout
+        uses: DanySK/action-checkout@0.2.1
 
       - name: Check Code Style
-        run: gradle ${{ env.GRADLE_OPTIONS }} ktlintCheck
-
-      - name: Archive reports on failure
-        uses: actions/upload-artifact@v3
-        if: failure()
+        uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
-          name: ktlint-reports
-          path: '**/build/reports/ktlint/*'
+          build-command: true
+          check-command: gradle ktlintCheck
+          gradle-termination-command: gradle --stop
 
   test-jvm:
     strategy:
@@ -47,49 +35,23 @@ jobs:
           - 17
         jdk-dist:
           - adopt-hotspot
-          - adopt-openj9
-    #          - zulu
+          - temurin
+#          - adopt-openj9
+#              - zulu
     runs-on: ${{ matrix.os }}
     name: Run tests via ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}, on ${{ matrix.os }}
     steps:
-      - name: Set ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}
-        uses: actions/setup-java@v3
+      - name: Checkout
+        uses: danysk/action-checkout@0.2.1
+
+      - name: Build and test
+        uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
-          distribution: ${{ matrix.jdk-dist }}
+          java-distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          submodules: recursive
-
-      - name: Get All Tags
-        run: git fetch --tags -f
-
-      - name: Show Env
-        run: gradle ${{ env.GRADLE_OPTIONS }} --version
-
-      - name: Restore Gradle Dependencies
-        run: gradle ${{ env.GRADLE_OPTIONS }}
-
-      - name: Build Main Classes
-        run: gradle ${{ env.GRADLE_OPTIONS }} jvmMainClasses
-
-      - name: Build Test Classes
-        run: gradle ${{ env.GRADLE_OPTIONS }} jvmTestClasses
-
-      - name: Test JVM
-        run: gradle ${{ env.GRADLE_OPTIONS }} jvmTest
-
-      - name: Archive reports on failure
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: tests-reports-${{ matrix.node-version }}-${{ matrix.os }}
-          path: |
-            **/build/reports/tests/jvmTest/*
-            **/build/reports/tests/test/*
+          build-command: gradle jvmMainClasses jvmTestClasses
+          check-command: gradle jvmTest
+          gradle-termination-command: gradle --stop
 
   test-js:
     strategy:
@@ -109,44 +71,16 @@ jobs:
     env:
       ORG_GRADLE_PROJECT_nodeVersion: ${{ matrix.node-version }}
     steps:
-      - name: Set ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}
-        uses: actions/setup-java@v3
+      - name: Checkout
+        uses: danysk/action-checkout@0.2.1
+
+      - name: Build and test
+        uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
-          distribution: ${{ matrix.jdk-dist }}
+          java-distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          submodules: recursive
-
-      - name: Get All Tags
-        run: git fetch --tags -f
-
-      - name: Show Env
-        run: gradle ${{ env.GRADLE_OPTIONS }} --version
-
-      - name: Install Node
-        run: gradle ${{ env.GRADLE_OPTIONS }} kotlinNodeJsSetup
-
-      - name: Restore Gradle and Node Dependencies
-        run: gradle ${{ env.GRADLE_OPTIONS }} kotlinNpmInstall
-
-      - name: Build Main Classes
-        run: gradle ${{ env.GRADLE_OPTIONS }} jsMainClasses
-
-      - name: Build Test Classes
-        run: gradle ${{ env.GRADLE_OPTIONS }} jsTestClasses
-
-      - name: Test JS
-        run: gradle ${{ env.GRADLE_OPTIONS }} jsTest
-
-      - name: Archive reports on failure
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: tests-reports-${{ matrix.node-version }}-${{ matrix.os }}
-          path: |
-            **/build/reports/tests/jsTest/*
-            **/build/reports/tests/test/*
+          pre-build-command: gradle kotlinNodeJsSetup kotlinNpmInstall
+          build-command: gradle jsMainClasses jsTestClasses
+          check-command: gradle jsTest
+          clean-command: gradle cleanTest
+          gradle-termination-command: gradle --stop
