@@ -10,7 +10,9 @@ on:
 env:
   PROJECT_NAME: 2p-kt
   WORKFLOW: deploy
-  GRADLE_OPTIONS: "--console=plain --stacktrace"
+  GRADLE_OPTIONS: "--console=plain"
+  RELEASE_JDK_VERSION: 11
+  RELEASE_JDK_DIST: adopt-hotspot
 jobs:
   github-release:
     name: Create GitHub Release
@@ -19,6 +21,12 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.version }}
     steps:
+      - name: Set ${{ env.RELEASE_JDK_DIST }} JDK v${{ env.RELEASE_JDK_VERSION }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: ${{ env.RELEASE_JDK_DIST }}
+          java-version: ${{ env.RELEASE_JDK_VERSION }}
+
       - name: Checkout code
         uses: actions/checkout@v3
         with:
@@ -63,6 +71,12 @@ jobs:
       ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.OSSRH_USERNAME }}
       ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.OSSRH_PASSWORD }}
     steps:
+      - name: Set ${{ env.RELEASE_JDK_DIST }} JDK v${{ env.RELEASE_JDK_VERSION }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: ${{ env.RELEASE_JDK_DIST }}
+          java-version: ${{ env.RELEASE_JDK_VERSION }}
+
       - name: Checkout code
         uses: actions/checkout@v3
         with:
@@ -73,7 +87,7 @@ jobs:
         run: git fetch --tags -f
 
       - name: Generate Documentation
-        run: gradle ${{ env.GRADLE_OPTIONS }} dokkaHtml
+        run: gradle ${{ env.GRADLE_OPTIONS }} dokkaHtml --parallel
 
 #      - name: Sign All Artifacts
 #        run: gradle ${{ env.GRADLE_OPTIONS }} signAllPublications
