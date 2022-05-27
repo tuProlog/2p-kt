@@ -36,8 +36,8 @@ jobs:
         jdk-dist:
           - adopt-hotspot
           - temurin
-#          - adopt-openj9
-#              - zulu
+#         - adopt-openj9
+#         - zulu
     runs-on: ${{ matrix.os }}
     name: Run tests via ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}, on ${{ matrix.os }}
     steps:
@@ -64,8 +64,6 @@ jobs:
         node-version:
           - '14.18.3'
           - '16.13.2'
-        java-version: [ 17 ]
-        jdk-dist: [ adopt-hotspot ]
     runs-on: ${{ matrix.os }}
     name: Run tests via NodeJS ${{ matrix.node-version }}, on ${{ matrix.os }}
     env:
@@ -77,8 +75,6 @@ jobs:
       - name: Build and test
         uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
-          java-distribution: ${{ matrix.jdk-dist }}
-          java-version: ${{ matrix.java-version }}
           pre-build-command: gradle kotlinNodeJsSetup kotlinNpmInstall
           build-command: gradle jsMainClasses jsTestClasses
           check-command: gradle jsTest
