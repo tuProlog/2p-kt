@@ -24,8 +24,8 @@ jobs:
       - name: Generate Jars
         uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
-          build-command: gradle shadowJar --parallel
-          check-command: gradle dokkaHtmlMultiModuleZip --parallel
+          build-command: gradle shadowJar
+          check-command: gradle dokkaHtmlMultiModuleZip
           clean-command: echo ::set-output name=version::$(gradle --console=plain -q printVersion)
           gradle-termination-command: gradle --stop
 
@@ -61,8 +61,8 @@ jobs:
       - name: Deploy
         uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
-          build-command: gradle dokkaHtml --parallel
-          check-command: gradle dokkaHtmlMultiModuleZip --parallel
+          build-command: gradle dokkaHtml
+          check-command: gradle dokkaHtmlMultiModuleZip
           deploy-command: gradle publishAllPublicationsToMavenRepository
           maven-central-username: ${{ secrets.OSSRH_USERNAME }}
           maven-central-password: ${{ secrets.OSSRH_PASSWORD }}
