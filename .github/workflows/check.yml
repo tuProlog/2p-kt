@@ -10,6 +10,10 @@ jobs:
   check-style:
     runs-on: ubuntu-latest
     name: Check Code Style
+    timeout-minutes: 30
+    concurrency:
+      group: ${{ github.workflow }}-style-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.1
@@ -40,6 +44,10 @@ jobs:
 #         - zulu
     runs-on: ${{ matrix.os }}
     name: Run tests via ${{ matrix.jdk-dist }} JDK v${{ matrix.java-version }}, on ${{ matrix.os }}
+    timeout-minutes: 60
+    concurrency:
+      group: ${{ github.workflow }}-build-jvm-${{ matrix.os }}-${{ matrix.jdk-dist }}-${{ matrix.java-version }}-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
@@ -68,6 +76,10 @@ jobs:
     name: Run tests via NodeJS ${{ matrix.node-version }}, on ${{ matrix.os }}
     env:
       ORG_GRADLE_PROJECT_nodeVersion: ${{ matrix.node-version }}
+    timeout-minutes: 60
+    concurrency:
+      group: ${{ github.workflow }}-build-js-${{ matrix.os }}-${{ matrix.node-version }}-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
