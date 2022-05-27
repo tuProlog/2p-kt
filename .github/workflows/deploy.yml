@@ -17,6 +17,10 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     outputs:
       version: ${{ steps.get-version.outputs.version }}
+    timeout-minutes: 120
+    concurrency:
+      # Only one release job at a time. Strictly sequential.
+      group: release-github
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
@@ -44,6 +48,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-on-central:
+    needs: github-release
     runs-on: ubuntu-latest
     name: Deploy on Central
     if: github.event.workflow_run.conclusion == 'success'
@@ -54,6 +59,10 @@ jobs:
       # ORG_GRADLE_PROJECT_mavenRepo: ${{ secrets.MAVEN_REPO }}
       ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.OSSRH_USERNAME }}
       ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.OSSRH_PASSWORD }}
+    timeout-minutes: 120
+    concurrency:
+      # Only one release job at a time. Strictly sequential.
+      group: release-central
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
@@ -78,6 +87,10 @@ jobs:
     env:
       AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
       SSHPASS: ${{ secrets.AUR_PASSPHRASE }}
+    timeout-minutes: 30
+    concurrency:
+      # Only one release job at a time. Strictly sequential.
+      group: release-aur
     steps:
       - name: Configure SSH
         run: |
