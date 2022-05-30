@@ -46,7 +46,7 @@ publishing {
             version = project.version.toString()
 
             tasks.withType<Jar> {
-                if (archiveClassifier.getOrElse("") in publishableClassifiers) {
+                if ("Html" in name && archiveClassifier.getOrElse("") in publishableClassifiers) {
                     artifact(this)
                 }
             }
