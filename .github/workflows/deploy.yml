@@ -33,7 +33,7 @@ jobs:
 
       - name: Get Version
         id: get-version
-        run: echo ::set-output name=version::$(./gradle --console=plain -q printVersion)
+        run: echo ::set-output name=version::$(./gradlew --console=plain -q printVersion)
 
       - name: Release Assets
         id: upload-release-assets
