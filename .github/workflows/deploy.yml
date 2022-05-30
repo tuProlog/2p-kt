@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
     outputs:
-      version: ${{ steps.get-version.outputs.version }}
+      version: ${{ steps.generate-jars.outputs.version }}
     timeout-minutes: 120
     concurrency:
       # Only one release job at a time. Strictly sequential.
@@ -26,6 +26,7 @@ jobs:
         uses: danysk/action-checkout@0.2.1
 
       - name: Generate Jars
+        id: generate-jars
         uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
           build-command: gradle shadowJar
@@ -42,10 +43,11 @@ jobs:
             ASSETS+=("-a" "$A")
             echo "Releasing $A"
           done
-          RELEASE_TAG='${{ steps.get-version.outputs.version }}'
           hub release create "${ASSETS[@]}" -m "$RELEASE_TAG" "$RELEASE_TAG"
         env:
+          RELEASE_TAG: ${{ steps.generate-jars.outputs.version }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
   deploy-on-central:
     needs: github-release
