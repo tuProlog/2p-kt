@@ -35,7 +35,7 @@ jobs:
           - macos-latest
         java-version:
           - 11
-          - 16
+#          - 16
           - 17
         jdk-dist:
           - adopt-hotspot
@@ -70,8 +70,9 @@ jobs:
           - windows-latest
           - macos-latest
         node-version:
-          - '14.18.3'
-          - '16.13.2'
+          - 'latest-14'
+          - 'latest-16'
+#          - 'latest-18'
     runs-on: ${{ matrix.os }}
     name: Run tests via NodeJS ${{ matrix.node-version }}, on ${{ matrix.os }}
     env:
