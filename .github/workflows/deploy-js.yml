@@ -31,5 +31,4 @@ jobs:
         with:
           build-command: true
           check-command: true
-          deploy-command: gradle publishJsNpmPublicationToNpm
-          gradle-termination-command: gradle --stop
+          deploy-command: ./gradle publishJsNpmPublicationToNpm

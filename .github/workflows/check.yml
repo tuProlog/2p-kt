@@ -22,8 +22,7 @@ jobs:
         uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
           build-command: true
-          check-command: gradle ktlintCheck
-          gradle-termination-command: gradle --stop
+          check-command: ./gradlew ktlintCheck
 
   test-jvm:
     strategy:
@@ -57,9 +56,8 @@ jobs:
         with:
           java-distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
-          build-command: gradle jvmMainClasses jvmTestClasses
-          check-command: gradle jvmTest
-          gradle-termination-command: gradle --stop
+          build-command: ./gradlew jvmMainClasses jvmTestClasses
+          check-command: ./gradlew jvmTest
 
   test-js:
     strategy:
@@ -88,8 +86,7 @@ jobs:
       - name: Build and test
         uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
-          pre-build-command: gradle kotlinNodeJsSetup kotlinNpmInstall
-          build-command: gradle jsMainClasses jsTestClasses
-          check-command: gradle jsTest
-          clean-command: gradle cleanTest
-          gradle-termination-command: gradle --stop
+          pre-build-command: ./gradlew kotlinNodeJsSetup kotlinNpmInstall
+          build-command: ./gradlew jsMainClasses jsTestClasses
+          check-command: ./gradlew jsTest
+          clean-command: ./gradlew cleanTest

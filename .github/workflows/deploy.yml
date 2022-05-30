@@ -29,10 +29,9 @@ jobs:
         id: generate-jars
         uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
-          build-command: gradle shadowJar
-          check-command: gradle dokkaHtmlMultiModuleZip
-          clean-command: echo ::set-output name=version::$(gradle --console=plain -q printVersion)
-          gradle-termination-command: gradle --stop
+          build-command: ./gradlew shadowJar
+          check-command: ./gradlew dokkaHtmlMultiModuleZip
+          clean-command: echo ::set-output name=version::$(./gradlew --console=plain -q printVersion)
 
       - name: Release Assets
         id: upload-release-assets
@@ -72,14 +71,13 @@ jobs:
       - name: Deploy
         uses: gciatto/build-check-deploy-gradle-action@2.0.0
         with:
-          build-command: gradle dokkaHtml
-          check-command: gradle dokkaHtmlMultiModuleZip
-          deploy-command: gradle publishAllPublicationsToMavenRepository
+          build-command: ./gradlew dokkaHtml
+          check-command: ./gradlew dokkaHtmlMultiModuleZip
+          deploy-command: ./gradlew publishAllPublicationsToMavenRepository
           maven-central-username: ${{ secrets.OSSRH_USERNAME }}
           maven-central-password: ${{ secrets.OSSRH_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
-          gradle-termination-command: gradle --stop
 
   publish-aur-update:
     needs: github-release
