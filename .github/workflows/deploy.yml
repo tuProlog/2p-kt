@@ -76,6 +76,7 @@ jobs:
           build-command: ./gradlew dokkaHtml
           check-command: ./gradlew dokkaHtmlMultiModuleZip
           deploy-command: ./gradlew publishAllPublicationsToMavenRepository
+          should-deploy: true
           maven-central-username: ${{ secrets.OSSRH_USERNAME }}
           maven-central-password: ${{ secrets.OSSRH_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
@@ -108,7 +109,7 @@ jobs:
           git config --global user.email '${{ secrets.AUR_MAINTAINER_EMAIL }}'
 
       - name: Clone AUR repo
-        run: git clone --depth 0 '${{ secrets.AUR_REPO }}' aur
+        run: git clone --depth 1 '${{ secrets.AUR_REPO }}' aur
 
       - name: Regenerate PKGBUILD
         working-directory: ./aur
