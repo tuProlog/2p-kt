@@ -100,8 +100,6 @@ jobs:
           mkdir -p $HOME/.ssh
           echo $AUR_PRIVATE_KEY | base64 --decode > $HOME/.ssh/aur
           chmod go-rwx $HOME/.ssh/aur
-          eval `ssh-agent`
-          sshpass -P passphrase -e ssh-add $HOME/.ssh/aur
 
       - name: Configure Git
         run: |
@@ -109,7 +107,10 @@ jobs:
           git config --global user.email '${{ secrets.AUR_MAINTAINER_EMAIL }}'
 
       - name: Clone AUR repo
-        run: git clone --depth 1 '${{ secrets.AUR_REPO }}' aur
+        run: |
+          eval `ssh-agent`
+          sshpass -P passphrase -e ssh-add $HOME/.ssh/aur
+          git clone --depth 1 '${{ secrets.AUR_REPO }}' aur
 
       - name: Regenerate PKGBUILD
         working-directory: ./aur
@@ -126,4 +127,6 @@ jobs:
         run: |
           git add .
           git commit -m "release $PROJECT_NAME v${{ needs.github-release.outputs.version }}"
+          eval `ssh-agent`
+          sshpass -P passphrase -e ssh-add $HOME/.ssh/aur
           git push
