@@ -37,7 +37,8 @@ val Project.npmCompliantVersion: String
 fun Project.nodeVersion(default: Provider<String>, override: Any? = null) {
     plugins.withType<NodeJsRootPlugin> {
         configure<NodeJsRootExtension> {
-            nodeVersion = override?.toString() ?: default.takeIf { it.isPresent }?.get() ?: nodeVersion
+            val requestedVersion = override?.toString() ?: default.takeIf { it.isPresent }?.get() ?: nodeVersion
+            nodeVersion = NodeVersions.toFullVersion(requestedVersion)
             project.logger.log(LogLevel.LIFECYCLE, "Using NodeJS v{} for project {}", nodeVersion, project.path)
         }
     }
