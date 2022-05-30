@@ -27,7 +27,7 @@ jobs:
         uses: DanySK/action-checkout@0.2.1
 
       - name: Check Code Style
-        uses: gciatto/build-check-deploy-gradle-action@2.0.0
+        uses: gciatto/build-check-deploy-gradle-action@2.1.0
         with:
           build-command: true
           check-command: true
