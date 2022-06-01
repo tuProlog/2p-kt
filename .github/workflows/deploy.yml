@@ -26,7 +26,7 @@ jobs:
         uses: danysk/action-checkout@0.2.1
 
       - name: Generate Jars
-        uses: gciatto/build-check-deploy-gradle-action@2.1.0
+        uses: gciatto/build-check-deploy-gradle-action@2.2.0
         with:
           build-command: ./gradlew shadowJar
           check-command: ./gradlew dokkaHtmlMultiModuleZip
@@ -71,7 +71,7 @@ jobs:
         uses: danysk/action-checkout@0.2.1
 
       - name: Deploy
-        uses: gciatto/build-check-deploy-gradle-action@2.1.0
+        uses: gciatto/build-check-deploy-gradle-action@2.2.0
         with:
           build-command: ./gradlew dokkaHtml
           check-command: ./gradlew dokkaHtmlMultiModuleZip
