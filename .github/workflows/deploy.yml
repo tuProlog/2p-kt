@@ -22,6 +22,14 @@ jobs:
       # Only one release job at a time. Strictly sequential.
       group: release-github
     steps:
+      - name: Cache Build
+        uses: actions/cache@v3.0.3
+        with:
+          path: |
+            build
+            **/build
+          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.event.number || github.ref }}
+
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
 
@@ -56,17 +64,19 @@ jobs:
     name: Deploy on Central
     if: github.event.workflow_run.conclusion == 'success'
     # && github.event.ref_type == 'tag'
-    env:
-      ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
-      ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
-      # ORG_GRADLE_PROJECT_mavenRepo: ${{ secrets.MAVEN_REPO }}
-      ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.OSSRH_USERNAME }}
-      ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.OSSRH_PASSWORD }}
     timeout-minutes: 120
     concurrency:
       # Only one release job at a time. Strictly sequential.
       group: release-central
     steps:
+      - name: Cache Build
+        uses: actions/cache@v3.0.3
+        with:
+          path: |
+            build
+            **/build
+          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.event.number || github.ref }}
+
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
 

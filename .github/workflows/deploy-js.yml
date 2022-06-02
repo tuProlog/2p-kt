@@ -16,8 +16,6 @@ jobs:
     name: Deploy on NPM
     if: github.event.workflow_run.conclusion == 'success'
     # && github.event.ref_type == 'tag'
-    env:
-      ORG_GRADLE_PROJECT_npmToken: ${{ secrets.NPM_TOKEN }}
     timeout-minutes: 60
     concurrency:
       # Only one release job at a time. Strictly sequential.
@@ -33,3 +31,4 @@ jobs:
           check-command: true
           deploy-command: ./gradle publishJsNpmPublicationToNpm
           should-deploy: true
+          npm-token: ${{ secrets.NPM_TOKEN }}
