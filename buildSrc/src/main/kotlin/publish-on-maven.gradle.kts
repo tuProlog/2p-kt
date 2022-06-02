@@ -5,9 +5,9 @@ plugins {
     signing
 }
 
-val projectLongName: String? by project
-val projectDescription: String? by project
-val projectHomepage: String? by project
+val projectLongName: String by project
+val projectDescription: String by project
+val projectHomepage: String by project
 val projectLicense: String? by project
 val projectLicenseUrl: String? by project
 val scmUrl: String? by project
