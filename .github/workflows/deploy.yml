@@ -48,7 +48,7 @@ jobs:
         run: |
           set -x
           ASSETS=()
-          for A in **/build/**/*redist*.jar build/**/*javadoc*.zip; do
+          for A in **/build/**/*redist*.jar **/build/**/2p*full.jar build/**/*javadoc*.zip; do
             ASSETS+=("-a" "$A")
             echo "Releasing $A"
           done
