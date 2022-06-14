@@ -40,6 +40,18 @@ publishing {
         }
     }
 
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        publications.maybeCreate<MavenPublication>("jvm").run {
+            from(components["java"])
+        }
+    }
+
+    plugins.withId("org.jetbrains.kotlin.js") {
+        publications.maybeCreate<MavenPublication>("js").run {
+            from(components["kotlin"])
+        }
+    }
+
     project.afterEvaluate {
         publications.withType<MavenPublication> {
             groupId = project.group.toString()
