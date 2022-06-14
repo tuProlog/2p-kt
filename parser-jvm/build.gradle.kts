@@ -34,5 +34,6 @@ tasks.getByName<Jar>("sourcesJar") {
         sourceSet.resources.sourceDirectories.forEach {
             from(it)
         }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
