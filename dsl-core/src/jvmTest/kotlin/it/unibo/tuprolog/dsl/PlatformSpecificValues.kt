@@ -5,7 +5,9 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 
 actual object PlatformSpecificValues {
-    actual val THREE_POINT_ONE_FLOAT: Numeric = Real.of("3.0999999046325684")
+    actual val THREE_POINT_ONE_FLOAT: Numeric = Real.of("3.099999904632568359375")
+
+    actual val THREE_POINT_ONE_DOUBLE: Numeric = Real.of("3.100000000000000088817841970012523233890533447265625")
 
     actual val ONE_POINT_ZERO: Numeric = Real.of("1.0")
 

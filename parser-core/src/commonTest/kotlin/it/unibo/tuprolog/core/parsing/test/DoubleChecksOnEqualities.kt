@@ -24,8 +24,10 @@ class DoubleChecksOnEqualities {
     @Test
     fun testRealsInitialization() {
         assertEquals(
-            Real.of(3.1),
-            Real.of("3" + ".1")
+            Real.of("3.100000000000000088817841970012523233890533447265625"),
+            prolog {
+                numOf(3.1)
+            }
         )
     }
 

@@ -82,7 +82,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to -3.8)),
+                kotlin.collections.listOf(query.yes("X" to numOf("-3.8"))),
                 solutions
             )
         }
