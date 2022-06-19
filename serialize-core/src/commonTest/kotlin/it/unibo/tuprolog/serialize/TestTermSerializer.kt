@@ -43,7 +43,7 @@ class TestTermSerializer {
         }
 
         serializer.assertTermSerializationWorks("{\"real\": \"3.0\"}") {
-            numOf(3.0)
+            numOf("3.0")
         }
     }
 
@@ -57,7 +57,7 @@ class TestTermSerializer {
             numOf(3)
         }
         serializer.assertTermSerializationWorks("real: \"4.2\"") {
-            numOf(4.2)
+            numOf("4.2")
         }
     }
 

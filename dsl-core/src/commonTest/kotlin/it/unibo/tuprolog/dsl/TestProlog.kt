@@ -10,6 +10,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.MINUS_THREE
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.ONE_POINT_ZERO
+import it.unibo.tuprolog.dsl.PlatformSpecificValues.THREE_POINT_ONE_DOUBLE
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.THREE_POINT_ONE_FLOAT
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -58,7 +59,7 @@ class TestProlog {
         assertDSLCreationIsCorrect(Real.of("1.0")) {
             numOf("1.0")
         }
-        assertDSLCreationIsCorrect(Real.of("3.1")) {
+        assertDSLCreationIsCorrect(THREE_POINT_ONE_DOUBLE) {
             numOf(3.1)
         }
         assertDSLCreationIsCorrect(THREE_POINT_ONE_FLOAT) {
