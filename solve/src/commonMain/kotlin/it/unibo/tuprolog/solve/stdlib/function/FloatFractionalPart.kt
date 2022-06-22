@@ -26,6 +26,6 @@ object FloatFractionalPart : UnaryMathFunction("float_fractional_part") {
         when {
             decimal >= BigDecimal.ZERO -> decimal - decimal.setScale(0, RoundingMode.FLOOR)
             else -> -commonBehaviour(-decimal).decimalValue
-        }
+        }.stripTrailingZeros()
     )
 }
