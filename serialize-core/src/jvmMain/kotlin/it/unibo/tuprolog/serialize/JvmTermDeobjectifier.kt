@@ -128,14 +128,14 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
 
     private fun deobjectifyNumber(value: Number): Term {
         return when (value) {
-            is Int -> scope.numOf(value)
-            is Long -> scope.numOf(value)
-            is Double -> scope.numOf(value)
-            is Byte -> scope.numOf(value)
-            is Short -> scope.numOf(value)
-            is Float -> scope.numOf(value)
-            is BigInteger -> LogicInteger.of(value.toString())
-            is BigDecimal -> Real.of(value.toString())
+            is Int -> scope.intOf(value)
+            is Long -> scope.intOf(value)
+            is Double -> scope.realOf(value.toString())
+            is Byte -> scope.intOf(value)
+            is Short -> scope.intOf(value)
+            is Float -> scope.realOf(value.toString())
+            is BigInteger -> scope.intOf(value.toString())
+            is BigDecimal -> scope.realOf(value.toString())
             else -> throw DeobjectificationException(value)
         }
     }
