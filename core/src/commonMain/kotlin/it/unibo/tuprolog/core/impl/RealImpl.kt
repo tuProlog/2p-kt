@@ -9,11 +9,9 @@ import org.gciatto.kt.math.BigInteger
 
 @Suppress("EqualsOrHashCode")
 internal class RealImpl(
-    value: BigDecimal,
+    override val value: BigDecimal,
     tags: Map<String, Any> = emptyMap()
 ) : NumericImpl(tags), Real {
-
-    override val value: BigDecimal = value.stripTrailingZeros()
 
     override val decimalValue: BigDecimal
         get() = value

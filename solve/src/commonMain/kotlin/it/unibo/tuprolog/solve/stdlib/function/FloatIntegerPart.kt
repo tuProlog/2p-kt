@@ -26,6 +26,6 @@ object FloatIntegerPart : UnaryMathFunction("float_integer_part") {
         when {
             decimal >= BigDecimal.ZERO -> decimal.setScale(0, RoundingMode.FLOOR)
             else -> -commonBehaviour(-decimal).decimalValue
-        }
+        }.stripTrailingZeros()
     )
 }

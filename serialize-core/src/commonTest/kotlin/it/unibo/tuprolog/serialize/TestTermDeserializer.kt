@@ -62,11 +62,11 @@ class TestTermDeserializer {
     fun testNumericDeserializationInJSON() {
         val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
         assertEquals(MimeType.Json, deserializer.mimeType)
-        deserializer.assertTermDeserializationWorks("2") {
-            numOf(2)
+        deserializer.assertTermDeserializationWorks("-3") {
+            intOf("-3")
         }
         deserializer.assertTermDeserializationWorks("3.1") {
-            numOf(3.1)
+            realOf("3.1")
         }
     }
 
@@ -75,10 +75,10 @@ class TestTermDeserializer {
         val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
         assertEquals(MimeType.Yaml, deserializer.mimeType)
         deserializer.assertTermDeserializationWorks("2") {
-            numOf(2)
+            intOf("2")
         }
         deserializer.assertTermDeserializationWorks("3.1") {
-            numOf(3.1)
+            realOf("3.1")
         }
     }
 

@@ -31,14 +31,14 @@ internal class NumericTest {
 
     /** This map contains a mapping between real numbers and their version with some trailing zeros (e.g. 10.0 to 10.00) */
     private val realToRealWithTrailingZerosMap by lazy {
-              RealUtils.stringNumbers
-                .filterNot { "E" in it || "e" in it }
-                .flatMap {
-                    listOf(
-                        BigDecimal.of(it) to BigDecimal.of(it + "0"),
-                        BigDecimal.of(it) to BigDecimal.of(it + "00"),
-                    )
-                }
+        RealUtils.stringNumbers
+            .filterNot { "E" in it || "e" in it }
+            .flatMap {
+                listOf(
+                    BigDecimal.of(it) to BigDecimal.of(it + "0"),
+                    BigDecimal.of(it) to BigDecimal.of(it + "00"),
+                )
+            }
     }
 
     @Test
