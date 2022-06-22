@@ -44,7 +44,7 @@ internal class FloatIntegerPartTest {
             val (integerPart, _) = parts
             assertEquals(
                 integerPart,
-                FloatIntegerPart.computeOf(Numeric.of(input)).castToReal().value.toDouble()
+                FloatIntegerPart.computeOf(Numeric.of(input)).castToReal().value
             )
         }
     }
