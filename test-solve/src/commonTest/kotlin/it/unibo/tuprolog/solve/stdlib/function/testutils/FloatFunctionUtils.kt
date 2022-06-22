@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.function.testutils
 
+import org.gciatto.kt.math.BigDecimal
+
 /**
  * Utils singleton to help testing Float functions
  *
@@ -17,5 +19,9 @@ internal object FloatFunctionUtils {
         -3.123456789101 to (-3.0 to -0.123456789101),
         -2.0000000001 to (-2.0 to -0.0000000001),
         -1984984.02 to (-1984984.0 to -0.02)
-    )
+    ).mapKeys { (k, _) -> BigDecimal.of(k.toString()) }
+        .mapValues { (_, v) ->
+            BigDecimal.of(v.first.toString()).stripTrailingZeros() to
+                BigDecimal.of(v.second.toString()).stripTrailingZeros()
+        }
 }
