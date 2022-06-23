@@ -35,14 +35,17 @@ kotlin {
 
         val jsTest by getting
 
-        val testCompileTask = tasks.withType<Kotlin2JsCompile>().matching { "Test" in it.name }.single()
-        tasks.maybeCreate("copyTaskJsResources", Copy::class.java).run {
-            listOf(commonMain, jsMain, commonTest, jsTest).forEach { sourceSet ->
-                from(sourceSet.resources.files)
+        tasks.withType<Kotlin2JsCompile>().matching { "Test" in it.name }.whenTaskAdded {
+            println("Configuring task $name from ${project.name}")
+            tasks.maybeCreate("copyTaskJsResources", Copy::class.java).also {
+                listOf(commonMain, jsMain, commonTest, jsTest).forEach { sourceSet ->
+                    it.from(sourceSet.resources.files)
+                }
+                it.into(outputFileProperty.get().parentFile.parentFile)
+                dependsOn(it)
             }
-            into(testCompileTask.outputFileProperty.get().parentFile.parentFile)
-            testCompileTask.dependsOn(this)
         }
+
     }
 }
 
