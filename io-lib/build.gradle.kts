@@ -4,7 +4,6 @@ plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
-    `publish-on-npm`
     `mock-service`
 }
 
@@ -78,12 +77,4 @@ mockService {
 tasks.matching { it.name in setOf("jvmTest", "jsNodeTest") }.configureEach {
     dependsOn(mockService.startMockTask)
     finalizedBy(mockService.stopMockTask)
-}
-
-packageJson {
-    dependencies = mutableMapOf(
-        "sync-request" to libs.versions.npm.syncRequest.get(),
-        npmSubproject("solve"),
-        npmSubproject("parser-theory"),
-    )
 }

@@ -4,7 +4,6 @@ plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
-    `publish-on-npm`
 }
 
 val jvmStackSize: String by project
@@ -30,11 +29,4 @@ kotlin {
 tasks.withType<KotlinJvmTest> {
     maxHeapSize = jvmMaxHeapSize
     jvmArgs("-Xss$jvmStackSize")
-}
-
-packageJson {
-    dependencies = mutableMapOf(
-        npmSubproject("solve"),
-        npmSubproject("dsl-theory"),
-    )
 }

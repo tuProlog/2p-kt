@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.javafx)
     alias(libs.plugins.shadowJar)
     `kotlin-doc`
-    `publish-on-maven`
 }
 
 val arguments: String? by project
