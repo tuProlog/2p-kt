@@ -16,7 +16,7 @@ kotlin {
 dependencies {
     implementation(libs.kotlin.bom)
     implementation(libs.kotlin.gradlePlugin)
-    implementation(libs.ktNpmPublish)
+    implementation(libs.npmPublish)
     implementation(libs.dokka)
     implementation(libs.ktlint)
     implementation(libs.detekt)
