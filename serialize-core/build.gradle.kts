@@ -2,7 +2,6 @@ plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
-    `publish-on-npm`
 }
 
 kotlin {
@@ -28,11 +27,4 @@ kotlin {
             }
         }
     }
-}
-
-packageJson {
-    dependencies = mutableMapOf(
-        "yaml" to libs.versions.npm.yaml.get(),
-        npmSubproject("core"),
-    )
 }

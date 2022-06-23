@@ -2,7 +2,6 @@ plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
-    `publish-on-npm`
 }
 
 kotlin {
@@ -31,11 +30,4 @@ kotlin {
             }
         }
     }
-}
-
-packageJson {
-    dependencies = mutableMapOf(
-        npmSubproject("core"),
-        npmSubproject("parser-js"),
-    )
 }

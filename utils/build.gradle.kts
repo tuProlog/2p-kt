@@ -2,7 +2,6 @@ plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
-    `publish-on-npm`
 }
 
 kotlin {
@@ -13,11 +12,4 @@ kotlin {
             }
         }
     }
-}
-
-packageJson {
-    dependencies = mutableMapOf(
-        "kotlin" to libs.kotlin.stdlib.js.version,
-        "kt-math" to libs.ktMath.version,
-    )
 }
