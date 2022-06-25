@@ -44,7 +44,6 @@ kotlin {
                 dependsOn(it)
             }
         }
-
     }
 }
 
