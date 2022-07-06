@@ -25,6 +25,11 @@ kotlin {
     }
 }
 
+dependencies {
+    implementation(kotlin("bom"))
+    api(kotlin("stdlib-js"))
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         allWarningsAsErrors = true
