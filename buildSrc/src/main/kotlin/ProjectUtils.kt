@@ -1,8 +1,12 @@
-import dev.petuska.npm.publish.NpmPublishPlugin
-import dev.petuska.npm.publish.dsl.NpmPublishExtension
-import dev.petuska.npm.publish.dsl.PackageJson
+import io.github.gciatto.kt.node.LiftJsSourcesTask
+import io.github.gciatto.kt.node.LiftPackageJsonTask
+import io.github.gciatto.kt.node.NpmPublishExtension
+import io.github.gciatto.kt.node.NpmPublishPlugin
+import io.github.gciatto.kt.node.NpmPublishTask
+import io.github.gciatto.kt.node.PackageJson
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.artifacts.MinimalExternalModuleDependency
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
@@ -47,14 +51,34 @@ fun Project.nodeVersion(default: Provider<String>, override: Any? = null) {
 fun Project.packageJson(handler: PackageJson.() -> Unit) {
     plugins.withType<NpmPublishPlugin> {
         configure<NpmPublishExtension> {
-            publications {
-                all {
-                    packageJson(handler)
-                }
-            }
+            liftPackageJson(handler)
         }
     }
 }
+
+fun Project.liftPackageJsonToFixDependencies(packageJson: PackageJson) {
+    packageJson.dependencies = packageJson.dependencies?.filterKeys { key -> "kotlin-test" !in key }
+        ?.mapValues { (key, value) ->
+            val temp = if (value.startsWith("file:")) {
+                value.split('/', '\\').last()
+            } else {
+                value
+            }
+            if (rootProject.name in key) temp.substringBefore('+') else temp
+        }?.toMutableMap()
+}
+
+fun Project.liftPackageJsonToSetOrganization(organizationName: String, packageJson: PackageJson) {
+    packageJson.name = "@$organizationName/${packageJson.name}"
+    packageJson.dependencies = packageJson.dependencies
+        ?.mapKeys { (key, _) ->
+            if (rootProject.name in key) "@$organizationName/$key" else key
+        }?.toMutableMap()
+}
+
+fun Project.liftJsSourcesToSetOrganization(organizationName: String, line: String): String =
+    line.replace("'${rootProject.name}", "'@$organizationName/${rootProject.name}")
+        .replace("\"${rootProject.name}", "\"@$organizationName/${rootProject.name}")
 
 fun Project.subprojects(names: Iterable<String>): Set<Project> {
     return subprojects.filter { it.name in names }.toSet()
@@ -90,3 +114,12 @@ fun Iterable<Project>.except(first: String, vararg others: String): Set<Project>
     val names = setOf(first, *others)
     return except(names)
 }
+
+val Provider<MinimalExternalModuleDependency>.version
+    get() = this.get().versionConstraint.requiredVersion
+
+fun Project.npmSubproject(subproject: String, organizationName: String? = null): Pair<String, String> =
+    rootProject.project(":$subproject").run {
+        val org = organizationName ?: project.findProperty("npmOrganization")?.toString()
+        (org?.let { "@$it/" } ?: "") + "${rootProject.name}-$subproject" to npmCompliantVersion
+    }

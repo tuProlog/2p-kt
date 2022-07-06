@@ -16,8 +16,9 @@ ktlint = "10.3.0"
 detekt = "1.20.0"
 
 [plugins]
+ktNpmPublish = "io.github.gciatto.kt-npm-publish:0.3.9"
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
-npmPublish = { id = "dev.petuska.npm.publish", version.ref = "npmPublish" }
+#npmPublish = { id = "dev.petuska.npm.publish", version.ref = "npmPublish" }
 nexusPublish = "de.marcphilipp.nexus-publish:0.4.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
@@ -34,7 +35,8 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-npmPublish = { module = "dev.petuska:npm-publish", version.ref = "npmPublish" }
+ktNpmPublish = "io.github.gciatto:kt-npm-publish:0.3.9"
+#npmPublish = { module = "dev.petuska:npm-publish", version.ref = "npmPublish" }
 dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javafx" }
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
