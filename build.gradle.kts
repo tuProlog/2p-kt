@@ -40,9 +40,6 @@ subprojects {
         nodeVersion(libs.versions.node, project.findProperty("nodeVersion"))
         packageJson {
             version = project.npmCompliantVersion
-            dependencies {
-                "kotlin" to libs.versions.kotlin.get()
-            }
         }
     }
 }
