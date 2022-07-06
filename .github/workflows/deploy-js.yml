@@ -24,11 +24,11 @@ jobs:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.1
 
-      - name: Check Code Style
+      - name: Compile and Release NPM modules
         uses: DanySK/build-check-deploy-gradle-action@2.1.0
         with:
-          build-command: true
+          build-command: ./gradlew compileKotlinJs
           check-command: true
-          deploy-command: ./gradle publishJsNpmPublicationToNpm
+          deploy-command: ./gradlew npmPublish
           should-deploy: true
           npm-token: ${{ secrets.NPM_TOKEN }}
