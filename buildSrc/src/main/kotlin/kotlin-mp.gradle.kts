@@ -36,6 +36,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(kotlin("bom"))
                 api(kotlin("stdlib-common"))
             }
         }
