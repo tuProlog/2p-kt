@@ -43,3 +43,10 @@ listOf("yaml", "json").forEach {
         main = "${it.toUpperCase()}PrinterKt"
     }
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        npmSubproject("theory"),
+        npmSubproject("serialize-core"),
+    )
+}

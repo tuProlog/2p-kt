@@ -21,3 +21,10 @@ kotlin {
         }
     }
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        "kotlin" to libs.kotlin.stdlib.js.version,
+        "@tuprolog/parser-utils" to libs.versions.npm.tuprolog.parserUtils.get(),
+    )
+}

@@ -14,3 +14,10 @@ kotlin {
         }
     }
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        "kotlin" to libs.kotlin.stdlib.js.version,
+        "kt-math" to libs.ktMath.version,
+    )
+}

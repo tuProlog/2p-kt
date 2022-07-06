@@ -23,3 +23,10 @@ kotlin {
         }
     }
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        npmSubproject("solve-classic"),
+        npmSubproject("solve-plp"),
+    )
+}

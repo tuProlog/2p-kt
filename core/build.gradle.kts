@@ -48,3 +48,9 @@ kotlin {
         }
     }
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        npmSubproject("utils"),
+    )
+}

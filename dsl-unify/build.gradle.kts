@@ -15,3 +15,10 @@ kotlin {
         }
     }
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        npmSubproject("dsl-unify"),
+        npmSubproject("theory"),
+    )
+}
