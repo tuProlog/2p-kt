@@ -15,3 +15,9 @@ kotlin {
         }
     }
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        npmSubproject("unify"),
+    )
+}
