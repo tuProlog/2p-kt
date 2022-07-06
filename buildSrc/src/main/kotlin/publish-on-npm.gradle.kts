@@ -1,6 +1,11 @@
 import Developer.Companion.getAllDevs
-import dev.petuska.npm.publish.NpmPublishPlugin
-import dev.petuska.npm.publish.dsl.NpmPublishExtension
+import io.github.gciatto.kt.node.Bugs
+import io.github.gciatto.kt.node.LiftJsSourcesTask
+import io.github.gciatto.kt.node.LiftPackageJsonTask
+import io.github.gciatto.kt.node.NpmPublishExtension
+import io.github.gciatto.kt.node.NpmPublishPlugin
+import io.github.gciatto.kt.node.NpmPublishTask
+import io.github.gciatto.kt.node.PackageJson
 
 apply<NpmPublishPlugin>()
 
@@ -17,41 +22,23 @@ val issuesEmail: String? by project
 val npmToken: String? by project
 val npmRepo: String? by project
 val npmDryRun: String? by project
+val npmOrganization: String? by project
 
 configure<NpmPublishExtension> {
-    readme = file("README.md")
-    bundleKotlinDependencies = true
-    dry = npmDryRun?.let { it.toBoolean() } ?: false
-    repositories {
-        repository("npm") {
-            registry = uri(npmRepo ?: "https://registry.npmjs.org")
-            npmToken?.let { authToken = it }
+    npmToken?.let { token.set(it) }
+    packageJson {
+        homepage = projectHomepage
+        description = projectDescription
+        bugs = Bugs(issuesUrl, issuesEmail)
+        license = projectLicense
+        liftPackageJsonToFixDependencies(this)
+        if (npmOrganization != null) {
+            liftPackageJsonToSetOrganization(npmOrganization!!, this)
         }
     }
-    publications {
-        all {
-            packageJson {
-                homepage = projectHomepage
-                description = projectDescription
-                val developers = project.getAllDevs()
-                if (developers.isNotEmpty()) {
-                    author = developers.first().toPerson()
-                }
-                contributors = developers.asSequence()
-                    .drop(1)
-                    .map { Person(it.toPerson()) }
-                    .toCollection(mutableListOf())
-                license = projectLicense
-                private = false
-                bugs {
-                    url = issuesUrl
-                    email = issuesEmail
-                }
-                repository {
-                    type = "git"
-                    url = scmUrl
-                }
-            }
+    if (npmOrganization != null) {
+        liftJsSources { _, _, line ->
+            liftJsSourcesToSetOrganization(npmOrganization!!, line)
         }
     }
 }
