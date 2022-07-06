@@ -1,3 +1,5 @@
+import gradle.kotlin.dsl.accessors._d12431019b11869e1a768c8678bcdb02.api
+import gradle.kotlin.dsl.accessors._d12431019b11869e1a768c8678bcdb02.implementation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
