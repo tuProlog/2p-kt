@@ -15,3 +15,10 @@ kotlin {
         }
     }
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        npmSubproject("solve"),
+        npmSubproject("bdd"),
+    )
+}

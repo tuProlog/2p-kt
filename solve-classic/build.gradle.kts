@@ -31,3 +31,10 @@ tasks.withType<KotlinJvmTest> {
     maxHeapSize = jvmMaxHeapSize
     jvmArgs("-Xss$jvmStackSize")
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        npmSubproject("solve"),
+        npmSubproject("dsl-theory"),
+    )
+}

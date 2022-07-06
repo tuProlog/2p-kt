@@ -35,3 +35,10 @@ kotlin {
         }
     }
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        npmSubproject("theory"),
+        npmSubproject("parser-core"),
+    )
+}

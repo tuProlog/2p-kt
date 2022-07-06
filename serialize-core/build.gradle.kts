@@ -29,3 +29,10 @@ kotlin {
         }
     }
 }
+
+packageJson {
+    dependencies = mutableMapOf(
+        "yaml" to libs.versions.npm.yaml.get(),
+        npmSubproject("core"),
+    )
+}
