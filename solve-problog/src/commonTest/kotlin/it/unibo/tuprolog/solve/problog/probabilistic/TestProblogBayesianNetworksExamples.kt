@@ -123,7 +123,7 @@ class TestProblogBayesianNetworksExamples {
                     listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517))
                 ),
                 QueryWithSolutions(
-                    "earthquake(_)".parseAsStruct(),
+                    "earthquake(X)".parseAsStruct(),
                     listOf(
                         ExpectedSolution("earthquake(heavy)".parseAsStruct(), 0.012476167),
                         ExpectedSolution("earthquake(mild)".parseAsStruct(), 0.20644476),
