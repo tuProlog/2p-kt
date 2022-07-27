@@ -102,7 +102,7 @@ internal sealed class SolutionImpl(
             copy(substitution = substitution.cleanUp(query.variables.filterNot { it.isAnonymous }.toSet()))
 
         private fun Substitution.Unifier.cleanUp(toRetain: Set<Var>): Substitution.Unifier {
-            return filter { v, t -> (v in toRetain) || (t !is Var) || (t in toRetain) }
+            return filter { v, t -> (v in toRetain) || (t is Var && t in toRetain) }
         }
     }
 
