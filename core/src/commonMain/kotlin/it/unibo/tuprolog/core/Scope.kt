@@ -206,6 +206,30 @@ interface Scope {
     @JsName("truthOf")
     fun truthOf(value: Boolean): Truth
 
+    @JsName("unifierOf")
+    fun unifierOf(vararg assignments: Pair<Var, Term>): Substitution.Unifier
+
+    @JsName("unifierOfString")
+    fun unifierOf(vararg assignments: Pair<String, Term>): Substitution.Unifier
+
+    @JsName("substitutionOf")
+    fun substitutionOf(vararg assignments: Pair<Var, Term>): Substitution
+
+    @JsName("substitutionOfString")
+    fun substitutionOf(vararg assignments: Pair<String, Term>): Substitution
+
+    @JsName("unifierOfIterable")
+    fun unifierOf(assignments: Iterable<Pair<Var, Term>>): Substitution.Unifier
+
+    @JsName("unifierOfSequence")
+    fun unifierOf(assignments: Sequence<Pair<Var, Term>>): Substitution.Unifier
+
+    @JsName("substitutionOfIterable")
+    fun substitutionOf(assignments: Iterable<Pair<Var, Term>>): Substitution
+
+    @JsName("substitutionOfSequence")
+    fun substitutionOf(assignments: Sequence<Pair<Var, Term>>): Substitution
+
     companion object {
 
         @JvmStatic
