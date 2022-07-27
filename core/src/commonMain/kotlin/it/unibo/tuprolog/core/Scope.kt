@@ -207,15 +207,9 @@ interface Scope {
     fun truthOf(value: Boolean): Truth
 
     @JsName("unifierOf")
-    fun unifierOf(vararg assignments: Pair<Var, Term>): Substitution.Unifier
-
-    @JsName("unifierOfString")
     fun unifierOf(vararg assignments: Pair<String, Term>): Substitution.Unifier
 
     @JsName("substitutionOf")
-    fun substitutionOf(vararg assignments: Pair<Var, Term>): Substitution
-
-    @JsName("substitutionOfString")
     fun substitutionOf(vararg assignments: Pair<String, Term>): Substitution
 
     @JsName("unifierOfIterable")
