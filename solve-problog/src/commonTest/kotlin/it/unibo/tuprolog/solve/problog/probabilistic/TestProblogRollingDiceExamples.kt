@@ -92,7 +92,7 @@ class TestProblogRollingDiceExamples {
             """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             listOf(
                 QueryWithSolutions(
-                    "odd(_)".parseAsStruct(),
+                    "odd(X)".parseAsStruct(),
                     listOf(
                         ExpectedSolution("odd(1)".parseAsStruct(), 0.5),
                         ExpectedSolution("odd(2)".parseAsStruct(), 0.45)
@@ -125,7 +125,7 @@ class TestProblogRollingDiceExamples {
                 evidence(odd(2)).
             """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
-                "sum(_)".parseAsStruct(),
+                "sum(X)".parseAsStruct(),
                 listOf(
                     ExpectedSolution("sum(3)".parseAsStruct(), 0.11111111),
                     ExpectedSolution("sum(5)".parseAsStruct(), 0.22222222),
@@ -154,7 +154,7 @@ class TestProblogRollingDiceExamples {
                 evidence(increasing).
             """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
-                "sum(_)".parseAsStruct(),
+                "sum(X)".parseAsStruct(),
                 listOf(
                     ExpectedSolution("sum(6)".parseAsStruct(), 0.05),
                     ExpectedSolution("sum(7)".parseAsStruct(), 0.05),
