@@ -15,6 +15,7 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
@@ -232,4 +233,28 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
 
     override fun realOf(value: String): Real =
         Real.of(value)
+
+    override fun unifierOf(vararg assignments: Pair<Var, Term>): Substitution.Unifier =
+        unifierOf(ktListOf(*assignments))
+
+    override fun unifierOf(assignments: Iterable<Pair<Var, Term>>): Substitution.Unifier =
+        Substitution.unifier(assignments)
+
+    override fun unifierOf(assignments: Sequence<Pair<Var, Term>>): Substitution.Unifier =
+        unifierOf(assignments.asIterable())
+
+    override fun unifierOf(vararg assignments: Pair<String, Term>): Substitution.Unifier =
+        unifierOf(assignments.map { (v, t) -> varOf(v) to t })
+
+    override fun substitutionOf(vararg assignments: Pair<Var, Term>): Substitution =
+        substitutionOf(ktListOf(*assignments))
+
+    override fun substitutionOf(assignments: Iterable<Pair<Var, Term>>): Substitution =
+        Substitution.of(assignments)
+
+    override fun substitutionOf(assignments: Sequence<Pair<Var, Term>>): Substitution =
+        substitutionOf(assignments.asIterable())
+
+    override fun substitutionOf(vararg assignments: Pair<String, Term>): Substitution =
+        substitutionOf(assignments.map { (v, t) -> varOf(v) to t })
 }
