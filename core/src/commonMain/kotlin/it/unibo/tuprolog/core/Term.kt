@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.utils.Castable
 import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
