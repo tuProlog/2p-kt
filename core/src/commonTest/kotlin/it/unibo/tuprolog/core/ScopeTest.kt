@@ -28,17 +28,14 @@ internal class ScopeTest {
     @Test
     @Suppress("RemoveRedundantSpreadOperator")
     fun scopeOfNoVarargReturnsEmptyScope() {
-        assertEquals(Scope.empty(), Scope.of(*emptyArray<String>()))
-        assertEquals(Scope.empty(), Scope.of(*emptyArray<String>(), lambda = {}))
-        assertEquals(Scope.empty(), Scope.of(*emptyArray<Var>()))
-        assertEquals(Scope.empty(), Scope.of(*emptyArray<Var>(), lambda = {}))
-        assertEquals(Scope.empty(), Scope.of<Scope>(*emptyArray<String>(), lambda = { this }))
-        assertEquals(Scope.empty(), Scope.of<Scope>(*emptyArray<Var>(), lambda = { this }))
+        assertEquals(Scope.empty(), Scope.of())
+        assertEquals(Scope.empty(), Scope.empty { this })
+        assertEquals(Scope.empty(), Scope.of { this })
     }
 
     @Test
     fun scopeOfVarargVariablesWorksAsExpected() {
-        val toBeTested = ScopeUtils.nonEmptyScopeVars.map { Scope.of(*it.toTypedArray()) }.map { it.variables }
+        val toBeTested = ScopeUtils.nonEmptyScopeVars.map { Scope.of(it) }.map { it.variables }
 
         onCorrespondingItems(
             correctNonEmptyScopeInstances.map { it.variables },
