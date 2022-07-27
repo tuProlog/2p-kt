@@ -236,7 +236,7 @@ interface Scope {
 
         @JvmStatic
         @JsName("ofVar")
-        fun of(vararg vars: Var): Scope = of(listOf(*vars))
+        fun of(`var`: Var, vararg vars: Var): Scope = of(listOf(`var`, *vars))
 
         @JvmStatic
         @JsName("ofVarIterable")
@@ -260,7 +260,7 @@ interface Scope {
 
         @JvmStatic
         @JsName("ofVarWithFunction")
-        fun <R> of(vararg vars: Var, lambda: Scope.() -> R): R = of(*vars).with(lambda)
+        fun <R> of(`var`: Var, vararg vars: Var, lambda: Scope.() -> R): R = of(`var`, *vars).with(lambda)
 
         @JvmStatic
         @JsName("ofVarIterableWithFunction")
