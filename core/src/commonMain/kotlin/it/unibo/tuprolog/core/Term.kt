@@ -9,7 +9,7 @@ import kotlin.js.JsName
  * Base type for all logic terms.
  * [Term]s are immutable tree-like data structures.
  */
-interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
+interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Term>, Variabled {
 
     /**
      * Empty companion aimed at letting extensions be injected through extension methods
@@ -77,17 +77,6 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
     @JsName("structurallyEquals")
     infix fun structurallyEquals(other: Term): Boolean
 
-    /** The sequence of [Var]iables directly or indirectly contained in the current term.
-     * Variables are lazily returned in a non-deterministic order.
-     * Notice that no occurrence-check is performed.
-     * Thus, if a [Term] contains the same [Var]iable twice or more times, then the [variables] sequence
-     * may contain as many occurrences of that [Var]iable
-     *
-     * @return a [Sequence] of [Var]
-     */
-    @JsName("variables")
-    val variables: Sequence<Var>
-
     /**
      * Checks whether the current term is a variable.
      * This method is guaranteed to return `true` if and only if the current term
@@ -96,16 +85,6 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      */
     @JsName("isVar")
     val isVar: Boolean get() = false
-
-    /**
-     * Checks whether the current term is ground.
-     * A term is ground is ground if and only if it does not contain any variable.
-     * This method is guaranteed to return `true` if and only if the [variables] property
-     * of the current term refers to an empty sequence.
-     * @return `true` if the current term is ground, or `false`, otherwise
-     */
-    @JsName("isGround")
-    val isGround: Boolean get() = variables.none()
 
     /**
      * Checks whether the current term is a structure, i.e., either a compound term or an atom.
@@ -295,90 +274,6 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      */
     @JsName("isIndicator")
     val isIndicator: Boolean get() = false
-
-    /**
-     * Returns a fresh copy of this Term, that is, an instance of Term which is equal to the current one in any aspect,
-     * except variables directly or indirectly contained into this Term, which are refreshed.
-     * This means that it could return itself, if no variable is present (ground term), or a new Term with freshly
-     * generated variables.
-     *
-     * Variables are refreshed consistently, meaning that, if more variables exists within this Term having the same
-     * name, all fresh copies of such variables will have the same complete name.
-     *
-     * Example: "f(X, g(X))".freshCopy() returns something like "f(X_1, g(X_1))" instead of "f(X_1, g(X_2))"
-     *
-     * Notice that, if the current term is ground, the same object may be returned as a result by this method.
-     *
-     * @return a fresh copy of the current term which is different because variables are consistently renamed
-     */
-    @JsName("freshCopy")
-    fun freshCopy(): Term
-
-    /**
-     * Returns a fresh copy of this Term, similarly to `freshCopy`, possibly reusing variables from the provided scope,
-     * if any
-     *
-     * @see freshCopy
-     * @param scope the Scope containing variables to be used in copying
-     * @return a fresh copy of the current term which is different because variables are consistently renamed
-     */
-    @JsName("freshCopyFromScope")
-    fun freshCopy(scope: Scope): Term
-
-    /**
-     * Applies a [Substitution] to the current term, producing a new [Term] which differs from the current
-     * one because variables are replaced by their values, according to the binding carried by [substitution].
-     *
-     * Notice that, if the current term is ground, or the provided substitution is empty,
-     * the same object may be returned as a result by this method.
-     *
-     * @param substitution is the [Substitution] to be applied to the current term
-     * @return a [Term] where variables in [substitution] are replaced by their values
-     * @throws [SubstitutionApplicationException] if the provided substitution is of type [Substitution.Fail]
-     */
-    @JsName("applySubstitution")
-    fun apply(substitution: Substitution): Term
-
-    /**
-     * Applies one or more [Substitution]s to the current term, producing a new [Term] which differs from the current
-     * one because variables are replaced by their values, according to the binding carried by the provided substitutions.
-     *
-     * This method behaves like [apply], assuming that the provided substitutions have been merged
-     * by means of [Substitution.of].
-     *
-     * @param substitution is the first [Substitution] to be applied to the current term
-     * @param substitutions is the vararg argument representing the 2nd, 3rd, etc., [Substitution]s to be applied
-     * @return a [Term] where variables in [substitution] are replaced by their values
-     * @throws [SubstitutionApplicationException] if the composition of the provided substitutions is of type [Substitution.Fail]
-     *
-     * @see apply
-     * @see Substitution.of
-     */
-    @JsName("apply")
-    fun apply(substitution: Substitution, vararg substitutions: Substitution): Term =
-        apply(Substitution.of(substitution, *substitutions))
-
-    /**
-     * This is an alias for [apply] aimed at supporting a square-brackets syntax for substitutions applications in
-     * Kotlin programs.
-     * It lets programmers write `term[substitution]` instead of `term.apply(substitution)`.
-     * It applies one or more [Substitution]s to the current term, producing a new [Term] which differs from the current
-     * one because variables are replaced by their values, according to the binding carried by the provided substitutions.
-     *
-     * This method behaves like [apply], assuming that the provided substitutions have been merged
-     * by means of [Substitution.of].
-     *
-     * @param substitution is the first [Substitution] to be applied to the current term
-     * @param substitutions is the vararg argument representing the 2nd, 3rd, etc., [Substitution]s to be applied
-     * @return a [Term] where variables in [substitution] are replaced by their values
-     * @throws [SubstitutionApplicationException] if the composition of the provided substitutions is of type [Substitution.Fail]
-     *
-     * @see apply
-     * @see Substitution.of
-     */
-    @JsName("getSubstituted")
-    operator fun get(substitution: Substitution, vararg substitutions: Substitution): Term =
-        apply(substitution, *substitutions)
 
     /**
      * Lets the provided [TermVisitor] navigate the current term and build an object of type [T].
