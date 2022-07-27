@@ -214,33 +214,46 @@ interface Scope {
 
         @JvmStatic
         @JsName("of")
-        fun of(vararg vars: String): Scope = of(*vars) {}
-
-        @JvmStatic
-        @JsName("ofWithFunction")
-        fun of(vararg vars: String, lambda: Scope.() -> Unit): Scope =
-            of(*vars.map { Var.of(it) }.toTypedArray(), lambda = lambda)
+        fun of(vararg vars: String): Scope = of(vars.map { Var.of(it) })
 
         @JvmStatic
         @JsName("ofVar")
-        fun of(vararg vars: Var): Scope = of(*vars) {}
+        fun of(vararg vars: Var): Scope = of(listOf(*vars))
 
         @JvmStatic
-        @JsName("ofVarWithFunction")
-        fun of(vararg vars: Var, lambda: Scope.() -> Unit): Scope =
-            ScopeImpl(vars.map { it.name to it }.toMap(mutableMapOf()))
-                .where(lambda)
+        @JsName("ofVarIterable")
+        fun of(vars: Iterable<Var>): Scope = ScopeImpl(vars.associateByTo(mutableMapOf()) { it.name })
+
+        @JvmStatic
+        @JsName("ofVarSequence")
+        fun of(vars: Sequence<Var>): Scope = of(vars.asIterable())
+
+        @JvmStatic
+        @JsName("ofVariabled")
+        fun of(variabled: Variabled): Scope = of(variabled.variables)
 
         @JvmStatic
         @JsName("emptyWithFunction")
         fun <R> empty(lambda: Scope.() -> R): R = empty().with(lambda)
 
         @JvmStatic
-        @JsName("ofAndThen")
+        @JsName("ofWithFunction")
         fun <R> of(vararg vars: String, lambda: Scope.() -> R): R = of(*vars).with(lambda)
 
         @JvmStatic
-        @JsName("ofVarAndThen")
+        @JsName("ofVarWithFunction")
         fun <R> of(vararg vars: Var, lambda: Scope.() -> R): R = of(*vars).with(lambda)
+
+        @JvmStatic
+        @JsName("ofVarIterableWithFunction")
+        fun <R> of(vars: Iterable<Var>, lambda: Scope.() -> R): R = of(vars).with(lambda)
+
+        @JvmStatic
+        @JsName("ofVarSequenceWithFunction")
+        fun <R> of(vars: Sequence<Var>, lambda: Scope.() -> R): R = of(vars).with(lambda)
+
+        @JvmStatic
+        @JsName("ofVariabledWithFunction")
+        fun <R> of(vars: Variabled, lambda: Scope.() -> R): R = of(vars).with(lambda)
     }
 }
