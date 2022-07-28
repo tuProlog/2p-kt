@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.streams.solver.fsm.impl
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.extractSignature
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
@@ -36,8 +36,8 @@ internal class StateRuleSelectionTest {
         theQuery.extractSignature(),
         theQuery.args,
         StreamsExecutionContext(
-            libraries = Libraries.of(
-                Library.aliased(
+            libraries = Runtime.of(
+                Library.of(
                     alias = "testLib",
                     theory = prolog { theory({ "f"("a") }) }
                 )
@@ -103,7 +103,7 @@ internal class StateRuleSelectionTest {
     @Test
     fun stateRuleSelectionUsesCombinationOfStaticAndDynamicKBWhenLibraryTheoriesDoesntProvideMatches() {
         val dynamicAndStaticKBSolveRequest =
-            with(threeDBSolveRequest) { copy(context = context.copy(libraries = Libraries.empty())) }
+            with(threeDBSolveRequest) { copy(context = context.copy(libraries = Runtime.empty())) }
         val correctSubstitutions = prolog {
             ktListOf(
                 theQueryVariable to "b",

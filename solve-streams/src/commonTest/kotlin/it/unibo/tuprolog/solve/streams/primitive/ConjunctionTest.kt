@@ -4,7 +4,7 @@ import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.extractSignature
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
@@ -72,8 +72,8 @@ internal class ConjunctionTest {
                 goal.args,
                 StreamsExecutionContext(
                     substitution = preRequestSubstitution,
-                    libraries = Libraries.of(
-                        Library.aliased(
+                    libraries = Runtime.of(
+                        Library.of(
                             alias = "conjunction.test",
                             primitives = mapOf(
                                 *ktListOf(Conjunction, leftPrimitive, rightPrimitive)

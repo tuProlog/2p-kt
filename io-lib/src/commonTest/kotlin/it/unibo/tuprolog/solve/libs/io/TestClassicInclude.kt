@@ -2,15 +2,15 @@ package it.unibo.tuprolog.solve.libs.io
 
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import kotlin.test.Test
 
 class TestClassicInclude : TestInclude, SolverFactory by ClassicSolverFactory {
 
     private val prototype = TestInclude.prototype(this)
 
-    override val defaultLibraries: Libraries
-        get() = super.defaultLibraries + Libraries.of(IOLib)
+    override val defaultRuntime: Runtime
+        get() = super.defaultRuntime + Runtime.of(IOLib)
 
     @Test
     override fun testLocalInclude() {
