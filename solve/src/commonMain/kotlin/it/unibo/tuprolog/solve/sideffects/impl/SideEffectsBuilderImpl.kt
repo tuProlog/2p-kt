@@ -5,8 +5,8 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
 

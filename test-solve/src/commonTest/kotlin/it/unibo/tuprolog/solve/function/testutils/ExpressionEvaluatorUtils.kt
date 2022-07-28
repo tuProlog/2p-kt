@@ -8,8 +8,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.ExpressionEvaluator
 import it.unibo.tuprolog.solve.function.LogicFunction
-import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Solve
 
 /**
