@@ -8,8 +8,8 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
@@ -22,13 +22,13 @@ import kotlin.js.JsName
 interface MutableSolver : Solver {
 
     @JsName("loadLibrary")
-    fun loadLibrary(library: AliasedLibrary)
+    fun loadLibrary(library: Library)
 
     @JsName("unloadLibrary")
-    fun unloadLibrary(library: AliasedLibrary)
+    fun unloadLibrary(library: Library)
 
     @JsName("setLibraries")
-    fun setLibraries(libraries: Libraries)
+    fun setRuntime(libraries: Runtime)
 
     @JsName("loadStaticKb")
     fun loadStaticKb(theory: Theory)
@@ -118,7 +118,7 @@ interface MutableSolver : Solver {
     fun setWarnings(warnings: OutputChannel<Warning>)
 
     override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.problog.lib
 
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.library.AliasedLibrary
+import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.problog.PROBLOG_SPECIFIC_OPERATORS
 import it.unibo.tuprolog.solve.problog.lib.primitive.SpecificPrimitives
@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.problog.lib.rules.SpecificRules
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.theory.Theory
 
-object ProblogLib : AliasedLibrary by CommonBuiltins {
+object ProblogLib : Library by CommonBuiltins {
     const val EXPLANATION_VAR_NAME = "EXPL"
     const val EVIDENCE_PREDICATE = "evidence"
     const val PREDICATE_PREFIX = "prob"

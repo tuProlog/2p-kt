@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.streams.solver.fsm.FinalState
@@ -31,7 +31,7 @@ import it.unibo.tuprolog.utils.buffered
  * @author Enrico
  */
 internal class StreamsSolver constructor(
-    libraries: Libraries = Libraries.empty(),
+    libraries: Runtime = Runtime.empty(),
     flags: FlagStore = FlagStore.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
@@ -40,7 +40,7 @@ internal class StreamsSolver constructor(
 ) : Solver {
 
     constructor(
-        libraries: Libraries = Libraries.empty(),
+        libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
@@ -98,7 +98,7 @@ internal class StreamsSolver constructor(
     }
 
     override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
@@ -108,7 +108,7 @@ internal class StreamsSolver constructor(
         warnings: OutputChannel<Warning>
     ) = StreamsSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
-    override val libraries: Libraries
+    override val libraries: Runtime
         get() = executionContext.libraries
 
     override val flags: FlagStore

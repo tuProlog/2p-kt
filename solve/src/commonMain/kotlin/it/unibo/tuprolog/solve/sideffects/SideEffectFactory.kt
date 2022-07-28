@@ -5,8 +5,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.Library
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -124,12 +123,8 @@ interface SideEffectFactory {
         SideEffect.ClearFlags(*names)
 
     @JsName("loadLibrary")
-    fun loadLibrary(alias: String, library: Library) =
-        SideEffect.LoadLibrary(alias, library)
-
-    @JsName("loadAliasedLibrary")
-    fun loadLibrary(aliasedLibrary: AliasedLibrary) =
-        SideEffect.LoadLibrary(aliasedLibrary.alias, aliasedLibrary)
+    fun loadLibrary(library: Library) =
+        SideEffect.LoadLibrary(library)
 
     @JsName("unloadLibrariesIterable")
     fun unloadLibraries(aliases: Iterable<String>) =
@@ -144,43 +139,39 @@ interface SideEffectFactory {
         SideEffect.UnloadLibraries(*aliases)
 
     @JsName("updateLibrary")
-    fun updateLibrary(alias: String, library: Library) =
-        SideEffect.UpdateLibrary(alias, library)
+    fun updateLibrary(library: Library) =
+        SideEffect.UpdateLibrary(library)
 
-    @JsName("updateAliasedLibrary")
-    fun updateLibrary(aliasedLibrary: AliasedLibrary) =
-        SideEffect.UpdateLibrary(aliasedLibrary.alias, aliasedLibrary)
+    @JsName("resetRuntime")
+    fun resetRuntime(libraries: Runtime) =
+        SideEffect.ResetRuntime(libraries)
 
-    @JsName("resetLibraries")
-    fun resetLibraries(libraries: Libraries) =
-        SideEffect.ResetLibraries(libraries)
+    @JsName("resetRuntimeIterable")
+    fun resetRuntime(libraries: Iterable<Library>) =
+        SideEffect.ResetRuntime(libraries)
 
-    @JsName("resetLibrariesIterable")
-    fun resetLibraries(libraries: Iterable<AliasedLibrary>) =
-        SideEffect.ResetLibraries(libraries)
+    @JsName("resetRuntimeSequence")
+    fun resetRuntime(libraries: Sequence<Library>) =
+        SideEffect.ResetRuntime(libraries)
 
-    @JsName("resetLibrariesSequence")
-    fun resetLibraries(libraries: Sequence<AliasedLibrary>) =
-        SideEffect.ResetLibraries(libraries)
-
-    @JsName("resetAliasedLibrary")
-    fun resetLibraries(vararg libraries: AliasedLibrary) =
-        SideEffect.ResetLibraries(*libraries)
+    @JsName("resetLibrary")
+    fun resetRuntime(vararg libraries: Library) =
+        SideEffect.ResetRuntime(*libraries)
 
     @JsName("addLibraries")
-    fun addLibraries(libraries: Libraries) =
+    fun addLibraries(libraries: Runtime) =
         SideEffect.AddLibraries(libraries)
 
     @JsName("addLibrariesIterable")
-    fun addLibraries(libraries: Iterable<AliasedLibrary>) =
+    fun addLibraries(libraries: Iterable<Library>) =
         SideEffect.AddLibraries(libraries)
 
     @JsName("addLibrariesSequence")
-    fun addLibraries(libraries: Sequence<AliasedLibrary>) =
+    fun addLibraries(libraries: Sequence<Library>) =
         SideEffect.AddLibraries(libraries)
 
-    @JsName("addAliasedLibrary")
-    fun addLibraries(vararg libraries: AliasedLibrary) =
+    @JsName("addLibrary")
+    fun addLibraries(vararg libraries: Library) =
         SideEffect.AddLibraries(*libraries)
 
     @JsName("setOperatorsIterable")

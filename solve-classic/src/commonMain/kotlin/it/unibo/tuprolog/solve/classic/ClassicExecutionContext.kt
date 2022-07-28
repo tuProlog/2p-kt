@@ -17,7 +17,7 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.toOperatorSet
@@ -29,7 +29,7 @@ import kotlin.collections.Set as KtSet
 
 data class ClassicExecutionContext(
     override val procedure: Struct? = null,
-    override val libraries: Libraries = Libraries.empty(),
+    override val libraries: Runtime = Runtime.empty(),
     override val flags: FlagStore = FlagStore.empty(),
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: MutableTheory = MutableTheory.empty(),
@@ -89,7 +89,7 @@ data class ClassicExecutionContext(
     }
 
     override fun createSolver(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
@@ -98,7 +98,7 @@ data class ClassicExecutionContext(
     ): Solver = ClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb = true)
 
     override fun createMutableSolver(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
@@ -107,7 +107,7 @@ data class ClassicExecutionContext(
     ): MutableSolver = MutableClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb = true)
 
     override fun update(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,

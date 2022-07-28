@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlin.js.JsName
@@ -19,7 +19,7 @@ interface ConcurrentSolver : Solver {
     fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution>
 
     override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,

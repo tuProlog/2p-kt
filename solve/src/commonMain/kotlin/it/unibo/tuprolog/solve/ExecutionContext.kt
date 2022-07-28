@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
@@ -33,7 +33,7 @@ interface ExecutionContext : ExecutionContextAware {
 
     @JsName("createSolver")
     fun createSolver(
-        libraries: Libraries = this.libraries,
+        libraries: Runtime = this.libraries,
         flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
@@ -43,7 +43,7 @@ interface ExecutionContext : ExecutionContextAware {
 
     @JsName("createMutableSolver")
     fun createMutableSolver(
-        libraries: Libraries = this.libraries,
+        libraries: Runtime = this.libraries,
         flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
@@ -70,7 +70,7 @@ interface ExecutionContext : ExecutionContextAware {
 
     @JsName("update")
     fun update(
-        libraries: Libraries = this.libraries,
+        libraries: Runtime = this.libraries,
         flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
