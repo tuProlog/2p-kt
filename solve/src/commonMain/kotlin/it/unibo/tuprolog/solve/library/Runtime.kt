@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.library
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-/** Represents a group of [Library] objects */
+/** Represents a group of [Library] objects constituting the runtime a logic solver may leverage upon */
 interface Runtime : Library, Map<String, Library> {
 
     override val alias: String

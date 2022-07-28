@@ -11,29 +11,40 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
-/** Represents a Prolog library */
+/**
+ * A type for logic libraries, i.e. _aliases_ aggregates of (possibly empty) collections of
+ * - [Operator]s, grouped into an [OperatorSet],
+ * - clauses, rules, or directives, grouped into a [Theory],
+ * - [Primitive]s, indexed by [Signature],
+ * - [LogicFunction]s, indexed by [Signature].
+ *
+ * A library alias is aimed at identifying the library in the eyes of a solver.
+ * */
 interface Library {
 
-    /** The library alias */
+    /** The alias identifying this library */
     @JsName("alias")
     val alias: String
 
-    /** Library defined operators */
+    /** Operators to be loaded by a solver when the library is used */
     @JsName("operators")
     val operators: OperatorSet
 
-    /** The library theory clauses */
+    /** Rules, facts, or directories to be loaded by a solver when the library is used */
     @JsName("theory")
     val theory: Theory
 
-    /** The library primitives, identified by their signatures */
+    /** [Primitive]s to be loaded by a solver when the library is used,
+     * indexed by their [Signature] in the eyes of the solver */
     @JsName("primitives")
     val primitives: Map<Signature, Primitive>
 
-    /** The library prolog functions, identified by their signature */
+    /** [LogicFunction]s to be loaded by a solver when the library is used,
+     * indexed by their [Signature] in the eyes of the solver */
     @JsName("functions")
     val functions: Map<Signature, LogicFunction>
 
+    /** Converts the current library into a [Runtime] containing a single library */
     @JsName("toRuntime")
     fun toRuntime(): Runtime = Runtime.of(this)
 
