@@ -3,8 +3,8 @@ package it.unibo.tuprolog.solve.streams.solver.fsm.impl
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.extractSignature
-import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.streams.solver.fsm.FinalState
