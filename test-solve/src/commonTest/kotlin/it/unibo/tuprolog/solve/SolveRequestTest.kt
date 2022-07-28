@@ -115,7 +115,7 @@ internal class SolveRequestTest {
                     it.solution,
                     aSideEffectManager
                 ) {
-                    resetLibraries(differentLibraries)
+                    resetRuntime(differentLibraries)
                     resetFlags(differentFlags)
                     resetStaticKb(differentStaticKB)
                     resetDynamicKb(differentDynamicKB)
@@ -132,7 +132,7 @@ internal class SolveRequestTest {
                 solutionSubstitution,
                 aSideEffectManager
             ) {
-                resetLibraries(differentLibraries)
+                resetRuntime(differentLibraries)
                 resetFlags(differentFlags)
                 resetStaticKb(differentStaticKB)
                 resetDynamicKb(differentDynamicKB)
@@ -147,7 +147,7 @@ internal class SolveRequestTest {
             createRequest().replyFail(
                 aSideEffectManager
             ) {
-                resetLibraries(differentLibraries)
+                resetRuntime(differentLibraries)
                 resetFlags(differentFlags)
                 resetStaticKb(differentStaticKB)
                 resetDynamicKb(differentDynamicKB)
@@ -163,7 +163,7 @@ internal class SolveRequestTest {
                 solutionException,
                 aSideEffectManager
             ) {
-                resetLibraries(differentLibraries)
+                resetRuntime(differentLibraries)
                 resetFlags(differentFlags)
                 resetStaticKb(differentStaticKB)
                 resetDynamicKb(differentDynamicKB)
@@ -179,7 +179,7 @@ internal class SolveRequestTest {
                 true,
                 aSideEffectManager
             ) {
-                resetLibraries(differentLibraries)
+                resetRuntime(differentLibraries)
                 resetFlags(differentFlags)
                 resetStaticKb(differentStaticKB)
                 resetDynamicKb(differentDynamicKB)
@@ -196,7 +196,7 @@ internal class SolveRequestTest {
                 false,
                 aSideEffectManager
             ) {
-                resetLibraries(differentLibraries)
+                resetRuntime(differentLibraries)
                 resetFlags(differentFlags)
                 resetStaticKb(differentStaticKB)
                 resetDynamicKb(differentDynamicKB)

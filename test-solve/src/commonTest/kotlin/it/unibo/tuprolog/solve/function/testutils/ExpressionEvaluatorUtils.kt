@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.ExpressionEvaluator
 import it.unibo.tuprolog.solve.function.LogicFunction
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Solve
 
@@ -21,7 +21,7 @@ internal object ExpressionEvaluatorUtils {
 
     /** A context with empty functions map */
     internal val noFunctionsContext = object : ExecutionContext by DummyInstances.executionContext {
-        override val libraries: Libraries = Libraries.empty()
+        override val libraries: Runtime = Runtime.empty()
     }
 
     internal val noFunctionRequest = Solve.Request(
@@ -79,12 +79,10 @@ internal object ExpressionEvaluatorUtils {
     /** Creates a context with provided signature-function binding */
     private fun createContextWithFunctionBy(signature: Signature, function: LogicFunction): ExecutionContext =
         object : ExecutionContext by DummyInstances.executionContext {
-            override val libraries: Libraries = Libraries.of(
-                Library.aliased(
-                    alias = "test.expression.evaluator",
-                    functions = mapOf(signature to function)
-                )
-            )
+            override val libraries: Runtime = Library.of(
+                alias = "test.expression.evaluator",
+                functions = mapOf(signature to function)
+            ).toRuntime()
         }
 
     internal fun createRequestWithFunctionBy(

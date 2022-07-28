@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.LogicFunction
-import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -120,7 +119,15 @@ internal object LibraryUtils {
         primitives: Map<Signature, Primitive>,
         functions: Map<Signature, LogicFunction>,
         alias: String
-    ): AliasedLibrary = Library.aliased(alias, primitives, theory, opSet, functions)
+    ): Library = Library.of(alias, primitives, theory, opSet, functions)
+
+    /** A method to disambiguate use of Library.of reference */
+    internal fun libraryWithoutAliasConstructor(
+        opSet: OperatorSet,
+        theory: Theory,
+        primitives: Map<Signature, Primitive>,
+        functions: Map<Signature, LogicFunction>,
+    ): Library = Library.of(primitives, theory, opSet, functions)
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(
@@ -131,13 +138,13 @@ internal object LibraryUtils {
     /** Utility function to construct a library with alias from raw data */
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
-        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>, String) -> AliasedLibrary
-    ): AliasedLibrary =
+        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>, String) -> Library
+    ): Library =
         constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions, rawLibrary.name)
 
     /** Utility function to alias a primitive/function */
     internal fun aliasPrimitiveOrFunction(libAlias: String, entry: Map.Entry<Signature, *>) =
-        entry.key.copy(name = libAlias + AliasedLibrary.ALIAS_SEPARATOR + entry.key.name) to entry.value
+        entry.key.copy(name = libAlias + Library.ALIAS_SEPARATOR + entry.key.name) to entry.value
 
     /** Utility function to duplicate all primitive/functions aliasing them in library */
     internal fun aliasLibraryMap(libAlias: String, toAliasMap: Map<Signature, *>) =

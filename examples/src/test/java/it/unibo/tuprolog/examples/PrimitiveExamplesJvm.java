@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.ExecutionContext;
 import it.unibo.tuprolog.solve.MutableSolver;
 import it.unibo.tuprolog.solve.Solution;
 import it.unibo.tuprolog.solve.Solver;
-import it.unibo.tuprolog.solve.library.AliasedLibrary;
 import it.unibo.tuprolog.solve.library.Library;
 import it.unibo.tuprolog.solve.primitive.Solve;
 import it.unibo.tuprolog.solve.primitive.TernaryRelation;
@@ -56,7 +55,7 @@ public class PrimitiveExamplesJvm {
 
     @Test
     public void loggingPrimitiveExample() {
-        AliasedLibrary library = Library.aliased(
+        Library library = Library.of(
                 "prolog.logging",
                 mapOf(LoggingPrimitive.INSTANCE.getDescriptionPair())
         );
@@ -106,7 +105,7 @@ public class PrimitiveExamplesJvm {
 
     @Test
     public void intRangePrimitiveExample() {
-        AliasedLibrary library = Library.aliased(
+        Library library = Library.of(
                 "prolog.ranges",
                 mapOf(IntRangePrimitive.INSTANCE.getDescriptionPair())
         );

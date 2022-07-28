@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.solve.library
 
-import it.unibo.tuprolog.solve.library.impl.LibraryAliasedImpl
-import it.unibo.tuprolog.solve.library.impl.LibraryImpl
+
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
+import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.libraryWithAliasConstructor
+import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.libraryWithoutAliasConstructor
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -15,13 +16,13 @@ import kotlin.test.assertTrue
  */
 internal class LibraryTest {
 
-    private val correctInstances = LibraryUtils.allLibraries.map { makeLib(it, ::LibraryImpl) }
-    private val correctInstancesWithAlias = LibraryUtils.allLibraries.map { makeLib(it, ::LibraryAliasedImpl) }
+    private val correctInstances = LibraryUtils.allLibraries.map { makeLib(it, ::libraryWithoutAliasConstructor) }
+    private val correctInstancesWithAlias = LibraryUtils.allLibraries.map { makeLib(it, ::libraryWithAliasConstructor) }
 
     @Test
     fun ofCreatesCorrectInstance() {
         val toBeTested = LibraryUtils.allLibraries.map { (_, opSet, theory, primitives, functions) ->
-            Library.unaliased(primitives, theory, opSet, functions)
+            Library.of(primitives, theory, opSet, functions)
         }
 
         assertEquals(correctInstances, toBeTested)
@@ -29,7 +30,7 @@ internal class LibraryTest {
 
     @Test
     fun ofWithOmittedParametersCreatesEmptyLibrary() {
-        val toBeTested = Library.unaliased()
+        val toBeTested = Library.of()
 
         assertTrue { toBeTested.theory.none() }
         assertTrue { toBeTested.operators.none() }
@@ -39,7 +40,7 @@ internal class LibraryTest {
     @Test
     fun ofWithAliasCreatesCorrectInstance() {
         val toBeTested = LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
-            Library.aliased(alias, primitives, theory, opSet, functions)
+            Library.of(alias, primitives, theory, opSet, functions)
         }
 
         assertEquals(correctInstancesWithAlias, toBeTested)
@@ -48,7 +49,7 @@ internal class LibraryTest {
     @Test
     fun ofLibraryAndAliasCreatesCorrectInstance() {
         val toBeTested = LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
-            Library.of(alias, LibraryImpl(opSet, theory, primitives, functions))
+            Library.of(alias, libraryWithoutAliasConstructor(opSet, theory, primitives, functions))
         }
 
         assertEquals(correctInstancesWithAlias, toBeTested)
