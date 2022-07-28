@@ -16,7 +16,7 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.toOperatorSet
@@ -27,7 +27,7 @@ import kotlin.collections.List as KtList
 
 data class ConcurrentExecutionContext(
     override val procedure: Struct? = null,
-    override val libraries: Libraries = Libraries.empty(),
+    override val libraries: Runtime = Runtime.empty(),
     override val flags: FlagStore = FlagStore.empty(),
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: MutableTheory = MutableTheory.empty(),
@@ -83,7 +83,7 @@ data class ConcurrentExecutionContext(
     }
 
     override fun createSolver(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
@@ -100,7 +100,7 @@ data class ConcurrentExecutionContext(
     )
 
     override fun createMutableSolver(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
@@ -116,7 +116,7 @@ data class ConcurrentExecutionContext(
     )
 
     override fun update(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,

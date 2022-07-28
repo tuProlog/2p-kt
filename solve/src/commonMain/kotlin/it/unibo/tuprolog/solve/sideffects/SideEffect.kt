@@ -10,9 +10,8 @@ import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
@@ -156,37 +155,21 @@ abstract class SideEffect {
             context.update(flags = context.flags - names)
     }
 
-    abstract class AlterLibraries : SideEffect()
+    abstract class AlterRuntime : SideEffect()
 
-    abstract class AlterAliasedLibraries : AlterLibraries() {
-        abstract val libraries: Libraries
+    abstract class AlterAliasedRuntime : AlterRuntime() {
+        abstract val libraries: Runtime
     }
 
-    abstract class AlterLibrary(open val alias: String, open val library: Library) : AlterAliasedLibraries() {
-        init {
-            when (val lib = library) {
-                is AliasedLibrary -> require(lib.alias == alias)
-            }
-        }
-
-        val aliasedLibrary: AliasedLibrary by lazy {
-            library.let {
-                if (it is AliasedLibrary) {
-                    it
-                } else {
-                    Library.of(alias, it)
-                }
-            }
-        }
-
-        override val libraries: Libraries by lazy { Libraries.of(aliasedLibrary) }
+    abstract class AlterLibrary(open val library: Library) : AlterAliasedRuntime() {
+        override val libraries: Runtime by lazy { Runtime.of(library) }
     }
 
-    abstract class AlterLibrariesByName(open val aliases: Iterable<String>) : AlterLibraries()
+    abstract class AlterLibrariesByName(open val aliases: Iterable<String>) : AlterRuntime()
 
-    data class LoadLibrary(override val alias: String, override val library: Library) : AlterLibrary(alias, library) {
+    data class LoadLibrary(override val library: Library) : AlterLibrary(library) {
         override fun applyTo(context: ExecutionContext): ExecutionContext =
-            context.update(libraries = context.libraries + aliasedLibrary)
+            context.update(libraries = context.libraries + library)
     }
 
     data class UnloadLibraries(override val aliases: Iterable<String>) : AlterLibrariesByName(aliases) {
@@ -200,28 +183,28 @@ abstract class SideEffect {
             context.update(libraries = context.libraries - aliases)
     }
 
-    data class UpdateLibrary(override val alias: String, override val library: Library) : AlterLibrary(alias, library) {
+    data class UpdateLibrary(override val library: Library) : AlterLibrary(library) {
         override fun applyTo(context: ExecutionContext): ExecutionContext =
-            context.update(libraries = context.libraries.update(aliasedLibrary))
+            context.update(libraries = context.libraries.update(library))
     }
 
-    data class AddLibraries(override val libraries: Libraries) : AlterAliasedLibraries() {
-        constructor(libraries: Iterable<AliasedLibrary>) : this(Libraries.of(libraries))
+    data class AddLibraries(override val libraries: Runtime) : AlterAliasedRuntime() {
+        constructor(libraries: Iterable<Library>) : this(Runtime.of(libraries))
 
-        constructor(libraries: Sequence<AliasedLibrary>) : this(Libraries.of(libraries))
+        constructor(libraries: Sequence<Library>) : this(Runtime.of(libraries))
 
-        constructor(vararg libraries: AliasedLibrary) : this(Libraries.of(*libraries))
+        constructor(vararg libraries: Library) : this(Runtime.of(*libraries))
 
         override fun applyTo(context: ExecutionContext): ExecutionContext =
             context.update(libraries = context.libraries + libraries)
     }
 
-    data class ResetLibraries(override val libraries: Libraries) : AlterAliasedLibraries() {
-        constructor(libraries: Iterable<AliasedLibrary>) : this(Libraries.of(libraries))
+    data class ResetRuntime(override val libraries: Runtime) : AlterAliasedRuntime() {
+        constructor(libraries: Iterable<Library>) : this(Runtime.of(libraries))
 
-        constructor(libraries: Sequence<AliasedLibrary>) : this(Libraries.of(libraries))
+        constructor(libraries: Sequence<Library>) : this(Runtime.of(libraries))
 
-        constructor(vararg libraries: AliasedLibrary) : this(Libraries.of(*libraries))
+        constructor(vararg libraries: Library) : this(Runtime.of(*libraries))
 
         override fun applyTo(context: ExecutionContext): ExecutionContext =
             context.update(libraries = libraries)

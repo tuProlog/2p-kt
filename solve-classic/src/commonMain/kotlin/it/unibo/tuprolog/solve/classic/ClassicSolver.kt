@@ -7,14 +7,14 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.classic.fsm.State
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 
 internal open class ClassicSolver : AbstractClassicSolver {
 
     constructor(
-        libraries: Libraries = Libraries.empty(),
+        libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
         initialStaticKb: Theory = Theory.empty(),
         initialDynamicKb: Theory = MutableTheory.empty(),
@@ -24,7 +24,7 @@ internal open class ClassicSolver : AbstractClassicSolver {
     ) : super(libraries, flags, initialStaticKb, initialDynamicKb, inputChannels, outputChannels, trustKb)
 
     constructor(
-        libraries: Libraries = Libraries.empty(),
+        libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
@@ -41,7 +41,7 @@ internal open class ClassicSolver : AbstractClassicSolver {
     ) = SolutionIterator.of(initialState, onStateTransition)
 
     override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,

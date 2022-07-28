@@ -2,7 +2,7 @@ package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.solve.problog.problogClassicWithDefaultBuiltins
@@ -71,7 +71,7 @@ class PLPIDEApplication : Application() {
         // Create a solver with PLP support
         model.customizeSolver {
             MutableSolver.problogClassicWithDefaultBuiltins(
-                libraries = Libraries.of(OOPLib, IOLib),
+                libraries = Runtime.of(OOPLib, IOLib),
                 stdIn = it.standardInput,
                 stdOut = it.standardOutput,
                 stdErr = it.standardError,

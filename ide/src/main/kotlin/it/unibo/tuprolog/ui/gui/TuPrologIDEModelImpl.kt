@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.Warning
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
@@ -144,7 +144,7 @@ internal class TuPrologIDEModelImpl(
 
     private val solver = Cached.of {
         var newSolver = MutableSolver.classicWithDefaultBuiltins(
-            libraries = Libraries.of(OOPLib, IOLib),
+            libraries = Runtime.of(OOPLib, IOLib),
             stdIn = InputChannel.of(stdin),
             stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
             stdErr = OutputChannel.of { onStderrPrinted.push(it) },

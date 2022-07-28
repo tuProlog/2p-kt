@@ -8,14 +8,14 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
 @JsName("classicSolver")
 fun Solver.Companion.classic(
-    libraries: Libraries = ClassicSolverFactory.defaultLibraries,
+    libraries: Runtime = ClassicSolverFactory.defaultRuntime,
     flags: FlagStore = ClassicSolverFactory.defaultFlags,
     staticKb: Theory = ClassicSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = ClassicSolverFactory.defaultDynamicKb,
@@ -28,7 +28,7 @@ fun Solver.Companion.classic(
 
 @JsName("classicSolverWithDefaultBuiltins")
 fun Solver.Companion.classicWithDefaultBuiltins(
-    libraries: Libraries = ClassicSolverFactory.defaultLibraries,
+    libraries: Runtime = ClassicSolverFactory.defaultRuntime,
     flags: FlagStore = ClassicSolverFactory.defaultFlags,
     staticKb: Theory = ClassicSolverFactory.defaultStaticKb,
     dynamicKb: Theory = ClassicSolverFactory.defaultDynamicKb,
@@ -41,7 +41,7 @@ fun Solver.Companion.classicWithDefaultBuiltins(
 
 @JsName("classicMutableSolver")
 fun MutableSolver.Companion.classic(
-    libraries: Libraries = ClassicSolverFactory.defaultLibraries,
+    libraries: Runtime = ClassicSolverFactory.defaultRuntime,
     flags: FlagStore = ClassicSolverFactory.defaultFlags,
     staticKb: Theory = ClassicSolverFactory.defaultStaticKb,
     dynamicKb: Theory = ClassicSolverFactory.defaultDynamicKb,
@@ -54,7 +54,7 @@ fun MutableSolver.Companion.classic(
 
 @JsName("classicMutableSolverWithDefaultBuiltins")
 fun MutableSolver.Companion.classicWithDefaultBuiltins(
-    libraries: Libraries = ClassicSolverFactory.defaultLibraries,
+    libraries: Runtime = ClassicSolverFactory.defaultRuntime,
     flags: FlagStore = ClassicSolverFactory.defaultFlags,
     staticKb: Theory = ClassicSolverFactory.defaultStaticKb,
     dynamicKb: Theory = ClassicSolverFactory.defaultDynamicKb,

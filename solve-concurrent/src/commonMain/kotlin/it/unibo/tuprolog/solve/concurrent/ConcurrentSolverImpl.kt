@@ -17,7 +17,7 @@ import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.impl.AbstractSolver
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
@@ -31,7 +31,7 @@ import kotlin.jvm.Synchronized
 import kotlinx.coroutines.channels.Channel as KtChannel
 
 internal open class ConcurrentSolverImpl(
-    libraries: Libraries = Libraries.empty(),
+    libraries: Runtime = Runtime.empty(),
     flags: FlagStore = FlagStore.empty(),
     initialStaticKb: Theory = Theory.empty(),
     initialDynamicKb: Theory = MutableTheory.empty(),
@@ -49,7 +49,7 @@ internal open class ConcurrentSolverImpl(
 ) {
 
     constructor(
-        libraries: Libraries = Libraries.empty(),
+        libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
@@ -140,7 +140,7 @@ internal open class ConcurrentSolverImpl(
     }
 
     override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
@@ -153,7 +153,7 @@ internal open class ConcurrentSolverImpl(
     override fun clone(): ConcurrentSolverImpl = copy()
 
     override fun initializeContext(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
