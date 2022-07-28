@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 
@@ -23,7 +23,7 @@ object Dummy {
         override val customData: CustomDataStore = CustomDataStore.empty()
 
         override fun createSolver(
-            libraries: Libraries,
+            libraries: Runtime,
             flags: FlagStore,
             staticKb: Theory,
             dynamicKb: Theory,
@@ -34,7 +34,7 @@ object Dummy {
         }
 
         override fun createMutableSolver(
-            libraries: Libraries,
+            libraries: Runtime,
             flags: FlagStore,
             staticKb: Theory,
             dynamicKb: Theory,
@@ -45,7 +45,7 @@ object Dummy {
         }
 
         override fun update(
-            libraries: Libraries,
+            libraries: Runtime,
             flags: FlagStore,
             staticKb: Theory,
             dynamicKb: Theory,
@@ -57,7 +57,7 @@ object Dummy {
             TODO("Not yet implemented")
         }
 
-        override val libraries: Libraries = Libraries.empty()
+        override val libraries: Runtime = Runtime.empty()
 
         override val flags: FlagStore = FlagStore.empty()
 

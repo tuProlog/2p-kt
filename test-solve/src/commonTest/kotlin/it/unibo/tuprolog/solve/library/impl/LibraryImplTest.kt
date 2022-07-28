@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
+import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.libraryWithoutAliasConstructor
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +26,7 @@ import kotlin.test.fail
  */
 internal class LibraryImplTest {
 
-    private val libraryInstances = LibraryUtils.allLibraries.map { makeLib(it, ::LibraryImpl) }
+    private val libraryInstances = LibraryUtils.allLibraries.map { makeLib(it, ::libraryWithoutAliasConstructor) }
 
     @Test
     fun operatorsCorrect() {
@@ -74,7 +75,7 @@ internal class LibraryImplTest {
     @Test
     fun containsSignatureDiscardsVarargSignatures() {
         val library =
-            LibraryImpl(OperatorSet(), Theory.indexedOf(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
+            libraryWithoutAliasConstructor(OperatorSet(), Theory.indexedOf(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
 
         assertTrue { Signature("f", 1, false) in library }
 

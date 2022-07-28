@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.assertHasPredicateInAPI
 import it.unibo.tuprolog.solve.exception.error.SyntaxError
 import it.unibo.tuprolog.solve.exception.error.SystemError
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.primitives.Consult
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -17,7 +17,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
         prolog {
             val canaryTheory = theoryOf(factOf("canary"))
             val solver = solverFactory.solverWithDefaultBuiltins(
-                Libraries.of(IOLib),
+                Runtime.of(IOLib),
                 staticKb = canaryTheory
             )
             assertEquals(canaryTheory, solver.staticKb)
@@ -38,7 +38,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
         prolog {
             val canaryTheory = theoryOf(factOf("canary"))
             val solver = solverFactory.solverWithDefaultBuiltins(
-                Libraries.of(IOLib),
+                Runtime.of(IOLib),
                 staticKb = canaryTheory
             )
             assertEquals(canaryTheory, solver.staticKb)
@@ -63,7 +63,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
         prolog {
             val canaryTheory = theoryOf(factOf("canary"))
             val solver = solverFactory.solverWithDefaultBuiltins(
-                Libraries.of(IOLib),
+                Runtime.of(IOLib),
                 staticKb = canaryTheory
             )
             assertEquals(canaryTheory, solver.staticKb)
@@ -86,7 +86,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
 
     override fun testApi() {
         val solver = solverFactory.solverWithDefaultBuiltins(
-            Libraries.of(IOLib)
+            Runtime.of(IOLib)
         )
         assertEquals(IOLib, solver.libraries[IOLib.alias])
         solver.assertHasPredicateInAPI(Consult)

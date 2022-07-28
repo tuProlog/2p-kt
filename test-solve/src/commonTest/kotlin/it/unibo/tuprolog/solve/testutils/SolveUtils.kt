@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.exception.ResolutionException
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.sideffects.SideEffect
@@ -28,7 +28,7 @@ import kotlin.collections.List as KtList
  */
 internal object SolveUtils {
 
-    internal val someLibraries = Libraries.empty()
+    internal val someLibraries = Runtime.empty()
     internal val someFlags = emptyMap<String, Term>()
     internal val aStaticKB = Theory.empty()
     internal val aDynamicKB = Theory.empty()
@@ -44,7 +44,7 @@ internal object SolveUtils {
     internal val varargArgumentList = anArgumentList + Truth.TRUE
 
     internal val differentLibraries by lazy {
-        Libraries.of(Library.aliased(alias = "test")).also { assertNotEquals(it, someLibraries) }
+        Runtime.of(Library.of(alias = "test")).also { assertNotEquals(it, someLibraries) }
     }
     internal val differentFlags by lazy {
         mapOf<String, Term>(Truth.TRUE.value to Truth.FAIL).also { assertNotEquals(it, someFlags) }
@@ -71,7 +71,7 @@ internal object SolveUtils {
         Solve.Response(
             Solution.yes(aSignature, anArgumentList, solutionSubstitution),
             aSideEffectManager,
-            SideEffect.ResetLibraries(differentLibraries),
+            SideEffect.ResetRuntime(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
             SideEffect.ResetStaticKb(differentStaticKB),
             SideEffect.ResetDynamicKb(differentDynamicKB)
@@ -83,7 +83,7 @@ internal object SolveUtils {
         Solve.Response(
             Solution.no(aSignature, anArgumentList),
             aSideEffectManager,
-            SideEffect.ResetLibraries(differentLibraries),
+            SideEffect.ResetRuntime(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
             SideEffect.ResetStaticKb(differentStaticKB),
             SideEffect.ResetDynamicKb(differentDynamicKB)
@@ -95,7 +95,7 @@ internal object SolveUtils {
         Solve.Response(
             Solution.halt(aSignature, anArgumentList, solutionException),
             aSideEffectManager,
-            SideEffect.ResetLibraries(differentLibraries),
+            SideEffect.ResetRuntime(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
             SideEffect.ResetStaticKb(differentStaticKB),
             SideEffect.ResetDynamicKb(differentDynamicKB)

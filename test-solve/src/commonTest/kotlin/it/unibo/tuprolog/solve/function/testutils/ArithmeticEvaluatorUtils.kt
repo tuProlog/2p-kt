@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.exception.error.EvaluationError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.function.ArithmeticEvaluator
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 
@@ -24,7 +24,7 @@ internal object ArithmeticEvaluatorUtils {
 
     /** A context with [CommonBuiltins] loaded */
     internal val commonFunctionsContext = object : ExecutionContext by ExpressionEvaluatorUtils.noFunctionsContext {
-        override val libraries: Libraries = Libraries.of(CommonBuiltins)
+        override val libraries: Runtime = Runtime.of(CommonBuiltins)
     }
 
     /** A context with [CommonBuiltins] loaded */
