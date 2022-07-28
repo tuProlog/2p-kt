@@ -18,9 +18,8 @@ import it.unibo.tuprolog.solve.classic.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.LogicFunction
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.solve.primitive.Primitive
@@ -176,7 +175,7 @@ class ExamplePrologSolver {
 
         // solvers require information to be provided at instantiation time:
         val solver: Solver = Solver.prolog.solverOf(
-            libraries = Libraries.of(DefaultBuiltins),
+            libraries = Runtime.of(DefaultBuiltins),
             staticKb = theory
         )
 
@@ -255,7 +254,7 @@ class ExamplePrologSolver {
     @Test
     fun usingLibraries() {
         val solver = Solver.prolog.solverOf(
-            libraries = Libraries.of(DefaultBuiltins, IOLib, OOPLib)
+            libraries = Runtime.of(DefaultBuiltins, IOLib, OOPLib)
         )
 
         println(solver.libraries.keys) // [prolog.lang, prolog.io, prolog.oop]
@@ -264,8 +263,8 @@ class ExamplePrologSolver {
     @Suppress("UNUSED_ANONYMOUS_PARAMETER")
     @Test
     fun definingLibraries() {
-        val myLibrary = object : AliasedLibrary by
-        Library.aliased(
+        val myLibrary = object : Library by
+        Library.of(
             alias = "alias.of.the.lib",
             primitives = mapOf(
                 Signature("f", 2) to Primitive { request: Solve.Request<ExecutionContext> ->
@@ -273,7 +272,7 @@ class ExamplePrologSolver {
                 }
             ),
             theory = Theory.empty(),
-            operatorSet = OperatorSet(),
+            operators = OperatorSet(),
             functions = mapOf(
                 Signature("+", 2) to LogicFunction { request: Compute.Request<ExecutionContext> ->
                     TODO("compute response here")

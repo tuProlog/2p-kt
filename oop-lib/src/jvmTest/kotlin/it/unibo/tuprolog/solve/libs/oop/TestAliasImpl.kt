@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.oop.primitives.Register
 import it.unibo.tuprolog.solve.libs.oop.rules.Alias
 import it.unibo.tuprolog.solve.yes
@@ -67,7 +67,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
 
     override fun testDefaultAliases() {
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Libraries.of(OOPLib))
+            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
 
             assertAliasIsPresent(solver, "string", String::class)
             assertAliasIsPresent(solver, "array", Array::class)
@@ -96,7 +96,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
 
     override fun testAliasIsBacktrackable() {
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Libraries.of(OOPLib))
+            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
 
             val query = Alias.FUNCTOR(A, T)
             val solutions = solver.solveList(query)
@@ -139,7 +139,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
         val bTypeAlias = Alias.forObject("bType", bType.type)
 
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Libraries.of(OOPLib))
+            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
 
             val registerQuery1 = Register.functor(bInstanceAlias.ref, bInstanceAlias.alias)
             assertSolutionEquals(
@@ -173,7 +173,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
 
     override fun testRegisterWithWrongArguments() {
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Libraries.of(OOPLib))
+            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
 
             var query = Register.functor(X, "alias")
             assertSolutionEquals(
