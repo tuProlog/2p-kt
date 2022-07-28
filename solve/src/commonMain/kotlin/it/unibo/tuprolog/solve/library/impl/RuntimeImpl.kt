@@ -1,15 +1,17 @@
-package it.unibo.tuprolog.solve.library
+package it.unibo.tuprolog.solve.library.impl
 
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.LogicFunction
+import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.Theory
 
 /** A class representing an agglomerate of libraries with an alias */
-internal class Libraries constructor(libraries: Sequence<Library>) :
+internal class RuntimeImpl constructor(libraries: Sequence<Library>) :
     Runtime,
     Map<String, Library> by (libraries.map { it.alias to it }.toMap()) {
 
@@ -50,50 +52,50 @@ internal class Libraries constructor(libraries: Sequence<Library>) :
         }.toMap()
     }
 
-    override fun plus(other: Library): Libraries =
+    override fun plus(other: Library): RuntimeImpl =
         aliases.find { other.alias in aliases }
             ?.let { alreadyLoadedError(other) }
-            ?: Libraries(libraries.asSequence() + sequenceOf(other))
+            ?: RuntimeImpl(libraries.asSequence() + sequenceOf(other))
 
-    override fun plus(runtime: Runtime): Libraries =
+    override fun plus(runtime: Runtime): RuntimeImpl =
         runtime.libraries.find { it.alias in aliases }
             ?.let { alreadyLoadedError(it) }
-            ?: Libraries(libraries.asSequence() + runtime.libraries.asSequence())
+            ?: RuntimeImpl(libraries.asSequence() + runtime.libraries.asSequence())
 
-    override fun minus(library: Library): Libraries {
+    override fun minus(library: Library): RuntimeImpl {
         if (library.alias in aliases) {
             noSuchALibraryError(library)
         }
-        return Libraries(libraries.asSequence().filter { it.alias != library.alias })
+        return RuntimeImpl(libraries.asSequence().filter { it.alias != library.alias })
     }
 
-    override operator fun minus(alias: String): Libraries {
+    override operator fun minus(alias: String): RuntimeImpl {
         if (alias in aliases) {
             noSuchALibraryError(alias)
         }
-        return Libraries(libraries.asSequence().filter { it.alias != alias })
+        return RuntimeImpl(libraries.asSequence().filter { it.alias != alias })
     }
 
-    override operator fun minus(aliases: Iterable<String>): Libraries {
+    override operator fun minus(aliases: Iterable<String>): RuntimeImpl {
         val toBeRemoved = aliases.map {
             if (it in this.aliases) {
                 noSuchALibraryError(it)
             }
             it
         }.toSet()
-        return Libraries(libraries.asSequence().filterNot { it.alias in toBeRemoved })
+        return RuntimeImpl(libraries.asSequence().filterNot { it.alias in toBeRemoved })
     }
 
-    override fun update(library: Library): Libraries =
+    override fun update(library: Library): RuntimeImpl =
         aliases.find { library.alias in aliases }
-            ?.let { Libraries(libraries.asSequence() + sequenceOf(library)) }
+            ?.let { RuntimeImpl(libraries.asSequence() + sequenceOf(library)) }
             ?: throw IllegalArgumentException("A library aliased as `${library.alias}` has never been loaded")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as Libraries
+        other as RuntimeImpl
 
         if (libraries != other.libraries) return false
 
