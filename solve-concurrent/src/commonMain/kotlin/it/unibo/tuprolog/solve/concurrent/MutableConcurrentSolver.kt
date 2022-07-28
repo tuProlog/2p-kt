@@ -12,8 +12,8 @@ import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.getAllOperators
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
@@ -22,7 +22,7 @@ import it.unibo.tuprolog.theory.Theory
 internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
 
     constructor(
-        libraries: Libraries = Libraries.empty(),
+        libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
@@ -32,7 +32,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
     ) : super(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb)
 
     constructor(
-        libraries: Libraries = Libraries.empty(),
+        libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
@@ -43,7 +43,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         trustKb: Boolean = false
     ) : super(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
 
-    override fun loadLibrary(library: AliasedLibrary) {
+    override fun loadLibrary(library: Library) {
         updateContext {
             val newLibraries = libraries + library
             copy(
@@ -53,7 +53,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         }
     }
 
-    override fun unloadLibrary(library: AliasedLibrary) {
+    override fun unloadLibrary(library: Library) {
         updateContext {
             val newLibraries = libraries + library
             copy(
@@ -63,7 +63,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         }
     }
 
-    override fun setLibraries(libraries: Libraries) {
+    override fun setRuntime(libraries: Runtime) {
         updateContext {
             copy(
                 libraries = libraries,
@@ -223,7 +223,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
     }
 
     override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,

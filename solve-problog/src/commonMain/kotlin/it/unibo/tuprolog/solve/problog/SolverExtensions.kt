@@ -8,14 +8,14 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
 @JsName("problogClassicSolver")
 fun Solver.Companion.problogClassic(
-    libraries: Libraries = ProblogSolverFactory.defaultLibraries,
+    libraries: Runtime = ProblogSolverFactory.defaultRuntime,
     flags: FlagStore = ProblogSolverFactory.defaultFlags,
     staticKb: Theory = ProblogSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = ProblogSolverFactory.defaultDynamicKb,
@@ -28,7 +28,7 @@ fun Solver.Companion.problogClassic(
 
 @JsName("problogClassicSolverWithDefaultBuiltins")
 fun Solver.Companion.problogClassicWithDefaultBuiltins(
-    libraries: Libraries = ProblogSolverFactory.defaultLibraries,
+    libraries: Runtime = ProblogSolverFactory.defaultRuntime,
     flags: FlagStore = ProblogSolverFactory.defaultFlags,
     staticKb: Theory = ProblogSolverFactory.defaultStaticKb,
     dynamicKb: Theory = ProblogSolverFactory.defaultDynamicKb,
@@ -41,7 +41,7 @@ fun Solver.Companion.problogClassicWithDefaultBuiltins(
 
 @JsName("problogClassicMutableSolver")
 fun MutableSolver.Companion.problogClassic(
-    libraries: Libraries = ProblogSolverFactory.defaultLibraries,
+    libraries: Runtime = ProblogSolverFactory.defaultRuntime,
     flags: FlagStore = ProblogSolverFactory.defaultFlags,
     staticKb: Theory = ProblogSolverFactory.defaultStaticKb,
     dynamicKb: Theory = ProblogSolverFactory.defaultDynamicKb,
@@ -54,7 +54,7 @@ fun MutableSolver.Companion.problogClassic(
 
 @JsName("problogClassicMutableSolverWithDefaultBuiltins")
 fun MutableSolver.Companion.problogClassicWithDefaultBuiltins(
-    libraries: Libraries = ProblogSolverFactory.defaultLibraries,
+    libraries: Runtime = ProblogSolverFactory.defaultRuntime,
     flags: FlagStore = ProblogSolverFactory.defaultFlags,
     staticKb: Theory = ProblogSolverFactory.defaultStaticKb,
     dynamicKb: Theory = ProblogSolverFactory.defaultDynamicKb,

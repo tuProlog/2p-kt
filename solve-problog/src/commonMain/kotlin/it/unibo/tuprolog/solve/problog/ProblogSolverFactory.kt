@@ -12,8 +12,8 @@ import it.unibo.tuprolog.solve.classic.classic
 import it.unibo.tuprolog.solve.classic.stdlib.rule.Call
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
@@ -22,7 +22,7 @@ import it.unibo.tuprolog.theory.Theory
 
 object ProblogSolverFactory : SolverFactory {
 
-    private object DefaultBuiltins : AliasedLibrary by ProblogLib {
+    private object DefaultBuiltins : Library by ProblogLib {
 
         override val operators: OperatorSet by lazy {
             ProblogLib.operators + ClassicSolverFactory.defaultBuiltins.operators
@@ -38,7 +38,7 @@ object ProblogSolverFactory : SolverFactory {
     }
 
     /* Minimum libraries always needed to solve queries */
-    private object MinimumBuiltins : AliasedLibrary by ProblogLib {
+    private object MinimumBuiltins : Library by ProblogLib {
 
         override val primitives: Map<Signature, Primitive> by lazy {
             ProblogLib.primitives + sequenceOf(
@@ -55,10 +55,10 @@ object ProblogSolverFactory : SolverFactory {
         }
     }
 
-    override val defaultBuiltins: AliasedLibrary
+    override val defaultBuiltins: Library
         get() = DefaultBuiltins
 
-    private fun fixLibraries(libraries: Libraries): Libraries {
+    private fun fixLibraries(libraries: Runtime): Runtime {
         return if (!libraries.containsValue(DefaultBuiltins)) {
             libraries.plus(MinimumBuiltins)
         } else {
@@ -67,7 +67,7 @@ object ProblogSolverFactory : SolverFactory {
     }
 
     override fun solverOf(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
@@ -90,7 +90,7 @@ object ProblogSolverFactory : SolverFactory {
         )
 
     override fun mutableSolverOf(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,

@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier.FX
 import it.unibo.tuprolog.core.operators.Specifier.XFX
 import it.unibo.tuprolog.core.operators.Specifier.XFY
-import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.libs.oop.primitives.ArrayItems
 import it.unibo.tuprolog.solve.libs.oop.primitives.Assign
@@ -35,8 +34,8 @@ import org.gciatto.kt.math.BigInteger
 
 internal expect val platformSpecificAliases: Array<Alias>
 
-object OOPLib : AliasedLibrary by
-Library.aliased(
+object OOPLib : Library by
+Library.of(
     alias = "prolog.oop",
     primitives = sequenceOf<PrimitiveWrapper<*>>(
         ArrayItems,
@@ -90,7 +89,7 @@ Library.aliased(
             *platformSpecificAliases
         ).map { it.implementation }
     ),
-    operatorSet = OperatorSet(
+    operators = OperatorSet(
         Operator(".", XFY, 800),
         Operator(":=", XFX, 850),
         Operator("as", XFX, 200),
