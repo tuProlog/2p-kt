@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.Info
-import it.unibo.tuprolog.solve.library.AliasedLibrary
+import it.unibo.tuprolog.solve.library.Library
 import javafx.event.EventHandler
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -24,7 +24,7 @@ data class TuPrologIDEBuilder(
     var onClose: () -> Boolean = { showExitConfirmationDialog(title) },
     var onAbout: () -> Unit = { showAboutDialog(title, Info.VERSION) },
     var stylesheets: List<String> = listOf(JAVA_KEYWORDS_LIGHT, LIGHT_CODE_AREA),
-    var customLibraries: List<AliasedLibrary> = emptyList(),
+    var customLibraries: List<Library> = emptyList(),
     var customTabs: List<CustomTab> = emptyList()
 ) {
 
@@ -81,10 +81,10 @@ data class TuPrologIDEBuilder(
 
     fun stylesheet(stylesheet: String) = apply { this.stylesheets += stylesheet }
 
-    fun customLibraries(customLibraries: Iterable<AliasedLibrary>) =
+    fun customLibraries(customLibraries: Iterable<Library>) =
         apply { this.customLibraries = customLibraries.toList() }
 
-    fun customLibrary(customLibrary: AliasedLibrary) =
+    fun customLibrary(customLibrary: Library) =
         apply { this.customLibraries += customLibrary }
 
     fun customTabs(customTabs: Iterable<CustomTab>) =

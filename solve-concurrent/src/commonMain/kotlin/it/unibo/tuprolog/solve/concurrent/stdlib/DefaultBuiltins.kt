@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Naf
 import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Or
 import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.concurrent.stdlib.rule.SpecificRules
-import it.unibo.tuprolog.solve.library.AliasedLibrary
+import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.solve.stdlib.primitive.Arg
@@ -72,7 +72,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Var
 import it.unibo.tuprolog.solve.stdlib.primitive.Write
 import it.unibo.tuprolog.theory.Theory
 
-object DefaultBuiltins : AliasedLibrary by CommonBuiltins {
+object DefaultBuiltins : Library by CommonBuiltins {
 
     override val theory: Theory by lazy {
         CommonBuiltins.theory + SpecificRules.theory

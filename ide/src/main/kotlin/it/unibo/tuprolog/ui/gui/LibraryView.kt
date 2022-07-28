@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.ui.gui
 
-import it.unibo.tuprolog.solve.library.AliasedLibrary
+import it.unibo.tuprolog.solve.library.Library
 import javafx.scene.control.TreeItem
 
-class LibraryView(library: AliasedLibrary) : TreeItem<String>(library.alias) {
+class LibraryView(library: Library) : TreeItem<String>(library.alias) {
     init {
         isExpanded = false
 

@@ -10,8 +10,8 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
@@ -20,16 +20,16 @@ internal class MutableProblogSolver(
     private val solver: MutableSolver
 ) : ProblogSolver(solver), MutableSolver {
 
-    override fun loadLibrary(library: AliasedLibrary) {
+    override fun loadLibrary(library: Library) {
         solver.loadLibrary(library)
     }
 
-    override fun unloadLibrary(library: AliasedLibrary) {
+    override fun unloadLibrary(library: Library) {
         solver.unloadLibrary(library)
     }
 
-    override fun setLibraries(libraries: Libraries) {
-        solver.setLibraries(libraries)
+    override fun setRuntime(libraries: Runtime) {
+        solver.setRuntime(libraries)
     }
 
     override fun loadStaticKb(theory: Theory) {
@@ -117,7 +117,7 @@ internal class MutableProblogSolver(
     }
 
     override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,

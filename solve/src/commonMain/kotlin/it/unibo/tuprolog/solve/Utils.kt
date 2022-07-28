@@ -7,8 +7,8 @@ import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import kotlin.jvm.JvmName
 
@@ -41,11 +41,11 @@ fun Library.getAllOperators(): Sequence<Operator> {
     return operators.asSequence()
 }
 
-fun Libraries.getAllOperators(): Sequence<Operator> {
+fun Runtime.getAllOperators(): Sequence<Operator> {
     return operators.asSequence()
 }
 
-fun getAllOperators(libraries: Libraries, vararg theories: Theory): Sequence<Operator> {
+fun getAllOperators(libraries: Runtime, vararg theories: Theory): Sequence<Operator> {
     return libraries.getAllOperators() + sequenceOf(*theories).flatMap { it.getAllOperators() }
 }
 

@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
@@ -22,7 +22,7 @@ interface PrologScopeWithResolution : PrologScopeWithTheories, MutableSolver {
 
     @JsName("solverOf")
     fun solverOf(
-        otherLibraries: Libraries = solverFactory.defaultLibraries,
+        otherLibraries: Runtime = solverFactory.defaultRuntime,
         flags: FlagStore = solverFactory.defaultFlags,
         staticKb: Theory = solverFactory.defaultStaticKb,
         dynamicKb: Theory = solverFactory.defaultDynamicKb,

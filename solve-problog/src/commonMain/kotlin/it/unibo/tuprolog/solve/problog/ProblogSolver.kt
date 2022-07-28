@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.isProbabilistic
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.BinaryDecisionDiagramExplanation
@@ -159,7 +159,7 @@ internal open class ProblogSolver(
     ): Solution = solve(goal, options.setLimit(1)).first()
 
     override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
