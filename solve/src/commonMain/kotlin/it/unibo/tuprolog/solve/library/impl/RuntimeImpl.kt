@@ -104,7 +104,7 @@ internal class RuntimeImpl constructor(libraries: Sequence<Library>) :
 
     override fun hashCode(): Int = libraries.hashCode()
 
-    override fun toString(): String = "Libraries($libraries)"
+    override fun toString(): String = "RuntimeImpl($libraries)"
 
     @Suppress("NOTHING_TO_INLINE")
     companion object {
