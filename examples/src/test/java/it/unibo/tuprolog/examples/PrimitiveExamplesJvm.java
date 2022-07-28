@@ -6,10 +6,7 @@ import it.unibo.tuprolog.core.Struct;
 import it.unibo.tuprolog.core.Substitution;
 import it.unibo.tuprolog.core.Term;
 import it.unibo.tuprolog.core.Var;
-import it.unibo.tuprolog.solve.ExecutionContext;
-import it.unibo.tuprolog.solve.MutableSolver;
-import it.unibo.tuprolog.solve.Solution;
-import it.unibo.tuprolog.solve.Solver;
+import it.unibo.tuprolog.solve.*;
 import it.unibo.tuprolog.solve.library.Library;
 import it.unibo.tuprolog.solve.primitive.Solve;
 import it.unibo.tuprolog.solve.primitive.TernaryRelation;
@@ -25,6 +22,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.unibo.tuprolog.solve.Utils.libraryOf;
+import static it.unibo.tuprolog.solve.Utils.runtimeOf;
 import static kotlin.collections.MapsKt.mapOf;
 import static kotlin.sequences.SequencesKt.generateSequence;
 import static kotlin.sequences.SequencesKt.map;
@@ -105,12 +104,25 @@ public class PrimitiveExamplesJvm {
 
     @Test
     public void intRangePrimitiveExample() {
-        Library library = Library.of(
-                "prolog.ranges",
-                mapOf(IntRangePrimitive.INSTANCE.getDescriptionPair())
-        );
         MutableSolver solver = Solver.getProlog().mutableSolverOf();
-        solver.loadLibrary(library);
+        solver.loadLibrary(
+                libraryOf("prolog.ranges", IntRangePrimitive.INSTANCE)
+        );
+
+        List<Solution> sol = solver.solveList(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")));
+        assertEquals(5, sol.size());
+        for (int i = 1; i <= 5; i++) {
+            Solution s = sol.get(i - 1);
+            assertTrue(s.isYes());
+            assertEquals(Integer.of(i), s.getSubstitution().getByName("X"));
+        }
+    }
+
+    @Test
+    public void intRangePrimitiveExample2() {
+        MutableSolver solver = Solver.getProlog().mutableSolverOf(
+                runtimeOf("prolog.ranges", IntRangePrimitive.INSTANCE)
+        );
 
         List<Solution> sol = solver.solveList(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")));
         assertEquals(5, sol.size());
