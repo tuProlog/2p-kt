@@ -16,7 +16,7 @@ import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.halt
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.yes
@@ -161,7 +161,7 @@ internal class SolverUtilsTest {
             dynamicKb = Theory.empty(),
             staticKb = aContext.staticKb.assertA(aClause),
             flags = FlagStore.of("someFlag" to Atom.of("someFlagValue")),
-            libraries = Libraries.empty()
+            libraries = Runtime.empty()
         )
 
         val toBeTested = solveRequest.newSolveRequest(solveRequest.query, toPropagateContextData = modifiedContext)

@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
 import it.unibo.tuprolog.solve.libs.oop.primitives.NewObject3
@@ -23,7 +23,7 @@ class TestCreationImpl(protected val solverFactory: SolverFactory) : TestCreatio
         detectorType: KClass<*> = ConstructorOverloadDetector::class,
         case2Term: (TestDatum) -> Term
     ) = prolog {
-        val solver = solverFactory.solverWithDefaultBuiltins(Libraries.of(OOPLib))
+        val solver = solverFactory.solverWithDefaultBuiltins(Runtime.of(OOPLib))
         for (case in cases) {
             val query = NewObject3.functor(TypeRef.of(detectorType), listOf(case2Term(case)), X)
             val solutions = solver.solveList(query)

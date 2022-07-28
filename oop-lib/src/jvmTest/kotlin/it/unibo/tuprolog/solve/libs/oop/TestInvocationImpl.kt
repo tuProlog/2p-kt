@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod
@@ -31,7 +31,7 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
         refCreator: (OverloadDetector) -> Ref = ObjectRef.Companion::of,
         case2Term: (TestDatum) -> Term
     ) = prolog {
-        val solver = solverFactory.solverWithDefaultBuiltins(Libraries.of(OOPLib))
+        val solver = solverFactory.solverWithDefaultBuiltins(Runtime.of(OOPLib))
         val obj = detectorCreator()
         val ref = refCreator(obj)
         for (case in cases) {
