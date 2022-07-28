@@ -1,10 +1,9 @@
 package it.unibo.tuprolog.solve.library
 
-
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
-import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.libraryWithAliasConstructor
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.libraryWithoutAliasConstructor
+import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

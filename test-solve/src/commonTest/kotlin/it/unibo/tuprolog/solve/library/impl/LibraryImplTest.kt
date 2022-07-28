@@ -10,8 +10,8 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
-import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.libraryWithoutAliasConstructor
+import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 import kotlin.test.assertEquals
