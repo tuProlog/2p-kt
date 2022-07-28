@@ -5,13 +5,13 @@ import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 
 data class SolverEvent<T>(
     val event: T,
     override val operators: OperatorSet,
-    override val libraries: Libraries,
+    override val libraries: Runtime,
     override val flags: FlagStore,
     override val staticKb: Theory,
     override val dynamicKb: Theory,

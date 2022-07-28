@@ -8,12 +8,12 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import kotlin.jvm.JvmName
 
 fun Solver.Companion.streams(
-    libraries: Libraries = StreamsSolverFactory.defaultLibraries,
+    libraries: Runtime = StreamsSolverFactory.defaultRuntime,
     flags: FlagStore = StreamsSolverFactory.defaultFlags,
     staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
@@ -25,7 +25,7 @@ fun Solver.Companion.streams(
     StreamsSolverFactory.solverOf(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 fun Solver.Companion.streamsWithDefaultBuiltins(
-    libraries: Libraries = StreamsSolverFactory.defaultLibraries,
+    libraries: Runtime = StreamsSolverFactory.defaultRuntime,
     flags: FlagStore = StreamsSolverFactory.defaultFlags,
     staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
@@ -37,7 +37,7 @@ fun Solver.Companion.streamsWithDefaultBuiltins(
     StreamsSolverFactory.solverWithDefaultBuiltins(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 fun MutableSolver.Companion.streams(
-    libraries: Libraries = StreamsSolverFactory.defaultLibraries,
+    libraries: Runtime = StreamsSolverFactory.defaultRuntime,
     flags: FlagStore = StreamsSolverFactory.defaultFlags,
     staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
@@ -49,7 +49,7 @@ fun MutableSolver.Companion.streams(
     StreamsSolverFactory.mutableSolverOf(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 fun MutableSolver.Companion.streamsWithDefaultBuiltins(
-    libraries: Libraries = StreamsSolverFactory.defaultLibraries,
+    libraries: Runtime = StreamsSolverFactory.defaultRuntime,
     flags: FlagStore = StreamsSolverFactory.defaultFlags,
     staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,

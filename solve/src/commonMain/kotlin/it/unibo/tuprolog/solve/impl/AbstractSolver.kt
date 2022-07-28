@@ -18,7 +18,7 @@ import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
@@ -26,7 +26,7 @@ import it.unibo.tuprolog.utils.buffered
 
 @Suppress("LeakingThis")
 abstract class AbstractSolver<E : ExecutionContext>(
-    libraries: Libraries = Libraries.empty(),
+    libraries: Runtime = Runtime.empty(),
     flags: FlagStore = FlagStore.empty(),
     initialStaticKb: Theory = Theory.empty(),
     initialDynamicKb: Theory = MutableTheory.empty(),
@@ -59,7 +59,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
     }
 
     protected abstract fun initializeContext(
-        libraries: Libraries = Libraries.empty(),
+        libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
@@ -128,7 +128,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
         }
     }
 
-    final override val libraries: Libraries
+    final override val libraries: Runtime
         get() = currentContext.libraries
 
     final override val flags: FlagStore
@@ -178,7 +178,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
     }
 
     abstract override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
@@ -192,7 +192,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
 
     override fun toString(): String =
         "${this::class.simpleName}(" +
-            "libraries=${libraries.libraryAliases}, " +
+            "libraries=${libraries.aliases}, " +
             "staticKb=${staticKb.clauses.toList()}, " +
             "dynamicKb=${dynamicKb.clauses.toList()}, " +
             "operators=$operators" +

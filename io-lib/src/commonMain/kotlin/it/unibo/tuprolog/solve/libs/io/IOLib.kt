@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Library.Companion.toMapEnsuringNoDuplicates
 import it.unibo.tuprolog.solve.libs.io.primitives.AtEndOfStream0
@@ -50,8 +49,8 @@ import it.unibo.tuprolog.solve.libs.io.primitives.WriteEq2
 import it.unibo.tuprolog.solve.libs.io.primitives.WriteTerm2
 import it.unibo.tuprolog.solve.libs.io.primitives.WriteTerm3
 
-object IOLib : AliasedLibrary by
-Library.aliased(
+object IOLib : Library by
+Library.of(
     alias = "prolog.io",
     primitives = sequenceOf(
         AtEndOfStream0,

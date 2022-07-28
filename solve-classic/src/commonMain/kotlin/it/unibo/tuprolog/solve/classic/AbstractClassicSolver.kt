@@ -15,13 +15,13 @@ import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.impl.AbstractSolver
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 
 abstract class AbstractClassicSolver(
-    libraries: Libraries = Libraries.empty(),
+    libraries: Runtime = Runtime.empty(),
     flags: FlagStore = FlagStore.empty(),
     initialStaticKb: Theory = Theory.empty(),
     initialDynamicKb: Theory = MutableTheory.empty(),
@@ -41,7 +41,7 @@ abstract class AbstractClassicSolver(
     override lateinit var currentContext: ClassicExecutionContext
 
     constructor(
-        libraries: Libraries = Libraries.empty(),
+        libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
@@ -61,7 +61,7 @@ abstract class AbstractClassicSolver(
     )
 
     final override fun initializeContext(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
@@ -108,7 +108,7 @@ abstract class AbstractClassicSolver(
     }
 
     abstract override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,

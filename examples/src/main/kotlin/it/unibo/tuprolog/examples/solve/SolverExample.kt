@@ -9,8 +9,8 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.Solve
 
@@ -47,8 +47,8 @@ fun gt(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> {
 fun main() {
     prolog {
         val solver = Solver.classicWithDefaultBuiltins(
-            libraries = Libraries.of(
-                Library.aliased(
+            libraries = Runtime.of(
+                Library.of(
                     alias = "it.unibo.lrizzato.myprimives",
                     primitives = mapOf(gtSignature to Primitive(::gt))
                 )
