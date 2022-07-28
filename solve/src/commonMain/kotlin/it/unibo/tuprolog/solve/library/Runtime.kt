@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.library
 
+import it.unibo.tuprolog.solve.library.impl.RuntimeImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -37,18 +38,18 @@ interface Runtime : Library, Map<String, Library> {
     companion object {
         @JsName("empty")
         @JvmStatic
-        fun empty(): Runtime = Libraries(emptySequence())
+        fun empty(): Runtime = RuntimeImpl(emptySequence())
 
         @JsName("of")
         @JvmStatic
-        fun of(vararg library: Library): Runtime = Libraries(sequenceOf(*library))
+        fun of(vararg library: Library): Runtime = RuntimeImpl(sequenceOf(*library))
 
         @JsName("ofIterable")
         @JvmStatic
-        fun of(libraries: Iterable<Library>): Runtime = Libraries(libraries.asSequence())
+        fun of(libraries: Iterable<Library>): Runtime = RuntimeImpl(libraries.asSequence())
 
         @JsName("ofSequence")
         @JvmStatic
-        fun of(libraries: Sequence<Library>): Runtime = Libraries(libraries)
+        fun of(libraries: Sequence<Library>): Runtime = RuntimeImpl(libraries)
     }
 }
