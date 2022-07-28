@@ -12,8 +12,8 @@ import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.getAllOperators
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
@@ -22,7 +22,7 @@ import it.unibo.tuprolog.theory.Theory
 internal class MutableClassicSolver : ClassicSolver, MutableSolver {
 
     constructor(
-        libraries: Libraries = Libraries.empty(),
+        libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
@@ -32,7 +32,7 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
     ) : super(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb)
 
     constructor(
-        libraries: Libraries = Libraries.empty(),
+        libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
@@ -43,27 +43,27 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
         trustKb: Boolean = false
     ) : super(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
 
-    override fun loadLibrary(library: AliasedLibrary) {
+    override fun loadLibrary(library: Library) {
         updateContext {
-            val newLibraries = libraries + library
+            val newRuntime = libraries + library
             copy(
-                libraries = newLibraries,
-                operators = operators + getAllOperators(newLibraries).toOperatorSet()
+                libraries = newRuntime,
+                operators = operators + getAllOperators(newRuntime).toOperatorSet()
             )
         }
     }
 
-    override fun unloadLibrary(library: AliasedLibrary) {
+    override fun unloadLibrary(library: Library) {
         updateContext {
-            val newLibraries = libraries + library
+            val newRuntime = libraries + library
             copy(
-                libraries = newLibraries,
-                operators = getAllOperators(newLibraries, staticKb, dynamicKb).toOperatorSet()
+                libraries = newRuntime,
+                operators = getAllOperators(newRuntime, staticKb, dynamicKb).toOperatorSet()
             )
         }
     }
 
-    override fun setLibraries(libraries: Libraries) {
+    override fun setRuntime(libraries: Runtime) {
         updateContext {
             copy(
                 libraries = libraries,
@@ -223,7 +223,7 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
     }
 
     override fun copy(
-        libraries: Libraries,
+        libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,

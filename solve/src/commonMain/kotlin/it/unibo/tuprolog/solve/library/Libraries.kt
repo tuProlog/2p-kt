@@ -7,21 +7,18 @@ import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.Theory
-import kotlin.js.JsName
-import kotlin.jvm.JvmStatic
 
 /** A class representing an agglomerate of libraries with an alias */
-class Libraries private constructor(libraries: Sequence<AliasedLibrary>) :
-    LibraryGroup<AliasedLibrary>,
-    Map<String, AliasedLibrary> by (libraries.map { it.alias to it }.toMap()) {
+internal class Libraries constructor(libraries: Sequence<Library>) :
+    Runtime,
+    Map<String, Library> by (libraries.map { it.alias to it }.toMap()) {
 
-    /** All library aliases of libraries included in this library group */
-    @JsName("libraryAliases")
-    val libraryAliases: Set<String>
-        inline get() = keys
+    /** All aliases of all libraries included in this library group */
+    override val aliases: Set<String>
+        get() = keys
 
-    override val libraries: Collection<AliasedLibrary>
-        get() = values.toList()
+    override val libraries: Set<Library>
+        get() = values.toSet()
 
     override val operators: OperatorSet by lazy {
         OperatorSet(libraries.flatMap { it.operators.asSequence() })
@@ -36,7 +33,7 @@ class Libraries private constructor(libraries: Sequence<AliasedLibrary>) :
             lib.primitives.entries.asSequence().flatMap {
                 sequenceOf(
                     it.toPair(),
-                    it.key.copy(name = lib.alias + AliasedLibrary.ALIAS_SEPARATOR + it.key.name) to it.value
+                    it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value
                 )
             }
         }.toMap()
@@ -47,41 +44,39 @@ class Libraries private constructor(libraries: Sequence<AliasedLibrary>) :
             lib.functions.entries.asSequence().flatMap {
                 sequenceOf(
                     it.toPair(),
-                    it.key.copy(name = lib.alias + AliasedLibrary.ALIAS_SEPARATOR + it.key.name) to it.value
+                    it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value
                 )
             }
         }.toMap()
     }
 
-    override fun plus(library: AliasedLibrary): Libraries =
-        libraryAliases.find { library.alias in libraryAliases }
-            ?.let { alreadyLoadedError(library) }
-            ?: Libraries(libraries.asSequence() + sequenceOf(library))
+    override fun plus(other: Library): Libraries =
+        aliases.find { other.alias in aliases }
+            ?.let { alreadyLoadedError(other) }
+            ?: Libraries(libraries.asSequence() + sequenceOf(other))
 
-    override fun plus(libraryGroup: LibraryGroup<AliasedLibrary>): Libraries =
-        libraryGroup.libraries.find { it.alias in libraryAliases }
+    override fun plus(runtime: Runtime): Libraries =
+        runtime.libraries.find { it.alias in aliases }
             ?.let { alreadyLoadedError(it) }
-            ?: Libraries(libraries.asSequence() + libraryGroup.libraries.asSequence())
+            ?: Libraries(libraries.asSequence() + runtime.libraries.asSequence())
 
-    override fun minus(library: AliasedLibrary): Libraries {
-        if (library.alias in libraryAliases) {
+    override fun minus(library: Library): Libraries {
+        if (library.alias in aliases) {
             noSuchALibraryError(library)
         }
         return Libraries(libraries.asSequence().filter { it.alias != library.alias })
     }
 
-    @JsName("minusAlias")
-    operator fun minus(alias: String): Libraries {
-        if (alias in libraryAliases) {
+    override operator fun minus(alias: String): Libraries {
+        if (alias in aliases) {
             noSuchALibraryError(alias)
         }
         return Libraries(libraries.asSequence().filter { it.alias != alias })
     }
 
-    @JsName("minusAliases")
-    operator fun minus(aliases: Iterable<String>): Libraries {
+    override operator fun minus(aliases: Iterable<String>): Libraries {
         val toBeRemoved = aliases.map {
-            if (it in libraryAliases) {
+            if (it in this.aliases) {
                 noSuchALibraryError(it)
             }
             it
@@ -89,8 +84,8 @@ class Libraries private constructor(libraries: Sequence<AliasedLibrary>) :
         return Libraries(libraries.asSequence().filterNot { it.alias in toBeRemoved })
     }
 
-    override fun update(library: AliasedLibrary): Libraries =
-        libraryAliases.find { library.alias in libraryAliases }
+    override fun update(library: Library): Libraries =
+        aliases.find { library.alias in aliases }
             ?.let { Libraries(libraries.asSequence() + sequenceOf(library)) }
             ?: throw IllegalArgumentException("A library aliased as `${library.alias}` has never been loaded")
 
@@ -109,31 +104,16 @@ class Libraries private constructor(libraries: Sequence<AliasedLibrary>) :
 
     override fun toString(): String = "Libraries($libraries)"
 
+    @Suppress("NOTHING_TO_INLINE")
     companion object {
         /** Utility function to handle already loaded error */
-        private fun alreadyLoadedError(library: AliasedLibrary): Nothing =
+        private inline fun alreadyLoadedError(library: Library): Nothing =
             throw AlreadyLoadedLibraryException("A library aliased as `${library.alias}` has already been loaded")
 
-        private fun noSuchALibraryError(library: AliasedLibrary): Nothing =
+        private inline fun noSuchALibraryError(library: Library): Nothing =
             noSuchALibraryError(library.alias)
 
-        private fun noSuchALibraryError(alias: String): Nothing =
+        private inline fun noSuchALibraryError(alias: String): Nothing =
             throw NoSuchALibraryException("No library with alias `$alias` has been loaded")
-
-        @JsName("empty")
-        @JvmStatic
-        fun empty() = Libraries(emptySequence())
-
-        @JsName("of")
-        @JvmStatic
-        fun of(vararg library: AliasedLibrary) = Libraries(sequenceOf(*library))
-
-        @JsName("ofIterable")
-        @JvmStatic
-        fun of(libraries: Iterable<AliasedLibrary>) = Libraries(libraries.asSequence())
-
-        @JsName("ofSequence")
-        @JvmStatic
-        fun of(libraries: Sequence<AliasedLibrary>) = Libraries(libraries)
     }
 }

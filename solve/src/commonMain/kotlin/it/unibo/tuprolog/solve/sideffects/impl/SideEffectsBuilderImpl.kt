@@ -5,8 +5,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
@@ -85,17 +84,11 @@ data class SideEffectsBuilderImpl(override val sideEffects: MutableList<SideEffe
 
     override fun clearFlags(vararg names: String): SideEffect.ClearFlags = adding { super.clearFlags(*names) }
 
-    override fun loadLibrary(alias: String, library: Library): SideEffect.LoadLibrary =
-        adding { super.loadLibrary(alias, library) }
+    override fun loadLibrary(library: Library): SideEffect.LoadLibrary =
+        adding { super.loadLibrary(library) }
 
-    override fun loadLibrary(aliasedLibrary: AliasedLibrary): SideEffect.LoadLibrary =
-        adding { super.loadLibrary(aliasedLibrary) }
-
-    override fun updateLibrary(alias: String, library: Library): SideEffect.UpdateLibrary =
-        adding { super.updateLibrary(alias, library) }
-
-    override fun updateLibrary(aliasedLibrary: AliasedLibrary): SideEffect.UpdateLibrary =
-        adding { super.updateLibrary(aliasedLibrary) }
+    override fun updateLibrary(library: Library): SideEffect.UpdateLibrary =
+        adding { super.updateLibrary(library) }
 
     override fun setOperators(operators: Iterable<Operator>): SideEffect.SetOperators =
         adding { super.setOperators(operators) }
@@ -178,27 +171,27 @@ data class SideEffectsBuilderImpl(override val sideEffects: MutableList<SideEffe
     override fun unloadLibraries(vararg aliases: String): SideEffect.UnloadLibraries =
         adding { super.unloadLibraries(*aliases) }
 
-    override fun resetLibraries(libraries: Libraries): SideEffect.ResetLibraries =
-        adding { super.resetLibraries(libraries) }
+    override fun resetRuntime(libraries: Runtime): SideEffect.ResetRuntime =
+        adding { super.resetRuntime(libraries) }
 
-    override fun resetLibraries(libraries: Iterable<AliasedLibrary>): SideEffect.ResetLibraries =
-        adding { super.resetLibraries(libraries) }
+    override fun resetRuntime(libraries: Iterable<Library>): SideEffect.ResetRuntime =
+        adding { super.resetRuntime(libraries) }
 
-    override fun resetLibraries(libraries: Sequence<AliasedLibrary>): SideEffect.ResetLibraries =
-        adding { super.resetLibraries(libraries) }
+    override fun resetRuntime(libraries: Sequence<Library>): SideEffect.ResetRuntime =
+        adding { super.resetRuntime(libraries) }
 
-    override fun resetLibraries(vararg libraries: AliasedLibrary): SideEffect.ResetLibraries =
-        adding { super.resetLibraries(*libraries) }
+    override fun resetRuntime(vararg libraries: Library): SideEffect.ResetRuntime =
+        adding { super.resetRuntime(*libraries) }
 
-    override fun addLibraries(libraries: Libraries): SideEffect.AddLibraries = adding { super.addLibraries(libraries) }
+    override fun addLibraries(libraries: Runtime): SideEffect.AddLibraries = adding { super.addLibraries(libraries) }
 
-    override fun addLibraries(libraries: Iterable<AliasedLibrary>): SideEffect.AddLibraries =
+    override fun addLibraries(libraries: Iterable<Library>): SideEffect.AddLibraries =
         adding { super.addLibraries(libraries) }
 
-    override fun addLibraries(libraries: Sequence<AliasedLibrary>): SideEffect.AddLibraries =
+    override fun addLibraries(libraries: Sequence<Library>): SideEffect.AddLibraries =
         adding { super.addLibraries(libraries) }
 
-    override fun addLibraries(vararg libraries: AliasedLibrary): SideEffect.AddLibraries =
+    override fun addLibraries(vararg libraries: Library): SideEffect.AddLibraries =
         adding { super.addLibraries(*libraries) }
 
     override fun resetInputChannels(inputChannels: Iterable<Pair<String, InputChannel<String>>>): SideEffect.ResetInputChannels =
