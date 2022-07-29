@@ -15,6 +15,8 @@ internal class InputStoreImpl(
         .ensureAliasRefersToChannel(STDIN, stdIn)
         .setCurrent(STDIN, stdIn)
 ) {
+    override fun setStdIn(channel: InputChannel<String>): InputStore =
+        InputStoreImpl(channel, channels - STDIN)
 
     override fun setCurrent(alias: String): InputStore =
         when (val newCurrentChannel = get(alias)) {
