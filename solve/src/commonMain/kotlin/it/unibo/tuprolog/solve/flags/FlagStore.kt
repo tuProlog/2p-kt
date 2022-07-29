@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.flags
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
@@ -14,7 +13,7 @@ data class FlagStore(private val flags: Map<String, Term>) : Map<String, Term> b
         this[notableFlag.name]
 
     @JsName("set")
-    fun set(name: String, value: Term): FlagStore =
+    operator fun set(name: String, value: Term): FlagStore =
         plus(name, value)
 
     @JsName("setNotableToDefault")
@@ -22,7 +21,7 @@ data class FlagStore(private val flags: Map<String, Term>) : Map<String, Term> b
         set(notableFlag.name, notableFlag.defaultValue)
 
     @JsName("setNotable")
-    fun set(notableFlag: NotableFlag, value: Atom): FlagStore =
+    operator fun set(notableFlag: NotableFlag, value: Term): FlagStore =
         if (value in notableFlag.admissibleValues) {
             set(notableFlag.name, value)
         } else {
