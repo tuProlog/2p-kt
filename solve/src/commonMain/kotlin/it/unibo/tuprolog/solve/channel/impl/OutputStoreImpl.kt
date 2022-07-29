@@ -16,6 +16,14 @@ internal class OutputStoreImpl(
     outputChannels: Map<String, OutputChannel<String>> = emptyMap()
 ) : AbstractChannelStore<String, OutputChannel<String>, OutputStore>(checkChannels(stdOut, stdErr, outputChannels)),
     OutputStore {
+    override fun setStdOut(channel: OutputChannel<String>): OutputStore =
+        OutputStoreImpl(channel, stdErr, warnings, channels - STDOUT)
+
+    override fun setStdErr(channel: OutputChannel<String>): OutputStore =
+        OutputStoreImpl(stdOut, channel, warnings, channels - STDERR)
+
+    override fun setWarnings(channel: OutputChannel<Warning>): OutputStore =
+        OutputStoreImpl(stdOut, stdErr, channel, channels)
 
     override fun setCurrent(alias: String): OutputStore =
         when (val newCurrentChannel = get(alias)) {

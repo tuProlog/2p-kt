@@ -7,6 +7,24 @@ import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore> {
+    @JsName("stdOut")
+    val stdOut: OutputChannel<String>
+
+    @JsName("setStdOut")
+    fun setStdOut(channel: OutputChannel<String>): OutputStore
+
+    @JsName("stdErr")
+    val stdErr: OutputChannel<String>
+
+    @JsName("setStdErr")
+    fun setStdErr(channel: OutputChannel<String>): OutputStore
+
+    @JsName("warnings")
+    val warnings: OutputChannel<Warning>
+
+    @JsName("setWarnings")
+    fun setWarnings(channel: OutputChannel<Warning>): OutputStore
+
     companion object {
         const val STDOUT = "stdout"
 
@@ -33,13 +51,4 @@ interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore>
             return OutputStoreImpl(stdOut, stdErr, warnings, channels)
         }
     }
-
-    @JsName("stdOut")
-    val stdOut: OutputChannel<String>
-
-    @JsName("stdErr")
-    val stdErr: OutputChannel<String>
-
-    @JsName("warnings")
-    val warnings: OutputChannel<Warning>
 }
