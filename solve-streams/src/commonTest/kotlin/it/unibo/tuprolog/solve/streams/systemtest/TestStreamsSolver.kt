@@ -1,27 +1,15 @@
 package it.unibo.tuprolog.solve.streams.systemtest
 
-import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestSolver
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.Warning
-import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Library
-import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.streams.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.solve.streams.streams
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.solve.streams.StreamsSolverFactory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestStreamsSolver : SolverFactory, TestSolver {
+class TestStreamsSolver : TestSolver, SolverFactory by StreamsSolverFactory {
 
     private val prototype = TestSolver.prototype(this)
-
-    override val defaultBuiltins: Library = DefaultBuiltins
 
     override val callErrorSignature: Signature
         get() = prototype.callErrorSignature
@@ -31,28 +19,6 @@ class TestStreamsSolver : SolverFactory, TestSolver {
 
     override val notErrorSignature: Signature
         get() = prototype.notErrorSignature
-
-    override fun solverOf(
-        libraries: Runtime,
-        flags: FlagStore,
-        staticKb: Theory,
-        dynamicKb: Theory,
-        stdIn: InputChannel<String>,
-        stdOut: OutputChannel<String>,
-        stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
-    ) = Solver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
-
-    override fun mutableSolverOf(
-        libraries: Runtime,
-        flags: FlagStore,
-        staticKb: Theory,
-        dynamicKb: Theory,
-        stdIn: InputChannel<String>,
-        stdOut: OutputChannel<String>,
-        stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
-    ) = MutableSolver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     @Test
     @Ignore
