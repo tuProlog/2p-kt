@@ -6,6 +6,12 @@ import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 interface InputStore : ChannelStore<String, InputChannel<String>, InputStore> {
+    @JsName("stdIn")
+    val stdIn: InputChannel<String>
+
+    @JsName("setStdIn")
+    fun setStdIn(channel: InputChannel<String>): InputStore
+
     companion object {
         const val STDIN = "stdin"
 
@@ -24,7 +30,4 @@ interface InputStore : ChannelStore<String, InputChannel<String>, InputStore> {
                 InputStoreImpl(InputChannel.stdIn(), channels)
             }
     }
-
-    @JsName("stdIn")
-    val stdIn: InputChannel<String>
 }
