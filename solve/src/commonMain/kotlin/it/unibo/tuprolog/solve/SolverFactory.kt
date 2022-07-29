@@ -1,15 +1,21 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.impl.SolverBuilderImpl
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
 interface SolverFactory {
+
+    @JsName("newBuilder")
+    fun newBuilder(): SolverBuilder = SolverBuilderImpl(this)
 
     @JsName("defaultRuntime")
     val defaultRuntime: Runtime
@@ -46,7 +52,17 @@ interface SolverFactory {
     val defaultWarningsChannel: OutputChannel<Warning>
         get() = OutputChannel.warn()
 
-    @JsName("solver")
+    @JsName("rawSolverOf")
+    fun solverOf(
+        libraries: Runtime = defaultRuntime,
+        flags: FlagStore = defaultFlags,
+        staticKb: Theory = defaultStaticKb,
+        dynamicKb: Theory = defaultDynamicKb,
+        inputs: InputStore = InputStore.fromStandard(defaultInputChannel),
+        outputs: OutputStore = OutputStore.fromStandard(defaultOutputChannel, defaultErrorChannel, defaultWarningsChannel)
+    ): Solver
+
+    @JsName("solverOf")
     fun solverOf(
         libraries: Runtime = defaultRuntime,
         flags: FlagStore = defaultFlags,
@@ -132,7 +148,7 @@ interface SolverFactory {
         defaultWarningsChannel
     )
 
-    @JsName("solverOf")
+    @JsName("solver")
     fun solverOf() = solverOf(
         defaultRuntime,
         defaultFlags,
@@ -236,7 +252,7 @@ interface SolverFactory {
         defaultWarningsChannel
     )
 
-    @JsName("mutableSolver")
+    @JsName("mutableSolverOf")
     fun mutableSolverOf(
         libraries: Runtime = defaultRuntime,
         flags: FlagStore = defaultFlags,
@@ -322,7 +338,7 @@ interface SolverFactory {
         defaultWarningsChannel
     )
 
-    @JsName("mutableSolverOf")
+    @JsName("mutableSolver")
     fun mutableSolverOf() = mutableSolverOf(
         defaultRuntime,
         defaultFlags,
@@ -418,4 +434,14 @@ interface SolverFactory {
             defaultErrorChannel,
             defaultWarningsChannel
         )
+
+    @JsName("rawMutableSolverOf")
+    fun mutableSolverOf(
+        libraries: Runtime = defaultRuntime,
+        flags: FlagStore = defaultFlags,
+        staticKb: Theory = defaultStaticKb,
+        dynamicKb: Theory = defaultDynamicKb,
+        inputs: InputStore = InputStore.fromStandard(defaultInputChannel),
+        outputs: OutputStore = OutputStore.fromStandard(defaultOutputChannel, defaultErrorChannel, defaultWarningsChannel)
+    ): MutableSolver
 }
