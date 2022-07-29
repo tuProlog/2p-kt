@@ -23,6 +23,15 @@ object StreamsSolverFactory : SolverFactory {
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
+        inputs: InputStore,
+        outputs: OutputStore
+    ): Solver = StreamsSolver(libraries, flags, staticKb, dynamicKb, inputs, outputs)
+
+    override fun solverOf(
+        libraries: Runtime,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
@@ -47,6 +56,17 @@ object StreamsSolverFactory : SolverFactory {
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
     ): MutableSolver {
-        TODO("Not yet implemented")
+        TODO("Mutable stream solver is not supported yet")
+    }
+
+    override fun mutableSolverOf(
+        libraries: Runtime,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        inputs: InputStore,
+        outputs: OutputStore
+    ): MutableSolver {
+        TODO("Mutable stream solver is not supported yet")
     }
 }
