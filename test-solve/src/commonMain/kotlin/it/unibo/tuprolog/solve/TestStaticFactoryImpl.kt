@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.Info
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNotSame
 import kotlin.test.fail
 
 @Suppress("DEPRECATION")
@@ -56,6 +57,11 @@ class TestStaticFactoryImpl(private val expectations: TestStaticFactory.Expectat
         val solver = factory().solverOf()
         assertNotNull(solver)
         assertClassNameIs(solver::class, `class`)
+        assertNotNull(factory().newBuilder())
+        assertNotSame(factory().newBuilder(), factory().newBuilder())
+        val solver2 = factory().newBuilder().build()
+        assertNotNull(solver2)
+        assertClassNameIs(solver2::class, `class`)
     }
 
     private fun testStaticFactoryShouldFail(name: String, factory: () -> SolverFactory) {
