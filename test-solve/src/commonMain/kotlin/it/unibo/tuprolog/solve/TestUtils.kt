@@ -9,6 +9,8 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.solve.channel.Channel
+import it.unibo.tuprolog.solve.channel.ChannelStore
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.exception.LogicError
@@ -230,6 +232,18 @@ fun Solver.assertHas(
     assertEquals(staticKb, this.staticKb)
     assertEquals(dynamicKb, this.dynamicKb)
     assertEquals(flags, this.flags)
-    assertEquals(inputs, this.inputChannels)
-    assertEquals(outputs, this.outputChannels)
+    assertChannelStoresAreEquals(inputs, this.inputChannels)
+    assertChannelStoresAreEquals(outputs, this.outputChannels)
+}
+
+internal fun <C : Channel<*>> assertChannelAreEquals(expected: C, actual: C) {
+    assertEquals(expected::class, actual::class)
+    assertEquals(expected.isClosed, actual.isClosed)
+}
+
+internal fun <C : Channel<*>, CS : ChannelStore<*, C, CS>> assertChannelStoresAreEquals(expected: CS, actual: CS) {
+    assertEquals(expected.keys, actual.keys)
+    for (alias in expected.keys) {
+        assertChannelAreEquals(expected[alias]!!, actual[alias]!!)
+    }
 }
