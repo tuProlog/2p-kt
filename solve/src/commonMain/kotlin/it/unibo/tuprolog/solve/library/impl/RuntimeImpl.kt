@@ -52,10 +52,12 @@ internal class RuntimeImpl constructor(libraries: Sequence<Library>) :
         }.toMap()
     }
 
-    override fun plus(other: Library): RuntimeImpl =
-        aliases.find { other.alias in aliases }
+    override fun plus(other: Library): RuntimeImpl {
+        if (other is Runtime) return plus(other)
+        return aliases.find { other.alias in aliases }
             ?.let { alreadyLoadedError(other) }
             ?: RuntimeImpl(libraries.asSequence() + sequenceOf(other))
+    }
 
     override fun plus(runtime: Runtime): RuntimeImpl =
         runtime.libraries.find { it.alias in aliases }
