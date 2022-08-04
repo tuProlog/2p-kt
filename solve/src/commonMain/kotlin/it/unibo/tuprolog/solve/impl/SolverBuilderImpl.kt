@@ -163,18 +163,20 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
 
     override fun build(): Solver =
         factory.solverOf(
-            libraries = builtins + runtime,
+            libraries = runtime + builtins,
             staticKb = staticKb,
             dynamicKb = dynamicKb,
+            flags = flags,
             inputs = inputs,
             outputs = outputs
         )
 
     override fun buildMutable(): MutableSolver =
         factory.mutableSolverOf(
-            libraries = builtins + runtime,
+            libraries = runtime + builtins,
             staticKb = staticKb,
             dynamicKb = dynamicKb,
+            flags = flags,
             inputs = inputs,
             outputs = outputs
         )

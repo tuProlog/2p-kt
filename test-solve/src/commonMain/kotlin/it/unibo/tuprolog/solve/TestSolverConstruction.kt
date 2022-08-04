@@ -1,18 +1,15 @@
 package it.unibo.tuprolog.solve
 
-import kotlin.reflect.KClass
+import it.unibo.tuprolog.solve.library.Library
 
 interface TestSolverConstruction<T : Solver, MT : MutableSolver> {
 
     companion object {
         inline fun <reified T : Solver, reified MT : MutableSolver> prototype(
-            factory: SolverFactory
-        ): TestSolverConstruction<T, MT> = TestSolverConstructionImpl(factory, T::class, MT::class)
+            factory: SolverFactory,
+            defaultBuiltins: Library,
+        ): TestSolverConstruction<T, MT> = TestSolverConstructionImpl(factory, defaultBuiltins, T::class, MT::class)
     }
-
-    val solverType: KClass<T>
-
-    val mutableSolverType: KClass<MT>
 
     fun testCreatingEmptySolver()
 
