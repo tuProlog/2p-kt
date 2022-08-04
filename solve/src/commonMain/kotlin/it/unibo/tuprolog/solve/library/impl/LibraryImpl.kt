@@ -22,4 +22,8 @@ internal data class LibraryImpl(
     init {
         require(alias.isNotBlank())
     }
+
+    override fun equals(other: Any?): Boolean = other is Library && Library.equals(this, other)
+
+    override fun hashCode(): Int = Library.hashCode(this)
 }
