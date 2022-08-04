@@ -73,6 +73,12 @@ interface Library {
     @JsName("plus")
     operator fun plus(other: Library): Runtime = Runtime.of(this, other)
 
+    override fun equals(other: Any?): Boolean // Leave this here to allow delegation in `: ... by`
+
+    override fun hashCode(): Int // Leave this here to allow delegation in `: ... by`
+
+    override fun toString(): String // Leave this here to allow delegation in `: ... by`
+
     companion object {
 
         /** The character used to separate library alias from original name */
@@ -81,6 +87,28 @@ interface Library {
         private const val DEFAULT_ALIAS = "default"
 
         private val ALIAS_PATTERN = "^\\w+(\\${ALIAS_SEPARATOR}\\w+)*$".toRegex()
+
+        internal fun equals(library: Library, other: Library): Boolean {
+            if (library === other) return true
+            if (library::class != other::class) return false
+
+            if (library.alias != other.alias) return false
+            if (library.operators != other.operators) return false
+            if (library.theory != other.theory) return false
+            if (library.primitives != other.primitives) return false
+            if (library.functions != other.functions) return false
+
+            return true
+        }
+
+        internal fun hashCode(library: Library): Int {
+            var result = library.alias.hashCode()
+            result = 31 * result + library.operators.hashCode()
+            result = 31 * result + library.theory.hashCode()
+            result = 31 * result + library.primitives.hashCode()
+            result = 31 * result + library.functions.hashCode()
+            return result
+        }
 
         @JvmStatic
         @JsName("sequenceToMapEnsuringNoDuplicates")
