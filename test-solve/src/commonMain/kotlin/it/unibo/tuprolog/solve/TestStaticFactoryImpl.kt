@@ -7,7 +7,7 @@ import kotlin.test.assertNotSame
 import kotlin.test.fail
 
 @Suppress("DEPRECATION")
-class TestStaticFactoryImpl(private val expectations: TestStaticFactory.Expectations) : TestStaticFactory {
+class TestStaticFactoryImpl(private val expectations: Expectations) : TestStaticFactory {
     companion object {
         private const val classicSolverClass = "it.unibo.tuprolog.solve.classic.ClassicSolver"
         private const val streamsSolverClass = "it.unibo.tuprolog.solve.streams.StreamsSolver"

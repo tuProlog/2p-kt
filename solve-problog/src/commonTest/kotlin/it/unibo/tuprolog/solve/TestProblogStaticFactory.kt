@@ -4,7 +4,7 @@ import kotlin.test.Test
 
 class TestProblogStaticFactory : TestStaticFactory {
     private val prototype = TestStaticFactory.prototype(
-        TestStaticFactory.Expectations(
+        Expectations(
             classicShouldWork = true,
             prologShouldWork = true,
             problogShouldWork = true
