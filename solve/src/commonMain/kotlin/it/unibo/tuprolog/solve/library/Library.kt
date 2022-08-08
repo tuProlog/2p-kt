@@ -90,7 +90,6 @@ interface Library {
 
         internal fun equals(library: Library, other: Library): Boolean {
             if (library === other) return true
-            if (library::class != other::class) return false
 
             if (library.alias != other.alias) return false
             if (library.operators != other.operators) return false

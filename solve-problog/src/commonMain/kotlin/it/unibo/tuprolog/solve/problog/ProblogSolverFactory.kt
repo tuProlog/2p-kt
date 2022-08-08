@@ -79,7 +79,7 @@ object ProblogSolverFactory : SolverFactory {
         )
 
     private fun fixLibraries(libraries: Runtime): Runtime {
-        return if (!libraries.containsValue(DefaultBuiltins)) {
+        return if (ProblogLib.alias !in libraries) {
             libraries.plus(MinimumBuiltins)
         } else {
             libraries
