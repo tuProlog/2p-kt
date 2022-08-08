@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
+import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
 /**
@@ -65,32 +66,28 @@ interface Solver : ExecutionContextAware {
 
     companion object {
         @JvmStatic
+        @get:JvmName("classic")
         @JsName("classic")
         @Deprecated(
             message = "This method is being renamed into \"prolog\" and its usage in this form is now deprecated",
             replaceWith = ReplaceWith("Solver.prolog")
         )
-        val classic: SolverFactory by lazy {
-            classicSolverFactory()
-        }
+        val classic: SolverFactory by lazy { classicSolverFactory() }
 
         @JvmStatic
+        @get:JvmName("prolog")
         @JsName("prolog")
-        val prolog: SolverFactory by lazy {
-            classicSolverFactory()
-        }
+        val prolog: SolverFactory by lazy { classicSolverFactory() }
 
         @JvmStatic
+        @get:JvmName("problog")
         @JsName("problog")
-        val problog: SolverFactory by lazy {
-            problogSolverFactory()
-        }
+        val problog: SolverFactory by lazy { problogSolverFactory() }
 
         @JvmStatic
+        @get:JvmName("streams")
         @JsName("streams")
         @Deprecated("The \"Streams\" solver is experimental and not mature enough for general purpose usage")
-        val streams: SolverFactory by lazy {
-            streamsSolverFactory()
-        }
+        val streams: SolverFactory by lazy { streamsSolverFactory() }
     }
 }

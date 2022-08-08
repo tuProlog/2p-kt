@@ -33,7 +33,7 @@ public class ExampleProbLogSolverJvm {
                 "path(X,Y) :- edge(X,Z), Y \\== Z, path(Z,Y)."
         );
 
-        Solver problogSolver = Solver.getProblog().solverWithDefaultBuiltins(probabilisticTheory);
+        Solver problogSolver = Solver.problog().solverWithDefaultBuiltins(probabilisticTheory);
         Struct goal = Struct.of("path", Var.of("From"), Var.of("To"));
         Iterator<Solution> si = problogSolver.solve(goal, probabilistic(SolveOptions.allLazily())).iterator();
         while (si.hasNext()) {
