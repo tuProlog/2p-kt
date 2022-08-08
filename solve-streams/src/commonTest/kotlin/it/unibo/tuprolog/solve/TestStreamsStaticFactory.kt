@@ -4,7 +4,7 @@ import kotlin.test.Test
 
 class TestStreamsStaticFactory : TestStaticFactory {
     private val prototype = TestStaticFactory.prototype(
-        TestStaticFactory.Expectations(
+        Expectations(
             streamsShouldWork = true
         )
     )
