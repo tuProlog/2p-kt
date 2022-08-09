@@ -16,6 +16,7 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
@@ -23,6 +24,7 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -228,7 +230,7 @@ fun Solver.assertHas(
     inputs: InputStore,
     outputs: OutputStore,
 ) {
-    assertEquals(libraries, this.libraries)
+    assertRuntimesAreEqual(libraries, this.libraries)
     assertEquals(staticKb, this.staticKb)
     assertEquals(dynamicKb, this.dynamicKb)
     assertEquals(flags, this.flags)
@@ -236,8 +238,46 @@ fun Solver.assertHas(
     assertChannelStoresAreEquals(outputs, this.outputChannels)
 }
 
+internal fun assertRuntimesAreEqual(expected: Runtime, actual: Runtime) {
+    assertEquals(expected.keys, actual.keys)
+    for ((alias, e) in expected) {
+        val a = actual[alias]
+        assertNotNull(a)
+        assertLibrariesAreEqual(e, a)
+    }
+}
+
+internal fun assertLibrariesAreEqual(expected: Library, actual: Library) {
+    assertEquals(expected.alias, actual.alias)
+    assertEquals(expected.theory, actual.theory)
+    assertEquals(expected.operators, actual.operators)
+    assertEquals(expected.primitives.keys, actual.primitives.keys)
+    for ((signature, e) in expected.primitives) {
+        val a = actual.primitives[signature]
+        assertEquals(
+            expected = e,
+            actual = a,
+            message = "Wrong primitive: $signature. Expected $e, actual $a."
+        )
+    }
+    assertEquals(expected.functions.keys, actual.functions.keys)
+    for ((signature, e) in expected.functions) {
+        val a = actual.functions[signature]
+        assertEquals(
+            expected = e,
+            actual = a,
+            message = "Wrong function: $signature. Expected $e, actual $a."
+        )
+    }
+}
+
+
 internal fun <C : Channel<*>> assertChannelAreEquals(expected: C, actual: C) {
-    assertEquals(expected::class, actual::class)
+    assertEquals(
+        expected::class,
+        actual::class,
+        message = "Wrong channel type. Expected ${expected::class}, actual ${actual::class}"
+    )
     assertEquals(expected.isClosed, actual.isClosed)
 }
 

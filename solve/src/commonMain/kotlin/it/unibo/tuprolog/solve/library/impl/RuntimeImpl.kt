@@ -11,9 +11,9 @@ import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.Theory
 
 /** A class representing an agglomerate of libraries with an alias */
-internal class RuntimeImpl constructor(libraries: Sequence<Library>) :
-    Runtime,
-    Map<String, Library> by (libraries.map { it.alias to it }.toMap()) {
+internal class RuntimeImpl(private val delegate: Map<String, Library>) : Runtime, Map<String, Library> by delegate {
+
+    constructor(libraries: Sequence<Library>) : this(libraries.map { it.alias to it }.toMap())
 
     /** All aliases of all libraries included in this library group */
     override val aliases: Set<String>
@@ -99,7 +99,7 @@ internal class RuntimeImpl constructor(libraries: Sequence<Library>) :
 
         other as RuntimeImpl
 
-        if (libraries != other.libraries) return false
+        if (delegate != other.delegate) return false
 
         return true
     }
