@@ -1,4 +1,4 @@
-@file:JvmName("PrologExtensions")
+@file:JvmName("DSL")
 
 package it.unibo.tuprolog.dsl
 
