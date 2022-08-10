@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentIfThenElse<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testIfTrueElseFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ";"("->"(true, true), fail)
@@ -20,7 +20,7 @@ interface TestConcurrentIfThenElse<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testIfFailElseTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ";"("->"(fail, true), true)
@@ -32,7 +32,7 @@ interface TestConcurrentIfThenElse<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testIfTrueThenElseFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ";"("->"(true, fail), fail)
@@ -44,7 +44,7 @@ interface TestConcurrentIfThenElse<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testIfFailElseFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ";"("->"(fail, true), fail)
@@ -56,7 +56,7 @@ interface TestConcurrentIfThenElse<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testIfXTrueElseX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ";"("->"(true, ("X" eq 1)), "X" eq 2)
@@ -68,7 +68,7 @@ interface TestConcurrentIfThenElse<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testIfFailElseX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ";"("->"(fail, ("X" eq 1)), "X" eq 2)
@@ -80,7 +80,7 @@ interface TestConcurrentIfThenElse<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testIfThenElseOrWithDoubleSub() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ";"("->"(true, ("X" eq 1) or ("X" eq 2)), true)
@@ -97,7 +97,7 @@ interface TestConcurrentIfThenElse<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testIfOrElseTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ";"("->"(("X" eq 1) or ("X" eq 2), true), true)

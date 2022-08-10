@@ -1,15 +1,14 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import kotlin.collections.listOf as ktListOf
 
 internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
     override fun testArgFromFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("a", "b"), "a")
@@ -23,7 +22,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgFromFooX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("a", "b"), "X")
@@ -37,7 +36,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgFromFoo2() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("X", "b"), "a")
@@ -51,7 +50,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgFromFooInF() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(2, "foo"("a", "f"("X", "b"), "c"), "f"("a", "Y"))
@@ -69,7 +68,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgFromFooY() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("X", "b"), "Y")
@@ -83,7 +82,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgFromFooInSecondTerm() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("a", "b"), "b")
@@ -97,7 +96,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgFromFooInFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("a", "b"), "foo")
@@ -111,7 +110,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgNumberFromFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(3, "foo"(3, 4), "N")
@@ -125,7 +124,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgXFromFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg("X", "foo"("a", "b"), "a")
@@ -141,7 +140,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgNumberFromX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(1, "X", "a")
@@ -164,7 +163,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgFromAtom() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(0, "atom", "A")
@@ -188,7 +187,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgFromNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(0, 3, "A")
@@ -212,7 +211,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testNegativeArgFromFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg(intOf(-3), "foo"("a", "b"), "A")
@@ -236,7 +235,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
     }
 
     override fun testArgAFromFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = arg("a", "foo"("a", "b"), "X")

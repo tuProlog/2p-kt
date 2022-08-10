@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testSetOfBasic() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = setof("X", ("X" eq 1) or ("X" eq 2), "S")
@@ -20,7 +20,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testSetOfX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = setof("X", ("X" eq 1) or ("X" eq 2), "X")
@@ -32,7 +32,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testSetOfNoSorted() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = setof("X", ("X" eq 2) or ("X" eq 1), "X")
@@ -44,7 +44,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testSetOfDoubled() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = setof("X", ("X" eq 2) or ("X" eq 2), "L")
@@ -56,7 +56,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testSetOfFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = bagof("X", fail, "L")
@@ -68,7 +68,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testSetOfAsFindAll() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = setof("X", "Y" sup ((("X" eq 1) or ("Y" eq 1)) or (("X" eq 2) or ("Y" eq 2))), "S")

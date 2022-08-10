@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
 
 class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     override fun defaultLastCallOptimizationIsOn() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             assertEquals(LastCallOptimization.ON, LastCallOptimization.defaultValue)
@@ -33,7 +33,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     }
 
     override fun defaultUnknownIsWarning() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             assertEquals(Unknown.WARNING, Unknown.defaultValue)
@@ -48,7 +48,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     }
 
     override fun settingUnknownToAdmissibleValueSucceeds() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             for (value in Unknown.admissibleValues) {
@@ -63,7 +63,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     }
 
     override fun flagsNamesMustBeAtoms() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val solutions = solver.solve(current_flag(F, `_`), shortDuration).toList()
@@ -107,7 +107,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     }
 
     override fun gettingMissingFlagsFails() {
-        prolog {
+        logicProgramming {
             for (flag in ktListOf("a", "b", "c")) {
                 val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -124,7 +124,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     }
 
     override fun settingMissingFlagsSucceeds() {
-        prolog {
+        logicProgramming {
             for ((value, flag) in ktListOf("a", "b", "c").asSequence().indexed()) {
                 val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -143,7 +143,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     }
 
     override fun gettingFlagsByVariableEnumeratesFlags() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val defaultFlags = solver.flags.mapKeys { (k, _) -> k.toTerm() }
 
@@ -161,7 +161,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     }
 
     override fun settingFlagsByVariableGeneratesInstantiationError() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = set_flag(F, "value")
@@ -183,7 +183,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     }
 
     override fun settingWrongValueToLastCallOptimizationProvokesDomainError() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = set_flag(LastCallOptimization.name, truthOf(true))
@@ -208,7 +208,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     }
 
     override fun attemptingToEditMaxArityFlagProvokesPermissionError() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = set_flag(MaxArity.name, 10)

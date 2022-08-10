@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -15,7 +15,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testFunArity() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("foo"("a", "b", "c"), "foo", 3)
@@ -27,7 +27,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunArityWithSub() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("foo"("a", "b", "c"), "X", "Y")
@@ -39,7 +39,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunArityZero() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("X", "foo", 0)
@@ -51,7 +51,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunMats() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("mats"("A", "B"), "A", "B")
@@ -63,7 +63,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunWrongArity() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("foo"("a"), "foo", 2)
@@ -75,7 +75,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunWrongName() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("foo"("a"), "fo", 1)
@@ -87,7 +87,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunXNameYArity() { // solver says exception_error
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor(1, "X", "Y")
@@ -99,7 +99,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunDecNum() { // solver says exception_error
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("X", 1.1, 0)
@@ -111,7 +111,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunConsOf() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor(consOf(`_`, `_`), ".", 2)
@@ -123,7 +123,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunEmptyList() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor(emptyList, emptyList, 0)
@@ -135,7 +135,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunXYWrongArity() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("X", "Y", 3)
@@ -156,7 +156,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunXNArity() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("X", "foo", "N")
@@ -177,7 +177,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunXAArity() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("X", "foo", "a")
@@ -199,7 +199,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunNumName() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("F", 1.5, 1)
@@ -221,7 +221,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunFooName() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("F", "foo"("a"), 1)
@@ -243,7 +243,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunFlag() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = current_flag("max_arity", A) and (
@@ -265,7 +265,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFunNegativeArity() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = functor("T", "foo", intOf(-1))

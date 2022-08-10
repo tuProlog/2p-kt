@@ -9,13 +9,13 @@ import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier.FX
 import it.unibo.tuprolog.core.operators.Specifier.FY
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.flags.FlagStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TestDirectivePartitioning {
-    private val theory = prolog {
+    private val theory = logicProgramming {
         theoryOf(
             directive { op(300, FY, "--") },
             directive { include("path/to/file1.pl") },

@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testClauseXBody() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = clause("x", "Body")
@@ -26,7 +26,7 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testClauseAnyB() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = clause(`_`, "B")
@@ -61,7 +61,7 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testClauseNumB() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = clause(4, "B")
@@ -98,7 +98,7 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testClauseFAnyNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = clause("f"(`_`), 5)
@@ -135,7 +135,7 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testClauseAtomBody() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = clause(atom(`_`), "Body")
@@ -172,7 +172,7 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testClauseVariables() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 theoryOf(
                     rule { "f"(X) impliedBy "g"(X) }

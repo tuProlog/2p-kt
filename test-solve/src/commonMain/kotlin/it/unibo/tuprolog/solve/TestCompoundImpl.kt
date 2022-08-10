@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestCompoundImpl(private val solverFactory: SolverFactory) : TestCompound {
     override fun testCompoundDec() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = compound(33.3)
@@ -18,7 +18,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testCompoundNegDec() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = compound(-33.3)
@@ -32,7 +32,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testCompoundNegA() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = compound("-"("a"))
@@ -46,7 +46,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testCompoundAny() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = compound(`_`)
@@ -60,7 +60,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testCompoundA() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = compound("a")
@@ -74,7 +74,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testCompoundAOfB() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = compound("a"("b"))
@@ -88,7 +88,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testCompoundListA() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = compound(listOf("a"))

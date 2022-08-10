@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testIsResult() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "Result" `is` (numOf(3) + realOf(11.0))
@@ -25,7 +25,7 @@ interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFac
     }
 
     fun testIsXY() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("X" eq (intOf(1) + intOf(2))) and ("Y" `is` ("X" * intOf(3)))
@@ -37,7 +37,7 @@ interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFac
     }
 
     fun testIsFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "foo" `is` intOf(77)
@@ -49,7 +49,7 @@ interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFac
     }
 
     fun testIsNNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = intOf(77) `is` "N"
@@ -70,7 +70,7 @@ interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFac
     }
 
     fun testIsNumberFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = intOf(77) `is` "foo"
@@ -92,7 +92,7 @@ interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFac
     }
 
     fun testIsXFloat() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "X" `is` float(intOf(3))

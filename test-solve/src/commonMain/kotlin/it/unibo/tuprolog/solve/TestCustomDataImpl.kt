@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.stdlib.primitive.GetDurable
 import it.unibo.tuprolog.solve.stdlib.primitive.GetEphemeral
 import it.unibo.tuprolog.solve.stdlib.primitive.GetPersistent
@@ -22,7 +22,7 @@ class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomD
     }
 
     override fun testEphemeralData() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val setQuery = SetEphemeral.functor("key", 1)
@@ -50,7 +50,7 @@ class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomD
     }
 
     override fun testDurableData() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val setQuery = SetDurable.functor("key", 1)
@@ -78,7 +78,7 @@ class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomD
     }
 
     override fun testPersistentData() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val setQuery = SetPersistent.functor("key", 1)

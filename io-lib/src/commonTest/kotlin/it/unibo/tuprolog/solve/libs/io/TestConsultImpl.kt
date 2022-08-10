@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.assertHasPredicateInAPI
@@ -14,7 +14,7 @@ import kotlin.test.assertTrue
 class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
 
     private fun testConsultCorrectTheory(url: Url) {
-        prolog {
+        logicProgramming {
             val canaryTheory = theoryOf(factOf("canary"))
             val solver = solverFactory.solverWithDefaultBuiltins(
                 Runtime.of(IOLib),
@@ -35,7 +35,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
     }
 
     private fun testConsultWrongTheory(url: Url) {
-        prolog {
+        logicProgramming {
             val canaryTheory = theoryOf(factOf("canary"))
             val solver = solverFactory.solverWithDefaultBuiltins(
                 Runtime.of(IOLib),
@@ -60,7 +60,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
     }
 
     private fun testConsultMissingTheory(url: Url) {
-        prolog {
+        logicProgramming {
             val canaryTheory = theoryOf(factOf("canary"))
             val solver = solverFactory.solverWithDefaultBuiltins(
                 Runtime.of(IOLib),

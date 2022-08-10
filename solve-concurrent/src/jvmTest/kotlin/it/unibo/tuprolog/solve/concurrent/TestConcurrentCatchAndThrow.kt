@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.exception.error.SystemError
@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.no
 interface TestConcurrentCatchAndThrow<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testCatchThrow() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = (catch(true, C, write("something")) and `throw`("blabla"))
@@ -29,7 +29,7 @@ interface TestConcurrentCatchAndThrow<T : WithAssertingEquals> : FromSequence<T>
     }
 
     fun testCatchFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = catch(number_chars("A", "L"), "error"("instantiation_error", `_`), fail)

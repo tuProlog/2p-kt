@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
@@ -29,10 +30,10 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
         val library = libraryOf("dummy", Sleep)
         val runtime = library.toRuntime()
         val flags = FlagStore.of(Unknown { ERROR }, LastCallOptimization { OFF })
-        val theory1 = prolog {
+        val theory1 = logicProgramming {
             theoryOf(fact { "a" }, fact { "b" }, fact { "c" })
         }
-        val theory2 = prolog {
+        val theory2 = logicProgramming {
             theoryOf(fact { "nat"("z") }, rule { "nat"("s"(X)) impliedBy "nat"(X) })
         }
         val input = InputChannel.of("")

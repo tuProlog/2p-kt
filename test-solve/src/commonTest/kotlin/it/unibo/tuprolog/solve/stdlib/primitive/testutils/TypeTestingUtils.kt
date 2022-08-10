@@ -9,8 +9,8 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.dsl.PrologScope
-import it.unibo.tuprolog.dsl.prolog
+import it.unibo.tuprolog.dsl.LogicProgrammingScope
+import it.unibo.tuprolog.dsl.logicProgramming
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
@@ -51,7 +51,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Var as VarPrimitive
 object TypeTestingUtils {
 
     private val baseArgs: Sequence<Term> =
-        prolog {
+        logicProgramming {
             sequenceOf(
                 "a",
                 "a b",
@@ -72,7 +72,7 @@ object TypeTestingUtils {
             ).map { it.toTerm() }
         }
 
-    private val commonArgs: List<Term> = PrologScope.empty().let {
+    private val commonArgs: List<Term> = LogicProgrammingScope.empty().let {
         baseArgs +
             baseArgs.squared { x, y -> it.tupleOf(x, y) } +
             baseArgs.squared { x, y -> it.structOf(";", x, y) } +
@@ -84,7 +84,7 @@ object TypeTestingUtils {
         terms: List<Term> = commonArgs,
         crossinline predicate: (Term) -> Boolean
     ): Map<Solve.Request<*>, Boolean> {
-        return prolog {
+        return logicProgramming {
             terms.asSequence()
                 .map { functor(it) to predicate(it) }
                 .toMap()

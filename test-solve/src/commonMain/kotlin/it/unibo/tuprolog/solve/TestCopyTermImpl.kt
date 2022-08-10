@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm {
     override fun testCopyXNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = copy_term(X, 3)
@@ -18,7 +18,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
     }
 
     override fun testCopyAnyA() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = copy_term(`_`, "a")
@@ -32,7 +32,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
     }
 
     override fun testCopySum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = copy_term(atomOf("a") + X, X + "b")
@@ -46,7 +46,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
     }
 
     override fun testCopyAnyAny() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = copy_term(`_`, `_`)
@@ -60,7 +60,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
     }
 
     override fun testCopyTripleSum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = copy_term(X + X + Y, A + B + B)
@@ -74,7 +74,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
     }
 
     override fun testCopyAA() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = copy_term("a", "a")
@@ -88,7 +88,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
     }
 
     override fun testCopyAB() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = copy_term("a", "b")
@@ -102,7 +102,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
     }
 
     override fun testCopyF() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = copy_term("f"("a"), "f"(X))
@@ -116,7 +116,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
     }
 
     override fun testDoubleCopy() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = copy_term(atom("a") + X, X + "b") and copy_term(atom("a") + X, X + "b")

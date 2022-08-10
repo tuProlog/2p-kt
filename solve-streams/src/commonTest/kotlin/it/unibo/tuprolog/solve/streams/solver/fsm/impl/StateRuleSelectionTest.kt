@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.streams.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
@@ -29,7 +29,7 @@ internal class StateRuleSelectionTest {
     private val theQueryVariable = Var.of("V")
 
     /** A struct query in the form `f(V)` */
-    private val theQuery = prolog { "f"(theQueryVariable) }
+    private val theQuery = logicProgramming { "f"(theQueryVariable) }
 
     /** A Solve.Request with three databases and three different facts, to test how they should be used/combined in searching */
     private val threeDBSolveRequest = Solve.Request(
@@ -39,11 +39,11 @@ internal class StateRuleSelectionTest {
             libraries = Runtime.of(
                 Library.of(
                     alias = "testLib",
-                    theory = prolog { theory({ "f"("a") }) }
+                    theory = logicProgramming { theory({ "f"("a") }) }
                 )
             ),
-            staticKb = prolog { theory({ "f"("b") }) },
-            dynamicKb = prolog { theory({ "f"("c") }) }
+            staticKb = logicProgramming { theory({ "f"("b") }) },
+            dynamicKb = logicProgramming { theory({ "f"("c") }) }
         )
     )
 
@@ -96,7 +96,7 @@ internal class StateRuleSelectionTest {
         val nextStates = StateRuleSelection(threeDBSolveRequest).behave().toList()
 
         assertOverState<StateEnd.True>(nextStates.last()) {
-            it.solve.solution.assertCorrectQueryAndSubstitution(theQuery, prolog { theQueryVariable to "a" })
+            it.solve.solution.assertCorrectQueryAndSubstitution(theQuery, logicProgramming { theQueryVariable to "a" })
         }
     }
 
@@ -104,7 +104,7 @@ internal class StateRuleSelectionTest {
     fun stateRuleSelectionUsesCombinationOfStaticAndDynamicKBWhenLibraryTheoriesDoesntProvideMatches() {
         val dynamicAndStaticKBSolveRequest =
             with(threeDBSolveRequest) { copy(context = context.copy(libraries = Runtime.empty())) }
-        val correctSubstitutions = prolog {
+        val correctSubstitutions = logicProgramming {
             ktListOf(
                 theQueryVariable to "b",
                 theQueryVariable to "c"

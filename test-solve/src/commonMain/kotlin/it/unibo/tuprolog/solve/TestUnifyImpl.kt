@@ -1,12 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
-import kotlin.collections.listOf as ktListOf
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUnify {
 
     override fun testNumberUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = 1 eq 1
@@ -20,7 +19,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
     }
 
     override fun testNumberXUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "X" eq 1
@@ -34,7 +33,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
     }
 
     override fun testXYUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "X" eq "Y"
@@ -48,7 +47,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
     }
 
     override fun testDoubleUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = (("X" eq "Y") and ("X" eq "abc"))
@@ -62,7 +61,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
     }
 
     override fun testFDefUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "f"("X", "def") eq "f"("def", "Y")
@@ -76,7 +75,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
     }
 
     override fun testDiffNumberUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = 1 eq 2
@@ -90,7 +89,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
     }
 
     override fun testDecNumberUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = 1 eq realOf(1.0)
@@ -104,7 +103,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
     }
 
     override fun testGUnifyFX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("g"("X")) eq ("f"("a"("X")))
@@ -118,7 +117,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
     }
 
     override fun testFUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("f"("X", 1)) eq ("f"("a"("X")))
@@ -132,7 +131,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
     }
 
     override fun testFMultipleTermUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("f"("X", "Y", "X")) eq ("f"("a"("X"), "a"("Y"), "Y", 2))
@@ -146,7 +145,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
     }
 
     override fun testMultipleTermUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("f"("A", "B", "C")) eq ("f"("g"("B", "B"), "g"("C", "C"), "g"("D", "D")))

@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testArgFromFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("a", "b"), "a")
@@ -26,7 +26,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgFromFooX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("a", "b"), "X")
@@ -38,7 +38,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgFromFoo2() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("X", "b"), "a")
@@ -50,7 +50,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgFromFooInF() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(2, "foo"("a", "f"("X", "b"), "c"), "f"("a", "Y"))
@@ -62,7 +62,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgFromFooY() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("X", "b"), "Y")
@@ -74,7 +74,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgFromFooInSecondTerm() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("a", "b"), "b")
@@ -86,7 +86,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgFromFooInFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(1, "foo"("a", "b"), "foo")
@@ -98,7 +98,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgNumberFromFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(3, "foo"(3, 4), "N")
@@ -110,7 +110,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgXFromFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg("X", "foo"("a", "b"), "a")
@@ -122,7 +122,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgNumberFromX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(1, "X", "a")
@@ -143,7 +143,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgFromAtom() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(0, "atom", "A")
@@ -165,7 +165,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgFromNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(0, 3, "A")
@@ -187,7 +187,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testNegativeArgFromFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg(intOf(-3), "foo"("a", "b"), "A")
@@ -209,7 +209,7 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testArgAFromFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = arg("a", "foo"("a", "b"), "X")

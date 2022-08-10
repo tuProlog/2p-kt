@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.streams.solver.fsm.impl.testutils
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.streams.solver.fsm.impl.StateRuleSelection
 import it.unibo.tuprolog.solve.streams.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.Theory
@@ -21,7 +21,7 @@ internal object StateRuleSelectionUtils {
 
     /** Test data in the form (query Struct, a database with no query matches) */
     internal val queryToNoMatchesTheoryMap by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 atomOf("a") to theoryOf(),
                 atomOf("a") to theory({ "b" })
@@ -31,7 +31,7 @@ internal object StateRuleSelectionUtils {
 
     /** Test data in the form (query struct, a database with one fact that matches, the resulting Substitution) */
     internal val queryToOneMatchFactTheoryAndSubstitution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 Triple(atomOf("a"), theory({ "a" }), emptyUnifier),
                 Triple(atomOf("a"), theory({ "a" }, { "b" }), emptyUnifier),
@@ -50,7 +50,7 @@ internal object StateRuleSelectionUtils {
 
     /** Test data in the form (query struct, a database with one rule that matches, the resulting Substitution) */
     internal val queryToOneMatchRuleTheoryAndSubstitution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 Triple(atomOf("a"), theory({ "a" impliedBy "b" }), Substitution.failed()),
                 Triple(atomOf("a"), theory({ "a" impliedBy "b" }, { "b" }), emptyUnifier),
@@ -68,7 +68,7 @@ internal object StateRuleSelectionUtils {
 
     /** Test data in the form (query struct, a database with multiple matches, the result Substitutions in order) */
     internal val queryToMultipleMatchesTheoryAndSubstitution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 Triple(
                     atomOf("a"),

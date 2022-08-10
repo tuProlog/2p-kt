@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm {
     override fun testTermDiff() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = "\\=="(intOf(1), intOf(1))
@@ -74,7 +74,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
     }
 
     override fun testTermEq() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = "=="(intOf(1), intOf(1))
@@ -144,7 +144,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
     }
 
     override fun testTermGreaterThan() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = "@>"(realOf(1.0), intOf(1))
@@ -206,7 +206,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
     }
 
     override fun testTermGreaterThanEq() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = "@>="(realOf(1.0), intOf(1))
@@ -268,7 +268,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
     }
 
     override fun testTermLessThan() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = "@<"(realOf(1.0), intOf(1))
@@ -330,7 +330,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
     }
 
     override fun testTermLessThanEq() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = "@=<"(realOf(1.0), intOf(1))

@@ -3,7 +3,7 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 
-actual class AnyToTermConverterImpl actual constructor(override val prologScope: PrologScope) : AnyToTermConverter {
+actual class AnyToTermConverterImpl actual constructor(override val prologScope: LogicProgrammingScope) : AnyToTermConverter {
     override val Number.isInteger: Boolean
         get() = this is Int || this is Long
 

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.streams
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.dsl.prolog
+import it.unibo.tuprolog.dsl.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.streams.SolverStrategies.Companion.prologStandard
 import it.unibo.tuprolog.solve.streams.solver.orderWithStrategy
@@ -20,8 +20,8 @@ internal class SolverStrategiesTest {
 
     private val aContext = DummyInstances.executionContext
 
-    private val predication = prolog { "a" and "b" and "c" }.argsSequence
-    private val clauses = prolog { ktListOf(fact { "a" }, fact { "b" }, fact { "c" }) }.asSequence()
+    private val predication = logicProgramming { "a" and "b" and "c" }.argsSequence
+    private val clauses = logicProgramming { ktListOf(fact { "a" }, fact { "b" }, fact { "c" }) }.asSequence()
 
     @Test
     fun prologStandardPredicationChoiceStrategy() {

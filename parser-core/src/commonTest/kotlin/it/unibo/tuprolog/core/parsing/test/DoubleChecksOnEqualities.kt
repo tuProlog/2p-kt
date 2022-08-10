@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.dsl.prolog
+import it.unibo.tuprolog.dsl.logicProgramming
 import org.gciatto.kt.math.BigInteger
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,7 +15,7 @@ class DoubleChecksOnEqualities {
     fun testNumsAreEquals1() {
         assertEquals(
             Integer.of(1),
-            prolog {
+            logicProgramming {
                 1.toTerm()
             }
         )
@@ -25,7 +25,7 @@ class DoubleChecksOnEqualities {
     fun testRealsInitialization() {
         assertEquals(
             Real.of("3.100000000000000088817841970012523233890533447265625"),
-            prolog {
+            logicProgramming {
                 numOf(3.1)
             }
         )
@@ -35,7 +35,7 @@ class DoubleChecksOnEqualities {
     fun testNumsAreEquals2() {
         assertEquals(
             Integer.of(1),
-            prolog {
+            logicProgramming {
                 numOf(1)
             }
         )
@@ -45,7 +45,7 @@ class DoubleChecksOnEqualities {
     fun testNumsAreEquals3() {
         assertEquals(
             Integer.of(1),
-            prolog {
+            logicProgramming {
                 numOf(1L)
             }
         )
@@ -55,7 +55,7 @@ class DoubleChecksOnEqualities {
     fun testNumsAreEquals4() {
         assertEquals(
             Integer.of(1),
-            prolog {
+            logicProgramming {
                 numOf(BigInteger.ONE)
             }
         )
@@ -65,7 +65,7 @@ class DoubleChecksOnEqualities {
     fun testNumsAreEquals5() {
         assertEquals(
             Integer.of(1),
-            prolog {
+            logicProgramming {
                 numOf(BigInteger.TEN / BigInteger.TEN)
             }
         )
@@ -75,7 +75,7 @@ class DoubleChecksOnEqualities {
     fun testListsAreEquals1() {
         assertEquals(
             Cons.singleton(Integer.of(1)),
-            prolog {
+            logicProgramming {
                 listOf(1)
             }
         )
@@ -85,7 +85,7 @@ class DoubleChecksOnEqualities {
     fun testListsAreEquals2() {
         assertEquals(
             Cons.singleton(Integer.of(1)),
-            prolog {
+            logicProgramming {
                 listOf(numOf(1))
             }
         )
@@ -95,7 +95,7 @@ class DoubleChecksOnEqualities {
     fun testListsAreEquals3() {
         assertEquals(
             Cons.singleton(Integer.of(1)),
-            prolog {
+            logicProgramming {
                 consOf(1, emptyList)
             }
         )
@@ -105,7 +105,7 @@ class DoubleChecksOnEqualities {
     fun testListsAreEquals4() {
         assertEquals(
             Cons.singleton(Integer.of(1)),
-            prolog {
+            logicProgramming {
                 consOf(numOf(1), emptyList)
             }
         )
@@ -115,7 +115,7 @@ class DoubleChecksOnEqualities {
     fun testListsAreEquals5() {
         assertEquals(
             Cons.singleton(Integer.of(1)),
-            prolog {
+            logicProgramming {
                 consOf(Integer.of(1), emptyList)
             }
         )
@@ -125,7 +125,7 @@ class DoubleChecksOnEqualities {
     fun testStructsAreEquals() {
         assertEquals(
             Struct.of("+", Integer.of(1), Integer.of(2)),
-            prolog {
+            logicProgramming {
                 1.toTerm() + 2
             }
         )

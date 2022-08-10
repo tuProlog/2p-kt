@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestCutImpl(private val solverFactory: SolverFactory) : TestCut {
     override fun testCut() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atomOf("!")
@@ -18,7 +18,7 @@ internal class TestCutImpl(private val solverFactory: SolverFactory) : TestCut {
     }
 
     override fun testCutFailTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("!" and fail or true)
@@ -32,7 +32,7 @@ internal class TestCutImpl(private val solverFactory: SolverFactory) : TestCut {
     }
 
     override fun testCallCutFailTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = (call("!") and fail or true)

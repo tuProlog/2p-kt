@@ -3,8 +3,8 @@ package it.unibo.tuprolog.theory.parsing
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.parsing.ParseException
-import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScopeWithTheories
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,8 +20,8 @@ class TestClausesParser {
             }
         }
 
-        fun assertMatch(expected: Term, actual: PrologScopeWithTheories.() -> Term) {
-            assertMatch(expected, PrologScopeWithTheories.empty().actual())
+        fun assertMatch(expected: Term, actual: LogicProgrammingScopeWithTheories.() -> Term) {
+            assertMatch(expected, LogicProgrammingScopeWithTheories.empty().actual())
         }
     }
 
@@ -36,8 +36,8 @@ class TestClausesParser {
 
         assertEquals(3, rules.size)
         assertEquals(2, rules.filterIsInstance<Fact>().count())
-        assertEquals(rules[0], prolog { factOf("f"(1)) })
-        assertEquals(rules[1], prolog { factOf("f"(2)) })
+        assertEquals(rules[0], logicProgramming { factOf("f"(1)) })
+        assertEquals(rules[1], logicProgramming { factOf("f"(2)) })
         assertMatch(rules[2]) {
             "f"("X") impliedBy "g"("X")
         }

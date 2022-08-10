@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolverFactory
 import kotlin.test.assertEquals
@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 interface TestConcurrentSolutionPresentation<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testSolutionWithDandlingVars() {
-        prolog {
+        logicProgramming {
             val theory = theoryOf(
                 fact { "append"("seq"(X), X) }
             )

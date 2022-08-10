@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentCopyTerm<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testCopyXNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = copy_term(X, 3)
@@ -20,7 +20,7 @@ interface TestConcurrentCopyTerm<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCopyAnyA() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = copy_term(`_`, "a")
@@ -32,7 +32,7 @@ interface TestConcurrentCopyTerm<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCopySum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = copy_term(atomOf("a") + X, X + "b")
@@ -44,7 +44,7 @@ interface TestConcurrentCopyTerm<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCopyAnyAny() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = copy_term(`_`, `_`)
@@ -56,7 +56,7 @@ interface TestConcurrentCopyTerm<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCopyTripleSum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = copy_term(X + X + Y, A + B + B)
@@ -68,7 +68,7 @@ interface TestConcurrentCopyTerm<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCopyAA() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = copy_term("a", "a")
@@ -80,7 +80,7 @@ interface TestConcurrentCopyTerm<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCopyAB() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = copy_term("a", "b")
@@ -92,7 +92,7 @@ interface TestConcurrentCopyTerm<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCopyF() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = copy_term("f"("a"), "f"(X))
@@ -104,7 +104,7 @@ interface TestConcurrentCopyTerm<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testDoubleCopy() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = copy_term(atom("a") + X, X + "b") and copy_term(atom("a") + X, X + "b")

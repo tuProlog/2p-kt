@@ -1,11 +1,10 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
-import kotlin.collections.listOf as ktListOf
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestInteger {
     override fun testIntPositiveNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = integer(3)
@@ -19,7 +18,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
     }
 
     override fun testIntNegativeNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = integer(intOf(-3))
@@ -33,7 +32,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
     }
 
     override fun testIntDecNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = integer(3.3)
@@ -47,7 +46,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
     }
 
     override fun testIntX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = integer("X")
@@ -61,7 +60,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
     }
 
     override fun testIntAtom() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = integer("atom")

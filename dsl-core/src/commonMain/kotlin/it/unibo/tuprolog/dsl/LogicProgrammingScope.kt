@@ -15,7 +15,7 @@ import it.unibo.tuprolog.core.Var
 import kotlin.js.JsName
 import it.unibo.tuprolog.core.List as LogicList
 
-interface PrologScope : PrologStdLibScope, VariablesAwareScope {
+interface LogicProgrammingScope : PrologStdLibScope, VariablesAwareScope {
 
     @JsName("stringInvoke")
     operator fun String.invoke(term: Any, vararg terms: Any): Struct =
@@ -129,7 +129,7 @@ interface PrologScope : PrologStdLibScope, VariablesAwareScope {
         directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("scope")
-    fun <R> scope(function: PrologScope.() -> R): R = PrologScope.empty().function()
+    fun <R> scope(function: LogicProgrammingScope.() -> R): R = LogicProgrammingScope.empty().function()
 
     @JsName("list")
     fun list(vararg items: Any, tail: Any? = null): LogicList = kotlin.collections.listOf(*items).map { it.toTerm() }.let {
@@ -141,9 +141,9 @@ interface PrologScope : PrologStdLibScope, VariablesAwareScope {
     }
 
     @JsName("rule")
-    fun rule(function: PrologScope.() -> Any): Rule = PrologScope.empty().function().toTerm() as Rule
+    fun rule(function: LogicProgrammingScope.() -> Any): Rule = LogicProgrammingScope.empty().function().toTerm() as Rule
 
-    fun clause(function: PrologScope.() -> Any): Clause = PrologScope.empty().function().let {
+    fun clause(function: LogicProgrammingScope.() -> Any): Clause = LogicProgrammingScope.empty().function().let {
         when (val t = it.toTerm()) {
             is Clause -> t
             is Struct -> return factOf(t)
@@ -152,7 +152,7 @@ interface PrologScope : PrologStdLibScope, VariablesAwareScope {
     }
 
     @JsName("directive")
-    fun directive(function: PrologScope.() -> Any): Directive = PrologScope.empty().function().let {
+    fun directive(function: LogicProgrammingScope.() -> Any): Directive = LogicProgrammingScope.empty().function().let {
         when (val t = it.toTerm()) {
             is Directive -> t
             is Struct -> return directiveOf(t)
@@ -161,7 +161,7 @@ interface PrologScope : PrologStdLibScope, VariablesAwareScope {
     }
 
     @JsName("fact")
-    fun fact(function: PrologScope.() -> Any): Fact = PrologScope.empty().function().let {
+    fun fact(function: LogicProgrammingScope.() -> Any): Fact = LogicProgrammingScope.empty().function().let {
         when (val t = it.toTerm()) {
             is Fact -> t
             is Struct -> return factOf(t)
@@ -198,6 +198,6 @@ interface PrologScope : PrologStdLibScope, VariablesAwareScope {
 
     companion object {
         @JsName("empty")
-        fun empty(): PrologScope = PrologScopeImpl()
+        fun empty(): LogicProgrammingScope = LogicProgrammingScopeImpl()
     }
 }

@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestFunctor {
     override fun testFunArity() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("foo"("a", "b", "c"), "foo", 3)
@@ -22,7 +22,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunArityWithSub() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("foo"("a", "b", "c"), "X", "Y")
@@ -36,7 +36,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunArityZero() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("X", "foo", 0)
@@ -50,7 +50,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunMats() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("mats"("A", "B"), "A", "B")
@@ -64,7 +64,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunWrongArity() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("foo"("a"), "foo", 2)
@@ -78,7 +78,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunWrongName() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("foo"("a"), "fo", 1)
@@ -92,7 +92,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunXNameYArity() { // solver says exception_error
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor(1, "X", "Y")
@@ -106,7 +106,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunDecNum() { // solver says exception_error
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("X", 1.1, 0)
@@ -120,7 +120,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunConsOf() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor(consOf(`_`, `_`), ".", 2)
@@ -134,7 +134,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunEmptyList() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor(emptyList, emptyList, 0)
@@ -148,7 +148,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunXYWrongArity() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("X", "Y", 3)
@@ -171,7 +171,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunXNArity() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("X", "foo", "N")
@@ -194,7 +194,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunXAArity() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("X", "foo", "a")
@@ -218,7 +218,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunNumName() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("F", 1.5, 1)
@@ -242,7 +242,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunFooName() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("F", "foo"("a"), 1)
@@ -266,7 +266,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunFlag() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = current_flag("max_arity", A) and (
@@ -290,7 +290,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
     }
 
     override fun testFunNegativeArity() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = functor("T", "foo", intOf(-1))

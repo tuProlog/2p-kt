@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentInteger<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testIntPositiveNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = integer(3)
@@ -20,7 +20,7 @@ interface TestConcurrentInteger<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testIntNegativeNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = integer(intOf(-3))
@@ -32,7 +32,7 @@ interface TestConcurrentInteger<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testIntDecNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = integer(3.3)
@@ -44,7 +44,7 @@ interface TestConcurrentInteger<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testIntX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = integer("X")
@@ -56,7 +56,7 @@ interface TestConcurrentInteger<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testIntAtom() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = integer("atom")

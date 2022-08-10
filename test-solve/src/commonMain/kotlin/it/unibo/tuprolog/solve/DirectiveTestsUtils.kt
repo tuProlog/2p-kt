@@ -2,28 +2,28 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.theory.Theory
 
 object DirectiveTestsUtils {
     fun dynamicDirective(functor: String, arity: Int): Sequence<Directive> =
-        prolog {
+        logicProgramming {
             sequenceOf(
                 directive { "dynamic"(functor / arity) }
             )
         }
 
     fun staticDirective(functor: String, arity: Int): Sequence<Directive> =
-        prolog {
+        logicProgramming {
             sequenceOf(
                 directive { "static"(functor / arity) }
             )
         }
 
     fun facts(functor: String, iterable: Iterable<Any>): Sequence<Fact> =
-        prolog {
+        logicProgramming {
             iterable.asSequence().map { fact { functor(it) } }
         }
 

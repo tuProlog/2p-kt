@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentAtomic<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testAtomicAtom() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atomic("atom")
@@ -20,7 +20,7 @@ interface TestConcurrentAtomic<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testAtomicAofB() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atomic("a"("b"))
@@ -32,7 +32,7 @@ interface TestConcurrentAtomic<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testAtomicVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atomic("Var")
@@ -44,7 +44,7 @@ interface TestConcurrentAtomic<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testAtomicEmptyList() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atomic(emptyList)
@@ -56,7 +56,7 @@ interface TestConcurrentAtomic<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testAtomicNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atomic(6)
@@ -68,7 +68,7 @@ interface TestConcurrentAtomic<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testAtomicNumDec() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atomic(3.3)

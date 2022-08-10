@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCodes {
 
     override fun testAtomCodesSecondIsVar1() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_codes("abc", "X")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -18,7 +18,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
     }
 
     override fun testAtomCodesSecondIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_codes("test", "X")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -31,7 +31,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
     }
 
     override fun testAtomCodesFirstIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_codes("X", listOf(97, 98, 99))
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -44,7 +44,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
     }
 
     override fun testAtomCodesNoVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_codes("test", listOf(116, 101, 115, 116))
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -57,7 +57,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
     }
 
     override fun testAtomCodesFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_codes("test", listOf(112, 101, 115, 116))
             val solutions = solver.solve(query, mediumDuration).toList()

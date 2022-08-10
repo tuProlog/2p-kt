@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.no
 interface TestConcurrentFail<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = fail
@@ -25,7 +25,7 @@ interface TestConcurrentFail<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testUndefPred() { // streams solver: `No(query=undef_pred)` instead of undef_pred/0
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 flags = FlagStore.of(Unknown to Unknown.ERROR)
             )
@@ -46,7 +46,7 @@ interface TestConcurrentFail<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testSetFlagFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("set_prolog_flag"("unknown" and fail) and "undef_pred")
@@ -58,7 +58,7 @@ interface TestConcurrentFail<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testSetFlagWarning() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("set_prolog_flag"("unknown" and "warning") and "undef_pred")

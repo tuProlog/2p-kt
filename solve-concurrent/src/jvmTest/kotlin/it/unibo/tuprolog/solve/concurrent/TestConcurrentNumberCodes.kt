@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testNumberCodesListIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_codes(33, "L")
@@ -23,7 +23,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCodesNumIsDecimal() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_codes(33.1, "L")
@@ -35,7 +35,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCodesListIsVar2() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_codes(9921.1, "L")
@@ -47,7 +47,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCodesOk() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_codes(33, listOf(51, 51))
@@ -59,7 +59,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCodesCompleteTest() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_codes(34, listOf(51, 52))
@@ -71,7 +71,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCodesNegativeNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_codes("X", listOf(45, 51, 46, 56))
@@ -83,7 +83,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCodesChar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_codes("a", "L")

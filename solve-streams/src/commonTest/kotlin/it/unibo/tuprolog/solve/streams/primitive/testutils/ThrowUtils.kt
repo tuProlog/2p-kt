@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.streams.primitive.testutils
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
@@ -17,7 +17,7 @@ internal object ThrowUtils {
 
     /** Requests that will return exceptions, if primitive invoked */
     internal val errorThrowingBehaviourRequest by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 Throw.functor("A").run { to(InstantiationError::class) },
                 Throw.functor(1).run { to(SystemError::class) },

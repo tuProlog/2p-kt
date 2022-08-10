@@ -2,23 +2,23 @@ package it.unibo.tuprolog.dsl.unify
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.dsl.PrologScope
+import it.unibo.tuprolog.dsl.LogicProgrammingScope
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
-interface PrologScopeWithUnification : PrologScope, Unificator {
+interface LogicProgrammingScopeWithUnification : LogicProgrammingScope, Unificator {
 
     @JsName("anyMguWith")
     infix fun Any.mguWith(other: Any): Substitution =
-        this@PrologScopeWithUnification.mgu(this.toTerm(), other.toTerm())
+        this@LogicProgrammingScopeWithUnification.mgu(this.toTerm(), other.toTerm())
 
     @JsName("anyMatches")
     infix fun Any.matches(other: Any): Boolean =
-        this@PrologScopeWithUnification.match(this.toTerm(), other.toTerm())
+        this@LogicProgrammingScopeWithUnification.match(this.toTerm(), other.toTerm())
 
     @JsName("anyUnifyWith")
     infix fun Any.unifyWith(other: Any): Term? =
-        this@PrologScopeWithUnification.unify(this.toTerm(), other.toTerm())
+        this@LogicProgrammingScopeWithUnification.unify(this.toTerm(), other.toTerm())
 
     @JsName("mguAny")
     fun mgu(term1: Any, term2: Any, occurCheckEnabled: Boolean = true): Substitution =
@@ -34,9 +34,9 @@ interface PrologScopeWithUnification : PrologScope, Unificator {
 
     companion object {
         @JsName("empty")
-        fun empty(): PrologScopeWithUnification = PrologScopeWithUnificationImpl()
+        fun empty(): LogicProgrammingScopeWithUnification = LogicProgrammingScopeWithUnificationImpl()
 
         @JsName("of")
-        fun of(unificator: Unificator): PrologScopeWithUnification = PrologScopeWithUnificationImpl(unificator)
+        fun of(unificator: Unificator): LogicProgrammingScopeWithUnification = LogicProgrammingScopeWithUnificationImpl(unificator)
     }
 }
