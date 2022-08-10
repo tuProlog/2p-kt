@@ -19,10 +19,13 @@ internal actual fun solverFactory(className: String, vararg classNames: String):
 }
 
 actual fun classicSolverFactory(): SolverFactory =
-    solverFactory("it.unibo.tuprolog.solve.classic.ClassicSolverFactory")
+    solverFactory(FactoryClassNames.classic)
 
 actual fun streamsSolverFactory(): SolverFactory =
-    solverFactory("it.unibo.tuprolog.solve.streams.StreamsSolverFactory")
+    solverFactory(FactoryClassNames.streams)
 
 actual fun problogSolverFactory(): SolverFactory =
-    solverFactory("it.unibo.tuprolog.solve.problog.ProblogSolverFactory")
+    solverFactory(FactoryClassNames.problog)
+
+actual fun concurrentSolverFactory(): SolverFactory =
+    solverFactory(FactoryClassNames.concurrent)
