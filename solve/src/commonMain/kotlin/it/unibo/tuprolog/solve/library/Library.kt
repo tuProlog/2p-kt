@@ -26,12 +26,6 @@ interface Library : Pluggable {
     @JsName("alias")
     val alias: String
 
-    /** Converts the current library into a [Runtime] containing a single library */
-    @JsName("toRuntime")
-    fun toRuntime(): Runtime = Runtime.of(this)
-
-    override fun plus(other: Library): Runtime = Runtime.of(this, other)
-
     override fun equals(other: Any?): Boolean // Leave this here to allow delegation in `: ... by`
 
     override fun hashCode(): Int // Leave this here to allow delegation in `: ... by`
