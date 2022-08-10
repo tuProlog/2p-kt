@@ -14,6 +14,9 @@ interface Runtime : Pluggable, Map<String, Library> {
     @JsName("libraries")
     val libraries: Set<Library>
 
+    @JsName("plusLibrary")
+    operator fun plus(other: Library): Runtime
+
     /** Adds all libraries in provided libraryGroup to this libraryGroup */
     @JsName("plusRuntime")
     operator fun plus(runtime: Runtime): Runtime
