@@ -20,58 +20,17 @@ import kotlin.jvm.JvmStatic
  *
  * A library alias is aimed at identifying the library in the eyes of a solver.
  * */
-interface Library {
+interface Library : Pluggable {
 
     /** The alias identifying this library */
     @JsName("alias")
     val alias: String
 
-    /** Operators to be loaded by a solver when the library is used */
-    @JsName("operators")
-    val operators: OperatorSet
-
-    /** Rules, facts, or directories to be loaded by a solver when the library is used */
-    @JsName("theory")
-    val theory: Theory
-
-    /** [Primitive]s to be loaded by a solver when the library is used,
-     * indexed by their [Signature] in the eyes of the solver */
-    @JsName("primitives")
-    val primitives: Map<Signature, Primitive>
-
-    /** [LogicFunction]s to be loaded by a solver when the library is used,
-     * indexed by their [Signature] in the eyes of the solver */
-    @JsName("functions")
-    val functions: Map<Signature, LogicFunction>
-
     /** Converts the current library into a [Runtime] containing a single library */
     @JsName("toRuntime")
     fun toRuntime(): Runtime = Runtime.of(this)
 
-    /**
-     * Checks whether this library contains the provided signature.
-     *
-     * The default implementation, checks for signature presence among primitives and theory clauses by indicator-like search
-     */
-    @JsName("containsSignature")
-    operator fun contains(signature: Signature): Boolean =
-        primitives.containsKey(signature) ||
-            signature.toIndicator().let { theory.contains(it) }
-
-    /** Checks whether this library contains the definition of provided operator */
-    @JsName("containsOperator")
-    operator fun contains(operator: Operator): Boolean = operator in operators
-
-    /** Checks whether this library has a [Primitive] with provided signature */
-    @JsName("hasPrimitive")
-    fun hasPrimitive(signature: Signature): Boolean = signature in primitives.keys
-
-    /** Checks whether the provided signature, is protected in this library */
-    @JsName("hasProtected")
-    fun hasProtected(signature: Signature): Boolean = signature in this
-
-    @JsName("plus")
-    operator fun plus(other: Library): Runtime = Runtime.of(this, other)
+    override fun plus(other: Library): Runtime = Runtime.of(this, other)
 
     override fun equals(other: Any?): Boolean // Leave this here to allow delegation in `: ... by`
 

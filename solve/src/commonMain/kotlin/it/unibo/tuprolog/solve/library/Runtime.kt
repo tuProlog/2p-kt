@@ -5,10 +5,7 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /** Represents a group of [Library] objects constituting the runtime a logic solver may leverage upon */
-interface Runtime : Library, Map<String, Library> {
-
-    override val alias: String
-        get() = ""
+interface Runtime : Pluggable, Map<String, Library> {
 
     @JsName("aliases")
     val aliases: Set<String>
@@ -18,7 +15,7 @@ interface Runtime : Library, Map<String, Library> {
     val libraries: Set<Library>
 
     /** Adds all libraries in provided libraryGroup to this libraryGroup */
-    @JsName("plusGroup")
+    @JsName("plusRuntime")
     operator fun plus(runtime: Runtime): Runtime
 
     /** Removes the library from this library group */
