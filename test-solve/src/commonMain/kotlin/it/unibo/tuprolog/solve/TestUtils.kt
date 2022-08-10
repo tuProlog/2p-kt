@@ -271,7 +271,6 @@ internal fun assertLibrariesAreEqual(expected: Library, actual: Library) {
     }
 }
 
-
 internal fun <C : Channel<*>> assertChannelAreEquals(expected: C, actual: C) {
     assertEquals(
         expected::class,
