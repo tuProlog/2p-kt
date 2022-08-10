@@ -1,8 +1,5 @@
 package it.unibo.tuprolog.solve;
 
-import it.unibo.tuprolog.solve.Expectations;
-import it.unibo.tuprolog.solve.Solver;
-import it.unibo.tuprolog.solve.SolverFactory;
 import org.junit.Assert;
 
 import java.util.function.Predicate;
@@ -39,5 +36,9 @@ public class TestJavaConstruction {
 
     public void testPrologFactory() {
         test(Expectations::getPrologShouldWork, Solver::prolog);
+    }
+
+    public void testConcurrentFactory() {
+        test(Expectations::getConcurrentShouldWork, Solver::concurrent);
     }
 }
