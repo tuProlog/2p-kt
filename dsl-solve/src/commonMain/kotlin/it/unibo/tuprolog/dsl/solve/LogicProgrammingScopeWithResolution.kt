@@ -6,11 +6,11 @@ import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface LogicProgrammingScopeWithResolution : LogicProgrammingScopeWithTheories, MutableSolver {
@@ -67,9 +67,9 @@ interface LogicProgrammingScopeWithResolution : LogicProgrammingScopeWithTheorie
 
     companion object {
         @JsName("of")
-        fun of(solverFactory: SolverFactory): LogicProgrammingScopeWithResolution = LogicProgrammingScopeWithResolutionImpl(solverFactory)
-
-        @JsName("empty")
-        fun empty(): LogicProgrammingScopeWithResolution = of(ClassicSolverFactory)
+        fun of(
+            solverFactory: SolverFactory,
+            unificator: Unificator
+        ): LogicProgrammingScopeWithResolution = LogicProgrammingScopeWithResolutionImpl(solverFactory, unificator)
     }
 }
