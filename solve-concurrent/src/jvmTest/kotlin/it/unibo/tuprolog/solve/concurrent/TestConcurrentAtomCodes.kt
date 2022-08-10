@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testAtomCodesSecondIsVar1() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_codes("abc", "X")
@@ -20,7 +20,7 @@ interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun testAtomCodesSecondIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_codes("test", "X")
@@ -32,7 +32,7 @@ interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun testAtomCodesFirstIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_codes("X", listOf(97, 98, 99))
@@ -44,7 +44,7 @@ interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun testAtomCodesNoVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_codes("test", listOf(116, 101, 115, 116))
@@ -56,7 +56,7 @@ interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun testAtomCodesFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_codes("test", listOf(112, 101, 115, 116))

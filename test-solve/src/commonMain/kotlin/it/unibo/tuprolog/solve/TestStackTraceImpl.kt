@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.dsl.PrologScope
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.LogicProgrammingScope
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.MessageError
 import it.unibo.tuprolog.solve.exception.error.SystemError
@@ -11,8 +11,8 @@ import kotlin.test.assertEquals
 
 class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTrace {
 
-    private fun threeLayersTheory(errorExpression: PrologScope.() -> Struct): Theory =
-        prolog {
+    private fun threeLayersTheory(errorExpression: LogicProgrammingScope.() -> Struct): Theory =
+        logicProgramming {
             theoryOf(
                 rule { "foo"(X) impliedBy "bar"(X) },
                 rule { "bar"(X) impliedBy "baz"(X) },
@@ -21,7 +21,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
         }
 
     override fun testSimpleStackTrace() {
-        prolog {
+        logicProgramming {
             val Y = Y
             val solver = solverFactory.solverWithDefaultBuiltins(staticKb = threeLayersTheory { X `is` (Y + 1) })
 
@@ -47,7 +47,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
     }
 
     override fun testDoubleStackTrace() {
-        prolog {
+        logicProgramming {
             val Y = Y
             val solver = solverFactory.solverWithDefaultBuiltins(staticKb = threeLayersTheory { X `is` (Y + 1) })
 
@@ -73,7 +73,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
     }
 
     override fun testTripleStackTrace() {
-        prolog {
+        logicProgramming {
             val Y = Y
             val solver = solverFactory.solverWithDefaultBuiltins(staticKb = threeLayersTheory { X `is` (Y + 1) })
 
@@ -99,7 +99,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
     }
 
     override fun testThrowIsNotInStacktrace() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(staticKb = threeLayersTheory { `throw`("x") })
 
             val query = findall(X, bagof(Z, "foo"(Z), X), L)

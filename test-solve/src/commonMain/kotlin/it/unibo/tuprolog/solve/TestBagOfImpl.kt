@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
 
     override fun testBagXInDifferentValues() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = bagof("X", ("X" eq 1) or ("X" eq 2), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -20,7 +20,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
     }
 
     override fun testBagOfFindX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = bagof("X", ("X" eq 1) or ("X" eq 2), "X")
@@ -34,7 +34,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
     }
 
     override fun testBagOfYXZ() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = bagof("X", ("X" eq "Y") or ("X" eq "Z"), "L")
@@ -48,7 +48,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
     }
 
     override fun testBagOfFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = bagof("X", fail, "L")
@@ -62,7 +62,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
     }
 
     override fun testBagOfSameAsFindall() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = bagof("X", "Y" sup (("X" eq 1) or ("Y" eq 2)), "S")
@@ -76,7 +76,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
     }
 
     override fun testBagOfInstanceError() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = bagof("X", "G", "S")
@@ -99,7 +99,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
     }
 
     override fun testBagOfTypeError() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = bagof("X", 1, "S")

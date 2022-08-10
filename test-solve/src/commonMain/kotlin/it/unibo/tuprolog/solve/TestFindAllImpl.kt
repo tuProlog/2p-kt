@@ -1,9 +1,8 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import kotlin.collections.listOf as ktListOf
 
 internal class TestFindAllImpl(
     private val solverFactory: SolverFactory,
@@ -11,7 +10,7 @@ internal class TestFindAllImpl(
 ) : TestFindAll {
 
     override fun testFindXInDiffValues() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = findall("X", ("X" eq 1) or ("X" eq 2), "S")
@@ -25,7 +24,7 @@ internal class TestFindAllImpl(
     }
 
     override fun testFindSumResult() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = findall("+"("X", "Y"), "X" eq 1, "S")
@@ -39,7 +38,7 @@ internal class TestFindAllImpl(
     }
 
     override fun testFindXinFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = findall("X", fail, "L")
@@ -53,7 +52,7 @@ internal class TestFindAllImpl(
     }
 
     override fun testFindXinSameXValues() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = findall("X", ("X" eq 1) or ("X" eq 1), "S")
@@ -67,7 +66,7 @@ internal class TestFindAllImpl(
     }
 
     override fun testResultListIsCorrect() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = findall("X", ("X" eq 2) or ("X" eq 1), listOf(1, 2))
@@ -81,7 +80,7 @@ internal class TestFindAllImpl(
     }
 
     override fun testFindXtoDoubleAssigment() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = findall("X", ("X" eq 1) or ("X" eq 2), listOf("X", "Y"))
@@ -95,7 +94,7 @@ internal class TestFindAllImpl(
     }
 
     override fun testFindXinGoal() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = findall("X", "Goal", "S")
@@ -118,7 +117,7 @@ internal class TestFindAllImpl(
     }
 
     override fun testFindXinNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = findall("X", 4, "S")
@@ -142,7 +141,7 @@ internal class TestFindAllImpl(
     }
 
     override fun testFindXinCall() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = findall("X", call(1), "S")

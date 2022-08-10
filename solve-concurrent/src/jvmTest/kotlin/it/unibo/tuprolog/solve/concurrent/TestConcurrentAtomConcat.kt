@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentAtomConcat<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testAtomConcatThirdIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_concat("test", "concat", "X")
@@ -20,7 +20,7 @@ interface TestConcurrentAtomConcat<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testAtomConcatFails() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_concat("test", "concat", "test")
@@ -32,7 +32,7 @@ interface TestConcurrentAtomConcat<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testAtomConcatSecondIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_concat("test", "X", "testTest")
@@ -44,7 +44,7 @@ interface TestConcurrentAtomConcat<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testAtomConcatFirstIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_concat("X", "query", "testquery")

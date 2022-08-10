@@ -1,16 +1,15 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import kotlin.collections.listOf as ktListOf
 
 internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestAssertZ {
 
     override fun testAssertZClause() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = assertz("foo"("X") `if` ("X" then call("X")))
@@ -24,7 +23,7 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
     }
 
     override fun testAssertZAny() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = assertz(`_`)
@@ -47,7 +46,7 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
     }
 
     override fun testAssertZNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = assertz(4)
@@ -71,7 +70,7 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
     }
 
     override fun testAssertZFooNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = assertz(("foo" `if` 4))
@@ -95,7 +94,7 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
     }
 
     override fun testAssertZAtomTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = assertz(atom(`_`) `if` true)

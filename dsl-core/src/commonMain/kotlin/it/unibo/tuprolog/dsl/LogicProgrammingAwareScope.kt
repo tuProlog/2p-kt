@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import kotlin.js.JsName
 
-interface PrologAwareScope : Scope {
+interface LogicProgrammingAwareScope : Scope {
 
     @JsName("anyToTerm")
     fun Any.toTerm(): Term

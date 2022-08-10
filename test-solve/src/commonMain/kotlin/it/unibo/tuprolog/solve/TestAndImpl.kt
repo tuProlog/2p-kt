@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.Unknown
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.flags.Unknown
 internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
 
     override fun testTermIsFreeVariable() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "X" eq 1 and `var`("X")
@@ -22,7 +22,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
     }
 
     override fun testWithSubstitution() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = `var`("X") and ("X" eq 1)
@@ -36,7 +36,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
     }
 
     override fun testFailIsCallable() { // goal
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = fail and call(3)
@@ -50,7 +50,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
     }
 
     override fun testNoFooIsCallable() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 flags = FlagStore.of(Unknown to Unknown.ERROR)
             )
@@ -73,7 +73,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
     }
 
     override fun testTrueVarCallable() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "X" eq true and call("X")

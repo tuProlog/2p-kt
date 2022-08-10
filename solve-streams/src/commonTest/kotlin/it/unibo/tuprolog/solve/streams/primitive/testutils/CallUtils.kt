@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.streams.primitive.testutils
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
@@ -49,7 +49,7 @@ internal object CallUtils {
      * - `call((h(A), '!'))` against [factDatabase][simpleFactTheory]  **will result in** `Yes(A -> a)`
      */
     internal val requestSolutionMap by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 Call.functor(true).hasSolutions({ yes() }),
                 Call.functor("true" and "true").hasSolutions({ yes() }),
@@ -79,7 +79,7 @@ internal object CallUtils {
      * - `call((true, 1))`  **will result in** `TypeError()`
      */
     internal val requestToErrorSolutionMap by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 Call.functor("X").hasSolutions({
                     halt(InstantiationError(context = aContext, extraData = varOf("X")))
@@ -111,7 +111,7 @@ internal object CallUtils {
      * - `call(g(A), call('!'))` against [factDatabase][simpleFactTheory]  **will result in** `Yes(A -> a), Yes(A -> b)`
      */
     internal val requestToSolutionOfCallWithCut by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 *simpleFactTheoryNotableGoalToSolutions.map { (goal, solutionList) ->
                     Call.functor(goal and Call.functor("!")).run {

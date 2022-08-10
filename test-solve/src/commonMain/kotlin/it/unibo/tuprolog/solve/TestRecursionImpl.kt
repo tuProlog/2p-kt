@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.flags.FlagStore
@@ -15,7 +15,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
     override val shortDuration: TimeDuration
         get() = 1000
 
-    private fun thermostat(initialTemp: Int, goodRange: IntRange) = prolog {
+    private fun thermostat(initialTemp: Int, goodRange: IntRange) = logicProgramming {
         theoryOf(
             directive { dynamic("temp" / 1) },
             fact { "temp"(initialTemp) },
@@ -60,7 +60,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
     }
 
     private fun testRecursion(init: Int, range: IntRange) {
-        prolog {
+        logicProgramming {
             val prints = mutableListOf<String>()
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = thermostat(init, range),
@@ -93,7 +93,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
         testRecursion(30, 18..22)
     }
 
-    private fun canary(message: String) = prolog {
+    private fun canary(message: String) = logicProgramming {
         theoryOf(
             rule { "recursive"(0) impliedBy `throw`(message) },
             rule {
@@ -107,7 +107,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
     }
 
     private fun testTailRecursion(lastCallOptimization: Boolean, n: Int = 200) {
-        prolog {
+        logicProgramming {
             val prints = mutableListOf<String>()
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = canary("ball"),

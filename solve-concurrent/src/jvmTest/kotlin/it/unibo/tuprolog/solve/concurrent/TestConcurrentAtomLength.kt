@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentAtomLength<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testAtomLengthNoVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_length("test", 4)
@@ -24,7 +24,7 @@ interface TestConcurrentAtomLength<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testAtomLengthSecondIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_length("test", X)
@@ -36,7 +36,7 @@ interface TestConcurrentAtomLength<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testAtomLengthFirstIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = char_code("X", "a")
@@ -58,7 +58,7 @@ interface TestConcurrentAtomLength<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testAtomLengthSecondIsVar2() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_length("testLength", X)
@@ -70,7 +70,7 @@ interface TestConcurrentAtomLength<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testAtomLengthFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom_length("test", 5)

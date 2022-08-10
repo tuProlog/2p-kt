@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.no
@@ -13,7 +13,7 @@ interface TestConcurrentBigList<T : WithAssertingEquals> : FromSequence<T>, Solv
         get() = 4000
 
     fun testBigListGeneration() {
-        prolog {
+        logicProgramming {
             val theory = theoryOf(
                 fact { "biglist"(0, listOf(0)) },
                 rule {

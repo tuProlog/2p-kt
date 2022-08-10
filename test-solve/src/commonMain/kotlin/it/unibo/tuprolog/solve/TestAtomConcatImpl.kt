@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomConcat {
 
     override fun testAtomConcatThirdIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_concat("test", "concat", "X")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -18,7 +18,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
     }
 
     override fun testAtomConcatFails() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_concat("test", "concat", "test")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -31,7 +31,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
     }
 
     override fun testAtomConcatSecondIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_concat("test", "X", "testTest")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -44,7 +44,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
     }
 
     override fun testAtomConcatFirstIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_concat("X", "query", "testquery")
             val solutions = solver.solve(query, mediumDuration).toList()

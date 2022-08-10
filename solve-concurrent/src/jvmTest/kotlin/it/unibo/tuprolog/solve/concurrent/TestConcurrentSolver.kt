@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.concurrent
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.format
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.CustomTheories
 import it.unibo.tuprolog.solve.CustomTheories.ifThen1ToSolution
 import it.unibo.tuprolog.solve.CustomTheories.ifThen2ToSolution
@@ -65,7 +65,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     val notErrorSignature: Signature
 
     fun testUnknownFlag2() {
-        prolog {
+        logicProgramming {
             val theory = theoryOf(
                 rule {
                     "ancestor"(X, Y) `if` "parent"(X, Y)
@@ -131,7 +131,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testUnknownFlag1() {
-        prolog {
+        logicProgramming {
             val query = "missing_predicate"(X)
 
             val observedWarnings = mutableListOf<Warning>()
@@ -188,7 +188,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     /** Test presence of correct built-ins */
     fun testBuiltinApi() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             with(solver) {
@@ -279,7 +279,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     private fun testAssert(suffix: String, inverse: Boolean) {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val assertX = "assert$suffix"
 
@@ -315,7 +315,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testWrite() {
         val outputs = mutableListOf<String>()
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             solver.standardOutput.addListener { outputs += it!! }
@@ -345,7 +345,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testStandardOutput() {
         val outputs = mutableListOf<String>()
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             with(solver.standardOutput) {
@@ -370,7 +370,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testFindAll() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 staticKb = theoryOf(
                     fact { "a"(1) },
@@ -410,7 +410,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testSideEffectsPersistentAfterBacktracking1() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 dynamicKb = theoryOf(
                     fact { "f"(1) },
@@ -447,7 +447,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     /** Test `true` goal */
     fun testTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = truthOf(true)
             var solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -620,7 +620,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     /** A test with all goals used in conjunction with `true` or `fail` to test Conjunction properties */
     fun testConjunctionProperties() {
-        prolog {
+        logicProgramming {
             val allDatabasesWithGoalsAndSolutions by lazy {
                 TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                     callErrorSignature,
@@ -674,7 +674,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     /** A test in which all testing goals are called through the Call primitive */
     fun testCallPrimitiveTransparency() {
-        prolog {
+        logicProgramming {
             TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                 callErrorSignature,
                 nafErrorSignature,
@@ -711,7 +711,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     /** A test in which all testing goals are called through the Catch primitive */
     fun testCatchPrimitiveTransparency() {
-        prolog {
+        logicProgramming {
             fun Struct.containsHaltPrimitive(): Boolean = when (functor) {
                 "halt" -> true
                 else -> argsSequence.filterIsInstance<Struct>().any { it.containsHaltPrimitive() }
@@ -770,7 +770,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     /** A test in which all testing goals are called through the Not rule */
     fun testNotModularity() {
-        prolog {
+        logicProgramming {
             TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                 callErrorSignature,
                 nafErrorSignature,
@@ -848,7 +848,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testFailure() {
         // TODO: 12/11/2019 enrich this test after solving #51
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = atomOf("a")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -859,7 +859,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testBasicBacktracking1() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy ("b"(X) and "c"(X)) },
@@ -879,7 +879,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testBasicBacktracking2() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy ("c"(X) and "b"(X)) },
@@ -898,7 +898,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testBasicBacktracking3() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy (("b"(X) and cut) and "c"(X)) },
@@ -917,7 +917,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testBasicBacktracking4() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy ("b"(X) and (cut and "c"(X))) },
@@ -936,7 +936,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testConjunction() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a" impliedBy ("b" and "c") },
@@ -953,7 +953,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testConjunctionOfConjunctions() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
@@ -972,7 +972,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testConjunctionWithUnification() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy ("b"(X) and "c"(X)) },
@@ -989,7 +989,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testDisjunction() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a" impliedBy ("b" or "c") },
@@ -1006,7 +1006,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testDisjunctionWithUnification() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy ("b"(X) or "c"(X)) },
@@ -1023,7 +1023,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testMember() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             assertConcurrentSolverSolutionsCorrect(solver, CustomTheories.memberGoalToSolution, mediumDuration)
@@ -1031,7 +1031,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testAssertRules() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = assertz("f"(2) impliedBy false) and asserta("f"(1) impliedBy true)
@@ -1052,7 +1052,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testRetract() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 dynamicKb = theoryOf(
                     factOf(structOf("f", numOf(1))),
@@ -1076,7 +1076,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testNatural() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = natural(X) and natural(X)
@@ -1091,7 +1091,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testFunctor() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = functor("a"("b", "c"), X, Y)
@@ -1158,7 +1158,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testUniv() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = "a"("b", "c") univ X
@@ -1211,7 +1211,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testRetractAll() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 dynamicKb = theoryOf(
                     factOf(structOf("f", numOf(1))),
@@ -1242,7 +1242,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testAppend() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = append(listOf(1, 2, 3), listOf(4, 5, 6), X)

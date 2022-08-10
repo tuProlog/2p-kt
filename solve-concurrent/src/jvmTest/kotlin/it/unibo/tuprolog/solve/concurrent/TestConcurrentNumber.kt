@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentNumber<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testBasicNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number(3)
@@ -20,7 +20,7 @@ interface TestConcurrentNumber<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testDecNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number(3.3)
@@ -32,7 +32,7 @@ interface TestConcurrentNumber<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testNegNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number(-3)
@@ -44,7 +44,7 @@ interface TestConcurrentNumber<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testLetterNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number("a")
@@ -56,7 +56,7 @@ interface TestConcurrentNumber<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testXNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number("X")

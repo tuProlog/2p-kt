@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testArithDiff() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = 0 arithNeq 1
@@ -68,7 +68,7 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testArithEq() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = 0 arithEq 1
@@ -129,7 +129,7 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testArithGreaterThan() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = 0 greaterThan 1
@@ -184,7 +184,7 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testArithGreaterThanEq() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = 0 greaterThanOrEqualsTo 1
@@ -239,7 +239,7 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testArithLessThan() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = 0 lowerThan 1
@@ -294,7 +294,7 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testArithLessThanEq() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = 0 lowerThanOrEqualsTo 1

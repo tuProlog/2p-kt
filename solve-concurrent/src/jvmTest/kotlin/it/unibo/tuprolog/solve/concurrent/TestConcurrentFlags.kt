@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolverFactory
@@ -25,7 +25,7 @@ import kotlin.test.assertTrue
 interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun defaultLastCallOptimizationIsOn() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             assertEquals(LastCallOptimization.ON, LastCallOptimization.defaultValue)
@@ -39,7 +39,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun defaultUnknownIsWarning() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             assertEquals(Unknown.WARNING, Unknown.defaultValue)
@@ -53,7 +53,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun settingUnknownToAdmissibleValueSucceeds() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             for (value in Unknown.admissibleValues) {
@@ -67,7 +67,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun flagsNamesMustBeAtoms() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val solutions = solver.solve(current_flag(F, `_`), shortDuration).toList()
@@ -115,7 +115,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun gettingMissingFlagsFails() {
-        prolog {
+        logicProgramming {
             for (flag in ktListOf("a", "b", "c")) {
                 val solver = solverWithDefaultBuiltins()
 
@@ -131,7 +131,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun settingMissingFlagsSucceeds() {
-        prolog {
+        logicProgramming {
             for ((value, flag) in ktListOf("a", "b", "c").asSequence().indexed()) {
                 val solver = solverWithDefaultBuiltins()
 
@@ -149,7 +149,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun gettingFlagsByVariableEnumeratesFlags() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val defaultFlags = solver.flags.mapKeys { (k, _) -> k.toTerm() }
 
@@ -167,7 +167,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun settingFlagsByVariableGeneratesInstantiationError() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = set_flag(F, "value")
@@ -188,7 +188,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun settingWrongValueToLastCallOptimizationProvokesDomainError() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = set_flag(LastCallOptimization.name, truthOf(true))
@@ -213,7 +213,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun attemptingToEditMaxArityFlagProvokesPermissionError() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = set_flag(MaxArity.name, 10)

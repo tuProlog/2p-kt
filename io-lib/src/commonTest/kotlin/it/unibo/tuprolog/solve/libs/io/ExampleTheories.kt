@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 object ExampleTheories {
 
-    val PARENTS = prolog {
+    val PARENTS = logicProgramming {
         theoryOf(
             fact { "male"("james1") },
             fact { "male"("charles1") },

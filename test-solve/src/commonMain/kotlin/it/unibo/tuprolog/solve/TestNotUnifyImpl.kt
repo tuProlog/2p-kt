@@ -1,12 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
-import kotlin.collections.listOf as ktListOf
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : TestNotUnify {
 
     override fun testNumberNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = 1 notEqualsTo 1
@@ -20,7 +19,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testNumberXNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "X" notEqualsTo 1
@@ -34,7 +33,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testXYNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "X" notEqualsTo "Y"
@@ -48,7 +47,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testDoubleNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = (("X" notEqualsTo "Y") and ("X" notEqualsTo "abc"))
@@ -62,7 +61,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testFDefNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "f"("X", "def") notEqualsTo ("f"("def", "Y"))
@@ -76,7 +75,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testDiffNumberNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = 1 notEqualsTo 2
@@ -90,7 +89,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testDecNumberNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = intOf(1) notEqualsTo realOf(1.0)
@@ -104,7 +103,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testGNotUnifyFX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("g"("X")) notEqualsTo ("f"("a"("X")))
@@ -118,7 +117,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testFNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("f"("X", 1)) notEqualsTo ("f"("a"("X")))
@@ -132,7 +131,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
     }
 
     override fun testFMultipleTermNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("f"("X", "Y", "X")) notEqualsTo ("f"("a"("X"), "a"("Y"), "Y", 2))

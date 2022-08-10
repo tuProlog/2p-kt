@@ -6,12 +6,19 @@ import it.unibo.tuprolog.solve.SolverFactory
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
-@JsName("prologFromSolverFactory")
-fun <R> prolog(solverFactory: SolverFactory, function: PrologScopeWithResolution.() -> R): R {
-    return PrologScopeWithResolution.of(solverFactory).function()
+@JsName("logicProgrammingFromSolverFactory")
+fun <R> logicProgramming(solverFactory: SolverFactory, function: LogicProgrammingScopeWithResolution.() -> R): R {
+    return LogicProgrammingScopeWithResolution.of(solverFactory).function()
 }
 
-@JsName("prolog")
-fun <R> prolog(function: PrologScopeWithResolution.() -> R): R {
-    return PrologScopeWithResolution.empty().function()
+@JsName("logicProgramming")
+fun <R> logicProgramming(function: LogicProgrammingScopeWithResolution.() -> R): R {
+    return LogicProgrammingScopeWithResolution.empty().function()
 }
+
+@JsName("lp")
+fun <R> lp(function: LogicProgrammingScopeWithResolution.() -> R): R = logicProgramming(function)
+
+@Deprecated("Use `lp` or `logicProgramming` instead", ReplaceWith("lp(function)"))
+@JsName("prolog")
+fun <R> prolog(function: LogicProgrammingScopeWithResolution.() -> R): R = logicProgramming(function)

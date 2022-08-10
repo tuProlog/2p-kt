@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentTerm<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testTermDiff() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = "\\=="(intOf(1), intOf(1))
@@ -62,7 +62,7 @@ interface TestConcurrentTerm<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testTermEq() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = "=="(intOf(1), intOf(1))
@@ -116,7 +116,7 @@ interface TestConcurrentTerm<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testTermGreaterThan() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = "@>"(realOf(1.0), intOf(1))
@@ -164,7 +164,7 @@ interface TestConcurrentTerm<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testTermGreaterThanEq() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = "@>="(realOf(1.0), intOf(1))
@@ -212,7 +212,7 @@ interface TestConcurrentTerm<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testTermLessThan() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = "@<"(realOf(1.0), intOf(1))
@@ -260,7 +260,7 @@ interface TestConcurrentTerm<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testTermLessThanEq() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             var query = "@=<"(realOf(1.0), intOf(1))

@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.streams.primitive
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.extractSignature
@@ -54,7 +54,7 @@ internal class ConjunctionTest {
 
     @Test
     fun conjunctionExecutesLeftAndRightArgumentsRemovingNotReachableVariablesExceptForRightAdded() {
-        prolog {
+        logicProgramming {
             val preRequestSubstitution = "PreRequest" to "a"
             val firstSubstitution = "L" to "first"
             val secondSubstitution = "R" to "second"

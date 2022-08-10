@@ -10,21 +10,28 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
 @JsName("scope")
-fun <R> PrologScopeWithUnification.scope(function: PrologScopeWithUnification.() -> R): R {
-    return PrologScopeWithUnification.empty().function()
+fun <R> LogicProgrammingScopeWithUnification.scope(function: LogicProgrammingScopeWithUnification.() -> R): R {
+    return LogicProgrammingScopeWithUnification.empty().function()
 }
 
 @JsName("rule")
-fun PrologScopeWithUnification.rule(function: PrologScopeWithUnification.() -> Term): Rule {
-    return PrologScopeWithUnification.empty().function() as Rule
+fun LogicProgrammingScopeWithUnification.rule(function: LogicProgrammingScopeWithUnification.() -> Term): Rule {
+    return LogicProgrammingScopeWithUnification.empty().function() as Rule
 }
 
 @JsName("fact")
-fun PrologScopeWithUnification.fact(function: PrologScopeWithUnification.() -> Term): Fact {
-    return factOf(PrologScopeWithUnification.empty().function() as Struct)
+fun LogicProgrammingScopeWithUnification.fact(function: LogicProgrammingScopeWithUnification.() -> Term): Fact {
+    return factOf(LogicProgrammingScopeWithUnification.empty().function() as Struct)
 }
 
-@JsName("prolog")
-fun <R> prolog(function: PrologScopeWithUnification.() -> R): R {
-    return PrologScopeWithUnification.empty().function()
+@JsName("logicProgramming")
+fun <R> logicProgramming(function: LogicProgrammingScopeWithUnification.() -> R): R {
+    return LogicProgrammingScopeWithUnification.empty().function()
 }
+
+@JsName("lp")
+fun <R> lp(function: LogicProgrammingScopeWithUnification.() -> R): R = logicProgramming(function)
+
+@Deprecated("Use `lp` or `logicProgramming` instead", ReplaceWith("lp(function)"))
+@JsName("prolog")
+fun <R> prolog(function: LogicProgrammingScopeWithUnification.() -> R): R = logicProgramming(function)

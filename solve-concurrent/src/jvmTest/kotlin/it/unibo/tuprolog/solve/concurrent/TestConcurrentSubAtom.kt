@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testSubAtomSubIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = sub_atom("abracadabra", intOf(0), intOf(1), intOf(10), "S")
@@ -26,7 +26,7 @@ interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testSubAtomSubIsVar2() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = sub_atom("abracadabra", intOf(6), intOf(5), intOf(0), "S")
@@ -38,7 +38,7 @@ interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testSubAtomSubIsVar3() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = sub_atom("abracadabra", intOf(3), "L", intOf(3), "S")
@@ -55,7 +55,7 @@ interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testSubAtomDoubleVar4() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = sub_atom("banana", intOf(3), intOf(2), "T", "S")
@@ -72,7 +72,7 @@ interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testSubAtomInstantiationError() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = sub_atom("Banana", intOf(3), intOf(2), "Y", "S")
@@ -93,7 +93,7 @@ interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testSubAtomTypeErrorAtomIsInteger() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = sub_atom(5, 2, 2, "_", "S")
@@ -116,7 +116,7 @@ interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, Solv
 
     // sub_atom('Banana', 4, 2, _, 2).
     fun testSubAtomTypeErrorSubIsInteger() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = sub_atom("banana", 4, 2, "_", 2)
@@ -139,7 +139,7 @@ interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, Solv
 
     // [sub_atom('Banana', a, 2, _, S2), type_error(integer,a)].
     fun testSubAtomTypeErrorBeforeIsNotInteger() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = sub_atom("banana", "a", 2, "_", "S")
@@ -161,7 +161,7 @@ interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testSubAtomTypeErrorLengthIsNotInteger() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = sub_atom("banana", 4, "n", "_", "S")
@@ -183,7 +183,7 @@ interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testSubAtomTypeErrorAfterIsNotInteger() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = sub_atom("banana", 4, 2, "m", "S")

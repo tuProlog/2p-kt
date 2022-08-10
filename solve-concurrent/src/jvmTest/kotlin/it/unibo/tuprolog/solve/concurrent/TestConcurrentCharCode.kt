@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentCharCode<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testCharCodeSecondIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = char_code("a", "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -23,7 +23,7 @@ interface TestConcurrentCharCode<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCharCodeFirstIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = char_code("X", intOf(97))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -34,7 +34,7 @@ interface TestConcurrentCharCode<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCharCodeTypeError() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = atom_length("X", 4)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -68,7 +68,7 @@ interface TestConcurrentCharCode<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCharCodeFails() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = char_code("g", intOf(105))
             val solutions = fromSequence(solver.solve(query, mediumDuration))

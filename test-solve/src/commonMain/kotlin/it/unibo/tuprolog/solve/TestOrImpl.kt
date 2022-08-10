@@ -1,12 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
-import kotlin.collections.listOf as ktListOf
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
 
     override fun testTrueOrFalse() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = true or fail
@@ -25,7 +24,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
     }
 
     override fun testCutFalseOrTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
 //            val query = ";"(("!" and fail()), true)
@@ -40,7 +39,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
     }
 
     override fun testCutCall() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
 //            val query = ";"("!", call(3))
@@ -55,7 +54,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
     }
 
     override fun testCutAssignedValue() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
 //            val query = ";"(("X" eq 1 and "!"), "X" eq 2)
@@ -70,7 +69,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
     }
 
     override fun testOrDoubleAssignment() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
 //            val query = ";"("X" eq 1, "X" eq 2)

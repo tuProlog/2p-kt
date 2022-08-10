@@ -1,12 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
-import kotlin.collections.listOf as ktListOf
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAtomic {
 
     override fun testAtomicAtom() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atomic("atom")
@@ -20,7 +19,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
     }
 
     override fun testAtomicAofB() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atomic("a"("b"))
@@ -34,7 +33,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
     }
 
     override fun testAtomicVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atomic("Var")
@@ -48,7 +47,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
     }
 
     override fun testAtomicEmptyList() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atomic(emptyList)
@@ -62,7 +61,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
     }
 
     override fun testAtomicNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atomic(6)
@@ -76,7 +75,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
     }
 
     override fun testAtomicNumDec() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atomic(3.3)

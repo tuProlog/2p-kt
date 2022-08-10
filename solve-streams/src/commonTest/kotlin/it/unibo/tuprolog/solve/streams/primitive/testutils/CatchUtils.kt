@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.streams.primitive.testutils
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheoryExample
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheoryExampleNotableGoalToSolution
 import it.unibo.tuprolog.solve.Solution
@@ -46,8 +46,8 @@ internal object CatchUtils {
 
             *CallUtils.requestSolutionMap.flatMap { (callRequest, solutions) ->
                 ktListOf(
-                    prolog { Catch.functor(callRequest.query, `_`, false) },
-                    prolog { Catch.functor(callRequest.arguments.single(), `_`, false) }
+                    logicProgramming { Catch.functor(callRequest.query, `_`, false) },
+                    logicProgramming { Catch.functor(callRequest.arguments.single(), `_`, false) }
                 ).map {
                     with(callRequest.context.libraries) {
                         createSolveRequest(it, theory, primitives + Catch.descriptionPair)
@@ -57,7 +57,7 @@ internal object CatchUtils {
 
             *CallUtils.requestToErrorSolutionMap.map { (callRequest, solutions) ->
                 val updatedPrimitives = callRequest.context.libraries.primitives + Catch.descriptionPair
-                prolog {
+                logicProgramming {
                     Catch.functor(callRequest.arguments.single(), "X", true).run {
                         createSolveRequest(this, callRequest.context.libraries.theory, updatedPrimitives) to
                             solutions.map {
