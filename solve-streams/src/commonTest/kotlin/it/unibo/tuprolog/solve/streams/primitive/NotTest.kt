@@ -49,7 +49,7 @@ internal class NotTest {
             createSolveRequest(
                 query,
                 primitives = mapOf(Not.descriptionPair, Call.descriptionPair),
-                database = LogicProgrammingScopeWithTheories.empty().theory({ "a" }, { "a" })
+                database = LogicProgrammingScopeWithTheories.of().theory({ "a" }, { "a" })
             )
         ).map { it.solution }.asIterable()
 

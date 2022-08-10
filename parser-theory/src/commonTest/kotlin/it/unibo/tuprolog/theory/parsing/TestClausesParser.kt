@@ -21,7 +21,7 @@ class TestClausesParser {
         }
 
         fun assertMatch(expected: Term, actual: LogicProgrammingScopeWithTheories.() -> Term) {
-            assertMatch(expected, LogicProgrammingScopeWithTheories.empty().actual())
+            assertMatch(expected, LogicProgrammingScopeWithTheories.of().actual())
         }
     }
 

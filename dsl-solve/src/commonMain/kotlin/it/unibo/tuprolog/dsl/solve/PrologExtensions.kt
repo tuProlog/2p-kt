@@ -2,23 +2,30 @@
 
 package it.unibo.tuprolog.dsl.solve
 
+import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
-@JsName("logicProgrammingFromSolverFactory")
-fun <R> logicProgramming(solverFactory: SolverFactory, function: LogicProgrammingScopeWithResolution.() -> R): R {
-    return LogicProgrammingScopeWithResolution.of(solverFactory).function()
-}
-
 @JsName("logicProgramming")
-fun <R> logicProgramming(function: LogicProgrammingScopeWithResolution.() -> R): R {
-    return LogicProgrammingScopeWithResolution.empty().function()
+fun <R> logicProgramming(
+    solverFactory: SolverFactory,
+    unificator: Unificator = Unificator.default,
+    function: LogicProgrammingScopeWithResolution.() -> R
+): R {
+    return LogicProgrammingScopeWithResolution.of(solverFactory, unificator).function()
 }
 
 @JsName("lp")
-fun <R> lp(function: LogicProgrammingScopeWithResolution.() -> R): R = logicProgramming(function)
+fun <R> lp(
+    solverFactory: SolverFactory,
+    unificator: Unificator = Unificator.default,
+    function: LogicProgrammingScopeWithResolution.() -> R
+): R = logicProgramming(solverFactory, unificator, function)
 
-@Deprecated("Use `lp` or `logicProgramming` instead", ReplaceWith("lp(function)"))
 @JsName("prolog")
-fun <R> prolog(function: LogicProgrammingScopeWithResolution.() -> R): R = logicProgramming(function)
+fun <R> prolog(
+    unificator: Unificator = Unificator.default,
+    function: LogicProgrammingScopeWithResolution.() -> R
+): R = logicProgramming(Solver.prolog, unificator, function)
