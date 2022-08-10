@@ -1,5 +1,35 @@
 package it.unibo.tuprolog.solve
 
+private object ModuleNames {
+    const val tuprolog = "@tuprolog"
+
+    private const val solvePrefix = "2p-solve"
+
+    const val classic = "${solvePrefix}-classic"
+
+    private fun withOptionalPrefix(orgPrefix: Boolean = false, module: String, klass: String): String =
+        (if (orgPrefix) "$tuprolog/" else "") + module + ":" + klass
+
+    fun classicFactoryClass(orgPrefix: Boolean = false) =
+        withOptionalPrefix(orgPrefix, classic, FactoryClassNames.classic)
+
+    const val streams = "${solvePrefix}-streams"
+
+    fun streamsFactoryClass(orgPrefix: Boolean = false) =
+        withOptionalPrefix(orgPrefix, streams, FactoryClassNames.streams)
+
+    const val problog = "${solvePrefix}-problog"
+
+    fun problogFactoryClass(orgPrefix: Boolean = false) =
+        withOptionalPrefix(orgPrefix, problog, FactoryClassNames.problog)
+
+    const val concurrent = "${solvePrefix}-concurrent"
+
+    fun concurrentFactoryClass(orgPrefix: Boolean = false) =
+        withOptionalPrefix(orgPrefix, concurrent, FactoryClassNames.concurrent)
+
+}
+
 internal actual fun solverFactory(className: String, vararg classNames: String): SolverFactory =
     sequenceOf(className, *classNames)
         .map { JsClassName.parse(it) }
@@ -10,18 +40,24 @@ internal actual fun solverFactory(className: String, vararg classNames: String):
 
 actual fun classicSolverFactory(): SolverFactory =
     solverFactory(
-        "@tuprolog/2p-solve-classic:it.unibo.tuprolog.solve.classic.ClassicSolverFactory",
-        "2p-solve-classic:it.unibo.tuprolog.solve.classic.ClassicSolverFactory"
+        ModuleNames.classicFactoryClass(orgPrefix = true),
+        ModuleNames.classicFactoryClass(orgPrefix = false)
     )
 
 actual fun streamsSolverFactory(): SolverFactory =
     solverFactory(
-        "@tuprolog/2p-solve-streams:it.unibo.tuprolog.solve.streams.StreamsSolverFactory",
-        "2p-solve-streams:it.unibo.tuprolog.solve.streams.StreamsSolverFactory"
+        ModuleNames.streamsFactoryClass(orgPrefix = true),
+        ModuleNames.streamsFactoryClass(orgPrefix = false)
     )
 
 actual fun problogSolverFactory(): SolverFactory =
     solverFactory(
-        "@tuprolog/2p-solve-problog:it.unibo.tuprolog.solve.problog.ProblogSolverFactory",
-        "2p-solve-problog:it.unibo.tuprolog.solve.problog.ProblogSolverFactory"
+        ModuleNames.problogFactoryClass(orgPrefix = true),
+        ModuleNames.problogFactoryClass(orgPrefix = false)
+    )
+
+actual fun concurrentSolverFactory(): SolverFactory =
+    solverFactory(
+        ModuleNames.concurrentFactoryClass(orgPrefix = true),
+        ModuleNames.concurrentFactoryClass(orgPrefix = false)
     )
