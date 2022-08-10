@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
@@ -9,7 +9,7 @@ class TestNotProvableImpl(
     override val errorSignature: Signature
 ) : TestNotProvable {
     override fun testNPTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "not"(true)
@@ -25,7 +25,7 @@ class TestNotProvableImpl(
     }
 
     override fun testNPCut() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "not"("!")
@@ -41,7 +41,7 @@ class TestNotProvableImpl(
     }
 
     override fun testNPCutFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "not"(("!" and fail))
@@ -57,7 +57,7 @@ class TestNotProvableImpl(
     }
 
     override fun testOrNotCutFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ((("X" eq 1) or ("X" eq 2)) and "not"(("!" and fail)))
@@ -76,7 +76,7 @@ class TestNotProvableImpl(
     }
 
     override fun testNPEquals() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "not"(4 eq 5)
@@ -92,7 +92,7 @@ class TestNotProvableImpl(
     }
 
     override fun testNPNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "not"(3)
@@ -116,7 +116,7 @@ class TestNotProvableImpl(
     }
 
     override fun testNPX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "not"("X")

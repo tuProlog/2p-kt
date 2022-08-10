@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFloat {
     override fun testFloatDec() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = float(3.3)
@@ -18,7 +18,7 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
     }
 
     override fun testFloatDecNeg() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = float(-3.3)
@@ -32,7 +32,7 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
     }
 
     override fun testFloatNat() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = float(3)
@@ -46,7 +46,7 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
     }
 
     override fun testFloatAtom() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = float("atom")
@@ -60,7 +60,7 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
     }
 
     override fun testFloatX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = float("X")

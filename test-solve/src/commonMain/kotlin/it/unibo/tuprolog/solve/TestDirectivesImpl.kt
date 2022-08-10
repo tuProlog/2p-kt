@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier.XFX
 import it.unibo.tuprolog.core.operators.Specifier.XFY
 import it.unibo.tuprolog.core.operators.Specifier.YFX
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DirectiveTestsUtils.dynamicDirective
 import it.unibo.tuprolog.solve.DirectiveTestsUtils.facts
 import it.unibo.tuprolog.solve.DirectiveTestsUtils.solverInitializers
@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
 class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirectives {
 
     override fun testDynamic1() {
-        prolog {
+        logicProgramming {
             val initialStaticKb = theoryOf(
                 facts("f", 1..3),
                 staticDirective("g", 1),
@@ -53,7 +53,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     }
 
     override fun testStatic1() {
-        prolog {
+        logicProgramming {
             val initialDynamicKb = theoryOf(
                 facts("f", 1..3),
                 staticDirective("g", 1),
@@ -87,7 +87,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
         }
     }
 
-    private fun theoryWithInit(initGoal: String): Theory = prolog {
+    private fun theoryWithInit(initGoal: String): Theory = logicProgramming {
         theoryOf(
             directive { initGoal(write("a")) },
             fact { "f"(1) },
@@ -98,7 +98,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     }
 
     private fun testInit(initGoal: String) =
-        prolog {
+        logicProgramming {
             val theory = theoryWithInit(initGoal)
             for ((solverOf, writeEvents) in solverInitializersWithEventsList(solverFactory)) {
                 val solver = solverOf(theory)
@@ -126,7 +126,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     override fun testSolve1() = testInit("solve")
 
     override fun testSetFlag2() {
-        prolog {
+        logicProgramming {
             for (solverOf in solverInitializers(solverFactory)) {
                 val solver = solverOf(
                     theoryOf(
@@ -145,7 +145,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     }
 
     override fun testSetPrologFlag2() {
-        prolog {
+        logicProgramming {
             for (solverOf in solverInitializers(solverFactory)) {
                 val solver = solverOf(
                     theoryOf(
@@ -164,7 +164,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     }
 
     override fun testOp3() {
-        prolog {
+        logicProgramming {
             for (solverOf in solverInitializers(solverFactory)) {
                 val solver = solverOf(
                     theoryOf(
@@ -188,7 +188,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     }
 
     override fun testWrongDirectives() {
-        prolog {
+        logicProgramming {
             for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
                 val theory = theoryOf(
                     directive { op("a", XFX, "++") },
@@ -214,12 +214,12 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
         }
     }
 
-    private fun theoryWithFailingInit(initGoal: String): Theory = prolog {
+    private fun theoryWithFailingInit(initGoal: String): Theory = logicProgramming {
         theoryOf(directive { initGoal(fail) })
     }
 
     private fun testFailingInit(initGoal: String) =
-        prolog {
+        logicProgramming {
             val theory = theoryWithFailingInit(initGoal)
             for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
                 val solver = solverOf(theory)
@@ -242,12 +242,12 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
         testFailingInit("solve")
     }
 
-    private fun theoryWithExceptionalInit(initGoal: String): Theory = prolog {
+    private fun theoryWithExceptionalInit(initGoal: String): Theory = logicProgramming {
         theoryOf(directive { initGoal(X `is` (Y + 1)) })
     }
 
     private fun testExceptionalInit(initGoal: String) =
-        prolog {
+        logicProgramming {
             val theory = theoryWithExceptionalInit(initGoal)
             for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
                 val solver = solverOf(theory)

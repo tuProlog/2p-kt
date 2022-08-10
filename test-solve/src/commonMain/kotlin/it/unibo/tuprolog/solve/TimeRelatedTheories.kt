@@ -1,9 +1,8 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.theory.Theory
-import kotlin.collections.listOf as ktListOf
 
 object TimeRelatedTheories {
     internal val timeOutException = TimeOutException(context = DummyInstances.executionContext, exceededDuration = 1)
@@ -19,7 +18,7 @@ object TimeRelatedTheories {
      * ```
      */
     val timeRelatedTheory: Theory by lazy {
-        prolog {
+        logicProgramming {
             theoryOf(
                 rule { "a"("X") `if` "b"("X") },
                 rule { "b"(500) `if` "sleep"(500) },
@@ -35,7 +34,7 @@ object TimeRelatedTheories {
      * thus a [TimeOutException] is returned as the first solution
      */
     val lessThan500MsGoalToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "a"("X").hasSolutions(
                     { halt(timeOutException) }
@@ -51,7 +50,7 @@ object TimeRelatedTheories {
      * thus a [TimeOutException] is returned as the second solution
      */
     val slightlyMoreThan500MsGoalToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "a"("X").hasSolutions(
                     { yes("X" to 500) },
@@ -68,7 +67,7 @@ object TimeRelatedTheories {
      * thus a [TimeOutException] is returned as the third solution
      */
     val slightlyMoreThan600MsGoalToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "a"("X").hasSolutions(
                     { yes("X" to 500) },
@@ -85,7 +84,7 @@ object TimeRelatedTheories {
      * thus no [TimeOutException] is returned and 3 positive solutions are returned instead
      */
     val slightlyMoreThan700MsGoalToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "a"("X").hasSolutions(
                     { yes("X" to 500) },

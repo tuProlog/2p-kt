@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIfThen {
     override fun testIfThenTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "->"(true, true)
@@ -18,7 +18,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
     }
 
     override fun testIfThenFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "->"(true, fail)
@@ -32,7 +32,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
     }
 
     override fun testIfThenFailTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "->"(fail, true)
@@ -46,7 +46,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
     }
 
     override fun testIfThenXtoOne() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "->"(true, "X" eq 1)
@@ -60,7 +60,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
     }
 
     override fun testIfThenXOr() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "->"(("X" eq 1) or ("X" eq 2), true)
@@ -74,7 +74,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
     }
 
     override fun testIfThenOrWithDoubleSub() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "->"(true, ("X" eq 1) or ("X" eq 2))

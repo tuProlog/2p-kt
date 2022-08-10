@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.libs.oop
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverFactory
@@ -36,7 +36,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
     }
 
     private fun assertAliasIsPresent(solver: Solver, alias: String, type: KClass<*>) {
-        prolog {
+        logicProgramming {
             val query1 = Alias.FUNCTOR(alias, T)
             assertSolutionEquals(
                 ktListOf(query1.yes(T to TypeRef.of(type))),
@@ -51,7 +51,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
     }
 
     private fun assertAliasIsPresent(solver: Solver, alias: String, obj: Any?) {
-        prolog {
+        logicProgramming {
             val query1 = Alias.FUNCTOR(alias, T)
             assertSolutionEquals(
                 ktListOf(query1.yes(T to ObjectRef.of(obj))),
@@ -66,7 +66,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
     }
 
     override fun testDefaultAliases() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
 
             assertAliasIsPresent(solver, "string", String::class)
@@ -95,7 +95,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
     }
 
     override fun testAliasIsBacktrackable() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
 
             val query = Alias.FUNCTOR(A, T)
@@ -138,7 +138,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
         val bInstanceAlias = Alias.forObject("bInstance", bInstance.`object`)
         val bTypeAlias = Alias.forObject("bType", bType.type)
 
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
 
             val registerQuery1 = Register.functor(bInstanceAlias.ref, bInstanceAlias.alias)
@@ -172,7 +172,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
     }
 
     override fun testRegisterWithWrongArguments() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
 
             var query = Register.functor(X, "alias")

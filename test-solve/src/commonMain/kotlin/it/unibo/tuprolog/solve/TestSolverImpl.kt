@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.format
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.CustomTheories.ifThen1ToSolution
 import it.unibo.tuprolog.solve.CustomTheories.ifThen2ToSolution
 import it.unibo.tuprolog.solve.CustomTheories.ifThenElse1ToSolution
@@ -153,7 +153,7 @@ internal class TestSolverImpl(
 ) : TestSolver {
 
     override fun testUnknownFlag2() {
-        prolog {
+        logicProgramming {
             val theory = theoryOf(
                 rule {
                     "ancestor"(X, Y) `if` "parent"(X, Y)
@@ -213,7 +213,7 @@ internal class TestSolverImpl(
     }
 
     override fun testUnknownFlag1() {
-        prolog {
+        logicProgramming {
             val query = "missing_predicate"(X)
 
             val observedWarnings = mutableListOf<Warning>()
@@ -270,7 +270,7 @@ internal class TestSolverImpl(
 
     /** Test presence of correct built-ins */
     override fun testBuiltinApi() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             with(solver) {
@@ -361,7 +361,7 @@ internal class TestSolverImpl(
     }
 
     private fun testAssert(suffix: String, inverse: Boolean) {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val assertX = "assert$suffix"
 
@@ -400,7 +400,7 @@ internal class TestSolverImpl(
 
     override fun testWrite() {
         val outputs = mutableListOf<String>()
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             solver.standardOutput.addListener { outputs += it!! }
@@ -432,7 +432,7 @@ internal class TestSolverImpl(
 
     override fun testStandardOutput() {
         val outputs = mutableListOf<String>()
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             with(solver.standardOutput) {
@@ -459,7 +459,7 @@ internal class TestSolverImpl(
     }
 
     override fun testFindAll() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theoryOf(
                     fact { "a"(1) },
@@ -504,7 +504,7 @@ internal class TestSolverImpl(
     }
 
     override fun testSideEffectsPersistentAfterBacktracking1() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 dynamicKb = theoryOf(
                     fact { "f"(1) },
@@ -541,7 +541,7 @@ internal class TestSolverImpl(
 
     /** Test `true` goal */
     override fun testTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = truthOf(true)
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -716,7 +716,7 @@ internal class TestSolverImpl(
 
     /** A test with all goals used in conjunction with `true` or `fail` to test Conjunction properties */
     override fun testConjunctionProperties() {
-        prolog {
+        logicProgramming {
             val allDatabasesWithGoalsAndSolutions by lazy {
                 allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                     callErrorSignature,
@@ -770,7 +770,7 @@ internal class TestSolverImpl(
 
     /** A test in which all testing goals are called through the Call primitive */
     override fun testCallPrimitiveTransparency() {
-        prolog {
+        logicProgramming {
             allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                 callErrorSignature,
                 nafErrorSignature,
@@ -807,7 +807,7 @@ internal class TestSolverImpl(
 
     /** A test in which all testing goals are called through the Catch primitive */
     override fun testCatchPrimitiveTransparency() {
-        prolog {
+        logicProgramming {
             fun Struct.containsHaltPrimitive(): Boolean = when (functor) {
                 "halt" -> true
                 else -> argsSequence.filterIsInstance<Struct>().any { it.containsHaltPrimitive() }
@@ -866,7 +866,7 @@ internal class TestSolverImpl(
 
     /** A test in which all testing goals are called through the Not rule */
     override fun testNotModularity() {
-        prolog {
+        logicProgramming {
             allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                 callErrorSignature,
                 nafErrorSignature,
@@ -944,7 +944,7 @@ internal class TestSolverImpl(
 
     override fun testFailure() {
         // TODO: 12/11/2019 enrich this test after solving #51
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atomOf("a")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -959,7 +959,7 @@ internal class TestSolverImpl(
     }
 
     override fun testBasicBacktracking1() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy ("b"(X) and "c"(X)) },
@@ -983,7 +983,7 @@ internal class TestSolverImpl(
     }
 
     override fun testBasicBacktracking2() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy ("c"(X) and "b"(X)) },
@@ -1004,7 +1004,7 @@ internal class TestSolverImpl(
     }
 
     override fun testBasicBacktracking3() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy (("b"(X) and cut) and "c"(X)) },
@@ -1027,7 +1027,7 @@ internal class TestSolverImpl(
     }
 
     override fun testBasicBacktracking4() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy ("b"(X) and (cut and "c"(X))) },
@@ -1050,7 +1050,7 @@ internal class TestSolverImpl(
     }
 
     override fun testConjunction() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a" impliedBy ("b" and "c") },
@@ -1071,7 +1071,7 @@ internal class TestSolverImpl(
     }
 
     override fun testConjunctionOfConjunctions() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
@@ -1094,7 +1094,7 @@ internal class TestSolverImpl(
     }
 
     override fun testConjunctionWithUnification() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy ("b"(X) and "c"(X)) },
@@ -1115,7 +1115,7 @@ internal class TestSolverImpl(
     }
 
     override fun testDisjunction() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a" impliedBy ("b" or "c") },
@@ -1134,7 +1134,7 @@ internal class TestSolverImpl(
     }
 
     override fun testDisjunctionWithUnification() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"(X) impliedBy ("b"(X) or "c"(X)) },
@@ -1155,7 +1155,7 @@ internal class TestSolverImpl(
     }
 
     override fun testMember() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             assertSolverSolutionsCorrect(solver, memberGoalToSolution, mediumDuration)
@@ -1163,7 +1163,7 @@ internal class TestSolverImpl(
     }
 
     override fun testAssertRules() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = assertz("f"(2) impliedBy false) and asserta("f"(1) impliedBy true)
@@ -1186,7 +1186,7 @@ internal class TestSolverImpl(
     }
 
     override fun testRetract() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 dynamicKb = theoryOf(
                     factOf(structOf("f", numOf(1))),
@@ -1216,7 +1216,7 @@ internal class TestSolverImpl(
     }
 
     override fun testNatural() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = natural(X) and natural(X)
@@ -1233,7 +1233,7 @@ internal class TestSolverImpl(
     }
 
     override fun testFunctor() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = functor("a"("b", "c"), X, Y)
@@ -1306,7 +1306,7 @@ internal class TestSolverImpl(
     }
 
     override fun testUniv() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = "a"("b", "c") univ X
@@ -1363,7 +1363,7 @@ internal class TestSolverImpl(
     }
 
     override fun testRetractAll() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 dynamicKb = theoryOf(
                     factOf(structOf("f", numOf(1))),
@@ -1401,7 +1401,7 @@ internal class TestSolverImpl(
     }
 
     override fun testAppend() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = append(listOf(1, 2, 3), listOf(4, 5, 6), X)

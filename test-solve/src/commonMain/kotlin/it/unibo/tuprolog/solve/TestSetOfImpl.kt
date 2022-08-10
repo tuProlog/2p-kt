@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
 
     override fun testSetOfBasic() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = setof("X", ("X" eq 1) or ("X" eq 2), "S")
@@ -19,7 +19,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
     }
 
     override fun testSetOfX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = setof("X", ("X" eq 1) or ("X" eq 2), "X")
@@ -33,7 +33,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
     }
 
     override fun testSetOfNoSorted() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = setof("X", ("X" eq 2) or ("X" eq 1), "X")
@@ -47,7 +47,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
     }
 
     override fun testSetOfDoubled() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = setof("X", ("X" eq 2) or ("X" eq 2), "L")
@@ -61,7 +61,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
     }
 
     override fun testSetOfFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = bagof("X", fail, "L")
@@ -75,7 +75,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
     }
 
     override fun testSetOfAsFindAll() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = setof("X", "Y" sup ((("X" eq 1) or ("Y" eq 1)) or (("X" eq 2) or ("Y" eq 2))), "S")

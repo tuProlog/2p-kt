@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.prolog
+import it.unibo.tuprolog.dsl.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
@@ -26,7 +26,7 @@ class TestMultiSet {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun testMultiSet() = multiRunConcurrentTest {
-        prolog {
+        logicProgramming {
             val query = "X" equalsTo 1 and `var`("X")
             val solutions = sequenceOf(query.no())
             val multiSet1 = MultiSet(solutions)
@@ -57,7 +57,7 @@ class TestMultiSet {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun testDifferentMultiSet() = multiRunConcurrentTest {
-        prolog {
+        logicProgramming {
             val query = "X" equalsTo 1 and `var`("X")
             val query2 = `var`("X") and ("X" equalsTo 1)
             val solutions = sequenceOf(query.no())

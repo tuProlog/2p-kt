@@ -15,7 +15,7 @@ import it.unibo.tuprolog.core.toTerm as extToTerm
 internal interface AnyToTermConverter {
 
     @JsName("prologScope")
-    val prologScope: PrologScope
+    val prologScope: LogicProgrammingScope
 
     @JsName("toTerm")
     fun toTerm(any: Any): Term = when (any) {
@@ -61,7 +61,7 @@ internal interface AnyToTermConverter {
 
     companion object {
         @JsName("of")
-        fun of(prologScope: PrologScope): AnyToTermConverter {
+        fun of(prologScope: LogicProgrammingScope): AnyToTermConverter {
             return AnyToTermConverterImpl(prologScope)
         }
     }

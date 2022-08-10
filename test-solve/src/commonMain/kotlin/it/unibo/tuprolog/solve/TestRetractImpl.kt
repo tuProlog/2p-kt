@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 
 internal class TestRetractImpl(private val solverFactory: SolverFactory) : TestRetract {
     override fun testRetractNumIfX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = retract(":-"(4, "X"))
@@ -30,7 +30,7 @@ internal class TestRetractImpl(private val solverFactory: SolverFactory) : TestR
     }
 
     override fun testRetractAtomEmptyList() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = retract((atom(`_`) `if` ("X" id emptyList)))

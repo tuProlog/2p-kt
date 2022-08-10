@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -15,7 +15,7 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
     val errorSignature: Signature
 
     fun testNPTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "not"(true)
@@ -27,7 +27,7 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNPCut() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "not"("!")
@@ -39,7 +39,7 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNPCutFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "not"(("!" and fail))
@@ -51,7 +51,7 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testOrNotCutFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ((("X" eq 1) or ("X" eq 2)) and "not"(("!" and fail)))
@@ -68,7 +68,7 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNPEquals() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "not"(4 eq 5)
@@ -80,7 +80,7 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNPNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "not"(3)
@@ -101,7 +101,7 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNPX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "not"("X")

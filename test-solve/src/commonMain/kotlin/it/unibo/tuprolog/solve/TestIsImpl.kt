@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
     override fun testIsResult() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "Result" `is` (numOf(3) + realOf(11.0))
@@ -20,7 +20,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
     }
 
     override fun testIsXY() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("X" eq (intOf(1) + intOf(2))) and ("Y" `is` ("X" * intOf(3)))
@@ -34,7 +34,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
     }
 
     override fun testIsFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "foo" `is` intOf(77)
@@ -48,7 +48,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
     }
 
     override fun testIsNNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = intOf(77) `is` "N"
@@ -71,7 +71,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
     }
 
     override fun testIsNumberFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = intOf(77) `is` "foo"
@@ -95,7 +95,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
     }
 
     override fun testIsXFloat() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "X" `is` float(intOf(3))

@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testBagXInDifferentValues() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = bagof("X", ("X" eq 1) or ("X" eq 2), "S")
@@ -25,7 +25,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testBagOfFindX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = bagof("X", ("X" eq 1) or ("X" eq 2), "X")
@@ -37,7 +37,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testBagOfYXZ() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = bagof("X", ("X" eq "Y") or ("X" eq "Z"), "L")
@@ -49,7 +49,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testBagOfFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = bagof("X", fail, "L")
@@ -61,7 +61,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testBagOfSameAsFindall() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = bagof("X", "Y" sup (("X" eq 1) or ("Y" eq 2)), "S")
@@ -73,7 +73,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testBagOfInstanceError() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = bagof("X", "G", "S")
@@ -94,7 +94,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testBagOfTypeError() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = bagof("X", 1, "S")

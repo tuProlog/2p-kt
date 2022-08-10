@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -15,7 +15,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     val errorSignature: Signature
 
     fun testCallCut() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call("!")
@@ -27,7 +27,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testCallFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call(fail)
@@ -39,7 +39,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testCallFailX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call(fail and "X")
@@ -51,7 +51,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testCallFailCall() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call(fail and call(1))
@@ -63,7 +63,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testCallWriteX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call(write(3) and "X")
@@ -83,7 +83,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testCallWriteCall() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call(write(3) and call(1))
@@ -104,7 +104,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testCallX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call("X")
@@ -124,7 +124,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testCallOne() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call(1)
@@ -145,7 +145,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testCallFailOne() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call(fail and 1)
@@ -166,7 +166,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testCallWriteOne() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call(write(3) and 1)
@@ -187,7 +187,7 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testCallTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = call(1 or true)

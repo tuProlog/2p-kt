@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TimeOutException
@@ -50,7 +50,7 @@ object TestingClauseTheories {
 
     /** Utility function to deeply replace all occurrences of one functor with another in a Struct */
     internal fun Struct.replaceAllFunctors(oldFunctor: String, withFunctor: String): Struct =
-        prolog {
+        logicProgramming {
             val synonymReplacer = object : TermVisitor<Term> {
                 override fun defaultValue(term: Term): Term = term
                 override fun visitStruct(term: Struct): Term = when (term.functor) {
@@ -77,7 +77,7 @@ object TestingClauseTheories {
      * ```
      */
     val simpleFactTheory by lazy {
-        prolog {
+        logicProgramming {
             theory(
                 { "f"("a") },
                 { "g"("a") },
@@ -98,7 +98,7 @@ object TestingClauseTheories {
      * ```
      */
     val simpleFactTheoryNotableGoalToSolutions by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "f"("A").hasSolutions(
                     { yes("A" to "a") }
@@ -134,7 +134,7 @@ object TestingClauseTheories {
      * d(d).
      * ```
      */
-    val simpleCutTheory = prolog {
+    val simpleCutTheory = logicProgramming {
         theory(
             { "f"("only") `if` "!" },
             { "f"("a") },
@@ -161,7 +161,7 @@ object TestingClauseTheories {
      * ```
      */
     val simpleCutTheoryNotableGoalToSolutions by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "f"("A").hasSolutions(
                     { yes("A" to "only") }
@@ -190,7 +190,7 @@ object TestingClauseTheories {
      * r(b1).
      * ```
      */
-    val simpleCutAndConjunctionTheory = prolog {
+    val simpleCutAndConjunctionTheory = logicProgramming {
         theory(
             { "f"("X", "Y") `if` ("q"("X") and "!" and "r"("Y")) },
             { "f"("X", "Y") `if` "r"("X") },
@@ -208,7 +208,7 @@ object TestingClauseTheories {
      * ```
      */
     val simpleCutAndConjunctionTheoryNotableGoalToSolutions by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "f"("A", "B").hasSolutions(
                     { yes("A" to "a", "B" to "a1") },
@@ -233,7 +233,7 @@ object TestingClauseTheories {
      * d(3).
      * ```
      */
-    val cutConjunctionAndBacktrackingTheory = prolog {
+    val cutConjunctionAndBacktrackingTheory = logicProgramming {
         theory(
             { "a"("X") `if` "b"("X") },
             { "a"(6) },
@@ -255,7 +255,7 @@ object TestingClauseTheories {
      * ```
      */
     val cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "a"("X").hasSolutions(
                     { yes("X" to 2) },
@@ -273,7 +273,7 @@ object TestingClauseTheories {
      * b :- a.
      * ```
      */
-    val infiniteComputationTheory = prolog {
+    val infiniteComputationTheory = logicProgramming {
         theory(
             { "a" `if` "b" },
             { "b" `if` "a" }
@@ -287,7 +287,7 @@ object TestingClauseTheories {
      * ```
      */
     val infiniteComputationTheoryNotableGoalToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 atomOf("a").hasSolutions({ halt(timeOutException) })
             )
@@ -305,7 +305,7 @@ object TestingClauseTheories {
      * ```
      */
     val customReverseListTheory by lazy {
-        prolog {
+        logicProgramming {
             theory(
                 { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", emptyList) },
                 { "my_rev"(emptyList, "L2", "L2") `if` "!" },
@@ -324,7 +324,7 @@ object TestingClauseTheories {
      * ```
      */
     val customReverseListTheoryNotableGoalToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "my_reverse"(listOf(1, 2, 3, 4), "L").hasSolutions(
                     { yes("L" to listOf(4, 3, 2, 1)) }
@@ -345,7 +345,7 @@ object TestingClauseTheories {
      * ```
      */
     val customRangeListGeneratorTheory by lazy {
-        prolog {
+        logicProgramming {
             theory(
                 { "range"("N", "N", listOf("N")) `if` "!" },
                 {
@@ -373,7 +373,7 @@ object TestingClauseTheories {
      */
     val customRangeListGeneratorTheoryNotableGoalToSolution by lazy {
         val N = customRangeListGeneratorTheory.last().head!![1] as Var
-        prolog {
+        logicProgramming {
             ktListOf(
                 "range"(1, 4, listOf(1, 2, 3, 4)).hasSolutions({ yes() }),
                 "range"(1, 4, listOf(1, 2, 3, 4, 5)).hasSolutions({ no() }),
@@ -403,7 +403,7 @@ object TestingClauseTheories {
      * ```
      */
     fun callTestingGoalsToSolutions(errorSignature: Signature) =
-        prolog {
+        logicProgramming {
             ktListOf(
                 call(true).hasSolutions({ yes() }),
                 call(false).hasSolutions({ no() }),
@@ -428,7 +428,7 @@ object TestingClauseTheories {
      * ```
      */
     val catchTestingGoalsToSolutions by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 catch(true, `_`, false).hasSolutions({ yes() }),
                 catch(catch(`throw`("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
@@ -453,7 +453,7 @@ object TestingClauseTheories {
      * ```
      */
     val haltTestingGoalsToSolutions by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 halt.hasSolutions({ halt(haltException) }),
                 catch(halt, `_`, true).hasSolutions({ halt(haltException) }),

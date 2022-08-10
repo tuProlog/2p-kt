@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentIfThen<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testIfThenTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "->"(true, true)
@@ -20,7 +20,7 @@ interface TestConcurrentIfThen<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testIfThenFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "->"(true, fail)
@@ -32,7 +32,7 @@ interface TestConcurrentIfThen<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testIfThenFailTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "->"(fail, true)
@@ -44,7 +44,7 @@ interface TestConcurrentIfThen<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testIfThenXtoOne() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "->"(true, "X" eq 1)
@@ -56,7 +56,7 @@ interface TestConcurrentIfThen<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testIfThenXOr() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "->"(("X" eq 1) or ("X" eq 2), true)
@@ -68,7 +68,7 @@ interface TestConcurrentIfThen<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testIfThenOrWithDoubleSub() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "->"(true, ("X" eq 1) or ("X" eq 2))

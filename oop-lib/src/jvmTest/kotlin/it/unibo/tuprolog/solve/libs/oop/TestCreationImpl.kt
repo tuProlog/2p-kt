@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.libs.oop
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.dsl.prolog
+import it.unibo.tuprolog.dsl.logicProgramming
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
@@ -22,7 +22,7 @@ class TestCreationImpl(protected val solverFactory: SolverFactory) : TestCreatio
         cases: List<TestDatum>,
         detectorType: KClass<*> = ConstructorOverloadDetector::class,
         case2Term: (TestDatum) -> Term
-    ) = prolog {
+    ) = logicProgramming {
         val solver = solverFactory.solverWithDefaultBuiltins(Runtime.of(OOPLib))
         for (case in cases) {
             val query = NewObject3.functor(TypeRef.of(detectorType), listOf(case2Term(case)), X)

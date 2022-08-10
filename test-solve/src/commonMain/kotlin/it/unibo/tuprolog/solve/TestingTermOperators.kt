@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
-import kotlin.collections.listOf as ktListOf
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 object TestingTermOperators {
 
@@ -17,7 +16,7 @@ object TestingTermOperators {
      * ```
      */
     val greaterThanTesting by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "@>"(intOf(1), realOf(1.0)).hasSolutions({ yes() }),
                 "@>"(realOf(1.0), intOf(1)).hasSolutions({ no() }),
@@ -39,7 +38,7 @@ object TestingTermOperators {
      * ```
      */
     val greaterThanOrEqualTesting by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "@>="(intOf(1), intOf(1)).hasSolutions({ yes() }),
                 "@>="("stringTest", "stringTest").hasSolutions({ yes() }),
@@ -62,7 +61,7 @@ object TestingTermOperators {
      * ```
      */
     val equalTesting by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "=@="(realOf(1.0), realOf(1.0)).hasSolutions({ yes() }),
                 "=@="("stringTest", "stringTest").hasSolutions({ yes() }),
@@ -84,7 +83,7 @@ object TestingTermOperators {
      */
 
     val lowerThanTesting by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "@<"(realOf(1.0), intOf(1)).hasSolutions({ yes() }),
                 "@<"(intOf(1), realOf(1.0)).hasSolutions({ no() }),
@@ -105,7 +104,7 @@ object TestingTermOperators {
      * ```
      */
     val lowerThanOrEqualTesting by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "@=<"(intOf(1), realOf(1.0)).hasSolutions({ no() }),
                 "@=<"(realOf(1.0), realOf(1.0)).hasSolutions({ yes() }),
@@ -125,7 +124,7 @@ object TestingTermOperators {
      * ```
      */
     val notEqualTesting by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "\\=@="(realOf(1.0), realOf(1.0)).hasSolutions({ no() }),
                 "\\=@="("stringTest", "stringTest").hasSolutions({ no() }),

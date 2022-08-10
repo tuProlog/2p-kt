@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.dsl.prolog
+import it.unibo.tuprolog.dsl.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.EvaluationError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticEqual
@@ -22,7 +22,7 @@ internal object ArithmeticUtils {
 
     /** [Is] primitive test data (input, [Substitution | ErrorType]) */
     internal val isQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 Is.functor("Y", "*"("+"(1, 2), 3)) to ("Y" to 9),
                 Is.functor("Result", "+"(3, 11.0)) to ("Result" to 14.0),
@@ -36,7 +36,7 @@ internal object ArithmeticUtils {
 
     /** Equal functor test data (input, [true | false | ErrorType]) */
     internal val equalQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 ArithmeticEqual.functor(1.0, 1) to true,
                 ArithmeticEqual.functor("*"(3, 2), "-"(7, 1)) to true,
@@ -49,7 +49,7 @@ internal object ArithmeticUtils {
 
     /** NotEqual functor test data (input, [true | false | ErrorType]) */
     internal val notEqualQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 ArithmeticNotEqual.functor(0, 1) to true,
                 ArithmeticNotEqual.functor(0.333, "/"(1, 3)) to true,
@@ -62,7 +62,7 @@ internal object ArithmeticUtils {
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val greaterQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 ArithmeticGreaterThan.functor("*"(3, 2), "-"(6, 1)) to true,
                 ArithmeticGreaterThan.functor(1.0, 1) to false,
@@ -76,7 +76,7 @@ internal object ArithmeticUtils {
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val greaterOrEqualQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 ArithmeticGreaterThanOrEqualTo.functor("*"(3, 2), "-"(7, 1)) to true,
                 ArithmeticGreaterThanOrEqualTo.functor(1.0, 1) to true,
@@ -90,7 +90,7 @@ internal object ArithmeticUtils {
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val lowerQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 ArithmeticLowerThan.functor(0, 1) to true,
                 ArithmeticLowerThan.functor(0.333, "/"(1, 3)) to true,
@@ -104,7 +104,7 @@ internal object ArithmeticUtils {
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val lowerOrEqualQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 ArithmeticLowerThanOrEqualTo.functor(0, 1) to true,
                 ArithmeticLowerThanOrEqualTo.functor(1.0, 1) to true,

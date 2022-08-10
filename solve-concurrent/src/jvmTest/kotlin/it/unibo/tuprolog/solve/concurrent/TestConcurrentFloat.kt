@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentFloat<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testFloatDec() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = float(3.3)
@@ -20,7 +20,7 @@ interface TestConcurrentFloat<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testFloatDecNeg() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = float(-3.3)
@@ -32,7 +32,7 @@ interface TestConcurrentFloat<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testFloatNat() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = float(3)
@@ -44,7 +44,7 @@ interface TestConcurrentFloat<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testFloatAtom() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = float("atom")
@@ -56,7 +56,7 @@ interface TestConcurrentFloat<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testFloatX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = float("X")

@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 
 class TestCharCodeImpl(private val solverFactory: SolverFactory) : TestCharCode {
 
     override fun testCharCodeSecondIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = char_code("a", "X")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -19,7 +19,7 @@ class TestCharCodeImpl(private val solverFactory: SolverFactory) : TestCharCode 
     }
 
     override fun testCharCodeFirstIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = char_code("X", intOf(97))
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -32,7 +32,7 @@ class TestCharCodeImpl(private val solverFactory: SolverFactory) : TestCharCode 
     }
 
     override fun testCharCodeTypeError() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_length("X", 4)
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -54,7 +54,7 @@ class TestCharCodeImpl(private val solverFactory: SolverFactory) : TestCharCode 
     }
 
     override fun testCharCodeFails() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = char_code("g", intOf(105))
             val solutions = solver.solve(query, mediumDuration).toList()

@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testNumberUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = 1 eq 1
@@ -20,7 +20,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testNumberXUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "X" eq 1
@@ -32,7 +32,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testXYUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "X" eq "Y"
@@ -44,7 +44,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testDoubleUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = (("X" eq "Y") and ("X" eq "abc"))
@@ -56,7 +56,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testFDefUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "f"("X", "def") eq "f"("def", "Y")
@@ -68,7 +68,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testDiffNumberUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = 1 eq 2
@@ -80,7 +80,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testDecNumberUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = 1 eq realOf(1.0)
@@ -92,7 +92,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testGUnifyFX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("g"("X")) eq ("f"("a"("X")))
@@ -104,7 +104,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testFUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("f"("X", 1)) eq ("f"("a"("X")))
@@ -116,7 +116,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testFMultipleTermUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("f"("X", "Y", "X")) eq ("f"("a"("X"), "a"("Y"), "Y", 2))
@@ -128,7 +128,7 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
     }
 
     fun testMultipleTermUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("f"("A", "B", "C")) eq ("f"("g"("B", "B"), "g"("C", "C"), "g"("D", "D")))

@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testNumberCharsListIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_chars(33, "L")
@@ -23,7 +23,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCharsOK() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_chars(33, listOf("3", "3"))
@@ -35,7 +35,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCharsNumIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_chars("X", listOf("3", "3"))
@@ -47,7 +47,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCharsNumNegativeIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_chars("X", listOf("-", "2", "5"))
@@ -59,7 +59,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCharsSpace() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_chars("X", listOf("\n", "3"))
@@ -71,7 +71,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCharsDecimalNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_chars("X", listOf("4", ".", "2"))
@@ -83,7 +83,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCharsCompleteCase() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             // val query = number_chars("X", listOf("3", ".", "3", "E", "+", "0"))
             val query = number_chars(X, listOf("3", ".", "9"))
@@ -95,7 +95,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
     }
 
     fun testNumberCharsInstantiationError() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = number_chars("X", "L")

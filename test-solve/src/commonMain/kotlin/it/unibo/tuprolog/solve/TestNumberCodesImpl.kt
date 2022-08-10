@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumberCodes {
     override fun testNumberCodesListIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_codes(33, "L")
@@ -19,7 +19,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCodesNumIsDecimal() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_codes(33.1, "L")
@@ -33,7 +33,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCodesListIsVar2() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_codes(9921.1, "L")
@@ -47,7 +47,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCodesOk() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_codes(33, listOf(51, 51))
@@ -61,7 +61,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCodesCompleteTest() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_codes(34, listOf(51, 52))
@@ -75,7 +75,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCodesNegativeNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_codes("X", listOf(45, 51, 46, 56))
@@ -89,7 +89,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCodesChar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_codes("a", "L")

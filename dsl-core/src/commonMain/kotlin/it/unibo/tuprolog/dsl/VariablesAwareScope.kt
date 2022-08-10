@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Var
 import kotlin.js.JsName
 
 @Suppress("PropertyName")
-interface VariablesAwareScope : PrologAwareScope {
+interface VariablesAwareScope : LogicProgrammingAwareScope {
 
     @JsName("A")
     val A: Var get() = varOf("A")

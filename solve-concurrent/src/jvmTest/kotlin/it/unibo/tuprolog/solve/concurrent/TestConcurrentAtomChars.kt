@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun atomCharsTestFirstIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = atom_chars("X", listOf("t", "e", "s", "t"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -24,7 +24,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun atomCharsTestYes() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = atom_chars("test", listOf("t", "e", "s", "t"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -35,7 +35,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun atomCharsTestOneCharIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = atom_chars("test", listOf("t", "e", "s", "T"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -46,7 +46,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun atomCharsTestFailure() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = atom_chars("test1", listOf("t", "e", "s", "T"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -57,7 +57,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun atomCharsTestEmpty() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = atom_chars("", "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -68,7 +68,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun atomCharsTestListHead() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = atom_chars("ac", listOf("a", "C"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -79,7 +79,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun atomCharsTestIstantationErrorCheck() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = atom_chars("A", "L")
 
@@ -100,7 +100,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     }
 
     fun atomCharsTestTypeErrorCheck() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = atom_chars("A", "iso")
 

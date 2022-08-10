@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -15,7 +15,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
     val errorSignature: Signature
 
     fun testFindXInDiffValues() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = findall("X", ("X" eq 1) or ("X" eq 2), "S")
@@ -27,7 +27,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFindSumResult() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = findall("+"("X", "Y"), "X" eq 1, "S")
@@ -39,7 +39,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFindXinFail() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = findall("X", fail, "L")
@@ -51,7 +51,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFindXinSameXValues() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = findall("X", ("X" eq 1) or ("X" eq 1), "S")
@@ -63,7 +63,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testResultListIsCorrect() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = findall("X", ("X" eq 2) or ("X" eq 1), listOf(1, 2))
@@ -75,7 +75,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFindXtoDoubleAssignment() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = findall("X", ("X" eq 1) or ("X" eq 2), listOf("X", "Y"))
@@ -87,7 +87,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFindXinGoal() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = findall("X", "Goal", "S")
@@ -108,7 +108,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFindXinNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = findall("X", 4, "S")
@@ -130,7 +130,7 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
     }
 
     fun testFindXinCall() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = findall("X", call(1), "S")

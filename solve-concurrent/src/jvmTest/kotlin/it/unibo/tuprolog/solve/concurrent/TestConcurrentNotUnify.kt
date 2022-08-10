@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testNumberNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = 1 notEqualsTo 1
@@ -20,7 +20,7 @@ interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testNumberXNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "X" notEqualsTo 1
@@ -32,7 +32,7 @@ interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testXYNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "X" notEqualsTo "Y"
@@ -44,7 +44,7 @@ interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testDoubleNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = (("X" notEqualsTo "Y") and ("X" notEqualsTo "abc"))
@@ -56,7 +56,7 @@ interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testFDefNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "f"("X", "def") notEqualsTo ("f"("def", "Y"))
@@ -68,7 +68,7 @@ interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testDiffNumberNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = 1 notEqualsTo 2
@@ -80,7 +80,7 @@ interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testDecNumberNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = intOf(1) notEqualsTo realOf(1.0)
@@ -92,7 +92,7 @@ interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testGNotUnifyFX() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("g"("X")) notEqualsTo ("f"("a"("X")))
@@ -104,7 +104,7 @@ interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testFNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("f"("X", 1)) notEqualsTo ("f"("a"("X")))
@@ -116,7 +116,7 @@ interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testFMultipleTermNotUnify() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("f"("X", "Y", "X")) notEqualsTo ("f"("a"("X"), "a"("Y"), "Y", 2))

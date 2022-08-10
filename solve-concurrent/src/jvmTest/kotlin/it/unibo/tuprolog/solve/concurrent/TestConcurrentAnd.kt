@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testTermIsFreeVariable() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = "X" eq 1 and `var`("X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -25,7 +25,7 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testWithSubstitution() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = `var`("X") and ("X" eq 1)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -36,7 +36,7 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testFailIsCallable() { // goal
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = fail and call(3)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
@@ -47,7 +47,7 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testNoFooIsCallable() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(
                 flags = FlagStore.of(Unknown to Unknown.ERROR)
             )
@@ -68,7 +68,7 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
     }
 
     fun testTrueVarCallable() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "X" eq true and call("X")

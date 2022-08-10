@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
@@ -9,7 +9,7 @@ internal class TestOnceImpl(
     override val errorSignature: Signature
 ) : TestOnce {
     override fun testOnceCut() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "once"("!")
@@ -23,7 +23,7 @@ internal class TestOnceImpl(
     }
 
     override fun testOnceCutOr() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("once"("!") and (("X" eq 1) or ("X" eq 2)))
@@ -42,7 +42,7 @@ internal class TestOnceImpl(
     }
 
     override fun testOnceRepeat() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "once"(repeat)
@@ -56,7 +56,7 @@ internal class TestOnceImpl(
     }
 
     override fun testOnceFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "once"(fail)
@@ -70,7 +70,7 @@ internal class TestOnceImpl(
     }
 
     override fun testOnceNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "once"(3)
@@ -94,7 +94,7 @@ internal class TestOnceImpl(
     }
 
     override fun testOnceX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = "once"("X")

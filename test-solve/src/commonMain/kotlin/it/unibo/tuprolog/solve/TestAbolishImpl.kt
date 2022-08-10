@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestAbolish {
     override fun testDoubleAbolish() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = abolish("abolish" / 1)
@@ -32,7 +32,7 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
     }
 
     override fun testAbolishFoo() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = abolish("foo" / "a")
@@ -56,7 +56,7 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
     }
 
     override fun testAbolishFooNeg() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = abolish("foo" / intOf(-1))
@@ -80,7 +80,7 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
     }
 
     override fun testAbolishFlag() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = (current_flag("max_arity", A) and ((X `is` (A + 1)) and abolish("foo" / X)))
@@ -102,7 +102,7 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
     }
 
     override fun testAbolish() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = abolish(intOf(5) / 2)

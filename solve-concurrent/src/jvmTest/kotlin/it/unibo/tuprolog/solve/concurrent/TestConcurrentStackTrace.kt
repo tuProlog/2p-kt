@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.dsl.PrologScope
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.LogicProgrammingScope
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
@@ -16,8 +16,8 @@ import kotlin.test.assertEquals
 
 interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
-    private fun threeLayersTheory(errorExpression: PrologScope.() -> Struct): Theory =
-        prolog {
+    private fun threeLayersTheory(errorExpression: LogicProgrammingScope.() -> Struct): Theory =
+        logicProgramming {
             theoryOf(
                 rule { "foo"(X) impliedBy "bar"(X) },
                 rule { "bar"(X) impliedBy "baz"(X) },
@@ -26,7 +26,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
         }
 
     fun testSimpleStackTrace() {
-        prolog {
+        logicProgramming {
             val Y = Y
             val solver = solverWithDefaultBuiltins(staticKb = threeLayersTheory { X `is` (Y + 1) })
 
@@ -54,7 +54,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testDoubleStackTrace() {
-        prolog {
+        logicProgramming {
             val Y = Y
             val solver = solverWithDefaultBuiltins(staticKb = threeLayersTheory { X `is` (Y + 1) })
 
@@ -82,7 +82,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testTripleStackTrace() {
-        prolog {
+        logicProgramming {
             val Y = Y
             val solver = solverWithDefaultBuiltins(staticKb = threeLayersTheory { X `is` (Y + 1) })
 
@@ -110,7 +110,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testThrowIsNotInStacktrace() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins(staticKb = threeLayersTheory { `throw`("x") })
 
             val query = findall(X, bagof(Z, "foo"(Z), X), L)
