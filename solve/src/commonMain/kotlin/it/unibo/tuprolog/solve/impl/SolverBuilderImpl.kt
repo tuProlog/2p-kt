@@ -30,14 +30,14 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
         this.runtime = runtime
     }
 
-    override var builtins: Library = factory.defaultBuiltins
+    override var builtins: Library? = factory.defaultBuiltins
 
     override fun builtins(builtins: Library): SolverBuilder = returningThis {
         this.builtins = builtins
     }
 
     override fun noBuiltins(): SolverBuilder = returningThis {
-        this.builtins = Runtime.empty()
+        this.builtins = null
     }
 
     override var flags: FlagStore = factory.defaultFlags
@@ -161,9 +161,12 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
         warnings = channel
     }
 
+    private val runtimeWithBuiltins: Runtime
+        get() = builtins?.let { runtime + it } ?: runtime
+
     override fun build(): Solver =
         factory.solverOf(
-            libraries = runtime + builtins,
+            libraries = runtimeWithBuiltins,
             staticKb = staticKb,
             dynamicKb = dynamicKb,
             flags = flags,
@@ -173,7 +176,7 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
 
     override fun buildMutable(): MutableSolver =
         factory.mutableSolverOf(
-            libraries = runtime + builtins,
+            libraries = runtimeWithBuiltins,
             staticKb = staticKb,
             dynamicKb = dynamicKb,
             flags = flags,
@@ -222,7 +225,7 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
     override fun toFactory(): SolverFactory =
         object : SolverFactory by factory {
             override val defaultBuiltins: Library
-                get() = builtins
+                get() = builtins ?: factory.defaultBuiltins
 
             override val defaultRuntime: Runtime
                 get() = runtime
