@@ -52,8 +52,7 @@ internal class RuntimeImpl(private val delegate: Map<String, Library>) : Runtime
         }.toMap()
     }
 
-    override fun plus(other: Library): RuntimeImpl {
-        if (other is Runtime) return plus(other)
+    override fun plus(other: Library): Runtime {
         return aliases.find { other.alias in aliases }
             ?.let { alreadyLoadedError(other) }
             ?: RuntimeImpl(libraries.asSequence() + sequenceOf(other))

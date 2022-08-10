@@ -32,7 +32,7 @@ interface SolverBuilder {
     fun runtime(runtime: Runtime): SolverBuilder
 
     @JsName("builtins")
-    var builtins: Library
+    var builtins: Library?
 
     @JsName("setBuiltins")
     fun builtins(builtins: Library): SolverBuilder
