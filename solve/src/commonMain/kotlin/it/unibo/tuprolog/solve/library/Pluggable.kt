@@ -48,7 +48,4 @@ interface Pluggable {
     /** Checks whether the provided signature, is protected in this library */
     @JsName("hasProtected")
     fun hasProtected(signature: Signature): Boolean = signature in this
-
-    @JsName("plus")
-    operator fun plus(other: Library): Runtime
 }
