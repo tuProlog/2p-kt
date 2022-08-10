@@ -5,7 +5,7 @@ private object ModuleNames {
 
     private const val solvePrefix = "2p-solve"
 
-    const val classic = "${solvePrefix}-classic"
+    const val classic = "$solvePrefix-classic"
 
     private fun withOptionalPrefix(orgPrefix: Boolean = false, module: String, klass: String): String =
         (if (orgPrefix) "$tuprolog/" else "") + module + ":" + klass
@@ -13,21 +13,20 @@ private object ModuleNames {
     fun classicFactoryClass(orgPrefix: Boolean = false) =
         withOptionalPrefix(orgPrefix, classic, FactoryClassNames.classic)
 
-    const val streams = "${solvePrefix}-streams"
+    const val streams = "$solvePrefix-streams"
 
     fun streamsFactoryClass(orgPrefix: Boolean = false) =
         withOptionalPrefix(orgPrefix, streams, FactoryClassNames.streams)
 
-    const val problog = "${solvePrefix}-problog"
+    const val problog = "$solvePrefix-problog"
 
     fun problogFactoryClass(orgPrefix: Boolean = false) =
         withOptionalPrefix(orgPrefix, problog, FactoryClassNames.problog)
 
-    const val concurrent = "${solvePrefix}-concurrent"
+    const val concurrent = "$solvePrefix-concurrent"
 
     fun concurrentFactoryClass(orgPrefix: Boolean = false) =
         withOptionalPrefix(orgPrefix, concurrent, FactoryClassNames.concurrent)
-
 }
 
 internal actual fun solverFactory(className: String, vararg classNames: String): SolverFactory =
