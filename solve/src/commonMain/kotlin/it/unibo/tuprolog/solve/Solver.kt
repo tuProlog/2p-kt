@@ -89,5 +89,10 @@ interface Solver : ExecutionContextAware {
         @JsName("streams")
         @Deprecated("The \"Streams\" solver is experimental and not mature enough for general purpose usage")
         val streams: SolverFactory by lazy { streamsSolverFactory() }
+
+        @JvmStatic
+        @get:JvmName("concurrent")
+        @JsName("concurrent")
+        val concurrent: SolverFactory by lazy { concurrentSolverFactory() }
     }
 }
