@@ -10,6 +10,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":dsl-theory"))
+                api(project(":solve"))
+            }
+        }
+        val commonTest by getting {
+            dependencies {
                 api(project(":solve-classic"))
             }
         }
@@ -19,6 +24,6 @@ kotlin {
 packageJson {
     dependencies = mutableMapOf(
         npmSubproject("dsl-theory"),
-        npmSubproject("solve-classic"),
+        npmSubproject("solve"),
     )
 }

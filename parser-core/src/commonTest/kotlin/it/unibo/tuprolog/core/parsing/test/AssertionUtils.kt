@@ -50,7 +50,7 @@ fun TermParser.assertTermIsCorrectlyParsed(
     stringToBeParsed: String,
     expectedGenerator: LogicProgrammingScopeWithUnification.() -> Term
 ) {
-    assertTermIsCorrectlyParsed(stringToBeParsed, LogicProgrammingScopeWithUnification.empty().expectedGenerator())
+    assertTermIsCorrectlyParsed(stringToBeParsed, LogicProgrammingScopeWithUnification.of().expectedGenerator())
 }
 
 fun TermParser.assertTermIsCorrectlyParsed(stringToBeParsed: String, expected: Term, loggingOn: Boolean = false) {

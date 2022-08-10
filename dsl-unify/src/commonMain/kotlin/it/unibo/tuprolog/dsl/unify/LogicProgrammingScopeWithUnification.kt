@@ -33,10 +33,9 @@ interface LogicProgrammingScopeWithUnification : LogicProgrammingScope, Unificat
         unify(term1.toTerm(), term2.toTerm(), occurCheckEnabled)
 
     companion object {
-        @JsName("empty")
-        fun empty(): LogicProgrammingScopeWithUnification = LogicProgrammingScopeWithUnificationImpl()
-
         @JsName("of")
-        fun of(unificator: Unificator): LogicProgrammingScopeWithUnification = LogicProgrammingScopeWithUnificationImpl(unificator)
+        fun of(
+            unificator: Unificator = Unificator.default
+        ): LogicProgrammingScopeWithUnification = LogicProgrammingScopeWithUnificationImpl(unificator)
     }
 }

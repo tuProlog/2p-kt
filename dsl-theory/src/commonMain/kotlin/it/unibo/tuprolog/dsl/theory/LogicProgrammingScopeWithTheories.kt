@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.dsl.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.unify.LogicProgrammingScopeWithUnification
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface LogicProgrammingScopeWithTheories : LogicProgrammingScopeWithUnification {
@@ -30,7 +31,9 @@ interface LogicProgrammingScopeWithTheories : LogicProgrammingScopeWithUnificati
     )
 
     companion object {
-        @JsName("empty")
-        fun empty(): LogicProgrammingScopeWithTheories = LogicProgrammingScopeWithTheoriesImpl()
+        @JsName("of")
+        fun of(
+            unificator: Unificator = Unificator.default
+        ): LogicProgrammingScopeWithTheories = LogicProgrammingScopeWithTheoriesImpl(unificator)
     }
 }
