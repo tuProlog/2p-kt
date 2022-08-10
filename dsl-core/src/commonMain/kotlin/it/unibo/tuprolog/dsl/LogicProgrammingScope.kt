@@ -7,197 +7,152 @@ import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.VariablesProvider
 import kotlin.js.JsName
 import it.unibo.tuprolog.core.List as LogicList
 
-interface LogicProgrammingScope : PrologStdLibScope, VariablesAwareScope {
+interface LogicProgrammingScope : PrologStdLibScope, VariablesProvider {
 
     @JsName("stringInvoke")
-    operator fun String.invoke(term: Any, vararg terms: Any): Struct =
-        structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
+    operator fun String.invoke(term: Any, vararg terms: Any): Struct
 
     @JsName("structOfAny")
-    fun structOf(functor: String, vararg args: Any): Struct =
-        structOf(functor, *args.map { it.toTerm() }.toTypedArray())
+    fun structOf(functor: String, vararg args: Any): Struct
 
     @JsName("anyPlus")
-    operator fun Any.plus(other: Any): Struct = structOf("+", this.toTerm(), other.toTerm())
+    operator fun Any.plus(other: Any): Struct
 
     @JsName("anyMinus")
-    operator fun Any.minus(other: Any): Struct = structOf("-", this.toTerm(), other.toTerm())
+    operator fun Any.minus(other: Any): Struct
 
     @JsName("anyTimes")
-    operator fun Any.times(other: Any): Struct = structOf("*", this.toTerm(), other.toTerm())
+    operator fun Any.times(other: Any): Struct
 
     @JsName("anyDiv")
-    operator fun Any.div(other: Any): Indicator = indicatorOf(this.toTerm(), other.toTerm())
+    operator fun Any.div(other: Any): Indicator
 
     /** Creates a structure whose functor is `'='/2` (term unification operator) */
     @JsName("anyEqualsTo")
-    infix fun Any.equalsTo(other: Any): Struct = structOf("=", this.toTerm(), other.toTerm())
+    infix fun Any.equalsTo(other: Any): Struct
 
     @JsName("anyNotEqualsTo")
-    infix fun Any.notEqualsTo(other: Any): Struct = structOf("\\=", this.toTerm(), other.toTerm())
+    infix fun Any.notEqualsTo(other: Any): Struct
 
     @JsName("anyGreaterThan")
-    infix fun Any.greaterThan(other: Any): Struct = structOf(">", this.toTerm(), other.toTerm())
+    infix fun Any.greaterThan(other: Any): Struct
 
     @JsName("anyGreaterThanOrEqualsTo")
-    infix fun Any.greaterThanOrEqualsTo(other: Any): Struct =
-        structOf(">=", this.toTerm(), other.toTerm())
+    infix fun Any.greaterThanOrEqualsTo(other: Any): Struct
 
     @JsName("anyNonLowerThan")
-    infix fun Any.nonLowerThan(other: Any): Struct = this greaterThanOrEqualsTo other
+    infix fun Any.nonLowerThan(other: Any): Struct
 
     @JsName("anyLowerThan")
-    infix fun Any.lowerThan(other: Any): Struct = structOf("<", this.toTerm(), other.toTerm())
+    infix fun Any.lowerThan(other: Any): Struct
 
     @JsName("anyLowerThanOrEqualsTo")
-    infix fun Any.lowerThanOrEqualsTo(other: Any): Struct =
-        structOf("=<", this.toTerm(), other.toTerm())
+    infix fun Any.lowerThanOrEqualsTo(other: Any): Struct
 
     @JsName("anyNonGreaterThan")
-    infix fun Any.nonGreaterThan(other: Any): Struct = this lowerThanOrEqualsTo other
+    infix fun Any.nonGreaterThan(other: Any): Struct
 
     @JsName("anyIntDiv")
-    infix fun Any.intDiv(other: Any): Struct = structOf("//", this.toTerm(), other.toTerm())
+    infix fun Any.intDiv(other: Any): Struct
 
     @JsName("anyRem")
-    operator fun Any.rem(other: Any): Struct = structOf("rem", this.toTerm(), other.toTerm())
+    operator fun Any.rem(other: Any): Struct
 
     @JsName("anyAnd")
-    infix fun Any.and(other: Any): Struct = tupleOf(this.toTerm(), other.toTerm())
+    infix fun Any.and(other: Any): Struct
 
     @JsName("anyOr")
-    infix fun Any.or(other: Any): Struct = structOf(";", this.toTerm(), other.toTerm())
+    infix fun Any.or(other: Any): Struct
 
     @JsName("anyPow")
-    infix fun Any.pow(other: Any): Struct = structOf("**", this.toTerm(), other.toTerm())
+    infix fun Any.pow(other: Any): Struct
 
     @JsName("anySup")
-    infix fun Any.sup(other: Any): Struct = structOf("^", this.toTerm(), other.toTerm())
+    infix fun Any.sup(other: Any): Struct
 
     @JsName("anyIs")
-    infix fun Any.`is`(other: Any): Struct = structOf("is", this.toTerm(), other.toTerm())
+    infix fun Any.`is`(other: Any): Struct
 
     @JsName("anyThen")
-    infix fun Any.then(other: Any): Struct = structOf("->", this.toTerm(), other.toTerm())
+    infix fun Any.then(other: Any): Struct
 
     @JsName("anyImpliedBy")
-    infix fun Any.impliedBy(other: Any): Rule {
-        when (val t = this.toTerm()) {
-            is Struct -> return ruleOf(t, other.toTerm())
-            else -> raiseErrorConvertingTo(Struct::class)
-        }
-    }
+    infix fun Any.impliedBy(other: Any): Rule
 
     @JsName("anyIf")
-    infix fun Any.`if`(other: Any): Rule = this impliedBy other
+    infix fun Any.`if`(other: Any): Rule
 
     @JsName("anyImpliedByVararg")
-    fun Any.impliedBy(vararg other: Any): Rule =
-        this impliedBy Tuple.wrapIfNeeded(*other.map { it.toTerm() }.toTypedArray())
+    fun Any.impliedBy(vararg other: Any): Rule
 
     @JsName("anyIfVararg")
-    fun Any.`if`(vararg other: Any): Rule =
-        this.impliedBy(*other)
+    fun Any.`if`(vararg other: Any): Rule
 
     @JsName("tupleOfAny")
-    fun tupleOf(vararg terms: Any): Tuple = tupleOf(*terms.map { it.toTerm() }.toTypedArray())
+    fun tupleOf(vararg terms: Any): Tuple
 
     @JsName("listOfAny")
-    fun listOf(vararg terms: Any): LogicList =
-        this.listOf(*terms.map { it.toTerm() }.toTypedArray())
+    fun listOf(vararg terms: Any): LogicList
 
     @JsName("blockOf")
-    fun blockOf(vararg terms: Any): Block =
-        this.blockOf(*terms.map { it.toTerm() }.toTypedArray())
+    fun blockOf(vararg terms: Any): Block
 
     @JsName("factOfAny")
-    fun factOf(term: Any): Fact = factOf(term.toTerm() as Struct)
+    fun factOf(term: Any): Fact
 
     @JsName("consOfAny")
-    fun consOf(head: Any, tail: Any): Cons = consOf(head.toTerm(), tail.toTerm())
+    fun consOf(head: Any, tail: Any): Cons
 
     @JsName("directiveOfAny")
-    fun directiveOf(term: Any, vararg terms: Any): Directive =
-        directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
+    fun directiveOf(term: Any, vararg terms: Any): Directive
 
     @JsName("scope")
-    fun <R> scope(function: LogicProgrammingScope.() -> R): R = LogicProgrammingScope.empty().function()
+    fun <R> scope(function: LogicProgrammingScope.() -> R): R
 
     @JsName("list")
-    fun list(vararg items: Any, tail: Any? = null): LogicList = kotlin.collections.listOf(*items).map { it.toTerm() }.let {
-        if (tail != null) {
-            listFrom(it, last = tail.toTerm())
-        } else {
-            listOf(it)
-        }
-    }
+    fun list(vararg items: Any, tail: Any? = null): LogicList
 
     @JsName("rule")
-    fun rule(function: LogicProgrammingScope.() -> Any): Rule = LogicProgrammingScope.empty().function().toTerm() as Rule
+    fun rule(function: LogicProgrammingScope.() -> Any): Rule
 
-    fun clause(function: LogicProgrammingScope.() -> Any): Clause = LogicProgrammingScope.empty().function().let {
-        when (val t = it.toTerm()) {
-            is Clause -> t
-            is Struct -> return factOf(t)
-            else -> it.raiseErrorConvertingTo(Clause::class)
-        }
-    }
+    fun clause(function: LogicProgrammingScope.() -> Any): Clause
 
     @JsName("directive")
-    fun directive(function: LogicProgrammingScope.() -> Any): Directive = LogicProgrammingScope.empty().function().let {
-        when (val t = it.toTerm()) {
-            is Directive -> t
-            is Struct -> return directiveOf(t)
-            else -> it.raiseErrorConvertingTo(Directive::class)
-        }
-    }
+    fun directive(function: LogicProgrammingScope.() -> Any): Directive
 
     @JsName("fact")
-    fun fact(function: LogicProgrammingScope.() -> Any): Fact = LogicProgrammingScope.empty().function().let {
-        when (val t = it.toTerm()) {
-            is Fact -> t
-            is Struct -> return factOf(t)
-            else -> it.raiseErrorConvertingTo(Fact::class)
-        }
-    }
+    fun fact(function: LogicProgrammingScope.() -> Any): Fact
 
     @JsName("varTo")
-    infix fun Var.to(termObject: Any) = Substitution.of(this, termObject.toTerm())
+    infix fun Var.to(termObject: Any): Substitution.Unifier
 
     @JsName("stringTo")
-    infix fun String.to(termObject: Any) = Substitution.of(varOf(this), termObject.toTerm())
+    infix fun String.to(termObject: Any): Substitution.Unifier
 
     @JsName("substitutionGet")
-    operator fun Substitution.get(term: Any): Term? =
-        when (val t = term.toTerm()) {
-            is Var -> this[t]
-            else -> term.raiseErrorConvertingTo(Var::class)
-        }
+    operator fun Substitution.get(term: Any): Term?
 
     @JsName("substitutionContainsKey")
-    fun Substitution.containsKey(term: Any): Boolean =
-        when (val t = term.toTerm()) {
-            is Var -> this.containsKey(t)
-            else -> term.raiseErrorConvertingTo(Var::class)
-        }
+    fun Substitution.containsKey(term: Any): Boolean
 
     @JsName("substitutionContains")
-    operator fun Substitution.contains(term: Any): Boolean = containsKey(term)
+    operator fun Substitution.contains(term: Any): Boolean
 
     @JsName("substitutionContainsValue")
-    fun Substitution.containsValue(term: Any): Boolean =
-        this.containsValue(term.toTerm())
+    fun Substitution.containsValue(term: Any): Boolean
 
     companion object {
         @JsName("empty")
-        fun empty(): LogicProgrammingScope = LogicProgrammingScopeImpl()
+        fun empty(): LogicProgrammingScope = LogicProgrammingScopeImpl(Scope.empty())
     }
 }
