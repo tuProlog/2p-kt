@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.flags.invoke
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.library.toRuntime
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
 import it.unibo.tuprolog.theory.Theory
 import kotlin.reflect.KClass
