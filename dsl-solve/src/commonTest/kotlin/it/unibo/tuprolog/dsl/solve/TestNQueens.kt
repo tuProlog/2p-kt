@@ -13,7 +13,7 @@ class TestNQueens {
         listOf((1 to 2), (2 to 4), (3 to 1), (4 to 3))
     )
 
-    private fun nQueens(n: Int): Sequence<List<Pair<Int, Int>>> = logicProgramming {
+    private fun nQueens(n: Int): Sequence<List<Pair<Int, Int>>> = prolog {
         staticKb(
             rule {
                 "no_attack"(("X1" and "Y1"), ("X2" and "Y2")) `if` (
