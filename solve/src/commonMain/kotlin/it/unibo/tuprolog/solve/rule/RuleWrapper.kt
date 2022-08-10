@@ -4,11 +4,10 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.VariablesProvider
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import kotlin.reflect.KProperty
 import kotlin.collections.List as KtList
 
 // TODO: 16/01/2020 document and test this class
@@ -19,13 +18,7 @@ abstract class RuleWrapper<C : ExecutionContext>(signature: Signature) : Abstrac
 
     private val scope: Scope = Scope.empty()
 
-    protected inner class VariableProvider {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): Var {
-            return scope.varOf(property.name)
-        }
-    }
-
-    protected val variables = VariableProvider()
+    protected val variables = VariablesProvider.of(scope)
 
     final override val implementation: Rule by lazy {
         val headArgs = scope.head
