@@ -30,4 +30,10 @@ public class TestJavaConstructionForSolveStreams extends TestJavaConstruction {
     public void testPrologFactory() {
         super.testPrologFactory();
     }
+
+    @Override
+    @Test
+    public void testConcurrentFactory() {
+        super.testConcurrentFactory();
+    }
 }
