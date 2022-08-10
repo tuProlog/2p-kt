@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testCompoundDec() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = compound(33.3)
@@ -20,7 +20,7 @@ interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCompoundNegDec() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = compound(-33.3)
@@ -32,7 +32,7 @@ interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCompoundNegA() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = compound("-"("a"))
@@ -44,7 +44,7 @@ interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCompoundAny() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = compound(`_`)
@@ -56,7 +56,7 @@ interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCompoundA() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = compound("a")
@@ -68,7 +68,7 @@ interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCompoundAOfB() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = compound("a"("b"))
@@ -80,7 +80,7 @@ interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, Sol
     }
 
     fun testCompoundListA() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = compound(listOf("a"))

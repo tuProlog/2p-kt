@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.streams.primitive.testutils
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.hasSolutions
 import it.unibo.tuprolog.solve.streams.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.solve.streams.testutils.SolverTestUtils.createSolveRequest
@@ -13,10 +13,10 @@ import it.unibo.tuprolog.solve.yes
  */
 internal object ConjunctionUtils {
 
-    internal val trueAndTrueSolveRequest = prolog { createSolveRequest("true" and "true") }
+    internal val trueAndTrueSolveRequest = logicProgramming { createSolveRequest("true" and "true") }
 
-    internal val twoMatchesDB = prolog { theory({ "f"("a") }, { "f"("b") }) }
-    internal val myRequestToSolutions = prolog {
+    internal val twoMatchesDB = logicProgramming { theory({ "f"("a") }, { "f"("b") }) }
+    internal val myRequestToSolutions = logicProgramming {
         ktListOf(
             ("f"("A") and "f"("B")).hasSolutions(
                 { yes("A" to "a", "B" to "a") },
@@ -28,7 +28,7 @@ internal object ConjunctionUtils {
     }
 
     /** Requests that should fail */
-    internal val failedRequests = prolog {
+    internal val failedRequests = logicProgramming {
         ktListOf(
             "true" and "fail",
             "fail" and "true",

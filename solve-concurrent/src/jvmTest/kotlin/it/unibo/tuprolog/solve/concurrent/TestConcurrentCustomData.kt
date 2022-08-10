@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.assertHasPredicateInAPI
 import it.unibo.tuprolog.solve.no
@@ -26,7 +26,7 @@ interface TestConcurrentCustomData<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testEphemeralData() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val setQuery = SetEphemeral.functor("key", 1)
@@ -51,7 +51,7 @@ interface TestConcurrentCustomData<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testDurableData() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val setQuery = SetDurable.functor("key", 1)
@@ -76,7 +76,7 @@ interface TestConcurrentCustomData<T : WithAssertingEquals> : FromSequence<T>, S
     }
 
     fun testPersistentData() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val setQuery = SetPersistent.functor("key", 1)

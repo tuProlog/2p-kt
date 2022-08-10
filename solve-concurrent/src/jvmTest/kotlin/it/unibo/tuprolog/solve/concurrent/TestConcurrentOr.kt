@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentOr<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testTrueOrFalse() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = true or fail
@@ -20,7 +20,7 @@ interface TestConcurrentOr<T : WithAssertingEquals> : FromSequence<T>, SolverFac
     }
 
     fun testCutFalseOrTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "!" and fail or true
@@ -32,7 +32,7 @@ interface TestConcurrentOr<T : WithAssertingEquals> : FromSequence<T>, SolverFac
     }
 
     fun testCutCall() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = "!" or call(3)
@@ -44,7 +44,7 @@ interface TestConcurrentOr<T : WithAssertingEquals> : FromSequence<T>, SolverFac
     }
 
     fun testCutAssignedValue() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("X" eq 1 and "!") or ("X" eq 2)
@@ -56,7 +56,7 @@ interface TestConcurrentOr<T : WithAssertingEquals> : FromSequence<T>, SolverFac
     }
 
     fun testOrDoubleAssignment() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("X" eq 1) or ("X" eq 2)

@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.streams.primitive.integrationtest
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.assertSolutionEquals
@@ -22,7 +22,7 @@ internal class CutAndConjunctionIntegrationTest {
 
     @Test
     fun cutAsFirstGoalInConjunctionDoesNothing() {
-        prolog {
+        logicProgramming {
             val modifiedSimpleFactDatabaseGoals =
                 simpleFactTheoryNotableGoalToSolutions.map { (goal, expectedSolutions) ->
                     ("!" and goal).run { to(expectedSolutions.map { it.changeQueryTo(this) }) }
@@ -43,7 +43,7 @@ internal class CutAndConjunctionIntegrationTest {
 
     @Test
     fun cutAsSecondGoalInConjunctionCutsFirstGoalAlternatives() {
-        prolog {
+        logicProgramming {
             val modifiedSimpleFactDatabaseGoals =
                 simpleFactTheoryNotableGoalToSolutions.map { (goal, expectedSolutions) ->
                     (goal and "!").hasSolutions({ expectedSolutions.first().changeQueryTo(this) })
@@ -64,7 +64,7 @@ internal class CutAndConjunctionIntegrationTest {
 
     @Test
     fun cutAsThirdGoalInConjunctionCutsOtherGoalsAlternatives() {
-        prolog {
+        logicProgramming {
             val query = "g"("A") and "g"("B") and "!"
             val request =
                 createSolveRequest(query, simpleFactTheory, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
@@ -76,7 +76,7 @@ internal class CutAndConjunctionIntegrationTest {
 
     @Test
     fun cutInMiddleOfGoalConjunctionWorksAsExpected() {
-        prolog {
+        logicProgramming {
             val query = "g"("A") and "!" and "g"("B")
             val request =
                 createSolveRequest(query, simpleFactTheory, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
@@ -94,7 +94,7 @@ internal class CutAndConjunctionIntegrationTest {
 
     @Test
     fun multipleCutGoalInConjunctionWorksAsExpected() {
-        prolog {
+        logicProgramming {
             val query = "g"("A") and "!" and "g"("B") and "!"
             val request =
                 createSolveRequest(query, simpleFactTheory, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
@@ -106,7 +106,7 @@ internal class CutAndConjunctionIntegrationTest {
 
     @Test
     fun deepCutsInConjunctionsDoesntCutOuterScopeNodes() {
-        prolog {
+        logicProgramming {
             val database = theoryOf(
                 *simpleFactTheory.takeWhile { it.head != "g"("b") }.toTypedArray(),
                 rule { "g"("cutting") `if` "g1"("deep1") },

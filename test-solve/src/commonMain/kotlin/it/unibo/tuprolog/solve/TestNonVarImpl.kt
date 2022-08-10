@@ -1,12 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
-import kotlin.collections.listOf as ktListOf
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNonVar {
 
     override fun testNonVarNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = nonvar(33.3)
@@ -20,7 +19,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
     }
 
     override fun testNonVarFoo() { // foo
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = nonvar("foo")
@@ -34,7 +33,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
     }
 
     override fun testNonVarFooCl() { // Foo (CapsLock)
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = nonvar("Foo")
@@ -48,7 +47,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
     }
 
     override fun testNonVarFooAssignment() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("foo" eq "Foo") and nonvar("Foo")
@@ -62,7 +61,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
     }
 
     override fun testNonVarAnyTerm() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = nonvar(`_`)
@@ -76,7 +75,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
     }
 
     override fun testNonVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = nonvar("a"("b"))

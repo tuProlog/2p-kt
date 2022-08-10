@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.dsl.prolog
+import it.unibo.tuprolog.dsl.logicProgramming
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.assertSolutionEquals
@@ -30,7 +30,7 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
         detectorCreator: () -> OverloadDetector = OverloadDetector.Companion::create,
         refCreator: (OverloadDetector) -> Ref = ObjectRef.Companion::of,
         case2Term: (TestDatum) -> Term
-    ) = prolog {
+    ) = logicProgramming {
         val solver = solverFactory.solverWithDefaultBuiltins(Runtime.of(OOPLib))
         val obj = detectorCreator()
         val ref = refCreator(obj)

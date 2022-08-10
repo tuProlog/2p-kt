@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestBigList {
 
@@ -9,7 +9,7 @@ internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestB
         get() = 4000
 
     override fun testBigListGeneration() {
-        prolog {
+        logicProgramming {
             val theory = theoryOf(
                 fact { "biglist"(0, listOf(0)) },
                 rule {

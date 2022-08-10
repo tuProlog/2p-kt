@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestClause {
     override fun testClauseXBody() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = clause("x", "Body")
@@ -21,7 +21,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
     }
 
     override fun testClauseAnyB() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = clause(`_`, "B")
@@ -44,7 +44,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
     }
 
     override fun testClauseNumB() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = clause(4, "B")
@@ -68,7 +68,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
     }
 
     override fun testClauseFAnyNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = clause("f"(`_`), 5)
@@ -92,7 +92,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
     }
 
     override fun testClauseAtomBody() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = clause(atom(`_`), "Body")
@@ -116,7 +116,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
     }
 
     override fun testClauseVariables() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 theoryOf(
                     rule { "f"(X) impliedBy "g"(X) }

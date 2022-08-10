@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLength {
 
     override fun testAtomLengthNoVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_length("test", 4)
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -19,7 +19,7 @@ class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLen
     }
 
     override fun testAtomLengthSecondIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_length("test", X)
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -32,7 +32,7 @@ class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLen
     }
 
     override fun testAtomLengthFirstIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = char_code("X", "a")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -55,7 +55,7 @@ class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLen
     }
 
     override fun testAtomLengthSecondIsVar2() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_length("testLength", X)
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -68,7 +68,7 @@ class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLen
     }
 
     override fun testAtomLengthFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_length("test", 5)
             val solutions = solver.solve(query, mediumDuration).toList()

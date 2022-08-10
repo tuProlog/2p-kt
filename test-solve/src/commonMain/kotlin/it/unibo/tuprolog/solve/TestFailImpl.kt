@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.Unknown
 
 internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail {
     override fun testFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = fail
@@ -21,7 +21,7 @@ internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail
     }
 
     override fun testUndefPred() { // streams solver: `No(query=undef_pred)` instead of undef_pred/0
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 flags = FlagStore.of(Unknown to Unknown.ERROR)
             )
@@ -44,7 +44,7 @@ internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail
     }
 
     override fun testSetFlagFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("set_prolog_flag"("unknown" and fail) and "undef_pred")
@@ -58,7 +58,7 @@ internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail
     }
 
     override fun testSetFlagWarning() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = ("set_prolog_flag"("unknown" and "warning") and "undef_pred")

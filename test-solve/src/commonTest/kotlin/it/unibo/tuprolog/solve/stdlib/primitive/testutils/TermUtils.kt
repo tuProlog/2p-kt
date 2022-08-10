@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
-import it.unibo.tuprolog.dsl.prolog
+import it.unibo.tuprolog.dsl.logicProgramming
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThan
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThanOrEqualTo
 import it.unibo.tuprolog.solve.stdlib.primitive.TermIdentical
@@ -16,7 +16,7 @@ internal object TermUtils {
 
     /** Equal functor test data (input, [true | false | ErrorType]) */
     internal val equalQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermIdentical.functor(
                     structOf("a", atomOf("c")),
@@ -34,7 +34,7 @@ internal object TermUtils {
 
     /** NotEqual functor test data (input, [true | false | ErrorType]) */
     internal val notEqualQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermNotIdentical.functor(
                     structOf("a", atomOf("c")),
@@ -52,7 +52,7 @@ internal object TermUtils {
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val greaterQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermGreaterThan.functor(
                     structOf("a", atomOf("a")),
@@ -75,7 +75,7 @@ internal object TermUtils {
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val greaterOrEqualQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermGreaterThanOrEqualTo.functor(
                     structOf("a", atomOf("a")),
@@ -98,7 +98,7 @@ internal object TermUtils {
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val lowerQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermLowerThan.functor(
                     structOf("a", atomOf("a")),
@@ -121,7 +121,7 @@ internal object TermUtils {
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val lowerOrEqualQueryToResult by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermLowerThanOrEqualTo.functor(
                     structOf("a", atomOf("a")),

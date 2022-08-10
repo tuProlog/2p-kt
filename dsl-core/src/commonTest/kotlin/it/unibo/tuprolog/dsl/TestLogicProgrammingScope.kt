@@ -17,15 +17,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertSame
 
-class TestProlog {
+class TestLogicProgrammingScope {
 
     companion object {
-        fun assertDSLCreationIsCorrect(expected: Term, actualCreator: PrologScope.() -> Term) {
-            assertEquals(expected, PrologScope.empty().actualCreator())
+        fun assertDSLCreationIsCorrect(expected: Term, actualCreator: LogicProgrammingScope.() -> Term) {
+            assertEquals(expected, LogicProgrammingScope.empty().actualCreator())
         }
 
-        fun assertDSLCreationIsCorrect(expectedCreator: PrologScope.() -> Term, actualCreator: PrologScope.() -> Term) {
-            val prolog = PrologScope.empty()
+        fun assertDSLCreationIsCorrect(expectedCreator: LogicProgrammingScope.() -> Term, actualCreator: LogicProgrammingScope.() -> Term) {
+            val prolog = LogicProgrammingScope.empty()
             assertEquals(prolog.expectedCreator(), prolog.actualCreator())
         }
     }
@@ -72,7 +72,7 @@ class TestProlog {
 
     @Test
     fun testUnderscore() {
-        prolog {
+        logicProgramming {
             assertNotEquals(`_`, `_`)
             assertEquals(varOf("X"), varOf("X"))
             assertEquals(varOf("_"), varOf("_"))
@@ -99,7 +99,7 @@ class TestProlog {
         assertDSLCreationIsCorrect({ varOf("A") }) {
             "A".toTerm()
         }
-        prolog {
+        logicProgramming {
             atomOf("a").let {
                 assertSame(it, it.toTerm())
             }

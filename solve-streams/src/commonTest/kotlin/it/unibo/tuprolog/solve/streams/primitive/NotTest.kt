@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.streams.primitive
 
-import it.unibo.tuprolog.dsl.prolog
-import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
+import it.unibo.tuprolog.dsl.logicProgramming
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScopeWithTheories
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.exception.error.TypeError
@@ -24,7 +24,7 @@ internal class NotTest {
 
     @Test
     fun notRevertsProvidedNoResponse() {
-        val query = prolog { "\\+"(false) }
+        val query = logicProgramming { "\\+"(false) }
         val solutions = Not.implementation.solve(
             createSolveRequest(query, primitives = mapOf(Not.descriptionPair, Call.descriptionPair))
         ).map { it.solution }.asIterable()
@@ -34,7 +34,7 @@ internal class NotTest {
 
     @Test
     fun notRevertsProvidedYesResponse() {
-        val query = prolog { "\\+"(true) }
+        val query = logicProgramming { "\\+"(true) }
         val solutions = Not.implementation.solve(
             createSolveRequest(query, primitives = mapOf(Not.descriptionPair, Call.descriptionPair))
         ).map { it.solution }.asIterable()
@@ -44,12 +44,12 @@ internal class NotTest {
 
     @Test
     fun notReturnsOnlyOneFailResponseIfMoreTrueOnes() {
-        val query = prolog { "\\+"("a") }
+        val query = logicProgramming { "\\+"("a") }
         val solutions = Not.implementation.solve(
             createSolveRequest(
                 query,
                 primitives = mapOf(Not.descriptionPair, Call.descriptionPair),
-                database = PrologScopeWithTheories.empty().theory({ "a" }, { "a" })
+                database = LogicProgrammingScopeWithTheories.empty().theory({ "a" }, { "a" })
             )
         ).map { it.solution }.asIterable()
 
@@ -59,7 +59,7 @@ internal class NotTest {
     @Test
     @Ignore
     fun notReturnsAsIsAnHaltSolution() {
-        val query = prolog { "\\+"(1) }
+        val query = logicProgramming { "\\+"(1) }
         val solutions = Not.implementation.solve(
             createSolveRequest(
                 query,
@@ -74,7 +74,7 @@ internal class NotTest {
                         DummyInstances.executionContext,
                         Not.signature,
                         TypeError.Expected.CALLABLE,
-                        prolog { numOf(1) }
+                        logicProgramming { numOf(1) }
                     )
                 )
             ),

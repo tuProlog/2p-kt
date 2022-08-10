@@ -1,12 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
-import kotlin.collections.listOf as ktListOf
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom {
 
     override fun testAtomAtom() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atom("atom")
@@ -20,7 +19,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
     }
 
     override fun testAtomString() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atom("string")
@@ -34,7 +33,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
     }
 
     override fun testAtomAofB() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atom("a"("b"))
@@ -48,7 +47,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
     }
 
     override fun testAtomVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atom("Var")
@@ -62,7 +61,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
     }
 
     override fun testAtomEmptyList() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atom(emptyList)
@@ -76,7 +75,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
     }
 
     override fun testAtomNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atom(6)
@@ -90,7 +89,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
     }
 
     override fun testAtomNumDec() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = atom(3.3)

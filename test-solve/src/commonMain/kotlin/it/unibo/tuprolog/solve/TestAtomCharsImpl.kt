@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChars {
 
     override fun atomCharsTestFirstIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_chars("X", listOf("t", "e", "s", "t"))
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -20,7 +20,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     }
 
     override fun atomCharsTestYes() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_chars("test", listOf("t", "e", "s", "t"))
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -33,7 +33,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     }
 
     override fun atomCharsTestOneCharIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_chars("test", listOf("t", "e", "s", "T"))
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -46,7 +46,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     }
 
     override fun atomCharsTestFailure() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_chars("test1", listOf("t", "e", "s", "T"))
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -59,7 +59,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     }
 
     override fun atomCharsTestEmpty() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_chars("", "L")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -72,7 +72,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     }
 
     override fun atomCharsTestListHead() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_chars("ac", listOf("a", "C"))
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -85,7 +85,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     }
 
     override fun atomCharsTestIstantationErrorCheck() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_chars("A", "L")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -107,7 +107,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     }
 
     override fun atomCharsTestTypeErrorCheck() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atom_chars("A", "iso")
             val solutions = solver.solve(query, mediumDuration).toList()

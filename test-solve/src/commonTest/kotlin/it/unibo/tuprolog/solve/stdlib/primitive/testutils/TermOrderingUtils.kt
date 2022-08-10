@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
-import it.unibo.tuprolog.dsl.prolog
+import it.unibo.tuprolog.dsl.logicProgramming
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.ResolutionException
@@ -40,7 +40,7 @@ internal object TermOrderingUtils {
 
     /** =@= test */
     internal val standardOrderEqualTest by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermSame.functor(realOf(1.0), realOf(1.0)) to true,
                 TermSame.functor("stringTest", "stringTest") to true,
@@ -51,7 +51,7 @@ internal object TermOrderingUtils {
 
     /** \=@= test */
     internal val standardOrderNotEqualTest by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermNotSame.functor(realOf(1.0), realOf(1.0)) to false,
                 TermNotSame.functor("stringTest", "stringTest") to false,
@@ -62,7 +62,7 @@ internal object TermOrderingUtils {
 
     /** @> test */
     internal val standardOrderGreaterThanTest by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermGreaterThan.functor(intOf(1), realOf(1.0)) to true,
                 TermGreaterThan.functor(realOf(1.0), intOf(1)) to false,
@@ -75,7 +75,7 @@ internal object TermOrderingUtils {
 
     /** @>= test */
     internal val standardOrderGreaterThanOrEqualToTest by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermGreaterThanOrEqualTo.functor(intOf(1), intOf(1)) to true,
                 TermGreaterThanOrEqualTo.functor("stringTest", "stringTest") to true,
@@ -87,7 +87,7 @@ internal object TermOrderingUtils {
 
     /** @< test */
     internal val standardOrderLowerThanTest by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermLowerThan.functor(realOf(1.0), intOf(1)) to true,
                 TermLowerThan.functor(intOf(1), realOf(1.0)) to false,
@@ -99,7 +99,7 @@ internal object TermOrderingUtils {
 
     /** @<= test */
     internal val standardOrderLowerThanOrEqualToTest by lazy {
-        prolog {
+        logicProgramming {
             mapOf(
                 TermLowerThanOrEqualTo.functor(intOf(1), realOf(1.0)) to false,
                 TermLowerThanOrEqualTo.functor(realOf(1.0), realOf(1.0)) to true,

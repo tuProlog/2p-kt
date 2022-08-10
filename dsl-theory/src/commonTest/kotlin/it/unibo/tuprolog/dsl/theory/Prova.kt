@@ -6,7 +6,7 @@ class Prova {
 
     @Test
     fun testProlog() {
-        prolog {
+        logicProgramming {
             println(
                 theoryOf(
                     fact { "member"("X", consOf("X", `_`)) },

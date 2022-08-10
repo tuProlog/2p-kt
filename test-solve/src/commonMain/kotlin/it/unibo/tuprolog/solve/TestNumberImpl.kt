@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestNumberImpl(private val solverFactory: SolverFactory) : TestNumber {
     override fun testBasicNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number(3)
@@ -18,7 +18,7 @@ internal class TestNumberImpl(private val solverFactory: SolverFactory) : TestNu
     }
 
     override fun testDecNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number(3.3)
@@ -32,7 +32,7 @@ internal class TestNumberImpl(private val solverFactory: SolverFactory) : TestNu
     }
 
     override fun testNegNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number(-3)
@@ -46,7 +46,7 @@ internal class TestNumberImpl(private val solverFactory: SolverFactory) : TestNu
     }
 
     override fun testLetterNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number("a")
@@ -60,7 +60,7 @@ internal class TestNumberImpl(private val solverFactory: SolverFactory) : TestNu
     }
 
     override fun testXNum() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number("X")

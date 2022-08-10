@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
@@ -9,7 +9,7 @@ internal class TestCallImpl(
     override val errorSignature: Signature
 ) : TestCall {
     override fun testCallCut() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call("!")
@@ -23,7 +23,7 @@ internal class TestCallImpl(
     }
 
     override fun testCallFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(fail)
@@ -37,7 +37,7 @@ internal class TestCallImpl(
     }
 
     override fun testCallFailX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(fail and "X")
@@ -51,7 +51,7 @@ internal class TestCallImpl(
     }
 
     override fun testCallFailCall() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(fail and call(1))
@@ -65,7 +65,7 @@ internal class TestCallImpl(
     }
 
     override fun testCallWriteX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(write(3) and "X")
@@ -87,7 +87,7 @@ internal class TestCallImpl(
     }
 
     override fun testCallWriteCall() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(write(3) and call(1))
@@ -110,7 +110,7 @@ internal class TestCallImpl(
     }
 
     override fun testCallX() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call("X")
@@ -132,7 +132,7 @@ internal class TestCallImpl(
     }
 
     override fun testCallOne() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(1)
@@ -155,7 +155,7 @@ internal class TestCallImpl(
     }
 
     override fun testCallFailOne() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(fail and 1)
@@ -178,7 +178,7 @@ internal class TestCallImpl(
     }
 
     override fun testCallWriteOne() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(write(3) and 1)
@@ -201,7 +201,7 @@ internal class TestCallImpl(
     }
 
     override fun testCallTrue() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(1 or true)

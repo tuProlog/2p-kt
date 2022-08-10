@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DirectiveTestsUtils.solverInitializersWithEventsList
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
 
     private fun theoryWithLocalInclude(loadGoal: String) =
-        prolog {
+        logicProgramming {
             val parentsPath = findResource("Parents.pl")
             theoryOf(
                 directive { loadGoal(parentsPath.toString()) },
@@ -20,7 +20,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
         }
 
     private fun testLocalInclude(loadGoal: String) =
-        prolog {
+        logicProgramming {
             val theory = theoryWithLocalInclude(loadGoal)
             for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
                 val solver = solverOf(theory)
@@ -43,7 +43,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
     }
 
     private fun theoryWithRemoteInclude(loadGoal: String) =
-        prolog {
+        logicProgramming {
             theoryOf(
                 directive { loadGoal(ExampleUrls.PARENTS) },
                 fact { "someFact" }
@@ -51,7 +51,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
         }
 
     private fun testRemoteInclude(loadGoal: String) =
-        prolog {
+        logicProgramming {
             val theory = theoryWithRemoteInclude(loadGoal)
             for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
                 val solver = solverOf(theory)
@@ -74,7 +74,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
     }
 
     private fun theoryWithMissingInclude(loadGoal: String) =
-        prolog {
+        logicProgramming {
             theoryOf(
                 directive { loadGoal("/path/to/missing.pl") },
                 fact { "someFact" }
@@ -82,7 +82,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
         }
 
     private fun testMissingInclude(loadGoal: String) =
-        prolog {
+        logicProgramming {
             val theory = theoryWithMissingInclude(loadGoal)
             for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
                 val solver = solverOf(theory)

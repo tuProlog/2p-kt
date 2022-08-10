@@ -6,7 +6,7 @@ class Prova {
 
     @Test
     fun testProlog() {
-        prolog {
+        logicProgramming {
             println("f"("X") mguWith "f"(1))
         }
     }

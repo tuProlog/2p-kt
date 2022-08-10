@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TestSolutionPresentationImpl(private val solverFactory: SolverFactory) : TestSolutionPresentation {
     override fun testSolutionWithDandlingVars() {
-        prolog {
+        logicProgramming {
             val theory = theoryOf(
                 fact { "append"("seq"(X), X) }
             )

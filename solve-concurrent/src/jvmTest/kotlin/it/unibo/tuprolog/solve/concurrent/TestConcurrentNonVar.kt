@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentNonVar<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testNonVarNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = nonvar(33.3)
@@ -20,7 +20,7 @@ interface TestConcurrentNonVar<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testNonVarFoo() { // foo
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = nonvar("foo")
@@ -32,7 +32,7 @@ interface TestConcurrentNonVar<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testNonVarFooCl() { // Foo (CapsLock)
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = nonvar("Foo")
@@ -44,7 +44,7 @@ interface TestConcurrentNonVar<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testNonVarFooAssignment() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = ("foo" eq "Foo") and nonvar("Foo")
@@ -56,7 +56,7 @@ interface TestConcurrentNonVar<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testNonVarAnyTerm() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = nonvar(`_`)
@@ -68,7 +68,7 @@ interface TestConcurrentNonVar<T : WithAssertingEquals> : FromSequence<T>, Solve
     }
 
     fun testNonVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = nonvar("a"("b"))

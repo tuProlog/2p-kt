@@ -1,15 +1,14 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.EVALUABLE
-import kotlin.collections.listOf as ktListOf
 
 internal class TestArithImpl(private val solverFactory: SolverFactory) : TestArith {
 
     override fun testArithDiff() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = 0 arithNeq 1
@@ -74,7 +73,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
     }
 
     override fun testArithEq() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = 0 arithEq 1
@@ -147,7 +146,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
     }
 
     override fun testArithGreaterThan() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = 0 greaterThan 1
@@ -212,7 +211,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
     }
 
     override fun testArithGreaterThanEq() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = 0 greaterThanOrEqualsTo 1
@@ -277,7 +276,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
     }
 
     override fun testArithLessThan() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = 0 lowerThan 1
@@ -342,7 +341,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
     }
 
     override fun testArithLessThanEq() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             var query = 0 lowerThanOrEqualsTo 1

@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.SystemError
 
 internal class TestCatchAndThrowImpl(private val solverFactory: SolverFactory) : TestCatchAndThrow {
     override fun testCatchThrow() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = (catch(true, C, write("something")) and `throw`("blabla"))
@@ -26,7 +26,7 @@ internal class TestCatchAndThrowImpl(private val solverFactory: SolverFactory) :
     }
 
     override fun testCatchFail() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = catch(number_chars("A", "L"), "error"("instantiation_error", `_`), fail)

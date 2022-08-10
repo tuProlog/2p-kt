@@ -1,13 +1,12 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.theory.Theory
-import kotlin.collections.listOf as ktListOf
 
 object CustomTheories {
 
     val ifThenTheory1: Theory by lazy {
-        prolog {
+        logicProgramming {
             theoryOf(
                 fact { "a"(1) },
                 fact { "a"(2) },
@@ -18,7 +17,7 @@ object CustomTheories {
     }
 
     val ifThenTheory2: Theory by lazy {
-        prolog {
+        logicProgramming {
             theoryOf(
                 fact { "a"(2) },
                 fact { "a"(1) },
@@ -29,7 +28,7 @@ object CustomTheories {
     }
 
     val ifThen1ToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 ("a"("X") then "b"("X")).hasSolutions(
                     { yes("X" to 1) }
@@ -72,7 +71,7 @@ object CustomTheories {
     }
 
     val ifThen2ToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 ("a"("X") then "b"("X")).hasSolutions(
                     { no() }
@@ -115,7 +114,7 @@ object CustomTheories {
     }
 
     val ifThenElse1ToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 ("a"("X") then "b"("X") or "c"("X")).hasSolutions(
                     { yes("X" to 1) }
@@ -159,7 +158,7 @@ object CustomTheories {
     }
 
     val ifThenElse2ToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 ("a"("X") then "b"("X") or "c"("X")).hasSolutions(
                     { no() }
@@ -203,7 +202,7 @@ object CustomTheories {
     }
 
     val memberGoalToSolution by lazy {
-        prolog {
+        logicProgramming {
             ktListOf(
                 "member"("X", listOf("a", "b", "c")).hasSolutions(
                     { yes("X" to "a") },

@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 
 class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumberChars {
     override fun testNumberCharsListIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_chars(33, "L")
@@ -19,7 +19,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCharsOK() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_chars(33, listOf("3", "3"))
@@ -33,7 +33,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCharsNumIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_chars("X", listOf("3", "3"))
@@ -47,7 +47,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCharsNumNegativeIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_chars("X", listOf("-", "2", "5"))
@@ -61,7 +61,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCharsSpace() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_chars("X", listOf("\n", "3"))
@@ -75,7 +75,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCharsDecimalNumber() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_chars("X", listOf("4", ".", "2"))
@@ -89,7 +89,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCharsCompleteCase() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             // val query = number_chars("X", listOf("3", ".", "3", "E", "+", "0"))
             val query = number_chars(X, listOf("3", ".", "9"))
@@ -103,7 +103,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
     }
 
     override fun testNumberCharsInstationErrror() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = number_chars("X", "L")

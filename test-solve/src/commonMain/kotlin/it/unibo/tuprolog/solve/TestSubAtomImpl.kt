@@ -2,13 +2,13 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
     override fun testSubAtomSubIsVar() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = sub_atom("abracadabra", intOf(0), intOf(1), intOf(10), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -21,7 +21,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
     }
 
     override fun testSubAtomSubIsVar2() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = sub_atom("abracadabra", intOf(6), intOf(5), intOf(0), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -34,7 +34,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
     }
 
     override fun testSubAtomSubIsVar3() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = sub_atom("abracadabra", intOf(3), "L", intOf(3), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -47,7 +47,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
     }
 
     override fun testSubAtomDoubleVar4() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = sub_atom("banana", intOf(3), intOf(2), "T", "S")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -60,7 +60,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
     }
 
     override fun testSubAtomInstantiationError() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = sub_atom("Banana", intOf(3), intOf(2), "Y", "S")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -82,7 +82,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
     }
 
     override fun testSubAtomTypeErrorAtomIsInteger() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = sub_atom(5, 2, 2, "_", "S")
@@ -107,7 +107,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
 
     // sub_atom('Banana', 4, 2, _, 2).
     override fun testSubAtomTypeErrorSubIsInteger() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = sub_atom("banana", 4, 2, "_", 2)
@@ -132,7 +132,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
 
     // [sub_atom('Banana', a, 2, _, S2), type_error(integer,a)].
     override fun testSubAtomTypeErrorBeforeIsNotInteger() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = sub_atom("banana", "a", 2, "_", "S")
@@ -156,7 +156,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
     }
 
     override fun testSubAtomTypeErrorLengthIsNotInteger() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = sub_atom("banana", 4, "n", "_", "S")
@@ -180,7 +180,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
     }
 
     override fun testSubAtomTypeErrorAfterIsNotInteger() {
-        prolog {
+        logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = sub_atom("banana", 4, 2, "m", "S")

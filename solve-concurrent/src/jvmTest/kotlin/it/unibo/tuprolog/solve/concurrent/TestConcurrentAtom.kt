@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.yes
 interface TestConcurrentAtom<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
 
     fun testAtomAtom() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom("atom")
@@ -20,7 +20,7 @@ interface TestConcurrentAtom<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testAtomString() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom("string")
@@ -32,7 +32,7 @@ interface TestConcurrentAtom<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testAtomAofB() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom("a"("b"))
@@ -44,7 +44,7 @@ interface TestConcurrentAtom<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testAtomVar() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom("Var")
@@ -56,7 +56,7 @@ interface TestConcurrentAtom<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testAtomEmptyList() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom(emptyList)
@@ -68,7 +68,7 @@ interface TestConcurrentAtom<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testAtomNum() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom(6)
@@ -80,7 +80,7 @@ interface TestConcurrentAtom<T : WithAssertingEquals> : FromSequence<T>, SolverF
     }
 
     fun testAtomNumDec() {
-        prolog {
+        logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = atom(3.3)

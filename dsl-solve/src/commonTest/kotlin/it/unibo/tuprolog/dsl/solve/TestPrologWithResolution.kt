@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 class TestPrologWithResolution {
     @Test
     fun testAbrahamFamilyTree() {
-        prolog {
+        logicProgramming {
             staticKb(
                 rule {
                     "ancestor"("X", "Y") `if` "parent"("X", "Y")

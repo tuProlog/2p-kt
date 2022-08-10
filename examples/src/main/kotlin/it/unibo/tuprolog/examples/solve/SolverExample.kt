@@ -2,7 +2,7 @@ package it.unibo.tuprolog.examples.solve
 
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
@@ -45,7 +45,7 @@ fun gt(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> {
 }
 
 fun main() {
-    prolog {
+    logicProgramming {
         val solver = Solver.classicWithDefaultBuiltins(
             libraries = Runtime.of(
                 Library.of(
