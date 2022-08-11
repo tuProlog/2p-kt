@@ -23,7 +23,7 @@ jobs:
       group: release-github
     steps:
       - name: Cache Build
-        uses: actions/cache@v3.0.6
+        uses: actions/cache@v3.0.7
         with:
           path: |
             build
@@ -70,7 +70,7 @@ jobs:
       group: release-central
     steps:
       - name: Cache Build
-        uses: actions/cache@v3.0.6
+        uses: actions/cache@v3.0.7
         with:
           path: |
             build
