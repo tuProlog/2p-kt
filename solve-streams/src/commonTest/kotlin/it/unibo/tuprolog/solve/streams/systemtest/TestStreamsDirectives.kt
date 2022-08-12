@@ -70,4 +70,9 @@ class TestStreamsDirectives : TestDirectives, SolverFactory by StreamsSolverFact
     override fun testExceptionalSolve1() {
         prototype.testExceptionalSolve1()
     }
+
+    @Test
+    override fun testDirectiveLoadingQuickly() {
+        prototype.testDirectiveLoadingQuickly()
+    }
 }

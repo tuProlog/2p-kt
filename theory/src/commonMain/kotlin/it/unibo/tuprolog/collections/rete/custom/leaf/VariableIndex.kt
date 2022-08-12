@@ -16,6 +16,12 @@ internal class VariableIndex(
 
     private val variables: MutableList<SituatedIndexedClause> = dequeOf()
 
+    override val size: Int
+        get() = variables.size
+
+    override val isEmpty: Boolean
+        get() = variables.isEmpty()
+
     override fun get(clause: Clause): Sequence<Clause> =
         extractGlobalSequence(clause)
 

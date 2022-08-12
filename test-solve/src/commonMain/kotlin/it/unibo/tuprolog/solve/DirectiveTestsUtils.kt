@@ -2,12 +2,28 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.dsl.lp
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.theory.Theory
 
 object DirectiveTestsUtils {
+
+    private const val BIG_THEORY_SIZE = 40000
+
+    fun bigTheory(size : Int = BIG_THEORY_SIZE) =
+        lp {
+            Theory.of(
+                sequence {
+                    for (i in 1..size) {
+                        yield(fact { "f$i" })
+                    }
+                    yield(directive { solve(write("hello world") and nl) })
+                }
+            )
+        }
+
     fun dynamicDirective(functor: String, arity: Int): Sequence<Directive> =
         logicProgramming {
             sequenceOf(

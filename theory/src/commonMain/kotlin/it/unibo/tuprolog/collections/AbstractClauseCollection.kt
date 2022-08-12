@@ -9,9 +9,11 @@ protected constructor(protected val rete: ReteTree) : ClauseCollection {
     protected abstract val self: Self
 
     override val size: Int
-        get() = rete.clauses.count()
+        get() = rete.size
 
-    override fun isEmpty(): Boolean = size == 0
+    override fun isEmpty(): Boolean = rete.isEmpty
+
+    override fun isNonEmpty(): Boolean = !isEmpty()
 
     override fun contains(element: Clause): Boolean = rete.get(element).any()
 

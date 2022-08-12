@@ -15,6 +15,9 @@ interface ClauseCollection : Iterable<Clause> {
     @JsName("isEmpty")
     fun isEmpty(): Boolean
 
+    @JsName("isNonEmpty")
+    fun isNonEmpty(): Boolean
+
     /** Tells if the [ClauseCollection] contains the given [Clause] **/
     @JsName("contains")
     operator fun contains(element: Clause): Boolean

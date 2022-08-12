@@ -20,6 +20,12 @@ internal class CompoundIndex(
     private val functors: MutableMap<String, FunctorIndexing> = mutableMapOf()
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
+    override val size: Int
+        get() = functors.values.asSequence().map { it.size }.sum()
+
+    override val isEmpty: Boolean
+        get() = functors.isEmpty() || functors.values.all { it.isEmpty }
+
     override fun get(clause: Clause): Sequence<Clause> =
         if (clause.isGlobal()) {
             if (ordered) {

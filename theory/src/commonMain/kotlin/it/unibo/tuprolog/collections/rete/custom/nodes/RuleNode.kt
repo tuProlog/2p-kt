@@ -43,6 +43,12 @@ internal class RuleNode(
         functors[clause.nestedFunctor()]?.retractFirst(clause)
             ?: emptySequence()
 
+    override val size: Int
+        get() = functors.values.asSequence().map { it.size }.sum()
+
+    override val isEmpty: Boolean
+        get() = functors.isEmpty() || functors.values.all { it.isEmpty }
+
     override fun retractAll(clause: Clause): Sequence<Clause> =
         functors[clause.nestedFunctor()]?.retractAll(clause)
             ?: emptySequence()

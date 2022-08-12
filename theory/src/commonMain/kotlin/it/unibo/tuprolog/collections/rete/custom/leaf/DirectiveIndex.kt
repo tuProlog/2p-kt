@@ -15,6 +15,12 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
 
     private val directives: MutableList<IndexedClause> = dequeOf()
 
+    override val size: Int
+        get() = directives.size
+
+    override val isEmpty: Boolean
+        get() = directives.isEmpty()
+
     override fun get(clause: Clause): Sequence<Clause> =
         directives
             .filter { it.innerClause matches clause }

@@ -102,7 +102,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
         appendStatic: Boolean = true,
         appendDynamic: Boolean = true
     ) {
-        if (staticKb.let { it == null || it.size == 0L } && dynamicKb.let { it == null || it.size == 0L }) return
+        if (staticKb.let { it == null || it.isEmpty } && dynamicKb.let { it == null || it.isEmpty }) return
         val staticKbPartitioning = staticKb?.partition()
         val dynamicKbPartitioning = dynamicKb?.partition(staticByDefault = false)
         val merged = staticKbPartitioning + dynamicKbPartitioning
