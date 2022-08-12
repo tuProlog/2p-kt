@@ -20,6 +20,12 @@ internal class NumericIndex(
 
     private val index: MutableMap<Numeric, MutableList<SituatedIndexedClause>> = mutableMapOf()
 
+    override val size: Int
+        get() = index.values.asSequence().map { it.size }.sum()
+
+    override val isEmpty: Boolean
+        get() = index.isEmpty() || index.values.all { it.isEmpty() }
+
     override fun get(clause: Clause): Sequence<Clause> {
         return if (clause.nestedFirstArgument().isNumber) {
             index[clause.asInnerNumeric()]

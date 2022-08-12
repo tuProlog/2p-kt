@@ -92,6 +92,12 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
             return i
         }
 
+    override val isEmpty: Boolean
+        get() = !isNonEmpty
+
+    override val isNonEmpty: Boolean
+        get() = iterator().hasNext()
+
     override fun plus(theory: Theory): Theory =
         createNewTheory(clauses.asSequence() + checkClausesCorrect(theory.clauses.asSequence()))
 

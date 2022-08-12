@@ -67,4 +67,9 @@ class TestClassicDirectives : TestDirectives, SolverFactory by ClassicSolverFact
     override fun testExceptionalSolve1() {
         prototype.testExceptionalSolve1()
     }
+
+    @Test
+    override fun testDirectiveLoadingQuickly() {
+        prototype.testDirectiveLoadingQuickly()
+    }
 }

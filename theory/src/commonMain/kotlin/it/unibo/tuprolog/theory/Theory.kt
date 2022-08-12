@@ -44,6 +44,14 @@ interface Theory : Iterable<Clause>, Taggable<Theory> {
     @JsName("size")
     val size: Long
 
+    /** Whether this [Theory] is empty or not */
+    @JsName("isEmpty")
+    val isEmpty: Boolean
+
+    /** Whether this [Theory] is full or not */
+    @JsName("isNonEmpty")
+    val isNonEmpty: Boolean
+
     /** Adds given [Theory] to this */
     @JsName("plusTheory")
     operator fun plus(theory: Theory): Theory

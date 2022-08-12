@@ -402,7 +402,7 @@ class TuPrologIDEController : Initializable {
     private var lastEvent: SolverEvent<*>? = null
 
     private fun Theory.pretty(): String =
-        if (size > 0) {
+        if (isNonEmpty) {
             clauses.joinToString(".\n", postfix = ".") {
                 it.format(TermFormatter.prettyExpressions())
             }

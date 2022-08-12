@@ -27,6 +27,12 @@ internal class RootNode(
         clauses.forEach { assertZ(it) }
     }
 
+    override val size: Int
+        get() = directives.size + rules.size
+
+    override val isEmpty: Boolean
+        get() = directives.isEmpty && rules.isEmpty
+
     override val clauses: Sequence<Clause>
         get() = theoryCache.value.asSequence()
 

@@ -13,7 +13,8 @@ interface ReteTree {
 
     /**Returns the number of [Clause] stored in this tree*/
     val size: Int
-        get() = clauses.count()
+
+    val isEmpty: Boolean
 
     /**Reads all the clauses matching the given [Clause]*/
     fun get(clause: Clause): Sequence<Clause>
