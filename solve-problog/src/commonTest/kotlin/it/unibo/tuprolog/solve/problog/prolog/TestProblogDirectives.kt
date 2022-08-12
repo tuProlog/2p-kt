@@ -78,4 +78,10 @@ class TestProblogDirectives : TestDirectives, SolverFactory by ProblogSolverFact
     override fun testExceptionalSolve1() {
         prototype.testExceptionalSolve1()
     }
+
+    @Ignore
+    @Test
+    override fun testDirectiveLoadingQuickly() {
+        prototype.testDirectiveLoadingQuickly()
+    }
 }

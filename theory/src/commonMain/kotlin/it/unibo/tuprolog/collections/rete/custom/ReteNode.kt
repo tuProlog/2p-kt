@@ -7,6 +7,10 @@ import it.unibo.tuprolog.core.Clause
 /**A data structure to manage the basic behaviour of the [ReteTree]*/
 internal interface ReteNode : Cacheable<SituatedIndexedClause> {
 
+    val size: Int
+
+    val isEmpty: Boolean
+
     /**Reads all the clauses matching the given [Clause]*/
     fun get(clause: Clause): Sequence<Clause>
 

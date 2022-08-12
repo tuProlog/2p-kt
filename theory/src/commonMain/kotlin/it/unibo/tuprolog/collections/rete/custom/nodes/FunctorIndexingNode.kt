@@ -16,7 +16,14 @@ internal class FunctorIndexingNode(
 ) : FunctorNode(), FunctorIndexing {
 
     private val arities: MutableMap<Int, ArityIndexing> = mutableMapOf()
+
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
+
+    override val size: Int
+        get() = arities.values.asSequence().map { it.size }.sum()
+
+    override val isEmpty: Boolean
+        get() = arities.isEmpty() || arities.values.all { it.isEmpty }
 
     override fun get(clause: Clause): Sequence<Clause> =
         arities[clause.nestedArity()]?.get(clause) ?: emptySequence()

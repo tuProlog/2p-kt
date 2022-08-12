@@ -29,4 +29,6 @@ interface TestDirectives : SolverTest {
     fun testExceptionalInitialization1()
 
     fun testExceptionalSolve1()
+
+    fun testDirectiveLoadingQuickly()
 }

@@ -20,6 +20,12 @@ internal class AtomIndex(
 
     private val index: MutableMap<Atom, MutableList<SituatedIndexedClause>> = mutableMapOf()
 
+    override val size: Int
+        get() = index.values.asSequence().map { it.size }.sum()
+
+    override val isEmpty: Boolean
+        get() = index.isEmpty() || index.values.all { it.isEmpty() }
+
     override fun get(clause: Clause): Sequence<Clause> =
         if (clause.nestedFirstArgument().isAtom) {
             index[clause.asInnerAtom()]

@@ -50,6 +50,12 @@ internal open class FamilyArityReteNode(
         }
     }
 
+    override val size: Int
+        get() = sequenceOf(numericIndex, atomicIndex, variableIndex, compoundIndex).map { it.size }.sum()
+
+    override val isEmpty: Boolean
+        get() = sequenceOf(numericIndex, atomicIndex, variableIndex, compoundIndex).all { it.isEmpty }
+
     override fun get(clause: Clause): Sequence<Clause> {
         return if (clause.isGlobal()) {
             if (ordered) {

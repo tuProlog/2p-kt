@@ -18,6 +18,12 @@ internal class ZeroArityReteNode(private val ordered: Boolean) : ArityNode(), Ar
     override fun retractFirst(clause: Clause): Sequence<Clause> =
         Utils.removeAllLazily(atoms, clause).map { it.innerClause }.take(1).buffered()
 
+    override val size: Int
+        get() = atoms.size
+
+    override val isEmpty: Boolean
+        get() = atoms.isEmpty()
+
     override fun get(clause: Clause): Sequence<Clause> =
         atoms.asSequence().filter { it.innerClause matches clause }.map { it.innerClause }
 
