@@ -39,6 +39,7 @@ include(":oop-lib")
 include(":io-lib")
 include(":ide-plp")
 include(":ide")
+include(":gui")
 include(":examples")
 include(":full")
 
