@@ -1,11 +1,19 @@
 package it.unibo.tuprolog.collections
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface ClauseCollection : Iterable<Clause> {
+
+    @JsName("directive")
+    val directives: Iterable<Directive>
+
+    @JsName("rules")
+    val rules: Iterable<Rule>
 
     /** Computes the size of the [ClauseCollection] **/
     @JsName("size")

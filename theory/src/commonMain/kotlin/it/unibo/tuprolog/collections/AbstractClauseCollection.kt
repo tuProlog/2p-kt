@@ -2,6 +2,8 @@ package it.unibo.tuprolog.collections
 
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Rule
 
 internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection<Self>>
 protected constructor(protected val rete: ReteTree) : ClauseCollection {
@@ -10,6 +12,12 @@ protected constructor(protected val rete: ReteTree) : ClauseCollection {
 
     override val size: Int
         get() = rete.size
+
+    override val directives: Iterable<Directive>
+        get() = rete.directives.asIterable()
+
+    override val rules: Iterable<Rule>
+        get() = rete.rules.asIterable()
 
     override fun isEmpty(): Boolean = rete.isEmpty
 

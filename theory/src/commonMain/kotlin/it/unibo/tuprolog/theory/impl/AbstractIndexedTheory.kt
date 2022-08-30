@@ -2,6 +2,8 @@ package it.unibo.tuprolog.theory.impl
 
 import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.theory.AbstractTheory
 
 internal abstract class AbstractIndexedTheory protected constructor(
@@ -10,7 +12,14 @@ internal abstract class AbstractIndexedTheory protected constructor(
 ) : AbstractTheory(tags) {
     protected open val queue: ClauseQueue = queue
 
-    override val clauses: Iterable<Clause> get() = Iterable { queue.iterator() }
+    override val directives: Iterable<Directive>
+        get() = queue.directives
+
+    override val rules: Iterable<Rule>
+        get() = queue.rules
+
+    override val clauses: Iterable<Clause>
+        get() = Iterable { queue.iterator() }
 
     override fun get(clause: Clause): Sequence<Clause> = queue[clause]
 

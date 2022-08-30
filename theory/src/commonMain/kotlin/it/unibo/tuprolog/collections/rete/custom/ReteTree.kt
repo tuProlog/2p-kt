@@ -2,6 +2,8 @@ package it.unibo.tuprolog.collections.rete.custom
 
 import it.unibo.tuprolog.collections.rete.custom.nodes.RootNode
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Rule
 
 interface ReteTree {
 
@@ -10,6 +12,10 @@ interface ReteTree {
 
     /**Returns all the [Clause] this [ReteTree] is storing*/
     val clauses: Sequence<Clause>
+
+    val rules: Sequence<Rule>
+
+    val directives: Sequence<Directive>
 
     /**Returns the number of [Clause] stored in this tree*/
     val size: Int
