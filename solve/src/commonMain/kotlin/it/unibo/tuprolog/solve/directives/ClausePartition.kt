@@ -30,11 +30,30 @@ interface ClausePartition {
     @JsName("plus")
     operator fun plus(other: ClausePartition): ClausePartition =
         ClausePartitionImpl(
-            Theory.indexedOf(sequenceOf(this, other).flatMap { it.staticClauses.asSequence() }),
-            MutableTheory.indexedOf(sequenceOf(this, other).flatMap { it.dynamicClauses.asSequence() }),
-            sequenceOf(this, other).map { it.operators }.reduce(OperatorSet::plus),
-            listOf(this, other).flatMap { it.initialGoals },
-            listOf(this, other).flatMap { it.includes },
-            sequenceOf(this, other).map { it.flagStore }.reduce(FlagStore::plus)
+            staticClauses + other.staticClauses,
+            (dynamicClauses + other.dynamicClauses).toImmutableTheory(),
+            operators + other.operators,
+            initialGoals + other.initialGoals,
+            includes + other.includes,
+            flagStore + other.flagStore
         )
+
+    companion object {
+        @JsName("of")
+        fun of(
+            staticClauses: Theory? = null,
+            dynamicClauses: Theory? = null,
+            operators: OperatorSet? = null,
+            initialGoals: List<Struct>? = null,
+            includes: List<Atom>? = null,
+            flagStore: FlagStore? = null,
+        ): ClausePartition = ClausePartitionImpl(
+            staticClauses ?: Theory.emptyIndexed(),
+            dynamicClauses ?: MutableTheory.emptyIndexed(),
+            operators ?: OperatorSet.EMPTY,
+            initialGoals ?: emptyList(),
+            includes ?: emptyList(),
+            flagStore ?: FlagStore.empty(),
+        )
+    }
 }
