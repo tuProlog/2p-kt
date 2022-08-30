@@ -102,13 +102,14 @@ abstract class AbstractSolver<E : ExecutionContext>(
         appendStatic: Boolean = true,
         appendDynamic: Boolean = true
     ) {
-        fun Theory?.isSkippable() =
-            this == null || directives.none()
-
-        if (staticKb.isSkippable() && dynamicKb.isSkippable()) return
-        val staticKbPartitioning = staticKb?.partition()
-        val dynamicKbPartitioning = dynamicKb?.partition(staticByDefault = false)
-        val merged = staticKbPartitioning + dynamicKbPartitioning
+        val staticSkippable = staticKb.let { it == null || it.directives.none() }
+        val dynamicSkippable = dynamicKb.let { it == null || it.directives.none() }
+        val merged = when {
+            staticSkippable && dynamicSkippable -> ClausePartition.of(staticKb, dynamicKb)
+            staticSkippable -> ClausePartition.of(staticKb) + dynamicKb?.partition(staticByDefault = false)
+            dynamicSkippable -> ClausePartition.of(dynamicKb) + staticKb?.partition()
+            else -> staticKb?.partition() + dynamicKb?.partition(staticByDefault = false)
+        }
         resetKb(!appendStatic, !appendDynamic)
         merged.includes.map { loadGoal(it) }.forEach(this::solveInitialGoal)
         updateContextWith(merged)
