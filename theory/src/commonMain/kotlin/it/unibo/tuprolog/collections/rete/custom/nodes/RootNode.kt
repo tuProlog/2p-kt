@@ -6,6 +6,8 @@ import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.leaf.DirectiveIndex
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.buffered
@@ -17,10 +19,13 @@ internal class RootNode(
 ) : ReteTree, Cacheable<Clause> {
 
     private val theoryCache: Cached<MutableList<Clause>> = Cached.of(this::regenerateCache)
-    private val rules: RuleNode = RuleNode(isOrdered)
-    private val directives: DirectiveIndex = DirectiveIndex(isOrdered)
+
+    private val ruleIndex: RuleNode = RuleNode(isOrdered)
+
+    private val directiveIndex: DirectiveIndex = DirectiveIndex(isOrdered)
 
     private var lowestIndex: Long = 0
+
     private var highestIndex: Long = 0
 
     init {
@@ -28,23 +33,29 @@ internal class RootNode(
     }
 
     override val size: Int
-        get() = directives.size + rules.size
+        get() = directiveIndex.size + ruleIndex.size
 
     override val isEmpty: Boolean
-        get() = directives.isEmpty && rules.isEmpty
+        get() = directiveIndex.isEmpty && ruleIndex.isEmpty
 
     override val clauses: Sequence<Clause>
         get() = theoryCache.value.asSequence()
 
+    override val directives: Sequence<Directive>
+        get() = directiveIndex.getCache().map { it.value.castToDirective() }
+
+    override val rules: Sequence<Rule>
+        get() = ruleIndex.getCache().map { it.value.castToRule() }
+
     override fun get(clause: Clause): Sequence<Clause> =
-        if (clause.isDirective) directives.get(clause)
-        else rules.get(clause)
+        if (clause.isDirective) directiveIndex.get(clause)
+        else ruleIndex.get(clause)
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) {
-            directives.retractFirst(clause)
+            directiveIndex.retractFirst(clause)
         } else {
-            rules.retractFirst(clause)
+            ruleIndex.retractFirst(clause)
         }
 
     override fun retractOnly(clause: Clause, limit: Int): Sequence<Clause> =
@@ -52,9 +63,9 @@ internal class RootNode(
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) {
-            directives.retractAll(clause)
+            directiveIndex.retractAll(clause)
         } else {
-            rules.retractAll(clause)
+            ruleIndex.retractAll(clause)
         }
 
     override fun deepCopy(): ReteTree =
@@ -68,8 +79,8 @@ internal class RootNode(
                 it.addFirst(clause)
             }
 
-            if (clause.isDirective) directives.assertA(indexed)
-            else rules.assertA(indexed)
+            if (clause.isDirective) directiveIndex.assertA(indexed)
+            else ruleIndex.assertA(indexed)
         } else {
             throw UnsupportedOperationException("An unordered ReteTree cannot perform the assertA operation.")
         }
@@ -82,9 +93,9 @@ internal class RootNode(
             it.add(clause)
         }
         if (clause.isDirective) {
-            directives.assertZ(indexed)
+            directiveIndex.assertZ(indexed)
         } else {
-            rules.assertZ(indexed)
+            ruleIndex.assertZ(indexed)
         }
     }
 
@@ -98,13 +109,13 @@ internal class RootNode(
         return dequeOf(
             if (isOrdered) {
                 Utils.merge(
-                    directives.getCache(),
-                    rules.getCache()
+                    directiveIndex.getCache(),
+                    ruleIndex.getCache()
                 ).map { it.innerClause }
             } else {
                 Utils.flatten(
-                    directives.getCache().map { it.innerClause },
-                    rules.getCache().map { it.innerClause }
+                    directiveIndex.getCache().map { it.innerClause },
+                    ruleIndex.getCache().map { it.innerClause }
                 )
             }
         )
