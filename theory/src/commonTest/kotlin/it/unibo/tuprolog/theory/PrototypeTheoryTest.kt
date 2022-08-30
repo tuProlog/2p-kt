@@ -100,6 +100,8 @@ class PrototypeTheoryTest(
             val badTheory = object : Theory by emptyTheoryGenerator() {
                 override val clauses: Iterable<Clause> = notWellFormedClauses
                 override fun iterator(): Iterator<Clause> = notWellFormedClauses.iterator()
+                override val isEmpty: Boolean get() = notWellFormedClauses.isEmpty()
+                override val isNonEmpty: Boolean get() = !isEmpty
             }
             assertFailsWith<IllegalArgumentException> { filledTheory + badTheory }
         }

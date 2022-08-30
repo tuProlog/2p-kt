@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
+import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.dequeOf
@@ -100,4 +101,11 @@ internal class ListedTheory private constructor(
 
     override fun replaceTags(tags: Map<String, Any>): ListedTheory =
         if (tags === this.tags) this else ListedTheory(clauses, tags)
+
+    override fun plus(theory: Theory): Theory =
+        when {
+            isEmpty -> theory.toImmutableTheory()
+            theory.isEmpty -> this
+            else -> super.plus(theory)
+        }
 }

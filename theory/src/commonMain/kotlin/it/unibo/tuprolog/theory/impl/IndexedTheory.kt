@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
+import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.utils.dequeOf
 
@@ -42,6 +43,13 @@ internal class IndexedTheory private constructor(
             )
         }
     }
+
+    override fun plus(theory: Theory): Theory =
+        when {
+            isEmpty -> theory.toImmutableTheory()
+            theory.isEmpty -> this
+            else -> super.plus(theory)
+        }
 
     override fun toMutableTheory(): MutableTheory = MutableTheory.indexedOf(this)
 
