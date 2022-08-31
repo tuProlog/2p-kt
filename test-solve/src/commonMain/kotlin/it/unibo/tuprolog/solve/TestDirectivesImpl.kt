@@ -1,15 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Directive
-import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier.XFX
 import it.unibo.tuprolog.core.operators.Specifier.XFY
 import it.unibo.tuprolog.core.operators.Specifier.YFX
-import it.unibo.tuprolog.dsl.lp
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DirectiveTestsUtils.bigTheory
 import it.unibo.tuprolog.solve.DirectiveTestsUtils.dynamicDirective
@@ -19,7 +15,6 @@ import it.unibo.tuprolog.solve.DirectiveTestsUtils.solverInitializersWithEventsL
 import it.unibo.tuprolog.solve.DirectiveTestsUtils.staticDirective
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
-import it.unibo.tuprolog.solve.stdlib.CommonBuiltins.theory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
