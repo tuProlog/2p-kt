@@ -14,7 +14,7 @@ object DirectiveTestsUtils {
 
     private const val BIG_THEORY_SIZE = 40000
 
-    fun bigTheory(size : Int = BIG_THEORY_SIZE, last: (LogicProgrammingScope.() -> Clause)? = null) =
+    fun bigTheory(size: Int = BIG_THEORY_SIZE, last: (LogicProgrammingScope.() -> Clause)? = null) =
         lp {
             Theory.of(
                 sequence {
