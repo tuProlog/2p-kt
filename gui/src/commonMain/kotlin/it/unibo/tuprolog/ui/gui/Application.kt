@@ -6,13 +6,13 @@ interface Application {
 
     val pages: Collection<Page>
 
-    fun newPage(): Page
+    fun newPage(pageID: PageID = PageID.untitled(pages.map { it.id })): Page
 
-    fun load(file: File)
+    fun load(file: File): Page
 
     val currentPage: Page?
 
-    fun select(id: PageID)
+    fun select(id: PageID?)
 
     fun select(page: Page)
 

@@ -5,10 +5,7 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parseAsStruct
-import it.unibo.tuprolog.solve.MutableSolver
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.SolveOptions
-import it.unibo.tuprolog.solve.SolverBuilder
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
@@ -20,7 +17,7 @@ import kotlin.jvm.Volatile
 internal abstract class AbstractPage(
     override var id: PageID,
     override var solverBuilder: SolverBuilder,
-    timeout: Long
+    timeout: TimeDuration
 ) : Page {
     
     private val content: FileContent = FileContent()
