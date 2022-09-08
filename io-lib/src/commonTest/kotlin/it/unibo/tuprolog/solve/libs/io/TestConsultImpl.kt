@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.exception.error.SyntaxError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.primitives.Consult
+import it.unibo.tuprolog.utils.io.Url
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

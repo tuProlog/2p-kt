@@ -16,6 +16,7 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 api(project(":parser-theory"))
+                api(project(":io-utils"))
             }
         }
 
@@ -79,8 +80,8 @@ tasks.matching { it.name in setOf("jvmTest", "jsNodeTest") }.configureEach {
 
 packageJson {
     dependencies = mutableMapOf(
-        "sync-request" to libs.versions.npm.syncRequest.get(),
         npmSubproject("solve"),
         npmSubproject("parser-theory"),
+        npmSubproject("io-utils"),
     )
 }

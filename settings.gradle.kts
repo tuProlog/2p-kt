@@ -12,6 +12,7 @@ dependencyResolutionManagement {
 
 include(":documentation")
 include(":utils")
+include(":io-utils")
 include(":core")
 include(":unify")
 include(":theory")

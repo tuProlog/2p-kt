@@ -34,9 +34,7 @@ import it.unibo.tuprolog.solve.exception.error.SyntaxError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.io.IOMode
-import it.unibo.tuprolog.solve.libs.io.Url
 import it.unibo.tuprolog.solve.libs.io.asTermChannel
-import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 import it.unibo.tuprolog.solve.libs.io.openInputChannel
 import it.unibo.tuprolog.solve.libs.io.openOutputChannel
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsAtom
@@ -50,6 +48,8 @@ import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.match
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.mgu
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.utils.io.Url
+import it.unibo.tuprolog.utils.io.exceptions.InvalidUrlException
 import kotlin.collections.List as KtList
 
 object IOPrimitiveUtils {
