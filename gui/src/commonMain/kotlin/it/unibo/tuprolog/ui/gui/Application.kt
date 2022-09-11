@@ -12,7 +12,7 @@ interface Application {
 
     fun newPage(pageID: PageID = PageID.untitled(pageIDs)): Page
 
-    fun load(file: File): Page
+    fun load(file: File)
 
     val currentPage: Page?
 

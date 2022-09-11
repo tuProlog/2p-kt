@@ -1,20 +1,24 @@
-package it.unibo.tuprolog.ui.gui
+package it.unibo.tuprolog.ui.gui.impl
 
 import it.unibo.tuprolog.solve.SolverBuilder
 import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.ui.gui.Application
+import it.unibo.tuprolog.ui.gui.FileName
+import it.unibo.tuprolog.ui.gui.Page
+import it.unibo.tuprolog.ui.gui.PageID
+import it.unibo.tuprolog.ui.gui.Runner
 import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Source
 
-open class AbstractApplication(
+open class ApplicationImpl(
     private var builderProvider: () -> SolverBuilder,
-    private var defaultTimeout: TimeDuration
+    private var defaultTimeout: TimeDuration,
+    private val runner: Runner
 ) : Application {
     private val pagesById: MutableMap<PageID, Page> = mutableMapOf()
 
     override val pages: Collection<Page>
         get() = pagesById.values
-
-    protected fun postpone(action: () -> Unit) = action()
 
     override fun newPage(pageID: PageID): Page {
         val page = if (pageID !in pagesById) {
@@ -34,9 +38,7 @@ open class AbstractApplication(
         builderProvider: () -> SolverBuilder = this.builderProvider,
         timeout: TimeDuration = this.defaultTimeout
     ): Page {
-        val page = object : AbstractPage(id, builderProvider(), timeout) {
-            override fun postpone(action: () -> Unit) = this@AbstractApplication.postpone(action)
-        }
+        val page = PageImpl(id, builderProvider(), timeout, runner)
         page.onClose += this::handlePageClosure
         page.onRename += this::handlePageRenaming
         return page
@@ -55,10 +57,16 @@ open class AbstractApplication(
         pagesById -= old
     }
 
-    override fun load(file: File): Page =
+    override fun load(file: File) {
         newPage(FileName(file)).also {
-            it.theory = file.readText()
+            runner.io {
+                val text = file.readText()
+                runner.ui {
+                    it.theory = text
+                }
+            }
         }
+    }
 
     override var currentPage: Page? = null
         protected set(value) {

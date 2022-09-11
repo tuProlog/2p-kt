@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.ui.gui
+package it.unibo.tuprolog.ui.gui.impl
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.exception.TuPrologException
@@ -14,15 +14,23 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
+import it.unibo.tuprolog.ui.gui.FileContent
+import it.unibo.tuprolog.ui.gui.FileName
+import it.unibo.tuprolog.ui.gui.Page
+import it.unibo.tuprolog.ui.gui.PageID
+import it.unibo.tuprolog.ui.gui.Runner
+import it.unibo.tuprolog.ui.gui.SolverEvent
+import it.unibo.tuprolog.ui.gui.SyntaxException
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Source
 import kotlin.jvm.Volatile
 
-internal abstract class AbstractPage(
+internal class PageImpl(
     id: PageID,
     override var solverBuilder: SolverBuilder,
-    timeout: TimeDuration
+    timeout: TimeDuration,
+    private val runner: Runner
 ) : Page {
 
     private val content: FileContent = FileContent()
@@ -114,8 +122,12 @@ internal abstract class AbstractPage(
     }
 
     override fun save(file: File) {
-        file.writeText(content.text)
-        id = FileName(file)
+        runner.io {
+            file.writeText(content.text)
+            runner.ui {
+                id = FileName(file)
+            }
+        }
     }
 
     override fun solve(maxSolutions: Int) {
@@ -136,17 +148,19 @@ internal abstract class AbstractPage(
     private fun nextImpl(maxSolutions: Int) {
         ensuringStateIs(Page.Status.COMPUTING) {
             if (maxSolutions <= 0) return
-            postpone {
+            runner.background {
                 val sol = solutions!!.next()
-                solutionCount++
-                onNewSolution.raise(SolverEvent(sol, solver.value))
-                if (!solutions!!.hasNext() || state != Page.Status.COMPUTING) {
-                    onResolutionOver.raise(SolverEvent(solutionCount, solver.value))
-                    onQueryOver.raise(SolverEvent(sol.query, solver.value))
-                    state = Page.Status.IDLE
-                } else {
-                    state = Page.Status.SOLUTION
-                    next(maxSolutions - 1)
+                runner.ui {
+                    solutionCount++
+                    onNewSolution.raise(SolverEvent(sol, solver.value))
+                    if (!solutions!!.hasNext() || state != Page.Status.COMPUTING) {
+                        onResolutionOver.raise(SolverEvent(solutionCount, solver.value))
+                        onQueryOver.raise(SolverEvent(sol.query, solver.value))
+                        state = Page.Status.IDLE
+                    } else {
+                        state = Page.Status.SOLUTION
+                        next(maxSolutions - 1)
+                    }
                 }
             }
         }
@@ -190,8 +204,6 @@ internal abstract class AbstractPage(
             }
         }
     }
-
-    protected abstract fun postpone(action: () -> Unit)
 
     override fun stop() {
         ensuringStateIs(Page.Status.SOLUTION) {
