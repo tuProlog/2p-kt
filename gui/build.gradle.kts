@@ -11,6 +11,7 @@ kotlin {
             dependencies {
                 api(project(":parser-theory"))
                 api(project(":solve"))
+                api(project(":io-utils"))
             }
         }
     }
@@ -20,5 +21,6 @@ packageJson {
     dependencies = mutableMapOf(
         npmSubproject("parser-theory"),
         npmSubproject("solve"),
+        npmSubproject("io-utils"),
     )
 }

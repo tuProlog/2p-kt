@@ -1,12 +1,16 @@
 package it.unibo.tuprolog.ui.gui
 
+import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Observable
 
 interface Application {
 
     val pages: Collection<Page>
 
-    fun newPage(pageID: PageID = PageID.untitled(pages.map { it.id })): Page
+    val pageIDs: Iterable<PageID>
+        get() = pages.asSequence().map { it.id }.asIterable()
+
+    fun newPage(pageID: PageID = PageID.untitled(pageIDs)): Page
 
     fun load(file: File): Page
 
@@ -24,5 +28,5 @@ interface Application {
 
     val onPageLoaded: Observable<Page>
 
-    val onPageClosed: Observable<File>
+    val onPageClosed: Observable<Page>
 }

@@ -3,7 +3,7 @@ package it.unibo.tuprolog.ui.gui
 sealed interface PageID {
     val name: String
 
-    fun rename(name: String) : PageID
+    fun rename(name: String): PageID
 
     companion object {
         private const val UNTITLED = "untitled"

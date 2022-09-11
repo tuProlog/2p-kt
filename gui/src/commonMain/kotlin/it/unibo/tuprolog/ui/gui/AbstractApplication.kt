@@ -2,9 +2,10 @@ package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.solve.SolverBuilder
 import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.utils.observe.Observable
+import it.unibo.tuprolog.utils.io.File
+import it.unibo.tuprolog.utils.observe.Source
 
-class AbstractApplication(
+open class AbstractApplication(
     private var builderProvider: () -> SolverBuilder,
     private var defaultTimeout: TimeDuration
 ) : Application {
@@ -13,9 +14,14 @@ class AbstractApplication(
     override val pages: Collection<Page>
         get() = pagesById.values
 
+    protected fun postpone(action: () -> Unit) = action()
+
     override fun newPage(pageID: PageID): Page {
         val page = if (pageID !in pagesById) {
-            createPage(pageID)
+            createPage(pageID).also {
+                pagesById[pageID] = it
+                onPageCreated.raise(it)
+            }
         } else {
             pagesById[pageID]!!
         }
@@ -23,36 +29,59 @@ class AbstractApplication(
         return page
     }
 
-    protected fun createPage(
+    private fun createPage(
         id: PageID,
         builderProvider: () -> SolverBuilder = this.builderProvider,
         timeout: TimeDuration = this.defaultTimeout
-    ): Page = TODO()
-
-    override fun load(file: File) {
-        TODO("Not yet implemented")
+    ): Page {
+        val page = object : AbstractPage(id, builderProvider(), timeout) {
+            override fun postpone(action: () -> Unit) = this@AbstractApplication.postpone(action)
+        }
+        page.onClose += this::handlePageClosure
+        page.onRename += this::handlePageRenaming
+        return page
     }
 
+    private fun handlePageClosure(id: PageID) {
+        pagesById -= id
+        onPageClosed.raise(pagesById[id]!!)
+    }
+
+    private fun handlePageRenaming(names: Pair<PageID, PageID>) {
+        val (old, new) = names
+        pagesById[old]?.let {
+            pagesById[new] = it
+        }
+        pagesById -= old
+    }
+
+    override fun load(file: File): Page =
+        newPage(FileName(file)).also {
+            it.theory = file.readText()
+        }
+
     override var currentPage: Page? = null
-        protected set
+        protected set(value) {
+            field = value?.also {
+                onPageSelected.raise(it)
+            }
+        }
 
     override fun select(id: PageID?) {
-        TODO("Not yet implemented")
+        currentPage = id?.let { pagesById[it] }
     }
 
     override fun select(page: Page) {
-        TODO("Not yet implemented")
+        currentPage = page
     }
 
-    override val onQuit: Observable<Unit>
-        get() = TODO("Not yet implemented")
-    override val onPageSelected: Observable<Page>
-        get() = TODO("Not yet implemented")
-    override val onPageCreated: Observable<Page>
-        get() = TODO("Not yet implemented")
-    override val onPageLoaded: Observable<Page>
-        get() = TODO("Not yet implemented")
-    override val onPageClosed: Observable<File>
-        get() = TODO("Not yet implemented")
+    override val onQuit: Source<Unit> = Source.of()
 
+    override val onPageSelected: Source<Page> = Source.of()
+
+    override val onPageCreated: Source<Page> = Source.of()
+
+    override val onPageLoaded: Source<Page> = Source.of()
+
+    override val onPageClosed: Source<Page> = Source.of()
 }

@@ -6,19 +6,20 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.SolverBuilder
 import it.unibo.tuprolog.solve.exception.Warning
+import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Observable
 
 interface Page {
     enum class Status {
         IDLE, COMPUTING, SOLUTION
     }
-    
+
     var id: PageID
-    
+
     val state: Status
 
     var theory: String
-    
+
     var query: String
 
     var stdin: String
@@ -36,20 +37,22 @@ interface Page {
     fun reset()
 
     fun save(file: File)
-    
+
     fun close()
 
-    val onReset: Observable<SolverEvent<Unit>>
+    val onRename: Observable<Pair<PageID, PageID>>
 
-    val onClose: Observable<Unit>
+    val onReset: Observable<SolverEvent<PageID>>
+
+    val onClose: Observable<PageID>
 
     val onSolveOptionsChanged: Observable<SolveOptions>
 
     val onQueryChanged: Observable<String>
 
-    val onNewSolver: Observable<SolverEvent<Unit>>
+    val onNewSolver: Observable<SolverEvent<PageID>>
 
-    val onNewStaticKb: Observable<SolverEvent<Unit>>
+    val onNewStaticKb: Observable<SolverEvent<PageID>>
 
     val onNewQuery: Observable<SolverEvent<Struct>>
 

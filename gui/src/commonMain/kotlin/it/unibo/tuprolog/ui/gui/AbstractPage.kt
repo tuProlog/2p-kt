@@ -5,22 +5,36 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parseAsStruct
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.MutableSolver
+import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolveOptions
+import it.unibo.tuprolog.solve.SolverBuilder
+import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.utils.Cached
+import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Source
 import kotlin.jvm.Volatile
 
 internal abstract class AbstractPage(
-    override var id: PageID,
+    id: PageID,
     override var solverBuilder: SolverBuilder,
     timeout: TimeDuration
 ) : Page {
-    
+
     private val content: FileContent = FileContent()
+
+    override var id: PageID = id
+        set(value) {
+            val old = field
+            field = value
+            if (value != old) {
+                onRename.raise(old to value)
+            }
+        }
 
     override var theory: String
         get() = content.text
@@ -55,7 +69,7 @@ internal abstract class AbstractPage(
         }
 
     override fun close() {
-        onClose.raise(Unit)
+        onClose.raise(id)
     }
 
     @Volatile
@@ -79,7 +93,7 @@ internal abstract class AbstractPage(
             .warnings(OutputChannel.of { onWarning.raise(it) })
             .buildMutable()
         newSolver.also {
-            onNewSolver.raise(SolverEvent(Unit, it))
+            onNewSolver.raise(SolverEvent(id, it))
         }
     }
 
@@ -90,7 +104,7 @@ internal abstract class AbstractPage(
             }
             solver.invalidate()
             solver.regenerate()
-            onReset.raise(SolverEvent(Unit, solver.value))
+            onReset.raise(SolverEvent(id, solver.value))
             try {
                 loadCurrentFileAsStaticKB(onlyIfChanged = false)
             } catch (e: SyntaxException) {
@@ -101,6 +115,7 @@ internal abstract class AbstractPage(
 
     override fun save(file: File) {
         file.writeText(content.text)
+        id = FileName(file)
     }
 
     override fun solve(maxSolutions: Int) {
@@ -167,7 +182,7 @@ internal abstract class AbstractPage(
                     val theory = content.text.parseAsTheory(solver.operators)
                     solver.resetDynamicKb()
                     solver.loadStaticKb(theory)
-                    onNewStaticKb.raise(SolverEvent(Unit, solver))
+                    onNewStaticKb.raise(SolverEvent(id, solver))
                 } catch (e: ParseException) {
                     content.changed = true
                     throw SyntaxException.InTheorySyntaxError(id, content.text, e)
@@ -185,9 +200,11 @@ internal abstract class AbstractPage(
         }
     }
 
-    override val onClose: Source<Unit> = Source.of()
+    override val onRename: Source<Pair<PageID, PageID>> = Source.of()
 
-    override val onReset: Source<SolverEvent<Unit>> = Source.of()
+    override val onClose: Source<PageID> = Source.of()
+
+    override val onReset: Source<SolverEvent<PageID>> = Source.of()
 
     override val onSolveOptionsChanged: Source<SolveOptions> = Source.of()
 
@@ -195,9 +212,9 @@ internal abstract class AbstractPage(
 
     override val onNewQuery: Source<SolverEvent<Struct>> = Source.of()
 
-    override val onNewSolver: Source<SolverEvent<Unit>> = Source.of()
+    override val onNewSolver: Source<SolverEvent<PageID>> = Source.of()
 
-    override val onNewStaticKb: Source<SolverEvent<Unit>> = Source.of()
+    override val onNewStaticKb: Source<SolverEvent<PageID>> = Source.of()
 
     override val onResolutionStarted: Source<SolverEvent<Int>> = Source.of()
 
