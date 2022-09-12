@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.utils.io
 
+import it.unibo.tuprolog.Os
+import it.unibo.tuprolog.currentOs
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class TestFile {
 
@@ -9,10 +12,18 @@ class TestFile {
 
     @Test
     fun fileRepresentation() {
-        assertEquals(
-            pathToFile,
-            File.of(pathToFile).toString()
-        )
+        try {
+            assertEquals(
+                pathToFile,
+                File.of(pathToFile).toString()
+            )
+        } catch (_: AssertionError) {
+            assertEquals(Os.WINDOWS, currentOs())
+            assertEndsWith(
+                pathToFile.toWindowsPath(),
+                File.of(pathToFile).toString()
+            )
+        }
     }
 
     @Test
@@ -25,10 +36,18 @@ class TestFile {
 
     @Test
     fun filePath() {
-        assertEquals(
-            pathToFile,
-            File.of(pathToFile).path
-        )
+        try {
+            assertEquals(
+                pathToFile,
+                File.of(pathToFile).path
+            )
+        } catch (_: AssertionError) {
+            assertEquals(Os.WINDOWS, currentOs())
+            assertEndsWith(
+                pathToFile.toWindowsPath(),
+                File.of(pathToFile).path
+            )
+        }
     }
 
     @Test
@@ -51,7 +70,17 @@ class TestFile {
     fun fileRead() {
         assertEquals(
             ExampleFiles.PARENTS,
-            findResource("Parents.pl").toFile().readText().trimEnd()
+            findResource("Parents.pl").toFile().readText().ensureUnixLineTermination()
         )
     }
+
+    private fun assertEndsWith(expectedEnding: String, actual: String) {
+        assertTrue(actual.endsWith(expectedEnding), "String \"$actual\" is not ending with $expectedEnding")
+    }
+
+    private fun String.toWindowsPath(): String =
+        trimEnd().replace("/", "\\")
+
+    private fun String.ensureUnixLineTermination(): String =
+        trimEnd().replace("\r\n", "\n")
 }
