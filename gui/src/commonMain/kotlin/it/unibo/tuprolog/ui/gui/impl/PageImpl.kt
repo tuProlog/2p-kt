@@ -27,10 +27,10 @@ import it.unibo.tuprolog.utils.observe.Source
 import kotlin.jvm.Volatile
 
 internal class PageImpl(
+    private val runner: Runner,
     id: PageID,
     override var solverBuilder: SolverBuilder,
     timeout: TimeDuration,
-    private val runner: Runner
 ) : Page {
 
     private val content: FileContent = FileContent()

@@ -14,6 +14,12 @@ kotlin {
                 api(project(":io-utils"))
             }
         }
+        val commonTest by getting {
+            dependencies {
+                implementation(project(":solve-classic"))
+                implementation(project(":io-lib"))
+            }
+        }
     }
 }
 

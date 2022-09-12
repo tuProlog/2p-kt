@@ -5,9 +5,14 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.SolverBuilder
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.exception.Warning
+import it.unibo.tuprolog.solve.times
+import it.unibo.tuprolog.ui.gui.impl.PageImpl
 import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Observable
+import kotlin.jvm.JvmField
 
 interface Page {
     enum class Status {
@@ -71,4 +76,17 @@ interface Page {
     val onWarning: Observable<Warning>
 
     val onError: Observable<TuPrologException>
+
+    companion object {
+
+        @JvmField
+        val DEFAULT_TIMEOUT = 5 * TimeUnit.SECONDS
+
+        fun of(
+            runner: Runner,
+            id: PageID,
+            solverBuilder: SolverBuilder,
+            timeout: TimeDuration = DEFAULT_TIMEOUT,
+        ): Page = PageImpl(runner, id, solverBuilder, timeout)
+    }
 }

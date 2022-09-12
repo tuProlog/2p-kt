@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.ui.gui
 
+import it.unibo.tuprolog.core.exception.TuPrologException
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.ui.gui.impl.ApplicationImpl
 import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Observable
 
@@ -29,4 +33,14 @@ interface Application {
     val onPageLoaded: Observable<Page>
 
     val onPageClosed: Observable<Page>
+
+    val onError: Observable<Pair<Page, TuPrologException>>
+
+    companion object {
+        fun of(
+            runner: Runner,
+            solverFactory: SolverFactory,
+            defaultTimeout: TimeDuration = Page.DEFAULT_TIMEOUT
+        ): Application = ApplicationImpl(runner, solverFactory, defaultTimeout)
+    }
 }

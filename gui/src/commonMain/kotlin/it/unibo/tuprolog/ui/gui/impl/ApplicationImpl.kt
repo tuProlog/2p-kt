@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ui.gui.impl
 
-import it.unibo.tuprolog.solve.SolverBuilder
+import it.unibo.tuprolog.core.exception.TuPrologException
+import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.ui.gui.Application
 import it.unibo.tuprolog.ui.gui.FileName
@@ -10,10 +11,10 @@ import it.unibo.tuprolog.ui.gui.Runner
 import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Source
 
-open class ApplicationImpl(
-    private var builderProvider: () -> SolverBuilder,
-    private var defaultTimeout: TimeDuration,
-    private val runner: Runner
+internal class ApplicationImpl(
+    private val runner: Runner,
+    private var solverFactory: SolverFactory,
+    private var defaultTimeout: TimeDuration
 ) : Application {
     private val pagesById: MutableMap<PageID, Page> = mutableMapOf()
 
@@ -35,12 +36,13 @@ open class ApplicationImpl(
 
     private fun createPage(
         id: PageID,
-        builderProvider: () -> SolverBuilder = this.builderProvider,
+        solverFactory: SolverFactory = this.solverFactory,
         timeout: TimeDuration = this.defaultTimeout
     ): Page {
-        val page = PageImpl(id, builderProvider(), timeout, runner)
+        val page = PageImpl(runner, id, solverFactory.newBuilder(), timeout)
         page.onClose += this::handlePageClosure
-        page.onRename += this::handlePageRenaming
+        page.onRename += { (old, new) -> handlePageRenaming(old, new) }
+        page.onError += { handlePageError(page, it) }
         return page
     }
 
@@ -49,12 +51,15 @@ open class ApplicationImpl(
         onPageClosed.raise(pagesById[id]!!)
     }
 
-    private fun handlePageRenaming(names: Pair<PageID, PageID>) {
-        val (old, new) = names
+    private fun handlePageRenaming(old: PageID, new: PageID) {
         pagesById[old]?.let {
             pagesById[new] = it
         }
         pagesById -= old
+    }
+
+    private fun handlePageError(page: Page, error: TuPrologException) {
+        onError.raise(page to error)
     }
 
     override fun load(file: File) {
@@ -92,4 +97,6 @@ open class ApplicationImpl(
     override val onPageLoaded: Source<Page> = Source.of()
 
     override val onPageClosed: Source<Page> = Source.of()
+
+    override val onError: Source<Pair<Page, TuPrologException>> = Source.of()
 }
