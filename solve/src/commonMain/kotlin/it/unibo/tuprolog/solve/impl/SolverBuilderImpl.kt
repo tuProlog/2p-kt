@@ -37,6 +37,13 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
         this.runtime = runtime
     }
 
+    override fun withLibrary(library: Library): SolverBuilder {
+        if (library != builtins && library !in runtime.libraries) {
+            this.runtime += library
+        }
+        return this
+    }
+
     override var builtins: Library? = factory.defaultBuiltins
 
     override fun builtins(builtins: Library): SolverBuilder = returningThis {

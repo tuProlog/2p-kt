@@ -38,6 +38,9 @@ interface SolverBuilder {
     @JsName("setRuntime")
     fun runtime(runtime: Runtime): SolverBuilder
 
+    @JsName("withLibrary")
+    fun withLibrary(library: Library): SolverBuilder
+
     @JsName("builtins")
     var builtins: Library?
 
