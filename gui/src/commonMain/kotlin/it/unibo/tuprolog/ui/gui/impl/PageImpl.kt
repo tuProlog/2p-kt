@@ -66,6 +66,13 @@ internal class PageImpl(
         }
 
     override var query: String = ""
+        set(value) {
+            val updated = field != value
+            field = value
+            if (updated) {
+                onQueryChanged.raise(value)
+            }
+        }
 
     override var solveOptions: SolveOptions = SolveOptions.DEFAULT.setTimeout(timeout)
         set(value) {
