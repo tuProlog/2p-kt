@@ -43,6 +43,10 @@ class EventsAsserter<T>(events: Iterable<T>) {
         assertTrue(predicate(it), message)
     }
 
+    fun aboutNext(action: (T) -> Unit) = focussingOnNext {
+        action(it)
+    }
+
     fun assertNextEquals(expected: T, message: String? = null) = focussingOnNext {
         assertEquals(expected, it, message)
     }
@@ -76,6 +80,12 @@ class EventsAsserter<T>(events: Iterable<T>) {
     }
 }
 
-fun <T> Iterable<T>.assertions(scope: EventsAsserter<T>.() -> Unit) {
+fun <T> Iterable<T>.assertions(debug: Boolean = false, scope: EventsAsserter<T>.() -> Unit) {
+    if (debug) {
+        val events = if (this.none()) "<none>" else joinToString("\n#\t- ") {
+            it.toString().replace("\n", "\\n")
+        }
+        println("# Events:\n#\t- $events")
+    }
     EventsAsserter(this).run(scope)
 }

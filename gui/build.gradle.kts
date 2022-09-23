@@ -17,6 +17,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(project(":solve-classic"))
+                implementation(project(":solve-concurrent"))
                 implementation(project(":io-lib"))
             }
         }
