@@ -14,6 +14,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
+import it.unibo.tuprolog.ui.gui.Event
 import it.unibo.tuprolog.ui.gui.FileContent
 import it.unibo.tuprolog.ui.gui.FileName
 import it.unibo.tuprolog.ui.gui.Page
@@ -21,6 +22,7 @@ import it.unibo.tuprolog.ui.gui.PageID
 import it.unibo.tuprolog.ui.gui.Runner
 import it.unibo.tuprolog.ui.gui.SolverEvent
 import it.unibo.tuprolog.ui.gui.SyntaxException
+import it.unibo.tuprolog.ui.gui.raise
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Source
@@ -40,14 +42,18 @@ internal class PageImpl(
             val old = field
             field = value
             if (value != old) {
-                onRename.raise(old to value)
+                onRename.raise(Page.EVENT_RENAME, old to value)
             }
         }
 
     override var theory: String
         get() = content.text
         set(value) {
+            val old = content.text
             content.text = value
+            if (value != old) {
+                onTheoryChanged.raise(Page.EVENT_THEORY_CHANGED, value)
+            }
         }
 
     private var solutions: Iterator<Solution>? = null
@@ -70,7 +76,7 @@ internal class PageImpl(
             val updated = field != value
             field = value
             if (updated) {
-                onQueryChanged.raise(value)
+                onQueryChanged.raise(Page.EVENT_QUERY_CHANGED, value)
             }
         }
 
@@ -79,17 +85,23 @@ internal class PageImpl(
             val changed = field != value
             field = value
             if (changed) {
-                onSolveOptionsChanged.raise(value)
+                onSolveOptionsChanged.raise(Page.EVENT_SOLVE_OPTIONS_CHANGED, value)
             }
         }
 
     override fun close() {
-        onClose.raise(id)
+        onClose.raise(Page.EVENT_CLOSE, id)
     }
 
     @Volatile
     override var state: Page.Status = Page.Status.IDLE
-        protected set
+        protected set(value) {
+            val changed = field != value
+            field = value
+            if (changed) {
+                onStateChanged.raise(Page.EVENT_STATE_CHANGED, value)
+            }
+        }
 
     private inline fun <T> ensuringStateIs(state: Page.Status, vararg states: Page.Status, action: () -> T): T {
         val admissibles = setOf(state, *states)
@@ -103,12 +115,12 @@ internal class PageImpl(
     private val solver = Cached.of {
         val newSolver: MutableSolver = solverBuilder
             .standardInput(InputChannel.of(stdin))
-            .standardOutput(OutputChannel.of { onStdoutPrinted.raise(it) })
-            .standardError(OutputChannel.of { onStderrPrinted.raise(it) })
-            .warnings(OutputChannel.of { onWarning.raise(it) })
+            .standardOutput(OutputChannel.of { onStdoutPrinted.raise(Page.EVENT_STDOUT_PRINTED, it) })
+            .standardError(OutputChannel.of { onStderrPrinted.raise(Page.EVENT_STDERR_PRINTED, it) })
+            .warnings(OutputChannel.of { onWarning.raise(Page.EVENT_WARNING, it) })
             .buildMutable()
         newSolver.also {
-            onNewSolver.raise(SolverEvent(id, it))
+            onNewSolver.raise(Page.EVENT_NEW_SOLVER, id, it)
         }
     }
 
@@ -119,11 +131,11 @@ internal class PageImpl(
             }
             solver.invalidate()
             solver.regenerate()
-            onReset.raise(SolverEvent(id, solver.value))
+            onReset.raise(Page.EVENT_RESET, id, solver.value)
             try {
                 loadCurrentFileAsStaticKB(onlyIfChanged = false)
             } catch (e: SyntaxException) {
-                onError.raise(e)
+                onError.raise(Page.EVENT_ERROR, e)
             }
         }
     }
@@ -142,11 +154,11 @@ internal class PageImpl(
             try {
                 solutions = newResolution()
                 solutionCount = 0
-                onNewQuery.raise(SolverEvent(lastGoal!!, solver.value))
+                onNewQuery.raise(Page.EVENT_NEW_QUERY, lastGoal!!, solver.value)
                 state = Page.Status.COMPUTING
                 nextImpl(maxSolutions)
             } catch (e: SyntaxException) {
-                onError.raise(e)
+                onError.raise(Page.EVENT_ERROR, e)
                 state = Page.Status.IDLE
             }
         }
@@ -159,10 +171,10 @@ internal class PageImpl(
                 val sol = solutions!!.next()
                 runner.ui {
                     solutionCount++
-                    onNewSolution.raise(SolverEvent(sol, solver.value))
+                    onNewSolution.raise(Page.EVENT_NEW_SOLUTION, sol, solver.value)
                     if (!solutions!!.hasNext() || state != Page.Status.COMPUTING) {
-                        onResolutionOver.raise(SolverEvent(solutionCount, solver.value))
-                        onQueryOver.raise(SolverEvent(sol.query, solver.value))
+                        onResolutionOver.raise(Page.EVENT_RESOLUTION_OVER, solutionCount, solver.value)
+                        onQueryOver.raise(Page.EVENT_QUERY_OVER, sol.query, solver.value)
                         state = Page.Status.IDLE
                     } else {
                         state = Page.Status.SOLUTION
@@ -203,7 +215,7 @@ internal class PageImpl(
                     val theory = content.text.parseAsTheory(solver.operators)
                     solver.resetDynamicKb()
                     solver.loadStaticKb(theory)
-                    onNewStaticKb.raise(SolverEvent(id, solver))
+                    onNewStaticKb.raise(Page.EVENT_NEW_STATIC_KB, id, solver)
                 } catch (e: ParseException) {
                     content.changed = true
                     throw SyntaxException.InTheorySyntaxError(id, content.text, e)
@@ -215,19 +227,23 @@ internal class PageImpl(
     override fun stop() {
         ensuringStateIs(Page.Status.SOLUTION) {
             state = Page.Status.IDLE
-            onQueryOver.raise(SolverEvent(lastGoal!!, solver.value))
+            onQueryOver.raise(Page.EVENT_QUERY_OVER, lastGoal!!, solver.value)
         }
     }
 
-    override val onRename: Source<Pair<PageID, PageID>> = Source.of()
+    override val onRename: Source<Event<Pair<PageID, PageID>>> = Source.of()
 
-    override val onClose: Source<PageID> = Source.of()
+    override val onClose: Source<Event<PageID>> = Source.of()
+
+    override val onStateChanged: Source<Event<Page.Status>> = Source.of()
 
     override val onReset: Source<SolverEvent<PageID>> = Source.of()
 
-    override val onSolveOptionsChanged: Source<SolveOptions> = Source.of()
+    override val onSolveOptionsChanged: Source<Event<SolveOptions>> = Source.of()
 
-    override val onQueryChanged: Source<String> = Source.of()
+    override val onQueryChanged: Source<Event<String>> = Source.of()
+
+    override val onTheoryChanged: Source<Event<String>> = Source.of()
 
     override val onNewQuery: Source<SolverEvent<Struct>> = Source.of()
 
@@ -243,11 +259,11 @@ internal class PageImpl(
 
     override val onQueryOver: Source<SolverEvent<Struct>> = Source.of()
 
-    override val onStdoutPrinted: Source<String> = Source.of()
+    override val onStdoutPrinted: Source<Event<String>> = Source.of()
 
-    override val onStderrPrinted: Source<String> = Source.of()
+    override val onStderrPrinted: Source<Event<String>> = Source.of()
 
-    override val onWarning: Source<Warning> = Source.of()
+    override val onWarning: Source<Event<Warning>> = Source.of()
 
-    override val onError: Source<TuPrologException> = Source.of()
+    override val onError: Source<Event<TuPrologException>> = Source.of()
 }

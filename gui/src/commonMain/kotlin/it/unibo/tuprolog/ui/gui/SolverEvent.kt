@@ -7,29 +7,50 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.ui.gui.impl.SolverEventImpl
 import it.unibo.tuprolog.unify.Unificator
 
-data class SolverEvent<T>(
-    val event: T,
-    override val unificator: Unificator,
-    override val operators: OperatorSet,
-    override val libraries: Runtime,
-    override val flags: FlagStore,
-    override val staticKb: Theory,
-    override val dynamicKb: Theory,
-    override val inputChannels: InputStore,
-    override val outputChannels: OutputStore
-) : ExecutionContextAware {
-    constructor(event: T, other: ExecutionContextAware) :
-        this(
-            event = event,
-            unificator = other.unificator,
-            dynamicKb = other.dynamicKb.toImmutableTheory(),
-            flags = other.flags,
-            inputChannels = other.inputChannels,
-            libraries = other.libraries,
-            operators = other.operators,
-            outputChannels = other.outputChannels,
-            staticKb = other.staticKb.toImmutableTheory()
+interface SolverEvent<T> : Event<T>, ExecutionContextAware {
+    companion object {
+        fun <T> of(
+            name: String,
+            event: T,
+            unificator: Unificator,
+            operators: OperatorSet,
+            libraries: Runtime,
+            flags: FlagStore,
+            staticKb: Theory,
+            dynamicKb: Theory,
+            inputChannels: InputStore,
+            outputChannels: OutputStore
+        ): SolverEvent<T> = SolverEventImpl(
+            name,
+            event,
+            unificator,
+            operators,
+            libraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            inputChannels,
+            outputChannels
         )
+
+        fun <T> copyOf(
+            name: String,
+            event: T,
+            other: ExecutionContextAware
+        ): SolverEvent<T> = SolverEventImpl(
+            name,
+            event,
+            other.unificator,
+            other.operators,
+            other.libraries,
+            other.flags,
+            other.staticKb,
+            other.dynamicKb,
+            other.inputChannels,
+            other.outputChannels
+        )
+    }
 }

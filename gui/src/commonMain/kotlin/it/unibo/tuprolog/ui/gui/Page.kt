@@ -45,15 +45,19 @@ interface Page {
 
     fun close()
 
-    val onRename: Observable<Pair<PageID, PageID>>
+    val onRename: Observable<Event<Pair<PageID, PageID>>>
 
     val onReset: Observable<SolverEvent<PageID>>
 
-    val onClose: Observable<PageID>
+    val onClose: Observable<Event<PageID>>
 
-    val onSolveOptionsChanged: Observable<SolveOptions>
+    val onStateChanged: Observable<Event<Status>>
 
-    val onQueryChanged: Observable<String>
+    val onSolveOptionsChanged: Observable<Event<SolveOptions>>
+
+    val onQueryChanged: Observable<Event<String>>
+
+    val onTheoryChanged: Observable<Event<String>>
 
     val onNewSolver: Observable<SolverEvent<PageID>>
 
@@ -69,15 +73,69 @@ interface Page {
 
     val onQueryOver: Observable<SolverEvent<Struct>>
 
-    val onStdoutPrinted: Observable<String>
+    val onStdoutPrinted: Observable<Event<String>>
 
-    val onStderrPrinted: Observable<String>
+    val onStderrPrinted: Observable<Event<String>>
 
-    val onWarning: Observable<Warning>
+    val onWarning: Observable<Event<Warning>>
 
-    val onError: Observable<TuPrologException>
+    val onError: Observable<Event<TuPrologException>>
 
     companion object {
+
+        @JvmField
+        val EVENT_RENAME = Page::onRename.name
+
+        @JvmField
+        val EVENT_RESET = Page::onReset.name
+
+        @JvmField
+        val EVENT_CLOSE = Page::onClose.name
+
+        @JvmField
+        val EVENT_STATE_CHANGED = Page::onStateChanged.name
+
+        @JvmField
+        val EVENT_SOLVE_OPTIONS_CHANGED = Page::onSolveOptionsChanged.name
+
+        @JvmField
+        val EVENT_QUERY_CHANGED = Page::onQueryChanged.name
+
+        @JvmField
+        val EVENT_THEORY_CHANGED = Page::onTheoryChanged.name
+
+        @JvmField
+        val EVENT_NEW_SOLVER = Page::onNewSolver.name
+
+        @JvmField
+        val EVENT_NEW_STATIC_KB = Page::onNewStaticKb.name
+
+        @JvmField
+        val EVENT_NEW_QUERY = Page::onNewQuery.name
+
+        @JvmField
+        val EVENT_RESOLUTION_STARTED = Page::onResolutionStarted.name
+
+        @JvmField
+        val EVENT_NEW_SOLUTION = Page::onNewSolution.name
+
+        @JvmField
+        val EVENT_RESOLUTION_OVER = Page::onResolutionOver.name
+
+        @JvmField
+        val EVENT_QUERY_OVER = Page::onQueryOver.name
+
+        @JvmField
+        val EVENT_STDOUT_PRINTED = Page::onStdoutPrinted.name
+
+        @JvmField
+        val EVENT_STDERR_PRINTED = Page::onStderrPrinted.name
+
+        @JvmField
+        val EVENT_WARNING = Page::onWarning.name
+
+        @JvmField
+        val EVENT_ERROR = Page::onError.name
 
         @JvmField
         val DEFAULT_TIMEOUT = 5 * TimeUnit.SECONDS

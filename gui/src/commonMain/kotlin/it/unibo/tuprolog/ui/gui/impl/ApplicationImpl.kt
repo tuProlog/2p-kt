@@ -4,10 +4,12 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.ui.gui.Application
+import it.unibo.tuprolog.ui.gui.Event
 import it.unibo.tuprolog.ui.gui.FileName
 import it.unibo.tuprolog.ui.gui.Page
 import it.unibo.tuprolog.ui.gui.PageID
 import it.unibo.tuprolog.ui.gui.Runner
+import it.unibo.tuprolog.ui.gui.raise
 import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Source
 
@@ -25,7 +27,7 @@ internal class ApplicationImpl(
         val page = if (pageID !in pagesById) {
             createPage(pageID).also {
                 pagesById[pageID] = it
-                onPageCreated.raise(it)
+                onPageCreated.raise(Application.EVENT_PAGE_CREATED, it)
             }
         } else {
             pagesById[pageID]!!
@@ -40,15 +42,15 @@ internal class ApplicationImpl(
         timeout: TimeDuration = this.defaultTimeout
     ): Page {
         val page = PageImpl(runner, id, solverFactory.newBuilder(), timeout)
-        page.onClose += this::handlePageClosure
-        page.onRename += { (old, new) -> handlePageRenaming(old, new) }
-        page.onError += { handlePageError(page, it) }
+        page.onClose += { handlePageClosure(it.event) }
+        page.onRename += { handlePageRenaming(it.event.first, it.event.first) }
+        page.onError += { handlePageError(page, it.event) }
         return page
     }
 
     private fun handlePageClosure(id: PageID) {
         pagesById -= id
-        onPageClosed.raise(pagesById[id]!!)
+        onPageClosed.raise(Application.EVENT_PAGE_CLOSED, pagesById[id]!!)
     }
 
     private fun handlePageRenaming(old: PageID, new: PageID) {
@@ -59,7 +61,7 @@ internal class ApplicationImpl(
     }
 
     private fun handlePageError(page: Page, error: TuPrologException) {
-        onError.raise(page to error)
+        onError.raise(Application.EVENT_ERROR, page to error)
     }
 
     override fun load(file: File) {
@@ -76,7 +78,7 @@ internal class ApplicationImpl(
     override var currentPage: Page? = null
         protected set(value) {
             field = value?.also {
-                onPageSelected.raise(it)
+                onPageSelected.raise(Application.EVENT_PAGE_SELECTED, it)
             }
         }
 
@@ -90,13 +92,13 @@ internal class ApplicationImpl(
 
     override val onQuit: Source<Unit> = Source.of()
 
-    override val onPageSelected: Source<Page> = Source.of()
+    override val onPageSelected: Source<Event<Page>> = Source.of()
 
-    override val onPageCreated: Source<Page> = Source.of()
+    override val onPageCreated: Source<Event<Page>> = Source.of()
 
-    override val onPageLoaded: Source<Page> = Source.of()
+    override val onPageLoaded: Source<Event<Page>> = Source.of()
 
-    override val onPageClosed: Source<Page> = Source.of()
+    override val onPageClosed: Source<Event<Page>> = Source.of()
 
-    override val onError: Source<Pair<Page, TuPrologException>> = Source.of()
+    override val onError: Source<Event<Pair<Page, TuPrologException>>> = Source.of()
 }

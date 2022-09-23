@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.ui.gui.impl.ApplicationImpl
 import it.unibo.tuprolog.utils.io.File
 import it.unibo.tuprolog.utils.observe.Observable
+import kotlin.jvm.JvmField
 
 interface Application {
 
@@ -26,17 +27,36 @@ interface Application {
 
     val onQuit: Observable<Unit>
 
-    val onPageSelected: Observable<Page>
+    val onPageSelected: Observable<Event<Page>>
 
-    val onPageCreated: Observable<Page>
+    val onPageCreated: Observable<Event<Page>>
 
-    val onPageLoaded: Observable<Page>
+    val onPageLoaded: Observable<Event<Page>>
 
-    val onPageClosed: Observable<Page>
+    val onPageClosed: Observable<Event<Page>>
 
-    val onError: Observable<Pair<Page, TuPrologException>>
+    val onError: Observable<Event<Pair<Page, TuPrologException>>>
 
     companion object {
+
+        @JvmField
+        val EVENT_QUIT = Application::onQuit.name
+
+        @JvmField
+        val EVENT_PAGE_SELECTED = Application::onPageSelected.name
+
+        @JvmField
+        val EVENT_PAGE_CREATED = Application::onPageCreated.name
+
+        @JvmField
+        val EVENT_PAGE_LOADED = Application::onPageLoaded.name
+
+        @JvmField
+        val EVENT_PAGE_CLOSED = Application::onPageClosed.name
+
+        @JvmField
+        val EVENT_ERROR = Application::onError.name
+
         fun of(
             runner: Runner,
             solverFactory: SolverFactory,
