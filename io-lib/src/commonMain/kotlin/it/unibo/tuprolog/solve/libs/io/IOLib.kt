@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.library.Library.Companion.toMapEnsuringNoDuplicates
+import it.unibo.tuprolog.solve.library.impl.AbstractLibrary
 import it.unibo.tuprolog.solve.libs.io.primitives.AtEndOfStream0
 import it.unibo.tuprolog.solve.libs.io.primitives.AtEndOfStream1
 import it.unibo.tuprolog.solve.libs.io.primitives.CharConversion
@@ -48,56 +49,59 @@ import it.unibo.tuprolog.solve.libs.io.primitives.WriteEq1
 import it.unibo.tuprolog.solve.libs.io.primitives.WriteEq2
 import it.unibo.tuprolog.solve.libs.io.primitives.WriteTerm2
 import it.unibo.tuprolog.solve.libs.io.primitives.WriteTerm3
+import it.unibo.tuprolog.solve.primitive.Primitive
 
-object IOLib : Library by
-Library.of(
-    alias = "prolog.io",
-    primitives = sequenceOf(
-        AtEndOfStream0,
-        AtEndOfStream1,
-        CharConversion,
-        Close1,
-        Close2,
-        Consult,
-        CurrentCharConversion,
-        CurrentInput,
-        CurrentOutput,
-        FlushOutput,
-        GetByte1,
-        GetByte2,
-        GetChar1,
-        GetChar2,
-        GetCode1,
-        GetCode2,
-        Nl1,
-        Open3,
-        Open4,
-        PeekByte1,
-        PeekByte2,
-        PeekChar1,
-        PeekChar2,
-        PeekCode1,
-        PeekCode2,
-        PutByte1,
-        PutByte2,
-        PutChar1,
-        PutChar2,
-        PutCode1,
-        PutCode2,
-        Read1,
-        Read2,
-        ReadTerm2,
-        ReadTerm3,
-        SetInput,
-        SetOutput,
-        SetTheory,
-        StreamProperty,
-        Write2,
-        WriteCanonical1,
-        WriteCanonical2,
-        WriteEq1,
-        WriteEq2,
-        WriteTerm2,
-        WriteTerm3
-    ).map { it.descriptionPair }.toMapEnsuringNoDuplicates()
-)
+object IOLib : AbstractLibrary() {
+    override val alias: String
+        get() = "prolog.io"
+
+    override val primitives: Map<Signature, Primitive>
+        get() = listOf(
+            AtEndOfStream0,
+            AtEndOfStream1,
+            CharConversion,
+            Close1,
+            Close2,
+            Consult,
+            CurrentCharConversion,
+            CurrentInput,
+            CurrentOutput,
+            FlushOutput,
+            GetByte1,
+            GetByte2,
+            GetChar1,
+            GetChar2,
+            GetCode1,
+            GetCode2,
+            Nl1,
+            Open3,
+            Open4,
+            PeekByte1,
+            PeekByte2,
+            PeekChar1,
+            PeekChar2,
+            PeekCode1,
+            PeekCode2,
+            PutByte1,
+            PutByte2,
+            PutChar1,
+            PutChar2,
+            PutCode1,
+            PutCode2,
+            Read1,
+            Read2,
+            ReadTerm2,
+            ReadTerm3,
+            SetInput,
+            SetOutput,
+            SetTheory,
+            StreamProperty,
+            Write2,
+            WriteCanonical1,
+            WriteCanonical2,
+            WriteEq1,
+            WriteEq2,
+            WriteTerm2,
+            WriteTerm3
+        ).map { it.descriptionPair }.toMapEnsuringNoDuplicates()
+}

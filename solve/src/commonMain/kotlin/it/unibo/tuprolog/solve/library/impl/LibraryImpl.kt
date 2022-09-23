@@ -18,12 +18,8 @@ internal data class LibraryImpl(
     override val theory: Theory,
     override val primitives: Map<Signature, Primitive>,
     override val functions: Map<Signature, LogicFunction>
-) : Library {
+) : AbstractLibrary() {
     init {
         require(alias.isNotBlank())
     }
-
-    override fun equals(other: Any?): Boolean = other is Library && Library.equals(this, other)
-
-    override fun hashCode(): Int = Library.hashCode(this)
 }
