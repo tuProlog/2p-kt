@@ -178,7 +178,9 @@ internal class PageImpl(
                         state = Page.Status.IDLE
                     } else {
                         state = Page.Status.SOLUTION
-                        next(maxSolutions - 1)
+                        if (maxSolutions > 1) {
+                            next(maxSolutions - 1)
+                        }
                     }
                 }
             }
