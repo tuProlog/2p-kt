@@ -17,10 +17,22 @@ internal class OutputStoreImpl(
 ) : AbstractChannelStore<String, OutputChannel<String>, OutputStore>(checkChannels(stdOut, stdErr, outputChannels)),
     OutputStore {
     override fun setStdOut(channel: OutputChannel<String>): OutputStore =
-        OutputStoreImpl(channel, stdErr, warnings, channels - STDOUT)
+        (channels - STDOUT).let {
+            if (current == stdOut) {
+                OutputStoreImpl(channel, stdErr, warnings, it + (CURRENT to channel))
+            } else {
+                OutputStoreImpl(channel, stdErr, warnings, it)
+            }
+        }
 
     override fun setStdErr(channel: OutputChannel<String>): OutputStore =
-        OutputStoreImpl(stdOut, channel, warnings, channels - STDERR)
+        (channels - STDERR).let {
+            if (current == stdErr) {
+                OutputStoreImpl(stdOut, channel, warnings, it + (CURRENT to channel))
+            } else {
+                OutputStoreImpl(stdOut, channel, warnings, it)
+            }
+        }
 
     override fun setWarnings(channel: OutputChannel<Warning>): OutputStore =
         OutputStoreImpl(stdOut, stdErr, channel, channels)
