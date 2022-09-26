@@ -43,6 +43,9 @@ fun assertSolutionsEquals(expected: Solution, actual: Solution) {
             .zip(actual.substitution.values.sortedWith(TermComparator.DefaultComparator))
             .all { (e, a) -> e.equals(a, useVarCompleteName = false) }
             .let { assertTrue(it) }
+    } else if (expected is Solution.Halt && actual is Solution.Halt) {
+        assertEquals(expected.exception::class, actual.exception::class)
+        assertEquals(expected.exception.message, actual.exception.message)
     }
 }
 
@@ -80,3 +83,4 @@ fun <T> EventsAsserter<Event<Any>>.assertNextIsSolveEvent(
     assertFalse(it.standardError.isClosed)
     assertFalse(it.warnings.isClosed)
 }
+

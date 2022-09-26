@@ -8,8 +8,12 @@ import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.TimeUnit
+import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.Warning
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.libs.io.IOLib
+import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parse
 import kotlin.random.Random
@@ -281,7 +285,7 @@ class TestPage {
         val query = "write('hello'), nl, write(stderr, 'world'), nl(stderr), missing."
         val parsedQuery = query.parseAsStruct()
         page.query = query
-        page.solve(maxSolutions = 1)
+        page.solve(maxSolutions = 2)
         events.assertions {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
@@ -305,6 +309,68 @@ class TestPage {
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, Solution.no(parsedQuery))
             assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, 1)
             assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
+            assertNoMoreEvents()
+        }
+    }
+
+    @Test
+    fun exceptionalQuery() {
+        val query = "X is Y + 1."
+        val parsedQuery = query.parseAsStruct()
+        page.query = query
+        page.solve(maxSolutions = 2)
+        events.assertions {
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+            assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            val solution = Solution.halt(
+                parsedQuery,
+                InstantiationError(
+                    message = "The 0-th argument `Y` of '+'/2 is unexpectedly not instantiated",
+                    context = DummyExecutionContext
+                )
+            )
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, solution)
+            assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, 1)
+            assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
+            assertNoMoreEvents()
+        }
+    }
+
+    @Test
+    fun timeoutQuery() {
+        // TODO fix timeout with subsolvers
+        // val query = "findall(N, nat(N), L)."
+        val query = "sleep(2000)"
+        val parsedQuery = query.parseAsStruct()
+        page.theory = peanoTheory
+        page.query = query
+        val shortTimeout = SolveOptions.DEFAULT.setTimeout(1 * TimeUnit.SECONDS)
+        page.solveOptions = shortTimeout
+        page.solve(maxSolutions = 2)
+        events.assertions(debug = true) {
+            assertNextIsEvent(Page.EVENT_THEORY_CHANGED, peanoTheory)
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsEvent(Page.EVENT_SOLVE_OPTIONS_CHANGED, shortTimeout)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = peanoTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = peanoTheoryParsed)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+            assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            val solution = Solution.halt(
+                parsedQuery,
+                TimeOutException(context = DummyExecutionContext, exceededDuration = 1)
+            )
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, solution, staticKb = peanoTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, 1, staticKb = peanoTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery, staticKb = peanoTheoryParsed)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
             assertNoMoreEvents()
         }
