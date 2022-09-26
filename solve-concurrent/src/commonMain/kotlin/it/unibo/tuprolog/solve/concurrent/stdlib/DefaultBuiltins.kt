@@ -4,9 +4,14 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Naf
 import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Or
 import it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Throw
-import it.unibo.tuprolog.solve.concurrent.stdlib.rule.SpecificRules
-import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.concurrent.stdlib.rule.Call
+import it.unibo.tuprolog.solve.concurrent.stdlib.rule.Catch
+import it.unibo.tuprolog.solve.concurrent.stdlib.rule.Comma
+import it.unibo.tuprolog.solve.concurrent.stdlib.rule.Cut
+import it.unibo.tuprolog.solve.concurrent.stdlib.rule.NegationAsFailure
+import it.unibo.tuprolog.solve.library.impl.ExtensionLibrary
 import it.unibo.tuprolog.solve.primitive.Primitive
+import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.solve.stdlib.primitive.Arg
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticEqual
@@ -70,16 +75,20 @@ import it.unibo.tuprolog.solve.stdlib.primitive.UnifiesWith
 import it.unibo.tuprolog.solve.stdlib.primitive.Univ
 import it.unibo.tuprolog.solve.stdlib.primitive.Var
 import it.unibo.tuprolog.solve.stdlib.primitive.Write
-import it.unibo.tuprolog.theory.Theory
 
-object DefaultBuiltins : Library by CommonBuiltins {
+object DefaultBuiltins : ExtensionLibrary(CommonBuiltins) {
+    override val additionalRules: Iterable<RuleWrapper<*>>
+        get() = listOf(
+            Catch,
+            Call,
+            Comma,
+            Cut, // convert into primitive in case smarter behavirour is needed
+            NegationAsFailure.Fail,
+            NegationAsFailure.Success
+        )
 
-    override val theory: Theory by lazy {
-        CommonBuiltins.theory + SpecificRules.theory
-    }
-
-    override val primitives: Map<Signature, Primitive> by lazy {
-        sequenceOf(
+    override val primitives: Map<Signature, Primitive>
+        get() = listOf(
             // Abolish,
             Arg,
             ArithmeticEqual,
@@ -153,5 +162,4 @@ object DefaultBuiltins : Library by CommonBuiltins {
             Var,
             Write
         ).map { it.descriptionPair }.toMap()
-    }
 }

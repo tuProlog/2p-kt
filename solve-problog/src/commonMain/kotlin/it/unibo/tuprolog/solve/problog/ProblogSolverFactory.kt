@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.solve.problog
 
-import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.MutableSolver
-import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
@@ -10,54 +8,18 @@ import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
-import it.unibo.tuprolog.solve.classic.stdlib.rule.Call
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
-import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.theory.Theory
 
 object ProblogSolverFactory : SolverFactory {
 
-    private object DefaultBuiltins : Library by ProblogLib {
-
-        override val operators: OperatorSet by lazy {
-            ProblogLib.operators + ClassicSolverFactory.defaultBuiltins.operators
-        }
-
-        override val theory: Theory by lazy {
-            ProblogLib.theory + ClassicSolverFactory.defaultBuiltins.theory
-        }
-
-        override val primitives: Map<Signature, Primitive> by lazy {
-            ProblogLib.primitives + ClassicSolverFactory.defaultBuiltins.primitives
-        }
-    }
-
-    /* Minimum libraries always needed to solve queries */
-    private object MinimumBuiltins : Library by ProblogLib {
-
-        override val primitives: Map<Signature, Primitive> by lazy {
-            ProblogLib.primitives + sequenceOf(
-                EnsureExecutable
-            ).map { it.descriptionPair }.toMap()
-        }
-
-        override val theory: Theory by lazy {
-            ProblogLib.theory + Theory.indexedOf(
-                sequenceOf(
-                    Call
-                ).map { it.implementation }
-            )
-        }
-    }
-
     override val defaultBuiltins: Library
-        get() = DefaultBuiltins
+        get() = ProblogLib.DefaultBuiltins
 
     override fun solverOf(
         libraries: Runtime,
@@ -80,7 +42,7 @@ object ProblogSolverFactory : SolverFactory {
 
     private fun fixLibraries(libraries: Runtime): Runtime {
         return if (ProblogLib.alias !in libraries) {
-            libraries.plus(MinimumBuiltins)
+            libraries.plus(ProblogLib.MinimalBuiltins)
         } else {
             libraries
         }
