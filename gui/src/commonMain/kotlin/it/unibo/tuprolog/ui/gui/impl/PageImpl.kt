@@ -112,12 +112,40 @@ internal class PageImpl(
         }
     }
 
+    private val stdinChannel: InputChannel<String> by lazy {
+        InputChannel.of(stdin)
+    }
+
+    private val stdoutChannel: OutputChannel<String> by lazy {
+        OutputChannel.of {
+            runner.ui {
+                onStdoutPrinted.raise(Page.EVENT_STDOUT_PRINTED, it)
+            }
+        }
+    }
+
+    private val stderrChannel: OutputChannel<String> by lazy {
+        OutputChannel.of {
+            runner.ui {
+                onStderrPrinted.raise(Page.EVENT_STDERR_PRINTED, it)
+            }
+        }
+    }
+
+    private val warningChannel: OutputChannel<Warning> by lazy {
+        OutputChannel.of {
+            runner.ui {
+                onWarning.raise(Page.EVENT_WARNING, it)
+            }
+        }
+    }
+
     private val solver = Cached.of {
         val newSolver: MutableSolver = solverBuilder
-            .standardInput(InputChannel.of(stdin))
-            .standardOutput(OutputChannel.of { onStdoutPrinted.raise(Page.EVENT_STDOUT_PRINTED, it) })
-            .standardError(OutputChannel.of { onStderrPrinted.raise(Page.EVENT_STDERR_PRINTED, it) })
-            .warnings(OutputChannel.of { onWarning.raise(Page.EVENT_WARNING, it) })
+            .standardInput(stdinChannel)
+            .standardOutput(stdoutChannel)
+            .standardError(stderrChannel)
+            .warnings(warningChannel)
             .buildMutable()
         newSolver.also {
             onNewSolver.raise(Page.EVENT_NEW_SOLVER, id, it)
@@ -176,11 +204,10 @@ internal class PageImpl(
                         onResolutionOver.raise(Page.EVENT_RESOLUTION_OVER, solutionCount, solver.value)
                         onQueryOver.raise(Page.EVENT_QUERY_OVER, sol.query, solver.value)
                         state = Page.Status.IDLE
+                    } else if (maxSolutions > 1) {
+                        nextImpl(maxSolutions - 1)
                     } else {
                         state = Page.Status.SOLUTION
-                        if (maxSolutions > 1) {
-                            next(maxSolutions - 1)
-                        }
                     }
                 }
             }
@@ -228,8 +255,9 @@ internal class PageImpl(
 
     override fun stop() {
         ensuringStateIs(Page.Status.SOLUTION) {
-            state = Page.Status.IDLE
+            onResolutionOver.raise(Page.EVENT_RESOLUTION_OVER, solutionCount, solver.value)
             onQueryOver.raise(Page.EVENT_QUERY_OVER, lastGoal!!, solver.value)
+            state = Page.Status.IDLE
         }
     }
 

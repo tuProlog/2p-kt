@@ -1,27 +1,22 @@
 package it.unibo.tuprolog.ui.gui
 
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.TermComparator
-import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.classic.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parse
+import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 class TestPage {
     private lateinit var page: Page
@@ -90,8 +85,8 @@ class TestPage {
         page.query = "a_query"
         page.query = "another_query"
         events.assertions {
-            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, "a_query",)
-            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, "another_query",)
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, "a_query")
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, "another_query")
             assertNoMoreEvents()
         }
     }
@@ -147,7 +142,7 @@ class TestPage {
         page.theory = factsTheory
         page.query = query
         page.solve()
-        events.assertions{
+        events.assertions {
             assertNextIsEvent(Page.EVENT_THEORY_CHANGED, factsTheory)
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
@@ -171,7 +166,7 @@ class TestPage {
         page.theory = factsTheory
         page.query = query
         page.solve(maxSolutions = 1)
-        events.assertions(debug = true) {
+        events.assertions {
             assertNextIsEvent(Page.EVENT_THEORY_CHANGED, factsTheory)
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
@@ -187,6 +182,134 @@ class TestPage {
         }
     }
 
+    @Test
+    fun solveTwo() {
+        val query = "f(X)"
+        val parsedQuery = query.parseAsStruct()
+        page.theory = factsTheory
+        page.query = query
+        page.solve(maxSolutions = 2)
+        events.assertions(debug = true) {
+            assertNextIsEvent(Page.EVENT_THEORY_CHANGED, factsTheory)
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = factsTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = factsTheoryParsed)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+            for (i in 1..2) {
+                assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+                assertNextEquals(Runner4Tests.EVENT_UI)
+                val solution = Solution.yes(parsedQuery, Substitution.of("X", Integer.of(i)))
+                assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, solution, staticKb = factsTheoryParsed)
+            }
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.SOLUTION)
+            assertNoMoreEvents()
+        }
+    }
+
+    @Test
+    fun solveThree() {
+        val query = "f(X)"
+        val parsedQuery = query.parseAsStruct()
+        page.theory = factsTheory
+        page.query = query
+        page.solve(maxSolutions = 3)
+        events.assertions(debug = true) {
+            assertNextIsEvent(Page.EVENT_THEORY_CHANGED, factsTheory)
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = factsTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = factsTheoryParsed)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+            for (i in 1..3) {
+                assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+                assertNextEquals(Runner4Tests.EVENT_UI)
+                val solution = Solution.yes(parsedQuery, Substitution.of("X", Integer.of(i)))
+                assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, solution, staticKb = factsTheoryParsed)
+            }
+            assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, 3, staticKb = factsTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery, staticKb = factsTheoryParsed)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
+            assertNoMoreEvents()
+        }
+    }
+
+    private val peanoNumbers: Sequence<Struct>
+        get() = sequence {
+            var n: Struct = Atom.of("z")
+            while (true) {
+                yield(n)
+                n = Struct.of("s", n)
+            }
+        }
+
+    @Test
+    fun solveN() {
+        val n = Random.nextInt(1, 100)
+        val query = "nat(N)"
+        val parsedQuery = query.parseAsStruct()
+        page.theory = peanoTheory
+        page.query = query
+        page.solve(maxSolutions = n)
+        val checkpoint = events.assertions {
+            assertNextIsEvent(Page.EVENT_THEORY_CHANGED, peanoTheory)
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = peanoTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = peanoTheoryParsed)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+            for (p in peanoNumbers.take(n)) {
+                assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+                assertNextEquals(Runner4Tests.EVENT_UI)
+                val solution = Solution.yes(parsedQuery, Substitution.of("N", p))
+                assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, solution, staticKb = peanoTheoryParsed)
+            }
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.SOLUTION)
+            assertNoMoreEvents()
+        }
+        page.stop()
+        checkpoint.assertions {
+            assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, n, staticKb = peanoTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery, staticKb = peanoTheoryParsed)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
+            assertNoMoreEvents()
+        }
+    }
+
+    @Test
+    fun gatherOutputs() {
+        val query = "write('hello'), nl, write(stderr, 'world'), nl(stderr), missing."
+        val parsedQuery = query.parseAsStruct()
+        page.query = query
+        page.solve(maxSolutions = 1)
+        events.assertions {
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+            assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNextIsEvent(Page.EVENT_STDOUT_PRINTED, "hello")
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNextIsEvent(Page.EVENT_STDOUT_PRINTED, "\n")
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNextIsEvent(Page.EVENT_STDERR_PRINTED, "world")
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNextIsEvent(Page.EVENT_STDERR_PRINTED, "\n")
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNext { e ->
+                e.event.let { it is Warning && it.message == "No such a predicate: missing/0" }
+            }
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, Solution.no(parsedQuery))
+            assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, 1)
+            assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
+            assertNoMoreEvents()
+        }
+    }
+
     @AfterTest
     fun closeRaisesCloseEvent() {
 //        assertEquals(Page.Status.IDLE, page.state)
@@ -194,61 +317,5 @@ class TestPage {
         events.assertions {
             assertLast { it.name == Page.EVENT_CLOSE && it.event is PageID }
         }
-    }
-
-    private fun <T> EventsAsserter<Event<Any>>.assertNextIsEvent(name: String, event: T) {
-        assertNextEquals(Event.of(name, event as Any))
-    }
-
-    private fun assertSolutionsEquals(expected: Solution, actual: Solution) {
-        assertEquals(expected::class, actual::class)
-        assertTrue { expected.query.equals(actual.query, useVarCompleteName = false) }
-        if (expected is Solution.Yes && actual is Solution.Yes) {
-            assertEquals(expected.substitution.size, actual.substitution.size)
-            assertEquals(
-                expected.substitution.keys.map { it.name }.toSet(),
-                actual.substitution.keys.map { it.name }.toSet(),
-            )
-            expected.substitution.values.sortedWith(TermComparator.DefaultComparator)
-                .zip(actual.substitution.values.sortedWith(TermComparator.DefaultComparator))
-                .all { (e, a) -> e.equals(a, useVarCompleteName = false) }
-                .let { assertTrue(it) }
-        }
-    }
-
-
-    private fun <T> EventsAsserter<Event<Any>>.assertNextIsSolveEvent(
-        name: String,
-        event: T,
-        operators: OperatorSet = OperatorSet.DEFAULT,
-        libraries: Runtime = Runtime.of(IOLib, DefaultBuiltins),
-        flags: FlagStore = FlagStore.DEFAULT,
-        staticKb: Theory = Theory.empty(),
-        dynamicKb: Theory = Theory.empty()
-    ) = aboutNext {
-        assertEquals(name, it.name)
-        when (event) {
-            is Solution -> assertSolutionsEquals(
-                event,
-                it.event as? Solution ?: throw AssertionError("Not a ${Solution::class.simpleName}: ${it.event}")
-            )
-            is Term -> assertTrue {
-                event.equals(
-                    it.event as? Term ?: throw AssertionError("Not a ${Term::class.simpleName}: ${it.event}"),
-                    useVarCompleteName = false
-                )
-            }
-            else -> assertEquals(event as Any, it.event)
-        }
-        assertIs<SolverEvent<*>>(it)
-        assertEquals(operators, it.operators)
-        assertEquals(libraries, it.libraries)
-        assertEquals(flags, it.flags)
-        assertEquals(staticKb, it.staticKb)
-        assertEquals(dynamicKb, it.dynamicKb)
-        assertFalse(it.standardInput.isClosed)
-        assertFalse(it.standardOutput.isClosed)
-        assertFalse(it.standardError.isClosed)
-        assertFalse(it.warnings.isClosed)
     }
 }

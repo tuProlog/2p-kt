@@ -9,14 +9,36 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class EventsAsserter<T>(events: Iterable<T>) {
+class EventsAsserter<T>(private val events: Iterable<T>) {
+
+    inner class Checkpoint(private val consumed: Int) {
+        fun restore(): EventsAsserter<T> {
+            return EventsAsserter(events.drop(consumed))
+        }
+    }
+
     private val iterator: Iterator<T> = events.iterator()
+
+    private var consumed: Int = 0
+
+    private fun hasNext(): Boolean = iterator.hasNext()
+
+    private fun next(): T = iterator.next().also { consumed++ }
+
+    fun checkpoint(): Checkpoint = Checkpoint(consumed)
+
+    internal fun debug() {
+        val events = if (events.none()) "<none>" else events.joinToString("\n#\t- ") {
+            it.toString().replace("\n", "\\n")
+        }
+        println("# Events:\n#\t- $events")
+    }
 
     private fun <R> focussingOnNext(
         onError: () -> R = { throw AssertionError("No more events") },
         onItem: (T) -> R
-    ) = if (iterator.hasNext()) {
-        iterator.next().let(onItem)
+    ) = if (hasNext()) {
+        next().let(onItem)
     } else {
         onError()
     }
@@ -24,15 +46,15 @@ class EventsAsserter<T>(events: Iterable<T>) {
     fun assertLast(message: String? = null, predicate: (T) -> Boolean) {
         assertThereAreEvents()
         var last: T? = null
-        while (iterator.hasNext()) {
-            last = iterator.next()
+        while (hasNext()) {
+            last = next()
         }
         assertTrue(predicate(last!!), message)
     }
 
     fun assertAny(message: String? = null, predicate: (T) -> Boolean) {
-        while (iterator.hasNext()) {
-            if (predicate(iterator.next())) {
+        while (hasNext()) {
+            if (predicate(next())) {
                 return
             }
         }
@@ -72,20 +94,10 @@ class EventsAsserter<T>(events: Iterable<T>) {
     }
 
     fun assertThereAreEvents(message: String? = null) {
-        assertTrue(iterator.hasNext(), message)
+        assertTrue(hasNext(), message)
     }
 
     fun assertNoMoreEvents(message: String? = null) {
-        assertFalse(iterator.hasNext(), message)
+        assertFalse(hasNext(), message)
     }
-}
-
-fun <T> Iterable<T>.assertions(debug: Boolean = false, scope: EventsAsserter<T>.() -> Unit) {
-    if (debug) {
-        val events = if (this.none()) "<none>" else joinToString("\n#\t- ") {
-            it.toString().replace("\n", "\\n")
-        }
-        println("# Events:\n#\t- $events")
-    }
-    EventsAsserter(this).run(scope)
 }
