@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.TimeInstant
  *
  * @author Enrico
  */
-interface TimedState : State {
+internal interface TimedState : State {
 
     /** Returns current time instant in some notion of "time" */
     fun getCurrentTime(): TimeInstant

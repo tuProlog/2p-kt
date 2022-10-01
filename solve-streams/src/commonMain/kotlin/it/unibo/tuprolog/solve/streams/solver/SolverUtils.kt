@@ -77,7 +77,7 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
     toAddSubstitutions: Substitution = Substitution.empty(),
     toPropagateContextData: ExecutionContext = context,
     baseSideEffectManager: SideEffectManagerImpl = context.sideEffectManager,
-    requestIssuingInstant: TimeInstant = this.requestIssuingInstant,
+    requestIssuingInstant: TimeInstant = this.startTime,
     isChoicePointChild: Boolean = false
 ): Solve.Request<StreamsExecutionContext> = copy(
     newGoal.extractSignature(),
@@ -92,7 +92,7 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
         substitution = (context.substitution + toAddSubstitutions) as Substitution.Unifier,
         sideEffectManager = baseSideEffectManager.creatingNewRequest(context, isChoicePointChild, this)
     ),
-    requestIssuingInstant = requestIssuingInstant
+    startTime = requestIssuingInstant
 )
 
 /** Responds to this solve request forwarding the provided [otherResponse] data */

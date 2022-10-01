@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.primitive
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.Durable
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
@@ -31,12 +32,10 @@ sealed class Solve {
         @JsName("context")
         val context: C,
         /** The time instant when the request was submitted for resolution */
-        @JsName("requestIssuingInstant")
-        val requestIssuingInstant: TimeInstant = currentTimeInstant(),
+        override val startTime: TimeInstant = currentTimeInstant(),
         /** The execution max duration after which the computation should end, because no more useful */
-        @JsName("executionMaxDuration")
-        val executionMaxDuration: TimeDuration = TimeDuration.MAX_VALUE
-    ) : Solve() {
+        override val maxDuration: TimeDuration = context.endTime - startTime,
+    ) : Durable, Solve() {
         init {
             when {
                 signature.vararg -> require(arguments.count() >= signature.arity) {
@@ -46,8 +45,8 @@ sealed class Solve {
                     "Trying to create Solve.Request of signature `$signature` with wrong number of arguments ${arguments.toList()}"
                 }
             }
-            require(requestIssuingInstant >= 0) { "The request issuing instant can't be negative: $requestIssuingInstant" }
-            require(executionMaxDuration >= 0) { "The execution max duration can't be negative: $executionMaxDuration" }
+            require(startTime >= 0) { "The request issuing instant can't be negative: $startTime" }
+            require(maxDuration >= 0) { "The execution max duration can't be negative: $maxDuration" }
         }
 
         /** The current query [Struct] of this request */

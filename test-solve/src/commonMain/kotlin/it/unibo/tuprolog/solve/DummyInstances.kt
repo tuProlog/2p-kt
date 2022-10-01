@@ -32,6 +32,8 @@ object DummyInstances {
         override val substitution: Substitution.Unifier = Substitution.empty()
         override val logicStackTrace: Nothing by lazy { throw NotImplementedError() }
         override val customData: Nothing by lazy { throw NotImplementedError() }
+        override val startTime: Nothing by lazy { throw NotImplementedError() }
+        override val maxDuration: Nothing by lazy { throw NotImplementedError() }
 
         override fun createSolver(
             libraries: Runtime,

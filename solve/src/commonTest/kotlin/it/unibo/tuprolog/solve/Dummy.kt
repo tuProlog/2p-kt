@@ -22,6 +22,12 @@ object Dummy {
 
         override val customData: CustomDataStore = CustomDataStore.empty()
 
+        override val startTime: TimeInstant
+            get() = 0
+
+        override val maxDuration: TimeDuration
+            get() = TimeDuration.MAX_VALUE
+
         override fun createSolver(
             libraries: Runtime,
             flags: FlagStore,

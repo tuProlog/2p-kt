@@ -29,7 +29,7 @@ internal sealed class StateEnd(
 
     override fun behave(): Sequence<State> = emptySequence()
 
-    override val context: ExecutionContext by lazy {
+    override val context: StreamsExecutionContext by lazy {
         StreamsExecutionContext(
             sourceContext,
             newCurrentSubstitution = solve.solution.substitution as? Substitution.Unifier ?: Substitution.empty()

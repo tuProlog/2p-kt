@@ -26,9 +26,9 @@ internal abstract class AbstractTimedState(
     private val stateCurrentTime by lazy { currentTimeInstant() }
 
     override fun behave(): Sequence<State> = when {
-        solve.executionMaxDuration == TimeDuration.MAX_VALUE -> behaveTimed() // optimized without check, when maxDuration is infinite
+        solve.maxDuration == TimeDuration.MAX_VALUE -> behaveTimed() // optimized without check, when maxDuration is infinite
 
-        timeIsOver(stateCurrentTime - solve.requestIssuingInstant, solve.executionMaxDuration) ->
+        timeIsOver(stateCurrentTime - solve.startTime, solve.maxDuration) ->
             sequenceOf(statEndHaltTimeout())
         else -> behaveTimed()
     }
@@ -39,7 +39,7 @@ internal abstract class AbstractTimedState(
     /** A function to check if currently the timeout has expired and return the halt state if yes,
      * the provided [toYieldState] otherwise*/
     protected fun IntermediateState.ifTimeIsNotOver(toYieldState: State): State = when {
-        timeIsOver(currentTimeInstant() - solve.requestIssuingInstant, solve.executionMaxDuration) ->
+        timeIsOver(currentTimeInstant() - solve.startTime, solve.maxDuration) ->
             statEndHaltTimeout()
         else -> toYieldState
     }
@@ -58,9 +58,9 @@ internal abstract class AbstractTimedState(
         private fun IntermediateState.statEndHaltTimeout(): State =
             stateEndHalt(
                 TimeOutException(
-                    "Given time for `${solve.query}` computation (${solve.executionMaxDuration}) wasn't enough for completion",
+                    "Given time for `${solve.query}` computation (${solve.maxDuration}) wasn't enough for completion",
                     context = solve.context,
-                    exceededDuration = solve.executionMaxDuration
+                    exceededDuration = solve.maxDuration
                 )
             )
     }
