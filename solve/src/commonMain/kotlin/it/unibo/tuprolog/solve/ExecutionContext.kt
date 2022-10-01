@@ -14,7 +14,7 @@ import kotlin.js.JsName
 
 /** An interface representing the Solver execution context, containing important information that determines its behaviour */
 // TODO: 25/09/2019 solverStrategies should go here... in common with other implementations, if the idea is approved
-interface ExecutionContext : ExecutionContextAware {
+interface ExecutionContext : ExecutionContextAware, Durable {
 
     /** The current procedure being executed */
     @JsName("procedure")

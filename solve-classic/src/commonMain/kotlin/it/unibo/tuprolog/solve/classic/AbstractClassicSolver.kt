@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.classic.fsm.State
 import it.unibo.tuprolog.solve.classic.fsm.StateInit
-import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -90,8 +89,7 @@ abstract class AbstractClassicSolver(
             inputChannels = inputChannels,
             outputChannels = outputChannels,
             customData = currentContext.customData,
-            maxDuration = options.timeout,
-            startTime = currentTimeInstant()
+            maxDuration = options.timeout
         )
         return solutionIterator(StateInit(currentContext), this::updateCurrentContextAfterStateTransition).asSequence()
     }

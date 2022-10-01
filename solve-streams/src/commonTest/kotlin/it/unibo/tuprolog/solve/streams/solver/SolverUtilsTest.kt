@@ -177,7 +177,7 @@ internal class SolverUtilsTest {
         val myCurrentTime = currentTimeInstant()
         val toBeTested = solveRequest.newSolveRequest(Truth.FAIL, requestIssuingInstant = myCurrentTime)
 
-        assertEquals(myCurrentTime, toBeTested.requestIssuingInstant)
+        assertEquals(myCurrentTime, toBeTested.startTime)
     }
 
     @Test

@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.streams.solver.fsm.testutils
 
-import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.streams.solver.fsm.State
 import it.unibo.tuprolog.solve.streams.solver.fsm.StateMachineExecutor
 import kotlin.reflect.KClass
@@ -19,7 +19,7 @@ internal object StateMachineExecutorUtils {
         override val solve: Solve by lazy<Solve> { throw NotImplementedError() }
         override fun behave(): Sequence<State> = emptySequence()
         override val hasBehaved: Boolean = false
-        override val context: ExecutionContext by lazy<ExecutionContext> { throw NotImplementedError() }
+        override val context: StreamsExecutionContext by lazy<StreamsExecutionContext> { throw NotImplementedError() }
         override fun toString(): String = this::class.className()
     }
 

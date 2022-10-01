@@ -52,16 +52,16 @@ internal class SolveRequestTest {
         assertEquals(aSignature, toBeTested.signature)
         assertEquals(anArgumentList, toBeTested.arguments)
         assertEquals(anExecutionContext, toBeTested.context)
-        assertEquals(aRequestIssuingInstant, toBeTested.requestIssuingInstant)
-        assertEquals(anExecutionMaxDuration, toBeTested.executionMaxDuration)
+        assertEquals(aRequestIssuingInstant, toBeTested.startTime)
+        assertEquals(anExecutionMaxDuration, toBeTested.maxDuration)
     }
 
     @Test
     fun requestDefaultValuesCorrect() {
         val toBeTested = Solve.Request(aSignature, anArgumentList, anExecutionContext)
 
-        assertTrue { currentTimeInstant() - toBeTested.requestIssuingInstant < TOLERANCE }
-        assertEquals(TimeDuration.MAX_VALUE, toBeTested.executionMaxDuration)
+        assertTrue { currentTimeInstant() - toBeTested.startTime < TOLERANCE }
+        assertEquals(TimeDuration.MAX_VALUE, toBeTested.maxDuration)
     }
 
     @Test

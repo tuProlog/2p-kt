@@ -32,14 +32,14 @@ internal class AbstractTimedStateTest {
     private fun createTimedRequest(requestIssuingInstant: TimeInstant? = null, maxDuration: TimeDuration? = null) =
         with(createSolveRequest(Truth.TRUE)) {
             copy(
-                requestIssuingInstant = requestIssuingInstant ?: this.requestIssuingInstant,
-                executionMaxDuration = maxDuration ?: this.executionMaxDuration
+                startTime = requestIssuingInstant ?: this.startTime,
+                maxDuration = maxDuration ?: this.maxDuration
             )
         }
 
     @Test
     fun behaveWorksAsUsualIfLongMaxValueTimeoutSpecified() {
-        val toBeTested = createTimeState(createTimedRequest(maxDuration = TimeDuration.MAX_VALUE))
+        val toBeTested = createTimeState(createTimedRequest())
 
         assertEquals(behaviourResponse, toBeTested.behave())
     }

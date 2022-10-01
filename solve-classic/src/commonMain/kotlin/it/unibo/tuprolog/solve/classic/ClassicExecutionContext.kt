@@ -14,6 +14,7 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -42,8 +43,8 @@ data class ClassicExecutionContext(
     val goals: Cursor<out Term> = Cursor.empty(),
     val rules: Cursor<out Rule> = Cursor.empty(),
     val primitives: Cursor<out Solve.Response> = Cursor.empty(),
-    val startTime: TimeInstant = 0,
-    val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
+    override val startTime: TimeInstant = currentTimeInstant(),
+    override val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
     val choicePoints: ChoicePointContext? = null,
     val parent: ClassicExecutionContext? = null,
     val depth: Int = 0,
@@ -51,6 +52,8 @@ data class ClassicExecutionContext(
 ) : ExecutionContext {
     init {
         require((depth == 0 && parent == null) || (depth > 0 && parent != null))
+        require(startTime >= 0)
+        require(maxDuration >= 0)
     }
 
     val isRoot: Boolean
@@ -152,6 +155,8 @@ data class ClassicExecutionContext(
             "operators=${operators.joinToString(",", "{", "}") { "'${it.functor}':${it.specifier}" }}, " +
             "inputChannels=${inputChannels.keys}, " +
             "outputChannels=${outputChannels.keys}, " +
+            "startTime=$startTime, " +
+            "endTime=$endTime, " +
             "maxDuration=$maxDuration, " +
             "choicePoints=$choicePoints, " +
             "depth=$depth, " +

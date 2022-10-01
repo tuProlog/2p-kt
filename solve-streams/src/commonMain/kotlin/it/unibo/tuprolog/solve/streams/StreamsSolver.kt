@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.streams
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
@@ -57,7 +56,7 @@ internal class StreamsSolver constructor(
         OutputStore.fromStandard(stdOut, stdErr, warnings),
     )
 
-    private var executionContext: ExecutionContext = StreamsExecutionContext(
+    private var executionContext: StreamsExecutionContext = StreamsExecutionContext(
         libraries,
         flags,
         staticKb,
@@ -74,15 +73,15 @@ internal class StreamsSolver constructor(
             staticKb = staticKb,
             dynamicKb = dynamicKb,
             inputChannels = inputChannels,
-            outputChannels = outputChannels
+            outputChannels = outputChannels,
+            maxDuration = options.timeout
         )
 
         var solutionSequence = solveToFinalStates(
-            Solve.Request(
+            Solve.Request<StreamsExecutionContext>(
                 goal.extractSignature(),
                 goal.args,
-                executionContext as StreamsExecutionContext,
-                executionMaxDuration = options.timeout
+                executionContext,
             )
         ).map {
             executionContext = it.context.apply(it.solve.sideEffects)

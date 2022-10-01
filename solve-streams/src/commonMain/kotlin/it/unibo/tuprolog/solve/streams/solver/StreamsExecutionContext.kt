@@ -4,8 +4,11 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -31,10 +34,12 @@ internal data class StreamsExecutionContext(
     override val outputChannels: OutputStore = OutputStore.fromStandard(),
     override val customData: CustomDataStore = CustomDataStore.empty(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
+    override val startTime: TimeInstant = currentTimeInstant(),
+    override val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
     /** The key strategies that a solver should use during resolution process */
     val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
     /** The side effects manager to be used during resolution process */
-    val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl()
+    val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl(),
 ) : ExecutionContext {
 
     constructor(context: ExecutionContext, newCurrentSubstitution: Substitution.Unifier) : this( // to be tested
@@ -47,8 +52,8 @@ internal data class StreamsExecutionContext(
         context.outputChannels,
         context.customData,
         newCurrentSubstitution,
-        (context as? StreamsExecutionContext)?.solverStrategies ?: SolverStrategies.prologStandard,
-        (context as? StreamsExecutionContext)?.sideEffectManager ?: SideEffectManagerImpl()
+        solverStrategies = (context as? StreamsExecutionContext)?.solverStrategies ?: SolverStrategies.prologStandard,
+        sideEffectManager = (context as? StreamsExecutionContext)?.sideEffectManager ?: SideEffectManagerImpl()
     )
 
     override val procedure: Struct?

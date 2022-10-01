@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
  *
  * @author Enrico
  */
-abstract class AbstractState(override val solve: Solve) : State {
+internal abstract class AbstractState(override val solve: Solve) : State {
 
     override val hasBehaved = false
 }

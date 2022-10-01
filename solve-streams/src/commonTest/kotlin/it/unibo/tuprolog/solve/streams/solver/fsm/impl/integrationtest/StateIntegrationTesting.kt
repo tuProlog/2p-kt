@@ -126,7 +126,7 @@ internal class StateIntegrationTesting {
                 goal.extractSignature(),
                 goal.args,
                 StreamsExecutionContext(staticKb = infiniteComputationTheory),
-                executionMaxDuration = maxDuration
+                maxDuration = maxDuration
             )
             val nextStates = request.executeFSM()
 

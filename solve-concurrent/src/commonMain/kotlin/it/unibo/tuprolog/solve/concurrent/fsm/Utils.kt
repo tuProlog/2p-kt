@@ -73,4 +73,4 @@ fun ConcurrentExecutionContext.replaceWithChildAppendingRules(
 fun ConcurrentExecutionContext.toRequest(
     goal: Struct,
     signature: Signature
-) = Solve.Request(signature, goal.args, this, executionMaxDuration = maxDuration)
+) = Solve.Request(signature, goal.args, this)
