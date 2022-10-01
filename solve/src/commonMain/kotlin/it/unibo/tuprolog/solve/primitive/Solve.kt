@@ -199,7 +199,7 @@ sealed class Solve {
         }
 
         @JsName("solve")
-        fun solve(goal: Struct, maxDuration: TimeDuration = TimeDuration.MAX_VALUE): Sequence<Solution> {
+        fun solve(goal: Struct, maxDuration: TimeDuration = this.maxDuration): Sequence<Solution> {
             return subSolver().solve(goal, maxDuration)
         }
     }
