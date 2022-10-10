@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
-import it.unibo.tuprolog.unify.Unificator.Companion.mergeWith
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cursor
 
 data class StatePrimitiveExecution(override val context: ClassicExecutionContext) : AbstractState(context) {
@@ -31,7 +31,11 @@ data class StatePrimitiveExecution(override val context: ClassicExecutionContext
                     context.copyFromCurrentPrimitive(
                         goals = context.goals.next,
                         procedureFromAncestor = 1,
-                        substitution = context.substitution.mergeWith(it.substitution)
+                        substitution = Unificator.default.merge(
+                            context.substitution,
+                            it.substitution,
+                            occurCheckEnabled = false
+                        )
                     )
                 )
             },
