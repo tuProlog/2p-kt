@@ -116,8 +116,13 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
         substitution2: Substitution,
         occurCheckEnabled: Boolean
     ): Substitution {
-        if (context.isFailed) return failed()
-
+        if (context.isFailed || substitution1.isFailed || substitution2.isFailed) return failed()
+        if (!occurCheckEnabled) {
+            val quickMerge = context + substitution1 + substitution2
+            if (quickMerge.isSuccess) {
+                return quickMerge
+            }
+        }
         val equations = newDeque(contextEquations.asSequence() + equationsFor(substitution1, substitution2))
         return mgu(equations, occurCheckEnabled)
     }
