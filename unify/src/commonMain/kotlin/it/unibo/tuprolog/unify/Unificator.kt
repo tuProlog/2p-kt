@@ -60,7 +60,7 @@ interface Unificator {
          */
         @JvmStatic
         @JsName("default")
-        val default by lazy { cached(strict()) }
+        val default by lazy { strict() }
 
         /** Computes the Most General Unifier, using [default] unification strategy */
         @JvmStatic
