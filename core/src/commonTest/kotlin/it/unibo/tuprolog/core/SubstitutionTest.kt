@@ -233,4 +233,20 @@ internal class SubstitutionTest {
             toBeTested.forEach { assertEquals(Substitution.empty(), it) }
         }
     }
+
+    @Test
+    fun substitutionMergeFailsInAssignmentChains() {
+        Scope.empty {
+            val base = unifierOf("X" to varOf("Y"), "Y" to varOf("Z"))
+            val a = atomOf("a")
+
+            val assignment1 = unifierOf("X" to a)
+            val assignment2 = unifierOf("Y" to a)
+            val assignment3 = unifierOf("Z" to a)
+
+            assertEquals(Substitution.failed(), base + assignment1)
+            assertEquals(Substitution.failed(), base + assignment2)
+            assertEquals(unifierOf("X" to a, "Y" to a, "Z" to a), base + assignment3)
+        }
+    }
 }
