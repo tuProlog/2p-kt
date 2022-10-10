@@ -8,4 +8,8 @@ interface TestTimeout : SolverTest {
     fun testSleep()
 
     fun testInfiniteFindAll()
+
+    fun testInfiniteBagOf()
+
+    fun testInfiniteSetOf()
 }

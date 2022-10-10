@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScopeWithTheories
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.stdlib.primitive.FindAll
@@ -26,7 +28,7 @@ class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
         }
     }
 
-    override fun testInfiniteFindAll() {
+    private fun testInfiniteCollectingGoal(goalProvider: LogicProgrammingScopeWithTheories.() -> Struct) {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theoryOf(
@@ -36,7 +38,7 @@ class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
             )
             solver.assertHasPredicateInAPI(FindAll)
 
-            val query = "findall"(N, "nat"(N), L)
+            val query = goalProvider()
 
             val solutions = solver.solveList(query, shortDuration)
 
@@ -48,6 +50,24 @@ class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
                 ),
                 solutions
             )
+        }
+    }
+
+    override fun testInfiniteFindAll() {
+        testInfiniteCollectingGoal {
+            "findall"(N, "nat"(N), L)
+        }
+    }
+
+    override fun testInfiniteBagOf() {
+        testInfiniteCollectingGoal {
+            "bagof"(N, "nat"(N), L)
+        }
+    }
+
+    override fun testInfiniteSetOf() {
+        testInfiniteCollectingGoal {
+            "setof"(N, "nat"(N), L)
         }
     }
 }

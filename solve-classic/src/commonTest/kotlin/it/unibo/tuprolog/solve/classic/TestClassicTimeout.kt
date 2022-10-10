@@ -17,4 +17,14 @@ class TestClassicTimeout : TestTimeout, SolverFactory by ClassicSolverFactory {
     override fun testInfiniteFindAll() {
         prototype.testInfiniteFindAll()
     }
+
+    @Test
+    override fun testInfiniteBagOf() {
+        prototype.testInfiniteBagOf()
+    }
+
+    @Test
+    override fun testInfiniteSetOf() {
+        prototype.testInfiniteSetOf()
+    }
 }

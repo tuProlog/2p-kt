@@ -6,14 +6,13 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import kotlin.collections.Set
 import it.unibo.tuprolog.core.List as LogicList
 
-abstract class AbstractCollectionOf(val name: String) : TernaryRelation.WithoutSideEffects<ExecutionContext>(name) {
+@Suppress("PrivatePropertyName")
+abstract class AbstractCollectionOf(val name: String) : AbstractCollectingPrimitive(name) {
     private val VARS = Var.of("VARS")
     private val GOAL = Var.of("GOAL")
     private val APEX_TEMPLATE = Struct.of("^", VARS, GOAL)
@@ -34,14 +33,8 @@ abstract class AbstractCollectionOf(val name: String) : TernaryRelation.WithoutS
             }
             else -> emptySet()
         }
-        val goal = if (mgu is Substitution.Unifier) mgu[GOAL] else second
-        val solutions = solve(goal as Struct)
-            .map {
-                when (it) {
-                    is Solution.Halt -> throw it.exception.pushContext(context)
-                    else -> it
-                }
-            }.filterIsInstance<Solution.Yes>().toList()
+        val goal = if (mgu is Substitution.Unifier) mgu[GOAL]!! else second
+        val solutions = computeIntermediateSolutions(goal.castToStruct())
         val free = goal.variables.toSet() - first.variables.toSet()
         val interesting = free - uninteresting
         val groups = solutions.groupBy { it.substitution.filter(interesting) }
