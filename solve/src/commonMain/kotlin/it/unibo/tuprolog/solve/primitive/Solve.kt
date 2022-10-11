@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.ResolutionException
+import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
@@ -46,7 +47,13 @@ sealed class Solve {
                 }
             }
             require(startTime >= 0) { "The request issuing instant can't be negative: $startTime" }
-            require(maxDuration >= 0) { "The execution max duration can't be negative: $maxDuration" }
+            if (maxDuration < 0) {
+                throw TimeOutException(
+                    message = "Request's max duration can't be negative: $maxDuration",
+                    context = context,
+                    exceededDuration = context.maxDuration
+                )
+            }
         }
 
         /** The current query [Struct] of this request */
