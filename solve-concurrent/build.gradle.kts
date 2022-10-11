@@ -20,7 +20,7 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                api(project(":test-solve"))
+                implementation(project(":test-solve"))
             }
         }
         val jvmTest by getting {
