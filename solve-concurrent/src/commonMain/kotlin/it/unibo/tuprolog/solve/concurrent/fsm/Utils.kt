@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.utils.Cursor
@@ -14,7 +15,6 @@ import it.unibo.tuprolog.utils.cursor
 import kotlin.jvm.JvmName
 
 fun Sequence<Clause>.ensureRules(): Sequence<Rule> =
-    @Suppress("USELESS_CAST")
     map { require(it.isRule); it.castToRule() }
 
 fun Term.unfoldGoals(): Sequence<Term> =
@@ -72,5 +72,6 @@ fun ConcurrentExecutionContext.replaceWithChildAppendingRules(
 
 fun ConcurrentExecutionContext.toRequest(
     goal: Struct,
-    signature: Signature
-) = Solve.Request(signature, goal.args, this)
+    signature: Signature,
+    startTime: TimeInstant
+) = Solve.Request(signature, goal.args, this, startTime)

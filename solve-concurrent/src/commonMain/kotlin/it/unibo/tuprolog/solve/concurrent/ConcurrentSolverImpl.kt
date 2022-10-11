@@ -168,6 +168,7 @@ internal open class ConcurrentSolverImpl(
         dynamicKb = if (trustKb) dynamicKb.toMutableTheory() else MutableTheory.empty(),
         operators = getAllOperators(libraries).toOperatorSet(),
         inputChannels = inputChannels,
-        outputChannels = outputChannels
+        outputChannels = outputChannels,
+        startTime = 0L
     )
 }

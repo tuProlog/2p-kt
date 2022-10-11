@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.classic.appendPrimitives
 import it.unibo.tuprolog.solve.classic.appendRules
@@ -19,7 +20,6 @@ fun Sequence<Clause>.toRulesCursor(): Cursor<out Rule> =
     ensureRules().cursor()
 
 fun Sequence<Clause>.ensureRules(): Sequence<Rule> =
-    @Suppress("USELESS_CAST")
     map { require(it.isRule); it.castToRule() }
 
 fun Term.unfoldGoals(): Sequence<Term> =
@@ -107,5 +107,6 @@ fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
 
 fun ClassicExecutionContext.toRequest(
     goal: Struct,
-    signature: Signature
-) = Solve.Request(signature, goal.args, this)
+    signature: Signature,
+    startTime: TimeInstant
+) = Solve.Request(signature, goal.args, this, startTime)
