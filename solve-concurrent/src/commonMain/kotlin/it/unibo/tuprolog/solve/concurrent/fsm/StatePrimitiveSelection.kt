@@ -37,10 +37,10 @@ data class StatePrimitiveSelection(override val context: ConcurrentExecutionCont
 
                     if (libraries.hasPrimitive(signature)) {
                         val childContext = createChild()
-                        val request = childContext.toRequest(goalStruct, signature)
-                        val primitive = libraries.primitives[signature]
-                            ?: error("Inconsistent behaviour of Library.contains and Library.get")
                         try {
+                            val request = childContext.toRequest(goalStruct, signature, executionTime)
+                            val primitive = libraries.primitives[signature]
+                                ?: error("Inconsistent behaviour of Library.contains and Library.get")
                             primitive.solve(request)
                                 .map { StatePrimitiveExecution(childContext.copy(primitive = it)) }
                                 .asIterable()
