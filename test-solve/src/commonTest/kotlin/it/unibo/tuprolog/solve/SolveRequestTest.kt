@@ -23,6 +23,7 @@ import it.unibo.tuprolog.solve.testutils.SolveUtils.differentStaticKB
 import it.unibo.tuprolog.solve.testutils.SolveUtils.solutionException
 import it.unibo.tuprolog.solve.testutils.SolveUtils.solutionSubstitution
 import it.unibo.tuprolog.solve.testutils.SolveUtils.varargArgumentList
+import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -60,8 +61,9 @@ internal class SolveRequestTest {
     fun requestDefaultValuesCorrect() {
         val toBeTested = Solve.Request(aSignature, anArgumentList, anExecutionContext)
 
-        assertTrue { currentTimeInstant() - toBeTested.startTime < TOLERANCE }
-        assertEquals(TimeDuration.MAX_VALUE, toBeTested.maxDuration)
+        val now = currentTimeInstant()
+        assertTrue(now - toBeTested.startTime < TOLERANCE)
+        assertTrue(abs(TimeDuration.MAX_VALUE - now - toBeTested.maxDuration) < TOLERANCE)
     }
 
     @Test
