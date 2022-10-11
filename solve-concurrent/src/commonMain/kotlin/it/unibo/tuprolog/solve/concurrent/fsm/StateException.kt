@@ -15,7 +15,7 @@ import it.unibo.tuprolog.utils.plus
 data class StateException(
     override val exception: ResolutionException,
     override val context: ConcurrentExecutionContext
-) : ExceptionalState {
+) : AbstractState(context), ExceptionalState {
 
     private fun Struct.isCatch(): Boolean =
         arity == 3 && functor == Catch.functor
@@ -77,7 +77,7 @@ data class StateException(
             else -> handleExceptionInParentContext
         }
 
-    override fun next(): Iterable<State> {
+    override fun computeNext(): Iterable<State> {
         return listOf(
             when (exception) {
                 is LogicError -> {
@@ -93,5 +93,6 @@ data class StateException(
         )
     }
 
-    override fun clone(context: ConcurrentExecutionContext): State = copy(exception = exception, context = context)
+    override fun clone(context: ConcurrentExecutionContext): StateException =
+        copy(exception = exception, context = context)
 }

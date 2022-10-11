@@ -3,8 +3,8 @@ package it.unibo.tuprolog.solve.concurrent.fsm
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 
-data class StateGoalSelection(override val context: ConcurrentExecutionContext) : State {
-    override fun next(): Iterable<State> {
+data class StateGoalSelection(override val context: ConcurrentExecutionContext) : AbstractState(context) {
+    override fun computeNext(): Iterable<State> {
         return listOf(
             if (context.goals.isOver) {
                 if (context.isRoot) {

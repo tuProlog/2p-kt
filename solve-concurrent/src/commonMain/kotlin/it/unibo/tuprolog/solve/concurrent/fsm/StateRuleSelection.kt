@@ -18,7 +18,7 @@ import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.buffered
 
-data class StateRuleSelection(override val context: ConcurrentExecutionContext) : State {
+data class StateRuleSelection(override val context: ConcurrentExecutionContext) : AbstractState(context) {
 
     companion object {
         private val catchSignature = Catch.signature
@@ -64,7 +64,7 @@ data class StateRuleSelection(override val context: ConcurrentExecutionContext) 
             context = context.copy(step = nextStep())
         )
 
-    override fun next(): Iterable<State> {
+    override fun computeNext(): Iterable<State> {
         val currentGoal = context.currentGoal!!
         return when {
             currentGoal.isVar ->
@@ -132,5 +132,5 @@ data class StateRuleSelection(override val context: ConcurrentExecutionContext) 
             }
         }
 
-    override fun clone(context: ConcurrentExecutionContext): State = copy(context = context)
+    override fun clone(context: ConcurrentExecutionContext): StateRuleSelection = copy(context = context)
 }

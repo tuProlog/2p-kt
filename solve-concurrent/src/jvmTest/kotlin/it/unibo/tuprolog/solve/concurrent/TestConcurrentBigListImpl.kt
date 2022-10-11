@@ -11,7 +11,13 @@ class TestConcurrentBigListImpl :
     FromSequence<MultiSet> by ConcurrentFromSequence {
 
     override val shortDuration: TimeDuration
-        get() = super<TestConcurrentBigList>.shortDuration
+        get() = 6000
+
+    override val mediumDuration: TimeDuration
+        get() = 2 * shortDuration
+
+    override val longDuration: TimeDuration
+        get() = 4 * mediumDuration
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
