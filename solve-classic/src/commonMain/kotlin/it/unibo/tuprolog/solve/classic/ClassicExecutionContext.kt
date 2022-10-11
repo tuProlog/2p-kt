@@ -14,7 +14,6 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
-import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -43,7 +42,7 @@ data class ClassicExecutionContext(
     val goals: Cursor<out Term> = Cursor.empty(),
     val rules: Cursor<out Rule> = Cursor.empty(),
     val primitives: Cursor<out Solve.Response> = Cursor.empty(),
-    override val startTime: TimeInstant = currentTimeInstant(),
+    override val startTime: TimeInstant,
     override val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
     val choicePoints: ChoicePointContext? = null,
     val parent: ClassicExecutionContext? = null,

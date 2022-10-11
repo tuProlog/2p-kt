@@ -13,7 +13,6 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
-import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -41,7 +40,7 @@ data class ConcurrentExecutionContext(
     val goals: Cursor<out Term> = Cursor.empty(),
     val rule: Rule? = null,
     val primitive: Solve.Response? = null,
-    override val startTime: TimeInstant = currentTimeInstant(),
+    override val startTime: TimeInstant,
     override val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
     val parent: ConcurrentExecutionContext? = null,
     val depth: Int = 0,
