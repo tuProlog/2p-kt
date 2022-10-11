@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.utils.Cursor
 
-data class StatePrimitiveExecution(override val context: ConcurrentExecutionContext) : State {
+data class StatePrimitiveExecution(override val context: ConcurrentExecutionContext) : AbstractState(context) {
 
     private fun failureState(context: ConcurrentExecutionContext = this.context): EndState = StateEnd(
         solution = Solution.no(context.query),
@@ -29,7 +29,7 @@ data class StatePrimitiveExecution(override val context: ConcurrentExecutionCont
         )
     }
 
-    override fun next(): Iterable<State> = listOf(
+    override fun computeNext(): Iterable<State> = listOf(
         try {
             context.primitive?.solution?.whenIs(
                 yes = {
@@ -54,5 +54,5 @@ data class StatePrimitiveExecution(override val context: ConcurrentExecutionCont
         }
     )
 
-    override fun clone(context: ConcurrentExecutionContext): State = copy(context = context)
+    override fun clone(context: ConcurrentExecutionContext): StatePrimitiveExecution = copy(context = context)
 }

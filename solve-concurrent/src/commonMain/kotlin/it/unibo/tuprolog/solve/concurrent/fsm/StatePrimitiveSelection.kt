@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
 
-data class StatePrimitiveSelection(override val context: ConcurrentExecutionContext) : State {
+data class StatePrimitiveSelection(override val context: ConcurrentExecutionContext) : AbstractState(context) {
 
     private fun exceptionalState(exception: ResolutionException): Iterable<StateException> {
         return listOf(
@@ -18,7 +18,7 @@ data class StatePrimitiveSelection(override val context: ConcurrentExecutionCont
         )
     }
 
-    override fun next(): Iterable<State> {
+    override fun computeNext(): Iterable<State> {
         return with(context) {
             val goal = currentGoal!!
             when {
@@ -65,5 +65,5 @@ data class StatePrimitiveSelection(override val context: ConcurrentExecutionCont
         }
     }
 
-    override fun clone(context: ConcurrentExecutionContext): State = copy(context = context)
+    override fun clone(context: ConcurrentExecutionContext): StatePrimitiveSelection = copy(context = context)
 }

@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
-data class StateRuleExecution(override val context: ConcurrentExecutionContext) : State {
+data class StateRuleExecution(override val context: ConcurrentExecutionContext) : AbstractState(context) {
 
     private val failureState: EndState
         get() = StateEnd(
@@ -13,7 +13,7 @@ data class StateRuleExecution(override val context: ConcurrentExecutionContext) 
             context = context.copy(step = nextStep())
         )
 
-    override fun next(): Iterable<State> {
+    override fun computeNext(): Iterable<State> {
         val substitution = context.goals.current!! mguWith context.rule!!.head
         return listOf(
             when {
@@ -34,5 +34,5 @@ data class StateRuleExecution(override val context: ConcurrentExecutionContext) 
         )
     }
 
-    override fun clone(context: ConcurrentExecutionContext): State = copy(context = context)
+    override fun clone(context: ConcurrentExecutionContext): StateRuleExecution = copy(context = context)
 }
