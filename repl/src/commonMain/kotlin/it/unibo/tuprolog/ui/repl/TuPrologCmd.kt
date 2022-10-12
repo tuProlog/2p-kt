@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.ui.repl
 
-import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
@@ -24,7 +22,7 @@ import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
 
-class TuPrologCmd(vararg additionalLibraries: Library) : CliktCommand(
+class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand(
     invokeWithoutSubcommand = true,
     allowMultipleSubcommands = true,
     name = "java -jar 2p-repl.jar",
@@ -67,10 +65,10 @@ class TuPrologCmd(vararg additionalLibraries: Library) : CliktCommand(
             if (isReadableFile(file)) {
                 try {
                     val t = loadTheoryFromFile(file)
-                    TermUi.echo("# Successfully loaded ${t.size} clauses from $file")
+                    echo("# Successfully loaded ${t.size} clauses from $file")
                     theory += t
                 } catch (e: ParseException) {
-                    TermUi.echo(
+                    echo(
                         """
                         |# Error while parsing theory file: $file
                         |#     Message: ${e.message}
@@ -83,22 +81,22 @@ class TuPrologCmd(vararg additionalLibraries: Library) : CliktCommand(
                 }
             }
         }
-        TermUi.echo("")
+        echo("")
         return theory
     }
 
     private fun readEvalPrintLoop(solver: Solver) {
-        var query: String? = TuPrologUtils.readQuery()
+        var query: String? = readQuery()
         while (query != null) {
             try {
                 val goal = Struct.parse(query, solver.operators)
                 val solutions = solver.solve(goal, this.getTimeout()).iterator()
-                TuPrologUtils.printSolutions(solutions, solver.operators)
+                printSolutions(solutions, solver.operators)
             } catch (e: ParseException) {
-                TuPrologUtils.printParseException(e)
+                printParseException(e)
             }
-            TermUi.echo("")
-            query = TuPrologUtils.readQuery()
+            echo("")
+            query = readQuery()
         }
     }
 
@@ -107,14 +105,14 @@ class TuPrologCmd(vararg additionalLibraries: Library) : CliktCommand(
     }
 
     fun getSolver(): Solver {
-        TermUi.echo("# 2P-Kt version ${Info.VERSION}")
+        echo("# 2P-Kt version ${Info.VERSION}")
         val theory: Theory = this.loadTheory()
         val outputChannel = OutputChannel.of<Warning> { w ->
-            TermUi.echo("# ${w.message}", err = true)
+            echo("# ${w.message}", err = true)
             val sep = "\n    at "
             val formatter = TermFormatter.Companion.prettyExpressions(w.context.operators)
             val stacktrace = w.logicStackTrace.joinToString(sep) { it.format(formatter) }
-            TermUi.echo("#    at $stacktrace", err = true)
+            echo("#    at $stacktrace", err = true)
         }
         val libraries = if (oop) {
             Runtime.of(IOLib, OOPLib, *additionalLibraries)
@@ -127,9 +125,9 @@ class TuPrologCmd(vararg additionalLibraries: Library) : CliktCommand(
             warnings = outputChannel
         ).also {
             for ((_, library) in it.libraries) {
-                TermUi.echo("# Successfully loaded library `${library.alias}`")
+                echo("# Successfully loaded library `${library.alias}`")
             }
-            TermUi.echo("")
+            echo("")
         }
     }
 }

@@ -14,14 +14,14 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                subprojects(ktProjects, except = setOf("test-solve", "repl", thisProject)) {
+                subprojects(ktProjects, except = setOf("test-solve", thisProject)) {
                     api(this)
                 }
             }
         }
         val jvmMain by getting {
             dependencies {
-                subprojects(jvmProjects + "repl", except = "examples") {
+                subprojects(jvmProjects, except = "examples") {
                     api(this)
                 }
             }
