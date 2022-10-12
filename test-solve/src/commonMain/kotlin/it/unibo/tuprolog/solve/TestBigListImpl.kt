@@ -6,7 +6,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestBigList {
 
     override val shortDuration: TimeDuration
-        get() = 4000
+        get() = 6000
 
     override fun testBigListGeneration() {
         logicProgramming {
