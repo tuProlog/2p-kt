@@ -83,4 +83,3 @@ fun <T> EventsAsserter<Event<Any>>.assertNextIsSolveEvent(
     assertFalse(it.standardError.isClosed)
     assertFalse(it.warnings.isClosed)
 }
-
