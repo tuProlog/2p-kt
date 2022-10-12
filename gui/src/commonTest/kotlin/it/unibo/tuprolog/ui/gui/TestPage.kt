@@ -21,6 +21,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class TestPage {
     private lateinit var page: Page
@@ -248,7 +249,7 @@ class TestPage {
         }
 
     @Test
-    fun solveN() {
+    fun solveNThenStop() {
         val n = Random.nextInt(1, 100)
         val query = "nat(N)"
         val parsedQuery = query.parseAsStruct()
@@ -276,6 +277,90 @@ class TestPage {
             assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, n, staticKb = peanoTheoryParsed)
             assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery, staticKb = peanoTheoryParsed)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
+            assertNoMoreEvents()
+        }
+    }
+
+    @Test
+    fun solvePagination() {
+        val query = "nat(N)"
+        val parsedQuery = query.parseAsStruct()
+        page.theory = peanoTheory
+        page.query = query
+        val n = 10
+        val firstPeanoNumbers = peanoNumbers.take(n * n).toList()
+        var checkpoint = events.assertions {
+            assertNextIsEvent(Page.EVENT_THEORY_CHANGED, peanoTheory)
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+        }
+        for (i in 0 until n) {
+            if (i == 0) {
+                assertFailsWith<IllegalStateException> { page.next() }
+                page.solve(maxSolutions = n)
+                checkpoint = checkpoint.assertions {
+                    assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+                    assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = peanoTheoryParsed)
+                    assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = peanoTheoryParsed)
+                }
+            } else {
+                assertFailsWith<IllegalStateException> { page.solve() }
+                page.next(maxSolutions = n)
+            }
+            checkpoint = checkpoint.assertions {
+                assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+                for (p in firstPeanoNumbers.subList(i * n, (i + 1) * n)) {
+                    assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+                    assertNextEquals(Runner4Tests.EVENT_UI)
+                    val solution = Solution.yes(parsedQuery, Substitution.of("N", p))
+                    assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, solution, staticKb = peanoTheoryParsed)
+                }
+                assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.SOLUTION)
+                assertNoMoreEvents()
+            }
+        }
+    }
+
+    @Test
+    fun solveNThenReset() {
+        solveNThen { reset() }
+    }
+
+    @Test
+    fun solveNThenStopAndReset() {
+        solveNThen { stop(); reset() }
+    }
+
+    private fun solveNThen(action: Page.() -> Unit) {
+        val n = Random.nextInt(1, 100)
+        val query = "nat(N)"
+        val parsedQuery = query.parseAsStruct()
+        page.theory = peanoTheory
+        page.query = query
+        page.solve(maxSolutions = n)
+        val checkpoint = events.assertions {
+            assertNextIsEvent(Page.EVENT_THEORY_CHANGED, peanoTheory)
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = peanoTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = peanoTheoryParsed)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+            for (p in peanoNumbers.take(n)) {
+                assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+                assertNextEquals(Runner4Tests.EVENT_UI)
+                val solution = Solution.yes(parsedQuery, Substitution.of("N", p))
+                assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, solution, staticKb = peanoTheoryParsed)
+            }
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.SOLUTION)
+            assertNoMoreEvents()
+        }
+        page.action()
+        checkpoint.assertions {
+            assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, n, staticKb = peanoTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery, staticKb = peanoTheoryParsed)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
+            assertNextIsSolveEvent(Page.EVENT_RESET, PageID.untitled(), staticKb = peanoTheoryParsed)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = peanoTheoryParsed)
             assertNoMoreEvents()
         }
     }
@@ -346,15 +431,15 @@ class TestPage {
     @Test
     fun timeoutQuery() {
         // TODO fix timeout with subsolvers
-        // val query = "findall(N, nat(N), L)."
-        val query = "sleep(2000)"
+        val query = "findall(N, nat(N), L)."
+//        val query = "sleep(2000)"
         val parsedQuery = query.parseAsStruct()
         page.theory = peanoTheory
         page.query = query
         val shortTimeout = SolveOptions.DEFAULT.setTimeout(1 * TimeUnit.SECONDS)
         page.solveOptions = shortTimeout
         page.solve(maxSolutions = 2)
-        events.assertions(debug = true) {
+        events.assertions {
             assertNextIsEvent(Page.EVENT_THEORY_CHANGED, peanoTheory)
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsEvent(Page.EVENT_SOLVE_OPTIONS_CHANGED, shortTimeout)
