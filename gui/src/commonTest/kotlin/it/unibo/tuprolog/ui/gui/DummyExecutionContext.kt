@@ -3,7 +3,11 @@ package it.unibo.tuprolog.ui.gui
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.MutableSolver
+import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.data.CustomDataStore
