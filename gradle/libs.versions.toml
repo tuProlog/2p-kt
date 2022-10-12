@@ -2,7 +2,7 @@
 kotlin = "1.7.20"
 dokka = "1.7.20"
 jvm = "1.8"
-node = "16.15.0"
+node = "16.17.1"
 npmPublish = "2.1.2"
 jackson = "2.13.4"
 orchid = "0.21.1"
