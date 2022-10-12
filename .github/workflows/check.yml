@@ -36,6 +36,7 @@ jobs:
           - 11
 #          - 16
           - 17
+          - 18
         jdk-dist:
           - adopt-hotspot
           - temurin
