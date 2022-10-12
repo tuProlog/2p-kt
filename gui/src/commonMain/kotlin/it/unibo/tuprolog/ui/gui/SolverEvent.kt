@@ -47,8 +47,8 @@ interface SolverEvent<T> : Event<T>, ExecutionContextAware {
             other.operators,
             other.libraries,
             other.flags,
-            other.staticKb,
-            other.dynamicKb,
+            other.staticKb.toImmutableTheory(),
+            other.dynamicKb.toImmutableTheory(),
             other.inputChannels,
             other.outputChannels
         )

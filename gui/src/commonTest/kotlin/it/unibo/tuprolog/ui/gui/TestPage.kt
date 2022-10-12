@@ -1,9 +1,13 @@
 package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.operators.Operator
+import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
@@ -12,6 +16,7 @@ import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.theory.Theory
@@ -462,9 +467,43 @@ class TestPage {
     }
 
     @Test
-    @Ignore
     fun solverRelatedEventsAreGeneratedDuringResolution() {
-        // TODO the goal should change the state of the solver and events should be generated
+        val query = """
+            assert(fact),
+            write(text),
+            write(stderr, error),
+            op(1, fx, '?'),
+            set_flag(flag, value),
+            missing.
+        """.trimIndent()
+        val parsedQuery = query.parseAsStruct()
+        val dynamicKb = Theory.of(Fact.of(Atom.of("fact")))
+        val operators = OperatorSet.DEFAULT + Operator("?", Specifier.FX, 1)
+        val flags = FlagStore.DEFAULT + ("flag" to Atom.of("value"))
+        page.query = query
+        page.solve(maxSolutions = 1)
+        events.assertions(debug = true) {
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+            assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNextIsEvent(Page.EVENT_STDOUT_PRINTED, "text")
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNextIsEvent(Page.EVENT_STDERR_PRINTED, "error")
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNext { e ->
+                e !is SolverEvent<*> && e.event.let { it is Warning && it.message == "No such a predicate: missing/0" }
+            }
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, Solution.no(parsedQuery), dynamicKb = dynamicKb, operators = operators, flags = flags)
+            assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, 1, dynamicKb = dynamicKb, operators = operators, flags = flags)
+            assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery, dynamicKb = dynamicKb, operators = operators, flags = flags)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
+            assertNoMoreEvents()
+        }
     }
 
     @Test
