@@ -157,9 +157,9 @@ internal class PageImpl(
             if (state == Page.Status.SOLUTION) {
                 stop()
             }
+            onReset.raise(Page.EVENT_RESET, id, solver.value)
             solver.invalidate()
             solver.regenerate()
-            onReset.raise(Page.EVENT_RESET, id, solver.value)
             try {
                 loadCurrentFileAsStaticKB(onlyIfChanged = false)
             } catch (e: SyntaxException) {
