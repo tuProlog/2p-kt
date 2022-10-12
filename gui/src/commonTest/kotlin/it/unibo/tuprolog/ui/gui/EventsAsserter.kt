@@ -9,17 +9,15 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class EventsAsserter<T>(private val events: Iterable<T>) {
+class EventsAsserter<T>(private val events: Iterable<T>, private var consumed: Int = 0) {
 
     inner class Checkpoint(private val consumed: Int) {
         fun restore(): EventsAsserter<T> {
-            return EventsAsserter(events.drop(consumed))
+            return EventsAsserter(events, consumed)
         }
     }
 
-    private val iterator: Iterator<T> = events.iterator()
-
-    private var consumed: Int = 0
+    private val iterator: Iterator<T> = events.asSequence().drop(consumed).iterator()
 
     private fun hasNext(): Boolean = iterator.hasNext()
 
