@@ -526,7 +526,7 @@ internal class TestSolverImpl(
             )
 
             val query = "ftog"(X, Y)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, longDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
