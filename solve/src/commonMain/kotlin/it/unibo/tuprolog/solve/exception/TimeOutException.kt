@@ -39,4 +39,11 @@ class TimeOutException(
 
     override fun pushContext(newContext: ExecutionContext): TimeOutException =
         TimeOutException(message, cause, arrayOf(*contexts, newContext), exceededDuration)
+
+    override fun toString(): String =
+        "${TimeOutException::class.simpleName}(" +
+            "message=$message, " +
+            "exceededDuration=$exceededDuration, " +
+            "contexts=${contexts.joinToString(", ", "[", "]")}" +
+            ")"
 }
