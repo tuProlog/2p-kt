@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aRequestIssuingInstant
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
@@ -85,7 +86,7 @@ internal class SolveRequestTest {
     @Test
     fun requestConstructorComplainsWithNegativeMaxDuration() {
         createRequest(executionMaxDuration = 0)
-        assertFailsWith<IllegalArgumentException> { createRequest(executionMaxDuration = -1) }
+        assertFailsWith<TimeOutException> { createRequest(executionMaxDuration = -1) }
     }
 
     @Test
