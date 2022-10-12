@@ -19,6 +19,7 @@ import it.unibo.tuprolog.theory.parsing.parse
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -430,7 +431,6 @@ class TestPage {
 
     @Test
     fun timeoutQuery() {
-        // TODO fix timeout with subsolvers
         val query = "findall(N, nat(N), L)."
 //        val query = "sleep(2000)"
         val parsedQuery = query.parseAsStruct()
@@ -461,9 +461,53 @@ class TestPage {
         }
     }
 
+    @Test
+    @Ignore
+    fun solverRelatedEventsAreGeneratedDuringResolution() {
+        // TODO the goal should change the state of the solver and events should be generated
+    }
+
+    @Test
+    @Ignore
+    fun standardInputCanBeConsumedByTheSolver() {
+        // TODO set the standard input
+        // TODO let the solver consume it
+        // TODO the standard input field is unaffected
+    }
+
+    @Test
+    @Ignore
+    fun queryErrorsAreCaught() {
+        // TODO set query with broken text
+        // TODO trigger resolution
+        // TODO an error event is generated and resolution does not start
+    }
+
+    @Test
+    @Ignore
+    fun theoryErrorsAreCaught() {
+        // TODO set theory with broken text
+        // TODO trigger resolution
+        // TODO an error event is generated and resolution does not start
+    }
+
+    @Test
+    @Ignore
+    fun renamingPage() {
+        // TODO rename the page
+        // TODO a renaming event is generated
+    }
+
+    @Test
+    @Ignore
+    fun saving() {
+        // TODO save the page
+        // TODO the page is renamed according
+        // TODO check the file exists
+    }
+
     @AfterTest
     fun closeRaisesCloseEvent() {
-//        assertEquals(Page.Status.IDLE, page.state)
         page.close()
         events.assertions {
             assertLast { it.name == Page.EVENT_CLOSE && it.event is PageID }
