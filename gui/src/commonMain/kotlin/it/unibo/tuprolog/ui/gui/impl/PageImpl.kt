@@ -112,9 +112,8 @@ internal class PageImpl(
         }
     }
 
-    private val stdinChannel: InputChannel<String> by lazy {
-        InputChannel.of(stdin)
-    }
+    private val stdinChannel: InputChannel<String>
+        get() = InputChannel.of(stdin)
 
     private val stdoutChannel: OutputChannel<String> by lazy {
         OutputChannel.of {
