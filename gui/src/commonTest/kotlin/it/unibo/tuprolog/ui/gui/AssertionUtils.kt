@@ -21,6 +21,10 @@ fun <T> Iterable<T>.assertions(
     return EventsAsserter(this).also { if (debug) it.debug() }.also(scope).checkpoint()
 }
 
+fun <T> Iterable<T>.beginAssertions(): EventsAsserter<T>.Checkpoint {
+    return EventsAsserter(this).checkpoint()
+}
+
 fun <T> EventsAsserter<T>.Checkpoint.assertions(
     debug: Boolean = false,
     scope: EventsAsserter<T>.() -> Unit
