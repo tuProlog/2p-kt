@@ -16,7 +16,13 @@ internal class InputStoreImpl(
         .setCurrent(STDIN, stdIn)
 ) {
     override fun setStdIn(channel: InputChannel<String>): InputStore =
-        InputStoreImpl(channel, channels - STDIN)
+        (channels - STDIN).let {
+            if (current == stdIn) {
+                InputStoreImpl(channel, it + (CURRENT to channel))
+            } else {
+                InputStoreImpl(channel, it)
+            }
+        }
 
     override fun setCurrent(alias: String): InputStore =
         when (val newCurrentChannel = get(alias)) {
