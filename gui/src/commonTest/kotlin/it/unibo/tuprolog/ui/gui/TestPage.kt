@@ -507,11 +507,43 @@ class TestPage {
     }
 
     @Test
-    @Ignore
     fun standardInputCanBeConsumedByTheSolver() {
-        // TODO set the standard input
-        // TODO let the solver consume it
-        // TODO the standard input field is unaffected
+        val query = "read(X)"
+        val parsedQuery = query.parseAsStruct()
+        page.query = query
+        page.stdin = "a b \n c"
+        var checkpoint = events.assertions {
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+        }
+        for (i in 1..3) {
+            page.stdin.split("\\s+".toRegex()).plus(null).forEachIndexed { index, letter ->
+                page.solve(maxSolutions = 1)
+                checkpoint = checkpoint.assertions {
+                    if (index == 0) {
+                        assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+                        assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled())
+                    }
+                    assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery)
+                    assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+                    assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+                    assertNextEquals(Runner4Tests.EVENT_UI)
+                    val solution = if (letter == null) {
+                        Solution.no(parsedQuery)
+                    } else {
+                        Solution.yes(parsedQuery, Substitution.unifier("X", Atom.of(letter)))
+                    }
+                    assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, solution)
+                    assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, 1)
+                    assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery)
+                    assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
+                    assertNoMoreEvents()
+                }
+            }
+            page.reset()
+            checkpoint = checkpoint.assertions {
+                assertNextIsSolveEvent(Page.EVENT_RESET, PageID.untitled())
+            }
+        }
     }
 
     @Test
