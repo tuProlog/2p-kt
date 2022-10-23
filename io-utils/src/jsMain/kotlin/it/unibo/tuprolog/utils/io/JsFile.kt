@@ -22,7 +22,7 @@ data class JsFile(val url: Url) : File {
 
     override fun readText(): String = url.readAsText()
 
-    override fun writeText(text: String) = throw NotImplementedError("Writing files on JS is currently not supported")
+    override fun writeText(text: String) = writeText(path, text)
 
     override fun toString(): String = path
 }

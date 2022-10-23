@@ -72,8 +72,8 @@ internal fun readText(path: String): String =
 
 @Suppress("UNUSED_PARAMETER")
 private fun browserReadBin(path: String): ByteArray =
-    js("window").localStorage.getItem(path).unsafeCast<ArrayBuffer?>()?.toByteArray()
-        ?: throw IOException("No such entry in window.localStorage: $path")
+    js("window").localStorage.getItem("fs:://$path").unsafeCast<ArrayBuffer?>()?.toByteArray()
+        ?: throw IOException("No such entry in window.localStorage: fs:://$path")
 
 private fun nodeReadBin(path: String): ByteArray =
     try {
@@ -87,4 +87,21 @@ internal fun readBin(path: String): ByteArray =
         browserReadBin(path)
     } else {
         nodeReadBin(path)
+    }
+
+internal fun writeText(path: String, text: String) =
+    if (currentPlatform() == Platform.BROWSER) {
+        browserWriteText(path, text)
+    } else {
+        nodeWriteText(path, text)
+    }
+
+private fun browserWriteText(path: String, text: String) =
+    js("window").localStorage.setItem(path, text)
+
+private fun nodeWriteText(path: String, text: String) =
+    try {
+        FS.writeFileSync(path.toOsSpecificPath(), text)
+    } catch (e: Throwable) {
+        throw IOException("Error while writing file `$path`: ${e.message}", e)
     }

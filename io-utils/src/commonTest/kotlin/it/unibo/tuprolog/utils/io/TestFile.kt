@@ -67,11 +67,35 @@ class TestFile {
     }
 
     @Test
+    fun subPath() {
+        try {
+            assertEquals(
+                File.of(pathToFile),
+                File.of("/") / "path" / "to" / "file.txt"
+            )
+        } catch (_: AssertionError) {
+            assertEquals(Os.WINDOWS, currentOs())
+            assertEndsWith(
+                pathToFile.toWindowsPath(),
+                (File.of("/") / "path" / "to" / "file.txt").path
+            )
+        }
+    }
+
+    @Test
     fun fileRead() {
         assertEquals(
             ExampleFiles.PARENTS,
             findResource("Parents.pl").toFile().readText().ensureUnixLineTermination()
         )
+    }
+
+    @Test
+    fun testIO() {
+        val tmp = File.temp("test", "txt")
+        val content = "ciao"
+        tmp.writeText(content)
+        assertEquals(content, tmp.readText())
     }
 
     private fun assertEndsWith(expectedEnding: String, actual: String) {
