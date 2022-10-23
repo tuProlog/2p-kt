@@ -23,10 +23,10 @@ import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parse
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
+import it.unibo.tuprolog.utils.io.File
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -564,6 +564,7 @@ class TestPage {
             } catch (e: ParseException) {
                 assertNextIsEvent(Page.EVENT_ERROR, SyntaxException.InQuerySyntaxError(query, e))
             }
+            assertNoMoreEvents()
         }
     }
 
@@ -616,6 +617,7 @@ class TestPage {
             } catch (e: ParseException) {
                 assertNextIsEvent(Page.EVENT_ERROR, SyntaxException.InTheorySyntaxError(PageID.untitled(), theory, e))
             }
+            assertNoMoreEvents()
         }
     }
 
@@ -624,17 +626,28 @@ class TestPage {
         val oldName = page.id
         val newName = PageID.name("new_name")
         page.id = newName
-        events.assertions(debug = true) {
+        events.assertions {
             assertNextIsEvent(Page.EVENT_RENAME, oldName to newName)
+            assertNoMoreEvents()
         }
     }
 
     @Test
-    @Ignore
     fun saving() {
-        // TODO save the page
-        // TODO the page is renamed according
-        // TODO check the file exists
+        val destination = File.temp("TestFile_saving", "pl")
+        val theory = "a_fact."
+        val oldName = page.id
+        val newName = PageID.file(destination)
+        page.theory = theory
+        page.save(destination)
+        events.assertions {
+            assertNextIsEvent(Page.EVENT_THEORY_CHANGED, theory)
+            assertNextEquals(Runner4Tests.EVENT_IO)
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNextIsEvent(Page.EVENT_RENAME, oldName to newName)
+            assertNoMoreEvents()
+        }
+        assertEquals(theory, destination.readText())
     }
 
     @AfterTest
