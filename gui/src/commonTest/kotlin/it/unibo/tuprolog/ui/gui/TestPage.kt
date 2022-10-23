@@ -8,6 +8,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
+import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
@@ -21,6 +22,7 @@ import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parse
+import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -28,6 +30,7 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.fail
 
 class TestPage {
     private lateinit var page: Page
@@ -200,7 +203,7 @@ class TestPage {
         page.theory = factsTheory
         page.query = query
         page.solve(maxSolutions = 2)
-        events.assertions(debug = true) {
+        events.assertions {
             assertNextIsEvent(Page.EVENT_THEORY_CHANGED, factsTheory)
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
@@ -225,7 +228,7 @@ class TestPage {
         page.theory = factsTheory
         page.query = query
         page.solve(maxSolutions = 3)
-        events.assertions(debug = true) {
+        events.assertions {
             assertNextIsEvent(Page.EVENT_THEORY_CHANGED, factsTheory)
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
@@ -482,7 +485,7 @@ class TestPage {
         val flags = FlagStore.DEFAULT + ("flag" to Atom.of("value"))
         page.query = query
         page.solve(maxSolutions = 1)
-        events.assertions(debug = true) {
+        events.assertions {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled())
@@ -547,26 +550,83 @@ class TestPage {
     }
 
     @Test
-    @Ignore
     fun queryErrorsAreCaught() {
-        // TODO set query with broken text
-        // TODO trigger resolution
-        // TODO an error event is generated and resolution does not start
+        val query = "query with syntax error"
+        page.query = query
+        page.solve(maxSolutions = 1)
+        events.assertions {
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled())
+            try {
+                query.parseAsStruct(OperatorSet.DEFAULT)
+                fail("Query `$query` should not be parsable with default operators")
+            } catch (e: ParseException) {
+                assertNextIsEvent(Page.EVENT_ERROR, SyntaxException.InQuerySyntaxError(query, e))
+            }
+        }
     }
 
     @Test
-    @Ignore
+    fun queryAreParsedAccordingToSolverOperators() {
+        val operator = Operator("#", Specifier.XFY, 299)
+        val operators = OperatorSet.DEFAULT + operator
+        val query = "a # b # c"
+        val parsedQuery = query.parseAsStruct(operators)
+        val theory = """
+            :- ${operator.toTerm()}.
+            a. b. c.
+            '#'(X, Y) :- call(X), call(Y).
+        """.trimIndent()
+        val parsedTheory = theory.parseAsTheory(operators)
+        page.query = query
+        page.theory = theory
+        page.solve(maxSolutions = 1)
+        events.assertions {
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsEvent(Page.EVENT_THEORY_CHANGED, theory)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = parsedTheory, operators = operators)
+            assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = parsedTheory, operators = operators)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
+            assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLUTION, Solution.yes(parsedQuery), staticKb = parsedTheory, operators = operators)
+            assertNextIsSolveEvent(Page.EVENT_RESOLUTION_OVER, 1, staticKb = parsedTheory, operators = operators)
+            assertNextIsSolveEvent(Page.EVENT_QUERY_OVER, parsedQuery, staticKb = parsedTheory, operators = operators)
+            assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.IDLE)
+            assertNoMoreEvents()
+        }
+    }
+
+    @Test
     fun theoryErrorsAreCaught() {
-        // TODO set theory with broken text
-        // TODO trigger resolution
-        // TODO an error event is generated and resolution does not start
+        val query = "true"
+        val theory = "theory with error"
+        page.query = query
+        page.theory = theory
+        page.solve(maxSolutions = 1)
+        events.assertions {
+            assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
+            assertNextIsEvent(Page.EVENT_THEORY_CHANGED, theory)
+            assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
+            try {
+                theory.parseAsTheory(OperatorSet.DEFAULT)
+                fail("Theory `$theory` should not be parsable with default operators")
+            } catch (e: ParseException) {
+                assertNextIsEvent(Page.EVENT_ERROR, SyntaxException.InTheorySyntaxError(PageID.untitled(), theory, e))
+            }
+        }
     }
 
     @Test
-    @Ignore
     fun renamingPage() {
-        // TODO rename the page
-        // TODO a renaming event is generated
+        val oldName = page.id
+        val newName = PageID.name("new_name")
+        page.id = newName
+        events.assertions(debug = true) {
+            assertNextIsEvent(Page.EVENT_RENAME, oldName to newName)
+        }
     }
 
     @Test
