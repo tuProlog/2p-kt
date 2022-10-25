@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.channel.impl
 
-internal class InputChannelFromString(
-    private val string: String
+class InputChannelFromString(
+    val string: String
 ) : AbstractInputChannel<String>() {
 
     private val iterator by lazy {
