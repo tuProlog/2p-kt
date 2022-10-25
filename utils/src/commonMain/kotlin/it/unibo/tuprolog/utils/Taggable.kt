@@ -10,7 +10,7 @@ interface Taggable<Self : Taggable<Self>> {
     @JsName("getTag")
     fun <T : Any> getTag(name: String): T? = tags[name] as T?
 
-    @JsName("resetTags")
+    @JsName("replaceTags")
     fun replaceTags(tags: Map<String, Any>): Self
 
     @JsName("containsTag")
