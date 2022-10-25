@@ -10,4 +10,7 @@ class TermParserImpl(
 ) : TermParser {
     override fun parseTerm(input: String, operators: OperatorSet): Term =
         PrologParserFactory.parseSingletonExpr(input, operators).accept(PrologExpressionVisitor(scope))
+
+    override fun parseTerms(input: String, operators: OperatorSet): Sequence<Term> =
+        PrologParserFactory.parseExpressions(input, operators).map { it.accept(PrologExpressionVisitor(scope)) }
 }

@@ -5,8 +5,11 @@ import it.unibo.tuprolog.parser.BailErrorStrategy
 import it.unibo.tuprolog.parser.ClauseContext
 import it.unibo.tuprolog.parser.CommonTokenStream
 import it.unibo.tuprolog.parser.ErrorStrategy
+import it.unibo.tuprolog.parser.ExpressionContext
 import it.unibo.tuprolog.parser.InputStream
 import it.unibo.tuprolog.parser.OptClauseContext
+import it.unibo.tuprolog.parser.OptExpressionContext
+import it.unibo.tuprolog.parser.ParserRuleContext
 import it.unibo.tuprolog.parser.PredictionMode
 import it.unibo.tuprolog.parser.PrologLexer
 import it.unibo.tuprolog.parser.PrologParser
@@ -52,22 +55,26 @@ object PrologParserFactory {
         }
     }
 
-    fun parseExpression(string: String): SingletonExpressionContext =
-        parseExpression(string, OperatorSet.EMPTY)
+    fun parseSingletonExpression(string: String): SingletonExpressionContext =
+        parseSingletonExpression(string, OperatorSet.EMPTY)
 
-    fun parseExpression(string: String, withOperators: OperatorSet): SingletonExpressionContext {
+    fun parseSingletonExpression(string: String, withOperators: OperatorSet): SingletonExpressionContext {
         val parser = createParser(string, withOperators)
-        return parseExpression(parser, string)
+        return parseSingletonExpression(parser, string)
     }
 
-    private fun parseExpression(parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>, source: String): SingletonExpressionContext {
+    private fun <T : ParserRuleContext> parse(
+        parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>,
+        source: String,
+        parseOne: PrologParser.() -> T
+    ): T {
         var mark = -1
         var index = -1
         val parser = parserAndErrorStrategy.first
         return try {
             mark = parser.getTokenStream().mark()
             index = parser.getTokenStream().index.coerceAtLeast(0)
-            parser.singletonExpression()
+            parser.parseOne()
         } catch (e: dynamic) {
             when {
                 isParseCancellationException(e) && parser._interp.predictionMode === PredictionMode.SLL -> {
@@ -75,11 +82,12 @@ object PrologParserFactory {
                     parser._interp.predictionMode = PredictionMode.LL
                     parser._errHandler = parserAndErrorStrategy.second
                     parser.addErrorListener(newErrorListener(source))
-                    parseExpression(parserAndErrorStrategy, source)
+                    parse(parserAndErrorStrategy, source, parseOne)
                 }
                 e.clause !== null && isRecognitionException(e.cause) -> {
                     throw e.cause as RecognitionException
                 }
+
                 else -> {
                     throw e as Throwable
                 }
@@ -89,8 +97,26 @@ object PrologParserFactory {
         }
     }
 
+    private fun parseSingletonExpression(
+        parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>,
+        source: String
+    ): SingletonExpressionContext {
+        return parse(parserAndErrorStrategy, source) {
+            singletonExpression()
+        }
+    }
+
+    private fun parseExpression(
+        parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>,
+        source: String
+    ): OptExpressionContext {
+        return parse(parserAndErrorStrategy, source) {
+            optExpression()
+        }
+    }
+
     fun parseExpressionWithStandardOperators(string: String): SingletonExpressionContext =
-        parseExpression(string, OperatorSet.DEFAULT)
+        parseSingletonExpression(string, OperatorSet.DEFAULT)
 
     fun parseClauses(source: String, withOperators: OperatorSet): Sequence<ClauseContext> {
         val parser = createParser(source, withOperators)
@@ -119,6 +145,17 @@ object PrologParserFactory {
         return addOperators(parser, operators) to originalErrorStrategy
     }
 
+    fun parseExpressions(source: String, withOperators: OperatorSet): Sequence<ExpressionContext> {
+        val parser = createParser(source, withOperators)
+        return parseExpressions(parser, source)
+    }
+
+    fun parseExpressions(source: String): Sequence<ExpressionContext> =
+        parseExpressions(source, OperatorSet.EMPTY)
+
+    fun parseExpressionsWithStandardOperators(source: String): Sequence<ExpressionContext> =
+        parseExpressions(source, OperatorSet.DEFAULT)
+
     fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
         operators.forEach {
             prologParser.addOperator(it.functor, it.specifier.toAssociativity(), it.priority)
@@ -127,36 +164,16 @@ object PrologParserFactory {
         return prologParser
     }
 
-    private fun parseClause(parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>, source: Any): OptClauseContext {
-        var mark = -1
-        var index = -1
-        val parser = parserAndErrorStrategy.first
-        return try {
-            mark = parser.getTokenStream().mark()
-            index = parser.getTokenStream().index.coerceAtLeast(0)
-            parser.optClause()
-        } catch (e: dynamic) {
-            when {
-                isParseCancellationException(e) && parser._interp.predictionMode === PredictionMode.SLL -> {
-                    parser.getTokenStream().seek(index)
-                    parser._interp.predictionMode = PredictionMode.LL
-                    parser._errHandler = parserAndErrorStrategy.second
-                    parser.addErrorListener(newErrorListener(source))
-                    parseClause(parserAndErrorStrategy, source)
-                }
-                e.clause !== null && isRecognitionException(e.cause) -> {
-                    throw e.cause as RecognitionException
-                }
-                else -> {
-                    throw e as Throwable
-                }
-            }
-        } finally {
-            parser.getTokenStream().release(mark)
+    private fun parseClause(
+        parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>,
+        source: String
+    ): OptClauseContext {
+        return parse(parserAndErrorStrategy, source) {
+            optClause()
         }
     }
 
-    private fun parseClauses(parser: Pair<PrologParser, ErrorStrategy>, source: Any): Sequence<ClauseContext> {
+    private fun parseClauses(parser: Pair<PrologParser, ErrorStrategy>, source: String): Sequence<ClauseContext> {
         return generateSequence(0) { it + 1 }
             .map {
                 try {
@@ -167,5 +184,20 @@ object PrologParserFactory {
                 }
             }.takeWhile { !it.isOver }
             .map { it.clause() }
+    }
+
+    private fun parseExpressions(
+        parser: Pair<PrologParser, ErrorStrategy>,
+        source: String
+    ): Sequence<ExpressionContext> {
+        return generateSequence(0) { it + 1 }
+            .map {
+                try {
+                    parseExpression(parser, source)
+                } catch (e: ParseException) {
+                    throw e
+                }
+            }.takeWhile { !it.isOver }
+            .map { it.expression() }
     }
 }

@@ -71,6 +71,7 @@ external class PrologParser(input: TokenStream) {
     fun optClause(): OptClauseContext
     fun clause(): ClauseContext
     fun expression(): ExpressionContext
+    fun optExpression(): OptExpressionContext
     fun outer(): OuterContext
     fun op(): OpContext
     fun term(): TermContext
@@ -123,6 +124,12 @@ external class ExpressionContext : ParserRuleContext {
     fun op(): OpContext
     fun expression(): ExpressionContext
     fun outer(): OuterContext
+}
+
+external class OptExpressionContext : ParserRuleContext {
+    val isOver: Boolean
+
+    fun expression(): ExpressionContext
 }
 
 external class OuterContext : ParserRuleContext {

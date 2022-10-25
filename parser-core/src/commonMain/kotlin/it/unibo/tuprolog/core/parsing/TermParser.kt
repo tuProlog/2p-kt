@@ -30,6 +30,13 @@ interface TermParser {
     @JsName("parseTermWithOperators")
     fun parseTerm(input: String, operators: OperatorSet): Term
 
+    @JsName("parseTermsWithOperators")
+    fun parseTerms(input: String, operators: OperatorSet): Sequence<Term>
+
+    @JsName("parseTerms")
+    fun parseTerms(input: String): Sequence<Term> =
+        parseTerms(input, defaultOperatorSet)
+
     @JsName("parseTerm")
     fun parseTerm(input: String): Term =
         parseTerm(input, defaultOperatorSet)

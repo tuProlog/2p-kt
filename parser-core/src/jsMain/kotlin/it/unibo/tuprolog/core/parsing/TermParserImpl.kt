@@ -9,5 +9,8 @@ class TermParserImpl(
     override val defaultOperatorSet: OperatorSet
 ) : TermParser {
     override fun parseTerm(input: String, operators: OperatorSet): Term =
-        PrologParserFactory.parseExpression(input, operators).accept(PrologVisitor(scope))
+        PrologParserFactory.parseSingletonExpression(input, operators).accept(PrologVisitor(scope))
+
+    override fun parseTerms(input: String, operators: OperatorSet): Sequence<Term> =
+        PrologParserFactory.parseExpressions(input, operators).map { it.accept(PrologVisitor(scope)) }
 }
