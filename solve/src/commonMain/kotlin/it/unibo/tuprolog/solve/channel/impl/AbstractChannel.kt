@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.channel.impl
 
 import it.unibo.tuprolog.solve.channel.Channel
 import it.unibo.tuprolog.solve.channel.Listener
+import it.unibo.tuprolog.utils.toMutableThreadSafe
 import kotlin.jvm.Synchronized
 import kotlin.jvm.Volatile
 
@@ -14,6 +15,8 @@ abstract class AbstractChannel<T : Any> : Channel<T> {
         @Synchronized
         private fun nextId(): String = (instanceCount++).toString(16).padStart(16, '0')
     }
+
+    override val extensions: MutableMap<String, Any> = mutableMapOf<String, Any>().toMutableThreadSafe()
 
     private val _listeners: MutableList<Listener<T?>> = mutableListOf()
 

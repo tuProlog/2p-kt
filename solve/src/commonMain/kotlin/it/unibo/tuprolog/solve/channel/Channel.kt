@@ -3,10 +3,11 @@ package it.unibo.tuprolog.solve.channel
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.Extendable
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-interface Channel<T : Any> {
+interface Channel<T : Any> : Extendable {
     @JsName("addListener")
     fun addListener(listener: Listener<T?>)
 
