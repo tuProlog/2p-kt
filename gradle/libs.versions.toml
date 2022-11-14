@@ -52,7 +52,7 @@ orchid-pluginDocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", ver
 plantuml = "net.sourceforge.plantuml:plantuml:1.2022.12"
 antlr-full = { module = "org.antlr:antlr4", version.ref = "antlr" }
 antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
-richtextFx = "org.fxmisc.richtext:richtextfx:0.10.9"
+richtextFx = "org.fxmisc.richtext:richtextfx:0.11.0"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
