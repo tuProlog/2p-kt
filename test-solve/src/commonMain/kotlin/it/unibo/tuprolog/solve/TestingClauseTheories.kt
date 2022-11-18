@@ -90,6 +90,49 @@ object TestingClauseTheories {
     }
 
     /**
+     * a(A) :- b(A), d(Z).
+     * b(B) :- c(B), d(W).
+     * d(_).
+     * c(1).
+     */
+    val callsWithVariablesTheory by lazy {
+        logicProgramming {
+            theoryOf(
+                rule { "a"(A) `if` ("b"(A) and "d"(Z)) },
+                rule { "b"(B) `if` ("c"(B) and "d"(W)) },
+                fact { "d"(`_`) },
+                fact { "c"(1) }
+            )
+        }
+    }
+
+    /**
+     * ```
+     * <observe>_one(X) :- <observe>([X])
+     * p(A, B, C) :-
+     *   <observe>([A, B, C]),
+     *   <observe>_one(D),
+     *   <observe>_one(E),
+     *   <observe>([f(A), f(B), f(C), f(D), f(E)]).
+     * ```
+     */
+    fun callsWithVariablesAndInspectorTheory(predicate: String, observe: String) =
+        logicProgramming {
+            val observeOne = "${observe}_one"
+            theoryOf(
+                rule { observeOne(X) `if` observe(listOf(X)) },
+                rule {
+                    predicate(A, B, C).`if`(
+                        observe(listOf(A, B, C)),
+                        observeOne(D),
+                        observeOne(E),
+                        observe(listOf("f"(A), "f"(B), "f"(C), "f"(D), "f"(E)))
+                    )
+                }
+            )
+        }
+
+    /**
      * Notable [simpleFactTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- f(A).
