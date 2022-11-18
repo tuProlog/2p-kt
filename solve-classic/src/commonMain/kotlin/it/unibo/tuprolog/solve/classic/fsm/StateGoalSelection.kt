@@ -34,13 +34,8 @@ data class StateGoalSelection(override val context: ClassicExecutionContext) : A
                 )
             }
         } else {
-            val goalsWithSubstitution = context.goals.map { it[context.substitution] }
-
             StatePrimitiveSelection(
-                context.copy(
-                    goals = goalsWithSubstitution,
-                    step = nextStep()
-                )
+                context.copy(step = nextStep())
             )
         }
     }
