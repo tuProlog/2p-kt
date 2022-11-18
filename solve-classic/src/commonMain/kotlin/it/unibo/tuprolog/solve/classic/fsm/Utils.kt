@@ -44,7 +44,8 @@ fun ClassicExecutionContext.createChild(inferProcedureFromGoals: Boolean = true)
         procedure = if (inferProcedureFromGoals) currentGoal else procedure,
         parent = this,
         depth = depth + 1,
-        step = step + 1
+        step = step + 1,
+        relevantVariables = emptySet()
     )
 }
 
