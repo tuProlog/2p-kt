@@ -73,13 +73,13 @@ data class ClassicExecutionContext(
         }
     }
 
-    val currentGoal: Term?
-        get() = if (goals.isOver) null else goals.current
+    val currentGoal: Term? by lazy {
+        if (goals.isOver) null else goals.current?.apply(substitution)
+    }
 
     val interestingVariables: KtSet<Var> by lazy {
         val baseInterestingVars: KtSet<Var> = parent?.interestingVariables ?: query.variables.toSet()
-        val currInterestingVars: KtSet<Var> =
-            if (goals.isOver) emptySet() else goals.current?.variables?.toSet() ?: emptySet()
+        val currInterestingVars: KtSet<Var> = goals.current?.variables?.toSet() ?: emptySet()
 
         baseInterestingVars + currInterestingVars
     }

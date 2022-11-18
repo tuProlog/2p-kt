@@ -10,7 +10,7 @@ data class StateRuleExecution(override val context: ClassicExecutionContext) : A
         get() = StateBacktracking(context.copy(rules = Cursor.empty(), step = nextStep()))
 
     override fun computeNext(): State {
-        val substitution = context.goals.current!! mguWith context.rules.current!!.head
+        val substitution = context.currentGoal!! mguWith context.rules.current!!.head
         return when {
             substitution.isSuccess -> {
                 val newSubstitution = (context.substitution + substitution).castToUnifier()

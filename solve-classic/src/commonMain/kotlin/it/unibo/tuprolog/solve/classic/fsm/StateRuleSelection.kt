@@ -134,7 +134,7 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
         }
 
     private val ClassicExecutionContext.isTailRecursive: Boolean
-        get() = goals.next.isOver && flags[LastCallOptimization] == ON && goals.current!!.let { currentGoal ->
+        get() = goals.next.isOver && flags[LastCallOptimization] == ON && currentGoal!!.let { currentGoal ->
             currentGoal.asStruct()?.extractSignature()?.let {
                 it == procedure?.extractSignature() && it != catchSignature
             } ?: false
