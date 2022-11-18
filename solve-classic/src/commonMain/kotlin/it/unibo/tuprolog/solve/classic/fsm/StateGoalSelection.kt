@@ -19,7 +19,7 @@ data class StateGoalSelection(override val context: ClassicExecutionContext) : A
                             flags = context.flags,
                             dynamicKb = context.dynamicKb,
                             staticKb = context.staticKb,
-                            substitution = context.substitution.filter(it.interestingVariables),
+                            substitution = context.substitution.filter { (it, _) -> context.isVariableInteresting(it) },
                             goals = it.goals.next, // go on with parent's goals
                             procedure = it.procedure,
                             step = nextStep(),
@@ -35,7 +35,10 @@ data class StateGoalSelection(override val context: ClassicExecutionContext) : A
             }
         } else {
             StatePrimitiveSelection(
-                context.copy(step = nextStep())
+                context.copy(
+                    step = nextStep(),
+                    relevantVariables = context.relevantVariables + context.goals.current!!.variables.toSet()
+                )
             )
         }
     }

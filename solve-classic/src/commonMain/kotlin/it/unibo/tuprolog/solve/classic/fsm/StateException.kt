@@ -59,8 +59,9 @@ data class StateException(
     private fun handleCatch(catchGoal: Struct, catcher: Substitution) =
         when {
             catcher.isSuccess -> {
-                val newSubstitution =
-                    (context.substitution + catcher).filter(context.interestingVariables)
+                val newSubstitution = (context.substitution + catcher).filter { (it, _) ->
+                    context.isVariableInteresting(it)
+                }
                 val subGoals = catchGoal[2][newSubstitution]
                 val newGoals = subGoals.toGoals() + context.goals.next
 

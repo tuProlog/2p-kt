@@ -47,7 +47,8 @@ data class ClassicExecutionContext(
     val choicePoints: ChoicePointContext? = null,
     val parent: ClassicExecutionContext? = null,
     val depth: Int = 0,
-    val step: Long = 0
+    val step: Long = 0,
+    val relevantVariables: KtSet<Var> = emptySet()
 ) : ExecutionContext {
     init {
         require((depth == 0 && parent == null) || (depth > 0 && parent != null))
@@ -77,12 +78,15 @@ data class ClassicExecutionContext(
         if (goals.isOver) null else goals.current?.apply(substitution)
     }
 
-    val interestingVariables: KtSet<Var> by lazy {
+    private val interestingVariables: KtSet<Var> by lazy {
         val baseInterestingVars: KtSet<Var> = parent?.interestingVariables ?: query.variables.toSet()
         val currInterestingVars: KtSet<Var> = goals.current?.variables?.toSet() ?: emptySet()
 
-        baseInterestingVars + currInterestingVars
+        relevantVariables + baseInterestingVars + currInterestingVars
     }
+
+    fun isVariableInteresting(variable: Var) =
+        variable in interestingVariables
 
     override val logicStackTrace: KtList<Struct> by lazy {
         pathToRoot.filter { it.isActivationRecord }
@@ -144,22 +148,17 @@ data class ClassicExecutionContext(
 
     override fun toString(): String {
         return "ClassicExecutionContext(" +
-            "query=$query, " +
-            "procedure=$procedure, " +
+            "step=$step, " +
+            "depth=$depth, " +
             "substitution=$substitution, " +
+            "logicStackTrace=$logicStackTrace, " +
             "goals=$goals, " +
             "rules=$rules, " +
             "primitives=$primitives, " +
             "startTime=$startTime, " +
-            "operators=${operators.joinToString(",", "{", "}") { "'${it.functor}':${it.specifier}" }}, " +
-            "inputChannels=${inputChannels.keys}, " +
-            "outputChannels=${outputChannels.keys}, " +
-            "startTime=$startTime, " +
             "endTime=$endTime, " +
             "maxDuration=$maxDuration, " +
-            "choicePoints=$choicePoints, " +
-            "depth=$depth, " +
-            "step=$step" +
+            "choicePoints=$choicePoints" +
             ")"
     }
 }

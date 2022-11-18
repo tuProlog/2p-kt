@@ -16,7 +16,8 @@ data class StateInit(override val context: ClassicExecutionContext) : AbstractSt
                 choicePoints = null,
                 depth = 0,
                 step = 1,
-                customData = context.customData.preservePersistent()
+                customData = context.customData.preservePersistent(),
+                relevantVariables = emptySet()
             ).appendRulesAndChoicePoints(Cursor.empty())
         )
     }
