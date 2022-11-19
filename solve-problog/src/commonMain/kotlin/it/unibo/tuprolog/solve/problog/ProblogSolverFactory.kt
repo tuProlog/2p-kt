@@ -10,6 +10,8 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.flags.TrackVariables
+import it.unibo.tuprolog.solve.flags.invoke
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
@@ -20,6 +22,12 @@ object ProblogSolverFactory : SolverFactory {
 
     override val defaultBuiltins: Library
         get() = ProblogLib.DefaultBuiltins
+
+    override val defaultFlags: FlagStore
+        get() = ensureVariablesTracking(super.defaultFlags)
+
+    private fun ensureVariablesTracking(flags: FlagStore): FlagStore =
+        flags + TrackVariables { ON }
 
     override fun solverOf(
         libraries: Runtime,
@@ -32,7 +40,7 @@ object ProblogSolverFactory : SolverFactory {
         ProblogSolver(
             ClassicSolverFactory.solverOf(
                 fixLibraries(libraries),
-                flags,
+                ensureVariablesTracking(flags),
                 ProblogTheory.of(staticKb),
                 ProblogTheory.of(dynamicKb),
                 inputs,
@@ -61,7 +69,7 @@ object ProblogSolverFactory : SolverFactory {
         ProblogSolver(
             ClassicSolverFactory.solverOf(
                 fixLibraries(libraries),
-                flags,
+                ensureVariablesTracking(flags),
                 ProblogTheory.of(staticKb),
                 ProblogTheory.of(dynamicKb),
                 stdIn,
@@ -84,7 +92,7 @@ object ProblogSolverFactory : SolverFactory {
         MutableProblogSolver(
             ClassicSolverFactory.mutableSolverOf(
                 fixLibraries(libraries),
-                flags,
+                ensureVariablesTracking(flags),
                 ProblogTheory.of(staticKb),
                 ProblogTheory.of(dynamicKb),
                 stdIn,
@@ -105,7 +113,7 @@ object ProblogSolverFactory : SolverFactory {
         MutableProblogSolver(
             ClassicSolverFactory.mutableSolverOf(
                 fixLibraries(libraries),
-                flags,
+                ensureVariablesTracking(flags),
                 ProblogTheory.of(staticKb),
                 ProblogTheory.of(dynamicKb),
                 inputs,
