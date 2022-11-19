@@ -78,12 +78,15 @@ data class ClassicExecutionContext(
         if (goals.isOver) null else goals.current?.apply(substitution)
     }
 
-    private val interestingVariables: KtSet<Var> by lazy {
-        val baseInterestingVars: KtSet<Var> = parent?.interestingVariables ?: query.variables.toSet()
-        val currInterestingVars: KtSet<Var> = goals.current?.variables?.toSet() ?: emptySet()
+    private val locallyInterestingVariables: Sequence<Var>
+        get() = relevantVariables.asSequence() + (goals.current?.variables ?: emptySequence())
 
-        relevantVariables + baseInterestingVars + currInterestingVars
-    }
+    private val interestingVariables: Sequence<Var>
+        get() = (
+            locallyInterestingVariables +
+                query.variables +
+                pathToRoot.flatMap { it.locallyInterestingVariables }
+            ).distinct()
 
     fun isVariableInteresting(variable: Var) =
         variable in interestingVariables
@@ -110,7 +113,8 @@ data class ClassicExecutionContext(
         dynamicKb: Theory,
         inputChannels: InputStore,
         outputChannels: OutputStore
-    ): MutableSolver = MutableClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb = true)
+    ): MutableSolver =
+        MutableClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb = true)
 
     override fun update(
         libraries: Runtime,

@@ -65,7 +65,8 @@ data class FlagStore(private val flags: Map<String, Term>) : Map<String, Term> b
             Unknown,
             MaxArity,
             DoubleQuotes,
-            LastCallOptimization
+            LastCallOptimization,
+            TrackVariables
         )
 
         @JsName("empty")
