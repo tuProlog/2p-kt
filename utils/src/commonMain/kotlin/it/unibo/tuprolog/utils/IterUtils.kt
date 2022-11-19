@@ -195,6 +195,10 @@ fun <T> Sequence<T>.buffered(): Sequence<T> {
     return this.toList().asSequence()
 }
 
+fun <T> Sequence<T>.cached(): Sequence<T> {
+    return this.cursor().asSequence()
+}
+
 fun <T> Sequence<T>.skipIndex(index: Int): Sequence<T> {
     require(index >= 0)
     return sequence {
