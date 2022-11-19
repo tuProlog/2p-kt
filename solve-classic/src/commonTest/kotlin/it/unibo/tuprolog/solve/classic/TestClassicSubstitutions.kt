@@ -14,6 +14,11 @@ class TestClassicSubstitutions : TestSubstitutions, SolverFactory by ClassicSolv
     }
 
     @Test
+    override fun interestingVariablesAreProperlyTracked() {
+        prototype.interestingVariablesAreProperlyTracked()
+    }
+
+    @Test
     override fun uninterestingVariablesAreObliterated() {
         prototype.uninterestingVariablesAreObliterated()
     }
