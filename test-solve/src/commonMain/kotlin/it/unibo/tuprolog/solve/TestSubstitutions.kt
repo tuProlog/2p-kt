@@ -8,5 +8,7 @@ interface TestSubstitutions : SolverTest {
 
     fun interestingVariablesAreNotObliterated()
 
+    fun interestingVariablesAreProperlyTracked()
+
     fun uninterestingVariablesAreObliterated()
 }
