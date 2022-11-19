@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.classic.fsm
 
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.flags.TrackVariables
 
 data class StateGoalSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
     override fun computeNext(): State {
@@ -33,12 +34,16 @@ data class StateGoalSelection(override val context: ClassicExecutionContext) : A
                     }
                 )
             }
-        } else {
+        } else if (context.flags[TrackVariables] == TrackVariables.ON) {
             StatePrimitiveSelection(
                 context.copy(
                     step = nextStep(),
                     relevantVariables = context.relevantVariables + context.goals.current!!.variables.toSet()
                 )
+            )
+        } else {
+            StatePrimitiveSelection(
+                context.copy(step = nextStep())
             )
         }
     }
