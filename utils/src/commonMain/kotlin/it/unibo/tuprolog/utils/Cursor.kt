@@ -41,6 +41,12 @@ interface Cursor<T> {
         }
 
         @JvmStatic
+        @JsName("ofSequence")
+        fun <T> of(sequence: Sequence<T>): Cursor<out T> {
+            return sequence.cursor()
+        }
+
+        @JvmStatic
         @JsName("empty")
         fun <T> empty(): Cursor<out T> {
             return EmptyCursor
