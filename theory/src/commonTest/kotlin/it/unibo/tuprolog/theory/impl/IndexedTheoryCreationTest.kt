@@ -1,18 +1,18 @@
 package it.unibo.tuprolog.theory.impl
 
+import it.unibo.tuprolog.collections.impl.Factories
 import it.unibo.tuprolog.theory.PrototypeTheoryCreationTest
-import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
 internal class IndexedTheoryCreationTest {
 
     private val prototype: PrototypeTheoryCreationTest =
         PrototypeTheoryCreationTest(
-            Theory.Companion::emptyIndexed,
-            { Theory.indexedOf(*it) },
-            Theory.Companion::indexedOf,
-            Theory.Companion::indexedOf,
-            Theory.Companion::indexedOf
+            Factories::emptyIndexedTheory,
+            Factories::indexedTheoryOf,
+            Factories::indexedTheoryOf,
+            Factories::indexedTheoryOf,
+            Factories::indexedTheoryOf
         )
 
     @Test

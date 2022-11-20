@@ -6,12 +6,15 @@ import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
-internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
+internal class DirectiveIndex(
+    override val unificator: Unificator,
+    private val ordered: Boolean
+) : TopLevelReteNode {
 
     private val directives: MutableList<IndexedClause> = dequeOf()
 
@@ -23,7 +26,7 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
 
     override fun get(clause: Clause): Sequence<Clause> =
         directives
-            .filter { it.innerClause matches clause }
+            .filter { unificator.match(it.innerClause, clause) }
             .map { it.innerClause }
             .asSequence()
 

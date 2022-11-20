@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.theory.impl
 
+import it.unibo.tuprolog.collections.impl.Factories
 import it.unibo.tuprolog.theory.PrototypeProperIndexingTest
-import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
 internal class ListedClauseIndexingTest {
 
     private val prototype = PrototypeProperIndexingTest(
-        Theory.Companion::listedOf
+        Factories::listedTheoryOf
     )
 
     @Test

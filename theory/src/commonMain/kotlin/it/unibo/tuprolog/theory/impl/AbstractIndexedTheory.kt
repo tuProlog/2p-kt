@@ -5,11 +5,16 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.theory.AbstractTheory
+import it.unibo.tuprolog.unify.Unificator
 
 internal abstract class AbstractIndexedTheory protected constructor(
     queue: ClauseQueue,
     tags: Map<String, Any>
 ) : AbstractTheory(tags) {
+
+    override val unificator: Unificator
+        get() = queue.unificator
+
     protected open val queue: ClauseQueue = queue
 
     override val directives: Iterable<Directive>

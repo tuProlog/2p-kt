@@ -7,6 +7,7 @@ import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.TheoryUtils
+import it.unibo.tuprolog.unify.Unificator
 
 internal class ReteClauseQueue private constructor(
     rete: ReteTree
@@ -21,7 +22,7 @@ internal class ReteClauseQueue private constructor(
     }
 
     /** Construct a [ReteClauseQueue] from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(ReteTree.ordered(clauses)) {
+    constructor(unificator: Unificator, clauses: Iterable<Clause>) : this(ReteTree.ordered(unificator, clauses)) {
         TheoryUtils.checkClausesCorrect(clauses)
     }
 

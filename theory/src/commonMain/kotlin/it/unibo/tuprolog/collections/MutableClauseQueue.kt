@@ -3,6 +3,7 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.collections.impl.MutableReteClauseQueue
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -35,18 +36,19 @@ interface MutableClauseQueue : ClauseQueue {
         /** Creates an empty [MutableClauseQueue] **/
         @JvmStatic
         @JsName("empty")
-        fun empty(): MutableClauseQueue = of(emptyList())
+        fun empty(unificator: Unificator): MutableClauseQueue = of(unificator, emptyList())
 
         /** Creates a [MutableClauseQueue] with given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(vararg clause: Clause): MutableClauseQueue = of(clause.asIterable())
+        fun of(unificator: Unificator, vararg clause: Clause): MutableClauseQueue = of(unificator, clause.asIterable())
 
         /** Let developers easily create a [MutableClauseQueue] programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(vararg clause: Scope.() -> Clause): MutableClauseQueue =
+        fun of(unificator: Unificator, vararg clause: Scope.() -> Clause): MutableClauseQueue =
             of(
+                unificator,
                 clause.map {
                     Scope.empty(it)
                 }
@@ -55,13 +57,14 @@ interface MutableClauseQueue : ClauseQueue {
         /** Creates a [MutableClauseQueue] from the given [Sequence] of [Clause] */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(clauses: Sequence<Clause>): MutableClauseQueue = of(clauses.asIterable())
+        fun of(unificator: Unificator, clauses: Sequence<Clause>): MutableClauseQueue =
+            of(unificator, clauses.asIterable())
 
         /** Creates a [MutableClauseQueue] from the given [Iterable] of [Clause] */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(clauses: Iterable<Clause>): MutableClauseQueue =
-            MutableReteClauseQueue(clauses)
+        fun of(unificator: Unificator, clauses: Iterable<Clause>): MutableClauseQueue =
+            MutableReteClauseQueue(unificator, clauses)
 
         @JvmStatic
         @JsName("areEquals")

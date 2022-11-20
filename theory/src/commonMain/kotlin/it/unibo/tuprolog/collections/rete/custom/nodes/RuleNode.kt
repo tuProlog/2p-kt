@@ -6,10 +6,12 @@ import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgum
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class RuleNode(
+    override val unificator: Unificator,
     private val ordered: Boolean
 ) : TopLevelReteNode {
 
@@ -23,7 +25,7 @@ internal class RuleNode(
         clause.nestedFunctor().let {
             if (ordered) {
                 functors.getOrPut(it) {
-                    TopLevelFunctorReteNode(ordered, 0)
+                    TopLevelFunctorReteNode(unificator, ordered, 0)
                 }.assertA(clause + this)
             } else {
                 assertZ(clause)
@@ -34,7 +36,7 @@ internal class RuleNode(
     override fun assertZ(clause: IndexedClause) {
         clause.nestedFunctor().let {
             functors.getOrPut(it) {
-                TopLevelFunctorReteNode(ordered, 0)
+                TopLevelFunctorReteNode(unificator, ordered, 0)
             }.assertZ(clause + this)
         }
     }

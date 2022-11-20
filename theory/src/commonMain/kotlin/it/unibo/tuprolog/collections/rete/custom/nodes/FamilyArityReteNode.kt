@@ -11,25 +11,27 @@ import it.unibo.tuprolog.collections.rete.custom.leaf.NumericIndex
 import it.unibo.tuprolog.collections.rete.custom.leaf.VariableIndex
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
 internal open class FamilyArityReteNode(
+    unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int
-) : ArityNode(), ArityRete {
+) : ArityNode(unificator), ArityRete {
 
     protected val numericIndex: IndexingLeaf =
-        NumericIndex(ordered, nestingLevel)
+        NumericIndex(unificator, ordered, nestingLevel)
 
     protected val atomicIndex: IndexingLeaf =
-        AtomIndex(ordered, nestingLevel)
+        AtomIndex(unificator, ordered, nestingLevel)
 
     protected val variableIndex: IndexingLeaf =
-        VariableIndex(ordered)
+        VariableIndex(unificator, ordered)
 
     protected val compoundIndex: IndexingLeaf =
-        CompoundIndex(ordered, nestingLevel + 1)
+        CompoundIndex(unificator, ordered, nestingLevel + 1)
 
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> =
         Cached.of(this::regenerateCache)

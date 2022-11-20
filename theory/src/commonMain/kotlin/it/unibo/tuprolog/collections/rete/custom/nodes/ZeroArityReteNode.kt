@@ -5,12 +5,16 @@ import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
-internal class ZeroArityReteNode(private val ordered: Boolean) : ArityNode(), ArityRete, Retractable {
+internal class ZeroArityReteNode(
+    unificator: Unificator,
+    private val ordered: Boolean
+) : ArityNode(unificator), ArityRete, Retractable {
 
     private val atoms: MutableList<SituatedIndexedClause> =
         dequeOf()

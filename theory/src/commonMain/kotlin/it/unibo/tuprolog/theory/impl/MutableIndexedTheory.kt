@@ -11,6 +11,7 @@ import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
+import it.unibo.tuprolog.unify.Unificator
 
 internal class MutableIndexedTheory private constructor(
     override val queue: MutableClauseQueue,
@@ -19,17 +20,19 @@ internal class MutableIndexedTheory private constructor(
 
     /** Construct a Clause database from given clauses */
     constructor(
+        unificator: Unificator,
         clauses: Iterable<Clause>,
         tags: Map<String, Any> = emptyMap()
-    ) : this(MutableClauseQueue.of(clauses), tags) {
+    ) : this(MutableClauseQueue.of(unificator, clauses), tags) {
         checkClausesCorrect(clauses)
     }
 
     /** Construct a Clause database from given clauses */
     constructor(
+        unificator: Unificator,
         clauses: Sequence<Clause>,
         tags: Map<String, Any> = emptyMap()
-    ) : this(clauses.asIterable(), tags)
+    ) : this(unificator, clauses.asIterable(), tags)
 
     override fun toMutableTheory(): MutableTheory = super<MutableTheory>.toMutableTheory()
 
@@ -38,7 +41,7 @@ internal class MutableIndexedTheory private constructor(
     override fun iterator(): Iterator<Clause> = queue.iterator()
 
     override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory =
-        MutableIndexedTheory(clauses, tags)
+        MutableIndexedTheory(unificator, clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<MutableIndexedTheory> =
         queue.retrieve(clause).toRetractResult()
@@ -99,7 +102,7 @@ internal class MutableIndexedTheory private constructor(
 
     override fun abolish(indicator: Indicator): MutableTheory = super.abolish(indicator).toMutableTheory()
 
-    override fun toImmutableTheory(): Theory = Theory.indexedOf(this)
+    override fun toImmutableTheory(): Theory = Theory.indexedOf(unificator, this)
 
     override fun replaceTags(tags: Map<String, Any>): MutableIndexedTheory =
         if (tags === this.tags) this else MutableIndexedTheory(queue, tags)
