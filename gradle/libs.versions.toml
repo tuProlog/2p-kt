@@ -60,4 +60,4 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "
 kotlin-stdlib-jvm = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlin-stdlib-js = { module = "org.jetbrains.kotlin:kotlin-stdlib-js", version.ref = "kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-javalin = "io.javalin:javalin:4.6.6"
+javalin = "io.javalin:javalin:4.6.7"
