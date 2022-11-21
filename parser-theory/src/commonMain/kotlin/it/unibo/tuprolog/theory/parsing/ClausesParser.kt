@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -13,7 +14,7 @@ interface ClausesParser {
 
     @JsName("parseTheoryWithOperators")
     fun parseTheory(input: String, operators: OperatorSet): Theory =
-        Theory.indexedOf(parseClausesLazily(input, operators))
+        Theory.indexedOf(Unificator.default, parseClausesLazily(input, operators))
 
     @JsName("parseTheory")
     fun parseTheory(input: String): Theory =
