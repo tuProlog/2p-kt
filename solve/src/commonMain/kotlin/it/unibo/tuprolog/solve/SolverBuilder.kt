@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface SolverBuilder {
@@ -24,6 +25,12 @@ interface SolverBuilder {
 
     @JsName("buildMutable")
     fun buildMutable(): MutableSolver
+
+    @JsName("unificator")
+    var unificator: Unificator
+
+    @JsName("setUnificator")
+    fun unificator(unificator: Unificator): SolverBuilder
 
     @JsName("runtime")
     var runtime: Runtime

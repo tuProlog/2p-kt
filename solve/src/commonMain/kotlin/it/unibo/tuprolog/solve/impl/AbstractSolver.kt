@@ -22,14 +22,16 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.buffered
 
 @Suppress("LeakingThis")
 abstract class AbstractSolver<E : ExecutionContext>(
+    unificator: Unificator = Unificator.default,
     libraries: Runtime = Runtime.empty(),
     flags: FlagStore = FlagStore.empty(),
-    initialStaticKb: Theory = Theory.empty(),
-    initialDynamicKb: Theory = MutableTheory.empty(),
+    initialStaticKb: Theory = Theory.emptyIndexed(unificator),
+    initialDynamicKb: Theory = MutableTheory.emptyIndexed(unificator),
     inputChannels: InputStore = InputStore.fromStandard(),
     outputChannels: OutputStore = OutputStore.fromStandard(),
     trustKb: Boolean = false
@@ -39,6 +41,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
 
     init {
         currentContext = initializeContext(
+            unificator,
             libraries,
             flags,
             initialStaticKb.toImmutableTheory(),
@@ -59,13 +62,14 @@ abstract class AbstractSolver<E : ExecutionContext>(
     }
 
     protected abstract fun initializeContext(
-        libraries: Runtime = Runtime.empty(),
-        flags: FlagStore = FlagStore.empty(),
-        staticKb: Theory = Theory.empty(),
-        dynamicKb: Theory = MutableTheory.empty(),
+        unificator: Unificator,
+        libraries: Runtime,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
         operators: OperatorSet,
-        inputChannels: InputStore = InputStore.fromStandard(),
-        outputChannels: OutputStore = OutputStore.fromStandard(),
+        inputChannels: InputStore,
+        outputChannels: OutputStore,
         trustKb: Boolean = false
     ): E
 
@@ -79,8 +83,8 @@ abstract class AbstractSolver<E : ExecutionContext>(
     private fun resetKb(resetStatic: Boolean, resetDynamic: Boolean) {
         updateContext {
             update(
-                staticKb = if (resetStatic) Theory.emptyIndexed() else this.staticKb,
-                dynamicKb = if (resetDynamic) MutableTheory.emptyIndexed() else this.dynamicKb
+                staticKb = if (resetStatic) Theory.emptyIndexed(unificator) else this.staticKb,
+                dynamicKb = if (resetDynamic) MutableTheory.emptyIndexed(unificator) else this.dynamicKb
             )
         }
     }
@@ -105,9 +109,9 @@ abstract class AbstractSolver<E : ExecutionContext>(
         val staticSkippable = staticKb.let { it == null || it.directives.none() }
         val dynamicSkippable = dynamicKb.let { it == null || it.directives.none() }
         val merged = when {
-            staticSkippable && dynamicSkippable -> ClausePartition.of(staticKb, dynamicKb)
-            staticSkippable -> ClausePartition.of(staticKb) + dynamicKb?.partition(staticByDefault = false)
-            dynamicSkippable -> ClausePartition.of(dynamicKb) + staticKb?.partition()
+            staticSkippable && dynamicSkippable -> ClausePartition.of(unificator, staticKb, dynamicKb)
+            staticSkippable -> ClausePartition.of(unificator, staticKb) + dynamicKb?.partition(staticByDefault = false)
+            dynamicSkippable -> ClausePartition.of(unificator, dynamicKb) + staticKb?.partition()
             else -> staticKb?.partition() + dynamicKb?.partition(staticByDefault = false)
         }
         resetKb(!appendStatic, !appendDynamic)
@@ -131,6 +135,9 @@ abstract class AbstractSolver<E : ExecutionContext>(
             }
         }
     }
+
+    final override val unificator: Unificator
+        get() = currentContext.unificator
 
     final override val libraries: Runtime
         get() = currentContext.libraries
@@ -182,6 +189,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
     }
 
     abstract override fun copy(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
