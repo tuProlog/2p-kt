@@ -7,7 +7,7 @@ import it.unibo.tuprolog.unify.Unificator
 
 class LogicProgrammingScopeWithResolutionImpl(
     override val solverFactory: SolverFactory,
-    val unificator: Unificator,
+    override val unificator: Unificator,
     override val defaultSolver: MutableSolver = solverFactory.mutableSolverWithDefaultBuiltins()
 ) : LogicProgrammingScopeWithResolution,
     LogicProgrammingScopeWithTheories by LogicProgrammingScopeWithTheories.of(unificator),

@@ -10,17 +10,17 @@ import kotlin.js.JsName
 interface LogicProgrammingScopeWithTheories : LogicProgrammingScopeWithUnification {
     @JsName("theoryOf")
     fun theoryOf(vararg clause: Clause): Theory {
-        return Theory.indexedOf(*clause)
+        return Theory.indexedOf(unificator, *clause)
     }
 
     @JsName("theoryOfIterable")
     fun theoryOf(clauses: Iterable<Clause>, vararg otherClauses: Iterable<Clause>): Theory {
-        return Theory.indexedOf(sequenceOf(clauses, *otherClauses).flatMap { it.asSequence() })
+        return Theory.indexedOf(unificator, sequenceOf(clauses, *otherClauses).flatMap { it.asSequence() })
     }
 
     @JsName("theoryOfSequence")
     fun theoryOf(clauses: Sequence<Clause>, vararg otherClauses: Sequence<Clause>): Theory {
-        return Theory.indexedOf(sequenceOf(clauses, *otherClauses).flatten())
+        return Theory.indexedOf(unificator, sequenceOf(clauses, *otherClauses).flatten())
     }
 
     @JsName("theory")
