@@ -110,14 +110,15 @@ abstract class AbstractSolver<E : ExecutionContext>(
         val dynamicSkippable = dynamicKb.let { it == null || it.directives.none() }
         val merged = when {
             staticSkippable && dynamicSkippable -> ClausePartition.of(unificator, staticKb, dynamicKb)
-            staticSkippable -> ClausePartition.of(unificator, staticKb) + dynamicKb?.partition(staticByDefault = false)
-            dynamicSkippable -> ClausePartition.of(unificator, dynamicKb) + staticKb?.partition()
-            else -> staticKb?.partition() + dynamicKb?.partition(staticByDefault = false)
+            staticSkippable -> ClausePartition.of(unificator, staticKb) +
+                dynamicKb?.partition(unificator, staticByDefault = false)
+            dynamicSkippable -> ClausePartition.of(unificator, dynamicKb) + staticKb?.partition(unificator)
+            else -> staticKb?.partition(unificator) + dynamicKb?.partition(unificator, staticByDefault = false)
         }
         resetKb(!appendStatic, !appendDynamic)
-        merged.includes.map { loadGoal(it) }.forEach(this::solveInitialGoal)
-        updateContextWith(merged)
-        merged.initialGoals.forEach(this::solveInitialGoal)
+        merged?.includes?.map { loadGoal(it) }?.forEach(this::solveInitialGoal)
+        merged?.let { updateContextWith(it) }
+        merged?.initialGoals?.forEach(this::solveInitialGoal)
     }
 
     private fun solveInitialGoal(goal: Struct) {
