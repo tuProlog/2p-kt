@@ -24,7 +24,7 @@ import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.Cursor
-import it.unibo.tuprolog.utils.cached
+import it.unibo.tuprolog.utils.LazySet
 import kotlin.collections.List as KtList
 import kotlin.collections.Set as KtSet
 
@@ -82,10 +82,8 @@ data class ClassicExecutionContext(
     private val locallyInterestingVariables: Sequence<Var>
         get() = relevantVariables.asSequence() + (goals.current?.variables ?: emptySequence())
 
-    private val interestingVariables: Sequence<Var> by lazy {
-        (locallyInterestingVariables + query.variables + pathToRoot.flatMap { it.locallyInterestingVariables })
-            .distinct()
-            .cached()
+    private val interestingVariables: KtSet<Var> by lazy {
+        LazySet(locallyInterestingVariables + query.variables + pathToRoot.flatMap { it.locallyInterestingVariables })
     }
 
     fun isVariableInteresting(variable: Var) =
