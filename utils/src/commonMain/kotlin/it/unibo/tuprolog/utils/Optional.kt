@@ -16,6 +16,9 @@ sealed class Optional<T> {
     }
 
     data class Some<T>(override val value: T) : Optional<T>() {
+        override val valueOrError: T
+            get() = value
+
         override val isPresent: Boolean
             get() = true
 
@@ -39,6 +42,9 @@ sealed class Optional<T> {
         override val value: Nothing?
             get() = null
 
+        override val valueOrError: Nothing
+            get() = throw NoSuchElementException("Optional is None")
+
         override val isPresent: Boolean
             get() = false
 
@@ -56,6 +62,8 @@ sealed class Optional<T> {
     }
 
     abstract val value: T?
+
+    abstract val valueOrError: T
 
     abstract val isPresent: Boolean
 
