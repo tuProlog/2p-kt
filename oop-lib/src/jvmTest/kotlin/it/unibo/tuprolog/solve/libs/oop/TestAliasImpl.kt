@@ -28,7 +28,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
             null -> ObjectRef.NULL
             else -> ObjectRef.of(obj)
         }
-        return OOPLib.theory[Struct.of(Alias.FUNCTOR, Var.anonymous(), ref)]
+        return OOPLib.clauses[Struct.of(Alias.FUNCTOR, Var.anonymous(), ref)]
             .map { it.head[0] as? Atom }
             .filterNotNull()
             .map { it.value }

@@ -82,16 +82,16 @@ internal class LibrariesTest {
 
     @Test
     fun theoryCorrectWithSingleLibrary() {
-        val correct = allLibInstances.map { it.theory }
-        val toBeTested = allLibInstances.map { Runtime.of(it).theory }
+        val correct = allLibInstances.map { it.clauses }
+        val toBeTested = allLibInstances.map { Runtime.of(it).clauses }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
     }
 
     @Test
     fun theoryShouldReturnAllClausesComposingAllProvidedTheories() {
-        assertEquals(library.theory, Runtime.of(library, emptyLibrary).theory)
-        assertEquals(overriddenLibrary.theory, Runtime.of(library, overridingLibrary).theory)
+        assertEquals(library.clauses, Runtime.of(library, emptyLibrary).clauses)
+        assertEquals(overriddenLibrary.clauses, Runtime.of(library, overridingLibrary).clauses)
     }
 
     @Test

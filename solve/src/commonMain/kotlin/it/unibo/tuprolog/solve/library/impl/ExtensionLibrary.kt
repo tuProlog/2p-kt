@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.library.impl
 
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
@@ -26,8 +27,8 @@ abstract class ExtensionLibrary(
     open val additionalOperators: Iterable<Operator>
         get() = emptyList()
 
-    final override val theory: Theory by lazy {
-        extended.theory + Theory.of(additionalRules.map { it.implementation })
+    final override val clauses: List<Clause> by lazy {
+        (extended.clauses.asSequence() + additionalRules.asSequence().map { it.implementation }).toList()
     }
 
     protected open val additionalRules: Iterable<RuleWrapper<*>>

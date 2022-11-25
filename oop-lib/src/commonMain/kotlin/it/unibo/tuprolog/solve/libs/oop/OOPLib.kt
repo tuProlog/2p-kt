@@ -58,7 +58,7 @@ object OOPLib : AbstractLibrary() {
             Unregister
         ).map { it.descriptionPair }.toMap()
 
-    override val theory: Theory
+    override val clauses: Theory
         get() = Theory.indexedOf(
             sequenceOf(
                 ColonEquals.Cast,

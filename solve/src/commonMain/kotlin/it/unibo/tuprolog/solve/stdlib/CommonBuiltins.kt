@@ -14,7 +14,7 @@ object CommonBuiltins : AbstractLibrary() {
 
     override val operators: OperatorSet
         get() = OperatorSet.DEFAULT
-    override val theory: Theory
+    override val clauses: Theory
         get() = CommonRules.theory
     override val primitives: Map<Signature, Primitive>
         get() = CommonPrimitives.primitives

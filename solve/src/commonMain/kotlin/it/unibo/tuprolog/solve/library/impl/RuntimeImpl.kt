@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.library.impl
 
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.LogicFunction
@@ -8,7 +9,6 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.theory.Theory
 
 /** A class representing an agglomerate of libraries with an alias */
 internal class RuntimeImpl(private val delegate: Map<String, Library>) : Runtime, Map<String, Library> by delegate {
@@ -26,8 +26,8 @@ internal class RuntimeImpl(private val delegate: Map<String, Library>) : Runtime
         OperatorSet(libraries.flatMap { it.operators.asSequence() })
     }
 
-    override val theory: Theory by lazy {
-        Theory.indexedOf(libraries.flatMap { it.theory.clauses.asSequence() })
+    override val clauses: List<Clause> by lazy {
+        libraries.flatMap { it.clauses }
     }
 
     override val primitives: Map<Signature, Primitive> by lazy {

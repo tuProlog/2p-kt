@@ -39,7 +39,7 @@ internal class LibraryImplTest {
     @Test
     fun theoryCorrect() {
         val correct = LibraryUtils.allLibraries.map { (_, _, theory) -> theory }
-        val toBeTested = libraryInstances.map { it.theory }
+        val toBeTested = libraryInstances.map { it.clauses }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
     }

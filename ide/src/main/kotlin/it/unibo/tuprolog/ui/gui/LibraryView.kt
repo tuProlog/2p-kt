@@ -13,7 +13,7 @@ class LibraryView(library: Library) : TreeItem<String>(library.alias) {
 
         children.addAll(functionsChild, predicatesChild, operatorsChild)
 
-        val rules = library.theory.rules.asSequence().map { it.head.indicator }
+        val rules = library.clauses.rules.asSequence().map { it.head.indicator }
         val primitives = library.primitives.keys.asSequence().map { it.toIndicator() }
         val predicates = (rules + primitives).distinct().map { it.toString() }.sorted()
 

@@ -107,7 +107,7 @@ internal class StateRuleSelection(
          */
         private fun ExecutionContext.retrieveRulesMatching(currentGoal: Struct): Sequence<Rule> =
             currentGoal.freshCopy().let { refreshedGoal ->
-                libraries.theory[refreshedGoal].takeIf { it.any() }
+                libraries.clauses[refreshedGoal].takeIf { it.any() }
                     ?: sequenceOf(staticKb, dynamicKb).flatMap { it[refreshedGoal] }
             }
 
