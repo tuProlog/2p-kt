@@ -9,6 +9,9 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
 import it.unibo.tuprolog.solve.primitive.Primitive
+import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.utils.Cache
 
 /** A class representing an agglomerate of libraries with an alias */
 internal class RuntimeImpl(private val delegate: Map<String, Library>) : Runtime, Map<String, Library> by delegate {
@@ -22,13 +25,19 @@ internal class RuntimeImpl(private val delegate: Map<String, Library>) : Runtime
     override val libraries: Set<Library>
         get() = values.toSet()
 
+    private val theoryCache: Cache<Unificator, Theory> = Cache.simpleLru(1)
+
+    override fun asTheory(unificator: Unificator): Theory =
+        theoryCache.getOrSet(unificator) {
+            Theory.indexedOf(unificator, clauses)
+        }
+
     override val operators: OperatorSet by lazy {
         OperatorSet(libraries.flatMap { it.operators.asSequence() })
     }
 
-    override val clauses: List<Clause> by lazy {
-        libraries.flatMap { it.clauses }
-    }
+    override val clauses: List<Clause>
+        get() = libraries.flatMap { it.clauses }
 
     override val primitives: Map<Signature, Primitive> by lazy {
         libraries.flatMap { lib ->

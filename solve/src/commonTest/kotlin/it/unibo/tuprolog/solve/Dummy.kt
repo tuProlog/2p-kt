@@ -11,9 +11,12 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 object Dummy {
     object Context : ExecutionContext {
+        override val unificator: Unificator = Unificator.default
+
         override val procedure: Struct? = null
 
         override val substitution: Substitution.Unifier = Substitution.empty()
@@ -29,6 +32,7 @@ object Dummy {
             get() = TimeDuration.MAX_VALUE
 
         override fun createSolver(
+            unificator: Unificator,
             libraries: Runtime,
             flags: FlagStore,
             staticKb: Theory,
@@ -40,6 +44,7 @@ object Dummy {
         }
 
         override fun createMutableSolver(
+            unificator: Unificator,
             libraries: Runtime,
             flags: FlagStore,
             staticKb: Theory,
@@ -51,6 +56,7 @@ object Dummy {
         }
 
         override fun update(
+            unificator: Unificator,
             libraries: Runtime,
             flags: FlagStore,
             staticKb: Theory,
@@ -67,9 +73,9 @@ object Dummy {
 
         override val flags: FlagStore = FlagStore.empty()
 
-        override val staticKb: Theory = Theory.empty()
+        override val staticKb: Theory = Theory.empty(unificator)
 
-        override val dynamicKb: Theory = MutableTheory.empty()
+        override val dynamicKb: Theory = MutableTheory.empty(unificator)
 
         override val operators: OperatorSet = OperatorSet.EMPTY
 

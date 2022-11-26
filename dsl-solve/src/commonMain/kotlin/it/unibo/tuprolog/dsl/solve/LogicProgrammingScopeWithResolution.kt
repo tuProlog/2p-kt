@@ -22,6 +22,7 @@ interface LogicProgrammingScopeWithResolution : LogicProgrammingScopeWithTheorie
 
     @JsName("solverOf")
     fun solverOf(
+        unificator: Unificator = solverFactory.defaultUnificator,
         otherLibraries: Runtime = solverFactory.defaultRuntime,
         flags: FlagStore = solverFactory.defaultFlags,
         staticKb: Theory = solverFactory.defaultStaticKb,
@@ -31,6 +32,7 @@ interface LogicProgrammingScopeWithResolution : LogicProgrammingScopeWithTheorie
         stdErr: OutputChannel<String> = solverFactory.defaultErrorChannel,
         warnings: OutputChannel<Warning> = solverFactory.defaultWarningsChannel
     ): MutableSolver = solverFactory.mutableSolverWithDefaultBuiltins(
+        unificator,
         otherLibraries,
         flags,
         staticKb,
