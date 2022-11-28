@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
+import it.unibo.tuprolog.collections.rete.custom.AbstractReteNode
 import it.unibo.tuprolog.collections.rete.custom.IndexingNode
 import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
@@ -14,10 +15,10 @@ import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class CompoundIndex(
-    override val unificator: Unificator,
+    unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int
-) : IndexingNode {
+) : IndexingNode, AbstractReteNode(unificator) {
 
     private val functors: MutableMap<String, FunctorIndexing> = mutableMapOf()
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)

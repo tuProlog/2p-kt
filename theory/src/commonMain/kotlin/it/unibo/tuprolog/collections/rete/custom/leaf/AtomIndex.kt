@@ -98,12 +98,12 @@ internal class AtomIndex(
         return if (clause.nestedFirstArgument().isAtom) {
             when (val partialIndex = index[clause.asInnerAtom()]) {
                 null -> emptySequence()
-                else -> Utils.removeAllLazily(partialIndex, clause)
+                else -> removeAllLazily(partialIndex, clause)
             }
         } else {
             Utils.merge(
                 index.values.asSequence().map {
-                    Utils.removeAllLazily(it, clause)
+                    removeAllLazily(it, clause)
                 }
             )
         }.buffered()

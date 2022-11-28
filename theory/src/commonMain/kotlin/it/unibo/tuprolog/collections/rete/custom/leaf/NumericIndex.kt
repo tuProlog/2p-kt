@@ -98,12 +98,12 @@ internal class NumericIndex(
         return if (clause.nestedFirstArgument().isNumber) {
             when (val partialIndex = index[clause.asInnerNumeric()]) {
                 null -> emptySequence()
-                else -> Utils.removeAllLazily(partialIndex, clause).buffered()
+                else -> removeAllLazily(partialIndex, clause).buffered()
             }
         } else {
             Utils.merge(
                 index.values.asSequence().map {
-                    Utils.removeAllLazily(it, clause)
+                    removeAllLazily(it, clause)
                 }
             ).buffered()
         }

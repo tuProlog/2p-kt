@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
 import it.unibo.tuprolog.collections.rete.custom.Retractable
-import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
@@ -55,7 +54,7 @@ internal class VariableIndex(
     }
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-        Utils.removeAllLazily(variables, clause).buffered()
+        removeAllLazily(variables, clause).buffered()
 
     private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
         val actualIndex = index.indexOfFirst { unificator.match(it.innerClause, clause) }
