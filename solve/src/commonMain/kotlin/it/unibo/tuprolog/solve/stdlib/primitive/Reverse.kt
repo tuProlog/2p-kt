@@ -39,8 +39,8 @@ object Reverse : BinaryRelation.Functional<ExecutionContext>("reverse") {
         }
     }
 
-    private fun reverse(list: List, other: Term): Substitution {
+    private fun Solve.Request<ExecutionContext>.reverse(list: List, other: Term): Substitution {
         val reversed = List.of(list.toList().asReversed())
-        return reversed mguWith other
+        return mgu(reversed, other)
     }
 }

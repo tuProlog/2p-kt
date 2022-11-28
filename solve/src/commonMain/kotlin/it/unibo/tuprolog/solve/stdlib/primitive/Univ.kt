@@ -10,22 +10,21 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.core.List as LogicList
 
 /**
  * Implementation of '=..'/2 predicate
  */
 object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
-    private fun decompose(first: Struct, second: Term): Substitution {
+    private fun Solve.Request<ExecutionContext>.decompose(first: Struct, second: Term): Substitution {
         val decomposed = LogicList.of(Atom.of(first.functor), *first.args.toTypedArray())
-        return second mguWith decomposed
+        return mgu(second, decomposed)
     }
 
-    private fun recompose(first: Term, second: LogicList): Substitution {
+    private fun Solve.Request<ExecutionContext>.recompose(first: Term, second: LogicList): Substitution {
         val list = second.toList()
         val composed = Struct.of(list[0].castTo<Atom>().value, list.subList(1, list.size))
-        return first mguWith composed
+        return mgu(first, composed)
     }
 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution {

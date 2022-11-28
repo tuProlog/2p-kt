@@ -25,7 +25,7 @@ object CharCode : BinaryRelation.Functional<ExecutionContext>("char_code") {
                 ensuringArgumentIsInstantiated(0)
                 ensuringArgumentIsChar(0)
                 val result = (first as Atom).value[0].code
-                second mguWith Integer.of(result)
+                mgu(second, Integer.of(result))
             }
         }
     }

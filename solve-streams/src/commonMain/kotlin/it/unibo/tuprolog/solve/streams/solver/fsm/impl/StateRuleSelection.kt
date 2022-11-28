@@ -20,7 +20,6 @@ import it.unibo.tuprolog.solve.streams.solver.moreThanOne
 import it.unibo.tuprolog.solve.streams.solver.newSolveRequest
 import it.unibo.tuprolog.solve.streams.solver.orderWithStrategy
 import it.unibo.tuprolog.solve.streams.solver.shouldCutExecuteInRuleSelection
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * State responsible of selecting a rule to be solved to demonstrate a goal
@@ -47,7 +46,7 @@ internal class StateRuleSelection(
                     matchingRules.orderWithStrategy(this, solverStrategies::clauseChoiceStrategy)
                 }.map { it.prepareForExecution().freshCopy() as Rule }
                     .forEachWithLookahead { refreshedRule, hasAlternatives ->
-                        val unifyingSubstitution = currentGoal mguWith refreshedRule.head
+                        val unifyingSubstitution = context.unificator.mgu(currentGoal, refreshedRule.head)
 
                         val wellFormedRuleBody = refreshedRule.body.apply(unifyingSubstitution) as Struct
 

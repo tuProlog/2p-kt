@@ -8,7 +8,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object AtomLength : BinaryRelation.Functional<ExecutionContext>("atom_length") {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
@@ -26,7 +25,7 @@ object AtomLength : BinaryRelation.Functional<ExecutionContext>("atom_length") {
                 ensuringArgumentIsAtom(0)
                 ensuringArgumentIsNonNegativeInteger(1)
                 val atomLength = Integer.of((first as Atom).value.length)
-                atomLength mguWith second
+                mgu(atomLength, second)
             }
         }
 }

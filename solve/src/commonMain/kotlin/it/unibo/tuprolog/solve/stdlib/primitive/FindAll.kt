@@ -18,6 +18,6 @@ object FindAll : AbstractCollectingPrimitive("findall") {
         ensuringArgumentIsCallable(1)
         val solutions = computeIntermediateSolutions(second.castToStruct())
         val mapped = solutions.map { first[it.substitution].freshCopy() }
-        return sequenceOf(third mguWith LogicList.of(mapped))
+        return sequenceOf(mgu(third, LogicList.of(mapped)))
     }
 }

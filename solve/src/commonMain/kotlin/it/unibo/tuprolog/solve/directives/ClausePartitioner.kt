@@ -22,7 +22,7 @@ import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.dequeOf
 
 class ClausePartitioner(
-    val unificator: Unificator,
+    override val unificator: Unificator,
     private val source: Iterable<Clause>,
     private val staticByDefault: Boolean = true
 ) : ClausePartition, DirectiveSelector {

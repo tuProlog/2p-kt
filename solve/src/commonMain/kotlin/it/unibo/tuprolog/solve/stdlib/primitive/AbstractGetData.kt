@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 abstract class AbstractGetData(suffix: String) : BinaryRelation<ExecutionContext>("get_$suffix") {
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term, second: Term): Sequence<Solve.Response> {
@@ -16,11 +15,11 @@ abstract class AbstractGetData(suffix: String) : BinaryRelation<ExecutionContext
                 data.entries.asSequence()
                     .filter { (_, v) -> v is Term }
                     .map { (k, v) -> Atom.of(k) to (v as Term) }
-                    .map { (k, v) -> (first mguWith k) + (second mguWith v) }
+                    .map { (k, v) -> mgu(first, k) + mgu(second, v) }
                     .filterIsInstance<Substitution.Unifier>()
                     .map { replyWith(it) } + replyFail()
             is Atom -> when (val value = data[first.value]) {
-                is Term -> sequenceOf(replyWith(second mguWith value))
+                is Term -> sequenceOf(replyWith(mgu(second, value)))
                 else -> sequenceOf(replyFail())
             }
             else -> {

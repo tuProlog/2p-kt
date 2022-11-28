@@ -54,7 +54,7 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
                 val firstString = (first as Atom).value
                 val secondString = (second as Atom).value
                 val thirdString = firstString + secondString
-                third mguWith Atom.of(thirdString)
+                mgu(third, Atom.of(thirdString))
             }
         }
     }
