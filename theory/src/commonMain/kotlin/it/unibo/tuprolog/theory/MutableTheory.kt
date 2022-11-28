@@ -15,6 +15,8 @@ import kotlin.jvm.JvmStatic
 
 interface MutableTheory : Theory {
 
+    override fun setUnificator(unificator: Unificator): MutableTheory
+
     override val isMutable: Boolean get() = true
 
     override fun toMutableTheory(): MutableTheory = this

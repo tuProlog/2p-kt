@@ -5,7 +5,6 @@ import it.unibo.tuprolog.collections.MutableClauseQueue
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Indicator
-import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
@@ -17,6 +16,9 @@ internal class MutableIndexedTheory private constructor(
     override val queue: MutableClauseQueue,
     tags: Map<String, Any>
 ) : AbstractIndexedTheory(queue, tags), MutableTheory {
+
+    override fun setUnificator(unificator: Unificator): MutableTheory =
+        super<AbstractIndexedTheory>.setUnificator(unificator).toMutableTheory()
 
     /** Construct a Clause database from given clauses */
     constructor(
@@ -40,8 +42,11 @@ internal class MutableIndexedTheory private constructor(
 
     override fun iterator(): Iterator<Clause> = queue.iterator()
 
-    override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory =
-        MutableIndexedTheory(unificator, clauses, tags)
+    override fun createNewTheory(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any>,
+        unificator: Unificator
+    ): MutableIndexedTheory = MutableIndexedTheory(unificator, clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<MutableIndexedTheory> =
         queue.retrieve(clause).toRetractResult()
@@ -107,5 +112,5 @@ internal class MutableIndexedTheory private constructor(
     override fun replaceTags(tags: Map<String, Any>): MutableIndexedTheory =
         if (tags === this.tags) this else MutableIndexedTheory(queue, tags)
 
-    override fun clone(): MutableTheory = super.clone().toMutableTheory()
+    override fun clone(): MutableTheory = createNewTheory(clauses.asSequence())
 }

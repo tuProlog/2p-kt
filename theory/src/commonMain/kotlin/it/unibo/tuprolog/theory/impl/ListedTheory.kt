@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.theory.impl
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
@@ -32,9 +31,11 @@ internal class ListedTheory private constructor(
         checkClausesCorrect(clauses)
     }
 
-    override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory {
-        return ListedTheory(unificator, clauses, tags)
-    }
+    override fun createNewTheory(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any>,
+        unificator: Unificator
+    ) = ListedTheory(unificator, clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<ListedTheory> {
         val retractability = clauses.filter { unificator.match(it, clause) }

@@ -3,7 +3,6 @@ package it.unibo.tuprolog.theory.impl
 import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.MutableClauseQueue
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
@@ -32,8 +31,11 @@ internal class IndexedTheory private constructor(
         tags: Map<String, Any> = emptyMap()
     ) : this(unificator, clauses.asIterable(), tags)
 
-    override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory =
-        IndexedTheory(unificator, clauses, tags)
+    override fun createNewTheory(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any>,
+        unificator: Unificator
+    ) = IndexedTheory(unificator, clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<IndexedTheory> {
         val newTheory = ClauseQueue.of(unificator, clauses)

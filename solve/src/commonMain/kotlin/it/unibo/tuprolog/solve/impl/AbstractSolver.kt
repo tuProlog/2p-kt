@@ -27,13 +27,13 @@ import it.unibo.tuprolog.utils.buffered
 
 @Suppress("LeakingThis")
 abstract class AbstractSolver<E : ExecutionContext>(
-    unificator: Unificator = Unificator.default,
-    libraries: Runtime = Runtime.empty(),
-    flags: FlagStore = FlagStore.empty(),
-    initialStaticKb: Theory = Theory.emptyIndexed(unificator),
-    initialDynamicKb: Theory = MutableTheory.emptyIndexed(unificator),
-    inputChannels: InputStore = InputStore.fromStandard(),
-    outputChannels: OutputStore = OutputStore.fromStandard(),
+    unificator: Unificator,
+    libraries: Runtime,
+    flags: FlagStore,
+    initialStaticKb: Theory,
+    initialDynamicKb: Theory,
+    inputChannels: InputStore,
+    outputChannels: OutputStore,
     trustKb: Boolean = false
 ) : Solver {
 

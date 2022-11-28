@@ -12,8 +12,12 @@ internal abstract class AbstractIndexedTheory protected constructor(
     tags: Map<String, Any>
 ) : AbstractTheory(tags) {
 
-    override val unificator: Unificator
+    @Suppress("UNUSED_PARAMETER")
+    override var unificator: Unificator
         get() = queue.unificator
+        set(value) {
+            error("Indexed theories do not support changing the unification without rebuilding")
+        }
 
     protected open val queue: ClauseQueue = queue
 

@@ -2,7 +2,6 @@ package it.unibo.tuprolog.theory.impl
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Indicator
-import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
@@ -16,6 +15,11 @@ internal class MutableListedTheory private constructor(
     override val clauses: MutableList<Clause>,
     tags: Map<String, Any>
 ) : AbstractListedTheory(unificator, clauses, tags), MutableTheory {
+
+    override fun setUnificator(unificator: Unificator): MutableTheory {
+        this.unificator = unificator
+        return this
+    }
 
     constructor(
         unificator: Unificator,
@@ -35,8 +39,11 @@ internal class MutableListedTheory private constructor(
 
     override fun toMutableTheory(): MutableTheory = super<MutableTheory>.toMutableTheory()
 
-    override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory =
-        MutableListedTheory(unificator, clauses, tags)
+    override fun createNewTheory(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any>,
+        unificator: Unificator
+    ) = MutableListedTheory(unificator, clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<MutableListedTheory> {
         val i = clauses.listIterator()
@@ -121,5 +128,5 @@ internal class MutableListedTheory private constructor(
     override fun replaceTags(tags: Map<String, Any>): MutableListedTheory =
         if (tags === this.tags) this else MutableListedTheory(unificator, clauses, tags)
 
-    override fun clone(): MutableTheory = super.clone().toMutableTheory()
+    override fun clone(): MutableTheory = createNewTheory(clauses.asSequence())
 }

@@ -24,6 +24,9 @@ interface Theory : Iterable<Clause>, Taggable<Theory> {
     val isMutable: Boolean
         get() = false
 
+    @JsName("setUnificator")
+    fun setUnificator(unificator: Unificator): Theory
+
     @JsName("toMutableTheory")
     fun toMutableTheory(): MutableTheory
 
