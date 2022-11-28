@@ -40,19 +40,21 @@ abstract class AbstractSolver<E : ExecutionContext>(
     protected abstract var currentContext: E
 
     init {
+        val staticKb = initialStaticKb.setUnificator(unificator).toImmutableTheory()
+        val dynamicKb = initialDynamicKb.setUnificator(unificator).toMutableTheory()
         currentContext = initializeContext(
             unificator,
             libraries,
             flags,
-            initialStaticKb.toImmutableTheory(),
-            initialDynamicKb.toMutableTheory(),
+            staticKb,
+            dynamicKb,
             getAllOperators(libraries).toOperatorSet(),
             inputChannels,
             outputChannels,
             trustKb
         )
         if (!trustKb) {
-            initializeKb(initialStaticKb, initialDynamicKb)
+            initializeKb(staticKb, dynamicKb)
         }
         onInitialize()
     }
