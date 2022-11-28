@@ -1,15 +1,13 @@
 package it.unibo.tuprolog.solve.library.impl
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
 
-abstract class AbstractLibrary : Library {
+abstract class AbstractLibrary : Library, AbstractPluggable() {
 
     override val operators: OperatorSet
         get() = OperatorSet.EMPTY
@@ -22,12 +20,6 @@ abstract class AbstractLibrary : Library {
 
     override val functions: Map<Signature, LogicFunction>
         get() = emptyMap()
-
-    private val rulesSignatures: Set<Signature> by lazy {
-        clauses.asSequence().filterIsInstance<Rule>().map { it.extractSignature() }.toSet()
-    }
-
-    override fun hasRule(signature: Signature): Boolean = signature in rulesSignatures
 
     override fun toString(): String {
         return "${super.toString()}(" +

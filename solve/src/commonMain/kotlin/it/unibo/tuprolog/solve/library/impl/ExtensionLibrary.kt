@@ -50,4 +50,8 @@ abstract class ExtensionLibrary(
 
     protected open val additionalFunctions: Iterable<FunctionWrapper<*>>
         get() = emptyList()
+
+    override fun hasRule(signature: Signature): Boolean {
+        return super<AbstractLibrary>.hasRule(signature)
+    }
 }

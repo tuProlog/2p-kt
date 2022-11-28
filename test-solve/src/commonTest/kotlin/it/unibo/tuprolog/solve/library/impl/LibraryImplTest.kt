@@ -74,17 +74,15 @@ internal class LibraryImplTest {
 
     @Test
     fun containsSignatureDiscardsVarargSignatures() {
-        val library =
-            libraryWithoutAliasConstructor(OperatorSet(), Theory.of(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
+        val library = libraryWithoutAliasConstructor(
+            OperatorSet(),
+            Theory.of(Fact.of(Struct.of("f", Atom.of("a")))),
+            emptyMap(),
+            emptyMap()
+        )
 
         assertTrue { Signature("f", 1, false) in library }
-
-        try {
-            assertFalse { Signature("f", 1, true) in library }
-            fail()
-        } catch (e: NotImplementedError) {
-            // ok
-        }
+        assertFalse { Signature("f", 1, true) in library }
     }
 
     @Test

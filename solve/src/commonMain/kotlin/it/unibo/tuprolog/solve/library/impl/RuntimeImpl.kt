@@ -14,7 +14,10 @@ import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cache
 
 /** A class representing an agglomerate of libraries with an alias */
-internal class RuntimeImpl(private val delegate: Map<String, Library>) : Runtime, Map<String, Library> by delegate {
+internal class RuntimeImpl(private val delegate: Map<String, Library>) :
+    Runtime,
+    AbstractPluggable(),
+    Map<String, Library> by delegate {
 
     constructor(libraries: Sequence<Library>) : this(libraries.map { it.alias to it }.toMap())
 

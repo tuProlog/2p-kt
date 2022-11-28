@@ -51,8 +51,16 @@ interface Pluggable {
 
     /** Checks whether this library has a [Rule] with provided signature */
     @JsName("hasRule")
-    fun hasRule(signature: Signature): Boolean =
-        signature.toIndicator().let { indicator -> clauses.filterIsInstance<Rule>().distinct().any { it == indicator } }
+    fun hasRule(signature: Signature): Boolean
+
+    @JsName("ruleSignatures")
+    val rulesSignatures: Sequence<Signature>
+        get() = clauses.asSequence()
+            .filterIsInstance<Rule>()
+            .map { it.head.indicator }
+            .map { Signature.fromIndicator(it) }
+            .filterNotNull()
+            .distinct()
 
     /** Checks whether the provided signature, is protected in this library */
     @JsName("hasProtected")

@@ -14,10 +14,13 @@ object CommonBuiltins : AbstractLibrary() {
 
     override val operators: OperatorSet
         get() = OperatorSet.DEFAULT
+
     override val clauses: List<Clause>
         get() = CommonRules.clauses
+
     override val primitives: Map<Signature, Primitive>
         get() = CommonPrimitives.primitives
+
     override val functions: Map<Signature, LogicFunction>
         get() = CommonFunctions.functions
 }
