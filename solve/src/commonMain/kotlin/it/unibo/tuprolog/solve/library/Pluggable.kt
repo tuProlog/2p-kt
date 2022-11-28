@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.library
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.primitive.Primitive

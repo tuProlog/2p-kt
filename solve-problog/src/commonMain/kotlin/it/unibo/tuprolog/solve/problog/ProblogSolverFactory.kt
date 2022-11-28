@@ -17,6 +17,7 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 object ProblogSolverFactory : SolverFactory {
 
@@ -30,6 +31,7 @@ object ProblogSolverFactory : SolverFactory {
         flags + TrackVariables { ON }
 
     override fun solverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -39,10 +41,11 @@ object ProblogSolverFactory : SolverFactory {
     ): Solver =
         ProblogSolver(
             ClassicSolverFactory.solverOf(
+                unificator,
                 fixLibraries(libraries),
                 ensureVariablesTracking(flags),
-                ProblogTheory.of(staticKb),
-                ProblogTheory.of(dynamicKb),
+                ProblogTheory.of(unificator, staticKb),
+                ProblogTheory.of(unificator, dynamicKb),
                 inputs,
                 outputs
             )
@@ -57,6 +60,7 @@ object ProblogSolverFactory : SolverFactory {
     }
 
     override fun solverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -68,10 +72,11 @@ object ProblogSolverFactory : SolverFactory {
     ): Solver =
         ProblogSolver(
             ClassicSolverFactory.solverOf(
+                unificator,
                 fixLibraries(libraries),
                 ensureVariablesTracking(flags),
-                ProblogTheory.of(staticKb),
-                ProblogTheory.of(dynamicKb),
+                ProblogTheory.of(unificator, staticKb),
+                ProblogTheory.of(unificator, dynamicKb),
                 stdIn,
                 stdOut,
                 stdErr,
@@ -80,6 +85,7 @@ object ProblogSolverFactory : SolverFactory {
         )
 
     override fun mutableSolverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -91,10 +97,11 @@ object ProblogSolverFactory : SolverFactory {
     ): MutableSolver =
         MutableProblogSolver(
             ClassicSolverFactory.mutableSolverOf(
+                unificator,
                 fixLibraries(libraries),
                 ensureVariablesTracking(flags),
-                ProblogTheory.of(staticKb),
-                ProblogTheory.of(dynamicKb),
+                ProblogTheory.of(unificator, staticKb),
+                ProblogTheory.of(unificator, dynamicKb),
                 stdIn,
                 stdOut,
                 stdErr,
@@ -103,6 +110,7 @@ object ProblogSolverFactory : SolverFactory {
         )
 
     override fun mutableSolverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -112,10 +120,11 @@ object ProblogSolverFactory : SolverFactory {
     ): MutableSolver =
         MutableProblogSolver(
             ClassicSolverFactory.mutableSolverOf(
+                unificator,
                 fixLibraries(libraries),
                 ensureVariablesTracking(flags),
-                ProblogTheory.of(staticKb),
-                ProblogTheory.of(dynamicKb),
+                ProblogTheory.of(unificator, staticKb),
+                ProblogTheory.of(unificator, dynamicKb),
                 inputs,
                 outputs
             )

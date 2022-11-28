@@ -32,7 +32,7 @@ class ExamplePrologSolver {
     @Test
     fun exampleYesSolutionList() {
         val prolog = Solver.prolog.solverWithDefaultBuiltins(
-            staticKb = Theory.indexedOf(
+            staticKb = Theory.of(
                 Fact.of(Struct.of("f", Atom.of("a"))),
                 Fact.of(Struct.of("f", Atom.of("b"))),
                 Fact.of(Struct.of("f", Atom.of("c")))
@@ -57,7 +57,7 @@ class ExamplePrologSolver {
     @Test
     fun exampleYesSolutions() {
         val prolog = Solver.prolog.solverWithDefaultBuiltins(
-            staticKb = Theory.indexedOf(
+            staticKb = Theory.of(
                 Fact.of(Struct.of("f", Atom.of("a"))),
                 Fact.of(Struct.of("f", Atom.of("b"))),
                 Fact.of(Struct.of("f", Atom.of("c")))
@@ -83,7 +83,7 @@ class ExamplePrologSolver {
     @Test
     fun exampleTimeoutSolutions() {
         val prolog = Solver.prolog.solverWithDefaultBuiltins(
-            staticKb = Theory.indexedOf(
+            staticKb = Theory.of(
                 Fact.of(Struct.of("f", Atom.of("a"))),
                 Fact.of(Struct.of("f", Atom.of("b"))),
                 Fact.of(Struct.of("f", Atom.of("c")))
@@ -271,7 +271,7 @@ class ExamplePrologSolver {
                     TODO("compute response sequence here")
                 }
             ),
-            theory = Theory.empty(),
+            clauses = emptyList(),
             operators = OperatorSet(),
             functions = mapOf(
                 Signature("+", 2) to LogicFunction { request: Compute.Request<ExecutionContext> ->

@@ -229,7 +229,7 @@ internal class TuPrologIDEModelImpl(
                 files[file].let { content ->
                     if (!onlyIfChanged || content?.changed != false) {
                         try {
-                            val theory = content?.text()?.parseAsTheory(solver.operators) ?: Theory.empty()
+                            val theory = content?.text()?.parseAsTheory(solver.operators) ?: Theory.empty(solver.unificator)
                             solver.resetDynamicKb()
                             solver.loadStaticKb(theory)
                             onNewStaticKb.push(SolverEvent(Unit, solver))

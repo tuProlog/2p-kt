@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.MappedProblogTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -71,36 +72,36 @@ interface ProblogTheory : Theory {
         /** Creates an empty [ProblogTheory] */
         @JvmStatic
         @JsName("empty")
-        fun empty(): ProblogTheory =
-            of(emptyList())
+        fun empty(unificator: Unificator): ProblogTheory =
+            of(unificator, emptyList())
 
         /** Creates a [ProblogTheory], containing the given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(vararg clause: Clause): ProblogTheory =
-            of(*clause)
+        fun of(unificator: Unificator, vararg clause: Clause): ProblogTheory =
+            of(unificator, clause.asIterable())
 
         /** Creates a [ProblogTheory], containing the given clauses */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(clauses: Sequence<Clause>): ProblogTheory =
-            of(clauses)
+        fun of(unificator: Unificator, clauses: Sequence<Clause>): ProblogTheory =
+            of(unificator, clauses.asIterable())
 
         /** Let developers easily create a [[ProblogTheory], while avoiding variables names clashing by using a
          * different [Scope] for each [Clause] */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(vararg clauses: Scope.() -> Clause): ProblogTheory =
-            of(*clauses)
+        fun of(unificator: Unificator, vararg clauses: Scope.() -> Clause): ProblogTheory =
+            of(unificator, clauses.map { Scope.empty().it() })
 
         /** Creates a [ProblogTheory] containing the given clauses */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(clauses: Iterable<Clause>): ProblogTheory =
+        fun of(unificator: Unificator, clauses: Iterable<Clause>): ProblogTheory =
             if (clauses is MutableTheory) {
-                MutableProblogTheory.of(clauses)
+                MutableProblogTheory.of(unificator, clauses)
             } else {
-                MappedProblogTheory(clauses)
+                MappedProblogTheory(clauses, unificator)
             }
     }
 }

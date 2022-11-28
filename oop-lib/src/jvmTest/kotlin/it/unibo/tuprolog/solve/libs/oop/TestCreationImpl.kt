@@ -23,7 +23,7 @@ class TestCreationImpl(protected val solverFactory: SolverFactory) : TestCreatio
         detectorType: KClass<*> = ConstructorOverloadDetector::class,
         case2Term: (TestDatum) -> Term
     ) = logicProgramming {
-        val solver = solverFactory.solverWithDefaultBuiltins(Runtime.of(OOPLib))
+        val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
         for (case in cases) {
             val query = NewObject3.functor(TypeRef.of(detectorType), listOf(case2Term(case)), X)
             val solutions = solver.solveList(query)

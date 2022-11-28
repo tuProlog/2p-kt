@@ -39,7 +39,7 @@ internal class LibraryImplTest {
     @Test
     fun theoryCorrect() {
         val correct = LibraryUtils.allLibraries.map { (_, _, theory) -> theory }
-        val toBeTested = libraryInstances.map { it.clauses }
+        val toBeTested = libraryInstances.map { it.clauses }.map { Theory.of(it) }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
     }
@@ -75,7 +75,7 @@ internal class LibraryImplTest {
     @Test
     fun containsSignatureDiscardsVarargSignatures() {
         val library =
-            libraryWithoutAliasConstructor(OperatorSet(), Theory.indexedOf(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
+            libraryWithoutAliasConstructor(OperatorSet(), Theory.of(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
 
         assertTrue { Signature("f", 1, false) in library }
 

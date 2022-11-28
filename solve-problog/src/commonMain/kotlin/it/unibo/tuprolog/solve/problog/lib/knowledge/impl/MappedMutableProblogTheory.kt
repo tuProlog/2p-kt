@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 /**
  * An implementation of [MutableProblogTheory] that makes use of our internal
@@ -22,50 +23,51 @@ import it.unibo.tuprolog.theory.Theory
  */
 internal class MappedMutableProblogTheory(
     clauses: Iterable<Clause>?,
-    val theory: MutableTheory = MutableTheory.indexedOf(clauses?.flatMap { ClauseMappingUtils.map(it) } ?: emptyList())
+    unificator: Unificator = Unificator.default,
+    val theory: MutableTheory = MutableTheory.indexedOf(unificator, clauses?.flatMap { ClauseMappingUtils.map(it) } ?: emptyList())
 ) : MutableTheory by theory, MutableProblogTheory {
 
     override val isMutable: Boolean
         get() = false
 
-    override fun toMutableTheory(): MutableProblogTheory = MutableProblogTheory.of(this)
+    override fun toMutableTheory(): MutableProblogTheory = MutableProblogTheory.of(unificator, this)
 
     override fun toImmutableTheory(): ProblogTheory = this
 
     override fun plus(theory: ProblogTheory): MutableProblogTheory {
-        return MappedMutableProblogTheory(null, this.theory.plus(theory))
+        return MappedMutableProblogTheory(null, unificator, this.theory.plus(theory))
     }
 
     override fun plus(theory: Theory): MutableProblogTheory {
         return when (theory) {
             is ProblogTheory -> plus(theory)
-            else -> plus(MappedMutableProblogTheory(theory))
+            else -> plus(MappedMutableProblogTheory(theory, unificator))
         }
     }
 
     override fun plus(clause: Clause): MutableProblogTheory {
         val mapped = ClauseMappingUtils.map(clause)
-        return MappedMutableProblogTheory(null, this.theory.plus(Theory.listedOf(mapped)))
+        return MappedMutableProblogTheory(null, unificator, this.theory.plus(Theory.indexedOf(unificator, mapped)))
     }
 
     override fun assertA(clauses: Iterable<Clause>): MutableProblogTheory {
         val mapped = clauses.flatMap { ClauseMappingUtils.map(it) }
-        return MappedMutableProblogTheory(null, this.theory.assertA(mapped))
+        return MappedMutableProblogTheory(null, unificator, this.theory.assertA(mapped))
     }
 
     override fun assertZ(clauses: Iterable<Clause>): MutableProblogTheory {
         val mapped = clauses.flatMap { ClauseMappingUtils.map(it) }
-        return MappedMutableProblogTheory(null, this.theory.assertZ(mapped))
+        return MappedMutableProblogTheory(null, unificator, this.theory.assertZ(mapped))
     }
 
     override fun retract(clauses: Iterable<Clause>): RetractResult<MutableProblogTheory> {
         val mapped = clauses.flatMap { ClauseMappingUtils.map(it) }
         return when (val result = theory.retract(mapped)) {
             is RetractResult.Success -> RetractResult.Success(
-                MappedMutableProblogTheory(null, result.theory),
+                MappedMutableProblogTheory(null, unificator, result.theory),
                 result.clauses
             )
-            else -> RetractResult.Failure(MappedMutableProblogTheory(null, result.theory))
+            else -> RetractResult.Failure(MappedMutableProblogTheory(null, unificator, result.theory))
         }
     }
 
@@ -83,16 +85,16 @@ internal class MappedMutableProblogTheory(
 
         return when (result) {
             is RetractResult.Success -> RetractResult.Success(
-                MappedMutableProblogTheory(null, result.theory),
+                MappedMutableProblogTheory(null, unificator, result.theory),
                 result.clauses
             )
-            is RetractResult.Failure -> RetractResult.Failure(MappedMutableProblogTheory(null, result.theory))
+            is RetractResult.Failure -> RetractResult.Failure(MappedMutableProblogTheory(null, unificator, result.theory))
             else -> RetractResult.Failure(this)
         }
     }
 
     override fun abolish(indicator: Indicator): MutableProblogTheory {
-        return MappedMutableProblogTheory(null, this.theory.abolish(ClauseMappingUtils.map(indicator)))
+        return MappedMutableProblogTheory(null, unificator, this.theory.abolish(ClauseMappingUtils.map(indicator)))
     }
 
     override fun assertA(struct: Struct): MutableProblogTheory = assertA(Fact.of(struct))

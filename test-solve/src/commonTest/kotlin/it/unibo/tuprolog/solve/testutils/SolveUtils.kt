@@ -50,10 +50,10 @@ internal object SolveUtils {
         mapOf<String, Term>(Truth.TRUE.value to Truth.FAIL).also { assertNotEquals(it, someFlags) }
     }
     internal val differentStaticKB by lazy {
-        Theory.indexedOf(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aStaticKB) }
+        Theory.of(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aStaticKB) }
     }
     internal val differentDynamicKB by lazy {
-        Theory.indexedOf(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aDynamicKB) }
+        Theory.of(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aDynamicKB) }
     }
 
     internal val solutionSubstitution = Substitution.of("A", Truth.TRUE)

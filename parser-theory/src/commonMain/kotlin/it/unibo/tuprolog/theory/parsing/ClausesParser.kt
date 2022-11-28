@@ -13,12 +13,18 @@ interface ClausesParser {
     val defaultOperatorSet: OperatorSet
 
     @JsName("parseTheoryWithOperators")
-    fun parseTheory(input: String, operators: OperatorSet, unificator: Unificator = Unificator.default): Theory =
+    fun parseTheory(input: String, operators: OperatorSet, unificator: Unificator): Theory =
         Theory.indexedOf(unificator, parseClausesLazily(input, operators))
 
+    @JsName("parseTheoryWithOperatorsAndDefaultUnificator")
+    fun parseTheory(input: String, operators: OperatorSet): Theory = parseTheory(input, operators, Unificator.default)
+
     @JsName("parseTheory")
-    fun parseTheory(input: String, unificator: Unificator = Unificator.default): Theory =
+    fun parseTheory(input: String, unificator: Unificator): Theory =
         parseTheory(input, defaultOperatorSet, unificator)
+
+    @JsName("parseTheoryWithDefaultUnificator")
+    fun parseTheory(input: String): Theory = parseTheory(input, Unificator.default)
 
     @JsName("parseClausesLazilyWithOperators")
     fun parseClausesLazily(input: String, operators: OperatorSet): Sequence<Clause>

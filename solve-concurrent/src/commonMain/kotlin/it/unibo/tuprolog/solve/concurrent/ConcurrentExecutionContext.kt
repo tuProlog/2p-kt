@@ -22,15 +22,17 @@ import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cursor
 import kotlin.collections.List as KtList
 
 data class ConcurrentExecutionContext(
     override val procedure: Struct? = null,
+    override val unificator: Unificator = Unificator.default,
     override val libraries: Runtime = Runtime.empty(),
     override val flags: FlagStore = FlagStore.empty(),
-    override val staticKb: Theory = Theory.empty(),
-    override val dynamicKb: MutableTheory = MutableTheory.empty(),
+    override val staticKb: Theory = Theory.empty(unificator),
+    override val dynamicKb: MutableTheory = MutableTheory.empty(unificator),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
     override val inputChannels: InputStore = InputStore.fromStandard(),
     override val outputChannels: OutputStore = OutputStore.fromStandard(),
@@ -83,6 +85,7 @@ data class ConcurrentExecutionContext(
     }
 
     override fun createSolver(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -90,6 +93,7 @@ data class ConcurrentExecutionContext(
         inputChannels: InputStore,
         outputChannels: OutputStore
     ): ConcurrentSolver = ConcurrentSolverImpl(
+        unificator,
         libraries,
         flags,
         staticKb,
@@ -100,6 +104,7 @@ data class ConcurrentExecutionContext(
     )
 
     override fun createMutableSolver(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -107,6 +112,7 @@ data class ConcurrentExecutionContext(
         inputChannels: InputStore,
         outputChannels: OutputStore
     ): MutableSolver = MutableConcurrentSolver(
+        unificator,
         libraries,
         flags,
         staticKb,
@@ -116,6 +122,7 @@ data class ConcurrentExecutionContext(
     )
 
     override fun update(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -126,6 +133,7 @@ data class ConcurrentExecutionContext(
         customData: CustomDataStore
     ): ConcurrentExecutionContext {
         return copy(
+            unificator = unificator,
             libraries = libraries,
             flags = flags,
             staticKb = staticKb,
@@ -162,7 +170,6 @@ data class ConcurrentExecutionContext(
             "inputChannels=${inputChannels.keys}, " +
             "outputChannels=${outputChannels.keys}, " +
             "maxDuration=$maxDuration, " +
-            // "choicePoints=$choicePoints, " +
             "depth=$depth, " +
             "step=$step" +
             ")"

@@ -167,11 +167,19 @@ interface Theory : Iterable<Clause>, Taggable<Theory> {
         fun empty(unificator: Unificator): Theory =
             indexedOf(unificator, emptySequence())
 
+        @JvmStatic
+        @JsName("emptyWithDefaultUnificator")
+        fun empty(): Theory = empty(Unificator.default)
+
         /** Creates a [Theory], containing the given clauses */
         @JvmStatic
         @JsName("of")
         fun of(unificator: Unificator, vararg clause: Clause): Theory =
             indexedOf(unificator, *clause)
+
+        @JvmStatic
+        @JsName("ofWithDefaultUnificator")
+        fun of(vararg clause: Clause): Theory = indexedOf(Unificator.default, *clause)
 
         /** Creates a [Theory], containing the given clauses */
         @JvmStatic
@@ -179,11 +187,19 @@ interface Theory : Iterable<Clause>, Taggable<Theory> {
         fun of(unificator: Unificator, clauses: Iterable<Clause>): Theory =
             indexedOf(unificator, clauses)
 
+        @JvmStatic
+        @JsName("ofIterableWithDefaultUnificator")
+        fun of(clauses: Iterable<Clause>): Theory = indexedOf(Unificator.default, clauses)
+
         /** Creates a [Theory], containing the given clauses */
         @JvmStatic
         @JsName("ofSequence")
         fun of(unificator: Unificator, clauses: Sequence<Clause>): Theory =
             indexedOf(unificator, clauses)
+
+        @JvmStatic
+        @JsName("ofSequenceWithDefaultUnificator")
+        fun of(clauses: Sequence<Clause>): Theory = indexedOf(Unificator.default, clauses)
 
         /** Let developers easily create a [Theory], while avoiding variables names clashing by using a
          * different [Scope] for each [Clause] */
@@ -191,6 +207,10 @@ interface Theory : Iterable<Clause>, Taggable<Theory> {
         @JsName("ofScopes")
         fun of(unificator: Unificator, vararg clauses: Scope.() -> Clause): Theory =
             indexedOf(unificator, *clauses)
+
+        @JvmStatic
+        @JsName("ofScopesWithDefaultUnificator")
+        fun of(vararg clauses: Scope.() -> Clause): Theory = indexedOf(Unificator.default, *clauses)
 
         /** Creates an empty [Theory] backed by an indexed data structure */
         @JvmStatic

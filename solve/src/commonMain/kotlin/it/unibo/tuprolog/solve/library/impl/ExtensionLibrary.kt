@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.library.Library.Companion.toMapEnsuringNoDuplicat
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
-import it.unibo.tuprolog.theory.Theory
 
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class ExtensionLibrary(
