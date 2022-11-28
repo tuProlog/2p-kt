@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.7.21"
+kotlin = "1.7.22"
 dokka = "1.7.20"
 jvm = "1.8"
 node = "16.17.1"
