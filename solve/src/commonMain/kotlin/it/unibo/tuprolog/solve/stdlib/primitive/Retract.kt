@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.buffered
 
 object Retract : UnaryPredicate<ExecutionContext>("retract") {

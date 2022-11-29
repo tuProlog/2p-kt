@@ -158,7 +158,8 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                     } else {
                         yield(
                             mgu(
-                                third, Struct.of(
+                                third,
+                                Struct.of(
                                     goal.functor,
                                     goal[0].withExplanation(first),
                                     goal[1]

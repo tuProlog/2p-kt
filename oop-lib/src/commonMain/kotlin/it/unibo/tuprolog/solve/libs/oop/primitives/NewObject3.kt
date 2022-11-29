@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
 
@@ -21,7 +20,7 @@ object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
             val type = getArgumentAsTypeRef(0)
             val arguments = (second as List).toArray()
             val objectReference = type?.create(termToObjectConverter, *arguments)?.asObjectRef()
-            objectReference?.mguWith(third) ?: Substitution.failed()
+            objectReference?.let { mgu(it, third) } ?: Substitution.failed()
         }
     }
 }

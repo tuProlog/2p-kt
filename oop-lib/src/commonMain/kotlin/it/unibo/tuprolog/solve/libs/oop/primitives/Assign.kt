@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 object Assign : TernaryRelation.Predicative<ExecutionContext>("assign") {
 
@@ -25,7 +24,7 @@ object Assign : TernaryRelation.Predicative<ExecutionContext>("assign") {
                 else -> findRefFromAlias(first as Atom)
             }
 
-            val value = if (third matches DEALIASING_TEMPLATE) {
+            val value = if (match(third, DEALIASING_TEMPLATE)) {
                 findRefFromAlias(third as Struct)
             } else {
                 third

@@ -1,6 +1,12 @@
 package it.unibo.tuprolog.solve.primitive
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
@@ -25,7 +31,6 @@ import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.LIST
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.PREDICATE_INDICATOR
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.MaxArity
-import it.unibo.tuprolog.unify.Unificator
 import org.gciatto.kt.math.BigInteger
 import kotlin.jvm.JvmStatic
 
@@ -44,21 +49,20 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
     protected abstract fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response>
 
     /** Checked primitive implementation */
-    @Suppress("UNCHECKED_CAST")
     final override val implementation: Primitive = Primitive.enforcingSignature(signature, ::uncheckedImplementation)
 
     companion object {
 
         @JvmStatic
-        protected fun <C : ExecutionContext> Solve.Request<C>.mgu(term1: Term, term2: Term): Substitution =
+        fun <C : ExecutionContext> Solve.Request<C>.mgu(term1: Term, term2: Term): Substitution =
             context.unificator.mgu(term1, term2)
 
         @JvmStatic
-        protected fun <C : ExecutionContext> Solve.Request<C>.match(term1: Term, term2: Term): Boolean =
+        fun <C : ExecutionContext> Solve.Request<C>.match(term1: Term, term2: Term): Boolean =
             context.unificator.match(term1, term2)
 
         @JvmStatic
-        protected fun <C : ExecutionContext> Solve.Request<C>.unify(term1: Term, term2: Term): Term? =
+        fun <C : ExecutionContext> Solve.Request<C>.unify(term1: Term, term2: Term): Term? =
             context.unificator.unify(term1, term2)
 
         /**

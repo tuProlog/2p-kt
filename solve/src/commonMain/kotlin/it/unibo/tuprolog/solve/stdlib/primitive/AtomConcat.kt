@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * atom_concat(ab, cd, abcd).

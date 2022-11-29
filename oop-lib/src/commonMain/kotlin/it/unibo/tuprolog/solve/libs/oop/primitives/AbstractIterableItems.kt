@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectToTermConverter
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import kotlin.reflect.KClass
 
 abstract class AbstractIterableItems<T : Any>(iterable: String, private val target: KClass<T>) :
@@ -30,7 +29,7 @@ abstract class AbstractIterableItems<T : Any>(iterable: String, private val targ
                 val converter = termToObjectConverter
                 val items = second.toSequence().map { converter.convert(it) }.toIterable()
                 val objectRef = ObjectRef.of(items)
-                first mguWith objectRef
+                mgu(first, objectRef)
             }
             first is ObjectRef -> {
                 val obj = first.`object`
@@ -39,7 +38,7 @@ abstract class AbstractIterableItems<T : Any>(iterable: String, private val targ
                     val items = (obj as T).items.map {
                         ObjectToTermConverter.default.convert(it)
                     }
-                    second mguWith List.of(items)
+                    mgu(second, List.of(items))
                 } else {
                     Substitution.failed()
                 }

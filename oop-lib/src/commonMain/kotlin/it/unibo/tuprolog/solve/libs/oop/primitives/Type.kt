@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.name
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object Type : BinaryRelation.Functional<ExecutionContext>("type") {
 
@@ -28,11 +27,11 @@ object Type : BinaryRelation.Functional<ExecutionContext>("type") {
             first is Var -> {
                 ensuringArgumentIsAtom(1)
                 ensuringArgumentIsTypeRef(1)
-                first mguWith Atom.of((second as TypeRef).type.name)
+                mgu(first, Atom.of((second as TypeRef).type.name))
             }
             second is Var -> {
                 ensuringArgumentIsAtom(0)
-                typeFactory.typeRefFromName((first as Atom).value)?.mguWith(second) ?: Substitution.failed()
+                typeFactory.typeRefFromName((first as Atom).value)?.let { mgu(it, second) } ?: Substitution.failed()
             }
             else -> {
                 ensuringArgumentIsAtom(0)
