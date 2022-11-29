@@ -31,7 +31,7 @@ internal class LibraryTest {
     fun ofWithOmittedParametersCreatesEmptyLibrary() {
         val toBeTested = Library.of()
 
-        assertTrue { toBeTested.theory.none() }
+        assertTrue { toBeTested.clauses.none() }
         assertTrue { toBeTested.operators.none() }
         assertTrue { toBeTested.primitives.none() }
     }

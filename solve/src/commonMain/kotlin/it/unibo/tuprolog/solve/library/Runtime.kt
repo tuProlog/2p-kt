@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve.library
 
 import it.unibo.tuprolog.solve.library.impl.RuntimeImpl
+import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -13,6 +15,9 @@ interface Runtime : Pluggable, Map<String, Library> {
     /** All libraries composing this library group */
     @JsName("libraries")
     val libraries: Set<Library>
+
+    @JsName("asTheory")
+    fun asTheory(unificator: Unificator): Theory
 
     @JsName("plusLibrary")
     operator fun plus(other: Library): Runtime

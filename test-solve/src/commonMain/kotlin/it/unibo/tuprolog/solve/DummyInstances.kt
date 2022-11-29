@@ -10,6 +10,7 @@ import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 /**
  * Utils singleton that contains dummy instances, to be used when in a test something is not important
@@ -21,6 +22,7 @@ object DummyInstances {
     /** An empty context to be used where needed to fill parameters */
     @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER", "IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
     val executionContext = object : ExecutionContext {
+        override val unificator: Unificator get() = Unificator.default
         override val procedure: Struct by lazy { Atom.of("dummyProcedure") }
         override val libraries: Nothing by lazy { throw NotImplementedError() }
         override val flags: Nothing by lazy { throw NotImplementedError() }
@@ -36,6 +38,7 @@ object DummyInstances {
         override val maxDuration: TimeDuration = TimeDuration.MAX_VALUE
 
         override fun createSolver(
+            unificator: Unificator,
             libraries: Runtime,
             flags: FlagStore,
             staticKb: Theory,
@@ -47,6 +50,7 @@ object DummyInstances {
         }
 
         override fun createMutableSolver(
+            unificator: Unificator,
             libraries: Runtime,
             flags: FlagStore,
             staticKb: Theory,
@@ -58,6 +62,7 @@ object DummyInstances {
         }
 
         override fun update(
+            unificator: Unificator,
             libraries: Runtime,
             flags: FlagStore,
             staticKb: Theory,

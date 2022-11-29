@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.theory.impl
 
+import it.unibo.tuprolog.collections.impl.Factories
 import it.unibo.tuprolog.theory.PrototypeRetractResultTest
-import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
 internal class ListedRetractResultTest {
 
     private val prototype: PrototypeRetractResultTest =
         PrototypeRetractResultTest(
-            Theory.Companion::emptyListed,
-            Theory.Companion::listedOf
+            Factories::emptyListedTheory,
+            Factories::listedTheoryOf
         )
 
     @Test

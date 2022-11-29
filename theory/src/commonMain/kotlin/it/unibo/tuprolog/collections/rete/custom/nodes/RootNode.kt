@@ -8,21 +8,23 @@ import it.unibo.tuprolog.collections.rete.custom.leaf.DirectiveIndex
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class RootNode(
+    override val unificator: Unificator,
     clauses: Iterable<Clause>,
     override val isOrdered: Boolean
 ) : ReteTree, Cacheable<Clause> {
 
     private val theoryCache: Cached<MutableList<Clause>> = Cached.of(this::regenerateCache)
 
-    private val ruleIndex: RuleNode = RuleNode(isOrdered)
+    private val ruleIndex: RuleNode = RuleNode(unificator, isOrdered)
 
-    private val directiveIndex: DirectiveIndex = DirectiveIndex(isOrdered)
+    private val directiveIndex: DirectiveIndex = DirectiveIndex(unificator, isOrdered)
 
     private var lowestIndex: Long = 0
 
@@ -69,7 +71,7 @@ internal class RootNode(
         }
 
     override fun deepCopy(): ReteTree =
-        RootNode(clauses.asIterable(), isOrdered)
+        RootNode(unificator, clauses.asIterable(), isOrdered)
 
     override fun assertA(clause: Clause) {
         val indexed = assignLowerIndex(clause)

@@ -18,15 +18,17 @@ import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.dequeOf
 
 class ClausePartitioner(
+    override val unificator: Unificator,
     private val source: Iterable<Clause>,
     private val staticByDefault: Boolean = true
 ) : ClausePartition, DirectiveSelector {
 
-    private val _staticClauses: MutableTheory = MutableTheory.emptyIndexed()
-    private val _dynamicClauses: MutableTheory = MutableTheory.emptyIndexed()
+    private val _staticClauses: MutableTheory = MutableTheory.emptyIndexed(unificator)
+    private val _dynamicClauses: MutableTheory = MutableTheory.emptyIndexed(unificator)
     private val _operators: MutableList<Operator> = dequeOf()
     private val _initialGoals: MutableList<Struct> = dequeOf()
     private val _includes: MutableList<Atom> = dequeOf()

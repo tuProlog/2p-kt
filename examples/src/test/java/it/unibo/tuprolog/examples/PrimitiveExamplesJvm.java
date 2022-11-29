@@ -62,7 +62,7 @@ public class PrimitiveExamplesJvm {
                 "a(X) :- b(X).\n" +
                         "b(X) :- log_msg(X)."
         );
-        MutableSolver solver = Solver.prolog().mutableSolverOf(theory);
+        MutableSolver solver = Solver.prolog().newBuilder().staticKb(theory).buildMutable();
         solver.loadLibrary(library);
 
         logs.clear();
@@ -104,7 +104,7 @@ public class PrimitiveExamplesJvm {
 
     @Test
     public void intRangePrimitiveExample() {
-        MutableSolver solver = Solver.prolog().mutableSolverOf();
+        MutableSolver solver = Solver.prolog().newBuilder().buildMutable();
         solver.loadLibrary(
                 libraryOf("prolog.ranges", IntRangePrimitive.INSTANCE)
         );
@@ -120,9 +120,9 @@ public class PrimitiveExamplesJvm {
 
     @Test
     public void intRangePrimitiveExample2() {
-        MutableSolver solver = Solver.prolog().mutableSolverOf(
-                runtimeOf("prolog.ranges", IntRangePrimitive.INSTANCE)
-        );
+        MutableSolver solver = Solver.prolog().newBuilder()
+                .runtime(runtimeOf("prolog.ranges", IntRangePrimitive.INSTANCE))
+                .buildMutable();
 
         List<Solution> sol = solver.solveList(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")));
         assertEquals(5, sol.size());

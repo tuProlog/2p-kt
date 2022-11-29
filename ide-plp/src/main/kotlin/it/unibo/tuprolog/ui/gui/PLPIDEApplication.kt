@@ -1,11 +1,10 @@
 package it.unibo.tuprolog.ui.gui
 
-import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
-import it.unibo.tuprolog.solve.problog.problogClassicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.setProbabilistic
 import javafx.application.Application
 import javafx.application.Platform
@@ -70,8 +69,8 @@ class PLPIDEApplication : Application() {
 
         // Create a solver with PLP support
         model.customizeSolver {
-            MutableSolver.problogClassicWithDefaultBuiltins(
-                libraries = Runtime.of(OOPLib, IOLib),
+            Solver.problog.mutableSolverWithDefaultBuiltins(
+                otherLibraries = Runtime.of(OOPLib, IOLib),
                 stdIn = it.standardInput,
                 stdOut = it.standardOutput,
                 stdErr = it.standardError,

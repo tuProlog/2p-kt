@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.theory.impl
 
+import it.unibo.tuprolog.collections.impl.Factories
 import it.unibo.tuprolog.theory.PrototypeTheoryTest
-import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
 internal class ListedTheoryTest {
 
     private val prototype = PrototypeTheoryTest(
-        Theory.Companion::emptyListed,
-        Theory.Companion::listedOf
+        Factories::emptyListedTheory,
+        Factories::listedTheoryOf
     )
 
     // @BeforeTest

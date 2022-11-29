@@ -8,7 +8,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object CharCode : BinaryRelation.Functional<ExecutionContext>("char_code") {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution {
@@ -25,7 +24,7 @@ object CharCode : BinaryRelation.Functional<ExecutionContext>("char_code") {
                 ensuringArgumentIsInstantiated(0)
                 ensuringArgumentIsChar(0)
                 val result = (first as Atom).value[0].code
-                second mguWith Integer.of(result)
+                mgu(second, Integer.of(result))
             }
         }
     }

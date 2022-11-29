@@ -16,12 +16,19 @@ import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBuilder {
 
     private inline fun returningThis(action: () -> Unit): SolverBuilder {
         action()
         return this
+    }
+
+    override var unificator: Unificator = factory.defaultUnificator
+
+    override fun unificator(unificator: Unificator): SolverBuilder = returningThis {
+        this.unificator = unificator
     }
 
     override var runtime: Runtime = factory.defaultRuntime
@@ -68,15 +75,15 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
     }
 
     override fun staticKb(vararg clauses: Clause): SolverBuilder = returningThis {
-        staticKb = Theory.of(*clauses)
+        staticKb = Theory.of(unificator, *clauses)
     }
 
     override fun staticKb(clauses: Iterable<Clause>): SolverBuilder = returningThis {
-        staticKb = Theory.of(clauses)
+        staticKb = Theory.of(unificator, clauses)
     }
 
     override fun staticKb(clauses: Sequence<Clause>): SolverBuilder = returningThis {
-        staticKb = Theory.of(clauses)
+        staticKb = Theory.of(unificator, clauses)
     }
 
     override var dynamicKb: Theory = factory.defaultDynamicKb
@@ -86,15 +93,15 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
     }
 
     override fun dynamicKb(vararg clauses: Clause): SolverBuilder = returningThis {
-        dynamicKb = Theory.of(*clauses)
+        dynamicKb = Theory.listedOf(unificator, *clauses)
     }
 
     override fun dynamicKb(clauses: Iterable<Clause>): SolverBuilder = returningThis {
-        dynamicKb = Theory.of(clauses)
+        dynamicKb = Theory.listedOf(unificator, clauses)
     }
 
     override fun dynamicKb(clauses: Sequence<Clause>): SolverBuilder = returningThis {
-        dynamicKb = Theory.of(clauses)
+        dynamicKb = Theory.listedOf(unificator, clauses)
     }
 
     override var inputs: InputStore = InputStore.fromStandard(factory.defaultInputChannel)
@@ -166,6 +173,7 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
 
     override fun build(): Solver =
         factory.solverOf(
+            unificator = unificator,
             libraries = runtimeWithBuiltins,
             staticKb = staticKb,
             dynamicKb = dynamicKb,
@@ -176,6 +184,7 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
 
     override fun buildMutable(): MutableSolver =
         factory.mutableSolverOf(
+            unificator = unificator,
             libraries = runtimeWithBuiltins,
             staticKb = staticKb,
             dynamicKb = dynamicKb,
@@ -190,6 +199,7 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
 
         other as SolverBuilderImpl
 
+        if (unificator != other.unificator) return false
         if (runtime != other.runtime) return false
         if (builtins != other.builtins) return false
         if (flags != other.flags) return false

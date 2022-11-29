@@ -249,7 +249,7 @@ internal fun assertRuntimesAreEqual(expected: Runtime, actual: Runtime) {
 
 internal fun assertLibrariesAreEqual(expected: Library, actual: Library) {
     assertEquals(expected.alias, actual.alias)
-    assertEquals(expected.theory, actual.theory)
+    assertEquals(expected.clauses, actual.clauses)
     assertEquals(expected.operators, actual.operators)
     assertEquals(expected.primitives.keys, actual.primitives.keys)
     for ((signature, e) in expected.primitives) {

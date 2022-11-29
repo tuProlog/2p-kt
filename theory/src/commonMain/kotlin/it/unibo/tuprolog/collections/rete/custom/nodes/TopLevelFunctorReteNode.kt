@@ -7,13 +7,15 @@ import it.unibo.tuprolog.collections.rete.custom.Utils.arityOfNestedFirstArgumen
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class TopLevelFunctorReteNode(
+    unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int
-) : FunctorNode(), FunctorRete {
+) : FunctorNode(unificator), FunctorRete {
 
     private val arities: MutableMap<Int, TopLevelReteNode> = mutableMapOf()
 
@@ -54,13 +56,10 @@ internal class TopLevelFunctorReteNode(
         clause.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel).let {
             when (it) {
                 0 -> arities.getOrPut(it) {
-                    ZeroArityReteNode(ordered)
+                    ZeroArityReteNode(unificator, ordered)
                 }
                 else -> arities.getOrPut(it) {
-                    FamilyArityReteNode(
-                        ordered,
-                        nestingLevel
-                    )
+                    FamilyArityReteNode(unificator, ordered, nestingLevel)
                 }
             }
         }.op(clause)

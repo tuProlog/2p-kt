@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
+import it.unibo.tuprolog.collections.rete.custom.AbstractReteNode
 import it.unibo.tuprolog.collections.rete.custom.IndexingNode
 import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
@@ -9,13 +10,15 @@ import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorIndexing
 import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorIndexingNode
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class CompoundIndex(
+    unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int
-) : IndexingNode {
+) : IndexingNode, AbstractReteNode(unificator) {
 
     private val functors: MutableMap<String, FunctorIndexing> = mutableMapOf()
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
@@ -49,7 +52,7 @@ internal class CompoundIndex(
         clause.nestedFunctor().let {
             if (ordered) {
                 functors.getOrPut(it) {
-                    FunctorIndexingNode(ordered, nestingLevel)
+                    FunctorIndexingNode(unificator, ordered, nestingLevel)
                 }.assertA(clause + this)
             } else {
                 assertZ(clause)
@@ -59,7 +62,7 @@ internal class CompoundIndex(
     override fun assertZ(clause: IndexedClause) =
         clause.nestedFunctor().let {
             functors.getOrPut(it) {
-                FunctorIndexingNode(ordered, nestingLevel)
+                FunctorIndexingNode(unificator, ordered, nestingLevel)
             }.assertZ(clause + this)
         }
 

@@ -6,6 +6,7 @@ import it.unibo.tuprolog.collections.MutableClauseMultiSet
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.TheoryUtils
+import it.unibo.tuprolog.unify.Unificator
 
 internal class ReteClauseMultiSet private constructor(
     rete: ReteTree
@@ -20,7 +21,7 @@ internal class ReteClauseMultiSet private constructor(
     }
 
     /** Construct a [ReteClauseMultiSet] from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(ReteTree.unordered(clauses)) {
+    constructor(unificator: Unificator, clauses: Iterable<Clause>) : this(ReteTree.unordered(unificator, clauses)) {
         TheoryUtils.checkClausesCorrect(clauses)
     }
 

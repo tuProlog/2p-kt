@@ -21,22 +21,22 @@ abstract class SideEffect {
     abstract fun applyTo(context: ExecutionContext): ExecutionContext
 
     abstract class SetClausesOfKb(open val clauses: Iterable<Clause>) : SideEffect() {
-        val theory: Theory by lazy {
-            clauses.let {
+        fun theory(context: ExecutionContext): Theory {
+            return clauses.let {
                 if (it is Theory) {
                     it
                 } else {
-                    Theory.indexedOf(it)
+                    Theory.indexedOf(context.unificator, it)
                 }
             }
         }
 
-        val mutableTheory: Theory by lazy {
-            clauses.let {
+        fun mutableTheory(context: ExecutionContext): Theory {
+            return clauses.let {
                 when (it) {
                     is MutableTheory -> it
                     is Theory -> it.toMutableTheory()
-                    else -> MutableTheory.indexedOf(it)
+                    else -> MutableTheory.indexedOf(context.unificator, it)
                 }
             }
         }
@@ -51,7 +51,8 @@ abstract class SideEffect {
 
         constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(staticKb = theory)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(staticKb = theory(context))
     }
 
     data class AddStaticClauses(
@@ -80,7 +81,8 @@ abstract class SideEffect {
 
         constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(dynamicKb = mutableTheory)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(dynamicKb = mutableTheory(context))
     }
 
     data class AddDynamicClauses(

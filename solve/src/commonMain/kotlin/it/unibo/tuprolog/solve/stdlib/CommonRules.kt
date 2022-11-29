@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.stdlib
 
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.rule.Append
@@ -10,7 +11,6 @@ import it.unibo.tuprolog.solve.stdlib.rule.Not
 import it.unibo.tuprolog.solve.stdlib.rule.Once
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
-import it.unibo.tuprolog.theory.Theory
 
 object CommonRules {
     val wrappers: Sequence<RuleWrapper<ExecutionContext>> = sequenceOf(
@@ -29,6 +29,6 @@ object CommonRules {
         CurrentPrologFlag
     )
 
-    val theory: Theory
-        get() = Theory.indexedOf(wrappers.map { it.implementation })
+    val clauses: List<Clause>
+        get() = wrappers.map { it.implementation }.toList()
 }

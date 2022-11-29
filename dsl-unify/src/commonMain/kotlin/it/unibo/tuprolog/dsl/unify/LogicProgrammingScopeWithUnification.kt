@@ -8,6 +8,9 @@ import kotlin.js.JsName
 
 interface LogicProgrammingScopeWithUnification : LogicProgrammingScope, Unificator {
 
+    @JsName("unificator")
+    val unificator: Unificator
+
     @JsName("anyMguWith")
     infix fun Any.mguWith(other: Any): Substitution =
         this@LogicProgrammingScopeWithUnification.mgu(this.toTerm(), other.toTerm())

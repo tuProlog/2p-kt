@@ -13,6 +13,11 @@ kotlin {
                 api(project(":unify"))
             }
         }
+        val commonTest by getting {
+            dependencies {
+                api(project(":dsl-unify"))
+            }
+        }
     }
 }
 

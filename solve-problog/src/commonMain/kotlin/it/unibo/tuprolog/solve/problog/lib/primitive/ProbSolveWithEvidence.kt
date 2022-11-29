@@ -13,7 +13,6 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.toTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.getSolverOptions
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.isPrologMode
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * This is analogous to [ProbSolve], but it takes in consideration "evidence" predicates.
@@ -65,9 +64,9 @@ internal object ProbSolveWithEvidence : TernaryRelation.WithoutSideEffects<Execu
                         goalExplanationTerm.explanation and evidenceExplanationTerm.explanation
                     )
                     yield(
-                        Substitution.Companion.of(
-                            first mguWith explanationWithEvidenceTerm,
-                            second mguWith evidenceExplanationTerm,
+                        Substitution.of(
+                            mgu(first, explanationWithEvidenceTerm),
+                            mgu(second, evidenceExplanationTerm),
                             solution.substitution.filter { v, _ -> v != goalExplanationVar }
                         )
                     )

@@ -1,17 +1,20 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
+import it.unibo.tuprolog.collections.rete.custom.AbstractReteNode
 import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
-import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
-internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
+internal class DirectiveIndex(
+    unificator: Unificator,
+    private val ordered: Boolean
+) : TopLevelReteNode, AbstractReteNode(unificator) {
 
     private val directives: MutableList<IndexedClause> = dequeOf()
 
@@ -23,7 +26,7 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
 
     override fun get(clause: Clause): Sequence<Clause> =
         directives
-            .filter { it.innerClause matches clause }
+            .filter { unificator.match(it.innerClause, clause) }
             .map { it.innerClause }
             .asSequence()
 
@@ -40,10 +43,10 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
     }
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
-        Utils.removeAllLazily(directives, clause).map { it.innerClause }.take(1).buffered()
+        removeAllLazily(directives, clause).map { it.innerClause }.take(1).buffered()
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
-        Utils.removeAllLazily(directives, clause).map { it.innerClause }.buffered()
+        removeAllLazily(directives, clause).map { it.innerClause }.buffered()
 
     override fun getCache(): Sequence<SituatedIndexedClause> =
         directives.asSequence().map {

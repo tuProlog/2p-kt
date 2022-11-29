@@ -4,8 +4,13 @@ import it.unibo.tuprolog.collections.rete.custom.nodes.RootNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.unify.Unificator
+import kotlin.js.JsName
 
 interface ReteTree {
+
+    @JsName("unificator")
+    val unificator: Unificator
 
     /**Checks if the values this [ReteTree] produces are to be considered as order-sensitive*/
     val isOrdered: Boolean
@@ -51,27 +56,27 @@ interface ReteTree {
 
     companion object {
         /**Creates an empty unordered [ReteTree]*/
-        fun emptyUnordered(): ReteTree =
-            unordered(emptyList())
+        fun emptyUnordered(unificator: Unificator): ReteTree =
+            unordered(unificator, emptyList())
 
         /**Creates an unordered ReteTree based on the given [Iterable]*/
-        fun unordered(clauses: Iterable<Clause>): ReteTree =
-            RootNode(clauses, false)
+        fun unordered(unificator: Unificator, clauses: Iterable<Clause>): ReteTree =
+            RootNode(unificator, clauses, false)
 
         /**Creates an unordered ReteTree based on the given vararg*/
-        fun unordered(vararg clauses: Clause): ReteTree =
-            unordered(listOf(*clauses))
+        fun unordered(unificator: Unificator, vararg clauses: Clause): ReteTree =
+            unordered(unificator, listOf(*clauses))
 
         /**Creates an empty ordered [ReteTree]*/
-        fun emptyOrdered(): ReteTree =
-            ordered(emptyList())
+        fun emptyOrdered(unificator: Unificator,): ReteTree =
+            ordered(unificator, emptyList())
 
         /**Creates an ordered ReteTree based on the given [Iterable]*/
-        fun ordered(clauses: Iterable<Clause>): ReteTree =
-            RootNode(clauses, true)
+        fun ordered(unificator: Unificator, clauses: Iterable<Clause>): ReteTree =
+            RootNode(unificator, clauses, true)
 
         /**Creates an ordered ReteTree based on the given vararg*/
-        fun ordered(vararg clauses: Clause): ReteTree =
-            ordered(listOf(*clauses))
+        fun ordered(unificator: Unificator, vararg clauses: Clause): ReteTree =
+            ordered(unificator, listOf(*clauses))
     }
 }

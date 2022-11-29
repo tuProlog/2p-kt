@@ -13,21 +13,24 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 object ConcurrentSolverFactory : SolverFactory {
     override val defaultBuiltins: Library
         get() = DefaultBuiltins
 
     override fun solverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
         outputs: OutputStore
-    ): Solver = ConcurrentSolverImpl(libraries, flags, staticKb, dynamicKb, inputs, outputs)
+    ): Solver = ConcurrentSolverImpl(unificator, libraries, flags, staticKb, dynamicKb, inputs, outputs)
 
     override fun solverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -36,9 +39,10 @@ object ConcurrentSolverFactory : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ): Solver = ConcurrentSolverImpl(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ): Solver = ConcurrentSolverImpl(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -47,14 +51,15 @@ object ConcurrentSolverFactory : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ): MutableSolver = MutableConcurrentSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ): MutableSolver = MutableConcurrentSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
         outputs: OutputStore
-    ): MutableSolver = MutableConcurrentSolver(libraries, flags, staticKb, dynamicKb, inputs, outputs)
+    ): MutableSolver = MutableConcurrentSolver(unificator, libraries, flags, staticKb, dynamicKb, inputs, outputs)
 }

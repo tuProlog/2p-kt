@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.theory.impl
 
-import it.unibo.tuprolog.theory.MutableTheory
+import it.unibo.tuprolog.collections.impl.Factories
 import it.unibo.tuprolog.theory.PrototypeProperIndexingTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -8,7 +8,7 @@ import kotlin.test.Test
 internal class MutableIndexedClauseIndexingTest {
 
     private val prototype = PrototypeProperIndexingTest(
-        MutableTheory.Companion::indexedOf
+        Factories::mutableIndexedTheoryOf
     )
 
     @BeforeTest

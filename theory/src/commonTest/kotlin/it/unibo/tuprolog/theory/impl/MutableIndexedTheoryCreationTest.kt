@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.theory.impl
 
-import it.unibo.tuprolog.theory.MutableTheory
+import it.unibo.tuprolog.collections.impl.Factories
 import it.unibo.tuprolog.theory.PrototypeTheoryCreationTest
 import kotlin.test.Test
 
@@ -8,11 +8,11 @@ internal class MutableIndexedTheoryCreationTest {
 
     private val prototype: PrototypeTheoryCreationTest =
         PrototypeTheoryCreationTest(
-            MutableTheory.Companion::emptyIndexed,
-            { MutableTheory.indexedOf(*it) },
-            MutableTheory.Companion::indexedOf,
-            MutableTheory.Companion::indexedOf,
-            MutableTheory.Companion::indexedOf
+            Factories::emptyMutableIndexedTheory,
+            Factories::mutableIndexedTheoryOf,
+            Factories::mutableIndexedTheoryOf,
+            Factories::mutableIndexedTheoryOf,
+            Factories::mutableIndexedTheoryOf
         )
 
     @Test

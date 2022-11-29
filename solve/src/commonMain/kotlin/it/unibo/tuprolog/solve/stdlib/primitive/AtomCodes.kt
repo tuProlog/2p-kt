@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.core.List as LogicList
 
 object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
@@ -44,7 +43,7 @@ object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
                 }
                 val charArray = (first as Atom).value
                 val result = LogicList.of(charArray.map { Integer.of(it.code) })
-                second mguWith result
+                mgu(second, result)
             }
         }
 }

@@ -7,8 +7,12 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
+import it.unibo.tuprolog.unify.Unificator
 
 internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Theory {
+
+    abstract override var unificator: Unificator
+        protected set
 
     override fun toImmutableTheory(): Theory = this
 
@@ -98,8 +102,19 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
     override val isNonEmpty: Boolean
         get() = iterator().hasNext()
 
+    override fun setUnificator(unificator: Unificator): Theory =
+        if (unificator != this.unificator) {
+            createNewTheory(clauses.asSequence(), unificator = unificator)
+        } else {
+            this
+        }
+
     override fun plus(theory: Theory): Theory =
-        createNewTheory(clauses.asSequence() + checkClausesCorrect(theory.clauses.asSequence()))
+        if (theory.isNonEmpty) {
+            createNewTheory(clauses.asSequence() + checkClausesCorrect(theory.clauses.asSequence()))
+        } else {
+            this
+        }
 
     override fun assertA(clause: Clause): Theory =
         createNewTheory(checkClausesCorrect(clause) + clauses.asSequence())
@@ -121,7 +136,8 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
 
     protected abstract fun createNewTheory(
         clauses: Sequence<Clause>,
-        tags: Map<String, Any> = this.tags
+        tags: Map<String, Any> = this.tags,
+        unificator: Unificator = this.unificator
     ): AbstractTheory
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<AbstractTheory> =
@@ -129,5 +145,5 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
 
     abstract override fun retract(clauses: Iterable<Clause>): RetractResult<AbstractTheory>
 
-    override fun clone(): Theory = createNewTheory(clauses.asSequence())
+    override fun clone(): Theory = this
 }

@@ -4,9 +4,13 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.unify.Unificator
 
 internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection<Self>>
 protected constructor(protected val rete: ReteTree) : ClauseCollection {
+
+    override val unificator: Unificator
+        get() = rete.unificator
 
     protected abstract val self: Self
 

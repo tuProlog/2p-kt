@@ -1,14 +1,13 @@
 package it.unibo.tuprolog.collections.impl
 
-import it.unibo.tuprolog.collections.MutableClauseMultiSet
 import it.unibo.tuprolog.collections.PrototypeClauseMultiSetTest
 import kotlin.test.Test
 
 internal class MutableReteClauseMultiSetTest : PrototypeClauseMultiSetTest {
 
     private val prototype = PrototypeClauseMultiSetTest.prototype(
-        MutableClauseMultiSet.Companion::empty,
-        MutableClauseMultiSet.Companion::of
+        Factories::emptyClauseMultiset,
+        Factories::mutableClauseMultisetOf
     )
 
     @Test
