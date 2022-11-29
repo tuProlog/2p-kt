@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.MappedMutableProblogTh
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -27,7 +28,7 @@ interface MutableProblogTheory : ProblogTheory, MutableTheory {
 
     override fun toMutableTheory(): MutableProblogTheory = this
 
-    override fun toImmutableTheory(): ProblogTheory = ProblogTheory.of(this)
+    override fun toImmutableTheory(): ProblogTheory = ProblogTheory.of(unificator, this)
 
     override operator fun plus(theory: ProblogTheory): MutableProblogTheory
 
@@ -71,32 +72,32 @@ interface MutableProblogTheory : ProblogTheory, MutableTheory {
         /** Creates an empty [MutableProblogTheory] */
         @JvmStatic
         @JsName("empty")
-        fun empty(): MutableTheory =
-            of(emptyList())
+        fun empty(unificator: Unificator): MutableTheory =
+            of(unificator, emptyList())
 
         /** Creates a [MutableProblogTheory], containing the given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(vararg clause: Clause): MutableTheory =
-            of(*clause)
+        fun of(unificator: Unificator, vararg clauses: Clause): MutableTheory =
+            of(unificator, clauses.asIterable())
 
         /** Creates a [MutableProblogTheory], containing the given clauses */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(clauses: Sequence<Clause>): MutableTheory =
-            of(clauses)
+        fun of(unificator: Unificator, clauses: Sequence<Clause>): MutableTheory =
+            of(unificator, clauses.asIterable())
 
         /** Let developers easily create a [[MutableProblogTheory], while avoiding variables names clashing by using a
          * different [Scope] for each [Clause] */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(vararg clauses: Scope.() -> Clause): MutableTheory =
-            of(*clauses)
+        fun of(unificator: Unificator, vararg clauses: Scope.() -> Clause): MutableTheory =
+            of(unificator, clauses.map { Scope.empty().it() })
 
         /** Creates a [MutableProblogTheory] containing the given clauses */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(clauses: Iterable<Clause>): MutableProblogTheory =
-            MappedMutableProblogTheory(clauses)
+        fun of(unificator: Unificator, clauses: Iterable<Clause>): MutableProblogTheory =
+            MappedMutableProblogTheory(clauses, unificator)
     }
 }

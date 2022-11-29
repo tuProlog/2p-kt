@@ -13,21 +13,24 @@ import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.streams.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 object StreamsSolverFactory : SolverFactory {
     override val defaultBuiltins: Library
         get() = DefaultBuiltins
 
     override fun solverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
         outputs: OutputStore
-    ): Solver = StreamsSolver(libraries, flags, staticKb, dynamicKb, inputs, outputs)
+    ): Solver = StreamsSolver(unificator, libraries, flags, staticKb, dynamicKb, inputs, outputs)
 
     override fun solverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -36,17 +39,18 @@ object StreamsSolverFactory : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ): Solver =
-        StreamsSolver(
-            libraries,
-            flags,
-            staticKb,
-            dynamicKb,
-            InputStore.fromStandard(stdIn),
-            OutputStore.fromStandard(stdOut, stdErr, warnings)
-        )
+    ): Solver = StreamsSolver(
+        unificator,
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        InputStore.fromStandard(stdIn),
+        OutputStore.fromStandard(stdOut, stdErr, warnings)
+    )
 
     override fun mutableSolverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -60,6 +64,7 @@ object StreamsSolverFactory : SolverFactory {
     }
 
     override fun mutableSolverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,

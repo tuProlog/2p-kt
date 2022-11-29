@@ -10,6 +10,7 @@ import it.unibo.tuprolog.solve.impl.SolverBuilderImpl
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface SolverFactory {
@@ -24,17 +25,21 @@ interface SolverFactory {
     @JsName("defaultBuiltins")
     val defaultBuiltins: Library
 
+    @JsName("defaultUnificator")
+    val defaultUnificator: Unificator
+        get() = Unificator.default
+
     @JsName("defaultFlags")
     val defaultFlags: FlagStore
         get() = FlagStore.DEFAULT
 
     @JsName("defaultStaticKb")
     val defaultStaticKb: Theory
-        get() = Theory.empty()
+        get() = Theory.emptyIndexed(defaultUnificator)
 
     @JsName("defaultDynamicKb")
     val defaultDynamicKb: Theory
-        get() = Theory.empty()
+        get() = Theory.emptyIndexed(defaultUnificator)
 
     @JsName("defaultInputChannel")
     val defaultInputChannel: InputChannel<String>
@@ -54,16 +59,22 @@ interface SolverFactory {
 
     @JsName("rawSolverOf")
     fun solverOf(
+        unificator: Unificator = defaultUnificator,
         libraries: Runtime = defaultRuntime,
         flags: FlagStore = defaultFlags,
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         inputs: InputStore = InputStore.fromStandard(defaultInputChannel),
-        outputs: OutputStore = OutputStore.fromStandard(defaultOutputChannel, defaultErrorChannel, defaultWarningsChannel)
+        outputs: OutputStore = OutputStore.fromStandard(
+            defaultOutputChannel,
+            defaultErrorChannel,
+            defaultWarningsChannel
+        )
     ): Solver
 
     @JsName("solverOf")
     fun solverOf(
+        unificator: Unificator = defaultUnificator,
         libraries: Runtime = defaultRuntime,
         flags: FlagStore = defaultFlags,
         staticKb: Theory = defaultStaticKb,
@@ -74,94 +85,9 @@ interface SolverFactory {
         warnings: OutputChannel<Warning> = defaultWarningsChannel
     ): Solver
 
-    @JsName("solverOfRuntimeAndKBs")
-    fun solverOf(
-        libraries: Runtime,
-        staticKb: Theory,
-        dynamicKb: Theory
-    ) = solverOf(
-        libraries,
-        defaultFlags,
-        staticKb,
-        dynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("solverOfKBs")
-    fun solverOf(
-        staticKb: Theory,
-        dynamicKb: Theory
-    ) = solverOf(
-        defaultRuntime,
-        defaultFlags,
-        staticKb,
-        dynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("solverOfStaticKB")
-    fun solverOf(
-        staticKb: Theory
-    ) = solverOf(
-        defaultRuntime,
-        defaultFlags,
-        staticKb,
-        defaultStaticKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("solverOfRuntimeAndStaticKB")
-    fun solverOf(
-        libraries: Runtime,
-        staticKb: Theory
-    ) = solverOf(
-        libraries,
-        defaultFlags,
-        staticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("solverOfRuntime")
-    fun solverOf(
-        libraries: Runtime
-    ) = solverOf(
-        libraries,
-        defaultFlags,
-        defaultStaticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("solver")
-    fun solverOf() = solverOf(
-        defaultRuntime,
-        defaultFlags,
-        defaultStaticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
     @JsName("solverWithDefaultBuiltinsAnd")
     fun solverWithDefaultBuiltins(
+        unificator: Unificator = defaultUnificator,
         otherLibraries: Runtime = defaultRuntime,
         flags: FlagStore = defaultFlags,
         staticKb: Theory = defaultStaticKb,
@@ -171,6 +97,7 @@ interface SolverFactory {
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<Warning> = defaultWarningsChannel
     ): Solver = solverOf(
+        unificator,
         otherLibraries + defaultBuiltins,
         flags,
         staticKb,
@@ -181,79 +108,9 @@ interface SolverFactory {
         warnings
     )
 
-    @JsName("solverWithDefaultBuiltinsAndRuntimeAndKBs")
-    fun solverWithDefaultBuiltins(
-        otherLibraries: Runtime,
-        staticKb: Theory,
-        dynamicKb: Theory
-    ) = solverWithDefaultBuiltins(
-        otherLibraries,
-        defaultFlags,
-        staticKb,
-        dynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("solverWithDefaultBuiltinsAndKBs")
-    fun solverWithDefaultBuiltins(
-        staticKb: Theory,
-        dynamicKb: Theory
-    ) = solverWithDefaultBuiltins(
-        defaultRuntime,
-        defaultFlags,
-        staticKb,
-        dynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("solverWithDefaultBuiltinsAndStaticKB")
-    fun solverWithDefaultBuiltins(
-        staticKb: Theory
-    ) = solverWithDefaultBuiltins(
-        defaultRuntime,
-        defaultFlags,
-        staticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("solverWithDefaultBuiltinsAndRuntime")
-    fun solverWithDefaultBuiltins(
-        otherLibraries: Runtime
-    ) = solverWithDefaultBuiltins(
-        otherLibraries,
-        defaultFlags,
-        defaultStaticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("solverWithDefaultBuiltins")
-    fun solverWithDefaultBuiltins() = solverWithDefaultBuiltins(
-        defaultRuntime,
-        defaultFlags,
-        defaultStaticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
     @JsName("mutableSolverOf")
     fun mutableSolverOf(
+        unificator: Unificator = defaultUnificator,
         libraries: Runtime = defaultRuntime,
         flags: FlagStore = defaultFlags,
         staticKb: Theory = defaultStaticKb,
@@ -264,94 +121,9 @@ interface SolverFactory {
         warnings: OutputChannel<Warning> = defaultWarningsChannel
     ): MutableSolver
 
-    @JsName("mutableSolverOfRuntimeAndKBs")
-    fun mutableSolverOf(
-        libraries: Runtime,
-        staticKb: Theory,
-        dynamicKb: Theory
-    ) = mutableSolverOf(
-        libraries,
-        defaultFlags,
-        staticKb,
-        dynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("mutableSolverOfKBs")
-    fun mutableSolverOf(
-        staticKb: Theory,
-        dynamicKb: Theory
-    ) = mutableSolverOf(
-        defaultRuntime,
-        defaultFlags,
-        staticKb,
-        dynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("mutableSolverOfStaticKB")
-    fun mutableSolverOf(
-        staticKb: Theory
-    ) = mutableSolverOf(
-        defaultRuntime,
-        defaultFlags,
-        staticKb,
-        defaultStaticKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("mutableSolverOfRuntimeAndStaticKB")
-    fun mutableSolverOf(
-        libraries: Runtime,
-        staticKb: Theory
-    ) = mutableSolverOf(
-        libraries,
-        defaultFlags,
-        staticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("mutableSolverOfRuntime")
-    fun mutableSolverOf(
-        libraries: Runtime
-    ) = mutableSolverOf(
-        libraries,
-        defaultFlags,
-        defaultStaticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("mutableSolver")
-    fun mutableSolverOf() = mutableSolverOf(
-        defaultRuntime,
-        defaultFlags,
-        defaultStaticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
     @JsName("mutableSolverWithDefaultBuiltinsAnd")
     fun mutableSolverWithDefaultBuiltins(
+        unificator: Unificator = defaultUnificator,
         otherLibraries: Runtime = defaultRuntime,
         flags: FlagStore = defaultFlags,
         staticKb: Theory = defaultStaticKb,
@@ -360,88 +132,30 @@ interface SolverFactory {
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<Warning> = defaultWarningsChannel
-    ): MutableSolver =
-        mutableSolverOf(otherLibraries + defaultBuiltins, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
-
-    @JsName("mutableSolverWithDefaultBuiltinsAndRuntimeAndKBs")
-    fun mutableSolverWithDefaultBuiltins(
-        otherLibraries: Runtime,
-        staticKb: Theory,
-        dynamicKb: Theory
-    ) = mutableSolverWithDefaultBuiltins(
-        otherLibraries,
-        defaultFlags,
+    ): MutableSolver = mutableSolverOf(
+        unificator,
+        otherLibraries + defaultBuiltins,
+        flags,
         staticKb,
         dynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
+        stdIn,
+        stdOut,
+        stdErr,
+        warnings
     )
-
-    @JsName("mutableSolverWithDefaultBuiltinsAndKBs")
-    fun mutableSolverWithDefaultBuiltins(
-        staticKb: Theory,
-        dynamicKb: Theory
-    ) = mutableSolverWithDefaultBuiltins(
-        defaultRuntime,
-        defaultFlags,
-        staticKb,
-        dynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("mutableSolverWithDefaultBuiltinsAndStaticKB")
-    fun mutableSolverWithDefaultBuiltins(
-        staticKb: Theory
-    ) = mutableSolverWithDefaultBuiltins(
-        defaultRuntime,
-        defaultFlags,
-        staticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("mutableSolverWithDefaultBuiltinsAndRuntime")
-    fun mutableSolverWithDefaultBuiltins(
-        otherLibraries: Runtime
-    ) = mutableSolverWithDefaultBuiltins(
-        otherLibraries,
-        defaultFlags,
-        defaultStaticKb,
-        defaultDynamicKb,
-        defaultInputChannel,
-        defaultOutputChannel,
-        defaultErrorChannel,
-        defaultWarningsChannel
-    )
-
-    @JsName("mutableSolverWithDefaultBuiltins")
-    fun mutableSolverWithDefaultBuiltins() =
-        mutableSolverWithDefaultBuiltins(
-            defaultRuntime,
-            defaultFlags,
-            defaultStaticKb,
-            defaultDynamicKb,
-            defaultInputChannel,
-            defaultOutputChannel,
-            defaultErrorChannel,
-            defaultWarningsChannel
-        )
 
     @JsName("rawMutableSolverOf")
     fun mutableSolverOf(
+        unificator: Unificator = defaultUnificator,
         libraries: Runtime = defaultRuntime,
         flags: FlagStore = defaultFlags,
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         inputs: InputStore = InputStore.fromStandard(defaultInputChannel),
-        outputs: OutputStore = OutputStore.fromStandard(defaultOutputChannel, defaultErrorChannel, defaultWarningsChannel)
+        outputs: OutputStore = OutputStore.fromStandard(
+            defaultOutputChannel,
+            defaultErrorChannel,
+            defaultWarningsChannel
+        )
     ): MutableSolver
 }

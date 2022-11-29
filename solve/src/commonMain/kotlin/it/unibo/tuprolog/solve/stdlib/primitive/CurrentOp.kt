@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object CurrentOp : TernaryRelation.WithoutSideEffects<ExecutionContext>("current_op") {
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
@@ -17,9 +16,9 @@ object CurrentOp : TernaryRelation.WithoutSideEffects<ExecutionContext>("current
     ): Sequence<Substitution> =
         context.operators.asSequence().map {
             listOf(
-                first mguWith Integer.of(it.priority),
-                second mguWith it.specifier.toTerm(),
-                third mguWith Atom.of(it.functor)
+                mgu(first, Integer.of(it.priority)),
+                mgu(second, it.specifier.toTerm()),
+                mgu(third, Atom.of(it.functor)),
             )
         }.filter {
             it.all { sub -> sub is Substitution.Unifier }

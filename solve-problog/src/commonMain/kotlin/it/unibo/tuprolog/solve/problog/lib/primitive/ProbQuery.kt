@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.toSolveOptions
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * This primitive is the main entrypoint for probabilistic logic queries. The first argument
@@ -72,8 +71,8 @@ internal object ProbQuery : QuaternaryRelation.WithoutSideEffects<ExecutionConte
                         yield(
                             Substitution.of(
                                 solutionSubstitution,
-                                first mguWith probabilityTerm,
-                                fourth mguWith queryWithEvidenceExplanationTerm,
+                                mgu(first, probabilityTerm),
+                                mgu(fourth, queryWithEvidenceExplanationTerm),
                             )
                         )
                     }

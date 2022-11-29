@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import org.gciatto.kt.math.BigInteger
 
 /**
@@ -29,13 +28,13 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
             if (third !is Var) {
                 ensuringArgumentIsArity(2)
             }
-            (second mguWith Atom.of(first.functor)) + (third mguWith Integer.of(first.arity))
+            mgu(second, Atom.of(first.functor)) + mgu(third, Integer.of(first.arity))
         }
         is Numeric -> {
             if (third !is Var) {
                 ensuringArgumentIsArity(2)
             }
-            (first mguWith second) + (third mguWith Integer.of(0))
+            mgu(first, second) + mgu(third, Integer.of(0))
         }
         is Var -> {
             when (second) {
@@ -51,7 +50,7 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
                     val arity = (third as Integer)
 
                     if (arity.intValue == BigInteger.ZERO) {
-                        Substitution.of(first to second) + (third mguWith Integer.of(0))
+                        Substitution.of(first to second) + mgu(third, Integer.of(0))
                     } else {
                         throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, second, 1)
                     }

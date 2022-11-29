@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.testutils.TheoryUtils
 import it.unibo.tuprolog.theory.impl.IndexedTheory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.test.assertEquals
 
 /**
@@ -24,7 +25,7 @@ internal class PrototypeTheoryCreationTest(
     fun emptyCreatesEmptyTheory() {
         val toBeTested = emptyTheoryConstructor()
 
-        assertEquals(IndexedTheory(emptyList()), toBeTested)
+        assertEquals(IndexedTheory(Unificator.default, emptyList()), toBeTested)
     }
 
     fun ofVarargClauseCreatesCorrectInstance() {

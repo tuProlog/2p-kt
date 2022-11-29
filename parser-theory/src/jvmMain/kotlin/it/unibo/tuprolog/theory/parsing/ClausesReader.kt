@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import java.io.InputStream
 import java.io.Reader
 import kotlin.jvm.JvmStatic
@@ -13,10 +14,10 @@ interface ClausesReader {
     val defaultOperatorSet: OperatorSet
 
     fun readTheory(inputStream: InputStream, operators: OperatorSet): Theory =
-        Theory.of(readClausesLazily(inputStream, operators))
+        Theory.of(Unificator.default, readClausesLazily(inputStream, operators))
 
     fun readTheory(reader: Reader, operators: OperatorSet): Theory =
-        Theory.of(readClausesLazily(reader, operators))
+        Theory.of(Unificator.default, readClausesLazily(reader, operators))
 
     fun readTheory(inputStream: InputStream): Theory = readTheory(inputStream, defaultOperatorSet)
 

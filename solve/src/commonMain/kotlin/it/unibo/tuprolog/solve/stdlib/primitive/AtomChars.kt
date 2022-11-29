@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.core.List as LogicList
 
 object AtomChars : BinaryRelation.Functional<ExecutionContext>("atom_chars") {
@@ -44,7 +43,7 @@ object AtomChars : BinaryRelation.Functional<ExecutionContext>("atom_chars") {
                 val chars = LogicList.of(
                     (first as Atom).value.map { Atom.of("" + it) }
                 )
-                chars mguWith second
+                mgu(chars, second)
             }
         }
 }

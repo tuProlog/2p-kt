@@ -46,9 +46,10 @@ import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgu
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsStruct
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsVariable
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.isCharacterCode
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.match
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.mgu
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.collections.List as KtList
 
 object IOPrimitiveUtils {
@@ -165,7 +166,7 @@ object IOPrimitiveUtils {
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidProperty(term: Term): Term =
-        if (validPropertiesPattern.any { it matches term }) {
+        if (validPropertiesPattern.any { match(it, term) }) {
             term
         } else {
             throw DomainError.forTerm(context, STREAM_PROPERTY, term)
@@ -173,7 +174,7 @@ object IOPrimitiveUtils {
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsSupportedProperty(term: Term): Term =
-        if (supportedPropertiesPattern.any { it matches term }) {
+        if (supportedPropertiesPattern.any { match(it, term) }) {
             term
         } else {
             throw SystemError.forUncaughtException(context, IllegalStateException("unsupported option $term"))
@@ -181,7 +182,7 @@ object IOPrimitiveUtils {
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidOption(term: Term): Term =
-        if (validOptionsPattern.any { it matches term }) {
+        if (validOptionsPattern.any { match(it, term) }) {
             term
         } else {
             throw DomainError.forTerm(context, WRITE_OPTION, term)
@@ -189,7 +190,7 @@ object IOPrimitiveUtils {
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidInfo(term: Term): Term =
-        if (validInfoPattern.any { it matches term }) {
+        if (validInfoPattern.any { match(it, term) }) {
             term
         } else {
             throw DomainError.forTerm(context, READ_OPTION, term)
@@ -219,27 +220,36 @@ object IOPrimitiveUtils {
             }
         }
 
-    private fun KtList<Term>.getOption(pattern: Term): Boolean =
+    private fun KtList<Term>.getOption(unificator: Unificator, pattern: Term): Boolean =
         asSequence()
             .filterIsInstance<Struct>()
-            .filter { it matches pattern }
+            .filter { unificator.match(it, pattern) }
             .map { it[0] }
             .filterIsInstance<Truth>()
             .map { it.isTrue }
             .firstOrNull() ?: false
 
-    private fun KtList<Term>.getInfo(pattern: Term, value: Term): Substitution =
-        asSequence().filterIsInstance<Struct>().firstOrNull { it matches pattern }
-            ?.let { it mguWith value }
+    private fun KtList<Term>.getInfo(unificator: Unificator, pattern: Term, value: Term): Substitution =
+        asSequence().filterIsInstance<Struct>()
+            .firstOrNull { unificator.match(it, pattern) }
+            ?.let { unificator.mgu(it, value) }
             ?: Substitution.empty()
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsFormatter(index: Int): TermFormatter {
         ensuringArgumentIsValidOptionList(index)
         val optionList = (arguments[index] as List).toList()
-        val funcFormat = if (optionList.getOption(OPTION_QUOTED_PATTERN)) QUOTED_IF_NECESSARY else LITERAL
-        val opFormat = if (optionList.getOption(OPTION_IGNORE_OPS_PATTERN)) IGNORE_OPERATORS else EXPRESSIONS
-        val numberVars = optionList.getOption(OPTION_NUMBER_VARS_PATTERN)
+        val funcFormat = if (optionList.getOption(context.unificator, OPTION_QUOTED_PATTERN)) {
+            QUOTED_IF_NECESSARY
+        } else {
+            LITERAL
+        }
+        val opFormat = if (optionList.getOption(context.unificator, OPTION_IGNORE_OPS_PATTERN)) {
+            IGNORE_OPERATORS
+        } else {
+            EXPRESSIONS
+        }
+        val numberVars = optionList.getOption(context.unificator, OPTION_NUMBER_VARS_PATTERN)
         return TermFormatter.of(UNDERSCORE, opFormat, funcFormat, numberVars, context.operators)
     }
 
@@ -248,7 +258,7 @@ object IOPrimitiveUtils {
         when (term) {
             is Var -> return this
             is Struct -> {
-                if (sequenceOf(PROPERTY_INPUT, PROPERTY_OUTPUT, PROPERTY_ALIAS_PATTERN).any { it matches term }) {
+                if (sequenceOf(PROPERTY_INPUT, PROPERTY_OUTPUT, PROPERTY_ALIAS_PATTERN).any { match(it, term) }) {
                     return this
                 }
             }
@@ -287,12 +297,12 @@ object IOPrimitiveUtils {
         when (term) {
             is Var -> return null
             is Struct -> when {
-                term matches OUTPUT_STREAM_TERM_PATTERN -> {
+                match(term, OUTPUT_STREAM_TERM_PATTERN) -> {
                     return context.outputChannels.findByTerm(term)
                         .firstOrNull()
                         ?: throw ExistenceError.forStream(context, term)
                 }
-                term matches INPUT_STREAM_TERM_PATTERN -> {
+                match(term, INPUT_STREAM_TERM_PATTERN) -> {
                     return context.inputChannels.findByTerm(term)
                         .firstOrNull()
                         ?: throw ExistenceError.forStream(context, term)
@@ -336,12 +346,12 @@ object IOPrimitiveUtils {
                     ?.get(term.value)
                     ?: throw ExistenceError.forSourceSink(context, term)
             }
-            term matches OUTPUT_STREAM_TERM_PATTERN -> {
+            match(term, OUTPUT_STREAM_TERM_PATTERN) -> {
                 context.outputChannels.findByTerm(term)
                     .firstOrNull()
                     ?: throw ExistenceError.forStream(context, term)
             }
-            term matches INPUT_STREAM_TERM_PATTERN -> {
+            match(term, INPUT_STREAM_TERM_PATTERN) -> {
                 context.inputChannels.findByTerm(term)
                     .firstOrNull()
                     ?: throw ExistenceError.forStream(context, term)
@@ -401,7 +411,7 @@ object IOPrimitiveUtils {
     fun Solve.Request<ExecutionContext>.peekCodeAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
         return try {
             val code = channel.peek()?.get(0)?.code ?: -1
-            replyWith(arg mguWith Integer.of(code))
+            replyWith(mgu(arg, Integer.of(code)))
         } catch (_: IllegalStateException) {
             replyFail()
         }
@@ -410,7 +420,7 @@ object IOPrimitiveUtils {
     fun Solve.Request<ExecutionContext>.peekCharAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
         return try {
             val char = channel.peek() ?: "end_of_file"
-            replyWith(arg mguWith Atom.of(char))
+            replyWith(mgu(arg, Atom.of(char)))
         } catch (_: IllegalStateException) {
             replyFail()
         }
@@ -419,7 +429,7 @@ object IOPrimitiveUtils {
     fun Solve.Request<ExecutionContext>.readCodeAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
         return try {
             val code = channel.read()?.get(0)?.code ?: -1
-            replyWith(arg mguWith Integer.of(code))
+            replyWith(mgu(arg, Integer.of(code)))
         } catch (_: IllegalStateException) {
             replyFail()
         }
@@ -428,7 +438,7 @@ object IOPrimitiveUtils {
     fun Solve.Request<ExecutionContext>.readCharAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
         return try {
             val char = channel.read() ?: "end_of_file"
-            replyWith(arg mguWith Atom.of(char))
+            replyWith(mgu(arg, Atom.of(char)))
         } catch (_: IllegalStateException) {
             replyFail()
         }
@@ -469,11 +479,12 @@ object IOPrimitiveUtils {
                     val variableNames = variableNames(read.variables.toAssignments())
                     val singletons = singletons(read.singletons.toAssignments())
                     val info = infoList?.let {
-                        it.getInfo(INFO_SINGLETONS_PATTERN, singletons) +
-                            it.getInfo(INFO_VARIABLES_PATTERN, variables) +
-                            it.getInfo(INFO_VARIABLE_NAMES_PATTERN, variableNames)
-                    } ?: (arguments.last() mguWith List.of(variables, variableNames, singletons))
-                    replyWith((arg mguWith read) + info)
+                        val u = context.unificator
+                        it.getInfo(u, INFO_SINGLETONS_PATTERN, singletons) +
+                            it.getInfo(u, INFO_VARIABLES_PATTERN, variables) +
+                            it.getInfo(u, INFO_VARIABLE_NAMES_PATTERN, variableNames)
+                    } ?: mgu(arguments.last(), List.of(variables, variableNames, singletons))
+                    replyWith(mgu(arg, read) + info)
                 }
             }
         } catch (e: IllegalStateException) {
@@ -505,7 +516,7 @@ object IOPrimitiveUtils {
         } else {
             emptySet()
         }
-        val alias = options.firstOrNull { it matches PROPERTY_ALIAS_PATTERN }?.alias
+        val alias = options.firstOrNull { match(it, PROPERTY_ALIAS_PATTERN) }?.alias
         return when (mode) {
             IOMode.READ -> replyOpeningStream(url.openInputChannel(), third, alias)
             IOMode.WRITE -> replyOpeningStream(url.openOutputChannel(false), third, alias)
@@ -519,7 +530,7 @@ object IOPrimitiveUtils {
         alias: String? = null
     ): Solve.Response {
         val streamTerm = channel.streamTerm
-        return replyWith(third mguWith streamTerm) {
+        return replyWith(mgu(third, streamTerm)) {
             openOutputChannel(alias ?: "output_channel${channel.streamTerm[1]}", channel)
         }
     }
@@ -530,7 +541,7 @@ object IOPrimitiveUtils {
         alias: String? = null
     ): Solve.Response {
         val streamTerm = channel.streamTerm
-        return replyWith(third mguWith streamTerm) {
+        return replyWith(mgu(third, streamTerm)) {
             openInputChannel(alias ?: "input_channel${channel.streamTerm[1]}", channel)
         }
     }

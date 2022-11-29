@@ -22,34 +22,39 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.buffered
 
 @Suppress("LeakingThis")
 abstract class AbstractSolver<E : ExecutionContext>(
-    libraries: Runtime = Runtime.empty(),
-    flags: FlagStore = FlagStore.empty(),
-    initialStaticKb: Theory = Theory.empty(),
-    initialDynamicKb: Theory = MutableTheory.empty(),
-    inputChannels: InputStore = InputStore.fromStandard(),
-    outputChannels: OutputStore = OutputStore.fromStandard(),
+    unificator: Unificator,
+    libraries: Runtime,
+    flags: FlagStore,
+    initialStaticKb: Theory,
+    initialDynamicKb: Theory,
+    inputChannels: InputStore,
+    outputChannels: OutputStore,
     trustKb: Boolean = false
 ) : Solver {
 
     protected abstract var currentContext: E
 
     init {
+        val staticKb = initialStaticKb.setUnificator(unificator).toImmutableTheory()
+        val dynamicKb = initialDynamicKb.setUnificator(unificator).toMutableTheory()
         currentContext = initializeContext(
+            unificator,
             libraries,
             flags,
-            initialStaticKb.toImmutableTheory(),
-            initialDynamicKb.toMutableTheory(),
+            staticKb,
+            dynamicKb,
             getAllOperators(libraries).toOperatorSet(),
             inputChannels,
             outputChannels,
             trustKb
         )
         if (!trustKb) {
-            initializeKb(initialStaticKb, initialDynamicKb)
+            initializeKb(staticKb, dynamicKb)
         }
         onInitialize()
     }
@@ -59,13 +64,14 @@ abstract class AbstractSolver<E : ExecutionContext>(
     }
 
     protected abstract fun initializeContext(
-        libraries: Runtime = Runtime.empty(),
-        flags: FlagStore = FlagStore.empty(),
-        staticKb: Theory = Theory.empty(),
-        dynamicKb: Theory = MutableTheory.empty(),
+        unificator: Unificator,
+        libraries: Runtime,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
         operators: OperatorSet,
-        inputChannels: InputStore = InputStore.fromStandard(),
-        outputChannels: OutputStore = OutputStore.fromStandard(),
+        inputChannels: InputStore,
+        outputChannels: OutputStore,
         trustKb: Boolean = false
     ): E
 
@@ -79,8 +85,8 @@ abstract class AbstractSolver<E : ExecutionContext>(
     private fun resetKb(resetStatic: Boolean, resetDynamic: Boolean) {
         updateContext {
             update(
-                staticKb = if (resetStatic) Theory.emptyIndexed() else this.staticKb,
-                dynamicKb = if (resetDynamic) MutableTheory.emptyIndexed() else this.dynamicKb
+                staticKb = if (resetStatic) Theory.emptyIndexed(unificator) else this.staticKb,
+                dynamicKb = if (resetDynamic) MutableTheory.emptyIndexed(unificator) else this.dynamicKb
             )
         }
     }
@@ -105,15 +111,16 @@ abstract class AbstractSolver<E : ExecutionContext>(
         val staticSkippable = staticKb.let { it == null || it.directives.none() }
         val dynamicSkippable = dynamicKb.let { it == null || it.directives.none() }
         val merged = when {
-            staticSkippable && dynamicSkippable -> ClausePartition.of(staticKb, dynamicKb)
-            staticSkippable -> ClausePartition.of(staticKb) + dynamicKb?.partition(staticByDefault = false)
-            dynamicSkippable -> ClausePartition.of(dynamicKb) + staticKb?.partition()
-            else -> staticKb?.partition() + dynamicKb?.partition(staticByDefault = false)
+            staticSkippable && dynamicSkippable -> ClausePartition.of(unificator, staticKb, dynamicKb)
+            staticSkippable -> ClausePartition.of(unificator, staticKb) +
+                dynamicKb?.partition(unificator, staticByDefault = false)
+            dynamicSkippable -> ClausePartition.of(unificator, dynamicKb) + staticKb?.partition(unificator)
+            else -> staticKb?.partition(unificator) + dynamicKb?.partition(unificator, staticByDefault = false)
         }
         resetKb(!appendStatic, !appendDynamic)
-        merged.includes.map { loadGoal(it) }.forEach(this::solveInitialGoal)
-        updateContextWith(merged)
-        merged.initialGoals.forEach(this::solveInitialGoal)
+        merged?.includes?.map { loadGoal(it) }?.forEach(this::solveInitialGoal)
+        merged?.let { updateContextWith(it) }
+        merged?.initialGoals?.forEach(this::solveInitialGoal)
     }
 
     private fun solveInitialGoal(goal: Struct) {
@@ -131,6 +138,9 @@ abstract class AbstractSolver<E : ExecutionContext>(
             }
         }
     }
+
+    final override val unificator: Unificator
+        get() = currentContext.unificator
 
     final override val libraries: Runtime
         get() = currentContext.libraries
@@ -182,6 +192,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
     }
 
     abstract override fun copy(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,

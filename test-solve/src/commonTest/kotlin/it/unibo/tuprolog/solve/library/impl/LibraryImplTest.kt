@@ -17,7 +17,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
  * Test class for [LibraryImpl] and [Library]
@@ -39,7 +38,7 @@ internal class LibraryImplTest {
     @Test
     fun theoryCorrect() {
         val correct = LibraryUtils.allLibraries.map { (_, _, theory) -> theory }
-        val toBeTested = libraryInstances.map { it.theory }
+        val toBeTested = libraryInstances.map { it.clauses }.map { Theory.of(it) }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
     }
@@ -74,17 +73,15 @@ internal class LibraryImplTest {
 
     @Test
     fun containsSignatureDiscardsVarargSignatures() {
-        val library =
-            libraryWithoutAliasConstructor(OperatorSet(), Theory.indexedOf(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
+        val library = libraryWithoutAliasConstructor(
+            OperatorSet(),
+            Theory.of(Fact.of(Struct.of("f", Atom.of("a")))),
+            emptyMap(),
+            emptyMap()
+        )
 
         assertTrue { Signature("f", 1, false) in library }
-
-        try {
-            assertFalse { Signature("f", 1, true) in library }
-            fail()
-        } catch (e: NotImplementedError) {
-            // ok
-        }
+        assertFalse { Signature("f", 1, true) in library }
     }
 
     @Test

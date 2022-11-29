@@ -79,7 +79,7 @@ data class StateRuleSelection(override val context: ConcurrentExecutionContext) 
                 )
             currentGoal.isStruct -> with(context) {
                 val currentGoalStruct = currentGoal.castToStruct()
-                val ruleSources = sequenceOf(libraries.theory, staticKb, dynamicKb)
+                val ruleSources = sequenceOf(libraries.asTheory(context.unificator), staticKb, dynamicKb)
                 when {
                     currentGoalStruct.isTruth -> {
                         listOf(

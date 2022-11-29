@@ -8,15 +8,16 @@ import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class NumericIndex(
+    unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int
-) : AbstractIndexingLeaf(), Retractable {
+) : AbstractIndexingLeaf(unificator), Retractable {
 
     private val index: MutableMap<Numeric, MutableList<SituatedIndexedClause>> = mutableMapOf()
 
@@ -30,7 +31,7 @@ internal class NumericIndex(
         return if (clause.nestedFirstArgument().isNumber) {
             index[clause.asInnerNumeric()]
                 ?.asSequence()
-                ?.filter { it.innerClause matches clause }
+                ?.filter { unificator.match(it.innerClause, clause) }
                 ?.map { it.innerClause }
                 ?: emptySequence()
         } else {
@@ -71,7 +72,7 @@ internal class NumericIndex(
         }.minOrNull()
 
     private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
-        val actualIndex = index.indexOfFirst { it.innerClause matches clause }
+        val actualIndex = index.indexOfFirst { unificator.match(it.innerClause, clause) }
 
         return if (actualIndex == -1) {
             null
@@ -84,7 +85,7 @@ internal class NumericIndex(
         return if (clause.nestedFirstArgument().isNumber) {
             index[clause.asInnerNumeric()]
                 ?.asSequence()
-                ?.filter { it.innerClause matches clause }
+                ?.filter { unificator.match(it.innerClause, clause) }
                 ?: emptySequence()
         } else extractGlobalIndexedSequence(clause)
     }
@@ -97,12 +98,12 @@ internal class NumericIndex(
         return if (clause.nestedFirstArgument().isNumber) {
             when (val partialIndex = index[clause.asInnerNumeric()]) {
                 null -> emptySequence()
-                else -> Utils.removeAllLazily(partialIndex, clause).buffered()
+                else -> removeAllLazily(partialIndex, clause).buffered()
             }
         } else {
             Utils.merge(
                 index.values.asSequence().map {
-                    Utils.removeAllLazily(it, clause)
+                    removeAllLazily(it, clause)
                 }
             ).buffered()
         }
@@ -115,7 +116,7 @@ internal class NumericIndex(
         Utils.merge(index.values.asSequence().map { it.asSequence() })
 
     override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
-        getCache().filter { it.innerClause matches clause }
+        getCache().filter { unificator.match(it.innerClause, clause) }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
         extractGlobalIndexedSequence(clause).map { it.innerClause }

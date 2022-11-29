@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.library
 
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
@@ -66,14 +67,14 @@ interface Library : Pluggable {
         fun of(
             alias: String,
             primitives: Map<Signature, Primitive> = emptyMap(),
-            theory: Theory = Theory.empty(),
+            clauses: Iterable<Clause> = emptyList(),
             operators: OperatorSet = OperatorSet(),
             functions: Map<Signature, LogicFunction> = emptyMap()
         ): Library {
             require(ALIAS_PATTERN.matches(alias)) {
                 "Aliases should match the pattern $ALIAS_PATTERN"
             }
-            return LibraryImpl(alias, operators, theory, primitives, functions)
+            return LibraryImpl(alias, operators, clauses.toList(), primitives, functions)
         }
 
         @JvmStatic
@@ -81,10 +82,10 @@ interface Library : Pluggable {
         @JvmOverloads
         fun of(
             primitives: Map<Signature, Primitive> = emptyMap(),
-            theory: Theory = Theory.empty(),
+            clauses: Iterable<Clause> = emptyList(),
             operators: OperatorSet = OperatorSet(),
             functions: Map<Signature, LogicFunction> = emptyMap()
-        ): Library = of(DEFAULT_ALIAS, primitives, theory, operators, functions)
+        ): Library = of(DEFAULT_ALIAS, primitives, clauses, operators, functions)
 
         @JvmStatic
         @JsName("changingAlias")
@@ -92,6 +93,6 @@ interface Library : Pluggable {
         fun of(
             alias: String = DEFAULT_ALIAS,
             library: Library
-        ): Library = of(alias, library.primitives, library.theory, library.operators, library.functions)
+        ): Library = of(alias, library.primitives, library.clauses, library.operators, library.functions)
     }
 }

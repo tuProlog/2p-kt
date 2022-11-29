@@ -6,8 +6,8 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
@@ -51,14 +51,15 @@ interface Solver : ExecutionContextAware {
 
     @JsName("copy")
     fun copy(
-        libraries: Runtime = Runtime.empty(),
-        flags: FlagStore = FlagStore.empty(),
-        staticKb: Theory = Theory.empty(),
-        dynamicKb: Theory = MutableTheory.empty(),
-        stdIn: InputChannel<String> = InputChannel.stdIn(),
-        stdOut: OutputChannel<String> = OutputChannel.stdOut(),
-        stdErr: OutputChannel<String> = OutputChannel.stdErr(),
-        warnings: OutputChannel<Warning> = OutputChannel.warn()
+        unificator: Unificator = this.unificator,
+        libraries: Runtime = this.libraries,
+        flags: FlagStore = this.flags,
+        staticKb: Theory = this.staticKb,
+        dynamicKb: Theory = this.dynamicKb,
+        stdIn: InputChannel<String> = this.standardInput,
+        stdOut: OutputChannel<String> = this.standardOutput,
+        stdErr: OutputChannel<String> = this.standardError,
+        warnings: OutputChannel<Warning> = this.warnings,
     ): Solver
 
     @JsName("clone")

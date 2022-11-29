@@ -15,7 +15,6 @@ import it.unibo.tuprolog.solve.library.toRuntime
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
-import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
@@ -65,18 +64,18 @@ fun Sequence<Operator>.toOperatorSet(): OperatorSet {
 @JvmOverloads
 @JsName("libraryOf")
 fun libraryOf(alias: String? = null, item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): Library {
-    val theory = MutableTheory.empty()
+    val clauses = mutableListOf<Clause>()
     val primitives = mutableMapOf<Signature, Primitive>()
     val functions = mutableMapOf<Signature, LogicFunction>()
     for (item in arrayOf(item1, *items)) {
         when (item) {
             is PrimitiveWrapper<*> -> primitives += item.descriptionPair
             is FunctionWrapper<*> -> functions += item.descriptionPair
-            is RuleWrapper<*> -> theory.assertZ(item.implementation)
+            is RuleWrapper<*> -> clauses.add(item.implementation)
             else -> throw NotImplementedError("Cannot handle wrappers of type ${item::class}")
         }
     }
-    val library = Library.of(primitives, theory, OperatorSet.EMPTY, functions)
+    val library = Library.of(primitives, clauses, OperatorSet.EMPTY, functions)
     return alias?.let { Library.of(it, library) } ?: library
 }
 

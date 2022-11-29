@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier.FX
@@ -30,7 +31,6 @@ import it.unibo.tuprolog.solve.libs.oop.rules.NewObject2
 import it.unibo.tuprolog.solve.libs.oop.rules.PropertyReduce
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.theory.Theory
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -58,42 +58,40 @@ object OOPLib : AbstractLibrary() {
             Unregister
         ).map { it.descriptionPair }.toMap()
 
-    override val theory: Theory
-        get() = Theory.indexedOf(
-            sequenceOf(
-                ColonEquals.Cast,
-                ColonEquals.Invocation,
-                ColonEquals.Assignment,
-                Dot,
-                FluentReduce.Recursive,
-                FluentReduce.Couple,
-                FluentReduce.Trivial,
-                NewObject2,
-                PropertyReduce.Recursive,
-                PropertyReduce.Base,
-                Alias.forType("string", String::class),
-                Alias.forType("array", Array::class),
-                Alias.forType("list", List::class),
-                Alias.forType("arraylist", ArrayList::class),
-                Alias.forType("map", Map::class),
-                Alias.forType("hashmap", LinkedHashMap::class),
-                Alias.forType("int", Int::class),
-                Alias.forType("integer", Int::class),
-                Alias.forType("double", Double::class),
-                Alias.forType("float", Float::class),
-                Alias.forType("long", Long::class),
-                Alias.forType("short", Short::class),
-                Alias.forType("byte", Byte::class),
-                Alias.forType("char", Char::class),
-                Alias.forType("bool", Boolean::class),
-                Alias.forType("boolean", Boolean::class),
-                Alias.forType("any", Any::class),
-                Alias.forType("nothing", Nothing::class),
-                Alias.forType("big_integer", BigInteger::class),
-                Alias.forType("big_decimal", BigDecimal::class),
-                *platformSpecificAliases
-            ).map { it.implementation }
-        )
+    override val clauses: List<Clause>
+        get() = listOf(
+            ColonEquals.Cast,
+            ColonEquals.Invocation,
+            ColonEquals.Assignment,
+            Dot,
+            FluentReduce.Recursive,
+            FluentReduce.Couple,
+            FluentReduce.Trivial,
+            NewObject2,
+            PropertyReduce.Recursive,
+            PropertyReduce.Base,
+            Alias.forType("string", String::class),
+            Alias.forType("array", Array::class),
+            Alias.forType("list", List::class),
+            Alias.forType("arraylist", ArrayList::class),
+            Alias.forType("map", Map::class),
+            Alias.forType("hashmap", LinkedHashMap::class),
+            Alias.forType("int", Int::class),
+            Alias.forType("integer", Int::class),
+            Alias.forType("double", Double::class),
+            Alias.forType("float", Float::class),
+            Alias.forType("long", Long::class),
+            Alias.forType("short", Short::class),
+            Alias.forType("byte", Byte::class),
+            Alias.forType("char", Char::class),
+            Alias.forType("bool", Boolean::class),
+            Alias.forType("boolean", Boolean::class),
+            Alias.forType("any", Any::class),
+            Alias.forType("nothing", Nothing::class),
+            Alias.forType("big_integer", BigInteger::class),
+            Alias.forType("big_decimal", BigDecimal::class),
+            *platformSpecificAliases
+        ).map { it.implementation }
 
     override val operators: OperatorSet
         get() = OperatorSet(

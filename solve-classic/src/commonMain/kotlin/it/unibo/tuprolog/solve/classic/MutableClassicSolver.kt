@@ -18,30 +18,33 @@ import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 internal class MutableClassicSolver : ClassicSolver, MutableSolver {
 
     constructor(
+        unificator: Unificator = Unificator.default,
         libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
-        staticKb: Theory = Theory.empty(),
-        dynamicKb: Theory = MutableTheory.empty(),
+        staticKb: Theory = Theory.empty(unificator),
+        dynamicKb: Theory = MutableTheory.empty(unificator),
         inputChannels: InputStore = InputStore.fromStandard(),
         outputChannels: OutputStore = OutputStore.fromStandard(),
         trustKb: Boolean = false
-    ) : super(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb)
+    ) : super(unificator, libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb)
 
     constructor(
+        unificator: Unificator = Unificator.default,
         libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
-        staticKb: Theory = Theory.empty(),
-        dynamicKb: Theory = MutableTheory.empty(),
+        staticKb: Theory = Theory.empty(unificator),
+        dynamicKb: Theory = MutableTheory.empty(unificator),
         stdIn: InputChannel<String> = InputChannel.stdIn(),
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
         warnings: OutputChannel<Warning> = OutputChannel.warn(),
         trustKb: Boolean = false
-    ) : super(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
+    ) : super(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
 
     override fun loadLibrary(library: Library) {
         updateContext {
@@ -86,7 +89,7 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
     override fun resetStaticKb() {
         updateContext {
             copy(
-                staticKb = Theory.empty(),
+                staticKb = Theory.empty(unificator),
                 operators = getAllOperators(libraries, dynamicKb).toOperatorSet()
             )
         }
@@ -106,7 +109,7 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
     override fun resetDynamicKb() {
         updateContext {
             copy(
-                dynamicKb = MutableTheory.empty(),
+                dynamicKb = MutableTheory.empty(unificator),
                 operators = getAllOperators(libraries, staticKb).toOperatorSet()
             )
         }
@@ -223,6 +226,7 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
     }
 
     override fun copy(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -231,7 +235,7 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ) = MutableClassicSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ) = MutableClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun clone(): MutableClassicSolver = copy()
 }

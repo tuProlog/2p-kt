@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface ClausePartition {
@@ -41,6 +42,7 @@ interface ClausePartition {
     companion object {
         @JsName("of")
         fun of(
+            unificator: Unificator,
             staticClauses: Theory? = null,
             dynamicClauses: Theory? = null,
             operators: OperatorSet? = null,
@@ -48,8 +50,8 @@ interface ClausePartition {
             includes: List<Atom>? = null,
             flagStore: FlagStore? = null,
         ): ClausePartition = ClausePartitionImpl(
-            staticClauses ?: Theory.emptyIndexed(),
-            dynamicClauses ?: MutableTheory.emptyIndexed(),
+            staticClauses ?: Theory.emptyIndexed(unificator),
+            dynamicClauses ?: MutableTheory.emptyIndexed(unificator),
             operators ?: OperatorSet.EMPTY,
             initialGoals ?: emptyList(),
             includes ?: emptyList(),

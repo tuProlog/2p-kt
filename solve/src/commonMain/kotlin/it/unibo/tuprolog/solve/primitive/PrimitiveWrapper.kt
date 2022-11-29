@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.operators.Specifier
@@ -48,12 +49,21 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
     protected abstract fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response>
 
     /** Checked primitive implementation */
-    @Suppress("UNCHECKED_CAST")
     final override val implementation: Primitive = Primitive.enforcingSignature(signature, ::uncheckedImplementation)
 
     companion object {
 
-        // TODO: 16/01/2020 test the three "wrap" functions
+        @JvmStatic
+        fun <C : ExecutionContext> Solve.Request<C>.mgu(term1: Term, term2: Term): Substitution =
+            context.unificator.mgu(term1, term2)
+
+        @JvmStatic
+        fun <C : ExecutionContext> Solve.Request<C>.match(term1: Term, term2: Term): Boolean =
+            context.unificator.match(term1, term2)
+
+        @JvmStatic
+        fun <C : ExecutionContext> Solve.Request<C>.unify(term1: Term, term2: Term): Term? =
+            context.unificator.unify(term1, term2)
 
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Signature] and a [Primitive] function

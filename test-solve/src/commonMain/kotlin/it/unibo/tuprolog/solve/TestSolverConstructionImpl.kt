@@ -15,6 +15,7 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.toRuntime
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 
@@ -44,9 +45,10 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
     }
 
     private object Default {
+        val unificator: Unificator = Unificator.default
         val libraries = Runtime.empty()
-        val staticKb = Theory.empty()
-        val dynamicKb = Theory.empty()
+        val staticKb = Theory.empty(unificator)
+        val dynamicKb = Theory.empty(unificator)
         val flags = FlagStore.DEFAULT
         val inputs = InputStore.fromStandard(InputChannel.stdIn())
         val outputs = OutputStore.fromStandard(

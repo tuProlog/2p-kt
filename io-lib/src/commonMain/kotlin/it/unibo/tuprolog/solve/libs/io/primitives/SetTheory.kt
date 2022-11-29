@@ -20,7 +20,10 @@ object SetTheory : UnaryPredicate.NonBacktrackable<ExecutionContext>("set_theory
     fun Solve.Request<ExecutionContext>.setTheory(text: String, append: Boolean = true): Solve.Response {
         try {
             val theory = ClausesParser.withOperators(context.operators).parseTheory(text)
-            val solver = context.createMutableSolver(staticKb = Theory.empty(), dynamicKb = MutableTheory.empty())
+            val solver = context.createMutableSolver(
+                staticKb = Theory.empty(context.unificator),
+                dynamicKb = MutableTheory.empty(context.unificator)
+            )
             solver.loadStaticKb(theory)
             return replySuccess {
                 if (append) {

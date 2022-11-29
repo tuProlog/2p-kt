@@ -3,6 +3,7 @@ package it.unibo.tuprolog.theory
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.testutils.TheoryUtils
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.addTag
 import it.unibo.tuprolog.utils.clearTags
 import it.unibo.tuprolog.utils.plus
@@ -18,14 +19,14 @@ import kotlin.test.assertTrue
 class TestTheoryMetadata {
 
     private val theories get() = listOf<Theory>(
-        Theory.emptyIndexed(),
-        Theory.emptyListed(),
-        Theory.indexedOf(TheoryUtils.wellFormedClauses),
-        Theory.listedOf(TheoryUtils.wellFormedClauses),
-        MutableTheory.emptyIndexed(),
-        MutableTheory.emptyListed(),
-        MutableTheory.indexedOf(TheoryUtils.wellFormedClauses),
-        MutableTheory.listedOf(TheoryUtils.wellFormedClauses),
+        Theory.emptyIndexed(Unificator.default),
+        Theory.emptyListed(Unificator.default),
+        Theory.indexedOf(Unificator.default, TheoryUtils.wellFormedClauses),
+        Theory.listedOf(Unificator.default, TheoryUtils.wellFormedClauses),
+        MutableTheory.emptyIndexed(Unificator.default),
+        MutableTheory.emptyListed(Unificator.default),
+        MutableTheory.indexedOf(Unificator.default, TheoryUtils.wellFormedClauses),
+        MutableTheory.listedOf(Unificator.default, TheoryUtils.wellFormedClauses),
     )
 
     private data class Metadata<T>(val value: T)
@@ -41,14 +42,14 @@ class TestTheoryMetadata {
         .map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
         .let {
             listOf(
-                Theory.emptyIndexed().setTag(yetAnotherKey, someValue2),
-                Theory.emptyListed().setTag(yetAnotherKey, someValue2),
-                Theory.indexedOf(it).setTag(yetAnotherKey, someValue2),
-                Theory.listedOf(it).setTag(yetAnotherKey, someValue2),
-                MutableTheory.emptyIndexed().setTag(yetAnotherKey, someValue2),
-                MutableTheory.emptyListed().setTag(yetAnotherKey, someValue2),
-                MutableTheory.indexedOf(it).setTag(yetAnotherKey, someValue2),
-                MutableTheory.listedOf(it).setTag(yetAnotherKey, someValue2)
+                Theory.emptyIndexed(Unificator.default).setTag(yetAnotherKey, someValue2),
+                Theory.emptyListed(Unificator.default).setTag(yetAnotherKey, someValue2),
+                Theory.indexedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2),
+                Theory.listedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2),
+                MutableTheory.emptyIndexed(Unificator.default).setTag(yetAnotherKey, someValue2),
+                MutableTheory.emptyListed(Unificator.default).setTag(yetAnotherKey, someValue2),
+                MutableTheory.indexedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2),
+                MutableTheory.listedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2)
             )
         }
 

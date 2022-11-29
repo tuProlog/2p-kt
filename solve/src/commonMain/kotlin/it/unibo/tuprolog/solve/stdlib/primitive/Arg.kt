@@ -8,7 +8,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import org.gciatto.kt.math.BigInteger
 
 object Arg : TernaryRelation.WithoutSideEffects<ExecutionContext>("arg") {
@@ -24,7 +23,7 @@ object Arg : TernaryRelation.WithoutSideEffects<ExecutionContext>("arg") {
                 return when (first) {
                     is Var -> {
                         compound.argsSequence.mapIndexed { i, arg ->
-                            (i + 1) to (arg mguWith third)
+                            (i + 1) to mgu(arg, third)
                         }.filter { (_, sub) ->
                             sub is Substitution.Unifier
                         }.map { (i, sub) ->
@@ -34,7 +33,7 @@ object Arg : TernaryRelation.WithoutSideEffects<ExecutionContext>("arg") {
                     is Integer -> {
                         ensuringArgumentIsNonNegativeInteger(0)
                         if (first.value in BigInteger.ONE..BigInteger.of(compound.arity)) {
-                            sequenceOf(third mguWith compound[first.value.toInt() - 1])
+                            sequenceOf(mgu(third, compound[first.value.toInt() - 1]))
                         } else {
                             sequenceOf(Substitution.failed())
                         }

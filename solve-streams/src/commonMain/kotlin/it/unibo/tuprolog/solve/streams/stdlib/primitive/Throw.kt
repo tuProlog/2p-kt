@@ -7,52 +7,47 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils
 import it.unibo.tuprolog.solve.exception.error.SystemError
-import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * Implementation of primitive handling `throw/1` behaviour
  *
  * @author Enrico
  */
-internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
+internal object Throw : UnaryPredicate.NonBacktrackable<StreamsExecutionContext>("throw") {
 
-    override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
+    override fun Solve.Request<StreamsExecutionContext>.computeOne(first: Term): Solve.Response =
         try {
-            request.ensuringAllArgumentsAreInstantiated().arguments.single().freshCopy().let { throwArgument ->
-                val ancestorCatch = request.context.sideEffectManager.retrieveAncestorCatchRequest(throwArgument)
+            ensuringAllArgumentsAreInstantiated().arguments.single().freshCopy().let { throwArgument ->
+                val ancestorCatch = context.sideEffectManager.retrieveAncestorCatchRequest(throwArgument)
 
-                when (val catcherUnifyingSubstitution = ancestorCatch?.arguments?.get(1)?.mguWith(throwArgument)) {
+                when (val catcher = ancestorCatch?.arguments?.get(1)?.let { mgu(it, throwArgument) }) {
                     // matching catch found, it will handle exception
-                    is Substitution.Unifier -> sequenceOf(
-                        with(request) {
-                            val newSubstitution =
-                                (context.substitution + catcherUnifyingSubstitution) as Substitution.Unifier
-
-                            replySuccess(
-                                newSubstitution,
-                                sideEffectManager = context.sideEffectManager.throwCut(ancestorCatch.context)
-                            )
-                        }
-                    )
+                    is Substitution.Unifier -> {
+                        val newSubstitution = (context.substitution + catcher) as Substitution.Unifier
+                        replySuccess(
+                            newSubstitution,
+                            sideEffectManager = context.sideEffectManager.throwCut(ancestorCatch.context)
+                        )
+                    }
 
                     // no catch found that can handle thrown exception
                     else -> {
-                        val errorCause = throwArgument.extractErrorCauseChain(request.context)
+                        val errorCause = throwArgument.extractErrorCauseChain(context)
                         when {
                             // if unhandled error is a LogicError, rethrow outside
                             errorCause != null -> throw errorCause
 
                             // if current unhandled exception is some other error, launch it as message
-                            else -> throw SystemError.forUncaughtException(request.context, throwArgument)
+                            else -> throw SystemError.forUncaughtException(context, throwArgument)
                         }
                     }
                 }
             }
         } catch (logicError: LogicError) {
-            sequenceOf(request.replyException(logicError))
+            replyException(logicError)
         }
 
     /** Utility function to extract error type from a term that should be `error(TYPE_STRUCT, ...)` */

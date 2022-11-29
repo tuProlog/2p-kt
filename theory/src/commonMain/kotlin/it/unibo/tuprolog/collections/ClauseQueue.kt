@@ -3,6 +3,7 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.collections.impl.ReteClauseQueue
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.itemWiseEquals
 import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
@@ -58,18 +59,21 @@ interface ClauseQueue : ClauseCollection {
         /** Creates an empty [ClauseQueue] **/
         @JvmStatic
         @JsName("empty")
-        fun empty(): ClauseQueue = of(emptyList())
+        fun empty(unificator: Unificator): ClauseQueue =
+            of(unificator, emptyList())
 
         /** Creates a [ClauseQueue] with given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(vararg clause: Clause): ClauseQueue = of(clause.asIterable())
+        fun of(unificator: Unificator, vararg clause: Clause): ClauseQueue =
+            of(unificator, clause.asIterable())
 
         /** Let developers easily create a [ClauseQueue] programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(vararg clause: Scope.() -> Clause): ClauseQueue =
+        fun of(unificator: Unificator, vararg clause: Scope.() -> Clause): ClauseQueue =
             of(
+                unificator,
                 clause.map {
                     Scope.empty(it)
                 }
@@ -78,13 +82,14 @@ interface ClauseQueue : ClauseCollection {
         /** Creates a [ClauseQueue] from the given [Sequence] of [Clause] */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(clauses: Sequence<Clause>): ClauseQueue = of(clauses.asIterable())
+        fun of(unificator: Unificator, clauses: Sequence<Clause>): ClauseQueue =
+            of(unificator, clauses.asIterable())
 
         /** Creates a [ClauseQueue] from the given [Iterable] of [Clause] */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(clauses: Iterable<Clause>): ClauseQueue =
-            ReteClauseQueue(clauses)
+        fun of(unificator: Unificator, clauses: Iterable<Clause>): ClauseQueue =
+            ReteClauseQueue(unificator, clauses)
 
         @JvmStatic
         @JsName("areEquals")

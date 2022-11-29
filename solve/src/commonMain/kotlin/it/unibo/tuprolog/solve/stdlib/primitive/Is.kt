@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.evalAsExpression
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * Implementation of 'is'/2 predicate
@@ -17,6 +16,6 @@ object Is : BinaryRelation.Functional<ExecutionContext>("is") {
 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
         ensuringArgumentIsInstantiated(1).run {
-            first mguWith second.evalAsExpression(this, 1)
+            mgu(first, second.evalAsExpression(this, 1))
         }
 }

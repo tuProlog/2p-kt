@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionExcepti
 import it.unibo.tuprolog.solve.primitive.Solve.Request
 import it.unibo.tuprolog.solve.primitive.Solve.Response
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import kotlin.reflect.KClass
 
 object Cast : TernaryRelation<ExecutionContext>("cast") {
@@ -33,7 +32,7 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
                         .asSequence()
                         .flatMap { it.allSupertypes(false) }
                         .distinct()
-                        .map { cast(first, it, third) + (second mguWith TypeRef.of(it)) }
+                        .map { cast(first, it, third) + mgu(second, TypeRef.of(it)) }
                         .map { replyWith(it) }
                 }
                 else -> {
@@ -48,6 +47,6 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
             Substitution.failed()
         } else {
             val casted = termToObjectConverter.convertInto(type, term)
-            result mguWith ObjectRef.of(casted)
+            mgu(result, ObjectRef.of(casted))
         }
 }

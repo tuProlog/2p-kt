@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.buffered
 
 object Retract : UnaryPredicate<ExecutionContext>("retract") {
@@ -24,8 +23,8 @@ object Retract : UnaryPredicate<ExecutionContext>("retract") {
         ensuringClauseProcedureHasPermission(clause, PermissionError.Operation.MODIFY)
         return context.dynamicKb[clause].buffered().map {
             val substitution = when (first) {
-                is Clause -> (first mguWith it) as Substitution.Unifier
-                else -> (first mguWith it.head!!) as Substitution.Unifier
+                is Clause -> mgu(first, it) as Substitution.Unifier
+                else -> mgu(first, it.head!!) as Substitution.Unifier
             }
             replySuccess(substitution) {
                 removeDynamicClauses(it)

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.logicProgramming
@@ -15,6 +16,7 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.oop.primitives.Register
 import it.unibo.tuprolog.solve.libs.oop.rules.Alias
 import it.unibo.tuprolog.solve.yes
+import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
@@ -28,7 +30,9 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
             null -> ObjectRef.NULL
             else -> ObjectRef.of(obj)
         }
-        return OOPLib.theory[Struct.of(Alias.FUNCTOR, Var.anonymous(), ref)]
+        return OOPLib.clauses.asSequence()
+            .filterIsInstance<Rule>()
+            .filter { it.head matches Struct.of(Alias.FUNCTOR, Var.anonymous(), ref) }
             .map { it.head[0] as? Atom }
             .filterNotNull()
             .map { it.value }

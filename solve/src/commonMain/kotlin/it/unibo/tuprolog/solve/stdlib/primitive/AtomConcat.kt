@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * atom_concat(ab, cd, abcd).
@@ -54,7 +53,7 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
                 val firstString = (first as Atom).value
                 val secondString = (second as Atom).value
                 val thirdString = firstString + secondString
-                third mguWith Atom.of(thirdString)
+                mgu(third, Atom.of(thirdString))
             }
         }
     }

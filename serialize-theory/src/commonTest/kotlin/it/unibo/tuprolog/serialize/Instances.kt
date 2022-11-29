@@ -1,6 +1,12 @@
 package it.unibo.tuprolog.serialize
 
+import it.unibo.tuprolog.solve.stdlib.CommonRules
+import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
+
 object Instances {
+    val commonRules = Theory.of(Unificator.default, CommonRules.clauses)
+
     val commonRulesInJSON =
         """
         |[

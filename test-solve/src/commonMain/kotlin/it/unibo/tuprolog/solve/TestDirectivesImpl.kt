@@ -15,7 +15,6 @@ import it.unibo.tuprolog.solve.DirectiveTestsUtils.solverInitializersWithEventsL
 import it.unibo.tuprolog.solve.DirectiveTestsUtils.staticDirective
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
-import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -33,8 +32,8 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
                 facts("h", 7..9)
             )
 
-            val expectedStatic = Theory.of(initialStaticKb.take(8))
-            val expectedDynamic = MutableTheory.of(initialStaticKb.drop(8))
+            val expectedStatic = theoryOf(initialStaticKb.take(8))
+            val expectedDynamic = mutableTheoryOf(initialStaticKb.drop(8))
 
             val solver = solverFactory.solverOf(staticKb = initialStaticKb)
 
@@ -43,8 +42,8 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
 
             val mutableSolver = solverFactory.mutableSolverOf()
 
-            assertEquals(Theory.empty(), mutableSolver.staticKb)
-            assertEquals(MutableTheory.empty(), mutableSolver.dynamicKb)
+            assertEquals(emptyTheory(), mutableSolver.staticKb)
+            assertEquals(emptyMutableTheory(), mutableSolver.dynamicKb)
 
             mutableSolver.loadStaticKb(initialStaticKb)
 
@@ -63,7 +62,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
                 facts("h", 7..9)
             )
 
-            val expectedStatic = Theory.of(initialDynamicKb.drop(4).take(3))
+            val expectedStatic = theoryOf(initialDynamicKb.drop(4).take(3))
             val expectedDynamic = theoryOf(
                 facts("f", 1..3),
                 staticDirective("g", 1),
@@ -71,15 +70,15 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
                 facts("h", 7..9)
             ).toMutableTheory()
 
-            val solver = solverFactory.solverOf(staticKb = Theory.empty(), dynamicKb = initialDynamicKb)
+            val solver = solverFactory.solverOf(staticKb = emptyTheory(), dynamicKb = initialDynamicKb)
 
             assertEquals(expectedStatic, solver.staticKb)
             assertEquals(expectedDynamic, solver.dynamicKb)
 
             val mutableSolver = solverFactory.mutableSolverOf()
 
-            assertEquals(Theory.empty(), mutableSolver.staticKb)
-            assertEquals(MutableTheory.empty(), mutableSolver.dynamicKb)
+            assertEquals(emptyTheory(), mutableSolver.staticKb)
+            assertEquals(emptyMutableTheory(), mutableSolver.dynamicKb)
 
             mutableSolver.loadDynamicKb(initialDynamicKb)
 

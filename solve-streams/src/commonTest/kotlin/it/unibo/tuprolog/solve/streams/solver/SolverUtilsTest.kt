@@ -37,8 +37,8 @@ import kotlin.test.fail
 internal class SolverUtilsTest {
 
     private val aContext = StreamsExecutionContext(
-        dynamicKb = Theory.indexedOf({ factOf(atomOf("a")) }),
-        staticKb = Theory.indexedOf({ factOf(atomOf("a")) }),
+        dynamicKb = Theory.of({ factOf(atomOf("a")) }),
+        staticKb = Theory.of({ factOf(atomOf("a")) }),
         flags = FlagStore.EMPTY
     )
 

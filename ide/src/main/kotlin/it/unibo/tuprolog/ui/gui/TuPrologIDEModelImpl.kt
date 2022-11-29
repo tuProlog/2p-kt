@@ -8,9 +8,9 @@ import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
+import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.IOLib
@@ -143,8 +143,8 @@ internal class TuPrologIDEModelImpl(
     }
 
     private val solver = Cached.of {
-        var newSolver = MutableSolver.classicWithDefaultBuiltins(
-            libraries = Runtime.of(OOPLib, IOLib),
+        var newSolver = Solver.prolog.mutableSolverWithDefaultBuiltins(
+            otherLibraries = Runtime.of(OOPLib, IOLib),
             stdIn = InputChannel.of(stdin),
             stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
             stdErr = OutputChannel.of { onStderrPrinted.push(it) },
@@ -229,7 +229,7 @@ internal class TuPrologIDEModelImpl(
                 files[file].let { content ->
                     if (!onlyIfChanged || content?.changed != false) {
                         try {
-                            val theory = content?.text()?.parseAsTheory(solver.operators) ?: Theory.empty()
+                            val theory = content?.text()?.parseAsTheory(solver.operators) ?: Theory.empty(solver.unificator)
                             solver.resetDynamicKb()
                             solver.loadStaticKb(theory)
                             onNewStaticKb.push(SolverEvent(Unit, solver))

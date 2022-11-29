@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import kotlin.collections.Set
 import it.unibo.tuprolog.core.List as LogicList
 
@@ -24,7 +23,7 @@ abstract class AbstractCollectionOf(val name: String) : AbstractCollectingPrimit
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
-        val mgu = APEX_TEMPLATE mguWith second
+        val mgu = mgu(APEX_TEMPLATE, second)
         val uninteresting: Set<Var> = when (mgu) {
             is Substitution.Unifier -> when (val vars = mgu[VARS]) {
                 is Tuple -> vars.toSequence().filterIsInstance<Var>().toSet()
@@ -43,7 +42,7 @@ abstract class AbstractCollectionOf(val name: String) : AbstractCollectingPrimit
             val solValues = sols.map { first[it.substitution] }
                 .filterNot { it in nonPresentable }
                 .map { it.freshCopy() }
-            sub + (third mguWith LogicList.of(processSolutions(solValues)))
+            sub + mgu(third, LogicList.of(processSolutions(solValues)))
         }
     }
 

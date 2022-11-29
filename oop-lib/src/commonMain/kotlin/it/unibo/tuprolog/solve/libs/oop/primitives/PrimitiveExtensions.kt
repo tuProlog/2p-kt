@@ -22,21 +22,24 @@ import it.unibo.tuprolog.solve.libs.oop.exceptions.NoSuchAnAliasException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopException
 import it.unibo.tuprolog.solve.libs.oop.rules.Alias
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsStruct
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.match
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import kotlin.jvm.JvmName
 
 internal val DEALIASING_TEMPLATE = Struct.of(DEALIASING_OPERATOR, Var.of("Alias"))
 
-internal val Term.isDealiasingExpression: Boolean
-    get() = this is Struct && this matches DEALIASING_TEMPLATE && args[0] is Atom
+internal fun <C : ExecutionContext> Solve.Request<C>.isDealiasingExpression(term: Term): Boolean =
+    term is Struct && match(term, DEALIASING_TEMPLATE) && term.args[0] is Atom
+
+internal fun <C : ExecutionContext> Solve.Request<C>.matchesDealiasingTemplate(term: Term): Boolean =
+    term is Struct && match(term, DEALIASING_TEMPLATE)
 
 internal val CAST_TEMPLATE = Struct.template(CAST_OPERATOR, 2)
 
 fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsRef(index: Int): Solve.Request<C> {
     val arg = arguments[index]
     return when {
-        arg is Struct && arg matches DEALIASING_TEMPLATE && ensureAliasIsRegistered(arg) -> this
+        matchesDealiasingTemplate(arg) && ensureAliasIsRegistered(arg.castToStruct()) -> this
         arg !is Ref -> throw TypeError.forArgument(context, signature, TypeError.Expected.REFERENCE, arg, index)
         else -> this
     }
@@ -45,7 +48,7 @@ fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsRef(index: Int): S
 fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsObjectRef(index: Int): Solve.Request<C> {
     val arg = arguments[index]
     return when {
-        arg is Struct && arg matches DEALIASING_TEMPLATE && findRefFromAlias(arg) is ObjectRef -> this
+        matchesDealiasingTemplate(arg) && findRefFromAlias(arg.castToStruct()) is ObjectRef -> this
         arg !is ObjectRef -> throw TypeError.forArgument(
             context,
             signature,
@@ -60,7 +63,7 @@ fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsObjectRef(index: I
 fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsTypeRef(index: Int): Solve.Request<C> {
     val arg = arguments[index]
     return when {
-        arg is Struct && arg matches DEALIASING_TEMPLATE && findRefFromAlias(arg) is TypeRef -> this
+        matchesDealiasingTemplate(arg) && findRefFromAlias(arg.castToStruct()) is TypeRef -> this
         arg !is TypeRef -> throw TypeError.forArgument(
             context,
             signature,
@@ -82,8 +85,8 @@ fun <C : ExecutionContext> Solve.Request<C>.getArgumentAsTypeRef(index: Int): Ty
         arg is Atom -> {
             TypeFactory.default.typeRefFromName(arg.value)
         }
-        arg is Struct && arg.isDealiasingExpression -> {
-            findRefFromAlias(arg) as? TypeRef
+        isDealiasingExpression(arg) -> {
+            findRefFromAlias(arg.castToStruct()) as? TypeRef
         }
         else -> {
             ensuringArgumentIsTypeRef(1)
@@ -93,7 +96,7 @@ fun <C : ExecutionContext> Solve.Request<C>.getArgumentAsTypeRef(index: Int): Ty
 }
 
 private fun <C : ExecutionContext> Solve.Request<C>.findRefFromAliasOrNull(alias: Struct): Ref? {
-    val actualAlias = if (alias.isDealiasingExpression) {
+    val actualAlias = if (isDealiasingExpression(alias)) {
         alias[0] as Struct
     } else {
         throw MalformedAliasException(alias)

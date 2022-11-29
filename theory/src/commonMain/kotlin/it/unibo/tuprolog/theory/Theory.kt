@@ -10,15 +10,22 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.impl.IndexedTheory
 import it.unibo.tuprolog.theory.impl.ListedTheory
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Theory : Iterable<Clause>, Taggable<Theory> {
 
+    @JsName("unificator")
+    val unificator: Unificator
+
     @JsName("isMutable")
     val isMutable: Boolean
         get() = false
+
+    @JsName("setUnificator")
+    fun setUnificator(unificator: Unificator): Theory
 
     @JsName("toMutableTheory")
     fun toMutableTheory(): MutableTheory
@@ -157,58 +164,76 @@ interface Theory : Iterable<Clause>, Taggable<Theory> {
 
     companion object {
 
-        private val EMPTY: Theory =
-            indexedOf(emptySequence())
-
         /** Creates an empty [Theory] */
         @JvmStatic
         @JsName("empty")
-        fun empty(): Theory =
-            EMPTY
+        fun empty(unificator: Unificator): Theory =
+            indexedOf(unificator, emptySequence())
+
+        @JvmStatic
+        @JsName("emptyWithDefaultUnificator")
+        fun empty(): Theory = empty(Unificator.default)
 
         /** Creates a [Theory], containing the given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(vararg clause: Clause): Theory =
-            indexedOf(*clause)
+        fun of(unificator: Unificator, vararg clause: Clause): Theory =
+            indexedOf(unificator, *clause)
+
+        @JvmStatic
+        @JsName("ofWithDefaultUnificator")
+        fun of(vararg clause: Clause): Theory = indexedOf(Unificator.default, *clause)
 
         /** Creates a [Theory], containing the given clauses */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(clauses: Iterable<Clause>): Theory =
-            indexedOf(clauses)
+        fun of(unificator: Unificator, clauses: Iterable<Clause>): Theory =
+            indexedOf(unificator, clauses)
+
+        @JvmStatic
+        @JsName("ofIterableWithDefaultUnificator")
+        fun of(clauses: Iterable<Clause>): Theory = indexedOf(Unificator.default, clauses)
 
         /** Creates a [Theory], containing the given clauses */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(clauses: Sequence<Clause>): Theory =
-            indexedOf(clauses)
+        fun of(unificator: Unificator, clauses: Sequence<Clause>): Theory =
+            indexedOf(unificator, clauses)
+
+        @JvmStatic
+        @JsName("ofSequenceWithDefaultUnificator")
+        fun of(clauses: Sequence<Clause>): Theory = indexedOf(Unificator.default, clauses)
 
         /** Let developers easily create a [Theory], while avoiding variables names clashing by using a
          * different [Scope] for each [Clause] */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(vararg clauses: Scope.() -> Clause): Theory =
-            indexedOf(*clauses)
+        fun of(unificator: Unificator, vararg clauses: Scope.() -> Clause): Theory =
+            indexedOf(unificator, *clauses)
+
+        @JvmStatic
+        @JsName("ofScopesWithDefaultUnificator")
+        fun of(vararg clauses: Scope.() -> Clause): Theory = indexedOf(Unificator.default, *clauses)
 
         /** Creates an empty [Theory] backed by an indexed data structure */
         @JvmStatic
         @JsName("emptyIndexed")
-        fun emptyIndexed(): Theory =
-            indexedOf(emptyList())
+        fun emptyIndexed(unificator: Unificator): Theory =
+            indexedOf(unificator, emptyList())
 
         /** Creates a [Theory] backed by an indexed data structure, containing the given clauses */
         @JvmStatic
         @JsName("indexedOf")
-        fun indexedOf(vararg clause: Clause): Theory =
-            indexedOf(clause.asIterable())
+        fun indexedOf(unificator: Unificator, vararg clause: Clause): Theory =
+            indexedOf(unificator, clause.asIterable())
 
         /** Let developers easily create a [Theory] backed by an indexed data structure, while avoiding variables names
          * clashing by using a different [Scope] for each [Clause] */
         @JvmStatic
         @JsName("indexedOfScopes")
-        fun indexedOf(vararg clauses: Scope.() -> Clause): Theory =
+        fun indexedOf(unificator: Unificator, vararg clauses: Scope.() -> Clause): Theory =
             indexedOf(
+                unificator,
                 clauses.map {
                     Scope.empty(it)
                 }
@@ -217,33 +242,34 @@ interface Theory : Iterable<Clause>, Taggable<Theory> {
         /** Creates a [Theory] backed by an indexed data structure, containing the given clauses */
         @JvmStatic
         @JsName("indexedOfSequence")
-        fun indexedOf(clauses: Sequence<Clause>): Theory =
-            indexedOf(clauses.asIterable())
+        fun indexedOf(unificator: Unificator, clauses: Sequence<Clause>): Theory =
+            indexedOf(unificator, clauses.asIterable())
 
         /** Creates a [Theory] backed by an indexed data structure, containing the given clauses */
         @JvmStatic
         @JsName("indexedOfIterable")
-        fun indexedOf(clauses: Iterable<Clause>): Theory =
-            IndexedTheory(clauses)
+        fun indexedOf(unificator: Unificator, clauses: Iterable<Clause>): Theory =
+            IndexedTheory(unificator, clauses)
 
         /** Creates a [Theory] backed by a list, containing the given clauses */
         @JvmStatic
         @JsName("emptyListed")
-        fun emptyListed(): Theory =
-            listedOf(emptySequence())
+        fun emptyListed(unificator: Unificator): Theory =
+            listedOf(unificator, emptySequence())
 
         /** Creates a [Theory] backed by a list, containing the given clauses */
         @JvmStatic
         @JsName("listedOf")
-        fun listedOf(vararg clause: Clause): Theory =
-            listedOf(clause.asIterable())
+        fun listedOf(unificator: Unificator, vararg clause: Clause): Theory =
+            listedOf(unificator, clause.asIterable())
 
         /** Let developers easily create a [Theory] backed by a list, while avoiding variables names
          * clashing by using a different [Scope] for each [Clause] */
         @JvmStatic
         @JsName("listedOfScopes")
-        fun listedOf(vararg clause: Scope.() -> Clause): Theory =
+        fun listedOf(unificator: Unificator, vararg clause: Scope.() -> Clause): Theory =
             listedOf(
+                unificator,
                 clause.map {
                     Scope.empty(it)
                 }
@@ -252,13 +278,13 @@ interface Theory : Iterable<Clause>, Taggable<Theory> {
         /** Creates a [Theory] backed by a list, containing the given clauses */
         @JvmStatic
         @JsName("listedOfSequence")
-        fun listedOf(clauses: Sequence<Clause>): Theory =
-            listedOf(clauses.asIterable())
+        fun listedOf(unificator: Unificator, clauses: Sequence<Clause>): Theory =
+            listedOf(unificator, clauses.asIterable())
 
         /** Creates a [Theory] backed by a list, containing the given clauses */
         @JvmStatic
         @JsName("listedOfIterable")
-        fun listedOf(clauses: Iterable<Clause>): Theory =
-            ListedTheory(clauses)
+        fun listedOf(unificator: Unificator, clauses: Iterable<Clause>): Theory =
+            ListedTheory(unificator, clauses)
     }
 }

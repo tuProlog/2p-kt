@@ -10,30 +10,33 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 internal open class ClassicSolver : AbstractClassicSolver {
 
     constructor(
+        unificator: Unificator = Unificator.default,
         libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
-        initialStaticKb: Theory = Theory.empty(),
-        initialDynamicKb: Theory = MutableTheory.empty(),
+        initialStaticKb: Theory = Theory.empty(unificator),
+        initialDynamicKb: Theory = MutableTheory.empty(unificator),
         inputChannels: InputStore = InputStore.fromStandard(),
         outputChannels: OutputStore = OutputStore.fromStandard(),
         trustKb: Boolean = false
-    ) : super(libraries, flags, initialStaticKb, initialDynamicKb, inputChannels, outputChannels, trustKb)
+    ) : super(unificator, libraries, flags, initialStaticKb, initialDynamicKb, inputChannels, outputChannels, trustKb)
 
     constructor(
+        unificator: Unificator = Unificator.default,
         libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
-        staticKb: Theory = Theory.empty(),
-        dynamicKb: Theory = MutableTheory.empty(),
+        staticKb: Theory = Theory.empty(unificator),
+        dynamicKb: Theory = MutableTheory.empty(unificator),
         stdIn: InputChannel<String> = InputChannel.stdIn(),
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
         warnings: OutputChannel<Warning> = OutputChannel.warn(),
         trustKb: Boolean = false
-    ) : super(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
+    ) : super(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
 
     override fun solutionIterator(
         initialState: State,
@@ -41,6 +44,7 @@ internal open class ClassicSolver : AbstractClassicSolver {
     ) = SolutionIterator.of(initialState, onStateTransition)
 
     override fun copy(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -49,7 +53,7 @@ internal open class ClassicSolver : AbstractClassicSolver {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ) = ClassicSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ) = ClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun clone(): ClassicSolver = copy()
 }

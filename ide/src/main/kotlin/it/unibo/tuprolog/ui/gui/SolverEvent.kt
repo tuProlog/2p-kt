@@ -7,9 +7,11 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 data class SolverEvent<T>(
     val event: T,
+    override val unificator: Unificator,
     override val operators: OperatorSet,
     override val libraries: Runtime,
     override val flags: FlagStore,
@@ -21,6 +23,7 @@ data class SolverEvent<T>(
     constructor(event: T, other: ExecutionContextAware) :
         this(
             event = event,
+            unificator = other.unificator,
             dynamicKb = other.dynamicKb.toImmutableTheory(),
             flags = other.flags,
             inputChannels = other.inputChannels,

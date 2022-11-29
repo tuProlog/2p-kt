@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.toTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.isPrologMode
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * This applies an "And" logical operation between two explanations represented by [ProbExplanationTerm].
@@ -28,7 +27,7 @@ internal object ProbExplAnd : TernaryRelation.NonBacktrackable<ExecutionContext>
 
         /* Skip computations for Prolog-only queries */
         if (context.isPrologMode()) {
-            return replyWith(first mguWith ProbExplanation.TRUE.toTerm())
+            return replyWith(mgu(first, ProbExplanation.TRUE.toTerm()))
         }
 
         return if (first is Var && second is ProbExplanationTerm && third is ProbExplanationTerm) {
@@ -42,7 +41,7 @@ internal object ProbExplAnd : TernaryRelation.NonBacktrackable<ExecutionContext>
             if (explanation.probability == 0.0) {
                 replyWith(false)
             } else {
-                replyWith(first mguWith ProbExplanationTerm(explanation))
+                replyWith(mgu(first, ProbExplanationTerm(explanation)))
             }
         } else replyException(ResolutionException("Can't compute $functor", context = context))
     }

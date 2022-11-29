@@ -16,7 +16,6 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.getSolverOptions
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * This primitive computes an explanation by finding solutions for all the "evidence" predicates
@@ -43,7 +42,7 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         val evidenceIndicator = Indicator.of(EVIDENCE_PREDICATE, 2)
         if (evidenceIndicator !in context.staticKb && evidenceIndicator !in context.dynamicKb) {
-            return replyWith(first mguWith ProbExplanationTerm(ProbExplanation.TRUE))
+            return replyWith(mgu(first, ProbExplanationTerm(ProbExplanation.TRUE)))
         }
 
         val evidenceTermVar = Var.of("TermVar")
@@ -78,6 +77,6 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
             .filter { it != ProbExplanation.FALSE }
 
         val resultExplanation = if (result.isEmpty()) ProbExplanation.TRUE else result.reduce { acc, t -> t and acc }
-        return replyWith(first mguWith ProbExplanationTerm(resultExplanation))
+        return replyWith(mgu(first, ProbExplanationTerm(resultExplanation)))
     }
 }

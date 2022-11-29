@@ -13,6 +13,7 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 object ClassicSolverFactory : SolverFactory {
 
@@ -20,15 +21,17 @@ object ClassicSolverFactory : SolverFactory {
         get() = DefaultBuiltins
 
     override fun solverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
         outputs: OutputStore
-    ): Solver = ClassicSolver(libraries, flags, staticKb, dynamicKb, inputs, outputs)
+    ): Solver = ClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, inputs, outputs)
 
     override fun solverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -37,9 +40,10 @@ object ClassicSolverFactory : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ): Solver = ClassicSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ): Solver = ClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -48,14 +52,15 @@ object ClassicSolverFactory : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ): MutableSolver = MutableClassicSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ): MutableSolver = MutableClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
         outputs: OutputStore
-    ): MutableSolver = MutableClassicSolver(libraries, flags, staticKb, dynamicKb, inputs, outputs)
+    ): MutableSolver = MutableClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, inputs, outputs)
 }

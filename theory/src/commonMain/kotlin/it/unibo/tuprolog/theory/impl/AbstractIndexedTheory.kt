@@ -5,11 +5,20 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.theory.AbstractTheory
+import it.unibo.tuprolog.unify.Unificator
 
 internal abstract class AbstractIndexedTheory protected constructor(
     queue: ClauseQueue,
     tags: Map<String, Any>
 ) : AbstractTheory(tags) {
+
+    @Suppress("UNUSED_PARAMETER")
+    override var unificator: Unificator
+        get() = queue.unificator
+        set(value) {
+            error("Indexed theories do not support changing the unification without rebuilding")
+        }
+
     protected open val queue: ClauseQueue = queue
 
     override val directives: Iterable<Directive>

@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.classic.fsm
 
 import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
 
 data class StateRuleExecution(override val context: ClassicExecutionContext) : AbstractState(context) {
@@ -10,7 +9,7 @@ data class StateRuleExecution(override val context: ClassicExecutionContext) : A
         get() = StateBacktracking(context.copy(rules = Cursor.empty(), step = nextStep()))
 
     override fun computeNext(): State {
-        val substitution = context.currentGoal!! mguWith context.rules.current!!.head
+        val substitution = with(context) { unificator.mgu(currentGoal!!, rules.current!!.head) }
         return when {
             substitution.isSuccess -> {
                 val newSubstitution = (context.substitution + substitution).castToUnifier()

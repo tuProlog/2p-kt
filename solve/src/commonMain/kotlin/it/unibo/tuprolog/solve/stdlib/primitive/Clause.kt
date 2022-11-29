@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVAT
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.buffered
 
 object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
@@ -30,7 +29,7 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
         }
         val template = Rule.of(head, second)
         return (context.staticKb[head] + context.dynamicKb[head].buffered()).map {
-            it mguWith template
+            mgu(it, template)
         }.filter {
             it.isSuccess
         }
