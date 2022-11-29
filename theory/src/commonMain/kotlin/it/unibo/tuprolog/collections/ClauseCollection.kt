@@ -4,10 +4,14 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface ClauseCollection : Iterable<Clause> {
+
+    @JsName("unificator")
+    val unificator: Unificator
 
     @JsName("directive")
     val directives: Iterable<Directive>
@@ -59,18 +63,20 @@ interface ClauseCollection : Iterable<Clause> {
         /** Creates an empty [ClauseMultiSet] **/
         @JvmStatic
         @JsName("emptyMultiSet")
-        fun emptyMultiSet(): ClauseMultiSet = multiSetOf(emptyList())
+        fun emptyMultiSet(unificator: Unificator): ClauseMultiSet = multiSetOf(unificator, emptyList())
 
         /** Creates a [ClauseMultiSet] with given clauses */
         @JvmStatic
         @JsName("multiSetOf")
-        fun multiSetOf(vararg clause: Clause): ClauseMultiSet = multiSetOf(clause.asIterable())
+        fun multiSetOf(unificator: Unificator, vararg clause: Clause): ClauseMultiSet =
+            multiSetOf(unificator, clause.asIterable())
 
         /** Let developers easily create a [ClauseMultiSet] programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("multiSetOfScopes")
-        fun multiSetOf(vararg clause: Scope.() -> Clause): ClauseMultiSet =
+        fun multiSetOf(unificator: Unificator, vararg clause: Scope.() -> Clause): ClauseMultiSet =
             multiSetOf(
+                unificator,
                 clause.map {
                     Scope.empty(it)
                 }
@@ -79,29 +85,32 @@ interface ClauseCollection : Iterable<Clause> {
         /** Creates a [ClauseQueue] from the given [Sequence] of [Clause] */
         @JvmStatic
         @JsName("multiSetOfSequence")
-        fun multiSetOf(clauses: Sequence<Clause>): ClauseMultiSet = multiSetOf(clauses.asIterable())
+        fun multiSetOf(unificator: Unificator, clauses: Sequence<Clause>): ClauseMultiSet =
+            multiSetOf(unificator, clauses.asIterable())
 
         /** Creates a [ClauseQueue] from the given [Iterable] of [Clause] */
         @JvmStatic
         @JsName("multiSetOfIterable")
-        fun multiSetOf(clauses: Iterable<Clause>): ClauseMultiSet =
-            ClauseMultiSet.of(clauses)
+        fun multiSetOf(unificator: Unificator, clauses: Iterable<Clause>): ClauseMultiSet =
+            ClauseMultiSet.of(unificator, clauses)
 
         /** Creates an empty [ClauseQueue] **/
         @JvmStatic
         @JsName("emptyQueue")
-        fun emptyQueue(): ClauseQueue = queueOf(emptyList())
+        fun emptyQueue(unificator: Unificator): ClauseQueue = queueOf(unificator, emptyList())
 
         /** Creates a [ClauseQueue] with given clauses */
         @JvmStatic
         @JsName("queueOf")
-        fun queueOf(vararg clause: Clause): ClauseQueue = queueOf(clause.asIterable())
+        fun queueOf(unificator: Unificator, vararg clause: Clause): ClauseQueue =
+            queueOf(unificator, clause.asIterable())
 
         /** Let developers easily create a [ClauseQueue] programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("queueOfScopes")
-        fun queueOf(vararg clause: Scope.() -> Clause): ClauseQueue =
+        fun queueOf(unificator: Unificator, vararg clause: Scope.() -> Clause): ClauseQueue =
             queueOf(
+                unificator,
                 clause.map {
                     Scope.empty(it)
                 }
@@ -110,12 +119,13 @@ interface ClauseCollection : Iterable<Clause> {
         /** Creates a [ClauseQueue] from the given [Sequence] of [Clause] */
         @JvmStatic
         @JsName("queueOfSequence")
-        fun queueOf(clauses: Sequence<Clause>): ClauseQueue = queueOf(clauses.asIterable())
+        fun queueOf(unificator: Unificator, clauses: Sequence<Clause>): ClauseQueue =
+            queueOf(unificator, clauses.asIterable())
 
         /** Creates a [ClauseQueue] from the given [Iterable] of [Clause] */
         @JvmStatic
         @JsName("queueOfIterable")
-        fun queueOf(clauses: Iterable<Clause>): ClauseQueue =
-            ClauseQueue.of(clauses)
+        fun queueOf(unificator: Unificator, clauses: Iterable<Clause>): ClauseQueue =
+            ClauseQueue.of(unificator, clauses)
     }
 }

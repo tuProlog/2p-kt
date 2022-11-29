@@ -53,7 +53,7 @@ class TestSubstitutionsImpl(private val solverFactory: SolverFactory) : TestSubs
 
     override fun uninterestingVariablesAreObliterated() {
         logicProgramming {
-            val solver = solverFactory.solverOf(TestingClauseTheories.callsWithVariablesTheory)
+            val solver = solverFactory.solverOf(staticKb = TestingClauseTheories.callsWithVariablesTheory)
             val query = "a"(X)
             val solution = solver.solveOnce(query)
             assertIs<Solution.Yes>(solution)

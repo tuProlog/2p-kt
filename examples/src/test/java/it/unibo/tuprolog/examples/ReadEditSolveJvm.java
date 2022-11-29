@@ -24,7 +24,7 @@ public class ReadEditSolveJvm {
         InputStream inputStream = ReadEditSolveJvm.class.getResourceAsStream("increment.pl");
         ClausesReader clausesReader = ClausesReader.withDefaultOperators();
         Theory theory = clausesReader.readTheory(inputStream);
-        MutableSolver solver = Solver.prolog().mutableSolverWithDefaultBuiltins(theory);
+        MutableSolver solver = Solver.prolog().newBuilder().staticKb(theory).buildMutable();
         Struct fact = Struct.of("diff", Integer.of(15));
         solver.assertZ(fact);
         Struct query = Struct.of("increment", Integer.of(15), Var.of("X"));
@@ -45,7 +45,7 @@ public class ReadEditSolveJvm {
         InputStream inputStream = ReadEditSolveJvm.class.getResourceAsStream("increment.pl");
         ClausesReader clausesReader = ClausesReader.withDefaultOperators();
         Theory theory = clausesReader.readTheory(inputStream);
-        MutableSolver solver = Solver.prolog().mutableSolverWithDefaultBuiltins(theory);
+        MutableSolver solver = Solver.prolog().newBuilder().staticKb(theory).buildMutable();
         Struct fact = Struct.of("diff", Integer.of(15));
         solver.assertZ(fact);
         Struct query = Struct.of("increment", Integer.of(15), Var.of("X"));

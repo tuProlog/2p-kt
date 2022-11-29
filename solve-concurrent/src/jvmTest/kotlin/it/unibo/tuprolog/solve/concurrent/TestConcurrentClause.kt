@@ -174,7 +174,7 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
     fun testClauseVariables() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins(
-                theoryOf(
+                staticKb = theoryOf(
                     rule { "f"(X) impliedBy "g"(X) }
                 )
             )

@@ -1,14 +1,13 @@
 package it.unibo.tuprolog.collections.impl
 
-import it.unibo.tuprolog.collections.MutableClauseQueue
 import it.unibo.tuprolog.collections.PrototypeClauseQueueTest
 import kotlin.test.Test
 
 internal class MutableReteClauseQueueTest : PrototypeClauseQueueTest {
 
     private val prototype = PrototypeClauseQueueTest.prototype(
-        MutableClauseQueue.Companion::empty,
-        MutableClauseQueue.Companion::of
+        Factories::emptyClauseQueue,
+        Factories::clauseQueueOf
     )
 
     @Test

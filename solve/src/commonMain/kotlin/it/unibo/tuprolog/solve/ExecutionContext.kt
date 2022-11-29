@@ -10,6 +10,7 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 /** An interface representing the Solver execution context, containing important information that determines its behaviour */
@@ -33,6 +34,7 @@ interface ExecutionContext : ExecutionContextAware, Durable {
 
     @JsName("createSolver")
     fun createSolver(
+        unificator: Unificator = this.unificator,
         libraries: Runtime = this.libraries,
         flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
@@ -43,6 +45,7 @@ interface ExecutionContext : ExecutionContextAware, Durable {
 
     @JsName("createMutableSolver")
     fun createMutableSolver(
+        unificator: Unificator = this.unificator,
         libraries: Runtime = this.libraries,
         flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
@@ -70,6 +73,7 @@ interface ExecutionContext : ExecutionContextAware, Durable {
 
     @JsName("update")
     fun update(
+        unificator: Unificator = this.unificator,
         libraries: Runtime = this.libraries,
         flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,

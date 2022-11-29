@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.library.impl
 
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
@@ -10,7 +11,6 @@ import it.unibo.tuprolog.solve.library.Library.Companion.toMapEnsuringNoDuplicat
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
-import it.unibo.tuprolog.theory.Theory
 
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class ExtensionLibrary(
@@ -26,8 +26,8 @@ abstract class ExtensionLibrary(
     open val additionalOperators: Iterable<Operator>
         get() = emptyList()
 
-    final override val theory: Theory by lazy {
-        extended.theory + Theory.of(additionalRules.map { it.implementation })
+    final override val clauses: List<Clause> by lazy {
+        (extended.clauses.asSequence() + additionalRules.asSequence().map { it.implementation }).toList()
     }
 
     protected open val additionalRules: Iterable<RuleWrapper<*>>
@@ -50,4 +50,8 @@ abstract class ExtensionLibrary(
 
     protected open val additionalFunctions: Iterable<FunctionWrapper<*>>
         get() = emptyList()
+
+    override fun hasRule(signature: Signature): Boolean {
+        return super<AbstractLibrary>.hasRule(signature)
+    }
 }

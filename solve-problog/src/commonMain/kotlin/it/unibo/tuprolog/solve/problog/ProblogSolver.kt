@@ -24,6 +24,7 @@ import it.unibo.tuprolog.solve.problog.lib.rules.Prob
 import it.unibo.tuprolog.solve.setBinaryDecisionDiagram
 import it.unibo.tuprolog.solve.setProbability
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 internal open class ProblogSolver(
     private val solver: Solver
@@ -159,6 +160,7 @@ internal open class ProblogSolver(
     ): Solution = solve(goal, options.setLimit(1)).first()
 
     override fun copy(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -170,10 +172,11 @@ internal open class ProblogSolver(
     ): Solver {
         return ProblogSolver(
             solver.copy(
+                unificator,
                 libraries,
                 flags,
-                ProblogTheory.of(staticKb),
-                ProblogTheory.of(dynamicKb),
+                ProblogTheory.of(unificator, staticKb),
+                ProblogTheory.of(unificator, dynamicKb),
                 stdIn,
                 stdOut,
                 stdErr,

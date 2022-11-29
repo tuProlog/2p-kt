@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -12,12 +13,18 @@ interface ClausesParser {
     val defaultOperatorSet: OperatorSet
 
     @JsName("parseTheoryWithOperators")
-    fun parseTheory(input: String, operators: OperatorSet): Theory =
-        Theory.indexedOf(parseClausesLazily(input, operators))
+    fun parseTheory(input: String, operators: OperatorSet, unificator: Unificator): Theory =
+        Theory.indexedOf(unificator, parseClausesLazily(input, operators))
+
+    @JsName("parseTheoryWithOperatorsAndDefaultUnificator")
+    fun parseTheory(input: String, operators: OperatorSet): Theory = parseTheory(input, operators, Unificator.default)
 
     @JsName("parseTheory")
-    fun parseTheory(input: String): Theory =
-        parseTheory(input, defaultOperatorSet)
+    fun parseTheory(input: String, unificator: Unificator): Theory =
+        parseTheory(input, defaultOperatorSet, unificator)
+
+    @JsName("parseTheoryWithDefaultUnificator")
+    fun parseTheory(input: String): Theory = parseTheory(input, Unificator.default)
 
     @JsName("parseClausesLazilyWithOperators")
     fun parseClausesLazily(input: String, operators: OperatorSet): Sequence<Clause>

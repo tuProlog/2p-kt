@@ -39,7 +39,7 @@ internal class StateRuleSelectionTest {
             libraries = Runtime.of(
                 Library.of(
                     alias = "testLib",
-                    theory = logicProgramming { theory({ "f"("a") }) }
+                    clauses = logicProgramming { theory({ "f"("a") }) }
                 )
             ),
             staticKb = logicProgramming { theory({ "f"("b") }) },

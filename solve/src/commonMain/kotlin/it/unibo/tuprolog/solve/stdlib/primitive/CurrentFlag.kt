@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object CurrentFlag : BinaryRelation.WithoutSideEffects<ExecutionContext>("current_flag") {
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
@@ -17,7 +16,7 @@ object CurrentFlag : BinaryRelation.WithoutSideEffects<ExecutionContext>("curren
         is Atom, is Var -> {
             context.flags.asSequence()
                 .map { (k, v) -> Atom.of(k) to v }
-                .map { (k, v) -> (k mguWith first) + (v mguWith second) }
+                .map { (k, v) -> mgu(k, first) + mgu(v, second) }
                 .filter { it.isSuccess }
         }
         else -> {

@@ -4,6 +4,7 @@ import it.unibo.tuprolog.collections.impl.MutableReteClauseMultiSet
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.TermComparator
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -27,18 +28,20 @@ interface MutableClauseMultiSet : ClauseMultiSet {
         /** Creates an empty [MutableClauseMultiSet] **/
         @JvmStatic
         @JsName("empty")
-        fun empty(): MutableClauseMultiSet = of(emptyList())
+        fun empty(unificator: Unificator,): MutableClauseMultiSet = of(unificator, emptyList())
 
         /** Creates a [MutableClauseMultiSet] with given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(vararg clause: Clause): MutableClauseMultiSet = of(clause.asIterable())
+        fun of(unificator: Unificator, vararg clause: Clause): MutableClauseMultiSet =
+            of(unificator, clause.asIterable())
 
         /** Let developers easily create a [MutableClauseMultiSet] programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(vararg clause: Scope.() -> Clause): MutableClauseMultiSet =
+        fun of(unificator: Unificator, vararg clause: Scope.() -> Clause): MutableClauseMultiSet =
             of(
+                unificator,
                 clause.map {
                     Scope.empty(it)
                 }
@@ -47,13 +50,14 @@ interface MutableClauseMultiSet : ClauseMultiSet {
         /** Creates a [MutableClauseMultiSet] from the given [Sequence] of [Clause] */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(clauses: Sequence<Clause>): MutableClauseMultiSet = of(clauses.asIterable())
+        fun of(unificator: Unificator, clauses: Sequence<Clause>): MutableClauseMultiSet =
+            of(unificator, clauses.asIterable())
 
         /** Creates a [MutableClauseMultiSet] from the given [Iterable] of [Clause] */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(clauses: Iterable<Clause>): MutableClauseMultiSet =
-            MutableReteClauseMultiSet(clauses)
+        fun of(unificator: Unificator, clauses: Iterable<Clause>): MutableClauseMultiSet =
+            MutableReteClauseMultiSet(unificator, clauses)
 
         @JvmStatic
         @JsName("areEquals")

@@ -31,7 +31,7 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
         refCreator: (OverloadDetector) -> Ref = ObjectRef.Companion::of,
         case2Term: (TestDatum) -> Term
     ) = logicProgramming {
-        val solver = solverFactory.solverWithDefaultBuiltins(Runtime.of(OOPLib))
+        val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
         val obj = detectorCreator()
         val ref = refCreator(obj)
         for (case in cases) {

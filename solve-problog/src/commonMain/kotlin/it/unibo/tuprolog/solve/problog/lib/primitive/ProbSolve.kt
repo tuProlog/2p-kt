@@ -15,7 +15,6 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.getSolverOptions
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.isPrologMode
 import it.unibo.tuprolog.solve.problog.lib.rules.Prob
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * This primitive is the core of the probabilistic goal resolution. The first argument is a term representing
@@ -62,7 +61,7 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
         if (error != null) throw error.exception
 
         return if (!solutions.any { s -> s is Solution.Yes }) {
-            sequenceOf(Substitution.of(first mguWith ProbExplanationTerm(ProbExplanation.FALSE)))
+            sequenceOf(Substitution.of(mgu(first, ProbExplanationTerm(ProbExplanation.FALSE))))
         } else {
             val solutionGroups = solutions
                 .filterIsInstance<Solution.Yes>()
@@ -83,7 +82,7 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
                         }
                     val substitution = Substitution.of(
                         solutionGroup.key,
-                        first mguWith ProbExplanationTerm(explanation)
+                        mgu(first, ProbExplanationTerm(explanation))
                     )
                     yield(substitution)
                 }

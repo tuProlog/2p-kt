@@ -17,7 +17,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
         logicProgramming {
             val canaryTheory = theoryOf(factOf("canary"))
             val solver = solverFactory.solverWithDefaultBuiltins(
-                Runtime.of(IOLib),
+                otherLibraries = Runtime.of(IOLib),
                 staticKb = canaryTheory
             )
             assertEquals(canaryTheory, solver.staticKb)
@@ -38,7 +38,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
         logicProgramming {
             val canaryTheory = theoryOf(factOf("canary"))
             val solver = solverFactory.solverWithDefaultBuiltins(
-                Runtime.of(IOLib),
+                otherLibraries = Runtime.of(IOLib),
                 staticKb = canaryTheory
             )
             assertEquals(canaryTheory, solver.staticKb)
@@ -63,7 +63,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
         logicProgramming {
             val canaryTheory = theoryOf(factOf("canary"))
             val solver = solverFactory.solverWithDefaultBuiltins(
-                Runtime.of(IOLib),
+                otherLibraries = Runtime.of(IOLib),
                 staticKb = canaryTheory
             )
             assertEquals(canaryTheory, solver.staticKb)
@@ -86,7 +86,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
 
     override fun testApi() {
         val solver = solverFactory.solverWithDefaultBuiltins(
-            Runtime.of(IOLib)
+            otherLibraries = Runtime.of(IOLib)
         )
         assertEquals(IOLib, solver.libraries[IOLib.alias])
         solver.assertHasPredicateInAPI(Consult)

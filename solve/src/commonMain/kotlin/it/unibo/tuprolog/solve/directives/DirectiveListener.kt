@@ -4,10 +4,13 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Substitution.Unifier
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface DirectiveListener : ClauseListener {
+
+    @JsName("unificator")
+    val unificator: Unificator
 
     @JsName("patterns")
     val patterns: List<Term>
@@ -18,7 +21,7 @@ interface DirectiveListener : ClauseListener {
     @JsName("listenDirective")
     fun listenDirective(directive: Directive) {
         patterns.asSequence()
-            .map { it to (directive.body mguWith it) }
+            .map { it to (unificator.mgu(directive.body, it)) }
             .filter { (_, substitution) -> substitution.isSuccess }
             .firstOrNull()
             ?.let { (pattern, substitution) ->

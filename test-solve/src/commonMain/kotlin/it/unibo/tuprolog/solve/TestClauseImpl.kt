@@ -118,7 +118,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
     override fun testClauseVariables() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins(
-                theoryOf(
+                staticKb = theoryOf(
                     rule { "f"(X) impliedBy "g"(X) }
                 )
             )

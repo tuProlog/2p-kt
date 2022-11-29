@@ -22,6 +22,7 @@ import it.unibo.tuprolog.solve.streams.solver.fsm.impl.StateInit
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.buffered
 
 /**
@@ -30,24 +31,27 @@ import it.unibo.tuprolog.utils.buffered
  * @author Enrico
  */
 internal class StreamsSolver constructor(
+    unificator: Unificator = Unificator.default,
     libraries: Runtime = Runtime.empty(),
     flags: FlagStore = FlagStore.empty(),
-    staticKb: Theory = Theory.empty(),
-    dynamicKb: Theory = Theory.empty(),
+    staticKb: Theory = Theory.empty(unificator),
+    dynamicKb: Theory = Theory.empty(unificator),
     inputChannels: InputStore = InputStore.fromStandard(),
     outputChannels: OutputStore = OutputStore.fromStandard()
 ) : Solver {
 
     constructor(
+        unificator: Unificator = Unificator.default,
         libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
-        staticKb: Theory = Theory.empty(),
-        dynamicKb: Theory = MutableTheory.empty(),
+        staticKb: Theory = Theory.empty(unificator),
+        dynamicKb: Theory = MutableTheory.empty(unificator),
         stdIn: InputChannel<String> = InputChannel.stdIn(),
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
         warnings: OutputChannel<Warning> = OutputChannel.warn(),
     ) : this(
+        unificator,
         libraries,
         flags,
         staticKb,
@@ -57,6 +61,7 @@ internal class StreamsSolver constructor(
     )
 
     private var executionContext: StreamsExecutionContext = StreamsExecutionContext(
+        unificator,
         libraries,
         flags,
         staticKb,
@@ -68,6 +73,7 @@ internal class StreamsSolver constructor(
 
     override fun solve(goal: Struct, options: SolveOptions): Sequence<Solution> {
         executionContext = StreamsExecutionContext(
+            unificator = unificator,
             libraries = libraries,
             flags = flags,
             staticKb = staticKb,
@@ -97,6 +103,7 @@ internal class StreamsSolver constructor(
     }
 
     override fun copy(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -105,7 +112,10 @@ internal class StreamsSolver constructor(
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ) = StreamsSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ) = StreamsSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+
+    override val unificator: Unificator
+        get() = executionContext.unificator
 
     override val libraries: Runtime
         get() = executionContext.libraries

@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 /**
@@ -35,15 +36,15 @@ interface MutableSolver : Solver {
 
     @JsName("loadStaticClauses")
     fun loadStaticClauses(vararg clauses: Clause) =
-        loadStaticKb(Theory.of(*clauses))
+        loadStaticKb(Theory.indexedOf(unificator, *clauses))
 
     @JsName("loadStaticClausesIterable")
     fun loadStaticClauses(clauses: Iterable<Clause>) =
-        loadStaticKb(Theory.of(clauses))
+        loadStaticKb(Theory.indexedOf(unificator, clauses))
 
     @JsName("loadStaticClausesSequence")
     fun loadStaticClauses(clauses: Sequence<Clause>) =
-        loadStaticKb(Theory.of(clauses))
+        loadStaticKb(Theory.indexedOf(unificator, clauses))
 
     @JsName("appendStaticKb")
     fun appendStaticKb(theory: Theory)
@@ -56,15 +57,15 @@ interface MutableSolver : Solver {
 
     @JsName("loadDynamicClauses")
     fun loadDynamicClauses(vararg clauses: Clause) =
-        loadDynamicKb(Theory.of(*clauses))
+        loadDynamicKb(Theory.indexedOf(unificator, *clauses))
 
     @JsName("loadDynamicClausesIterable")
     fun loadDynamicClauses(clauses: Iterable<Clause>) =
-        loadDynamicKb(Theory.of(clauses))
+        loadDynamicKb(Theory.indexedOf(unificator, clauses))
 
     @JsName("loadDynamicClausesSequence")
     fun loadDynamicClauses(clauses: Sequence<Clause>) =
-        loadDynamicKb(Theory.of(clauses))
+        loadDynamicKb(Theory.indexedOf(unificator, clauses))
 
     @JsName("appendDynamicKb")
     fun appendDynamicKb(theory: Theory)
@@ -118,6 +119,7 @@ interface MutableSolver : Solver {
     fun setWarnings(warnings: OutputChannel<Warning>)
 
     override fun copy(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,

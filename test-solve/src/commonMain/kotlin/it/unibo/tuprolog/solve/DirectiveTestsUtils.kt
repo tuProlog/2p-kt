@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.dsl.LogicProgrammingScope
-import it.unibo.tuprolog.dsl.lp
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
@@ -15,14 +14,14 @@ object DirectiveTestsUtils {
     private const val BIG_THEORY_SIZE = 40000
 
     fun bigTheory(size: Int = BIG_THEORY_SIZE, last: (LogicProgrammingScope.() -> Clause)? = null) =
-        lp {
-            Theory.of(
+        logicProgramming {
+            theoryOf(
                 sequence {
                     for (i in 1..size) {
                         yield(fact { "f$i" })
                     }
                     if (last != null) {
-                        yield(this@lp.last())
+                        yield(this@logicProgramming.last())
                     }
                 }
             )

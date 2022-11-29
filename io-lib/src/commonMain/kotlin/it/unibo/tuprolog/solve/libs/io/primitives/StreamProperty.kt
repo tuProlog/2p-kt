@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.ensuringArgum
 import it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.propertiesOf
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object StreamProperty : BinaryRelation<ExecutionContext>("stream_property") {
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term, second: Term): Sequence<Solve.Response> {
@@ -19,7 +18,7 @@ object StreamProperty : BinaryRelation<ExecutionContext>("stream_property") {
             .map { it.streamTerm to propertiesOf(it) }
             .flatMap { (streamTerm, properties) -> properties.map { streamTerm to it } }
             .map { (streamTerm, property) ->
-                replyWith((first mguWith streamTerm) + (second mguWith property))
+                replyWith(mgu(first, streamTerm) + mgu(second, property))
             }
     }
 }

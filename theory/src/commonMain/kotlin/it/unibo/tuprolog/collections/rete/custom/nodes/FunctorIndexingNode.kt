@@ -6,14 +6,15 @@ import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class FunctorIndexingNode(
+    unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int
-) : FunctorNode(), FunctorIndexing {
+) : FunctorNode(unificator), FunctorIndexing {
 
     private val arities: MutableMap<Int, ArityIndexing> = mutableMapOf()
 
@@ -30,19 +31,13 @@ internal class FunctorIndexingNode(
 
     override fun assertA(clause: IndexedClause) {
         arities.getOrPut(clause.nestedArity()) {
-            FamilyArityIndexingNode(
-                ordered,
-                nestingLevel
-            )
+            FamilyArityIndexingNode(unificator, ordered, nestingLevel)
         }.assertA(clause + this)
     }
 
     override fun assertZ(clause: IndexedClause) {
         arities.getOrPut(clause.nestedArity()) {
-            FamilyArityIndexingNode(
-                ordered,
-                nestingLevel
-            )
+            FamilyArityIndexingNode(unificator, ordered, nestingLevel)
         }.assertZ(clause + this)
     }
 
@@ -59,7 +54,7 @@ internal class FunctorIndexingNode(
                 arities.values.map {
                     it.extractGlobalIndexedSequence(clause)
                 }
-            ).firstOrNull { it.innerClause matches clause }
+            ).firstOrNull { unificator.match(it.innerClause, clause) }
         } else arities[clause.nestedArity()]?.getFirstIndexed(clause)
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
@@ -81,7 +76,7 @@ internal class FunctorIndexingNode(
                     it.extractGlobalIndexedSequence(clause)
                 }
             )
-                .filter { it.innerClause matches clause }
+                .filter { unificator.match(it.innerClause, clause) }
                 .toList()
             if (partialResult.isNotEmpty()) {
                 invalidateCache()

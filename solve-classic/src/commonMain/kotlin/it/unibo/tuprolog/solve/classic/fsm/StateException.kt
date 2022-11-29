@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.MessageError
 import it.unibo.tuprolog.solve.exception.error.SystemError
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.plus
 
@@ -46,10 +46,10 @@ data class StateException(
             context.parent!!.copy(step = nextStep())
         )
 
-    private fun handleStruct(catchGoal: Struct, error: LogicError): State =
+    private fun handleStruct(unificator: Unificator, catchGoal: Struct, error: LogicError): State =
         when {
             catchGoal.isCatch() -> {
-                val catcher = catchGoal[1] mguWith error.getExceptionContent()
+                val catcher = unificator.mgu(catchGoal[1], error.getExceptionContent())
                 handleCatch(catchGoal, catcher)
             }
             context.isRoot -> finalState
@@ -84,7 +84,7 @@ data class StateException(
             is LogicError -> {
                 val catchGoal = context.currentGoal!!
                 when {
-                    catchGoal.isStruct -> handleStruct(catchGoal.castToStruct(), exception)
+                    catchGoal.isStruct -> handleStruct(context.unificator, catchGoal.castToStruct(), exception)
                     context.isRoot -> finalState
                     else -> handleExceptionInParentContext
                 }

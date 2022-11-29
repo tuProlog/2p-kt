@@ -16,6 +16,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -24,10 +25,10 @@ class UnorderedReteTreeTest {
 
     companion object {
         private fun reteTreeOf(vararg clauses: Clause): ReteTree =
-            ReteTree.unordered(*clauses)
+            ReteTree.unordered(Unificator.default, *clauses)
 
         private fun reteTreeOf(clauses: Iterable<Clause>): ReteTree =
-            ReteTree.unordered(clauses)
+            ReteTree.unordered(Unificator.default, clauses)
     }
 
     @Test

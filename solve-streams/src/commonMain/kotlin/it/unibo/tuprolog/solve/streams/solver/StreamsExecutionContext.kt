@@ -18,6 +18,7 @@ import it.unibo.tuprolog.solve.streams.SolverStrategies
 import it.unibo.tuprolog.solve.streams.StreamsSolver
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 /**
  * The execution context implementation for [StreamsSolver]
@@ -25,10 +26,11 @@ import it.unibo.tuprolog.theory.Theory
  * @author Enrico
  */
 internal data class StreamsExecutionContext(
+    override val unificator: Unificator = Unificator.default,
     override val libraries: Runtime = Runtime.empty(),
     override val flags: FlagStore = FlagStore.empty(),
-    override val staticKb: Theory = Theory.empty(),
-    override val dynamicKb: Theory = Theory.empty(),
+    override val staticKb: Theory = Theory.empty(unificator),
+    override val dynamicKb: Theory = Theory.empty(unificator),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
     override val inputChannels: InputStore = InputStore.fromStandard(),
     override val outputChannels: OutputStore = OutputStore.fromStandard(),
@@ -43,6 +45,7 @@ internal data class StreamsExecutionContext(
 ) : ExecutionContext {
 
     constructor(context: ExecutionContext, newCurrentSubstitution: Substitution.Unifier) : this( // to be tested
+        context.unificator,
         context.libraries,
         context.flags,
         context.staticKb,
@@ -64,22 +67,17 @@ internal data class StreamsExecutionContext(
     }
 
     override fun createSolver(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         inputChannels: InputStore,
         outputChannels: OutputStore
-    ) = StreamsSolver(
-        libraries,
-        flags,
-        staticKb,
-        dynamicKb,
-        inputChannels,
-        outputChannels
-    )
+    ) = StreamsSolver(unificator, libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels)
 
     override fun createMutableSolver(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -101,6 +99,7 @@ internal data class StreamsExecutionContext(
     }
 
     override fun update(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -111,6 +110,7 @@ internal data class StreamsExecutionContext(
         customData: CustomDataStore
     ): StreamsExecutionContext {
         return copy(
+            unificator = unificator,
             libraries = libraries,
             flags = flags,
             staticKb = staticKb,

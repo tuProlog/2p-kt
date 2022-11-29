@@ -16,7 +16,6 @@ import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
@@ -121,9 +120,9 @@ class TuPrologCmd(vararg additionalLibraries: Library) : CliktCommand(
         } else {
             Runtime.of(IOLib, *additionalLibraries)
         }
-        return Solver.classicWithDefaultBuiltins(
+        return Solver.prolog.solverWithDefaultBuiltins(
             staticKb = theory,
-            libraries = libraries,
+            otherLibraries = libraries,
             warnings = outputChannel
         ).also {
             for ((_, library) in it.libraries) {

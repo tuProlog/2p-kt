@@ -21,6 +21,7 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -31,14 +32,16 @@ import kotlin.jvm.Synchronized
 import kotlinx.coroutines.channels.Channel as KtChannel
 
 internal open class ConcurrentSolverImpl(
+    unificator: Unificator = Unificator.default,
     libraries: Runtime = Runtime.empty(),
     flags: FlagStore = FlagStore.empty(),
-    initialStaticKb: Theory = Theory.empty(),
-    initialDynamicKb: Theory = MutableTheory.empty(),
+    initialStaticKb: Theory = Theory.empty(unificator),
+    initialDynamicKb: Theory = MutableTheory.empty(unificator),
     inputChannels: InputStore = InputStore.fromStandard(),
     outputChannels: OutputStore = OutputStore.fromStandard(),
     trustKb: Boolean = false
 ) : ConcurrentSolver, AbstractSolver<ConcurrentExecutionContext>(
+    unificator,
     libraries,
     flags,
     initialStaticKb,
@@ -49,16 +52,18 @@ internal open class ConcurrentSolverImpl(
 ) {
 
     constructor(
+        unificator: Unificator,
         libraries: Runtime = Runtime.empty(),
         flags: FlagStore = FlagStore.empty(),
-        staticKb: Theory = Theory.empty(),
-        dynamicKb: Theory = MutableTheory.empty(),
+        staticKb: Theory = Theory.empty(unificator),
+        dynamicKb: Theory = MutableTheory.empty(unificator),
         stdIn: InputChannel<String> = InputChannel.stdIn(),
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
         warnings: OutputChannel<Warning> = OutputChannel.warn(),
         trustKb: Boolean = false
     ) : this(
+        unificator,
         libraries,
         flags,
         staticKb,
@@ -140,6 +145,7 @@ internal open class ConcurrentSolverImpl(
     }
 
     override fun copy(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -148,11 +154,12 @@ internal open class ConcurrentSolverImpl(
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>
-    ) = ConcurrentSolverImpl(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ) = ConcurrentSolverImpl(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun clone(): ConcurrentSolverImpl = copy()
 
     override fun initializeContext(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -162,10 +169,11 @@ internal open class ConcurrentSolverImpl(
         outputChannels: OutputStore,
         trustKb: Boolean
     ): ConcurrentExecutionContext = ConcurrentExecutionContext(
+        unificator = unificator,
         libraries = libraries,
         flags = flags,
-        staticKb = if (trustKb) staticKb.toImmutableTheory() else Theory.empty(),
-        dynamicKb = if (trustKb) dynamicKb.toMutableTheory() else MutableTheory.empty(),
+        staticKb = if (trustKb) staticKb.toImmutableTheory() else Theory.empty(unificator),
+        dynamicKb = if (trustKb) dynamicKb.toMutableTheory() else MutableTheory.empty(unificator),
         operators = getAllOperators(libraries).toOperatorSet(),
         inputChannels = inputChannels,
         outputChannels = outputChannels,

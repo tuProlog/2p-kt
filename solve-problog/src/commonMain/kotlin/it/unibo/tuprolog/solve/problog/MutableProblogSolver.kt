@@ -15,6 +15,7 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator
 
 internal class MutableProblogSolver(
     private val solver: MutableSolver
@@ -33,11 +34,11 @@ internal class MutableProblogSolver(
     }
 
     override fun loadStaticKb(theory: Theory) {
-        solver.loadStaticKb(ProblogTheory.of(theory))
+        solver.loadStaticKb(ProblogTheory.of(solver.unificator, theory))
     }
 
     override fun appendStaticKb(theory: Theory) {
-        solver.appendStaticKb(ProblogTheory.of(theory))
+        solver.appendStaticKb(ProblogTheory.of(solver.unificator, theory))
     }
 
     override fun resetStaticKb() {
@@ -45,11 +46,11 @@ internal class MutableProblogSolver(
     }
 
     override fun loadDynamicKb(theory: Theory) {
-        solver.loadDynamicKb(ProblogTheory.of(theory))
+        solver.loadDynamicKb(ProblogTheory.of(solver.unificator, theory))
     }
 
     override fun appendDynamicKb(theory: Theory) {
-        solver.appendDynamicKb(ProblogTheory.of(theory))
+        solver.appendDynamicKb(ProblogTheory.of(solver.unificator, theory))
     }
 
     override fun resetDynamicKb() {
@@ -57,35 +58,35 @@ internal class MutableProblogSolver(
     }
 
     override fun assertA(clause: Clause) {
-        solver.assertA(ProblogTheory.of(clause).clauses.first())
+        solver.assertA(ProblogTheory.of(solver.unificator, clause).clauses.first())
     }
 
     override fun assertA(fact: Struct) {
-        solver.assertA(ProblogTheory.of(Fact.of(fact)).clauses.first())
+        solver.assertA(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
     }
 
     override fun assertZ(clause: Clause) {
-        solver.assertZ(ProblogTheory.of(clause).clauses.first())
+        solver.assertZ(ProblogTheory.of(solver.unificator, clause).clauses.first())
     }
 
     override fun assertZ(fact: Struct) {
-        solver.assertA(ProblogTheory.of(Fact.of(fact)).clauses.first())
+        solver.assertA(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
     }
 
     override fun retract(clause: Clause): RetractResult<Theory> {
-        return solver.retract(ProblogTheory.of(clause).clauses.first())
+        return solver.retract(ProblogTheory.of(solver.unificator, clause).clauses.first())
     }
 
     override fun retract(fact: Struct): RetractResult<Theory> {
-        return solver.retract(ProblogTheory.of(Fact.of(fact)).clauses.first())
+        return solver.retract(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
     }
 
     override fun retractAll(clause: Clause): RetractResult<Theory> {
-        return solver.retractAll(ProblogTheory.of(clause).clauses.first())
+        return solver.retractAll(ProblogTheory.of(solver.unificator, clause).clauses.first())
     }
 
     override fun retractAll(fact: Struct): RetractResult<Theory> {
-        return solver.retractAll(ProblogTheory.of(Fact.of(fact)).clauses.first())
+        return solver.retractAll(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
     }
 
     override fun setFlag(name: String, value: Term) {
@@ -117,6 +118,7 @@ internal class MutableProblogSolver(
     }
 
     override fun copy(
+        unificator: Unificator,
         libraries: Runtime,
         flags: FlagStore,
         staticKb: Theory,
@@ -127,7 +129,7 @@ internal class MutableProblogSolver(
         warnings: OutputChannel<Warning>
     ): MutableSolver {
         return MutableProblogSolver(
-            solver.copy(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+            solver.copy(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
         )
     }
 

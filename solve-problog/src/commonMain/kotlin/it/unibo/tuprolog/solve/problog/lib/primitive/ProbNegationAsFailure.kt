@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.setProbabilistic
-import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * This primitive executes negation-as-failure calls for probabilistic goals. In probabilistic logic goal resolution, it
@@ -57,7 +56,7 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
                 } else {
                     replyWith(
                         Substitution.of(
-                            first mguWith ProbExplanationTerm(explanationTerm.explanation.not())
+                            mgu(first, ProbExplanationTerm(explanationTerm.explanation.not()))
                         )
                     )
                 }

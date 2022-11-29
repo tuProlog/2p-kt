@@ -50,7 +50,7 @@ internal object CatchUtils {
                     logicProgramming { Catch.functor(callRequest.arguments.single(), `_`, false) }
                 ).map {
                     with(callRequest.context.libraries) {
-                        createSolveRequest(it, theory, primitives + Catch.descriptionPair)
+                        createSolveRequest(it, clauses, primitives + Catch.descriptionPair)
                     } to solutions.changeQueriesTo(it)
                 }
             }.toTypedArray(),
@@ -59,7 +59,7 @@ internal object CatchUtils {
                 val updatedPrimitives = callRequest.context.libraries.primitives + Catch.descriptionPair
                 logicProgramming {
                     Catch.functor(callRequest.arguments.single(), "X", true).run {
-                        createSolveRequest(this, callRequest.context.libraries.theory, updatedPrimitives) to
+                        createSolveRequest(this, callRequest.context.libraries.clauses, updatedPrimitives) to
                             solutions.map {
                                 yes("X" to (it.exception as LogicError).errorStruct)
                             }

@@ -3,11 +3,13 @@ package it.unibo.tuprolog.collections.rete.custom.nodes
 import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.unify.Unificator
 
 internal class FamilyArityIndexingNode(
+    unificator: Unificator,
     private val ordered: Boolean,
     nestingLevel: Int
-) : FamilyArityReteNode(ordered, nestingLevel), ArityIndexing {
+) : FamilyArityReteNode(unificator, ordered, nestingLevel), ArityIndexing {
 
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
         if (ordered) orderedLookahead(clause)
