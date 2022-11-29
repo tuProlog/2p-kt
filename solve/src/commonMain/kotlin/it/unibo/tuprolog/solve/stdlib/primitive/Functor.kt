@@ -50,7 +50,7 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
                     val arity = (third as Integer)
 
                     if (arity.intValue == BigInteger.ZERO) {
-                        Substitution.of(first to second) + (third mguWith Integer.of(0))
+                        Substitution.of(first to second) + mgu(third, Integer.of(0))
                     } else {
                         throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, second, 1)
                     }
