@@ -49,7 +49,7 @@ ktMath = "io.github.gciatto:kt-math:0.6.3"
 orchid-docs = { module = "io.github.javaeden.orchid:OrchidDocs", version.ref = "orchid" }
 orchid-kotlinDocs = { module = "io.github.javaeden.orchid:OrchidKotlindoc", version.ref = "orchid" }
 orchid-pluginDocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", version.ref = "orchid" }
-plantuml = "net.sourceforge.plantuml:plantuml:1.2022.13"
+plantuml = "net.sourceforge.plantuml:plantuml:1.2022.14"
 antlr-full = { module = "org.antlr:antlr4", version.ref = "antlr" }
 antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 richtextFx = "org.fxmisc.richtext:richtextfx:0.11.0"
