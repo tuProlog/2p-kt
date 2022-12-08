@@ -21,3 +21,6 @@ actual fun InputChannel<String>.asTermChannel(operators: OperatorSet): InputChan
         termChannel
     }
 }
+
+actual val KEY: String
+    get() = "it.unibo.tuprolog.solve.libs.io.term-reader"

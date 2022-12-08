@@ -20,3 +20,6 @@ actual fun InputChannel<String>.asTermChannel(operators: OperatorSet): InputChan
         termChannel
     }
 }
+
+actual val KEY: String
+    get() = IOLib::class.let { it.qualifiedName!!.replace(it.simpleName!!, "") } + "term-reader"
