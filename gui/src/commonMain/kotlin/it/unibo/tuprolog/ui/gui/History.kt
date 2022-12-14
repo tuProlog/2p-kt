@@ -15,6 +15,9 @@ interface History<T> {
     @JsName("append")
     fun append(item: T)
 
+    @JsName("select")
+    fun select(item: T)
+
     @JsName("onAppended")
     val onAppended: Observable<Event<T>>
 

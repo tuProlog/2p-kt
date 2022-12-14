@@ -30,7 +30,7 @@ class HistoryImpl<T>(private var itemsSequence: Sequence<T>) : History<T> {
             if (size == 0) {
                 throw IllegalStateException("The history is empty")
             }
-            field = if (value > 0) {
+            field = if (value >= 0) {
                 value % size
             } else {
                 size + value % size
@@ -47,6 +47,11 @@ class HistoryImpl<T>(private var itemsSequence: Sequence<T>) : History<T> {
         itemsCache.invalidate()
         onAppended.raise(Event.of(History.EVENT_APPENDED, item))
         selectedIndex = 0
+    }
+
+    override fun select(item: T) {
+        selectedIndex = items.indexOf(item).takeIf { it >= 0 }
+            ?: throw NoSuchElementException("Missing element in history: $item")
     }
 
     override fun equals(other: Any?): Boolean {
