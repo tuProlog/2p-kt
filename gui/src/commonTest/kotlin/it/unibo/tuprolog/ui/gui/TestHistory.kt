@@ -147,4 +147,15 @@ class TestHistory {
             assertNoMoreEvents()
         }
     }
+
+    @Test
+    fun testDuplicatesNotAllowed() {
+        history2.append("c")
+        assertEquals(0, history2.selectedIndex)
+        assertEquals(listOf("c", "a", "b"), history2.items)
+        events.assertions {
+            assertNextEquals(Event.of(History.EVENT_SELECTED, 0 to "c"))
+            assertNoMoreEvents()
+        }
+    }
 }
