@@ -4,6 +4,7 @@ import it.unibo.tuprolog.ui.gui.Event
 import it.unibo.tuprolog.ui.gui.History
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.observe.Source
+import kotlin.jvm.Volatile
 
 class HistoryImpl<T>(private var itemsSequence: Sequence<T>) : History<T> {
 
@@ -35,7 +36,7 @@ class HistoryImpl<T>(private var itemsSequence: Sequence<T>) : History<T> {
             } else {
                 size + value % size
             }
-            onSelected.raise(Event.of(History.EVENT_SELECTED, field to items[field]))
+            raise(History.EVENT_SELECTED, field to items[field])
         }
 
     override val onAppended: Source<Event<T>> = Source.of()
@@ -46,8 +47,23 @@ class HistoryImpl<T>(private var itemsSequence: Sequence<T>) : History<T> {
         val new = itemsSequence.any { it == item }
         itemsSequence = sequenceOf(item) + itemsSequence.filter { it != item }
         itemsCache.invalidate()
-        if (!new) onAppended.raise(Event.of(History.EVENT_APPENDED, item))
+        if (!new) raise(History.EVENT_APPENDED, item)
         selectedIndex = 0
+    }
+
+    @Volatile
+    private var handlingEvent = false
+
+    @Suppress("UNCHECKED_CAST")
+    private fun raise(name: String, event: Any?) {
+        if (handlingEvent) return
+        handlingEvent = true
+        when (name) {
+            History.EVENT_APPENDED -> onAppended.raise(Event.of(name, event as T))
+            History.EVENT_SELECTED -> onSelected.raise(Event.of(name, event as Pair<Int, T>))
+            else -> error("Event $event is invalid")
+        }
+        handlingEvent = false
     }
 
     override var selected: T

@@ -158,4 +158,17 @@ class TestHistory {
             assertNoMoreEvents()
         }
     }
+
+    @Test
+    fun testReentrancyIsAvoidedInAppending() {
+        history1.onAppended += { history1.append(it.event) }
+        history1.onSelected += { history1.append(it.event.second) }
+        history1.append("a")
+        assertEquals(listOf("a"), history1.items)
+        events.assertions {
+            assertNextEquals(Event.of(History.EVENT_APPENDED, "a"))
+            assertNextEquals(Event.of(History.EVENT_SELECTED, 0 to "a"))
+            assertNoMoreEvents()
+        }
+    }
 }
