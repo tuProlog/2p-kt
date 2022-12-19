@@ -12,11 +12,11 @@ interface History<T> {
     @JsName("selectedIndex")
     var selectedIndex: Int
 
+    @JsName("selected")
+    var selected: T
+
     @JsName("append")
     fun append(item: T)
-
-    @JsName("select")
-    fun select(item: T)
 
     @JsName("onAppended")
     val onAppended: Observable<Event<T>>

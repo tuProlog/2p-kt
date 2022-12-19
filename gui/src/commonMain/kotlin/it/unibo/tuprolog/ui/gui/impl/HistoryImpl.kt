@@ -49,10 +49,12 @@ class HistoryImpl<T>(private var itemsSequence: Sequence<T>) : History<T> {
         selectedIndex = 0
     }
 
-    override fun select(item: T) {
-        selectedIndex = items.indexOf(item).takeIf { it >= 0 }
-            ?: throw NoSuchElementException("Missing element in history: $item")
-    }
+    override var selected: T
+        get() = items[selectedIndex]
+        set(value) {
+            selectedIndex = items.indexOf(value).takeIf { it >= 0 }
+                ?: throw NoSuchElementException("Missing element in history: $value")
+        }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

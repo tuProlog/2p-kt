@@ -97,7 +97,7 @@ class TestHistory {
 
     @Test
     fun testSelectSpecific() {
-        history2.select("c")
+        history2.selected = "c"
         assertEquals(2, history2.selectedIndex)
         events.assertions {
             assertNextEquals(Event.of(History.EVENT_SELECTED, 2 to "c"))
@@ -107,7 +107,7 @@ class TestHistory {
 
     @Test
     fun testSelectMissing() {
-        assertFailsWith<NoSuchElementException> { history2.select("d") }
+        assertFailsWith<NoSuchElementException> { history2.selected = "d" }
         assertEquals(0, history2.selectedIndex)
         events.assertions {
             assertNoMoreEvents()
