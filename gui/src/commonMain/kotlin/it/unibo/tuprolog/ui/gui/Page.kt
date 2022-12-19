@@ -33,6 +33,8 @@ interface Page {
 
     var solverBuilder: SolverBuilder
 
+    val queryHistory: History<String>
+
     fun solve(maxSolutions: Int = 1)
 
     fun next(maxSolutions: Int = 1)

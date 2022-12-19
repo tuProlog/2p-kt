@@ -44,10 +44,10 @@ class HistoryImpl<T>(private var itemsSequence: Sequence<T>) : History<T> {
     override val onSelected: Source<Event<Pair<Int, T>>> = Source.of()
 
     override fun append(item: T) {
-        val new = itemsSequence.any { it == item }
+        val repeated = itemsSequence.any { it == item }
         itemsSequence = sequenceOf(item) + itemsSequence.filter { it != item }
         itemsCache.invalidate()
-        if (!new) raise(History.EVENT_APPENDED, item)
+        if (!repeated) raise(History.EVENT_APPENDED, item)
         selectedIndex = 0
     }
 

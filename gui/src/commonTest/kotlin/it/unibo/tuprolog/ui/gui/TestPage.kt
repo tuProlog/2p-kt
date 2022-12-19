@@ -62,6 +62,10 @@ class TestPage {
             onClose += catchAnyEvent
             onSolveOptionsChanged += catchAnyEvent
             onQueryChanged += catchAnyEvent
+            queryHistory.run {
+                onAppended += catchAnyEvent
+                onSelected += catchAnyEvent
+            }
             onNewSolver += catchAnyEvent
             onNewStaticKb += catchAnyEvent
             onNewQuery += catchAnyEvent
@@ -161,6 +165,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = factsTheoryParsed)
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = factsTheoryParsed)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
@@ -185,6 +191,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = factsTheoryParsed)
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = factsTheoryParsed)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
@@ -208,6 +216,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = factsTheoryParsed)
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = factsTheoryParsed)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             for (i in 1..2) {
@@ -233,6 +243,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = factsTheoryParsed)
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = factsTheoryParsed)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             for (i in 1..3) {
@@ -270,6 +282,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = peanoTheoryParsed)
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = peanoTheoryParsed)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             for (p in peanoNumbers.take(n)) {
@@ -309,6 +323,8 @@ class TestPage {
                 checkpoint = checkpoint.assertions {
                     assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
                     assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = peanoTheoryParsed)
+                    assertNextIsEvent(History.EVENT_APPENDED, query)
+                    assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
                     assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = peanoTheoryParsed)
                 }
             } else {
@@ -351,6 +367,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = peanoTheoryParsed)
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = peanoTheoryParsed)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             for (p in peanoNumbers.take(n)) {
@@ -384,6 +402,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled())
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
@@ -418,6 +438,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled())
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
@@ -453,6 +475,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_SOLVE_OPTIONS_CHANGED, shortTimeout)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = peanoTheoryParsed)
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = peanoTheoryParsed)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
@@ -489,6 +513,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_QUERY_CHANGED, query)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled())
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
@@ -525,7 +551,11 @@ class TestPage {
                     if (index == 0) {
                         assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
                         assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled())
+                        if (i == 1) {
+                            assertNextIsEvent(History.EVENT_APPENDED, query)
+                        }
                     }
+                    assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
                     assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery)
                     assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
                     assertNextEquals(Runner4Tests.EVENT_BACKGROUND)
@@ -588,6 +618,8 @@ class TestPage {
             assertNextIsEvent(Page.EVENT_THEORY_CHANGED, theory)
             assertNextIsSolveEvent(Page.EVENT_NEW_SOLVER, PageID.untitled())
             assertNextIsSolveEvent(Page.EVENT_NEW_STATIC_KB, PageID.untitled(), staticKb = parsedTheory, operators = operators)
+            assertNextIsEvent(History.EVENT_APPENDED, query)
+            assertNextIsEvent(History.EVENT_SELECTED, 0 to query)
             assertNextIsSolveEvent(Page.EVENT_NEW_QUERY, parsedQuery, staticKb = parsedTheory, operators = operators)
             assertNextIsEvent(Page.EVENT_STATE_CHANGED, Page.Status.COMPUTING)
             assertNextEquals(Runner4Tests.EVENT_BACKGROUND)

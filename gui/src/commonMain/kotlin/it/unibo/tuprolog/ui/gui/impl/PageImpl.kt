@@ -17,6 +17,7 @@ import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.ui.gui.Event
 import it.unibo.tuprolog.ui.gui.FileContent
 import it.unibo.tuprolog.ui.gui.FileName
+import it.unibo.tuprolog.ui.gui.History
 import it.unibo.tuprolog.ui.gui.Page
 import it.unibo.tuprolog.ui.gui.PageID
 import it.unibo.tuprolog.ui.gui.Runner
@@ -88,6 +89,8 @@ internal class PageImpl(
                 onSolveOptionsChanged.raise(Page.EVENT_SOLVE_OPTIONS_CHANGED, value)
             }
         }
+
+    override val queryHistory: History<String> = History.empty()
 
     override fun close() {
         onClose.raise(Page.EVENT_CLOSE, id)
@@ -229,8 +232,11 @@ internal class PageImpl(
     }
 
     private fun parseQueryAsStruct(operators: OperatorSet): Struct {
+        val query = query
         try {
-            return query.parseAsStruct(operators)
+            return query.parseAsStruct(operators).also {
+                queryHistory.append(query)
+            }
         } catch (e: ParseException) {
             throw SyntaxException.InQuerySyntaxError(query, e)
         }

@@ -14,8 +14,10 @@ import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
+private const val DEBUG = false
+
 fun <T> Iterable<T>.assertions(
-    debug: Boolean = false,
+    debug: Boolean = DEBUG,
     scope: EventsAsserter<T>.() -> Unit
 ): EventsAsserter<T>.Checkpoint {
     return EventsAsserter(this).also { if (debug) it.debug() }.also(scope).checkpoint()
@@ -26,7 +28,7 @@ fun <T> Iterable<T>.beginAssertions(): EventsAsserter<T>.Checkpoint {
 }
 
 fun <T> EventsAsserter<T>.Checkpoint.assertions(
-    debug: Boolean = false,
+    debug: Boolean = DEBUG,
     scope: EventsAsserter<T>.() -> Unit
 ): EventsAsserter<T>.Checkpoint = restore().also { if (debug) it.debug() }.also(scope).checkpoint()
 
