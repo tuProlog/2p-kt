@@ -8,6 +8,7 @@ import it.unibo.tuprolog.ui.gui.Event
 import it.unibo.tuprolog.ui.gui.FileName
 import it.unibo.tuprolog.ui.gui.Page
 import it.unibo.tuprolog.ui.gui.PageID
+import it.unibo.tuprolog.ui.gui.PageName
 import it.unibo.tuprolog.ui.gui.Runner
 import it.unibo.tuprolog.ui.gui.raise
 import it.unibo.tuprolog.utils.io.File
@@ -23,7 +24,9 @@ internal class ApplicationImpl(
     override val pages: Collection<Page>
         get() = pagesById.values
 
-    override fun newPage(pageID: PageID): Page {
+    override fun newPage(pageID: PageName): Page = newPageImpl(pageID)
+
+    private fun newPageImpl(pageID: PageID): Page {
         val page = if (pageID !in pagesById) {
             createPage(pageID).also {
                 pagesById[pageID] = it
@@ -64,8 +67,8 @@ internal class ApplicationImpl(
         onError.raise(Application.EVENT_ERROR, page to error)
     }
 
-    override fun load(file: File) {
-        newPage(FileName(file)).also {
+    override fun load(file: File): Page =
+        newPageImpl(FileName(file)).also {
             runner.io {
                 val text = file.readText()
                 runner.ui {
@@ -73,7 +76,6 @@ internal class ApplicationImpl(
                 }
             }
         }
-    }
 
     override var currentPage: Page? = null
         protected set(value) {
@@ -90,7 +92,17 @@ internal class ApplicationImpl(
         currentPage = page
     }
 
-    override val onQuit: Source<Unit> = Source.of()
+    override fun start() {
+        onStart.raise(Event.of(Application.EVENT_START, Unit))
+    }
+
+    override fun quit() {
+        onQuit.raise(Event.of(Application.EVENT_QUIT, Unit))
+    }
+
+    override val onStart: Source<Event<Unit>> = Source.of()
+
+    override val onQuit: Source<Event<Unit>> = Source.of()
 
     override val onPageSelected: Source<Event<Page>> = Source.of()
 

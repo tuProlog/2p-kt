@@ -10,11 +10,11 @@ sealed interface PageID {
     companion object {
         const val UNTITLED = "untitled"
 
-        fun untitled(existing: Iterable<PageID> = emptyList()): PageID =
+        fun untitled(existing: Iterable<PageID> = emptyList()): PageName =
             existing.asSequence().distinct()
                 .filter { it.name.startsWith(UNTITLED) }
                 .map { it.name.removePrefix(UNTITLED) }
-                .map { it.toIntOrNull() }
+                .map { it.ifEmpty { "0" }.toIntOrNull() }
                 .filterNotNull()
                 .maxOrNull()
                 ?.let { PageName(UNTITLED + (it + 1)) }

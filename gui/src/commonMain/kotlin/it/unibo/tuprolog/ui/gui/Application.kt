@@ -15,9 +15,9 @@ interface Application {
     val pageIDs: Iterable<PageID>
         get() = pages.asSequence().map { it.id }.asIterable()
 
-    fun newPage(pageID: PageID = PageID.untitled(pageIDs)): Page
+    fun newPage(pageID: PageName = PageID.untitled(pageIDs)): Page
 
-    fun load(file: File)
+    fun load(file: File): Page
 
     val currentPage: Page?
 
@@ -25,7 +25,13 @@ interface Application {
 
     fun select(page: Page)
 
-    val onQuit: Observable<Unit>
+    fun start()
+
+    fun quit()
+
+    val onStart: Observable<Event<Unit>>
+
+    val onQuit: Observable<Event<Unit>>
 
     val onPageSelected: Observable<Event<Page>>
 
@@ -38,6 +44,9 @@ interface Application {
     val onError: Observable<Event<Pair<Page, TuPrologException>>>
 
     companion object {
+
+        @JvmField
+        val EVENT_START = Application::onStart.name
 
         @JvmField
         val EVENT_QUIT = Application::onQuit.name

@@ -266,6 +266,15 @@ internal class PageImpl(
         }
     }
 
+    override fun toString(): String =
+        "PageImpl(" +
+            "id=$id, " +
+            "theory='$theory', " +
+            "stdin='$stdin', " +
+            "query='$query', " +
+            "solveOptions=$solveOptions, " +
+            "queryHistory=${queryHistory.items}, " +
+            "state=$state)"
     override val onRename: Source<Event<Pair<PageID, PageID>>> = Source.of()
 
     override val onClose: Source<Event<PageID>> = Source.of()
