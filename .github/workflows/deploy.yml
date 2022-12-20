@@ -31,7 +31,7 @@ jobs:
           key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.event.number || github.ref }}
 
       - name: Checkout
-        uses: danysk/action-checkout@0.2.3
+        uses: danysk/action-checkout@0.2.4
 
       - name: Generate Jars
         uses: DanySK/build-check-deploy-gradle-action@2.1.17
@@ -78,7 +78,7 @@ jobs:
           key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.event.number || github.ref }}
 
       - name: Checkout
-        uses: danysk/action-checkout@0.2.3
+        uses: danysk/action-checkout@0.2.4
 
       - name: Deploy
         uses: DanySK/build-check-deploy-gradle-action@2.1.17
