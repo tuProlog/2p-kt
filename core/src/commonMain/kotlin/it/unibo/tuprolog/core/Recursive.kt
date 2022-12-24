@@ -22,6 +22,10 @@ interface Recursive : Struct {
     @JsName("size")
     val size: Int
 
+    @JsName("items")
+    val items: Iterable<Term>
+        get() = toSequence().asIterable()
+
     @JsName("toArray")
     fun toArray(): Array<Term>
 
