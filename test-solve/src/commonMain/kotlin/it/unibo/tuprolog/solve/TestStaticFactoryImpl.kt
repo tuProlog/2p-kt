@@ -76,8 +76,8 @@ class TestStaticFactoryImpl(private val expectations: Expectations) : TestStatic
         } catch (e: IllegalStateException) {
             // ... in any case, if it fails, an IllegalStateException should be thrown
             assertEquals(
-                "No viable implementation for SolverFactory",
-                e.message
+                true,
+                e.message?.startsWith("No viable implementation for SolverFactory")
             )
         }
     }

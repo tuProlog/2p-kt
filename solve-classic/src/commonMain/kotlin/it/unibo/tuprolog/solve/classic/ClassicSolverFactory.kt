@@ -13,7 +13,10 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
+import kotlin.js.JsExport
 
+@Suppress("NON_EXPORTABLE_TYPE")
+@JsExport
 object ClassicSolverFactory : SolverFactory {
 
     override val defaultBuiltins: Library

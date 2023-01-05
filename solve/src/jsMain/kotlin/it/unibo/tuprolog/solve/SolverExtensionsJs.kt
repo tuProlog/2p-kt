@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.solve
 
 private object ModuleNames {
-    const val tuprolog = "@tuprolog"
+    const val organization = "."
 
     private const val solvePrefix = "2p-solve"
 
     const val classic = "$solvePrefix-classic"
 
     private fun withOptionalPrefix(orgPrefix: Boolean = false, module: String, klass: String): String =
-        (if (orgPrefix) "$tuprolog/" else "") + module + ":" + klass
+        (if (orgPrefix) "$organization/" else "") + module + ":" + klass
 
     fun classicFactoryClass(orgPrefix: Boolean = false) =
         withOptionalPrefix(orgPrefix, classic, FactoryClassNames.classic)
@@ -35,7 +35,10 @@ internal actual fun solverFactory(className: String, vararg classNames: String):
         .map { it.resolve() }
         .filterIsInstance<SolverFactory>()
         .firstOrNull()
-        ?: throw IllegalStateException("No viable implementation for ${SolverFactory::class.simpleName}")
+        ?: throw IllegalStateException(
+            "No viable implementation for ${SolverFactory::class.simpleName} in " +
+                sequenceOf(className, *classNames).joinToString(", ", "[", "]")
+        )
 
 actual fun classicSolverFactory(): SolverFactory =
     solverFactory(

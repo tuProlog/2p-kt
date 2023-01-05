@@ -15,7 +15,10 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.Theory
+import kotlin.js.JsExport
 
+@Suppress("NON_EXPORTABLE_TYPE")
+@JsExport
 object ProblogSolverFactory : SolverFactory {
 
     override val defaultBuiltins: Library
