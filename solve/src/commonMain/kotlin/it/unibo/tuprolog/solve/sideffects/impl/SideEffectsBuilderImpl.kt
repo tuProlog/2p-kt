@@ -10,7 +10,8 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
 
-data class SideEffectsBuilderImpl(override val sideEffects: MutableList<SideEffect>) : SideEffectsBuilder {
+internal data class SideEffectsBuilderImpl(override val sideEffects: MutableList<SideEffect>)
+    : SideEffectsBuilder, AbstractSideEffectFactory() {
     private fun <T : SideEffect> adding(f: () -> T): T = f().also { sideEffects.add(it) }
 
     override fun resetStaticKb(clauses: Iterable<Clause>): SideEffect.ResetStaticKb =
