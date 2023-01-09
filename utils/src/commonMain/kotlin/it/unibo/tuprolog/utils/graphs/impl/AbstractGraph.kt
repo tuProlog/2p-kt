@@ -4,6 +4,7 @@ import it.unibo.tuprolog.utils.graphs.Edge
 import it.unibo.tuprolog.utils.graphs.Graph
 import it.unibo.tuprolog.utils.graphs.MutableGraph
 import it.unibo.tuprolog.utils.graphs.Node
+import it.unibo.tuprolog.utils.graphs.SearchStrategy
 
 internal abstract class AbstractGraph<T, W> protected constructor(
     protected val connections: MutableMap<Node<T>, MutableMap<Node<T>, W>>
@@ -59,6 +60,7 @@ internal abstract class AbstractGraph<T, W> protected constructor(
     override val edges: Set<Edge<T, W>>
         get() = lazyEdges.toSet()
 
+    @Suppress("MemberVisibilityCanBePrivate")
     protected val lazyEdges: Sequence<Edge<T, W>>
         get() = sequence {
             for ((node1, connectedNodes) in connections) {
@@ -101,5 +103,17 @@ internal abstract class AbstractGraph<T, W> protected constructor(
             "${it.source}-${it.weight ?: ""}->${it.destination}"
         }
 
+    override fun asIterable(searchStrategy: SearchStrategy<T, W>, initialNode: Node<T>): Iterable<Node<T>> =
+        searchStrategy.search(this, initialNode).asIterable()
+
     override fun toMutable(): MutableGraph<T, W> = it.unibo.tuprolog.utils.graphs.impl.MutableGraph(connections)
+
+    override fun ingoingEdges(to: Node<T>): Iterable<Edge<T, W>> =
+        connections.asSequence()
+            .filter { (_, destinations) -> to in destinations }
+            .map { (source, destinations) -> edge(source, to, destinations[to]!!) }
+            .asIterable()
+
+    override fun outgoingEdges(from: Node<T>): Iterable<Edge<T, W>> =
+        connections[from]?.asSequence()?.map { (to, weight) -> edge(from, to, weight) }?.asIterable() ?: emptyList()
 }
