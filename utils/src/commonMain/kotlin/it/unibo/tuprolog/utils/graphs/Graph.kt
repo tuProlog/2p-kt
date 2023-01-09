@@ -35,6 +35,15 @@ interface Graph<T, W> {
     @JsName("get")
     operator fun get(edge: Pair<Node<T>, Node<T>>): W?
 
+    @JsName("asIterable")
+    fun asIterable(searchStrategy: SearchStrategy<T, W>, initialNode: Node<T>): Iterable<Node<T>>
+
+    @JsName("outgoingEdges")
+    fun outgoingEdges(from: Node<T>): Iterable<Edge<T, W>>
+
+    @JsName("ingoingEdges")
+    fun ingoingEdges(to: Node<T>): Iterable<Edge<T, W>>
+
     companion object {
         @JsName("build")
         @JvmStatic
