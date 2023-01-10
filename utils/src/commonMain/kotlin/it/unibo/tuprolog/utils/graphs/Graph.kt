@@ -4,7 +4,7 @@ import it.unibo.tuprolog.utils.graphs.impl.ImmutableGraph
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-interface Graph<T, W> {
+interface Graph<T, W> : Iterable<Edge<T, W>> {
     @JsName("nodes")
     val nodes: Set<Node<T>>
 
@@ -14,11 +14,14 @@ interface Graph<T, W> {
     @JsName("size")
     val size: Int
 
+    @JsName("edgesCount")
+    val edgesCount: Int
+
     @JsName("node")
     fun node(value: T): Node<T>
 
     @JsName("edge")
-    fun edge(node1: Node<T>, node2: Node<T>, weight: W): Edge<T, W>
+    fun edge(node1: Node<T>, node2: Node<T>, weight: W? = null): Edge<T, W>
 
     @JsName("containsNode")
     operator fun contains(node: Node<T>): Boolean
@@ -34,6 +37,18 @@ interface Graph<T, W> {
 
     @JsName("get")
     operator fun get(edge: Pair<Node<T>, Node<T>>): W?
+
+    @JsName("plusNode")
+    operator fun plus(node: Node<T>): Graph<T, W>
+
+    @JsName("plusEdge")
+    operator fun plus(edge: Edge<T, W>): Graph<T, W>
+
+    @JsName("minusNode")
+    operator fun minus(node: Node<T>): Graph<T, W>
+
+    @JsName("minusEdge")
+    operator fun minus(edge: Edge<T, W>): Graph<T, W>
 
     @JsName("asIterable")
     fun asIterable(searchStrategy: SearchStrategy<T, W>, initialNode: Node<T>): Iterable<Node<T>>
