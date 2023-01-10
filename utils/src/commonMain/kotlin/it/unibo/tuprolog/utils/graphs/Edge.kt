@@ -20,7 +20,7 @@ interface Edge<T, W> {
         @JsName("of")
         @JvmStatic
         @JvmOverloads
-        fun <T, W>  of(source: Node<T>, destination: Node<T>, weight: W? = null): Edge<T, W> =
+        fun <T, W> of(source: Node<T>, destination: Node<T>, weight: W? = null): Edge<T, W> =
             EdgeImpl(source, destination, weight)
     }
 }

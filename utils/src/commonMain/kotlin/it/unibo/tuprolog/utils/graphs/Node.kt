@@ -11,6 +11,6 @@ interface Node<T> {
     companion object {
         @JsName("of")
         @JvmStatic
-        fun <T>  of(value: T): Node<T> = NodeImpl(value)
+        fun <T> of(value: T): Node<T> = NodeImpl(value)
     }
 }
