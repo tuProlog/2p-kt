@@ -17,12 +17,6 @@ interface Graph<T, W> : Iterable<Edge<T, W>> {
     @JsName("edgesCount")
     val edgesCount: Int
 
-    @JsName("node")
-    fun node(value: T): Node<T>
-
-    @JsName("edge")
-    fun edge(node1: Node<T>, node2: Node<T>, weight: W? = null): Edge<T, W>
-
     @JsName("containsNode")
     operator fun contains(node: Node<T>): Boolean
 

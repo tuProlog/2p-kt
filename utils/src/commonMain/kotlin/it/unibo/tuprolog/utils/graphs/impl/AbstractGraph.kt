@@ -29,17 +29,9 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
         }
     )
 
-    private data class GraphNode<T>(override val value: T) : Node<T>
+    protected fun node(value: T): Node<T> = Node.of(value)
 
-    private data class GraphEdge<T, W>(
-        override val source: Node<T>,
-        override val destination: Node<T>,
-        override val weight: W?
-    ) : Edge<T, W>
-
-    override fun node(value: T): Node<T> = GraphNode(value)
-
-    override fun edge(node1: Node<T>, node2: Node<T>, weight: W?): Edge<T, W> = GraphEdge(node1, node2, weight)
+    protected fun edge(node1: Node<T>, node2: Node<T>, weight: W?): Edge<T, W> = Edge.of(node1, node2, weight)
 
     protected open fun remove(edge: Edge<T, W>) {
         connections[edge.source]?.remove(edge.destination)
