@@ -62,4 +62,40 @@ class TestGraph {
         assertTrue(unweighted.containsEdgeAmong(node("b"), node("c")))
         assertFalse(unweighted.containsEdgeAmong(node("c"), node("b")))
     }
+
+    @Test
+    fun testCreationWeighted() {
+        assertEquals(3, weighted.size)
+        assertEquals(4, weighted.edgesCount)
+
+        assertEquals(weighted.nodes, setOf(node("a"), node("b"), node("c")))
+        assertEquals(
+            weighted.edges,
+            setOf(
+                edge(node("a"), node("b"), weight = 3),
+                edge(node("b"), node("a"), weight = 3),
+                edge(node("a"), node("c"), weight = 1),
+                edge(node("b"), node("c"), weight = 2),
+            )
+        )
+
+        assertTrue(node("a") in unweighted)
+        assertTrue(node("b") in unweighted)
+        assertTrue(node("c") in unweighted)
+        assertFalse(node("d") in unweighted)
+
+        assertTrue(edge(node("a"), node("b")) in unweighted)
+        assertTrue(edge(node("b"), node("a")) in unweighted)
+        assertTrue(edge(node("a"), node("c")) in unweighted)
+        assertFalse(edge(node("c"), node("a")) in unweighted)
+        assertTrue(edge(node("b"), node("c")) in unweighted)
+        assertFalse(edge(node("c"), node("b")) in unweighted)
+
+        assertTrue(unweighted.containsEdgeAmong(node("a"), node("b")))
+        assertTrue(unweighted.containsEdgeAmong(node("b"), node("a")))
+        assertTrue(unweighted.containsEdgeAmong(node("a"), node("c")))
+        assertFalse(unweighted.containsEdgeAmong(node("c"), node("a")))
+        assertTrue(unweighted.containsEdgeAmong(node("b"), node("c")))
+        assertFalse(unweighted.containsEdgeAmong(node("c"), node("b")))
+    }
 }
