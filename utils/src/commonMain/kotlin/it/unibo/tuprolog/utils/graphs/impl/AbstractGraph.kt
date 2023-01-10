@@ -6,18 +6,23 @@ import it.unibo.tuprolog.utils.graphs.MutableGraph
 import it.unibo.tuprolog.utils.graphs.Node
 import it.unibo.tuprolog.utils.graphs.SearchStrategy
 
-internal abstract class AbstractGraph<T, W> protected constructor(
-    protected val connections: MutableMap<Node<T>, MutableMap<Node<T>, W>>
+internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> protected constructor(
+    protected val connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>
 ) : Graph<T, W> {
 
     companion object {
-        private fun <T, W> MutableMap<Node<T>, MutableMap<Node<T>, W>>.putEdge(edge: Edge<T, W>) =
-            get(edge.source)?.set(edge.destination, edge.weight)
-                ?: put(edge.source, mutableMapOf(edge.destination to edge.weight))
+        private fun <T, W> MutableMap<Node<T>, MutableMap<Node<T>, W?>>.putEdge(edge: Edge<T, W>) {
+            val destination = edge.destination
+            get(edge.source)?.set(destination, edge.weight)
+                ?: put(edge.source, mutableMapOf(destination to edge.weight))
+            if (destination !in this) {
+                put(destination, mutableMapOf())
+            }
+        }
     }
 
     constructor(edges: Iterable<Edge<T, W>>) : this(
-        mutableMapOf<Node<T>, MutableMap<Node<T>, W>>().also {
+        mutableMapOf<Node<T>, MutableMap<Node<T>, W?>>().also {
             for (edge in edges) {
                 it.putEdge(edge)
             }
@@ -29,12 +34,12 @@ internal abstract class AbstractGraph<T, W> protected constructor(
     private data class GraphEdge<T, W>(
         override val source: Node<T>,
         override val destination: Node<T>,
-        override val weight: W
+        override val weight: W?
     ) : Edge<T, W>
 
     override fun node(value: T): Node<T> = GraphNode(value)
 
-    override fun edge(node1: Node<T>, node2: Node<T>, weight: W): Edge<T, W> = GraphEdge(node1, node2, weight)
+    override fun edge(node1: Node<T>, node2: Node<T>, weight: W?): Edge<T, W> = GraphEdge(node1, node2, weight)
 
     protected open fun remove(edge: Edge<T, W>) {
         connections[edge.source]?.remove(edge.destination)
@@ -59,6 +64,8 @@ internal abstract class AbstractGraph<T, W> protected constructor(
 
     override val edges: Set<Edge<T, W>>
         get() = lazyEdges.toSet()
+
+    override fun iterator(): Iterator<Edge<T, W>> = lazyEdges.iterator()
 
     @Suppress("MemberVisibilityCanBePrivate")
     protected val lazyEdges: Sequence<Edge<T, W>>
@@ -89,7 +96,7 @@ internal abstract class AbstractGraph<T, W> protected constructor(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as AbstractGraph<*, *>
+        other as AbstractGraph<*, *, *>
 
         if (connections != other.connections) return false
 
@@ -100,7 +107,7 @@ internal abstract class AbstractGraph<T, W> protected constructor(
 
     override fun toString(): String =
         lazyEdges.joinToString(", ", "{", "}") {
-            "${it.source}-${it.weight ?: ""}->${it.destination}"
+            "${it.source.value}-${it.weight ?: ""}->${it.destination.value}"
         }
 
     override fun asIterable(searchStrategy: SearchStrategy<T, W>, initialNode: Node<T>): Iterable<Node<T>> =
@@ -116,4 +123,33 @@ internal abstract class AbstractGraph<T, W> protected constructor(
 
     override fun outgoingEdges(from: Node<T>): Iterable<Edge<T, W>> =
         connections[from]?.asSequence()?.map { (to, weight) -> edge(from, to, weight) }?.asIterable() ?: emptyList()
+
+    protected abstract fun newInstance(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>): Self
+
+    override fun plus(node: Node<T>): Self {
+        val connections = connections.toMutableMap()
+        connections[node] = mutableMapOf()
+        return newInstance(connections)
+    }
+
+    override fun plus(edge: Edge<T, W>): Self {
+        val connections = connections.toMutableMap()
+        connections[edge.source] = mutableMapOf(edge.destination to edge.weight)
+        return newInstance(connections)
+    }
+
+    override fun minus(node: Node<T>): Self {
+        val connections = connections.toMutableMap()
+        connections.remove(node)
+        return newInstance(connections)
+    }
+
+    override fun minus(edge: Edge<T, W>): Self {
+        val connections = connections.toMutableMap()
+        connections[edge.source]?.remove(edge.destination)
+        return newInstance(connections)
+    }
+
+    override val edgesCount: Int
+        get() = connections.map { it.value.size }.sum()
 }
