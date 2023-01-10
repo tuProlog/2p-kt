@@ -1,4 +1,8 @@
+@file:JvmName("Deque")
+
 package it.unibo.tuprolog.utils
+
+import kotlin.jvm.JvmName
 
 expect fun <T> dequeOf(vararg items: T): MutableList<T>
 

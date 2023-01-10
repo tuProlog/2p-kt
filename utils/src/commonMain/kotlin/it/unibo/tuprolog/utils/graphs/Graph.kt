@@ -45,7 +45,10 @@ interface Graph<T, W> : Iterable<Edge<T, W>> {
     operator fun minus(edge: Edge<T, W>): Graph<T, W>
 
     @JsName("asIterable")
-    fun asIterable(searchStrategy: SearchStrategy<T, W>, initialNode: Node<T>): Iterable<Node<T>>
+    fun <S> asIterable(searchStrategy: SearchStrategy<T, W, S>, initialNode: Node<T>): Iterable<Visit<T, S>>
+
+    @JsName("asSequence")
+    fun <S> asSequence(searchStrategy: SearchStrategy<T, W, S>, initialNode: Node<T>): Sequence<Visit<T, S>>
 
     @JsName("outgoingEdges")
     fun outgoingEdges(from: Node<T>): Iterable<Edge<T, W>>

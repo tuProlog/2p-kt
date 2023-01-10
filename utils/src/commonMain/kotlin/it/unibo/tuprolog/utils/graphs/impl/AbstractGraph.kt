@@ -5,6 +5,7 @@ import it.unibo.tuprolog.utils.graphs.Graph
 import it.unibo.tuprolog.utils.graphs.MutableGraph
 import it.unibo.tuprolog.utils.graphs.Node
 import it.unibo.tuprolog.utils.graphs.SearchStrategy
+import it.unibo.tuprolog.utils.graphs.Visit
 
 internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> protected constructor(
     protected val connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>
@@ -102,8 +103,11 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
             "${it.source.value}-${it.weight ?: ""}->${it.destination.value}"
         }
 
-    override fun asIterable(searchStrategy: SearchStrategy<T, W>, initialNode: Node<T>): Iterable<Node<T>> =
-        searchStrategy.search(this, initialNode).asIterable()
+    override fun <S> asIterable(searchStrategy: SearchStrategy<T, W, S>, initialNode: Node<T>): Iterable<Visit<T, S>> =
+        asSequence(searchStrategy, initialNode).asIterable()
+
+    override fun <S> asSequence(searchStrategy: SearchStrategy<T, W, S>, initialNode: Node<T>): Sequence<Visit<T, S>> =
+        searchStrategy.search(this, initialNode)
 
     override fun toMutable(): MutableGraph<T, W> = it.unibo.tuprolog.utils.graphs.impl.MutableGraph(connections)
 
