@@ -11,5 +11,5 @@ interface Edge<T, W> {
     val destination: Node<T>
 
     @JsName("weight")
-    val weight: W
+    val weight: W?
 }

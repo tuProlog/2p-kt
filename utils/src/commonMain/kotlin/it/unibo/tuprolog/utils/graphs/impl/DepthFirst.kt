@@ -1,6 +1,10 @@
-package it.unibo.tuprolog.utils.graphs
+package it.unibo.tuprolog.utils.graphs.impl
 
-class DepthFirst<T, W>(
+import it.unibo.tuprolog.utils.graphs.Graph
+import it.unibo.tuprolog.utils.graphs.Node
+import it.unibo.tuprolog.utils.graphs.SearchStrategy
+
+internal class DepthFirst<T, W>(
     private val postOrder: Boolean = false,
     private val maxDepth: Int = -1
 ) : SearchStrategy<T, W> {
