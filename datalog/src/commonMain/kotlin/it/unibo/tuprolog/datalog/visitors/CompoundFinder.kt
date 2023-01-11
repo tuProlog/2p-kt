@@ -4,7 +4,8 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 
 object CompoundFinder : AbstractClauseVisitor<Boolean>() {
-    override fun reduce(results: Sequence<Boolean>): Boolean = results.any { it }
+    override fun reduce(results: Sequence<Boolean>): Boolean =
+        results.any { it }
 
     override fun defaultValue(term: Term): Boolean = false
 

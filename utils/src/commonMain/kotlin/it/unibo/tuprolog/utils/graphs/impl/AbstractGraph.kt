@@ -107,7 +107,7 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
 
     override fun toString(): String =
         lazyEdges.joinToString(", ", "{", "}") {
-            "${it.source.value}-${it.weight ?: ""}->${it.destination.value}"
+            "${it.source.value} -${it.weight ?: ""}-> ${it.destination.value}"
         }
 
     override fun <S> asIterable(searchStrategy: SearchStrategy<T, W, S>, initialNode: Node<T>): Iterable<Visit<T, S>> =
