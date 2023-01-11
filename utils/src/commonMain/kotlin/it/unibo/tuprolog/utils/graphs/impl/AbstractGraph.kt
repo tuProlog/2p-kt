@@ -20,6 +20,13 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
                 put(destination, mutableMapOf())
             }
         }
+
+        private fun <T, W> MutableMap<Node<T>, MutableMap<Node<T>, W?>>.removeNode(node: Node<T>) {
+            remove(node)
+            for (connectedNode in values) {
+                connectedNode.remove(node)
+            }
+        }
     }
 
     constructor(edges: Iterable<Edge<T, W>>) : this(
@@ -39,7 +46,7 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
     }
 
     protected open fun remove(node: Node<T>) {
-        connections.remove(node)
+        connections.removeNode(node)
     }
 
     protected open fun add(edge: Edge<T, W>) {
@@ -136,7 +143,7 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
 
     override fun minus(node: Node<T>): Self {
         val connections = connections.toMutableMap()
-        connections.remove(node)
+        connections.removeNode(node)
         return newInstance(connections)
     }
 
