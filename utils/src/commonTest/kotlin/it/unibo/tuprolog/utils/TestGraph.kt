@@ -4,10 +4,10 @@ import it.unibo.tuprolog.utils.graphs.BreadthFirst
 import it.unibo.tuprolog.utils.graphs.DepthFirst
 import it.unibo.tuprolog.utils.graphs.Graph
 import it.unibo.tuprolog.utils.graphs.copy
-import it.unibo.tuprolog.utils.graphs.edge
+import it.unibo.tuprolog.utils.graphs.edgeOf
 import it.unibo.tuprolog.utils.graphs.isAcyclic
 import it.unibo.tuprolog.utils.graphs.isTree
-import it.unibo.tuprolog.utils.graphs.node
+import it.unibo.tuprolog.utils.graphs.nodeOf
 import it.unibo.tuprolog.utils.graphs.visitOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,27 +16,27 @@ import kotlin.test.assertTrue
 
 class TestGraph {
     private val unweighted = Graph.build<String, Nothing> {
-        this += node("a")
-        this += node("b")
-        this -= node("a")
-        this += edge(node("a"), node("b"))
-        this += edge(node("a"), node("c"))
-        this += edge(node("b"), node("d"))
-        this += edge(node("b"), node("e"))
-        this += edge(node("e"), node("f"))
-        connect(node("a"), node("f"), bidirectional = true)
+        this += nodeOf("a")
+        this += nodeOf("b")
+        this -= nodeOf("a")
+        this += edgeOf(nodeOf("a"), nodeOf("b"))
+        this += edgeOf(nodeOf("a"), nodeOf("c"))
+        this += edgeOf(nodeOf("b"), nodeOf("d"))
+        this += edgeOf(nodeOf("b"), nodeOf("e"))
+        this += edgeOf(nodeOf("e"), nodeOf("f"))
+        connect(nodeOf("a"), nodeOf("f"), bidirectional = true)
     }
 
     private val weighted = Graph.build<String, Int> {
-        this += node("a")
-        this += node("b")
-        this -= node("a")
-        this += edge(node("a"), node("b"), 1)
-        this += edge(node("a"), node("c"), 2)
-        this += edge(node("b"), node("d"), 4)
-        this += edge(node("b"), node("e"), 5)
-        this += edge(node("e"), node("f"), 6)
-        connect(node("a"), node("f"), bidirectional = true, weight = 3)
+        this += nodeOf("a")
+        this += nodeOf("b")
+        this -= nodeOf("a")
+        this += edgeOf(nodeOf("a"), nodeOf("b"), 1)
+        this += edgeOf(nodeOf("a"), nodeOf("c"), 2)
+        this += edgeOf(nodeOf("b"), nodeOf("d"), 4)
+        this += edgeOf(nodeOf("b"), nodeOf("e"), 5)
+        this += edgeOf(nodeOf("e"), nodeOf("f"), 6)
+        connect(nodeOf("a"), nodeOf("f"), bidirectional = true, weight = 3)
     }
 
     @Test
@@ -44,47 +44,47 @@ class TestGraph {
         assertEquals(6, unweighted.size)
         assertEquals(7, unweighted.edgesCount)
 
-        assertEquals(unweighted.nodes, listOf("a", "b", "c", "d", "e", "f").map { node(it) }.toSet())
+        assertEquals(unweighted.nodes, listOf("a", "b", "c", "d", "e", "f").map { nodeOf(it) }.toSet())
         assertEquals(
             unweighted.edges,
             setOf(
-                edge(node("a"), node("b")),
-                edge(node("a"), node("c")),
-                edge(node("b"), node("d")),
-                edge(node("b"), node("e")),
-                edge(node("e"), node("f")),
-                edge(node("a"), node("f")),
-                edge(node("f"), node("a"))
+                edgeOf(nodeOf("a"), nodeOf("b")),
+                edgeOf(nodeOf("a"), nodeOf("c")),
+                edgeOf(nodeOf("b"), nodeOf("d")),
+                edgeOf(nodeOf("b"), nodeOf("e")),
+                edgeOf(nodeOf("e"), nodeOf("f")),
+                edgeOf(nodeOf("a"), nodeOf("f")),
+                edgeOf(nodeOf("f"), nodeOf("a"))
             )
         )
 
-        assertTrue(node("a") in unweighted)
-        assertTrue(node("b") in unweighted)
-        assertTrue(node("c") in unweighted)
-        assertTrue(node("d") in unweighted)
-        assertTrue(node("e") in unweighted)
-        assertTrue(node("f") in unweighted)
-        assertFalse(node("g") in unweighted)
+        assertTrue(nodeOf("a") in unweighted)
+        assertTrue(nodeOf("b") in unweighted)
+        assertTrue(nodeOf("c") in unweighted)
+        assertTrue(nodeOf("d") in unweighted)
+        assertTrue(nodeOf("e") in unweighted)
+        assertTrue(nodeOf("f") in unweighted)
+        assertFalse(nodeOf("g") in unweighted)
 
-        assertTrue(edge(node("a"), node("b")) in unweighted)
-        assertTrue(edge(node("a"), node("c")) in unweighted)
-        assertTrue(edge(node("b"), node("d")) in unweighted)
-        assertTrue(edge(node("b"), node("e")) in unweighted)
-        assertTrue(edge(node("e"), node("f")) in unweighted)
-        assertTrue(edge(node("a"), node("f")) in unweighted)
-        assertTrue(edge(node("f"), node("a")) in unweighted)
-        assertFalse(edge(node("b"), node("c")) in unweighted)
-        assertFalse(edge(node("d"), node("e")) in unweighted)
+        assertTrue(edgeOf(nodeOf("a"), nodeOf("b")) in unweighted)
+        assertTrue(edgeOf(nodeOf("a"), nodeOf("c")) in unweighted)
+        assertTrue(edgeOf(nodeOf("b"), nodeOf("d")) in unweighted)
+        assertTrue(edgeOf(nodeOf("b"), nodeOf("e")) in unweighted)
+        assertTrue(edgeOf(nodeOf("e"), nodeOf("f")) in unweighted)
+        assertTrue(edgeOf(nodeOf("a"), nodeOf("f")) in unweighted)
+        assertTrue(edgeOf(nodeOf("f"), nodeOf("a")) in unweighted)
+        assertFalse(edgeOf(nodeOf("b"), nodeOf("c")) in unweighted)
+        assertFalse(edgeOf(nodeOf("d"), nodeOf("e")) in unweighted)
 
-        assertTrue(unweighted.containsEdgeAmong(node("a"), node("b")))
-        assertTrue(unweighted.containsEdgeAmong(node("a"), node("c")))
-        assertTrue(unweighted.containsEdgeAmong(node("b"), node("d")))
-        assertTrue(unweighted.containsEdgeAmong(node("b"), node("e")))
-        assertTrue(unweighted.containsEdgeAmong(node("e"), node("f")))
-        assertTrue(unweighted.containsEdgeAmong(node("a"), node("f")))
-        assertTrue(unweighted.containsEdgeAmong(node("f"), node("a")))
-        assertFalse(unweighted.containsEdgeAmong(node("b"), node("c")))
-        assertFalse(unweighted.containsEdgeAmong(node("d"), node("e")))
+        assertTrue(unweighted.containsEdgeAmong(nodeOf("a"), nodeOf("b")))
+        assertTrue(unweighted.containsEdgeAmong(nodeOf("a"), nodeOf("c")))
+        assertTrue(unweighted.containsEdgeAmong(nodeOf("b"), nodeOf("d")))
+        assertTrue(unweighted.containsEdgeAmong(nodeOf("b"), nodeOf("e")))
+        assertTrue(unweighted.containsEdgeAmong(nodeOf("e"), nodeOf("f")))
+        assertTrue(unweighted.containsEdgeAmong(nodeOf("a"), nodeOf("f")))
+        assertTrue(unweighted.containsEdgeAmong(nodeOf("f"), nodeOf("a")))
+        assertFalse(unweighted.containsEdgeAmong(nodeOf("b"), nodeOf("c")))
+        assertFalse(unweighted.containsEdgeAmong(nodeOf("d"), nodeOf("e")))
     }
 
     @Test
@@ -92,277 +92,277 @@ class TestGraph {
         assertEquals(6, weighted.size)
         assertEquals(7, weighted.edgesCount)
 
-        assertEquals(weighted.nodes, listOf("a", "b", "c", "d", "e", "f").map { node(it) }.toSet())
+        assertEquals(weighted.nodes, listOf("a", "b", "c", "d", "e", "f").map { nodeOf(it) }.toSet())
         assertEquals(
             weighted.edges,
             setOf(
-                edge(node("a"), node("b"), 1),
-                edge(node("a"), node("c"), 2),
-                edge(node("b"), node("d"), 4),
-                edge(node("b"), node("e"), 5),
-                edge(node("e"), node("f"), 6),
-                edge(node("a"), node("f"), 3),
-                edge(node("f"), node("a"), 3)
+                edgeOf(nodeOf("a"), nodeOf("b"), 1),
+                edgeOf(nodeOf("a"), nodeOf("c"), 2),
+                edgeOf(nodeOf("b"), nodeOf("d"), 4),
+                edgeOf(nodeOf("b"), nodeOf("e"), 5),
+                edgeOf(nodeOf("e"), nodeOf("f"), 6),
+                edgeOf(nodeOf("a"), nodeOf("f"), 3),
+                edgeOf(nodeOf("f"), nodeOf("a"), 3)
             )
         )
 
-        assertTrue(node("a") in weighted)
-        assertTrue(node("b") in weighted)
-        assertTrue(node("c") in weighted)
-        assertTrue(node("d") in weighted)
-        assertTrue(node("e") in weighted)
-        assertTrue(node("f") in weighted)
-        assertFalse(node("g") in weighted)
+        assertTrue(nodeOf("a") in weighted)
+        assertTrue(nodeOf("b") in weighted)
+        assertTrue(nodeOf("c") in weighted)
+        assertTrue(nodeOf("d") in weighted)
+        assertTrue(nodeOf("e") in weighted)
+        assertTrue(nodeOf("f") in weighted)
+        assertFalse(nodeOf("g") in weighted)
 
-        assertTrue(edge(node("a"), node("b"), 1) in weighted)
-        assertTrue(edge(node("a"), node("c"), 2) in weighted)
-        assertTrue(edge(node("b"), node("d"), 4) in weighted)
-        assertTrue(edge(node("b"), node("e"), 5) in weighted)
-        assertTrue(edge(node("e"), node("f"), 6) in weighted)
-        assertTrue(edge(node("a"), node("f"), 3) in weighted)
-        assertTrue(edge(node("f"), node("a"), 3) in weighted)
-        assertFalse(edge(node("b"), node("c")) in weighted)
-        assertFalse(edge(node("d"), node("e")) in weighted)
+        assertTrue(edgeOf(nodeOf("a"), nodeOf("b"), 1) in weighted)
+        assertTrue(edgeOf(nodeOf("a"), nodeOf("c"), 2) in weighted)
+        assertTrue(edgeOf(nodeOf("b"), nodeOf("d"), 4) in weighted)
+        assertTrue(edgeOf(nodeOf("b"), nodeOf("e"), 5) in weighted)
+        assertTrue(edgeOf(nodeOf("e"), nodeOf("f"), 6) in weighted)
+        assertTrue(edgeOf(nodeOf("a"), nodeOf("f"), 3) in weighted)
+        assertTrue(edgeOf(nodeOf("f"), nodeOf("a"), 3) in weighted)
+        assertFalse(edgeOf(nodeOf("b"), nodeOf("c")) in weighted)
+        assertFalse(edgeOf(nodeOf("d"), nodeOf("e")) in weighted)
 
-        assertTrue(weighted.containsEdgeAmong(node("a"), node("b")))
-        assertTrue(weighted.containsEdgeAmong(node("a"), node("c")))
-        assertTrue(weighted.containsEdgeAmong(node("b"), node("d")))
-        assertTrue(weighted.containsEdgeAmong(node("b"), node("e")))
-        assertTrue(weighted.containsEdgeAmong(node("e"), node("f")))
-        assertTrue(weighted.containsEdgeAmong(node("a"), node("f")))
-        assertTrue(weighted.containsEdgeAmong(node("f"), node("a")))
-        assertFalse(weighted.containsEdgeAmong(node("b"), node("c")))
-        assertFalse(weighted.containsEdgeAmong(node("d"), node("e")))
+        assertTrue(weighted.containsEdgeAmong(nodeOf("a"), nodeOf("b")))
+        assertTrue(weighted.containsEdgeAmong(nodeOf("a"), nodeOf("c")))
+        assertTrue(weighted.containsEdgeAmong(nodeOf("b"), nodeOf("d")))
+        assertTrue(weighted.containsEdgeAmong(nodeOf("b"), nodeOf("e")))
+        assertTrue(weighted.containsEdgeAmong(nodeOf("e"), nodeOf("f")))
+        assertTrue(weighted.containsEdgeAmong(nodeOf("a"), nodeOf("f")))
+        assertTrue(weighted.containsEdgeAmong(nodeOf("f"), nodeOf("a")))
+        assertFalse(weighted.containsEdgeAmong(nodeOf("b"), nodeOf("c")))
+        assertFalse(weighted.containsEdgeAmong(nodeOf("d"), nodeOf("e")))
     }
 
     @Test
     fun testLimitedPreOrderDepthFirstSearch() {
         val expected = listOf(
-            visitOf(0, node("a")),
-            visitOf(1, node("b")),
-            visitOf(2, node("d")),
-            visitOf(2, node("e")),
-            visitOf(3, node("f")),
-            visitOf(1, node("c")),
-            visitOf(1, node("f")),
-            visitOf(2, node("a")),
-            visitOf(3, node("b")),
-            visitOf(3, node("c")),
-            visitOf(3, node("f")),
+            visitOf(0, nodeOf("a")),
+            visitOf(1, nodeOf("b")),
+            visitOf(2, nodeOf("d")),
+            visitOf(2, nodeOf("e")),
+            visitOf(3, nodeOf("f")),
+            visitOf(1, nodeOf("c")),
+            visitOf(1, nodeOf("f")),
+            visitOf(2, nodeOf("a")),
+            visitOf(3, nodeOf("b")),
+            visitOf(3, nodeOf("c")),
+            visitOf(3, nodeOf("f")),
         )
-        assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 3), node("a")).toList())
-        assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 3), node("a")).toList())
+        assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 3), nodeOf("a")).toList())
+        assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 3), nodeOf("a")).toList())
     }
 
     @Test
     fun testPreOrderDepthFirstSearchOnGraphWithCycles() {
         val expected = listOf(
-            visitOf(0, node("a")),
-            visitOf(1, node("b")),
-            visitOf(2, node("d")),
-            visitOf(2, node("e")),
-            visitOf(3, node("f")),
-            visitOf(4, node("a")),
-            visitOf(5, node("b")),
-            visitOf(6, node("d")),
-            visitOf(6, node("e")),
-            visitOf(7, node("f")),
-            visitOf(8, node("a")),
-            visitOf(9, node("b")),
-            visitOf(9, node("c")),
-            visitOf(9, node("f")),
-            visitOf(5, node("c")),
-            visitOf(5, node("f")),
-            visitOf(6, node("a")),
-            visitOf(7, node("b")),
-            visitOf(8, node("d")),
-            visitOf(8, node("e")),
-            visitOf(9, node("f")),
-            visitOf(7, node("c")),
-            visitOf(7, node("f")),
-            visitOf(8, node("a")),
-            visitOf(9, node("b")),
-            visitOf(9, node("c")),
-            visitOf(9, node("f")),
-            visitOf(1, node("c")),
-            visitOf(1, node("f")),
-            visitOf(2, node("a")),
-            visitOf(3, node("b")),
-            visitOf(4, node("d")),
-            visitOf(4, node("e")),
-            visitOf(5, node("f")),
-            visitOf(6, node("a")),
-            visitOf(7, node("b")),
-            visitOf(8, node("d")),
-            visitOf(8, node("e")),
-            visitOf(9, node("f")),
-            visitOf(7, node("c")),
-            visitOf(7, node("f")),
-            visitOf(8, node("a")),
-            visitOf(9, node("b")),
-            visitOf(9, node("c")),
-            visitOf(9, node("f")),
-            visitOf(3, node("c")),
-            visitOf(3, node("f")),
-            visitOf(4, node("a")),
-            visitOf(5, node("b")),
-            visitOf(6, node("d")),
-            visitOf(6, node("e")),
-            visitOf(7, node("f")),
-            visitOf(8, node("a")),
-            visitOf(9, node("b")),
-            visitOf(9, node("c")),
-            visitOf(9, node("f")),
-            visitOf(5, node("c")),
-            visitOf(5, node("f")),
-            visitOf(6, node("a")),
-            visitOf(7, node("b")),
-            visitOf(8, node("d")),
-            visitOf(8, node("e")),
-            visitOf(9, node("f")),
-            visitOf(7, node("c")),
-            visitOf(7, node("f")),
-            visitOf(8, node("a")),
-            visitOf(9, node("b")),
-            visitOf(9, node("c")),
-            visitOf(9, node("f")),
+            visitOf(0, nodeOf("a")),
+            visitOf(1, nodeOf("b")),
+            visitOf(2, nodeOf("d")),
+            visitOf(2, nodeOf("e")),
+            visitOf(3, nodeOf("f")),
+            visitOf(4, nodeOf("a")),
+            visitOf(5, nodeOf("b")),
+            visitOf(6, nodeOf("d")),
+            visitOf(6, nodeOf("e")),
+            visitOf(7, nodeOf("f")),
+            visitOf(8, nodeOf("a")),
+            visitOf(9, nodeOf("b")),
+            visitOf(9, nodeOf("c")),
+            visitOf(9, nodeOf("f")),
+            visitOf(5, nodeOf("c")),
+            visitOf(5, nodeOf("f")),
+            visitOf(6, nodeOf("a")),
+            visitOf(7, nodeOf("b")),
+            visitOf(8, nodeOf("d")),
+            visitOf(8, nodeOf("e")),
+            visitOf(9, nodeOf("f")),
+            visitOf(7, nodeOf("c")),
+            visitOf(7, nodeOf("f")),
+            visitOf(8, nodeOf("a")),
+            visitOf(9, nodeOf("b")),
+            visitOf(9, nodeOf("c")),
+            visitOf(9, nodeOf("f")),
+            visitOf(1, nodeOf("c")),
+            visitOf(1, nodeOf("f")),
+            visitOf(2, nodeOf("a")),
+            visitOf(3, nodeOf("b")),
+            visitOf(4, nodeOf("d")),
+            visitOf(4, nodeOf("e")),
+            visitOf(5, nodeOf("f")),
+            visitOf(6, nodeOf("a")),
+            visitOf(7, nodeOf("b")),
+            visitOf(8, nodeOf("d")),
+            visitOf(8, nodeOf("e")),
+            visitOf(9, nodeOf("f")),
+            visitOf(7, nodeOf("c")),
+            visitOf(7, nodeOf("f")),
+            visitOf(8, nodeOf("a")),
+            visitOf(9, nodeOf("b")),
+            visitOf(9, nodeOf("c")),
+            visitOf(9, nodeOf("f")),
+            visitOf(3, nodeOf("c")),
+            visitOf(3, nodeOf("f")),
+            visitOf(4, nodeOf("a")),
+            visitOf(5, nodeOf("b")),
+            visitOf(6, nodeOf("d")),
+            visitOf(6, nodeOf("e")),
+            visitOf(7, nodeOf("f")),
+            visitOf(8, nodeOf("a")),
+            visitOf(9, nodeOf("b")),
+            visitOf(9, nodeOf("c")),
+            visitOf(9, nodeOf("f")),
+            visitOf(5, nodeOf("c")),
+            visitOf(5, nodeOf("f")),
+            visitOf(6, nodeOf("a")),
+            visitOf(7, nodeOf("b")),
+            visitOf(8, nodeOf("d")),
+            visitOf(8, nodeOf("e")),
+            visitOf(9, nodeOf("f")),
+            visitOf(7, nodeOf("c")),
+            visitOf(7, nodeOf("f")),
+            visitOf(8, nodeOf("a")),
+            visitOf(9, nodeOf("b")),
+            visitOf(9, nodeOf("c")),
+            visitOf(9, nodeOf("f")),
         )
-        assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 9), node("a")).toList())
-        assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 9), node("a")).toList())
+        assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 9), nodeOf("a")).toList())
+        assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 9), nodeOf("a")).toList())
     }
 
     @Test
     fun testLimitedPostOrderDepthFirstSearch() {
         val expected = listOf(
-            visitOf(2, node("d")),
-            visitOf(3, node("f")),
-            visitOf(2, node("e")),
-            visitOf(1, node("b")),
-            visitOf(1, node("c")),
-            visitOf(3, node("b")),
-            visitOf(3, node("c")),
-            visitOf(3, node("f")),
-            visitOf(2, node("a")),
-            visitOf(1, node("f")),
-            visitOf(0, node("a")),
+            visitOf(2, nodeOf("d")),
+            visitOf(3, nodeOf("f")),
+            visitOf(2, nodeOf("e")),
+            visitOf(1, nodeOf("b")),
+            visitOf(1, nodeOf("c")),
+            visitOf(3, nodeOf("b")),
+            visitOf(3, nodeOf("c")),
+            visitOf(3, nodeOf("f")),
+            visitOf(2, nodeOf("a")),
+            visitOf(1, nodeOf("f")),
+            visitOf(0, nodeOf("a")),
         )
-        assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 3, postOrder = true), node("a")).toList())
-        assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 3, postOrder = true), node("a")).toList())
+        assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 3, postOrder = true), nodeOf("a")).toList())
+        assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 3, postOrder = true), nodeOf("a")).toList())
     }
 
     @Test
     fun testLimitedBreadthFirstSearch() {
         val expected = listOf(
-            visitOf(0, node("a")),
-            visitOf(1, node("b")),
-            visitOf(1, node("c")),
-            visitOf(1, node("f")),
-            visitOf(2, node("d")),
-            visitOf(2, node("e")),
-            visitOf(2, node("a")),
-            visitOf(3, node("f")),
-            visitOf(3, node("b")),
-            visitOf(3, node("c")),
-            visitOf(3, node("f")),
+            visitOf(0, nodeOf("a")),
+            visitOf(1, nodeOf("b")),
+            visitOf(1, nodeOf("c")),
+            visitOf(1, nodeOf("f")),
+            visitOf(2, nodeOf("d")),
+            visitOf(2, nodeOf("e")),
+            visitOf(2, nodeOf("a")),
+            visitOf(3, nodeOf("f")),
+            visitOf(3, nodeOf("b")),
+            visitOf(3, nodeOf("c")),
+            visitOf(3, nodeOf("f")),
         )
-        assertEquals(expected, unweighted.asSequence(BreadthFirst(maxDepth = 3), node("a")).toList())
-        assertEquals(expected, weighted.asSequence(BreadthFirst(maxDepth = 3), node("a")).toList())
+        assertEquals(expected, unweighted.asSequence(BreadthFirst(maxDepth = 3), nodeOf("a")).toList())
+        assertEquals(expected, weighted.asSequence(BreadthFirst(maxDepth = 3), nodeOf("a")).toList())
     }
 
     @Test
     fun testBreadthFirstSearchOnGraphWithCycles() {
         val expected = listOf(
-            visitOf(0, node("a")),
-            visitOf(1, node("b")),
-            visitOf(1, node("c")),
-            visitOf(1, node("f")),
-            visitOf(2, node("d")),
-            visitOf(2, node("e")),
-            visitOf(2, node("a")),
-            visitOf(3, node("f")),
-            visitOf(3, node("b")),
-            visitOf(3, node("c")),
-            visitOf(3, node("f")),
-            visitOf(4, node("a")),
-            visitOf(4, node("d")),
-            visitOf(4, node("e")),
-            visitOf(4, node("a")),
-            visitOf(5, node("b")),
-            visitOf(5, node("c")),
-            visitOf(5, node("f")),
-            visitOf(5, node("f")),
-            visitOf(5, node("b")),
-            visitOf(5, node("c")),
-            visitOf(5, node("f")),
-            visitOf(6, node("d")),
-            visitOf(6, node("e")),
-            visitOf(6, node("a")),
-            visitOf(6, node("a")),
-            visitOf(6, node("d")),
-            visitOf(6, node("e")),
-            visitOf(6, node("a")),
-            visitOf(7, node("f")),
-            visitOf(7, node("b")),
-            visitOf(7, node("c")),
-            visitOf(7, node("f")),
-            visitOf(7, node("b")),
-            visitOf(7, node("c")),
-            visitOf(7, node("f")),
-            visitOf(7, node("f")),
-            visitOf(7, node("b")),
-            visitOf(7, node("c")),
-            visitOf(7, node("f")),
-            visitOf(8, node("a")),
-            visitOf(8, node("d")),
-            visitOf(8, node("e")),
-            visitOf(8, node("a")),
-            visitOf(8, node("d")),
-            visitOf(8, node("e")),
-            visitOf(8, node("a")),
-            visitOf(8, node("a")),
-            visitOf(8, node("d")),
-            visitOf(8, node("e")),
-            visitOf(8, node("a")),
-            visitOf(9, node("b")),
-            visitOf(9, node("c")),
-            visitOf(9, node("f")),
-            visitOf(9, node("f")),
-            visitOf(9, node("b")),
-            visitOf(9, node("c")),
-            visitOf(9, node("f")),
-            visitOf(9, node("f")),
-            visitOf(9, node("b")),
-            visitOf(9, node("c")),
-            visitOf(9, node("f")),
-            visitOf(9, node("b")),
-            visitOf(9, node("c")),
-            visitOf(9, node("f")),
-            visitOf(9, node("f")),
-            visitOf(9, node("b")),
-            visitOf(9, node("c")),
-            visitOf(9, node("f")),
+            visitOf(0, nodeOf("a")),
+            visitOf(1, nodeOf("b")),
+            visitOf(1, nodeOf("c")),
+            visitOf(1, nodeOf("f")),
+            visitOf(2, nodeOf("d")),
+            visitOf(2, nodeOf("e")),
+            visitOf(2, nodeOf("a")),
+            visitOf(3, nodeOf("f")),
+            visitOf(3, nodeOf("b")),
+            visitOf(3, nodeOf("c")),
+            visitOf(3, nodeOf("f")),
+            visitOf(4, nodeOf("a")),
+            visitOf(4, nodeOf("d")),
+            visitOf(4, nodeOf("e")),
+            visitOf(4, nodeOf("a")),
+            visitOf(5, nodeOf("b")),
+            visitOf(5, nodeOf("c")),
+            visitOf(5, nodeOf("f")),
+            visitOf(5, nodeOf("f")),
+            visitOf(5, nodeOf("b")),
+            visitOf(5, nodeOf("c")),
+            visitOf(5, nodeOf("f")),
+            visitOf(6, nodeOf("d")),
+            visitOf(6, nodeOf("e")),
+            visitOf(6, nodeOf("a")),
+            visitOf(6, nodeOf("a")),
+            visitOf(6, nodeOf("d")),
+            visitOf(6, nodeOf("e")),
+            visitOf(6, nodeOf("a")),
+            visitOf(7, nodeOf("f")),
+            visitOf(7, nodeOf("b")),
+            visitOf(7, nodeOf("c")),
+            visitOf(7, nodeOf("f")),
+            visitOf(7, nodeOf("b")),
+            visitOf(7, nodeOf("c")),
+            visitOf(7, nodeOf("f")),
+            visitOf(7, nodeOf("f")),
+            visitOf(7, nodeOf("b")),
+            visitOf(7, nodeOf("c")),
+            visitOf(7, nodeOf("f")),
+            visitOf(8, nodeOf("a")),
+            visitOf(8, nodeOf("d")),
+            visitOf(8, nodeOf("e")),
+            visitOf(8, nodeOf("a")),
+            visitOf(8, nodeOf("d")),
+            visitOf(8, nodeOf("e")),
+            visitOf(8, nodeOf("a")),
+            visitOf(8, nodeOf("a")),
+            visitOf(8, nodeOf("d")),
+            visitOf(8, nodeOf("e")),
+            visitOf(8, nodeOf("a")),
+            visitOf(9, nodeOf("b")),
+            visitOf(9, nodeOf("c")),
+            visitOf(9, nodeOf("f")),
+            visitOf(9, nodeOf("f")),
+            visitOf(9, nodeOf("b")),
+            visitOf(9, nodeOf("c")),
+            visitOf(9, nodeOf("f")),
+            visitOf(9, nodeOf("f")),
+            visitOf(9, nodeOf("b")),
+            visitOf(9, nodeOf("c")),
+            visitOf(9, nodeOf("f")),
+            visitOf(9, nodeOf("b")),
+            visitOf(9, nodeOf("c")),
+            visitOf(9, nodeOf("f")),
+            visitOf(9, nodeOf("f")),
+            visitOf(9, nodeOf("b")),
+            visitOf(9, nodeOf("c")),
+            visitOf(9, nodeOf("f")),
         )
-        assertEquals(expected, unweighted.asSequence(BreadthFirst(maxDepth = 9), node("a")).toList())
-        assertEquals(expected, weighted.asSequence(BreadthFirst(maxDepth = 9), node("a")).toList())
+        assertEquals(expected, unweighted.asSequence(BreadthFirst(maxDepth = 9), nodeOf("a")).toList())
+        assertEquals(expected, weighted.asSequence(BreadthFirst(maxDepth = 9), nodeOf("a")).toList())
     }
 
     @Test
     fun removeNodeImmutable() {
-        val withoutA = weighted - node("a")
-        assertTrue(withoutA.edges.flatMap { listOf(it.source, it.destination) }.none { it == node("a") })
+        val withoutA = weighted - nodeOf("a")
+        assertTrue(withoutA.edges.flatMap { listOf(it.source, it.destination) }.none { it == nodeOf("a") })
     }
 
     @Test
     fun removeNodeMutable() {
-        val withoutA = unweighted.toMutable().also { it -= node("a") }
-        assertTrue(withoutA.edges.flatMap { listOf(it.source, it.destination) }.none { it == node("a") })
+        val withoutA = unweighted.toMutable().also { it -= nodeOf("a") }
+        assertTrue(withoutA.edges.flatMap { listOf(it.source, it.destination) }.none { it == nodeOf("a") })
     }
 
     @Test
     fun treeCheck() {
         val tree = unweighted.copy {
-            this -= edge(node("a"), node("f"))
-            this -= edge(node("f"), node("a"))
+            this -= edgeOf(nodeOf("a"), nodeOf("f"))
+            this -= edgeOf(nodeOf("f"), nodeOf("a"))
         }
 
         assertTrue(tree.isTree)
@@ -371,7 +371,7 @@ class TestGraph {
     @Test
     fun acyclicCheck() {
         val tree = weighted.copy {
-            this -= edge(node("f"), node("a"))
+            this -= edgeOf(nodeOf("f"), nodeOf("a"))
         }
 
         assertTrue(tree.isAcyclic)
