@@ -3,7 +3,10 @@ package it.unibo.tuprolog.utils
 import it.unibo.tuprolog.utils.graphs.BreadthFirst
 import it.unibo.tuprolog.utils.graphs.DepthFirst
 import it.unibo.tuprolog.utils.graphs.Graph
+import it.unibo.tuprolog.utils.graphs.copy
 import it.unibo.tuprolog.utils.graphs.edge
+import it.unibo.tuprolog.utils.graphs.isAcyclic
+import it.unibo.tuprolog.utils.graphs.isTree
 import it.unibo.tuprolog.utils.graphs.node
 import it.unibo.tuprolog.utils.graphs.visitOf
 import kotlin.test.Test
@@ -353,5 +356,24 @@ class TestGraph {
     fun removeNodeMutable() {
         val withoutA = unweighted.toMutable().also { it -= node("a") }
         assertTrue(withoutA.edges.flatMap { listOf(it.source, it.destination) }.none { it == node("a") })
+    }
+
+    @Test
+    fun treeCheck() {
+        val tree = unweighted.copy {
+            this -= edge(node("a"), node("f"))
+            this -= edge(node("f"), node("a"))
+        }
+
+        assertTrue(tree.isTree)
+    }
+
+    @Test
+    fun acyclicCheck() {
+        val tree = weighted.copy {
+            this -= edge(node("f"), node("a"))
+        }
+
+        assertTrue(tree.isAcyclic)
     }
 }
