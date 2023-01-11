@@ -56,6 +56,12 @@ interface Graph<T, W> : Iterable<Edge<T, W>> {
     @JsName("ingoingEdges")
     fun ingoingEdges(to: Node<T>): Iterable<Edge<T, W>>
 
+    @JsName("indegree")
+    fun indegree(to: Node<T>): Int
+
+    @JsName("outdegree")
+    fun outdegree(from: Node<T>): Int
+
     companion object {
         @JsName("build")
         @JvmStatic
