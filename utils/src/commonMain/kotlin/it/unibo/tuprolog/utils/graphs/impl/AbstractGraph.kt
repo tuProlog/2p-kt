@@ -127,6 +127,12 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
     override fun outgoingEdges(from: Node<T>): Iterable<Edge<T, W>> =
         connections[from]?.asSequence()?.map { (to, weight) -> edge(from, to, weight) }?.asIterable() ?: emptyList()
 
+    override fun indegree(to: Node<T>): Int =
+        connections.asSequence().filter { (_, destinations) -> to in destinations }.count()
+
+    override fun outdegree(from: Node<T>): Int =
+        connections[from]?.size ?: 0
+
     protected abstract fun newInstance(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>): Self
 
     override fun plus(node: Node<T>): Self {
