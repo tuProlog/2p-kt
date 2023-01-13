@@ -89,6 +89,7 @@ abstract class AbstractClassicSolver(
 
     final override fun solveImpl(goal: Struct, options: SolveOptions): Sequence<Solution> {
         currentContext = ClassicExecutionContext(
+            unificator = unificator,
             query = goal,
             libraries = libraries,
             flags = flags,
