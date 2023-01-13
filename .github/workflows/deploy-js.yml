@@ -25,7 +25,7 @@ jobs:
         uses: DanySK/action-checkout@0.2.5
 
       - name: Compile and Release NPM modules
-        uses: DanySK/build-check-deploy-gradle-action@2.1.20
+        uses: DanySK/build-check-deploy-gradle-action@2.1.21
         with:
           build-command: ./gradlew compileKotlinJs
           check-command: true

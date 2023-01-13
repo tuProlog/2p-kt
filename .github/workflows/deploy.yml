@@ -34,7 +34,7 @@ jobs:
         uses: danysk/action-checkout@0.2.5
 
       - name: Generate Jars
-        uses: DanySK/build-check-deploy-gradle-action@2.1.20
+        uses: DanySK/build-check-deploy-gradle-action@2.1.21
         with:
           build-command: ./gradlew shadowJar
           check-command: ./gradlew dokkaHtmlMultiModuleZip
@@ -81,7 +81,7 @@ jobs:
         uses: danysk/action-checkout@0.2.5
 
       - name: Deploy
-        uses: DanySK/build-check-deploy-gradle-action@2.1.20
+        uses: DanySK/build-check-deploy-gradle-action@2.1.21
         with:
           build-command: ./gradlew dokkaHtml
           check-command: ./gradlew dokkaHtmlMultiModuleZip
