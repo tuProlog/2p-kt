@@ -12,6 +12,7 @@ import it.unibo.tuprolog.ui.gui.PageName
 import it.unibo.tuprolog.ui.gui.Runner
 import it.unibo.tuprolog.ui.gui.raise
 import it.unibo.tuprolog.utils.io.File
+import it.unibo.tuprolog.utils.io.exceptions.IOException
 import it.unibo.tuprolog.utils.observe.Source
 
 internal class ApplicationImpl(
@@ -70,9 +71,16 @@ internal class ApplicationImpl(
     override fun load(file: File): Page =
         newPageImpl(FileName(file)).also {
             runner.io {
-                val text = file.readText()
-                runner.ui {
-                    it.theory = text
+                try {
+                    val text = file.readText()
+                    runner.ui {
+                        it.theory = text
+                        onPageLoaded.raise(Application.EVENT_PAGE_LOADED, it)
+                    }
+                } catch (e: IOException) {
+                    runner.ui {
+                        onError.raise(Application.EVENT_ERROR, it to e)
+                    }
                 }
             }
         }
@@ -112,5 +120,5 @@ internal class ApplicationImpl(
 
     override val onPageClosed: Source<Event<Page>> = Source.of()
 
-    override val onError: Source<Event<Pair<Page, TuPrologException>>> = Source.of()
+    override val onError: Source<Event<Pair<Page, Throwable>>> = Source.of()
 }

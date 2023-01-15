@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.utils.io
 
+import it.unibo.tuprolog.utils.io.exceptions.IOException
 import java.io.File as JavaFile
+import java.io.IOException as JavaIOException
 
 @Suppress("MemberVisibilityCanBePrivate")
 data class JvmFile(val file: JavaFile) : File {
@@ -9,7 +11,12 @@ data class JvmFile(val file: JavaFile) : File {
     override val path: String
         get() = file.absolutePath
 
-    override fun readText(): String = file.readText()
+    override fun readText(): String =
+        try {
+            file.readText()
+        } catch (e: JavaIOException) {
+            throw IOException(e.message, e)
+        }
 
     override val name: String
         get() = file.name
@@ -22,7 +29,11 @@ data class JvmFile(val file: JavaFile) : File {
     fun setPath(path: String): JvmFile = JvmFile(path)
 
     override fun writeText(text: String) {
-        file.writeText(text)
+        try {
+            file.writeText(text)
+        } catch (e: JavaIOException) {
+            throw IOException(e.message, e)
+        }
     }
 
     override fun toString(): String = file.toString()

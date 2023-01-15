@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.ui.gui
 
-import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.ui.gui.impl.ApplicationImpl
@@ -41,7 +40,7 @@ interface Application {
 
     val onPageClosed: Observable<Event<Page>>
 
-    val onError: Observable<Event<Pair<Page, TuPrologException>>>
+    val onError: Observable<Event<Pair<Page, Throwable>>>
 
     companion object {
 

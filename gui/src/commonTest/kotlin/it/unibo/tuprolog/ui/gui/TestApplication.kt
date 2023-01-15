@@ -2,9 +2,9 @@ package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.utils.io.File
+import it.unibo.tuprolog.utils.io.exceptions.IOException
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -137,14 +137,24 @@ class TestApplication {
         assertPageInitialisedCorrectly(page, name, prologFileContent) {
             assertNextEquals(Runner4Tests.EVENT_IO)
             assertNextEquals(Runner4Tests.EVENT_UI)
-            // TODO ensure event page loaded is raised
+            assertNextEquals(Event.of(Application.EVENT_PAGE_LOADED, page))
         }
     }
 
     @Test
-    @Ignore
     fun testPageLoadingFromMissingFile() {
-        TODO("not implemented yed")
+        val name = PageID.file(missingPrologFile)
+        val page = app.load(name.file)
+        assertPageInitialisedCorrectly(page, name, "") {
+            assertNextEquals(Runner4Tests.EVENT_IO)
+            assertNextEquals(Runner4Tests.EVENT_UI)
+            assertNext { e ->
+                val event = e.event as? Pair<*, *>
+                e.name == Application.EVENT_ERROR &&
+                    event?.first == page &&
+                    event.second is IOException
+            }
+        }
     }
 
     @Test
