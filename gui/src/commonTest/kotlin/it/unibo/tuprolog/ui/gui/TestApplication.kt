@@ -230,6 +230,26 @@ class TestApplication {
         }
     }
 
+    @Test
+    fun testWrongTheoryErrorPropagatesToApplication() {
+        val name = PageID.untitled()
+        val page = app.newPage(name)
+        val theory = "this is an error."
+        page.theory = theory
+        val query = "true"
+        page.query = query
+        page.solve()
+        assertPageInitialisedCorrectly(page, name, theory, query) {
+            assertNext { e ->
+                val event = e.event as? Pair<*, *>
+                e.name == Application.EVENT_ERROR &&
+                    event?.first == page &&
+                    event.second is SyntaxException.InTheorySyntaxError
+            }
+            assertNoMoreEvents()
+        }
+    }
+
     @AfterTest
     fun tearDown() {
         app.quit()
