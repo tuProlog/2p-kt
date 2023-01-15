@@ -27,6 +27,7 @@ class TestApplication {
             onStart += catchAnyEvent
             onQuit += catchAnyEvent
             onPageSelected += catchAnyEvent
+            onPageUnselected += catchAnyEvent
             onPageCreated += catchAnyEvent
             onPageLoaded += catchAnyEvent
             onPageClosed += catchAnyEvent
@@ -50,17 +51,17 @@ class TestApplication {
         assertTrue(app.pageIDs.none())
     }
 
-    @Suppress("NOTHING_TO_INLINE")
     private inline fun assertPageInitialisedCorrectly(
         page: Page,
         id: PageID,
         theory: String = "",
+        query: String = "",
         crossinline otherAssertions: EventsAsserter<Event<Any>>.() -> Unit = {}
     ) {
         assertEquals(listOf(page), app.pages.toList())
         assertEquals(id, page.id)
         assertEquals(listOf(page.id), app.pageIDs.toList())
-        assertEquals("", page.query)
+        assertEquals(query, page.query)
         assertEquals(theory.trim(), page.theory.trim())
         assertEquals("", page.stdin)
         events.assertions(debug = true) {
@@ -138,6 +139,7 @@ class TestApplication {
             assertNextEquals(Runner4Tests.EVENT_IO)
             assertNextEquals(Runner4Tests.EVENT_UI)
             assertNextEquals(Event.of(Application.EVENT_PAGE_LOADED, page))
+            assertNoMoreEvents()
         }
     }
 
@@ -154,6 +156,7 @@ class TestApplication {
                     event?.first == page &&
                     event.second is IOException
             }
+            assertNoMoreEvents()
         }
     }
 
@@ -185,11 +188,47 @@ class TestApplication {
         }
     }
 
-    // TODO test page closing
+    @Test
+    fun testPageClosing() {
+        val name = PageID.untitled()
+        val page = app.newPage(name)
+        assertPageInitialisedCorrectly(page, name)
+        page.close()
+        events.assertions {
+            assertLast { it == Event.of(Application.EVENT_PAGE_CLOSED, page) }
+        }
+    }
 
-    // TODO test page unselection
+    @Test
+    fun testPageUnselection() {
+        testMultiplePages(n = 10) { checkpoint ->
+            assertEquals(app.pages.last(), app.currentPage)
+            app.unselect()
+            assertNull(app.currentPage)
+            checkpoint.assertions {
+                assertNextEquals(Event.of(Application.EVENT_PAGE_UNSELECTED, Unit))
+                assertNoMoreEvents()
+            }
+        }
+    }
 
-    // TODO test error propagation from page to application
+    @Test
+    fun testWrongQueryErrorPropagatesToApplication() {
+        val name = PageID.untitled()
+        val page = app.newPage(name)
+        val query = "this is an error"
+        page.query = query
+        page.solve()
+        assertPageInitialisedCorrectly(page, name, query = query) {
+            assertNext { e ->
+                val event = e.event as? Pair<*, *>
+                e.name == Application.EVENT_ERROR &&
+                    event?.first == page &&
+                    event.second is SyntaxException.InQuerySyntaxError
+            }
+            assertNoMoreEvents()
+        }
+    }
 
     @AfterTest
     fun tearDown() {

@@ -20,9 +20,11 @@ interface Application {
 
     val currentPage: Page?
 
-    fun select(id: PageID?)
+    fun select(id: PageID)
 
     fun select(page: Page)
+
+    fun unselect()
 
     fun start()
 
@@ -33,6 +35,8 @@ interface Application {
     val onQuit: Observable<Event<Unit>>
 
     val onPageSelected: Observable<Event<Page>>
+
+    val onPageUnselected: Observable<Event<Unit>>
 
     val onPageCreated: Observable<Event<Page>>
 
@@ -52,6 +56,9 @@ interface Application {
 
         @JvmField
         val EVENT_PAGE_SELECTED = Application::onPageSelected.name
+
+        @JvmField
+        val EVENT_PAGE_UNSELECTED = Application::onPageUnselected.name
 
         @JvmField
         val EVENT_PAGE_CREATED = Application::onPageCreated.name

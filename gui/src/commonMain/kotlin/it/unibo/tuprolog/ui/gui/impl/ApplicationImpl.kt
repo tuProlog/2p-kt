@@ -53,8 +53,10 @@ internal class ApplicationImpl(
     }
 
     private fun handlePageClosure(id: PageID) {
-        pagesById -= id
-        onPageClosed.raise(Application.EVENT_PAGE_CLOSED, pagesById[id]!!)
+        pagesById[id]?.let {
+            pagesById -= id
+            onPageClosed.raise(Application.EVENT_PAGE_CLOSED, it)
+        }
     }
 
     private fun handlePageRenaming(old: PageID, new: PageID) {
@@ -87,17 +89,25 @@ internal class ApplicationImpl(
 
     override var currentPage: Page? = null
         protected set(value) {
-            field = value?.also {
-                onPageSelected.raise(Application.EVENT_PAGE_SELECTED, it)
+            field = value.also {
+                if (it == null) {
+                    onPageUnselected.raise(Application.EVENT_PAGE_UNSELECTED, Unit)
+                } else {
+                    onPageSelected.raise(Application.EVENT_PAGE_SELECTED, it)
+                }
             }
         }
 
-    override fun select(id: PageID?) {
-        currentPage = id?.let { pagesById[it] }
+    override fun select(id: PageID) {
+        currentPage = pagesById[id]
     }
 
     override fun select(page: Page) {
         currentPage = page
+    }
+
+    override fun unselect() {
+        currentPage = null
     }
 
     override fun start() {
@@ -113,6 +123,8 @@ internal class ApplicationImpl(
     override val onQuit: Source<Event<Unit>> = Source.of()
 
     override val onPageSelected: Source<Event<Page>> = Source.of()
+
+    override val onPageUnselected: Source<Event<Unit>> = Source.of()
 
     override val onPageCreated: Source<Event<Page>> = Source.of()
 
