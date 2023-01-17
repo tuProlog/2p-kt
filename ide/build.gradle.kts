@@ -12,6 +12,7 @@ plugins {
 val arguments: String? by project
 
 dependencies {
+    api(project(":gui"))
     api(project(":io-lib"))
     api(project(":oop-lib"))
     api(project(":parser-theory"))
