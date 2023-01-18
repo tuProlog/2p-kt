@@ -15,45 +15,17 @@ import it.unibo.tuprolog.parser.PrologLexer
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.RecognitionException
 import it.unibo.tuprolog.parser.SingletonExpressionContext
-import it.unibo.tuprolog.parser.Token
 import it.unibo.tuprolog.parser.isParseCancellationException
 import it.unibo.tuprolog.parser.isRecognitionException
 
 object PrologParserFactory {
 
-    private fun newErrorListener(whileParsing: Any): dynamic {
-        return object {
-            private fun symbolToString(obj: dynamic): String {
-                return if (obj is Token) {
-                    obj.text
-                } else {
-                    obj.toString()
-                }
-            }
+    // TODO uncomment when switching to new IR
+    // private fun newErrorListener(whileParsing: Any): ErrorListener =
+    //     WhileParsingErrorListener(whileParsing)
 
-            @JsName("syntaxError")
-            fun syntaxError(
-                recognizer: dynamic,
-                offendingSymbol: dynamic,
-                line: Int,
-                column: Int,
-                msg: String,
-                e: RecognitionException
-            ) {
-                if (recognizer is PrologParser) {
-                    recognizer.removeParseListeners()
-                }
-                throw ParseException(
-                    whileParsing,
-                    symbolToString(offendingSymbol),
-                    line,
-                    column + 1,
-                    msg,
-                    e
-                )
-            }
-        }
-    }
+    private fun newErrorListener(whileParsing: Any): dynamic =
+        WhileParsingErrorListerWorkaround(whileParsing)
 
     fun parseSingletonExpression(string: String): SingletonExpressionContext =
         parseSingletonExpression(string, OperatorSet.EMPTY)

@@ -20,8 +20,14 @@ open external class DefaultErrorStrategy : ErrorStrategy {
 
 open external class BailErrorStrategy : DefaultErrorStrategy
 
-abstract external class ErrorListener {
-    abstract fun syntaxError(recognizer: dynamic, offendingSymbol: dynamic, line: Int, column: Int, msg: String, e: dynamic)
+open external class ErrorListener {
+    open fun syntaxError(recognizer: dynamic, offendingSymbol: dynamic, line: Int, column: Int, msg: String, e: dynamic)
+
+    open fun reportAmbiguity(recognizer: dynamic, dfa: dynamic, startIndex: Int, stopIndex: Int, exact: dynamic, ambigAlts: dynamic, configs: dynamic)
+
+    open fun reportAttemptingFullContext(recognizer: dynamic, dfa: dynamic, startIndex: Int, stopIndex: Int, conflictingAlts: dynamic, configs: dynamic)
+
+    open fun reportContextSensitivity(recognizer: dynamic, dfa: dynamic, startIndex: Int, stopIndex: Int, prediction: dynamic, configs: dynamic)
 }
 
 open external class ConsoleErrorListener : ErrorListener {
