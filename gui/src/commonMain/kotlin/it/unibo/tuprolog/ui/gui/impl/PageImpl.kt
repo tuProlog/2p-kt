@@ -101,6 +101,7 @@ internal class PageImpl(
 
     override fun close() {
         onClose.raise(Page.EVENT_CLOSE, id)
+        // TODO consider clearing all sources from their listeners
     }
 
     @Volatile
@@ -179,9 +180,14 @@ internal class PageImpl(
 
     override fun save(file: File) {
         runner.io {
-            file.writeText(content.text)
-            runner.ui {
-                id = FileName(file)
+            try {
+                file.writeText(content.text)
+                runner.ui {
+                    id = FileName(file)
+                    // TODO raise onSave
+                }
+            } catch (e: IOException) {
+                // TODO raise onError
             }
         }
     }
@@ -205,6 +211,7 @@ internal class PageImpl(
         ensuringStateIs(Page.Status.COMPUTING) {
             if (maxSolutions <= 0) return
             runner.background {
+                // TODO raise new resolution event
                 val sol = solutions!!.next()
                 runner.ui {
                     solutionCount++

@@ -32,6 +32,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.fail
 
+// TODO test file saving with and without errors
 class TestPage {
     private lateinit var page: Page
     private lateinit var events: MutableList<Event<Any>>
