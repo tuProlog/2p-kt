@@ -11,9 +11,8 @@ import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.theory.Theory
-import javafx.application.Platform
+import it.unibo.tuprolog.utils.io.JvmFile
 import javafx.event.ActionEvent
-import javafx.event.Event
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.Node
@@ -49,11 +48,13 @@ import java.util.ResourceBundle
 import kotlin.math.pow
 import kotlin.math.round
 import kotlin.system.exitProcess
+import it.unibo.tuprolog.utils.io.File as KtFile
+import javafx.event.Event as JavaFxEvent
 
 @Suppress("UNUSED_PARAMETER", "unused")
 class TuPrologIDEController : Initializable {
 
-    private val model = TuPrologIDEModel.of()
+    private val model = TuPrologIDEModel()
 
     private var onClose = {}
 
@@ -226,46 +227,30 @@ class TuPrologIDEController : Initializable {
 
     private val stage: Stage get() = root.scene.window as Stage
 
-    private inline fun onUiThread(crossinline f: () -> Unit) =
-        Platform.runLater {
-            f()
-        }
-
-    private val fileTabs: Sequence<FileTabView>
-        get() = tabsFiles.tabs.asSequence().filterIsInstance<FileTabView>()
+    private val fileTabs: Sequence<PageView>
+        get() = tabsFiles.tabs.asSequence().filterIsInstance<PageView>()
 
     private val streamsTabs: Sequence<Tab>
         get() = tabsStreams.tabs.asSequence()
 
-    private val currentFileTab: FileTabView?
-        get() = model.currentFile?.let { tabForFile(it) }
+    private val currentFileTab: PageView?
+        get() = model.currentPage?.let { tabForFile(it.id) }
 
-    private fun tabForFile(file: File): FileTabView? =
-        fileTabs.firstOrNull { it.file == file }
+    private fun tabForFile(page: PageID): PageView? =
+        fileTabs.firstOrNull { it.pageID == page }
 
     @FXML
     override fun initialize(location: URL, resources: ResourceBundle?) {
-        model.onResolutionStarted.subscribe(this::onResolutionStarted)
-        model.onResolutionOver.subscribe(this::onResolutionOver)
-        model.onNewQuery.subscribe(this::onNewQuery)
-        model.onQueryOver.subscribe(this::onQueryOver)
-        model.onNewSolution.subscribe(this::onNewSolution)
-        model.onStdoutPrinted.subscribe(this::onStdoutPrinted)
-        model.onStderrPrinted.subscribe(this::onStderrPrinted)
-        model.onWarning.subscribe(this::onWarning)
-        model.onError.subscribe(this::onError)
-        model.onFileLoaded.subscribe(this::onFileLoaded)
-        model.onFileClosed.subscribe(this::onFileClosed)
-        model.onFileSelected.subscribe(this::onFileSelected)
-        model.onNewSolver.subscribe(this::onNewSolver)
-        model.onNewStaticKb.subscribe(this::onNewStaticKb)
-        model.onSolveOptionsChanged.subscribe(this::onSolveOptionsChanged)
-        model.onReset.subscribe(this::onReset)
-        model.onQuit.subscribe(this::onQuit)
+        model.onStart.bind(this::onStart)
+        model.onError.bind(this::onError)
+        model.onPageCreated.bind(this::onPageCreated)
+        model.onPageLoaded.bind(this::onFileLoaded)
+        model.onPageClosed.bind(this::onPageClosed)
+        model.onPageSelected.bind(this::onFileSelected)
+
+        model.onQuit.bind(this::onQuit)
 
         sldTimeout.valueProperty().addListener { _, _, value -> onTimeoutSliderMoved(value) }
-
-        updateTimeoutView(model.solveOptions.timeout)
 
         lsvSolutions.setCellFactory { ListCellView { SolutionView.of(it) } }
         lsvWarnings.setCellFactory { ListCellView { Label(it.message) } }
@@ -279,19 +264,42 @@ class TuPrologIDEController : Initializable {
 
         trvLibraries.root = TreeItem("Loaded libraries:")
 
-        model.newFile()
-        model.reset()
-
-        Platform.runLater {
+        onUiThread {
             streamsTabs.forEach { it.hideNotification() }
         }
     }
 
-    private fun onQuit(e: Unit) {
+    private fun onPageCreated(e: Event<Page>) = onUiThread {
+        e.event.onResolutionStarted.bind(this::onResolutionStarted)
+        e.event.onResolutionOver.bind(this::onResolutionOver)
+        e.event.onNewQuery.bind(this::onNewQuery)
+        e.event.onQueryOver.bind(this::onQueryOver)
+        e.event.onNewSolution.bind(this::onNewSolution)
+        e.event.onStdoutPrinted.bind(this::onStdoutPrinted)
+        e.event.onStderrPrinted.bind(this::onStderrPrinted)
+        e.event.onWarning.bind(this::onWarning)
+        e.event.onNewSolver.bind(this::onNewSolver)
+        e.event.onNewStaticKb.bind(this::onNewStaticKb)
+        e.event.onSolveOptionsChanged.bind(this::onSolveOptionsChanged)
+        e.event.onReset.bind(this::onReset)
+        // TODO do this on page selection and on page solve option modification
+//        updateTimeoutView(model.solveOptions.timeout)
+        tabsFiles.tabs.add(PageView(e.event, model, this))
+        handleSomeOpenFiles()
+    }
+
+    private fun onStart(e: Event<Unit>) {
+        model.newPage()
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun onUiThread(noinline action: () -> Unit) = JavaFxRunner.ui(action)
+
+    private fun onQuit(e: Event<Unit>) {
         exitProcess(0)
     }
 
-    private fun onReset(e: SolverEvent<Unit>) {
+    private fun onReset(e: SolverEvent<PageID>) {
         // currentFileTab?.let { model.setCurrentFile(it.wholeText) }
         lsvWarnings.items.clear()
         txaStdout.clear()
@@ -300,13 +308,11 @@ class TuPrologIDEController : Initializable {
     }
 
     private fun onTimeoutSliderMoved(value: Number) {
-        model.solveOptions = model.solveOptions.setTimeout(
-            round(10.0.pow(value.toDouble())).toLong()
-        )
+        model.currentPage?.timeout = round(10.0.pow(value.toDouble())).toLong()
     }
 
-    private fun onSolveOptionsChanged(newSolveOptions: SolveOptions) {
-        updateTimeoutView(newSolveOptions.timeout)
+    private fun onSolveOptionsChanged(e: Event<SolveOptions>) {
+        updateTimeoutView(e.event.timeout)
     }
 
     private fun updateTimeoutView(timeout: TimeDuration) {
@@ -314,6 +320,7 @@ class TuPrologIDEController : Initializable {
         lblTimeout.text = duration.pretty()
     }
 
+    @Suppress("Since15")
     private fun Duration.pretty(): String {
         val milliseconds = toMillisPart()
         val seconds = toSecondsPart()
@@ -336,28 +343,27 @@ class TuPrologIDEController : Initializable {
 
     private fun Int.pretty(unit: String): String? = toLong().pretty(unit)
 
-    private fun onNewSolver(e: SolverEvent<Unit>) = onUiThread {
+    private fun onNewSolver(e: SolverEvent<PageID>) = onUiThread {
         updateContextSensitiveView(e)
     }
 
-    private fun onNewStaticKb(e: SolverEvent<Unit>) = onUiThread {
+    private fun onNewStaticKb(e: SolverEvent<PageID>) = onUiThread {
         updateContextSensitiveView(e)
     }
 
-    private fun onFileLoaded(e: Pair<File, String>) = onUiThread {
-        tabsFiles.tabs.add(FileTabView(e.first, model, this, e.second))
-        handleSomeOpenFiles()
+    private fun onFileLoaded(e: Event<Page>) = onUiThread {
+        // does nothing
     }
 
-    private fun onFileClosed(e: File) = onUiThread {
-        fileTabs.firstOrNull { it.file == e }?.let {
+    private fun onPageClosed(e: Event<Page>) = onUiThread {
+        fileTabs.firstOrNull { it.pageID == e.event.id }?.let {
             tabsFiles.tabs -= it
             handleNoMoreOpenFiles()
         }
     }
 
-    private fun onFileSelected(e: File) = onUiThread {
-        fileTabs.firstOrNull { it.file == e }?.let {
+    private fun onFileSelected(e: Event<Page>) = onUiThread {
+        fileTabs.firstOrNull { it.pageID == e.event.id }?.let {
             it.updateSyntaxColoring()
             tabsFiles.selectionModel.select(it)
         }
@@ -382,8 +388,8 @@ class TuPrologIDEController : Initializable {
         }
     }
 
-    private fun onStdoutPrinted(output: String) = onUiThread {
-        txaStdout.text += output
+    private fun onStdoutPrinted(e: Event<String>) = onUiThread {
+        txaStdout.text += e.event
         tabStdout.showNotification()
     }
 
@@ -447,23 +453,24 @@ class TuPrologIDEController : Initializable {
         updateContextSensitiveView(event)
     }
 
-    private fun onStderrPrinted(output: String) = onUiThread {
-        txaStderr.text += output
+    private fun onStderrPrinted(e: Event<String>) = onUiThread {
+        txaStderr.text += e.event
         tabStderr.showNotification()
     }
 
-    private fun onWarning(warning: Warning) = onUiThread {
-        lsvWarnings.items.add(warning)
-        lsvWarnings.scrollTo(warning)
+    private fun onWarning(e: Event<Warning>) = onUiThread {
+        lsvWarnings.items.add(e.event)
+        lsvWarnings.scrollTo(e.event)
         tabWarnings.showNotification()
     }
 
-    private fun onError(exception: Exception) = onUiThread {
+    private fun onError(e: Event<Pair<Page, Throwable>>) = onUiThread {
         val dialog = Alert(Alert.AlertType.ERROR)
+        val (_, exception: Throwable) = e.event
         dialog.title = exception::class.java.simpleName
         when (exception) {
             is SyntaxException.InTheorySyntaxError -> {
-                dialog.headerText = "Syntax error in ${exception.file.name}"
+                dialog.headerText = "Syntax error in ${exception.page.name}"
                 dialog.dialogPane.content = exception.message.toMonospacedText()
             }
             is SyntaxException.InQuerySyntaxError -> {
@@ -548,12 +555,12 @@ class TuPrologIDEController : Initializable {
 
     @FXML
     fun onKeyTypedOnQuery(e: KeyEvent) {
-        model.query = txfQuery.text
+        model.currentPage?.query = txfQuery.text
     }
 
     @FXML
     fun onNextButtonPressed(e: ActionEvent) {
-        if (model.state == TuPrologIDEModel.State.IDLE) {
+        if (model.currentPage?.state == Page.Status.IDLE) {
             startNewResolution()
         } else {
             continueResolution()
@@ -562,12 +569,12 @@ class TuPrologIDEController : Initializable {
 
     @FXML
     fun onStdinChanged(e: KeyEvent) {
-        model.setStdin(txaStdin.text)
+        model.currentPage?.stdin = txaStdin.text
     }
 
     @FXML
     fun onNextAllButtonPressed(e: ActionEvent) {
-        if (model.state == TuPrologIDEModel.State.IDLE) {
+        if (model.currentPage?.state == Page.Status.IDLE) {
             startNewResolution(true)
         } else {
             continueResolution(true)
@@ -576,28 +583,20 @@ class TuPrologIDEController : Initializable {
 
     @FXML
     fun onStopButtonPressed(e: ActionEvent) {
-        model.stop()
+        model.currentPage?.stop()
     }
 
     @FXML
     fun onResetButtonPressed(e: ActionEvent) {
-        model.reset()
+        model.currentPage?.reset()
     }
 
     private fun continueResolution(all: Boolean = false) {
-        if (all) {
-            model.nextAll()
-        } else {
-            model.next()
-        }
+        model.currentPage?.solve(if (all) Int.MAX_VALUE else 1)
     }
 
     private fun startNewResolution(all: Boolean = false) {
-        if (all) {
-            model.solveAll()
-        } else {
-            model.solve()
-        }
+        model.currentPage?.next(if (all) Int.MAX_VALUE else 1)
     }
 
     private fun cleanUpAfterResolution() {
@@ -642,7 +641,7 @@ class TuPrologIDEController : Initializable {
     }
 
     @FXML
-    fun onTabSelectionChanged(e: Event) {
+    fun onTabSelectionChanged(e: JavaFxEvent) {
         val tab = e.source as Tab
         if (tab.isSelected) {
             tab.hideNotification()
@@ -651,7 +650,7 @@ class TuPrologIDEController : Initializable {
 
     @FXML
     fun onNewFilePressed(e: ActionEvent) {
-        model.newFile()
+        model.newPage()
     }
 
     @FXML
@@ -665,26 +664,30 @@ class TuPrologIDEController : Initializable {
         fileChooser.initialDirectory = File(System.getProperty("user.home"))
         fileChooser.title = "Open file..."
         val file = fileChooser.showOpenDialog(stage)
-        model.loadFile(file)
+        model.load(JvmFile(file))
     }
 
     @FXML
     fun onCloseFilePressed(e: ActionEvent) {
-        model.closeFile(model.currentFile!!)
+        model.currentPage?.close()
+    }
+
+    private fun onFileSaved(e: Event<Pair<PageID, KtFile>>) {
+        val alert = Alert(Alert.AlertType.INFORMATION)
+        alert.title = "Save file"
+        alert.headerText = "File correctly saved"
+        alert.contentText = e.event.first.name
+        alert.dialogPane.minHeight = Region.USE_PREF_SIZE
+        alert.showAndWait()
     }
 
     @FXML
     fun onSaveFilePressed(e: ActionEvent) {
-        try {
-            model.saveFile(model.currentFile!!)
-            val alert = Alert(Alert.AlertType.INFORMATION)
-            alert.title = "Save file"
-            alert.headerText = "File correctly saved"
-            alert.contentText = model.currentFile?.canonicalPath
-            alert.dialogPane.minHeight = Region.USE_PREF_SIZE
-            alert.showAndWait()
-        } catch (e: Exception) {
-            onError(e)
+        model.currentPage?.let { page ->
+            when (val name = page.id) {
+                is FileName -> page.save(name.file)
+                else -> onSaveFileAsPressed(e)
+            }
         }
     }
 
@@ -699,18 +702,13 @@ class TuPrologIDEController : Initializable {
         fileChooser.initialDirectory = File(System.getProperty("user.home"))
         fileChooser.title = "Save file as..."
         val file = fileChooser.showSaveDialog(stage)
-        model.currentFile?.let {
-            model.renameFile(it, file)
-            model.saveFile(file)
-            model.selectFile(file)
-            tabForFile(it)?.file = file
-        }
+        model.currentPage?.save(JvmFile(file))
     }
 
     @FXML
     fun onReloadFilePressed(e: ActionEvent) {
-        currentFileTab?.let {
-            it.wholeText = model.currentFile!!.readText()
+        model.currentPage?.let { page ->
+            (page.id as? FileName)?.let { model.load(it.file) }
         }
     }
 

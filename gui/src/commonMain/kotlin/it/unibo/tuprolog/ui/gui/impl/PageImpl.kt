@@ -26,6 +26,7 @@ import it.unibo.tuprolog.ui.gui.SyntaxException
 import it.unibo.tuprolog.ui.gui.raise
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.io.File
+import it.unibo.tuprolog.utils.io.exceptions.IOException
 import it.unibo.tuprolog.utils.observe.Source
 import kotlin.jvm.Volatile
 
@@ -88,6 +89,12 @@ internal class PageImpl(
             if (changed) {
                 onSolveOptionsChanged.raise(Page.EVENT_SOLVE_OPTIONS_CHANGED, value)
             }
+        }
+
+    override var timeout: TimeDuration
+        get() = solveOptions.timeout
+        set(value) {
+            solveOptions = solveOptions.setTimeout(value)
         }
 
     override val queryHistory: History<String> = History.empty()
@@ -280,6 +287,8 @@ internal class PageImpl(
     override val onClose: Source<Event<PageID>> = Source.of()
 
     override val onStateChanged: Source<Event<Page.Status>> = Source.of()
+
+    override val onSave: Source<Event<Pair<PageID, File>>> = Source.of()
 
     override val onReset: Source<SolverEvent<PageID>> = Source.of()
 

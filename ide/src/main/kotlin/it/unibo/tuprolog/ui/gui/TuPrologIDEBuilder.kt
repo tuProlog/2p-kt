@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.Info
-import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.SolverFactory
 import javafx.event.EventHandler
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -21,10 +21,10 @@ data class TuPrologIDEBuilder(
     val stage: Stage,
     var title: String = "tuProlog IDE",
     var icon: Image = TUPROLOG_LOGO,
+    var solverFactory: SolverFactory,
     var onClose: () -> Boolean = { showExitConfirmationDialog(title) },
     var onAbout: () -> Unit = { showAboutDialog(title, Info.VERSION) },
     var stylesheets: List<String> = listOf(JAVA_KEYWORDS_LIGHT, LIGHT_CODE_AREA),
-    var customLibraries: List<Library> = emptyList(),
     var customTabs: List<CustomTab> = emptyList()
 ) {
 
@@ -81,12 +81,6 @@ data class TuPrologIDEBuilder(
 
     fun stylesheet(stylesheet: String) = apply { this.stylesheets += stylesheet }
 
-    fun customLibraries(customLibraries: Iterable<Library>) =
-        apply { this.customLibraries = customLibraries.toList() }
-
-    fun customLibrary(customLibrary: Library) =
-        apply { this.customLibraries += customLibrary }
-
     fun customTabs(customTabs: Iterable<CustomTab>) =
         apply { this.customTabs = customTabs.toList() }
 
@@ -115,11 +109,9 @@ data class TuPrologIDEBuilder(
         }
 
         controller.customizeModel { model ->
-            model.customizeSolver { solver ->
-                customLibraries.forEach { solver.loadLibrary(it) }
-                solver
-            }
+            model.solverFactory = solverFactory
             customTabs.forEach { it.modelConfigurator(model) }
+            model.start()
         }
 
         this.stage.show()

@@ -10,23 +10,25 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
-import java.io.File
 import java.io.IOException
 import kotlin.math.max
 
 @Suppress("UNUSED_PARAMETER")
-class FileTabView(
-    file: File,
-    private val model: TuPrologIDEModel,
+class PageView(
+    private val page: Page,
+    private val application: Application,
     private val ideController: TuPrologIDEController,
     initialText: String = ""
 ) : Tab() {
 
     companion object {
-        private const val FXML = "FileTabView.fxml"
+        private const val FXML = "PageView.fxml"
         private const val MIN_FONT_SIZE = 13
         private const val DEFAULT_FONT_SIZE = 16
     }
+
+    val pageID: PageID
+        get() = page.id
 
     private val syntaxColoring: SyntaxColoring
 
@@ -37,7 +39,7 @@ class FileTabView(
         }
 
     init {
-        val loader = FXMLLoader(FileTabView::class.java.getResource(FXML))
+        val loader = FXMLLoader(PageView::class.java.getResource(FXML))
         loader.setController(this)
         loader.setRoot(this)
 
@@ -55,7 +57,7 @@ class FileTabView(
         syntaxColoring = SyntaxColoring(codeArea)
         syntaxColoring.activate()
 
-        text = file.name
+        text = page.id.name
     }
 
     @FXML
@@ -65,7 +67,7 @@ class FileTabView(
         get() = codeArea.text
         set(value) {
             codeArea.replaceText(value)
-            model.setFile(file, codeArea.text)
+            page.theory = codeArea.text
         }
 
     fun notifyOperators(operators: OperatorSet) {
@@ -83,16 +85,9 @@ class FileTabView(
     @FXML
     fun onTabSelectionChanged(e: Event) {
         if (isSelected) {
-            model.selectFile(file)
+            application.select(page)
         }
     }
-
-    var file: File = file
-        get
-        set(value) {
-            field = value
-            text = value.name
-        }
 
     @FXML
     fun onMousePressedOnCodeArea(e: MouseEvent) {
@@ -101,7 +96,7 @@ class FileTabView(
 
     @FXML
     fun onKeyTypedOnCodeArea(e: KeyEvent) {
-        model.setFile(file, wholeText)
+        page.theory = wholeText
         ideController.onKeyTypedOnCurrentFile(e)
         if (e.isControlDown) {
             when (e.character) {
@@ -114,7 +109,7 @@ class FileTabView(
 
     @FXML
     fun onKeyPressedOnCodeArea(e: KeyEvent) {
-        model.setFile(file, wholeText)
+        page.theory = wholeText
         ideController.onKeyPressedOnCurrentFile(e)
     }
 }

@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.solve.exception.error.SyntaxError
 
-internal sealed class SyntaxException(override val cause: ParseException) : TuPrologException(cause = cause) {
+sealed class SyntaxException(override val cause: ParseException) : TuPrologException(cause = cause) {
     @Suppress("MemberVisibilityCanBePrivate")
     class InTheorySyntaxError(val page: PageID, val text: String, cause: ParseException) : SyntaxException(cause) {
         override val message: String

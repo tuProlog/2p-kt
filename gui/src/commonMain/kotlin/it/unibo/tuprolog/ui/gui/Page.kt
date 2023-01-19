@@ -21,6 +21,8 @@ interface Page {
 
     var id: PageID
 
+    var timeout: TimeDuration
+
     val state: Status
 
     var theory: String
@@ -52,6 +54,8 @@ interface Page {
     val onReset: Observable<SolverEvent<PageID>>
 
     val onClose: Observable<Event<PageID>>
+
+    val onSave: Observable<Event<Pair<PageID, File>>>
 
     val onStateChanged: Observable<Event<Status>>
 

@@ -17,13 +17,16 @@ import it.unibo.tuprolog.utils.observe.Source
 
 internal class ApplicationImpl(
     private val runner: Runner,
-    private var solverFactory: SolverFactory,
     private var defaultTimeout: TimeDuration
 ) : Application {
     private val pagesById: MutableMap<PageID, Page> = mutableMapOf()
 
     override val pages: Collection<Page>
         get() = pagesById.values
+
+    override lateinit var solverFactory: SolverFactory
+
+    override fun pageByID(id: PageID): Page? = pagesById[id]
 
     override fun newPage(pageID: PageName): Page = newPageImpl(pageID)
 

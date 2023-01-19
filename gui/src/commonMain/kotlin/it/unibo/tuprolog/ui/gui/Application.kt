@@ -9,10 +9,14 @@ import kotlin.jvm.JvmField
 
 interface Application {
 
+    var solverFactory: SolverFactory
+
     val pages: Collection<Page>
 
     val pageIDs: Iterable<PageID>
         get() = pages.asSequence().map { it.id }.asIterable()
+
+    fun pageByID(id: PageID): Page?
 
     fun newPage(pageID: PageName = PageID.untitled(pageIDs)): Page
 
@@ -74,8 +78,12 @@ interface Application {
 
         fun of(
             runner: Runner,
-            solverFactory: SolverFactory,
+            solverFactory: SolverFactory? = null,
             defaultTimeout: TimeDuration = Page.DEFAULT_TIMEOUT
-        ): Application = ApplicationImpl(runner, solverFactory, defaultTimeout)
+        ): Application = ApplicationImpl(runner, defaultTimeout).also {
+            if (solverFactory != null) {
+                it.solverFactory = solverFactory
+            }
+        }
     }
 }
