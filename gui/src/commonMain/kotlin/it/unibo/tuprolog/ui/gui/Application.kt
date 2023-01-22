@@ -40,7 +40,7 @@ interface Application {
 
     val onPageSelected: Observable<Event<Page>>
 
-    val onPageUnselected: Observable<Event<Unit>>
+    val onPageUnselected: Observable<Event<Page>>
 
     val onPageCreated: Observable<Event<Page>>
 

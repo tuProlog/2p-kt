@@ -91,12 +91,15 @@ internal class ApplicationImpl(
         }
 
     override var currentPage: Page? = null
-        protected set(value) {
-            field = value.also {
-                if (it == null) {
-                    onPageUnselected.raise(Application.EVENT_PAGE_UNSELECTED, Unit)
-                } else {
-                    onPageSelected.raise(Application.EVENT_PAGE_SELECTED, it)
+        private set(value) {
+            val old = field
+            if (old != value) {
+                if (old != null) {
+                    onPageUnselected.raise(Application.EVENT_PAGE_UNSELECTED, old)
+                }
+                field = value
+                if (value != null) {
+                    onPageSelected.raise(Application.EVENT_PAGE_SELECTED, value)
                 }
             }
         }
@@ -127,7 +130,7 @@ internal class ApplicationImpl(
 
     override val onPageSelected: Source<Event<Page>> = Source.of()
 
-    override val onPageUnselected: Source<Event<Unit>> = Source.of()
+    override val onPageUnselected: Source<Event<Page>> = Source.of()
 
     override val onPageCreated: Source<Event<Page>> = Source.of()
 

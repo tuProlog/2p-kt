@@ -9,9 +9,14 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.ui.gui.impl.SolverEventImpl
 import it.unibo.tuprolog.unify.Unificator
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 interface SolverEvent<T> : Event<T>, ExecutionContextAware {
     companion object {
+
+        @JsName("of")
+        @JvmStatic
         fun <T> of(
             name: String,
             event: T,
@@ -36,6 +41,8 @@ interface SolverEvent<T> : Event<T>, ExecutionContextAware {
             outputChannels
         )
 
+        @JsName("copyOf")
+        @JvmStatic
         fun <T> copyOf(
             name: String,
             event: T,

@@ -246,7 +246,8 @@ class TuPrologIDEController : Initializable {
         model.onPageCreated.bind(this::onPageCreated)
         model.onPageLoaded.bind(this::onFileLoaded)
         model.onPageClosed.bind(this::onPageClosed)
-        model.onPageSelected.bind(this::onFileSelected)
+        model.onPageSelected.bind(this::onPageSelected)
+        model.onPageUnselected.bind(this::onPageUnselected)
 
         model.onQuit.bind(this::onQuit)
 
@@ -270,22 +271,40 @@ class TuPrologIDEController : Initializable {
     }
 
     private fun onPageCreated(e: Event<Page>) = onUiThread {
-        e.event.onResolutionStarted.bind(this::onResolutionStarted)
-        e.event.onResolutionOver.bind(this::onResolutionOver)
-        e.event.onNewQuery.bind(this::onNewQuery)
-        e.event.onQueryOver.bind(this::onQueryOver)
-        e.event.onNewSolution.bind(this::onNewSolution)
-        e.event.onStdoutPrinted.bind(this::onStdoutPrinted)
-        e.event.onStderrPrinted.bind(this::onStderrPrinted)
-        e.event.onWarning.bind(this::onWarning)
-        e.event.onNewSolver.bind(this::onNewSolver)
-        e.event.onNewStaticKb.bind(this::onNewStaticKb)
-        e.event.onSolveOptionsChanged.bind(this::onSolveOptionsChanged)
-        e.event.onReset.bind(this::onReset)
-        // TODO do this on page selection and on page solve option modification
-//        updateTimeoutView(model.solveOptions.timeout)
         tabsFiles.tabs.add(PageView(e.event, model, this))
         handleSomeOpenFiles()
+    }
+
+    private fun bindPage(page: Page) {
+        page.onResolutionStarted.bind(this::onResolutionStarted)
+        page.onResolutionOver.bind(this::onResolutionOver)
+        page.onNewQuery.bind(this::onNewQuery)
+        page.onQueryOver.bind(this::onQueryOver)
+        page.onNewSolution.bind(this::onNewSolution)
+        page.onStdoutPrinted.bind(this::onStdoutPrinted)
+        page.onStderrPrinted.bind(this::onStderrPrinted)
+        page.onWarning.bind(this::onWarning)
+        page.onNewSolver.bind(this::onNewSolver)
+        page.onNewStaticKb.bind(this::onNewStaticKb)
+        page.onSolveOptionsChanged.bind(this::onSolveOptionsChanged)
+        page.onReset.bind(this::onReset)
+        // TODO do this on page selection and on page solve option modification
+//        updateTimeoutView(model.solveOptions.timeout)
+    }
+
+    private fun unbindPage(page: Page) {
+        page.onResolutionStarted.unbind(this::onResolutionStarted)
+        page.onResolutionOver.unbind(this::onResolutionOver)
+        page.onNewQuery.unbind(this::onNewQuery)
+        page.onQueryOver.unbind(this::onQueryOver)
+        page.onNewSolution.unbind(this::onNewSolution)
+        page.onStdoutPrinted.unbind(this::onStdoutPrinted)
+        page.onStderrPrinted.unbind(this::onStderrPrinted)
+        page.onWarning.unbind(this::onWarning)
+        page.onNewSolver.unbind(this::onNewSolver)
+        page.onNewStaticKb.unbind(this::onNewStaticKb)
+        page.onSolveOptionsChanged.unbind(this::onSolveOptionsChanged)
+        page.onReset.unbind(this::onReset)
     }
 
     private fun onStart(e: Event<Unit>) {
@@ -362,11 +381,17 @@ class TuPrologIDEController : Initializable {
         }
     }
 
-    private fun onFileSelected(e: Event<Page>) = onUiThread {
+    private fun onPageSelected(e: Event<Page>) = onUiThread {
+        bindPage(e.event)
         fileTabs.firstOrNull { it.pageID == e.event.id }?.let {
             it.updateSyntaxColoring()
             tabsFiles.selectionModel.select(it)
         }
+    }
+
+    private fun onPageUnselected(e: Event<Page>) = onUiThread {
+        unbindPage(e.event)
+        tabsFiles.selectionModel.clearSelection()
     }
 
     private fun handleNoMoreOpenFiles() {
@@ -592,11 +617,11 @@ class TuPrologIDEController : Initializable {
     }
 
     private fun continueResolution(all: Boolean = false) {
-        model.currentPage?.solve(if (all) Int.MAX_VALUE else 1)
+        model.currentPage?.next(if (all) Int.MAX_VALUE else 1)
     }
 
     private fun startNewResolution(all: Boolean = false) {
-        model.currentPage?.next(if (all) Int.MAX_VALUE else 1)
+        model.currentPage?.solve(if (all) Int.MAX_VALUE else 1)
     }
 
     private fun cleanUpAfterResolution() {
