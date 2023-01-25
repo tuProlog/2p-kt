@@ -2,13 +2,167 @@
 
 <?import javafx.scene.control.Tab?>
 <?import org.fxmisc.richtext.CodeArea?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
 <fx:root type="Tab" text="Untitled Tab" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
          onSelectionChanged="#onTabSelectionChanged"
          closable="true">
-  <content>
-      <CodeArea fx:id="codeArea" onKeyTyped="#onKeyTypedOnCodeArea" onKeyPressed="#onKeyPressedOnCodeArea" onMouseClicked="#onMousePressedOnCodeArea" prefHeight="200.0" prefWidth="200.0" />
-  </content>
-<!--    <graphic>-->
-<!--        <Button mnemonicParsing="false" text="X" fx:id="btnClose" />-->
-<!--    </graphic>-->
+    <content>
+        <SplitPane dividerPositions="0.65" orientation="VERTICAL" prefHeight="228.0" prefWidth="640.0"
+                   VBox.vgrow="ALWAYS">
+            <CodeArea fx:id="codeArea" onKeyTyped="#onKeyTypedOnCodeArea" onKeyPressed="#onKeyPressedOnCodeArea"
+                      onMouseClicked="#onMousePressedOnCodeArea" prefHeight="200.0" prefWidth="200.0"/>
+            <BorderPane>
+                <center>
+                    <TabPane fx:id="tabsStreams" prefHeight="157.0" prefWidth="638.0" tabClosingPolicy="UNAVAILABLE">
+                        <tabs>
+                            <Tab fx:id="tabSolutions" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Solutions">
+                                <content>
+                                    <ListView fx:id="lsvSolutions" prefHeight="200.0" prefWidth="200.0" />
+                                </content>
+                            </Tab>
+                            <Tab fx:id="tabStdin" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Stdin">
+                                <content>
+                                    <TextArea fx:id="txaStdin" onKeyTyped="#onStdinChanged" prefHeight="200.0" prefWidth="200.0" />
+                                </content>
+                            </Tab>
+                            <Tab fx:id="tabStdout" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Stdout">
+                                <content>
+                                    <TextArea fx:id="txaStdout" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                </content>
+                            </Tab>
+                            <Tab fx:id="tabStderr" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Stderr">
+                                <content>
+                                    <TextArea fx:id="txaStderr" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                </content>
+                            </Tab>
+                            <Tab fx:id="tabWarnings" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Warnings">
+                                <content>
+                                    <ListView fx:id="lsvWarnings" prefHeight="200.0" prefWidth="200.0" />
+                                </content>
+                            </Tab>
+                            <Tab fx:id="tabOperators" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Operators">
+                                <TableView fx:id="tbvOperators" prefHeight="200.0" prefWidth="200.0">
+                                    <columns>
+                                        <TableColumn fx:id="tbcFunctor" prefWidth="100.0" text="Functor" />
+                                        <TableColumn fx:id="tbcPriority" prefWidth="100.0" text="Priority" />
+                                        <TableColumn fx:id="tbcSpecifier" prefWidth="100.0" text="Specifier" />
+                                    </columns></TableView>
+                            </Tab>
+                            <Tab fx:id="tabFlags" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Flags">
+                                <content>
+                                    <TableView fx:id="tbvFlags" prefHeight="200.0" prefWidth="200.0">
+                                        <columns>
+                                            <TableColumn fx:id="tbcKey" prefWidth="150.0" text="Flag" />
+                                            <TableColumn fx:id="tbcValue" prefWidth="150.0" text="Value" />
+                                        </columns>
+                                    </TableView>
+                                </content>
+                            </Tab>
+                            <Tab fx:id="tabLibraries" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Libraries">
+                                <content>
+                                    <TreeView fx:id="trvLibraries" prefHeight="200.0" prefWidth="200.0" />
+                                </content>
+                            </Tab>
+                            <Tab fx:id="tabStaticKb" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Static KB">
+                                <content>
+                                    <TextArea fx:id="txaStaticKb" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                </content>
+                            </Tab>
+                            <Tab fx:id="tabDynamicKb" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Dynamic KB">
+                                <content>
+                                    <TextArea fx:id="txaDynamicKb" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                </content>
+                            </Tab>
+                        </tabs>
+                    </TabPane>
+                </center>
+                <top>
+                    <HBox alignment="CENTER_LEFT" fillHeight="false" BorderPane.alignment="CENTER">
+                        <children>
+                            <Label text="?-" />
+                            <TextField fx:id="txfQuery" onAction="#onActionPerformedOnQuery" onKeyTyped="#onKeyTypedOnQuery" HBox.hgrow="SOMETIMES">
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin>
+                            </TextField>
+                            <Separator orientation="VERTICAL" />
+                            <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#onNextButtonPressed" text="Solve">
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin></Button>
+                            <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed" text="Solve all">
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin></Button>
+                            <Button fx:id="btnStop" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#onStopButtonPressed" text="Stop">
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin>
+                            </Button>
+                            <Button fx:id="btnReset" mnemonicParsing="false" onAction="#onResetButtonPressed" text="Reset">
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin>
+                            </Button>
+                        </children>
+                    </HBox>
+                </top>
+                <bottom>
+                    <BorderPane BorderPane.alignment="CENTER">
+                        <center>
+                            <ProgressBar fx:id="prbResolution" prefWidth="200.0" visible="false" />
+                        </center>
+                        <left>
+                            <Label fx:id="lblStatus" text="Idle" BorderPane.alignment="BOTTOM_LEFT" />
+                        </left>
+                        <right>
+                            <HBox BorderPane.alignment="CENTER_RIGHT">
+                                <children>
+                                    <Label text="Timeout:">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                    <Label fx:id="lblTimeout" text="5 s">
+                                        <HBox.margin>
+                                            <Insets />
+                                        </HBox.margin>
+                                    </Label>
+                                    <Slider fx:id="sldTimeout" blockIncrement="00000.1" majorTickUnit="1.0" max="10.5" min="1.0" minorTickCount="1" value="3.69897">
+                                        <HBox.margin>
+                                            <Insets left="5.0" right="5.0" />
+                                        </HBox.margin>
+                                    </Slider>
+                                    <Separator orientation="VERTICAL" />
+                                    <Label fx:id="lblCaret" text="Line: 1 | Column: 1" />
+                                </children>
+                            </HBox>
+                        </right>
+                    </BorderPane>
+                </bottom>
+            </BorderPane>
+        </SplitPane>
+    </content>
 </fx:root>

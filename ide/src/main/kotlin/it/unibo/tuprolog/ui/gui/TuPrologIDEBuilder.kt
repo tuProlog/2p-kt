@@ -101,7 +101,7 @@ data class TuPrologIDEBuilder(
         stage.onCloseRequest = EventHandler { e -> if (!this.onClose()) e.consume() }
         stage.scene.stylesheets.addAll(this.stylesheets)
 
-        val controller = loader.getController() as TuPrologIDEController
+        val controller = loader.getController() as ApplicationController
         controller.setOnAbout(this.onAbout)
         controller.setOnClose { if (this.onClose()) this.stage.close() }
         customTabs.forEach {

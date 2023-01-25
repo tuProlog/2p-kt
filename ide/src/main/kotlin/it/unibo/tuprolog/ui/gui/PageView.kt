@@ -1,23 +1,17 @@
 package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.core.operators.OperatorSet
-import javafx.event.Event
-import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.Tab
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
-import java.io.IOException
 import kotlin.math.max
 
 @Suppress("UNUSED_PARAMETER")
 class PageView(
     private val page: Page,
-    private val application: Application,
-    private val ideController: TuPrologIDEController,
+    private val appController: ApplicationController,
     initialText: String = ""
 ) : Tab() {
 
@@ -30,9 +24,11 @@ class PageView(
     val pageID: PageID
         get() = page.id
 
+    val codeArea: CodeArea
+
     private val syntaxColoring: SyntaxColoring
 
-    private var fontSize: Int = MIN_FONT_SIZE
+    var fontSize: Int = MIN_FONT_SIZE
         set(value) {
             field = max(value, MIN_FONT_SIZE)
             codeArea.style = "-fx-font-size: $value"
@@ -40,14 +36,11 @@ class PageView(
 
     init {
         val loader = FXMLLoader(PageView::class.java.getResource(FXML))
-        loader.setController(this)
+        loader.setController(PageController(page, this, appController))
         loader.setRoot(this)
 
-        try {
-            loader.load<BorderPane>()
-        } catch (e: IOException) {
-            throw IllegalStateException(e)
-        }
+        val root = loader.load<BorderPane>()
+        codeArea = root.lookup("#codeArea") as CodeArea
 
         fontSize = DEFAULT_FONT_SIZE
 
@@ -59,9 +52,6 @@ class PageView(
 
         text = page.id.name
     }
-
-    @FXML
-    lateinit var codeArea: CodeArea
 
     var wholeText: String
         get() = codeArea.text
@@ -77,39 +67,5 @@ class PageView(
 
     fun updateSyntaxColoring() {
         syntaxColoring.applyHighlightingNow()
-    }
-
-//    @FXML
-//    lateinit var btnClose: Button
-
-    @FXML
-    fun onTabSelectionChanged(e: Event) {
-        if (isSelected) {
-            application.select(page)
-        }
-    }
-
-    @FXML
-    fun onMousePressedOnCodeArea(e: MouseEvent) {
-        ideController.onMouseClickedOnCurrentFile(e)
-    }
-
-    @FXML
-    fun onKeyTypedOnCodeArea(e: KeyEvent) {
-        page.theory = wholeText
-        ideController.onKeyTypedOnCurrentFile(e)
-        if (e.isControlDown) {
-            when (e.character) {
-                "+" -> fontSize++
-                "-" -> fontSize--
-                else -> {}
-            }
-        }
-    }
-
-    @FXML
-    fun onKeyPressedOnCodeArea(e: KeyEvent) {
-        page.theory = wholeText
-        ideController.onKeyPressedOnCurrentFile(e)
     }
 }
