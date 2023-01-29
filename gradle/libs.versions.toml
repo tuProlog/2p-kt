@@ -17,7 +17,7 @@ detekt = "1.22.0"
 
 [plugins]
 ktNpmPublish = "io.github.gciatto.kt-npm-publish:0.3.9"
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:1.0.1"
 #npmPublish = { id = "dev.petuska.npm.publish", version.ref = "npmPublish" }
 nexusPublish = "de.marcphilipp.nexus-publish:0.4.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
