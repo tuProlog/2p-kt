@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.dsl.unify
 
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.dsl.LogicProgrammingScope
@@ -38,7 +39,8 @@ interface LogicProgrammingScopeWithUnification : LogicProgrammingScope, Unificat
     companion object {
         @JsName("of")
         fun of(
-            unificator: Unificator = Unificator.default
-        ): LogicProgrammingScopeWithUnification = LogicProgrammingScopeWithUnificationImpl(unificator)
+            unificator: Unificator = Unificator.default,
+            scope: Scope = Scope.empty()
+        ): LogicProgrammingScopeWithUnification = LogicProgrammingScopeWithUnificationImpl(unificator, scope)
     }
 }

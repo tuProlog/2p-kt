@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.dsl.solve
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.dsl.theory.LogicProgrammingScopeWithTheories
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.SolverFactory
@@ -71,7 +72,8 @@ interface LogicProgrammingScopeWithResolution : LogicProgrammingScopeWithTheorie
         @JsName("of")
         fun of(
             solverFactory: SolverFactory,
-            unificator: Unificator
-        ): LogicProgrammingScopeWithResolution = LogicProgrammingScopeWithResolutionImpl(solverFactory, unificator)
+            unificator: Unificator = solverFactory.defaultUnificator,
+            scope: Scope = Scope.empty()
+        ): LogicProgrammingScopeWithResolution = LogicProgrammingScopeWithResolutionImpl(solverFactory, unificator, scope)
     }
 }

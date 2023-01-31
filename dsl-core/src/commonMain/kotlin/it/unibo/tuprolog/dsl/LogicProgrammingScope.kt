@@ -153,6 +153,9 @@ interface LogicProgrammingScope : PrologStdLibScope, VariablesProvider {
 
     companion object {
         @JsName("empty")
-        fun empty(): LogicProgrammingScope = LogicProgrammingScopeImpl(Scope.empty())
+        fun empty(): LogicProgrammingScope = of(Scope.empty())
+
+        @JsName("of")
+        fun of(scope: Scope): LogicProgrammingScope = LogicProgrammingScopeImpl(scope)
     }
 }

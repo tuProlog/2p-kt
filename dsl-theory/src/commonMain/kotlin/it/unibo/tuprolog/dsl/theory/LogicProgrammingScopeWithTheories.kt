@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.dsl.theory
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.dsl.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.unify.LogicProgrammingScopeWithUnification
 import it.unibo.tuprolog.theory.MutableTheory
@@ -67,7 +68,8 @@ interface LogicProgrammingScopeWithTheories : LogicProgrammingScopeWithUnificati
     companion object {
         @JsName("of")
         fun of(
-            unificator: Unificator = Unificator.default
-        ): LogicProgrammingScopeWithTheories = LogicProgrammingScopeWithTheoriesImpl(unificator)
+            unificator: Unificator = Unificator.default,
+            scope: Scope = Scope.empty()
+        ): LogicProgrammingScopeWithTheories = LogicProgrammingScopeWithTheoriesImpl(unificator, scope)
     }
 }
