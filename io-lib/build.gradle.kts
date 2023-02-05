@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-
 plugins {
     `kotlin-mp`
     `kotlin-doc`
@@ -31,9 +29,6 @@ kotlin {
                 implementation(npm("sync-request", libs.versions.npm.syncRequest.get()))
             }
         }
-
-        val jsTest by getting
-
     }
 }
 
