@@ -57,7 +57,6 @@ jobs:
           RELEASE_TAG: ${{ steps.get-version.outputs.version }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
   deploy-on-central:
     needs: github-release
     runs-on: ubuntu-latest
