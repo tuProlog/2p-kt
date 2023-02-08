@@ -21,6 +21,14 @@ internal class IsTest {
     fun computesCorrectly() {
         isQueryToResult.forEach { (input, expectedResult) ->
             when (expectedResult) {
+                is KClass<*> -> {
+                    try {
+                        Is.implementation.solve(input)
+                        fail("Expected: $expectedResult but no exception was thrown")
+                    } catch (e: ResolutionException) {
+                        assertEquals(expectedResult, e::class)
+                    }
+                }
                 is Substitution.Unifier -> {
                     Is.implementation.solve(input).single().solution.let {
                         assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
@@ -36,13 +44,6 @@ internal class IsTest {
                         }
                     }
                 }
-                else ->
-                    try {
-                        Is.implementation.solve(input)
-                        fail("Expected: $expectedResult but no exception was thrown")
-                    } catch (e: ResolutionException) {
-                        assertEquals(expectedResult as KClass<*>, e::class)
-                    }
             }
         }
     }
