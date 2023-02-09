@@ -19,7 +19,7 @@ val npmRepo: String? by project
 val npmDryRun: String? by project
 
 configure<NpmPublishExtension> {
-    readme.set(file("README.md"))
+    readme.set(rootProject.file("README.md"))
     // bundleKotlinDependencies.set(true)
     dry.set(npmDryRun?.let { it.toBoolean() } ?: false)
     registries {
