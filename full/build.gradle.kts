@@ -12,7 +12,7 @@ val thisProject = project.name
 
 kotlin {
     js {
-        binaries.executable()
+        binaries.library()
     }
     sourceSets {
         val commonMain by getting {
