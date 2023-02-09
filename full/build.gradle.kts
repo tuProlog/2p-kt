@@ -11,6 +11,9 @@ plugins {
 val thisProject = project.name
 
 kotlin {
+    js {
+        binaries.executable()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
