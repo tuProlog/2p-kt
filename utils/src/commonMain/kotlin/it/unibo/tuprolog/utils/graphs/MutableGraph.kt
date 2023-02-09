@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.utils.graphs
 
+import it.unibo.tuprolog.utils.graphs.impl.MutableGraphImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
-import it.unibo.tuprolog.utils.graphs.impl.MutableGraphImpl
 
 interface MutableGraph<T, W> : Graph<T, W> {
 
