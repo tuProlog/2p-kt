@@ -2,7 +2,7 @@ package it.unibo.tuprolog.utils.graphs
 
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
-import it.unibo.tuprolog.utils.graphs.impl.MutableGraph as MutableGraphImpl
+import it.unibo.tuprolog.utils.graphs.impl.MutableGraphImpl
 
 interface MutableGraph<T, W> : Graph<T, W> {
 
@@ -12,10 +12,8 @@ interface MutableGraph<T, W> : Graph<T, W> {
     @JsName("toImmutable")
     fun toImmutable(): Graph<T, W>
 
-    @JsName("addNode")
     fun add(node: Node<T>)
 
-    @JsName("addEdge")
     fun add(edge: Edge<T, W>)
 
     @JsName("plusAssignNode")
@@ -44,10 +42,8 @@ interface MutableGraph<T, W> : Graph<T, W> {
     @JsName("connect")
     fun connect(node1: Node<T>, node2: Node<T>, weight: W? = null, bidirectional: Boolean = false)
 
-    @JsName("removeNode")
     fun remove(node: Node<T>)
 
-    @JsName("removeEdge")
     fun remove(edge: Edge<T, W>)
 
     companion object {

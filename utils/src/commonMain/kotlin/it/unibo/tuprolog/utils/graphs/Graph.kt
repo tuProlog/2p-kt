@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.utils.graphs
 
-import it.unibo.tuprolog.utils.graphs.impl.ImmutableGraph
+import it.unibo.tuprolog.utils.graphs.impl.GraphImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -75,7 +75,7 @@ interface Graph<T, W> : Iterable<Edge<T, W>> {
         fun <T, W> empty(): Graph<T, W> = of(emptyList())
 
         @JsName("ofIterable")
-        fun <T, W> of(edges: Iterable<Edge<T, W>>): Graph<T, W> = ImmutableGraph(edges)
+        fun <T, W> of(edges: Iterable<Edge<T, W>>): Graph<T, W> = GraphImpl(edges)
 
         @JsName("ofSequence")
         fun <T, W> of(edges: Sequence<Edge<T, W>>): Graph<T, W> = of(edges.asIterable())

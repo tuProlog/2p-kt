@@ -41,19 +41,19 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
 
     protected fun edge(node1: Node<T>, node2: Node<T>, weight: W?): Edge<T, W> = Edge.of(node1, node2, weight)
 
-    protected open fun remove(edge: Edge<T, W>) {
+    protected fun removeEdge(edge: Edge<T, W>) {
         connections[edge.source]?.remove(edge.destination)
     }
 
-    protected open fun remove(node: Node<T>) {
+    protected fun removeNode(node: Node<T>) {
         connections.removeNode(node)
     }
 
-    protected open fun add(edge: Edge<T, W>) {
+    protected fun addEdge(edge: Edge<T, W>) {
         connections.putEdge(edge)
     }
 
-    protected open fun add(node: Node<T>) {
+    protected fun addNode(node: Node<T>) {
         if (node !in connections) {
             connections[node] = mutableMapOf()
         }
@@ -116,7 +116,7 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
     override fun <S> asSequence(searchStrategy: SearchStrategy<T, W, S>, initialNode: Node<T>): Sequence<Visit<T, S>> =
         searchStrategy.search(this, initialNode)
 
-    override fun toMutable(): MutableGraph<T, W> = it.unibo.tuprolog.utils.graphs.impl.MutableGraph(connections)
+    override fun toMutable(): MutableGraph<T, W> = MutableGraphImpl(connections)
 
     override fun ingoingEdges(to: Node<T>): Iterable<Edge<T, W>> =
         connections.asSequence()
