@@ -9,9 +9,7 @@ plugins {
 group = "io.github.gciatto"
 
 gitSemVer {
-    minimumVersion.set("0.1.0")
-    developmentIdentifier.set("dev")
-    noTagIdentifier.set("archeo")
+    excludeLightweightTags()
     assignGitSemanticVersion()
 }
 
