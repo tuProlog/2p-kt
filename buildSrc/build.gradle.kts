@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.konan.util.visibleName
-
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
@@ -11,10 +9,8 @@ repositories {
     gradlePluginPortal()
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(JavaVersion.current().toString()))
-    }
+kotlin {
+    jvmToolchain(JavaVersion.current().ordinal)
 }
 
 dependencies {
