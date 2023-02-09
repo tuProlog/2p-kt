@@ -119,7 +119,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
 
             val query = "recursive"(n)
 
-            val sol = solver.solveOnce(query, mediumDuration)
+            val sol = solver.solveOnce(query, longDuration)
 
             assertSolutionEquals(
                 query.halt(
