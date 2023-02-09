@@ -6,41 +6,41 @@ import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import kotlin.test.Test
-import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
-class TestBuggyJsTypeChecker {
+class TestJsTypeChecker {
     @Test
     fun testInstantiationErrorKlassIsSubstitutionFail() {
-        assertIs<Substitution.Fail>(InstantiationError::class)
+        assertTrue(InstantiationError::class !is Substitution.Fail)
     }
 
     @Test
     fun testLogicErrorKlassIsSubstitutionFail() {
-        assertIs<Substitution.Fail>(LogicError::class)
+        assertTrue(LogicError::class !is Substitution.Fail)
     }
 
     @Test
     fun testResolutionExceptionKlassIsSubstitutionFail() {
-        assertIs<Substitution.Fail>(ResolutionException::class)
+        assertTrue(ResolutionException::class !is Substitution.Fail)
     }
 
     @Test
     fun testTuPrologExceptionKlassIsSubstitutionFail() {
-        assertIs<Substitution.Fail>(TuPrologException::class)
+        assertTrue(TuPrologException::class !is Substitution.Fail)
     }
 
     @Test
     fun testRuntimeExceptionKlassIsSubstitutionFail() {
-        assertIs<Substitution.Fail>(RuntimeException::class)
+        assertTrue(RuntimeException::class !is Substitution.Fail)
     }
 
     @Test
     fun testExceptionKlassIsSubstitutionFail() {
-        assertIs<Substitution.Fail>(Exception::class)
+        assertTrue(Exception::class !is Substitution.Fail)
     }
 
     @Test
     fun testAnyKlassIsSubstitutionFail() {
-        assertIs<Substitution.Fail>(Any::class)
+        assertTrue(Any::class !is Substitution.Fail)
     }
 }
