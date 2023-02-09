@@ -24,7 +24,6 @@ interface Recursive : Struct {
 
     @JsName("items")
     val items: Iterable<Term>
-        get() = toSequence().asIterable()
 
     @JsName("toArray")
     fun toArray(): Array<Term>
@@ -32,7 +31,6 @@ interface Recursive : Struct {
     @JsName("toList")
     fun toList(): List<Term>
 
-    @JsName("toSequence")
     fun toSequence(): Sequence<Term>
 
     @JsName("unfold")
