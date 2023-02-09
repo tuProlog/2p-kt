@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.util.visibleName
+
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
