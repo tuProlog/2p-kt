@@ -26,6 +26,9 @@ internal abstract class RecursiveImpl(
     override val isGround: Boolean
         get() = checkGroundness()
 
+    override val items: Iterable<Term>
+        get() = toSequence().asIterable()
+
     override fun checkGroundness(): Boolean = unfoldedSequence.all { it.isGround }
 
     override fun argsHashCode(): Int = itemWiseHashCode(unfoldedSequence)

@@ -2,7 +2,6 @@ plugins {
     `kotlin-js-only`
     `kotlin-doc`
     `publish-on-maven`
-    `publish-on-npm`
 }
 
 kotlin {
@@ -20,11 +19,4 @@ kotlin {
             }
         }
     }
-}
-
-packageJson {
-    dependencies = mutableMapOf(
-        "kotlin" to libs.kotlin.stdlib.js.version,
-        "@tuprolog/parser-utils" to libs.versions.npm.tuprolog.parserUtils.get(),
-    )
 }

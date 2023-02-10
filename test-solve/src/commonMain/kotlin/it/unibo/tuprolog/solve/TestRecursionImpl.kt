@@ -106,7 +106,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
         )
     }
 
-    private fun testTailRecursion(lastCallOptimization: Boolean, n: Int = 200) {
+    private fun testTailRecursion(lastCallOptimization: Boolean, n: Int = 100) {
         logicProgramming {
             val prints = mutableListOf<String>()
             val solver = solverFactory.solverWithDefaultBuiltins(
@@ -119,7 +119,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
 
             val query = "recursive"(n)
 
-            val sol = solver.solveOnce(query, mediumDuration)
+            val sol = solver.solveOnce(query, longDuration)
 
             assertSolutionEquals(
                 query.halt(

@@ -6,27 +6,34 @@ val mochaTimeout: String by project
 val ktCompilerArgsJvm: String by project
 val ktCompilerArgs: String by project
 
+val disableJvm: Boolean = project.findProperty("ktTargetJvmDisable")?.toString()?.toBoolean() ?: false
+val disableJs: Boolean = project.findProperty("ktTargetJsDisable")?.toString()?.toBoolean() ?: false
+
 kotlin {
-    jvm {
-        withJava()
-        compilations.all {
-            kotlinOptions {
-                freeCompilerArgs = freeCompilerArgs + ktCompilerArgsJvm.split(";")
+    if (!disableJvm) {
+        jvm {
+            withJava()
+            compilations.all {
+                kotlinOptions {
+                    freeCompilerArgs = freeCompilerArgs + ktCompilerArgsJvm.split(";")
+                }
             }
         }
     }
 
-    js {
-        useCommonJs()
-        compilations.all {
-            kotlinOptions {
-                main = "noCall"
+    if (!disableJs) {
+        js {
+            useCommonJs()
+            compilations.all {
+                kotlinOptions {
+                    main = "noCall"
+                }
             }
-        }
-        nodejs {
-            testTask {
-                useMocha {
-                    timeout = mochaTimeout
+            nodejs {
+                testTask {
+                    useMocha {
+                        timeout = mochaTimeout
+                    }
                 }
             }
         }
@@ -46,24 +53,28 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
-        val jvmMain by getting {
-            dependencies {
-                api(kotlin("stdlib-jdk8"))
+        if (!disableJvm) {
+            val jvmMain by getting {
+                dependencies {
+                    api(kotlin("stdlib-jdk8"))
+                }
+            }
+            val jvmTest by getting {
+                dependencies {
+                    implementation(kotlin("test-junit"))
+                }
             }
         }
-        val jvmTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
+        if (!disableJs) {
+            val jsMain by getting {
+                dependencies {
+                    api(kotlin("stdlib-js"))
+                }
             }
-        }
-        val jsMain by getting {
-            dependencies {
-                api(kotlin("stdlib-js"))
-            }
-        }
-        val jsTest by getting {
-            dependencies {
-                implementation(kotlin("test-js"))
+            val jsTest by getting {
+                dependencies {
+                    implementation(kotlin("test-js"))
+                }
             }
         }
     }

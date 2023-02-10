@@ -34,7 +34,6 @@ jobs:
           - macos-latest
         java-version:
           - 11
-#          - 16
           - 17
           - 18
         jdk-dist:
@@ -69,9 +68,9 @@ jobs:
           - windows-latest
           - macos-latest
         node-version:
-#           - 'latest-14'
           - 'latest-16'
           - 'latest-18'
+          - 'latest-19'
     runs-on: ${{ matrix.os }}
     name: Run tests via NodeJS ${{ matrix.node-version }}, on ${{ matrix.os }}
     env:

@@ -2,7 +2,6 @@ plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
-    `publish-on-npm`
 }
 
 kotlin {
@@ -42,11 +41,4 @@ listOf("yaml", "json").forEach {
         standardInput = System.`in`
         main = "${it.toUpperCase()}PrinterKt"
     }
-}
-
-packageJson {
-    dependencies = mutableMapOf(
-        npmSubproject("theory"),
-        npmSubproject("serialize-core"),
-    )
 }

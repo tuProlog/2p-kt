@@ -29,6 +29,6 @@ jobs:
         with:
           build-command: ./gradlew compileKotlinJs
           check-command: true
-          deploy-command: ./gradlew npmPublish
+          deploy-command: ./gradlew publishJsPackageToNpmjsRegistry
           should-deploy: true
           npm-token: ${{ secrets.NPM_TOKEN }}

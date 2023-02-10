@@ -1,11 +1,6 @@
 import Developer.Companion.getAllDevs
-import io.github.gciatto.kt.node.Bugs
-import io.github.gciatto.kt.node.LiftJsSourcesTask
-import io.github.gciatto.kt.node.LiftPackageJsonTask
-import io.github.gciatto.kt.node.NpmPublishExtension
-import io.github.gciatto.kt.node.NpmPublishPlugin
-import io.github.gciatto.kt.node.NpmPublishTask
-import io.github.gciatto.kt.node.PackageJson
+import dev.petuska.npm.publish.NpmPublishPlugin
+import dev.petuska.npm.publish.extension.NpmPublishExtension
 
 apply<NpmPublishPlugin>()
 
@@ -22,23 +17,42 @@ val issuesEmail: String? by project
 val npmToken: String? by project
 val npmRepo: String? by project
 val npmDryRun: String? by project
-val npmOrganization: String? by project
 
 configure<NpmPublishExtension> {
-    npmToken?.let { token.set(it) }
-    packageJson {
-        homepage = projectHomepage
-        description = projectDescription
-        bugs = Bugs(issuesUrl, issuesEmail)
-        license = projectLicense
-        liftPackageJsonToFixDependencies(this)
-        if (npmOrganization != null) {
-            liftPackageJsonToSetOrganization(npmOrganization!!, this)
+    readme.set(rootProject.file("README.md"))
+    // bundleKotlinDependencies.set(true)
+    dry.set(npmDryRun?.let { it.toBoolean() } ?: false)
+    registries {
+        npmjs {
+            npmToken?.let { authToken.set(it) }
         }
     }
-    if (npmOrganization != null) {
-        liftJsSources { _, _, line ->
-            liftJsSourcesToSetOrganization(npmOrganization!!, line)
+    packages {
+        all {
+            packageJson {
+                homepage.set(projectHomepage)
+                description.set(projectDescription)
+                val developers = project.getAllDevs()
+                if (developers.isNotEmpty()) {
+                    author.set(person(developers.first()))
+                }
+                contributors.set(
+                    developers.asSequence()
+                        .drop(1)
+                        .map { person(it) }
+                        .toCollection(mutableListOf())
+                )
+                license.set(projectLicense)
+                private.set(false)
+                bugs {
+                    url.set(issuesUrl)
+                    email.set(issuesEmail)
+                }
+                repository {
+                    type.set("git")
+                    url.set(scmUrl)
+                }
+            }
         }
     }
 }

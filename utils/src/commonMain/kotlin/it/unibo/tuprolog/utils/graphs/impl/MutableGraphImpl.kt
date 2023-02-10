@@ -2,27 +2,27 @@ package it.unibo.tuprolog.utils.graphs.impl
 
 import it.unibo.tuprolog.utils.graphs.Edge
 import it.unibo.tuprolog.utils.graphs.Graph
+import it.unibo.tuprolog.utils.graphs.MutableGraph
 import it.unibo.tuprolog.utils.graphs.Node
-import it.unibo.tuprolog.utils.graphs.MutableGraph as IMutableGraph
 
 @Suppress("RedundantVisibilityModifier")
-internal class MutableGraph<T, W> : IMutableGraph<T, W>, AbstractGraph<T, W, MutableGraph<T, W>> {
+internal class MutableGraphImpl<T, W> : MutableGraph<T, W>, AbstractGraph<T, W, MutableGraphImpl<T, W>> {
 
     constructor(edges: Iterable<Edge<T, W>> = emptyList()) : super(edges)
 
     internal constructor(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>) : super(connections)
 
-    override fun clone(): MutableGraph<T, W> = MutableGraph(connections.toMutableMap())
+    override fun clone(): MutableGraphImpl<T, W> = MutableGraphImpl(connections.toMutableMap())
 
-    override fun toImmutable(): Graph<T, W> = ImmutableGraph(connections.toMutableMap())
+    override fun toImmutable(): Graph<T, W> = GraphImpl(connections.toMutableMap())
 
-    public override fun remove(edge: Edge<T, W>) = super.remove(edge)
+    public override fun remove(edge: Edge<T, W>) = removeEdge(edge)
 
-    public override fun remove(node: Node<T>) = super.remove(node)
+    public override fun remove(node: Node<T>) = removeNode(node)
 
-    public override fun add(edge: Edge<T, W>) = super.add(edge)
+    public override fun add(edge: Edge<T, W>) = addEdge(edge)
 
-    public override fun add(node: Node<T>) = super.add(node)
+    public override fun add(node: Node<T>) = addNode(node)
 
     override fun set(edge: Pair<Node<T>, Node<T>>, weight: W) =
         add(edge(edge.first, edge.second, weight))
@@ -34,7 +34,7 @@ internal class MutableGraph<T, W> : IMutableGraph<T, W>, AbstractGraph<T, W, Mut
         }
     }
 
-    override fun toMutable(): MutableGraph<T, W> = clone()
+    override fun toMutable(): MutableGraphImpl<T, W> = clone()
 
     override fun plusAssign(node: Node<T>) = add(node)
 
@@ -44,6 +44,6 @@ internal class MutableGraph<T, W> : IMutableGraph<T, W>, AbstractGraph<T, W, Mut
 
     override fun minusAssign(edge: Edge<T, W>) = remove(edge)
 
-    override fun newInstance(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>): MutableGraph<T, W> =
-        MutableGraph(connections)
+    override fun newInstance(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>): MutableGraphImpl<T, W> =
+        MutableGraphImpl(connections)
 }
