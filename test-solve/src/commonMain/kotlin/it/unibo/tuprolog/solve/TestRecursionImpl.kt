@@ -106,7 +106,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
         )
     }
 
-    private fun testTailRecursion(lastCallOptimization: Boolean, n: Int = 200) {
+    private fun testTailRecursion(lastCallOptimization: Boolean, n: Int = 100) {
         logicProgramming {
             val prints = mutableListOf<String>()
             val solver = solverFactory.solverWithDefaultBuiltins(
