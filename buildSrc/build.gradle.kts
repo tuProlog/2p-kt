@@ -9,10 +9,6 @@ repositories {
     gradlePluginPortal()
 }
 
-kotlin {
-    jvmToolchain(JavaVersion.current().ordinal)
-}
-
 dependencies {
     implementation(libs.kotlin.bom)
     implementation(libs.kotlin.gradlePlugin)
