@@ -13,12 +13,13 @@ val scmUrl: String? by project
 val scmConnection: String? by project
 val issuesUrl: String? by project
 val issuesEmail: String? by project
-// env ORG_GRADLE_PROJECT_npmToken
 val npmToken: String? by project
 val npmRepo: String? by project
 val npmDryRun: String? by project
+val npmOrganization: String? by project
 
 configure<NpmPublishExtension> {
+    npmOrganization?.let { organization.set(it) }
     readme.set(rootProject.file("README.md"))
     // bundleKotlinDependencies.set(true)
     dry.set(npmDryRun?.let { it.toBoolean() } ?: false)
@@ -29,6 +30,7 @@ configure<NpmPublishExtension> {
     }
     packages {
         all {
+            packageName.set("${rootProject.name}-${project.name}")
             packageJson {
                 homepage.set(projectHomepage)
                 description.set(projectDescription)
