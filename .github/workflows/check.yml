@@ -16,7 +16,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: DanySK/action-checkout@0.2.5
+        uses: DanySK/action-checkout@0.2.6
 
       - name: Check Code Style
         uses: DanySK/build-check-deploy-gradle-action@2.2.0
@@ -49,7 +49,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.5
+        uses: danysk/action-checkout@0.2.6
 
       - name: Build and test
         uses: DanySK/build-check-deploy-gradle-action@2.2.0
@@ -81,7 +81,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.5
+        uses: danysk/action-checkout@0.2.6
 
       - name: Build and test
         uses: DanySK/build-check-deploy-gradle-action@2.2.0
