@@ -205,25 +205,25 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
 
     override fun setStandardInput(stdIn: InputChannel<String>) {
         updateContext {
-            copy(inputChannels = inputChannels + (InputStore.STDIN to stdIn))
+            copy(inputChannels = inputChannels.setStdIn(stdIn))
         }
     }
 
     override fun setStandardError(stdErr: OutputChannel<String>) {
         updateContext {
-            copy(outputChannels = outputChannels + (OutputStore.STDERR to stdErr))
+            copy(outputChannels = outputChannels.setStdErr(stdErr))
         }
     }
 
     override fun setStandardOutput(stdOut: OutputChannel<String>) {
         updateContext {
-            copy(outputChannels = outputChannels + (OutputStore.STDOUT to stdOut))
+            copy(outputChannels = outputChannels.setStdOut(stdOut))
         }
     }
 
     override fun setWarnings(warnings: OutputChannel<Warning>) {
         updateContext {
-            copy(outputChannels = OutputStore.of(outputChannels, warnings))
+            copy(outputChannels = outputChannels.setWarnings(warnings))
         }
     }
 
