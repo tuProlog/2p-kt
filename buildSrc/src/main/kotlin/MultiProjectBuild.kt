@@ -2,7 +2,7 @@ import org.gradle.api.Project
 
 val otherProjects = setOf("documentation")
 
-val jsProjects = setOf("parser-js")
+val jsProjects = setOf("parser-js", "ide-web")
 
 val jvmProjects = setOf("examples", "ide", "ide-plp", "parser-jvm")
 

@@ -43,6 +43,7 @@ include(":ide")
 include(":gui")
 include(":examples")
 include(":full")
+include(":ide-web")
 
 gradleEnterprise {
     buildScan {
