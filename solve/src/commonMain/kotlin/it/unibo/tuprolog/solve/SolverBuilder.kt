@@ -38,6 +38,12 @@ interface SolverBuilder {
     @JsName("setRuntime")
     fun runtime(runtime: Runtime): SolverBuilder
 
+    @JsName("setLibrary")
+    fun library(alias: String?, item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): SolverBuilder
+
+    @JsName("setLibraryWithDefaultAlias")
+    fun library(item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): SolverBuilder
+
     @JsName("builtins")
     var builtins: Library?
 

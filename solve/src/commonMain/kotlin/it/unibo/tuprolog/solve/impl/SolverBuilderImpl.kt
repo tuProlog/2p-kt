@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.impl
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverBuilder
@@ -15,6 +16,7 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.runtimeOf
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
@@ -36,6 +38,14 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
     override fun runtime(runtime: Runtime): SolverBuilder = returningThis {
         this.runtime = runtime
     }
+
+    private var anonymousCount = 0
+
+    override fun library(alias: String?, item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): SolverBuilder =
+        runtime(runtime + runtimeOf(alias ?: "anonymous${anonymousCount++}", item1, *items))
+
+    override fun library(item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): SolverBuilder =
+        library(null, item1, *items)
 
     override var builtins: Library? = factory.defaultBuiltins
 

@@ -16,6 +16,7 @@ import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
+import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 /** A base class for Solve requests and responses */
@@ -59,6 +60,10 @@ sealed class Solve {
         /** The current query [Struct] of this request */
         @JsName("query")
         val query: Struct by lazy { signature withArgs arguments }
+
+        @JsName("unificator")
+        val unificator: Unificator
+            get() = context.unificator
 
         /** Creates a new [Response] to this Request */
         @JsName("replyWith")
