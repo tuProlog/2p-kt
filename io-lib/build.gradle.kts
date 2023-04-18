@@ -1,10 +1,7 @@
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-
 plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
-    `publish-on-npm`
     `mock-service`
 }
 
@@ -32,17 +29,6 @@ kotlin {
             dependencies {
                 implementation(npm("sync-request", libs.versions.npm.syncRequest.get()))
             }
-        }
-
-        val jsTest by getting
-
-        val testCompileTask = tasks.withType<Kotlin2JsCompile>().matching { "Test" in it.name }.single()
-        tasks.maybeCreate("copyTaskJsResources", Copy::class.java).run {
-            listOf(commonMain, jsMain, commonTest, jsTest).forEach { sourceSet ->
-                from(sourceSet.resources.files)
-            }
-            into(testCompileTask.outputFileProperty.get().parentFile.parentFile)
-            testCompileTask.dependsOn(this)
         }
     }
 }
@@ -76,12 +62,4 @@ mockService {
 tasks.matching { it.name in setOf("jvmTest", "jsNodeTest") }.configureEach {
     dependsOn(mockService.startMockTask)
     finalizedBy(mockService.stopMockTask)
-}
-
-packageJson {
-    dependencies = mutableMapOf(
-        npmSubproject("solve"),
-        npmSubproject("parser-theory"),
-        npmSubproject("io-utils"),
-    )
 }

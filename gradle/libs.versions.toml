@@ -1,12 +1,12 @@
 [versions]
-kotlin = "1.8.0"
-dokka = "1.7.20"
+kotlin = "1.8.10"
+dokka = "1.8.10"
 jvm = "1.8"
-node = "16.17.1"
-npmPublish = "2.1.2"
-jackson = "2.14.1"
+node = "16-latest"
+npmPublish = "3.2.1"
+jackson = "2.14.2"
 orchid = "0.21.1"
-antlr = "4.11.1"
+antlr = "4.12.0"
 kotlinx-coroutines = "1.6.4"
 javafx = "20-ea+1"
 npm-yaml = "1.10.0" # yaml
@@ -17,8 +17,8 @@ detekt = "1.22.0"
 
 [plugins]
 ktNpmPublish = "io.github.gciatto.kt-npm-publish:0.3.9"
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
-#npmPublish = { id = "dev.petuska.npm.publish", version.ref = "npmPublish" }
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:1.1.4"
+npmPublish = { id = "dev.petuska.npm.publish", version.ref = "npmPublish" }
 nexusPublish = "de.marcphilipp.nexus-publish:0.4.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
@@ -37,20 +37,20 @@ detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.
 ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 ktNpmPublish = "io.github.gciatto:kt-npm-publish:0.3.9"
-#npmPublish = { module = "dev.petuska:npm-publish", version.ref = "npmPublish" }
+npmPublish = { module = "dev.petuska:npm-publish-gradle-plugin", version.ref = "npmPublish" }
 dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javafx" }
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
-clikt = "com.github.ajalt:clikt-multiplatform:2.8.0"
+clikt = "com.github.ajalt.clikt:clikt:3.5.2"
 graphviz = "guru.nidi:graphviz-java:0.18.1"
-ktMath = "io.github.gciatto:kt-math:0.6.3"
+ktMath = "io.github.gciatto:kt-math:0.7.0"
 orchid-docs = { module = "io.github.javaeden.orchid:OrchidDocs", version.ref = "orchid" }
 orchid-kotlinDocs = { module = "io.github.javaeden.orchid:OrchidKotlindoc", version.ref = "orchid" }
 orchid-pluginDocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", version.ref = "orchid" }
-plantuml = "net.sourceforge.plantuml:plantuml:1.2022.14"
+plantuml = "net.sourceforge.plantuml:plantuml:1.2023.4"
 antlr-full = { module = "org.antlr:antlr4", version.ref = "antlr" }
 antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 richtextFx = "org.fxmisc.richtext:richtextfx:0.11.0"

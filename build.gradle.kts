@@ -9,9 +9,7 @@ plugins {
 group = "io.github.gciatto"
 
 gitSemVer {
-    minimumVersion.set("0.1.0")
-    developmentIdentifier.set("dev")
-    noTagIdentifier.set("archeo")
+    excludeLightweightTags()
     assignGitSemanticVersion()
 }
 
@@ -38,7 +36,7 @@ subprojects {
         jvmVersion(libs.versions.jvm)
         nodeVersion(libs.versions.node, project.findProperty("nodeVersion"))
         packageJson {
-            version = project.npmCompliantVersion
+            version.set(project.npmCompliantVersion)
         }
     }
 }

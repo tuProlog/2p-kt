@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.util.visibleName
+
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
@@ -9,25 +11,10 @@ repositories {
     gradlePluginPortal()
 }
 
-//val javaVersion = JavaVersion.current()
-//
-//java {
-//    targetCompatibility = javaVersion
-//    sourceCompatibility = javaVersion
-//}
-//
-//tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-//    kotlinOptions {
-//        allWarningsAsErrors = false
-//        jvmTarget = javaVersion.toString()
-//        languageVersion = "1.6"
-//    }
-//}
-
 dependencies {
     implementation(libs.kotlin.bom)
     implementation(libs.kotlin.gradlePlugin)
-    implementation(libs.ktNpmPublish)
+    implementation(libs.npmPublish)
     implementation(libs.dokka)
     implementation(libs.ktlint)
     implementation(libs.detekt)

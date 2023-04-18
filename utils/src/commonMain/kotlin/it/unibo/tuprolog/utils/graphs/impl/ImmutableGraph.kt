@@ -14,11 +14,11 @@ internal class ImmutableGraph<T, W> : Graph<T, W>, AbstractGraph<T, W, Immutable
     override fun newInstance(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>): ImmutableGraph<T, W> =
         ImmutableGraph(connections)
 
-    override fun remove(edge: Edge<T, W>) = error("Cannot invoke this operation on immutable graph: remove(Edge)")
+    override fun removeEdge(edge: Edge<T, W>) = error("Cannot invoke this operation on immutable graph: remove(Edge)")
 
-    override fun remove(node: Node<T>) = error("Cannot invoke this operation on immutable graph: remove(Node)")
+    override fun removeNode(node: Node<T>) = error("Cannot invoke this operation on immutable graph: remove(Node)")
 
-    override fun add(edge: Edge<T, W>) = error("Cannot invoke this operation on immutable graph: add(Edge)")
+    override fun addEdge(edge: Edge<T, W>) = error("Cannot invoke this operation on immutable graph: add(Edge)")
 
-    override fun add(node: Node<T>) = error("Cannot invoke this operation on immutable graph: add(Node)")
+    override fun addNode(node: Node<T>) = error("Cannot invoke this operation on immutable graph: add(Node)")
 }

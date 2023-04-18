@@ -4,7 +4,6 @@ plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
-    `publish-on-npm`
     `mock-service`
 }
 
@@ -26,13 +25,14 @@ kotlin {
             }
         }
 
-        val testCompileTask = tasks.withType<Kotlin2JsCompile>().matching { "Test" in it.name }.single()
-        tasks.maybeCreate("copyTaskJsResources", Copy::class.java).run {
-            listOf(commonMain, jsMain, commonTest, jsTest).forEach { sourceSet ->
-                from(sourceSet.resources.files)
+        tasks.withType<Kotlin2JsCompile>().matching { "Test" in it.name }.all {
+            tasks.maybeCreate("copyTaskJsResources", Copy::class.java).run {
+                listOf(commonMain, jsMain, commonTest, jsTest).forEach { sourceSet ->
+                    from(sourceSet.resources.files)
+                }
+                into(outputFileProperty.get().parentFile.parentFile)
+                dependsOn(this)
             }
-            into(testCompileTask.outputFileProperty.get().parentFile.parentFile)
-            testCompileTask.dependsOn(this)
         }
     }
 }
@@ -66,10 +66,4 @@ mockService {
 tasks.matching { it.name in setOf("jvmTest", "jsNodeTest") }.configureEach {
     dependsOn(mockService.startMockTask)
     finalizedBy(mockService.stopMockTask)
-}
-
-packageJson {
-    dependencies = mutableMapOf(
-        "sync-request" to libs.versions.npm.syncRequest.get(),
-    )
 }

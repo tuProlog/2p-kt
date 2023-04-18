@@ -1,10 +1,8 @@
 plugins {
-    id("com.gradle.enterprise") version "3.12.2"
+    id("com.gradle.enterprise") version "3.12.5"
 }
 
 rootProject.name = "2p"
-
-enableFeaturePreview("VERSION_CATALOGS")
 
 dependencyResolutionManagement {
 //    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)

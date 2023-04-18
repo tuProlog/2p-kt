@@ -16,13 +16,13 @@ internal class MutableGraph<T, W> : IMutableGraph<T, W>, AbstractGraph<T, W, Mut
 
     override fun toImmutable(): Graph<T, W> = ImmutableGraph(connections.toMutableMap())
 
-    public override fun remove(edge: Edge<T, W>) = super.remove(edge)
+    public override fun remove(edge: Edge<T, W>) = super.removeEdge(edge)
 
-    public override fun remove(node: Node<T>) = super.remove(node)
+    public override fun remove(node: Node<T>) = super.removeNode(node)
 
-    public override fun add(edge: Edge<T, W>) = super.add(edge)
+    public override fun add(edge: Edge<T, W>) = super.addEdge(edge)
 
-    public override fun add(node: Node<T>) = super.add(node)
+    public override fun add(node: Node<T>) = super.addNode(node)
 
     override fun set(edge: Pair<Node<T>, Node<T>>, weight: W) =
         add(edge(edge.first, edge.second, weight))

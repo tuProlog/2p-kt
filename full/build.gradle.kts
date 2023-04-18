@@ -11,6 +11,9 @@ plugins {
 val thisProject = project.name
 
 kotlin {
+    js {
+        binaries.library()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -35,10 +38,4 @@ val shadowJar by tasks.getting(ShadowJar::class) {
     archiveClassifier.set("full")
     from(kotlin.jvm().compilations.getByName("main").output)
     from(files("${rootProject.projectDir}/LICENSE"))
-}
-
-packageJson {
-    val subprojectToExclude = setOf(thisProject, "test-solve", "oop-lib", "repl", "solve-concurrent")
-    val relevantSubprojects = ktProjects + jsProjects - subprojectToExclude
-    relevantSubprojects.map { npmSubproject(it) }.toMap(dependencies!!)
 }

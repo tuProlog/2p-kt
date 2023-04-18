@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.ui.repl
 
+import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
-import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.output.defaultCliktConsole
 import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -10,8 +10,29 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolutionFormatter
 import it.unibo.tuprolog.solve.exception.HaltException
 
-object TuPrologUtils {
-
+abstract class AbstractTuPrologCommand(
+    help: String = "",
+    epilog: String = "",
+    name: String? = null,
+    invokeWithoutSubcommand: Boolean = false,
+    printHelpOnEmptyArgs: Boolean = false,
+    helpTags: Map<String, String> = emptyMap(),
+    autoCompleteEnvvar: String? = "",
+    allowMultipleSubcommands: Boolean = false,
+    treatUnknownOptionsAsArgs: Boolean = false,
+    hidden: Boolean = false
+) : CliktCommand(
+    help,
+    epilog,
+    name,
+    invokeWithoutSubcommand,
+    printHelpOnEmptyArgs,
+    helpTags,
+    autoCompleteEnvvar,
+    allowMultipleSubcommands,
+    treatUnknownOptionsAsArgs,
+    hidden
+) {
     private fun printSolution(sol: Solution, operatorSet: OperatorSet) {
         when (sol) {
             is Solution.Yes -> {
@@ -27,29 +48,29 @@ object TuPrologUtils {
     }
 
     private fun printYesSolution(sol: Solution.Yes, operatorSet: OperatorSet) {
-        TermUi.echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
+        echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
     }
 
     private fun printHaltSolution(sol: Solution.Halt, operatorSet: OperatorSet) {
         when (val ex = sol.exception) {
             is HaltException -> {
-                TermUi.echo("goodbye.")
+                echo("goodbye.")
                 throw ProgramResult(ex.exitStatus)
             }
-            else -> TermUi.echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
+            else -> echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
         }
     }
 
-    fun printParseException(e: ParseException) {
-        TermUi.echo("# ${e.message?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}", err = true)
+    protected fun printParseException(e: ParseException) {
+        echo("# ${e.message?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}", err = true)
     }
 
     private fun printEndOfSolutions() {
         // do nothing
     }
 
-    fun readQuery(): String {
-        val query: String? = TermUi.prompt("?-", promptSuffix = " ")
+    protected fun readQuery(): String {
+        val query: String? = prompt("?-", promptSuffix = " ")
         return when {
             query == null -> {
                 throw NullInputException("The standard input has been close unexpectedly")
@@ -67,7 +88,7 @@ object TuPrologUtils {
         val longQuery = StringBuilder(query)
         var lastRead = query
         while (!lastRead.trim().endsWith('.')) {
-            lastRead = TermUi.prompt(">", promptSuffix = " ")
+            lastRead = prompt(">", promptSuffix = " ")
                 ?: throw NullInputException("The standard input has been closed unexpectedly")
             longQuery.append(lastRead)
         }
@@ -76,10 +97,10 @@ object TuPrologUtils {
 
     @Suppress("UNUSED_PARAMETER")
     private fun printNoSolution(sol: Solution.No, operatorSet: OperatorSet) {
-        TermUi.echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
+        echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
     }
 
-    fun printSolutions(solutions: Iterator<Solution>, operatorSet: OperatorSet) {
+    protected fun printSolutions(solutions: Iterator<Solution>, operatorSet: OperatorSet) {
         var first = true
         while (solutions.hasNext()) {
             if (!first) {
@@ -93,7 +114,7 @@ object TuPrologUtils {
         printEndOfSolutions()
     }
 
-    fun printNumSolutions(solutions: Iterator<Solution>, maxSolutions: Int, operatorSet: OperatorSet) {
+    protected fun printNumSolutions(solutions: Iterator<Solution>, maxSolutions: Int, operatorSet: OperatorSet) {
         var i = 0
         while (i < maxSolutions && solutions.hasNext()) {
             i++

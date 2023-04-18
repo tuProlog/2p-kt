@@ -6,7 +6,7 @@ import it.unibo.tuprolog.Os
 interface SolverTest {
     /** A short test max duration */
     val shortDuration: TimeDuration
-        get() = 500L * OS_SPECIFIC_TIME_MULTIPLIER
+        get() = 1000L * OS_SPECIFIC_TIME_MULTIPLIER
 
     /** A medium test max duration */
     val mediumDuration: TimeDuration

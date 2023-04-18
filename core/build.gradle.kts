@@ -5,7 +5,6 @@ plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
-    `publish-on-npm`
 }
 
 val tuPrologPackage get() = rootProject.group.toString()
@@ -46,10 +45,4 @@ kotlin {
             tasks.withType<AbstractDokkaTask>().forEach(addDependencyAction)
         }
     }
-}
-
-packageJson {
-    dependencies = mutableMapOf(
-        npmSubproject("utils"),
-    )
 }

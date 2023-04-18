@@ -14,7 +14,10 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.streams.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
+import kotlin.js.JsExport
 
+@Suppress("NON_EXPORTABLE_TYPE")
+@JsExport
 object StreamsSolverFactory : SolverFactory {
     override val defaultBuiltins: Library
         get() = DefaultBuiltins

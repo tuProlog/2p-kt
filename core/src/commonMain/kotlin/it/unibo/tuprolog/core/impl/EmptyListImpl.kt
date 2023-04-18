@@ -16,6 +16,8 @@ internal class EmptyListImpl(
 
     override val unfoldedArray: Array<Term> = arrayOf(this)
 
+    override val items: Iterable<Term> = emptyList()
+
     override fun unfold(): Sequence<Term> = sequenceOf(this)
 
     override fun toString(): String = value

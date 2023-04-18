@@ -11,7 +11,7 @@ import kotlin.jvm.JvmName
 @JsName("logicProgramming")
 fun <R> logicProgramming(
     solverFactory: SolverFactory,
-    unificator: Unificator = Unificator.default,
+    unificator: Unificator = solverFactory.defaultUnificator,
     function: LogicProgrammingScopeWithResolution.() -> R
 ): R {
     return LogicProgrammingScopeWithResolution.of(solverFactory, unificator).function()
@@ -20,7 +20,7 @@ fun <R> logicProgramming(
 @JsName("lp")
 fun <R> lp(
     solverFactory: SolverFactory,
-    unificator: Unificator = Unificator.default,
+    unificator: Unificator = solverFactory.defaultUnificator,
     function: LogicProgrammingScopeWithResolution.() -> R
 ): R = logicProgramming(solverFactory, unificator, function)
 

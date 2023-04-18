@@ -16,10 +16,10 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: DanySK/action-checkout@0.2.5
+        uses: DanySK/action-checkout@0.2.7
 
       - name: Check Code Style
-        uses: DanySK/build-check-deploy-gradle-action@2.1.21
+        uses: DanySK/build-check-deploy-gradle-action@2.2.1
         with:
           build-command: true
           check-command: ./gradlew ktlintCheck
@@ -34,7 +34,6 @@ jobs:
           - macos-latest
         java-version:
           - 11
-#          - 16
           - 17
           - 18
         jdk-dist:
@@ -50,10 +49,10 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.5
+        uses: danysk/action-checkout@0.2.7
 
       - name: Build and test
-        uses: DanySK/build-check-deploy-gradle-action@2.1.21
+        uses: DanySK/build-check-deploy-gradle-action@2.2.1
         with:
           java-distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
@@ -69,9 +68,9 @@ jobs:
           - windows-latest
           - macos-latest
         node-version:
-#           - 'latest-14'
           - 'latest-16'
           - 'latest-18'
+          - 'latest-19'
     runs-on: ${{ matrix.os }}
     name: Run tests via NodeJS ${{ matrix.node-version }}, on ${{ matrix.os }}
     env:
@@ -82,10 +81,10 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.5
+        uses: danysk/action-checkout@0.2.7
 
       - name: Build and test
-        uses: DanySK/build-check-deploy-gradle-action@2.1.21
+        uses: DanySK/build-check-deploy-gradle-action@2.2.1
         with:
           pre-build-command: ./gradlew kotlinNodeJsSetup kotlinNpmInstall
           build-command: ./gradlew jsMainClasses jsTestClasses
