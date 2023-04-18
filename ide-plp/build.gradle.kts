@@ -18,7 +18,7 @@ dependencies {
 
     libs.javafx.graphics.get().let {
         val dependencyNotation = "${it.module.group}:${it.module.name}:${it.versionConstraint.preferredVersion}"
-        listOf("win", "linux", "mac").forEach { platform ->
+        listOf("win", "linux", "mac", "mac-aarch64").forEach { platform ->
             runtimeOnly("$dependencyNotation:$platform")
         }
     }
