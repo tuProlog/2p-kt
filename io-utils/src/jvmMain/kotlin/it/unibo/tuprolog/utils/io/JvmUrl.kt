@@ -2,12 +2,10 @@ package it.unibo.tuprolog.utils.io
 
 import it.unibo.tuprolog.utils.io.Url.Companion.toString
 import it.unibo.tuprolog.utils.io.exceptions.IOException
-import it.unibo.tuprolog.utils.io.exceptions.InvalidUrlException
 import java.io.BufferedInputStream
 import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.io.InputStreamReader
-import java.net.MalformedURLException
 import java.net.URL
 import kotlin.streams.asSequence
 
@@ -50,13 +48,4 @@ data class JvmUrl(val url: URL) : Url {
         }
 
     override fun toString(): String = url.toString()
-
-    companion object {
-        private fun String.toUrl(): URL =
-            try {
-                URL(this)
-            } catch (e: MalformedURLException) {
-                throw InvalidUrlException(message = "Invalid URL: $this", cause = e)
-            }
-    }
 }
