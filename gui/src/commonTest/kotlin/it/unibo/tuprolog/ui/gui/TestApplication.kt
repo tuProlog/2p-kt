@@ -224,7 +224,7 @@ class TestApplication {
                 val event = e.event as? Pair<*, *>
                 e.name == Application.EVENT_ERROR &&
                     event?.first == page &&
-                    event.second is SyntaxException.InQuerySyntaxError
+                    event.second is InQuerySyntaxError
             }
             assertNoMoreEvents()
         }
@@ -244,7 +244,7 @@ class TestApplication {
                 val event = e.event as? Pair<*, *>
                 e.name == Application.EVENT_ERROR &&
                     event?.first == page &&
-                    event.second is SyntaxException.InTheorySyntaxError
+                    event.second is InTheorySyntaxError
             }
             assertNoMoreEvents()
         }

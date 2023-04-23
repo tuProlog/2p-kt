@@ -593,7 +593,7 @@ class TestPage {
                 query.parseAsStruct(OperatorSet.DEFAULT)
                 fail("Query `$query` should not be parsable with default operators")
             } catch (e: ParseException) {
-                assertNextIsEvent(Page.EVENT_ERROR, SyntaxException.InQuerySyntaxError(query, e))
+                assertNextIsEvent(Page.EVENT_ERROR, InQuerySyntaxError(query, e))
             }
             assertNoMoreEvents()
         }
@@ -648,7 +648,7 @@ class TestPage {
                 theory.parseAsTheory(OperatorSet.DEFAULT)
                 fail("Theory `$theory` should not be parsable with default operators")
             } catch (e: ParseException) {
-                assertNextIsEvent(Page.EVENT_ERROR, SyntaxException.InTheorySyntaxError(PageID.untitled(), theory, e))
+                assertNextIsEvent(Page.EVENT_ERROR, InTheorySyntaxError(PageID.untitled(), theory, e))
             }
             assertNoMoreEvents()
         }

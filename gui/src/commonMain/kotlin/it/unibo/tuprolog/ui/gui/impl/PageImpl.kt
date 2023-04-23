@@ -18,6 +18,8 @@ import it.unibo.tuprolog.ui.gui.Event
 import it.unibo.tuprolog.ui.gui.FileContent
 import it.unibo.tuprolog.ui.gui.FileName
 import it.unibo.tuprolog.ui.gui.History
+import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
+import it.unibo.tuprolog.ui.gui.InTheorySyntaxError
 import it.unibo.tuprolog.ui.gui.Page
 import it.unibo.tuprolog.ui.gui.PageID
 import it.unibo.tuprolog.ui.gui.Runner
@@ -252,7 +254,7 @@ internal class PageImpl(
                 queryHistory.append(query)
             }
         } catch (e: ParseException) {
-            throw SyntaxException.InQuerySyntaxError(query, e)
+            throw InQuerySyntaxError(query, e)
         }
     }
 
@@ -266,7 +268,7 @@ internal class PageImpl(
                     onNewStaticKb.raise(Page.EVENT_NEW_STATIC_KB, id, solver)
                 } catch (e: ParseException) {
                     content.changed = true
-                    throw SyntaxException.InTheorySyntaxError(id, content.text, e)
+                    throw InTheorySyntaxError(id, content.text, e)
                 }
             }
         }
