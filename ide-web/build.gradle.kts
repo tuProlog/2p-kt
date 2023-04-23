@@ -1,7 +1,19 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+
 plugins {
     `kotlin-js-only`
     `kotlin-doc`
     `publish-on-maven`
+}
+
+fun kotlinw(target: String): String =
+    "org.jetbrains.kotlin-wrappers:kotlin-$target"
+
+@Suppress("NAME_SHADOWING")
+fun KotlinDependencyHandler.bom(version: Provider<MinimalExternalModuleDependency>) {
+    val module = version.map { it.module }.get()
+    val version = version.map { it.versionConstraint.requiredVersion }.get()
+    implementation(enforcedPlatform("$module:$version"))
 }
 
 kotlin {
@@ -12,16 +24,17 @@ kotlin {
                 api(project(":solve-classic"))
                 api(project(":parser-theory"))
 
-                // implementation(enforcedPlatform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:1.0.0-pre.527"))
-                // implementation("org.jetbrains.kotlin-wrappers:kotlin-react")
-                // implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom")
-                // implementation("org.jetbrains.kotlin-wrappers:kotlin-emotion")
-                // implementation("org.jetbrains.kotlin-wrappers:kotlin-mui")
-                // implementation("org.jetbrains.kotlin-wrappers:kotlin-mui-icons")
-                //
-                // implementation(npm("date-fns", "2.29.3"))
-                // implementation(npm("@date-io/date-fns", "2.16.0"))
-                // implementation(npm("@monaco-editor/react", "4.4.6"))
+                bom(libs.kotlin.wrappers.bom)
+
+                implementation(kotlinw("react"))
+                implementation(kotlinw("react-dom"))
+                implementation(kotlinw("emotion"))
+                implementation(kotlinw("mui"))
+                implementation(kotlinw("mui-icons"))
+
+                implementation(npm("date-fns", "2.29.3"))
+                implementation(npm("@date-io/date-fns", "2.16.0"))
+                implementation(npm("@monaco-editor/react", "4.4.6"))
             }
         }
         val test by getting {
