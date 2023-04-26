@@ -20,13 +20,8 @@ kotlin {
     sourceSets {
         val main by getting {
             dependencies {
-                api(kotlin("stdlib-js"))
                 api(project(":solve-classic"))
                 api(project(":parser-theory"))
-                api(project(":solve"))
-                api(project(":io-utils"))
-                api(project(":io-lib"))
-                api(project(":oop-lib"))
 
                 bom(libs.kotlin.wrappers.bom)
 

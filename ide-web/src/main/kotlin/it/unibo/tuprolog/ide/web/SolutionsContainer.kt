@@ -21,7 +21,7 @@ class getSolutionState(s: Solution) {
 
 }*/
 
-class Solution(val state: String, val sol: String) {
+class SolutionIde(val state: String, val sol: String) {
     //private val field: String = ""
 
     // val s: String = ""
@@ -36,40 +36,40 @@ val SolutionsContainer = FC<Props> {
 
     var solutionsListYes by useState(
         mutableListOf(
-            Solution("yes", "x/4"),
-            Solution("yes", "x/2"),
-            Solution("yes", "x/5")
+            SolutionIde("yes", "x/4"),
+            SolutionIde("yes", "x/2"),
+            SolutionIde("yes", "x/5")
         )
     )
 
-    var solutionsListNo by useState(mutableListOf(Solution("no", "")))
-    var solutionsListTimeout by useState(mutableListOf(Solution("timeout", "")))
-    var solutionsListError by useState(mutableListOf(Solution("error", "")))
+    var solutionsListNo by useState(mutableListOf(SolutionIde("no", "")))
+    var solutionsListTimeout by useState(mutableListOf(SolutionIde("timeout", "")))
+    var solutionsListError by useState(mutableListOf(SolutionIde("error", "")))
 
-    var solutionsMixed by useState(
+    var solutionsMixeds by useState(
         mutableListOf(
-            Solution("yes", "x/6"),
-            Solution("no", ""),
-            Solution("timeout", ""),
-            Solution("error", "")
+            SolutionIde("yes", "x/6"),
+            SolutionIde("no", ""),
+            SolutionIde("timeout", ""),
+            SolutionIde("error", "")
         )
     )
 
     useEffectOnce {
 
         //fake solution yes
-        solutionsListYes.add(Solution("yes", "x/4"))
-        solutionsListYes.add(Solution("yes", "x/2"))
-        solutionsListYes.add(Solution("yes", "X/5"))
+        solutionsListYes.add(SolutionIde("yes", "x/4"))
+        solutionsListYes.add(SolutionIde("yes", "x/2"))
+        solutionsListYes.add(SolutionIde("yes", "X/5"))
 
         //fake solution no
-        solutionsListNo.add(Solution("no", ""))
+        solutionsListNo.add(SolutionIde("no", ""))
 
         //fake solution timeout
-        solutionsListTimeout.add(Solution("timeout", ""))
+        solutionsListTimeout.add(SolutionIde("timeout", ""))
 
         //fake solution error
-        solutionsListError.add(Solution("error", ""))
+        solutionsListError.add(SolutionIde("error", ""))
 
 
     }
@@ -97,7 +97,7 @@ val SolutionsContainer = FC<Props> {
         TabPanel {
             value = "tab1"
             List {
-                solutionsMixed.forEach { i ->
+                solutionsMixeds.forEach { i ->
 
                     ListItem {
                         ListItemIcon {

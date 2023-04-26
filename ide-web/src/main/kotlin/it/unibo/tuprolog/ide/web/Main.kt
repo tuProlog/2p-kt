@@ -1,15 +1,22 @@
 package it.unibo.tuprolog.ide.web
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Fact
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Var
+// TEST 1
 import it.unibo.tuprolog.core.parsing.TermParser
-import it.unibo.tuprolog.core.parsing.parseAsStruct
-import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.ClausesParser
+
+// TEST 2
+// import it.unibo.tuprolog.core.parsing.parseAsStruct
+
+// TEST 3
+//import it.unibo.tuprolog.core.Struct
+//import it.unibo.tuprolog.core.Atom
+//import it.unibo.tuprolog.core.Var
+//import it.unibo.tuprolog.core.Fact
+//import it.unibo.tuprolog.solve.Solver
+//import it.unibo.tuprolog.solve.Solution
+//import it.unibo.tuprolog.theory.Theory
+
 import js.uri.encodeURIComponent
 import kotlinx.browser.window
 import mui.lab.TabContext
@@ -22,14 +29,59 @@ import web.dom.document
 import web.html.HTML
 import kotlin.js.Date
 
-fun testTuprolog(): Unit {
-//    val stringTheory = "increment(A, B, C) :- C is A + B."
-//    val parsedTheory = stringTheory.parseAsStruct()
-//    console.log(parsedTheory)
-//
-//    val stringQuery = "increment(1,2,X)."
-//    val parsedQuery = stringQuery.parseAsStruct()
+fun testTuprolog() {
+    console.log("Test tuProlog")
 
+    // TEST 1
+    val stringTheory = """
+        increment(A, B, C) :-
+            C is A + B.
+    """.trimIndent()
+    val clauseReader = ClausesParser.withDefaultOperators()
+    val theory = clauseReader.parseTheory(stringTheory)
+    val solver = Solver.prolog.mutableSolverWithDefaultBuiltins(staticKb = theory)
+    val queryParser = TermParser.withDefaultOperators()
+    val query = queryParser.parseStruct("increment(1,2,X).".trimIndent())
+    for (solution in solver.solve(query)) {
+        if (solution.isYes) {
+//            val value = solution.substitution.getByName("X")
+//            val valueAsBigInteger = value?.asInteger()?.value
+//            val actualValue = valueAsBigInteger?.toInt()
+            console.log(solution.query)
+            console.log(solution.isYes)
+            console.log(solution.substitution)
+        }
+    }
+
+    // ERROR
+    /*
+    Compiled with problems:X
+    ERROR in ../../node_modules/antlr4/src/antlr4/CharStreams.js 7:11-24
+    Module not found: Error: Can't resolve 'fs' in 'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
+    ERROR in ../../node_modules/antlr4/src/antlr4/FileStream.js 7:11-24
+    Module not found: Error: Can't resolve 'fs' in 'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
+    */
+
+    // TEST 2
+    /*
+    val stringTheory = "increment(A, B, C) :- C is A + B."
+    val parsedTheory = stringTheory.parseAsStruct()
+    console.log(parsedTheory)
+    val stringQuery = "increment(1,2,X)."
+    val parsedQuery = stringQuery.parseAsStruct()
+    console.log(parsedQuery)
+    */
+    // ERROR
+    /*
+    Compiled with problems:X
+    ERROR in ../../node_modules/antlr4/src/antlr4/CharStreams.js 7:11-24
+    Module not found: Error: Can't resolve 'fs' in 'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
+    ERROR in ../../node_modules/antlr4/src/antlr4/FileStream.js 7:11-24
+    Module not found: Error: Can't resolve 'fs' in 'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
+    */
+
+    // TEST 3
+    /*
     val prolog = Solver.prolog.solverWithDefaultBuiltins(
         staticKb = Theory.of(
             Fact.of(Struct.of("f", Atom.of("a"))),
@@ -37,49 +89,28 @@ fun testTuprolog(): Unit {
             Fact.of(Struct.of("f", Atom.of("c")))
         )
     )
-
     val goal = Struct.of("f", Var.of("X"))
-
     val solutions: List<Solution> = prolog.solveList(goal)
-
     console.log(solutions.size) // 3
-    console.log(solutions)
-    // [Yes(query=f(X_2), substitution={X_2=a}), Yes(query=f(X_2), substitution={X_2=b}) Yes(query=f(X_2), substitution={X_2=c})]
-
+    console.log(solutions) // [Yes(query=f(X_2), substitution={X_2=a}), Yes(query=f(X_2), substitution={X_2=b}) Yes(query=f(X_2), substitution={X_2=c})]
     for (solution in solutions) {
         console.log(solution.query) // f(X_2), f(X_2), f(X_2)
         console.log(solution.isYes) // true, true, true
         console.log(solution.substitution) // {X_2=a}, {X_2=b}, {X_2=c}
     }
+    */
+    // ERROR
+    /*
+    "IllegalStateException", "No viable implementation for SolverFactory in [./2p-solve-classic:it.unibo.tuprolog.solve.classic.ClassicSolverFactory, 2p-solve-classic:it.unibo.tuprolog.solve.classic.ClassicSolverFactory]"
+    */
 
-//    val clauseReader = ClausesParser.withDefaultOperators()
-//    val theory = clauseReader.parseTheory(stringTheory)
-//    val solver = Solver.prolog.mutableSolverWithDefaultBuiltins(staticKb = theory)
-
-//    var queryParser = TermParser.withDefaultOperators()
-//    val query = queryParser.parseStruct("increment(1,2,X).")
-//
-//    for (solution in solver.solve(query)) {
-//        if (solution.isYes) {
-//            val value = solution.substitution.getByName("X")
-//            val valueAsBigInteger = value?.asInteger()?.value
-//            val actualValue = valueAsBigInteger?.toInt()
-//
-//            println(solution.query)
-//            println(solution.isYes)
-//            println(solution.substitution)
-//        }
-//    }
-    console.log("Test tuProlog")
 }
 
 fun main() {
-
     testTuprolog()
 
     val root = document.createElement(HTML.div)
         .also { document.body.appendChild(it) }
-
     createRoot(root)
         .render(App.create())
 }
@@ -139,6 +170,7 @@ val App = FC<Props> {
                 }
                 onAddEditor = {
                     addNewEditor()
+
                     testTuprolog()
                 }
                 onCloseEditor = {
