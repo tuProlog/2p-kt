@@ -2,19 +2,22 @@ package it.unibo.tuprolog.ide.web
 
 import mui.material.*
 import mui.system.responsive
-import react.FC
-import react.Props
-import react.ReactNode
+import react.*
+import react.dom.onChange
+import web.html.HTMLInputElement
 
 
 external interface QueryEditorProps : Props {
-    var onSolve: () -> Unit
+    var onSolve: (query: String) -> Unit
     var onSolveAll: () -> Unit
     var onStop: () -> Unit
     var onReset: () -> Unit
 }
 
-val QueryEditor = FC<QueryEditorProps> {
+val QueryEditor = FC<QueryEditorProps> { props ->
+    var editorQuery by useState("")
+    val inputRef2 = createRef<HTMLInputElement>()
+
     Stack {
         direction = responsive(StackDirection.row)
         TextField {
@@ -22,11 +25,19 @@ val QueryEditor = FC<QueryEditorProps> {
             label = ReactNode("Query")
             variant = FormControlVariant.outlined
             fullWidth = true
+            inputRef = inputRef2
+            onChange = {
+                inputRef2.current?.let { it1 ->
+                    editorQuery = it1.value
+                }
+            }
         }
         Button {
             variant = ButtonVariant.contained
             +"Solve"
-            onClick = {}
+            onClick = {
+                props.onSolve(editorQuery)
+            }
         }
         Button {
             variant = ButtonVariant.contained

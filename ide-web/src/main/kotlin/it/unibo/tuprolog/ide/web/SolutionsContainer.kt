@@ -123,8 +123,6 @@ val SolutionsContainer = FC<Props> {
                         ListItemText {
                             primary = ReactNode(i.state)
                             secondary = ReactNode(i.sol)
-                            console.log(i.sol)
-                            console.log(i.state)
                         }
 
 
