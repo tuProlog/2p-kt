@@ -1,5 +1,4 @@
 package it.unibo.tuprolog.ide.web
-//import csstype.PropertyName.Companion.paddingRight
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent.Companion.spaceBetween
 import csstype.NamedColor.Companion.green
@@ -18,8 +17,11 @@ import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.input
 import react.dom.onChange
+import react.redux.useDispatch
 import web.html.HTMLInputElement
 import web.html.InputType
+import Increase
+import Counter
 
 external interface NavBarProps : Props {
     var onFileLoad: (String, String) -> Unit
@@ -38,6 +40,8 @@ val NavBar = FC<NavBarProps> { props ->
     val uploadInputRef = createRef<HTMLInputElement>()
     val inputRef2 = createRef<HTMLInputElement>()
     var changeFileNameErrorInput by useState(false)
+
+    val dispatcher = useDispatch<Increase, Counter>()
 
     Stack {
         direction = responsive(StackDirection.row)
@@ -58,16 +62,6 @@ val NavBar = FC<NavBarProps> { props ->
                     paddingLeft = 1.em
                 }
             }
-            /*
-            Typography {
-                variant = TypographyVariant.h4
-                gutterBottom = true
-                +"IDE web"
-                css {
-                    color = Color("blue")
-                    textShadow = TextShadow(3.px, 3.px, 3.px, Color("red"))
-                }
-            }*/
         }
 
         div {
@@ -103,39 +97,6 @@ val NavBar = FC<NavBarProps> { props ->
                     marginLeft = 1.em
                 }
             }
-
-            /*
-            Button {
-                startIcon = AddCircleOutline.create()
-                variant = contained
-                onClick = { props.onAddEditor() }
-                Typography {
-                    +"Add"
-                }
-                sx {
-                    marginRight = 1.em
-                    marginLeft = 1.em
-                }
-            }*/
-
-            /*
-            Button {
-                startIcon = DriveFileRenameOutline.create()
-                variant = outlined
-                onClick = {
-                    newFileName = props.currentFileName
-                    changeFileNameErrorInput = false
-                    isDialogRenameOpen = true
-                }
-                Typography {
-                    +"Rename"
-                }
-                sx {
-                    marginRight = 1.em
-                    marginLeft = 1.em
-                }
-            }
-            */
 
             input {
                 type = InputType.file
@@ -194,7 +155,10 @@ val NavBar = FC<NavBarProps> { props ->
             Button {
                 startIcon = Info.create()
                 variant = contained
-                onClick = { isDialogOpen = true }
+                onClick = {
+                    isDialogOpen = true
+                    dispatcher(Increase())
+                }
                 Typography {
                     +"About"
                 }

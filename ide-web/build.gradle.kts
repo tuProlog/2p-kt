@@ -30,6 +30,11 @@ kotlin {
                 implementation(kotlinw("emotion"))
                 implementation(kotlinw("mui"))
                 implementation(kotlinw("mui-icons"))
+                // TODO: selezionare solo il redux che ci serve e non entrambi
+                implementation(kotlinw("react-redux"))
+                implementation(kotlinw("redux"))
+
+                // TODO: provare a utilizzare filer
 
                 implementation(npm("date-fns", "2.29.3"))
                 implementation(npm("@date-io/date-fns", "2.16.0"))

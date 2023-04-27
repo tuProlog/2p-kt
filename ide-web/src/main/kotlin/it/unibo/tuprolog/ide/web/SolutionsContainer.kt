@@ -9,32 +9,14 @@ import mui.lab.TabPanel
 import mui.material.*
 import react.*
 
-/*
-class Solution(state : String, sol : String) {
-    state -> So
-    //state puo' essere yes, no, timeout, error
-    //sol puo' essere vuoto o string
-}
-class getSolutionState(s: Solution) {
-    val s -> soluzione
-    return s.state
-
-}*/
-
 class SolutionIde(val state: String, val sol: String) {
-    //private val field: String = ""
-
-    // val s: String = ""
-    // s = this.s
-    //s: String = this.s
-    //return (Solution(state, sol)
 }
 
 
 val SolutionsContainer = FC<Props> {
     var activeTab by useState("tab1")
 
-    var solutionsListYes by useState(
+    val solutionsListYes by useState(
         mutableListOf(
             SolutionIde("yes", "x/4"),
             SolutionIde("yes", "x/2"),
@@ -42,11 +24,11 @@ val SolutionsContainer = FC<Props> {
         )
     )
 
-    var solutionsListNo by useState(mutableListOf(SolutionIde("no", "")))
-    var solutionsListTimeout by useState(mutableListOf(SolutionIde("timeout", "")))
-    var solutionsListError by useState(mutableListOf(SolutionIde("error", "")))
+    val solutionsListNo by useState(mutableListOf(SolutionIde("no", "")))
+    val solutionsListTimeout by useState(mutableListOf(SolutionIde("timeout", "")))
+    val solutionsListError by useState(mutableListOf(SolutionIde("error", "")))
 
-    var solutionsMixeds by useState(
+    val solutionsMixeds by useState(
         mutableListOf(
             SolutionIde("yes", "x/6"),
             SolutionIde("no", ""),
