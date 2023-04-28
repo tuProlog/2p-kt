@@ -1,7 +1,7 @@
 [versions]
 kotlin = "1.8.10"
 dokka = "1.8.10"
-jvm = "1.8"
+jvm = "11"
 node = "16-latest"
 npmPublish = "3.2.1"
 jackson = "2.14.2"

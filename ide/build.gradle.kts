@@ -56,13 +56,15 @@ fun shadowJar(
         jarTask.archiveClassifier.set("redist")
     }
     sourceSets.main {
-        println("Dependencies for platform ${platform ?: "all"}")
         runtimeClasspath.filter { it.exists() }
-            .filter { file -> excludedPlatforms.none { file.name.endsWith("$it.jar") }.also {
-                if (!it) println("Exclude $file")
-            } }
-            .map { if (it.isDirectory) it else zipTree(it) }
-            .forEach { println(it) ; jarTask.from(it) }
+            .filter { file -> excludedPlatforms.none { file.name.endsWith("$it.jar") } }
+            .elements
+            .map { files ->
+                files.map { it.asFile }
+                    .map { if (it.isDirectory) fileTree(it) else zipTree(it) }
+                    .reduce(FileTree::plus)
+            }
+            .let { jarTask.from(it) }
     }
     jarTask.from(files("${rootProject.projectDir}/LICENSE"))
     jarTask.dependsOn("classes")
