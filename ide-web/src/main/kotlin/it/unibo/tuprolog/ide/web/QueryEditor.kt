@@ -7,14 +7,14 @@ import react.dom.onChange
 import web.html.HTMLInputElement
 
 
-external interface QueryEditorProps : Props {
+external interface QueryEditor : Props {
     var onSolve: (query: String) -> Unit
     var onSolveAll: () -> Unit
     var onStop: () -> Unit
     var onReset: () -> Unit
 }
 
-val QueryEditor = FC<QueryEditorProps> { props ->
+val QueryEditorComponent = FC<QueryEditor> { props ->
     var editorQuery by useState("")
     val inputRef2 = createRef<HTMLInputElement>()
 

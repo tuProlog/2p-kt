@@ -48,9 +48,11 @@ fun testTuprolog(myTheory: String, myQuery: String) {
     /*
     Compiled with problems:X
     ERROR in ../../node_modules/antlr4/src/antlr4/CharStreams.js 7:11-24
-    Module not found: Error: Can't resolve 'fs' in 'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
+    Module not found: Error: Can't resolve 'fs' in
+    'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
     ERROR in ../../node_modules/antlr4/src/antlr4/FileStream.js 7:11-24
-    Module not found: Error: Can't resolve 'fs' in 'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
+    Module not found: Error: Can't resolve 'fs' in
+    'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
     */
 
     // TEST 2
@@ -66,9 +68,11 @@ fun testTuprolog(myTheory: String, myQuery: String) {
     /*
     Compiled with problems:X
     ERROR in ../../node_modules/antlr4/src/antlr4/CharStreams.js 7:11-24
-    Module not found: Error: Can't resolve 'fs' in 'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
+    Module not found: Error: Can't resolve 'fs' in
+    'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
     ERROR in ../../node_modules/antlr4/src/antlr4/FileStream.js 7:11-24
-    Module not found: Error: Can't resolve 'fs' in 'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
+    Module not found: Error: Can't resolve 'fs' in
+    'C:\Users\Fabio\Desktop\ise_workspace\2p-kt\build\js\node_modules\antlr4\src\antlr4'
     */
 
     // TEST 3
@@ -83,7 +87,8 @@ fun testTuprolog(myTheory: String, myQuery: String) {
     val goal = Struct.of("f", Var.of("X"))
     val solutions: List<Solution> = prolog.solveList(goal)
     console.log(solutions.size) // 3
-    console.log(solutions) // [Yes(query=f(X_2), substitution={X_2=a}), Yes(query=f(X_2), substitution={X_2=b}) Yes(query=f(X_2), substitution={X_2=c})]
+    console.log(solutions) // [Yes(query=f(X_2), substitution={X_2=a}), Yes(query=f(X_2), substitution={X_2=b})
+    Yes(query=f(X_2), substitution={X_2=c})]
     for (solution in solutions) {
         console.log(solution.query) // f(X_2), f(X_2), f(X_2)
         console.log(solution.isYes) // true, true, true
@@ -92,7 +97,8 @@ fun testTuprolog(myTheory: String, myQuery: String) {
     */
     // ERROR
     /*
-    "IllegalStateException", "No viable implementation for SolverFactory in [./2p-solve-classic:it.unibo.tuprolog.solve.classic.ClassicSolverFactory, 2p-solve-classic:it.unibo.tuprolog.solve.classic.ClassicSolverFactory]"
+    "IllegalStateException", "No viable implementation for SolverFactory in
+    [./2p-solve-classic:it.unibo.tuprolog.solve.classic.ClassicSolverFactory,
+    2p-solve-classic:it.unibo.tuprolog.solve.classic.ClassicSolverFactory]"
     */
-
 }

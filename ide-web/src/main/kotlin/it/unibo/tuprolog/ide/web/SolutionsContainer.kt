@@ -6,11 +6,23 @@ import mui.icons.material.ErrorOutlineOutlined
 import mui.icons.material.TimerOffOutlined
 import mui.lab.TabContext
 import mui.lab.TabPanel
-import mui.material.*
-import react.*
+import mui.material.List
+import mui.material.ListItem
+import mui.material.ListItemIcon
+import mui.material.ListItemText
+import mui.material.SvgIconColor
+import mui.material.Tab
+import mui.material.Tabs
+import react.FC
+import react.Props
+import react.ReactNode
+import react.useEffectOnce
+import react.useState
 
-class SolutionIde(val state: String, val sol: String) {
-}
+
+class SolutionIde(val state: String, val sol: String)
+//{
+//}
 
 
 val SolutionsContainer = FC<Props> {

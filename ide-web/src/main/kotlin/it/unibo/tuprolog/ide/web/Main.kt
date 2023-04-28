@@ -81,7 +81,7 @@ val App = FC<Props> {
 
     ReactHTML.div {
         Stack {
-            NavBar {
+            NavBarComponent {
                 onFileLoad = { fileName: String, editorValue: String ->
                     console.log(fileName, editorValue)
                     dispatcher(OnFileLoad(fileName, editorValue))
@@ -185,10 +185,10 @@ val App = FC<Props> {
                     severity = AlertColor.error
                     +errorAlertMessage
                 }
-                // TODO: change snack-bar anchor
+                // TODO change snack-bar anchor
             }
 
-            QueryEditor {
+            QueryEditorComponent {
                 onSolve = {
 //                    val editorTheory = editorTabs.find { it2 -> it2.fileName == editorSelectedTab }?.editorValue ?: ""
 //                    val editorQuery = it

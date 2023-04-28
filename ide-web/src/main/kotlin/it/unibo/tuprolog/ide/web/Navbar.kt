@@ -8,11 +8,28 @@ import csstype.NamedColor.Companion.green
 import csstype.NamedColor.Companion.red
 import csstype.em
 import emotion.react.css
-import mui.icons.material.*
-import mui.material.*
+import mui.icons.material.Add
+import mui.icons.material.Info
+import mui.icons.material.DeleteForever
+import mui.icons.material.Edit
+import mui.icons.material.GetAppOutlined
+import mui.icons.material.UploadFileOutlined
+import mui.material.Button
+import mui.material.ButtonColor
 import mui.material.ButtonVariant.Companion.contained
 import mui.material.ButtonVariant.Companion.outlined
+import mui.material.Dialog
+import mui.material.DialogActions
+import mui.material.DialogContent
+import mui.material.DialogContentText
+import mui.material.DialogTitle
+import mui.material.Fab
+import mui.material.FabColor
 import mui.material.FabVariant.Companion.extended
+import mui.material.Stack
+import mui.material.StackDirection
+import mui.material.TextField
+import mui.material.Typography
 import mui.system.responsive
 import mui.system.sx
 import react.*
@@ -24,7 +41,7 @@ import react.redux.useDispatch
 import web.html.HTMLInputElement
 import web.html.InputType
 
-external interface NavBarProps : Props {
+external interface NavBar : Props {
     var onFileLoad: (String, String) -> Unit
     var onCloseEditor: () -> Unit
     var onAddEditor: () -> Unit
@@ -34,7 +51,7 @@ external interface NavBarProps : Props {
 }
 
 //TODO far visualizzare le tab con il nome non tutto maiuscolo
-val NavBar = FC<NavBarProps> { props ->
+val NavBarComponent = FC<NavBar> { props ->
     var isDialogOpen by useState(false)
     var isDialogRenameOpen by useState(false)
     var newFileName by useState(props.currentFileName)

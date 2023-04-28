@@ -25,9 +25,18 @@ import react.useState
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
+const val MYTIMEOUTDURATION = 10
+const val MYSTATE = 0
+const val MYXS = 5
+const val MYXSGRID = 7
+const val MYMIN = 1
+const val MYMAX = 1000
+const val MYSTEP = 10
+
 val Footer = FC<Props> {
-    var state by useState(0)
-    var timeoutDuration by useState(10)
+
+    var state by useState(MYSTATE)
+    var timeoutDuration by useState(MYTIMEOUTDURATION)
 
     val c2 = myStore.getState().counter.count
     val c3 = c2 + 1
@@ -75,7 +84,7 @@ val Footer = FC<Props> {
             }
             Grid {
                 item = true
-                xs = 5
+                xs = MYXS
 
                 Grid {
                     container = true
@@ -83,7 +92,7 @@ val Footer = FC<Props> {
 
                     Grid {
                         item = true
-                        xs = 5
+                        xs = MYXS
                         Typography {
                             +"Timeout: ${timeoutDuration.toDuration(DurationUnit.MILLISECONDS)}"
                         }
@@ -91,13 +100,13 @@ val Footer = FC<Props> {
 
                     Grid {
                         item = true
-                        xs = 7
+                        xs = MYXSGRID
                         Slider {
                             value = timeoutDuration
-                            step = 10
+                            step = MYSTEP
                             onChange = { _, newValue, _ -> timeoutDuration = newValue as Int }
-                            max = 1000
-                            min = 1
+                            max = MYMAX
+                            min = MYMIN
                         }
                     }
                 }
