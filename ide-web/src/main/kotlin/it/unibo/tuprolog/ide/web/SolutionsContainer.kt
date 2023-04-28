@@ -19,11 +19,9 @@ import react.ReactNode
 import react.useEffectOnce
 import react.useState
 
-class SolutionIde(val state: String, val sol: String)
-//{
-//}
-
 val SolutionsContainer = FC<Props> {
+    class SolutionIde(val state: String, val sol: String)
+
     var activeTab by useState("tab1")
 
     val solutionsListYes by useState(

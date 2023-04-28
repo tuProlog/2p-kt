@@ -42,10 +42,11 @@ kotlin {
             }
 
             // TODO: remove these following configurations (skipping code checks and linting tasks)
-            /*
+
             tasks.getByPath("detekt").onlyIf {
                 gradle.startParameter.taskNames.any { it.contains("detekt") }
-             }*/
+             }
+
             tasks.getByPath("ktlintMainSourceSetCheck").onlyIf {
                gradle.startParameter.taskNames.any { it.contains("ktlintMainSourceSetCheck") }
             }

@@ -45,7 +45,7 @@ val Footer = FC<Props> {
     val selector = useSelector<State, Int> { s -> s.counter.count }
 
     BottomNavigation {
-        showLabels = true
+//        showLabels = true
         value = state
         onChange = { _, value -> state = value }
 

@@ -54,6 +54,8 @@ fun counterActions(state: Counter = Counter(MYCOUNTER), action: RAction): Counte
     else -> state
 }
 
+// TODO risolvere complessità ciclica della funzione
+// TODO verificare se la dispatch è sincrona o asincrona
 fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) {
     is AddEditorTab -> {
         val fileName: String = "undefined_" + Date().getTime() + ".pl"

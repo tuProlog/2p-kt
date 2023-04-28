@@ -1,7 +1,18 @@
 package it.unibo.tuprolog.ide.web
 
+import mui.material.Button
+import mui.material.ButtonVariant
+import mui.material.FormControlVariant
+import mui.material.Stack
+import mui.material.StackDirection
+import mui.material.TextField
 import mui.system.responsive
+import react.FC
+import react.Props
+import react.ReactNode
+import react.createRef
 import react.dom.onChange
+import react.useState
 import web.html.HTMLInputElement
 
 external interface QueryEditor : Props {

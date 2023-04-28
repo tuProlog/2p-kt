@@ -66,7 +66,7 @@ val NavBar = FC<Props> {
     var changeFileNameErrorInput by useState(false)
     val editorSelectedTab = useSelector<State, String> { s -> s.tuProlog.editorSelectedTab }
 
-    val dispatcher = useDispatch<RAction, String>()
+    val dispatcher = useDispatch<RAction, Nothing>()
 
     Stack {
         direction = responsive(StackDirection.row)
@@ -97,6 +97,7 @@ val NavBar = FC<Props> {
                 variant = extended
                 onClick = {
                     dispatcher(AddEditorTab())
+
                 }
                 Typography {
                     +"Add"
@@ -133,7 +134,7 @@ val NavBar = FC<Props> {
                 multiple = false
                 onChange = {
                     it.target.files?.get(0)?.text()?.then { it1 ->
-                        //val res = dispatcher(OnFileLoad(it.target.files?.get(0)?.name ?: "ERROR", it1))
+                        dispatcher(OnFileLoad(it.target.files?.get(0)?.name ?: "ERROR", it1))
                         it.target.value = ""
                     }
                 }
