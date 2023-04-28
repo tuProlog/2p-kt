@@ -5,8 +5,12 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.ReaderChannel
 import it.unibo.tuprolog.solve.channel.WriterChannel
 import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
+import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 import java.io.File
 import java.io.FileOutputStream
+import java.net.MalformedURLException
+import java.net.URI
+import java.net.URISyntaxException
 import java.net.URL
 
 actual fun parseUrl(string: String): Url = JvmUrl(string)
@@ -20,8 +24,19 @@ fun URL.toUrl(): Url = parseUrl(toExternalForm())
 
 fun Url.toURL(): URL = when (this) {
     is JvmUrl -> url
-    else -> URL(toString())
+    else -> toString().toUrl()
 }
+
+internal fun String.toUrl(): URL =
+    try {
+        URI(this).takeIf { it.isAbsolute }
+            ?.toURL()
+            ?: throw InvalidUrlException(message = "Invalid URL: $this")
+    } catch (e: MalformedURLException) {
+        throw InvalidUrlException(message = "Invalid URL: $this", cause = e)
+    } catch (e: URISyntaxException) {
+        throw InvalidUrlException(message = "Invalid URL: $this", cause = e)
+    }
 
 actual fun Url.openInputChannel(): InputChannel<String> = ReaderChannel(toURL().openStream())
 
