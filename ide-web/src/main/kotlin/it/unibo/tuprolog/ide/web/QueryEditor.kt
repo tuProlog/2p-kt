@@ -1,11 +1,8 @@
 package it.unibo.tuprolog.ide.web
 
-import mui.material.*
 import mui.system.responsive
-import react.*
 import react.dom.onChange
 import web.html.HTMLInputElement
-
 
 external interface QueryEditor : Props {
     var onSolve: (query: String) -> Unit

@@ -4,7 +4,7 @@ import mui.material.GridProps
 import mui.material.InputBaseProps
 import mui.material.TextFieldProps
 
-// TODO: Remove when it will be implemented in MUI wrappers
+//TODO Remove when it will be implemented in MUI wrappers
 inline var GridProps.xs: Int
     get() = TODO("Prop is write-only!")
     set(value) {

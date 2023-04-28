@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.ide.web
 
-import Counter
-import Increase
+import AddEditorTab
+import DownloadTheory
+import OnFileLoad
+import RemoveEditorTab
+import RenameEditor
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent.Companion.spaceBetween
 import csstype.NamedColor.Companion.green
@@ -32,38 +35,42 @@ import mui.material.TextField
 import mui.material.Typography
 import mui.system.responsive
 import mui.system.sx
-import react.*
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.input
 import react.dom.onChange
 import react.redux.useDispatch
+import react.redux.useSelector
 import web.html.HTMLInputElement
 import web.html.InputType
+import State
+import react.FC
+import react.Props
+import react.ReactNode
+import react.create
+import react.createRef
+import react.useState
+import redux.RAction
 
-external interface NavBar : Props {
-    var onFileLoad: (String, String) -> Unit
-    var onCloseEditor: () -> Unit
-    var onAddEditor: () -> Unit
-    var onDownloadTheory: () -> Unit
-    var onRenameEditor: (String) -> Unit
-    var currentFileName: String
-}
+const val MYSPACING = 3
+const val MYHEIGHT = 56.0
+const val MYWIDTH = 56.0
 
 //TODO far visualizzare le tab con il nome non tutto maiuscolo
-val NavBarComponent = FC<NavBar> { props ->
+val NavBar = FC<Props> {
     var isDialogOpen by useState(false)
     var isDialogRenameOpen by useState(false)
-    var newFileName by useState(props.currentFileName)
+    var newFileName by useState("")
     val uploadInputRef = createRef<HTMLInputElement>()
-    val inputRef2 = createRef<HTMLInputElement>()
+    val newFileNameInputRef = createRef<HTMLInputElement>()
     var changeFileNameErrorInput by useState(false)
+    val editorSelectedTab = useSelector<State, String> { s -> s.tuProlog.editorSelectedTab }
 
-    val dispatcher = useDispatch<Increase, Counter>()
+    val dispatcher = useDispatch<RAction, String>()
 
     Stack {
         direction = responsive(StackDirection.row)
-        spacing = responsive(3)
+        spacing = responsive(MYSPACING)
 
         sx {
             justifyContent = spaceBetween
@@ -73,8 +80,8 @@ val NavBarComponent = FC<NavBar> { props ->
         div {
             img {
                 src = "https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/logo.svg"
-                height = 56.0
-                width = 56.0
+                height = MYHEIGHT
+                width = MYWIDTH
                 css {
                     paddingRight = 1.em
                     paddingLeft = 1.em
@@ -88,7 +95,9 @@ val NavBarComponent = FC<NavBar> { props ->
                 Add()
                 color = FabColor.primary
                 variant = extended
-                onClick = { props.onAddEditor() }
+                onClick = {
+                    dispatcher(AddEditorTab())
+                }
                 Typography {
                     +"Add"
                 }
@@ -103,7 +112,7 @@ val NavBarComponent = FC<NavBar> { props ->
                 color = FabColor.secondary
                 variant = extended
                 onClick = {
-                    newFileName = props.currentFileName
+                    newFileName = editorSelectedTab
                     changeFileNameErrorInput = false
                     isDialogRenameOpen = true
                 }
@@ -124,7 +133,7 @@ val NavBarComponent = FC<NavBar> { props ->
                 multiple = false
                 onChange = {
                     it.target.files?.get(0)?.text()?.then { it1 ->
-                        props.onFileLoad(it.target.files?.get(0)?.name ?: "ERROR", it1)
+                        //val res = dispatcher(OnFileLoad(it.target.files?.get(0)?.name ?: "ERROR", it1))
                         it.target.value = ""
                     }
                 }
@@ -146,7 +155,7 @@ val NavBarComponent = FC<NavBar> { props ->
                 startIcon = GetAppOutlined.create()
                 variant = outlined
                 onClick = {
-                    props.onDownloadTheory()
+                    dispatcher(DownloadTheory())
                 }
                 Typography {
                     +"Download"
@@ -160,7 +169,9 @@ val NavBarComponent = FC<NavBar> { props ->
             Button {
                 startIcon = DeleteForever.create()
                 variant = outlined
-                onClick = { props.onCloseEditor() }
+                onClick = {
+                    dispatcher(RemoveEditorTab())
+                }
                 Typography {
                     +"Remove"
                 }
@@ -175,7 +186,6 @@ val NavBarComponent = FC<NavBar> { props ->
                 variant = contained
                 onClick = {
                     isDialogOpen = true
-                    dispatcher(Increase())
                 }
                 Typography {
                     +"About"
@@ -216,18 +226,18 @@ val NavBarComponent = FC<NavBar> { props ->
             }
             DialogContent {
                 DialogContentText {
-                    +"Write here the new name of ${props.currentFileName}"
+                    +"Write here the new name for $editorSelectedTab"
                 }
                 TextField {
                     autoFocus = true
-                    inputRef = inputRef2
+                    inputRef = newFileNameInputRef
                     fullWidth = true
                     error = changeFileNameErrorInput
                     label = ReactNode("New file name")
                     helperText = ReactNode("File name must end with .pl or .txt")
-                    defaultValue = props.currentFileName
+                    defaultValue = editorSelectedTab
                     onChange = {
-                        inputRef2.current?.let { it1 ->
+                        newFileNameInputRef.current?.let { it1 ->
                             newFileName = it1.value
                             changeFileNameErrorInput = !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
                         }
@@ -245,7 +255,7 @@ val NavBarComponent = FC<NavBar> { props ->
                     disabled = changeFileNameErrorInput
                     onClick = {
                         isDialogRenameOpen = false
-                        props.onRenameEditor(newFileName)
+                        dispatcher(RenameEditor(newFileName))
                     }
                     +"Confirm"
                 }
