@@ -9,6 +9,7 @@ import kotlin.reflect.KProperty1
 fun <S, A, R> combineReducers(reducers: Map<KProperty1<S, R>, Reducer<*, A>>): Reducer<S, A> {
     return redux.combineReducers(reducers.mapKeys { it.key.name })
 }
+
 class EditorTab(var fileName: String, var editorValue: String)
 
 
@@ -34,10 +35,12 @@ fun counterActions(state: Counter = Counter(10), action: RAction): Counter = whe
         state.count++
         state
     }
+
     is Decrease -> {
         state.count--
         state
     }
+
     else -> state
 }
 
@@ -52,6 +55,7 @@ fun tuPrologActions(state: TuProlog = TuProlog("", "", mutableListOf()), action:
         state.editorSelectedTab = fileName
         state
     }
+
     is OnFileLoad -> {
         console.log(action.fileName, action.editorValue)
         if (state.editorTabs.find { it.fileName == action.fileName } == null) {
@@ -63,6 +67,7 @@ fun tuPrologActions(state: TuProlog = TuProlog("", "", mutableListOf()), action:
         state.editorSelectedTab = action.fileName
         state
     }
+
     else -> state
 }
 

@@ -1,13 +1,18 @@
 package it.unibo.tuprolog.ide.web
 
-import Increase
 import Counter
+import Increase
 import State
 import csstype.AlignItems
 import csstype.JustifyContent
 import csstype.em
+import mui.material.GridDirection
 import it.unibo.tuprolog.ide.web.utils.xs
-import mui.material.*
+import mui.material.BottomNavigation
+import mui.material.Button
+import mui.material.Slider
+import mui.material.Grid
+import mui.material.Typography
 import mui.system.responsive
 import mui.system.sx
 import myStore
@@ -19,7 +24,6 @@ import react.redux.useSelector
 import react.useState
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
-
 
 val Footer = FC<Props> {
     var state by useState(0)

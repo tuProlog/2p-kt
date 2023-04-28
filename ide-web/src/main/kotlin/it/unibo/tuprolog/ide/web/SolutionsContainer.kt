@@ -121,7 +121,6 @@ val SolutionsContainer = FC<Props> {
                 value = "tab3"
                 List {
                 }
-
             }
         }
     }

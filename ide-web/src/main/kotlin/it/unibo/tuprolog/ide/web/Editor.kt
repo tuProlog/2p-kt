@@ -55,20 +55,20 @@ external interface EditorProps : Props {
 //
 //                                    comment: [
 //                                    [/[^\/*]+/, 'comment'],
-//			[/[\/*]/, 'comment'],
-//			[/\/\/.*$/, 'comment'],
-//			[/%.*$/, 'comment']
-//		],
+// 			[/[\/*]/, 'comment'],
+// 			[/\/\/.*$/, 'comment'],
+// 			[/%.*$/, 'comment']
+// 		],
 //
-//		string: [
-//			[/[^\\"]+/, 'string'],
-//			[/@escapes/, 'string.escape'],
-//			[/\\./, 'string.escape.invalid'],
-//			[/"/, { token: 'string.quote', bracket: '@close', next: '@pop' }]
-//		],
+// 		string: [
+// 			[/[^\\"]+/, 'string'],
+// 			[/@escapes/, 'string.escape'],
+// 			[/\\./, 'string.escape.invalid'],
+// 			[/"/, { token: 'string.quote', bracket: '@close', next: '@pop' }]
+// 		],
 //
-//		whitespace: [
-//			[/[ \t\r\n]+/, 'white'],
-//		]
-//	},
-//})
+// 		whitespace: [
+//   			[/[ \t\r\n]+/, 'white'],
+// 		]
+// 	},
+// })

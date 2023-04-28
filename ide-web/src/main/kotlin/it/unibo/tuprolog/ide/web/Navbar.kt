@@ -1,4 +1,7 @@
 package it.unibo.tuprolog.ide.web
+
+import Counter
+import Increase
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent.Companion.spaceBetween
 import csstype.NamedColor.Companion.green
@@ -20,8 +23,6 @@ import react.dom.onChange
 import react.redux.useDispatch
 import web.html.HTMLInputElement
 import web.html.InputType
-import Increase
-import Counter
 
 external interface NavBarProps : Props {
     var onFileLoad: (String, String) -> Unit

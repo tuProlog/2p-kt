@@ -6,5 +6,4 @@ To deploy dev server
 
 ` gradle :ide-web:run `
 
-
 \` -> `ALT+96`

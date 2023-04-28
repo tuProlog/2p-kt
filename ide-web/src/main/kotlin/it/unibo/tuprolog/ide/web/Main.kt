@@ -1,20 +1,31 @@
 package it.unibo.tuprolog.ide.web
 
-import State
-import Counter
 import EditorTab
 import OnFileLoad
+import State
 import TuProlog
 import mui.lab.TabContext
 import mui.lab.TabPanel
-import mui.material.*
+import mui.material.Alert
+import mui.material.AlertColor
+import mui.material.Snackbar
+import mui.material.Stack
+import mui.material.Tab
+import mui.material.Tabs
+import mui.material.TabsScrollButtons
+import mui.material.TabsVariant
 import myStore
-import react.*
+import react.FC
+import react.Props
+import react.ReactNode
+import react.create
 import react.dom.client.createRoot
 import react.dom.html.ReactHTML
 import react.redux.Provider
 import react.redux.useDispatch
 import react.redux.useSelector
+import react.useEffectOnce
+import react.useState
 import web.dom.document
 import web.html.HTML
 
@@ -28,10 +39,9 @@ fun main() {
 val Root = FC<Props> {
     Provider {
         store = myStore
-        App{}
+        App {}
     }
 }
-
 
 val App = FC<Props> {
 
@@ -129,7 +139,6 @@ val App = FC<Props> {
 //                        isErrorAlertOpen = true
 //                    }
                 }
-
             }
 
             TabContext {
