@@ -1,11 +1,11 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 
 plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
     `publish-on-npm`
-    alias(libs.plugins.shadowJar)
+    id("com.github.johnrengelman.shadow")
 }
 
 val thisProject = project.name
@@ -32,10 +32,10 @@ kotlin {
     }
 }
 
-val shadowJar by tasks.getting(ShadowJar::class) {
-    dependsOn("jvmMainClasses")
-    archiveBaseName.set(rootProject.name)
-    archiveClassifier.set("full")
-    from(kotlin.jvm().compilations.getByName("main").output)
-    from(files("${rootProject.projectDir}/LICENSE"))
+val supportedPlatforms by extra { listOf("win", "linux", "mac", "mac-aarch64") }
+
+shadowJar(classifier = "full")
+
+for (platform in supportedPlatforms) {
+    shadowJar(platform = platform, classifier = "full")
 }

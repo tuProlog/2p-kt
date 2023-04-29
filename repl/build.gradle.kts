@@ -1,10 +1,10 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 
 plugins {
     `kotlin-mp`
     `kotlin-doc`
     `publish-on-maven`
-    alias(libs.plugins.shadowJar)
+    id("com.github.johnrengelman.shadow")
 }
 
 kotlin {
@@ -23,18 +23,12 @@ kotlin {
 }
 
 val arguments: String? by project
+
 val mainKlass = "it.unibo.tuprolog.ui.repl.Main"
 
-val shadowJar by tasks.getting(ShadowJar::class) {
-    dependsOn("jvmMainClasses")
-    archiveBaseName.set("${rootProject.name}-${project.name}")
-    archiveClassifier.set("redist")
-    from(kotlin.jvm().compilations.getByName("main").output)
-    from(files("${rootProject.projectDir}/LICENSE"))
-    manifest {
-        attributes("Main-Class" to mainKlass)
-    }
-}
+val supportedPlatforms by extra { emptyList<String>() }
+
+shadowJar(entryPoint = mainKlass)
 
 tasks.create("run", JavaExec::class.java) {
     group = "application"

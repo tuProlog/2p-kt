@@ -14,6 +14,7 @@ npm-tuprolog-parserUtils = "0.4.1" # @tuprolog/parser-utils
 npm-syncRequest = "6.1.0" # sync-request
 ktlint = "10.3.0"
 detekt = "1.22.0"
+shadowJar = "7.1.2"
 
 [plugins]
 ktNpmPublish = "io.github.gciatto.kt-npm-publish:0.3.9"
@@ -25,7 +26,7 @@ kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
-shadowJar = "com.github.johnrengelman.shadow:7.1.2"
+shadowJar = { id = "com.github.johnrengelman.shadow", version.ref = "shadowJar" }
 javafx = "org.openjfx.javafxplugin:0.0.13"
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 ktlint-idea = { id = "org.jlleitschuh.gradle.ktlint-idea", version.ref = "ktlint" }
@@ -61,3 +62,4 @@ kotlin-stdlib-jvm = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", versio
 kotlin-stdlib-js = { module = "org.jetbrains.kotlin:kotlin-stdlib-js", version.ref = "kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 javalin = "io.javalin:javalin:4.6.7"
+shadowJar = { module = "gradle.plugin.com.github.johnrengelman:shadow", version.ref = "shadowJar" }

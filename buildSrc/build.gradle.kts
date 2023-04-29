@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.ktlint)
     implementation(libs.detekt)
     implementation(libs.javalin)
+    implementation(libs.shadowJar)
 }
 
 gradlePlugin {

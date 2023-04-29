@@ -1,18 +1,15 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.configurationcache.extensions.capitalized
-
 plugins {
     `kotlin-jvm-only`
     application
     alias(libs.plugins.javafx)
-    alias(libs.plugins.shadowJar)
+    id("com.github.johnrengelman.shadow")
     `kotlin-doc`
     `publish-on-maven`
 }
 
 val arguments: String? by project
 
-val supportedPlatforms = listOf("win", "linux", "mac", "mac-aarch64")
+val supportedPlatforms by extra { listOf("win", "linux", "mac", "mac-aarch64") }
 
 dependencies {
     api(project(":io-lib"))
@@ -42,40 +39,8 @@ application {
     mainClass.set(entryPoint)
 }
 
-fun shadowJar(
-    platform: String? = null,
-    name: String = "shadowJar" + (platform?.let { "For${it.capitalized()}" } ?: ""),
-    excludedPlatforms: List<String> = platform?.let { supportedPlatforms - it } ?: emptyList()
-): ShadowJar = tasks.maybeCreate(name, ShadowJar::class.java).also { jarTask ->
-    jarTask.manifest { attributes("Main-Class" to entryPoint) }
-    jarTask.archiveBaseName.set("${rootProject.name}-${project.name}")
-    jarTask.archiveVersion.set(project.version.toString())
-    if (platform !== null) {
-        jarTask.archiveClassifier.set("redist-$platform")
-    } else {
-        jarTask.archiveClassifier.set("redist")
-    }
-    sourceSets.main {
-        runtimeClasspath.filter { it.exists() }
-            .filter { file -> excludedPlatforms.none { file.name.endsWith("$it.jar") } }
-            .elements
-            .map { files ->
-                files.map { it.asFile }
-                    .map { if (it.isDirectory) fileTree(it) else zipTree(it) }
-                    .reduce(FileTree::plus)
-            }
-            .let { jarTask.from(it) }
-    }
-    jarTask.from(files("${rootProject.projectDir}/LICENSE"))
-    jarTask.dependsOn("classes")
-    tasks.maybeCreate("allShadowJars").also {
-        it.dependsOn(jarTask)
-        it.group = "shadow"
-    }
-}
-
-val shadowJar = shadowJar()
+shadowJar(entryPoint)
 
 for (platform in supportedPlatforms) {
-    shadowJar(platform)
+    shadowJar(entryPoint, platform)
 }

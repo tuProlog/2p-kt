@@ -1,15 +1,15 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     `kotlin-jvm-only`
     application
     alias(libs.plugins.javafx)
-    alias(libs.plugins.shadowJar)
+    id("com.github.johnrengelman.shadow")
     `kotlin-doc`
     `publish-on-maven`
 }
 
 val arguments: String? by project
+
+val supportedPlatforms by extra { listOf("win", "linux", "mac", "mac-aarch64") }
 
 dependencies {
     api(project(":ide"))
@@ -18,7 +18,7 @@ dependencies {
 
     libs.javafx.graphics.get().let {
         val dependencyNotation = "${it.module.group}:${it.module.name}:${it.versionConstraint.preferredVersion}"
-        listOf("win", "linux", "mac", "mac-aarch64").forEach { platform ->
+        supportedPlatforms.forEach { platform ->
             runtimeOnly("$dependencyNotation:$platform")
         }
     }
@@ -37,16 +37,8 @@ application {
     mainClass.set(entryPoint)
 }
 
-val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
-    manifest { attributes("Main-Class" to entryPoint) }
-    archiveBaseName.set("${rootProject.name}-${project.name}")
-    archiveVersion.set(project.version.toString())
-    archiveClassifier.set("redist")
-    sourceSets.main {
-        runtimeClasspath.filter { it.exists() }
-            .map { if (it.isDirectory) it else zipTree(it) }
-            .forEach { from(it) }
-    }
-    from(files("${rootProject.projectDir}/LICENSE"))
-    dependsOn("classes")
+shadowJar(entryPoint)
+
+for (platform in supportedPlatforms) {
+    shadowJar(entryPoint, platform)
 }
