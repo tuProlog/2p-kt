@@ -3,14 +3,11 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.FileTree
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.attributes
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.provideDelegate
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.File
 
@@ -19,15 +16,20 @@ fun String.toPascalCase(separators: Set<Char> = setOf('_', '-')) =
         it.capitalized()
     }
 
+private val Project.supportedPlatforms: List<String>
+    get() {
+        val supportedPlatforms: List<String>? by extra
+        return supportedPlatforms ?: emptyList()
+    }
+
 fun Project.shadowJar(
     entryPoint: String? = null,
     platform: String? = null,
     name: String = "shadowJar" + (platform?.let { "For${it.toPascalCase()}" } ?: ""),
-    classifier: String = "redist"
+    classifier: String = "redist",
+    excludedPlatforms: List<String> = platform?.let { supportedPlatforms - it } ?: emptyList()
 ): ShadowJar {
-    val supportedPlatforms: List<String> by project.extra
-    val excludedPlatforms: List<String> = platform?.let { supportedPlatforms - it } ?: emptyList()
-    fun setOfFileSystemLocationstoFileTree(locations: Set<FileSystemLocation>): FileTree =
+    fun setOfFileSystemLocationsToFileTree(locations: Set<FileSystemLocation>): FileTree =
         locations.map { it.asFile }.map { if (it.isDirectory) fileTree(it) else zipTree(it) }.reduce(FileTree::plus)
     fun fileShouldBeIncluded(file: File): Boolean = excludedPlatforms.none { file.name.endsWith("$it.jar") }
     return tasks.maybeCreate(name, ShadowJar::class.java).also { jarTask ->
@@ -37,9 +39,9 @@ fun Project.shadowJar(
         if (platform !== null) {
             jarTask.archiveClassifier.set("$classifier-$platform")
         } else {
-            jarTask.archiveClassifier.set("$classifier")
+            jarTask.archiveClassifier.set(classifier)
         }
-        configureJarForProject(jarTask, ::fileShouldBeIncluded, ::setOfFileSystemLocationstoFileTree)
+        configureJarForProject(jarTask, ::fileShouldBeIncluded, ::setOfFileSystemLocationsToFileTree)
         jarTask.from(files("${rootProject.projectDir}/LICENSE"))
         tasks.maybeCreate("allShadowJars").also {
             it.dependsOn(jarTask)

@@ -1,5 +1,3 @@
-
-
 plugins {
     `kotlin-mp`
     `kotlin-doc`
@@ -25,8 +23,6 @@ kotlin {
 val arguments: String? by project
 
 val mainKlass = "it.unibo.tuprolog.ui.repl.Main"
-
-val supportedPlatforms by extra { emptyList<String>() }
 
 shadowJar(entryPoint = mainKlass)
 

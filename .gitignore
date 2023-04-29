@@ -2,6 +2,8 @@ kotlin-js-store/
 
 core/src/commonMain/kotlin/it/unibo/tuprolog/Info.kt
 
+bin/
+
 .DS_Store
 
 *.hprof

@@ -40,5 +40,9 @@ application {
 shadowJar(entryPoint)
 
 for (platform in supportedPlatforms) {
-    shadowJar(entryPoint, platform)
+    if ("mac" in platform) {
+        shadowJar(entryPoint, platform, excludedPlatforms = supportedPlatforms - setOf(platform, "linux"))
+    } else {
+        shadowJar(entryPoint, platform)
+    }
 }
