@@ -101,7 +101,7 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
                 query = readQuery()
             }
         } catch (_: NullInputException) {
-            echo("# goodbye.")
+            echo("\n# goodbye.")
             throw ProgramResult(0)
         }
     }
