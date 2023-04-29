@@ -36,7 +36,7 @@ jobs:
       - name: Generate Jars
         uses: DanySK/build-check-deploy-gradle-action@2.2.3
         with:
-          build-command: ./gradlew shadowJar
+          build-command: ./gradlew allShadowJars
           check-command: ./gradlew dokkaHtmlMultiModuleZip
 
       - name: Get Version
@@ -48,7 +48,7 @@ jobs:
         run: |
           set -x
           ASSETS=()
-          for A in **/build/**/*redist*.jar **/build/**/2p*full.jar build/**/*javadoc*.zip; do
+          for A in **/build/**/*redist*.jar **/build/**/*full*.jar build/**/*javadoc*.zip; do
             ASSETS+=("-a" "$A")
             echo "Releasing $A"
           done
