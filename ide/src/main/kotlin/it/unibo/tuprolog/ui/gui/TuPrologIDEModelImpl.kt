@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
+import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
@@ -143,13 +144,14 @@ internal class TuPrologIDEModelImpl(
     }
 
     private val solver = Cached.of {
-        var newSolver = Solver.prolog.mutableSolverWithDefaultBuiltins(
-            otherLibraries = Runtime.of(OOPLib, IOLib),
-            stdIn = InputChannel.of(stdin),
-            stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
-            stdErr = OutputChannel.of { onStderrPrinted.push(it) },
-            warnings = OutputChannel.of { onWarning.push(it) },
-        )
+        var newSolver = Solver.prolog.newBuilder()
+            .runtime(Runtime.of(OOPLib, IOLib))
+            .flag(TrackVariables) { ON }
+            .standardInput(InputChannel.of(stdin))
+            .standardOutput(OutputChannel.of { onStdoutPrinted.push(it) })
+            .standardError(OutputChannel.of { onStderrPrinted.push(it) })
+            .warnings(OutputChannel.of { onWarning.push(it) })
+            .buildMutable()
         if (this.customizer != null) {
             newSolver = this.customizer!!(newSolver)
         }

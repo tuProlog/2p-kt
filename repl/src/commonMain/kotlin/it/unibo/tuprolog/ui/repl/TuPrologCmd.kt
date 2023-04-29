@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.repl
 
+import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
@@ -15,6 +16,7 @@ import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
+import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.IOLib
@@ -118,11 +120,12 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
         } else {
             Runtime.of(IOLib, *additionalLibraries)
         }
-        return Solver.prolog.solverWithDefaultBuiltins(
-            staticKb = theory,
-            otherLibraries = libraries,
-            warnings = outputChannel
-        ).also {
+        return Solver.prolog.newBuilder()
+            .runtime(libraries)
+            .staticKb(theory)
+            .flag(TrackVariables) { ON }
+            .warnings(outputChannel)
+            .build().also {
             for ((_, library) in it.libraries) {
                 echo("# Successfully loaded library `${library.alias}`")
             }
