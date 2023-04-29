@@ -19,7 +19,7 @@ jobs:
         uses: DanySK/action-checkout@0.2.9
 
       - name: Check Code Style
-        uses: DanySK/build-check-deploy-gradle-action@2.2.3
+        uses: DanySK/build-check-deploy-gradle-action@2.2.4
         with:
           build-command: true
           check-command: ./gradlew ktlintCheck
@@ -52,7 +52,7 @@ jobs:
         uses: danysk/action-checkout@0.2.9
 
       - name: Build and test
-        uses: DanySK/build-check-deploy-gradle-action@2.2.3
+        uses: DanySK/build-check-deploy-gradle-action@2.2.4
         with:
           java-distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
@@ -84,7 +84,7 @@ jobs:
         uses: danysk/action-checkout@0.2.9
 
       - name: Build and test
-        uses: DanySK/build-check-deploy-gradle-action@2.2.3
+        uses: DanySK/build-check-deploy-gradle-action@2.2.4
         with:
           pre-build-command: ./gradlew kotlinNodeJsSetup kotlinNpmInstall
           build-command: ./gradlew jsMainClasses jsTestClasses
