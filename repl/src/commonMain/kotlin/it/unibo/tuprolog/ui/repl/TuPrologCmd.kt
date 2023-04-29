@@ -87,17 +87,22 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
     }
 
     private fun readEvalPrintLoop(solver: Solver) {
-        var query: String? = readQuery()
-        while (query != null) {
-            try {
-                val goal = Struct.parse(query, solver.operators)
-                val solutions = solver.solve(goal, this.getTimeout()).iterator()
-                printSolutions(solutions, solver.operators)
-            } catch (e: ParseException) {
-                printParseException(e)
+        try {
+            var query: String? = readQuery()
+            while (query != null) {
+                try {
+                    val goal = Struct.parse(query, solver.operators)
+                    val solutions = solver.solve(goal, this.getTimeout()).iterator()
+                    printSolutions(solutions, solver.operators)
+                } catch (e: ParseException) {
+                    printParseException(e)
+                }
+                echo("")
+                query = readQuery()
             }
-            echo("")
-            query = readQuery()
+        } catch (_: NullInputException) {
+            echo("# goodbye.")
+            throw ProgramResult(0)
         }
     }
 
@@ -126,10 +131,10 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
             .flag(TrackVariables) { ON }
             .warnings(outputChannel)
             .build().also {
-            for ((_, library) in it.libraries) {
-                echo("# Successfully loaded library `${library.alias}`")
+                for ((_, library) in it.libraries) {
+                    echo("# Successfully loaded library `${library.alias}`")
+                }
+                echo("")
             }
-            echo("")
-        }
     }
 }

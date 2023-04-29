@@ -54,7 +54,7 @@ abstract class AbstractTuPrologCommand(
     private fun printHaltSolution(sol: Solution.Halt, operatorSet: OperatorSet) {
         when (val ex = sol.exception) {
             is HaltException -> {
-                echo("goodbye.")
+                echo("# goodbye.")
                 throw ProgramResult(ex.exitStatus)
             }
             else -> echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
