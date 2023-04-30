@@ -17,18 +17,14 @@ class EditorTab(var fileName: String, var editorValue: String)
 
 
 // Stato
-data class Counter(var count: Int)
 data class TuProlog(var editorSelectedTab: String, var editorQuery: String, var editorTabs: MutableList<EditorTab>)
 
 data class State(
-    val counter: Counter,
     var tuProlog: TuProlog,
 )
 // Azioni disponibili
 
-class Increase : RAction
-class Decrease : RAction
-class AddEditorTab(val content: String = "") : RAction
+class AddEditorTab(val content: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
 class ChangeSelectedTab(val newValue: String = "") : RAction
 class RemoveEditorTab : RAction
 class RenameEditor(val newName: String = "") : RAction
@@ -40,19 +36,6 @@ const val MYCOUNTER = 10
 const val MYCOUNTER2 = 10
 
 // Gestione di azioni
-fun counterActions(state: Counter = Counter(MYCOUNTER), action: RAction): Counter = when (action) {
-    is Increase -> {
-        state.count++
-        state
-    }
-
-    is Decrease -> {
-        state.count--
-        state
-    }
-
-    else -> state
-}
 
 // TODO risolvere complessità ciclica della funzione
 // TODO verificare se la dispatch è sincrona o asincrona
@@ -65,6 +48,7 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
             )
         )
         state.editorSelectedTab = fileName
+        action.resolve(false)
         state
     }
 
@@ -147,7 +131,6 @@ fun rootReducer(
     state: State,
     action: Any
 ) = State(
-    counterActions(state.counter, action.unsafeCast<RAction>()),
     tuPrologActions(state.tuProlog, action.unsafeCast<RAction>()),
 )
 
@@ -186,7 +169,6 @@ val DEMO_EDITORS = mutableListOf(
 val myStore = createStore(
     ::rootReducer,
     State(
-        Counter(MYCOUNTER2),
         TuProlog("Test1.pl", "", DEMO_EDITORS)
     ),
     rEnhancer()

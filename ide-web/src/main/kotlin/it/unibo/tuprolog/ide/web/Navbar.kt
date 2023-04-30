@@ -97,7 +97,9 @@ val NavBar = FC<Props> {
                 variant = extended
                 onClick = {
                     dispatcher(AddEditorTab())
-
+//                    dispatcher(
+//                        AddEditorTab("", error -> console.log(error))
+//                    )
                 }
                 Typography {
                     +"Add"
