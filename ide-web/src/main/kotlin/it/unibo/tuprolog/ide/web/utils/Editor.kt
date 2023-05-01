@@ -1,13 +1,10 @@
 @file:JsModule("@monaco-editor/react")
 @file:JsNonModule
 
-package it.unibo.tuprolog.ide.web
+package it.unibo.tuprolog.ide.web.utils
 
 import react.ComponentClass
 import react.Props
-
-@JsName("default")
-external val Editor: ComponentClass<EditorProps>
 
 external interface EditorProps : Props {
     var value: String
@@ -15,6 +12,10 @@ external interface EditorProps : Props {
     var onChange: (String) -> Unit
     var beforeMount: (Any) -> Unit
 }
+
+@JsName("default")
+external val Editor: ComponentClass<EditorProps>
+
 
 //                                monaco.languages.setMonarchTokensProvider('tuprolog', {
 //

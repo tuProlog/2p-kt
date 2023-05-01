@@ -44,6 +44,12 @@ import react.redux.useSelector
 import web.html.HTMLInputElement
 import web.html.InputType
 import State
+import it.unibo.tuprolog.ide.web.utils.errorSnackbar
+import it.unibo.tuprolog.ide.web.utils.successSnackbar
+import it.unibo.tuprolog.ide.web.utils.useSnackbar
+import mui.material.Alert
+import mui.material.AlertColor
+import mui.material.Snackbar
 import react.FC
 import react.Props
 import react.ReactNode
@@ -66,7 +72,10 @@ val NavBar = FC<Props> {
     var changeFileNameErrorInput by useState(false)
     val editorSelectedTab = useSelector<State, String> { s -> s.tuProlog.editorSelectedTab }
 
+    var addTabActionResult by useState("")
+
     val dispatcher = useDispatch<RAction, Nothing>()
+    val enqueueSnackbar = useSnackbar().enqueueSnackbar
 
     Stack {
         direction = responsive(StackDirection.row)
@@ -96,10 +105,16 @@ val NavBar = FC<Props> {
                 color = FabColor.primary
                 variant = extended
                 onClick = {
-                    dispatcher(AddEditorTab())
-//                    dispatcher(
-//                        AddEditorTab("", error -> console.log(error))
-//                    )
+                    console.log(enqueueSnackbar)
+                    enqueueSnackbar("This is a success message!", successSnackbar)
+                    enqueueSnackbar("This is an error message!", errorSnackbar)
+
+                    dispatcher(
+                        AddEditorTab("") { error ->
+                            addTabActionResult = "SUCCESS"
+                        }
+                    )
+
                 }
                 Typography {
                     +"Add"
@@ -137,7 +152,6 @@ val NavBar = FC<Props> {
                 onChange = {
                     it.target.files?.get(0)?.text()?.then { it1 ->
                         dispatcher(OnFileLoad(it.target.files?.get(0)?.name ?: "ERROR", it1))
-                        it.target.value = ""
                     }
                 }
             }
@@ -198,6 +212,17 @@ val NavBar = FC<Props> {
                     marginLeft = 1.em
                 }
                 color = ButtonColor.info
+            }
+        }
+
+        Snackbar {
+            open = addTabActionResult == "SUCCESS"
+            autoHideDuration = 6000
+
+            Alert {
+                onClose={addTabActionResult = ""}
+                severity= AlertColor.success
+                + "This is a success message!"
             }
         }
 

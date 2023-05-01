@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.ide.web
 
-import Counter
-import Increase
 import State
 import csstype.AlignItems
 import csstype.JustifyContent
@@ -38,33 +36,9 @@ val Footer = FC<Props> {
     var state by useState(MYSTATE)
     var timeoutDuration by useState(MYTIMEOUTDURATION)
 
-    val c2 = myStore.getState().counter.count
-    val c3 = c2 + 1
-
-    val dispatcher = useDispatch<Increase, Counter>()
-    val selector = useSelector<State, Int> { s -> s.counter.count }
-
     BottomNavigation {
-//        showLabels = true
         value = state
         onChange = { _, value -> state = value }
-
-
-        Typography {
-            +"$c2"
-        }
-        Typography {
-            +"$c3"
-        }
-        Typography {
-            +"$selector"
-        }
-        Button {
-            onClick = {
-                dispatcher(Increase())
-            }
-            +"test"
-        }
 
         Grid {
             container = true

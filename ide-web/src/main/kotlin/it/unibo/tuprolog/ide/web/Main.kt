@@ -4,11 +4,14 @@ import ChangeSelectedTab
 import EditorTab
 import State
 import UpdateEditorTheory
+import it.unibo.tuprolog.ide.web.utils.Editor
+import it.unibo.tuprolog.ide.web.utils.SnackbarProvider
 import mui.lab.TabContext
 import mui.lab.TabPanel
-import mui.material.Alert
 import mui.material.AlertColor
-import mui.material.Snackbar
+import mui.material.SnackbarOrigin
+import mui.material.SnackbarOriginHorizontal
+import mui.material.SnackbarOriginVertical
 import mui.material.Stack
 import mui.material.Tab
 import mui.material.Tabs
@@ -25,12 +28,9 @@ import react.redux.Provider
 import react.redux.useDispatch
 import react.redux.useSelector
 import react.useEffectOnce
-import react.useState
 import redux.RAction
 import web.dom.document
 import web.html.HTML
-
-const val AUTOHIDEDURATION = 6000
 
 fun main() {
     val root = document.createElement(HTML.div)
@@ -42,16 +42,23 @@ fun main() {
 val Root = FC<Props> {
     Provider {
         store = myStore
-        App {}
 
-//        Messages {}
+        SnackbarProvider {
+            maxSnack = 5
+            dense = true
+            variant = AlertColor.success
+            anchorOrigin = object: SnackbarOrigin {
+                override var horizontal = SnackbarOriginHorizontal.right
+                override var vertical = SnackbarOriginVertical.top
+            }
+
+            App {}
+        }
     }
 }
 
 val App = FC<Props> {
 
-    var isErrorAlertOpen by useState(false)
-    var errorAlertMessage by useState("")
     val editorSelectedTab = useSelector<State, String> { s -> s.tuProlog.editorSelectedTab }
     val editorTabs = useSelector<State, List<EditorTab>> { s -> s.tuProlog.editorTabs }
     val dispatcher = useDispatch<RAction, Nothing>()
@@ -60,6 +67,8 @@ val App = FC<Props> {
 
     ReactHTML.div {
         Stack {
+
+
             NavBar { }
 
             TabContext {
@@ -97,17 +106,17 @@ val App = FC<Props> {
                 }
             }
 
-            Snackbar {
-                open = isErrorAlertOpen
-                autoHideDuration = AUTOHIDEDURATION
-                onClose = { _, _ -> isErrorAlertOpen = false }
-
-                Alert {
-                    severity = AlertColor.error
-                    +errorAlertMessage
-                }
-                // TODO change snack-bar anchor
-            }
+//            Snackbar {
+//                open = isErrorAlertOpen
+//                autoHideDuration = AUTOHIDEDURATION
+//                onClose = { _, _ -> isErrorAlertOpen = false }
+//
+//                Alert {
+//                    severity = AlertColor.error
+//                    +errorAlertMessage
+//                }
+//                // TODO change snack-bar anchor
+//            }
 
             QueryEditorComponent {
                 onSolve = {
@@ -116,9 +125,7 @@ val App = FC<Props> {
 //                    testTuprolog(editorTheory, editorQuery)
                 }
             }
-
             SolutionsContainer {}
-
             Footer {}
         }
     }
