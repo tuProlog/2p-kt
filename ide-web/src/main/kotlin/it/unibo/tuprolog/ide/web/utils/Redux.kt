@@ -79,14 +79,9 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
             elem.setAttribute("download", state.editorSelectedTab)
             elem.click()
             action.resolve(false)
-//            isErrorAlertOpen = false
         } else {
             action.resolve(true)
         }
-//        else {
-//            errorAlertMessage = "No theory specified"
-//            isErrorAlertOpen = true
-//        }
         state
     }
 
@@ -97,18 +92,10 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
             state.editorTabs[indexForRename].fileName = action.newName
             state.editorSelectedTab = state.editorTabs[indexForRename].fileName
             action.resolve(false)
-//            isErrorAlertOpen = false
         }
         else {
             action.resolve(true)
         }
-//        else {
-//            errorAlertMessage = if (it != editorSelectedTab)
-//                "Cannot rename file. A file with this name already exists"
-//            else
-//                "Cannot rename file with the same value"
-//            isErrorAlertOpen = true
-//        }
         state
     }
 
@@ -124,14 +111,11 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
         state
     }
 
-
     is OnFileLoad -> {
         if (state.editorTabs.find { it.fileName == action.fileName } == null) {
             state.editorTabs.add(EditorTab(action.fileName, action.editorValue))
             action.resolve(false)
         } else {
-//            errorAlertMessage = "File already exists"
-//            isErrorAlertOpen = true
             action.resolve(true)
         }
         state.editorSelectedTab = action.fileName
