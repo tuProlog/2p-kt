@@ -23,17 +23,15 @@ data class State(
     var tuProlog: TuProlog,
 )
 
-open class ResolveRedux(val resolve: (error: Boolean) -> Unit = {}) : RAction
-
 // Azioni disponibili
 
-class AddEditorTab (val content: String = "") : ResolveRedux()
-class ChangeSelectedTab(val newValue: String = "") : ResolveRedux()
-class RemoveEditorTab() : ResolveRedux()
-class RenameEditor(val newName: String = "") : ResolveRedux()
-class DownloadTheory() : ResolveRedux()
-class UpdateEditorTheory(val newTheory: String = "") : ResolveRedux()
-class OnFileLoad(val fileName: String = "", val editorValue: String = "") : ResolveRedux()
+class AddEditorTab (val content: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
+class ChangeSelectedTab(val newValue: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
+class RemoveEditorTab(val resolve: (error: Boolean) -> Unit = {}) : RAction
+class RenameEditor(val newName: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
+class DownloadTheory(val resolve: (error: Boolean) -> Unit = {}) : RAction
+class UpdateEditorTheory(val newTheory: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
+class OnFileLoad(val fileName: String = "", val editorValue: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
 
 const val MYCOUNTER = 10
 const val MYCOUNTER2 = 10

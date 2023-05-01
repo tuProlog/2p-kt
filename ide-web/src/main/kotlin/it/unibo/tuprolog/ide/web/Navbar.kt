@@ -106,12 +106,12 @@ val NavBar = FC<Props> {
                 variant = extended
                 onClick = {
                     console.log(enqueueSnackbar)
-                    enqueueSnackbar("This is a success message!", successSnackbar)
-                    enqueueSnackbar("This is an error message!", errorSnackbar)
 
                     dispatcher(
                         AddEditorTab("") { error ->
                             addTabActionResult = "SUCCESS"
+                            enqueueSnackbar("This is a success message!", successSnackbar)
+                            enqueueSnackbar("This is an error message!", errorSnackbar)
                         }
                     )
 

@@ -46,7 +46,7 @@ val Root = FC<Props> {
         SnackbarProvider {
             maxSnack = 5
             dense = true
-            variant = AlertColor.success
+            variant = AlertColor.info
             anchorOrigin = object: SnackbarOrigin {
                 override var horizontal = SnackbarOriginHorizontal.right
                 override var vertical = SnackbarOriginVertical.top
