@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.ide.web
+package it.unibo.tuprolog.ide.web.components
 
 import mui.material.Button
 import mui.material.ButtonVariant

@@ -1,10 +1,10 @@
-package it.unibo.tuprolog.ide.web
+package it.unibo.tuprolog.ide.web.components
 
-import AddEditorTab
-import DownloadTheory
-import OnFileLoad
-import RemoveEditorTab
-import RenameEditor
+import it.unibo.tuprolog.ide.web.redux.actions.AddEditorTab
+import it.unibo.tuprolog.ide.web.redux.actions.DownloadTheory
+import it.unibo.tuprolog.ide.web.redux.actions.OnFileLoad
+import it.unibo.tuprolog.ide.web.redux.actions.RemoveEditorTab
+import it.unibo.tuprolog.ide.web.redux.actions.RenameEditor
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent.Companion.spaceBetween
 import csstype.NamedColor.Companion.green
@@ -44,9 +44,7 @@ import react.redux.useSelector
 import web.html.HTMLInputElement
 import web.html.InputType
 import State
-import it.unibo.tuprolog.ide.web.utils.errorSnackbar
-import it.unibo.tuprolog.ide.web.utils.successSnackbar
-import it.unibo.tuprolog.ide.web.utils.useSnackbar
+import it.unibo.tuprolog.ide.web.redux.actions.AddMessage
 import mui.material.Alert
 import mui.material.AlertColor
 import mui.material.Snackbar
@@ -75,7 +73,6 @@ val NavBar = FC<Props> {
     var addTabActionResult by useState("")
 
     val dispatcher = useDispatch<RAction, Nothing>()
-    val enqueueSnackbar = useSnackbar().enqueueSnackbar
 
     Stack {
         direction = responsive(StackDirection.row)
@@ -105,13 +102,11 @@ val NavBar = FC<Props> {
                 color = FabColor.primary
                 variant = extended
                 onClick = {
-                    console.log(enqueueSnackbar)
-                    enqueueSnackbar("This is a success message!", successSnackbar)
-                    enqueueSnackbar("This is an error message!", errorSnackbar)
-
                     dispatcher(
                         AddEditorTab("") { error ->
                             addTabActionResult = "SUCCESS"
+
+//                            dispatcher(AddMessage("Tab added succesfully", AlertColor.success))
                         }
                     )
 

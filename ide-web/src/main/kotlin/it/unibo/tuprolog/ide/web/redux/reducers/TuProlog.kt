@@ -1,44 +1,20 @@
+package it.unibo.tuprolog.ide.web.redux.reducers
+
+import EditorTab
+import TuProlog
+import it.unibo.tuprolog.ide.web.redux.actions.AddEditorTab
+import it.unibo.tuprolog.ide.web.redux.actions.ChangeSelectedTab
+import it.unibo.tuprolog.ide.web.redux.actions.DownloadTheory
+import it.unibo.tuprolog.ide.web.redux.actions.OnFileLoad
+import it.unibo.tuprolog.ide.web.redux.actions.RemoveEditorTab
+import it.unibo.tuprolog.ide.web.redux.actions.RenameEditor
+import it.unibo.tuprolog.ide.web.redux.actions.UpdateEditorTheory
 import js.uri.encodeURIComponent
-import react.Reducer
 import redux.RAction
-import redux.createStore
-import redux.rEnhancer
+import web.dom.document
 import web.html.HTML
 import kotlin.js.Date
-import kotlin.reflect.KProperty1
-import web.dom.document
 
-// Utils
-fun <S, A, R> combineReducers(reducers: Map<KProperty1<S, R>, Reducer<*, A>>): Reducer<S, A> {
-    return redux.combineReducers(reducers.mapKeys { it.key.name })
-}
-
-class EditorTab(var fileName: String, var editorValue: String)
-
-
-// Stato
-data class TuProlog(var editorSelectedTab: String, var editorQuery: String, var editorTabs: MutableList<EditorTab>)
-
-data class State(
-    var tuProlog: TuProlog,
-)
-
-open class ResolveRedux(val resolve: (error: Boolean) -> Unit = {}) : RAction
-
-// Azioni disponibili
-
-class AddEditorTab (val content: String = "") : ResolveRedux()
-class ChangeSelectedTab(val newValue: String = "") : ResolveRedux()
-class RemoveEditorTab() : ResolveRedux()
-class RenameEditor(val newName: String = "") : ResolveRedux()
-class DownloadTheory() : ResolveRedux()
-class UpdateEditorTheory(val newTheory: String = "") : ResolveRedux()
-class OnFileLoad(val fileName: String = "", val editorValue: String = "") : ResolveRedux()
-
-const val MYCOUNTER = 10
-const val MYCOUNTER2 = 10
-
-// Gestione di azioni
 
 // TODO risolvere complessità ciclica della funzione
 // TODO verificare se la dispatch è sincrona o asincrona
@@ -77,7 +53,10 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
         val editorText = state.editorTabs.find { it2 -> it2.fileName == state.editorSelectedTab }?.editorValue ?: ""
         if (editorText != "") {
             val elem = document.createElement(HTML.a)
-            elem.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(editorText))
+            elem.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(
+                editorText
+            )
+            )
             elem.setAttribute("download", state.editorSelectedTab)
             elem.click()
             action.resolve(false)
@@ -142,52 +121,3 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
 
     else -> state
 }
-
-// Redux Store
-
-fun rootReducer(
-    state: State,
-    action: Any
-) = State(
-    tuPrologActions(state.tuProlog, action.unsafeCast<RAction>()),
-)
-
-val DEMO_EDITORS = mutableListOf(
-    EditorTab(
-        "Test1.pl", """
-            % member2(List, Elem, ListWithoutElem)
-            member2([X|Xs],X,Xs).
-            member2([X|Xs],E,[X|Ys]):-member2(Xs,E,Ys).
-            % permutation(Ilist, Olist)
-            permutation([],[]).
-            permutation(Xs, [X | Ys]) :-
-            member2(Xs,X,Zs),
-            permutation(Zs, Ys).
-    
-            % permutation([10,20,30],L).
-        """
-    ),
-    EditorTab(
-        "Test2.pl", """
-            nat(z).
-            nat(s(X)) :- nat(X).
-
-            % nat(N).
-        """
-    ),
-    EditorTab(
-        "Test3.pl", """
-            increment(A, B, C) :- C is A + B.
-            
-            % increment(1,2,X).
-        """
-    )
-)
-
-val myStore = createStore(
-    ::rootReducer,
-    State(
-        TuProlog("Test1.pl", "", DEMO_EDITORS)
-    ),
-    rEnhancer()
-)

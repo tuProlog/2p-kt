@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.ide.web
+package it.unibo.tuprolog.ide.web.components
 
 import mui.icons.material.CancelOutlined
 import mui.icons.material.CheckCircleOutline

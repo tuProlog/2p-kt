@@ -1,24 +1,19 @@
-package it.unibo.tuprolog.ide.web
+package it.unibo.tuprolog.ide.web.components
 
-import State
 import csstype.AlignItems
 import csstype.JustifyContent
 import csstype.em
 import mui.material.GridDirection
 import it.unibo.tuprolog.ide.web.utils.xs
 import mui.material.BottomNavigation
-import mui.material.Button
 import mui.material.Slider
 import mui.material.Grid
 import mui.material.Typography
 import mui.system.responsive
 import mui.system.sx
-import myStore
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.p
-import react.redux.useDispatch
-import react.redux.useSelector
 import react.useState
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration

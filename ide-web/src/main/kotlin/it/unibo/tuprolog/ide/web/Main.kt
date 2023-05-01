@@ -1,22 +1,23 @@
 package it.unibo.tuprolog.ide.web
 
-import ChangeSelectedTab
+import it.unibo.tuprolog.ide.web.redux.actions.ChangeSelectedTab
 import EditorTab
 import State
-import UpdateEditorTheory
+import it.unibo.tuprolog.ide.web.redux.actions.UpdateEditorTheory
+import it.unibo.tuprolog.ide.web.components.Footer
+import it.unibo.tuprolog.ide.web.components.Messages
+import it.unibo.tuprolog.ide.web.components.NavBar
+import it.unibo.tuprolog.ide.web.components.QueryEditorComponent
+import it.unibo.tuprolog.ide.web.components.SolutionsContainer
 import it.unibo.tuprolog.ide.web.utils.Editor
-import it.unibo.tuprolog.ide.web.utils.SnackbarProvider
 import mui.lab.TabContext
 import mui.lab.TabPanel
-import mui.material.AlertColor
-import mui.material.SnackbarOrigin
-import mui.material.SnackbarOriginHorizontal
-import mui.material.SnackbarOriginVertical
 import mui.material.Stack
 import mui.material.Tab
 import mui.material.Tabs
 import mui.material.TabsScrollButtons
 import mui.material.TabsVariant
+import mui.material.Typography
 import myStore
 import react.FC
 import react.Props
@@ -43,17 +44,9 @@ val Root = FC<Props> {
     Provider {
         store = myStore
 
-        SnackbarProvider {
-            maxSnack = 5
-            dense = true
-            variant = AlertColor.success
-            anchorOrigin = object: SnackbarOrigin {
-                override var horizontal = SnackbarOriginHorizontal.right
-                override var vertical = SnackbarOriginVertical.top
-            }
+        App {}
 
-            App {}
-        }
+        Messages {}
     }
 }
 
