@@ -25,12 +25,12 @@ data class State(
 // Azioni disponibili
 
 class AddEditorTab(val content: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
-class ChangeSelectedTab(val newValue: String = "") : RAction
-class RemoveEditorTab : RAction
-class RenameEditor(val newName: String = "") : RAction
-class DownloadTheory : RAction
-class UpdateEditorTheory(val newTheory: String = "") : RAction
-class OnFileLoad(val fileName: String = "", val editorValue: String = "") : RAction
+class ChangeSelectedTab(val newValue: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
+class RemoveEditorTab(val resolve: (error: Boolean) -> Unit = {}) : RAction
+class RenameEditor(val newName: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
+class DownloadTheory(val resolve: (error: Boolean) -> Unit = {}) : RAction
+class UpdateEditorTheory(val newTheory: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
+class OnFileLoad(val fileName: String = "", val editorValue: String = "", val resolve: (error: Boolean) -> Unit = {}) : RAction
 
 const val MYCOUNTER = 10
 const val MYCOUNTER2 = 10
@@ -62,6 +62,10 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
                 state.editorSelectedTab = state.editorTabs[index].fileName
             else
                 state.editorSelectedTab = state.editorTabs[index - 1].fileName
+            action.resolve(false)
+        }
+        else {
+            action.resolve(true)
         }
         state
     }
@@ -73,7 +77,10 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
             elem.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(editorText))
             elem.setAttribute("download", state.editorSelectedTab)
             elem.click()
+            action.resolve(false)
 //            isErrorAlertOpen = false
+        } else {
+            action.resolve(true)
         }
 //        else {
 //            errorAlertMessage = "No theory specified"
@@ -88,7 +95,11 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
             val indexForRename = state.editorTabs.indexOfFirst { it3 -> it3.fileName == state.editorSelectedTab }
             state.editorTabs[indexForRename].fileName = action.newName
             state.editorSelectedTab = state.editorTabs[indexForRename].fileName
+            action.resolve(false)
 //            isErrorAlertOpen = false
+        }
+        else {
+            action.resolve(true)
         }
 //        else {
 //            errorAlertMessage = if (it != editorSelectedTab)
@@ -102,11 +113,13 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
 
     is ChangeSelectedTab -> {
         state.editorSelectedTab = action.newValue
+        action.resolve(false)
         state
     }
 
     is UpdateEditorTheory -> {
         state.editorTabs.find { it2 -> it2.fileName == state.editorSelectedTab }?.editorValue = action.newTheory
+        action.resolve(false)
         state
     }
 
@@ -114,9 +127,11 @@ fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) 
     is OnFileLoad -> {
         if (state.editorTabs.find { it.fileName == action.fileName } == null) {
             state.editorTabs.add(EditorTab(action.fileName, action.editorValue))
+            action.resolve(false)
         } else {
 //            errorAlertMessage = "File already exists"
 //            isErrorAlertOpen = true
+            action.resolve(true)
         }
         state.editorSelectedTab = action.fileName
         state
