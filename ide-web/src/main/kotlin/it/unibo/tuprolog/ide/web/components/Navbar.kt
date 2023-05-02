@@ -43,8 +43,7 @@ import react.redux.useDispatch
 import react.redux.useSelector
 import web.html.HTMLInputElement
 import web.html.InputType
-import State
-import it.unibo.tuprolog.ide.web.redux.actions.AddMessage
+import AppState
 import mui.material.Alert
 import mui.material.AlertColor
 import mui.material.Snackbar
@@ -73,7 +72,7 @@ val NavBar = FC<Props> {
     val newFileNameInputRef = createRef<HTMLInputElement>()
 
     val dispatcher = useDispatch<RAction, WrapperAction>()
-    val editorSelectedTab = useSelector<State, String> { s -> s.tuProlog.editorSelectedTab }
+    val editorSelectedTab = useSelector<AppState, String> { s -> s.tuProlog.editorSelectedTab }
 
     Stack {
         direction = responsive(StackDirection.row)

@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.ide.web.redux.reducers
 
 import Message
-import State
+import AppState
 import it.unibo.tuprolog.ide.web.redux.actions.AddMessage
 import it.unibo.tuprolog.ide.web.redux.actions.RemoveMessage
 import redux.RAction
 
-fun messagesActions(state: State, action: RAction): List<Message> = when (action) {
+fun messagesActions(state: AppState, action: RAction): List<Message> = when (action) {
     is AddMessage -> {
         state.messages + Message(action.text, action.color)
         state.messages

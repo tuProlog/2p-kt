@@ -14,7 +14,7 @@ external interface EditorProps : Props {
 }
 
 @JsName("default")
-external val Editor: ComponentClass<EditorProps>
+external val MonacoEditor: ComponentClass<EditorProps>
 
 
 //                                monaco.languages.setMonarchTokensProvider('tuprolog', {

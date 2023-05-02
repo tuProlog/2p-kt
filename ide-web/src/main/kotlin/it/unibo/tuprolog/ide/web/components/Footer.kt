@@ -1,8 +1,12 @@
 package it.unibo.tuprolog.ide.web.components
 
 import csstype.AlignItems
+import csstype.AlignItems.Companion.center
 import csstype.JustifyContent
 import csstype.em
+import csstype.px
+import emotion.css.css
+import emotion.react.css
 import mui.material.GridDirection
 import it.unibo.tuprolog.ide.web.utils.xs
 import mui.material.BottomNavigation
@@ -31,53 +35,52 @@ val Footer = FC<Props> {
     var state by useState(MYSTATE)
     var timeoutDuration by useState(MYTIMEOUTDURATION)
 
-    BottomNavigation {
-        value = state
-        onChange = { _, value -> state = value }
+    Grid {
+        container = true
+        direction = responsive(GridDirection.row)
+        sx {
+            justifyContent = JustifyContent.spaceBetween
+            alignItems = center
+        }
 
         Grid {
-            container = true
-
-            direction = responsive(GridDirection.row)
-            sx {
-                justifyContent = JustifyContent.spaceBetween
-                alignItems = AlignItems.center
-                padding = 2.em
+            item = true
+            p {
+                +"Stato: IDLE"
             }
+        }
+
+        Grid {
+            item = true
 
             Grid {
-                item = true
-                p {
-                    +"Stato: IDLE"
-                }
-            }
-            Grid {
-                item = true
-                xs = MYXS
+                container = true
+                direction = responsive(GridDirection.row)
+                sx { alignItems = center }
 
                 Grid {
-                    container = true
-                    direction = responsive(GridDirection.row)
+                    item = true
+                    Typography {
+                        +"Timeout: ${timeoutDuration.toDuration(DurationUnit.MILLISECONDS)}"
+                    }
+                }
 
-                    Grid {
-                        item = true
-                        xs = MYXS
-                        Typography {
-                            +"Timeout: ${timeoutDuration.toDuration(DurationUnit.MILLISECONDS)}"
-                        }
+                Grid {
+                    item = true
+                    css {
+                        width = 300.px
+                        paddingLeft = 2.em
                     }
 
-                    Grid {
-                        item = true
-                        xs = MYXSGRID
-                        Slider {
-                            value = timeoutDuration
-                            step = MYSTEP
-                            onChange = { _, newValue, _ -> timeoutDuration = newValue as Int }
-                            max = MYMAX
-                            min = MYMIN
-                        }
-                    }
+//                    Slider {
+//                        value = timeoutDuration
+//                        step = MYSTEP
+//                        onChange = { _, newValue, _ -> timeoutDuration = newValue as Int }
+//                        max = MYMAX
+//                        min = MYMIN
+//
+//
+//                    }
                 }
             }
         }

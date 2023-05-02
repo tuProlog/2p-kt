@@ -1,27 +1,25 @@
 import it.unibo.tuprolog.ide.web.redux.reducers.messagesActions
 import it.unibo.tuprolog.ide.web.redux.reducers.tuPrologActions
-import react.Reducer
 import redux.RAction
 import redux.createStore
 import redux.rEnhancer
 import mui.material.AlertColor
-import kotlinx.browser.window
 
 // Stato
 class Message(var text: String, var color: AlertColor) {} //, var id:UUID
 class EditorTab(var fileName: String, var editorValue: String)
 data class TuProlog(var editorSelectedTab: String, var editorQuery: String, var editorTabs: MutableList<EditorTab>)
 
-data class State(
+data class AppState(
     var tuProlog: TuProlog,
     var messages: List<Message>
 )
 
 
 fun rootReducer(
-    state: State,
+    state: AppState,
     action: Any
-) = State(
+) = AppState(
     tuPrologActions(state, action.unsafeCast<RAction>()),
     messagesActions(state, action.unsafeCast<RAction>())
 )
@@ -60,7 +58,7 @@ val DEMO_EDITORS = mutableListOf(
 
 val myStore = createStore(
     ::rootReducer,
-    State(
+    AppState(
         TuProlog("Test1.pl", "", DEMO_EDITORS),
         emptyList()
     ),

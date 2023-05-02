@@ -15,14 +15,7 @@ import react.dom.onChange
 import react.useState
 import web.html.HTMLInputElement
 
-external interface QueryEditor : Props {
-    var onSolve: (query: String) -> Unit
-    var onSolveAll: () -> Unit
-    var onStop: () -> Unit
-    var onReset: () -> Unit
-}
-
-val QueryEditorComponent = FC<QueryEditor> { props ->
+val QueryEditor = FC<Props> { props ->
     var editorQuery by useState("")
     val inputRef2 = createRef<HTMLInputElement>()
 
@@ -44,7 +37,10 @@ val QueryEditorComponent = FC<QueryEditor> { props ->
             variant = ButtonVariant.contained
             +"Solve"
             onClick = {
-                props.onSolve(editorQuery)
+
+//                val editorTheory = editorTabs.find { it2 -> it2.fileName == editorSelectedTab }?.editorValue ?: ""
+//                val editorQuery = it
+//                testTuprolog(editorTheory, editorQuery)
             }
         }
         Button {

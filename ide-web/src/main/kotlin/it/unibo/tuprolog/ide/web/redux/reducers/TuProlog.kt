@@ -2,7 +2,7 @@ package it.unibo.tuprolog.ide.web.redux.reducers
 
 import EditorTab
 import Message
-import State
+import AppState
 import TuProlog
 import it.unibo.tuprolog.ide.web.redux.actions.AddEditorTab
 import it.unibo.tuprolog.ide.web.redux.actions.ChangeSelectedTab
@@ -12,7 +12,6 @@ import it.unibo.tuprolog.ide.web.redux.actions.RemoveEditorTab
 import it.unibo.tuprolog.ide.web.redux.actions.RenameEditor
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateEditorTheory
 import js.uri.encodeURIComponent
-import kotlinx.browser.window
 import mui.material.AlertColor
 import redux.RAction
 import web.dom.document
@@ -22,7 +21,7 @@ import kotlin.js.Date
 
 // TODO risolvere complessità ciclica della funzione
 // TODO verificare se la dispatch è sincrona o asincrona
-fun tuPrologActions(state: State, action: RAction): TuProlog = when (action) {
+fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) {
     is AddEditorTab -> {
         val fileName: String = "undefined_" + Date().getTime() + ".pl"
         state.tuProlog.editorTabs.add(

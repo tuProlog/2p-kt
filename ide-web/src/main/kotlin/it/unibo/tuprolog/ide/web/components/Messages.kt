@@ -1,15 +1,13 @@
 package it.unibo.tuprolog.ide.web.components
 
 import Message
-import State
+import AppState
 import csstype.integer
 import csstype.Position.Companion.absolute
 import csstype.em
-import csstype.px
 import emotion.react.css
 import mui.material.Alert
 import mui.material.Button
-import mui.material.Snackbar
 import mui.material.Stack
 import react.FC
 import react.Props
@@ -18,7 +16,7 @@ import react.redux.useSelector
 
 val Messages = FC<Props> {
 
-    val messages = useSelector<State, List<Message>> { s -> s.messages }
+    val messages = useSelector<AppState, List<Message>> { s -> s.messages }
 
 
     ReactHTML.div {
