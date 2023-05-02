@@ -5,9 +5,10 @@ import redux.RAction
 import redux.createStore
 import redux.rEnhancer
 import mui.material.AlertColor
+import kotlinx.browser.window
 
 // Stato
-class Message(var text: String, var color: AlertColor) //, var id:UUID
+class Message(var text: String, var color: AlertColor) {} //, var id:UUID
 class EditorTab(var fileName: String, var editorValue: String)
 data class TuProlog(var editorSelectedTab: String, var editorQuery: String, var editorTabs: MutableList<EditorTab>)
 
@@ -21,8 +22,8 @@ fun rootReducer(
     state: State,
     action: Any
 ) = State(
-    tuPrologActions(state.tuProlog, action.unsafeCast<RAction>()),
-    messagesActions(state.messages, action.unsafeCast<RAction>())
+    tuPrologActions(state, action.unsafeCast<RAction>()),
+    messagesActions(state, action.unsafeCast<RAction>())
 )
 
 val DEMO_EDITORS = mutableListOf(

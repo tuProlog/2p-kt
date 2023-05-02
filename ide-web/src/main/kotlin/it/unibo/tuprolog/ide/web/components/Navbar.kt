@@ -55,6 +55,7 @@ import react.create
 import react.createRef
 import react.useState
 import redux.RAction
+import redux.WrapperAction
 
 const val MYSPACING = 3
 const val MYHEIGHT = 56.0
@@ -64,15 +65,15 @@ const val MYWIDTH = 56.0
 val NavBar = FC<Props> {
     var isDialogOpen by useState(false)
     var isDialogRenameOpen by useState(false)
-    var newFileName by useState("")
-    val uploadInputRef = createRef<HTMLInputElement>()
-    val newFileNameInputRef = createRef<HTMLInputElement>()
     var changeFileNameErrorInput by useState(false)
-    val editorSelectedTab = useSelector<State, String> { s -> s.tuProlog.editorSelectedTab }
-
+    var newFileName by useState("")
     var addTabActionResult by useState("")
 
-    val dispatcher = useDispatch<RAction, Nothing>()
+    val uploadInputRef = createRef<HTMLInputElement>()
+    val newFileNameInputRef = createRef<HTMLInputElement>()
+
+    val dispatcher = useDispatch<RAction, WrapperAction>()
+    val editorSelectedTab = useSelector<State, String> { s -> s.tuProlog.editorSelectedTab }
 
     Stack {
         direction = responsive(StackDirection.row)
@@ -103,11 +104,7 @@ val NavBar = FC<Props> {
                 variant = extended
                 onClick = {
                     dispatcher(
-                        AddEditorTab("") { error ->
-                            addTabActionResult = "SUCCESS"
-
-//                            dispatcher(AddMessage("Tab added succesfully", AlertColor.success))
-                        }
+                        AddEditorTab("")
                     )
 
                 }

@@ -2,11 +2,13 @@ package it.unibo.tuprolog.ide.web.components
 
 import Message
 import State
-import csstype.Position
+import csstype.integer
 import csstype.Position.Companion.absolute
 import csstype.em
+import csstype.px
 import emotion.react.css
 import mui.material.Alert
+import mui.material.Button
 import mui.material.Snackbar
 import mui.material.Stack
 import react.FC
@@ -22,23 +24,21 @@ val Messages = FC<Props> {
     ReactHTML.div {
         css {
             position = absolute
-            top = 0.em
-            right = 0.em
+            bottom = 1.em
+            right = 1.em
+            zIndex = integer(10)
         }
-
 
         Stack {
             messages.forEach { m ->
-                Snackbar {
-                    autoHideDuration = 5000
-//                    onClose = { _, _ -> isErrorAlertOpen = false }
-
-                    Alert {
-                        severity = m.color
-                        +m.text
-                    }
-                    // TODO change snack-bar anchor
+                Alert {
+                    severity = m.color
+                    +m.text
                 }
+            }
+
+            Button {
+                + "Hide all"
             }
         }
     }

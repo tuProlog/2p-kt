@@ -46,7 +46,6 @@ val Root = FC<Props> {
 
         App {}
 
-        Messages {}
     }
 }
 
@@ -59,8 +58,11 @@ val App = FC<Props> {
     useEffectOnce {}
 
     ReactHTML.div {
-        Stack {
 
+
+
+        Stack {
+            Messages {}
 
             NavBar { }
 
@@ -88,7 +90,7 @@ val App = FC<Props> {
                         value = it.fileName
                         Editor {
                             value = it.editorValue
-                            height = "63vh"
+                            height = "35vh"
                             onChange = {
                                 dispatcher(UpdateEditorTheory(it))
                             }
