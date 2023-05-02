@@ -6,6 +6,8 @@ import State
 import UpdateEditorTheory
 import it.unibo.tuprolog.ide.web.utils.Editor
 import it.unibo.tuprolog.ide.web.utils.SnackbarProvider
+import it.unibo.tuprolog.ui.gui.Application
+import it.unibo.tuprolog.ui.gui.DefaultJsRunner
 import mui.lab.TabContext
 import mui.lab.TabPanel
 import mui.material.AlertColor
@@ -57,13 +59,31 @@ val Root = FC<Props> {
     }
 }
 
+
+
 val App = FC<Props> {
 
     val editorSelectedTab = useSelector<State, String> { s -> s.tuProlog.editorSelectedTab }
     val editorTabs = useSelector<State, List<EditorTab>> { s -> s.tuProlog.editorTabs }
     val dispatcher = useDispatch<RAction, Nothing>()
 
-    useEffectOnce {}
+    useEffectOnce {
+        val app = Application.of(DefaultJsRunner(), defaultTimeout = 1000L)
+        app.onStart.bind {
+            console.log(it)
+        }
+        app.start()
+
+//        page.onSolve(() -> {...})
+//        page.solve()
+//        app.onError.bind(this::onError)
+//        app.onPageCreated.bind(this::onPageCreated)
+//        app.onPageLoaded.bind(this::onFileLoaded)
+//        app.onPageClosed.bind(this::onPageClosed)
+//        app.onPageSelected.bind(this::onPageSelected)
+//        app.onPageUnselected.bind(this::onPageUnselected)
+//        app.onQuit.bind(this::onQuit)
+    }
 
     ReactHTML.div {
         Stack {

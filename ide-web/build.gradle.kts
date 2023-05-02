@@ -20,6 +20,7 @@ kotlin {
     sourceSets {
         val main by getting {
             dependencies {
+                api(project(":gui"))
                 api(project(":solve-classic"))
                 api(project(":parser-theory"))
 
