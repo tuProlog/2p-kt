@@ -78,7 +78,7 @@ val NavBar = FC<Props> {
 
     val dispatcher = useDispatch<RAction, Nothing>()
 
-//    val enqueueSnackbar = useSnackbar().enqueueSnackbar
+    val enqueueSnackbar = useSnackbar().enqueueSnackbar
 
     Stack {
         direction = responsive(StackDirection.row)
@@ -115,8 +115,8 @@ val NavBar = FC<Props> {
                                 actionResultMessage = "Unable to open a new tab"
                                 isMessageOpen = true
                             }
-//                            enqueueSnackbar("This is a success message!", successSnackbar)
-//                            enqueueSnackbar("This is an error message!", errorSnackbar)
+                            enqueueSnackbar("This is a success message!", successSnackbar)
+                            enqueueSnackbar("This is an error message!", errorSnackbar)
                         }
                     )
 

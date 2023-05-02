@@ -49,7 +49,7 @@ val Root = FC<Props> {
             variant = AlertColor.info
             anchorOrigin = object: SnackbarOrigin {
                 override var horizontal = SnackbarOriginHorizontal.right
-                override var vertical = SnackbarOriginVertical.top
+                override var vertical = SnackbarOriginVertical.bottom
             }
 
             App {}
