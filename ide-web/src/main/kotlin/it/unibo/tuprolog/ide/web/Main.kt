@@ -48,7 +48,6 @@ val Root = FC<Props> {
         store = myStore
 
         App {}
-
     }
 }
 
@@ -71,7 +70,6 @@ val App = FC<Props> {
         Grid {
             item = true
             css {
-                backgroundColor = Color("red")
                 width = 100.vw
             }
             NavBar {}
@@ -98,12 +96,11 @@ val App = FC<Props> {
 
         Grid {
             item = true
-            xs = 4
             css {
                 backgroundColor =  Color("yellow")
                 width = 100.vw
+                height = 400.px
                 overflowY = Overflow.scroll
-//                height = 400.px
             }
 
             SolutionsContainer {}
