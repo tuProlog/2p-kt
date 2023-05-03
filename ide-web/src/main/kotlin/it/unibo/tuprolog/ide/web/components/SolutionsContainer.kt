@@ -24,11 +24,13 @@ import react.dom.html.ReactHTML
 import react.redux.useSelector
 import csstype.Display
 import csstype.FlexFlow
+import csstype.Overflow
 import csstype.number
 import csstype.pct
 import csstype.px
 import emotion.react.css
 import mui.material.Typography
+import react.dom.html.ReactHTML.div
 import react.useEffectOnce
 import react.useState
 
@@ -50,10 +52,10 @@ val SolutionsContainer = FC<Props> {
     )
     ReactHTML.div {
         css {
-            display = Display.flex
-            flexFlow = FlexFlow.column
             height = 100.pct
+            overflow = Overflow.hidden
         }
+
         TabContext {
             value = activeTab
             Tabs {
@@ -78,70 +80,79 @@ val SolutionsContainer = FC<Props> {
                     label = ReactNode("Messages")
                 }
             }
-            TabPanel {
-                value = "solutionsTab"
+
+            div {
                 css {
-                    flexGrow = number(1.0)
-                    flexShrink = number(1.0)
+//                    overflowY = Overflow.auto
+
                 }
 
-                List {
-                    solutionsMixeds.forEach { i ->
-                        ListItem {
-                            ListItemIcon {
-                                //CheckCircleOutline
-                                if (i.state == "yes")
-                                    CheckCircleOutline {
-                                        color = SvgIconColor.success
-                                    }
-                                if (i.state == "no")
-                                    CancelOutlined {
-                                        color = SvgIconColor.disabled
-                                    }
-                                if (i.state == "timeout")
-                                    TimerOffOutlined {
-                                        color = SvgIconColor.warning
-                                    }
-                                if (i.state == "error")
-                                    ErrorOutlineOutlined {
-                                        color = SvgIconColor.error
-                                    }
-                            }
-                            ListItemText {
-                                primary = ReactNode(i.state)
-                                secondary = ReactNode(i.sol)
+                TabPanel {
+                    value = "solutionsTab"
+
+                    List {
+                        dense = true
+
+                        solutionsMixeds.forEach { i ->
+                            ListItem {
+                                ListItemIcon {
+                                    //CheckCircleOutline
+                                    if (i.state == "yes")
+                                        CheckCircleOutline {
+                                            color = SvgIconColor.success
+                                        }
+                                    if (i.state == "no")
+                                        CancelOutlined {
+                                            color = SvgIconColor.disabled
+                                        }
+                                    if (i.state == "timeout")
+                                        TimerOffOutlined {
+                                            color = SvgIconColor.warning
+                                        }
+                                    if (i.state == "error")
+                                        ErrorOutlineOutlined {
+                                            color = SvgIconColor.error
+                                        }
+                                }
+                                ListItemText {
+                                    primary = ReactNode(i.state)
+                                    secondary = ReactNode(i.sol)
+                                }
                             }
                         }
                     }
                 }
                 TabPanel {
                     value = "stdInTab"
-                    List {
-                        Typography {
-                            +"ASD"
+                    Stack {
+                        messages.forEach { m ->
+                            Alert {
+                                severity = m.color
+                                +m.text
+                            }
                         }
                     }
                 }
                 TabPanel {
                     value = "stdOutTab"
-                    List {
-                        Typography {
-                            +"ASD"
+                    Stack {
+                        messages.forEach { m ->
+                            Alert {
+                                severity = m.color
+                                +m.text
+                            }
                         }
                     }
                 }
                 TabPanel {
                     value = "messagesTab"
                     Stack {
-                        Typography {
-                            +"ASD"
+                        messages.forEach { m ->
+                            Alert {
+                                severity = m.color
+                                +m.text
+                            }
                         }
-                        //                    messages.forEach { m ->
-                        //                        Alert {
-                        //                            severity = m.color
-                        //                            +m.text
-                        //                        }
-                        //                    }
                     }
                 }
             }

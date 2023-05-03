@@ -37,6 +37,7 @@ val TheoryEditors = FC<Props> {
             display = Display.flex
             flexFlow = FlexFlow.column
             height = 100.pct
+            padding = 0.px
         }
         
         

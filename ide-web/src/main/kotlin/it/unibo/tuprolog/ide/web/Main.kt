@@ -3,8 +3,13 @@ package it.unibo.tuprolog.ide.web
 import csstype.AlignItems
 import csstype.BackgroundColor
 import csstype.Color
+import csstype.FlexDirection
+import csstype.FlexWrap
 import csstype.JustifyContent
+import csstype.Overflow
 import csstype.em
+import csstype.pct
+import csstype.px
 import csstype.vh
 import csstype.vw
 import emotion.react.css
@@ -50,92 +55,68 @@ val Root = FC<Props> {
 val App = FC<Props> {
     useEffectOnce {}
 
-
 //        Messages {}
 
+    Grid {
+        container = true
+        direction = responsive(GridDirection.column)
+        sx {
+            justifyContent = JustifyContent.flexStart
+            alignItems = AlignItems.center
+//            flexDirection = FlexDirection.column
+            flexWrap = FlexWrap.nowrap
+            height = 100.vh
+        }
+
         Grid {
-            container = true
-            direction = responsive(GridDirection.column)
-            sx {
-                justifyContent = JustifyContent.flexStart
-                alignItems = AlignItems.center
-                height = 100.vh
+            item = true
+            css {
+                backgroundColor = Color("red")
+                width = 100.vw
+            }
+            NavBar {}
+        }
+
+        Grid {
+            item = true
+            css {
+                backgroundColor =  Color("pink")
+                width = 100.vw
+            }
+            xs = true
+            TheoryEditors {}
+        }
+
+        Grid {
+            item = true
+            css {
+                backgroundColor =  Color("blue")
+                width = 100.vw
+            }
+            QueryEditor {}
+        }
+
+        Grid {
+            item = true
+            xs = 4
+            css {
+                backgroundColor =  Color("yellow")
+                width = 100.vw
+                overflowY = Overflow.scroll
+//                height = 400.px
             }
 
-            Grid {
-                item = true
-                css {
-                    backgroundColor = Color("red")
-                    width = 100.vw
-                }
-                NavBar {}
-            }
+            SolutionsContainer {}
+        }
 
-            Grid {
-                item = true
-                css {
-                    backgroundColor =  Color("pink")
-                    width = 100.vw
-                }
-                xs = true
-
-//                TheoryEditors {}
+        Grid {
+            item = true
+            css {
+                backgroundColor =  Color("green")
+                width = 100.vw
             }
-
-            Grid {
-                item = true
-                css {
-                    backgroundColor =  Color("blue")
-                    width = 100.vw
-                }
-                QueryEditor {}
-            }
-
-            Grid {
-                item = true
-                css {
-                    backgroundColor =  Color("yellow")
-                    width = 100.vw
-                }
-                xs = true
-//                SolutionsContainer {}
-            }
-
-            Grid {
-                item = true
-                css {
-                    backgroundColor =  Color("green")
-                    width = 100.vw
-                }
-                Footer {}
-            }
-            
-//            Grid {
-//                item = true
-//                NavBar {}
-//            }
-//
-//            Grid {
-//                item = true
-//                TheoryEditors {}
-//                xs=7
-//            }
-//
-//            Grid {
-//                item = true
-//                QueryEditor {}
-//            }
-//
-//            Grid {
-//                item = true
-//                SolutionsContainer {}
-//                xs=3
-//            }
-//
-//            Grid {
-//                item = true
-//                Footer {}
-//            }
+            Footer {}
+        }
     }
 }
 //            Snackbar {
