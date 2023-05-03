@@ -1,13 +1,16 @@
 package it.unibo.tuprolog.ide.web
 
+import AddEditorTab
 import ChangeSelectedTab
 import EditorTab
 import State
 import UpdateEditorTheory
 import it.unibo.tuprolog.ide.web.utils.Editor
 import it.unibo.tuprolog.ide.web.utils.SnackbarProvider
+import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.ui.gui.Application
 import it.unibo.tuprolog.ui.gui.DefaultJsRunner
+import it.unibo.tuprolog.ui.gui.PageID
 import mui.lab.TabContext
 import mui.lab.TabPanel
 import mui.material.AlertColor
@@ -45,6 +48,10 @@ val Root = FC<Props> {
     Provider {
         store = myStore
 
+        useEffectOnce {
+            console.log(myStore)
+        }
+
         SnackbarProvider {
             maxSnack = 5
             dense = true
@@ -68,11 +75,16 @@ val App = FC<Props> {
     val dispatcher = useDispatch<RAction, Nothing>()
 
     useEffectOnce {
-        val app = Application.of(DefaultJsRunner(), defaultTimeout = 1000L)
-        app.onStart.bind {
-            console.log(it)
-        }
-        app.start()
+//        val app = Application.of(DefaultJsRunner(), ClassicSolverFactory, defaultTimeout = 1000L)
+//        app.onStart.bind {
+////            app.newPage(PageID.name("asd.pl"))
+//
+//            dispatcher(AddEditorTab(""))
+//        }
+//        app.onPageCreated.bind {
+//            console.log("CORE TAB CREATED!!!", it)
+//        }
+//        app.start()
 
 //        page.onSolve(() -> {...})
 //        page.solve()

@@ -1,6 +1,12 @@
+import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
+import it.unibo.tuprolog.ui.gui.Application
+import it.unibo.tuprolog.ui.gui.DefaultJsRunner
+import it.unibo.tuprolog.ui.gui.Event
+import it.unibo.tuprolog.ui.gui.PageID
 import js.uri.encodeURIComponent
 import react.Reducer
 import redux.RAction
+import redux.Store
 import redux.createStore
 import redux.rEnhancer
 import web.html.HTML
@@ -18,9 +24,40 @@ class EditorTab(var fileName: String, var editorValue: String)
 
 // Stato
 data class TuProlog(var editorSelectedTab: String, var editorQuery: String, var editorTabs: MutableList<EditorTab>)
+//class Core {
+//    val coreApp: Application =
+//        Application.of(DefaultJsRunner(), ClassicSolverFactory, defaultTimeout = 1000L)
+//
+//    init {
+//
+//        coreApp.start()
+//    }
+//
+//    private fun catchAnyEvent(e: Event<Any>) {
+//        console.log("Handler for event $e not implemented")
+//    }
+//
+//    private fun registerAppBindings() {
+//        coreApp.onStart.bind {
+//            console.log("STARTED!!!")
+//            console.log(myStore)
+//            myStore.dispatch(AddEditorTab(""))
+//        }
+//        coreApp.onError.bind(this::catchAnyEvent)
+//        coreApp.onPageCreated.bind {
+//            console.log("CORE TAB CREATED!!!")
+//        }
+//        coreApp.onPageLoaded.bind(this::catchAnyEvent)
+//        coreApp.onPageClosed.bind(this::catchAnyEvent)
+//        coreApp.onPageSelected.bind(this::catchAnyEvent)
+//        coreApp.onPageUnselected.bind(this::catchAnyEvent)
+//        coreApp.onQuit.bind(this::catchAnyEvent)
+//    }
+//}
 
 data class State(
     var tuProlog: TuProlog,
+//    var core: Core
 )
 
 // Azioni disponibili
@@ -40,6 +77,19 @@ const val MYCOUNTER2 = 10
 
 // TODO risolvere complessità ciclica della funzione
 // TODO verificare se la dispatch è sincrona o asincrona
+//fun coreActions(state: State, action: RAction): Core = when (action) {
+//    is AddEditorTab -> {
+//        console.log("ACTION", state)
+//        val fileName: String = "undefined_" + Date().getTime() + ".pl"
+//        state.core.coreApp.newPage(PageID.name(fileName))
+//        state.core
+//    }
+//
+//    else -> {
+//        console.log("ELSE", state)
+//        state.core
+//    }
+//}
 fun tuPrologActions(state: TuProlog, action: RAction): TuProlog = when (action) {
     is AddEditorTab -> {
         val fileName: String = "undefined_" + Date().getTime() + ".pl"
@@ -132,6 +182,7 @@ fun rootReducer(
     action: Any
 ) = State(
     tuPrologActions(state.tuProlog, action.unsafeCast<RAction>()),
+//    coreActions(state, action.unsafeCast<RAction>()),
 )
 
 val DEMO_EDITORS = mutableListOf(
@@ -169,7 +220,8 @@ val DEMO_EDITORS = mutableListOf(
 val myStore = createStore(
     ::rootReducer,
     State(
-        TuProlog("Test1.pl", "", DEMO_EDITORS)
+        TuProlog("Test1.pl", "", DEMO_EDITORS),
+//        Core()
     ),
     rEnhancer()
 )
