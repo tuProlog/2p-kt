@@ -1,10 +1,10 @@
-package it.unibo.tuprolog.ide.web
+package it.unibo.tuprolog.ide.web.components
 
-import AddEditorTab
-import DownloadTheory
-import OnFileLoad
-import RemoveEditorTab
-import RenameEditor
+import it.unibo.tuprolog.ide.web.redux.actions.AddEditorTab
+import it.unibo.tuprolog.ide.web.redux.actions.DownloadTheory
+import it.unibo.tuprolog.ide.web.redux.actions.OnFileLoad
+import it.unibo.tuprolog.ide.web.redux.actions.RemoveEditorTab
+import it.unibo.tuprolog.ide.web.redux.actions.RenameEditor
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent.Companion.spaceBetween
 import csstype.NamedColor.Companion.green
@@ -43,10 +43,7 @@ import react.redux.useDispatch
 import react.redux.useSelector
 import web.html.HTMLInputElement
 import web.html.InputType
-import State
-import it.unibo.tuprolog.ide.web.utils.errorSnackbar
-import it.unibo.tuprolog.ide.web.utils.successSnackbar
-import it.unibo.tuprolog.ide.web.utils.useSnackbar
+import AppState
 import mui.material.Alert
 import mui.material.AlertColor
 import mui.material.Snackbar
@@ -57,6 +54,7 @@ import react.create
 import react.createRef
 import react.useState
 import redux.RAction
+import redux.WrapperAction
 
 const val MYSPACING = 3
 const val MYHEIGHT = 56.0
@@ -66,19 +64,14 @@ const val MYWIDTH = 56.0
 val NavBar = FC<Props> {
     var isDialogOpen by useState(false)
     var isDialogRenameOpen by useState(false)
+    var changeFileNameErrorInput by useState(false)
     var newFileName by useState("")
+
     val uploadInputRef = createRef<HTMLInputElement>()
     val newFileNameInputRef = createRef<HTMLInputElement>()
-    var changeFileNameErrorInput by useState(false)
-    val editorSelectedTab = useSelector<State, String> { s -> s.tuProlog.editorSelectedTab }
 
-    var actionResultSeverity by useState<AlertColor>(AlertColor.info)
-    var actionResultMessage by useState("undefined")
-    var isMessageOpen by useState(false)
-
-    val dispatcher = useDispatch<RAction, Nothing>()
-
-    val enqueueSnackbar = useSnackbar().enqueueSnackbar
+    val dispatcher = useDispatch<RAction, WrapperAction>()
+    val editorSelectedTab = useSelector<AppState, String> { s -> s.tuProlog.editorSelectedTab }
 
     Stack {
         direction = responsive(StackDirection.row)
@@ -109,17 +102,8 @@ val NavBar = FC<Props> {
                 variant = extended
                 onClick = {
                     dispatcher(
-                        AddEditorTab("") { error ->
-                            if (error) {
-                                actionResultSeverity = AlertColor.error
-                                actionResultMessage = "Unable to open a new tab"
-                                isMessageOpen = true
-                            }
-                            enqueueSnackbar("This is a success message!", successSnackbar)
-                            enqueueSnackbar("This is an error message!", errorSnackbar)
-                        }
+                        AddEditorTab("")
                     )
-
                 }
                 Typography {
                     +"Add"
@@ -157,19 +141,8 @@ val NavBar = FC<Props> {
                 onChange = {
                     it.target.files?.get(0)?.text()?.then { it1 ->
                         val fileName = it.target.files?.get(0)?.name
-                        if (fileName == null ) {
-                            actionResultSeverity = AlertColor.error
-                            actionResultMessage = "Unable to load file. File has no name."
-                            isMessageOpen = true
-                        } else {
-                            dispatcher(OnFileLoad(fileName, it1) { error ->
-                                if (error) {
-                                    actionResultSeverity = AlertColor.error
-                                    actionResultMessage = "Unable to load file. File already exists."
-                                    isMessageOpen = true
-                                }
-                            })
-                        }
+                        if (fileName != null)
+                            dispatcher(OnFileLoad(fileName, it1))
                     }
                 }
             }
@@ -190,13 +163,7 @@ val NavBar = FC<Props> {
                 startIcon = GetAppOutlined.create()
                 variant = outlined
                 onClick = {
-                    dispatcher(DownloadTheory { error ->
-                        if (error) {
-                            actionResultSeverity = AlertColor.error
-                            actionResultMessage = "Unable to download theory. No theory specified."
-                            isMessageOpen = true
-                        }
-                    })
+                    dispatcher(DownloadTheory())
                 }
                 Typography {
                     +"Download"
@@ -211,13 +178,7 @@ val NavBar = FC<Props> {
                 startIcon = DeleteForever.create()
                 variant = outlined
                 onClick = {
-                    dispatcher(RemoveEditorTab { error ->
-                        if (error) {
-                            actionResultSeverity = AlertColor.error
-                            actionResultMessage = "Unable to remove editor tab."
-                            isMessageOpen = true
-                        }
-                    })
+                    dispatcher(RemoveEditorTab())
                 }
                 Typography {
                     +"Remove"
@@ -245,16 +206,16 @@ val NavBar = FC<Props> {
             }
         }
 
-        Snackbar {
-            open = isMessageOpen
-            autoHideDuration = 6000
-
-            Alert {
-                onClose={ isMessageOpen = false }
-                severity=actionResultSeverity
-                + actionResultMessage
-            }
-        }
+//        Snackbar {
+//            open = isMessageOpen
+//            autoHideDuration = 6000
+//
+//            Alert {
+//                onClose={ isMessageOpen = false }
+//                severity=actionResultSeverity
+//                + actionResultMessage
+//            }
+//        }
 
         Dialog {
             open = isDialogOpen
@@ -313,12 +274,7 @@ val NavBar = FC<Props> {
                     disabled = changeFileNameErrorInput
                     onClick = {
                         isDialogRenameOpen = false
-                        dispatcher(RenameEditor(newFileName) { error ->
-                            if (error) {
-                                actionResultSeverity = AlertColor.error
-                                actionResultMessage = "Unable to rename current editor tab."
-                            }
-                        })
+                        dispatcher(RenameEditor(newFileName))
                     }
                     +"Confirm"
                 }

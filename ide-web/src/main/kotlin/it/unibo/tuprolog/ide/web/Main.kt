@@ -1,39 +1,38 @@
 package it.unibo.tuprolog.ide.web
 
-import AddEditorTab
-import ChangeSelectedTab
-import EditorTab
-import State
-import UpdateEditorTheory
-import it.unibo.tuprolog.ide.web.utils.Editor
-import it.unibo.tuprolog.ide.web.utils.SnackbarProvider
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
-import it.unibo.tuprolog.ui.gui.Application
-import it.unibo.tuprolog.ui.gui.DefaultJsRunner
-import it.unibo.tuprolog.ui.gui.PageID
-import mui.lab.TabContext
-import mui.lab.TabPanel
-import mui.material.AlertColor
-import mui.material.SnackbarOrigin
-import mui.material.SnackbarOriginHorizontal
-import mui.material.SnackbarOriginVertical
+import csstype.AlignItems
+import csstype.BackgroundColor
+import csstype.Color
+import csstype.FlexDirection
+import csstype.FlexWrap
+import csstype.JustifyContent
+import csstype.Overflow
+import csstype.em
+import csstype.pct
+import csstype.px
+import csstype.vh
+import csstype.vw
+import emotion.react.css
+import it.unibo.tuprolog.ide.web.components.TheoryEditors
+import it.unibo.tuprolog.ide.web.components.Footer
+import it.unibo.tuprolog.ide.web.components.Messages
+import it.unibo.tuprolog.ide.web.components.NavBar
+import it.unibo.tuprolog.ide.web.components.QueryEditor
+import it.unibo.tuprolog.ide.web.components.SolutionsContainer
+import it.unibo.tuprolog.ide.web.utils.xs
+import mui.material.Grid
+import mui.material.GridDirection
 import mui.material.Stack
-import mui.material.Tab
-import mui.material.Tabs
-import mui.material.TabsScrollButtons
-import mui.material.TabsVariant
+import mui.system.responsive
+import mui.system.sx
 import myStore
 import react.FC
 import react.Props
-import react.ReactNode
 import react.create
 import react.dom.client.createRoot
 import react.dom.html.ReactHTML
 import react.redux.Provider
-import react.redux.useDispatch
-import react.redux.useSelector
 import react.useEffectOnce
-import redux.RAction
 import web.dom.document
 import web.html.HTML
 
@@ -48,31 +47,13 @@ val Root = FC<Props> {
     Provider {
         store = myStore
 
-        useEffectOnce {
-            console.log(myStore)
-        }
-
-        SnackbarProvider {
-            maxSnack = 5
-            dense = true
-            variant = AlertColor.info
-            anchorOrigin = object: SnackbarOrigin {
-                override var horizontal = SnackbarOriginHorizontal.right
-                override var vertical = SnackbarOriginVertical.bottom
-            }
-
-            App {}
-        }
+        App {}
     }
 }
 
 
 
 val App = FC<Props> {
-
-    val editorSelectedTab = useSelector<State, String> { s -> s.tuProlog.editorSelectedTab }
-    val editorTabs = useSelector<State, List<EditorTab>> { s -> s.tuProlog.editorTabs }
-    val dispatcher = useDispatch<RAction, Nothing>()
 
     useEffectOnce {
 //        val app = Application.of(DefaultJsRunner(), ClassicSolverFactory, defaultTimeout = 1000L)
@@ -97,47 +78,68 @@ val App = FC<Props> {
 //        app.onQuit.bind(this::onQuit)
     }
 
-    ReactHTML.div {
-        Stack {
+//        Messages {}
 
+    Grid {
+        container = true
+        direction = responsive(GridDirection.column)
+        sx {
+            justifyContent = JustifyContent.flexStart
+            alignItems = AlignItems.center
+//            flexDirection = FlexDirection.column
+            flexWrap = FlexWrap.nowrap
+            height = 100.vh
+        }
 
-            NavBar { }
+        Grid {
+            item = true
+            css {
+                width = 100.vw
+            }
+            NavBar {}
+        }
 
-            TabContext {
-                value = editorSelectedTab
-                Tabs {
-                    value = editorSelectedTab
-                    variant = TabsVariant.scrollable
-                    scrollButtons = TabsScrollButtons.auto
-                    onChange = { _, newValue ->
-                        dispatcher(ChangeSelectedTab(newValue))
-                    }
+        Grid {
+            item = true
+            css {
+//                backgroundColor =  Color("pink")
+                width = 100.vw
+            }
+            xs = true
+            TheoryEditors {}
+        }
 
-                    editorTabs.forEach {
-                        Tab {
-                            value = it.fileName
-                            label = ReactNode(it.fileName)
-                            wrapped = true
-                        }
-                    }
-                }
+        Grid {
+            item = true
+            css {
+//                backgroundColor =  Color("blue")
+                width = 100.vw
+            }
+            QueryEditor {}
+        }
 
-                editorTabs.forEach {
-                    TabPanel {
-                        value = it.fileName
-                        Editor {
-                            value = it.editorValue
-                            height = "63vh"
-                            onChange = {
-                                dispatcher(UpdateEditorTheory(it))
-                            }
-                            beforeMount = {
-                            }
-                        }
-                    }
-                }
+        Grid {
+            item = true
+            css {
+//                backgroundColor =  Color("yellow")
+                width = 100.vw
+                height = 400.px
+                overflowY = Overflow.scroll
             }
 
+            SolutionsContainer {}
+        }
+
+        Grid {
+            item = true
+            css {
+//                backgroundColor =  Color("green")
+                width = 100.vw
+            }
+            Footer {}
+        }
+    }
+}
 //            Snackbar {
 //                open = isErrorAlertOpen
 //                autoHideDuration = AUTOHIDEDURATION
@@ -149,16 +151,3 @@ val App = FC<Props> {
 //                }
 //                // TODO change snack-bar anchor
 //            }
-
-            QueryEditorComponent {
-                onSolve = {
-//                    val editorTheory = editorTabs.find { it2 -> it2.fileName == editorSelectedTab }?.editorValue ?: ""
-//                    val editorQuery = it
-//                    testTuprolog(editorTheory, editorQuery)
-                }
-            }
-            SolutionsContainer {}
-            Footer {}
-        }
-    }
-}

@@ -35,12 +35,11 @@ kotlin {
                 implementation(kotlinw("react-redux"))
                 implementation(kotlinw("redux"))
 
-                // TODO: provare a utilizzare filer
-
                 implementation(npm("date-fns", "2.29.3"))
                 implementation(npm("@date-io/date-fns", "2.16.0"))
                 implementation(npm("@monaco-editor/react", "4.4.6"))
                 implementation(npm("notistack", "3.0.1"))
+                implementation(npm("uuid", "9.0.0"))
             }
 
             // TODO: remove these following configurations (skipping code checks and linting tasks)
