@@ -27,7 +27,7 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 shadowJar = { id = "com.github.johnrengelman.shadow", version.ref = "shadowJar" }
-javafx = "org.openjfx.javafxplugin:0.0.13"
+javafx = "org.openjfx.javafxplugin:0.0.14"
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 ktlint-idea = { id = "org.jlleitschuh.gradle.ktlint-idea", version.ref = "ktlint" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
