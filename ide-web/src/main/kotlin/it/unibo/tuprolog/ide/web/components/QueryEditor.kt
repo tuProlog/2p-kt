@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ide.web.components
 
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import mui.material.Button
 import mui.material.ButtonVariant
 import mui.material.FormControlVariant
@@ -16,7 +17,6 @@ import react.useState
 import web.html.HTMLInputElement
 
 val QueryEditor = FC<Props> { props ->
-    var editorQuery by useState("")
     val inputRef2 = createRef<HTMLInputElement>()
 
     Stack {
@@ -29,7 +29,7 @@ val QueryEditor = FC<Props> { props ->
             inputRef = inputRef2
             onChange = {
                 inputRef2.current?.let { it1 ->
-                    editorQuery = it1.value
+                    TuPrologController.application.currentPage?.query = it1.value
                 }
             }
         }
@@ -37,10 +37,7 @@ val QueryEditor = FC<Props> { props ->
             variant = ButtonVariant.contained
             +"Solve"
             onClick = {
-
-//                val editorTheory = editorTabs.find { it2 -> it2.fileName == editorSelectedTab }?.editorValue ?: ""
-//                val editorQuery = it
-//                testTuprolog(editorTheory, editorQuery)
+                TuPrologController.application.currentPage?.solve()
             }
         }
         Button {

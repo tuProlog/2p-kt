@@ -1,5 +1,7 @@
 import it.unibo.tuprolog.ide.web.redux.reducers.messagesActions
 import it.unibo.tuprolog.ide.web.redux.reducers.tuPrologActions
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import redux.RAction
 import redux.createStore
 import redux.rEnhancer
@@ -7,8 +9,9 @@ import mui.material.AlertColor
 
 // Stato
 class Message(var text: String, var color: AlertColor) {} //, var id:UUID
-class EditorTab(var fileName: String, var editorValue: String)
-data class TuProlog(var editorSelectedTab: String, var editorQuery: String, var editorTabs: MutableList<EditorTab>)
+data class TuProlog(var pages: Collection<TuPrologPage>,
+                    var currentPage: TuPrologPage?,
+                    var solutions: Collection<TuPrologSolution>)
 
 data class AppState(
     var tuProlog: TuProlog,
@@ -24,42 +27,42 @@ fun rootReducer(
     messagesActions(state, action.unsafeCast<RAction>())
 )
 
-val DEMO_EDITORS = mutableListOf(
-    EditorTab(
-        "Test1.pl", """
-            % member2(List, Elem, ListWithoutElem)
-            member2([X|Xs],X,Xs).
-            member2([X|Xs],E,[X|Ys]):-member2(Xs,E,Ys).
-            % permutation(Ilist, Olist)
-            permutation([],[]).
-            permutation(Xs, [X | Ys]) :-
-            member2(Xs,X,Zs),
-            permutation(Zs, Ys).
-    
-            % permutation([10,20,30],L).
-        """
-    ),
-    EditorTab(
-        "Test2.pl", """
-            nat(z).
-            nat(s(X)) :- nat(X).
-
-            % nat(N).
-        """
-    ),
-    EditorTab(
-        "Test3.pl", """
-            increment(A, B, C) :- C is A + B.
-            
-            % increment(1,2,X).
-        """
-    )
-)
+//val DEMO_EDITORS = mutableListOf(
+//    EditorTab(
+//        "Test1.pl", """
+//            % member2(List, Elem, ListWithoutElem)
+//            member2([X|Xs],X,Xs).
+//            member2([X|Xs],E,[X|Ys]):-member2(Xs,E,Ys).
+//            % permutation(Ilist, Olist)
+//            permutation([],[]).
+//            permutation(Xs, [X | Ys]) :-
+//            member2(Xs,X,Zs),
+//            permutation(Zs, Ys).
+//
+//            % permutation([10,20,30],L).
+//        """
+//    ),
+//    EditorTab(
+//        "Test2.pl", """
+//            nat(z).
+//            nat(s(X)) :- nat(X).
+//
+//            % nat(N).
+//        """
+//    ),
+//    EditorTab(
+//        "Test3.pl", """
+//            increment(A, B, C) :- C is A + B.
+//
+//            % increment(1,2,X).
+//        """
+//    )
+//)
 
 val myStore = createStore(
     ::rootReducer,
     AppState(
-        TuProlog("Test1.pl", "", DEMO_EDITORS),
+        TuProlog(emptyList(), null, emptyList()),
         emptyList()
     ),
     rEnhancer()

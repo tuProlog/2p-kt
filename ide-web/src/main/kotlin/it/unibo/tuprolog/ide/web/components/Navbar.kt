@@ -1,60 +1,47 @@
 package it.unibo.tuprolog.ide.web.components
 
-import it.unibo.tuprolog.ide.web.redux.actions.AddEditorTab
-import it.unibo.tuprolog.ide.web.redux.actions.DownloadTheory
-import it.unibo.tuprolog.ide.web.redux.actions.OnFileLoad
-import it.unibo.tuprolog.ide.web.redux.actions.RemoveEditorTab
-import it.unibo.tuprolog.ide.web.redux.actions.RenameEditor
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent.Companion.spaceBetween
-import csstype.NamedColor.Companion.green
 import csstype.NamedColor.Companion.red
 import csstype.em
 import emotion.react.css
 import mui.icons.material.Add
-import mui.icons.material.Info
 import mui.icons.material.DeleteForever
-import mui.icons.material.Edit
-import mui.icons.material.GetAppOutlined
-import mui.icons.material.UploadFileOutlined
 import mui.material.Button
-import mui.material.ButtonColor
-import mui.material.ButtonVariant.Companion.contained
 import mui.material.ButtonVariant.Companion.outlined
-import mui.material.Dialog
-import mui.material.DialogActions
-import mui.material.DialogContent
-import mui.material.DialogContentText
-import mui.material.DialogTitle
 import mui.material.Fab
 import mui.material.FabColor
 import mui.material.FabVariant.Companion.extended
 import mui.material.Stack
 import mui.material.StackDirection
-import mui.material.TextField
 import mui.material.Typography
 import mui.system.responsive
 import mui.system.sx
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
-import react.dom.html.ReactHTML.input
-import react.dom.onChange
 import react.redux.useDispatch
 import react.redux.useSelector
 import web.html.HTMLInputElement
-import web.html.InputType
 import AppState
-import mui.material.Alert
-import mui.material.AlertColor
-import mui.material.Snackbar
+import csstype.NamedColor.Companion.green
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
+import it.unibo.tuprolog.utils.io.JsFile
+import mui.icons.material.UploadFileOutlined
 import react.FC
 import react.Props
 import react.ReactNode
 import react.create
 import react.createRef
+import react.dom.html.ReactHTML.input
 import react.useState
 import redux.RAction
 import redux.WrapperAction
+import web.buffer.Blob
+import web.events.EventType
+import web.file.FileReader
+import web.html.InputType
+import web.url.URL
 
 const val MYSPACING = 3
 const val MYHEIGHT = 56.0
@@ -71,7 +58,7 @@ val NavBar = FC<Props> {
     val newFileNameInputRef = createRef<HTMLInputElement>()
 
     val dispatcher = useDispatch<RAction, WrapperAction>()
-    val editorSelectedTab = useSelector<AppState, String> { s -> s.tuProlog.editorSelectedTab }
+    val currentPage = useSelector<AppState, TuPrologPage?> { s -> s.tuProlog.currentPage }
 
     Stack {
         direction = responsive(StackDirection.row)
@@ -101,9 +88,7 @@ val NavBar = FC<Props> {
                 color = FabColor.primary
                 variant = extended
                 onClick = {
-                    dispatcher(
-                        AddEditorTab("")
-                    )
+                    TuPrologController.application.newPage()
                 }
                 Typography {
                     +"Add"
@@ -114,23 +99,23 @@ val NavBar = FC<Props> {
                 }
             }
 
-            Fab {
-                Edit()
-                color = FabColor.secondary
-                variant = extended
-                onClick = {
-                    newFileName = editorSelectedTab
-                    changeFileNameErrorInput = false
-                    isDialogRenameOpen = true
-                }
-                Typography {
-                    +"Rename"
-                }
-                sx {
-                    marginRight = 10.em
-                    marginLeft = 1.em
-                }
-            }
+//            Fab {
+//                Edit()
+//                color = FabColor.secondary
+//                variant = extended
+//                onClick = {
+//                    newFileName = editorSelectedTab
+//                    changeFileNameErrorInput = false
+//                    isDialogRenameOpen = true
+//                }
+//                Typography {
+//                    +"Rename"
+//                }
+//                sx {
+//                    marginRight = 10.em
+//                    marginLeft = 1.em
+//                }
+//            }
 
             input {
                 type = InputType.file
@@ -140,9 +125,24 @@ val NavBar = FC<Props> {
                 multiple = false
                 onChange = {
                     it.target.files?.get(0)?.text()?.then { it1 ->
-                        val fileName = it.target.files?.get(0)?.name
-                        if (fileName != null)
-                            dispatcher(OnFileLoad(fileName, it1))
+                        val file = it.target.files?.get(0)
+                        if (file != null) {
+                            val url = URL.createObjectURL(file)
+                            TuPrologController.application.load(
+                                JsFile(url.subSequence(13, url.length).toString())
+                            )
+                        }
+
+                        /*
+                            const reader = new FileReader();
+
+                            reader.addEventListener("load", function () {
+                              const url = reader.result;
+                              console.log(url);
+                            });
+
+                            reader.readAsDataURL(file);
+                         */
                     }
                 }
             }
@@ -159,26 +159,36 @@ val NavBar = FC<Props> {
                     color = green
                 }
             }
-            Button {
-                startIcon = GetAppOutlined.create()
-                variant = outlined
-                onClick = {
-                    dispatcher(DownloadTheory())
-                }
-                Typography {
-                    +"Download"
-                }
-                sx {
-                    marginRight = 1.em
-                    marginLeft = 1.em
-                    color = green
-                }
-            }
+//            Button {
+//                startIcon = GetAppOutlined.create()
+//                variant = outlined
+//                onClick = {
+//                }
+//                Typography {
+//                    +"Download"
+//                }
+//                sx {
+//                    marginRight = 1.em
+//                    marginLeft = 1.em
+//                    color = green
+//                }
+//            }
             Button {
                 startIcon = DeleteForever.create()
                 variant = outlined
                 onClick = {
-                    dispatcher(RemoveEditorTab())
+                    if (TuPrologController.application.pages.size > 1) {
+                        // find the deletable tab panel index
+                        val index = TuPrologController.application.pages.indexOfFirst {
+                            it.id == TuPrologController.application.currentPage?.id
+                        }
+                        TuPrologController.application.currentPage?.close()
+
+                        // select new ide
+                        TuPrologController.application.select(
+                            TuPrologController.application.pages.elementAt(
+                                if (index == 0) index else index -1))
+                    }
                 }
                 Typography {
                     +"Remove"
@@ -189,21 +199,21 @@ val NavBar = FC<Props> {
                     color = red
                 }
             }
-            Button {
-                startIcon = Info.create()
-                variant = contained
-                onClick = {
-                    isDialogOpen = true
-                }
-                Typography {
-                    +"About"
-                }
-                sx {
-                    marginRight = 1.em
-                    marginLeft = 1.em
-                }
-                color = ButtonColor.info
-            }
+//            Button {
+//                startIcon = Info.create()
+//                variant = contained
+//                onClick = {
+//                    isDialogOpen = true
+//                }
+//                Typography {
+//                    +"About"
+//                }
+//                sx {
+//                    marginRight = 1.em
+//                    marginLeft = 1.em
+//                }
+//                color = ButtonColor.info
+//            }
         }
 
 //        Snackbar {
@@ -217,68 +227,68 @@ val NavBar = FC<Props> {
 //            }
 //        }
 
-        Dialog {
-            open = isDialogOpen
-            onClose = { _, _ -> isDialogOpen = false }
+//        Dialog {
+//            open = isDialogOpen
+//            onClose = { _, _ -> isDialogOpen = false }
+//
+//            DialogTitle {
+//                +"About"
+//            }
+//            DialogContent {
+//                DialogContentText {
+//                    +"TupKTWeb versione 0.1"
+//                }
+//                DialogActions {
+//                    Button {
+//                        onClick = { isDialogOpen = false }
+//                        +"Close"
+//                    }
+//                }
+//            }
+//        }
 
-            DialogTitle {
-                +"About"
-            }
-            DialogContent {
-                DialogContentText {
-                    +"TupKTWeb versione 0.1"
-                }
-                DialogActions {
-                    Button {
-                        onClick = { isDialogOpen = false }
-                        +"Close"
-                    }
-                }
-            }
-        }
-
-        Dialog {
-            open = isDialogRenameOpen
-            onClose = { _, _ -> isDialogRenameOpen = false }
-            DialogTitle {
-                +"Rename editor"
-            }
-            DialogContent {
-                DialogContentText {
-                    +"Write here the new name for $editorSelectedTab"
-                }
-                TextField {
-                    autoFocus = true
-                    inputRef = newFileNameInputRef
-                    fullWidth = true
-                    error = changeFileNameErrorInput
-                    label = ReactNode("New file name")
-                    helperText = ReactNode("File name must end with .pl or .txt")
-                    defaultValue = editorSelectedTab
-                    onChange = {
-                        newFileNameInputRef.current?.let { it1 ->
-                            newFileName = it1.value
-                            changeFileNameErrorInput = !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
-                        }
-                    }
-                }
-            }
-            DialogActions {
-                Button {
-                    onClick = {
-                        isDialogRenameOpen = false
-                    }
-                    +"Cancel"
-                }
-                Button {
-                    disabled = changeFileNameErrorInput
-                    onClick = {
-                        isDialogRenameOpen = false
-                        dispatcher(RenameEditor(newFileName))
-                    }
-                    +"Confirm"
-                }
-            }
-        }
+//        Dialog {
+//            open = isDialogRenameOpen
+//            onClose = { _, _ -> isDialogRenameOpen = false }
+//            DialogTitle {
+//                +"Rename editor"
+//            }
+//            DialogContent {
+//                DialogContentText {
+//                    +"Write here the new name for $currentPage"
+//                }
+//                TextField {
+//                    autoFocus = true
+//                    inputRef = newFileNameInputRef
+//                    fullWidth = true
+//                    error = changeFileNameErrorInput
+//                    label = ReactNode("New file name")
+//                    helperText = ReactNode("File name must end with .pl or .txt")
+//                    defaultValue = currentPage
+//                    onChange = {
+//                        newFileNameInputRef.current?.let { it1 ->
+//                            newFileName = it1.value
+//                            changeFileNameErrorInput = !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
+//                        }
+//                    }
+//                }
+//            }
+//            DialogActions {
+//                Button {
+//                    onClick = {
+//                        isDialogRenameOpen = false
+//                    }
+//                    +"Cancel"
+//                }
+//                Button {
+//                    disabled = changeFileNameErrorInput
+//                    onClick = {
+//                        isDialogRenameOpen = false
+//                        dispatcher(RenameEditor(newFileName))
+//                    }
+//                    +"Confirm"
+//                }
+//            }
+//        }
     }
 }

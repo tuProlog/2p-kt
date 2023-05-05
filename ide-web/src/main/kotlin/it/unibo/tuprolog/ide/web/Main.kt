@@ -19,6 +19,7 @@ import it.unibo.tuprolog.ide.web.components.Messages
 import it.unibo.tuprolog.ide.web.components.NavBar
 import it.unibo.tuprolog.ide.web.components.QueryEditor
 import it.unibo.tuprolog.ide.web.components.SolutionsContainer
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.xs
 import mui.material.Grid
 import mui.material.GridDirection
@@ -47,6 +48,11 @@ val Root = FC<Props> {
     Provider {
         store = myStore
 
+        useEffectOnce {
+            // TODO move into main() ???
+            TuPrologController.registerReduxStore(myStore)
+        }
+
         App {}
     }
 }
@@ -56,29 +62,8 @@ val Root = FC<Props> {
 val App = FC<Props> {
 
     useEffectOnce {
-//        val app = Application.of(DefaultJsRunner(), ClassicSolverFactory, defaultTimeout = 1000L)
-//        app.onStart.bind {
-////            app.newPage(PageID.name("asd.pl"))
-//
-//            dispatcher(AddEditorTab(""))
-//        }
-//        app.onPageCreated.bind {
-//            console.log("CORE TAB CREATED!!!", it)
-//        }
-//        app.start()
 
-//        page.onSolve(() -> {...})
-//        page.solve()
-//        app.onError.bind(this::onError)
-//        app.onPageCreated.bind(this::onPageCreated)
-//        app.onPageLoaded.bind(this::onFileLoaded)
-//        app.onPageClosed.bind(this::onPageClosed)
-//        app.onPageSelected.bind(this::onPageSelected)
-//        app.onPageUnselected.bind(this::onPageUnselected)
-//        app.onQuit.bind(this::onQuit)
     }
-
-//        Messages {}
 
     Grid {
         container = true
@@ -86,7 +71,6 @@ val App = FC<Props> {
         sx {
             justifyContent = JustifyContent.flexStart
             alignItems = AlignItems.center
-//            flexDirection = FlexDirection.column
             flexWrap = FlexWrap.nowrap
             height = 100.vh
         }
@@ -102,7 +86,6 @@ val App = FC<Props> {
         Grid {
             item = true
             css {
-//                backgroundColor =  Color("pink")
                 width = 100.vw
             }
             xs = true
@@ -112,7 +95,6 @@ val App = FC<Props> {
         Grid {
             item = true
             css {
-//                backgroundColor =  Color("blue")
                 width = 100.vw
             }
             QueryEditor {}
@@ -121,7 +103,6 @@ val App = FC<Props> {
         Grid {
             item = true
             css {
-//                backgroundColor =  Color("yellow")
                 width = 100.vw
                 height = 400.px
                 overflowY = Overflow.scroll
@@ -133,21 +114,9 @@ val App = FC<Props> {
         Grid {
             item = true
             css {
-//                backgroundColor =  Color("green")
                 width = 100.vw
             }
             Footer {}
         }
     }
 }
-//            Snackbar {
-//                open = isErrorAlertOpen
-//                autoHideDuration = AUTOHIDEDURATION
-//                onClose = { _, _ -> isErrorAlertOpen = false }
-//
-//                Alert {
-//                    severity = AlertColor.error
-//                    +errorAlertMessage
-//                }
-//                // TODO change snack-bar anchor
-//            }

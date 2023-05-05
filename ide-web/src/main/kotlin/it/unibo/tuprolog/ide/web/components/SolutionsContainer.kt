@@ -24,6 +24,7 @@ import react.ReactNode
 import react.dom.html.ReactHTML
 import react.redux.useSelector
 import emotion.react.css
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import mui.material.Badge
 import mui.material.Button
 import mui.material.ButtonColor
@@ -37,6 +38,8 @@ import react.dom.html.ReactHTML.div
 import react.useState
 
 val SolutionsContainer = FC<Props> {
+
+    val solutions = useSelector<AppState, Collection<TuPrologSolution>> { s -> s.tuProlog.solutions }
 
     val messages = useSelector<AppState, List<Message>> { s -> s.messages }
 
@@ -89,56 +92,65 @@ val SolutionsContainer = FC<Props> {
                 List {
                     dense = true
 
-                    solutionsMixed.forEach { i ->
+//                    solutionsMixed.forEach { i ->
+//                        ListItem {
+//                            ListItemIcon {
+//                                //CheckCircleOutline
+//                                if (i.state == "yes")
+//                                    CheckCircleOutline {
+//                                        color = SvgIconColor.success
+//                                    }
+//                                if (i.state == "no")
+//                                    CancelOutlined {
+//                                        color = SvgIconColor.disabled
+//                                    }
+//                                if (i.state == "timeout")
+//                                    TimerOffOutlined {
+//                                        color = SvgIconColor.warning
+//                                    }
+//                                if (i.state == "error")
+//                                    ErrorOutlineOutlined {
+//                                        color = SvgIconColor.error
+//                                    }
+//                            }
+//                            ListItemText {
+//                                primary = ReactNode(i.state)
+//                                secondary = ReactNode(i.sol)
+//                            }
+//                        }
+//                    }
+
+                    solutions.forEach { i ->
                         ListItem {
                             ListItemIcon {
                                 //CheckCircleOutline
-                                if (i.state == "yes")
+                                if (i.isYes)
                                     CheckCircleOutline {
                                         color = SvgIconColor.success
                                     }
-                                if (i.state == "no")
+                                if (i.isNo)
                                     CancelOutlined {
                                         color = SvgIconColor.disabled
                                     }
-                                if (i.state == "timeout")
+                                if (i.isHalt)
                                     TimerOffOutlined {
                                         color = SvgIconColor.warning
                                     }
-                                if (i.state == "error")
-                                    ErrorOutlineOutlined {
-                                        color = SvgIconColor.error
-                                    }
                             }
-                            ListItemText {
-                                primary = ReactNode(i.state)
-                                secondary = ReactNode(i.sol)
-                            }
+//                            C:\Users\Fabio\Desktop\ise_workspace\2p-kt\ide\src\main\kotlin\it\unibo\tuprolog\ui\gui\SolutionView.kt
+//                            ListItemText {
+//                                primary = ReactNode(i.state)
+//                                secondary = ReactNode(i.sol)
+//                            }
                         }
                     }
                 }
             }
             TabPanel {
                 value = "stdInTab"
-                Stack {
-                    messages.forEach { m ->
-                        Alert {
-                            severity = m.color
-                            +m.text
-                        }
-                    }
-                }
             }
             TabPanel {
                 value = "stdOutTab"
-                Stack {
-                    messages.forEach { m ->
-                        Alert {
-                            severity = m.color
-                            +m.text
-                        }
-                    }
-                }
             }
             TabPanel {
                 value = "messagesTab"

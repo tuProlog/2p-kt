@@ -1,26 +1,58 @@
 package it.unibo.tuprolog.ide.web.tuprolog
 
+import AppState
+import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
+import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
+import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.ui.gui.Application
 import it.unibo.tuprolog.ui.gui.DefaultJsRunner
 import it.unibo.tuprolog.ui.gui.Event
 import it.unibo.tuprolog.ui.gui.Page
+import redux.RAction
+import redux.Store
+import redux.WrapperAction
 
-class TuPrologController {
+object TuPrologController {
 
-    val application = Application.of(DefaultJsRunner(), ClassicSolverFactory, defaultTimeout = 1000L)
+    val application = TuPrologApplication.of(DefaultJsRunner(), ClassicSolverFactory, defaultTimeout = 1000L)
+    private lateinit var store: Store<AppState, RAction, WrapperAction>
+    init {
+        this.bindApplication()
+    }
 
-    val catchAnyEvent: (Event<Any>) -> Unit = { console.log("Missing event: ", it) }
+    private val catchAnyEvent: (Event<Any>) -> Unit = { console.log("[Controller] Missing event handler: ", it) }
+    val logEvent: (Event<Any>) -> Unit = { console.log("[Controller] Received event: ", it) }
+
+    fun registerReduxStore(store: Store<AppState, RAction, WrapperAction>) {
+        this.store = store
+    }
+
     fun bindApplication() {
         application.onStart.bind(catchAnyEvent)
         application.onError.bind(catchAnyEvent)
-        application.onPageCreated.bind(catchAnyEvent)
-        application.onPageLoaded.bind(catchAnyEvent)
-        application.onPageClosed.bind(catchAnyEvent)
-        application.onPageSelected.bind {
-            bindPage(it.event)
+        application.onPageCreated.bind{
+            logEvent(it)
+            store.dispatch(UpdatePagesList(application.pages))
         }
-        application.onPageUnselected.bind(catchAnyEvent)
+        application.onPageLoaded.bind {
+            logEvent(it)
+            store.dispatch(UpdatePagesList(application.pages))
+        }
+        application.onPageClosed.bind {
+            logEvent(it)
+            store.dispatch(UpdatePagesList(application.pages))
+        }
+        application.onPageSelected.bind {
+            logEvent(it)
+            bindPage(it.event)
+            store.dispatch(UpdateSelectedPage(application.currentPage))
+        }
+        application.onPageUnselected.bind {
+            logEvent(it)
+            unbindPage(it.event)
+            store.dispatch(UpdateSelectedPage(null))
+        }
         application.onQuit.bind(catchAnyEvent)
     }
 
@@ -29,7 +61,10 @@ class TuPrologController {
         page.onResolutionOver.bind(catchAnyEvent)
         page.onNewQuery.bind(catchAnyEvent)
         page.onQueryOver.bind(catchAnyEvent)
-        page.onNewSolution.bind(catchAnyEvent)
+        page.onNewSolution.bind{
+            logEvent(it)
+            store.dispatch(NewSolution(it.event))
+        }
         page.onStdoutPrinted.bind(catchAnyEvent)
         page.onStderrPrinted.bind(catchAnyEvent)
         page.onWarning.bind(catchAnyEvent)
@@ -37,6 +72,7 @@ class TuPrologController {
         page.onNewStaticKb.bind(catchAnyEvent)
         page.onSolveOptionsChanged.bind(catchAnyEvent)
         page.onReset.bind(catchAnyEvent)
+
     }
 
     private fun unbindPage(page: Page) {

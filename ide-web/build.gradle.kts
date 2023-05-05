@@ -21,6 +21,8 @@ kotlin {
         val main by getting {
             dependencies {
                 api(project(":gui"))
+                api(project(":io-lib"))
+                api(project(":oop-lib"))
                 api(project(":solve-classic"))
                 api(project(":parser-theory"))
 
