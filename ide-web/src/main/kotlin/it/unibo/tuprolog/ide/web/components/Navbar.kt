@@ -26,8 +26,17 @@ import AppState
 import csstype.NamedColor.Companion.green
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
+import it.unibo.tuprolog.ui.gui.PageName
 import it.unibo.tuprolog.utils.io.JsFile
+import mui.icons.material.Info
 import mui.icons.material.UploadFileOutlined
+import mui.material.ButtonColor
+import mui.material.ButtonVariant.Companion.contained
+import mui.material.Dialog
+import mui.material.DialogActions
+import mui.material.DialogContent
+import mui.material.DialogContentText
+import mui.material.DialogTitle
 import react.FC
 import react.Props
 import react.ReactNode
@@ -125,30 +134,19 @@ val NavBar = FC<Props> {
                 multiple = false
                 onChange = {
                     it.target.files?.get(0)?.text()?.then { it1 ->
-                        val file = it.target.files?.get(0)
-                        if (file != null) {
-                            val url = URL.createObjectURL(file)
-                            TuPrologController.application.load(
-                                JsFile(url.subSequence(13, url.length).toString())
-                            )
-                        }
-
-                        /*
-                            const reader = new FileReader();
-
-                            reader.addEventListener("load", function () {
-                              const url = reader.result;
-                              console.log(url);
-                            });
-
-                            reader.readAsDataURL(file);
-                         */
+                        val name = it.target.files?.get(0)?.name
+                        if (name != null)
+                            TuPrologController
+                                .application
+                                .newPage(PageName(name))
+                                .theory = it1
                     }
                 }
             }
             Button {
                 startIcon = UploadFileOutlined.create()
                 variant = outlined
+                color = ButtonColor.success
                 onClick = { uploadInputRef.current?.click() }
                 Typography {
                     +"Upload"
@@ -156,7 +154,6 @@ val NavBar = FC<Props> {
                 sx {
                     marginRight = 1.em
                     marginLeft = 1.em
-                    color = green
                 }
             }
 //            Button {
@@ -176,6 +173,7 @@ val NavBar = FC<Props> {
             Button {
                 startIcon = DeleteForever.create()
                 variant = outlined
+                color = ButtonColor.error
                 onClick = {
                     if (TuPrologController.application.pages.size > 1) {
                         // find the deletable tab panel index
@@ -196,24 +194,23 @@ val NavBar = FC<Props> {
                 sx {
                     marginRight = 1.em
                     marginLeft = 1.em
-                    color = red
                 }
             }
-//            Button {
-//                startIcon = Info.create()
-//                variant = contained
-//                onClick = {
-//                    isDialogOpen = true
-//                }
-//                Typography {
-//                    +"About"
-//                }
-//                sx {
-//                    marginRight = 1.em
-//                    marginLeft = 1.em
-//                }
-//                color = ButtonColor.info
-//            }
+            Button {
+                startIcon = Info.create()
+                variant = contained
+                onClick = {
+                    isDialogOpen = true
+                }
+                Typography {
+                    +"About"
+                }
+                sx {
+                    marginRight = 1.em
+                    marginLeft = 1.em
+                }
+                color = ButtonColor.info
+            }
         }
 
 //        Snackbar {
@@ -227,25 +224,25 @@ val NavBar = FC<Props> {
 //            }
 //        }
 
-//        Dialog {
-//            open = isDialogOpen
-//            onClose = { _, _ -> isDialogOpen = false }
-//
-//            DialogTitle {
-//                +"About"
-//            }
-//            DialogContent {
-//                DialogContentText {
-//                    +"TupKTWeb versione 0.1"
-//                }
-//                DialogActions {
-//                    Button {
-//                        onClick = { isDialogOpen = false }
-//                        +"Close"
-//                    }
-//                }
-//            }
-//        }
+        Dialog {
+            open = isDialogOpen
+            onClose = { _, _ -> isDialogOpen = false }
+
+            DialogTitle {
+                +"About"
+            }
+            DialogContent {
+                DialogContentText {
+                    +"TupKTWeb versione 0.1"
+                }
+                DialogActions {
+                    Button {
+                        onClick = { isDialogOpen = false }
+                        +"Close"
+                    }
+                }
+            }
+        }
 
 //        Dialog {
 //            open = isDialogRenameOpen

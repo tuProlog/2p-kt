@@ -17,6 +17,7 @@ object TuPrologController {
 
     val application = TuPrologApplication.of(DefaultJsRunner(), ClassicSolverFactory, defaultTimeout = 1000L)
     private lateinit var store: Store<AppState, RAction, WrapperAction>
+
     init {
         this.bindApplication()
     }

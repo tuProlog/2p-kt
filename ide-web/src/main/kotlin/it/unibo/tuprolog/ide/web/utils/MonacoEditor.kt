@@ -27,6 +27,7 @@ external interface EditorProps : Props {
     var height: String
     var onChange: (String) -> Unit
     var beforeMount: (BeforeMount) -> Unit
+    var theme: String
 }
 
 @JsName("default")

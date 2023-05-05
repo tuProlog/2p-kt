@@ -77,6 +77,7 @@ val TheoryEditors = FC<Props> {
                             onChange = {
                                 TuPrologController.application.currentPage?.theory = it
                             }
+                            theme = "vs-dark"
                             beforeMount = {
     //                            console.log(it)
     //                            it.languages.register("tuProlog")
