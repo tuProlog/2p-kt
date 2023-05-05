@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ide.web.components
 
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
+import it.unibo.tuprolog.ui.gui.Page
 import mui.material.Button
 import mui.material.ButtonVariant
 import mui.material.FormControlVariant
@@ -37,12 +38,23 @@ val QueryEditor = FC<Props> { props ->
             variant = ButtonVariant.contained
             +"Solve"
             onClick = {
-                TuPrologController.application.currentPage?.solve()
+                if ( TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
+                    TuPrologController.application.currentPage?.solve(1)
+                } else {
+                    TuPrologController.application.currentPage?.next(1)
+                }
             }
         }
         Button {
             variant = ButtonVariant.contained
             +"Solve All"
+            onClick = {
+                if ( TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
+                    TuPrologController.application.currentPage?.solve(Int.MAX_VALUE)
+                } else {
+                    TuPrologController.application.currentPage?.next(Int.MAX_VALUE)
+                }
+            }
         }
         Button {
             variant = ButtonVariant.contained
