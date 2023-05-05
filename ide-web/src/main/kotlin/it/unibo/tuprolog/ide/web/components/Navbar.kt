@@ -28,6 +28,8 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ui.gui.PageName
 import it.unibo.tuprolog.utils.io.JsFile
+import js.uri.encodeURIComponent
+import mui.icons.material.GetAppOutlined
 import mui.icons.material.Info
 import mui.icons.material.UploadFileOutlined
 import mui.material.ButtonColor
@@ -46,17 +48,18 @@ import react.dom.html.ReactHTML.input
 import react.useState
 import redux.RAction
 import redux.WrapperAction
-import web.buffer.Blob
+import web.dom.document
 import web.events.EventType
-import web.file.FileReader
+import web.html.HTML
 import web.html.InputType
-import web.url.URL
 
+// TODO spostare tutte le config di val costanti in un file a parte
 const val MYSPACING = 3
 const val MYHEIGHT = 56.0
 const val MYWIDTH = 56.0
 
 //TODO far visualizzare le tab con il nome non tutto maiuscolo
+
 val NavBar = FC<Props> {
     var isDialogOpen by useState(false)
     var isDialogRenameOpen by useState(false)
@@ -135,11 +138,13 @@ val NavBar = FC<Props> {
                 onChange = {
                     it.target.files?.get(0)?.text()?.then { it1 ->
                         val name = it.target.files?.get(0)?.name
-                        if (name != null)
+                        if (name != null) {
                             TuPrologController
                                 .application
                                 .newPage(PageName(name))
                                 .theory = it1
+                        }
+                        it.target.value = ""
                     }
                 }
             }
@@ -156,20 +161,37 @@ val NavBar = FC<Props> {
                     marginLeft = 1.em
                 }
             }
-//            Button {
-//                startIcon = GetAppOutlined.create()
-//                variant = outlined
-//                onClick = {
-//                }
-//                Typography {
-//                    +"Download"
-//                }
-//                sx {
-//                    marginRight = 1.em
-//                    marginLeft = 1.em
-//                    color = green
-//                }
-//            }
+            Button {
+                startIcon = GetAppOutlined.create()
+                variant = outlined
+                onClick = {
+                    val editorText = TuPrologController.application.currentPage?.theory ?: ""
+                    if (editorText != "") {
+                        val elem = document.createElement(HTML.a)
+                        elem.setAttribute(
+                            "href",
+                            "data:text/plain;charset=utf-8," + encodeURIComponent(
+                                editorText
+                            )
+                        )
+                        elem.setAttribute(
+                            "download",
+                            TuPrologController.application.currentPage?.id?.name ?: "UNDEFINED.pl"
+                        )
+                        elem.click()
+                    }
+                    // TODO: add empty theory download message (dispatch message)
+
+                }
+                Typography {
+                    +"Download"
+                }
+                sx {
+                    marginRight = 1.em
+                    marginLeft = 1.em
+                    color = green
+                }
+            }
             Button {
                 startIcon = DeleteForever.create()
                 variant = outlined

@@ -139,8 +139,8 @@ val SolutionsContainer = FC<Props> {
                             }
 //                            C:\Users\Fabio\Desktop\ise_workspace\2p-kt\ide\src\main\kotlin\it\unibo\tuprolog\ui\gui\SolutionView.kt
 //                            ListItemText {
-//                                primary = ReactNode(i.state)
-//                                secondary = ReactNode(i.sol)
+//                                primary = ReactNode(i.state) // yes: query+substitution
+//                                secondary = ReactNode(i.sol) // list of substitution
 //                            }
                         }
                     }
