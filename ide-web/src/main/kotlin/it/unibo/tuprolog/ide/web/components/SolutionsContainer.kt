@@ -25,6 +25,7 @@ import react.dom.html.ReactHTML
 import react.redux.useSelector
 import emotion.react.css
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
+import mui.icons.material.Mail
 import mui.material.Badge
 import mui.material.Button
 import mui.material.ButtonColor
@@ -43,18 +44,8 @@ val SolutionsContainer = FC<Props> {
 
     val messages = useSelector<AppState, List<Message>> { s -> s.messages }
 
-    class SolutionIde(val state: String, val sol: String)
-
     var activeTab by useState("solutionsTab")
 
-    val solutionsMixed by useState(
-        mutableListOf(
-            SolutionIde("yes", "x/6"),
-            SolutionIde("no", ""),
-            SolutionIde("timeout", ""),
-            SolutionIde("error", "")
-        )
-    )
     TabContext {
         value = activeTab
         Tabs {
@@ -76,9 +67,11 @@ val SolutionsContainer = FC<Props> {
             }
             Tab {
                 value = "messagesTab"
-                icon = BadgeIcon.create()
+                icon = NumberedIcon.create {
+                    icon = Mail
+                    number = messages.size
+                }
                 iconPosition = IconPosition.end
-                label = ReactNode("Messages")
             }
         }
 
@@ -92,57 +85,19 @@ val SolutionsContainer = FC<Props> {
                 List {
                     dense = true
 
-//                    solutionsMixed.forEach { i ->
-//                        ListItem {
-//                            ListItemIcon {
-//                                //CheckCircleOutline
-//                                if (i.state == "yes")
-//                                    CheckCircleOutline {
-//                                        color = SvgIconColor.success
-//                                    }
-//                                if (i.state == "no")
-//                                    CancelOutlined {
-//                                        color = SvgIconColor.disabled
-//                                    }
-//                                if (i.state == "timeout")
-//                                    TimerOffOutlined {
-//                                        color = SvgIconColor.warning
-//                                    }
-//                                if (i.state == "error")
-//                                    ErrorOutlineOutlined {
-//                                        color = SvgIconColor.error
-//                                    }
-//                            }
-//                            ListItemText {
-//                                primary = ReactNode(i.state)
-//                                secondary = ReactNode(i.sol)
-//                            }
-//                        }
-//                    }
-
-                    solutions.forEach { i ->
-                        ListItem {
-                            ListItemIcon {
-                                //CheckCircleOutline
-                                if (i.isYes)
-                                    CheckCircleOutline {
-                                        color = SvgIconColor.success
-                                    }
-                                if (i.isNo)
-                                    CancelOutlined {
-                                        color = SvgIconColor.disabled
-                                    }
-                                if (i.isHalt)
-                                    TimerOffOutlined {
-                                        color = SvgIconColor.warning
-                                    }
+                    solutions.forEach {
+                        if (it.isYes)
+                            YesView {
+                                solution = it
                             }
-//                            C:\Users\Fabio\Desktop\ise_workspace\2p-kt\ide\src\main\kotlin\it\unibo\tuprolog\ui\gui\SolutionView.kt
-//                            ListItemText {
-//                                primary = ReactNode(i.state) // yes: query+substitution
-//                                secondary = ReactNode(i.sol) // list of substitution
-//                            }
-                        }
+                        if (it.isNo)
+                            NoView {
+                                solution = it
+                            }
+                        if (it.isHalt)
+                            HaltView {
+                                solution = it
+                            }
                     }
                 }
             }

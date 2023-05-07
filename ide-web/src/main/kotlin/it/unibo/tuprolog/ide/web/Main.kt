@@ -51,6 +51,7 @@ val Root = FC<Props> {
         useEffectOnce {
             // TODO move into main() ???
             TuPrologController.registerReduxStore(myStore)
+            TuPrologController.application.newPage()
         }
 
         App {}
@@ -78,7 +79,7 @@ val App = FC<Props> {
         Grid {
             item = true
             css {
-                width = 100.vw
+                width = 100.pct
             }
             NavBar {}
         }
@@ -86,7 +87,7 @@ val App = FC<Props> {
         Grid {
             item = true
             css {
-                width = 100.vw
+                width = 100.pct
             }
             xs = true
             TheoryEditors {}
@@ -95,7 +96,7 @@ val App = FC<Props> {
         Grid {
             item = true
             css {
-                width = 100.vw
+                width = 100.pct
             }
             QueryEditor {}
         }
@@ -103,7 +104,7 @@ val App = FC<Props> {
         Grid {
             item = true
             css {
-                width = 100.vw
+                width = 100.pct
                 height = 400.px
                 overflowY = Overflow.scroll
             }
@@ -114,7 +115,7 @@ val App = FC<Props> {
         Grid {
             item = true
             css {
-                width = 100.vw
+                width = 100.pct
             }
             Footer {}
         }

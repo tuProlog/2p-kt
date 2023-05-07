@@ -29,7 +29,7 @@ object TuPrologController {
         this.store = store
     }
 
-    fun bindApplication() {
+    private fun bindApplication() {
         application.onStart.bind(catchAnyEvent)
         application.onError.bind(catchAnyEvent)
         application.onPageCreated.bind{
@@ -90,6 +90,4 @@ object TuPrologController {
         page.onSolveOptionsChanged.unbind(catchAnyEvent)
         page.onReset.unbind(catchAnyEvent)
     }
-
-
 }

@@ -24,6 +24,8 @@ import react.redux.useSelector
 import web.html.HTMLInputElement
 import AppState
 import csstype.NamedColor.Companion.green
+import it.unibo.tuprolog.ide.web.redux.actions.MessageType
+import it.unibo.tuprolog.ide.web.redux.actions.TypedMessage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ui.gui.PageName
@@ -53,12 +55,12 @@ import web.events.EventType
 import web.html.HTML
 import web.html.InputType
 
-// TODO spostare tutte le config di val costanti in un file a parte
+// TODO move all config magic-numbers into separate file (even better a css file)
 const val MYSPACING = 3
 const val MYHEIGHT = 56.0
 const val MYWIDTH = 56.0
 
-//TODO far visualizzare le tab con il nome non tutto maiuscolo
+//TODO remove uppercase tab visualization name
 
 val NavBar = FC<Props> {
     var isDialogOpen by useState(false)
@@ -179,8 +181,9 @@ val NavBar = FC<Props> {
                             TuPrologController.application.currentPage?.id?.name ?: "UNDEFINED.pl"
                         )
                         elem.click()
+                    } else {
+                        dispatcher(TypedMessage("Cannot download empty theory.", MessageType.ERROR))
                     }
-                    // TODO: add empty theory download message (dispatch message)
 
                 }
                 Typography {
@@ -208,10 +211,12 @@ val NavBar = FC<Props> {
                         TuPrologController.application.select(
                             TuPrologController.application.pages.elementAt(
                                 if (index == 0) index else index -1))
+                    } else {
+                        dispatcher(TypedMessage("Cannot remove last tab.", MessageType.ERROR))
                     }
                 }
                 Typography {
-                    +"Remove"
+                    +"Delete"
                 }
                 sx {
                     marginRight = 1.em
