@@ -50,6 +50,7 @@ object TuPrologController {
         application.onPageLoaded.bind {
             logEvent(it)
             store.dispatch(UpdatePagesList(application.pages))
+            store.dispatch(UpdateSelectedPage(it.event))
         }
         application.onPageClosed.bind {
             logEvent(it)

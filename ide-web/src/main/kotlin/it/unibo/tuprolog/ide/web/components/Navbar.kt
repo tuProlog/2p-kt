@@ -29,7 +29,9 @@ import it.unibo.tuprolog.ide.web.redux.actions.TypedMessage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ui.gui.PageName
+import it.unibo.tuprolog.utils.io.JsFile
 import js.uri.encodeURIComponent
+import kotlinx.browser.localStorage
 import mui.icons.material.GetAppOutlined
 import mui.icons.material.Info
 import mui.icons.material.UploadFileOutlined
@@ -40,6 +42,8 @@ import mui.material.DialogActions
 import mui.material.DialogContent
 import mui.material.DialogContentText
 import mui.material.DialogTitle
+import org.w3c.dom.Storage
+import org.w3c.dom.set
 import react.FC
 import react.Props
 import react.create
@@ -157,18 +161,28 @@ val NavBar = FC<Props> {
                 accept = ".pl, .txt"
                 multiple = false
                 onChange = {
-                    console.log(it.target.files?.get(0))
-                    it.target.files?.get(0)?.text()?.then { it1 ->
-                        val name = it.target.files?.get(0)?.name
-                        if (name != null) {
-                            TuPrologController
-                                .application
-                                .newPage(PageName(name))
-                                .theory = it1
-                        }
-                        // TODO allow multiple uploads of the same file (following line is not working as intended)
-                        it.target.value = ""
+                    val filePath = "file://"+it.target.files?.get(0)?.name
+                    val jsFile = JsFile(filePath)
+                    it.target.files?.get(0)?.text()?.then { it2 ->
+                        localStorage[filePath] = it2
+
+                        it2
+                        // JSON.stringify(value.toTypedArray())
+                    }?.then {
+                        TuPrologController.application.load(jsFile)
                     }
+
+//                    it.target.files?.get(0)?.text()?.then { it1 ->
+//                        val name = it.target.files?.get(0)?.name
+//                        if (name != null) {
+//                            TuPrologController
+//                                .application
+//                                .newPage(PageName(name))
+//                                .theory = it1
+//                        }
+//                        // TODO allow multiple uploads of the same file (following line is not working as intended)
+//                        // it.target.value = ""
+//                    }
                 }
             }
             Button {
