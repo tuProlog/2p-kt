@@ -10,10 +10,13 @@ import mui.material.AlertColor
 
 // Stato
 class Message(var text: String, var color: AlertColor) {} //, var id:UUID
-data class TuProlog(var pages: Collection<TuPrologPage>,
-                    var currentPage: TuPrologPage?,
-                    var solutions: Collection<TuPrologSolution>,
-                    var pageStatus: Page.Status )
+data class TuProlog(
+    var pages: Collection<TuPrologPage>,
+    var currentPage: TuPrologPage?,
+    var solutions: Collection<TuPrologSolution>,
+    var pageStatus: Page.Status,
+    var pageException: Throwable?
+)
 
 data class AppState(
     var tuProlog: TuProlog,
@@ -64,7 +67,7 @@ fun rootReducer(
 val myStore = createStore(
     ::rootReducer,
     AppState(
-        TuProlog(emptyList(), null, emptyList(), Page.Status.IDLE),
+        TuProlog(emptyList(), null, emptyList(), Page.Status.IDLE, null),
         emptyList()
     ),
     rEnhancer()

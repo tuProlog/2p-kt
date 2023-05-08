@@ -1,29 +1,32 @@
 package it.unibo.tuprolog.ide.web
 
+import AppState
 import csstype.AlignItems
-import csstype.BackgroundColor
-import csstype.Color
-import csstype.FlexDirection
 import csstype.FlexWrap
 import csstype.JustifyContent
 import csstype.Overflow
-import csstype.em
 import csstype.pct
 import csstype.px
 import csstype.vh
-import csstype.vw
 import emotion.react.css
 import it.unibo.tuprolog.ide.web.components.TheoryEditors
 import it.unibo.tuprolog.ide.web.components.Footer
-import it.unibo.tuprolog.ide.web.components.Messages
 import it.unibo.tuprolog.ide.web.components.NavBar
 import it.unibo.tuprolog.ide.web.components.QueryEditor
 import it.unibo.tuprolog.ide.web.components.SolutionsContainer
+import it.unibo.tuprolog.ide.web.redux.actions.CleanPageError
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.xs
+import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
+import it.unibo.tuprolog.ui.gui.InTheorySyntaxError
+import mui.material.Button
+import mui.material.Dialog
+import mui.material.DialogActions
+import mui.material.DialogContent
+import mui.material.DialogContentText
+import mui.material.DialogTitle
 import mui.material.Grid
 import mui.material.GridDirection
-import mui.material.Stack
 import mui.system.responsive
 import mui.system.sx
 import myStore
@@ -31,9 +34,12 @@ import react.FC
 import react.Props
 import react.create
 import react.dom.client.createRoot
-import react.dom.html.ReactHTML
 import react.redux.Provider
+import react.redux.useDispatch
+import react.redux.useSelector
 import react.useEffectOnce
+import redux.RAction
+import redux.WrapperAction
 import web.dom.document
 import web.html.HTML
 
@@ -42,17 +48,18 @@ fun main() {
         .also { document.body.appendChild(it) }
     createRoot(root)
         .render(Root.create())
+
+    TuPrologController.registerReduxStore(myStore)
+    TuPrologController.application.newPage()
 }
 
 val Root = FC<Props> {
     Provider {
         store = myStore
 
-        useEffectOnce {
-            // TODO move into main() ???
-            TuPrologController.registerReduxStore(myStore)
-            TuPrologController.application.newPage()
-        }
+//        useEffectOnce {
+//            // TODO move into main() ???
+//        }
 
         App {}
     }
@@ -61,9 +68,21 @@ val Root = FC<Props> {
 
 
 val App = FC<Props> {
+    val pageException = useSelector<AppState, Throwable?> { s -> s.tuProlog.pageException }
+    val dispatcher = useDispatch<RAction, WrapperAction>()
 
-    useEffectOnce {
-
+    fun getExceptionTextHeader(): String {
+        return when (pageException) {
+            is InTheorySyntaxError -> "Syntax error in ${pageException.page.name}"
+            is InQuerySyntaxError -> "Syntax error in query"
+            else -> "Error"
+        }
+    }
+    fun getExceptionTextContent(): String {
+        if (pageException?.message != null) {
+            return pageException.message.toString()
+        }
+        return ""
     }
 
     Grid {
@@ -118,6 +137,26 @@ val App = FC<Props> {
                 width = 100.pct
             }
             Footer {}
+        }
+    }
+
+    Dialog {
+        open = pageException != null
+        onClose = { _, _ -> dispatcher(CleanPageError())}
+
+        DialogTitle {
+            +getExceptionTextHeader()
+        }
+        DialogContent {
+            DialogContentText {
+                +  getExceptionTextContent() //pageException?::class.simpleName +
+            }
+            DialogActions {
+                Button {
+                    onClick = { dispatcher(CleanPageError()) }
+                    +"Close"
+                }
+            }
         }
     }
 }

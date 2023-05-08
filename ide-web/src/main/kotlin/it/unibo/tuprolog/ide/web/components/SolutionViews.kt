@@ -69,7 +69,7 @@ val NoView = FC<ViewProps> { props ->
             }
         }
         ListItemText {
-            primary= ReactNode("No.")
+            primary = ReactNode("No.")
         }
     }
 }
@@ -77,31 +77,33 @@ val NoView = FC<ViewProps> { props ->
 val HaltView = FC<ViewProps> { props ->
     val queryText = props.solution.castToHalt()
     ListItem {
-        ListItemIcon {
+        if (props.solution.castToHalt().exception is TimeOutException) {
 
-            if (props.solution.castToHalt().exception is TimeOutException) {
+            ListItemIcon {
                 TimerOffOutlined {
                     color = SvgIconColor.warning
                 }
-                ListItemText {
-                    primary= ReactNode("Timeout.")
-                }
-            } else {
+            }
+            ListItemText {
+                primary= ReactNode("Timeout.")
+            }
+        } else {
+            ListItemIcon {
                 ErrorOutlineOutlined {
                     color = SvgIconColor.error
                 }
-                ListItemText {
-                    primary= ReactNode("Error:")
-                    secondary = span.create {
-                        span {
-                            props.solution.castToHalt().exception.message
-                        }
-//                        br {}
-//                        ReactNode(
-//                            props.solution.castToHalt().exception.logicStackTrace
-//                                .joinToString("<br>")
-//                        )
+            }
+            ListItemText {
+                primary = ReactNode("Halt:")
+                secondary = span.create {
+                    span {
+                        props.solution.castToHalt().exception.message
                     }
+                    br {}
+                    ReactNode(
+                        props.solution.castToHalt().exception.logicStackTrace
+                            .joinToString("<br>")
+                    )
                 }
             }
         }

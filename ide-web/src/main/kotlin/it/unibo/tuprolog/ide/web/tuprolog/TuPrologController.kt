@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ide.web.tuprolog
 
 import AppState
 import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
+import it.unibo.tuprolog.ide.web.redux.actions.PageError
 import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
@@ -10,7 +11,10 @@ import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.ui.gui.Application
 import it.unibo.tuprolog.ui.gui.DefaultJsRunner
 import it.unibo.tuprolog.ui.gui.Event
+import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
+import it.unibo.tuprolog.ui.gui.InTheorySyntaxError
 import it.unibo.tuprolog.ui.gui.Page
+import it.unibo.tuprolog.ui.gui.SyntaxException
 import redux.RAction
 import redux.Store
 import redux.WrapperAction
@@ -31,9 +35,14 @@ object TuPrologController {
         this.store = store
     }
 
+    // TODO decorare la bind con il logger invece che inserire la log in ogni handler
+
     private fun bindApplication() {
         application.onStart.bind(catchAnyEvent)
-        application.onError.bind(catchAnyEvent)
+        application.onError.bind{
+            logEvent(it)
+            store.dispatch(PageError(it.event.first, it.event.second))
+        }
         application.onPageCreated.bind{
             logEvent(it)
             store.dispatch(UpdatePagesList(application.pages))

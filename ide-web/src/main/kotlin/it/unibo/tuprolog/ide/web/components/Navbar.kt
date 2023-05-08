@@ -146,6 +146,7 @@ val NavBar = FC<Props> {
                                 .newPage(PageName(name))
                                 .theory = it1
                         }
+                        // TODO allow multiple uploads of the same file (following line is not working as intended)
                         it.target.value = ""
                     }
                 }

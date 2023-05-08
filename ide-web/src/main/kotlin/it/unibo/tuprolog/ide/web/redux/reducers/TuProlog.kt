@@ -1,19 +1,17 @@
 package it.unibo.tuprolog.ide.web.redux.reducers
 
-import Message
 import AppState
 import TuProlog
+import it.unibo.tuprolog.ide.web.redux.actions.CleanPageError
 import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
+import it.unibo.tuprolog.ide.web.redux.actions.PageError
 import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
-import js.uri.encodeURIComponent
-import mui.material.AlertColor
+import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
+import it.unibo.tuprolog.ui.gui.InTheorySyntaxError
 import redux.RAction
-import web.dom.document
-import web.html.HTML
-import kotlin.js.Date
 
 
 // TODO risolvere complessità ciclica della funzione
@@ -40,6 +38,17 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) 
 
     is UpdateStatus -> {
         state.tuProlog.pageStatus = action.newStatus
+        state.tuProlog
+    }
+
+    is PageError -> {
+        state.tuProlog.pageException = action.exception
+        state.tuProlog
+    }
+
+    is CleanPageError -> {
+        console.log("ASD")
+        state.tuProlog.pageException = null
         state.tuProlog
     }
 
