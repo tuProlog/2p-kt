@@ -4,8 +4,10 @@ import Message
 import AppState
 import TuProlog
 import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
+import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
+import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
 import js.uri.encodeURIComponent
 import mui.material.AlertColor
 import redux.RAction
@@ -15,7 +17,6 @@ import kotlin.js.Date
 
 
 // TODO risolvere complessità ciclica della funzione
-// TODO verificare se la dispatch è sincrona o asincrona
 fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) {
     is UpdatePagesList -> {
         state.tuProlog.pages = action.list
@@ -28,9 +29,20 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) 
     }
 
     is NewSolution -> {
-        state.tuProlog.solutions += action.solution
+        state.tuProlog.solutions = listOf(action.solution) + state.tuProlog.solutions
         state.tuProlog
     }
+
+    is ResetPage -> {
+        state.tuProlog.solutions = emptyList()
+        state.tuProlog
+    }
+
+    is UpdateStatus -> {
+        state.tuProlog.pageStatus = action.newStatus
+        state.tuProlog
+    }
+
 
     else -> state.tuProlog
 }

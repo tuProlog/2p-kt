@@ -25,6 +25,7 @@ import react.dom.html.ReactHTML
 import react.redux.useSelector
 import emotion.react.css
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
+import it.unibo.tuprolog.ide.web.utils.xs
 import mui.icons.material.Mail
 import mui.material.Badge
 import mui.material.Button
@@ -32,8 +33,10 @@ import mui.material.ButtonColor
 import mui.material.ButtonGroup
 import mui.material.ButtonGroupVariant
 import mui.material.ButtonVariant
+import mui.material.Grid
 import mui.material.IconPosition
 import mui.material.Size
+import mui.material.Typography
 import react.create
 import react.dom.html.ReactHTML.div
 import react.useState
@@ -110,19 +113,48 @@ val SolutionsContainer = FC<Props> {
             TabPanel {
                 value = "messagesTab"
 
-                Button {
-                    color = ButtonColor.error
-                    size = Size.small
-                    variant = ButtonVariant.text
-                    + "Delete all"
-                }
+                Grid {
+                    container = true
 
-                Stack {
-                    messages.forEach { m ->
-                        Alert {
-                            severity = m.color
-                            onClose = {}
-                            +m.text
+                    Grid {
+                        item = true
+                        xs = 4
+
+                        Stack {
+                            messages.forEach { m ->
+                                Alert {
+                                    severity = m.color
+                                    onClose = {}
+                                    +m.text
+                                }
+                            }
+                        }
+                    }
+
+                    Grid {
+                        item = true
+                        xs = true
+
+                        Button {
+                            color = ButtonColor.error
+                            size = Size.small
+                            variant = ButtonVariant.text
+                            + "Delete all"
+                        }
+                        Button {
+                            color = ButtonColor.error
+                            size = Size.small
+                            variant = ButtonVariant.text
+                            + "Sort by severity"
+                        }
+                        Button {
+                            color = ButtonColor.error
+                            size = Size.small
+                            variant = ButtonVariant.text
+                            + "Sort recent"
+                        }
+                        Typography {
+                            + "total messages: 1123"
                         }
                     }
                 }

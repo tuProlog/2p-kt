@@ -2,8 +2,10 @@ package it.unibo.tuprolog.ide.web.tuprolog
 
 import AppState
 import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
+import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
+import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.ui.gui.Application
 import it.unibo.tuprolog.ui.gui.DefaultJsRunner
@@ -58,11 +60,23 @@ object TuPrologController {
     }
 
     private fun bindPage(page: Page) {
-        page.onResolutionStarted.bind(catchAnyEvent)
-        page.onResolutionOver.bind(catchAnyEvent)
-        page.onNewQuery.bind(catchAnyEvent)
-        page.onQueryOver.bind(catchAnyEvent)
-        page.onNewSolution.bind{
+        page.onResolutionStarted.bind{
+            logEvent(it)
+            store.dispatch(UpdateStatus(Page.Status.COMPUTING))
+        }
+        page.onResolutionOver.bind {
+            logEvent(it)
+            store.dispatch(UpdateStatus(Page.Status.IDLE))
+        }
+        page.onNewQuery.bind {
+            logEvent(it)
+            store.dispatch(UpdateStatus(Page.Status.COMPUTING))
+        }
+        page.onQueryOver.bind {
+            logEvent(it)
+            store.dispatch(UpdateStatus(Page.Status.IDLE))
+        }
+        page.onNewSolution.bind {
             logEvent(it)
             store.dispatch(NewSolution(it.event))
         }
@@ -72,7 +86,10 @@ object TuPrologController {
         page.onNewSolver.bind(catchAnyEvent)
         page.onNewStaticKb.bind(catchAnyEvent)
         page.onSolveOptionsChanged.bind(catchAnyEvent)
-        page.onReset.bind(catchAnyEvent)
+        page.onReset.bind {
+            logEvent(it)
+            store.dispatch(ResetPage())
+        }
 
     }
 

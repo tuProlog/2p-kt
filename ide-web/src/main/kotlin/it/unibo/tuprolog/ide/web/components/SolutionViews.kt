@@ -29,7 +29,7 @@ external interface ViewProps : Props {
 
 fun getYesSubstitutions(solution: Solution.Yes): List<String> {
     return solution.substitution.map {
-        it.key.format(formatter) + " " + it.value.format(formatter)
+        it.key.format(formatter) + ": " + it.value.format(formatter)
     }
 }
 
@@ -54,12 +54,11 @@ val YesView = FC<ViewProps> { props ->
             primary= ReactNode("Yes: " + getYesText(props.solution.castToYes()))
             secondary= ReactNode(
                 getYesSubstitutions(props.solution.castToYes())
-                    .joinToString("<br>")
+                    .joinToString(", ")
             )
         }
     }
 }
-
 
 
 val NoView = FC<ViewProps> { props ->
@@ -97,11 +96,11 @@ val HaltView = FC<ViewProps> { props ->
                         span {
                             props.solution.castToHalt().exception.message
                         }
-                        br {}
-                        ReactNode(
-                            props.solution.castToHalt().exception.logicStackTrace
-                                .joinToString("<br>")
-                        )
+//                        br {}
+//                        ReactNode(
+//                            props.solution.castToHalt().exception.logicStackTrace
+//                                .joinToString("<br>")
+//                        )
                     }
                 }
             }

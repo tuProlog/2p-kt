@@ -24,3 +24,5 @@ import redux.RAction
 class UpdatePagesList(val list: Collection<TuPrologPage>): RAction
 class UpdateSelectedPage(val page: TuPrologPage?): RAction
 class NewSolution(val solution: TuPrologSolution): RAction
+class ResetPage: RAction
+class UpdateStatus(val newStatus: Page.Status): RAction

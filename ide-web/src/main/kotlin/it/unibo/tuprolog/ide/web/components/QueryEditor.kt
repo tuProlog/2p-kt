@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ide.web.components
 
+import AppState
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ui.gui.Page
 import mui.material.Button
@@ -14,11 +15,13 @@ import react.Props
 import react.ReactNode
 import react.createRef
 import react.dom.onChange
-import react.useState
+import react.redux.useSelector
 import web.html.HTMLInputElement
 
-val QueryEditor = FC<Props> { props ->
-    val inputRef2 = createRef<HTMLInputElement>()
+val QueryEditor = FC<Props> {
+    val queryInputRef = createRef<HTMLInputElement>()
+    val pageStatus = useSelector<AppState, Page.Status> { s -> s.tuProlog.pageStatus }
+
 
     Stack {
         direction = responsive(StackDirection.row)
@@ -27,9 +30,9 @@ val QueryEditor = FC<Props> { props ->
             label = ReactNode("Query")
             variant = FormControlVariant.outlined
             fullWidth = true
-            inputRef = inputRef2
+            inputRef = queryInputRef
             onChange = {
-                inputRef2.current?.let { it1 ->
+                queryInputRef.current?.let { it1 ->
                     TuPrologController.application.currentPage?.query = it1.value
                 }
             }
@@ -58,11 +61,17 @@ val QueryEditor = FC<Props> { props ->
         }
         Button {
             variant = ButtonVariant.contained
-            disabled = true
+            disabled = pageStatus == Page.Status.COMPUTING
+            onClick = {
+                TuPrologController.application.currentPage?.reset()
+            }
             +"Stop"
         }
         Button {
             variant = ButtonVariant.contained
+            onClick = {
+                TuPrologController.application.currentPage?.reset()
+            }
             +"Reset"
         }
     }

@@ -5,9 +5,16 @@ import redux.RAction
 
 class AddMessage(val text: String = "", val color: AlertColor = AlertColor.info) :
     RAction
-class RemoveMessage(val id: String = "") :
+class RemoveMessage(val id: String = "", val allFlag: Boolean = false) :
     RAction
 
+enum class SortType {
+    RECENT, SEVERITY
+}
+class SortByMessage(val sortType: SortType) :
+    RAction
+
+// TODO implement utility function from mui alert type to messageType
 enum class MessageType {
     ERROR, WARNING, SUCCESS, INFO
 }
