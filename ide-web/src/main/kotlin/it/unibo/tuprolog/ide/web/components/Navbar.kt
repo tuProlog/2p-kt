@@ -2,7 +2,6 @@ package it.unibo.tuprolog.ide.web.components
 
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent.Companion.spaceBetween
-import csstype.NamedColor.Companion.red
 import csstype.em
 import emotion.react.css
 import mui.icons.material.Add
@@ -23,13 +22,13 @@ import react.redux.useDispatch
 import react.redux.useSelector
 import web.html.HTMLInputElement
 import AppState
+import csstype.Length
 import csstype.NamedColor.Companion.green
 import it.unibo.tuprolog.ide.web.redux.actions.MessageType
 import it.unibo.tuprolog.ide.web.redux.actions.TypedMessage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ui.gui.PageName
-import it.unibo.tuprolog.utils.io.JsFile
 import js.uri.encodeURIComponent
 import mui.icons.material.GetAppOutlined
 import mui.icons.material.Info
@@ -43,7 +42,6 @@ import mui.material.DialogContentText
 import mui.material.DialogTitle
 import react.FC
 import react.Props
-import react.ReactNode
 import react.create
 import react.createRef
 import react.dom.html.ReactHTML.input
@@ -51,28 +49,35 @@ import react.useState
 import redux.RAction
 import redux.WrapperAction
 import web.dom.document
-import web.events.EventType
 import web.html.HTML
 import web.html.InputType
 
 data class IDEStyle(
     val spacing: Int = DEFAULT_SPACING,
-    val height: Double = DEFAULT_HEIGHT) {
+    val height: Double = DEFAULT_HEIGHT,
+    val width: Double = DEFAULT_WIDTH,
+    val paddingRight: Length = PADDING_RIGHT,
+    val paddingLeft: Length = PADDING_LEFT,
+    val marginRight: Length = MARGIN_RIGHT,
+    val marginLeft: Length = MARGIN_LEFT
+) {
     companion object {
         const val DEFAULT_SPACING = 3
         const val DEFAULT_HEIGHT = 56.0
-
+        const val DEFAULT_WIDTH = 56.0
+        val PADDING_RIGHT = 1.em
+        val PADDING_LEFT = 1.em
+        val MARGIN_RIGHT = 1.em
+        val MARGIN_LEFT = 1.em
     }
-
-
 }
 
-val currentConfig = IDEStyle()
+val currentStyleConfig = IDEStyle()
 
 // TODO move all config magic-numbers into separate file (even better a css file)
-//const val MYSPACING = 3
-const val MYHEIGHT = 56.0
-const val MYWIDTH = 56.0
+
+//const val MYHEIGH = 56.0
+//const val MYWIDTH = 56.0
 
 //TODO remove uppercase tab visualization name
 
@@ -90,7 +95,7 @@ val NavBar = FC<Props> {
 
     Stack {
         direction = responsive(StackDirection.row)
-        spacing = responsive(currentConfig.spacing)
+        spacing = responsive(currentStyleConfig.spacing)
 
         sx {
             justifyContent = spaceBetween
@@ -100,11 +105,11 @@ val NavBar = FC<Props> {
         div {
             img {
                 src = "https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/logo.svg"
-                height = MYHEIGHT
-                width = MYWIDTH
+                height = currentStyleConfig.height
+
                 css {
-                    paddingRight = 1.em
-                    paddingLeft = 1.em
+                    paddingRight = currentStyleConfig.paddingRight
+                    paddingLeft = currentStyleConfig.paddingLeft
                 }
             }
         }
@@ -122,8 +127,8 @@ val NavBar = FC<Props> {
                     +"Add"
                 }
                 sx {
-                    marginRight = 1.em
-                    marginLeft = 1.em
+                    marginRight = currentStyleConfig.marginRight
+                    marginLeft = currentStyleConfig.marginLeft
                 }
             }
 
@@ -226,7 +231,9 @@ val NavBar = FC<Props> {
                         // select new ide
                         TuPrologController.application.select(
                             TuPrologController.application.pages.elementAt(
-                                if (index == 0) index else index -1))
+                                if (index == 0) index else index - 1
+                            )
+                        )
                     } else {
                         dispatcher(TypedMessage("Cannot remove last tab.", MessageType.ERROR))
                     }
