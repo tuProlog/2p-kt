@@ -194,8 +194,8 @@ val NavBar = FC<Props> {
                     +"Upload"
                 }
                 sx {
-                    marginRight = 1.em
-                    marginLeft = 1.em
+                    marginRight = currentStyleConfig.marginRight
+                    marginLeft = currentStyleConfig.marginLeft
                 }
             }
             Button {
@@ -225,8 +225,8 @@ val NavBar = FC<Props> {
                     +"Download"
                 }
                 sx {
-                    marginRight = 1.em
-                    marginLeft = 1.em
+                    marginRight = currentStyleConfig.marginRight
+                    marginLeft = currentStyleConfig.marginLeft
                     color = green
                 }
             }
@@ -256,8 +256,8 @@ val NavBar = FC<Props> {
                     +"Delete"
                 }
                 sx {
-                    marginRight = 1.em
-                    marginLeft = 1.em
+                    marginRight = currentStyleConfig.marginRight
+                    marginLeft = currentStyleConfig.marginLeft
                 }
             }
             Button {
@@ -270,8 +270,8 @@ val NavBar = FC<Props> {
                     +"About"
                 }
                 sx {
-                    marginRight = 1.em
-                    marginLeft = 1.em
+                    marginRight = currentStyleConfig.marginRight
+                    marginLeft = currentStyleConfig.marginLeft
                 }
                 color = ButtonColor.info
             }
