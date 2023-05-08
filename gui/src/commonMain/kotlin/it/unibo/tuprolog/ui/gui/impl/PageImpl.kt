@@ -186,6 +186,7 @@ internal class PageImpl(
                 file.writeText(content.text)
                 runner.ui {
                     id = FileName(file)
+//                    onSave.raise(Page.EVENT_)
                     // TODO raise onSave
                 }
             } catch (e: IOException) {

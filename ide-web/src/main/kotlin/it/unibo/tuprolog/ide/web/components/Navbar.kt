@@ -55,8 +55,22 @@ import web.events.EventType
 import web.html.HTML
 import web.html.InputType
 
+data class IDEStyle(
+    val spacing: Int = DEFAULT_SPACING,
+    val height: Double = DEFAULT_HEIGHT) {
+    companion object {
+        const val DEFAULT_SPACING = 3
+        const val DEFAULT_HEIGHT = 56.0
+
+    }
+
+
+}
+
+val currentConfig = IDEStyle()
+
 // TODO move all config magic-numbers into separate file (even better a css file)
-const val MYSPACING = 3
+//const val MYSPACING = 3
 const val MYHEIGHT = 56.0
 const val MYWIDTH = 56.0
 
@@ -76,7 +90,7 @@ val NavBar = FC<Props> {
 
     Stack {
         direction = responsive(StackDirection.row)
-        spacing = responsive(MYSPACING)
+        spacing = responsive(currentConfig.spacing)
 
         sx {
             justifyContent = spaceBetween
@@ -138,6 +152,7 @@ val NavBar = FC<Props> {
                 accept = ".pl, .txt"
                 multiple = false
                 onChange = {
+                    console.log(it.target.files?.get(0))
                     it.target.files?.get(0)?.text()?.then { it1 ->
                         val name = it.target.files?.get(0)?.name
                         if (name != null) {
