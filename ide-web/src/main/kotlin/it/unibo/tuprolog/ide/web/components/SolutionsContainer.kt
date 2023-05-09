@@ -129,49 +129,49 @@ val SolutionsContainer = FC<Props> {
                 value = "stdInTab"
 
                 if (eContext != null)
-                    eContext.standardInput
+                    +eContext.standardInput.toString()
                 else
                     +"Empty"
             }
             TabPanel {
                 value = "stdOutTab"
                 if (eContext != null)
-                    eContext.standardOutput
+                    +eContext.standardOutput.toString()
                 else
                     +"Empty"
             }
             TabPanel {
                 value = "stdErr"
                 if (eContext != null)
-                    eContext.standardError
+                    +eContext.standardError.toString()
                 else
                     +"Empty"
             }
             TabPanel {
                 value = "warnings"
                 if (eContext != null)
-                    eContext.warnings
+                    +eContext.warnings.toString()
                 else
                     +"Empty"
             }
             TabPanel {
                 value = "operators"
                 if (eContext != null)
-                    eContext.operators
+                    +eContext.operators.toString()
                 else
                     +"Empty"
             }
             TabPanel {
                 value = "libraries"
                 if (eContext != null)
-                    eContext.libraries
+                    +eContext.libraries.toString()
                 else
                     +"Empty"
             }
             TabPanel {
                 value = "staticKb"
                 if (eContext != null)
-                    eContext.staticKb
+                    +eContext.staticKb.toString()
                 else
                     +"Empty"
             }

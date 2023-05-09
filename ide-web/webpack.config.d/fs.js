@@ -4,7 +4,7 @@ config.resolve = {
     fallback: {
         fs: false,
         path: false,
-        crypto: false,
+//        crypto: false,
         os: false,
     }
 };

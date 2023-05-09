@@ -76,8 +76,6 @@ val Root = FC<Props> {
     }
 }
 
-
-
 val App = FC<Props> {
     val pageException = useSelector<AppState, Throwable?> { s -> s.tuProlog.pageException }
     val dispatcher = useDispatch<RAction, WrapperAction>()

@@ -15,6 +15,7 @@ import it.unibo.tuprolog.ui.gui.Application
 import it.unibo.tuprolog.ui.gui.DefaultJsRunner
 import it.unibo.tuprolog.ui.gui.Event
 import it.unibo.tuprolog.ui.gui.Page
+import it.unibo.tuprolog.ui.gui.SolverEvent
 import redux.RAction
 import redux.Store
 import redux.WrapperAction
@@ -25,6 +26,7 @@ object TuPrologController {
 
     public lateinit var application: Application
     private lateinit var store: Store<AppState, RAction, WrapperAction>
+    private lateinit var currPage: Page
 
 
     private val catchAnyEvent: (Event<Any>) -> Unit = { console.log("[Controller] Missing event handler: ", it) }
@@ -34,9 +36,7 @@ object TuPrologController {
         this.store = store
     }
 
-    // TODO decorare la bind con il logger invece che inserire la log in ogni handler
-
-    public fun bindApplication(application: Application) {
+    fun bindApplication(application: Application) {
         this.application = application
         application.onStart.bind(catchAnyEvent)
         application.onError.bind{
@@ -49,6 +49,7 @@ object TuPrologController {
         }
         application.onPageLoaded.bind {
             logEvent(it)
+            store.dispatch(UpdatePagesList(application.pages))
         }
         application.onPageClosed.bind {
             logEvent(it)
@@ -67,25 +68,23 @@ object TuPrologController {
         application.onQuit.bind(catchAnyEvent)
     }
 
+    // TODO applicare l'unbind
     private fun bindPage(page: Page) {
-        page.onResolutionStarted.bind{
-            logEvent(it)
-            store.dispatch(UpdateStatus(Page.Status.COMPUTING))
-            store.dispatch(UpdateExecutionContext(it))
-        }
+        currPage = page
+        page.onResolutionStarted.bind(this::onResolutionStarted)
         page.onResolutionOver.bind {
             logEvent(it)
-            store.dispatch(UpdateStatus(Page.Status.IDLE))
+            store.dispatch(UpdateStatus(page.state))
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onNewQuery.bind {
             logEvent(it)
-            store.dispatch(UpdateStatus(Page.Status.COMPUTING))
+            store.dispatch(UpdateStatus(page.state))
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onQueryOver.bind {
             logEvent(it)
-            store.dispatch(UpdateStatus(Page.Status.IDLE))
+            store.dispatch(UpdateStatus(page.state))
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onNewSolution.bind {
@@ -99,15 +98,18 @@ object TuPrologController {
         page.onNewSolver.bind(catchAnyEvent)
         page.onNewStaticKb.bind(catchAnyEvent)
         page.onSolveOptionsChanged.bind(catchAnyEvent)
-        page.onSave.bind {
-            logEvent(it)
-        }
+        page.onSave.bind(catchAnyEvent)
         page.onReset.bind {
             logEvent(it)
             store.dispatch(ResetPage())
             store.dispatch(UpdateExecutionContext(it))
         }
+    }
 
+    private fun onResolutionStarted(solverEvent: SolverEvent<Int>) {
+        logEvent(solverEvent)
+        store.dispatch(UpdateStatus(this.currPage.state))
+        store.dispatch(UpdateExecutionContext(solverEvent))
     }
 
     private fun unbindPage(page: Page) {
