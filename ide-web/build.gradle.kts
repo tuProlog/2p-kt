@@ -23,8 +23,8 @@ kotlin {
                 api(project(":gui"))
                 api(project(":io-lib"))
                 api(project(":oop-lib"))
-                api(project(":solve-classic"))
                 api(project(":parser-theory"))
+                api(project(":solve-classic"))
 
                 bom(libs.kotlin.wrappers.bom)
 

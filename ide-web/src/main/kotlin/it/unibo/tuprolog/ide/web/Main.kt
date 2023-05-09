@@ -15,8 +15,13 @@ import it.unibo.tuprolog.ide.web.components.NavBar
 import it.unibo.tuprolog.ide.web.components.QueryEditor
 import it.unibo.tuprolog.ide.web.components.SolutionsContainer
 import it.unibo.tuprolog.ide.web.redux.actions.CleanPageError
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologApplication
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.xs
+import it.unibo.tuprolog.solve.TimeUnit
+import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
+import it.unibo.tuprolog.solve.times
+import it.unibo.tuprolog.ui.gui.DefaultJsRunner
 import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
 import it.unibo.tuprolog.ui.gui.InTheorySyntaxError
 import mui.material.Button
@@ -48,18 +53,22 @@ fun main() {
         .also { document.body.appendChild(it) }
     createRoot(root)
         .render(Root.create())
-
-    TuPrologController.registerReduxStore(myStore)
-    TuPrologController.application.newPage()
 }
 
 val Root = FC<Props> {
     Provider {
         store = myStore
 
-//        useEffectOnce {
-//            // TODO move into main() ???
-//        }
+        useEffectOnce {
+            TuPrologController.bindApplication(
+                TuPrologApplication.of(
+                    DefaultJsRunner(),
+                    ClassicSolverFactory,
+                    defaultTimeout = 1 * TimeUnit.SECONDS))
+            TuPrologController.registerReduxStore(myStore)
+            TuPrologController.application.newPage()
+            // TODO move into main() ???
+        }
 
         App {}
     }

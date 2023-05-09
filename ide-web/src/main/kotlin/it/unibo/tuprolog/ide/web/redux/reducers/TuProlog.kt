@@ -6,6 +6,7 @@ import it.unibo.tuprolog.ide.web.redux.actions.CleanPageError
 import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
 import it.unibo.tuprolog.ide.web.redux.actions.PageError
 import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
+import it.unibo.tuprolog.ide.web.redux.actions.UpdateExecutionContext
 import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
@@ -13,8 +14,6 @@ import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
 import it.unibo.tuprolog.ui.gui.InTheorySyntaxError
 import redux.RAction
 
-
-// TODO risolvere complessità ciclica della funzione
 fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) {
     is UpdatePagesList -> {
         state.tuProlog.pages = action.list
@@ -28,6 +27,11 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) 
 
     is NewSolution -> {
         state.tuProlog.solutions = listOf(action.solution) + state.tuProlog.solutions
+        state.tuProlog
+    }
+
+    is UpdateExecutionContext -> {
+        state.tuProlog.executionContext = action.context
         state.tuProlog
     }
 
@@ -47,7 +51,6 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) 
     }
 
     is CleanPageError -> {
-        console.log("ASD")
         state.tuProlog.pageException = null
         state.tuProlog
     }
