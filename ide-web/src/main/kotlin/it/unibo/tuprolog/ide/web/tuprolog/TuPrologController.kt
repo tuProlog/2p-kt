@@ -7,7 +7,9 @@ import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
+import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
+import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.ui.gui.Application
 import it.unibo.tuprolog.ui.gui.DefaultJsRunner
 import it.unibo.tuprolog.ui.gui.Event
@@ -21,7 +23,9 @@ import redux.WrapperAction
 
 object TuPrologController {
 
-    val application = TuPrologApplication.of(DefaultJsRunner(), ClassicSolverFactory, defaultTimeout = 1000L)
+    // TODO move application into getter method and initialize in registerReduxStore
+
+    val application = TuPrologApplication.of(DefaultJsRunner(), ClassicSolverFactory, defaultTimeout = 1 * TimeUnit.SECONDS)
     private lateinit var store: Store<AppState, RAction, WrapperAction>
 
     init {
@@ -49,8 +53,6 @@ object TuPrologController {
         }
         application.onPageLoaded.bind {
             logEvent(it)
-            store.dispatch(UpdatePagesList(application.pages))
-            store.dispatch(UpdateSelectedPage(it.event))
         }
         application.onPageClosed.bind {
             logEvent(it)
@@ -96,6 +98,9 @@ object TuPrologController {
         page.onNewSolver.bind(catchAnyEvent)
         page.onNewStaticKb.bind(catchAnyEvent)
         page.onSolveOptionsChanged.bind(catchAnyEvent)
+        page.onSave.bind {
+            logEvent(it)
+        }
         page.onReset.bind {
             logEvent(it)
             store.dispatch(ResetPage())
