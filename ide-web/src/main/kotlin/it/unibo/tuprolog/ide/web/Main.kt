@@ -49,6 +49,17 @@ import web.dom.document
 import web.html.HTML
 
 fun main() {
+
+    console.log(DefaultJsRunner())
+
+    TuPrologController.bindApplication(
+        TuPrologApplication.of(
+            DefaultJsRunner(),
+            ClassicSolverFactory,
+            defaultTimeout = 1 * TimeUnit.SECONDS))
+    TuPrologController.registerReduxStore(myStore)
+    TuPrologController.application.newPage()
+
     val root = document.createElement(HTML.div)
         .also { document.body.appendChild(it) }
     createRoot(root)
@@ -59,16 +70,7 @@ val Root = FC<Props> {
     Provider {
         store = myStore
 
-        useEffectOnce {
-            TuPrologController.bindApplication(
-                TuPrologApplication.of(
-                    DefaultJsRunner(),
-                    ClassicSolverFactory,
-                    defaultTimeout = 1 * TimeUnit.SECONDS))
-            TuPrologController.registerReduxStore(myStore)
-            TuPrologController.application.newPage()
-            // TODO move into main() ???
-        }
+        useEffectOnce { }
 
         App {}
     }

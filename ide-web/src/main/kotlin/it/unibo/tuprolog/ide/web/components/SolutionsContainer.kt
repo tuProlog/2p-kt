@@ -16,6 +16,7 @@ import react.redux.useSelector
 import emotion.react.css
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.ide.web.utils.xs
+import it.unibo.tuprolog.solve.ExecutionContextAware
 import mui.icons.material.Mail
 import mui.material.Button
 import mui.material.ButtonColor
@@ -31,6 +32,7 @@ import react.useState
 val SolutionsContainer = FC<Props> {
 
     val solutions = useSelector<AppState, Collection<TuPrologSolution>> { s -> s.tuProlog.solutions }
+    val eContext = useSelector<AppState, ExecutionContextAware?> { s -> s.tuProlog.executionContext }
 
     val messages = useSelector<AppState, List<Message>> { s -> s.messages }
 
@@ -47,6 +49,15 @@ val SolutionsContainer = FC<Props> {
                 label = ReactNode("Solutions")
                 //wrapped = true
             }
+//            Tab {
+//                value = "stdInTab"
+//                label = ReactNode("Standard In")
+//            }
+//            Tab {
+//                value = "stdOutTab"
+//                label = ReactNode("Standard Out")
+//            }
+
             Tab {
                 value = "stdInTab"
                 label = ReactNode("Standard In")
@@ -54,6 +65,30 @@ val SolutionsContainer = FC<Props> {
             Tab {
                 value = "stdOutTab"
                 label = ReactNode("Standard Out")
+            }
+            Tab {
+                value = "stdErr"
+                label = ReactNode("Standard Error")
+            }
+            Tab {
+                value = "warnings"
+                label = ReactNode("Warnings")
+            }
+            Tab {
+                value = "operators"
+                label = ReactNode("Operators")
+            }
+            Tab {
+                value = "libraries"
+                label = ReactNode("Libraries")
+            }
+            Tab {
+                value = "staticKb"
+                label = ReactNode("Static KB")
+            }
+            Tab {
+                value = "dynamicKb"
+                label = ReactNode("Dynamic KB")
             }
             Tab {
                 value = "messagesTab"
@@ -74,7 +109,6 @@ val SolutionsContainer = FC<Props> {
 
                 List {
                     dense = true
-                    console.log(it)
                     solutions.forEach {
                         if (it.isYes)
                             YesView {
@@ -93,27 +127,60 @@ val SolutionsContainer = FC<Props> {
             }
             TabPanel {
                 value = "stdInTab"
+
+                if (eContext != null)
+                    eContext.standardInput
+                else
+                    +"Empty"
             }
             TabPanel {
                 value = "stdOutTab"
+                if (eContext != null)
+                    eContext.standardOutput
+                else
+                    +"Empty"
             }
             TabPanel {
                 value = "stdErr"
+                if (eContext != null)
+                    eContext.standardError
+                else
+                    +"Empty"
             }
             TabPanel {
-                value = "Warnings"
+                value = "warnings"
+                if (eContext != null)
+                    eContext.warnings
+                else
+                    +"Empty"
             }
             TabPanel {
-                value = "Operators"
+                value = "operators"
+                if (eContext != null)
+                    eContext.operators
+                else
+                    +"Empty"
             }
             TabPanel {
-                value = "Libraries"
+                value = "libraries"
+                if (eContext != null)
+                    eContext.libraries
+                else
+                    +"Empty"
             }
             TabPanel {
-                value = "Static KB"
+                value = "staticKb"
+                if (eContext != null)
+                    eContext.staticKb
+                else
+                    +"Empty"
             }
             TabPanel {
-                value = "Dynamic KB"
+                value = "dynamicKb"
+                if (eContext != null)
+                    eContext.dynamicKb
+                else
+                    +"Empty"
             }
             TabPanel {
                 value = "messagesTab"
