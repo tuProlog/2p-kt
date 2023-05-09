@@ -74,7 +74,7 @@ val SolutionsContainer = FC<Props> {
 
                 List {
                     dense = true
-
+                    console.log(it)
                     solutions.forEach {
                         if (it.isYes)
                             YesView {
@@ -96,6 +96,24 @@ val SolutionsContainer = FC<Props> {
             }
             TabPanel {
                 value = "stdOutTab"
+            }
+            TabPanel {
+                value = "stdErr"
+            }
+            TabPanel {
+                value = "Warnings"
+            }
+            TabPanel {
+                value = "Operators"
+            }
+            TabPanel {
+                value = "Libraries"
+            }
+            TabPanel {
+                value = "Static KB"
+            }
+            TabPanel {
+                value = "Dynamic KB"
             }
             TabPanel {
                 value = "messagesTab"
