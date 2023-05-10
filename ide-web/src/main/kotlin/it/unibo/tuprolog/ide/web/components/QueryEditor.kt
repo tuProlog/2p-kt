@@ -4,6 +4,7 @@ import AppState
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ui.gui.Page
 import mui.material.Button
+import mui.material.ButtonGroup
 import mui.material.ButtonVariant
 import mui.material.FormControlVariant
 import mui.material.Stack
@@ -20,11 +21,12 @@ import web.html.HTMLInputElement
 
 val QueryEditor = FC<Props> {
     val queryInputRef = createRef<HTMLInputElement>()
-    val pageStatus = useSelector<AppState, Page.Status> { s -> s.tuProlog.pageStatus }
+    val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
 
 
     Stack {
         direction = responsive(StackDirection.row)
+
         TextField {
             id = "query"
             label = ReactNode("Query")
@@ -37,42 +39,46 @@ val QueryEditor = FC<Props> {
                 }
             }
         }
-        Button {
-            variant = ButtonVariant.contained
-            +"Solve"
-            onClick = {
-                if ( TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
-                    TuPrologController.application.currentPage?.solve(1)
-                } else {
-                    TuPrologController.application.currentPage?.next(1)
+
+        ButtonGroup {
+
+            Button {
+                variant = ButtonVariant.contained
+                +"Solve"
+                onClick = {
+                    if ( TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
+                        TuPrologController.application.currentPage?.solve(1)
+                    } else {
+                        TuPrologController.application.currentPage?.next(1)
+                    }
                 }
             }
-        }
-        Button {
-            variant = ButtonVariant.contained
-            +"Solve All"
-            onClick = {
-                if ( TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
-                    TuPrologController.application.currentPage?.solve(Int.MAX_VALUE)
-                } else {
-                    TuPrologController.application.currentPage?.next(Int.MAX_VALUE)
+            Button {
+                variant = ButtonVariant.contained
+                +"Solve All"
+                onClick = {
+                    if ( TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
+                        TuPrologController.application.currentPage?.solve(Int.MAX_VALUE)
+                    } else {
+                        TuPrologController.application.currentPage?.next(Int.MAX_VALUE)
+                    }
                 }
             }
-        }
-        Button {
-            variant = ButtonVariant.contained
-            disabled = pageStatus == Page.Status.COMPUTING
-            onClick = {
-                TuPrologController.application.currentPage?.reset()
+            Button {
+                variant = ButtonVariant.contained
+                disabled = pageStatus == Page.Status.COMPUTING
+                onClick = {
+                    TuPrologController.application.currentPage?.stop()
+                }
+                +"Stop"
             }
-            +"Stop"
-        }
-        Button {
-            variant = ButtonVariant.contained
-            onClick = {
-                TuPrologController.application.currentPage?.reset()
+            Button {
+                variant = ButtonVariant.contained
+                onClick = {
+                    TuPrologController.application.currentPage?.reset()
+                }
+                +"Reset"
             }
-            +"Reset"
         }
     }
 }

@@ -10,6 +10,7 @@ import it.unibo.tuprolog.ide.web.redux.actions.UpdateExecutionContext
 import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
 import it.unibo.tuprolog.ui.gui.InTheorySyntaxError
 import redux.RAction
@@ -41,7 +42,7 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) 
     }
 
     is UpdateStatus -> {
-        state.tuProlog.pageStatus = action.newStatus
+        state.tuProlog.pageStatus = TuPrologController.application.currentPage?.state
         state.tuProlog
     }
 

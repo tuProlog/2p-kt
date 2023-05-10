@@ -9,7 +9,6 @@ import mui.icons.material.CheckCircleOutline
 import mui.icons.material.ErrorOutlineOutlined
 import mui.icons.material.TimerOffOutlined
 import mui.material.ListItem
-import mui.material.ListItemAvatar
 import mui.material.ListItemIcon
 import mui.material.ListItemText
 import mui.material.SvgIconColor
@@ -18,7 +17,6 @@ import react.Props
 import react.ReactNode
 import react.create
 import react.dom.html.ReactHTML.br
-import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.span
 
 val formatter = TermFormatter.prettyExpressions()
@@ -38,12 +36,6 @@ fun getYesText(solution: Solution.Yes): String {
 }
 
 val YesView = FC<ViewProps> { props ->
-    props.solution.substitution.map { it.toPair() }.forEach {
-        console.log(it)
-
-        console.log(getYesSubstitutions(props.solution.castToYes()))
-        console.log(getYesSubstitutions(props.solution.castToYes()).joinToString("<br>"))
-    }
     ListItem {
         ListItemIcon {
             CheckCircleOutline {
@@ -61,7 +53,7 @@ val YesView = FC<ViewProps> { props ->
 }
 
 
-val NoView = FC<ViewProps> { props ->
+val NoView = FC<ViewProps> {
     ListItem {
         ListItemIcon {
             CancelOutlined {
@@ -75,7 +67,6 @@ val NoView = FC<ViewProps> { props ->
 }
 
 val HaltView = FC<ViewProps> { props ->
-    val queryText = props.solution.castToHalt()
     ListItem {
         if (props.solution.castToHalt().exception is TimeOutException) {
 

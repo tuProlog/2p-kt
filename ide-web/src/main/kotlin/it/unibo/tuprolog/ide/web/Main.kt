@@ -50,8 +50,6 @@ import web.html.HTML
 
 fun main() {
 
-    console.log(DefaultJsRunner())
-
     TuPrologController.bindApplication(
         TuPrologApplication.of(
             DefaultJsRunner(),

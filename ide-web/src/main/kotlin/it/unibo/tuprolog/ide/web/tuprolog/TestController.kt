@@ -17,8 +17,6 @@ import it.unibo.tuprolog.theory.parsing.ClausesParser
 //import it.unibo.tuprolog.theory.Theory
 
 fun testTuprolog(myTheory: String, myQuery: String) {
-    console.log("Test tuProlog")
-
     // TEST 1
     val stringTheory = myTheory.trimIndent()
     val clauseReader = ClausesParser.withDefaultOperators()

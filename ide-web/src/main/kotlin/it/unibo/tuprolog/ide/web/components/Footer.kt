@@ -36,7 +36,7 @@ const val MYMAX = 1000
 const val MYSTEP = 10
 
 val Footer = FC<Props> {
-    val pageStatus = useSelector<AppState, Page.Status> { s -> s.tuProlog.pageStatus }
+    val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
     var timeoutDuration by useState(MYTIMEOUTDURATION)
 
     Grid {
@@ -50,7 +50,7 @@ val Footer = FC<Props> {
         Grid {
             item = true
             p {
-                +"Stato: ${pageStatus.name}"
+                +"Stato: ${pageStatus?.name ?: "UNDEFINED"}"
             }
         }
 

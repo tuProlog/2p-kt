@@ -26,8 +26,6 @@ object TuPrologController {
 
     public lateinit var application: Application
     private lateinit var store: Store<AppState, RAction, WrapperAction>
-    private lateinit var currPage: Page
-
 
     private val catchAnyEvent: (Event<Any>) -> Unit = { console.log("[Controller] Missing event handler: ", it) }
     val logEvent: (Event<Any>) -> Unit = { console.log("[Controller] Received event: ", it) }
@@ -70,25 +68,33 @@ object TuPrologController {
 
     // TODO applicare l'unbind
     private fun bindPage(page: Page) {
-        currPage = page
-        page.onResolutionStarted.bind(this::onResolutionStarted)
+        page.onResolutionStarted.bind {
+            logEvent(it)
+            console.log(page.state)
+//            store.dispatch(UpdateStatus(page.state))
+            store.dispatch(UpdateExecutionContext(it))
+        }
         page.onResolutionOver.bind {
             logEvent(it)
-            store.dispatch(UpdateStatus(page.state))
+            console.log(page.state)
+//            store.dispatch(UpdateStatus(page.state))
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onNewQuery.bind {
             logEvent(it)
-            store.dispatch(UpdateStatus(page.state))
+            console.log(page.state)
+//            store.dispatch(UpdateStatus(page.state))
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onQueryOver.bind {
             logEvent(it)
-            store.dispatch(UpdateStatus(page.state))
+            console.log(page.state)
+//            store.dispatch(UpdateStatus(page.state))
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onNewSolution.bind {
             logEvent(it)
+            console.log(page.state)
             store.dispatch(NewSolution(it.event))
             store.dispatch(UpdateExecutionContext(it))
         }
@@ -104,12 +110,6 @@ object TuPrologController {
             store.dispatch(ResetPage())
             store.dispatch(UpdateExecutionContext(it))
         }
-    }
-
-    private fun onResolutionStarted(solverEvent: SolverEvent<Int>) {
-        logEvent(solverEvent)
-        store.dispatch(UpdateStatus(this.currPage.state))
-        store.dispatch(UpdateExecutionContext(solverEvent))
     }
 
     private fun unbindPage(page: Page) {
