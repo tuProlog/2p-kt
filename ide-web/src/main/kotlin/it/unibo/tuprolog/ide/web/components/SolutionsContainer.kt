@@ -19,6 +19,8 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.ide.web.utils.xs
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import mui.icons.material.Mail
+import mui.lab.TreeItem
+import mui.lab.TreeView
 import mui.material.Button
 import mui.material.ButtonColor
 import mui.material.ButtonVariant
@@ -208,70 +210,131 @@ val SolutionsContainer = FC<Props> {
             TabPanel {
                 value = "libraries"
                 if (eContext != null) {
-                    ul {
-                        eContext.libraries.libraries.forEach {
-                            li {
-                                +"operators"
-                            }
-                            table {
-                                tr {
-                                    th {
-                                        +"FUNCTOR"
-                                    }
-                                    th {
-                                        +"PRIORITY"
-                                    }
-                                    th {
-                                       +"SPECIFIER"
-                                    }
-                                }
-                                for (operator in it.operators) {
-                                    tr {
-                                        td {
-                                            +operator.functor
-                                        }
-                                        td {
-                                            +operator.priority.toString()
-                                        }
-                                        td {
-                                            +operator.specifier.toString()
-                                        }
-                                    }
-                                }
-                            }
 
-                            li {
-                                +"functions"
-                                ul {
-                                    it.functions.keys.forEach { it2 ->
-                                        li {
-                                            +it2.toIndicator().toString()
+                    TreeView {
+                        var idCounter = 0
+                        eContext.libraries.libraries.forEach {
+                            idCounter += 1
+                            TreeItem {
+                                nodeId = (idCounter).toString()
+                                label = ReactNode(it.alias)
+                                TreeItem {
+                                    nodeId = (idCounter+1).toString()
+                                    label = ReactNode("Functions")
+                                    ul {
+                                        it.functions.keys.forEach { it2 ->
+                                            li {
+                                                +it2.toIndicator().toString()
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            li {
-                                +"rules"
-                                ul {
-                                    it.clauses.filterIsInstance<Rule>().forEach { it2 ->
-                                        li {
-                                            +it2.head.indicator.toString()
-                                        }
+                                TreeItem {
+                                    nodeId = (idCounter + 2).toString()
+                                    label = ReactNode("Predicates")
+                                    //+"prova2"
+                                    ul {
+                                        it.clauses.filterIsInstance<Rule>().forEach { it2 ->
+                                            li {
+                                                +it2.head.indicator.toString()
+                                                +"nonboh"
+                                                }
+                                            }
+                                        it.primitives.keys.forEach { it3 ->
+                                                li {
+                                                    +it3.toIndicator().toString()
+                                                    +"boh"
+                                                }
+                                            }
+                                        //SORTED ??
                                     }
                                 }
-                            }
-                            li {
-                                +"primitives"
-                                ul {
-                                    it.primitives.keys.forEach { it2 ->
-                                        li {
-                                            +it2.toIndicator().toString()
+                                TreeItem {
+                                    nodeId = (idCounter+3).toString()
+                                    label = ReactNode("Operations")
+                                    ul {
+                                        it.operators.forEach { it2 ->
+                                            li {
+                                                +it2.functor.plus("    ").plus(it2.specifier.toString()).plus("    ")
+                                                    .plus(it2.priority.toString())
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
+/*                    ul {
+                        eContext.libraries.libraries.forEach {
+                        li {
+                            +"operators"
+                        }
+                        table {
+                            tr {
+                                th {
+                                    +"FUNCTOR"
+                                }
+                                th {
+                                    +"PRIORITY"
+                                }
+                                th {
+                                    +"SPECIFIER"
+                                }
+                            }
+                            for (operator in it.operators) {
+                                tr {
+                                    td {
+                                        +operator.functor
+                                    }
+                                    td {
+                                        +operator.priority.toString()
+                                    }
+                                    td {
+                                        +operator.specifier.toString()
+                                    }
+                                }
+                            }
+                        }
+
+                        li {
+                            +"functions"
+                            ul {
+                                it.functions.keys.forEach { it2 ->
+                                    li {
+                                        +it2.toIndicator().toString()
+                                    }
+                                }
+                            }
+                        }
+                        li {
+                            +"rules"
+                            ul {
+                                it.clauses.filterIsInstance<Rule>().forEach { it2 ->
+                                    li {
+                                        +it2.head.indicator.toString()
+                                    }
+                                }
+                            }
+                        }
+                        li {
+                            +"rerererf"
+                            ul {
+                                it.operators.forEach it2 ->
+                                +it2.functor, it2.specifier , it.priority"
+                            }
+                        }
+                        li {
+                            +"primitives"
+                            ul {
+                                it.primitives.keys.forEach { it2 ->
+                                    li {
+                                        +it2.toIndicator().toString()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    }*/
                 }
                 else
                     +"Empty LIBRARIES"
