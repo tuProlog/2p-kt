@@ -27,6 +27,12 @@ import mui.material.Size
 import mui.material.Typography
 import react.create
 import react.dom.html.ReactHTML.div
+import react.dom.html.ReactHTML.li
+import react.dom.html.ReactHTML.table
+import react.dom.html.ReactHTML.td
+import react.dom.html.ReactHTML.th
+import react.dom.html.ReactHTML.tr
+import react.dom.html.ReactHTML.ul
 import react.useState
 
 val SolutionsContainer = FC<Props> {
@@ -81,6 +87,17 @@ val SolutionsContainer = FC<Props> {
             Tab {
                 value = "libraries"
                 label = ReactNode("Libraries")
+/*                if (eContext != null) {
+                    console.log(eContext.libraries.libraries.toString())
+                    console.log("AAAAA")
+                    console.log(eContext.libraries.toString())
+                    console.log(eContext.libraries)
+                    console.log(eContext.libraries.libraries)
+                    val myvar = eContext.libraries.libraries.toList()
+                    console.log(myvar)
+                    console.log("BBB")
+                    console.log(myvar[0])
+                }*/
             }
             Tab {
                 value = "staticKb"
@@ -157,16 +174,89 @@ val SolutionsContainer = FC<Props> {
             TabPanel {
                 value = "operators"
                 if (eContext != null)
-                    +eContext.operators.toString()
+                    //+eContext.operators.toString()
                 else
-                    +"Empty"
+                    +"Empty OPERATORS"
             }
             TabPanel {
                 value = "libraries"
-                if (eContext != null)
-                    +eContext.libraries.toString()
+                if (eContext != null) {
+                    //+eContext.libraries.toString()
+                    //+eContext.standardError.toString()
+                    //eContext.libraries.libraries.forEach {
+                    //    +it.toString()
+                    //}
+                    ul {
+                            eContext.libraries.libraries.forEach {
+                                li {
+                                    +it.operators.toString()
+                                    +"primo"
+                                }
+                                li {
+                                    +"secondo"
+                                }
+                                li {
+                                    it.operators.forEach {
+                                        li {
+                                            +it.functor
+                                            +"FUNCTOR"
+                                        }
+                                        li {
+                                            +it.priority.toString()
+                                            +"PRIORITY"
+                                        }
+                                        li {
+                                            +it.specifier.toString()
+                                            +"SPECIFIER"
+                                        }
+                                    }
+                                }
+                                table {
+                                    tr {
+                                        th {
+                                            +"FUNCTOR"
+                                        }
+                                        th {
+                                            +"PRIORITY"
+                                        }
+                                        th {
+                                           +"SPECIFIER"
+                                        }
+                                    }
+                                    for (operator in it.operators) {
+                                        tr {
+                                            td {
+                                                +operator.functor
+                                            }
+                                            td {
+                                                +operator.priority.toString()
+                                            }
+                                            td {
+                                                +operator.specifier.toString()
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                    }
+
+                    /*eContext.libraries.libraries.forEach {
+                        +it.operators.toString()
+                    }*/
+                    /*
+                    eContext.libraries.libraries.forEach {
+                        +it.clauses.toString()
+                    }
+                    eContext.libraries.libraries.forEach {
+                        +it.functions.toString()
+                    }
+                    eContext.libraries.libraries.forEach {
+                        +it.primitives.toString()
+                    }*/
+                }
                 else
-                    +"Empty"
+                    +"Empty LIBRARIES 22"
             }
             TabPanel {
                 value = "staticKb"
