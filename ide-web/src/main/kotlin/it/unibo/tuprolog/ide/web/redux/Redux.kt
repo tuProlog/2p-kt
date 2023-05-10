@@ -3,6 +3,9 @@ import it.unibo.tuprolog.ide.web.redux.reducers.tuPrologActions
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.TimeUnit
+import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.ui.gui.Page
 import redux.RAction
 import redux.createStore
@@ -37,7 +40,13 @@ fun rootReducer(
 val myStore = createStore(
     ::rootReducer,
     AppState(
-        TuProlog(emptyList(), null, emptyList(), null, null, null),
+        TuProlog(
+            emptyList(),
+            null,
+            emptyList(),
+            null,
+            null,
+            null),
         emptyList()
     ),
     rEnhancer()
