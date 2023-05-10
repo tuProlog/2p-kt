@@ -174,42 +174,42 @@ val SolutionsContainer = FC<Props> {
             TabPanel {
                 value = "operators"
                 if (eContext != null)
-                    //+eContext.operators.toString()
+                    table {
+                        tr {
+                            th {
+                                +"FUNCTOR"
+                            }
+                            th {
+                                +"PRIORITY"
+                            }
+                            th {
+                                +"SPECIFIER"
+                            }
+                        }
+                        for (operator in eContext.operators) {
+                                tr {
+                                    td {
+                                        +operator.functor
+                                    }
+                                    td {
+                                        +operator.priority.toString()
+                                    }
+                                    td {
+                                        +operator.specifier.toString()
+                                    }
+                                }
+                        }
+                    }
                 else
                     +"Empty OPERATORS"
             }
             TabPanel {
                 value = "libraries"
                 if (eContext != null) {
-                    //+eContext.libraries.toString()
-                    //+eContext.standardError.toString()
-                    //eContext.libraries.libraries.forEach {
-                    //    +it.toString()
-                    //}
                     ul {
                             eContext.libraries.libraries.forEach {
                                 li {
-                                    +it.operators.toString()
-                                    +"primo"
-                                }
-                                li {
-                                    +"secondo"
-                                }
-                                li {
-                                    it.operators.forEach {
-                                        li {
-                                            +it.functor
-                                            +"FUNCTOR"
-                                        }
-                                        li {
-                                            +it.priority.toString()
-                                            +"PRIORITY"
-                                        }
-                                        li {
-                                            +it.specifier.toString()
-                                            +"SPECIFIER"
-                                        }
-                                    }
+                                    +"operators"
                                 }
                                 table {
                                     tr {
@@ -238,25 +238,17 @@ val SolutionsContainer = FC<Props> {
                                     }
 
                                 }
+                                li {
+                                    +"functions"
+                                    +it.functions.toString()
+                                }
+                                //it.functions
+
                             }
                     }
-
-                    /*eContext.libraries.libraries.forEach {
-                        +it.operators.toString()
-                    }*/
-                    /*
-                    eContext.libraries.libraries.forEach {
-                        +it.clauses.toString()
-                    }
-                    eContext.libraries.libraries.forEach {
-                        +it.functions.toString()
-                    }
-                    eContext.libraries.libraries.forEach {
-                        +it.primitives.toString()
-                    }*/
                 }
                 else
-                    +"Empty LIBRARIES 22"
+                    +"Empty LIBRARIES"
             }
             TabPanel {
                 value = "staticKb"
