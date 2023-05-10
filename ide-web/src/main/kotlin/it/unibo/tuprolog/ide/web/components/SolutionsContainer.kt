@@ -14,6 +14,7 @@ import react.Props
 import react.ReactNode
 import react.redux.useSelector
 import emotion.react.css
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.ide.web.utils.xs
 import it.unibo.tuprolog.solve.ExecutionContextAware
@@ -28,6 +29,7 @@ import mui.material.Typography
 import react.create
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.li
+import react.dom.html.ReactHTML.p
 import react.dom.html.ReactHTML.table
 import react.dom.html.ReactHTML.td
 import react.dom.html.ReactHTML.th
@@ -207,44 +209,68 @@ val SolutionsContainer = FC<Props> {
                 value = "libraries"
                 if (eContext != null) {
                     ul {
-                            eContext.libraries.libraries.forEach {
-                                li {
-                                    +"operators"
-                                }
-                                table {
-                                    tr {
-                                        th {
-                                            +"FUNCTOR"
-                                        }
-                                        th {
-                                            +"PRIORITY"
-                                        }
-                                        th {
-                                           +"SPECIFIER"
-                                        }
-                                    }
-                                    for (operator in it.operators) {
-                                        tr {
-                                            td {
-                                                +operator.functor
-                                            }
-                                            td {
-                                                +operator.priority.toString()
-                                            }
-                                            td {
-                                                +operator.specifier.toString()
-                                            }
-                                        }
-                                    }
-
-                                }
-                                li {
-                                    +"functions"
-                                    +it.functions.toString()
-                                }
-                                //it.functions
-
+                        eContext.libraries.libraries.forEach {
+                            li {
+                                +"operators"
                             }
+                            table {
+                                tr {
+                                    th {
+                                        +"FUNCTOR"
+                                    }
+                                    th {
+                                        +"PRIORITY"
+                                    }
+                                    th {
+                                       +"SPECIFIER"
+                                    }
+                                }
+                                for (operator in it.operators) {
+                                    tr {
+                                        td {
+                                            +operator.functor
+                                        }
+                                        td {
+                                            +operator.priority.toString()
+                                        }
+                                        td {
+                                            +operator.specifier.toString()
+                                        }
+                                    }
+                                }
+                            }
+
+                            li {
+                                +"functions"
+                                ul {
+                                    it.functions.keys.forEach { it2 ->
+                                        li {
+                                            +it2.toIndicator().toString()
+                                        }
+                                    }
+                                }
+                            }
+                            li {
+                                +"rules"
+                                ul {
+                                    it.clauses.filterIsInstance<Rule>().forEach { it2 ->
+                                        li {
+                                            +it2.head.indicator.toString()
+                                        }
+                                    }
+                                }
+                            }
+                            li {
+                                +"primitives"
+                                ul {
+                                    it.primitives.keys.forEach { it2 ->
+                                        li {
+                                            +it2.toIndicator().toString()
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 else
