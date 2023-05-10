@@ -232,7 +232,6 @@ val SolutionsContainer = FC<Props> {
                                 TreeItem {
                                     nodeId = (idCounter + 2).toString()
                                     label = ReactNode("Predicates")
-                                    //+"prova2"
                                     ul {
                                         it.clauses.filterIsInstance<Rule>().forEach { it2 ->
                                             li {
@@ -264,80 +263,9 @@ val SolutionsContainer = FC<Props> {
                             }
                         }
                     }
-/*                    ul {
-                        eContext.libraries.libraries.forEach {
-                        li {
-                            +"operators"
-                        }
-                        table {
-                            tr {
-                                th {
-                                    +"FUNCTOR"
-                                }
-                                th {
-                                    +"PRIORITY"
-                                }
-                                th {
-                                    +"SPECIFIER"
-                                }
-                            }
-                            for (operator in it.operators) {
-                                tr {
-                                    td {
-                                        +operator.functor
-                                    }
-                                    td {
-                                        +operator.priority.toString()
-                                    }
-                                    td {
-                                        +operator.specifier.toString()
-                                    }
-                                }
-                            }
-                        }
-
-                        li {
-                            +"functions"
-                            ul {
-                                it.functions.keys.forEach { it2 ->
-                                    li {
-                                        +it2.toIndicator().toString()
-                                    }
-                                }
-                            }
-                        }
-                        li {
-                            +"rules"
-                            ul {
-                                it.clauses.filterIsInstance<Rule>().forEach { it2 ->
-                                    li {
-                                        +it2.head.indicator.toString()
-                                    }
-                                }
-                            }
-                        }
-                        li {
-                            +"rerererf"
-                            ul {
-                                it.operators.forEach it2 ->
-                                +it2.functor, it2.specifier , it.priority"
-                            }
-                        }
-                        li {
-                            +"primitives"
-                            ul {
-                                it.primitives.keys.forEach { it2 ->
-                                    li {
-                                        +it2.toIndicator().toString()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    }*/
                 }
                 else
-                    +"Empty LIBRARIES"
+                    +"Empty LIBRARIES"//name all empty??
             }
             TabPanel {
                 value = "staticKb"
