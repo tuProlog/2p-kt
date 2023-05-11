@@ -4,16 +4,8 @@ import csstype.AlignItems.Companion.center
 import csstype.JustifyContent.Companion.spaceBetween
 import csstype.em
 import emotion.react.css
-import mui.icons.material.Add
-import mui.icons.material.DeleteForever
-import mui.material.Button
 import mui.material.ButtonVariant.Companion.outlined
-import mui.material.Fab
-import mui.material.FabColor
 import mui.material.FabVariant.Companion.extended
-import mui.material.Stack
-import mui.material.StackDirection
-import mui.material.Typography
 import mui.system.responsive
 import mui.system.sx
 import react.dom.html.ReactHTML.div
@@ -32,24 +24,13 @@ import it.unibo.tuprolog.ui.gui.PageName
 import it.unibo.tuprolog.utils.io.JsFile
 import js.uri.encodeURIComponent
 import kotlinx.browser.localStorage
-import mui.icons.material.GetAppOutlined
-import mui.icons.material.Info
-import mui.icons.material.UploadFileOutlined
-import mui.material.ButtonColor
+import mui.icons.material.*
+import mui.material.*
 import mui.material.ButtonVariant.Companion.contained
-import mui.material.Dialog
-import mui.material.DialogActions
-import mui.material.DialogContent
-import mui.material.DialogContentText
-import mui.material.DialogTitle
 import org.w3c.dom.Storage
 import org.w3c.dom.set
-import react.FC
-import react.Props
-import react.create
-import react.createRef
+import react.*
 import react.dom.html.ReactHTML.input
-import react.useState
 import redux.RAction
 import redux.WrapperAction
 import web.dom.document
@@ -136,23 +117,23 @@ val NavBar = FC<Props> {
                 }
             }
 
-//            Fab {
-//                Edit()
-//                color = FabColor.secondary
-//                variant = extended
-//                onClick = {
-//                    newFileName = editorSelectedTab
-//                    changeFileNameErrorInput = false
-//                    isDialogRenameOpen = true
-//                }
-//                Typography {
-//                    +"Rename"
-//                }
-//                sx {
-//                    marginRight = 10.em
-//                    marginLeft = 1.em
-//                }
-//            }
+            Fab {
+                Edit()
+                color = FabColor.secondary
+                variant = extended
+                onClick = {
+                  //  newFileName = editorSelectedTab
+                  //  changeFileNameErrorInput = false
+                  isDialogRenameOpen = true
+                }
+                Typography {
+                    +"Rename"
+                }
+                sx {
+                    marginRight = currentStyleConfig.marginRight
+                    marginLeft = currentStyleConfig.marginLeft
+                }
+            }
 
             input {
                 type = InputType.file
@@ -297,48 +278,51 @@ val NavBar = FC<Props> {
             }
         }
 
-//        Dialog {
-//            open = isDialogRenameOpen
-//            onClose = { _, _ -> isDialogRenameOpen = false }
-//            DialogTitle {
-//                +"Rename editor"
-//            }
-//            DialogContent {
-//                DialogContentText {
-//                    +"Write here the new name for $currentPage"
-//                }
-//                TextField {
-//                    autoFocus = true
-//                    inputRef = newFileNameInputRef
-//                    fullWidth = true
-//                    error = changeFileNameErrorInput
-//                    label = ReactNode("New file name")
-//                    helperText = ReactNode("File name must end with .pl or .txt")
-//                    defaultValue = currentPage
-//                    onChange = {
-//                        newFileNameInputRef.current?.let { it1 ->
-//                            newFileName = it1.value
-//                            changeFileNameErrorInput = !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
-//                        }
-//                    }
-//                }
-//            }
-//            DialogActions {
-//                Button {
-//                    onClick = {
-//                        isDialogRenameOpen = false
-//                    }
-//                    +"Cancel"
-//                }
-//                Button {
-//                    disabled = changeFileNameErrorInput
-//                    onClick = {
-//                        isDialogRenameOpen = false
-//                        dispatcher(RenameEditor(newFileName))
-//                    }
-//                    +"Confirm"
-//                }
-//            }
-//        }
+        Dialog {
+            open = isDialogRenameOpen
+            onClose = { _, _ -> isDialogRenameOpen = false }
+            DialogTitle {
+                +"Rename editor"
+            }
+            DialogContent {
+                DialogContentText {
+                  //  +"Write here the new name for $currentPage"
+                    val currentName = TuPrologController.application.currentPage?.id?.name
+                    +"Write here the new name for $currentName"
+                }
+                TextField {
+                    autoFocus = true
+                    inputRef = newFileNameInputRef
+                    fullWidth = true
+                    error = changeFileNameErrorInput
+                    label = ReactNode("New file name")
+                    helperText = ReactNode("File name must end with .pl or .txt")
+                   // defaultValue = currentPage
+                    defaultValue = TuPrologController.application.currentPage?.id?.name
+                   /* onChange = {
+                        newFileNameInputRef.current?.let { it1 ->
+                            newFileName = it1.value
+                            changeFileNameErrorInput = !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
+                        }
+                    }*/
+                }
+            }
+            DialogActions {
+                Button {
+                    onClick = {
+                        isDialogRenameOpen = false
+                    }
+                    +"Cancel"
+                }
+                Button {
+                    disabled = changeFileNameErrorInput
+                    onClick = {
+                        isDialogRenameOpen = false
+                       // dispatcher(RenameEditor(newFileName))
+                    }
+                    +"Confirm"
+                }
+            }
+        }
     }
 }
