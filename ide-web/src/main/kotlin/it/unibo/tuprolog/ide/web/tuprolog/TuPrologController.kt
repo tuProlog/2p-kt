@@ -22,7 +22,11 @@ import redux.WrapperAction
 
 object TuPrologController {
 
-    lateinit var application: Application
+    var application: Application =
+        TuPrologApplication.of(
+            DefaultJsRunner(),
+            ClassicSolverFactory,
+            Page.DEFAULT_TIMEOUT)
     private lateinit var store: Store<AppState, RAction, WrapperAction>
 
     private val catchAnyEvent: (Event<Any>) -> Unit = { console.log("[Controller] Missing event handler: ", it) }
@@ -30,15 +34,7 @@ object TuPrologController {
 
     fun initialize(store: Store<AppState, RAction, WrapperAction>) {
         this.store = store
-
-        val runner = DefaultJsRunner()
-        application = TuPrologApplication.of(
-            runner,
-            ClassicSolverFactory,
-            Page.DEFAULT_TIMEOUT)
-
         bindApplication(application)
-
         application.newPage()
     }
 

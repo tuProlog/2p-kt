@@ -13,6 +13,8 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import mui.material.GridDirection
 import it.unibo.tuprolog.ide.web.utils.xs
 import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.TimeUnit
+import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.ui.gui.Page
 import mui.material.BaseSize
 import mui.material.BottomNavigation
@@ -37,12 +39,12 @@ import kotlin.time.toDuration
 const val MYXS = 5
 const val MYXSGRID = 7
 const val MYMIN = 1
-const val MYMAX = 1000
 const val MYSTEP = 10
 
 val Footer = FC<Props> {
     val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
-    var timeoutDuration by useState(Page.DEFAULT_TIMEOUT)
+    val myTimeout = Page.DEFAULT_TIMEOUT
+    var timeoutDuration by useState(myTimeout)
 
     Grid {
         container = true
@@ -87,17 +89,15 @@ val Footer = FC<Props> {
                     }
 
                     Slider {
-                        value = timeoutDuration
+                        value = 10
                         step = MYSTEP
                         size = Size.small
                         onChange = { _, newValue, _ ->
                             timeoutDuration = newValue as Long
-                            TuPrologController.application.currentPage?.timeout = timeoutDuration
+//                            TuPrologController.application.currentPage?.timeout = 10
                         }
-                        max = MYMAX
-                        min = MYMIN
-
-
+                        max = 60000
+                        min = 10
                     }
                 }
             }
