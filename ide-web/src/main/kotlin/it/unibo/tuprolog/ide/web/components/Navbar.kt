@@ -164,12 +164,14 @@ val NavBar = FC<Props> {
                 onChange = {
                     it.target.files?.get(0)?.text()?.then { it1 ->
                         val name = it.target.files?.get(0)?.name
-                        if (name != null) {
-                            TuPrologController
-                                .application
-                                .newPage(PageName(name))
-                                .theory = it1
-                        }
+                        val theory = it1
+
+//                        if (name != null) {
+//                            val newPage = TuPrologController
+//                                .application
+//                                .newPage(PageName(name))
+//                            TuPrologController.application.pageByID(newPage.id)?.theory = it1
+//                        }
                         // TODO allow multiple uploads of the same file (following line is not working as intended)
                         // it.target.value = ""
                     }

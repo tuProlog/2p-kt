@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ide.web.components
 
 import AppState
+import PageWrapper
 import csstype.Display
 import csstype.FlexFlow
 import csstype.number
@@ -29,7 +30,7 @@ val TheoryEditors = FC<Props> {
     val editorSelectedTab =
         useSelector<AppState, TuPrologPage?> { s -> s.tuProlog.currentPage }
     val editorTabs =
-        useSelector<AppState, Collection<TuPrologPage>> { s -> s.tuProlog.pages }
+        useSelector<AppState, Collection<PageWrapper>> { s -> s.tuProlog.pages }
 
     div {
         css {

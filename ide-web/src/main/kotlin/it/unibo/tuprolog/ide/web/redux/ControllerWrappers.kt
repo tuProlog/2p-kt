@@ -6,9 +6,9 @@ data class ApplicationWrapper() {
 
 data class PageWrapper() {
     val id
-    val solutions AddSolution(pageId, solution), CleanSolutions(pageId)
     val theory // forse non serve
     val query // forse non serve
+    val solutions AddSolution(pageId, solution), CleanSolutions(pageId)
     val execution context UpdateExecutionContext(pageId, context), CleanExecutionContext(pageId)
     val page status // updateStatus(newStatus: string)
     val exceptions

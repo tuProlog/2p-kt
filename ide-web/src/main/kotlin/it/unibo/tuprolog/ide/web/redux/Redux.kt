@@ -3,18 +3,38 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.ui.gui.Page
+import it.unibo.tuprolog.ui.gui.PageID
 import mui.material.AlertColor
 import redux.RAction
 import redux.createStore
 import redux.rEnhancer
 
-// Stato
-class Message(var text: String, var color: AlertColor) {} //, var id:UUID
+
+data class PageWrapper(
+    var id: PageID,
+    val theory: String,
+//    val query: String,
+//    val solutions AddSolution(pageId, solution), CleanSolutions(pageId)
+//    val execution context UpdateExecutionContext(pageId, context), CleanExecutionContext(pageId)
+//    val page status // updateStatus(newStatus: string)
+//    val exceptions
+) {
+    fun nameByID(): String {
+        return id.name
+    }
+
+    companion object {
+        fun fromPage(page: Page): PageWrapper {
+            return PageWrapper(page.id, page.theory)
+        }
+    }
+}
+
 data class TuProlog(
-    var pages: Collection<TuPrologPage>, // Map PageId, pageName
-    var currentPage: TuPrologPage?, // PageId
-    var solutions: Collection<TuPrologSolution>, // Collection<TuPrologSolution>
-    var executionContext: ExecutionContextAware?, // ExecutionContextAware?
+    var pages: Collection<PageWrapper>,
+    var currentPage: TuPrologPage?,
+    var solutions: Collection<TuPrologSolution>,
+    var executionContext: ExecutionContextAware?,
     var pageStatus: Page.Status?,
     var pageException: Throwable?
 )

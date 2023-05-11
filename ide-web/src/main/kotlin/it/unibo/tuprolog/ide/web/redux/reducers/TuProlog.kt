@@ -16,7 +16,7 @@ import redux.RAction
 fun tuPrologActions(state: AppState, action: RAction): TuProlog =
     when (action) {
         is UpdatePagesList -> {
-            state.tuProlog.pages = action.list.toMutableList()
+            state.tuProlog.pages = action.list.map {PageWrapper.fromPage(it)}
             state.tuProlog
         }
 
@@ -46,6 +46,16 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog =
                 TuPrologController.application.currentPage?.state
             state.tuProlog
         }
+
+//        is UpdatePageName -> {
+////            val targetPage = state.tuProlog.pages.find { it.id == action.oldName }
+////            if (targetPage != null)
+////                targetPage.id = action.newName
+//
+//            state.tuProlog.pages = action.list.map {PageWrapper.fromPage(it)}
+//            state.tuProlog.currentPage = action.page
+//            state.tuProlog
+//        }
 
         is PageError -> {
             state.tuProlog.pageException = action.exception

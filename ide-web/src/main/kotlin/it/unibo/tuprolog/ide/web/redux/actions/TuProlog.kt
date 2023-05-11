@@ -4,6 +4,7 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.ui.gui.Page
+import it.unibo.tuprolog.ui.gui.PageID
 import redux.RAction
 
 class UpdatePagesList(val list: Collection<TuPrologPage>) : RAction
