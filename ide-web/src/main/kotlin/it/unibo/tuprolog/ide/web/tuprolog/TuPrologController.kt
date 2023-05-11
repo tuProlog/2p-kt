@@ -105,7 +105,8 @@ object TuPrologController {
         page.onSave.bind(catchAnyEvent)
         page.onRename.bind {
             logEvent(it)
-//            store.dispatch(UpdateExecutionContext(it))
+            store.dispatch(UpdatePagesList(application.pages))
+            store.dispatch(UpdateSelectedPage(application.currentPage))
         }
         page.onReset.bind {
             logEvent(it)

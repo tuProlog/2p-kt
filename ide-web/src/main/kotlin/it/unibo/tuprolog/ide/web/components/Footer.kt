@@ -43,7 +43,7 @@ const val MYSTEP = 10
 
 val Footer = FC<Props> {
     val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
-    var timeoutDuration by useState(1000L)
+    var timeoutDuration by useState(1000)
 
     Grid {
         container = true
@@ -92,9 +92,9 @@ val Footer = FC<Props> {
                         step = MYSTEP
                         size = Size.small
                         onChange = { _, newValue, _ ->
-                            console.log(newValue)
                             timeoutDuration = newValue
-                            TuPrologController.application.currentPage?.timeout = newValue * TimeUnit.MILLIS
+                            TuPrologController.application.currentPage?.timeout =
+                                (newValue * TimeUnit.MILLIS)
                         }
                         max = 60000L
                         min = 10L

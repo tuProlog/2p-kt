@@ -31,13 +31,16 @@ import mui.material.ButtonVariant.Companion.contained
 import org.w3c.dom.Storage
 import org.w3c.dom.set
 import react.*
+import react.dom.html.ReactHTML.a
 import react.dom.html.ReactHTML.input
+import react.dom.html.ReactHTML.p
 import redux.RAction
 import redux.WrapperAction
 import web.dom.document
 import web.html.HTML
 import web.html.InputType
 import react.dom.onChange
+import it.unibo.tuprolog.Info as TuPrologInfo
 
 data class IDEStyle(
     val spacing: Int = DEFAULT_SPACING,
@@ -89,18 +92,6 @@ val NavBar = FC<Props> {
         sx {
             justifyContent = spaceBetween
             alignItems = center
-        }
-
-        div {
-            Switch {
-                icon = Brightness7.create()
-                checkedIcon = Brightness4.create()
-                checked = theme == Themes.Dark
-
-                onChange = { _, checked ->
-                    theme = if (checked) Themes.Dark else Themes.Light
-                }
-            }
         }
 
         div {
@@ -252,27 +243,23 @@ val NavBar = FC<Props> {
                 onClick = {
                     isDialogOpen = true
                 }
-                Typography {
-                    +"About"
-                }
-                sx {
-                    marginRight = currentStyleConfig.marginRight
-                    marginLeft = currentStyleConfig.marginLeft
-                }
                 color = ButtonColor.info
             }
-        }
 
-//        Snackbar {
-//            open = isMessageOpen
-//            autoHideDuration = 6000
-//
-//            Alert {
-//                onClose={ isMessageOpen = false }
-//                severity=actionResultSeverity
-//                + actionResultMessage
-//            }
-//        }
+            Switch {
+                icon = Brightness7.create {
+                    color = SvgIconColor.info
+                }
+                checkedIcon = Brightness4.create {
+                    color = SvgIconColor.info
+                }
+                checked = theme == Themes.Dark
+
+                onChange = { _, checked ->
+                    theme = if (checked) Themes.Dark else Themes.Light
+                }
+            }
+        }
 
         Dialog {
             open = isDialogOpen
@@ -283,7 +270,16 @@ val NavBar = FC<Props> {
             }
             DialogContent {
                 DialogContentText {
-                    +"TupKTWeb versione 0.1"
+                    p {
+                        +"TupKTWeb version: 0.1"
+                        +"TuProlog 2p-kt version: ${TuPrologInfo.VERSION}"
+                        +"2p-kt GitHub repo:"
+                        a {
+                            href="https://github.com/tuProlog/2p-kt"
+                            + "https://github.com/tuProlog/2p-kt"
+                        }
+                        +"Developed by: Alberto Donati & Fabio Muratori"
+                    }
                 }
                 DialogActions {
                     Button {

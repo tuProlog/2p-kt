@@ -52,109 +52,109 @@ fun main() {
 }
 
 val Root = FC<Props> {
+
+    useEffectOnce {
+        TuPrologController.initialize(myStore)
+    }
+
     Provider {
         store = myStore
 
-        useEffectOnce {
-            TuPrologController.initialize(myStore)
+        ThemeModule {
+            App {}
         }
-
-        App {}
     }
 }
 
 val App = FC<Props> {
+    val pageException = useSelector<AppState, Throwable?> { s -> s.tuProlog.pageException }
+    val dispatcher = useDispatch<RAction, WrapperAction>()
 
-    ThemeModule {
-        val pageException = useSelector<AppState, Throwable?> { s -> s.tuProlog.pageException }
-        val dispatcher = useDispatch<RAction, WrapperAction>()
-
-        fun getExceptionTextHeader(): String {
-            return when (pageException) {
-                is InTheorySyntaxError -> "Syntax error in ${pageException.page.name}"
-                is InQuerySyntaxError -> "Syntax error in query"
-                else -> "Error"
-            }
+    fun getExceptionTextHeader(): String {
+        return when (pageException) {
+            is InTheorySyntaxError -> "Syntax error in ${pageException.page.name}"
+            is InQuerySyntaxError -> "Syntax error in query"
+            else -> "Error"
         }
+    }
 
-        fun getExceptionTextContent(): String {
-            if (pageException?.message != null) {
-                return pageException.message.toString()
-            }
-            return ""
+    fun getExceptionTextContent(): String {
+        if (pageException?.message != null) {
+            return pageException.message.toString()
+        }
+        return ""
+    }
+
+    Grid {
+        container = true
+        direction = responsive(GridDirection.column)
+        sx {
+            justifyContent = JustifyContent.flexStart
+            alignItems = AlignItems.center
+            flexWrap = FlexWrap.nowrap
+            height = 100.vh
         }
 
         Grid {
-            container = true
-            direction = responsive(GridDirection.column)
-            sx {
-                justifyContent = JustifyContent.flexStart
-                alignItems = AlignItems.center
-                flexWrap = FlexWrap.nowrap
-                height = 100.vh
+            item = true
+            css {
+                width = 100.pct
             }
-
-            Grid {
-                item = true
-                css {
-                    width = 100.pct
-                }
-                NavBar {}
-            }
-
-            Grid {
-                item = true
-                css {
-                    width = 100.pct
-                }
-                xs = true
-                TheoryEditors {}
-            }
-
-            Grid {
-                item = true
-                css {
-                    width = 100.pct
-                }
-                QueryEditor {}
-            }
-
-            Grid {
-                item = true
-                css {
-                    width = 100.pct
-                    height = 400.px
-                    overflowY = Overflow.scroll
-                }
-
-                SolutionsContainer {}
-            }
-
-            Grid {
-                item = true
-                css {
-                    width = 100.pct
-                }
-                Footer {}
-            }
+            NavBar {}
         }
 
-        Dialog {
-            open = pageException != null
-            onClose = { _, _ -> dispatcher(CleanPageError()) }
-
-            DialogTitle {
-                +getExceptionTextHeader()
+        Grid {
+            item = true
+            css {
+                width = 100.pct
             }
-            DialogContent {
-                DialogContentText {
-                    +getExceptionTextContent() //pageException?::class.simpleName +
-                }
-                DialogActions {
-                    Button {
-                        onClick = { dispatcher(CleanPageError()) }
-                        +"Close"
-                    }
+            xs = true
+            TheoryEditors {}
+        }
+
+        Grid {
+            item = true
+            css {
+                width = 100.pct
+            }
+            QueryEditor {}
+        }
+
+        Grid {
+            item = true
+            css {
+                width = 100.pct
+                height = 400.px
+                overflowY = Overflow.scroll
+            }
+
+            SolutionsContainer {}
+        }
+
+        Grid {
+            item = true
+            css {
+                width = 100.pct
+            }
+            Footer {}
+        }
+    }
+
+    Dialog {
+        open = pageException != null
+        onClose = { _, _ -> dispatcher(CleanPageError()) }
+
+        DialogTitle {
+            +getExceptionTextHeader()
+        }
+        DialogContent {
+            DialogContentText {
+                +getExceptionTextContent() //pageException?::class.simpleName +
+            }
+            DialogActions {
+                Button {
+                    onClick = { dispatcher(CleanPageError()) }
+                    +"Close"
                 }
             }
         }

@@ -10,6 +10,7 @@ import emotion.react.css
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.utils.MonacoEditor
+import it.unibo.tuprolog.ide.web.utils.Themes
 import it.unibo.tuprolog.ui.gui.Page
 import mui.lab.TabContext
 import mui.lab.TabPanel
@@ -23,11 +24,12 @@ import react.ReactNode
 import react.dom.html.ReactHTML.div
 import react.redux.useDispatch
 import react.redux.useSelector
+import react.useRequiredContext
 import redux.RAction
 import redux.WrapperAction
 
 val TheoryEditors = FC<Props> {
-
+    val provTheme by useRequiredContext(ThemeContext)
     val editorSelectedTab = useSelector<AppState, TuPrologPage?> { s -> s.tuProlog.currentPage }
     val editorTabs = useSelector<AppState, Collection<TuPrologPage>> { s -> s.tuProlog.pages }
     val dispatcher = useDispatch<RAction, WrapperAction>()
@@ -77,7 +79,10 @@ val TheoryEditors = FC<Props> {
                             onChange = {
                                 TuPrologController.application.currentPage?.theory = it
                             }
-//                            theme = "vs-dark"
+                            if (provTheme == Themes.Dark)
+                                theme = "vs-dark"
+                            else if  (provTheme == Themes.Light)
+                                theme = "vs-light"
                             beforeMount = {
     //                            console.log(it)
     //                            it.languages.register("tuProlog")

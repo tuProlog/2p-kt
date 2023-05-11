@@ -17,7 +17,7 @@ import redux.RAction
 
 fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) {
     is UpdatePagesList -> {
-        state.tuProlog.pages = action.list
+        state.tuProlog.pages = action.list.toMutableList()
         state.tuProlog
     }
 
