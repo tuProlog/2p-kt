@@ -36,6 +36,7 @@ import redux.WrapperAction
 import web.dom.document
 import web.html.HTML
 import web.html.InputType
+import react.dom.onChange
 
 data class IDEStyle(
     val spacing: Int = DEFAULT_SPACING,
@@ -299,12 +300,12 @@ val NavBar = FC<Props> {
                     helperText = ReactNode("File name must end with .pl or .txt")
                    // defaultValue = currentPage
                     defaultValue = TuPrologController.application.currentPage?.id?.name
-                   /* onChange = {
+                    onChange = {
                         newFileNameInputRef.current?.let { it1 ->
                             newFileName = it1.value
                             changeFileNameErrorInput = !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
                         }
-                    }*/
+                    }
                 }
             }
             DialogActions {
@@ -318,7 +319,7 @@ val NavBar = FC<Props> {
                     disabled = changeFileNameErrorInput
                     onClick = {
                         isDialogRenameOpen = false
-                       // dispatcher(RenameEditor(newFileName))
+                        TuPrologController.application.currentPage?.id = PageName(newFileName)
                     }
                     +"Confirm"
                 }

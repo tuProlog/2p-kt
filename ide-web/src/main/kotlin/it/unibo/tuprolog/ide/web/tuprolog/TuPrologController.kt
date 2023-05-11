@@ -107,6 +107,10 @@ object TuPrologController {
         page.onNewStaticKb.bind(catchAnyEvent)
         page.onSolveOptionsChanged.bind(catchAnyEvent)
         page.onSave.bind(catchAnyEvent)
+        page.onRename.bind {
+            logEvent(it)
+//            store.dispatch(UpdateExecutionContext(it))
+        }
         page.onReset.bind {
             logEvent(it)
             store.dispatch(ResetPage())
