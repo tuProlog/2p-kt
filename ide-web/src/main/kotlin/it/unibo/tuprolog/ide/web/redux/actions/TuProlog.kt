@@ -30,3 +30,5 @@ class ResetPage: RAction
 class UpdateStatus(val newStatus: Page.Status): RAction
 class PageError(val page: Page, val exception: Throwable): RAction
 class CleanPageError: RAction
+
+class StdOut(val out: String) : RAction

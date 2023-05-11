@@ -141,28 +141,28 @@ val SolutionsContainer = FC<Props> {
                 if (eContext != null)
                     +eContext.standardInput.toString()
                 else
-                    +"Empty"
+                    +"Empty stdInTab"
             }
             TabPanel {
                 value = "stdOutTab"
                 if (eContext != null)
                     +eContext.standardOutput.toString()
                 else
-                    +"Empty"
+                    +"Empty stdOutTab"
             }
             TabPanel {
                 value = "stdErr"
                 if (eContext != null)
                     +eContext.standardError.toString()
                 else
-                    +"Empty"
+                    +"Empty stdErr"
             }
             TabPanel {
                 value = "warnings"
                 if (eContext != null)
                     +eContext.warnings.toString()
                 else
-                    +"Empty"
+                    +"Empty warnings"
             }
             TabPanel {
                 value = "operators"
@@ -194,7 +194,7 @@ val SolutionsContainer = FC<Props> {
                         }
                     }
                 else
-                    +"Empty OPERATORS"
+                    +"Empty operators"
             }
             TabPanel {
                 value = "libraries"
@@ -253,21 +253,21 @@ val SolutionsContainer = FC<Props> {
                     }
                 }
                 else
-                    +"Empty LIBRARIES"//name all empty??
+                    +"Empty libraries"
             }
             TabPanel {
                 value = "staticKb"
                 if (eContext != null)
                     +eContext.staticKb.toString()
                 else
-                    +"Empty"
+                    +"Empty staticKb"
             }
             TabPanel {
                 value = "dynamicKb"
                 if (eContext != null)
                     eContext.dynamicKb
                 else
-                    +"Empty"
+                    +"Empty dynamicKb"
             }
             TabPanel {
                 value = "messagesTab"

@@ -1,13 +1,7 @@
 package it.unibo.tuprolog.ide.web.tuprolog
 
 import AppState
-import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
-import it.unibo.tuprolog.ide.web.redux.actions.PageError
-import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
-import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
-import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
-import it.unibo.tuprolog.ide.web.redux.actions.UpdateExecutionContext
-import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
+import it.unibo.tuprolog.ide.web.redux.actions.*
 import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.times
@@ -96,7 +90,10 @@ object TuPrologController {
         page.onStateChanged.bind {
             store.dispatch(UpdateStatus(it.event))
         }
-        page.onStdoutPrinted.bind(catchAnyEvent) //
+        page.onStdoutPrinted.bind {
+            store.dispatch(StdOut(it.event))
+        }
+
         page.onStderrPrinted.bind(catchAnyEvent) //
         page.onWarning.bind(catchAnyEvent) //
         page.onNewSolver.bind(catchAnyEvent)
