@@ -8,8 +8,11 @@ import csstype.em
 import csstype.px
 import emotion.css.css
 import emotion.react.css
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologApplication
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import mui.material.GridDirection
 import it.unibo.tuprolog.ide.web.utils.xs
+import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.ui.gui.Page
 import mui.material.BaseSize
 import mui.material.BottomNavigation
@@ -23,12 +26,14 @@ import mui.system.sx
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.p
+import react.redux.useDispatch
 import react.redux.useSelector
 import react.useState
+import redux.RAction
+import redux.WrapperAction
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-const val MYTIMEOUTDURATION = 10
 const val MYXS = 5
 const val MYXSGRID = 7
 const val MYMIN = 1
@@ -37,7 +42,7 @@ const val MYSTEP = 10
 
 val Footer = FC<Props> {
     val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
-    var timeoutDuration by useState(MYTIMEOUTDURATION)
+    var timeoutDuration by useState(Page.DEFAULT_TIMEOUT)
 
     Grid {
         container = true
@@ -85,7 +90,10 @@ val Footer = FC<Props> {
                         value = timeoutDuration
                         step = MYSTEP
                         size = Size.small
-                        onChange = { _, newValue, _ -> timeoutDuration = newValue as Int }
+                        onChange = { _, newValue, _ ->
+                            timeoutDuration = newValue as Long
+                            TuPrologController.application.currentPage?.timeout = timeoutDuration
+                        }
                         max = MYMAX
                         min = MYMIN
 

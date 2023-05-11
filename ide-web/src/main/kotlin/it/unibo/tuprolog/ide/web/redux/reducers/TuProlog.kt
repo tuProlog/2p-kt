@@ -56,6 +56,5 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) 
         state.tuProlog
     }
 
-
     else -> state.tuProlog
 }

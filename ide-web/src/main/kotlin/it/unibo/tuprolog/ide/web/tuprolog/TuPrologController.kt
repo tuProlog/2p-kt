@@ -22,16 +22,24 @@ import redux.WrapperAction
 
 object TuPrologController {
 
-    // TODO move application into getter method and initialize in registerReduxStore
-
-    public lateinit var application: Application
+    lateinit var application: Application
     private lateinit var store: Store<AppState, RAction, WrapperAction>
 
     private val catchAnyEvent: (Event<Any>) -> Unit = { console.log("[Controller] Missing event handler: ", it) }
-    val logEvent: (Event<Any>) -> Unit = { console.log("[Controller] Received event: ", it) }
+    private val logEvent: (Event<Any>) -> Unit = { console.log("[Controller] Received event: ", it) }
 
-    fun registerReduxStore(store: Store<AppState, RAction, WrapperAction>) {
+    fun initialize(store: Store<AppState, RAction, WrapperAction>) {
         this.store = store
+
+        val runner = DefaultJsRunner()
+        application = TuPrologApplication.of(
+            runner,
+            ClassicSolverFactory,
+            Page.DEFAULT_TIMEOUT)
+
+        bindApplication(application)
+
+        application.newPage()
     }
 
     fun bindApplication(application: Application) {
@@ -70,37 +78,31 @@ object TuPrologController {
     private fun bindPage(page: Page) {
         page.onResolutionStarted.bind {
             logEvent(it)
-            console.log(page.state)
-//            store.dispatch(UpdateStatus(page.state))
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onResolutionOver.bind {
             logEvent(it)
-            console.log(page.state)
-//            store.dispatch(UpdateStatus(page.state))
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onNewQuery.bind {
             logEvent(it)
-            console.log(page.state)
-//            store.dispatch(UpdateStatus(page.state))
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onQueryOver.bind {
             logEvent(it)
-            console.log(page.state)
-//            store.dispatch(UpdateStatus(page.state))
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onNewSolution.bind {
             logEvent(it)
-            console.log(page.state)
             store.dispatch(NewSolution(it.event))
             store.dispatch(UpdateExecutionContext(it))
         }
-        page.onStdoutPrinted.bind(catchAnyEvent)
-        page.onStderrPrinted.bind(catchAnyEvent)
-        page.onWarning.bind(catchAnyEvent)
+        page.onStateChanged.bind {
+            store.dispatch(UpdateStatus(it.event))
+        }
+        page.onStdoutPrinted.bind(catchAnyEvent) //
+        page.onStderrPrinted.bind(catchAnyEvent) //
+        page.onWarning.bind(catchAnyEvent) //
         page.onNewSolver.bind(catchAnyEvent)
         page.onNewStaticKb.bind(catchAnyEvent)
         page.onSolveOptionsChanged.bind(catchAnyEvent)
