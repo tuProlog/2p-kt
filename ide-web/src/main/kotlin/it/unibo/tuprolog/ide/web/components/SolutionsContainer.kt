@@ -91,17 +91,6 @@ val SolutionsContainer = FC<Props> {
             Tab {
                 value = "libraries"
                 label = ReactNode("Libraries")
-/*                if (eContext != null) {
-                    console.log(eContext.libraries.libraries.toString())
-                    console.log("AAAAA")
-                    console.log(eContext.libraries.toString())
-                    console.log(eContext.libraries)
-                    console.log(eContext.libraries.libraries)
-                    val myvar = eContext.libraries.libraries.toList()
-                    console.log(myvar)
-                    console.log("BBB")
-                    console.log(myvar[0])
-                }*/
             }
             Tab {
                 value = "staticKb"
@@ -233,28 +222,27 @@ val SolutionsContainer = FC<Props> {
                                     nodeId = (idCounter + 2).toString()
                                     label = ReactNode("Predicates")
                                     ul {
+                                        val myPredicates: MutableList<String> = mutableListOf()
                                         it.clauses.filterIsInstance<Rule>().forEach { it2 ->
-                                            li {
-                                                +it2.head.indicator.toString()
-                                                +"nonboh"
-                                                }
+                                                myPredicates += it2.head.indicator.toString()
                                             }
                                         it.primitives.keys.forEach { it3 ->
-                                                li {
-                                                    +it3.toIndicator().toString()
-                                                    +"boh"
-                                                }
+                                                myPredicates += it3.toIndicator().toString()
                                             }
-                                        //SORTED ??
+                                        li {
+                                            myPredicates.distinct().sorted().forEach {
+                                                +it
+                                            }
+                                        }
                                     }
                                 }
                                 TreeItem {
                                     nodeId = (idCounter+3).toString()
-                                    label = ReactNode("Operations")
+                                    label = ReactNode("Operators")
                                     ul {
                                         it.operators.forEach { it2 ->
                                             li {
-                                                +it2.functor.plus("    ").plus(it2.specifier.toString()).plus("    ")
+                                                +it2.functor.plus(" , ").plus(it2.specifier.toString()).plus(" , ")
                                                     .plus(it2.priority.toString())
                                             }
                                         }
