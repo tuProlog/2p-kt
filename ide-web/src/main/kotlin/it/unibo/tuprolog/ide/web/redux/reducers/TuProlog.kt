@@ -2,17 +2,11 @@ package it.unibo.tuprolog.ide.web.redux.reducers
 
 import AppState
 import TuProlog
-import it.unibo.tuprolog.ide.web.redux.actions.CleanPageError
-import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
-import it.unibo.tuprolog.ide.web.redux.actions.PageError
-import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
-import it.unibo.tuprolog.ide.web.redux.actions.UpdateExecutionContext
-import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
-import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
-import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
+import it.unibo.tuprolog.ide.web.redux.actions.*
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
 import it.unibo.tuprolog.ui.gui.InTheorySyntaxError
+import mui.system.StackDirection
 import redux.RAction
 
 fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) {
@@ -53,6 +47,21 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) 
 
     is CleanPageError -> {
         state.tuProlog.pageException = null
+        state.tuProlog
+    }
+
+    is StdOut -> {
+        state.tuProlog.stdOutMessage = action.out
+        state.tuProlog
+    }
+
+    is StdErr -> {
+        state.tuProlog.stdErrMessage = action.err
+        state.tuProlog
+    }
+
+    is Warnings -> {
+        state.tuProlog.warningMessage = action.warn
         state.tuProlog
     }
 

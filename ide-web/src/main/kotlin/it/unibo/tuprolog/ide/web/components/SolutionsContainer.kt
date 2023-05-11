@@ -15,9 +15,11 @@ import react.ReactNode
 import react.redux.useSelector
 import emotion.react.css
 import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.ide.web.redux.actions.StdOut
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.ide.web.utils.xs
 import it.unibo.tuprolog.solve.ExecutionContextAware
+import it.unibo.tuprolog.solve.exception.Warning
 import mui.icons.material.Mail
 import mui.lab.TreeItem
 import mui.lab.TreeView
@@ -43,6 +45,9 @@ val SolutionsContainer = FC<Props> {
 
     val solutions = useSelector<AppState, Collection<TuPrologSolution>> { s -> s.tuProlog.solutions }
     val eContext = useSelector<AppState, ExecutionContextAware?> { s -> s.tuProlog.executionContext }
+    val outputs = useSelector<AppState, String> { s -> s.tuProlog.stdOutMessage }
+    val errors = useSelector<AppState, String> {s -> s.tuProlog.stdErrMessage }
+    val warnings = useSelector<AppState, Warning?> { s -> s.tuProlog.warningMessage }
 
     val messages = useSelector<AppState, List<Message>> { s -> s.messages }
 
@@ -145,24 +150,25 @@ val SolutionsContainer = FC<Props> {
             }
             TabPanel {
                 value = "stdOutTab"
-                if (eContext != null)
-                    +eContext.standardOutput.toString()
-                else
-                    +"Empty stdOutTab"
+                +outputs
             }
             TabPanel {
                 value = "stdErr"
-                if (eContext != null)
+                +errors
+                /*if (eContext != null)
                     +eContext.standardError.toString()
                 else
-                    +"Empty stdErr"
+                    +"Empty stdErr"*/
             }
             TabPanel {
                 value = "warnings"
-                if (eContext != null)
-                    +eContext.warnings.toString()
-                else
-                    +"Empty warnings"
+                if (warnings != null) {
+                    +warnings.message.toString()
+                }
+//                if (eContext != null)
+//                    +eContext.warnings.toString()
+//                else
+//                    +"Empty warnings"
             }
             TabPanel {
                 value = "operators"

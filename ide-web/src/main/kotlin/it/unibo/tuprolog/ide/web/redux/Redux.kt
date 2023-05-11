@@ -5,6 +5,7 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeUnit
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.ui.gui.Page
 import redux.RAction
@@ -20,7 +21,10 @@ data class TuProlog(
     var solutions: Collection<TuPrologSolution>, // Collection<TuPrologSolution>
     var executionContext: ExecutionContextAware?, // ExecutionContextAware?
     var pageStatus: Page.Status?,
-    var pageException: Throwable?
+    var pageException: Throwable?,
+    var stdOutMessage: String,
+    var stdErrMessage: String,
+    var warningMessage: Warning?
 )
 
 data class AppState(
@@ -46,6 +50,9 @@ val myStore = createStore(
             emptyList(),
             null,
             null,
+            null,
+            "",
+            "",
             null),
         emptyList()
     ),

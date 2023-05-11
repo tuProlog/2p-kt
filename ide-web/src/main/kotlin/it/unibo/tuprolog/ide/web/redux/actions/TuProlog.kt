@@ -4,6 +4,7 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.ui.gui.Page
 import redux.RAction
 
@@ -32,3 +33,5 @@ class PageError(val page: Page, val exception: Throwable): RAction
 class CleanPageError: RAction
 
 class StdOut(val out: String) : RAction
+class StdErr(val err: String) : RAction
+class Warnings(val warn: Warning) : RAction
