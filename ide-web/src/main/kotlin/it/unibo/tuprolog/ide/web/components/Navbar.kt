@@ -2,44 +2,59 @@ package it.unibo.tuprolog.ide.web.components
 
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent.Companion.spaceBetween
-import csstype.em
-import emotion.react.css
-import mui.material.ButtonVariant.Companion.outlined
-import mui.material.FabVariant.Companion.extended
-import mui.system.responsive
-import mui.system.sx
-import react.dom.html.ReactHTML.div
-import react.dom.html.ReactHTML.img
-import react.redux.useDispatch
-import react.redux.useSelector
-import web.html.HTMLInputElement
-import AppState
 import csstype.Length
 import csstype.NamedColor.Companion.green
-import it.unibo.tuprolog.ide.web.redux.actions.MessageType
-import it.unibo.tuprolog.ide.web.redux.actions.TypedMessage
+import csstype.em
+import emotion.react.css
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
-import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.utils.Themes
 import it.unibo.tuprolog.ui.gui.PageName
-import it.unibo.tuprolog.utils.io.JsFile
 import js.uri.encodeURIComponent
-import kotlinx.browser.localStorage
-import mui.icons.material.*
-import mui.material.*
+import mui.icons.material.Add
+import mui.icons.material.Brightness4
+import mui.icons.material.Brightness7
+import mui.icons.material.DeleteForever
+import mui.icons.material.Edit
+import mui.icons.material.GetAppOutlined
+import mui.icons.material.Info
+import mui.icons.material.UploadFileOutlined
+import mui.material.Button
+import mui.material.ButtonColor
 import mui.material.ButtonVariant.Companion.contained
-import org.w3c.dom.Storage
-import org.w3c.dom.set
-import react.*
+import mui.material.ButtonVariant.Companion.outlined
+import mui.material.Dialog
+import mui.material.DialogActions
+import mui.material.DialogContent
+import mui.material.DialogContentText
+import mui.material.DialogTitle
+import mui.material.Fab
+import mui.material.FabColor
+import mui.material.FabVariant.Companion.extended
+import mui.material.Stack
+import mui.material.StackDirection
+import mui.material.SvgIconColor
+import mui.material.Switch
+import mui.material.TextField
+import mui.material.Typography
+import mui.system.responsive
+import mui.system.sx
+import react.FC
+import react.Props
+import react.ReactNode
+import react.create
+import react.createRef
 import react.dom.html.ReactHTML.a
+import react.dom.html.ReactHTML.div
+import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.input
 import react.dom.html.ReactHTML.p
-import redux.RAction
-import redux.WrapperAction
+import react.dom.onChange
+import react.useRequiredContext
+import react.useState
 import web.dom.document
 import web.html.HTML
+import web.html.HTMLInputElement
 import web.html.InputType
-import react.dom.onChange
 import it.unibo.tuprolog.Info as TuPrologInfo
 
 data class IDEStyle(
@@ -80,9 +95,6 @@ val NavBar = FC<Props> {
     val uploadInputRef = createRef<HTMLInputElement>()
     val newFileNameInputRef = createRef<HTMLInputElement>()
 
-    val dispatcher = useDispatch<RAction, WrapperAction>()
-    val currentPage = useSelector<AppState, TuPrologPage?> { s -> s.tuProlog.currentPage }
-
     var theme by useRequiredContext(ThemeContext)
 
     Stack {
@@ -96,7 +108,8 @@ val NavBar = FC<Props> {
 
         div {
             img {
-                src = "https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/logo.svg"
+                src =
+                    "https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/logo.svg"
                 height = currentStyleConfig.height
 
                 css {
@@ -129,9 +142,9 @@ val NavBar = FC<Props> {
                 color = FabColor.secondary
                 variant = extended
                 onClick = {
-                  //  newFileName = editorSelectedTab
-                  //  changeFileNameErrorInput = false
-                  isDialogRenameOpen = true
+                    //  newFileName = editorSelectedTab
+                    //  changeFileNameErrorInput = false
+                    isDialogRenameOpen = true
                 }
                 Typography {
                     +"Rename"
@@ -179,24 +192,21 @@ val NavBar = FC<Props> {
                 startIcon = GetAppOutlined.create()
                 variant = outlined
                 onClick = {
-                    val editorText = TuPrologController.application.currentPage?.theory ?: ""
-                    if (editorText != "") {
-                        val elem = document.createElement(HTML.a)
-                        elem.setAttribute(
-                            "href",
-                            "data:text/plain;charset=utf-8," + encodeURIComponent(
-                                editorText
-                            )
+                    val editorText =
+                        TuPrologController.application.currentPage?.theory ?: ""
+                    val elem = document.createElement(HTML.a)
+                    elem.setAttribute(
+                        "href",
+                        "data:text/plain;charset=utf-8," + encodeURIComponent(
+                            editorText
                         )
-                        elem.setAttribute(
-                            "download",
-                            TuPrologController.application.currentPage?.id?.name ?: "UNDEFINED.pl"
-                        )
-                        elem.click()
-                    } else {
-                        dispatcher(TypedMessage("Cannot download empty theory.", MessageType.ERROR))
-                    }
-
+                    )
+                    elem.setAttribute(
+                        "download",
+                        TuPrologController.application.currentPage?.id?.name
+                            ?: "UNDEFINED.pl"
+                    )
+                    elem.click()
                 }
                 Typography {
                     +"Download"
@@ -212,22 +222,19 @@ val NavBar = FC<Props> {
                 variant = outlined
                 color = ButtonColor.error
                 onClick = {
-                    if (TuPrologController.application.pages.size > 1) {
-                        // find the deletable tab panel index
-                        val index = TuPrologController.application.pages.indexOfFirst {
+                    // find the deletable tab panel index
+                    val index =
+                        TuPrologController.application.pages.indexOfFirst {
                             it.id == TuPrologController.application.currentPage?.id
                         }
-                        TuPrologController.application.currentPage?.close()
+                    TuPrologController.application.currentPage?.close()
 
-                        // select new ide
-                        TuPrologController.application.select(
-                            TuPrologController.application.pages.elementAt(
-                                if (index == 0) index else index - 1
-                            )
+                    // select new ide
+                    TuPrologController.application.select(
+                        TuPrologController.application.pages.elementAt(
+                            if (index == 0) index else index - 1
                         )
-                    } else {
-                        dispatcher(TypedMessage("Cannot remove last tab.", MessageType.ERROR))
-                    }
+                    )
                 }
                 Typography {
                     +"Delete"
@@ -275,8 +282,8 @@ val NavBar = FC<Props> {
                         +"TuProlog 2p-kt version: ${TuPrologInfo.VERSION}"
                         +"2p-kt GitHub repo:"
                         a {
-                            href="https://github.com/tuProlog/2p-kt"
-                            + "https://github.com/tuProlog/2p-kt"
+                            href = "https://github.com/tuProlog/2p-kt"
+                            +"https://github.com/tuProlog/2p-kt"
                         }
                         +"Developed by: Alberto Donati & Fabio Muratori"
                     }
@@ -298,8 +305,9 @@ val NavBar = FC<Props> {
             }
             DialogContent {
                 DialogContentText {
-                  //  +"Write here the new name for $currentPage"
-                    val currentName = TuPrologController.application.currentPage?.id?.name
+                    //  +"Write here the new name for $currentPage"
+                    val currentName =
+                        TuPrologController.application.currentPage?.id?.name
                     +"Write here the new name for $currentName"
                 }
                 TextField {
@@ -308,13 +316,16 @@ val NavBar = FC<Props> {
                     fullWidth = true
                     error = changeFileNameErrorInput
                     label = ReactNode("New file name")
-                    helperText = ReactNode("File name must end with .pl or .txt")
-                   // defaultValue = currentPage
-                    defaultValue = TuPrologController.application.currentPage?.id?.name
+                    helperText =
+                        ReactNode("File name must end with .pl or .txt")
+                    // defaultValue = currentPage
+                    defaultValue =
+                        TuPrologController.application.currentPage?.id?.name
                     onChange = {
                         newFileNameInputRef.current?.let { it1 ->
                             newFileName = it1.value
-                            changeFileNameErrorInput = !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
+                            changeFileNameErrorInput =
+                                !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
                         }
                     }
                 }
@@ -330,7 +341,8 @@ val NavBar = FC<Props> {
                     disabled = changeFileNameErrorInput
                     onClick = {
                         isDialogRenameOpen = false
-                        TuPrologController.application.currentPage?.id = PageName(newFileName)
+                        TuPrologController.application.currentPage?.id =
+                            PageName(newFileName)
                     }
                     +"Confirm"
                 }

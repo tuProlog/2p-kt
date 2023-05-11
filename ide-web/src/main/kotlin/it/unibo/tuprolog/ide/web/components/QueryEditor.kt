@@ -26,7 +26,8 @@ import web.html.HTMLInputElement
 
 val QueryEditor = FC<Props> {
     val queryInputRef = createRef<HTMLInputElement>()
-    val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
+    val pageStatus =
+        useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
 
 
     Stack {
@@ -40,7 +41,8 @@ val QueryEditor = FC<Props> {
             inputRef = queryInputRef
             onChange = {
                 queryInputRef.current?.let { it1 ->
-                    TuPrologController.application.currentPage?.query = it1.value
+                    TuPrologController.application.currentPage?.query =
+                        it1.value
                 }
             }
 
@@ -54,10 +56,14 @@ val QueryEditor = FC<Props> {
                             disabled = pageStatus == Page.Status.COMPUTING
                             +"Solve"
                             onClick = {
-                                if ( TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
-                                    TuPrologController.application.currentPage?.solve(1)
+                                if (TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
+                                    TuPrologController.application.currentPage?.solve(
+                                        1
+                                    )
                                 } else {
-                                    TuPrologController.application.currentPage?.next(1)
+                                    TuPrologController.application.currentPage?.next(
+                                        1
+                                    )
                                 }
                             }
                         }
@@ -66,10 +72,14 @@ val QueryEditor = FC<Props> {
                             disabled = pageStatus == Page.Status.COMPUTING
                             +"Solve 10"
                             onClick = {
-                                if ( TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
-                                    TuPrologController.application.currentPage?.solve(10)
+                                if (TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
+                                    TuPrologController.application.currentPage?.solve(
+                                        10
+                                    )
                                 } else {
-                                    TuPrologController.application.currentPage?.next(10)
+                                    TuPrologController.application.currentPage?.next(
+                                        10
+                                    )
                                 }
                             }
                         }

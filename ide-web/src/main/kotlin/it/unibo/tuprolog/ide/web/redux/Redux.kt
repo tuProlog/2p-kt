@@ -1,16 +1,12 @@
-import it.unibo.tuprolog.ide.web.redux.reducers.messagesActions
 import it.unibo.tuprolog.ide.web.redux.reducers.tuPrologActions
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
-import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.TimeUnit
-import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.ui.gui.Page
+import mui.material.AlertColor
 import redux.RAction
 import redux.createStore
 import redux.rEnhancer
-import mui.material.AlertColor
 
 // Stato
 class Message(var text: String, var color: AlertColor) {} //, var id:UUID
@@ -25,7 +21,6 @@ data class TuProlog(
 
 data class AppState(
     var tuProlog: TuProlog,
-    var messages: List<Message>
 )
 
 
@@ -34,7 +29,6 @@ fun rootReducer(
     action: Any
 ) = AppState(
     tuPrologActions(state, action.unsafeCast<RAction>()),
-    messagesActions(state, action.unsafeCast<RAction>())
 )
 
 val myStore = createStore(
@@ -46,8 +40,8 @@ val myStore = createStore(
             emptyList(),
             null,
             null,
-            null),
-        emptyList()
+            null
+        )
     ),
     rEnhancer()
 )

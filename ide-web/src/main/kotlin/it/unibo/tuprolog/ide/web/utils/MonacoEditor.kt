@@ -10,6 +10,7 @@ import react.Props
 external interface BeforeMount {
     val languages: Languages
 }
+
 external interface Languages {
     fun getLanguages(): Any
 

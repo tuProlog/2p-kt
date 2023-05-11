@@ -4,18 +4,15 @@ import AppState
 import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
 import it.unibo.tuprolog.ide.web.redux.actions.PageError
 import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
+import it.unibo.tuprolog.ide.web.redux.actions.UpdateExecutionContext
 import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
-import it.unibo.tuprolog.ide.web.redux.actions.UpdateExecutionContext
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
-import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
-import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.ui.gui.Application
 import it.unibo.tuprolog.ui.gui.DefaultJsRunner
 import it.unibo.tuprolog.ui.gui.Event
 import it.unibo.tuprolog.ui.gui.Page
-import it.unibo.tuprolog.ui.gui.SolverEvent
 import redux.RAction
 import redux.Store
 import redux.WrapperAction
@@ -26,11 +23,14 @@ object TuPrologController {
         TuPrologApplication.of(
             DefaultJsRunner(),
             ClassicSolverFactory,
-            Page.DEFAULT_TIMEOUT)
+            Page.DEFAULT_TIMEOUT
+        )
     private lateinit var store: Store<AppState, RAction, WrapperAction>
 
-    private val catchAnyEvent: (Event<Any>) -> Unit = { console.log("[Controller] Missing event handler: ", it) }
-    private val logEvent: (Event<Any>) -> Unit = { console.log("[Controller] Received event: ", it) }
+    private val catchAnyEvent: (Event<Any>) -> Unit =
+        { console.log("[Controller] Missing event handler: ", it) }
+    private val logEvent: (Event<Any>) -> Unit =
+        { console.log("[Controller] Received event: ", it) }
 
     fun initialize(store: Store<AppState, RAction, WrapperAction>) {
         this.store = store
@@ -41,11 +41,11 @@ object TuPrologController {
     fun bindApplication(application: Application) {
         this.application = application
         application.onStart.bind(catchAnyEvent)
-        application.onError.bind{
+        application.onError.bind {
             logEvent(it)
             store.dispatch(PageError(it.event.first, it.event.second))
         }
-        application.onPageCreated.bind{
+        application.onPageCreated.bind {
             logEvent(it)
             store.dispatch(UpdatePagesList(application.pages))
         }
