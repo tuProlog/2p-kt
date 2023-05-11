@@ -9,7 +9,10 @@ import emotion.react.css
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.Themes
 import it.unibo.tuprolog.ui.gui.PageName
+import it.unibo.tuprolog.utils.io.JsFile
+import it.unibo.tuprolog.utils.io.JsUrl
 import js.uri.encodeURIComponent
+import kotlinx.browser.localStorage
 import mui.icons.material.Add
 import mui.icons.material.Brightness4
 import mui.icons.material.Brightness7
@@ -38,6 +41,7 @@ import mui.material.TextField
 import mui.material.Typography
 import mui.system.responsive
 import mui.system.sx
+import org.w3c.dom.set
 import react.FC
 import react.Props
 import react.ReactNode
@@ -163,15 +167,14 @@ val NavBar = FC<Props> {
                 multiple = false
                 onChange = {
                     it.target.files?.get(0)?.text()?.then { it1 ->
-                        val name = it.target.files?.get(0)?.name
-                        val theory = it1
-
-//                        if (name != null) {
-//                            val newPage = TuPrologController
-//                                .application
-//                                .newPage(PageName(name))
-//                            TuPrologController.application.pageByID(newPage.id)?.theory = it1
-//                        }
+                        val filePath = it.target.files?.get(0)?.name
+                        if (filePath != null) {
+                            // TODO set localstorage item Expiry Time (https://www.sohamkamani.com/javascript/localstorage-with-ttl-expiry/)
+                            localStorage[filePath] = it1
+                            val url = JsUrl(protocol="file", host="localhost", path=filePath)
+                            val jsFile = JsFile(url)
+                            TuPrologController.application.load(jsFile)
+                        }
                         // TODO allow multiple uploads of the same file (following line is not working as intended)
                         // it.target.value = ""
                     }
