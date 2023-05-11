@@ -20,6 +20,7 @@ import it.unibo.tuprolog.ide.web.redux.actions.MessageType
 import it.unibo.tuprolog.ide.web.redux.actions.TypedMessage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
+import it.unibo.tuprolog.ide.web.utils.Themes
 import it.unibo.tuprolog.ui.gui.PageName
 import it.unibo.tuprolog.utils.io.JsFile
 import js.uri.encodeURIComponent
@@ -79,6 +80,8 @@ val NavBar = FC<Props> {
     val dispatcher = useDispatch<RAction, WrapperAction>()
     val currentPage = useSelector<AppState, TuPrologPage?> { s -> s.tuProlog.currentPage }
 
+    var theme by useRequiredContext(ThemeContext)
+
     Stack {
         direction = responsive(StackDirection.row)
         spacing = responsive(currentStyleConfig.spacing)
@@ -86,6 +89,18 @@ val NavBar = FC<Props> {
         sx {
             justifyContent = spaceBetween
             alignItems = center
+        }
+
+        div {
+            Switch {
+                icon = Brightness7.create()
+                checkedIcon = Brightness4.create()
+                checked = theme == Themes.Dark
+
+                onChange = { _, checked ->
+                    theme = if (checked) Themes.Dark else Themes.Light
+                }
+            }
         }
 
         div {
