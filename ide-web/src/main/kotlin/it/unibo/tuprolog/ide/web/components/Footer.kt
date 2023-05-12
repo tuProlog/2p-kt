@@ -1,40 +1,27 @@
 package it.unibo.tuprolog.ide.web.components
 
 import AppState
-import csstype.AlignItems
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent
 import csstype.em
 import csstype.px
-import emotion.css.css
 import emotion.react.css
-import it.unibo.tuprolog.ide.web.tuprolog.TuPrologApplication
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
-import mui.material.GridDirection
-import it.unibo.tuprolog.ide.web.utils.xs
-import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeUnit
-import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.ui.gui.Page
-import mui.material.BaseSize
-import mui.material.BottomNavigation
-import mui.material.Slider
 import mui.material.Grid
+import mui.material.GridDirection
 import mui.material.LinearProgress
 import mui.material.Size
+import mui.material.Slider
 import mui.material.Typography
 import mui.system.responsive
 import mui.system.sx
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.p
-import react.redux.useDispatch
 import react.redux.useSelector
 import react.useState
-import redux.RAction
-import redux.WrapperAction
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 const val MYXS = 5
 const val MYXSGRID = 7
@@ -42,7 +29,8 @@ const val MYMIN = 1
 const val MYSTEP = 10
 
 val Footer = FC<Props> {
-    val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
+    val pageStatus =
+        useSelector<AppState, Page.Status?> { s -> s.tuProlog.currentPage?.state }
     var timeoutDuration by useState(1000)
 
     Grid {
@@ -76,7 +64,7 @@ val Footer = FC<Props> {
                 Grid {
                     item = true
                     Typography {
-                        +"Timeout: ${timeoutDuration} ms"
+                        +"Timeout: $timeoutDuration ms"
                     }
                 }
 
@@ -96,8 +84,8 @@ val Footer = FC<Props> {
                             TuPrologController.application.currentPage?.timeout =
                                 (newValue * TimeUnit.MILLIS)
                         }
-                        max = 60000L
-                        min = 10L
+                        max = 60000
+                        min = 10
                     }
                 }
             }

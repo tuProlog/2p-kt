@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ide.web.components
 
 import AppState
+import PageWrapper
 import csstype.Display
 import csstype.FlexFlow
 import csstype.number
@@ -11,7 +12,6 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.utils.MonacoEditor
 import it.unibo.tuprolog.ide.web.utils.Themes
-import it.unibo.tuprolog.ui.gui.Page
 import mui.lab.TabContext
 import mui.lab.TabPanel
 import mui.material.Tab
@@ -22,17 +22,15 @@ import react.FC
 import react.Props
 import react.ReactNode
 import react.dom.html.ReactHTML.div
-import react.redux.useDispatch
 import react.redux.useSelector
 import react.useRequiredContext
-import redux.RAction
-import redux.WrapperAction
 
 val TheoryEditors = FC<Props> {
     val provTheme by useRequiredContext(ThemeContext)
-    val editorSelectedTab = useSelector<AppState, TuPrologPage?> { s -> s.tuProlog.currentPage }
-    val editorTabs = useSelector<AppState, Collection<TuPrologPage>> { s -> s.tuProlog.pages }
-    val dispatcher = useDispatch<RAction, WrapperAction>()
+    val editorSelectedTab =
+        useSelector<AppState, TuPrologPage?> { s -> s.tuProlog.currentPage }
+    val editorTabs =
+        useSelector<AppState, Collection<PageWrapper>> { s -> s.tuProlog.pages }
 
     div {
         css {
@@ -41,7 +39,7 @@ val TheoryEditors = FC<Props> {
             height = 100.pct
             padding = 0.px
         }
-        
+
         if (editorSelectedTab != null)
             TabContext {
                 value = editorSelectedTab.id.name
@@ -51,7 +49,8 @@ val TheoryEditors = FC<Props> {
                     variant = TabsVariant.scrollable
                     scrollButtons = TabsScrollButtons.auto
                     onChange = { _, newValue ->
-                        val newPage = TuPrologController.application.pages.find { p -> p.id.name == newValue }
+                        val newPage =
+                            TuPrologController.application.pages.find { p -> p.id.name == newValue }
                         if (newPage != null)
                             TuPrologController.application.select(newPage)
                     }
@@ -77,18 +76,19 @@ val TheoryEditors = FC<Props> {
                         MonacoEditor {
                             value = it.theory
                             onChange = {
-                                TuPrologController.application.currentPage?.theory = it
+                                TuPrologController.application.currentPage?.theory =
+                                    it
                             }
                             if (provTheme == Themes.Dark)
                                 theme = "vs-dark"
-                            else if  (provTheme == Themes.Light)
+                            else if (provTheme == Themes.Light)
                                 theme = "vs-light"
                             beforeMount = {
-    //                            console.log(it)
-    //                            it.languages.register("tuProlog")
-    //                            console.log(it.languages)
-    //                            console.log(it.languages.getLanguages())
-    //                            console.log(it.languages.setMonarchTokensProvider())
+                                //                            console.log(it)
+                                //                            it.languages.register("tuProlog")
+                                //                            console.log(it.languages)
+                                //                            console.log(it.languages.getLanguages())
+                                //                            console.log(it.languages.setMonarchTokensProvider())
                             }
                         }
                     }

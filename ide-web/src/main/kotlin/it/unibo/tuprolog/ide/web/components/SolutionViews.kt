@@ -43,8 +43,9 @@ val YesView = FC<ViewProps> { props ->
             }
         }
         ListItemText {
-            primary= ReactNode("Yes: " + getYesText(props.solution.castToYes()))
-            secondary= ReactNode(
+            primary =
+                ReactNode("Yes: " + getYesText(props.solution.castToYes()))
+            secondary = ReactNode(
                 getYesSubstitutions(props.solution.castToYes())
                     .joinToString(", ")
             )
@@ -76,7 +77,7 @@ val HaltView = FC<ViewProps> { props ->
                 }
             }
             ListItemText {
-                primary= ReactNode("Timeout.")
+                primary = ReactNode("Timeout.")
             }
         } else {
             ListItemIcon {
