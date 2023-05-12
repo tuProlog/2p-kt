@@ -66,10 +66,6 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog =
         state.tuProlog
     }
 
-    is StdIn -> {
-        state.tuProlog.stdInMessage = action.input
-        state.tuProlog
-    }
+    else -> state.tuProlog
 
-        else -> state.tuProlog
     }

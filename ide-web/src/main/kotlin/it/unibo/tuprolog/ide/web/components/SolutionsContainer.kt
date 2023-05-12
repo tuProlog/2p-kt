@@ -52,8 +52,6 @@ val SolutionsContainer = FC<Props> {
     val errors = useSelector<AppState, String> {s -> s.tuProlog.stdErrMessage }
     val warnings = useSelector<AppState, Warning?> { s -> s.tuProlog.warningMessage }
 
-    val inputs = useSelector<AppState, String> { s -> s.tuProlog.stdInMessage }
-
     var activeTab by useState("solutionsTab")
 
     TabContext {

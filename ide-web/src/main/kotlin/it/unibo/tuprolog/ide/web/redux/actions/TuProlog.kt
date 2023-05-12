@@ -19,4 +19,3 @@ class CleanPageError : RAction
 class StdOut(val output: String) : RAction
 class StdErr(val error: String) : RAction
 class Warnings(val warning: Warning) : RAction
-class StdIn(val input: String) : RAction
