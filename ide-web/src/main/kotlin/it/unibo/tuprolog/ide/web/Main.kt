@@ -9,15 +9,15 @@ import csstype.pct
 import csstype.px
 import csstype.vh
 import emotion.react.css
-import it.unibo.tuprolog.ide.web.components.*
+import it.unibo.tuprolog.ide.web.components.Footer
+import it.unibo.tuprolog.ide.web.components.NavBar
+import it.unibo.tuprolog.ide.web.components.QueryEditor
+import it.unibo.tuprolog.ide.web.components.SolutionsContainer
+import it.unibo.tuprolog.ide.web.components.ThemeModule
+import it.unibo.tuprolog.ide.web.components.TheoryEditors
 import it.unibo.tuprolog.ide.web.redux.actions.CleanPageError
-import it.unibo.tuprolog.ide.web.tuprolog.TuPrologApplication
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.xs
-import it.unibo.tuprolog.solve.TimeUnit
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
-import it.unibo.tuprolog.solve.times
-import it.unibo.tuprolog.ui.gui.DefaultJsRunner
 import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
 import it.unibo.tuprolog.ui.gui.InTheorySyntaxError
 import mui.material.Button
@@ -67,7 +67,8 @@ val Root = FC<Props> {
 }
 
 val App = FC<Props> {
-    val pageException = useSelector<AppState, Throwable?> { s -> s.tuProlog.pageException }
+    val pageException =
+        useSelector<AppState, Throwable?> { s -> s.tuProlog.pageException }
     val dispatcher = useDispatch<RAction, WrapperAction>()
 
     fun getExceptionTextHeader(): String {

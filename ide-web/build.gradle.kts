@@ -48,10 +48,10 @@ kotlin {
 
             tasks.getByPath("detekt").onlyIf {
                 gradle.startParameter.taskNames.any { it.contains("detekt") }
-             }
+            }
 
             tasks.getByPath("ktlintMainSourceSetCheck").onlyIf {
-               gradle.startParameter.taskNames.any { it.contains("ktlintMainSourceSetCheck") }
+                gradle.startParameter.taskNames.any { it.contains("ktlintMainSourceSetCheck") }
             }
             tasks.getByPath("ktlintKotlinScriptCheck").onlyIf {
                 gradle.startParameter.taskNames.any { it.contains("ktlintKotlinScriptCheck") }

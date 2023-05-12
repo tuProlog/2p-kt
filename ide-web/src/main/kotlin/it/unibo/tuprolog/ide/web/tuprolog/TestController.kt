@@ -21,7 +21,8 @@ fun testTuprolog(myTheory: String, myQuery: String) {
     val stringTheory = myTheory.trimIndent()
     val clauseReader = ClausesParser.withDefaultOperators()
     val theory = clauseReader.parseTheory(stringTheory)
-    val solver = ClassicSolverFactory.mutableSolverWithDefaultBuiltins(staticKb = theory)
+    val solver =
+        ClassicSolverFactory.mutableSolverWithDefaultBuiltins(staticKb = theory)
     val queryParser = TermParser.withDefaultOperators()
     val query = queryParser.parseStruct(myQuery.trimIndent())
     for (solution in solver.solve(query)) {
