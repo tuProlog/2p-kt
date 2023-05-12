@@ -9,6 +9,8 @@ import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
 import it.unibo.tuprolog.ide.web.redux.actions.*
+import it.unibo.tuprolog.solve.SolverBuilder
+import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.ui.gui.Application
@@ -18,13 +20,20 @@ import it.unibo.tuprolog.ui.gui.Page
 import redux.RAction
 import redux.Store
 import redux.WrapperAction
+import it.unibo.tuprolog.solve.libs.io.IOLib
 
 object TuPrologController {
+
+    private val customSolverFactory: SolverFactory = ClassicSolverFactory
+        .newBuilder()
+        .withLibrary(IOLib)
+        .
+        .toFactory()
 
     var application: Application =
         TuPrologApplication.of(
             DefaultJsRunner(),
-            ClassicSolverFactory,
+            customSolverFactory,
             Page.DEFAULT_TIMEOUT
         )
     private lateinit var store: Store<AppState, RAction, WrapperAction>
@@ -35,6 +44,7 @@ object TuPrologController {
         { console.log("[Controller] Received event: ", it) }
 
     fun initialize(store: Store<AppState, RAction, WrapperAction>) {
+
         this.store = store
         bindApplication(application)
         application.newPage()

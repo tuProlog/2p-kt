@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.ide.web.components
 
 import AppState
-import csstype.HtmlAttributes.Companion.width
 import csstype.pct
 import csstype.vh
 import emotion.react.css
 import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import mui.lab.TabContext
@@ -18,20 +18,9 @@ import react.Props
 import react.ReactNode
 import react.redux.useSelector
 import it.unibo.tuprolog.solve.exception.Warning
-import mui.base.TextareaAutosize
-import mui.base.TextareaAutosize
-import mui.icons.material.Mail
+import it.unibo.tuprolog.solve.libs.io.IOLib
 import mui.lab.TreeItem
 import mui.lab.TreeView
-import mui.material.Button
-import mui.material.ButtonColor
-import mui.material.ButtonVariant
-import mui.material.Grid
-import mui.material.IconPosition
-import mui.material.MuiInput.Companion.fullWidth
-import mui.material.Size
-import mui.material.Typography
-import react.create
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.table
@@ -131,14 +120,10 @@ val SolutionsContainer = FC<Props> {
                        width = 100.pct
                        height = 30.vh
                    }
-                   onChange?.let {
-                       it2 -> console.log(it2)
+                   onChange = { it2 ->
+                       TuPrologController.application.currentPage?.stdin = it2.target.value
                    }
                }
-               /* if (eContext != null)
-                    +eContext.standardInput.toString()
-                else
-                    +"Empty stdIn"*/
             }
             TabPanel {
                 value = "stdOutTab"
@@ -197,6 +182,9 @@ val SolutionsContainer = FC<Props> {
             TabPanel {
                 value = "libraries"
                 if (eContext != null) {
+                    console.log("ASD1", eContext.libraries)
+                    console.log("ASD2", eContext.libraries.libraries.toList())
+                    console.log("ASD3", eContext.libraries.libraries.contains(IOLib))
 
                     TreeView {
                         var idCounter = 0
@@ -230,12 +218,12 @@ val SolutionsContainer = FC<Props> {
                                             myPredicates += it3.toIndicator()
                                                 .toString()
                                         }
-                                        li {
-                                            myPredicates.distinct().sorted()
-                                                .forEach {
+                                        myPredicates.distinct().sorted()
+                                            .forEach {
+                                                li {
                                                     +it
                                                 }
-                                        }
+                                            }
                                     }
                                 }
                                 TreeItem {

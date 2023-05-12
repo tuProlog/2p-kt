@@ -302,54 +302,56 @@ val NavBar = FC<Props> {
             }
         }
 
-        Dialog {
-            open = isDialogRenameOpen
-            onClose = { _, _ -> isDialogRenameOpen = false }
-            DialogTitle {
-                +"Rename editor"
-            }
-            DialogContent {
-                DialogContentText {
-                    //  +"Write here the new name for $currentPage"
-                    val currentName =
-                        TuPrologController.application.currentPage?.id?.name
-                    +"Write here the new name for $currentName"
+        if (TuPrologController.application.currentPage != null) {
+            Dialog {
+                open = isDialogRenameOpen
+                onClose = { _, _ -> isDialogRenameOpen = false }
+                DialogTitle {
+                    +"Rename editor"
                 }
-                TextField {
-                    autoFocus = true
-                    inputRef = newFileNameInputRef
-                    fullWidth = true
-                    error = changeFileNameErrorInput
-                    label = ReactNode("New file name")
-                    helperText =
-                        ReactNode("File name must end with .pl or .txt")
-                    // defaultValue = currentPage
-                    defaultValue =
-                        TuPrologController.application.currentPage?.id?.name
-                    onChange = {
-                        newFileNameInputRef.current?.let { it1 ->
-                            newFileName = it1.value
-                            changeFileNameErrorInput =
-                                !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
+                DialogContent {
+                    DialogContentText {
+                        //  +"Write here the new name for $currentPage"
+                        val currentName =
+                            TuPrologController.application.currentPage?.id?.name
+                        +"Write here the new name for $currentName"
+                    }
+                    TextField {
+                        autoFocus = true
+                        inputRef = newFileNameInputRef
+                        fullWidth = true
+                        error = changeFileNameErrorInput
+                        label = ReactNode("New file name")
+                        helperText =
+                            ReactNode("File name must end with .pl or .txt")
+                        // defaultValue = currentPage
+                        defaultValue =
+                            TuPrologController.application.currentPage?.id?.name
+                        onChange = {
+                            newFileNameInputRef.current?.let { it1 ->
+                                newFileName = it1.value
+                                changeFileNameErrorInput =
+                                    !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
+                            }
                         }
                     }
                 }
-            }
-            DialogActions {
-                Button {
-                    onClick = {
-                        isDialogRenameOpen = false
+                DialogActions {
+                    Button {
+                        onClick = {
+                            isDialogRenameOpen = false
+                        }
+                        +"Cancel"
                     }
-                    +"Cancel"
-                }
-                Button {
-                    disabled = changeFileNameErrorInput
-                    onClick = {
-                        isDialogRenameOpen = false
-                        TuPrologController.application.currentPage?.id =
-                            PageName(newFileName)
+                    Button {
+                        disabled = changeFileNameErrorInput
+                        onClick = {
+                            isDialogRenameOpen = false
+                            TuPrologController.application.currentPage?.id =
+                                PageName(newFileName)
+                        }
+                        +"Confirm"
                     }
-                    +"Confirm"
                 }
             }
         }

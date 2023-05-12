@@ -20,6 +20,7 @@ kotlin {
     sourceSets {
         val main by getting {
             dependencies {
+                api(project(":solve"))
                 api(project(":gui"))
                 api(project(":io-lib"))
                 api(project(":oop-lib"))

@@ -45,6 +45,8 @@ import web.dom.document
 import web.html.HTML
 
 fun main() {
+    TuPrologController.initialize(myStore)
+
     val root = document.createElement(HTML.div)
         .also { document.body.appendChild(it) }
     createRoot(root)
@@ -52,10 +54,6 @@ fun main() {
 }
 
 val Root = FC<Props> {
-
-    useEffectOnce {
-        TuPrologController.initialize(myStore)
-    }
 
     Provider {
         store = myStore

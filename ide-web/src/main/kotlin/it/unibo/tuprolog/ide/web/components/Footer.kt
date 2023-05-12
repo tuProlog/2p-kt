@@ -26,7 +26,7 @@ import react.useState
 const val MYXS = 5
 const val MYXSGRID = 7
 const val MYMIN = 1
-const val MYSTEP = 10
+const val MYSTEP = 100
 
 val Footer = FC<Props> {
     val pageStatus =
@@ -85,7 +85,7 @@ val Footer = FC<Props> {
 //                                (newValue * TimeUnit.MILLIS)
 
                             TuPrologController.application.currentPage?.timeout =
-                                newValue.toLong()
+                                newValue as Long
                         }
                         max = 60000
                         min = 10
