@@ -1,15 +1,26 @@
 package it.unibo.tuprolog.ide.web.redux.reducers
 
 import AppState
+import PageWrapper
 import TuProlog
-import it.unibo.tuprolog.ide.web.redux.actions.*
+import it.unibo.tuprolog.ide.web.redux.actions.CleanPageError
+import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
+import it.unibo.tuprolog.ide.web.redux.actions.PageError
+import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
+import it.unibo.tuprolog.ide.web.redux.actions.StdErr
+import it.unibo.tuprolog.ide.web.redux.actions.StdOut
+import it.unibo.tuprolog.ide.web.redux.actions.UpdateExecutionContext
+import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
+import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
+import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
+import it.unibo.tuprolog.ide.web.redux.actions.Warnings
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import redux.RAction
 
 fun tuPrologActions(state: AppState, action: RAction): TuProlog =
     when (action) {
         is UpdatePagesList -> {
-            state.tuProlog.pages = action.list.map {PageWrapper.fromPage(it)}
+            state.tuProlog.pages = action.list.map { PageWrapper.fromPage(it) }
             state.tuProlog
         }
 
@@ -45,27 +56,23 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog =
             state.tuProlog
         }
 
-    is CleanPageError -> {
-        state.tuProlog.pageException = null
-        state.tuProlog
-    }
-
-    is StdOut -> {
-        state.tuProlog.stdOutMessage = action.out
-        state.tuProlog
-    }
-
-    is StdErr -> {
-        state.tuProlog.stdErrMessage = action.err
-        state.tuProlog
-    }
-
-    is Warnings -> {
-        state.tuProlog.warningMessage = action.warn
-        state.tuProlog
-    }
         is CleanPageError -> {
             state.tuProlog.pageException = null
+            state.tuProlog
+        }
+
+        is StdOut -> {
+            state.tuProlog.stdOutMessage = action.out
+            state.tuProlog
+        }
+
+        is StdErr -> {
+            state.tuProlog.stdErrMessage = action.err
+            state.tuProlog
+        }
+
+        is Warnings -> {
+            state.tuProlog.warningMessage = action.warn
             state.tuProlog
         }
 

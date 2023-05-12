@@ -81,8 +81,11 @@ val Footer = FC<Props> {
                         size = Size.small
                         onChange = { _, newValue, _ ->
                             timeoutDuration = newValue
+//                            TuPrologController.application.currentPage?.timeout =
+//                                (newValue * TimeUnit.MILLIS)
+
                             TuPrologController.application.currentPage?.timeout =
-                                (newValue * TimeUnit.MILLIS)
+                                newValue.toLong()
                         }
                         max = 60000
                         min = 10

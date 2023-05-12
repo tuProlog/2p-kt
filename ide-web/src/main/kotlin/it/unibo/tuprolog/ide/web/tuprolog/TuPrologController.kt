@@ -96,16 +96,20 @@ object TuPrologController {
             store.dispatch(UpdateExecutionContext(it))
         }
         page.onStateChanged.bind {
+            logEvent(it)
             store.dispatch(UpdateStatus(it.event))
         }
         page.onStdoutPrinted.bind {
+            logEvent(it)
             store.dispatch(StdOut(it.event))
         }
 
         page.onStderrPrinted.bind {
+            logEvent(it)
             store.dispatch(StdErr(it.event))
         }
         page.onWarning.bind {
+            logEvent(it)
             store.dispatch(Warnings(it.event))
         }
         page.onNewSolver.bind(catchAnyEvent)

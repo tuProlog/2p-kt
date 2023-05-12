@@ -15,6 +15,7 @@ import react.Props
 import react.ReactNode
 import react.redux.useSelector
 import it.unibo.tuprolog.solve.exception.Warning
+import mui.base.TextareaAutosize
 import mui.lab.TreeItem
 import mui.lab.TreeView
 import react.dom.html.ReactHTML.div
