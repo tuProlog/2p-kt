@@ -51,17 +51,22 @@ fun tuPrologActions(state: AppState, action: RAction): TuProlog = when (action) 
     }
 
     is StdOut -> {
-        state.tuProlog.stdOutMessage = action.out
+        state.tuProlog.stdOutMessage = action.output
         state.tuProlog
     }
 
     is StdErr -> {
-        state.tuProlog.stdErrMessage = action.err
+        state.tuProlog.stdErrMessage = action.error
         state.tuProlog
     }
 
     is Warnings -> {
-        state.tuProlog.warningMessage = action.warn
+        state.tuProlog.warningMessage = action.warning
+        state.tuProlog
+    }
+
+    is StdIn -> {
+        state.tuProlog.stdInMessage = action.input
         state.tuProlog
     }
 

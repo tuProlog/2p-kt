@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ide.web.redux.actions
 
+import Message
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
@@ -31,7 +32,7 @@ class ResetPage: RAction
 class UpdateStatus(val newStatus: Page.Status): RAction
 class PageError(val page: Page, val exception: Throwable): RAction
 class CleanPageError: RAction
-
-class StdOut(val out: String) : RAction
-class StdErr(val err: String) : RAction
-class Warnings(val warn: Warning) : RAction
+class StdOut(val output: String) : RAction
+class StdErr(val error: String) : RAction
+class Warnings(val warning: Warning) : RAction
+class StdIn(val input: String) : RAction

@@ -24,7 +24,8 @@ data class TuProlog(
     var pageException: Throwable?,
     var stdOutMessage: String,
     var stdErrMessage: String,
-    var warningMessage: Warning?
+    var warningMessage: Warning?,
+    var stdInMessage: String
 )
 
 data class AppState(
@@ -53,7 +54,9 @@ val myStore = createStore(
             null,
             "",
             "",
-            null),
+            null,
+            ""
+            ),
         emptyList()
     ),
     rEnhancer()

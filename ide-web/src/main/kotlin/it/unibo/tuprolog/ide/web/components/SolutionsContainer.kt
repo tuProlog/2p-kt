@@ -2,6 +2,9 @@ package it.unibo.tuprolog.ide.web.components
 
 import Message
 import AppState
+import csstype.HtmlAttributes.Companion.width
+import csstype.pct
+import csstype.vh
 import mui.lab.TabContext
 import mui.lab.TabPanel
 import mui.material.Alert
@@ -20,6 +23,7 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.ide.web.utils.xs
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.exception.Warning
+import mui.base.TextareaAutosize
 import mui.icons.material.Mail
 import mui.lab.TreeItem
 import mui.lab.TreeView
@@ -28,6 +32,7 @@ import mui.material.ButtonColor
 import mui.material.ButtonVariant
 import mui.material.Grid
 import mui.material.IconPosition
+import mui.material.MuiInput.Companion.fullWidth
 import mui.material.Size
 import mui.material.Typography
 import react.create
@@ -36,6 +41,7 @@ import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.p
 import react.dom.html.ReactHTML.table
 import react.dom.html.ReactHTML.td
+import react.dom.html.ReactHTML.textarea
 import react.dom.html.ReactHTML.th
 import react.dom.html.ReactHTML.tr
 import react.dom.html.ReactHTML.ul
@@ -48,6 +54,9 @@ val SolutionsContainer = FC<Props> {
     val outputs = useSelector<AppState, String> { s -> s.tuProlog.stdOutMessage }
     val errors = useSelector<AppState, String> {s -> s.tuProlog.stdErrMessage }
     val warnings = useSelector<AppState, Warning?> { s -> s.tuProlog.warningMessage }
+
+    val inputs = useSelector<AppState, String> { s -> s.tuProlog.stdInMessage }
+
 
     val messages = useSelector<AppState, List<Message>> { s -> s.messages }
 
@@ -142,15 +151,28 @@ val SolutionsContainer = FC<Props> {
             }
             TabPanel {
                 value = "stdInTab"
-
-                if (eContext != null)
+                //+inputs
+               textarea {
+                   css  {
+                       width = 100.pct
+                       height = 30.vh
+                   }
+                   onChange?.let {
+                       it2 -> console.log(it2)
+                   }
+               }
+               /* if (eContext != null)
                     +eContext.standardInput.toString()
                 else
-                    +"Empty stdInTab"
+                    +"Empty stdIn"*/
             }
             TabPanel {
                 value = "stdOutTab"
                 +outputs
+                /*if (eContext != null)
+                    +eContext.standardOutput.toString()
+                else
+                    +"Empty stdIn"*/
             }
             TabPanel {
                 value = "stdErr"
