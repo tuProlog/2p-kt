@@ -9,6 +9,7 @@ import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
 import it.unibo.tuprolog.ide.web.redux.actions.*
+import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverBuilder
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TimeUnit
@@ -27,7 +28,6 @@ object TuPrologController {
     private val customSolverFactory: SolverFactory = ClassicSolverFactory
         .newBuilder()
         .withLibrary(IOLib)
-        .
         .toFactory()
 
     var application: Application =
@@ -44,7 +44,6 @@ object TuPrologController {
         { console.log("[Controller] Received event: ", it) }
 
     fun initialize(store: Store<AppState, RAction, WrapperAction>) {
-
         this.store = store
         bindApplication(application)
         application.newPage()
@@ -59,6 +58,8 @@ object TuPrologController {
         }
         application.onPageCreated.bind {
             logEvent(it)
+            // TODO try to define additional libraries inside of the Application SolverFactory
+            it.event.solverBuilder.withLibrary(IOLib)
             store.dispatch(UpdatePagesList(application.pages))
         }
         application.onPageLoaded.bind {
@@ -113,7 +114,6 @@ object TuPrologController {
             logEvent(it)
             store.dispatch(StdOut(it.event))
         }
-
         page.onStderrPrinted.bind {
             logEvent(it)
             store.dispatch(StdErr(it.event))
