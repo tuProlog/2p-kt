@@ -21,8 +21,10 @@ import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import mui.lab.TreeItem
 import mui.lab.TreeView
+import react.dom.html.ReactHTML.details
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.li
+import react.dom.html.ReactHTML.summary
 import react.dom.html.ReactHTML.table
 import react.dom.html.ReactHTML.td
 import react.dom.html.ReactHTML.textarea
@@ -30,6 +32,7 @@ import react.dom.html.ReactHTML.th
 import react.dom.html.ReactHTML.tr
 import react.dom.html.ReactHTML.ul
 import react.useState
+import web.html.HTML.details
 
 val SolutionsContainer = FC<Props> {
 
@@ -182,11 +185,67 @@ val SolutionsContainer = FC<Props> {
             TabPanel {
                 value = "libraries"
                 if (eContext != null) {
-                    console.log("ASD1", eContext.libraries)
-                    console.log("ASD2", eContext.libraries.libraries.toList())
-                    console.log("ASD3", eContext.libraries.libraries.contains(IOLib))
-
-                    TreeView {
+                    //console.log("ASD1", eContext.libraries)
+                    //console.log("ASD2", eContext.libraries.libraries.toList())
+                    //console.log("ASD3", eContext.libraries.libraries.contains(IOLib))
+                    eContext.libraries.libraries.forEach {
+                        details {
+                            summary {
+                                +it.alias
+                            }
+                            details {
+                            summary {
+                                +"Functions"
+                            }
+                            ul {
+                                it.functions.keys.forEach { it2 ->
+                                    li {
+                                        +it2.toIndicator().toString()
+                                    }
+                                }
+                            }
+                        }
+                            details {
+                            summary {
+                                +"Predicates"
+                            }
+                            ul {
+                                val myPredicates: MutableList<String> =
+                                    mutableListOf()
+                                it.clauses.filterIsInstance<Rule>()
+                                    .forEach { it2 ->
+                                        myPredicates += it2.head.indicator.toString()
+                                    }
+                                it.primitives.keys.forEach { it3 ->
+                                    myPredicates += it3.toIndicator()
+                                        .toString()
+                                }
+                                myPredicates.distinct().sorted()
+                                    .forEach {
+                                        li {
+                                            +it
+                                        }
+                                    }
+                            }
+                        }
+                            details {
+                            summary {
+                                +"Operators"
+                            }
+                            ul {
+                                it.operators.forEach { it2 ->
+                                    li {
+                                        +it2.functor.plus(" , ")
+                                            .plus(it2.specifier.toString())
+                                            .plus(" , ")
+                                            .plus(it2.priority.toString())
+                                    }
+                                }
+                            }
+                        }
+                        }
+                    }
+                    /*TreeView {
                         var idCounter = 0
                         eContext.libraries.libraries.forEach {
                             idCounter += 1
@@ -242,7 +301,7 @@ val SolutionsContainer = FC<Props> {
                                 }
                             }
                         }
-                    }
+                    }*/
                 } else
                     +"Empty libraries"
             }
