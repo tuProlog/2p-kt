@@ -72,8 +72,8 @@ data class IDEStyle(
 ) {
     companion object {
         const val DEFAULT_SPACING = 3
-        const val DEFAULT_HEIGHT = 56.0
-        const val DEFAULT_WIDTH = 56.0
+        const val DEFAULT_HEIGHT = 48.0
+        const val DEFAULT_WIDTH = 48.0
         val PADDING_RIGHT = 1.em
         val PADDING_LEFT = 1.em
         val MARGIN_RIGHT = 1.em
@@ -87,8 +87,6 @@ val currentStyleConfig = IDEStyle()
 
 //const val MYHEIGH = 56.0
 //const val MYWIDTH = 56.0
-
-//TODO remove uppercase tab visualization name
 
 val NavBar = FC<Props> {
     var isDialogOpen by useState(false)
@@ -169,14 +167,11 @@ val NavBar = FC<Props> {
                     it.target.files?.get(0)?.text()?.then { it1 ->
                         val filePath = it.target.files?.get(0)?.name
                         if (filePath != null) {
-                            // TODO set localstorage item Expiry Time (https://www.sohamkamani.com/javascript/localstorage-with-ttl-expiry/)
                             localStorage[filePath] = it1
                             val url = JsUrl(protocol="file", host="localhost", path=filePath)
                             val jsFile = JsFile(url)
                             TuPrologController.application.load(jsFile)
                         }
-                        // TODO allow multiple uploads of the same file (following line is not working as intended)
-                        // it.target.value = ""
                     }
                 }
             }

@@ -4,6 +4,7 @@ import AppState
 import PageWrapper
 import csstype.Display
 import csstype.FlexFlow
+import csstype.TextTransform
 import csstype.number
 import csstype.pct
 import csstype.px

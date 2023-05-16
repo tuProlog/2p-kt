@@ -22,6 +22,7 @@ import redux.RAction
 import redux.Store
 import redux.WrapperAction
 import it.unibo.tuprolog.solve.libs.io.IOLib
+import it.unibo.tuprolog.utils.observe.Binding
 
 object TuPrologController {
 
@@ -36,6 +37,9 @@ object TuPrologController {
             customSolverFactory,
             Page.DEFAULT_TIMEOUT
         )
+
+    private var activePageBindings: List<Binding> = emptyList()
+
     private lateinit var store: Store<AppState, RAction, WrapperAction>
 
     private val catchAnyEvent: (Event<Any>) -> Unit =
@@ -49,7 +53,7 @@ object TuPrologController {
         application.newPage()
     }
 
-    fun bindApplication(application: Application) {
+    private fun bindApplication(application: Application) {
         this.application = application
         application.onStart.bind(catchAnyEvent)
         application.onError.bind {
@@ -77,79 +81,69 @@ object TuPrologController {
         }
         application.onPageUnselected.bind {
             logEvent(it)
-            unbindPage(it.event)
+            unbindPage()
             store.dispatch(UpdateSelectedPage(null))
         }
         application.onQuit.bind(catchAnyEvent)
     }
 
-    // TODO applicare l'unbind
     private fun bindPage(page: Page) {
-        page.onResolutionStarted.bind(catchAnyEvent)
-        page.onResolutionOver.bind {
+        activePageBindings += page.onResolutionStarted.bind(catchAnyEvent)
+        activePageBindings += page.onResolutionStarted.bind(catchAnyEvent)
+        activePageBindings += page.onResolutionOver.bind {
             logEvent(it)
             store.dispatch(UpdateExecutionContext(it))
         }
-        page.onNewQuery.bind {
+        activePageBindings += page.onNewQuery.bind {
             logEvent(it)
             store.dispatch(UpdateExecutionContext(it))
         }
-        page.onQueryOver.bind {
+        activePageBindings += page.onQueryOver.bind {
             logEvent(it)
             store.dispatch(UpdateExecutionContext(it))
         }
-        page.onNewSolution.bind {
+        activePageBindings += page.onNewSolution.bind {
             logEvent(it)
             store.dispatch(NewSolution(it.event))
             store.dispatch(UpdateExecutionContext(it))
         }
-        page.onStateChanged.bind {
+        activePageBindings += page.onStateChanged.bind {
             logEvent(it)
             store.dispatch(UpdateStatus(it.event))
         }
-        page.onStdoutPrinted.bind {
+        activePageBindings += page.onStdoutPrinted.bind {
             logEvent(it)
             store.dispatch(StdOut(it.event))
         }
-        page.onStderrPrinted.bind {
+        activePageBindings += page.onStderrPrinted.bind {
             logEvent(it)
             store.dispatch(StdErr(it.event))
         }
-        page.onWarning.bind {
+        activePageBindings += page.onWarning.bind {
             logEvent(it)
             store.dispatch(Warnings(it.event))
         }
-        page.onNewSolver.bind{
+        activePageBindings += page.onNewSolver.bind{
             logEvent(it)
             store.dispatch(UpdateExecutionContext(it))
         }
-        page.onNewStaticKb.bind(catchAnyEvent)
-        page.onSolveOptionsChanged.bind(catchAnyEvent)
-        page.onSave.bind(catchAnyEvent)
-        page.onRename.bind {
+        activePageBindings += page.onNewStaticKb.bind(catchAnyEvent)
+        activePageBindings += page.onSolveOptionsChanged.bind(catchAnyEvent)
+        activePageBindings += page.onSave.bind(catchAnyEvent)
+        activePageBindings += page.onRename.bind {
             logEvent(it)
             store.dispatch(UpdatePagesList(application.pages))
             store.dispatch(UpdateSelectedPage(application.currentPage))
         }
-        page.onReset.bind {
+        activePageBindings += page.onReset.bind {
             logEvent(it)
             store.dispatch(ResetPage())
             store.dispatch(UpdateExecutionContext(it))
         }
     }
 
-    private fun unbindPage(page: Page) {
-        page.onResolutionStarted.unbind(catchAnyEvent)
-        page.onResolutionOver.unbind(catchAnyEvent)
-        page.onNewQuery.unbind(catchAnyEvent)
-        page.onQueryOver.unbind(catchAnyEvent)
-        page.onNewSolution.unbind(catchAnyEvent)
-        page.onStdoutPrinted.unbind(catchAnyEvent)
-        page.onStderrPrinted.unbind(catchAnyEvent)
-        page.onWarning.unbind(catchAnyEvent)
-        page.onNewSolver.unbind(catchAnyEvent)
-        page.onNewStaticKb.unbind(catchAnyEvent)
-        page.onSolveOptionsChanged.unbind(catchAnyEvent)
-        page.onReset.unbind(catchAnyEvent)
+    private fun unbindPage() {
+        activePageBindings.forEach { it.unbind() }
+        activePageBindings = emptyList()
     }
 }
