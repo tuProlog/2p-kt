@@ -56,14 +56,9 @@ object TuPrologController {
             logEvent(it)
             store.dispatch(PageError(it.event.first, it.event.second))
         }
-        application.onPageCreated.bind { it: Event<Page> ->
+        application.onPageCreated.bind {
             logEvent(it)
-            // TODO try to define additional libraries inside of the Application SolverFactory
-
-            console.log(it.event.solverBuilder.runtime.toString())
             it.event.solverBuilder.withLibrary(IOLib)
-            console.log(it.event.solverBuilder.runtime.toString())
-            // open issue
             store.dispatch(UpdatePagesList(application.pages))
         }
         application.onPageLoaded.bind {
@@ -77,6 +72,7 @@ object TuPrologController {
         application.onPageSelected.bind {
             logEvent(it)
             bindPage(it.event)
+            it.event
             store.dispatch(UpdateSelectedPage(application.currentPage))
         }
         application.onPageUnselected.bind {
@@ -89,10 +85,7 @@ object TuPrologController {
 
     // TODO applicare l'unbind
     private fun bindPage(page: Page) {
-        page.onResolutionStarted.bind {
-            logEvent(it)
-            store.dispatch(UpdateExecutionContext(it))
-        }
+        page.onResolutionStarted.bind(catchAnyEvent)
         page.onResolutionOver.bind {
             logEvent(it)
             store.dispatch(UpdateExecutionContext(it))
@@ -126,13 +119,13 @@ object TuPrologController {
             logEvent(it)
             store.dispatch(Warnings(it.event))
         }
-        page.onNewSolver.bind(catchAnyEvent)
+        page.onNewSolver.bind{
+            logEvent(it)
+            store.dispatch(UpdateExecutionContext(it))
+        }
         page.onNewStaticKb.bind(catchAnyEvent)
         page.onSolveOptionsChanged.bind(catchAnyEvent)
-        page.onSave.bind({
-            logEvent(it)
-            // feedback
-        })
+        page.onSave.bind(catchAnyEvent)
         page.onRename.bind {
             logEvent(it)
             store.dispatch(UpdatePagesList(application.pages))

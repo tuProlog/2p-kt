@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ide.web.components
 
 import AppState
+import it.unibo.tuprolog.ide.web.redux.actions.CleanSolutions
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.InputProps
 import it.unibo.tuprolog.ui.gui.Page
@@ -21,13 +22,17 @@ import react.ReactNode
 import react.create
 import react.createRef
 import react.dom.onChange
+import react.redux.useDispatch
 import react.redux.useSelector
+import redux.RAction
+import redux.WrapperAction
 import web.html.HTMLInputElement
 
 val QueryEditor = FC<Props> {
     val queryInputRef = createRef<HTMLInputElement>()
     val pageStatus =
         useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
+    val dispatcher = useDispatch <RAction, WrapperAction>()
 
 
     Stack {
@@ -57,9 +62,8 @@ val QueryEditor = FC<Props> {
                             +"Solve"
                             onClick = {
                                 if (TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
-                                    TuPrologController.application.currentPage?.solve(
-                                        1
-                                    )
+                                    dispatcher(CleanSolutions())
+                                    TuPrologController.application.currentPage?.solve(1)
                                 } else {
                                     TuPrologController.application.currentPage?.next(
                                         1
@@ -73,6 +77,7 @@ val QueryEditor = FC<Props> {
                             +"Solve 10"
                             onClick = {
                                 if (TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
+                                    dispatcher(CleanSolutions())
                                     TuPrologController.application.currentPage?.solve(
                                         10
                                     )
