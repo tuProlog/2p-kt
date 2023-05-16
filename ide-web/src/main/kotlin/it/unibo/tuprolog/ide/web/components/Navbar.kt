@@ -85,10 +85,10 @@ val currentStyleConfig = IDEStyle()
 
 // TODO move all config magic-numbers into separate file (even better a css file)
 
-//const val MYHEIGH = 56.0
-//const val MYWIDTH = 56.0
+// const val MYHEIGH = 56.0
+// const val MYWIDTH = 56.0
 
-//TODO remove uppercase tab visualization name
+// TODO remove uppercase tab visualization name
 
 val NavBar = FC<Props> {
     var isDialogOpen by useState(false)
@@ -112,8 +112,7 @@ val NavBar = FC<Props> {
 
         div {
             img {
-                src =
-                    "https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/logo.svg"
+                src = "https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/logo.svg"
                 height = currentStyleConfig.height
 
                 css {
@@ -124,7 +123,6 @@ val NavBar = FC<Props> {
         }
 
         div {
-
             Fab {
                 Add()
                 color = FabColor.primary
@@ -140,7 +138,6 @@ val NavBar = FC<Props> {
                     marginLeft = currentStyleConfig.marginLeft
                 }
             }
-
             Fab {
                 Edit()
                 color = FabColor.secondary
@@ -158,7 +155,6 @@ val NavBar = FC<Props> {
                     marginLeft = currentStyleConfig.marginLeft
                 }
             }
-
             input {
                 type = InputType.file
                 ref = uploadInputRef
@@ -171,7 +167,7 @@ val NavBar = FC<Props> {
                         if (filePath != null) {
                             // TODO set localstorage item Expiry Time (https://www.sohamkamani.com/javascript/localstorage-with-ttl-expiry/)
                             localStorage[filePath] = it1
-                            val url = JsUrl(protocol="file", host="localhost", path=filePath)
+                            val url = JsUrl(protocol = "file", host = "localhost", path = filePath)
                             val jsFile = JsFile(url)
                             TuPrologController.application.load(jsFile)
                         }
@@ -184,7 +180,9 @@ val NavBar = FC<Props> {
                 startIcon = UploadFileOutlined.create()
                 variant = outlined
                 color = ButtonColor.success
-                onClick = { uploadInputRef.current?.click() }
+                onClick = {
+                    uploadInputRef.current?.click()
+                }
                 Typography {
                     +"Upload"
                 }
@@ -198,10 +196,8 @@ val NavBar = FC<Props> {
                 variant = outlined
                 onClick = {
                     // real save
-                    val editorText =
-                        TuPrologController.application.currentPage?.theory ?: ""
-                    val fileName = TuPrologController.application.currentPage?.id?.name
-                        ?: "UNDEFINED.pl"
+                    val editorText = TuPrologController.application.currentPage?.theory ?: ""
+                    val fileName = TuPrologController.application.currentPage?.id?.name ?: "UNDEFINED.pl"
                     val elem = document.createElement(HTML.a)
                     elem.setAttribute(
                         "href",
@@ -216,7 +212,7 @@ val NavBar = FC<Props> {
                     elem.click()
 
                     // :gui save
-                    val url = JsUrl(protocol="file", host="localhost", path=fileName)
+                    val url = JsUrl(protocol = "file", host = "localhost", path = fileName)
                     val jsFile = JsFile(url)
                     TuPrologController.application.currentPage?.save(jsFile)
                 }
@@ -244,7 +240,12 @@ val NavBar = FC<Props> {
                     // select new ide
                     TuPrologController.application.select(
                         TuPrologController.application.pages.elementAt(
-                            if (index == 0) index else index - 1
+                            if (index == 0) {
+                                index
+                            }
+                            else {
+                                index - 1
+                            }
                         )
                     )
                 }
@@ -272,7 +273,7 @@ val NavBar = FC<Props> {
                 checkedIcon = Brightness4.create {
                     color = SvgIconColor.info
                 }
-                checked = theme == Themes.Dark
+                checked = (theme == Themes.Dark)
 
                 onChange = { _, checked ->
                     theme = if (checked) Themes.Dark else Themes.Light
@@ -291,24 +292,31 @@ val NavBar = FC<Props> {
                 DialogContentText {
                     p {
                         +"TupKTWeb version: 0.1"
+                    }
+                    p {
                         +"TuProlog 2p-kt version: ${TuPrologInfo.VERSION}"
-                        +"2p-kt GitHub repo:"
+                    }
+                    p {
+                        +"2p-kt GitHub repo: "
                         a {
                             href = "https://github.com/tuProlog/2p-kt"
                             +"https://github.com/tuProlog/2p-kt"
                         }
+                    }
+                    p {
                         +"Developed by: Alberto Donati & Fabio Muratori"
                     }
                 }
                 DialogActions {
                     Button {
-                        onClick = { isDialogOpen = false }
+                        onClick = {
+                            isDialogOpen = false
+                        }
                         +"Close"
                     }
                 }
             }
         }
-
         if (TuPrologController.application.currentPage != null) {
             Dialog {
                 open = isDialogRenameOpen
@@ -319,8 +327,7 @@ val NavBar = FC<Props> {
                 DialogContent {
                     DialogContentText {
                         //  +"Write here the new name for $currentPage"
-                        val currentName =
-                            TuPrologController.application.currentPage?.id?.name
+                        val currentName = TuPrologController.application.currentPage?.id?.name
                         +"Write here the new name for $currentName"
                     }
                     TextField {
@@ -329,16 +336,13 @@ val NavBar = FC<Props> {
                         fullWidth = true
                         error = changeFileNameErrorInput
                         label = ReactNode("New file name")
-                        helperText =
-                            ReactNode("File name must end with .pl or .txt")
+                        helperText = ReactNode("File name must end with .pl or .txt")
                         // defaultValue = currentPage
-                        defaultValue =
-                            TuPrologController.application.currentPage?.id?.name
+                        defaultValue = TuPrologController.application.currentPage?.id?.name
                         onChange = {
                             newFileNameInputRef.current?.let { it1 ->
                                 newFileName = it1.value
-                                changeFileNameErrorInput =
-                                    !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
+                                changeFileNameErrorInput = !(it1.value.matches(Regex("\\w+(\\.pl|\\.txt)\$")))
                             }
                         }
                     }
@@ -354,8 +358,7 @@ val NavBar = FC<Props> {
                         disabled = changeFileNameErrorInput
                         onClick = {
                             isDialogRenameOpen = false
-                            TuPrologController.application.currentPage?.id =
-                                PageName(newFileName)
+                            TuPrologController.application.currentPage?.id = PageName(newFileName)
                         }
                         +"Confirm"
                     }

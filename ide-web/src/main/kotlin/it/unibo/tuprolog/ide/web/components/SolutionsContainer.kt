@@ -20,9 +20,6 @@ import react.Props
 import react.ReactNode
 import react.redux.useSelector
 import it.unibo.tuprolog.solve.exception.Warning
-import it.unibo.tuprolog.solve.libs.io.IOLib
-import mui.lab.TreeItem
-import mui.lab.TreeView
 import react.dom.html.ReactHTML.details
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.li
@@ -36,16 +33,13 @@ import react.dom.html.ReactHTML.thead
 import react.dom.html.ReactHTML.tr
 import react.dom.html.ReactHTML.ul
 import react.useState
-import web.html.HTML.details
 
 val SolutionsContainer = FC<Props> {
 
-    val solutions =
-        useSelector<AppState, Collection<TuPrologSolution>> { s -> s.tuProlog.solutions }
-    val eContext =
-        useSelector<AppState, ExecutionContextAware?> { s -> s.tuProlog.executionContext }
+    val solutions = useSelector<AppState, Collection<TuPrologSolution>> { s -> s.tuProlog.solutions }
+    val eContext = useSelector<AppState, ExecutionContextAware?> { s -> s.tuProlog.executionContext }
     val outputs = useSelector<AppState, String> { s -> s.tuProlog.stdOutMessage }
-    val errors = useSelector<AppState, String> {s -> s.tuProlog.stdErrMessage }
+    val errors = useSelector<AppState, String> { s -> s.tuProlog.stdErrMessage }
     val warnings = useSelector<AppState, Warning?> { s -> s.tuProlog.warningMessage }
 
     var activeTab by useState("solutionsTab")
@@ -95,9 +89,6 @@ val SolutionsContainer = FC<Props> {
         }
 
         div {
-            css {
-            }
-
             TabPanel {
                 value = "solutionsTab"
 
@@ -121,16 +112,15 @@ val SolutionsContainer = FC<Props> {
             }
             TabPanel {
                 value = "stdInTab"
-                //+inputs
-               textarea {
-                   css  {
-                       width = 100.pct
-                       height = 30.vh
-                   }
-                   onChange = { it2 ->
-                       TuPrologController.application.currentPage?.stdin = it2.target.value
-                   }
-               }
+                textarea {
+                    css {
+                        width = 100.pct
+                        height = 30.vh
+                    }
+                    onChange = { it2 ->
+                        TuPrologController.application.currentPage?.stdin = it2.target.value
+                    }
+                }
             }
             TabPanel {
                 value = "stdOutTab"
@@ -156,7 +146,7 @@ val SolutionsContainer = FC<Props> {
             }
             TabPanel {
                 value = "operators"
-                if (eContext != null)
+                if (eContext != null) {
                     table {
                         thead {
                             tr {
@@ -187,8 +177,10 @@ val SolutionsContainer = FC<Props> {
                             }
                         }
                     }
-                else
+            }
+            else {
                     +"Empty operators"
+            }
             }
             TabPanel {
                 value = "libraries"
@@ -198,78 +190,82 @@ val SolutionsContainer = FC<Props> {
                             summary {
                                 +it.alias
                             }
-                                details {
-                                    summary {
-                                        +"Functions"
-                                    }
-                                    ul {
-                                it.functions.keys.forEach { it2 ->
-                                    li {
-                                        +it2.toIndicator().toString()
+                            details {
+                                summary {
+                                    +"Functions"
+                                }
+                                ul {
+                                    it.functions.keys.forEach { it2 ->
+                                        li {
+                                            +it2.toIndicator().toString()
+                                        }
                                     }
                                 }
                             }
+                            details {
+                                summary {
+                                    +"Predicates"
                                 }
-                                details {
-                                    summary {
-                                        +"Predicates"
-                                    }
-                                    ul {
-                                        val myPredicates: MutableList<String> =
-                                            mutableListOf()
-                                        it.clauses.filterIsInstance<Rule>()
-                                            .forEach { it2 ->
-                                                myPredicates += it2.head.indicator.toString()
-                                            }
-                                        it.primitives.keys.forEach { it3 ->
-                                            myPredicates += it3.toIndicator()
-                                                .toString()
+                                ul {
+                                    val myPredicates: MutableList<String> =
+                                        mutableListOf()
+                                    it.clauses.filterIsInstance<Rule>()
+                                        .forEach { it2 ->
+                                            myPredicates += it2.head.indicator.toString()
                                         }
-                                        myPredicates.distinct().sorted()
-                                            .forEach {
-                                                li {
-                                                    +it
-                                                }
-                                            }
+                                    it.primitives.keys.forEach { it3 ->
+                                        myPredicates += it3.toIndicator()
+                                            .toString()
                                     }
-                                }
-                                details {
-                                    summary {
-                                        +"Operators"
-                                    }
-                                    ul {
-                                        it.operators.forEach { it2 ->
+                                    myPredicates.distinct().sorted()
+                                        .forEach {
                                             li {
-                                                +it2.functor.plus(" , ")
-                                                    .plus(it2.specifier.toString())
-                                                    .plus(" , ")
-                                                    .plus(it2.priority.toString())
+                                                +it
                                             }
                                         }
+                                }
+                            }
+                            details {
+                                summary {
+                                    +"Operators"
+                                }
+                                ul {
+                                    it.operators.forEach { it2 ->
+                                        li {
+                                            +it2.functor.plus(" , ")
+                                                .plus(it2.specifier.toString())
+                                                .plus(" , ")
+                                                .plus(it2.priority.toString())
+                                        }
                                     }
+                                }
                             }
                         }
                     }
-                } else
+                } else {
                     +"Empty libraries"
+                }
             }
             TabPanel {
                 value = "staticKb"
-                if (eContext != null)
+                if (eContext != null) {
                     +eContext.staticKb.clauses.joinToString(".\n", postfix = ".") {
                         it.format(TermFormatter.prettyExpressions())
                     }
-                else
+                }
+                else {
                     +"Empty staticKb"
+                }
             }
             TabPanel {
                 value = "dynamicKb"
-                if (eContext != null)
+                if (eContext != null) {
                     eContext.dynamicKb.clauses.joinToString(".\n", postfix = ".") {
                         it.format(TermFormatter.prettyExpressions())
                     }
-                else
+                } else {
                     +"Empty dynamicKb"
+                }
             }
         }
     }

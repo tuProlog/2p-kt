@@ -30,10 +30,8 @@ import web.html.HTMLInputElement
 
 val QueryEditor = FC<Props> {
     val queryInputRef = createRef<HTMLInputElement>()
-    val pageStatus =
-        useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
+    val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
     val dispatcher = useDispatch <RAction, WrapperAction>()
-
 
     Stack {
         direction = responsive(StackDirection.row)
@@ -65,15 +63,13 @@ val QueryEditor = FC<Props> {
                                     dispatcher(CleanSolutions())
                                     TuPrologController.application.currentPage?.solve(1)
                                 } else {
-                                    TuPrologController.application.currentPage?.next(
-                                        1
-                                    )
+                                    TuPrologController.application.currentPage?.next(1)
                                 }
                             }
                         }
                         Button {
                             variant = ButtonVariant.contained
-                            disabled = pageStatus == Page.Status.COMPUTING
+                            disabled = (pageStatus == Page.Status.COMPUTING)
                             +"Solve 10"
                             onClick = {
                                 if (TuPrologController.application.currentPage?.state == Page.Status.IDLE) {

@@ -7,7 +7,6 @@ import csstype.em
 import csstype.px
 import emotion.react.css
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
-import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.ui.gui.Page
@@ -60,8 +59,9 @@ val Footer = FC<Props> {
 
                 Grid {
                     item = true
-                    if (pageStatus == Page.Status.COMPUTING)
+                    if (pageStatus == Page.Status.COMPUTING) {
                         LinearProgress {}
+                    }
                 }
                 Grid {
                     item = true
