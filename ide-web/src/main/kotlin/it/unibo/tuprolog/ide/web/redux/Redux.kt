@@ -30,6 +30,8 @@ data class PageWrapper(
     }
 }
 
+// TODO simulate multitabs by wrapping page specific variables into TuProlog:pages collection
+
 data class TuProlog(
     var pages: Collection<PageWrapper>,
     var currentPage: TuPrologPage?,
