@@ -17,6 +17,7 @@ import react.Props
 import react.ReactNode
 import react.create
 import react.dom.html.ReactHTML.br
+import react.dom.html.ReactHTML.p
 import react.dom.html.ReactHTML.span
 
 val formatter = TermFormatter.prettyExpressions()
@@ -70,7 +71,6 @@ val NoView = FC<ViewProps> {
 val HaltView = FC<ViewProps> { props ->
     ListItem {
         if (props.solution.castToHalt().exception is TimeOutException) {
-
             ListItemIcon {
                 TimerOffOutlined {
                     color = SvgIconColor.warning
@@ -87,17 +87,22 @@ val HaltView = FC<ViewProps> { props ->
             }
             ListItemText {
                 primary = ReactNode("Halt:")
-                secondary = span.create {
-                    span {
-                        props.solution.castToHalt().exception.message
-                    }
-                    br {}
-                    ReactNode(
-                        props.solution.castToHalt().exception.logicStackTrace
-                            .joinToString("<br>")
-                    )
-                }
+                secondary = HaltViewMessage.create { solution = props.solution }
+//                ReactNode(props.solution.exception?.message)
+
             }
+        }
+    }
+}
+
+val HaltViewMessage = FC<ViewProps> { props ->
+    p {
+        span {
+            +props.solution.exception?.message
+        }
+        br {}
+        span {
+            +props.solution.exception?.logicStackTrace?.joinToString(", ")
         }
     }
 }

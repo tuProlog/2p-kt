@@ -5,6 +5,8 @@ import csstype.pct
 import csstype.vh
 import emotion.react.css
 import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
@@ -26,9 +28,11 @@ import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.summary
 import react.dom.html.ReactHTML.table
+import react.dom.html.ReactHTML.tbody
 import react.dom.html.ReactHTML.td
 import react.dom.html.ReactHTML.textarea
 import react.dom.html.ReactHTML.th
+import react.dom.html.ReactHTML.thead
 import react.dom.html.ReactHTML.tr
 import react.dom.html.ReactHTML.ul
 import react.useState
@@ -154,27 +158,31 @@ val SolutionsContainer = FC<Props> {
                 value = "operators"
                 if (eContext != null)
                     table {
-                        tr {
-                            th {
-                                +"FUNCTOR"
-                            }
-                            th {
-                                +"PRIORITY"
-                            }
-                            th {
-                                +"SPECIFIER"
+                        thead {
+                            tr {
+                                th {
+                                    +"FUNCTOR"
+                                }
+                                th {
+                                    +"PRIORITY"
+                                }
+                                th {
+                                    +"SPECIFIER"
+                                }
                             }
                         }
-                        for (operator in eContext.operators) {
-                            tr {
-                                td {
-                                    +operator.functor
-                                }
-                                td {
-                                    +operator.priority.toString()
-                                }
-                                td {
-                                    +operator.specifier.toString()
+                        tbody {
+                            for (operator in eContext.operators) {
+                                tr {
+                                    td {
+                                        +operator.functor
+                                    }
+                                    td {
+                                        +operator.priority.toString()
+                                    }
+                                    td {
+                                        +operator.specifier.toString()
+                                    }
                                 }
                             }
                         }
@@ -248,14 +256,18 @@ val SolutionsContainer = FC<Props> {
             TabPanel {
                 value = "staticKb"
                 if (eContext != null)
-                    +eContext.staticKb.toString()
+                    +eContext.staticKb.clauses.joinToString(".\n", postfix = ".") {
+                        it.format(TermFormatter.prettyExpressions())
+                    }
                 else
                     +"Empty staticKb"
             }
             TabPanel {
                 value = "dynamicKb"
                 if (eContext != null)
-                    eContext.dynamicKb
+                    eContext.dynamicKb.clauses.joinToString(".\n", postfix = ".") {
+                        it.format(TermFormatter.prettyExpressions())
+                    }
                 else
                     +"Empty dynamicKb"
             }
