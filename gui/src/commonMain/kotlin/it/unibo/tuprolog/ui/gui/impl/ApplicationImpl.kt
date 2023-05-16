@@ -69,7 +69,7 @@ internal class ApplicationImpl(
         pagesById -= old
     }
 
-    private fun handlePageError(page: Page, error: TuPrologException) {
+    private fun handlePageError(page: Page, error: Throwable) {
         onError.raise(Application.EVENT_ERROR, page to error)
     }
 

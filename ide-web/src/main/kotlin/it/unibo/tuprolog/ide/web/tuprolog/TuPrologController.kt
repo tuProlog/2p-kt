@@ -27,7 +27,7 @@ object TuPrologController {
 
     private val customSolverFactory: SolverFactory = ClassicSolverFactory
         .newBuilder()
-        .withLibrary(IOLib)
+        .withLibrary(IOLib) // open issue
         .toFactory()
 
     var application: Application =
@@ -56,10 +56,14 @@ object TuPrologController {
             logEvent(it)
             store.dispatch(PageError(it.event.first, it.event.second))
         }
-        application.onPageCreated.bind {
+        application.onPageCreated.bind { it: Event<Page> ->
             logEvent(it)
             // TODO try to define additional libraries inside of the Application SolverFactory
+
+            console.log(it.event.solverBuilder.runtime.toString())
             it.event.solverBuilder.withLibrary(IOLib)
+            console.log(it.event.solverBuilder.runtime.toString())
+            // open issue
             store.dispatch(UpdatePagesList(application.pages))
         }
         application.onPageLoaded.bind {
@@ -125,7 +129,10 @@ object TuPrologController {
         page.onNewSolver.bind(catchAnyEvent)
         page.onNewStaticKb.bind(catchAnyEvent)
         page.onSolveOptionsChanged.bind(catchAnyEvent)
-        page.onSave.bind(catchAnyEvent)
+        page.onSave.bind({
+            logEvent(it)
+            // feedback
+        })
         page.onRename.bind {
             logEvent(it)
             store.dispatch(UpdatePagesList(application.pages))

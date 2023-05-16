@@ -80,6 +80,7 @@ class TestPage {
             onError += catchAnyEvent
             onStateChanged += catchAnyEvent
             onTheoryChanged += catchAnyEvent
+            onSave += catchAnyEvent
         }
         events.assertions {
             assertNoMoreEvents()
@@ -678,6 +679,7 @@ class TestPage {
             assertNextEquals(Runner4Tests.EVENT_IO)
             assertNextEquals(Runner4Tests.EVENT_UI)
             assertNextIsEvent(Page.EVENT_RENAME, oldName to newName)
+            assertNextIsEvent(Page.EVENT_SAVE, newName to destination)
             assertNoMoreEvents()
         }
         assertEquals(theory, destination.readText())

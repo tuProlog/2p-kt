@@ -85,7 +85,7 @@ interface Page {
 
     val onWarning: Observable<Event<Warning>>
 
-    val onError: Observable<Event<TuPrologException>>
+    val onError: Observable<Event<Throwable>>
 
     companion object {
 
@@ -97,6 +97,9 @@ interface Page {
 
         @JvmField
         val EVENT_CLOSE = Page::onClose.name
+
+        @JvmField
+        val EVENT_SAVE = Page::onSave.name
 
         @JvmField
         val EVENT_STATE_CHANGED = Page::onStateChanged.name
