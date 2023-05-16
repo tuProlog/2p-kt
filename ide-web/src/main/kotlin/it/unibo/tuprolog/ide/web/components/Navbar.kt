@@ -197,23 +197,26 @@ val NavBar = FC<Props> {
                 startIcon = GetAppOutlined.create()
                 variant = outlined
                 onClick = {
-//                    val editorText =
-//                        TuPrologController.application.currentPage?.theory ?: ""
-//                    val elem = document.createElement(HTML.a)
-//                    elem.setAttribute(
-//                        "href",
-//                        "data:text/plain;charset=utf-8," + encodeURIComponent(
-//                            editorText
-//                        )
-//                    )
-//                    elem.setAttribute(
-//                        "download",
-//                        TuPrologController.application.currentPage?.id?.name
-//                            ?: "UNDEFINED.pl"
-//                    )
-//                    elem.click()
+                    // real save
+                    val editorText =
+                        TuPrologController.application.currentPage?.theory ?: ""
+                    val fileName = TuPrologController.application.currentPage?.id?.name
+                        ?: "UNDEFINED.pl"
+                    val elem = document.createElement(HTML.a)
+                    elem.setAttribute(
+                        "href",
+                        "data:text/plain;charset=utf-8," + encodeURIComponent(
+                            editorText
+                        )
+                    )
+                    elem.setAttribute(
+                        "download",
+                        fileName
+                    )
+                    elem.click()
 
-                    val url = JsUrl(protocol="file", host="localhost", path="test")
+                    // :gui save
+                    val url = JsUrl(protocol="file", host="localhost", path=fileName)
                     val jsFile = JsFile(url)
                     TuPrologController.application.currentPage?.save(jsFile)
                 }
