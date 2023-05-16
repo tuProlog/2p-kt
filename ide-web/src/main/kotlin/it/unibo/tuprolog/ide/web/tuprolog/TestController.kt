@@ -7,29 +7,29 @@ import it.unibo.tuprolog.theory.parsing.ClausesParser
 // import it.unibo.tuprolog.core.parsing.parseAsStruct
 
 // TEST 3
-//import it.unibo.tuprolog.core.Struct
-//import it.unibo.tuprolog.core.Atom
-//import it.unibo.tuprolog.core.Var
-//import it.unibo.tuprolog.core.Fact
-//import it.unibo.tuprolog.solve.Solver
-//import it.unibo.tuprolog.solve.Solution
-//import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
-//import it.unibo.tuprolog.theory.Theory
+// import it.unibo.tuprolog.core.Struct
+// import it.unibo.tuprolog.core.Atom
+// import it.unibo.tuprolog.core.Var
+// import it.unibo.tuprolog.core.Fact
+// import it.unibo.tuprolog.solve.Solver
+// import it.unibo.tuprolog.solve.Solution
+// import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
+// import it.unibo.tuprolog.theory.Theory
 
 fun testTuprolog(myTheory: String, myQuery: String) {
     // TEST 1
     val stringTheory = myTheory.trimIndent()
     val clauseReader = ClausesParser.withDefaultOperators()
     val theory = clauseReader.parseTheory(stringTheory)
-    val solver =
-        ClassicSolverFactory.mutableSolverWithDefaultBuiltins(staticKb = theory)
+    val solver = ClassicSolverFactory.mutableSolverWithDefaultBuiltins(staticKb = theory)
     val queryParser = TermParser.withDefaultOperators()
     val query = queryParser.parseStruct(myQuery.trimIndent())
     for (solution in solver.solve(query)) {
-        if (solution.isYes)
+        if (solution.isYes) {
             console.log("YES")
-        else
+        } else {
             console.log("NO")
+        }
 
         if (solution.isYes) {
             console.log("SOLUTION", solution)

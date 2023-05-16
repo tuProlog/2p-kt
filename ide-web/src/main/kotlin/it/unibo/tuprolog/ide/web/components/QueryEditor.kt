@@ -31,7 +31,7 @@ import web.html.HTMLInputElement
 val QueryEditor = FC<Props> {
     val queryInputRef = createRef<HTMLInputElement>()
     val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
-    val dispatcher = useDispatch <RAction, WrapperAction>()
+    val dispatcher = useDispatch<RAction, WrapperAction>()
 
     Stack {
         direction = responsive(StackDirection.row)

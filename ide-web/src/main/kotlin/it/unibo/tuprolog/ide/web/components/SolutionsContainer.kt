@@ -10,6 +10,7 @@ import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
+import it.unibo.tuprolog.solve.exception.Warning
 import mui.lab.TabContext
 import mui.lab.TabPanel
 import mui.material.List
@@ -18,8 +19,6 @@ import mui.material.Tabs
 import react.FC
 import react.Props
 import react.ReactNode
-import react.redux.useSelector
-import it.unibo.tuprolog.solve.exception.Warning
 import react.dom.html.ReactHTML.details
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.li
@@ -32,6 +31,7 @@ import react.dom.html.ReactHTML.th
 import react.dom.html.ReactHTML.thead
 import react.dom.html.ReactHTML.tr
 import react.dom.html.ReactHTML.ul
+import react.redux.useSelector
 import react.useState
 
 val SolutionsContainer = FC<Props> {
@@ -95,18 +95,21 @@ val SolutionsContainer = FC<Props> {
                 List {
                     dense = true
                     solutions.forEach {
-                        if (it.isYes)
+                        if (it.isYes) {
                             YesView {
                                 solution = it
                             }
-                        if (it.isNo)
+                        }
+                        if (it.isNo) {
                             NoView {
                                 solution = it
                             }
-                        if (it.isHalt)
+                        }
+                        if (it.isHalt) {
                             HaltView {
                                 solution = it
                             }
+                        }
                     }
                 }
             }
@@ -177,10 +180,9 @@ val SolutionsContainer = FC<Props> {
                             }
                         }
                     }
-            }
-            else {
+                } else {
                     +"Empty operators"
-            }
+                }
             }
             TabPanel {
                 value = "libraries"
@@ -252,8 +254,7 @@ val SolutionsContainer = FC<Props> {
                     +eContext.staticKb.clauses.joinToString(".\n", postfix = ".") {
                         it.format(TermFormatter.prettyExpressions())
                     }
-                }
-                else {
+                } else {
                     +"Empty staticKb"
                 }
             }

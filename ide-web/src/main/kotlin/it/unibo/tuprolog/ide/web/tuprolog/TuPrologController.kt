@@ -9,10 +9,7 @@ import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
 import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
 import it.unibo.tuprolog.ide.web.redux.actions.*
-import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.SolverBuilder
 import it.unibo.tuprolog.solve.SolverFactory
-import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.ui.gui.Application
 import it.unibo.tuprolog.ui.gui.DefaultJsRunner

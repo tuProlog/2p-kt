@@ -242,8 +242,7 @@ val NavBar = FC<Props> {
                         TuPrologController.application.pages.elementAt(
                             if (index == 0) {
                                 index
-                            }
-                            else {
+                            } else {
                                 index - 1
                             }
                         )

@@ -27,10 +27,8 @@ import react.useRequiredContext
 
 val TheoryEditors = FC<Props> {
     val provTheme by useRequiredContext(ThemeContext)
-    val editorSelectedTab =
-        useSelector<AppState, TuPrologPage?> { s -> s.tuProlog.currentPage }
-    val editorTabs =
-        useSelector<AppState, Collection<PageWrapper>> { s -> s.tuProlog.pages }
+    val editorSelectedTab = useSelector<AppState, TuPrologPage?> { s -> s.tuProlog.currentPage }
+    val editorTabs = useSelector<AppState, Collection<PageWrapper>> { s -> s.tuProlog.pages }
 
     div {
         css {
@@ -39,8 +37,7 @@ val TheoryEditors = FC<Props> {
             height = 100.pct
             padding = 0.px
         }
-
-        if (editorSelectedTab != null)
+        if (editorSelectedTab != null) {
             TabContext {
                 value = editorSelectedTab.id.name
 
@@ -49,10 +46,12 @@ val TheoryEditors = FC<Props> {
                     variant = TabsVariant.scrollable
                     scrollButtons = TabsScrollButtons.auto
                     onChange = { _, newValue ->
-                        val newPage =
-                            TuPrologController.application.pages.find { p -> p.id.name == newValue }
-                        if (newPage != null)
+                        val newPage = TuPrologController.application.pages.find { p -> p.id.name == newValue }
+                        if (newPage != null) {
                             TuPrologController.application.select(newPage)
+                        } else {
+                            console.log("new page is null")
+                        }
                     }
 
                     editorTabs.forEach {
@@ -79,10 +78,11 @@ val TheoryEditors = FC<Props> {
                                 TuPrologController.application.currentPage?.theory =
                                     it
                             }
-                            if (provTheme == Themes.Dark)
+                            if (provTheme == Themes.Dark) {
                                 theme = "vs-dark"
-                            else if (provTheme == Themes.Light)
+                            } else if (provTheme == Themes.Light) {
                                 theme = "vs-light"
+                            }
                             beforeMount = {
                                 //                            console.log(it)
                                 //                            it.languages.register("tuProlog")
@@ -94,5 +94,8 @@ val TheoryEditors = FC<Props> {
                     }
                 }
             }
+        } else {
+            console.log("editor is not selected")
+        }
     }
 }
