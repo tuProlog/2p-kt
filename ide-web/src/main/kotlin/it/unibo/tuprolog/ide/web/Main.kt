@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.ide.web
 
-import AppState
+import it.unibo.tuprolog.ide.web.redux.AppState
 import csstype.AlignItems
 import csstype.FlexWrap
 import csstype.JustifyContent
@@ -15,7 +15,7 @@ import it.unibo.tuprolog.ide.web.components.QueryEditor
 import it.unibo.tuprolog.ide.web.components.SolutionsContainer
 import it.unibo.tuprolog.ide.web.components.ThemeModule
 import it.unibo.tuprolog.ide.web.components.TheoryEditors
-import it.unibo.tuprolog.ide.web.redux.actions.CleanPageError
+import it.unibo.tuprolog.ide.web.redux.CleanPageError
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.xs
 import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
@@ -30,7 +30,7 @@ import mui.material.Grid
 import mui.material.GridDirection
 import mui.system.responsive
 import mui.system.sx
-import myStore
+import it.unibo.tuprolog.ide.web.redux.myStore
 import react.FC
 import react.Props
 import react.create
@@ -38,7 +38,6 @@ import react.dom.client.createRoot
 import react.redux.Provider
 import react.redux.useDispatch
 import react.redux.useSelector
-import react.useEffectOnce
 import redux.RAction
 import redux.WrapperAction
 import web.dom.document
@@ -66,7 +65,7 @@ val Root = FC<Props> {
 
 val App = FC<Props> {
     val pageException =
-        useSelector<AppState, Throwable?> { s -> s.tuProlog.pageException }
+        useSelector<AppState, Throwable?> { s -> s.tuProlog.currentPage?.pageException }
     val dispatcher = useDispatch<RAction, WrapperAction>()
 
     fun getExceptionTextHeader(): String {

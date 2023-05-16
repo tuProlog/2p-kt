@@ -1,18 +1,20 @@
 package it.unibo.tuprolog.ide.web.tuprolog
 
-import AppState
-import it.unibo.tuprolog.ide.web.redux.actions.NewSolution
-import it.unibo.tuprolog.ide.web.redux.actions.PageError
-import it.unibo.tuprolog.ide.web.redux.actions.ResetPage
-import it.unibo.tuprolog.ide.web.redux.actions.UpdateExecutionContext
-import it.unibo.tuprolog.ide.web.redux.actions.UpdatePagesList
-import it.unibo.tuprolog.ide.web.redux.actions.UpdateSelectedPage
-import it.unibo.tuprolog.ide.web.redux.actions.UpdateStatus
-import it.unibo.tuprolog.ide.web.redux.actions.*
-import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.SolverBuilder
+import it.unibo.tuprolog.ide.web.redux.AddPage
+import it.unibo.tuprolog.ide.web.redux.AppState
+import it.unibo.tuprolog.ide.web.redux.NewSolution
+import it.unibo.tuprolog.ide.web.redux.PageError
+import it.unibo.tuprolog.ide.web.redux.RemovePage
+import it.unibo.tuprolog.ide.web.redux.ResetPage
+import it.unibo.tuprolog.ide.web.redux.StdErr
+import it.unibo.tuprolog.ide.web.redux.StdOut
+import it.unibo.tuprolog.ide.web.redux.UpdateExecutionContext
+import it.unibo.tuprolog.ide.web.redux.UpdatePageName
+import it.unibo.tuprolog.ide.web.redux.UpdatePagesList
+import it.unibo.tuprolog.ide.web.redux.UpdateSelectedPage
+import it.unibo.tuprolog.ide.web.redux.UpdateStatus
+import it.unibo.tuprolog.ide.web.redux.Warnings
 import it.unibo.tuprolog.solve.SolverFactory
-import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.ui.gui.Application
 import it.unibo.tuprolog.ui.gui.DefaultJsRunner
@@ -63,15 +65,15 @@ object TuPrologController {
         application.onPageCreated.bind {
             logEvent(it)
             it.event.solverBuilder.withLibrary(IOLib)
-            store.dispatch(UpdatePagesList(application.pages))
+            store.dispatch(AddPage(it.event))
         }
         application.onPageLoaded.bind {
             logEvent(it)
-            store.dispatch(UpdatePagesList(application.pages))
+            store.dispatch(AddPage(it.event))
         }
         application.onPageClosed.bind {
             logEvent(it)
-            store.dispatch(UpdatePagesList(application.pages))
+            store.dispatch(RemovePage(it.event))
         }
         application.onPageSelected.bind {
             logEvent(it)
@@ -132,8 +134,7 @@ object TuPrologController {
         activePageBindings += page.onSave.bind(catchAnyEvent)
         activePageBindings += page.onRename.bind {
             logEvent(it)
-            store.dispatch(UpdatePagesList(application.pages))
-            store.dispatch(UpdateSelectedPage(application.currentPage))
+            store.dispatch(UpdatePageName(it.event.first, it.event.second))
         }
         activePageBindings += page.onReset.bind {
             logEvent(it)

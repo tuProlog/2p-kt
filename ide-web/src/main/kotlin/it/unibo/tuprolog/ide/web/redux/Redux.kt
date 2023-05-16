@@ -1,6 +1,5 @@
-import it.unibo.tuprolog.ide.web.redux.appActionsReducer
-import it.unibo.tuprolog.ide.web.redux.reducers.tuPrologActions
-import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
+package it.unibo.tuprolog.ide.web.redux
+
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.exception.Warning
@@ -24,10 +23,6 @@ data class PageWrapper(
     var warningMessage: Warning?,
     var stdInMessage: String,
 ) {
-    fun nameByID(): String {
-        return id.name
-    }
-
     companion object {
         fun fromPage(page: Page): PageWrapper {
             return PageWrapper(
@@ -46,21 +41,30 @@ data class PageWrapper(
     }
 }
 
-data class AppState(
-    var pages: Map<Page, PageWrapper>,
+data class TuProlog(
+    var pages: MutableMap<Page, PageWrapper>,
     var currentPage: PageWrapper?,
+)
+
+data class AppState(
+    var tuProlog: TuProlog
 )
 
 fun rootReducer(
     state: AppState,
     action: Any
-) = appActionsReducer(state, action.unsafeCast<RAction>())
+) = AppState(
+    tuPrologReducer(state.tuProlog, action.unsafeCast<RAction>())
+)
+
 
 val myStore = createStore(
     ::rootReducer,
     AppState(
-        emptyMap(),
-        null
+        TuProlog(
+            mutableMapOf(),
+            null
+        )
     ),
     rEnhancer()
 )

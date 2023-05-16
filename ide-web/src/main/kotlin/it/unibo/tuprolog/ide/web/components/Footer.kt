@@ -1,13 +1,12 @@
 package it.unibo.tuprolog.ide.web.components
 
-import AppState
+import it.unibo.tuprolog.ide.web.redux.AppState
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent
 import csstype.em
 import csstype.px
 import emotion.react.css
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
-import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.ui.gui.Page
@@ -32,7 +31,7 @@ const val MYSTEP = 100
 
 val Footer = FC<Props> {
     val pageStatus =
-        useSelector<AppState, Page.Status?> { s -> s.tuProlog.currentPage?.state }
+        useSelector<AppState, Page.Status?> { s -> s.tuProlog.currentPage?.pageStatus }
     var timeoutDuration by useState(1000)
 
     Grid {
