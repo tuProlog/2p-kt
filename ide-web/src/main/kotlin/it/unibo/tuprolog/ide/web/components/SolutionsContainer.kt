@@ -21,8 +21,10 @@ import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import mui.lab.TreeItem
 import mui.lab.TreeView
+import react.dom.html.ReactHTML.details
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.li
+import react.dom.html.ReactHTML.summary
 import react.dom.html.ReactHTML.table
 import react.dom.html.ReactHTML.td
 import react.dom.html.ReactHTML.textarea
@@ -30,6 +32,7 @@ import react.dom.html.ReactHTML.th
 import react.dom.html.ReactHTML.tr
 import react.dom.html.ReactHTML.ul
 import react.useState
+import web.html.HTML.details
 
 val SolutionsContainer = FC<Props> {
 
@@ -182,31 +185,27 @@ val SolutionsContainer = FC<Props> {
             TabPanel {
                 value = "libraries"
                 if (eContext != null) {
-                    console.log("ASD1", eContext.libraries)
-                    console.log("ASD2", eContext.libraries.libraries.toList())
-                    console.log("ASD3", eContext.libraries.libraries.contains(IOLib))
-
-                    TreeView {
-                        var idCounter = 0
-                        eContext.libraries.libraries.forEach {
-                            idCounter += 1
-                            TreeItem {
-                                nodeId = (idCounter).toString()
-                                label = ReactNode(it.alias)
-                                TreeItem {
-                                    nodeId = (idCounter + 1).toString()
-                                    label = ReactNode("Functions")
+                    eContext.libraries.libraries.forEach {
+                        details {
+                            summary {
+                                +it.alias
+                            }
+                                details {
+                                    summary {
+                                        +"Functions"
+                                    }
                                     ul {
-                                        it.functions.keys.forEach { it2 ->
-                                            li {
-                                                +it2.toIndicator().toString()
-                                            }
-                                        }
+                                it.functions.keys.forEach { it2 ->
+                                    li {
+                                        +it2.toIndicator().toString()
                                     }
                                 }
-                                TreeItem {
-                                    nodeId = (idCounter + 2).toString()
-                                    label = ReactNode("Predicates")
+                            }
+                                }
+                                details {
+                                    summary {
+                                        +"Predicates"
+                                    }
                                     ul {
                                         val myPredicates: MutableList<String> =
                                             mutableListOf()
@@ -226,9 +225,10 @@ val SolutionsContainer = FC<Props> {
                                             }
                                     }
                                 }
-                                TreeItem {
-                                    nodeId = (idCounter + 3).toString()
-                                    label = ReactNode("Operators")
+                                details {
+                                    summary {
+                                        +"Operators"
+                                    }
                                     ul {
                                         it.operators.forEach { it2 ->
                                             li {
@@ -239,7 +239,6 @@ val SolutionsContainer = FC<Props> {
                                             }
                                         }
                                     }
-                                }
                             }
                         }
                     }
