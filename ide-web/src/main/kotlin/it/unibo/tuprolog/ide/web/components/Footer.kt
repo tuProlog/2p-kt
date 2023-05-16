@@ -7,7 +7,9 @@ import csstype.em
 import csstype.px
 import emotion.react.css
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
+import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeUnit
+import it.unibo.tuprolog.solve.times
 import it.unibo.tuprolog.ui.gui.Page
 import mui.material.Grid
 import mui.material.GridDirection
@@ -81,11 +83,8 @@ val Footer = FC<Props> {
                         size = Size.small
                         onChange = { _, newValue, _ ->
                             timeoutDuration = newValue
-//                            TuPrologController.application.currentPage?.timeout =
-//                                (newValue * TimeUnit.MILLIS)
-
                             TuPrologController.application.currentPage?.timeout =
-                                newValue as Long
+                                newValue.unsafeCast<Int>() * TimeUnit.MILLIS
                         }
                         max = 60000
                         min = 10
