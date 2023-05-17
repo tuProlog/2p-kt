@@ -88,8 +88,6 @@ val HaltView = FC<ViewProps> { props ->
             ListItemText {
                 primary = ReactNode("Halt:")
                 secondary = HaltViewMessage.create { solution = props.solution }
-//                ReactNode(props.solution.exception?.message)
-
             }
         }
     }

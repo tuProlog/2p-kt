@@ -1,5 +1,5 @@
-import it.unibo.tuprolog.ide.web.redux.reducers.tuPrologActions
-import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
+package it.unibo.tuprolog.ide.web.redux
+
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.exception.Warning
@@ -13,28 +13,7 @@ import redux.rEnhancer
 data class PageWrapper(
     var id: PageID,
     val theory: String,
-//    val query: String,
-//    val solutions AddSolution(pageId, solution), CleanSolutions(pageId)
-//    val execution context UpdateExecutionContext(pageId, context), CleanExecutionContext(pageId)
-//    val page status // updateStatus(newStatus: string)
-//    val exceptions
-) {
-    fun nameByID(): String {
-        return id.name
-    }
-
-    companion object {
-        fun fromPage(page: Page): PageWrapper {
-            return PageWrapper(page.id, page.theory)
-        }
-    }
-}
-
-// TODO simulate multitabs by wrapping page specific variables into TuProlog:pages collection
-
-data class TuProlog(
-    var pages: Collection<PageWrapper>,
-    var currentPage: TuPrologPage?,
+    val query: String,
     var solutions: Collection<TuPrologSolution>,
     var executionContext: ExecutionContextAware?,
     var pageStatus: Page.Status?,
@@ -42,36 +21,50 @@ data class TuProlog(
     var stdOutMessage: String,
     var stdErrMessage: String,
     var warningMessage: Warning?,
-    var stdInMessage: String
+    var stdInMessage: String,
+) {
+    companion object {
+        fun fromPage(page: Page): PageWrapper {
+            return PageWrapper(
+                page.id,
+                page.theory,
+                page.query,
+                emptyList(),
+                null,
+                page.state,
+                null,
+                "",
+                "",
+                null,
+                page.stdin)
+        }
+    }
+}
+
+data class TuProlog(
+    var pages: MutableMap<Page, PageWrapper>,
+    var currentPage: PageWrapper?,
 )
 
 data class AppState(
-    var tuProlog: TuProlog,
+    var tuProlog: TuProlog
 )
-
 
 fun rootReducer(
     state: AppState,
     action: Any
 ) = AppState(
-    tuPrologActions(state, action.unsafeCast<RAction>()),
+    tuPrologReducer(state.tuProlog, action.unsafeCast<RAction>())
 )
+
 
 val myStore = createStore(
     ::rootReducer,
     AppState(
         TuProlog(
-            emptyList(),
-            null,
-            emptyList(),
-            null,
-            null,
-            null,
-            "",
-            "",
-            null,
-            ""
-            ),
+            mutableMapOf(),
+            null
+        )
     ),
     rEnhancer()
 )

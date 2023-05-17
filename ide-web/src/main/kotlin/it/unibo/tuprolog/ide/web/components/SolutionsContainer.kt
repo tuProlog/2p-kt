@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.ide.web.components
 
-import AppState
+import it.unibo.tuprolog.ide.web.redux.AppState
 import csstype.pct
 import csstype.vh
 import emotion.react.css
@@ -19,6 +19,7 @@ import mui.material.Tabs
 import react.FC
 import react.Props
 import react.ReactNode
+import react.redux.useSelector
 import react.dom.html.ReactHTML.details
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.li
@@ -31,16 +32,17 @@ import react.dom.html.ReactHTML.th
 import react.dom.html.ReactHTML.thead
 import react.dom.html.ReactHTML.tr
 import react.dom.html.ReactHTML.ul
-import react.redux.useSelector
 import react.useState
 
 val SolutionsContainer = FC<Props> {
-
-    val solutions = useSelector<AppState, Collection<TuPrologSolution>> { s -> s.tuProlog.solutions }
-    val eContext = useSelector<AppState, ExecutionContextAware?> { s -> s.tuProlog.executionContext }
-    val outputs = useSelector<AppState, String> { s -> s.tuProlog.stdOutMessage }
-    val errors = useSelector<AppState, String> { s -> s.tuProlog.stdErrMessage }
-    val warnings = useSelector<AppState, Warning?> { s -> s.tuProlog.warningMessage }
+    val solutions = useSelector<AppState, Collection<TuPrologSolution>> { s -> s.tuProlog.currentPage?.solutions
+            ?: emptyList() }
+    val eContext = useSelector<AppState, ExecutionContextAware?> { s -> s.tuProlog.currentPage?.executionContext }
+    val outputs = useSelector<AppState, String> { s -> s.tuProlog.currentPage?.stdOutMessage
+        ?: "" }
+    val errors = useSelector<AppState, String> { s -> s.tuProlog.currentPage?.stdErrMessage
+        ?: "" }
+    val warnings = useSelector<AppState, Warning?> { s -> s.tuProlog.currentPage?.warningMessage }
 
     var activeTab by useState("solutionsTab")
 

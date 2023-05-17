@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.ide.web.components
 
-import AppState
-import PageWrapper
+import it.unibo.tuprolog.ide.web.redux.AppState
+import it.unibo.tuprolog.ide.web.redux.PageWrapper
 import csstype.Display
 import csstype.FlexFlow
 import csstype.number
@@ -12,6 +12,8 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.utils.MonacoEditor
 import it.unibo.tuprolog.ide.web.utils.Themes
+import it.unibo.tuprolog.ui.gui.Page
+import it.unibo.tuprolog.ui.gui.PageID
 import mui.lab.TabContext
 import mui.lab.TabPanel
 import mui.material.Tab
@@ -27,8 +29,10 @@ import react.useRequiredContext
 
 val TheoryEditors = FC<Props> {
     val provTheme by useRequiredContext(ThemeContext)
-    val editorSelectedTab = useSelector<AppState, TuPrologPage?> { s -> s.tuProlog.currentPage }
-    val editorTabs = useSelector<AppState, Collection<PageWrapper>> { s -> s.tuProlog.pages }
+
+    val editorSelectedTab = useSelector<AppState, PageWrapper?> { s -> s.tuProlog.currentPage }
+    val editorTabs = useSelector<AppState, MutableMap<Page, PageWrapper>> { s -> s.tuProlog.pages }
+    val editorTabsNames = useSelector<AppState, Collection<PageID>> { s -> s.tuProlog.pages.keys.map {it.id} }
 
     div {
         css {
@@ -54,10 +58,10 @@ val TheoryEditors = FC<Props> {
                         }
                     }
 
-                    editorTabs.forEach {
+                    editorTabsNames.forEach {
                         Tab {
-                            value = it.id.name
-                            label = ReactNode(it.id.name)
+                            value = it.name
+                            label = ReactNode(it.name)
                             wrapped = true
                         }
                     }
@@ -65,7 +69,7 @@ val TheoryEditors = FC<Props> {
 
                 editorTabs.forEach {
                     TabPanel {
-                        value = it.id.name
+                        value = it.key.id.name
                         css {
                             flexGrow = number(1.0)
                             flexShrink = number(1.0)
@@ -73,7 +77,7 @@ val TheoryEditors = FC<Props> {
                         }
 
                         MonacoEditor {
-                            value = it.theory
+                            value = it.key.theory
                             onChange = {
                                 TuPrologController.application.currentPage?.theory =
                                     it

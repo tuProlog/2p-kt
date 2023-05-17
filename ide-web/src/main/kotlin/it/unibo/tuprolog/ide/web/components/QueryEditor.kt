@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.ide.web.components
 
-import AppState
-import it.unibo.tuprolog.ide.web.redux.actions.CleanSolutions
+import it.unibo.tuprolog.ide.web.redux.AppState
+import it.unibo.tuprolog.ide.web.redux.CleanSolutions
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.InputProps
 import it.unibo.tuprolog.ui.gui.Page
@@ -30,8 +30,8 @@ import web.html.HTMLInputElement
 
 val QueryEditor = FC<Props> {
     val queryInputRef = createRef<HTMLInputElement>()
-    val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.pageStatus }
-    val dispatcher = useDispatch<RAction, WrapperAction>()
+    val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.currentPage?.pageStatus }
+    val dispatcher = useDispatch <RAction, WrapperAction>()
 
     Stack {
         direction = responsive(StackDirection.row)
