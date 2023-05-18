@@ -2,8 +2,6 @@ package it.unibo.tuprolog.ide.web.components
 
 import csstype.Color
 import csstype.Display
-import csstype.Length
-import csstype.PropertyName.Companion.display
 import csstype.em
 import csstype.number
 import csstype.px
@@ -48,9 +46,7 @@ import react.Props
 import react.ReactNode
 import react.create
 import react.createRef
-import react.dom.html.ReactHTML
 import react.dom.html.ReactHTML.a
-import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
 import react.dom.html.ReactHTML.input
 import react.dom.html.ReactHTML.p
@@ -63,29 +59,6 @@ import web.html.HTML
 import web.html.HTMLInputElement
 import web.html.InputType
 import it.unibo.tuprolog.Info as TuPrologInfo
-
-data class IDEStyle2(
-    val spacing: Int = DEFAULT_SPACING,
-    val height: Double = DEFAULT_HEIGHT,
-    val width: Double = DEFAULT_WIDTH,
-    val paddingRight: Length = PADDING_RIGHT,
-    val paddingLeft: Length = PADDING_LEFT,
-    val marginRight: Length = MARGIN_RIGHT,
-    val marginLeft: Length = MARGIN_LEFT
-) {
-    companion object {
-        const val DEFAULT_SPACING = 3
-        const val DEFAULT_HEIGHT = 48.0
-        const val DEFAULT_WIDTH = 48.0
-        val PADDING_RIGHT = 1.em
-        val PADDING_LEFT = 1.em
-        val MARGIN_RIGHT = 1.em
-        val MARGIN_LEFT = 1.em
-    }
-}
-
-val currentStyleConfig2 = IDEStyle2()
-
 
 val Appbar = FC<Props> {
     var isDialogOpen by useState(false)
@@ -108,11 +81,11 @@ val Appbar = FC<Props> {
 
             img {
                 src = "https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/logo.svg"
-                height = currentStyleConfig2.height
-
+                height = 48.0
+                width = 48.0
                 css {
-                    paddingRight = currentStyleConfig2.paddingRight
-                    paddingLeft = currentStyleConfig2.paddingLeft
+                    paddingRight = 1.em
+                    paddingLeft = 1.em
                     backgroundColor = Color("#FFFFFF")
                     margin = 10.px
                     padding = 1.px
@@ -121,14 +94,14 @@ val Appbar = FC<Props> {
             }
 
             Typography {
-                variant= TypographyVariant.h6
-                noWrap=true
+                variant = TypographyVariant.h6
+                noWrap = true
                 sx {
                     marginRight = 2.em
                     color = null
                     textDecoration = null
                 }
-                + "tuProlog"
+                +"tuProlog"
             }
 
             Box {
@@ -378,5 +351,4 @@ val Appbar = FC<Props> {
             }
         }
     }
-
 }

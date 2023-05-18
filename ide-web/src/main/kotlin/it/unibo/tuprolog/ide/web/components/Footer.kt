@@ -1,15 +1,17 @@
 package it.unibo.tuprolog.ide.web.components
 
-import it.unibo.tuprolog.ide.web.redux.AppState
 import csstype.AlignItems.Companion.center
 import csstype.JustifyContent
 import csstype.em
 import csstype.px
 import emotion.react.css
+import it.unibo.tuprolog.ide.web.appConfig
+import it.unibo.tuprolog.ide.web.redux.AppState
+import it.unibo.tuprolog.ide.web.tuprolog.TPPage
+import it.unibo.tuprolog.ide.web.tuprolog.TPPageStatus
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.solve.TimeUnit
 import it.unibo.tuprolog.solve.times
-import it.unibo.tuprolog.ui.gui.Page
 import mui.material.Grid
 import mui.material.GridDirection
 import mui.material.LinearProgress
@@ -24,15 +26,10 @@ import react.dom.html.ReactHTML.p
 import react.redux.useSelector
 import react.useState
 
-const val MYXS = 5
-const val MYXSGRID = 7
-const val MYMIN = 1
-const val MYSTEP = 100
-
 val Footer = FC<Props> {
     val pageStatus =
-        useSelector<AppState, Page.Status?> { s -> s.tuProlog.currentPage?.pageStatus }
-    var timeoutDuration by useState(1000)
+        useSelector<AppState, TPPageStatus?> { s -> s.tuProlog.currentPage?.pageStatus }
+    var timeoutDuration by useState(TPPage.DEFAULT_TIMEOUT * TimeUnit.MILLIS)
 
     Grid {
         container = true
@@ -61,7 +58,7 @@ val Footer = FC<Props> {
 
                 Grid {
                     item = true
-                    if (pageStatus == Page.Status.COMPUTING) {
+                    if (pageStatus == TPPageStatus.COMPUTING) {
                         LinearProgress {}
                     }
                 }
@@ -81,15 +78,15 @@ val Footer = FC<Props> {
 
                     Slider {
                         value = timeoutDuration
-                        step = MYSTEP
+                        step = appConfig.sliderStep
                         size = Size.small
                         onChange = { _, newValue, _ ->
                             timeoutDuration = newValue
                             TuPrologController.application.currentPage?.timeout =
                                 newValue.unsafeCast<Int>() * TimeUnit.MILLIS
                         }
-                        max = 60000
-                        min = 10
+                        max = appConfig.maxSliderValue
+                        min = appConfig.minSliderValue
                     }
                 }
             }

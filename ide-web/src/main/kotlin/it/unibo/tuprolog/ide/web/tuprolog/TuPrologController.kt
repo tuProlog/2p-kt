@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ide.web.tuprolog
 
+import it.unibo.tuprolog.ide.web.appConfig
 import it.unibo.tuprolog.ide.web.redux.AddPage
 import it.unibo.tuprolog.ide.web.redux.AppState
 import it.unibo.tuprolog.ide.web.redux.NewSolution
@@ -17,15 +18,13 @@ import it.unibo.tuprolog.ide.web.redux.UpdateTheory
 import it.unibo.tuprolog.ide.web.redux.Warnings
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
-import it.unibo.tuprolog.ui.gui.Application
+import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.ui.gui.DefaultJsRunner
 import it.unibo.tuprolog.ui.gui.Event
-import it.unibo.tuprolog.ui.gui.Page
+import it.unibo.tuprolog.utils.observe.Binding
 import redux.RAction
 import redux.Store
 import redux.WrapperAction
-import it.unibo.tuprolog.solve.libs.io.IOLib
-import it.unibo.tuprolog.utils.observe.Binding
 
 object TuPrologController {
 
@@ -34,11 +33,11 @@ object TuPrologController {
         .withLibrary(IOLib) // open issue
         .toFactory()
 
-    var application: Application =
-        TuPrologApplication.of(
+    var application: TPApplication =
+        TPApplication.of(
             DefaultJsRunner(),
             customSolverFactory,
-            Page.DEFAULT_TIMEOUT
+            TPPage.DEFAULT_TIMEOUT
         )
 
     private var activePageBindings: List<Binding> = emptyList()
@@ -46,9 +45,9 @@ object TuPrologController {
     private lateinit var store: Store<AppState, RAction, WrapperAction>
 
     private val catchAnyEvent: (Event<Any>) -> Unit =
-        { console.log("[Controller] Missing event handler: ", it) }
+        { if (appConfig.logEvents) console.log("[Controller] Missing event handler: ", it) }
     private val logEvent: (Event<Any>) -> Unit =
-        { console.log("[Controller] Received event: ", it) }
+        { if (appConfig.logEvents) console.log("[Controller] Received event: ", it) }
 
     fun initialize(store: Store<AppState, RAction, WrapperAction>) {
         this.store = store
@@ -56,7 +55,7 @@ object TuPrologController {
         application.newPage()
     }
 
-    private fun bindApplication(application: Application) {
+    private fun bindApplication(application: TPApplication) {
         this.application = application
         application.onStart.bind(catchAnyEvent)
         application.onError.bind {
@@ -89,7 +88,7 @@ object TuPrologController {
         application.onQuit.bind(catchAnyEvent)
     }
 
-    private fun bindPage(page: Page) {
+    private fun bindPage(page: TPPage) {
         activePageBindings += page.onResolutionStarted.bind(catchAnyEvent)
         activePageBindings += page.onResolutionOver.bind {
             logEvent(it)
@@ -131,11 +130,11 @@ object TuPrologController {
             logEvent(it)
             store.dispatch(Warnings(it.event))
         }
-        activePageBindings += page.onNewSolver.bind{
+        activePageBindings += page.onNewSolver.bind {
             logEvent(it)
             store.dispatch(UpdateExecutionContext(it))
         }
-        activePageBindings += page.onNewStaticKb.bind{
+        activePageBindings += page.onNewStaticKb.bind {
             logEvent(it)
             store.dispatch(UpdateExecutionContext(it))
         }
@@ -143,7 +142,7 @@ object TuPrologController {
         activePageBindings += page.onSave.bind(catchAnyEvent)
         activePageBindings += page.onRename.bind {
             logEvent(it)
-            store.dispatch(UpdatePageName(it.event.first, it.event.second))
+            store.dispatch(UpdatePageName(it.event.second))
         }
         activePageBindings += page.onReset.bind {
             logEvent(it)

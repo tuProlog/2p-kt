@@ -1,17 +1,17 @@
 package it.unibo.tuprolog.ide.web.components
 
-import it.unibo.tuprolog.ide.web.redux.AppState
-import it.unibo.tuprolog.ide.web.redux.PageWrapper
 import csstype.Display
 import csstype.FlexFlow
 import csstype.number
 import csstype.pct
 import csstype.px
 import emotion.react.css
+import it.unibo.tuprolog.ide.web.redux.AppState
+import it.unibo.tuprolog.ide.web.redux.PageWrapper
+import it.unibo.tuprolog.ide.web.tuprolog.TPPage
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.MonacoEditor
 import it.unibo.tuprolog.ide.web.utils.Themes
-import it.unibo.tuprolog.ui.gui.Page
 import it.unibo.tuprolog.ui.gui.PageID
 import mui.lab.TabContext
 import mui.lab.TabPanel
@@ -30,7 +30,7 @@ val TheoryEditors = FC<Props> {
     val provTheme by useRequiredContext(ThemeContext)
 
     val editorSelectedTab = useSelector<AppState, PageWrapper?> { s -> s.tuProlog.currentPage }
-    val editorTabs = useSelector<AppState, MutableMap<Page, PageWrapper>> { s -> s.tuProlog.pages }
+    val editorTabs = useSelector<AppState, MutableMap<TPPage, PageWrapper>> { s -> s.tuProlog.pages }
     val editorTabsNames = useSelector<AppState, Collection<PageID>> { s -> s.tuProlog.pages.keys.map { it.id } }
 
     div {

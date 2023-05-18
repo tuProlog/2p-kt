@@ -54,7 +54,6 @@ val YesView = FC<ViewProps> { props ->
     }
 }
 
-
 val NoView = FC<ViewProps> {
     ListItem {
         ListItemIcon {

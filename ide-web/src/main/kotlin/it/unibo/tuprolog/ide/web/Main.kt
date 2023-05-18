@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.ide.web
 
-import it.unibo.tuprolog.ide.web.redux.AppState
 import csstype.AlignItems
 import csstype.FlexWrap
 import csstype.JustifyContent
@@ -11,12 +10,13 @@ import csstype.vh
 import emotion.react.css
 import it.unibo.tuprolog.ide.web.components.Appbar
 import it.unibo.tuprolog.ide.web.components.Footer
-import it.unibo.tuprolog.ide.web.components.NavBar
 import it.unibo.tuprolog.ide.web.components.QueryEditor
 import it.unibo.tuprolog.ide.web.components.SolutionsContainer
 import it.unibo.tuprolog.ide.web.components.ThemeModule
 import it.unibo.tuprolog.ide.web.components.TheoryEditors
+import it.unibo.tuprolog.ide.web.redux.AppState
 import it.unibo.tuprolog.ide.web.redux.CleanPageError
+import it.unibo.tuprolog.ide.web.redux.myStore
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.xs
 import it.unibo.tuprolog.ui.gui.InQuerySyntaxError
@@ -31,7 +31,6 @@ import mui.material.Grid
 import mui.material.GridDirection
 import mui.system.responsive
 import mui.system.sx
-import it.unibo.tuprolog.ide.web.redux.myStore
 import react.FC
 import react.Props
 import react.create
@@ -94,14 +93,6 @@ val App = FC<Props> {
             height = 100.vh
         }
 
-//        Grid {
-//            item = true
-//            css {
-//                width = 100.pct
-//            }
-//            NavBar {}
-//        }
-
         Grid {
             item = true
             css {
@@ -156,7 +147,7 @@ val App = FC<Props> {
         }
         DialogContent {
             DialogContentText {
-                +getExceptionTextContent() //pageException?::class.simpleName +
+                +getExceptionTextContent() // pageException?::class.simpleName +
             }
             DialogActions {
                 Button {

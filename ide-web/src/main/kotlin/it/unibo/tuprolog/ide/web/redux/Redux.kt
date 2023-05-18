@@ -1,22 +1,22 @@
 package it.unibo.tuprolog.ide.web.redux
 
-import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
+import it.unibo.tuprolog.ide.web.tuprolog.TPPage
+import it.unibo.tuprolog.ide.web.tuprolog.TPPageStatus
+import it.unibo.tuprolog.ide.web.tuprolog.TPSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.exception.Warning
-import it.unibo.tuprolog.ui.gui.Page
 import it.unibo.tuprolog.ui.gui.PageID
 import redux.RAction
 import redux.createStore
 import redux.rEnhancer
 
-
 data class PageWrapper(
     var id: PageID,
     var theory: String,
     var query: String,
-    var solutions: Collection<TuPrologSolution>,
+    var solutions: Collection<TPSolution>,
     var executionContext: ExecutionContextAware?,
-    var pageStatus: Page.Status?,
+    var pageStatus: TPPageStatus?,
     var pageException: Throwable?,
     var stdOutMessage: String,
     var stdErrMessage: String,
@@ -24,7 +24,7 @@ data class PageWrapper(
     var stdInMessage: String,
 ) {
     companion object {
-        fun fromPage(page: Page): PageWrapper {
+        fun fromPage(page: TPPage): PageWrapper {
             return PageWrapper(
                 page.id,
                 page.theory,
@@ -36,13 +36,14 @@ data class PageWrapper(
                 "",
                 "",
                 null,
-                page.stdin)
+                page.stdin
+            )
         }
     }
 }
 
 data class TuProlog(
-    var pages: MutableMap<Page, PageWrapper>,
+    var pages: MutableMap<TPPage, PageWrapper>,
     var currentPage: PageWrapper?,
 )
 
@@ -56,7 +57,6 @@ fun rootReducer(
 ) = AppState(
     tuPrologReducer(state.tuProlog, action.unsafeCast<RAction>())
 )
-
 
 val myStore = createStore(
     ::rootReducer,

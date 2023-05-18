@@ -20,7 +20,7 @@ fun tuPrologReducer(state: TuProlog, action: RAction): TuProlog =
         }
 
         is UpdateSelectedPage -> {
-            state.currentPage =  state.pages[action.page]
+            state.currentPage = state.pages[action.page]
             state
         }
 
@@ -87,5 +87,4 @@ fun tuPrologReducer(state: TuProlog, action: RAction): TuProlog =
         }
 
         else -> state
-
     }
