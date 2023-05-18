@@ -12,8 +12,8 @@ import redux.rEnhancer
 
 data class PageWrapper(
     var id: PageID,
-    val theory: String,
-    val query: String,
+    var theory: String,
+    var query: String,
     var solutions: Collection<TuPrologSolution>,
     var executionContext: ExecutionContextAware?,
     var pageStatus: Page.Status?,

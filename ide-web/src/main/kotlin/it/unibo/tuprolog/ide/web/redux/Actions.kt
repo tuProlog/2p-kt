@@ -13,6 +13,8 @@ class AddPage(val page: TuPrologPage) : RAction
 class RemovePage(val page: TuPrologPage) : RAction
 class UpdatePageName(val old: PageID, val new: PageID) : RAction
 class UpdateSelectedPage(val page: TuPrologPage?) : RAction
+class UpdateQuery(val newQuery: String) : RAction
+class UpdateTheory(val newTheory: String) : RAction
 class NewSolution(val solution: TuPrologSolution) : RAction
 class UpdateExecutionContext(val context: ExecutionContextAware) : RAction
 class ResetPage : RAction

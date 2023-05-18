@@ -20,7 +20,17 @@ fun tuPrologReducer(state: TuProlog, action: RAction): TuProlog =
         }
 
         is UpdateSelectedPage -> {
-            state.currentPage = state.pages[action.page]
+            state.currentPage =  state.pages[action.page]
+            state
+        }
+
+        is UpdateTheory -> {
+            state.currentPage!!.theory = action.newTheory
+            state
+        }
+
+        is UpdateQuery -> {
+            state.currentPage!!.query = action.newQuery
             state
         }
 

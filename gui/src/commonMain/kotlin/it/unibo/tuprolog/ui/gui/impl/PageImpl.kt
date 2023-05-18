@@ -187,15 +187,11 @@ internal class PageImpl(
                 runner.ui {
                     id = FileName(file)
                     onSave.raise(Page.EVENT_SAVE, id to file)
-                    // TODO raise onSave
                 }
             } catch (e: IOException) {
                 runner.ui {
                     onError.raise(Page.EVENT_ERROR, e)
-                    // opt1: creare un eccezione custom
-                    // opt2: modificare traccia raise per accettare tutti i tipi di eccezione
                 }
-                // TODO raise onError
             }
         }
     }

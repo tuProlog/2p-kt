@@ -9,7 +9,6 @@ import csstype.pct
 import csstype.px
 import emotion.react.css
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
-import it.unibo.tuprolog.ide.web.tuprolog.TuPrologPage
 import it.unibo.tuprolog.ide.web.utils.MonacoEditor
 import it.unibo.tuprolog.ide.web.utils.Themes
 import it.unibo.tuprolog.ui.gui.Page
@@ -32,7 +31,7 @@ val TheoryEditors = FC<Props> {
 
     val editorSelectedTab = useSelector<AppState, PageWrapper?> { s -> s.tuProlog.currentPage }
     val editorTabs = useSelector<AppState, MutableMap<Page, PageWrapper>> { s -> s.tuProlog.pages }
-    val editorTabsNames = useSelector<AppState, Collection<PageID>> { s -> s.tuProlog.pages.keys.map {it.id} }
+    val editorTabsNames = useSelector<AppState, Collection<PageID>> { s -> s.tuProlog.pages.keys.map { it.id } }
 
     div {
         css {
@@ -77,10 +76,9 @@ val TheoryEditors = FC<Props> {
                         }
 
                         MonacoEditor {
-                            value = it.key.theory
-                            onChange = {
-                                TuPrologController.application.currentPage?.theory =
-                                    it
+                            value = it.value.theory
+                            onChange = { it2 ->
+                                it.key.theory = it2
                             }
                             if (provTheme == Themes.Dark) {
                                 theme = "vs-dark"

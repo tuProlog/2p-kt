@@ -40,6 +40,8 @@ val Footer = FC<Props> {
         sx {
             justifyContent = JustifyContent.spaceBetween
             alignItems = center
+            paddingLeft = 20.px
+            paddingRight = 20.px
         }
 
         Grid {

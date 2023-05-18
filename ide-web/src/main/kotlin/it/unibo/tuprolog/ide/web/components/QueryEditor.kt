@@ -1,7 +1,12 @@
 package it.unibo.tuprolog.ide.web.components
 
+import csstype.PropertyName.Companion.padding
+import csstype.px
+import emotion.css.css
+import emotion.react.css
 import it.unibo.tuprolog.ide.web.redux.AppState
 import it.unibo.tuprolog.ide.web.redux.CleanSolutions
+import it.unibo.tuprolog.ide.web.redux.PageWrapper
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.utils.InputProps
 import it.unibo.tuprolog.ui.gui.Page
@@ -21,9 +26,13 @@ import react.Props
 import react.ReactNode
 import react.create
 import react.createRef
+import react.dom.html.ReactHTML.div
 import react.dom.onChange
 import react.redux.useDispatch
 import react.redux.useSelector
+import react.useEffect
+import react.useEffectOnce
+import react.useState
 import redux.RAction
 import redux.WrapperAction
 import web.html.HTMLInputElement
@@ -31,10 +40,20 @@ import web.html.HTMLInputElement
 val QueryEditor = FC<Props> {
     val queryInputRef = createRef<HTMLInputElement>()
     val pageStatus = useSelector<AppState, Page.Status?> { s -> s.tuProlog.currentPage?.pageStatus }
+    val currentPage = useSelector<AppState, PageWrapper?> { s -> s.tuProlog.currentPage }
+    var fieldQuery by useState("")
     val dispatcher = useDispatch <RAction, WrapperAction>()
 
-    Stack {
-        direction = responsive(StackDirection.row)
+    useEffect {
+        fieldQuery = currentPage?.query ?: ""
+    }
+
+    div {
+        css {
+            paddingLeft = 20.px
+            paddingRight = 20.px
+        }
+
 
         TextField {
             id = "query"
@@ -46,8 +65,10 @@ val QueryEditor = FC<Props> {
                 queryInputRef.current?.let { it1 ->
                     TuPrologController.application.currentPage?.query =
                         it1.value
+                    fieldQuery = it1.value
                 }
             }
+            value = currentPage?.query ?: ""
 
             InputProps = jso {
                 endAdornment = InputAdornment.create {
@@ -57,9 +78,13 @@ val QueryEditor = FC<Props> {
                         Button {
                             variant = ButtonVariant.contained
                             disabled = pageStatus == Page.Status.COMPUTING
-                            +"Solve"
+                            if (pageStatus == Page.Status.IDLE) {
+                                +"Solve"
+                            } else {
+                                +"Next"
+                            }
                             onClick = {
-                                if (TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
+                                if (pageStatus == Page.Status.IDLE) {
                                     dispatcher(CleanSolutions())
                                     TuPrologController.application.currentPage?.solve(1)
                                 } else {
@@ -70,9 +95,13 @@ val QueryEditor = FC<Props> {
                         Button {
                             variant = ButtonVariant.contained
                             disabled = (pageStatus == Page.Status.COMPUTING)
-                            +"Solve 10"
+                            if (pageStatus == Page.Status.IDLE) {
+                                +"Solve 10"
+                            } else {
+                                +"Next 10"
+                            }
                             onClick = {
-                                if (TuPrologController.application.currentPage?.state == Page.Status.IDLE) {
+                                if (pageStatus == Page.Status.IDLE) {
                                     dispatcher(CleanSolutions())
                                     TuPrologController.application.currentPage?.solve(
                                         10

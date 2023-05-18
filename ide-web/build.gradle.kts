@@ -43,7 +43,6 @@ kotlin {
                 implementation(npm("@monaco-editor/react", "4.4.6"))
             }
 
-
             tasks.getByPath("detekt").onlyIf {
                 gradle.startParameter.taskNames.any { it.contains("detekt") }
             }

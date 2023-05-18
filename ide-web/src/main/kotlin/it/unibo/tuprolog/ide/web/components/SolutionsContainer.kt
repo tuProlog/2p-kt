@@ -11,6 +11,7 @@ import it.unibo.tuprolog.ide.web.tuprolog.TuPrologController
 import it.unibo.tuprolog.ide.web.tuprolog.TuPrologSolution
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.exception.Warning
+import it.unibo.tuprolog.ui.gui.Page
 import mui.lab.TabContext
 import mui.lab.TabPanel
 import mui.material.List
@@ -23,6 +24,8 @@ import react.redux.useSelector
 import react.dom.html.ReactHTML.details
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.li
+import react.dom.html.ReactHTML.p
+import react.dom.html.ReactHTML.pre
 import react.dom.html.ReactHTML.summary
 import react.dom.html.ReactHTML.table
 import react.dom.html.ReactHTML.tbody
@@ -43,7 +46,6 @@ val SolutionsContainer = FC<Props> {
     val errors = useSelector<AppState, String> { s -> s.tuProlog.currentPage?.stdErrMessage
         ?: "" }
     val warnings = useSelector<AppState, Warning?> { s -> s.tuProlog.currentPage?.warningMessage }
-
     var activeTab by useState("solutionsTab")
 
     TabContext {
@@ -253,21 +255,29 @@ val SolutionsContainer = FC<Props> {
             TabPanel {
                 value = "staticKb"
                 if (eContext != null) {
-                    +eContext.staticKb.clauses.joinToString(".\n", postfix = ".") {
-                        it.format(TermFormatter.prettyExpressions())
+                    eContext.staticKb.clauses.forEach {
+                        p {
+                            +it.format(TermFormatter.prettyExpressions())
+                        }
                     }
+
+//                        ("", postfix = ".") {
+//                            it.format(TermFormatter.prettyExpressions())
+//                        }
                 } else {
                     +"Empty staticKb"
                 }
             }
             TabPanel {
                 value = "dynamicKb"
-                if (eContext != null) {
-                    eContext.dynamicKb.clauses.joinToString(".\n", postfix = ".") {
-                        it.format(TermFormatter.prettyExpressions())
+                p {
+                    if (eContext != null) {
+                        +eContext.dynamicKb.clauses.joinToString("\n", postfix = ".") {
+                            it.format(TermFormatter.prettyExpressions())
+                        }
+                    } else {
+                        +"Empty dynamicKb"
                     }
-                } else {
-                    +"Empty dynamicKb"
                 }
             }
         }

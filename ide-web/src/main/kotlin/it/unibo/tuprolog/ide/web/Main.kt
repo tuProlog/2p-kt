@@ -9,6 +9,7 @@ import csstype.pct
 import csstype.px
 import csstype.vh
 import emotion.react.css
+import it.unibo.tuprolog.ide.web.components.Appbar
 import it.unibo.tuprolog.ide.web.components.Footer
 import it.unibo.tuprolog.ide.web.components.NavBar
 import it.unibo.tuprolog.ide.web.components.QueryEditor
@@ -93,12 +94,20 @@ val App = FC<Props> {
             height = 100.vh
         }
 
+//        Grid {
+//            item = true
+//            css {
+//                width = 100.pct
+//            }
+//            NavBar {}
+//        }
+
         Grid {
             item = true
             css {
                 width = 100.pct
             }
-            NavBar {}
+            Appbar {}
         }
 
         Grid {

@@ -10,8 +10,10 @@ import it.unibo.tuprolog.ide.web.redux.StdErr
 import it.unibo.tuprolog.ide.web.redux.StdOut
 import it.unibo.tuprolog.ide.web.redux.UpdateExecutionContext
 import it.unibo.tuprolog.ide.web.redux.UpdatePageName
+import it.unibo.tuprolog.ide.web.redux.UpdateQuery
 import it.unibo.tuprolog.ide.web.redux.UpdateSelectedPage
 import it.unibo.tuprolog.ide.web.redux.UpdateStatus
+import it.unibo.tuprolog.ide.web.redux.UpdateTheory
 import it.unibo.tuprolog.ide.web.redux.Warnings
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
@@ -77,7 +79,6 @@ object TuPrologController {
         application.onPageSelected.bind {
             logEvent(it)
             bindPage(it.event)
-            it.event
             store.dispatch(UpdateSelectedPage(application.currentPage))
         }
         application.onPageUnselected.bind {
@@ -90,10 +91,17 @@ object TuPrologController {
 
     private fun bindPage(page: Page) {
         activePageBindings += page.onResolutionStarted.bind(catchAnyEvent)
-        activePageBindings += page.onResolutionStarted.bind(catchAnyEvent)
         activePageBindings += page.onResolutionOver.bind {
             logEvent(it)
             store.dispatch(UpdateExecutionContext(it))
+        }
+        activePageBindings += page.onQueryChanged.bind {
+            logEvent(it)
+            store.dispatch(UpdateQuery(it.event))
+        }
+        activePageBindings += page.onTheoryChanged.bind {
+            logEvent(it)
+            store.dispatch(UpdateTheory(it.event))
         }
         activePageBindings += page.onNewQuery.bind {
             logEvent(it)
@@ -104,7 +112,6 @@ object TuPrologController {
             store.dispatch(UpdateExecutionContext(it))
         }
         activePageBindings += page.onNewSolution.bind {
-            logEvent(it)
             store.dispatch(NewSolution(it.event))
             store.dispatch(UpdateExecutionContext(it))
         }
@@ -128,7 +135,10 @@ object TuPrologController {
             logEvent(it)
             store.dispatch(UpdateExecutionContext(it))
         }
-        activePageBindings += page.onNewStaticKb.bind(catchAnyEvent)
+        activePageBindings += page.onNewStaticKb.bind{
+            logEvent(it)
+            store.dispatch(UpdateExecutionContext(it))
+        }
         activePageBindings += page.onSolveOptionsChanged.bind(catchAnyEvent)
         activePageBindings += page.onSave.bind(catchAnyEvent)
         activePageBindings += page.onRename.bind {
