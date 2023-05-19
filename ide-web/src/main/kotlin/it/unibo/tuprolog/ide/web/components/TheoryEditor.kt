@@ -52,8 +52,6 @@ val TheoryEditors = FC<Props> {
                         val newPage = TuPrologController.application.pages.find { p -> p.id.name == newValue }
                         if (newPage != null) {
                             TuPrologController.application.select(newPage)
-                        } else {
-                            console.log("new page is null")
                         }
                     }
 
@@ -96,8 +94,6 @@ val TheoryEditors = FC<Props> {
                     }
                 }
             }
-        } else {
-            console.log("editor is not selected")
         }
     }
 }
