@@ -1,5 +1,3 @@
-// check if only fs is required
-
 config.resolve = {
     fallback: {
         fs: false,
