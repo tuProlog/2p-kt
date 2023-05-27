@@ -6,19 +6,19 @@ package it.unibo.tuprolog.ide.web.utils
 import react.ComponentClass
 import react.Props
 
-//external interface BeforeMount {
+// external interface BeforeMount {
 //    val languages: Languages
-//}
+// }
 //
-//external interface Languages {
+// external interface Languages {
 //    fun getLanguages(): Any
 //
 //    val register: (String) -> Any
 //
 //    val setMonarchTokensProvider: (String, IMonarchLanguage) -> Any
-//}
+// }
 
-external interface IMonarchLanguage
+// external interface IMonarchLanguage
 
 external interface EditorProps : Props {
     var value: String
@@ -30,4 +30,3 @@ external interface EditorProps : Props {
 
 @JsName("default")
 external val MonacoEditor: ComponentClass<EditorProps>
-
