@@ -186,10 +186,12 @@ internal class PageImpl(
                 file.writeText(content.text)
                 runner.ui {
                     id = FileName(file)
-                    // TODO raise onSave
+                    onSave.raise(Page.EVENT_SAVE, id to file)
                 }
             } catch (e: IOException) {
-                // TODO raise onError
+                runner.ui {
+                    onError.raise(Page.EVENT_ERROR, e)
+                }
             }
         }
     }
@@ -327,5 +329,5 @@ internal class PageImpl(
 
     override val onWarning: Source<Event<Warning>> = Source.of()
 
-    override val onError: Source<Event<TuPrologException>> = Source.of()
+    override val onError: Source<Event<Throwable>> = Source.of()
 }

@@ -692,6 +692,7 @@ class TuPrologIDEController : Initializable {
         model.load(JvmFile(file))
     }
 
+
     @FXML
     fun onCloseFilePressed(e: ActionEvent) {
         model.currentPage?.close()

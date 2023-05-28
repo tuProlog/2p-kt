@@ -50,7 +50,7 @@ internal class ApplicationImpl(
     ): Page {
         val page = PageImpl(runner, id, solverFactory.newBuilder(), timeout)
         page.onClose += { handlePageClosure(it.event) }
-        page.onRename += { handlePageRenaming(it.event.first, it.event.first) }
+        page.onRename += { handlePageRenaming(it.event.first, it.event.second) }
         page.onError += { handlePageError(page, it.event) }
         return page
     }
@@ -69,7 +69,7 @@ internal class ApplicationImpl(
         pagesById -= old
     }
 
-    private fun handlePageError(page: Page, error: TuPrologException) {
+    private fun handlePageError(page: Page, error: Throwable) {
         onError.raise(Application.EVENT_ERROR, page to error)
     }
 

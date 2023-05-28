@@ -20,9 +20,12 @@ kotlin {
     sourceSets {
         val main by getting {
             dependencies {
-                api(kotlin("stdlib-js"))
-                api(project(":solve-classic"))
+                api(project(":solve"))
+                api(project(":gui"))
+                api(project(":io-lib"))
+                api(project(":oop-lib"))
                 api(project(":parser-theory"))
+                api(project(":solve-classic"))
 
                 bom(libs.kotlin.wrappers.bom)
 
@@ -31,11 +34,25 @@ kotlin {
                 implementation(kotlinw("emotion"))
                 implementation(kotlinw("mui"))
                 implementation(kotlinw("mui-icons"))
+                // TODO: selezionare solo il redux che ci serve e non entrambi
+                implementation(kotlinw("react-redux"))
+                implementation(kotlinw("redux"))
 
                 implementation(npm("date-fns", "2.29.3"))
                 implementation(npm("@date-io/date-fns", "2.16.0"))
                 implementation(npm("@monaco-editor/react", "4.4.6"))
             }
+
+            tasks.getByPath("detekt").onlyIf {
+                gradle.startParameter.taskNames.any { it.contains("detekt") }
+            }
+
+//            tasks.getByPath("ktlintMainSourceSetCheck").onlyIf {
+//                gradle.startParameter.taskNames.any { it.contains("ktlintMainSourceSetCheck") }
+//            }
+//            tasks.getByPath("ktlintKotlinScriptCheck").onlyIf {
+//                gradle.startParameter.taskNames.any { it.contains("ktlintKotlinScriptCheck") }
+//            }
         }
         val test by getting {
             dependencies {
