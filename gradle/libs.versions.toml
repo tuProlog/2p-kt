@@ -13,7 +13,7 @@ npm-yaml = "1.10.0" # yaml
 npm-tuprolog-parserUtils = "0.4.1" # @tuprolog/parser-utils
 npm-syncRequest = "6.1.0" # sync-request
 ktlint = "10.3.0"
-detekt = "1.22.0"
+detekt = "1.23.0"
 shadowJar = "7.1.2"
 
 [plugins]
