@@ -1,10 +1,6 @@
 plugins {
-    `kotlin-jvm-only`
-    application
-    alias(libs.plugins.javafx)
-    id("com.github.johnrengelman.shadow")
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.shadowJar.get().pluginId)
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 val arguments: String? by project
@@ -26,15 +22,14 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
-javafx {
-    version = libs.versions.javafx.get()
-    modules = listOf("javafx.controls", "javafx.fxml", "javafx.graphics")
-}
-
 val entryPoint = "it.unibo.tuprolog.ui.gui.PLPMain"
 
-application {
+tasks.create<JavaExec>("run") {
+    group = "application"
     mainClass.set(entryPoint)
+    dependsOn("jvmMainClasses")
+    classpath = sourceSets.getByName("main").runtimeClasspath
+    standardInput = System.`in`
 }
 
 shadowJar(entryPoint)

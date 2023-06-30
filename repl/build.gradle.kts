@@ -1,8 +1,6 @@
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
-    id("com.github.johnrengelman.shadow")
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(libs.plugins.shadowJar.get().pluginId)
 }
 
 kotlin {

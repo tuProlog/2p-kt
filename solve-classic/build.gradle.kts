@@ -1,9 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 val jvmStackSize: String by project

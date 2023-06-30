@@ -1,8 +1,6 @@
 plugins {
-    `kotlin-jvm-only`
     antlr
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 dependencies {

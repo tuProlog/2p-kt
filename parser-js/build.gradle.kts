@@ -1,7 +1,5 @@
 plugins {
-    `kotlin-js-only`
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 kotlin {

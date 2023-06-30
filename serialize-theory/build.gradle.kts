@@ -1,7 +1,8 @@
+import org.gradle.configurationcache.extensions.capitalized
+import java.util.Locale
+
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 kotlin {
@@ -31,7 +32,7 @@ kotlin {
 }
 
 listOf("yaml", "json").forEach {
-    tasks.create("print${it.capitalize()}", JavaExec::class.java) {
+    tasks.create("print${it.capitalized()}", JavaExec::class.java) {
         group = "application"
         dependsOn("jvmTestClasses")
         classpath = files(
@@ -39,6 +40,6 @@ listOf("yaml", "json").forEach {
             kotlin.jvm().compilations.getByName("test").compileDependencyFiles
         )
         standardInput = System.`in`
-        main = "${it.toUpperCase()}PrinterKt"
+        mainClass.set("${it.uppercase(Locale.getDefault())}PrinterKt")
     }
 }

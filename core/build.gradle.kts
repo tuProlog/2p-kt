@@ -1,10 +1,9 @@
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
 
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 val tuPrologPackage get() = rootProject.group.toString()
@@ -12,7 +11,7 @@ val tuPrologPackageDir get() = tuPrologPackage.replace('.', File.separatorChar)
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(libs.ktMath)
                 api(project(":utils"))
@@ -37,13 +36,11 @@ kotlin {
                 outputs.file(infoKtFile)
             }
 
-            val addDependencyAction: (Task) -> Unit = {
-                it.dependsOn(createInfoKt)
-                it.inputs.file(infoKtFile)
-            }
-
-            tasks.withType<KotlinCompile<*>>().forEach(addDependencyAction)
-            tasks.withType<AbstractDokkaTask>().forEach(addDependencyAction)
+            tasks.findByName("sourcesJar")?.dependsOn(createInfoKt)
+            tasks.findByName("detekt")?.dependsOn(createInfoKt)
+            tasks.withType<AbstractDokkaTask>().configureEach { dependsOn(createInfoKt) }
+            tasks.withType<BaseKtLintCheckTask> { dependsOn(createInfoKt) }
+            tasks.withType<KotlinCompile<*>> { dependsOn(createInfoKt) }
         }
     }
 }

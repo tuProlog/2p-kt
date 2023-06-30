@@ -1,11 +1,7 @@
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
-    `mock-service`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    alias(libs.plugins.gradleMockService)
 }
-
-apply<MockServicePlugin>()
 
 kotlin {
     sourceSets {
@@ -56,9 +52,6 @@ mockService {
             it.result(random.inputStream())
         }
     }
-}
 
-tasks.matching { it.name in setOf("jvmTest", "jsNodeTest") }.configureEach {
-    dependsOn(mockService.startMockTask)
-    finalizedBy(mockService.stopMockTask)
+    wrapTasks("jvmTest", "jsNodeTest")
 }

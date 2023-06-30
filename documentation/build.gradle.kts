@@ -56,7 +56,7 @@ if (!plantUmlFiles.isEmpty) {
                 .map(::File)
         )
         classpath = configurations.getByName("plantuml")
-        main = "net.sourceforge.plantuml.Run"
+        mainClass.set("net.sourceforge.plantuml.Run")
         args("-tsvg", "-o", "$projectDir/src/orchid/resources/assets/generated")
         args(plantUmlFiles.map { it.absolutePath })
     }
