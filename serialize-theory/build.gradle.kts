@@ -7,20 +7,20 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(project(":theory"))
                 api(project(":serialize-core"))
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 api(project(":solve"))
             }
         }
 
-        val jvmMain by getting {
+        getByName("jvmMain") {
             dependencies {
                 implementation(libs.jackson.core)
                 implementation(libs.jackson.xml)

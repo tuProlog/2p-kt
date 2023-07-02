@@ -4,7 +4,7 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(kotlin("reflect"))
                 api(project(":core"))
@@ -13,7 +13,7 @@ kotlin {
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(project(":dsl-theory"))
             }

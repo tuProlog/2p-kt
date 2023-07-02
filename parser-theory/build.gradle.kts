@@ -4,7 +4,7 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(project(":core"))
                 api(project(":unify"))
@@ -13,19 +13,19 @@ kotlin {
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 api(project(":dsl-theory"))
             }
         }
 
-        val jvmMain by getting {
+        getByName("jvmMain") {
             dependencies {
                 api(project(":parser-jvm"))
             }
         }
 
-        val jsMain by getting {
+        getByName("jsMain") {
             dependencies {
                 api(project(":parser-js"))
             }

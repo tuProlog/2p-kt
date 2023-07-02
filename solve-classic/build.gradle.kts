@@ -9,14 +9,14 @@ val jvmMaxHeapSize: String by project
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(project(":solve"))
                 implementation(project(":dsl-theory"))
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 api(project(":test-solve"))
             }

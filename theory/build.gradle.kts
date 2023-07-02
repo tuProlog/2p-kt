@@ -4,13 +4,13 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(project(":core"))
                 api(project(":unify"))
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 api(project(":dsl-unify"))
             }

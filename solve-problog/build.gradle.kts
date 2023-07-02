@@ -4,7 +4,7 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(project(":bdd"))
                 api(project(":solve-classic"))
@@ -12,7 +12,7 @@ kotlin {
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 api(project(":parser-theory"))
                 api(project(":test-solve"))

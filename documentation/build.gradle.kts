@@ -3,7 +3,7 @@ plugins {
 }
 
 configurations {
-    val orchidRuntimeOnly by getting {
+    getByName("orchidRuntimeOnly") {
         resolutionStrategy {
             force(libs.plantuml)
         }
@@ -23,6 +23,7 @@ dependencies {
     plantuml(libs.plantuml)
 }
 
+@Suppress("Deprecation")
 repositories {
     jcenter()
     mavenCentral()

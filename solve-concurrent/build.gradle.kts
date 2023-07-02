@@ -9,19 +9,19 @@ val jvmMaxHeapSize: String by project
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(project(":solve"))
                 implementation(project(":dsl-theory"))
                 implementation(libs.kotlinx.coroutines.core)
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(project(":test-solve"))
             }
         }
-        val jvmTest by getting {
+        getByName("jvmMain") {
             dependencies {
                 implementation(libs.kotlinx.coroutines.test)
             }

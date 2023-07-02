@@ -5,14 +5,14 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(project(":solve"))
                 api(project(":parser-theory"))
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(project(":test-solve"))
                 implementation(project(":solve-classic"))
@@ -20,7 +20,7 @@ kotlin {
             }
         }
 
-        val jsMain by getting {
+        getByName("jvmMain") {
             dependencies {
                 implementation(npm("sync-request", libs.versions.npm.syncRequest.get()))
             }
