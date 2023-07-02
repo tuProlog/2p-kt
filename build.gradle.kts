@@ -54,8 +54,11 @@ multiProjectHelper {
     applyProjectTemplates()
 }
 
-repositories {
-    mavenCentral()
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
 
 project.findProperty("nodeVersion")?.let { it.toString() }?.takeIf { it.isNotBlank() }?.let {
