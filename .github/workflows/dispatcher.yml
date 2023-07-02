@@ -1,0 +1,29 @@
+name: CI/CD
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+    paths-ignore:
+      - '.gitignore'
+      - '.mergify.yml'
+      - 'CHANGELOG.md'
+      - 'LICENSE'
+      - 'README.md'
+      - 'renovate.json'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  dispatcher:
+    runs-on: ubuntu-22.04
+    if: >-
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.repository
+      || startsWith(github.head_ref, 'refs/heads/dependabot/')
+    steps:
+      - run: 'true'
+  ci-cd:
+    needs:
+      - dispatcher
+    uses: ./.github/workflows/build-and-deploy.yml
+    secrets: inherit
