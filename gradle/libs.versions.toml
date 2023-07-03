@@ -33,16 +33,12 @@ ktMpp-multiProjectHelper = { id = "io.github.gciatto.kt-mpp.multi-project-helper
 gradleMockService = "io.github.gciatto.gradle-mock-service:1.0.0"
 nexusPublish = "de.marcphilipp.nexus-publish:0.4.0"
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
-javafx = "org.openjfx.javafxplugin:0.0.14"
 shadowJar = { id = "com.github.johnrengelman.shadow", version.ref = "shadowJar" }
 
 [libraries]
-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 ktNpmPublish = "io.github.gciatto:kt-npm-publish:0.3.9"
 npmPublish = { module = "dev.petuska:npm-publish-gradle-plugin", version.ref = "npmPublish" }
-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 javafx-base = { module = "org.openjfx:javafx-base", version.ref = "javafx" }
 javafx-fxml = { module = "org.openjfx:javafx-fxml", version.ref = "javafx" }
 javafx-controls = { module = "org.openjfx:javafx-controls", version.ref = "javafx" }
@@ -53,7 +49,7 @@ jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-y
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 clikt = "com.github.ajalt.clikt:clikt:3.5.2"
 graphviz = "guru.nidi:graphviz-java:0.18.1"
-ktMath = "io.github.gciatto:kt-math:0.7.0"
+ktMath = "io.github.gciatto:kt-math:0.9.0"
 orchid-docs = { module = "io.github.javaeden.orchid:OrchidDocs", version.ref = "orchid" }
 orchid-kotlinDocs = { module = "io.github.javaeden.orchid:OrchidKotlindoc", version.ref = "orchid" }
 orchid-pluginDocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", version.ref = "orchid" }
