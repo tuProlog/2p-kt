@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.channel.impl
 
-import kotlin.jvm.Synchronized
+import it.unibo.tuprolog.utils.synchronizedOnSelf
 
 internal class InputChannelFromFunction<T : Any>(
     private val generator: () -> T?,
@@ -8,8 +8,7 @@ internal class InputChannelFromFunction<T : Any>(
 ) : AbstractInputChannel<T>() {
 
     override val available: Boolean
-        @Synchronized
-        get() = availabilityChecker()
+        get() = synchronizedOnSelf { availabilityChecker() }
 
     override fun readActually(): T? = generator()
 }

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.channel.impl
 
 import it.unibo.tuprolog.solve.channel.Channel
 import it.unibo.tuprolog.solve.channel.Listener
-import kotlin.jvm.Synchronized
+import it.unibo.tuprolog.utils.synchronizedOnSelf
 import kotlin.jvm.Volatile
 
 abstract class AbstractChannel<T : Any> : Channel<T> {
@@ -11,7 +11,7 @@ abstract class AbstractChannel<T : Any> : Channel<T> {
         @Volatile
         private var instanceCount: Long = 0
 
-        @Synchronized
+
         private fun nextId(): String = (instanceCount++).toString(16).padStart(16, '0')
     }
 
@@ -19,18 +19,15 @@ abstract class AbstractChannel<T : Any> : Channel<T> {
 
     protected val id = nextId()
 
-    @Synchronized
-    override fun addListener(listener: Listener<T?>) {
+    override fun addListener(listener: Listener<T?>): Unit = synchronizedOnSelf {
         _listeners.add(listener)
     }
 
-    @Synchronized
-    override fun removeListener(listener: Listener<T?>) {
+    override fun removeListener(listener: Listener<T?>): Unit = synchronizedOnSelf {
         _listeners.remove(listener)
     }
 
-    @Synchronized
-    override fun clearListeners() {
+    override fun clearListeners() = synchronizedOnSelf {
         _listeners.clear()
     }
 
@@ -38,8 +35,7 @@ abstract class AbstractChannel<T : Any> : Channel<T> {
         _listeners.forEach { it(value) }
     }
 
-    @Synchronized
-    override fun close() {
+    override fun close() = synchronizedOnSelf {
         if (!isClosed) {
             isClosed = true
         } else {
@@ -48,6 +44,6 @@ abstract class AbstractChannel<T : Any> : Channel<T> {
     }
 
     final override var isClosed: Boolean = false
-        @Synchronized get
+        get() = synchronizedOnSelf { field }
         private set
 }

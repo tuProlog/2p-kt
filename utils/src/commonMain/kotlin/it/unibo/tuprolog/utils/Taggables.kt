@@ -1,5 +1,5 @@
 @file:Suppress("UNCHECKED_CAST")
-@file:JvmName("TaggableExtensions")
+@file:JvmName("Taggables")
 
 package it.unibo.tuprolog.utils
 

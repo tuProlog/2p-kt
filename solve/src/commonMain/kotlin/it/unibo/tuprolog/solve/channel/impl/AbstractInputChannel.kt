@@ -3,33 +3,30 @@ package it.unibo.tuprolog.solve.channel.impl
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.utils.dequeOf
+import it.unibo.tuprolog.utils.synchronizedOnSelf
 import it.unibo.tuprolog.utils.takeFirst
-import kotlin.jvm.Synchronized
 
 abstract class AbstractInputChannel<T : Any> : AbstractChannel<T>(), InputChannel<T> {
 
     private val queue: MutableList<T?> = dequeOf()
 
     override val available: Boolean
-        @Synchronized
-        get() = if (isClosed) throw IllegalStateException("Input channel is closed") else true
+        get() = synchronizedOnSelf { if (isClosed) throw IllegalStateException("Input channel is closed") else true }
 
     protected abstract fun readActually(): T?
 
-    @Synchronized
-    final override fun read(): T? {
+    final override fun read(): T? = synchronizedOnSelf {
         if (isClosed) throw IllegalStateException("Input channel is closed")
         refillQueueIfNecessary()
         val read = queue.takeFirst()
         notify(read)
-        return read
+        read
     }
 
-    @Synchronized
-    final override fun peek(): T? {
+    final override fun peek(): T? = synchronizedOnSelf {
         if (isClosed) throw IllegalStateException("Input channel is closed")
         refillQueueIfNecessary()
-        return queue[0]
+        queue[0]
     }
 
     private fun refillQueue() {
@@ -43,11 +40,10 @@ abstract class AbstractInputChannel<T : Any> : AbstractChannel<T>(), InputChanne
     }
 
     override val isOver: Boolean
-        @Synchronized
-        get() {
+        get() = synchronizedOnSelf {
             if (isClosed) throw IllegalStateException("Input channel is closed")
             refillQueueIfNecessary()
-            return queue.first() == null
+            queue.first() == null
         }
 
     override fun toString(): String = "${this::class.simpleName}(id=$id, available=$available, closed=$isClosed)"

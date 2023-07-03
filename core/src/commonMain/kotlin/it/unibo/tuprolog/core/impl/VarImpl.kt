@@ -7,7 +7,7 @@ import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.VAR_NAME_PATTERN
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.setTags
-import kotlin.jvm.Synchronized
+import it.unibo.tuprolog.utils.synchronizedOn
 
 @Suppress("EqualsOrHashCode")
 internal class VarImpl(
@@ -19,11 +19,10 @@ internal class VarImpl(
     companion object {
         private val nameToInstanceCount = mutableMapOf<String, Long>()
 
-        @Synchronized
-        private fun instanceId(name: String): Long {
+        private fun instanceId(name: String): Long = synchronizedOn(nameToInstanceCount) {
             val count = nameToInstanceCount[name]?.let { it + 1 } ?: 0
             nameToInstanceCount[name] = count
-            return count
+            count
         }
     }
 

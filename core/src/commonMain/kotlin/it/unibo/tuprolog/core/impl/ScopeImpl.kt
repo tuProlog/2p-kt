@@ -20,9 +20,9 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.synchronizedOnSelf
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
-import kotlin.jvm.Synchronized
 import it.unibo.tuprolog.core.List as LogicList
 
 @Suppress("RemoveRedundantQualifierName")
@@ -37,12 +37,11 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override val variables: Map<String, Var>
         get() = _variables.toMap()
 
-    @Synchronized
-    override fun varOf(name: String): Var {
+    override fun varOf(name: String): Var = synchronizedOnSelf {
         if (!_variables.containsKey(name)) {
             _variables[name] = Var.of(name)
         }
-        return _variables[name]!!
+        _variables[name]!!
     }
 
     override fun where(lambda: Scope.() -> Unit): Scope =
