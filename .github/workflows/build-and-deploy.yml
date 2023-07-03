@@ -158,7 +158,9 @@ jobs:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.maven-central-repo-id }}
           ENFORCE_VERSION: "${{ needs.staging-repo.outputs.next-version }}"
         with:
-          build-command: true
+          build-command: |
+            ./gradlew allShadowJars
+            ./gradlew dokkaHtmlMultiModuleZip
           check-command: true
           deploy-command: |
             npm install

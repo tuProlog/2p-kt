@@ -14,7 +14,16 @@ config.plugins.push(
             "publishCmd": publishCmd,
         }
     ],
-    "@semantic-release/github",
+    [
+        "@semantic-release/github",
+        {
+            "assets": [
+                { "path": "**/build/**/*redist*.jar" },
+                { "path": "**/build/**/*full*.jar" },
+                { "path": "**/build/**/*javadoc*.jar" },
+            ]
+        }
+    ],
     "@semantic-release/git",
 )
 module.exports = config
