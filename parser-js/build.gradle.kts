@@ -4,14 +4,13 @@ plugins {
 
 kotlin {
     sourceSets {
-        val main by getting {
+        main {
             dependencies {
                 api(kotlin("stdlib-js"))
                 api(npm("@tuprolog/parser-utils", libs.versions.npm.tuprolog.parserUtils.get()))
             }
         }
-
-        val test by getting {
+        test {
             dependencies {
                 implementation(kotlin("test-js"))
             }

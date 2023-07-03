@@ -4,13 +4,13 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(project(":core"))
             }
         }
 
-        val jvmMain by getting {
+        getByName("jvmMain") {
             dependencies {
                 implementation(libs.jackson.core)
                 implementation(libs.jackson.xml)
@@ -19,7 +19,7 @@ kotlin {
             }
         }
 
-        val jsMain by getting {
+        getByName("jsMain") {
             dependencies {
                 api(npm("yaml", libs.versions.npm.yaml.get()))
             }
