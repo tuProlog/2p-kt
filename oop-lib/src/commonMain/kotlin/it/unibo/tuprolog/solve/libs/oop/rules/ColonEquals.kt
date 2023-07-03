@@ -66,7 +66,7 @@ sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
         override val Scope.body: Term
             get() = tupleOf(
                 structOf(PropertyReduce.FUNCTOR, C, R, P),
-                structOf(Assign.functor, R, P, V),
+                structOf(Assign.functor, R, P, V)
             )
     }
 }

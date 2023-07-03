@@ -148,7 +148,7 @@ class TestGraph {
             visitOf(2, nodeOf("a")),
             visitOf(3, nodeOf("b")),
             visitOf(3, nodeOf("c")),
-            visitOf(3, nodeOf("f")),
+            visitOf(3, nodeOf("f"))
         )
         assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 3), nodeOf("a")).toList())
         assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 3), nodeOf("a")).toList())
@@ -225,7 +225,7 @@ class TestGraph {
             visitOf(8, nodeOf("a")),
             visitOf(9, nodeOf("b")),
             visitOf(9, nodeOf("c")),
-            visitOf(9, nodeOf("f")),
+            visitOf(9, nodeOf("f"))
         )
         assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 9), nodeOf("a")).toList())
         assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 9), nodeOf("a")).toList())
@@ -244,7 +244,7 @@ class TestGraph {
             visitOf(3, nodeOf("f")),
             visitOf(2, nodeOf("a")),
             visitOf(1, nodeOf("f")),
-            visitOf(0, nodeOf("a")),
+            visitOf(0, nodeOf("a"))
         )
         assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 3, postOrder = true), nodeOf("a")).toList())
         assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 3, postOrder = true), nodeOf("a")).toList())
@@ -263,7 +263,7 @@ class TestGraph {
             visitOf(3, nodeOf("f")),
             visitOf(3, nodeOf("b")),
             visitOf(3, nodeOf("c")),
-            visitOf(3, nodeOf("f")),
+            visitOf(3, nodeOf("f"))
         )
         assertEquals(expected, unweighted.asSequence(BreadthFirst(maxDepth = 3), nodeOf("a")).toList())
         assertEquals(expected, weighted.asSequence(BreadthFirst(maxDepth = 3), nodeOf("a")).toList())
@@ -340,7 +340,7 @@ class TestGraph {
             visitOf(9, nodeOf("f")),
             visitOf(9, nodeOf("b")),
             visitOf(9, nodeOf("c")),
-            visitOf(9, nodeOf("f")),
+            visitOf(9, nodeOf("f"))
         )
         assertEquals(expected, unweighted.asSequence(BreadthFirst(maxDepth = 9), nodeOf("a")).toList())
         assertEquals(expected, weighted.asSequence(BreadthFirst(maxDepth = 9), nodeOf("a")).toList())

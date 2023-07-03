@@ -28,7 +28,7 @@ interface MutableClauseMultiSet : ClauseMultiSet {
         /** Creates an empty [MutableClauseMultiSet] **/
         @JvmStatic
         @JsName("empty")
-        fun empty(unificator: Unificator,): MutableClauseMultiSet = of(unificator, emptyList())
+        fun empty(unificator: Unificator): MutableClauseMultiSet = of(unificator, emptyList())
 
         /** Creates a [MutableClauseMultiSet] with given clauses */
         @JvmStatic

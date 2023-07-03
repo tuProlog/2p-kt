@@ -36,7 +36,7 @@ class TestDirectivePartitioning {
             fact { "g"(2, "b") },
             directive { solve("g"(1)) },
             rule { "h"(X) impliedBy (Y `is` (X - 1) and "h"(Y)) },
-            directive { initialization("f"(1)) },
+            directive { initialization("f"(1)) }
         )
     }
 

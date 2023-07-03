@@ -36,7 +36,7 @@ sealed class Solve {
         /** The time instant when the request was submitted for resolution */
         override val startTime: TimeInstant = currentTimeInstant(),
         /** The execution max duration after which the computation should end, because no more useful */
-        override val maxDuration: TimeDuration = context.endTime - startTime,
+        override val maxDuration: TimeDuration = context.endTime - startTime
     ) : Durable, Solve() {
         init {
             when {
@@ -96,7 +96,7 @@ sealed class Solve {
         ) = solution.whenIs(
             yes = { replySuccess(it.substitution, sideEffectManager, *sideEffects) },
             no = { replyFail(sideEffectManager, *sideEffects) },
-            halt = { replyException(it.exception, sideEffectManager, *sideEffects) },
+            halt = { replyException(it.exception, sideEffectManager, *sideEffects) }
         )
 
         /** Creates a new [Response] to this Request */

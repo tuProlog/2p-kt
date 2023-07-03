@@ -45,8 +45,8 @@ class TestProblogClassicFindAll : TestFindAll, SolverFactory by ProblogSolverFac
     }
 
     /* NOTE: Ignored because not significant. The test expects the solver to HALT (and it does),
-    * but strictly checks the message error that, in this case, is not the one expected due to the
-    * presence of meta-predicates such as Prob. */
+     * but strictly checks the message error that, in this case, is not the one expected due to the
+     * presence of meta-predicates such as Prob. */
     @Ignore
     @Test
     override fun testFindXinGoal() {

@@ -101,7 +101,7 @@ class TestTermDeserializer {
                 |- hello
                 |- 1
                 |- true
-                """.trimMargin()
+            """.trimMargin()
         deserializer.assertTermDeserializationWorks(actual) {
             listOf(atomOf("hello"), numOf(1), truthOf(true))
         }
@@ -127,7 +127,7 @@ class TestTermDeserializer {
                 |- 1
                 |- true
                 |
-                """.trimMargin()
+            """.trimMargin()
         deserializer.assertTermDeserializationWorks(actual) {
             blockOf(atomOf("hello"), numOf(1), truthOf(true))
         }
@@ -161,7 +161,7 @@ class TestTermDeserializer {
                 |args:
                 |- hello
                 |- 2
-                """.trimMargin()
+            """.trimMargin()
         deserializer.assertTermDeserializationWorks(actual) {
             structOf("f", atomOf("hello"), numOf(2))
         }
@@ -175,7 +175,7 @@ class TestTermDeserializer {
                 |- list:
                 |  - "qua ci va una lista"
                 |  - true
-                """.trimMargin()
+            """.trimMargin()
         deserializer.assertTermDeserializationWorks(actual) {
             structOf(
                 "f",
@@ -206,7 +206,7 @@ class TestTermDeserializer {
         val actual =
             """
                 |var: "X"
-                """.trimMargin()
+            """.trimMargin()
         deserializer.assertTermDeserializationWorks(actual) {
             varOf("X")
         }

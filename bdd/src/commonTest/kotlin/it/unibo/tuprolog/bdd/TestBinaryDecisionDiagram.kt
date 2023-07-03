@@ -39,7 +39,7 @@ class TestBinaryDecisionDiagram {
      * give bad results on badly constructed BDDs. */
     private fun BinaryDecisionDiagram<ComparablePair>.probability(): Double {
         return this.expansion(0.0, 1.0) {
-            node, low, high ->
+                node, low, high ->
             node.second * high + (1.0 - node.second) * low
         }
     }

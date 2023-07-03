@@ -1,7 +1,7 @@
-import io.github.gciatto.kt.mpp.log
-import io.github.gciatto.kt.mpp.nodeVersion
 import io.github.gciatto.kt.mpp.Plugins
 import io.github.gciatto.kt.mpp.ProjectType
+import io.github.gciatto.kt.mpp.log
+import io.github.gciatto.kt.mpp.nodeVersion
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {

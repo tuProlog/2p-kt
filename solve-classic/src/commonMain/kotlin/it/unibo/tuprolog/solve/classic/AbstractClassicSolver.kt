@@ -100,7 +100,7 @@ abstract class AbstractClassicSolver(
             outputChannels = outputChannels,
             customData = currentContext.customData,
             startTime = currentTimeInstant(),
-            maxDuration = options.timeout,
+            maxDuration = options.timeout
         )
         return solutionIterator(StateInit(currentContext), this::updateCurrentContextAfterStateTransition).asSequence()
     }

@@ -72,8 +72,8 @@ internal class MappedMutableProblogTheory(
     }
 
     /* NOTE: This has a side effect. If a `retractAll` fails for a clause inside `mappedClauses`
-    * with index `I` > 0, then this returns a `RetractResult.Failure` containing a theory in which
-    * clauses with index < `I` has been retracted. */
+     * with index `I` > 0, then this returns a `RetractResult.Failure` containing a theory in which
+     * clauses with index < `I` has been retracted. */
     override fun retractAll(clause: Clause): RetractResult<MutableProblogTheory> {
         val mappedClauses = ClauseMappingUtils.map(clause)
         var result: RetractResult<MutableTheory>? = null

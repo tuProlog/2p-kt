@@ -50,7 +50,7 @@ internal fun <T> runOperationAndCatchErrors(action: () -> T): T {
 fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
     falseTerminal: E,
     trueTerminal: E,
-    operator: (node: T, low: E, high: E) -> E,
+    operator: (node: T, low: E, high: E) -> E
 ): E {
     return runOperationAndCatchErrors {
         this.accept(
@@ -99,7 +99,7 @@ fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
     return runOperationAndCatchErrors {
         this.expansion(
             builder.buildTerminal(false),
-            builder.buildTerminal(true),
+            builder.buildTerminal(true)
         ) { node, low, high -> builder.buildVariable(mapper(node), low, high) }
     }
 }
@@ -143,7 +143,7 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toDotString(): String {
 fun <T : Comparable<T>> BinaryDecisionDiagram<T>.countVariableNodes(): Int {
     return runOperationAndCatchErrors {
         this.expansion(0, 0) {
-            _, low, high ->
+                _, low, high ->
             1 + low + high
         }
     }

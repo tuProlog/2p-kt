@@ -23,7 +23,7 @@ internal object Conversions {
         TestDatum(Var.of("X"), Any::class, null),
         TestDatum(A.B(1, "a"), Any::class),
         TestDatum(A.C(2, "b"), Any::class),
-        TestDatum(null, Any::class),
+        TestDatum(null, Any::class)
     )
 
     private val higherThanMaxLong = BigInteger.of(Long.MAX_VALUE) + BigInteger.ONE
@@ -62,7 +62,7 @@ internal object Conversions {
         TestDatum(Var.of("X"), Any::class, null),
         TestDatum(A.B(1, "a"), Any::class),
         TestDatum(A.C(2, "b"), Any::class),
-        TestDatum(null, Any::class),
+        TestDatum(null, Any::class)
     )
 
     private fun Term.product(vararg types: KClass<*>, datum: (Term, KClass<*>) -> TestDatum): List<TestDatum> =

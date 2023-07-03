@@ -8,7 +8,7 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 internal data class SimpleBinaryDecisionDiagramVariable<T : Comparable<T>>(
     override val value: T,
     override val low: BinaryDecisionDiagram<T>,
-    override val high: BinaryDecisionDiagram<T>,
+    override val high: BinaryDecisionDiagram<T>
 ) : BinaryDecisionDiagram.Variable<T> {
 
     private val hashCodeCache: Int by lazy {

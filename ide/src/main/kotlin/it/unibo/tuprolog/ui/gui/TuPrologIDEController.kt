@@ -660,7 +660,7 @@ class TuPrologIDEController : Initializable {
         fileChooser.extensionFilters.addAll(
             FileChooser.ExtensionFilter("Prolog file", "*.pl", "*.2p"),
             FileChooser.ExtensionFilter("Text file", "*.txt"),
-            FileChooser.ExtensionFilter("Any file", "*"),
+            FileChooser.ExtensionFilter("Any file", "*")
         )
         fileChooser.initialDirectory = File(System.getProperty("user.home"))
         fileChooser.title = "Open file..."
@@ -694,7 +694,7 @@ class TuPrologIDEController : Initializable {
         fileChooser.extensionFilters.addAll(
             FileChooser.ExtensionFilter("Prolog file", "*.pl"),
             FileChooser.ExtensionFilter("Text file", "*.txt"),
-            FileChooser.ExtensionFilter("2P file", "*.2p"),
+            FileChooser.ExtensionFilter("2P file", "*.2p")
         )
         fileChooser.initialDirectory = File(System.getProperty("user.home"))
         fileChooser.title = "Save file as..."

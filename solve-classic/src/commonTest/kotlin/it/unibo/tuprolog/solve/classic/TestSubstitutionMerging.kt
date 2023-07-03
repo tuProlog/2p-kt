@@ -19,7 +19,7 @@ class TestSubstitutionMerging {
         theoryOf(
             rule { "a"(X) impliedBy "b"(X) },
             rule { "b"(Y) impliedBy "c"(Y) },
-            rule { "c"(Z) impliedBy "primitive"(Z) },
+            rule { "c"(Z) impliedBy "primitive"(Z) }
         )
     }
 

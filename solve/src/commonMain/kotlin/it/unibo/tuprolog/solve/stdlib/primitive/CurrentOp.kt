@@ -18,7 +18,7 @@ object CurrentOp : TernaryRelation.WithoutSideEffects<ExecutionContext>("current
             listOf(
                 mgu(first, Integer.of(it.priority)),
                 mgu(second, it.specifier.toTerm()),
-                mgu(third, Atom.of(it.functor)),
+                mgu(third, Atom.of(it.functor))
             )
         }.filter {
             it.all { sub -> sub is Substitution.Unifier }

@@ -21,7 +21,7 @@ import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
 class GraphRenderView(
-    private val dotGraph: String,
+    private val dotGraph: String
 ) : VBox() {
 
     companion object {

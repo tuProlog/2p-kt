@@ -17,11 +17,11 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
  * */
 internal class BinaryDecisionDiagramExplanation(
     val diagram: BinaryDecisionDiagram<ProbTerm>,
-    private val computedValue: ComputedValue = EMPTY_COMPUTED_VALUE,
+    private val computedValue: ComputedValue = EMPTY_COMPUTED_VALUE
 ) : ProbExplanation {
 
     internal data class ComputedValue(
-        val probability: Double?,
+        val probability: Double?
     )
 
     companion object {
@@ -41,13 +41,15 @@ internal class BinaryDecisionDiagramExplanation(
         return ComputedValue(
             if (low.probability != null && high.probability != null) {
                 value.probability * high.probability + (1.0 - value.probability) * low.probability
-            } else null,
+            } else {
+                null
+            }
         )
     }
 
     private val cachedNot: ProbExplanation by lazy {
         val result = diagram.notThenExpansion(FALSE_COMPUTED_VALUE, TRUE_COMPUTED_VALUE) {
-            node, low, high ->
+                node, low, high ->
             computeExpansion(node, low, high)
         }
         BinaryDecisionDiagramExplanation(result.first, result.second)
@@ -57,7 +59,7 @@ internal class BinaryDecisionDiagramExplanation(
 
     override fun and(that: ProbExplanation): ProbExplanation {
         val result = diagram.andThenExpansion(getAsInternal(that).diagram, FALSE_COMPUTED_VALUE, TRUE_COMPUTED_VALUE) {
-            node, low, high ->
+                node, low, high ->
             computeExpansion(node, low, high)
         }
         return BinaryDecisionDiagramExplanation(result.first, result.second)
@@ -65,7 +67,7 @@ internal class BinaryDecisionDiagramExplanation(
 
     override fun or(that: ProbExplanation): ProbExplanation {
         val result = diagram.orThenExpansion(getAsInternal(that).diagram, FALSE_COMPUTED_VALUE, TRUE_COMPUTED_VALUE) {
-            node, low, high ->
+                node, low, high ->
             computeExpansion(node, low, high)
         }
         return BinaryDecisionDiagramExplanation(result.first, result.second)

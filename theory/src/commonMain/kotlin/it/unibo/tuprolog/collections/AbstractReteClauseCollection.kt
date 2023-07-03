@@ -4,8 +4,7 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.TheoryUtils
 
-internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCollection<Self>>
-protected constructor(
+internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCollection<Self>> protected constructor(
     rete: ReteTree
 ) : AbstractClauseCollection<Self>(rete) {
 

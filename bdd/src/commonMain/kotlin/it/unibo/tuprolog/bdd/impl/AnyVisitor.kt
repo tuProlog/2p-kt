@@ -10,7 +10,7 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
  * @author Jason Dellaluce
  */
 internal class AnyVisitor<T : Comparable<T>>(
-    private val predicate: (T) -> Boolean,
+    private val predicate: (T) -> Boolean
 ) : BinaryDecisionDiagramVisitor<T, Boolean> {
 
     override fun visit(

@@ -11,7 +11,6 @@ abstract class AbstractChannel<T : Any> : Channel<T> {
         @Volatile
         private var instanceCount: Long = 0
 
-
         private fun nextId(): String = (instanceCount++).toString(16).padStart(16, '0')
     }
 

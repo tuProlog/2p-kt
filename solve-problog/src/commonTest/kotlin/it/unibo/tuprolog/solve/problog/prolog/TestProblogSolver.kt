@@ -168,8 +168,8 @@ class TestProblogSolver : TestSolver, SolverFactory by ProblogSolverFactory {
     }
 
     /* NOTE: Ignored because not significant. The test expects the solver to HALT (and it does),
-    * but strictly checks the message error that, in this case, is not the one expected due to the
-    * presence of meta-predicates such as Prob. */
+     * but strictly checks the message error that, in this case, is not the one expected due to the
+     * presence of meta-predicates such as Prob. */
     @Ignore
     @Test
     override fun testConjunctionProperties() {
@@ -182,8 +182,8 @@ class TestProblogSolver : TestSolver, SolverFactory by ProblogSolverFactory {
     }
 
     /* NOTE: Ignored because not significant. The test expects the solver to HALT (and it does),
-    * but strictly checks the message error that, in this case, is not the one expected due to the
-    * presence of meta-predicates such as Prob. */
+     * but strictly checks the message error that, in this case, is not the one expected due to the
+     * presence of meta-predicates such as Prob. */
     @Ignore
     @Test
     override fun testCallPrimitiveTransparency() {
@@ -191,8 +191,8 @@ class TestProblogSolver : TestSolver, SolverFactory by ProblogSolverFactory {
     }
 
     /* NOTE: Ignored because not significant. The test expects the solver to HALT (and it does),
-    * but strictly checks the message error that, in this case, is not the one expected due to the
-    * presence of meta-predicates such as Prob. */
+     * but strictly checks the message error that, in this case, is not the one expected due to the
+     * presence of meta-predicates such as Prob. */
     @Ignore
     @Test
     override fun testCatchPrimitive() {
@@ -200,8 +200,8 @@ class TestProblogSolver : TestSolver, SolverFactory by ProblogSolverFactory {
     }
 
     /* NOTE: Ignored because not significant. The test expects the solver to HALT (and it does),
-    * but strictly checks the message error that, in this case, is not the one expected due to the
-    * presence of meta-predicates such as Prob. */
+     * but strictly checks the message error that, in this case, is not the one expected due to the
+     * presence of meta-predicates such as Prob. */
     @Ignore
     @Test
     override fun testCatchPrimitiveTransparency() {
@@ -219,8 +219,8 @@ class TestProblogSolver : TestSolver, SolverFactory by ProblogSolverFactory {
     }
 
     /* NOTE: Ignored because not significant. The test expects the solver to HALT (and it does),
-    * but strictly checks the message error that, in this case, is not the one expected due to the
-    * presence of meta-predicates such as Prob. */
+     * but strictly checks the message error that, in this case, is not the one expected due to the
+     * presence of meta-predicates such as Prob. */
     @Ignore
     @Test
     override fun testNotModularity() {

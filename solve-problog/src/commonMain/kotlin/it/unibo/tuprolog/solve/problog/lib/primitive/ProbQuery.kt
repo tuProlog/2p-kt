@@ -27,7 +27,7 @@ internal object ProbQuery : QuaternaryRelation.WithoutSideEffects<ExecutionConte
         first: Term,
         second: Term,
         third: Term,
-        fourth: Term,
+        fourth: Term
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
@@ -39,7 +39,7 @@ internal object ProbQuery : QuaternaryRelation.WithoutSideEffects<ExecutionConte
         val solutions = subSolver().solve(
             Tuple.of(
                 Struct.of(ProbSetConfig.functor, third),
-                Struct.of(ProbSolveWithEvidence.functor, queryWithEvidenceExplanation, evidenceExplanation, second),
+                Struct.of(ProbSolveWithEvidence.functor, queryWithEvidenceExplanation, evidenceExplanation, second)
             ),
             third.toSolveOptions()
         )
@@ -64,7 +64,7 @@ internal object ProbQuery : QuaternaryRelation.WithoutSideEffects<ExecutionConte
                         yield(Substitution.failed())
                     } else {
                         val solutionSubstitution = solution.substitution.filter {
-                            v, _ ->
+                                v, _ ->
                             v != evidenceExplanation && v != queryWithEvidenceExplanation
                         }
                         val probabilityTerm = Numeric.of(queryWithEvidenceProbability / evidenceProbability)
@@ -72,7 +72,7 @@ internal object ProbQuery : QuaternaryRelation.WithoutSideEffects<ExecutionConte
                             Substitution.of(
                                 solutionSubstitution,
                                 mgu(first, probabilityTerm),
-                                mgu(fourth, queryWithEvidenceExplanationTerm),
+                                mgu(fourth, queryWithEvidenceExplanationTerm)
                             )
                         )
                     }

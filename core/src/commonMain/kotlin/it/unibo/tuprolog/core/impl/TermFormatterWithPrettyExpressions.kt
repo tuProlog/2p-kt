@@ -16,7 +16,7 @@ import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.operators.toOperatorsIndex
 import kotlin.collections.Set
 
-internal class TermFormatterWithPrettyExpressions private constructor (
+internal class TermFormatterWithPrettyExpressions private constructor(
     private val priority: Int,
     private val delegate: TermFormatter,
     private val operators: OperatorsIndex,

@@ -34,7 +34,7 @@ class PLPIDEApplication : Application() {
                 title = "tuProlog IDE for Probabilistic Logic Programming",
                 customTabs = listOf(
                     CustomTab(
-                        customSolutionsTab,
+                        customSolutionsTab
                     ) { this.configureModel(it, solutionsListView, customSolutionsTab) }
                 )
             ).show()
@@ -51,7 +51,7 @@ class PLPIDEApplication : Application() {
     private fun configureModel(
         model: TuPrologIDEModel,
         listView: ListView<Solution>,
-        listTab: Tab,
+        listTab: Tab
     ) {
         // Hook events to the custom solutions tab
         model.onReset.subscribe { listView.items.clear() }

@@ -10,8 +10,8 @@ open class SubstitutionException : TuPrologException {
     @JvmOverloads
     constructor(substitution: Substitution, message: String?, cause: Throwable? = null) :
         super(message, cause) {
-            this.substitution = substitution
-        }
+        this.substitution = substitution
+    }
 
     constructor(substitution: Substitution, cause: Throwable? = null) :
         this(substitution, prettyMessage(substitution), cause)

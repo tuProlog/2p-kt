@@ -176,7 +176,7 @@ sealed interface Solution : Taggable<Solution>, Castable<Solution> {
         fun halt(
             signature: Signature,
             arguments: List<Term>,
-            exception: ResolutionException,
+            exception: ResolutionException
         ): Halt = SolutionImpl.HaltImpl(signature, arguments, exception)
     }
 }

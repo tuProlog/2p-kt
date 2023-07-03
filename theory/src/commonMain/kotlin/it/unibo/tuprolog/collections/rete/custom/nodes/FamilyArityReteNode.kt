@@ -76,8 +76,11 @@ internal open class FamilyArityReteNode(
                 ).map { it.innerClause }
             }
         } else {
-            if (ordered) getOrdered(clause)
-            else getUnordered(clause)
+            if (ordered) {
+                getOrdered(clause)
+            } else {
+                getUnordered(clause)
+            }
         }
     }
 

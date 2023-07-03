@@ -30,7 +30,7 @@ class TestProblogTossingCoinsExamples {
                 QueryWithSolutions(
                     "twoHeads".parseAsStruct(),
                     listOf(ExpectedSolution("twoHeads".parseAsStruct(), 0.3))
-                ),
+                )
             )
         )
     }
@@ -50,7 +50,7 @@ class TestProblogTossingCoinsExamples {
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
                 listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.8))
-            ),
+            )
         )
     }
 
@@ -72,7 +72,7 @@ class TestProblogTossingCoinsExamples {
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
                 listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.9744))
-            ),
+            )
         )
     }
 
@@ -93,7 +93,7 @@ class TestProblogTossingCoinsExamples {
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
                 listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.9744))
-            ),
+            )
         )
     }
 }

@@ -32,7 +32,7 @@ class TestProblogBayesianNetworksExamples {
                 QueryWithSolutions(
                     "earthquake".parseAsStruct(),
                     listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22758621))
-                ),
+                )
             )
         )
     }
@@ -59,7 +59,7 @@ class TestProblogBayesianNetworksExamples {
                 QueryWithSolutions(
                     "earthquake".parseAsStruct(),
                     listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22685136))
-                ),
+                )
             )
         )
     }
@@ -91,7 +91,7 @@ class TestProblogBayesianNetworksExamples {
                 QueryWithSolutions(
                     "earthquake".parseAsStruct(),
                     listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22758621))
-                ),
+                )
             )
         )
     }
@@ -127,9 +127,9 @@ class TestProblogBayesianNetworksExamples {
                     listOf(
                         ExpectedSolution("earthquake(heavy)".parseAsStruct(), 0.012476167),
                         ExpectedSolution("earthquake(mild)".parseAsStruct(), 0.20644476),
-                        ExpectedSolution("earthquake(none)".parseAsStruct(), 0.78107907),
+                        ExpectedSolution("earthquake(none)".parseAsStruct(), 0.78107907)
                     )
-                ),
+                )
             )
         )
     }

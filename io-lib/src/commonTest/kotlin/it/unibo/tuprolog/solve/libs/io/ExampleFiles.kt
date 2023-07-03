@@ -23,7 +23,7 @@ object ExampleFiles {
             |
             |mother(X, Y) :- female(X), parent(X, Y).
             |father(X, Y) :- male(X), parent(X, Y).
-            """.trimMargin()
+        """.trimMargin()
 
     val WRONG_PARENTS =
         """
@@ -47,5 +47,5 @@ object ExampleFiles {
             |
             |mother(X, Y) :- female(X), parent(X, Y).
             |father(X, Y) :- male(X), parent(X, Y).
-            """.trimMargin()
+        """.trimMargin()
 }

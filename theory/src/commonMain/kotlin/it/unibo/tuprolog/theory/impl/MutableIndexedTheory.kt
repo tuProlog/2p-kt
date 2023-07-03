@@ -63,8 +63,11 @@ internal class MutableIndexedTheory private constructor(
             .filter { it.isSuccess }
             .flatMap { it.clauses!!.asSequence() }
             .toList()
-        return if (retracted.isEmpty()) RetractResult.Failure(this)
-        else RetractResult.Success(this, retracted)
+        return if (retracted.isEmpty()) {
+            RetractResult.Failure(this)
+        } else {
+            RetractResult.Success(this, retracted)
+        }
     }
 
     override fun retractAll(clause: Clause): RetractResult<MutableIndexedTheory> =

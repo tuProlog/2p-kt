@@ -12,12 +12,18 @@ internal class FamilyArityIndexingNode(
 ) : FamilyArityReteNode(unificator, ordered, nestingLevel), ArityIndexing {
 
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
-        if (ordered) orderedLookahead(clause)
-        else anyLookahead(clause)
+        if (ordered) {
+            orderedLookahead(clause)
+        } else {
+            anyLookahead(clause)
+        }
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-        if (ordered) getOrderedIndexed(clause)
-        else getUnorderedIndexed(clause)
+        if (ordered) {
+            getOrderedIndexed(clause)
+        } else {
+            getUnorderedIndexed(clause)
+        }
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
         if (ordered) {

@@ -5,5 +5,5 @@ data class Expectations(
     val streamsShouldWork: Boolean = false,
     val prologShouldWork: Boolean = false,
     val problogShouldWork: Boolean = false,
-    val concurrentShouldWork: Boolean = false,
+    val concurrentShouldWork: Boolean = false
 )

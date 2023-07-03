@@ -96,7 +96,9 @@ data class TuPrologIDEBuilder(
     fun customTab(tab: Tab, modelConfigurator: ModelConfigurator) =
         customTab(CustomTab(tab, modelConfigurator))
 
-    fun customTab(tab: Tab) = customTab(tab) { /* do nothing */ }
+    fun customTab(tab: Tab) = customTab(tab) {
+        /* do nothing */
+    }
 
     fun show() {
         val loader = FXMLLoader(javaClass.getResource("TuPrologIDEView.fxml"))

@@ -33,7 +33,7 @@ internal object ClauseMappingUtils {
         ProbabilisticClauseMapper,
         EvidenceClauseMapper,
         PrologClauseMapper,
-        NothingClauseMapper,
+        NothingClauseMapper
     )
 
     /** Generates a new clause identifier.
@@ -90,9 +90,11 @@ internal fun Term.withExplanationNonWrappable(explanation: Term): Struct {
 internal fun Term.withExplanation(explanation: Term): Struct {
     return if (!this.isWrappableWithExplanation) {
         this.withExplanationNonWrappable(explanation)
-    } else when (this) {
-        is Struct -> Struct.of(this.functor, this.args + explanation)
-        else -> Struct.of(this.toString(), explanation)
+    } else {
+        when (this) {
+            is Struct -> Struct.of(this.functor, this.args + explanation)
+            else -> Struct.of(this.toString(), explanation)
+        }
     }
 }
 
@@ -114,7 +116,9 @@ internal fun Term.withBodyExplanation(explanation: Term): Struct {
 internal fun Term.wrapInPredicate(functor: String, explanation: Term): Struct {
     return if (!this.isWrappableWithExplanation) {
         this.withExplanationNonWrappable(explanation)
-    } else Struct.of(functor, explanation, this)
+    } else {
+        Struct.of(functor, explanation, this)
+    }
 }
 
 /** Wraps the [this] term with the provided in a new predicate that has [functor] as its
@@ -140,21 +144,21 @@ internal fun Term.wrapInPredicateRecursive(functor: String, explanation: Term, d
                     Tuple.of(
                         this[0].wrapInPredicateRecursive(functor, leftVar, depth + 1),
                         this[1].wrapInPredicateRecursive(functor, rightVar, depth + 1),
-                        Struct.of(ProbExplAnd.functor, explanation, leftVar, rightVar),
+                        Struct.of(ProbExplAnd.functor, explanation, leftVar, rightVar)
                     )
                 }
                 ";" -> {
                     Struct.of(
                         ";",
                         this[0].wrapInPredicateRecursive(functor, explanation, depth + 1),
-                        this[1].wrapInPredicateRecursive(functor, explanation, depth + 1),
+                        this[1].wrapInPredicateRecursive(functor, explanation, depth + 1)
                     )
                 }
                 "->" -> {
                     Struct.of(
                         "->",
                         this[0].wrapInPredicateRecursive(functor, Var.anonymous(), depth + 1),
-                        this[1].wrapInPredicateRecursive(functor, explanation, depth + 1),
+                        this[1].wrapInPredicateRecursive(functor, explanation, depth + 1)
                     )
                 }
                 else -> {

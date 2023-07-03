@@ -29,7 +29,7 @@ internal class ProbTerm(
     val id: Long,
     val probability: Double,
     val term: Term,
-    val extraVariables: Set<Term> = emptySet(),
+    val extraVariables: Set<Term> = emptySet()
 ) : Term by Struct.of(ANNOTATION_FUNCTOR, Numeric.of(probability), term) {
 
     override fun freshCopy(): ProbTerm {

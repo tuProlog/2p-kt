@@ -216,7 +216,7 @@ class SyntaxColoring(
             VARIABLE_PATTERN.asGroup(VARIABLE),
             NUMBER_PATTERN.asGroup(NUMBER),
             STRING_PATTERN.asGroup(STRING),
-            FULLSTOP_PATTERN.asGroup(FULLSTOP),
+            FULLSTOP_PATTERN.asGroup(FULLSTOP)
         )
 
         private val MatchResult.styleClass: String

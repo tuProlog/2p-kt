@@ -360,7 +360,7 @@ object Instances {
         |      }
         |   }
         |]
-    """.trimMargin()
+        """.trimMargin()
 
     val commonRulesInYAML =
         """

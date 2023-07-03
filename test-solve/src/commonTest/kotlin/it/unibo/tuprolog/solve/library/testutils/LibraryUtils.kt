@@ -126,7 +126,7 @@ internal object LibraryUtils {
         opSet: OperatorSet,
         theory: Theory,
         primitives: Map<Signature, Primitive>,
-        functions: Map<Signature, LogicFunction>,
+        functions: Map<Signature, LogicFunction>
     ): Library = Library.of(primitives, theory, opSet, functions)
 
     /** Utility function to construct a library from raw data */

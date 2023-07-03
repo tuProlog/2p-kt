@@ -20,7 +20,6 @@ multiProjectHelper {
                     ktProjects.except("test-solve", thisProject).forEach {
                         api(it)
                     }
-
                 }
             }
             getByName("jvmMain") {

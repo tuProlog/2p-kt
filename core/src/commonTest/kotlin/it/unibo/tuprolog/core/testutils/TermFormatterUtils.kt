@@ -117,7 +117,7 @@ object TermFormatterUtils {
                 |   $formatted
                 |is produced instead
                 |
-                """.trimMargin()
+            """.trimMargin()
         )
     }
 }

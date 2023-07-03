@@ -56,8 +56,11 @@ object TestingClauseTheories {
                 override fun visitStruct(term: Struct): Term = when (term.functor) {
                     oldFunctor -> withFunctor(term.args.single().accept(this))
                     else -> term.args.map { it.accept(this) }.let {
-                        if (it.none()) term
-                        else term.functor(it.first(), *it.drop(1).toTypedArray())
+                        if (it.none()) {
+                            term
+                        } else {
+                            term.functor(it.first(), *it.drop(1).toTypedArray())
+                        }
                     }
                 }
             }

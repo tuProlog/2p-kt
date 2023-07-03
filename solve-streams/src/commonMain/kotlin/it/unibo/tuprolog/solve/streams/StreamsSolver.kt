@@ -49,7 +49,7 @@ internal class StreamsSolver constructor(
         stdIn: InputChannel<String> = InputChannel.stdIn(),
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
-        warnings: OutputChannel<Warning> = OutputChannel.warn(),
+        warnings: OutputChannel<Warning> = OutputChannel.warn()
     ) : this(
         unificator,
         libraries,
@@ -57,7 +57,7 @@ internal class StreamsSolver constructor(
         staticKb,
         dynamicKb,
         InputStore.fromStandard(stdIn),
-        OutputStore.fromStandard(stdOut, stdErr, warnings),
+        OutputStore.fromStandard(stdOut, stdErr, warnings)
     )
 
     private var executionContext: StreamsExecutionContext = StreamsExecutionContext(
@@ -87,7 +87,7 @@ internal class StreamsSolver constructor(
             Solve.Request<StreamsExecutionContext>(
                 goal.extractSignature(),
                 goal.args,
-                executionContext,
+                executionContext
             )
         ).map {
             executionContext = it.context.apply(it.solve.sideEffects)

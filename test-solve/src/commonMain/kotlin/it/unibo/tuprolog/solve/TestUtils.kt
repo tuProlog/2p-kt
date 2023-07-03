@@ -52,7 +52,7 @@ fun Struct.halt(withException: ResolutionException) = Solution.halt(this, withEx
 fun Solution.changeQueryTo(query: Struct) = whenIs(
     yes = { it.copy(query) },
     no = { it.copy(query) },
-    halt = { it.copy(query) },
+    halt = { it.copy(query) }
 )
 
 /** Utility function to help writing tests; applies [changeQueryTo] to all [Solution]s in receiver iterable */
@@ -228,7 +228,7 @@ fun Solver.assertHas(
     dynamicKb: Theory,
     flags: FlagStore,
     inputs: InputStore,
-    outputs: OutputStore,
+    outputs: OutputStore
 ) {
     assertRuntimesAreEqual(libraries, this.libraries)
     assertEquals(staticKb, this.staticKb)

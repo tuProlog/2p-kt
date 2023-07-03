@@ -58,8 +58,11 @@ internal class NumericIndex(
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? {
         if (clause.nestedFirstArgument().isNumber) {
             index[clause.asInnerNumeric()].let {
-                return if (it == null) null
-                else extractFirst(clause, it)
+                return if (it == null) {
+                    null
+                } else {
+                    extractFirst(clause, it)
+                }
             }
         } else {
             return extractFirst(clause)
@@ -87,7 +90,9 @@ internal class NumericIndex(
                 ?.asSequence()
                 ?.filter { unificator.match(it.innerClause, clause) }
                 ?: emptySequence()
-        } else extractGlobalIndexedSequence(clause)
+        } else {
+            extractGlobalIndexedSequence(clause)
+        }
     }
 
     override fun retractIndexed(indexed: SituatedIndexedClause) {

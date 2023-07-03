@@ -18,11 +18,13 @@ class TestLexerKt {
 
         val tokens = lexer.getAllTokens()
 
-        if (loggingOn) tokens.forEachIndexed { i, it ->
-            println("token-$i=$it")
-            println("type=${it.type} (i.e., ${it.getNameAccordingTo(lexer)})")
-            println("text=`${it.text}`")
-            println("".padEnd(80, '-'))
+        if (loggingOn) {
+            tokens.forEachIndexed { i, it ->
+                println("token-$i=$it")
+                println("type=${it.type} (i.e., ${it.getNameAccordingTo(lexer)})")
+                println("text=`${it.text}`")
+                println("".padEnd(80, '-'))
+            }
         }
 
         assertEquals(5, tokens.size)

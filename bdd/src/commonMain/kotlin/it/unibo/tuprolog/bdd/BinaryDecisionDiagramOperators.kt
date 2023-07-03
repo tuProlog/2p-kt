@@ -24,7 +24,7 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
         this.applyThenExpansion(
             unaryOp,
             0,
-            0,
+            0
         ) { _, _, _ -> 0 }
     }.first
 }
@@ -44,7 +44,7 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
             that,
             binaryOp,
             0,
-            0,
+            0
         ) { _, _, _ -> 0 }
     }.first
 }
@@ -65,7 +65,7 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.applyThenExpansion(
     unaryOp: (Boolean) -> Boolean,
     expansionFalseTerminal: E,
     expansionTrueTerminal: E,
-    expansionOperator: (node: T, low: E, high: E) -> E,
+    expansionOperator: (node: T, low: E, high: E) -> E
 ): Pair<BinaryDecisionDiagram<T>, E> {
     return runOperationAndCatchErrors {
         this.accept(
@@ -97,7 +97,7 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.applyThenExpansion(
     binaryOp: (Boolean, Boolean) -> Boolean,
     expansionFalseTerminal: E,
     expansionTrueTerminal: E,
-    expansionOperator: (node: T, low: E, high: E) -> E,
+    expansionOperator: (node: T, low: E, high: E) -> E
 ): Pair<BinaryDecisionDiagram<T>, E> {
     return runOperationAndCatchErrors {
         this.accept(
@@ -139,7 +139,7 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.not(): BinaryDecisionDiagram<T>
 fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.notThenExpansion(
     expansionFalseTerminal: E,
     expansionTrueTerminal: E,
-    expansionOperator: (node: T, low: E, high: E) -> E,
+    expansionOperator: (node: T, low: E, high: E) -> E
 ): Pair<BinaryDecisionDiagram<T>, E> {
     return runOperationAndCatchErrors {
         this.applyThenExpansion(
@@ -181,7 +181,7 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.andThenExpansion(
     that: BinaryDecisionDiagram<T>,
     expansionFalseTerminal: E,
     expansionTrueTerminal: E,
-    expansionOperator: (node: T, low: E, high: E) -> E,
+    expansionOperator: (node: T, low: E, high: E) -> E
 ): Pair<BinaryDecisionDiagram<T>, E> {
     return runOperationAndCatchErrors {
         this.applyThenExpansion(
@@ -223,7 +223,7 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.orThenExpansion(
     that: BinaryDecisionDiagram<T>,
     expansionFalseTerminal: E,
     expansionTrueTerminal: E,
-    expansionOperator: (node: T, low: E, high: E) -> E,
+    expansionOperator: (node: T, low: E, high: E) -> E
 ): Pair<BinaryDecisionDiagram<T>, E> {
     return runOperationAndCatchErrors {
         this.applyThenExpansion(

@@ -96,7 +96,7 @@ class TestTermSerializer {
                 |list:
                 |- hello
                 |- false
-                """.trimMargin()
+            """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             listOf(atomOf("hello"), truthOf(false))
         }
@@ -106,7 +106,7 @@ class TestTermSerializer {
                 |list:
                 |- hello
                 |- 1
-                """.trimMargin()
+            """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             listOf(atomOf("hello"), numOf(1))
         }
@@ -153,7 +153,7 @@ class TestTermSerializer {
                 |block:
                 |- hello
                 |- false
-                """.trimMargin()
+            """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             blockOf(atomOf("hello"), truthOf(false))
         }
@@ -163,7 +163,7 @@ class TestTermSerializer {
                 |block:
                 |- hello
                 |- 1
-                """.trimMargin()
+            """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             blockOf(atomOf("hello"), numOf(1))
         }
@@ -194,7 +194,7 @@ class TestTermSerializer {
                 |- list:
                 |  - true
                 |  - ciao
-                """.trimMargin()
+            """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             structOf("f", atomOf("hello"), numOf(2), listOf(truthOf(true), atomOf("ciao")))
         }
@@ -250,7 +250,7 @@ class TestTermSerializer {
         val expected =
             """
                 |var: "Y"
-                """.trimMargin()
+            """.trimMargin()
 
         serializer.assertTermSerializationWorks(expected) {
             varOf("Y")
