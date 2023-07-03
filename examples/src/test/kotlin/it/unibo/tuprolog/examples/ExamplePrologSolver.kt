@@ -45,7 +45,9 @@ class ExamplePrologSolver {
 
         println(solutions.size) // 3
         println(solutions)
-        // [Yes(query=f(X_2), substitution={X_2=a}), Yes(query=f(X_2), substitution={X_2=b}) Yes(query=f(X_2), substitution={X_2=c})]
+        // Yes(query=f(X_2), substitution={X_2=a})
+        // Yes(query=f(X_2), substitution={X_2=b})
+        // Yes(query=f(X_2), substitution={X_2=c})
 
         for (solution in solutions) {
             println(solution.query) // f(X_2), f(X_2), f(X_2)

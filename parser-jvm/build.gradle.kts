@@ -26,6 +26,10 @@ tasks.generateGrammarSource {
     tasks.compileKotlin.orNull?.dependsOn(this)
 }
 
+tasks.generateTestGrammarSource {
+    tasks.compileTestKotlin.orNull?.dependsOn(this)
+}
+
 tasks.withType<AbstractDokkaTask> {
     dependsOn(tasks.generateGrammarSource)
 }

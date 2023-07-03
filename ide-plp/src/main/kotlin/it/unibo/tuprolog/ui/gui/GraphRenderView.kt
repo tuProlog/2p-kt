@@ -122,18 +122,20 @@ class GraphRenderView(
     }
 
     private fun saveToFile() {
-        if (imageBytes != null && imageView.isVisible) {
-            val fileChooser = FileChooser()
-            fileChooser.title = "Save Image"
-            fileChooser.extensionFilters.addAll(
-                FileChooser.ExtensionFilter("PNG image file", "*.png"),
-                FileChooser.ExtensionFilter("All files", "*.*")
-            )
-            fileChooser.initialFileName = "bdd-${System.currentTimeMillis()}.png"
-            val file = fileChooser.showSaveDialog(scene.window)
-            showMessage("Saving image to file...", false)
-            file?.writeBytes(imageBytes!!)
-            showMessage("File saved successfully.", false)
+        imageBytes?.let {
+            if (imageView.isVisible) {
+                val fileChooser = FileChooser()
+                fileChooser.title = "Save Image"
+                fileChooser.extensionFilters.addAll(
+                    FileChooser.ExtensionFilter("PNG image file", "*.png"),
+                    FileChooser.ExtensionFilter("All files", "*.*")
+                )
+                fileChooser.initialFileName = "bdd-${System.currentTimeMillis()}.png"
+                val file = fileChooser.showSaveDialog(scene.window)
+                showMessage("Saving image to file...", false)
+                file?.writeBytes(it)
+                showMessage("File saved successfully.", false)
+            }
         }
     }
 

@@ -19,6 +19,7 @@ class TestLexerKt {
         val tokens = lexer.getAllTokens()
 
         if (loggingOn) {
+            @Suppress("ExplicitItLambdaParameter")
             tokens.forEachIndexed { i, it ->
                 println("token-$i=$it")
                 println("type=${it.type} (i.e., ${it.getNameAccordingTo(lexer)})")

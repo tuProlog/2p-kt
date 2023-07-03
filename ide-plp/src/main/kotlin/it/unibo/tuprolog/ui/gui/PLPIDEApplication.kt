@@ -21,10 +21,12 @@ class PLPIDEApplication : Application() {
         }
     }
 
+    @Suppress("TooGenericExceptionCaught", "TooGenericExceptionThrown", "PrintStackTrace")
     override fun start(stage: Stage) {
         val solutionsListView = ListView<Solution>()
         val customSolutionsTab = Tab("Solutions", solutionsListView)
         customSolutionsTab.id = "tabSolutions" // This substitutes the existing solution tab
+        @Suppress("NoNameShadowing")
         solutionsListView.setCellFactory { ListCellView { PLPSolutionView.of(it) } }
 
         try {

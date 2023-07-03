@@ -83,6 +83,7 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
     @FXML
     lateinit var btnShowBinaryDecisionDiagram: Button
 
+    @Suppress("MagicNumber")
     class YesViewPLP(solution: Solution.Yes) : PLPSolutionView<Pair<Var, Term>, Solution.Yes>(solution) {
         init {
             status.text = "yes:"
@@ -140,10 +141,10 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
         }
     }
 
-    private fun String?.toMonospacedText(): Node {
-        if (this == null) return Text()
-        return Text(this).also { it.style = "-fx-font-family: monospaced" }
-    }
+    // private fun String?.toMonospacedText(): Node {
+    //     if (this == null) return Text()
+    //     return Text(this).also { it.style = "-fx-font-family: monospaced" }
+    // }
 
     fun onShowBinaryDecisionDiagramPressed() {
         solution.binaryDecisionDiagram?.let {
@@ -158,13 +159,13 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
         }
     }
 
-    private fun bddToImage(bdd: BinaryDecisionDiagram<*>): Image {
-        val outputStream = ByteArrayOutputStream()
-        Graphviz
-            .fromString(bdd.toDotString())
-            .render(Format.PNG)
-            .toOutputStream(outputStream)
-        val inputStream = ByteArrayInputStream(outputStream.toByteArray())
-        return Image(inputStream)
-    }
+    // private fun bddToImage(bdd: BinaryDecisionDiagram<*>): Image {
+    //     val outputStream = ByteArrayOutputStream()
+    //     Graphviz
+    //         .fromString(bdd.toDotString())
+    //         .render(Format.PNG)
+    //         .toOutputStream(outputStream)
+    //     val inputStream = ByteArrayInputStream(outputStream.toByteArray())
+    //     return Image(inputStream)
+    // }
 }

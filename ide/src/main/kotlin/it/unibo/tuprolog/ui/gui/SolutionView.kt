@@ -23,10 +23,10 @@ sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
 
         private val ITEM_MARGIN = Insets(0.0, 0.0, 0.0, 55.0)
 
-        val COLOR_YES = Paint.valueOf("LIME")
-        val COLOR_NO = Paint.valueOf("GRAY")
-        val COLOR_HALT = Paint.valueOf("RED")
-        val COLOR_TIMEOUT = Paint.valueOf("GOLD")
+        val COLOR_YES: Paint = Paint.valueOf("LIME")
+        val COLOR_NO: Paint = Paint.valueOf("GRAY")
+        val COLOR_HALT: Paint = Paint.valueOf("RED")
+        val COLOR_TIMEOUT: Paint = Paint.valueOf("GOLD")
 
         fun of(solution: Solution): SolutionView<*, *> =
             solution.whenIs(

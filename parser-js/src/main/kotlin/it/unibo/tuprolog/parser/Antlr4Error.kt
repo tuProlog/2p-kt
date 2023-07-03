@@ -1,5 +1,6 @@
 @file:JsModule("antlr4/src/antlr4/error")
 @file:JsNonModule
+@file:Suppress("UnusedPrivateProperty")
 
 package it.unibo.tuprolog.parser
 
@@ -21,11 +22,26 @@ open external class DefaultErrorStrategy : ErrorStrategy {
 open external class BailErrorStrategy : DefaultErrorStrategy
 
 abstract external class ErrorListener {
-    abstract fun syntaxError(recognizer: dynamic, offendingSymbol: dynamic, line: Int, column: Int, msg: String, e: dynamic)
+    @Suppress("LongParameterList")
+    abstract fun syntaxError(
+        recognizer: dynamic,
+        offendingSymbol: dynamic,
+        line: Int,
+        column: Int,
+        msg: String,
+        e: dynamic
+    )
 }
 
 open external class ConsoleErrorListener : ErrorListener {
-    override fun syntaxError(recognizer: dynamic, offendingSymbol: dynamic, line: Int, column: Int, msg: String, e: dynamic)
+    override fun syntaxError(
+        recognizer: dynamic,
+        offendingSymbol: dynamic,
+        line: Int,
+        column: Int,
+        msg: String,
+        e: dynamic
+    )
 }
 
 external class DiagnosticErrorListener : ErrorListener {
@@ -34,7 +50,14 @@ external class DiagnosticErrorListener : ErrorListener {
     constructor(exactOnly: Boolean)
     constructor()
 
-    override fun syntaxError(recognizer: dynamic, offendingSymbol: dynamic, line: Int, column: Int, msg: String, e: dynamic)
+    override fun syntaxError(
+        recognizer: dynamic,
+        offendingSymbol: dynamic,
+        line: Int,
+        column: Int,
+        msg: String,
+        e: dynamic
+    )
 }
 
 open external class RecognitionException(params: dynamic) : Throwable {

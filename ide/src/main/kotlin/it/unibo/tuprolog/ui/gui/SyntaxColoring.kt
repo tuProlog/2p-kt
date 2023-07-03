@@ -86,7 +86,7 @@ class SyntaxColoring(
                     }
                 }.subscribe { applyHighlighting(it) }
         } else {
-            throw IllegalStateException("Syntax coloring is already active")
+            error("Syntax coloring is already active")
         }
     }
 
@@ -97,7 +97,7 @@ class SyntaxColoring(
                 it.unsubscribe()
                 subscription = null
             } else {
-                throw IllegalStateException("Syntax coloring is not active")
+                error("Syntax coloring is not active")
             }
         }
     }

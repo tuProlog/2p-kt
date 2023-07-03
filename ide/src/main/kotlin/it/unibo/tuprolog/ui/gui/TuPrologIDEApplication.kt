@@ -5,6 +5,7 @@ import javafx.stage.Stage
 import kotlin.system.exitProcess
 
 class TuPrologIDEApplication : Application() {
+    @Suppress("TooGenericExceptionCaught", "PrintStackTrace", "TooGenericExceptionThrown")
     override fun start(stage: Stage) {
         try {
             TuPrologIDEBuilder(stage).show()

@@ -1,5 +1,6 @@
 @file:JsModule("antlr4")
 @file:JsNonModule
+@file:Suppress("TooManyFunctions", "FunctionNaming", "UnusedPrivateProperty")
 
 package it.unibo.tuprolog.parser
 

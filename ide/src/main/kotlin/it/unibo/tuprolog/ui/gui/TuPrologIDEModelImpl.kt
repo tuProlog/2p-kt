@@ -25,10 +25,15 @@ import java.io.File
 import java.util.EnumSet
 import java.util.concurrent.ExecutorService
 
+@Suppress("UnsafeCallOnNullableType", "TooManyFunctions")
 internal class TuPrologIDEModelImpl(
     override val executor: ExecutorService,
     var customizer: ((MutableSolver) -> MutableSolver)? = { it }
 ) : TuPrologIDEModel {
+
+    companion object {
+        const val DEFAULT_TIMEOUT: Long = 5000
+    }
 
     private data class FileContent(var text: String, var changed: Boolean = true) {
         fun text(text: String) {
@@ -61,7 +66,7 @@ internal class TuPrologIDEModelImpl(
             field = value
         }
 
-    override var solveOptions: SolveOptions = SolveOptions.DEFAULT.setTimeout(5000)
+    override var solveOptions: SolveOptions = SolveOptions.DEFAULT.setTimeout(DEFAULT_TIMEOUT)
         set(value) {
             val changed = field != value
             field = value
@@ -136,10 +141,11 @@ internal class TuPrologIDEModelImpl(
     }
 
     private inline fun <T> ensuringStateIs(state: State, vararg states: State, action: () -> T): T {
-        if (EnumSet.of(state, *states).contains(this.state)) {
+        val admissibleStates = EnumSet.of(state, *states)
+        if (this.state in admissibleStates) {
             return action()
         } else {
-            throw IllegalStateException()
+            error("Invalid state $state: should be among $admissibleStates")
         }
     }
 
@@ -226,22 +232,29 @@ internal class TuPrologIDEModelImpl(
     }
 
     private fun loadCurrentFileAsStaticKB(onlyIfChanged: Boolean = true) {
-        solver.value.let { solver ->
-            currentFile?.let { file ->
-                files[file].let { content ->
-                    if (!onlyIfChanged || content?.changed != false) {
-                        try {
-                            val theory = content?.text()?.parseAsTheory(solver.operators) ?: Theory.empty(solver.unificator)
-                            solver.resetDynamicKb()
-                            solver.loadStaticKb(theory)
-                            onNewStaticKb.push(SolverEvent(Unit, solver))
-                        } catch (e: ParseException) {
-                            content?.changed = true
-                            throw SyntaxException.InTheorySyntaxError(file, e)
-                        }
-                    }
-                }
-            }
+        currentFile?.let {
+            loadCurrentFileAsStaticKB(solver.value, it, files[it], onlyIfChanged)
+        }
+    }
+
+    private fun loadCurrentFileAsStaticKB(
+        solver: MutableSolver,
+        file: File,
+        content: FileContent?,
+        onlyIfChanged: Boolean
+    ) {
+        if (onlyIfChanged && content?.changed == true) {
+            return
+        }
+        try {
+            val theory = content?.text()?.parseAsTheory(solver.operators)
+                ?: Theory.empty(solver.unificator)
+            solver.resetDynamicKb()
+            solver.loadStaticKb(theory)
+            onNewStaticKb.push(SolverEvent(Unit, solver))
+        } catch (e: ParseException) {
+            content?.changed = true
+            throw SyntaxException.InTheorySyntaxError(file, e)
         }
     }
 
