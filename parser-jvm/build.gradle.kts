@@ -1,3 +1,5 @@
+import org.jetbrains.dokka.gradle.AbstractDokkaTask
+
 plugins {
     antlr
     id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
@@ -22,6 +24,10 @@ tasks.generateGrammarSource {
     arguments = arguments + listOf("-visitor", "-long-messages")
     outputDirectory = File("${project.buildDir}/generated-src/antlr/main/it/unibo/tuprolog/parser")
     tasks.compileKotlin.orNull?.dependsOn(this)
+}
+
+tasks.withType<AbstractDokkaTask> {
+    dependsOn(tasks.generateGrammarSource)
 }
 
 tasks.getByName<Jar>("sourcesJar") {
