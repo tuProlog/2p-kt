@@ -28,7 +28,7 @@ multiProjectHelper {
     val baseProjectTemplate = buildSet {
         add(Plugins.documentation)
         add(Plugins.linter)
-        // add(Plugins.bugFinder)
+        add(Plugins.bugFinder)
         add(Plugins.versions)
     }
 
