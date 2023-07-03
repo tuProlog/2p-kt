@@ -20,7 +20,7 @@ kotlin {
             }
         }
 
-        getByName("jvmMain") {
+        getByName("jsMain") {
             dependencies {
                 implementation(npm("sync-request", libs.versions.npm.syncRequest.get()))
             }
