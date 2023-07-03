@@ -13,15 +13,14 @@ dependencies {
     api(project(":parser-theory"))
     api(project(":solve-classic"))
     api(libs.richtextFx)
-    api(libs.javafx.controls)
-    api(libs.javafx.fxml)
-    libs.javafx.graphics.get().let {
-        val dependencyNotation = "${it.module.group}:${it.module.name}:${it.versionConstraint.preferredVersion}"
-        supportedPlatforms.forEach { platform ->
-            runtimeOnly("$dependencyNotation:$platform")
+    for (jfxModule in listOf(libs.javafx.base, libs.javafx.controls, libs.javafx.fxml, libs.javafx.graphics)) {
+        for (platform in supportedPlatforms) {
+            val dependency = jfxModule.get().let {
+                "${it.module.group}:${it.module.name}:${it.versionConstraint.requiredVersion}"
+            }
+            api("$dependency:$platform")
         }
     }
-
     testImplementation(kotlin("test-junit"))
 }
 

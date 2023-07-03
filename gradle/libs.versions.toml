@@ -8,7 +8,7 @@ jackson = "2.15.0"
 orchid = "0.21.1"
 antlr = "4.12.0"
 kotlinx-coroutines = "1.6.4"
-javafx = "20-ea+1"
+javafx = "19"
 npm-yaml = "1.10.0" # yaml
 npm-tuprolog-parserUtils = "0.4.1" # @tuprolog/parser-utils
 npm-syncRequest = "6.1.0" # sync-request
@@ -43,6 +43,7 @@ kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 ktNpmPublish = "io.github.gciatto:kt-npm-publish:0.3.9"
 npmPublish = { module = "dev.petuska:npm-publish-gradle-plugin", version.ref = "npmPublish" }
 dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+javafx-base = { module = "org.openjfx:javafx-base", version.ref = "javafx" }
 javafx-fxml = { module = "org.openjfx:javafx-fxml", version.ref = "javafx" }
 javafx-controls = { module = "org.openjfx:javafx-controls", version.ref = "javafx" }
 javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javafx" }

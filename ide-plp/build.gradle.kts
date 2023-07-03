@@ -11,14 +11,6 @@ dependencies {
     api(project(":ide"))
     api(project(":solve-problog"))
     api(libs.graphviz)
-
-    libs.javafx.graphics.get().let {
-        val dependencyNotation = "${it.module.group}:${it.module.name}:${it.versionConstraint.preferredVersion}"
-        supportedPlatforms.forEach { platform ->
-            runtimeOnly("$dependencyNotation:$platform")
-        }
-    }
-
     testImplementation(kotlin("test-junit"))
 }
 
