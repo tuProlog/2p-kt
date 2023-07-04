@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
@@ -38,7 +39,7 @@ kotlin {
             }
 
             tasks.findByName("sourcesJar")?.dependsOn(createInfoKt)
-            tasks.findByName("detekt")?.dependsOn(createInfoKt)
+            tasks.withType<Detekt> { dependsOn(createInfoKt) }
             tasks.withType<AbstractDokkaTask>().configureEach { dependsOn(createInfoKt) }
             tasks.withType<BaseKtLintCheckTask> { dependsOn(createInfoKt) }
             tasks.withType<KotlinCompile<*>> { dependsOn(createInfoKt) }
