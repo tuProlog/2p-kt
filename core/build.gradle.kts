@@ -38,7 +38,8 @@ kotlin {
                 outputs.file(infoKtFile)
             }
 
-            tasks.findByName("sourcesJar")?.dependsOn(createInfoKt)
+            tasks.matching { it.name.endsWith("sourcesJar", ignoreCase = true) }
+                .configureEach { dependsOn(createInfoKt) }
             tasks.withType<Detekt> { dependsOn(createInfoKt) }
             tasks.withType<AbstractDokkaTask>().configureEach { dependsOn(createInfoKt) }
             tasks.withType<BaseKtLintCheckTask> { dependsOn(createInfoKt) }
