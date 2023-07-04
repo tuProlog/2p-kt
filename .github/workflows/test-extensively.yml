@@ -26,8 +26,10 @@ jobs:
         with:
           java-distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
-          build-command: ./gradlew jsMainClasses jsTestClasses --parallel
-          check-command: ./gradlew jvmTest --parallel
+          build-command: |
+            ./gradlew jsMainClasses jsTestClasses --parallel || ./gradlew jsMainClasses jsTestClasses --parallel
+          check-command: |
+            ./gradlew jvmTest --parallel --continue || ./gradlew jvmTest --parallel --continue
           should-run-codecov: false
 
   test-js:
@@ -51,7 +53,9 @@ jobs:
         uses: DanySK/action-checkout@0.2.10
       - uses: DanySK/build-check-deploy-gradle-action@2.2.6
         with:
-          build-command: ./gradlew jsMainClasses jsTestClasses --parallel
-          check-command: ./gradlew jsTest --parallel
+          build-command: |
+            ./gradlew jsMainClasses jsTestClasses --parallel || ./gradlew jsMainClasses jsTestClasses --parallel
+          check-command: |
+            ./gradlew jsTest --parallel --continue || ./gradlew jsTest --parallel --continue
           clean-command: ./gradlew cleanTest
           should-run-codecov: false

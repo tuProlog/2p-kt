@@ -1,5 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -21,6 +25,7 @@ val ci = !System.getenv("CI").isNullOrBlank()
 val ciTag = if (ci) "CI" else "Local"
 val osTag = "OS: " + tag("%s (%s) v. %s", "os.name", "os.arch", "os.version")
 val jvmTag = "JVM: " + tag("%s v. %s", "java.vm.name", "java.vm.version")
+val whenTag = "When: ${ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT)}"
 
 gradleEnterprise {
     buildScan {
@@ -29,10 +34,11 @@ gradleEnterprise {
         tag(ciTag)
         tag(osTag)
         tag(jvmTag)
+        tag(whenTag)
         publishOnFailure()
         buildScanPublished {
             if (ci) {
-                println("::error title=Gradle scan for $osTag, $jvmTag::$buildScanUri")
+                println("::error title=Gradle scan for $osTag, $jvmTag, $whenTag::$buildScanUri")
             }
         }
     }

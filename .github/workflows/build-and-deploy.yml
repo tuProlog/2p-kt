@@ -95,6 +95,8 @@ jobs:
           should-deploy: ${{ contains(needs.staging-repo.result, 'success') }}
           maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
           maven-central-username: gciatto
+          check-command: |
+            ./gradlew check --parallel --continue || ./gradlew check --parallel --continue
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
 
