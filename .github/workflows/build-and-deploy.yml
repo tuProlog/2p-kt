@@ -95,9 +95,11 @@ jobs:
           should-deploy: ${{ contains(needs.staging-repo.result, 'success') }}
           maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
           maven-central-username: gciatto
-          check-command: |
+          build-command: |
             SKIP_DOC="-x dokkaHtml -x javadoc -x dokkaJavadoc -x dokkaGfm -x dokkaJekyll"
-            ./gradlew check $SKIP_DOC --parallel --continue || ./gradlew check $SKIP_DOC --parallel --continue
+            ./gradlew assemble $SKIP_DOC --parallel || ./gradlew assemble $SKIP_DOC --parallel
+          check-command: |
+            ./gradlew check --parallel --continue || ./gradlew check --parallel --continue
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
 
