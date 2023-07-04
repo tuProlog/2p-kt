@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.parser.dynamic
 
 import java.util.EnumSet
-import java.util.stream.Stream
 
 enum class Associativity {
     XF, YF, XFX, XFY, YFX, FX, FY;

@@ -6,11 +6,8 @@ import org.antlr.v4.runtime.BufferedTokenStream
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.Recognizer
-import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.TokenStream
-import org.junit.Assert
 import org.junit.Test
-import java.util.LinkedList
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

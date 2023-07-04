@@ -1,8 +1,5 @@
 package it.unibo.tuprolog.ui.gui
 
-import guru.nidi.graphviz.engine.Format
-import guru.nidi.graphviz.engine.Graphviz
-import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.bdd.toDotString
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
@@ -16,19 +13,14 @@ import it.unibo.tuprolog.solve.probability
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.geometry.Insets
-import javafx.scene.Node
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
-import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Circle
-import javafx.scene.text.Text
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() {
