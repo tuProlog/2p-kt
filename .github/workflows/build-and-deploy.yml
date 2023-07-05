@@ -116,7 +116,11 @@ jobs:
       - test-extensively
       - build
     runs-on: ubuntu-22.04
-    if: needs.check-secrets.outputs.run-with-secrets == 'true'
+    if: |
+      always() &&
+      needs.check-secrets.outputs.run-with-secrets == 'true' &&
+      needs.build.result == 'success' &&
+      (needs.test-extensively.result == 'success' || needs.test-extensively.result == 'skipped')
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v3.5.3
@@ -145,7 +149,10 @@ jobs:
       - build
       - close-staging-repos
     runs-on: ubuntu-22.04
-    if: needs.check-secrets.outputs.run-with-secrets == 'true'
+    if: |
+      always() &&
+      needs.check-secrets.outputs.run-with-secrets == 'true' &&
+      needs.build.close-staging-repos == 'success'
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.3
@@ -186,6 +193,7 @@ jobs:
       - close-staging-repos
       - release
       - build
+      - test-extensively
     if: >-
       always() && (
         contains(join(needs.*.result, ','), 'failure')
