@@ -85,6 +85,7 @@ jobs:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.10
       - uses: DanySK/build-check-deploy-gradle-action@2.2.6
+        timeout-minutes: 120
         with:
           # Dry-deployment
           deploy-command: |
