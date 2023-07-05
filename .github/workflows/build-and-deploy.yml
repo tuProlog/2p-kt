@@ -89,6 +89,7 @@ jobs:
         with:
           # Dry-deployment
           deploy-command: |
+            ./gradlew assemble --parallel --continue || ./gradlew assemble --parallel --continue
             NEXT_VERSION="${{ needs.staging-repo.outputs.next-version }}"
             OVERRIDE_VERSION=$([[ "$NEXT_VERSION" != "" ]] && echo "-PforceVersion=$(echo $NEXT_VERSION)" || echo "")
             ./gradlew $OVERRIDE_VERSION -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }} uploadProject --parallel
