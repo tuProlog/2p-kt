@@ -81,6 +81,8 @@ jobs:
     concurrency:
       group: build-${{ github.workflow }}-${{ matrix.os }}-${{ github.event.number || github.ref }}
       cancel-in-progress: true
+    env:
+      GRADLE_OPTS: -Dorg.gradle.daemon=false
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.10
@@ -89,7 +91,7 @@ jobs:
         with:
           # Dry-deployment
           deploy-command: |
-            ./gradlew assemble --parallel --continue || ./gradlew assemble --parallel --continue
+            ./gradlew assemble --continue || ./gradlew assemble --continue
             NEXT_VERSION="${{ needs.staging-repo.outputs.next-version }}"
             OVERRIDE_VERSION=$([[ "$NEXT_VERSION" != "" ]] && echo "-PforceVersion=$(echo $NEXT_VERSION)" || echo "")
             ./gradlew $OVERRIDE_VERSION -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }} uploadProject --parallel
