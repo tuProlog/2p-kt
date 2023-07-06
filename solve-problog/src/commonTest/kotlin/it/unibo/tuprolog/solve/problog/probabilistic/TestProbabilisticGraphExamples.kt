@@ -36,7 +36,7 @@ class TestProbabilisticGraphExamples {
                 QueryWithSolutions(
                     "path(1,6)".parseAsStruct(),
                     listOf(ExpectedSolution("path(1,6)".parseAsStruct(), 0.2167296))
-                ),
+                )
             )
         )
     }

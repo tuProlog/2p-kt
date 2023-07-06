@@ -22,7 +22,7 @@ interface TestConcurrentBigList<T : WithAssertingEquals> : FromSequence<T>, Solv
                         M `is` (N - 1),
                         "biglist"(M, X)
                     )
-                },
+                }
             )
 
             val solver = solverWithDefaultBuiltins(staticKb = theory)

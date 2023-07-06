@@ -26,7 +26,7 @@ class TestTheoryMetadata {
         MutableTheory.emptyIndexed(Unificator.default),
         MutableTheory.emptyListed(Unificator.default),
         MutableTheory.indexedOf(Unificator.default, TheoryUtils.wellFormedClauses),
-        MutableTheory.listedOf(Unificator.default, TheoryUtils.wellFormedClauses),
+        MutableTheory.listedOf(Unificator.default, TheoryUtils.wellFormedClauses)
     )
 
     private data class Metadata<T>(val value: T)

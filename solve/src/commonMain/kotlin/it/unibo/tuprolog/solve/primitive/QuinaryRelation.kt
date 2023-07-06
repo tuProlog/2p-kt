@@ -12,7 +12,7 @@ abstract class QuinaryRelation<E : ExecutionContext>(operator: String) : Primiti
         second: Term,
         third: Term,
         fourth: Term,
-        fifth: Term,
+        fifth: Term
     ): Sequence<Solve.Response>
 
     final override fun uncheckedImplementation(request: Solve.Request<E>): Sequence<Solve.Response> {

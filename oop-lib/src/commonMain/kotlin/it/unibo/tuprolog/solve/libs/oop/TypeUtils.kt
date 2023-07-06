@@ -18,7 +18,7 @@ private val PRIMITIVE_TYPES = setOf(
     Byte::class,
     Char::class,
     Double::class,
-    Float::class,
+    Float::class
 )
 
 internal const val id = "[a-zA-Z_][a-zA-Z0-9_]*"

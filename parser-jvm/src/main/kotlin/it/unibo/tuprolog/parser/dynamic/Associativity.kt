@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.parser.dynamic
 
 import java.util.EnumSet
-import java.util.stream.Stream
 
 enum class Associativity {
     XF, YF, XFX, XFY, YFX, FX, FY;
@@ -14,29 +13,25 @@ enum class Associativity {
         }
 
         @JvmField
-        val X_FIRST = EnumSet.of(XF, XFX, XFY, FX)
+        val X_FIRST: EnumSet<Associativity> = EnumSet.of(XF, XFX, XFY, FX)
 
         @JvmField
-        val Y_FIRST = EnumSet.of(YF, YFX, FY)
+        val Y_FIRST: EnumSet<Associativity> = EnumSet.of(YF, YFX, FY)
 
         @JvmField
-        val INFIX = EnumSet.of(XFX, YFX, XFY)
+        val INFIX: EnumSet<Associativity> = EnumSet.of(XFX, YFX, XFY)
 
         @JvmField
-        val PREFIX = EnumSet.of(FX, FY)
+        val PREFIX: EnumSet<Associativity> = EnumSet.of(FX, FY)
 
         @JvmField
-        val POSTFIX = EnumSet.of(YF, XF)
+        val POSTFIX: EnumSet<Associativity> = EnumSet.of(YF, XF)
 
         @JvmField
-        var NON_PREFIX = EnumSet.complementOf(PREFIX)
+        var NON_PREFIX: EnumSet<Associativity> = EnumSet.complementOf(PREFIX)
 
         @JvmStatic
-        fun isAssociativity(value: String?): Boolean {
-            return Stream.of(*values())
-                .anyMatch {
-                    it.toString().equals(value, ignoreCase = true)
-                }
-        }
+        fun isAssociativity(value: String?): Boolean =
+            values().asSequence().any { it.name.equals(value, ignoreCase = true) }
     }
 }

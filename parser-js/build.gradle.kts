@@ -1,22 +1,27 @@
 plugins {
-    `kotlin-js-only`
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 kotlin {
     sourceSets {
-        val main by getting {
+        main {
             dependencies {
                 api(kotlin("stdlib-js"))
                 api(npm("@tuprolog/parser-utils", libs.versions.npm.tuprolog.parserUtils.get()))
             }
         }
-
-        val test by getting {
+        test {
             dependencies {
                 implementation(kotlin("test-js"))
             }
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications.withType<MavenPublication> {
+            pom.packaging = "klib"
         }
     }
 }

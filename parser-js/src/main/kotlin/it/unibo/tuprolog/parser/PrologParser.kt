@@ -1,5 +1,6 @@
 @file:JsModule("@tuprolog/parser-utils")
 @file:JsNonModule
+@file:Suppress("VariableNaming", "TooManyFunctions", "UnusedPrivateProperty")
 
 package it.unibo.tuprolog.parser
 

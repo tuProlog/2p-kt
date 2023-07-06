@@ -3,7 +3,7 @@ plugins {
 }
 
 configurations {
-    val orchidRuntimeOnly by getting {
+    getByName("orchidRuntimeOnly") {
         resolutionStrategy {
             force(libs.plantuml)
         }
@@ -23,6 +23,7 @@ dependencies {
     plantuml(libs.plantuml)
 }
 
+@Suppress("Deprecation")
 repositories {
     jcenter()
     mavenCentral()
@@ -56,7 +57,7 @@ if (!plantUmlFiles.isEmpty) {
                 .map(::File)
         )
         classpath = configurations.getByName("plantuml")
-        main = "net.sourceforge.plantuml.Run"
+        mainClass.set("net.sourceforge.plantuml.Run")
         args("-tsvg", "-o", "$projectDir/src/orchid/resources/assets/generated")
         args(plantUmlFiles.map { it.absolutePath })
     }

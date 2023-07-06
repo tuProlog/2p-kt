@@ -69,7 +69,7 @@ class TestClausesParser {
             |nil.
             |1 :: nil.
             |1 :: 2 :: nil.
-        """.trimMargin()
+            """.trimMargin()
 
         val th = with(ClausesParser.withStandardOperators()) {
             parseTheory(input)
@@ -101,7 +101,7 @@ class TestClausesParser {
             |1 -- 2.
             |1 -- 2 ++ 3.
             |1 ++ 2 -- 3 ++ 4.
-        """.trimMargin()
+            """.trimMargin()
 
         val th = with(ClausesParser.withStandardOperators()) {
             parseTheory(input)

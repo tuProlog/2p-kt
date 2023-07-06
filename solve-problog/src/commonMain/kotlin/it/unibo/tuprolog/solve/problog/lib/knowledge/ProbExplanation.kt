@@ -100,7 +100,7 @@ internal interface ProbExplanation {
             return BinaryDecisionDiagramExplanation(
                 bddOf(term),
                 BinaryDecisionDiagramExplanation.ComputedValue(
-                    term.probability,
+                    term.probability
                 )
             )
         }

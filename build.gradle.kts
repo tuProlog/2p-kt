@@ -1,42 +1,67 @@
+import io.github.gciatto.kt.mpp.Plugins
+import io.github.gciatto.kt.mpp.ProjectType
+import io.github.gciatto.kt.mpp.log
+import io.github.gciatto.kt.mpp.nodeVersion
+
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.gitSemVer)
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
-    `print-versions`
+    alias(libs.plugins.ktMpp.multiProjectHelper)
 }
 
-group = "io.github.gciatto"
+group = "it.unibo.tuprolog"
 
 gitSemVer {
     excludeLightweightTags()
     assignGitSemanticVersion()
 }
 
-logger.log(LogLevel.LIFECYCLE, "${rootProject.name} version: $version")
+log("version: $version", LogLevel.LIFECYCLE)
+
+multiProjectHelper {
+    defaultProjectType = ProjectType.KOTLIN // default project type for all projects which are not explicitly marked
+
+    jvmProjects(":examples", ":ide", ":ide-plp", ":parser-jvm") // marks projects as JVM-only
+    jsProjects(":parser-js") // marks projects as JS-only
+    otherProjects(":documentation") // marks projects as non-Kotlin related
+
+    val baseProjectTemplate = buildSet {
+        add(Plugins.documentation)
+        add(Plugins.linter)
+        add(Plugins.bugFinder)
+        add(Plugins.versions)
+    }
+
+    ktProjectTemplate = buildSet {
+        addAll(baseProjectTemplate)
+        add(Plugins.multiplatform)
+    }
+
+    jvmProjectTemplate = buildSet {
+        addAll(baseProjectTemplate)
+        add(Plugins.jvmOnly)
+    }
+
+    jsProjectTemplate = buildSet {
+        addAll(baseProjectTemplate)
+        add(Plugins.jsOnly)
+    }
+
+    otherProjectTemplate = buildSet {
+        add(Plugins.versions)
+    }
+
+    applyProjectTemplates()
+}
 
 allprojects {
     repositories {
+        google()
         mavenCentral()
     }
-    apply(plugin = "kotlin-style-checker")
-    apply(plugin = "kotlin-bug-finder")
 }
 
-group = "it.unibo.tuprolog"
-
-jvmVersion(libs.versions.jvm)
-nodeVersion(libs.versions.node, rootProject.findProperty("nodeVersion"))
-
-subprojects {
-    group = rootProject.group
-    version = rootProject.version
-
-    afterEvaluate {
-        jvmVersion(libs.versions.jvm)
-        nodeVersion(libs.versions.node, project.findProperty("nodeVersion"))
-        packageJson {
-            version.set(project.npmCompliantVersion)
-        }
-    }
+project.findProperty("nodeVersion")?.let { it.toString() }?.takeIf { it.isNotBlank() }?.let {
+    nodeVersion(it)
+    log("override NodeJS version: $it", LogLevel.LIFECYCLE)
 }

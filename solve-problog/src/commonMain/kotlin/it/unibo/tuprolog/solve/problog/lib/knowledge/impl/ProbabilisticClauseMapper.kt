@@ -52,11 +52,11 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
         }
 
         /* This is a negated probabilistic fact (A fact expressed as negated logic
-        * i.e. providing the probability of that predicate being false).
-        * We want to map these cases to positive logic facts, so we make them become
-        * regular facts and negate the original probability value.
-        * Clearly, this is optimized to make false facts with 0.0 stay as they
-        * are, in order to lead the resolution engine to a failure. */
+         * i.e. providing the probability of that predicate being false).
+         * We want to map these cases to positive logic facts, so we make them become
+         * regular facts and negate the original probability value.
+         * Clearly, this is optimized to make false facts with 0.0 stay as they
+         * are, in order to lead the resolution engine to a failure. */
         var bodyTerm = rule.body
         if (rule.body is Truth) {
             if (!rule.body.isTrue && probability < 1.0) {
@@ -95,8 +95,8 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
             Struct.of(
                 ",",
                 newBody,
-                Struct.of(ProbExplAnd.functor, explanationVar, explanationBodyVar, explanation.toTerm()),
-            ),
+                Struct.of(ProbExplAnd.functor, explanationVar, explanationBodyVar, explanation.toTerm())
+            )
         )
     }
 }

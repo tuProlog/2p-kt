@@ -1,8 +1,10 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.dokka.gradle.AbstractDokkaTask
+import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
+
 plugins {
-    `kotlin-jvm-only`
     antlr
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 dependencies {
@@ -24,6 +26,33 @@ tasks.generateGrammarSource {
     arguments = arguments + listOf("-visitor", "-long-messages")
     outputDirectory = File("${project.buildDir}/generated-src/antlr/main/it/unibo/tuprolog/parser")
     tasks.compileKotlin.orNull?.dependsOn(this)
+    tasks.findByName("sourcesJar")?.dependsOn(this)
+}
+
+tasks.generateTestGrammarSource {
+    tasks.compileTestKotlin.orNull?.dependsOn(this)
+}
+
+fun dependOnGrammarGeneration(task: Task) {
+    if ("Test" in task.name) {
+        task.dependsOn(tasks.generateTestGrammarSource)
+    } else {
+        task.dependsOn(tasks.generateGrammarSource)
+    }
+}
+
+tasks.withType<AbstractDokkaTask>(::dependOnGrammarGeneration)
+tasks.withType<Detekt>(::dependOnGrammarGeneration)
+tasks.withType<BaseKtLintCheckTask>(::dependOnGrammarGeneration)
+
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    filter {
+        exclude("**/generated-src/**")
+    }
+}
+
+tasks.withType<AbstractDokkaTask> {
+    dependsOn(tasks.generateGrammarSource)
 }
 
 tasks.getByName<Jar>("sourcesJar") {

@@ -59,7 +59,7 @@ interface Solver : ExecutionContextAware {
         stdIn: InputChannel<String> = this.standardInput,
         stdOut: OutputChannel<String> = this.standardOutput,
         stdErr: OutputChannel<String> = this.standardError,
-        warnings: OutputChannel<Warning> = this.warnings,
+        warnings: OutputChannel<Warning> = this.warnings
     ): Solver
 
     @JsName("clone")

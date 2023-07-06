@@ -21,10 +21,12 @@ class PLPIDEApplication : Application() {
         }
     }
 
+    @Suppress("TooGenericExceptionCaught", "TooGenericExceptionThrown", "PrintStackTrace")
     override fun start(stage: Stage) {
         val solutionsListView = ListView<Solution>()
         val customSolutionsTab = Tab("Solutions", solutionsListView)
         customSolutionsTab.id = "tabSolutions" // This substitutes the existing solution tab
+        @Suppress("NoNameShadowing")
         solutionsListView.setCellFactory { ListCellView { PLPSolutionView.of(it) } }
 
         try {
@@ -34,7 +36,7 @@ class PLPIDEApplication : Application() {
                 title = "tuProlog IDE for Probabilistic Logic Programming",
                 customTabs = listOf(
                     CustomTab(
-                        customSolutionsTab,
+                        customSolutionsTab
                     ) { this.configureModel(it, solutionsListView, customSolutionsTab) }
                 )
             ).show()
@@ -51,7 +53,7 @@ class PLPIDEApplication : Application() {
     private fun configureModel(
         model: TuPrologIDEModel,
         listView: ListView<Solution>,
-        listTab: Tab,
+        listTab: Tab
     ) {
         // Hook events to the custom solutions tab
         model.onReset.subscribe { listView.items.clear() }

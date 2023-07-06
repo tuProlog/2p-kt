@@ -15,6 +15,7 @@ object GraphvizRenderer {
 
     private var available: Future<Boolean> = CompletableFuture.completedFuture(false)
 
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun initialize() {
         available = CompletableFuture.supplyAsync {
             try {

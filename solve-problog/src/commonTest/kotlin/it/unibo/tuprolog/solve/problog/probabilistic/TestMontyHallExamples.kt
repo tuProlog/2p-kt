@@ -44,7 +44,7 @@ class TestMontyHallExamples {
                     listOf(
                         ExpectedSolution("prize(1)".parseAsStruct(), 0.33333333),
                         ExpectedSolution("prize(2)".parseAsStruct(), 0.33333333),
-                        ExpectedSolution("prize(3)".parseAsStruct(), 0.33333333),
+                        ExpectedSolution("prize(3)".parseAsStruct(), 0.33333333)
                     )
                 ),
                 QueryWithSolutions(
@@ -58,7 +58,7 @@ class TestMontyHallExamples {
                 QueryWithSolutions(
                     "win_switch".parseAsStruct(),
                     listOf(ExpectedSolution("win_switch".parseAsStruct(), 0.66666667))
-                ),
+                )
             )
         )
     }
@@ -90,7 +90,7 @@ class TestMontyHallExamples {
                 QueryWithSolutions(
                     "switched_gets_car".parseAsStruct(),
                     listOf(ExpectedSolution("switched_gets_car".parseAsStruct(), 0.66666667))
-                ),
+                )
             )
         )
     }

@@ -1,8 +1,5 @@
-import org.jetbrains.kotlin.konan.util.visibleName
-
 plugins {
     `kotlin-dsl`
-    `java-gradle-plugin`
     alias(libs.plugins.kotlin.jvm)
 }
 
@@ -12,23 +9,20 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.kotlin.bom)
-    implementation(libs.kotlin.gradlePlugin)
-    implementation(libs.npmPublish)
-    implementation(libs.dokka)
-    implementation(libs.ktlint)
-    implementation(libs.detekt)
-    implementation(libs.javalin)
     implementation(libs.shadowJar)
+    implementation(libs.kotlin.gradlePlugin)
 }
 
-gradlePlugin {
-    plugins {
-        create("mock-service") {
-            id = "mock-service"
-            displayName = "Mock Service"
-            description = "Mock Service Plugin for starting WS in Gradle"
-            implementationClass = "MockServicePlugin"
-        }
+val targetJvm = libs.versions.jvm.get()
+val targetJava = JavaVersion.valueOf("VERSION_$targetJvm")
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = targetJvm
     }
+}
+
+java {
+    sourceCompatibility = targetJava
+    targetCompatibility = targetJava
 }

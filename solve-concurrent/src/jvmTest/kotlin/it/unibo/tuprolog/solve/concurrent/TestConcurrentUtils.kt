@@ -55,7 +55,9 @@ class KeySolution(val solution: Solution) {
 
         return if (this is LogicError && other is LogicError) {
             errorStruct.equals(other.errorStruct, false) && message == other.message
-        } else true
+        } else {
+            true
+        }
     }
 
     private val ResolutionException.hash: Int
@@ -156,7 +158,9 @@ class KeySolution(val solution: Solution) {
         )
         val exceptionEqual = if (solution is Solution.Halt && other.solution is Solution.Halt) {
             solution.exception.similar(other.solution.exception)
-        } else true
+        } else {
+            true
+        }
         return queryEqual && substitutionEqual && exceptionEqual
     }
 

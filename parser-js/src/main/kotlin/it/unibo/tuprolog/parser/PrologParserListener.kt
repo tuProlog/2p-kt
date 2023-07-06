@@ -3,6 +3,7 @@
 
 package it.unibo.tuprolog.parser
 
+@Suppress("TooManyFunctions")
 open external class PrologParserListener {
 
     open fun enterSingletonTerm(ctx: SingletonTermContext)

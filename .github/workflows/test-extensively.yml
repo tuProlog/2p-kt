@@ -1,0 +1,61 @@
+name: Test Extensively
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  test-jvm:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-2022, macos-12, ubuntu-22.04 ]
+        java-version: [11, 17, 19]
+        jdk-dist:
+          - adopt-hotspot
+          - temurin
+#          - adopt-openj9
+#          - zulu
+    runs-on: ${{ matrix.os }}
+    concurrency:
+      group: build-${{ github.workflow }}-${{ matrix.os }}-${{ matrix.java-version }}-${{ matrix.jdk-dist }}-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: DanySK/action-checkout@0.2.10
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.6
+        with:
+          java-distribution: ${{ matrix.jdk-dist }}
+          java-version: ${{ matrix.java-version }}
+          build-command: |
+            ./gradlew jsMainClasses jsTestClasses --parallel || ./gradlew jsMainClasses jsTestClasses --parallel
+          check-command: |
+            ./gradlew jvmTest --parallel --continue || ./gradlew jvmTest --parallel --continue
+          should-run-codecov: false
+
+  test-js:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-2022, macos-12, ubuntu-22.04 ]
+        node-version:
+          - 'latest-16'
+          - 'latest-18'
+          - 'latest-19'
+          - 'latest-20'
+    runs-on: ${{ matrix.os }}
+    env:
+      ORG_GRADLE_PROJECT_nodeVersion: ${{ matrix.node-version }}
+    concurrency:
+      group: build-${{ github.workflow }}-${{ matrix.os }}-${{ matrix.node-version }}-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: DanySK/action-checkout@0.2.10
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.6
+        with:
+          build-command: |
+            ./gradlew jsMainClasses jsTestClasses --parallel || ./gradlew jsMainClasses jsTestClasses --parallel
+          check-command: |
+            ./gradlew jsTest --parallel --continue || ./gradlew jsTest --parallel --continue
+          clean-command: ./gradlew cleanTest
+          should-run-codecov: false

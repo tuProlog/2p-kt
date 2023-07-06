@@ -136,6 +136,7 @@ class TestPrologParser {
         }
     }
 
+    @Suppress("CyclomaticComplexMethod")
     @Test
     fun testSingletonList() {
         sequenceOfInputStreamFromStrings("[1]", "[1 ]", "[ 1]", "[ 1 ]").forEach {

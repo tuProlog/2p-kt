@@ -1,31 +1,32 @@
 
 
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
-    `publish-on-npm`
-    id("com.github.johnrengelman.shadow")
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(libs.plugins.ktMpp.npmPublish.get().pluginId)
+    id(libs.plugins.ktMpp.multiProjectHelper.get().pluginId)
+    id(libs.plugins.shadowJar.get().pluginId)
 }
 
 val thisProject = project.name
 
-kotlin {
-    js {
-        binaries.library()
-    }
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                subprojects(ktProjects, except = setOf("test-solve", thisProject)) {
-                    api(this)
+multiProjectHelper {
+    kotlin {
+        js {
+            binaries.library()
+        }
+        sourceSets {
+            commonMain {
+                dependencies {
+                    ktProjects.except("test-solve", thisProject).forEach {
+                        api(it)
+                    }
                 }
             }
-        }
-        val jvmMain by getting {
-            dependencies {
-                subprojects(jvmProjects, except = "examples") {
-                    api(this)
+            getByName("jvmMain") {
+                dependencies {
+                    jvmProjects.except("examples").forEach {
+                        api(it)
+                    }
                 }
             }
         }

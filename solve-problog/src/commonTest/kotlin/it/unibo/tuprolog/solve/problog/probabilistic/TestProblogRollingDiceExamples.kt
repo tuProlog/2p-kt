@@ -36,7 +36,7 @@ class TestProblogRollingDiceExamples {
                 QueryWithSolutions(
                     "twoSix".parseAsStruct(),
                     listOf(ExpectedSolution("twoSix".parseAsStruct(), 0.041666667))
-                ),
+                )
             )
         )
     }
@@ -71,7 +71,7 @@ class TestProblogRollingDiceExamples {
                 QueryWithSolutions(
                     "even(2)".parseAsStruct(),
                     listOf(ExpectedSolution("even(2)".parseAsStruct(), 0.55))
-                ),
+                )
             )
         )
     }
@@ -101,7 +101,7 @@ class TestProblogRollingDiceExamples {
                 QueryWithSolutions(
                     "even(_)".parseAsStruct(),
                     emptyList()
-                ),
+                )
             )
         )
     }
@@ -131,7 +131,7 @@ class TestProblogRollingDiceExamples {
                     ExpectedSolution("sum(5)".parseAsStruct(), 0.22222222),
                     ExpectedSolution("sum(7)".parseAsStruct(), 0.33333333),
                     ExpectedSolution("sum(9)".parseAsStruct(), 0.22222222),
-                    ExpectedSolution("sum(11)".parseAsStruct(), 0.11111111),
+                    ExpectedSolution("sum(11)".parseAsStruct(), 0.11111111)
                 )
             )
         )
@@ -165,7 +165,7 @@ class TestProblogRollingDiceExamples {
                     ExpectedSolution("sum(12)".parseAsStruct(), 0.15),
                     ExpectedSolution("sum(13)".parseAsStruct(), 0.1),
                     ExpectedSolution("sum(14)".parseAsStruct(), 0.05),
-                    ExpectedSolution("sum(15)".parseAsStruct(), 0.05),
+                    ExpectedSolution("sum(15)".parseAsStruct(), 0.05)
                 )
             )
         )

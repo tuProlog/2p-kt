@@ -1,7 +1,5 @@
 plugins {
-    `kotlin-jvm-only`
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 dependencies {
@@ -15,5 +13,3 @@ dependencies {
     api(kotlin("stdlib-jdk8"))
     testImplementation(kotlin("test-junit"))
 }
-
-jvmVersion(libs.versions.jvm)

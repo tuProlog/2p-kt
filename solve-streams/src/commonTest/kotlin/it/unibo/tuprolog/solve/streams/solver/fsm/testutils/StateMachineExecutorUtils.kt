@@ -34,8 +34,11 @@ internal object StateMachineExecutorUtils {
     internal fun oneStateAtATimeState(nextCountToProceed: Int, otherState: State): State =
         object : State by defaultDummyEndState {
             override fun behave(): Sequence<State> = sequence {
-                if (nextCountToProceed > 0) yield(oneStateAtATimeState(nextCountToProceed - 1, otherState))
-                else yield(otherState)
+                if (nextCountToProceed > 0) {
+                    yield(oneStateAtATimeState(nextCountToProceed - 1, otherState))
+                } else {
+                    yield(otherState)
+                }
             }
 
             override fun toString(): String = "${this::class.className()} nextCountToProceed:$nextCountToProceed"

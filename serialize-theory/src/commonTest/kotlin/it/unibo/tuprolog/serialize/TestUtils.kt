@@ -16,7 +16,7 @@ fun <T : Theory> Serializer<T>.assertSerializationWorks(expected: String, actual
         |got instead:
         |   $actualObj
         |
-    """.trimMargin()
+        """.trimMargin()
     ) { deeplyEqual(expectedObj, actualObj) }
 }
 
@@ -33,7 +33,7 @@ fun <T : Theory> Deserializer<T>.assertDeserializationWorks(expected: T, actual:
         |got:
         |   $deserialized
         |
-    """.trimMargin()
+        """.trimMargin()
     ) { representationsAreEqual(expected, deserialized) }
 }
 

@@ -50,8 +50,12 @@ import kotlin.math.pow
 import kotlin.math.round
 import kotlin.system.exitProcess
 
-@Suppress("UNUSED_PARAMETER", "unused")
+@Suppress("UNUSED_PARAMETER", "unused", "VarCouldBeVal", "TooManyFunctions")
 class TuPrologIDEController : Initializable {
+
+    companion object {
+        private const val DAYS_PER_YEAR = 365
+    }
 
     private val model = TuPrologIDEModel.of()
 
@@ -243,6 +247,7 @@ class TuPrologIDEController : Initializable {
     private fun tabForFile(file: File): FileTabView? =
         fileTabs.firstOrNull { it.file == file }
 
+    @Suppress("NoNameShadowing")
     @FXML
     override fun initialize(location: URL, resources: ResourceBundle?) {
         model.onResolutionStarted.subscribe(this::onResolutionStarted)
@@ -319,8 +324,8 @@ class TuPrologIDEController : Initializable {
         val seconds = toSecondsPart()
         val minutes = toMinutesPart()
         val hours = toHoursPart()
-        val days = toDaysPart() % 365
-        val years = toDaysPart() / 365
+        val days = toDaysPart() % DAYS_PER_YEAR
+        val years = toDaysPart() / DAYS_PER_YEAR
         return sequenceOf(
             years.pretty("y"),
             days.pretty("d"),
@@ -660,7 +665,7 @@ class TuPrologIDEController : Initializable {
         fileChooser.extensionFilters.addAll(
             FileChooser.ExtensionFilter("Prolog file", "*.pl", "*.2p"),
             FileChooser.ExtensionFilter("Text file", "*.txt"),
-            FileChooser.ExtensionFilter("Any file", "*"),
+            FileChooser.ExtensionFilter("Any file", "*")
         )
         fileChooser.initialDirectory = File(System.getProperty("user.home"))
         fileChooser.title = "Open file..."
@@ -670,19 +675,24 @@ class TuPrologIDEController : Initializable {
 
     @FXML
     fun onCloseFilePressed(e: ActionEvent) {
-        model.closeFile(model.currentFile!!)
+        model.run {
+            currentFile?.let { closeFile(it) }
+        }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     @FXML
     fun onSaveFilePressed(e: ActionEvent) {
         try {
-            model.saveFile(model.currentFile!!)
-            val alert = Alert(Alert.AlertType.INFORMATION)
-            alert.title = "Save file"
-            alert.headerText = "File correctly saved"
-            alert.contentText = model.currentFile?.canonicalPath
-            alert.dialogPane.minHeight = Region.USE_PREF_SIZE
-            alert.showAndWait()
+            model.currentFile?.let {
+                model.saveFile(it)
+                val alert = Alert(Alert.AlertType.INFORMATION)
+                alert.title = "Save file"
+                alert.headerText = "File correctly saved"
+                alert.contentText = it.canonicalPath
+                alert.dialogPane.minHeight = Region.USE_PREF_SIZE
+                alert.showAndWait()
+            }
         } catch (e: Exception) {
             onError(e)
         }
@@ -694,7 +704,7 @@ class TuPrologIDEController : Initializable {
         fileChooser.extensionFilters.addAll(
             FileChooser.ExtensionFilter("Prolog file", "*.pl"),
             FileChooser.ExtensionFilter("Text file", "*.txt"),
-            FileChooser.ExtensionFilter("2P file", "*.2p"),
+            FileChooser.ExtensionFilter("2P file", "*.2p")
         )
         fileChooser.initialDirectory = File(System.getProperty("user.home"))
         fileChooser.title = "Save file as..."
@@ -709,8 +719,10 @@ class TuPrologIDEController : Initializable {
 
     @FXML
     fun onReloadFilePressed(e: ActionEvent) {
-        currentFileTab?.let {
-            it.wholeText = model.currentFile!!.readText()
+        currentFileTab?.let { tab ->
+            model.currentFile?.let {
+                tab.wholeText = it.readText()
+            }
         }
     }
 
@@ -757,8 +769,7 @@ class TuPrologIDEController : Initializable {
     }
 
     @FXML
-    fun onSettingsPressed(e: ActionEvent) {
-    }
+    fun onSettingsPressed(e: ActionEvent) = Unit
 
     @FXML
     fun onAbout(e: ActionEvent) {

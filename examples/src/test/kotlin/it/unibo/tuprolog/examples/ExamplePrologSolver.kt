@@ -45,7 +45,9 @@ class ExamplePrologSolver {
 
         println(solutions.size) // 3
         println(solutions)
-        // [Yes(query=f(X_2), substitution={X_2=a}), Yes(query=f(X_2), substitution={X_2=b}) Yes(query=f(X_2), substitution={X_2=c})]
+        // Yes(query=f(X_2), substitution={X_2=a})
+        // Yes(query=f(X_2), substitution={X_2=b})
+        // Yes(query=f(X_2), substitution={X_2=c})
 
         for (solution in solutions) {
             println(solution.query) // f(X_2), f(X_2), f(X_2)
@@ -81,6 +83,7 @@ class ExamplePrologSolver {
     }
 
     @Test
+    @Suppress("ktlint:experimental:comment-wrapping")
     fun exampleTimeoutSolutions() {
         val prolog = Solver.prolog.solverWithDefaultBuiltins(
             staticKb = Theory.of(
@@ -196,11 +199,11 @@ class ExamplePrologSolver {
     fun customTheoriesSolver() {
         val theory1 = Theory.of(
             Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
-            Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
+            Fact.of(Struct.of("f", Atom.of("b"))) // f(b).
         )
         val theory2 = Theory.of(
             Fact.of(Struct.of("g", Integer.of(1))), // g(1).
-            Fact.of(Struct.of("g", Integer.of(2))), // g(2).
+            Fact.of(Struct.of("g", Integer.of(2))) // g(2).
         )
 
         val solver = Solver.prolog.solverWithDefaultBuiltins(
@@ -216,11 +219,11 @@ class ExamplePrologSolver {
     fun customTheoriesMutableSolver() {
         val theory1 = Theory.of(
             Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
-            Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
+            Fact.of(Struct.of("f", Atom.of("b"))) // f(b).
         )
         val theory2 = Theory.of(
             Fact.of(Struct.of("g", Integer.of(1))), // g(1).
-            Fact.of(Struct.of("g", Integer.of(2))), // g(2).
+            Fact.of(Struct.of("g", Integer.of(2))) // g(2).
         )
 
         val solver = Solver.prolog.mutableSolverWithDefaultBuiltins()
@@ -240,7 +243,7 @@ class ExamplePrologSolver {
             Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
             Directive.of(Struct.of("dynamic", Indicator.of("g", 1))), // :- dynamic(g/1).
             Fact.of(Struct.of("g", Integer.of(1))), // g(1).
-            Fact.of(Struct.of("g", Integer.of(2))), // g(2).
+            Fact.of(Struct.of("g", Integer.of(2))) // g(2).
         )
 
         val solver = Solver.prolog.solverWithDefaultBuiltins(

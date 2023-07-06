@@ -6,7 +6,7 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
  * @author Jason Dellaluce
  */
 internal data class SimpleBinaryDecisionDiagramTerminal<T : Comparable<T>>(
-    override val truth: Boolean,
+    override val truth: Boolean
 ) : BinaryDecisionDiagram.Terminal<T> {
 
     override fun equals(other: Any?): Boolean {

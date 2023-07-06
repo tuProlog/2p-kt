@@ -6,11 +6,8 @@ import org.antlr.v4.runtime.BufferedTokenStream
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.Recognizer
-import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.TokenStream
-import org.junit.Assert
 import org.junit.Test
-import java.util.LinkedList
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -26,25 +23,25 @@ class PrologParserTest {
             return BufferedTokenStream(lexer)
         }
 
-        private fun tokenStreamToList(stream: TokenStream): List<Token> {
-            val result = LinkedList<Token>()
-            var i = 0
-            stream.consume()
-            do {
-                result.add(stream[i++])
-                stream.consume()
-            } while (stream.LA(1) != TokenStream.EOF)
-            result.add(stream[i])
-            return result
-        }
+        // private fun tokenStreamToList(stream: TokenStream): List<Token> {
+        //     val result = LinkedList<Token>()
+        //     var i = 0
+        //     stream.consume()
+        //     do {
+        //         result.add(stream[i++])
+        //         stream.consume()
+        //     } while (stream.LA(1) != TokenStream.EOF)
+        //     result.add(stream[i])
+        //     return result
+        // }
 
-        private fun assertTokenIs(token: Token, type: Int, text: String) {
-            Assert.assertEquals("'$text'", "'" + token.text + "'")
-            Assert.assertEquals(
-                PrologLexer.VOCABULARY.getSymbolicName(type),
-                PrologLexer.VOCABULARY.getSymbolicName(token.type)
-            )
-        }
+        // private fun assertTokenIs(token: Token, type: Int, text: String) {
+        //     Assert.assertEquals("'$text'", "'" + token.text + "'")
+        //     Assert.assertEquals(
+        //         PrologLexer.VOCABULARY.getSymbolicName(type),
+        //         PrologLexer.VOCABULARY.getSymbolicName(token.type)
+        //     )
+        // }
 
         private fun parseTerm(string: String): PrologParser.SingletonTermContext {
             val parser: PrologParser = this.createParser(string)
@@ -65,24 +62,24 @@ class PrologParserTest {
             return parser.singletonTerm()
         }
 
-        private fun parseExpression(string: String): PrologParser.SingletonExpressionContext {
-            val parser: PrologParser = createParser(string)
-            parser.addErrorListener(
-                object : BaseErrorListener() {
-                    override fun syntaxError(
-                        recognizer: Recognizer<*, *>,
-                        offendingSymbol: Any,
-                        line: Int,
-                        charPositionInLine: Int,
-                        msg: String,
-                        e: RecognitionException
-                    ) {
-                        throw e
-                    }
-                }
-            )
-            return parser.singletonExpression()
-        }
+        // private fun parseExpression(string: String): PrologParser.SingletonExpressionContext {
+        //     val parser: PrologParser = createParser(string)
+        //     parser.addErrorListener(
+        //         object : BaseErrorListener() {
+        //             override fun syntaxError(
+        //                 recognizer: Recognizer<*, *>,
+        //                 offendingSymbol: Any,
+        //                 line: Int,
+        //                 charPositionInLine: Int,
+        //                 msg: String,
+        //                 e: RecognitionException
+        //             ) {
+        //                 throw e
+        //             }
+        //         }
+        //     )
+        //     return parser.singletonExpression()
+        // }
 
         private fun createParser(string: String): PrologParser {
             return PrologParser(
@@ -214,6 +211,7 @@ class PrologParserTest {
         }
     }
 
+    @Suppress("CyclomaticComplexMethod")
     @Test
     fun testSingletonList() {
         sequenceOf("[1]", "[1 ]", "[ 1]", "[ 1 ]").forEach {
@@ -226,7 +224,7 @@ class PrologParserTest {
                     !l.hasTail && l.tail == null
             )
             val expr = l.items[0]
-            assertTrue(expr.isTerm && expr.left != null && expr.operators.count() == 0 && expr.right.count() == 0)
+            assertTrue(expr.isTerm && expr.left != null && expr.operators.isEmpty() && expr.right.isEmpty())
             val t = expr.left!!
             assertTrue(t.isNum && !t.isVar && !t.isList && !t.isStruct && !t.isExpr)
             val n = t.number()

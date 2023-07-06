@@ -86,7 +86,7 @@ class SyntaxColoring(
                     }
                 }.subscribe { applyHighlighting(it) }
         } else {
-            throw IllegalStateException("Syntax coloring is already active")
+            error("Syntax coloring is already active")
         }
     }
 
@@ -97,7 +97,7 @@ class SyntaxColoring(
                 it.unsubscribe()
                 subscription = null
             } else {
-                throw IllegalStateException("Syntax coloring is not active")
+                error("Syntax coloring is not active")
             }
         }
     }
@@ -216,7 +216,7 @@ class SyntaxColoring(
             VARIABLE_PATTERN.asGroup(VARIABLE),
             NUMBER_PATTERN.asGroup(NUMBER),
             STRING_PATTERN.asGroup(STRING),
-            FULLSTOP_PATTERN.asGroup(FULLSTOP),
+            FULLSTOP_PATTERN.asGroup(FULLSTOP)
         )
 
         private val MatchResult.styleClass: String

@@ -1,25 +1,26 @@
+import org.gradle.configurationcache.extensions.capitalized
+import java.util.Locale
+
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(project(":theory"))
                 api(project(":serialize-core"))
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 api(project(":solve"))
             }
         }
 
-        val jvmMain by getting {
+        getByName("jvmMain") {
             dependencies {
                 implementation(libs.jackson.core)
                 implementation(libs.jackson.xml)
@@ -31,7 +32,7 @@ kotlin {
 }
 
 listOf("yaml", "json").forEach {
-    tasks.create("print${it.capitalize()}", JavaExec::class.java) {
+    tasks.create("print${it.capitalized()}", JavaExec::class.java) {
         group = "application"
         dependsOn("jvmTestClasses")
         classpath = files(
@@ -39,6 +40,6 @@ listOf("yaml", "json").forEach {
             kotlin.jvm().compilations.getByName("test").compileDependencyFiles
         )
         standardInput = System.`in`
-        main = "${it.toUpperCase()}PrinterKt"
+        mainClass.set("${it.uppercase(Locale.getDefault())}PrinterKt")
     }
 }

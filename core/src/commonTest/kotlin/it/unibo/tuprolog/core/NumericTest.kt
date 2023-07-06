@@ -36,7 +36,7 @@ internal class NumericTest {
             .flatMap {
                 listOf(
                     BigDecimal.of(it) to BigDecimal.of(it + "0"),
-                    BigDecimal.of(it) to BigDecimal.of(it + "00"),
+                    BigDecimal.of(it) to BigDecimal.of(it + "00")
                 )
             }
     }

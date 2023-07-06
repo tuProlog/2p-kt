@@ -21,7 +21,7 @@ fun assertTermsAreEqual(expected: Term, actual: Term) {
             |     type: ${actual::class}
             | expected: $expected
             |     type: ${expected::class}
-        """.trimMargin()
+            """.trimMargin()
         )
     } else {
         when {

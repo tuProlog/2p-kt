@@ -98,6 +98,6 @@ object OOPLib : AbstractLibrary() {
             Operator(".", XFY, 800),
             Operator(":=", XFX, 850),
             Operator("as", XFX, 200),
-            Operator("$", FX, 100),
+            Operator("$", FX, 100)
         )
 }

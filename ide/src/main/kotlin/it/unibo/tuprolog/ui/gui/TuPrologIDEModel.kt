@@ -11,6 +11,7 @@ import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
 
+@Suppress("TooManyFunctions")
 interface TuPrologIDEModel {
 
     companion object {

@@ -7,7 +7,7 @@ interface TestSolverConstruction<T : Solver, MT : MutableSolver> {
     companion object {
         inline fun <reified T : Solver, reified MT : MutableSolver> prototype(
             factory: SolverFactory,
-            defaultBuiltins: Library,
+            defaultBuiltins: Library
         ): TestSolverConstruction<T, MT> = TestSolverConstructionImpl(factory, defaultBuiltins, T::class, MT::class)
     }
 

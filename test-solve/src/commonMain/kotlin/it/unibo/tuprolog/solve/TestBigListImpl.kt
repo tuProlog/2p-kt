@@ -18,7 +18,7 @@ internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestB
                         M `is` (N - 1),
                         "biglist"(M, X)
                     )
-                },
+                }
             )
 
             val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory)

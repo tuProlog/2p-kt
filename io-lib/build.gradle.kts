@@ -1,22 +1,18 @@
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
-    `mock-service`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    alias(libs.plugins.gradleMockService)
 }
-
-apply<MockServicePlugin>()
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(project(":solve"))
                 api(project(":parser-theory"))
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(project(":test-solve"))
                 implementation(project(":solve-classic"))
@@ -24,7 +20,7 @@ kotlin {
             }
         }
 
-        val jsMain by getting {
+        getByName("jsMain") {
             dependencies {
                 implementation(npm("sync-request", libs.versions.npm.syncRequest.get()))
             }
@@ -56,9 +52,6 @@ mockService {
             it.result(random.inputStream())
         }
     }
-}
 
-tasks.matching { it.name in setOf("jvmTest", "jsNodeTest") }.configureEach {
-    dependsOn(mockService.startMockTask)
-    finalizedBy(mockService.stopMockTask)
+    wrapTasks("jvmTest", "jsNodeTest")
 }

@@ -41,7 +41,7 @@ internal data class StreamsExecutionContext(
     /** The key strategies that a solver should use during resolution process */
     val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
     /** The side effects manager to be used during resolution process */
-    val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl(),
+    val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl()
 ) : ExecutionContext {
 
     constructor(context: ExecutionContext, newCurrentSubstitution: Substitution.Unifier) : this( // to be tested

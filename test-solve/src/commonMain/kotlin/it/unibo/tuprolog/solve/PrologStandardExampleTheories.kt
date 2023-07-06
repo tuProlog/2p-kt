@@ -317,7 +317,7 @@ object PrologStandardExampleTheories {
                 ("not"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
                 ("not"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
                 (("X" equalsTo 1) and "not"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
-                "not"(fail and 1).hasSolutions({ halt(typeError(notErrorSignature, fail and 1)) }),
+                "not"(fail and 1).hasSolutions({ halt(typeError(notErrorSignature, fail and 1)) })
             )
         }
 

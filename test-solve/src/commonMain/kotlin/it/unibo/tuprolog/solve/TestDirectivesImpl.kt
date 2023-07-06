@@ -93,7 +93,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
             fact { "f"(1) },
             directive { initGoal(tupleOf("f"(X), write("f"(X)))) },
             fact { "f"(2) },
-            directive { initGoal(write("b")) },
+            directive { initGoal(write("b")) }
         )
     }
 
@@ -132,7 +132,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
                     theoryOf(
                         directive { set_flag("a", 1) },
                         directive { set_flag("b", 2) },
-                        directive { set_flag("c", 3) },
+                        directive { set_flag("c", 3) }
                     )
                 )
 
@@ -151,7 +151,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
                     theoryOf(
                         directive { set_prolog_flag("a", 1) },
                         directive { set_prolog_flag("b", 2) },
-                        directive { set_prolog_flag("c", 3) },
+                        directive { set_prolog_flag("c", 3) }
                     )
                 )
 
@@ -170,7 +170,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
                     theoryOf(
                         directive { op(2, XFX, "++") },
                         directive { op(3, XFY, "+++") },
-                        directive { op(4, YFX, "++++") },
+                        directive { op(4, YFX, "++++") }
                     )
                 )
 
@@ -198,7 +198,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
                     fact { "f"("a") },
                     directive { "statyc"("g" / 1) },
                     fact { "g"("b") },
-                    directive { "init"(write("something")) },
+                    directive { "init"(write("something")) }
                 )
                 val solver = solverOf(theory)
 

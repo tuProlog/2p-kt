@@ -1,19 +1,17 @@
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(kotlin("reflect"))
                 api(project(":solve"))
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 api(project(":test-solve"))
                 api(project(":solve-classic"))

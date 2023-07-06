@@ -39,7 +39,7 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
-        third: Term,
+        third: Term
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
@@ -60,9 +60,9 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                     }
                 )
                 /* Edge case: The current goal is a conjunction/disjunction or any sort of recursive predicate.
-                * NOTE: This is not supposed to trigger regularly because we map the theory prior to query execution,
-                * however this happens when the current goal is the initial query itself. As such, we want recursive
-                * predicates in queries to be supported. */
+                 * NOTE: This is not supposed to trigger regularly because we map the theory prior to query execution,
+                 * however this happens when the current goal is the initial query itself. As such, we want recursive
+                 * predicates in queries to be supported. */
                 ",", ";", "->" -> yield(
                     /* Optimize Prolog-only queries */
                     if (context.isPrologMode()) {
@@ -145,7 +145,9 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                                     goalArg.safeToStruct().extractSignature() in context.libraries
                                 ) {
                                     goalArg
-                                } else goalArg.withExplanation(first)
+                                } else {
+                                    goalArg.withExplanation(first)
+                                }
                             )
                         )
                     )

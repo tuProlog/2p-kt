@@ -41,7 +41,7 @@ internal open class ProblogSolver(
                     ProbSetConfig.functor,
                     options.toProbConfigTerm()
                 ),
-                Struct.of(Prob.functor, anonVar, goal),
+                Struct.of(Prob.functor, anonVar, goal)
             ),
             options
         ).map {
@@ -68,7 +68,7 @@ internal open class ProblogSolver(
                 probabilityVar,
                 goal,
                 options.toProbConfigTerm(),
-                bddVar,
+                bddVar
             ),
             options
         ).map {
@@ -78,7 +78,7 @@ internal open class ProblogSolver(
                 is Solution.Yes -> Solution.yes(
                     goal,
                     it.substitution.filter {
-                        key, _ ->
+                            key, _ ->
                         key != probabilityVar && key != bddVar
                     }
                 )

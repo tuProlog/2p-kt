@@ -48,14 +48,14 @@ interface ClausePartition {
             operators: OperatorSet? = null,
             initialGoals: List<Struct>? = null,
             includes: List<Atom>? = null,
-            flagStore: FlagStore? = null,
+            flagStore: FlagStore? = null
         ): ClausePartition = ClausePartitionImpl(
             staticClauses ?: Theory.emptyIndexed(unificator),
             dynamicClauses ?: MutableTheory.emptyIndexed(unificator),
             operators ?: OperatorSet.EMPTY,
             initialGoals ?: emptyList(),
             includes ?: emptyList(),
-            flagStore ?: FlagStore.empty(),
+            flagStore ?: FlagStore.empty()
         )
     }
 }

@@ -1,19 +1,16 @@
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 // api(kotlin("reflect"))
                 api(project(":theory"))
             }
         }
-
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(project(":dsl-theory"))
             }

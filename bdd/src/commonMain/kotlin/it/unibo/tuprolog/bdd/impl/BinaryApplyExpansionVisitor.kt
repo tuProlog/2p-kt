@@ -38,7 +38,7 @@ internal class BinaryApplyExpansionVisitor<T : Comparable<T>, E>(
     private val operator: (first: Boolean, second: Boolean) -> Boolean,
     private val expansionFalseTerminal: E,
     private val expansionTrueTerminal: E,
-    private val expansionOperator: (node: T, low: E, high: E) -> E,
+    private val expansionOperator: (node: T, low: E, high: E) -> E
 ) : BinaryDecisionDiagramVisitor<T, ApplyExpansionResult<T, E>> {
     private val dynamicTable:
         MutableMap<Int, MutableMap<Int, ApplyExpansionResult<T, E>>> =
@@ -69,7 +69,7 @@ internal class BinaryApplyExpansionVisitor<T : Comparable<T>, E>(
     private fun visitWithTable(
         first: BinaryDecisionDiagram<T>,
         second: BinaryDecisionDiagram<T>,
-        computation: () -> ApplyExpansionResult<T, E>,
+        computation: () -> ApplyExpansionResult<T, E>
     ): ApplyExpansionResult<T, E> {
         val firstKey = first.hashCode()
         val secondKey = second.hashCode()

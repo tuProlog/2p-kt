@@ -30,7 +30,7 @@ object Instances {
             fact { "d"(1) },
             fact { "e"(2) },
             rule { "f"(X) impliedBy "a"(X) },
-            fact { "g"(4) },
+            fact { "g"(4) }
         )
     }
 

@@ -75,8 +75,11 @@ internal class AtomIndex(
     private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
         val actualIndex = index.indexOfFirst { unificator.match(it.innerClause, clause) }
 
-        return if (actualIndex == -1) null
-        else index[actualIndex]
+        return if (actualIndex == -1) {
+            null
+        } else {
+            index[actualIndex]
+        }
     }
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {

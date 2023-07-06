@@ -1,13 +1,11 @@
 plugins {
-    `kotlin-mp`
-    `kotlin-doc`
-    `publish-on-maven`
-    id("com.github.johnrengelman.shadow")
+    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(libs.plugins.shadowJar.get().pluginId)
 }
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(libs.clikt)
                 api(project(":core"))

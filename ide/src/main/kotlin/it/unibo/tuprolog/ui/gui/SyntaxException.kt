@@ -19,7 +19,7 @@ internal sealed class SyntaxException(override val cause: ParseException) : TuPr
                     |Syntax error at ${cause.line}:${cause.column} of ${file.name}, while parsing clause ${cause.clauseIndex}
                     |
                     |    ${errorDetector.replace("\n", "\n|    ")}
-                    """.trimMargin()
+                """.trimMargin()
             }
     }
 
@@ -34,7 +34,7 @@ internal sealed class SyntaxException(override val cause: ParseException) : TuPr
                     |Syntax error in query, near column ${cause.column}
                     |
                     |    ${errorDetector.replace("\n", "\n|    ")}
-                    """.trimMargin()
+                """.trimMargin()
             }
     }
 

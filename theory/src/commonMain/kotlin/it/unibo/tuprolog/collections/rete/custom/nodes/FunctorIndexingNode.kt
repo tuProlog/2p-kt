@@ -55,7 +55,9 @@ internal class FunctorIndexingNode(
                     it.extractGlobalIndexedSequence(clause)
                 }
             ).firstOrNull { unificator.match(it.innerClause, clause) }
-        } else arities[clause.nestedArity()]?.getFirstIndexed(clause)
+        } else {
+            arities[clause.nestedArity()]?.getFirstIndexed(clause)
+        }
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
         return if (clause.isGlobal()) {

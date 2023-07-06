@@ -12,11 +12,13 @@ import javafx.scene.control.Tab
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
+import java.util.Optional
 
 /**
  * NOTE ([customTabs]: If a [CustomTab.tab] has a [Tab.id] that is already existing
  * in the IDE, it substitutes the existing [Tab] instead of being added to the tab list.
  */
+@Suppress("TooManyFunctions")
 data class TuPrologIDEBuilder(
     val stage: Stage,
     var title: String = "tuProlog IDE",
@@ -29,6 +31,8 @@ data class TuPrologIDEBuilder(
 ) {
 
     companion object {
+        private const val DEFAULT_ICON_SCALE_RATIO: Double = 0.3
+
         @JvmStatic
         fun showConfirmationDialog(title: String, header: String, content: String): Boolean =
             Alert(Alert.AlertType.CONFIRMATION).also {
@@ -50,9 +54,9 @@ data class TuPrologIDEBuilder(
             what: String,
             version: String = Info.VERSION,
             image: Image = TUPROLOG_LOGO,
-            width: Double = TUPROLOG_LOGO.width * 0.3,
-            height: Double = TUPROLOG_LOGO.height * 0.3
-        ) = Alert(Alert.AlertType.INFORMATION).also {
+            width: Double = TUPROLOG_LOGO.width * DEFAULT_ICON_SCALE_RATIO,
+            height: Double = TUPROLOG_LOGO.height * DEFAULT_ICON_SCALE_RATIO
+        ): Optional<ButtonType> = Alert(Alert.AlertType.INFORMATION).also {
             it.title = "About"
             it.headerText = "$what v$version"
             it.dialogPane.graphic = ImageView(image).also { img ->
@@ -96,7 +100,9 @@ data class TuPrologIDEBuilder(
     fun customTab(tab: Tab, modelConfigurator: ModelConfigurator) =
         customTab(CustomTab(tab, modelConfigurator))
 
-    fun customTab(tab: Tab) = customTab(tab) { /* do nothing */ }
+    fun customTab(tab: Tab) = customTab(tab) {
+        /* do nothing */
+    }
 
     fun show() {
         val loader = FXMLLoader(javaClass.getResource("TuPrologIDEView.fxml"))

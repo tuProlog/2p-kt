@@ -50,8 +50,11 @@ internal class RootNode(
         get() = ruleIndex.getCache().map { it.value.castToRule() }
 
     override fun get(clause: Clause): Sequence<Clause> =
-        if (clause.isDirective) directiveIndex.get(clause)
-        else ruleIndex.get(clause)
+        if (clause.isDirective) {
+            directiveIndex.get(clause)
+        } else {
+            ruleIndex.get(clause)
+        }
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) {
@@ -81,8 +84,11 @@ internal class RootNode(
                 it.addFirst(clause)
             }
 
-            if (clause.isDirective) directiveIndex.assertA(indexed)
-            else ruleIndex.assertA(indexed)
+            if (clause.isDirective) {
+                directiveIndex.assertA(indexed)
+            } else {
+                ruleIndex.assertA(indexed)
+            }
         } else {
             throw UnsupportedOperationException("An unordered ReteTree cannot perform the assertA operation.")
         }

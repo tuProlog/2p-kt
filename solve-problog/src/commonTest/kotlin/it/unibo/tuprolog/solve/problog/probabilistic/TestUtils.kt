@@ -69,7 +69,7 @@ internal object TestUtils {
 
     fun assertQueryWithSolutions(
         theory: Theory,
-        queryWithSolutions: QueryWithSolutions,
+        queryWithSolutions: QueryWithSolutions
     ) {
         assertQueryWithSolutions(theory, listOf(queryWithSolutions))
     }

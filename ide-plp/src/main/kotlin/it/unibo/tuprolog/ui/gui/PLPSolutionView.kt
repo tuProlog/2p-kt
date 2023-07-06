@@ -1,8 +1,5 @@
 package it.unibo.tuprolog.ui.gui
 
-import guru.nidi.graphviz.engine.Format
-import guru.nidi.graphviz.engine.Graphviz
-import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.bdd.toDotString
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
@@ -16,19 +13,14 @@ import it.unibo.tuprolog.solve.probability
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.geometry.Insets
-import javafx.scene.Node
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
-import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Circle
-import javafx.scene.text.Text
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() {
@@ -83,6 +75,7 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
     @FXML
     lateinit var btnShowBinaryDecisionDiagram: Button
 
+    @Suppress("MagicNumber")
     class YesViewPLP(solution: Solution.Yes) : PLPSolutionView<Pair<Var, Term>, Solution.Yes>(solution) {
         init {
             status.text = "yes:"
@@ -140,10 +133,10 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
         }
     }
 
-    private fun String?.toMonospacedText(): Node {
-        if (this == null) return Text()
-        return Text(this).also { it.style = "-fx-font-family: monospaced" }
-    }
+    // private fun String?.toMonospacedText(): Node {
+    //     if (this == null) return Text()
+    //     return Text(this).also { it.style = "-fx-font-family: monospaced" }
+    // }
 
     fun onShowBinaryDecisionDiagramPressed() {
         solution.binaryDecisionDiagram?.let {
@@ -158,13 +151,13 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
         }
     }
 
-    private fun bddToImage(bdd: BinaryDecisionDiagram<*>): Image {
-        val outputStream = ByteArrayOutputStream()
-        Graphviz
-            .fromString(bdd.toDotString())
-            .render(Format.PNG)
-            .toOutputStream(outputStream)
-        val inputStream = ByteArrayInputStream(outputStream.toByteArray())
-        return Image(inputStream)
-    }
+    // private fun bddToImage(bdd: BinaryDecisionDiagram<*>): Image {
+    //     val outputStream = ByteArrayOutputStream()
+    //     Graphviz
+    //         .fromString(bdd.toDotString())
+    //         .render(Format.PNG)
+    //         .toOutputStream(outputStream)
+    //     val inputStream = ByteArrayInputStream(outputStream.toByteArray())
+    //     return Image(inputStream)
+    // }
 }

@@ -339,8 +339,11 @@ class PrototypeTheoryTest(
             clausesQueryResultsMap.forEach { (query, result) ->
                 val retractResult = filledTheory.retract(query)
 
-                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
-                else assertTrue { retractResult is RetractResult.Success }
+                if (result.isEmpty()) {
+                    assertTrue { retractResult is RetractResult.Failure }
+                } else {
+                    assertTrue { retractResult is RetractResult.Success }
+                }
             }
         }
     }
@@ -360,8 +363,11 @@ class PrototypeTheoryTest(
             rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
                 val retractResult = filledTheory.retract(query)
 
-                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
-                else assertTrue { retractResult is RetractResult.Success }
+                if (result.isEmpty()) {
+                    assertTrue { retractResult is RetractResult.Failure }
+                } else {
+                    assertTrue { retractResult is RetractResult.Success }
+                }
             }
         }
     }
@@ -400,8 +406,11 @@ class PrototypeTheoryTest(
             withFreshTheories {
                 val retractResult = filledTheory.retractAll(query)
 
-                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
-                else assertTrue { retractResult is RetractResult.Success }
+                if (result.isEmpty()) {
+                    assertTrue { retractResult is RetractResult.Failure }
+                } else {
+                    assertTrue { retractResult is RetractResult.Success }
+                }
             }
         }
     }
@@ -421,8 +430,11 @@ class PrototypeTheoryTest(
             withFreshTheories {
                 val retractResult = filledTheory.retractAll(query)
 
-                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
-                else assertTrue { retractResult is RetractResult.Success }
+                if (result.isEmpty()) {
+                    assertTrue { retractResult is RetractResult.Failure }
+                } else {
+                    assertTrue { retractResult is RetractResult.Success }
+                }
             }
         }
     }

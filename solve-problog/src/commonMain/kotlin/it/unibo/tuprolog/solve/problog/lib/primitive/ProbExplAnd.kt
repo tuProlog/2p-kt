@@ -43,6 +43,8 @@ internal object ProbExplAnd : TernaryRelation.NonBacktrackable<ExecutionContext>
             } else {
                 replyWith(mgu(first, ProbExplanationTerm(explanation)))
             }
-        } else replyException(ResolutionException("Can't compute $functor", context = context))
+        } else {
+            replyException(ResolutionException("Can't compute $functor", context = context))
+        }
     }
 }

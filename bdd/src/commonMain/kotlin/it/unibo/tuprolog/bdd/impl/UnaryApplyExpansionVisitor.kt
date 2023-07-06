@@ -29,7 +29,7 @@ internal class UnaryApplyExpansionVisitor<T : Comparable<T>, E>(
     private val operator: (first: Boolean) -> Boolean,
     private val expansionFalseTerminal: E,
     private val expansionTrueTerminal: E,
-    private val expansionOperator: (node: T, low: E, high: E) -> E,
+    private val expansionOperator: (node: T, low: E, high: E) -> E
 ) : BinaryDecisionDiagramVisitor<T, ApplyExpansionResult<T, E>> {
     private val dynamicTable: MutableMap<Int, ApplyExpansionResult<T, E>> =
         mutableMapOf()

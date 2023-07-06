@@ -57,7 +57,7 @@ class TestSubstitutionsMetadata {
         Substitution.of(Z, Fact.of(Block.of(X))),
         Substitution.of(Z, Fact.of(Tuple.of(X, X))),
         Substitution.of(Z, Directive.of(Struct.of("h", X), Tuple.of(X, X))),
-        Substitution.of(Z, Rule.of(Struct.of("h", X), Tuple.of(X, X))),
+        Substitution.of(Z, Rule.of(Struct.of("h", X), Tuple.of(X, X)))
     )
 
     private data class Metadata<T>(val value: T)

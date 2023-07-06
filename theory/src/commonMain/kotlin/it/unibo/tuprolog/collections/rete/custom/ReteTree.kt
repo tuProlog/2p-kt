@@ -68,7 +68,7 @@ interface ReteTree {
             unordered(unificator, listOf(*clauses))
 
         /**Creates an empty ordered [ReteTree]*/
-        fun emptyOrdered(unificator: Unificator,): ReteTree =
+        fun emptyOrdered(unificator: Unificator): ReteTree =
             ordered(unificator, emptyList())
 
         /**Creates an ordered ReteTree based on the given [Iterable]*/

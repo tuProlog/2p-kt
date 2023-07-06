@@ -89,7 +89,9 @@ internal class StateRuleSelection(
                                 }
 
                                 if (subState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
-                            } else yield(it) // return wrapped subState as is, only if not interested in it
+                            } else {
+                                yield(it) // return wrapped subState as is, only if not interested in it
+                            }
                         }
                         if (cutNextSiblings) return@sequence // cut here other matching rules trial
                     }
