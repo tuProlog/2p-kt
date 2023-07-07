@@ -21,6 +21,7 @@ config.plugins.push(
                 { "path": "**/build/**/*redist*.jar" },
                 { "path": "**/build/**/*full*.jar" },
                 { "path": "**/build/**/*javadoc*.jar" },
+                { "path": "build/**/*javadoc*.zip" }
             ]
         }
     ],

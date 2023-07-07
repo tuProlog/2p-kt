@@ -175,8 +175,10 @@ jobs:
           ENFORCE_VERSION: "${{ needs.staging-repo.outputs.next-version }}"
         with:
           build-command: |
-            ./gradlew allShadowJars
-            ./gradlew dokkaHtmlMultiModuleZip
+            NEXT_VERSION="${{ needs.staging-repo.outputs.next-version }}"
+            OVERRIDE_VERSION=$([[ "$NEXT_VERSION" != "" ]] && echo "-PforceVersion=$(echo $NEXT_VERSION)" || echo "")
+            ./gradlew $OVERRIDE_VERSION allShadowJars
+            ./gradlew $OVERRIDE_VERSION dokkaHtmlMultiModuleZip
           check-command: true
           deploy-command: |
             npm install
