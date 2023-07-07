@@ -1,3 +1,11 @@
+## [0.31.7](https://github.com/tuProlog/2p-kt/compare/0.31.6...0.31.7) (2023-07-07)
+
+
+### Bug Fixes
+
+* **ci:** gh release sould contain artefact with the correct version tags ([a471a2d](https://github.com/tuProlog/2p-kt/commit/a471a2d068201cda1a150c258b1f7eb975455fb7))
+* **deps:** update dependency com.github.ajalt.clikt:clikt to v3.5.4 ([6648b61](https://github.com/tuProlog/2p-kt/commit/6648b6199605c5ca018205bbbb3eb1f1dbe2d071))
+
 ## [0.31.6](https://github.com/tuProlog/2p-kt/compare/0.31.5...0.31.6) (2023-07-07)
 
 
