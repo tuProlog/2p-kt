@@ -17,8 +17,9 @@ multiProjectHelper {
         sourceSets {
             commonMain {
                 dependencies {
-                    ktProjects.except("test-solve", thisProject).forEach {
+                    ktProjects.except("test-solve", thisProject, rootProject.name).forEach {
                         api(it)
+                        logger.lifecycle("${project.path} depends on ${it.path}")
                     }
                 }
             }
@@ -26,6 +27,7 @@ multiProjectHelper {
                 dependencies {
                     jvmProjects.except("examples").forEach {
                         api(it)
+                        logger.lifecycle("${project.path} depends on ${it.path}")
                     }
                 }
             }
