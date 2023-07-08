@@ -1,3 +1,10 @@
+## [0.31.9](https://github.com/tuProlog/2p-kt/compare/0.31.8...0.31.9) (2023-07-08)
+
+
+### Bug Fixes
+
+* full should not depend on rootproject ([222653c](https://github.com/tuProlog/2p-kt/commit/222653c1e8850d22d7746f235f8ffde78a4143b2))
+
 ## [0.31.8](https://github.com/tuProlog/2p-kt/compare/0.31.7...0.31.8) (2023-07-08)
 
 
