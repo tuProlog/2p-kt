@@ -1,3 +1,15 @@
+## [0.31.8](https://github.com/tuProlog/2p-kt/compare/0.31.7...0.31.8) (2023-07-08)
+
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.40 ([93768c0](https://github.com/tuProlog/2p-kt/commit/93768c028cd0a0995ba190ac7f448ae63e5d9e44))
+
+
+### Bug Fixes
+
+* **deps:** update javafx to v19.0.2.1 ([43ef7af](https://github.com/tuProlog/2p-kt/commit/43ef7afee135b01a639809c48ed40276302bda56))
+
 ## [0.31.7](https://github.com/tuProlog/2p-kt/compare/0.31.6...0.31.7) (2023-07-07)
 
 
