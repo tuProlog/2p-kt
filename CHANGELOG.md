@@ -1,3 +1,24 @@
+## [0.31.10](https://github.com/tuProlog/2p-kt/compare/0.31.9...0.31.10) (2023-07-12)
+
+
+### Dependency updates
+
+* **deps:** update dependency gradle to v8.2.1 ([a15427e](https://github.com/tuProlog/2p-kt/commit/a15427e8c43e0be5855e47b1a61ce756320b2f7b))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.41 ([674581f](https://github.com/tuProlog/2p-kt/commit/674581febc68856dd667f04e4a73701cfc19010f))
+* **deps:** update plugin gradlemockservice to v1.0.2 ([b894e9d](https://github.com/tuProlog/2p-kt/commit/b894e9d3fa94910bbd43aff17fa6505c7293f511))
+* **deps:** update plugin org.gradle.toolchains.foojay-resolver-convention to v0.6.0 ([7171ca9](https://github.com/tuProlog/2p-kt/commit/7171ca9b31ca88493744b5fca8e848f4d029f2de))
+* **deps:** update shadowjar to v8 ([8b3c57e](https://github.com/tuProlog/2p-kt/commit/8b3c57ead3b0b01edd0d83e1db5649457f55f398))
+
+
+### Bug Fixes
+
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2023.10 ([64487bb](https://github.com/tuProlog/2p-kt/commit/64487bb9f3fa638b70094eb01a710d9cd2ba24b8))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/setup-node action to v3.7.0 ([a7143d4](https://github.com/tuProlog/2p-kt/commit/a7143d4c09a0fffa56ca643248f7c88ec1bbea59))
+
 ## [0.31.9](https://github.com/tuProlog/2p-kt/compare/0.31.8...0.31.9) (2023-07-08)
 
 
