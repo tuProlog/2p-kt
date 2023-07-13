@@ -1,4 +1,5 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import org.danilopianini.gradle.gitsemver.SemanticVersion
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
@@ -7,8 +8,22 @@ plugins {
     id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
 }
 
-val tuPrologPackage get() = rootProject.group.toString()
-val tuPrologPackageDir get() = tuPrologPackage.replace('.', File.separatorChar)
+val tuPrologPackage: String
+    get() = group.toString()
+
+val tuPrologPackageDir: String
+    get() = tuPrologPackage.replace('.', File.separatorChar)
+
+val infoKtFileContent: String
+    get() = """|package $tuPrologPackage
+        |
+        |object Info {
+        |    const val VERSION = "$version"
+        |    val PLATFORM: Platform by lazy { currentPlatform() }
+        |    val OS: Os by lazy { currentOs() }
+        |}
+        |
+    """.trimMargin()
 
 kotlin {
     sourceSets {
@@ -21,21 +36,22 @@ kotlin {
             val infoKtFile = kotlin.srcDirs.first().absoluteFile.resolve("$tuPrologPackageDir/Info.kt")
 
             val createInfoKt by tasks.creating {
+                doFirst {
+                    val version = version.toString()
+                    val rootVersion = rootProject.version.toString()
+                    require(version matches SemanticVersion.semVerRegex) {
+                        "Invalid version of project ${project.name}: $version"
+                    }
+                    require(version == rootVersion) {
+                        "Version of project ${project.name} ($version) does not match " +
+                            "root project's one ($rootVersion)"
+                    }
+                }
                 doLast {
-                    infoKtFile.writeText(
-                        """
-                        |package $tuPrologPackage
-                        |
-                        |object Info {
-                        |    const val VERSION = "${rootProject.version}"
-                        |    val PLATFORM: Platform by lazy { currentPlatform() }
-                        |    val OS: Os by lazy { currentOs() }
-                        |}
-                        |
-                        """.trimMargin()
-                    )
+                    infoKtFile.writeText(infoKtFileContent)
                 }
                 outputs.file(infoKtFile)
+                outputs.upToDateWhen { infoKtFile.exists() && infoKtFile.readText().contains(version.toString()) }
             }
 
             tasks.matching { it.name.endsWith("sourcesJar", ignoreCase = true) }

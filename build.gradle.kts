@@ -66,8 +66,8 @@ project.findProperty("nodeVersion")?.let { it.toString() }?.takeIf { it.isNotBla
     log("override NodeJS version: $it", LogLevel.LIFECYCLE)
 }
 
-subprojects {
-    afterEvaluate {
+afterEvaluate {
+    subprojects {
         version = rootProject.version
     }
 }
