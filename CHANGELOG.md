@@ -1,3 +1,15 @@
+## [0.31.11](https://github.com/tuProlog/2p-kt/compare/0.31.10...0.31.11) (2023-07-19)
+
+
+### Dependency updates
+
+* **deps:** update node.js to 18.17 ([99a5602](https://github.com/tuProlog/2p-kt/commit/99a560231154b3e9513d83ca11a8bdc8ff149427))
+
+
+### Bug Fixes
+
+* version self-awareness class Info in :core ([fc47bf5](https://github.com/tuProlog/2p-kt/commit/fc47bf585a830e05db744d4b6ff4feb01476563f))
+
 ## [0.31.10](https://github.com/tuProlog/2p-kt/compare/0.31.9...0.31.10) (2023-07-12)
 
 
