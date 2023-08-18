@@ -1,3 +1,16 @@
+## [0.31.12](https://github.com/tuProlog/2p-kt/compare/0.31.11...0.31.12) (2023-08-18)
+
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.43 ([ff0b946](https://github.com/tuProlog/2p-kt/commit/ff0b9462f4d78b868b4c37e144a693409aca8a80))
+* **deps:** update plugin com.gradle.enterprise to v3.14 ([6510ea0](https://github.com/tuProlog/2p-kt/commit/6510ea0414985b708dd492ee240727f2e261176c))
+
+
+### Bug Fixes
+
+* **deps:** update dependency org.fxmisc.richtext:richtextfx to v0.11.1 ([300b1d5](https://github.com/tuProlog/2p-kt/commit/300b1d5419415a298e5a7a9e90626458a84d7252))
+
 ## [0.31.11](https://github.com/tuProlog/2p-kt/compare/0.31.10...0.31.11) (2023-07-19)
 
 
