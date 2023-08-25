@@ -1,3 +1,25 @@
+## [0.31.13](https://github.com/tuProlog/2p-kt/compare/0.31.12...0.31.13) (2023-08-25)
+
+
+### Dependency updates
+
+* **deps:** update dependency gradle to v8.3 ([90f9fa4](https://github.com/tuProlog/2p-kt/commit/90f9fa431afc19c3beafb5b59461526177bf4c7b))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.46 ([1c8a557](https://github.com/tuProlog/2p-kt/commit/1c8a557906a2adadff3e98758d9eb25523ab32f0))
+* **deps:** update plugin com.gradle.enterprise to v3.14.1 ([444ab37](https://github.com/tuProlog/2p-kt/commit/444ab3774cd16932bfb0f66b064914838792b6a0))
+* **deps:** update plugin gradlemockservice to v1.0.3 ([df91f55](https://github.com/tuProlog/2p-kt/commit/df91f5515ee9ebcbdd31d27e5e9c39e883473f7e))
+
+
+### Bug Fixes
+
+* **deps:** update dependency dev.petuska:npm-publish-gradle-plugin to v3.4.1 ([2d485ae](https://github.com/tuProlog/2p-kt/commit/2d485ae7cb36d43da65865104bb167a32e53b038))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/setup-node action to v3.8.1 ([3062e90](https://github.com/tuProlog/2p-kt/commit/3062e90898da46acdf64f9f50ee04a2d4617b2e8))
+* **deps:** update danysk/action-checkout action to v0.2.11 ([4cfa0a3](https://github.com/tuProlog/2p-kt/commit/4cfa0a3abffb51b4658b83c9b8466883c63ecab4))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.8 ([a86d65b](https://github.com/tuProlog/2p-kt/commit/a86d65bb1742aa3484d58904181c694bb7d76714))
+
 ## [0.31.12](https://github.com/tuProlog/2p-kt/compare/0.31.11...0.31.12) (2023-08-18)
 
 
