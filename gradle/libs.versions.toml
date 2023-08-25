@@ -30,7 +30,7 @@ ktMpp-jsOnly = { id = "io.github.gciatto.kt-mpp.js-only", version.ref = "ktMpp" 
 ktMpp-jvmOnly = { id = "io.github.gciatto.kt-mpp.jvm-only", version.ref = "ktMpp" }
 ktMpp-multiplatform = { id = "io.github.gciatto.kt-mpp.multiplatform", version.ref = "ktMpp" }
 ktMpp-multiProjectHelper = { id = "io.github.gciatto.kt-mpp.multi-project-helper", version.ref = "ktMpp" }
-gradleMockService = "io.github.gciatto.gradle-mock-service:1.0.2"
+gradleMockService = "io.github.gciatto.gradle-mock-service:1.0.3"
 nexusPublish = "de.marcphilipp.nexus-publish:0.4.0"
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 shadowJar = { id = "com.github.johnrengelman.shadow", version.ref = "shadowJar" }
