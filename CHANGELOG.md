@@ -1,3 +1,29 @@
+## [0.31.14](https://github.com/tuProlog/2p-kt/compare/0.31.13...0.31.14) (2023-09-13)
+
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.47 ([298b787](https://github.com/tuProlog/2p-kt/commit/298b78729e0a9232aece06abb4593b843024f6dd))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.48 ([7482067](https://github.com/tuProlog/2p-kt/commit/7482067faf65da9ad52fb73da9d36fd1293403ec))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.51 ([a41b90d](https://github.com/tuProlog/2p-kt/commit/a41b90d6683de5d0b198d8bfc5c7ab0b5bd03a22))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.52 ([884b3ea](https://github.com/tuProlog/2p-kt/commit/884b3eae1f5d2c180177c39b9b4dc14d49a32be4))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.53 ([2ca2543](https://github.com/tuProlog/2p-kt/commit/2ca254378df4af7db87b32a9d548da37bbae45e3))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.55 ([573d8c7](https://github.com/tuProlog/2p-kt/commit/573d8c7cbd0b2b396aa13e2726debc0e3f677d2c))
+* **deps:** update plugin gradlemockservice to v1.0.4 ([3f5492e](https://github.com/tuProlog/2p-kt/commit/3f5492e8c365e972652d883449b5e2e0f74f08db))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.1.10 ([57aec61](https://github.com/tuProlog/2p-kt/commit/57aec6146c18667457e0c7a8c5bbff2e8a6cd882))
+* **deps:** update plugin org.gradle.toolchains.foojay-resolver-convention to v0.7.0 ([6ddadb6](https://github.com/tuProlog/2p-kt/commit/6ddadb6c4c343afada13bf2d2f62ff7fe825fffd))
+
+
+### Bug Fixes
+
+* **deps:** update antlr to v4.13.1 ([cf81d0f](https://github.com/tuProlog/2p-kt/commit/cf81d0f12bbdef53755d3209904c8561fc85af6b))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v3.6.0 ([f60657b](https://github.com/tuProlog/2p-kt/commit/f60657b0401bf2c7c22282346788e910fd08619b))
+* **deps:** update danysk/action-checkout action to v0.2.12 ([b494ceb](https://github.com/tuProlog/2p-kt/commit/b494cebf8cc95621d4cd875c9f410d6e65bdd766))
+
 ## [0.31.13](https://github.com/tuProlog/2p-kt/compare/0.31.12...0.31.13) (2023-08-25)
 
 
