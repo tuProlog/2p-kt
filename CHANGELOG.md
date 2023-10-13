@@ -1,3 +1,28 @@
+## [0.31.16](https://github.com/tuProlog/2p-kt/compare/0.31.15...0.31.16) (2023-10-13)
+
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.58 ([add0732](https://github.com/tuProlog/2p-kt/commit/add0732016212b9e2dbc5f88196c6759a0b1ed66))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.59 ([f562de6](https://github.com/tuProlog/2p-kt/commit/f562de65d97ef99188a2d4064c8550aaca0ee5df))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.61 ([31c16f8](https://github.com/tuProlog/2p-kt/commit/31c16f8b49af33e9f96a24947447cddeeee56382))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.62 ([e3e15ae](https://github.com/tuProlog/2p-kt/commit/e3e15ae49fc6736ea0e71f42cfa83917697babfe))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.67 ([8e8a6be](https://github.com/tuProlog/2p-kt/commit/8e8a6beae8530f113e54638171dcd6b4e60de187))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.68 ([dcb39e8](https://github.com/tuProlog/2p-kt/commit/dcb39e8b64723185a2dd60fe819557da81ea9e4a))
+* **deps:** update node.js to 18.18 ([2b54656](https://github.com/tuProlog/2p-kt/commit/2b54656be5f079c813b5886565010ce0dc851b44))
+
+
+### Bug Fixes
+
+* **deps:** update jackson to v2.15.3 ([79d2172](https://github.com/tuProlog/2p-kt/commit/79d2172079c4d0dde89d325ca7fe22d5222ab881))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v4.1.0 ([8da642c](https://github.com/tuProlog/2p-kt/commit/8da642cf0797b0e6f94a975d459c91b02e390042))
+* **deps:** update danysk/action-checkout action to v0.2.13 ([02028f5](https://github.com/tuProlog/2p-kt/commit/02028f5d45fc75923ae49dafe64d895351c3eeb6))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.10 ([722953c](https://github.com/tuProlog/2p-kt/commit/722953c5c76fe748d42087a856bbf9208a0234d0))
+
 ## [0.31.15](https://github.com/tuProlog/2p-kt/compare/0.31.14...0.31.15) (2023-09-15)
 
 
