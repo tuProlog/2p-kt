@@ -1,3 +1,19 @@
+## [0.31.17](https://github.com/tuProlog/2p-kt/compare/0.31.16...0.31.17) (2023-10-22)
+
+
+### Dependency updates
+
+* **deps:** update plugin com.gradle.enterprise to v3.15.1 ([56c3e15](https://github.com/tuProlog/2p-kt/commit/56c3e15da66b9d9040cbb4ae030e2ca7ca8e4772))
+* **deps:** update plugin gitsemver to v1.1.11 ([239380d](https://github.com/tuProlog/2p-kt/commit/239380d563df52ddd517ce4d67c160d934bec156))
+* **deps:** update plugin gitsemver to v1.1.13 ([54920ff](https://github.com/tuProlog/2p-kt/commit/54920ff2efc3b31b63081b8d503a960804d68a39))
+* **deps:** update plugin gradlemockservice to v1.0.6 ([99f6ac4](https://github.com/tuProlog/2p-kt/commit/99f6ac433f0557ca0bdbb539c69c6396c3f2ad04))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.1.11 ([c1dabe7](https://github.com/tuProlog/2p-kt/commit/c1dabe793c36eae17bcc175cab247d5f2dba4e82))
+
+
+### Bug Fixes
+
+* **deps:** update dependency org.fxmisc.richtext:richtextfx to v0.11.2 ([c1a66f0](https://github.com/tuProlog/2p-kt/commit/c1a66f0d27032386767d26a10c527222787d56ec))
+
 ## [0.31.16](https://github.com/tuProlog/2p-kt/compare/0.31.15...0.31.16) (2023-10-13)
 
 
