@@ -1,3 +1,22 @@
+## [0.31.18](https://github.com/tuProlog/2p-kt/compare/0.31.17...0.31.18) (2023-10-24)
+
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.69 ([4b452e4](https://github.com/tuProlog/2p-kt/commit/4b452e4d15507fb6ed82841fe2daad149bc7338c))
+* **deps:** update plugin gitsemver to v1.1.15 ([2ff9ed4](https://github.com/tuProlog/2p-kt/commit/2ff9ed435d0878d40733807332e0764e12136cce))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.1.13 ([9c21cd7](https://github.com/tuProlog/2p-kt/commit/9c21cd742a62d906ae622095f19c2512999cb750))
+
+
+### Bug Fixes
+
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2023.12 ([c3f439f](https://github.com/tuProlog/2p-kt/commit/c3f439f66c4c9589322ee4de72d14f572b3a6078))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/action-checkout action to v0.2.14 ([7c485e3](https://github.com/tuProlog/2p-kt/commit/7c485e30c4ece5656549b539a21c473ff12d3427))
+
 ## [0.31.17](https://github.com/tuProlog/2p-kt/compare/0.31.16...0.31.17) (2023-10-22)
 
 
