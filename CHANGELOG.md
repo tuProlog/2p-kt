@@ -1,3 +1,37 @@
+## [0.31.19](https://github.com/tuProlog/2p-kt/compare/0.31.18...0.31.19) (2023-12-09)
+
+
+### Dependency updates
+
+* **deps:** update dependency gradle to v8.4 ([202eef5](https://github.com/tuProlog/2p-kt/commit/202eef554bb97c9c2e7037e9755ca84f070167d8))
+* **deps:** update dependency gradle to v8.5 ([8c6b0ca](https://github.com/tuProlog/2p-kt/commit/8c6b0ca7f5028c39df9c69ee92407ed103cdb68a))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.71 ([29aaa9e](https://github.com/tuProlog/2p-kt/commit/29aaa9eb619144b42d04ddd0c5483581102d3c28))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.74 ([5abd886](https://github.com/tuProlog/2p-kt/commit/5abd88624878ecd8f7ad5928f4e0e7e38d3c7a50))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.75 ([8b6a95e](https://github.com/tuProlog/2p-kt/commit/8b6a95ec2a7eff9d9a438fffb56dd61d972c700e))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.80 ([b3e7571](https://github.com/tuProlog/2p-kt/commit/b3e7571ca2fb555c558e96e2b40263306a701c91))
+* **deps:** update node.js to 20.10 ([0b77bdd](https://github.com/tuProlog/2p-kt/commit/0b77bdde3ac21a05f840f6f70ac50e5f4b155a24))
+* **deps:** update node.js to v20 ([da7fb07](https://github.com/tuProlog/2p-kt/commit/da7fb077b3b861ea7ddae55150f0bc920720e7ce))
+* **deps:** update plugin com.gradle.enterprise to v3.16 ([78a1d89](https://github.com/tuProlog/2p-kt/commit/78a1d892578bad2a037ed68036f94cee761f990b))
+* **deps:** update plugin gitsemver to v2 ([618c889](https://github.com/tuProlog/2p-kt/commit/618c889e943c22866745c6e94b153553f30e760f))
+* **deps:** update plugin gitsemver to v2.0.4 ([1754ebb](https://github.com/tuProlog/2p-kt/commit/1754ebb0641452893ab0826fb2be937ed8529664))
+* **deps:** update plugin gradlemockservice to v1.0.7 ([d860c25](https://github.com/tuProlog/2p-kt/commit/d860c25c34708060e48ae39e141c947fa76d8d51))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.1.14 ([2516f04](https://github.com/tuProlog/2p-kt/commit/2516f04670c9b36a4cb0ad9acf902912ab655e52))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.1.16 ([ac548d5](https://github.com/tuProlog/2p-kt/commit/ac548d54b05398a8a8339465c9436c2464bb5212))
+
+
+### Bug Fixes
+
+* **deps:** update jackson to v2.16.0 ([9e80eaf](https://github.com/tuProlog/2p-kt/commit/9e80eaf85c2ff73320cbc52bf4e2f2366ea160b7))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v4.1.1 ([77b41d6](https://github.com/tuProlog/2p-kt/commit/77b41d69cdf20fbff0826c21869b3e040561550d))
+* **deps:** update actions/setup-node action to v3.8.2 ([958819b](https://github.com/tuProlog/2p-kt/commit/958819ba81ec13ef259d4d9ada638ea0b0b56dfc))
+* **deps:** update actions/setup-node action to v4 ([3d9c69b](https://github.com/tuProlog/2p-kt/commit/3d9c69bb0846bda9d8177b410498af62b0e5cae9))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.11 ([badc8a0](https://github.com/tuProlog/2p-kt/commit/badc8a057a258dec19403dce7a319f1c9edde046))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.12 ([e307114](https://github.com/tuProlog/2p-kt/commit/e3071140b7988ac4eba9e45777bb91cea632579c))
+
 ## [0.31.18](https://github.com/tuProlog/2p-kt/compare/0.31.17...0.31.18) (2023-10-24)
 
 
