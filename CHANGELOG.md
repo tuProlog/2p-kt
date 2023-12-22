@@ -1,3 +1,25 @@
+## [0.31.20](https://github.com/tuProlog/2p-kt/compare/0.31.19...0.31.20) (2023-12-22)
+
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.81 ([70f7565](https://github.com/tuProlog/2p-kt/commit/70f75659d5ec447ee3f4b78e55c55acd6f555307))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.82 ([4c350d8](https://github.com/tuProlog/2p-kt/commit/4c350d8581c4ba4709c6517433b1096e186b9ef4))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.84 ([65d5cd1](https://github.com/tuProlog/2p-kt/commit/65d5cd1c37a38fdd569db1024bc2b51584ad4931))
+* **deps:** update plugin com.gradle.enterprise to v3.16.1 ([0956f16](https://github.com/tuProlog/2p-kt/commit/0956f16b471a91948eb39e128e610c09d5305dfc))
+* **deps:** update plugin gitsemver to v2.0.5 ([0cc1264](https://github.com/tuProlog/2p-kt/commit/0cc1264621d68790ff7a3946f90c011477696559))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.1.17 ([a19cc02](https://github.com/tuProlog/2p-kt/commit/a19cc02eeffaf1470fd88d03d68946d8a3b42f94))
+
+
+### Bug Fixes
+
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2023.13 ([a89170f](https://github.com/tuProlog/2p-kt/commit/a89170fcc60565f80122d1d5cf9a62ad1cb8b0b4))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/setup-node action to v4.0.1 ([2bf0926](https://github.com/tuProlog/2p-kt/commit/2bf09266918e3c8d674911e4022458dbbe5ec5ce))
+
 ## [0.31.19](https://github.com/tuProlog/2p-kt/compare/0.31.18...0.31.19) (2023-12-09)
 
 
