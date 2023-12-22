@@ -166,7 +166,7 @@ jobs:
         id: node-version
         run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
       - name: Install Node
-        uses: actions/setup-node@v4.0.0
+        uses: actions/setup-node@v4.0.1
         with:
           node-version: ${{ steps.node-version.outputs.version }}
       - uses: DanySK/build-check-deploy-gradle-action@2.2.12
