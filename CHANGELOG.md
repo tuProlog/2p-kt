@@ -1,3 +1,10 @@
+## [0.31.21](https://github.com/tuProlog/2p-kt/compare/0.31.20...0.31.21) (2023-12-24)
+
+
+### Bug Fixes
+
+* **deps:** update jackson to v2.16.1 ([02953d1](https://github.com/tuProlog/2p-kt/commit/02953d12718b686cae51d15e2db2722479b8d182))
+
 ## [0.31.20](https://github.com/tuProlog/2p-kt/compare/0.31.19...0.31.20) (2023-12-22)
 
 
