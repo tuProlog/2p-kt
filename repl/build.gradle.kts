@@ -1,6 +1,6 @@
 plugins {
     id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
-    id(libs.plugins.shadowJar.get().pluginId)
+    id(libs.plugins.ktMpp.fatJar.get().pluginId)
 }
 
 kotlin {
@@ -18,12 +18,6 @@ kotlin {
     }
 }
 
-val arguments: String? by project
-
-val mainKlass = "it.unibo.tuprolog.ui.repl.Main"
-
-shadowJar(entryPoint = mainKlass)
-
 tasks.create("run", JavaExec::class.java) {
     group = "application"
     dependsOn("jvmMainClasses")
@@ -32,10 +26,8 @@ tasks.create("run", JavaExec::class.java) {
         kotlin.jvm().compilations.getByName("main").compileDependencyFiles
     )
     standardInput = System.`in`
-    mainClass.set(mainKlass)
-    arguments.let {
-        if (it != null) {
-            args = it.split("\\s+".toRegex()).filterNot { a -> a.isBlank() }
-        }
+    mainClass.set(multiPlatformHelper.fatJarEntryPoint)
+    project.findProperty("arguments")?.let {
+        args = it.toString().split("\\s+".toRegex()).filterNot(String::isBlank)
     }
 }

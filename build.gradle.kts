@@ -1,7 +1,6 @@
 import io.github.gciatto.kt.mpp.Plugins
-import io.github.gciatto.kt.mpp.ProjectType
-import io.github.gciatto.kt.mpp.log
-import io.github.gciatto.kt.mpp.nodeVersion
+import io.github.gciatto.kt.mpp.helpers.ProjectType
+import io.github.gciatto.kt.mpp.utils.log
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -19,11 +18,11 @@ gitSemVer {
 log("version: $version", LogLevel.LIFECYCLE)
 
 multiProjectHelper {
-    defaultProjectType = ProjectType.KOTLIN // default project type for all projects which are not explicitly marked
+    defaultProjectType = ProjectType.KOTLIN
 
-    jvmProjects(":examples", ":ide", ":ide-plp", ":parser-jvm") // marks projects as JVM-only
-    jsProjects(":parser-js") // marks projects as JS-only
-    otherProjects(":documentation") // marks projects as non-Kotlin related
+    jvmProjects(":examples", ":ide", ":ide-plp", ":parser-jvm")
+    jsProjects(":parser-js")
+    otherProjects(":documentation")
 
     val baseProjectTemplate = buildSet {
         add(Plugins.documentation)
@@ -58,16 +57,5 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-    }
-}
-
-project.findProperty("nodeVersion")?.let { it.toString() }?.takeIf { it.isNotBlank() }?.let {
-    nodeVersion(it)
-    log("override NodeJS version: $it", LogLevel.LIFECYCLE)
-}
-
-afterEvaluate {
-    subprojects {
-        version = rootProject.version
     }
 }

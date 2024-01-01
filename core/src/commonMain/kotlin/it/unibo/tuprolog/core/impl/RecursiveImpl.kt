@@ -59,41 +59,41 @@ internal abstract class RecursiveImpl(
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCollection(this)
 
     protected class LazyTwoItemsList<T>(firstGenerator: () -> T, secondGenerator: () -> T) : KtList<T> {
-        private val first: T by lazy(firstGenerator)
+        private val fst: T by lazy(firstGenerator)
 
-        private val second: T by lazy(secondGenerator)
+        private val snd: T by lazy(secondGenerator)
 
         override val size: Int
             get() = 2
 
         override fun contains(element: T): Boolean =
-            first == element || second == element
+            fst == element || snd == element
 
         override fun containsAll(elements: KtCollection<T>): Boolean =
             elements.any { contains(it) }
 
         override fun get(index: Int): T = when (index) {
-            0 -> first
-            1 -> second
+            0 -> fst
+            1 -> snd
             else -> throw IndexOutOfBoundsException("Index out of range: $index")
         }
 
         override fun indexOf(element: T): Int = when (element) {
-            first -> 0
-            second -> 1
+            fst -> 0
+            snd -> 1
             else -> -1
         }
 
         override fun isEmpty(): Boolean = false
 
         override fun iterator(): Iterator<T> = iterator {
-            yield(first)
-            yield(second)
+            yield(fst)
+            yield(snd)
         }
 
         override fun lastIndexOf(element: T): Int = when (element) {
-            second -> 1
-            first -> 0
+            snd -> 1
+            fst -> 0
             else -> -1
         }
 
