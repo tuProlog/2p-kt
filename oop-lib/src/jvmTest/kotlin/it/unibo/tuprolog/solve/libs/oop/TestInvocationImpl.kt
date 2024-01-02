@@ -59,7 +59,7 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
             }
         }
         var query = InvokeMethod.functor(ref, "size", R)
-        val expectedSize = cases.size - cases.filter { it.isFailed }.count()
+        val expectedSize = cases.size - cases.count { it.isFailed }
         assertSolutionEquals(
             query.yes(R to Integer.of(expectedSize)),
             solver.solveOnce(query),

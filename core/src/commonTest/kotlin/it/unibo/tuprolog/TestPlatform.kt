@@ -4,5 +4,5 @@ import kotlin.test.Test
 
 expect class TestPlatform {
     @Test
-    fun testPlatform()
+    fun testCurrentPlatform()
 }

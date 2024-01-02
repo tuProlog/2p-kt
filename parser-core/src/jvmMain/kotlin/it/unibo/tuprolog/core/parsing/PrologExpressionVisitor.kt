@@ -17,10 +17,12 @@ import it.unibo.tuprolog.parser.dynamic.Associativity.YF
 import it.unibo.tuprolog.parser.dynamic.Associativity.YFX
 import org.gciatto.kt.math.BigInteger
 
+@Suppress("TooManyFunctions")
 class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : PrologParserBaseVisitor<Term>() {
     override fun visitSingletonTerm(ctx: PrologParser.SingletonTermContext): Term = visitTerm(ctx.term())
 
-    override fun visitSingletonExpression(ctx: PrologParser.SingletonExpressionContext): Term = visitExpression(ctx.expression())
+    override fun visitSingletonExpression(ctx: PrologParser.SingletonExpressionContext): Term =
+        visitExpression(ctx.expression())
 
     override fun visitClause(ctx: PrologParser.ClauseContext): Term =
         ctx.expression().accept(this).toClause(ctx.text, ctx.start.line, ctx.start.charPositionInLine)
@@ -33,7 +35,7 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
                 POSTFIX.contains(ctx.associativity) -> visitPostfixExpression(ctx)
                 PREFIX.contains(ctx.associativity) -> visitPrefixExpression(ctx)
                 ctx.exception != null -> throw ctx.exception
-                else -> throw IllegalArgumentException() // use kotlin's IllegalArgumentException
+                else -> error("Unknown expression type: $ctx")
             },
             flatten(ctx.outers),
         )
@@ -67,12 +69,11 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
         }
 
     override fun visitStructure(ctx: PrologParser.StructureContext): Term {
-        if (ctx.isList) {
-            return scope.listOf()
+        return if (ctx.isList) {
+            scope.listOf()
         } else if (ctx.isBlock) {
-            return scope.blockOf()
-        }
-        return if (ctx.arity == 0) {
+            scope.blockOf()
+        } else if (ctx.arity == 0) {
             scope.atomOf(ctx.functor.text)
         } else {
             scope.structOf(
@@ -99,7 +100,7 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
         }
     }
 
-    @Suppress("NullableBooleanElvis", "UNNECESSARY_SAFE_CALL")
+    @Suppress("NullableBooleanElvis", "MagicNumber")
     private fun parseInteger(ctx: PrologParser.IntegerContext): BigInteger {
         val str = ctx.value.text
         val base: Int
@@ -194,7 +195,7 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
             XFY -> visitInfixRightAssociativeExpression(ctx)
             YFX -> visitInfixLeftAssociativeExpression(ctx)
             XFX -> visitInfixNonAssociativeExpression(ctx)
-            else -> throw IllegalStateException()
+            else -> error("Expected infix associativity, got ${ctx.associativity} instead")
         }
     }
 
@@ -260,9 +261,11 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
         return result
     }
 
-    private fun listOfOperands(ctx: PrologParser.ExpressionContext): List<Term> = (listOf(ctx.left) + ctx.right).map { it.accept(this) }
+    private fun listOfOperands(ctx: PrologParser.ExpressionContext): List<Term> =
+        (listOf(ctx.left) + ctx.right).map { it.accept(this) }
 
-    private fun listOfOperators(ctx: PrologParser.ExpressionContext): List<String> = ctx.operators.map { it.symbol.text }
+    private fun listOfOperators(ctx: PrologParser.ExpressionContext): List<String> =
+        ctx.operators.map { it.symbol.text }
 
     private fun visitInfixRightAssociativeExpression(ctx: PrologParser.ExpressionContext): Term =
         infixRight(listOfOperands(ctx), listOfOperators(ctx))
@@ -275,5 +278,6 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
             sequenceOf(it) + flatten(it.outers.asSequence())
         }
 
-    private fun flatten(outers: List<PrologParser.OuterContext>): List<PrologParser.OuterContext> = flatten(outers.asSequence()).toList()
+    private fun flatten(outers: List<PrologParser.OuterContext>): List<PrologParser.OuterContext> =
+        flatten(outers.asSequence()).toList()
 }

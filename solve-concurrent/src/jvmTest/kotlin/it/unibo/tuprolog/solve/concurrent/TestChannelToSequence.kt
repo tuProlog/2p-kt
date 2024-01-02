@@ -49,9 +49,8 @@ class TestChannelToSequence {
             assertTrue(channel.isClosedForSend)
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testChannelToSequence() =
+    fun testChannelToSequenceWorks() =
         multiRunConcurrentTest {
             val times = 100
             val channel: Channel<String> = Channel(Channel.UNLIMITED)

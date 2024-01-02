@@ -9,6 +9,7 @@ import kotlin.test.fail
 
 @Ignore
 class TestKotlinReflectionWorkaroundsAreStillNecessary {
+    @Suppress("PrintStackTrace")
     private inline fun <reified T : Throwable> assertExceptionIsThrown(action: () -> Unit) {
         try {
             action()

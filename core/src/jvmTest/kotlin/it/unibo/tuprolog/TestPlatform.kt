@@ -5,7 +5,7 @@ import kotlin.test.assertEquals
 
 actual class TestPlatform {
     @Test
-    actual fun testPlatform() {
+    actual fun testCurrentPlatform() {
         assertEquals(Platform.JVM, Info.PLATFORM)
     }
 }

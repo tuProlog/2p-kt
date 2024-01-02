@@ -13,19 +13,23 @@ private object ModuleNames {
         klass: String,
     ): String = (if (orgPrefix) "$ORGANIZATION/" else "") + module + ":" + klass
 
-    fun classicFactoryClass(orgPrefix: Boolean = false) = withOptionalPrefix(orgPrefix, CLASSIC, FactoryClassNames.CLASSIC)
+    fun classicFactoryClass(orgPrefix: Boolean = false) =
+        withOptionalPrefix(orgPrefix, CLASSIC, FactoryClassNames.CLASSIC)
 
     const val STREAMS = "$SOLVE_PREFIX-streams"
 
-    fun streamsFactoryClass(orgPrefix: Boolean = false) = withOptionalPrefix(orgPrefix, STREAMS, FactoryClassNames.STREAMS)
+    fun streamsFactoryClass(orgPrefix: Boolean = false) =
+        withOptionalPrefix(orgPrefix, STREAMS, FactoryClassNames.STREAMS)
 
     const val PROBLOG = "$SOLVE_PREFIX-problog"
 
-    fun problogFactoryClass(orgPrefix: Boolean = false) = withOptionalPrefix(orgPrefix, PROBLOG, FactoryClassNames.PROBLOG)
+    fun problogFactoryClass(orgPrefix: Boolean = false) =
+        withOptionalPrefix(orgPrefix, PROBLOG, FactoryClassNames.PROBLOG)
 
     const val CONCURRENT = "$SOLVE_PREFIX-concurrent"
 
-    fun concurrentFactoryClass(orgPrefix: Boolean = false) = withOptionalPrefix(orgPrefix, CONCURRENT, FactoryClassNames.CONCURRENT)
+    fun concurrentFactoryClass(orgPrefix: Boolean = false) =
+        withOptionalPrefix(orgPrefix, CONCURRENT, FactoryClassNames.CONCURRENT)
 }
 
 internal actual fun solverFactory(

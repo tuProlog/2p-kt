@@ -12,8 +12,8 @@ actual fun log(x: () -> Any) {
 }
 
 actual fun <T : Any> assertClassNameIs(
-    `class`: KClass<T>,
+    klass: KClass<T>,
     name: String,
 ) {
-    assertEquals(name, `class`.qualifiedName)
+    assertEquals(name, klass.qualifiedName)
 }

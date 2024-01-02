@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
-@Suppress("USELESS_CAST")
+@Suppress("USELESS_CAST", "TooManyFunctions")
 internal class JsTermDeobjectifier : TermDeobjectifier {
     private val scope: Scope = Scope.empty()
 
@@ -104,6 +104,7 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
         )
     }
 
+    @Suppress("UseCheckOrError", "ThrowsCount")
     private fun deobjectifyStructure(value: dynamic): Term {
         val name = value["fun"] as? String ?: throw DeobjectificationException(value)
         val args = value["args"] as? Array<*> ?: throw DeobjectificationException(value)

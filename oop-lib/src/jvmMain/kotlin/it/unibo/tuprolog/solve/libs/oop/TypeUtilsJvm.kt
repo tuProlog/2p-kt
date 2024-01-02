@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
@@ -32,8 +34,11 @@ actual val KClass<*>.companionObjectType: Optional<out KClass<*>>
             },
         )
 
-private val classCache = Cache.simpleLru<String, Optional<out KClass<*>>>(32)
+private const val DEFAULT_CACHE_SIZE = 32
 
+private val classCache = Cache.simpleLru<String, Optional<out KClass<*>>>(DEFAULT_CACHE_SIZE)
+
+@Suppress("ReturnCount")
 actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
     require(CLASS_NAME_PATTERN.matches(qualifiedName)) {
         "`$qualifiedName` must match ${CLASS_NAME_PATTERN.pattern} while it doesn't"
@@ -41,6 +46,7 @@ actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
     return classCache.getOrSet(qualifiedName) { kClassFromNameImpl(qualifiedName) }
 }
 
+@Suppress("ReturnCount")
 private fun kClassFromNameImpl(qualifiedName: String): Optional<out KClass<*>> {
     val kotlinKlass = KotlinToJavaTypeMap[qualifiedName]
     return if (kotlinKlass != null) {
@@ -62,10 +68,11 @@ private fun String.replaceAt(
     index: Int,
     char: Char,
 ): String {
-    if (index < 0 || index >= length) throw IndexOutOfBoundsException()
+    if (index < 0 || index >= length) throw IndexOutOfBoundsException("Index out of bounds: $index")
     return substring(0, index) + char + substring(index + 1)
 }
 
+@Suppress("SwallowedException")
 private fun javaClassForName(qualifiedName: String): Class<*>? =
     try {
         Class.forName(qualifiedName)
@@ -78,6 +85,7 @@ private val classNamePattern = "^$ID(\\.$ID(\\$$ID)*)*$".toRegex()
 actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern
 
+@Suppress("MagicNumber")
 actual val Any.identifier: String
     get() = System.identityHashCode(this).toString(16)
 
@@ -104,16 +112,15 @@ actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
         .let { if (strict) it else sequenceOf(this) + it }
 
 actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
-    get() =
-        parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
-            it.type.classifier as? KClass<*> ?: Any::class
-        }
+    get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
+        it.type.classifier as? KClass<*> ?: Any::class
+    }
 
 actual val KClass<*>.fullName: String
-    get() = qualifiedName!!
+    get() = qualifiedName ?: error("Reflection issue: cannot get qualified name of $this")
 
 actual val KClass<*>.name: String
-    get() = simpleName!!
+    get() = simpleName ?: error("Reflection issue: cannot get name of $this")
 
 actual fun KCallable<*>.pretty(): String = "$name(${parameters.map { it.pretty() }}): ${returnType.classifier.pretty()}"
 

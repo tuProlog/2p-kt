@@ -9,10 +9,11 @@ import java.util.WeakHashMap
 
 private val cache = WeakHashMap<InputChannel<String>, InputChannel<Term>>()
 
+@Suppress("UnsafeCallOnNullableType")
 @Synchronized
 actual fun InputChannel<String>.asTermChannel(operators: OperatorSet): InputChannel<Term> {
     if (this !is ReaderChannel) {
-        throw IllegalStateException("Channel $streamTerm does not supporting reading terms, as it is of type ${this::class.simpleName}")
+        error("Channel $streamTerm does not supporting reading terms, as it is of type ${this::class.simpleName}")
     }
     return if (cache.containsKey(this)) {
         cache[this]!!

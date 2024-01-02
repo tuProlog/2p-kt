@@ -38,5 +38,6 @@ class TestConcurrentNumberCharsImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    override fun testNumberCharsInstantiationError() = multiRunConcurrentTest { super.testNumberCharsInstantiationError() }
+    override fun testNumberCharsInstantiationError() =
+        multiRunConcurrentTest { super.testNumberCharsInstantiationError() }
 }

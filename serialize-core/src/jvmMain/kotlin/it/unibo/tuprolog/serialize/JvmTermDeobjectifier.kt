@@ -9,6 +9,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import it.unibo.tuprolog.core.Integer as LogicInteger
 
+@Suppress("TooManyFunctions")
 internal class JvmTermDeobjectifier : TermDeobjectifier {
     private val scope: Scope = Scope.empty()
 
@@ -61,13 +62,10 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
     }
 
     private fun deobjectifyClause(value: Map<*, *>): Term {
-        val head =
-            value["head"]?.let {
-                deobjectify(it) as? Struct ?: throw DeobjectificationException(value)
-            }
+        val head = value["head"]?.let { deobjectify(it) as? Struct } ?: throw DeobjectificationException(value)
         val body = value["body"]?.let { deobjectify(it) }
         return if (body == null) {
-            scope.factOf(head!!)
+            scope.factOf(head)
         } else {
             scope.clauseOf(head, body)
         }
@@ -105,6 +103,7 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
         )
     }
 
+    @Suppress("ThrowsCount")
     private fun deobjectifyStructure(value: Map<*, *>): Term {
         val name = value["fun"] as? String ?: throw DeobjectificationException(value)
         val args = value["args"] as? List<*> ?: throw DeobjectificationException(value)

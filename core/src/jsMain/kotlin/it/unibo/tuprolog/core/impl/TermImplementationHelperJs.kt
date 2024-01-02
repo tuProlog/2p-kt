@@ -7,7 +7,8 @@ import it.unibo.tuprolog.utils.forceCast
 
 internal val property: String = TermImpl::termMark.name
 
-internal actual inline fun isTerm(any: Any?): Boolean = any !== null && (any.asDynamic()[property] == MARK || any is Term)
+internal actual inline fun isTerm(any: Any?): Boolean =
+    any !== null && (any.asDynamic()[property] == MARK || any is Term)
 
 internal actual inline fun asTerm(any: Any?): Term? =
     if (isTerm(any)) {

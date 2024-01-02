@@ -32,7 +32,9 @@ private val map =
             Long::class,
             Double::class,
             Nothing::class,
-        ).forEach { tree[it.qualifiedName!!] = it }
+        ).map { (it.qualifiedName ?: error("Reflection issue with $it")) to it }.forEach { (name, klass) ->
+            tree[name] = klass
+        }
     }
 
 internal object KotlinToJavaTypeMap : Map<String, KClass<*>> by map {

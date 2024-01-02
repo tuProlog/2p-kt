@@ -20,6 +20,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException
 import java.io.InputStream
 import java.io.Reader
 
+@Suppress("TooManyFunctions")
 object PrologParserFactory {
     private fun newErrorListener(whileParsing: Any): ANTLRErrorListener {
         return object : BaseErrorListener() {
@@ -204,6 +205,7 @@ object PrologParserFactory {
         return parser
     }
 
+    @Suppress("SwallowedException")
     private fun <T : ParserRuleContext> parseSingle(
         parser: PrologParser,
         source: Any,
@@ -237,6 +239,7 @@ object PrologParserFactory {
         return parseSingle(parser, source) { singletonTerm() }
     }
 
+    @Suppress("SwallowedException", "ThrowsCount")
     private fun <T : ParserRuleContext> parseNext(
         parser: PrologParser,
         input: Any,

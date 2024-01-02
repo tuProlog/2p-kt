@@ -2,6 +2,7 @@ package it.unibo.tuprolog.serialize
 
 @JsModule("yaml")
 @JsNonModule
+@Suppress("UnusedParameter")
 external object YAML {
     fun stringify(
         value: dynamic,

@@ -18,9 +18,10 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 
+@Suppress("TooManyFunctions")
 internal class JvmTermObjectifier : TermObjectifier {
     override fun defaultValue(term: Term): Any {
-        throw IllegalStateException()
+        error("Cannot objectify term: $term")
     }
 
     override fun objectifyMany(values: Iterable<Term>): Any {
@@ -48,6 +49,7 @@ internal class JvmTermObjectifier : TermObjectifier {
 
     override fun visitAtom(term: Atom): String = term.value
 
+    @Suppress("SwallowedException")
     override fun visitInteger(term: Integer): Any =
         try {
             term.value.toLongExact()

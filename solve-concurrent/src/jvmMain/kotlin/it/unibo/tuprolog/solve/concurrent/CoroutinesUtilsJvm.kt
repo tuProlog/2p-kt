@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -10,7 +9,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("TooGenericExceptionCaught")
 actual fun <T> ReceiveChannel<T>.toSequence(coroutineScope: CoroutineScope): Sequence<T> {
     val queue = LinkedBlockingQueue<Any?>()
     coroutineScope.launch {
@@ -47,8 +46,9 @@ internal actual val backgroundScope: CoroutineScope =
 
 actual fun createScope(): CoroutineScope = CoroutineScope(SupervisorJob() + executionContext.asCoroutineDispatcher())
 
-// todo need checks, computation never ends with shorter timeout of executionContext.awaitTermination
+@Suppress("MagicNumber")
 actual fun closeExecution() {
+    // TODO need checks, computation never ends with shorter timeout of executionContext.awaitTermination
     executionContext.awaitTermination(30, TimeUnit.SECONDS)
     executionContext.shutdown()
     backgroundExecutionContext.awaitTermination(2, TimeUnit.SECONDS)

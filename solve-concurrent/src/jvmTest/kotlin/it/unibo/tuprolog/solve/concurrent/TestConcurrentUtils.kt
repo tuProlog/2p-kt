@@ -50,10 +50,10 @@ object ConcurrentFromSequence : FromSequence<MultiSet> {
 }
 
 class KeySolution(val solution: Solution) {
+    @Suppress("ReturnCount")
     private fun ResolutionException.similar(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
-
         return if (this is LogicError && other is LogicError) {
             errorStruct.equals(other.errorStruct, false) && message == other.message
         } else {
@@ -94,10 +94,10 @@ class KeySolution(val solution: Solution) {
             return hashCode
         }
 
+    @Suppress("ReturnCount")
     private fun List<Term>.similar(other: List<Term>): Boolean {
         if (this === other) return true
         if (size != other.size) return false
-
         return all {
             other.any { otherIt ->
                 otherIt.similar(it)
@@ -137,10 +137,10 @@ class KeySolution(val solution: Solution) {
             else -> this == other
         }
 
+    @Suppress("ReturnCount")
     private fun Substitution.Unifier.similar(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
-
         other as Substitution.Unifier
         if (isSuccess != other.isSuccess) return false
         if (this.size != other.size) return false
@@ -198,7 +198,9 @@ class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf())
 
     constructor(vararg solutions: Solution) : this(solutions.asIterable())
 
-    fun add(solution: Solution): MultiSet = MultiSet(solutionOccurrences + (solution.key() to (solutionOccurrences[solution.key()] ?: 1)))
+    fun add(solution: Solution): MultiSet = MultiSet(
+        solutionOccurrences + (solution.key() to (solutionOccurrences[solution.key()] ?: 1))
+    )
 
     override fun assertingEquals(other: Any?) {
         if (this === other) {
@@ -212,8 +214,8 @@ class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf())
         val failMsg = "Expected solutions: ${printSolutions()} \nActual solutions: ${actual.printSolutions()}"
 
         assertEquals(
-            solutionOccurrences.entries.filter { !it.key.solution.isNo }.size,
-            actual.solutionOccurrences.entries.filter { !it.key.solution.isNo }.size,
+            solutionOccurrences.entries.count { !it.key.solution.isNo },
+            actual.solutionOccurrences.entries.count { !it.key.solution.isNo },
             "Expected MultiSet size did not match actual MultiSet size.\n$failMsg",
         )
         solutionOccurrences.forEach { (key, value) ->

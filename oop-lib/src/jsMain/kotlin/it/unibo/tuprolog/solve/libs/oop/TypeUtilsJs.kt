@@ -8,6 +8,8 @@ import kotlin.reflect.KMutableProperty
 
 private val TODO_EXCEPTION = NotImplementedError("OOP-Prolog integration is still not supported on JS")
 
+private const val HEX_RADIX = 16
+
 actual val KClass<*>.companionObjectRef: Optional<out Any>
     get() = Optional.none()
 
@@ -41,7 +43,7 @@ actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern
 
 actual val Any.identifier: String
-    get() = identifier.hashCode().toString(16)
+    get() = identifier.hashCode().toString(HEX_RADIX)
 
 internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
     instance: Any?,

@@ -244,7 +244,7 @@ expect fun internalsOf(x: () -> Any): String
 expect fun log(x: () -> Any): Unit
 
 expect fun <T : Any> assertClassNameIs(
-    `class`: KClass<T>,
+    klass: KClass<T>,
     name: String,
 )
 

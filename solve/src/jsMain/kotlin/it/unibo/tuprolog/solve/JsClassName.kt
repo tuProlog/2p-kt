@@ -19,6 +19,7 @@ data class JsClassName(val module: String, val qualifiedName: String) {
         qualifiedName.split('.')
     }
 
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun resolve(): dynamic {
         try {
             var resolved = require(module)

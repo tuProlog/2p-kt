@@ -34,7 +34,8 @@ class TestConcurrentAtomCharsImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    override fun atomCharsTestIstantationErrorCheck() = multiRunConcurrentTest { super.atomCharsTestIstantationErrorCheck() }
+    override fun atomCharsTestIstantationErrorCheck() =
+        multiRunConcurrentTest { super.atomCharsTestIstantationErrorCheck() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

@@ -20,6 +20,7 @@ class DynamicOpListener private constructor(
 ) : PrologParserBaseListener() {
     private val parser: WeakReference<PrologParser> = WeakReference(parser)
 
+    @Suppress("NestedBlockDepth")
     override fun exitClause(ctx: PrologParser.ClauseContext) {
         val expr: PrologParser.ExpressionContext = ctx.expression()
         if (ctx.exception != null) {
@@ -28,13 +29,13 @@ class DynamicOpListener private constructor(
         if (expr.op != null && ":-" == expr.op.symbol.text && expr.associativity in Associativity.PREFIX) {
             val directive = ctx.accept(PrologExpressionVisitor()) as Directive
             val op = directive.body
-            if (op is Struct && op.arity == 3 && op.functor == "op" && op[0] is Numeric && op[1] is Atom && op.isGround) {
+            if (op.isOpDirective) {
                 val priority =
                     min(
                         PrologParser.TOP,
                         max(
                             PrologParser.BOTTOM,
-                            (op[0] as Numeric).intValue.toInt(),
+                            ((op as Struct)[0] as Numeric).intValue.toInt(),
                         ),
                     )
                 val specifier = Specifier.fromTerm(op[1])

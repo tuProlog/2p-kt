@@ -10,6 +10,7 @@ import java.io.InputStream
 import java.io.Reader
 import kotlin.jvm.JvmStatic
 
+@Suppress("TooManyFunctions")
 interface ClausesReader {
     val defaultOperatorSet: OperatorSet
 
@@ -37,7 +38,8 @@ interface ClausesReader {
         operators: OperatorSet,
     ): Sequence<Clause>
 
-    fun readClausesLazily(inputStream: InputStream): Sequence<Clause> = readClausesLazily(inputStream, defaultOperatorSet)
+    fun readClausesLazily(inputStream: InputStream): Sequence<Clause> =
+        readClausesLazily(inputStream, defaultOperatorSet)
 
     fun readClausesLazily(reader: Reader): Sequence<Clause> = readClausesLazily(reader, defaultOperatorSet)
 

@@ -16,6 +16,7 @@ import it.unibo.tuprolog.parser.Token
 import it.unibo.tuprolog.parser.isParseCancellationException
 import it.unibo.tuprolog.parser.isRecognitionException
 
+@Suppress("TooManyFunctions")
 object PrologParserFactory {
     private fun newErrorListener(whileParsing: Any): dynamic {
         return object {
@@ -61,6 +62,7 @@ object PrologParserFactory {
         return parseExpression(parser, string)
     }
 
+    @Suppress("InstanceOfCheckForException", "SwallowedException")
     private fun parseExpression(
         parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>,
         source: String,
@@ -93,7 +95,8 @@ object PrologParserFactory {
         }
     }
 
-    fun parseExpressionWithStandardOperators(string: String): SingletonExpressionContext = parseExpression(string, OperatorSet.DEFAULT)
+    fun parseExpressionWithStandardOperators(string: String): SingletonExpressionContext =
+        parseExpression(string, OperatorSet.DEFAULT)
 
     fun parseClauses(
         source: String,
@@ -105,7 +108,8 @@ object PrologParserFactory {
 
     fun parseClauses(source: String): Sequence<ClauseContext> = parseClauses(source, OperatorSet.EMPTY)
 
-    fun parseClausesWithStandardOperators(source: String): Sequence<ClauseContext> = parseClauses(source, OperatorSet.DEFAULT)
+    fun parseClausesWithStandardOperators(source: String): Sequence<ClauseContext> =
+        parseClauses(source, OperatorSet.DEFAULT)
 
     fun createParser(string: String): Pair<PrologParser, ErrorStrategy> = createParser(string, OperatorSet.DEFAULT)
 
@@ -136,6 +140,7 @@ object PrologParserFactory {
         return prologParser
     }
 
+    @Suppress("InstanceOfCheckForException", "SwallowedException")
     private fun parseClause(
         parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>,
         source: Any,

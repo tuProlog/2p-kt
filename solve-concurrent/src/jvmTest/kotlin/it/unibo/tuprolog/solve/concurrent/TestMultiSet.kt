@@ -25,7 +25,7 @@ class TestMultiSet {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testMultiSet() =
+    fun testMultiSetCreationAndEquality() =
         multiRunConcurrentTest {
             logicProgramming {
                 val query = "X" equalsTo 1 and `var`("X")

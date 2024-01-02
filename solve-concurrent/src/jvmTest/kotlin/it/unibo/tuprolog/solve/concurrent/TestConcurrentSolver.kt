@@ -58,6 +58,7 @@ import it.unibo.tuprolog.solve.yes
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Suppress("LongMethod", "LargeClass", "CyclomaticComplexMethod")
 interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
     val callErrorSignature: Signature
     val nafErrorSignature: Signature
@@ -476,8 +477,8 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val query = truthOf(true)
-            var solutions = fromSequence(solver.solve(query, mediumDuration))
-            var expected = fromSequence(query.yes())
+            val solutions = fromSequence(solver.solve(query, mediumDuration))
+            val expected = fromSequence(query.yes())
 
             expected.assertingEquals(solutions)
         }
@@ -722,7 +723,9 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         }
     }
 
-    /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowTheoryExampleNotableGoalToSolution] */
+    /**
+     * Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowTheoryExampleNotableGoalToSolution]
+     * */
     fun testCatchPrimitive() {
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.catchAndThrowTheoryExample),

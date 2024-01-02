@@ -72,7 +72,8 @@ internal object Conversions {
         datum: (Term, KClass<*>) -> TestDatum,
     ): List<TestDatum> = sequenceOf(this).product(sequenceOf(*types)).map { (t, k) -> datum(t, k) }.toList()
 
-    private inline operator fun <reified T> Array<T>.minus(item: T): Array<T> = this.filterNot { it == item }.toTypedArray()
+    private inline operator fun <reified T> Array<T>.minus(item: T): Array<T> =
+        this.filterNot { it == item }.toTypedArray()
 
     val cornerCases: List<TestDatum> =
         buildList {
@@ -107,10 +108,13 @@ internal object Conversions {
             Integer.of(higherThanMaxLong).product(*nonFloatingLiteralTypes, datum = TestDatum::failed).let(::addAll)
             Integer.of(lowerThanMinLong).product(*nonFloatingLiteralTypes, datum = TestDatum::failed).let(::addAll)
             val nonFloatingLiteralTypesMinusLong = nonFloatingLiteralTypes - Long::class
-            Integer.of(higherThanMaxInt).product(*nonFloatingLiteralTypesMinusLong, datum = TestDatum::failed).let(::addAll)
-            Integer.of(lowerThanMinInt).product(*nonFloatingLiteralTypesMinusLong, datum = TestDatum::failed).let(::addAll)
+            Integer.of(higherThanMaxInt).product(*nonFloatingLiteralTypesMinusLong, datum = TestDatum::failed)
+                .let(::addAll)
+            Integer.of(lowerThanMinInt).product(*nonFloatingLiteralTypesMinusLong, datum = TestDatum::failed)
+                .let(::addAll)
             val shortNumbersAndAlphanumeric = nonFloatingLiteralTypesMinusLong - Int::class
-            Integer.of(higherThanMaxShort).product(*shortNumbersAndAlphanumeric, datum = TestDatum::failed).let(::addAll)
+            Integer.of(higherThanMaxShort).product(*shortNumbersAndAlphanumeric, datum = TestDatum::failed)
+                .let(::addAll)
             Integer.of(lowerThanMinShort).product(*shortNumbersAndAlphanumeric, datum = TestDatum::failed).let(::addAll)
             val byteBoolsAndAlphanumeric = shortNumbersAndAlphanumeric - Short::class
             Integer.of(higherThanMaxByte).product(*byteBoolsAndAlphanumeric, datum = TestDatum::failed).let(::addAll)

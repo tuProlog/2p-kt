@@ -16,7 +16,7 @@ class TestThreadSafety {
         val executors = Executors.newFixedThreadPool(8)
         val results: MutableList<Future<Substitution>> = Collections.synchronizedList(LinkedList())
         val unificator = Unificator.cached(Unificator.strict())
-        for (i in 1..100) {
+        repeat(100) {
             for (equation in successfulUnifications.keys) {
                 results.add(
                     executors.submit<Substitution> {

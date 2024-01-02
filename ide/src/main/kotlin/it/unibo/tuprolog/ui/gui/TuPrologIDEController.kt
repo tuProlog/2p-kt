@@ -50,7 +50,7 @@ import kotlin.math.pow
 import kotlin.math.round
 import kotlin.system.exitProcess
 
-@Suppress("UNUSED_PARAMETER", "unused", "VarCouldBeVal", "TooManyFunctions")
+@Suppress("UNUSED_PARAMETER", "unused", "VarCouldBeVal", "TooManyFunctions", "LargeClass")
 class TuPrologIDEController : Initializable {
     companion object {
         private const val DAYS_PER_YEAR = 365

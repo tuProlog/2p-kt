@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import java.lang.IllegalStateException
-
+@Suppress("SwallowedException")
 internal actual fun solverFactory(
     className: String,
     vararg classNames: String,
@@ -18,7 +17,7 @@ internal actual fun solverFactory(
         .map { it.objectInstance }
         .filterIsInstance<SolverFactory>()
         .firstOrNull()
-        ?: throw IllegalStateException("No viable implementation for ${SolverFactory::class.simpleName}")
+        ?: error("No viable implementation for ${SolverFactory::class.simpleName}")
 }
 
 actual fun classicSolverFactory(): SolverFactory = solverFactory(FactoryClassNames.CLASSIC)

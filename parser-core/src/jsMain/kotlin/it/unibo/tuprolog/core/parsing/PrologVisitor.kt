@@ -30,6 +30,7 @@ import it.unibo.tuprolog.parser.TermContext
 import it.unibo.tuprolog.parser.VariableContext
 import org.gciatto.kt.math.BigInteger
 
+@Suppress("TooManyFunctions")
 class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisitor<Term>() {
     override fun visitSingletonTerm(ctx: SingletonTermContext): Term = visitTerm(ctx.term())
 
@@ -92,12 +93,11 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
         }
 
     override fun visitStructure(ctx: StructureContext): Term {
-        if (ctx.isList) {
-            return scope.listOf()
+        return if (ctx.isList) {
+            scope.listOf()
         } else if (ctx.isBlock) {
-            return scope.blockOf()
-        }
-        return if (ctx.arity == 0) {
+            scope.blockOf()
+        } else if (ctx.arity == 0) {
             scope.atomOf(ctx.functor.text)
         } else {
             scope.structOf(
@@ -124,6 +124,7 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
         }
     }
 
+    @Suppress("MagicNumber")
     private fun parseInteger(ctx: IntegerContext): BigInteger {
         val str = ctx.value.text
         val base: Int
@@ -214,7 +215,7 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
             XFY -> visitInfixRightAssociativeExpression(ctx)
             YFX -> visitInfixLeftAssociativeExpression(ctx)
             XFX -> visitInfixNonAssociativeExpression(ctx)
-            else -> throw IllegalStateException()
+            else -> error("Non-infix associativity ${ctx.associativity} in infix expression")
         }
     }
 
@@ -240,13 +241,13 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
             val operands = listOf(result) + o.right.map { it.accept<Term>(this) }
             val operators = o.operators.map { it.symbol.text }
             result =
-                when (o.associativity) {
+                when (val associativity = o.associativity) {
                     XFY -> infixRight(operands, operators)
                     XF, YF -> postfix(result, operators)
                     XFX -> infixNonAssociative(operands, operators)
                     YFX -> infixLeft(operands, operators)
                     FX, FY -> prefix(result, operators)
-                    else -> throw IllegalStateException()
+                    else -> error("Invalid associativity: $associativity")
                 }
         }
         return result
@@ -281,18 +282,22 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
         return result
     }
 
-    private fun listOfOperands(ctx: ExpressionContext): List<Term> = (listOf(ctx.left) + ctx.right.toList()).map { it!!.accept<Term>(this) }
+    private fun listOfOperands(ctx: ExpressionContext): List<Term> =
+        (listOf(ctx.left) + ctx.right.toList()).map { it!!.accept<Term>(this) }
 
     private fun listOfOperators(ctx: ExpressionContext): List<String> = ctx.operators.map { it.symbol.text }
 
-    private fun visitInfixRightAssociativeExpression(ctx: ExpressionContext): Term = infixRight(listOfOperands(ctx), listOfOperators(ctx))
+    private fun visitInfixRightAssociativeExpression(ctx: ExpressionContext): Term =
+        infixRight(listOfOperands(ctx), listOfOperators(ctx))
 
-    private fun visitInfixLeftAssociativeExpression(ctx: ExpressionContext): Term = infixLeft(listOfOperands(ctx), listOfOperators(ctx))
+    private fun visitInfixLeftAssociativeExpression(ctx: ExpressionContext): Term =
+        infixLeft(listOfOperands(ctx), listOfOperators(ctx))
 
     private fun flatten(outers: Sequence<OuterContext>): Sequence<OuterContext> =
         outers.asSequence().flatMap {
             sequenceOf(it) + flatten(it.outers.asSequence())
         }
 
-    private fun flatten(outers: List<OuterContext>): List<OuterContext> = flatten(outers.asSequence()).toList()
+    private fun flatten(outers: List<OuterContext>): List<OuterContext> =
+        flatten(outers.asSequence()).toList()
 }
