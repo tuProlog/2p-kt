@@ -21,44 +21,43 @@ import it.unibo.tuprolog.solve.streams.stdlib.primitive.Throw
  * @author Enrico
  */
 internal class StateGoalEvaluation(
-    override val solve: Solve.Request<StreamsExecutionContext>
+    override val solve: Solve.Request<StreamsExecutionContext>,
 ) : AbstractTimedState(solve) {
+    override fun behaveTimed(): Sequence<State> =
+        sequence {
+            val primitive = with(solve) { context.libraries.primitives[signature] }
 
-    override fun behaveTimed(): Sequence<State> = sequence {
-        val primitive = with(solve) { context.libraries.primitives[signature] }
+            primitive?.also {
+                // primitive with request signature present
+                var responses: Sequence<Solve.Response>? = null
+                try {
+                    responses = primitive.solve(solve) // execute primitive
+                } catch (exception: HaltException) {
+                    yield(stateEndHalt(exception))
+                } catch (logicError: LogicError) {
+                    // if primitive throws LogicError try to solve corresponding throw/1 request
 
-        primitive?.also {
-            // primitive with request signature present
-            var responses: Sequence<Solve.Response>? = null
-            try {
-                responses = primitive.solve(solve) // execute primitive
-            } catch (exception: HaltException) {
-                yield(stateEndHalt(exception))
-            } catch (logicError: LogicError) {
-                // if primitive throws LogicError try to solve corresponding throw/1 request
+                    responses = StreamsSolver.solveToResponses(solve.newThrowSolveRequest(logicError))
+                }
 
-                responses = StreamsSolver.solveToResponses(solve.newThrowSolveRequest(logicError))
-            }
+                var allSideEffectsSoFar = emptyList<SideEffect>()
+                responses?.forEach {
+                    allSideEffectsSoFar = allSideEffectsSoFar.addWithNoDuplicates(it.sideEffects)
 
-            var allSideEffectsSoFar = emptyList<SideEffect>()
-            responses?.forEach {
-                allSideEffectsSoFar = allSideEffectsSoFar.addWithNoDuplicates(it.sideEffects)
+                    yield(ifTimeIsNotOver(stateEnd(it.copy(sideEffects = allSideEffectsSoFar))))
 
-                yield(ifTimeIsNotOver(stateEnd(it.copy(sideEffects = allSideEffectsSoFar))))
-
-                if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
-            }
-        } ?: yield(StateRuleSelection(solve))
-    }
+                    if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
+                }
+            } ?: yield(StateRuleSelection(solve))
+        }
 
     private companion object {
-
         /** Utility function to create "throw/1" solve requests */
         private fun Solve.Request<StreamsExecutionContext>.newThrowSolveRequest(error: LogicError) =
             newSolveRequest(
                 Struct.of(Throw.functor, error.errorStruct),
                 baseSideEffectManager = error.context.getSideEffectManager() ?: context.sideEffectManager,
-                requestIssuingInstant = currentTimeInstant()
+                requestIssuingInstant = currentTimeInstant(),
             )
     }
 }

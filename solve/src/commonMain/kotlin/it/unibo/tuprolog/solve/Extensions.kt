@@ -9,11 +9,10 @@ import kotlin.jvm.JvmName
 
 /** Extracts this [Struct] indicator and converts it to [Signature] */
 @JsName("extractSignature")
-fun Struct.extractSignature(): Signature =
-    Signature.fromIndicator(indicator)!!
+fun Struct.extractSignature(): Signature = Signature.fromIndicator(indicator)!!
 
 @JsName("solve")
 fun Solver.solve(
     maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
-    scopedContext: Scope.() -> Struct
+    scopedContext: Scope.() -> Struct,
 ): Sequence<Solution> = solve(scopedContext(Scope.empty()), maxDuration)

@@ -13,18 +13,20 @@ import it.unibo.tuprolog.theory.Theory
  * @author Enrico
  */
 internal object StateRuleSelectionUtils {
-
     private val emptyUnifier = Substitution.empty()
 
     /** Utility function to create a Solve.Request of given query against given rule database */
-    internal fun createRequest(query: Struct, ruleDatabase: Theory) = createSolveRequest(query, ruleDatabase)
+    internal fun createRequest(
+        query: Struct,
+        ruleDatabase: Theory,
+    ) = createSolveRequest(query, ruleDatabase)
 
     /** Test data in the form (query Struct, a database with no query matches) */
     internal val queryToNoMatchesTheoryMap by lazy {
         logicProgramming {
             mapOf(
                 atomOf("a") to theoryOf(),
-                atomOf("a") to theory({ "b" })
+                atomOf("a") to theory({ "b" }),
             )
         }
     }
@@ -40,10 +42,10 @@ internal object StateRuleSelectionUtils {
                     "f"("Var"),
                     theory(
                         { "f"("a") },
-                        { "f"("a", "b") }
+                        { "f"("a", "b") },
                     ),
-                    "Var" to "a"
-                )
+                    "Var" to "a",
+                ),
             )
         }
     }
@@ -58,10 +60,10 @@ internal object StateRuleSelectionUtils {
                     "f"("Var"),
                     theory(
                         { "f"("Var") impliedBy "g"("Var") },
-                        { "g"("a") }
+                        { "g"("a") },
                     ),
-                    "Var" to "a"
-                )
+                    "Var" to "a",
+                ),
             )
         }
     }
@@ -74,29 +76,29 @@ internal object StateRuleSelectionUtils {
                     atomOf("a"),
                     theory(
                         { "a" },
-                        { "a" impliedBy "b" }
+                        { "a" impliedBy "b" },
                     ),
-                    ktListOf(emptyUnifier, Substitution.failed())
+                    ktListOf(emptyUnifier, Substitution.failed()),
                 ),
                 Triple(
                     atomOf("a"),
                     theory(
                         { "a" impliedBy "b" },
-                        { "a" }
+                        { "a" },
                     ),
-                    ktListOf(emptyUnifier)
+                    ktListOf(emptyUnifier),
                 ),
                 Triple(
                     "f"("Var"),
                     theory(
                         { "f"("Var") impliedBy "g"("Var") },
                         { "g"("a") },
-                        { "g"("b") }
+                        { "g"("b") },
                     ),
                     ktListOf(
                         "Var" to "a",
-                        "Var" to "b"
-                    )
+                        "Var" to "b",
+                    ),
                 ),
                 Triple(
                     structOf("f", varOf("V")),
@@ -106,15 +108,15 @@ internal object StateRuleSelectionUtils {
                         { "g"("c1") },
                         { "g"("c2") },
                         { "h"("d1") },
-                        { "h"("d2") }
+                        { "h"("d2") },
                     ),
                     ktListOf(
                         "V" to "c1",
                         "V" to "c2",
                         "V" to "d1",
-                        "V" to "d2"
-                    )
-                )
+                        "V" to "d2",
+                    ),
+                ),
             )
         }
     }

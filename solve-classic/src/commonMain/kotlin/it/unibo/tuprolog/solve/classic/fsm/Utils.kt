@@ -16,11 +16,13 @@ import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 import kotlin.jvm.JvmName
 
-fun Sequence<Clause>.toRulesCursor(): Cursor<out Rule> =
-    ensureRules().cursor()
+fun Sequence<Clause>.toRulesCursor(): Cursor<out Rule> = ensureRules().cursor()
 
 fun Sequence<Clause>.ensureRules(): Sequence<Rule> =
-    map { require(it.isRule); it.castToRule() }
+    map {
+        require(it.isRule)
+        it.castToRule()
+    }
 
 fun Term.unfoldGoals(): Sequence<Term> =
     when {
@@ -45,7 +47,7 @@ fun ClassicExecutionContext.createChild(inferProcedureFromGoals: Boolean = true)
         parent = this,
         depth = depth + 1,
         step = step + 1,
-        relevantVariables = emptySet()
+        relevantVariables = emptySet(),
     )
 }
 
@@ -56,35 +58,35 @@ fun ClassicExecutionContext.replaceWithChild(inferProcedureFromGoals: Boolean = 
         goals = currentGoal.toGoals(),
         procedure = if (inferProcedureFromGoals) currentGoal else procedure,
         depth = depth + 1,
-        step = step + 1
+        step = step + 1,
     )
 }
 
 fun ClassicExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>): ClassicExecutionContext {
-    val newChoicePointContext = if (rules.hasNext) {
-        choicePoints.appendRules(rules.next, this)
-    } else {
-        choicePoints.appendRules(Cursor.empty(), this)
-    }
+    val newChoicePointContext =
+        if (rules.hasNext) {
+            choicePoints.appendRules(rules.next, this)
+        } else {
+            choicePoints.appendRules(Cursor.empty(), this)
+        }
 
     return copy(rules = rules, choicePoints = newChoicePointContext)
 }
 
-fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(
-    primitiveExecutions: Cursor<out Solve.Response>
-): ClassicExecutionContext {
-    val newChoicePointContext = if (primitiveExecutions.hasNext) {
-        choicePoints.appendPrimitives(primitiveExecutions.next, this)
-    } else {
-        choicePoints.appendPrimitives(Cursor.empty(), this)
-    }
+fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions: Cursor<out Solve.Response>): ClassicExecutionContext {
+    val newChoicePointContext =
+        if (primitiveExecutions.hasNext) {
+            choicePoints.appendPrimitives(primitiveExecutions.next, this)
+        } else {
+            choicePoints.appendPrimitives(Cursor.empty(), this)
+        }
 
     return copy(primitives = primitiveExecutions, choicePoints = newChoicePointContext)
 }
 
 fun ClassicExecutionContext.createChildAppendingRulesAndChoicePoints(
     rules: Cursor<out Rule>,
-    inferProcedureFromGoals: Boolean = true
+    inferProcedureFromGoals: Boolean = true,
 ): ClassicExecutionContext {
     val tempExecutionContext = createChild(inferProcedureFromGoals)
     return tempExecutionContext.appendRulesAndChoicePoints(rules)
@@ -92,7 +94,7 @@ fun ClassicExecutionContext.createChildAppendingRulesAndChoicePoints(
 
 fun ClassicExecutionContext.replaceWithChildAppendingRulesAndChoicePoints(
     rules: Cursor<out Rule>,
-    inferProcedureFromGoals: Boolean = true
+    inferProcedureFromGoals: Boolean = true,
 ): ClassicExecutionContext {
     val tempExecutionContext = replaceWithChild(inferProcedureFromGoals)
     return tempExecutionContext.appendRulesAndChoicePoints(rules)
@@ -100,7 +102,7 @@ fun ClassicExecutionContext.replaceWithChildAppendingRulesAndChoicePoints(
 
 fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
     primitiveExecutions: Cursor<out Solve.Response>,
-    inferProcedureFromGoals: Boolean = true
+    inferProcedureFromGoals: Boolean = true,
 ): ClassicExecutionContext {
     val tempExecutionContext = createChild(inferProcedureFromGoals)
     return tempExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions)
@@ -109,5 +111,5 @@ fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
 fun ClassicExecutionContext.toRequest(
     goal: Struct,
     signature: Signature,
-    startTime: TimeInstant
+    startTime: TimeInstant,
 ) = Solve.Request(signature, goal.args, this, startTime)

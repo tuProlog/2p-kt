@@ -13,17 +13,17 @@ import it.unibo.tuprolog.utils.synchronizedOn
 internal class VarImpl(
     override val name: String,
     private val identifier: Long = instanceId(name),
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : TermImpl(tags), Var {
-
     companion object {
         private val nameToInstanceCount = mutableMapOf<String, Long>()
 
-        private fun instanceId(name: String): Long = synchronizedOn(nameToInstanceCount) {
-            val count = nameToInstanceCount[name]?.let { it + 1 } ?: 0
-            nameToInstanceCount[name] = count
-            count
-        }
+        private fun instanceId(name: String): Long =
+            synchronizedOn(nameToInstanceCount) {
+                val count = nameToInstanceCount[name]?.let { it + 1 } ?: 0
+                nameToInstanceCount[name] = count
+                count
+            }
     }
 
     override val completeName: String by lazy { "${name}_$identifier" }
@@ -58,15 +58,19 @@ internal class VarImpl(
     @Suppress("NOTHING_TO_INLINE")
     private inline fun equalsByCompleteName(other: Var) = completeName == other.completeName
 
-    private fun equalsToVar(other: Var, useVarCompleteName: Boolean) =
-        if (useVarCompleteName) {
-            completeName == other.completeName
-        } else {
-            name == other.name
-        }
+    private fun equalsToVar(
+        other: Var,
+        useVarCompleteName: Boolean,
+    ) = if (useVarCompleteName) {
+        completeName == other.completeName
+    } else {
+        name == other.name
+    }
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        other.isVar && equalsToVar(other.castToVar(), useVarCompleteName)
+    override fun equals(
+        other: Term,
+        useVarCompleteName: Boolean,
+    ): Boolean = other.isVar && equalsToVar(other.castToVar(), useVarCompleteName)
 
     override val hashCodeCache: Int by lazy { completeName.hashCode() }
 

@@ -14,14 +14,16 @@ import kotlin.reflect.KClass
 
 abstract class AbstractIterableItems<T : Any>(iterable: String, private val target: KClass<T>) :
     BinaryRelation.Functional<ExecutionContext>("${iterable}_items") {
-
     protected abstract fun Sequence<Any?>.toIterable(): T
 
     protected abstract val Any?.isIterable: Boolean
 
     protected abstract val T.items: Sequence<Any?>
 
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
+    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
+        first: Term,
+        second: Term,
+    ): Substitution =
         when {
             first is Var && second is Var ->
                 ensuringAllArgumentsAreInstantiated().let { Substitution.failed() }
@@ -35,9 +37,10 @@ abstract class AbstractIterableItems<T : Any>(iterable: String, private val targ
                 val obj = first.`object`
                 if (obj.isIterable) {
                     @Suppress("UNCHECKED_CAST")
-                    val items = (obj as T).items.map {
-                        ObjectToTermConverter.default.convert(it)
-                    }
+                    val items =
+                        (obj as T).items.map {
+                            ObjectToTermConverter.default.convert(it)
+                        }
                     mgu(second, List.of(items))
                 } else {
                     Substitution.failed()

@@ -5,7 +5,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Clause : Struct {
-
     override val functor: String
         get() = CLAUSE_FUNCTOR
 
@@ -77,7 +76,10 @@ interface Clause : Struct {
     fun setHeadArgs(arguments: Sequence<Term>): Clause
 
     @JsName("insertHeadArg")
-    fun insertHeadArg(index: Int, argument: Term): Clause
+    fun insertHeadArg(
+        index: Int,
+        argument: Term,
+    ): Clause
 
     @JsName("addFirstHeadArg")
     fun addFirstHeadArg(argument: Term): Clause
@@ -89,7 +91,10 @@ interface Clause : Struct {
     fun appendHeadArg(argument: Term): Clause
 
     @JsName("setBodyItems")
-    fun setBodyItems(argument: Term, vararg arguments: Term): Clause
+    fun setBodyItems(
+        argument: Term,
+        vararg arguments: Term,
+    ): Clause
 
     @JsName("setBodyItemsIterable")
     fun setBodyItems(arguments: Iterable<Term>): Clause
@@ -98,7 +103,10 @@ interface Clause : Struct {
     fun setBodyItems(arguments: Sequence<Term>): Clause
 
     @JsName("insertBodyItem")
-    fun insertBodyItem(index: Int, argument: Term): Clause
+    fun insertBodyItem(
+        index: Int,
+        argument: Term,
+    ): Clause
 
     @JsName("addFirstBodyItem")
     fun addFirstBodyItem(argument: Term): Clause
@@ -110,16 +118,21 @@ interface Clause : Struct {
     fun appendBodyItem(argument: Term): Clause
 
     companion object {
-
         const val FUNCTOR = CLAUSE_FUNCTOR
 
         @JvmStatic
         @JsName("of")
-        fun of(head: Struct? = null, vararg body: Term): Clause = of(head, body.asIterable())
+        fun of(
+            head: Struct? = null,
+            vararg body: Term,
+        ): Clause = of(head, body.asIterable())
 
         @JvmStatic
         @JsName("ofIterable")
-        fun of(head: Struct? = null, body: Iterable<Term>): Clause =
+        fun of(
+            head: Struct? = null,
+            body: Iterable<Term>,
+        ): Clause =
             when (head) {
                 null -> {
                     require(body.any()) { "If Clause head is null, at least one body element, is required" }
@@ -130,7 +143,10 @@ interface Clause : Struct {
 
         @JvmStatic
         @JsName("ofSequence")
-        fun of(head: Struct? = null, body: Sequence<Term>): Clause = of(head, body.asIterable())
+        fun of(
+            head: Struct? = null,
+            body: Sequence<Term>,
+        ): Clause = of(head, body.asIterable())
 
         /** Contains notable functor in determining if a Clause [isWellFormed] */
         @JvmStatic
@@ -140,38 +156,41 @@ interface Clause : Struct {
         /** A visitor that checks whether [isWellFormed] (body constraints part) is respected */
         @JvmStatic
         @JsName("bodyWellFormedVisitor")
-        val bodyWellFormedVisitor: TermVisitor<Boolean> = object : TermVisitor<Boolean> {
+        val bodyWellFormedVisitor: TermVisitor<Boolean> =
+            object : TermVisitor<Boolean> {
+                override fun defaultValue(term: Term): Boolean = true
 
-            override fun defaultValue(term: Term): Boolean = true
+                override fun visitNumeric(term: Numeric): Boolean = false
 
-            override fun visitNumeric(term: Numeric): Boolean = false
-
-            override fun visitStruct(term: Struct): Boolean = when {
-                term.functor in notableFunctors && term.arity == 2 ->
-                    term.argsSequence
-                        .map { arg -> arg.accept(this) }
-                        .reduce(Boolean::and)
-                else -> true
+                override fun visitStruct(term: Struct): Boolean =
+                    when {
+                        term.functor in notableFunctors && term.arity == 2 ->
+                            term.argsSequence
+                                .map { arg -> arg.accept(this) }
+                                .reduce(Boolean::and)
+                        else -> true
+                    }
             }
-        }
 
         // TODO: 16/01/2020 test this method
         internal fun preparationForExecutionVisitor(unifier: Substitution.Unifier = Substitution.empty()) =
             object : TermVisitor<Term> {
                 override fun defaultValue(term: Term) = term
 
-                override fun visitStruct(term: Struct): Term = when {
-                    term.functor in notableFunctors && term.arity == 2 ->
-                        Struct.of(term.functor, term.argsSequence.map { arg -> arg.accept(this) })
-                    else -> term
-                }
+                override fun visitStruct(term: Struct): Term =
+                    when {
+                        term.functor in notableFunctors && term.arity == 2 ->
+                            Struct.of(term.functor, term.argsSequence.map { arg -> arg.accept(this) })
+                        else -> term
+                    }
 
                 override fun visitClause(term: Clause): Term = of(term.head, term.body.accept(this))
 
-                override fun visitVar(term: Var): Term = when (term) {
-                    in unifier -> unifier[term]!!.accept(this)
-                    else -> Struct.of("call", term)
-                }
+                override fun visitVar(term: Var): Term =
+                    when (term) {
+                        in unifier -> unifier[term]!!.accept(this)
+                        else -> Struct.of("call", term)
+                    }
             }
 
         /**

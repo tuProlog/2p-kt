@@ -15,8 +15,9 @@ class ExampleProbLogSolver {
     fun examplifyProblogSolver() {
         val clausesParser = ClausesParser.withOperators(PROBLOG_OPERATORS)
 
-        val probabilisticTheory = clausesParser.parseTheory(
-            """
+        val probabilisticTheory =
+            clausesParser.parseTheory(
+                """
             0.6::edge(1,2).
             0.1::edge(1,3).
             0.4::edge(2,5).
@@ -27,8 +28,8 @@ class ExampleProbLogSolver {
             
             path(X,Y) :- edge(X,Y).
             path(X,Y) :- edge(X,Z),Y \== Z,path(Z,Y).
-            """
-        )
+            """,
+            )
 
         val problogSolver = Solver.problog.solverWithDefaultBuiltins(staticKb = probabilisticTheory)
         val goal = Struct.of("path", Var.of("From"), Var.of("To"))

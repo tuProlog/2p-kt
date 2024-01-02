@@ -13,13 +13,14 @@ import java.util.concurrent.ForkJoinPool
 
 @Suppress("TooManyFunctions")
 interface TuPrologIDEModel {
-
     companion object {
         fun of(executor: ExecutorService = ForkJoinPool.commonPool()): TuPrologIDEModel = TuPrologIDEModelImpl(executor)
     }
 
     enum class State {
-        IDLE, COMPUTING, SOLUTION
+        IDLE,
+        COMPUTING,
+        SOLUTION,
     }
 
     var solveOptions: SolveOptions
@@ -44,9 +45,15 @@ interface TuPrologIDEModel {
 
     fun getFile(file: File): String
 
-    fun setFile(file: File, theory: String)
+    fun setFile(
+        file: File,
+        theory: String,
+    )
 
-    fun renameFile(file: File, newFile: File)
+    fun renameFile(
+        file: File,
+        newFile: File,
+    )
 
     fun setCurrentFile(theory: String)
 

@@ -14,7 +14,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class RealTest {
-
     @Test
     fun realOfBigDecimal() {
         val correct = RealUtils.bigDecimals.map(::RealImpl)

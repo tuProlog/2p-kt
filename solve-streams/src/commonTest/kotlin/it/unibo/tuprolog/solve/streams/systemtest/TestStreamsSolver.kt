@@ -8,7 +8,6 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestStreamsSolver : TestSolver, SolverFactory by StreamsSolverFactory {
-
     private val prototype = TestSolver.prototype(this)
 
     override val callErrorSignature: Signature

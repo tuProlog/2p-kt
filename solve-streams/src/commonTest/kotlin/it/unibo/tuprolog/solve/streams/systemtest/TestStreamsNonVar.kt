@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.streams.StreamsSolverFactory
 import kotlin.test.Test
 
 class TestStreamsNonVar : TestNonVar, SolverFactory by StreamsSolverFactory {
-
     private val prototype = TestNonVar.prototype(this)
 
     @Test

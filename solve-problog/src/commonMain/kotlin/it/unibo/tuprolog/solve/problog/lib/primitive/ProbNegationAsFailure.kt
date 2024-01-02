@@ -22,10 +22,12 @@ import it.unibo.tuprolog.solve.setProbabilistic
  * @author Jason Dellaluce
  */
 internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<ExecutionContext>(
-    "${ProblogLib.PREDICATE_PREFIX}_negation_as_failure"
+    "${ProblogLib.PREDICATE_PREFIX}_negation_as_failure",
 ) {
-
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+    ): Solve.Response {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
 
@@ -33,15 +35,16 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
             replyException(
                 ResolutionException(
                     "Probabilistic negation does not support non-ground goals: $second",
-                    context = context
-                )
+                    context = context,
+                ),
             )
         } else {
             val explanationTermVar = Var.of("Explanation")
-            val solution = subSolver().solve(
-                Struct.of(ProbSolve.functor, explanationTermVar, second),
-                SolveOptions.DEFAULT.setProbabilistic(false)
-            ).firstOrNull()
+            val solution =
+                subSolver().solve(
+                    Struct.of(ProbSolve.functor, explanationTermVar, second),
+                    SolveOptions.DEFAULT.setProbabilistic(false),
+                ).firstOrNull()
             if (solution == null) {
                 replyFail()
             } else {
@@ -50,14 +53,14 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
                     replyException(
                         ResolutionException(
                             "No valid explanation has been solved for goal: $second",
-                            context = context
-                        )
+                            context = context,
+                        ),
                     )
                 } else {
                     replyWith(
                         Substitution.of(
-                            mgu(first, ProbExplanationTerm(explanationTerm.explanation.not()))
-                        )
+                            mgu(first, ProbExplanationTerm(explanationTerm.explanation.not())),
+                        ),
                     )
                 }
             }

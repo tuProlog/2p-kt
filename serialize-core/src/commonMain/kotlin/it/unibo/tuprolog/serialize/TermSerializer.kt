@@ -5,7 +5,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface TermSerializer : Serializer<Term> {
-
     companion object {
         @JvmStatic
         @JsName("of")

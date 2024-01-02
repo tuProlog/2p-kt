@@ -3,7 +3,6 @@ package it.unibo.tuprolog.serialize
 import kotlin.test.Test
 
 class TestTheorySerialization {
-
     @Test
     fun testTheorySerializationJSON() {
         TheorySerializer.of(MimeType.Json).assertSerializationWorks(Instances.commonRulesInJSON, Instances.commonRules)

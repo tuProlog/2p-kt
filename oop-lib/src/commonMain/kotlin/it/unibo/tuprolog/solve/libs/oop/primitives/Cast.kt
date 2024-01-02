@@ -15,7 +15,11 @@ import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import kotlin.reflect.KClass
 
 object Cast : TernaryRelation<ExecutionContext>("cast") {
-    override fun Request<ExecutionContext>.computeAll(first: Term, second: Term, third: Term): Sequence<Response> =
+    override fun Request<ExecutionContext>.computeAll(
+        first: Term,
+        second: Term,
+        third: Term,
+    ): Sequence<Response> =
         catchingOopExceptions {
             when (second) {
                 is Struct -> {
@@ -42,7 +46,11 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
             }
         }
 
-    private fun Request<ExecutionContext>.cast(term: Term, type: KClass<*>?, result: Term): Substitution =
+    private fun Request<ExecutionContext>.cast(
+        term: Term,
+        type: KClass<*>?,
+        result: Term,
+    ): Substitution =
         if (type == null) {
             Substitution.failed()
         } else {

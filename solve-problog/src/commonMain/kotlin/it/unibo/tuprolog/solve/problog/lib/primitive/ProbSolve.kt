@@ -37,15 +37,14 @@ import it.unibo.tuprolog.solve.problog.lib.rules.Prob
  * @author Jason Dellaluce
  */
 internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>("${PREDICATE_PREFIX}_solve") {
-
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
-        second: Term
+        second: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
 
-        /* Optimize Prolog-only queries */
+        // Optimize Prolog-only queries
         if (context.isPrologMode()) {
             return subSolver().solve(Struct.of(Prob.functor, first, second), context.getSolverOptions()).map {
                 if (it.isHalt) throw it.exception!!
@@ -54,36 +53,40 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
         }
 
         val explanationVar = Var.of(EXPLANATION_VAR_NAME)
-        val solutions = subSolver()
-            .solve(Struct.of(Prob.functor, explanationVar, second), context.getSolverOptions())
-            .toList()
+        val solutions =
+            subSolver()
+                .solve(Struct.of(Prob.functor, explanationVar, second), context.getSolverOptions())
+                .toList()
         val error = solutions.asSequence().filterIsInstance<Solution.Halt>().firstOrNull()
         if (error != null) throw error.exception
 
         return if (!solutions.any { s -> s is Solution.Yes }) {
             sequenceOf(Substitution.of(mgu(first, ProbExplanationTerm(ProbExplanation.FALSE))))
         } else {
-            val solutionGroups = solutions
-                .filterIsInstance<Solution.Yes>()
-                .groupBy { it.substitution.filter { v, _ -> v != explanationVar } }
+            val solutionGroups =
+                solutions
+                    .filterIsInstance<Solution.Yes>()
+                    .groupBy { it.substitution.filter { v, _ -> v != explanationVar } }
 
             sequence {
                 for (solutionGroup in solutionGroups) {
-                    val explanation: ProbExplanation = solutionGroup.value
-                        .map { v -> v.substitution[explanationVar] }
-                        .filterIsInstance<ProbExplanationTerm>()
-                        .map { e -> e.explanation }
-                        .reduce { acc, expl ->
-                            when {
-                                expl.probability == 1.0 -> acc
-                                acc.probability == 1.0 -> expl
-                                else -> acc or expl
+                    val explanation: ProbExplanation =
+                        solutionGroup.value
+                            .map { v -> v.substitution[explanationVar] }
+                            .filterIsInstance<ProbExplanationTerm>()
+                            .map { e -> e.explanation }
+                            .reduce { acc, expl ->
+                                when {
+                                    expl.probability == 1.0 -> acc
+                                    acc.probability == 1.0 -> expl
+                                    else -> acc or expl
+                                }
                             }
-                        }
-                    val substitution = Substitution.of(
-                        solutionGroup.key,
-                        mgu(first, ProbExplanationTerm(explanation))
-                    )
+                    val substitution =
+                        Substitution.of(
+                            solutionGroup.key,
+                            mgu(first, ProbExplanationTerm(explanation)),
+                        )
                     yield(substitution)
                 }
             }

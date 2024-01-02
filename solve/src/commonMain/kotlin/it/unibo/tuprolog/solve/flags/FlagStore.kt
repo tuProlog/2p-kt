@@ -7,21 +7,23 @@ import kotlin.jvm.JvmStatic
 
 /** A storage for flags and their values */
 data class FlagStore(private val flags: Map<String, Term>) : Map<String, Term> by flags {
-
     @JsName("get")
-    operator fun get(notableFlag: NotableFlag): Term? =
-        this[notableFlag.name]
+    operator fun get(notableFlag: NotableFlag): Term? = this[notableFlag.name]
 
     @JsName("set")
-    operator fun set(name: String, value: Term): FlagStore =
-        plus(name, value)
+    operator fun set(
+        name: String,
+        value: Term,
+    ): FlagStore = plus(name, value)
 
     @JsName("setNotableToDefault")
-    fun set(notableFlag: NotableFlag): FlagStore =
-        set(notableFlag.name, notableFlag.defaultValue)
+    fun set(notableFlag: NotableFlag): FlagStore = set(notableFlag.name, notableFlag.defaultValue)
 
     @JsName("setNotable")
-    operator fun set(notableFlag: NotableFlag, value: Term): FlagStore =
+    operator fun set(
+        notableFlag: NotableFlag,
+        value: Term,
+    ): FlagStore =
         if (value in notableFlag.admissibleValues) {
             set(notableFlag.name, value)
         } else {
@@ -29,28 +31,25 @@ data class FlagStore(private val flags: Map<String, Term>) : Map<String, Term> b
         }
 
     @JsName("plus")
-    fun plus(name: String, value: Term): FlagStore =
-        this + (name to value)
+    fun plus(
+        name: String,
+        value: Term,
+    ): FlagStore = this + (name to value)
 
     @JsName("plusPair")
-    operator fun plus(flagValue: Pair<String, Term>): FlagStore =
-        FlagStore(this.flags + mapOf(flagValue))
+    operator fun plus(flagValue: Pair<String, Term>): FlagStore = FlagStore(this.flags + mapOf(flagValue))
 
     @JsName("plusNotable")
-    operator fun plus(notableFlagValue: NotableFlag): FlagStore =
-        FlagStore(this.flags + mapOf(notableFlagValue.toPair()))
+    operator fun plus(notableFlagValue: NotableFlag): FlagStore = FlagStore(this.flags + mapOf(notableFlagValue.toPair()))
 
     @JsName("plusMap")
-    operator fun plus(flags: Map<String, Term>): FlagStore =
-        FlagStore(this.flags + flags)
+    operator fun plus(flags: Map<String, Term>): FlagStore = FlagStore(this.flags + flags)
 
     @JsName("minus")
-    operator fun minus(flagName: String): FlagStore =
-        FlagStore(this.flags - flagName)
+    operator fun minus(flagName: String): FlagStore = FlagStore(this.flags - flagName)
 
     @JsName("minusMany")
-    operator fun minus(flagNames: Iterable<String>): FlagStore =
-        FlagStore(this.flags - flagNames)
+    operator fun minus(flagNames: Iterable<String>): FlagStore = FlagStore(this.flags - flagNames)
 
     companion object {
         @JvmField
@@ -61,13 +60,14 @@ data class FlagStore(private val flags: Map<String, Term>) : Map<String, Term> b
         fun of(vararg flagValues: Pair<String, Term>) = FlagStore(mapOf(*flagValues))
 
         @JvmField
-        val DEFAULT = FlagStore.of(
-            Unknown,
-            MaxArity,
-            DoubleQuotes,
-            LastCallOptimization,
-            TrackVariables
-        )
+        val DEFAULT =
+            FlagStore.of(
+                Unknown,
+                MaxArity,
+                DoubleQuotes,
+                LastCallOptimization,
+                TrackVariables,
+            )
 
         @JsName("empty")
         @JvmStatic

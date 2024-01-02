@@ -6,7 +6,6 @@ import kotlin.jvm.JvmField
 
 @Suppress("MemberVisibilityCanBePrivate")
 object TrackVariables : NotableFlag {
-
     @JvmField
     val ON = Atom.of("on")
 

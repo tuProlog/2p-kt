@@ -64,7 +64,7 @@ fun Clause.ensureAllHeadVariablesInNonNegatedLiterals() {
         throw DatalogViolationException(
             "some variable occurring in head of",
             this,
-            " does not occur within any non-negated literal of the same clause"
+            " does not occur within any non-negated literal of the same clause",
         )
     }
 }
@@ -81,7 +81,7 @@ fun Clause.ensureAllNegatedLiteralsVariablesInNonNegatedLiteralsToo() {
         throw DatalogViolationException(
             "some variable occurring in some negated literal of ",
             this,
-            " does not occur in any non-negated literal of the same clause"
+            " does not occur in any non-negated literal of the same clause",
         )
     }
 }
@@ -100,9 +100,10 @@ private fun MutableGraph<Indicator, Boolean>.register(rule: Rule) {
 }
 
 val Theory.callGraph: Graph<Indicator, Boolean>
-    get() = Graph.build {
-        rules.forEach { register(it) }
-    }
+    get() =
+        Graph.build {
+            rules.forEach { register(it) }
+        }
 
 val Theory.isNonRecursive: Boolean
     get() = callGraph.isAcyclic
@@ -112,15 +113,16 @@ fun Theory.ensureIsNonRecursive() {
         throw DatalogViolationException(
             "the theory ",
             this.joinToString("", "{", "}") { "$it." },
-            " contains either direct or indirect recursion"
+            " contains either direct or indirect recursion",
         )
     }
 }
 
 val Theory.isDatalog: Boolean
-    get() = rules.all {
-        it.hasNoCompound && it.allHeadVariablesInNonNegatedLiterals && it.allNegatedLiteralsVariablesInNonNegatedLiteralsToo
-    } && isNonRecursive
+    get() =
+        rules.all {
+            it.hasNoCompound && it.allHeadVariablesInNonNegatedLiterals && it.allNegatedLiteralsVariablesInNonNegatedLiteralsToo
+        } && isNonRecursive
 
 fun Theory.ensureIsDatalog() {
     for (rule in rules) {

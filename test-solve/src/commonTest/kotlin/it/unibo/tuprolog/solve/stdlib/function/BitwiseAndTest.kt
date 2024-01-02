@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class BitwiseAndTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("/\\", 2), BitwiseAnd.signature)
@@ -25,8 +24,8 @@ internal class BitwiseAndTest {
             Integer.of(125),
             BitwiseAnd.computeOf(
                 Integer.of(17 * 256 + 125),
-                Integer.of(255)
-            )
+                Integer.of(255),
+            ),
         )
     }
 

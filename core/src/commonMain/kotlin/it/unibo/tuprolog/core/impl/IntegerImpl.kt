@@ -11,9 +11,8 @@ import org.gciatto.kt.math.BigInteger
 @Suppress("EqualsOrHashCode")
 internal class IntegerImpl(
     override val value: BigInteger,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : NumericImpl(tags), Integer {
-
     override val decimalValue: BigDecimal by lazy { BigDecimal.of(intValue) }
 
     override val intValue: BigInteger = value
@@ -28,11 +27,12 @@ internal class IntegerImpl(
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun equalsToInteger(other: Integer) =
-        value.compareTo(other.value) == 0
+    private inline fun equalsToInteger(other: Integer) = value.compareTo(other.value) == 0
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        other.isInteger && equalsToInteger(other.castToInteger())
+    override fun equals(
+        other: Term,
+        useVarCompleteName: Boolean,
+    ): Boolean = other.isInteger && equalsToInteger(other.castToInteger())
 
     override val hashCodeCache: Int by lazy { value.hashCode() }
 

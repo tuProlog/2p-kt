@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class BitwiseComplementTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("\\", 1), BitwiseComplement.signature)
@@ -23,7 +22,7 @@ internal class BitwiseComplementTest {
     fun computationCorrect() {
         assertEquals(
             Integer.of(10),
-            BitwiseComplement.computeOf(BitwiseComplement.computeOf(Integer.of(10)))
+            BitwiseComplement.computeOf(BitwiseComplement.computeOf(Integer.of(10))),
         )
     }
 

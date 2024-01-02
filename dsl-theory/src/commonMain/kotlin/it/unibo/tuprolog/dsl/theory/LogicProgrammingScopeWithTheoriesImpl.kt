@@ -6,6 +6,6 @@ import it.unibo.tuprolog.unify.Unificator
 
 class LogicProgrammingScopeWithTheoriesImpl(
     unificator: Unificator,
-    scope: Scope
+    scope: Scope,
 ) : LogicProgrammingScopeWithTheories,
     LogicProgrammingScopeWithUnification by LogicProgrammingScopeWithUnification.of(unificator, scope)

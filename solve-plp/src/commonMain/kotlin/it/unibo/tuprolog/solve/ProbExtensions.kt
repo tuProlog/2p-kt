@@ -24,8 +24,7 @@ private const val PROBABILISTIC_OPTION_TAG =
 const val DEFAULT_PROBABILITY = 1.0
 const val DEFAULT_PROBABILISTIC_OPTION = false
 
-private fun normalizeProbability(probability: Double): Double =
-    max(min(1.0, probability), 0.0)
+private fun normalizeProbability(probability: Double): Double = max(min(1.0, probability), 0.0)
 
 /**
  * Returns the probability value assigned to this object.
@@ -37,9 +36,7 @@ val <T : Taggable<T>, U : T> U.probability: Double
  * Assigns a probability value to this object.
  */
 @JsName("setProbability")
-fun <T : Taggable<T>, U : T> U.setProbability(
-    value: Double
-): U = setTag(PROBABILITY_TAG, normalizeProbability(value))
+fun <T : Taggable<T>, U : T> U.setProbability(value: Double): U = setTag(PROBABILITY_TAG, normalizeProbability(value))
 
 /**
  * Returns true if probabilistic computation option is enabled.
@@ -51,16 +48,15 @@ fun <T : Taggable<T>, U : T> U.setProbability(
  * default value.
  */
 val SolveOptions.isProbabilistic: Boolean
-    get() = (customOptions[PROBABILISTIC_OPTION_TAG] as Boolean?)
-        ?: DEFAULT_PROBABILISTIC_OPTION
+    get() =
+        (customOptions[PROBABILISTIC_OPTION_TAG] as Boolean?)
+            ?: DEFAULT_PROBABILISTIC_OPTION
 
 /**
  * Sets the probabilistic computation option to [value].
  */
 @JsName("setProbabilistic")
-fun SolveOptions.setProbabilistic(
-    value: Boolean
-) = setOption(PROBABILISTIC_OPTION_TAG, value)
+fun SolveOptions.setProbabilistic(value: Boolean) = setOption(PROBABILISTIC_OPTION_TAG, value)
 
 @JsName("probabilistic")
 fun SolveOptions.probabilistic() = setProbabilistic(true)
@@ -82,6 +78,4 @@ val Solution.binaryDecisionDiagram: BinaryDecisionDiagram<out Term>?
  * of [BinaryDecisionDiagram] to [this] [Solution].
  */
 @JsName("setBinaryDecisionDiagram")
-fun Solution.setBinaryDecisionDiagram(
-    value: BinaryDecisionDiagram<out Term>
-) = setTag(BINARY_DECISION_DIAGRAM_TAG, value)
+fun Solution.setBinaryDecisionDiagram(value: BinaryDecisionDiagram<out Term>) = setTag(BINARY_DECISION_DIAGRAM_TAG, value)

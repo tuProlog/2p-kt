@@ -34,8 +34,7 @@ interface Pluggable {
      * The default implementation, checks for signature presence among primitives and theory clauses by indicator-like search
      */
     @JsName("containsSignature")
-    operator fun contains(signature: Signature): Boolean =
-        hasPrimitive(signature) || hasRule(signature) || hasFunction(signature)
+    operator fun contains(signature: Signature): Boolean = hasPrimitive(signature) || hasRule(signature) || hasFunction(signature)
 
     /** Checks whether this library contains the definition of provided operator */
     @JsName("containsOperator")
@@ -55,12 +54,13 @@ interface Pluggable {
 
     @JsName("ruleSignatures")
     val rulesSignatures: Sequence<Signature>
-        get() = clauses.asSequence()
-            .filterIsInstance<Rule>()
-            .map { it.head.indicator }
-            .map { Signature.fromIndicator(it) }
-            .filterNotNull()
-            .distinct()
+        get() =
+            clauses.asSequence()
+                .filterIsInstance<Rule>()
+                .map { it.head.indicator }
+                .map { Signature.fromIndicator(it) }
+                .filterNotNull()
+                .distinct()
 
     /** Checks whether the provided signature, is protected in this library */
     @JsName("hasProtected")

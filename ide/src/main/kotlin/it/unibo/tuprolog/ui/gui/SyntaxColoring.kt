@@ -17,9 +17,8 @@ class SyntaxColoring(
     private val codeArea: CodeArea,
     delay: Duration = DEFAULT_UPDATE_DELAY,
     operators: OperatorSet = OperatorSet.DEFAULT,
-    private val executor: ExecutorService = ForkJoinPool.commonPool()
+    private val executor: ExecutorService = ForkJoinPool.commonPool(),
 ) {
-
     @Volatile
     var delay: Duration = delay
         @Synchronized get
@@ -42,11 +41,12 @@ class SyntaxColoring(
         }
 
     private fun computeHighlightingAsync(): Task<StyleSpans<Collection<String>>> {
-        val task: Task<StyleSpans<Collection<String>>> = object : Task<StyleSpans<Collection<String>>>() {
-            override fun call(): StyleSpans<Collection<String>> {
-                return computeHighlighting(codeArea.text)
+        val task: Task<StyleSpans<Collection<String>>> =
+            object : Task<StyleSpans<Collection<String>>>() {
+                override fun call(): StyleSpans<Collection<String>> {
+                    return computeHighlighting(codeArea.text)
+                }
             }
-        }
         executor.execute(task)
         return task
     }
@@ -70,21 +70,22 @@ class SyntaxColoring(
     @Synchronized
     fun activate() {
         if (subscription == null) {
-            subscription = codeArea.multiPlainChanges()
-                .successionEnds(delay)
-                .supplyTask { computeHighlightingAsync() }
-                .awaitLatest(codeArea.multiPlainChanges())
-                .filterMap {
-                    when {
-                        it.isSuccess -> {
-                            Optional.of(it.get())
+            subscription =
+                codeArea.multiPlainChanges()
+                    .successionEnds(delay)
+                    .supplyTask { computeHighlightingAsync() }
+                    .awaitLatest(codeArea.multiPlainChanges())
+                    .filterMap {
+                        when {
+                            it.isSuccess -> {
+                                Optional.of(it.get())
+                            }
+                            else -> {
+                                it.failure.printStackTrace()
+                                Optional.empty()
+                            }
                         }
-                        else -> {
-                            it.failure.printStackTrace()
-                            Optional.empty()
-                        }
-                    }
-                }.subscribe { applyHighlighting(it) }
+                    }.subscribe { applyHighlighting(it) }
         } else {
             error("Syntax coloring is already active")
         }
@@ -102,9 +103,10 @@ class SyntaxColoring(
         }
     }
 
-    private val patternCache: Cached<Regex> = Cached.of {
-        pattern(this.operators)
-    }
+    private val patternCache: Cached<Regex> =
+        Cached.of {
+            pattern(this.operators)
+        }
 
     private fun computeHighlighting(text: String): StyleSpans<Collection<String>> {
         val matches = patternCache.value.findAll(text)
@@ -127,7 +129,6 @@ class SyntaxColoring(
     }
 
     companion object {
-
         private val DEFAULT_UPDATE_DELAY = Duration.ofMillis(100)
 
         private fun keywords(operators: OperatorSet): Regex =
@@ -184,14 +185,15 @@ class SyntaxColoring(
 
         private val CHAR_PATTERN = Regex("0'(\\\\[abfnrtv'`\"]|.)")
 
-        private val NUMBER_PATTERN = anyOf(
-            FLOAT_PATTERN,
-            INTEGER_PATTERN,
-            HEX_PATTERN,
-            BIN_PATTERN,
-            OCT_PATTERN,
-            CHAR_PATTERN
-        ).asWord()
+        private val NUMBER_PATTERN =
+            anyOf(
+                FLOAT_PATTERN,
+                INTEGER_PATTERN,
+                HEX_PATTERN,
+                BIN_PATTERN,
+                OCT_PATTERN,
+                CHAR_PATTERN,
+            ).asWord()
 
         private const val KEYWORD = "KEYWORD"
         private const val PAREN = "PAREN"
@@ -205,34 +207,36 @@ class SyntaxColoring(
         private const val ATOM = "ATOM"
         private const val FULLSTOP = "FULLSTOP"
 
-        private fun pattern(operators: OperatorSet) = anyOf(
-            COMMENT_PATTERN.asGroup(COMMENT),
-            keywords(operators).asGroup(KEYWORD),
-            PAREN_PATTERN.asGroup(PAREN),
-            BRACE_PATTERN.asGroup(BRACE),
-            BRACKET_PATTERN.asGroup(BRACKET),
-            FUNCTOR_PATTERN.asGroup(FUNCTOR),
-            ATOM_PATTERN.asGroup(ATOM),
-            VARIABLE_PATTERN.asGroup(VARIABLE),
-            NUMBER_PATTERN.asGroup(NUMBER),
-            STRING_PATTERN.asGroup(STRING),
-            FULLSTOP_PATTERN.asGroup(FULLSTOP)
-        )
+        private fun pattern(operators: OperatorSet) =
+            anyOf(
+                COMMENT_PATTERN.asGroup(COMMENT),
+                keywords(operators).asGroup(KEYWORD),
+                PAREN_PATTERN.asGroup(PAREN),
+                BRACE_PATTERN.asGroup(BRACE),
+                BRACKET_PATTERN.asGroup(BRACKET),
+                FUNCTOR_PATTERN.asGroup(FUNCTOR),
+                ATOM_PATTERN.asGroup(ATOM),
+                VARIABLE_PATTERN.asGroup(VARIABLE),
+                NUMBER_PATTERN.asGroup(NUMBER),
+                STRING_PATTERN.asGroup(STRING),
+                FULLSTOP_PATTERN.asGroup(FULLSTOP),
+            )
 
         private val MatchResult.styleClass: String
-            get() = when {
-                groups[KEYWORD] != null -> KEYWORD.lowercase()
-                groups[PAREN] != null -> PAREN.lowercase()
-                groups[NUMBER] != null -> NUMBER.lowercase()
-                groups[BRACE] != null -> BRACE.lowercase()
-                groups[BRACKET] != null -> BRACKET.lowercase()
-                groups[STRING] != null -> STRING.lowercase()
-                groups[COMMENT] != null -> COMMENT.lowercase()
-                groups[VARIABLE] != null -> VARIABLE.lowercase()
-                groups[ATOM] != null -> ATOM.lowercase()
-                groups[FUNCTOR] != null -> FUNCTOR.lowercase()
-                groups[FULLSTOP] != null -> FULLSTOP.lowercase()
-                else -> ""
-            }
+            get() =
+                when {
+                    groups[KEYWORD] != null -> KEYWORD.lowercase()
+                    groups[PAREN] != null -> PAREN.lowercase()
+                    groups[NUMBER] != null -> NUMBER.lowercase()
+                    groups[BRACE] != null -> BRACE.lowercase()
+                    groups[BRACKET] != null -> BRACKET.lowercase()
+                    groups[STRING] != null -> STRING.lowercase()
+                    groups[COMMENT] != null -> COMMENT.lowercase()
+                    groups[VARIABLE] != null -> VARIABLE.lowercase()
+                    groups[ATOM] != null -> ATOM.lowercase()
+                    groups[FUNCTOR] != null -> FUNCTOR.lowercase()
+                    groups[FULLSTOP] != null -> FULLSTOP.lowercase()
+                    else -> ""
+                }
     }
 }

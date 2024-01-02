@@ -6,9 +6,8 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** A leaf node containing [Rule]s */
 internal data class RuleNode(
-    override val leafElements: MutableList<Rule> = mutableListOf()
+    override val leafElements: MutableList<Rule> = mutableListOf(),
 ) : AbstractLeafReteNode<Rule>() {
-
     override val isRuleNode: Boolean
         get() = true
 
@@ -18,6 +17,5 @@ internal data class RuleNode(
 
     override fun get(element: Rule): Sequence<Rule> = indexedElements.filter { it matches element }
 
-    override fun deepCopy(): RuleNode =
-        RuleNode(leafElements.toMutableList())
+    override fun deepCopy(): RuleNode = RuleNode(leafElements.toMutableList())
 }

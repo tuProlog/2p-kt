@@ -15,9 +15,8 @@ import kotlin.collections.List as KtList
 internal abstract class RecursiveImpl(
     functor: String,
     args: KtList<Term>,
-    tags: Map<String, Any>
+    tags: Map<String, Any>,
 ) : AbstractStruct(functor, args, tags), Recursive {
-
     override val unfoldedList: KtList<Term> by lazy { dequeOf(unfoldedSequence) }
 
     override val unfoldedArray: Array<Term>
@@ -49,7 +48,10 @@ internal abstract class RecursiveImpl(
             }
         } ?: false
 
-    override fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
+    override fun itemsAreEqual(
+        other: Struct,
+        useVarCompleteName: Boolean,
+    ): Boolean =
         other.asRecursive()?.let {
             itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
                 a.equals(b, useVarCompleteName)
@@ -66,66 +68,71 @@ internal abstract class RecursiveImpl(
         override val size: Int
             get() = 2
 
-        override fun contains(element: T): Boolean =
-            fst == element || snd == element
+        override fun contains(element: T): Boolean = fst == element || snd == element
 
-        override fun containsAll(elements: KtCollection<T>): Boolean =
-            elements.any { contains(it) }
+        override fun containsAll(elements: KtCollection<T>): Boolean = elements.any { contains(it) }
 
-        override fun get(index: Int): T = when (index) {
-            0 -> fst
-            1 -> snd
-            else -> throw IndexOutOfBoundsException("Index out of range: $index")
-        }
+        override fun get(index: Int): T =
+            when (index) {
+                0 -> fst
+                1 -> snd
+                else -> throw IndexOutOfBoundsException("Index out of range: $index")
+            }
 
-        override fun indexOf(element: T): Int = when (element) {
-            fst -> 0
-            snd -> 1
-            else -> -1
-        }
+        override fun indexOf(element: T): Int =
+            when (element) {
+                fst -> 0
+                snd -> 1
+                else -> -1
+            }
 
         override fun isEmpty(): Boolean = false
 
-        override fun iterator(): Iterator<T> = iterator {
-            yield(fst)
-            yield(snd)
-        }
+        override fun iterator(): Iterator<T> =
+            iterator {
+                yield(fst)
+                yield(snd)
+            }
 
-        override fun lastIndexOf(element: T): Int = when (element) {
-            snd -> 1
-            fst -> 0
-            else -> -1
-        }
+        override fun lastIndexOf(element: T): Int =
+            when (element) {
+                snd -> 1
+                fst -> 0
+                else -> -1
+            }
 
         override fun listIterator(): ListIterator<T> = listIterator(0)
 
-        override fun listIterator(index: Int): ListIterator<T> = object : ListIterator<T> {
-            private var currentIndex = index
+        override fun listIterator(index: Int): ListIterator<T> =
+            object : ListIterator<T> {
+                private var currentIndex = index
 
-            override fun hasNext(): Boolean = currentIndex < size
+                override fun hasNext(): Boolean = currentIndex < size
 
-            override fun hasPrevious(): Boolean = currentIndex > 0
+                override fun hasPrevious(): Boolean = currentIndex > 0
 
-            override fun next(): T =
-                if (hasNext()) {
-                    get(currentIndex++)
-                } else {
-                    throw NoSuchElementException()
-                }
+                override fun next(): T =
+                    if (hasNext()) {
+                        get(currentIndex++)
+                    } else {
+                        throw NoSuchElementException()
+                    }
 
-            override fun nextIndex(): Int = index + 1
+                override fun nextIndex(): Int = index + 1
 
-            override fun previous(): T =
-                if (hasPrevious()) {
-                    get(currentIndex--)
-                } else {
-                    throw NoSuchElementException()
-                }
+                override fun previous(): T =
+                    if (hasPrevious()) {
+                        get(currentIndex--)
+                    } else {
+                        throw NoSuchElementException()
+                    }
 
-            override fun previousIndex(): Int = currentIndex - 1
-        }
+                override fun previousIndex(): Int = currentIndex - 1
+            }
 
-        override fun subList(fromIndex: Int, toIndex: Int): KtList<T> =
-            (fromIndex until toIndex).map { get(it) }
+        override fun subList(
+            fromIndex: Int,
+            toIndex: Int,
+        ): KtList<T> = (fromIndex until toIndex).map { get(it) }
     }
 }

@@ -10,9 +10,8 @@ import kotlin.jvm.JvmStatic
 /** A class representing a solution to a goal */
 internal sealed class SolutionImpl(
     override val query: Struct,
-    override val tags: Map<String, Any>
+    override val tags: Map<String, Any>,
 ) : Solution {
-
     override val isYes: Boolean
         get() = false
 
@@ -29,7 +28,7 @@ internal sealed class SolutionImpl(
         yes: ((Solution.Yes) -> T)?,
         no: ((Solution.No) -> T)?,
         halt: ((Solution.Halt) -> T)?,
-        otherwise: ((Solution) -> T)
+        otherwise: ((Solution) -> T),
     ): T {
         if (this is Solution.Yes && yes != null) {
             return yes(this)
@@ -61,25 +60,22 @@ internal sealed class SolutionImpl(
         return result
     }
 
-    override fun valueOf(variable: Var): Term? =
-        (substitution as? Substitution.Unifier)?.get(variable)
+    override fun valueOf(variable: Var): Term? = (substitution as? Substitution.Unifier)?.get(variable)
 
-    override fun valueOf(variable: String): Term? =
-        (substitution as? Substitution.Unifier)?.getByName(variable)
+    override fun valueOf(variable: String): Term? = (substitution as? Substitution.Unifier)?.getByName(variable)
 
     /** A class representing the successful solution */
     class YesImpl(
         query: Struct,
         /** The successful substitution applied finding the solution */
         override val substitution: Substitution.Unifier = Substitution.empty(),
-        tags: Map<String, Any> = emptyMap()
+        tags: Map<String, Any> = emptyMap(),
     ) : SolutionImpl(query, tags), Solution.Yes {
-
         constructor(
             signature: Signature,
             arguments: List<Term>,
             substitution: Substitution.Unifier = Substitution.empty(),
-            tags: Map<String, Any> = emptyMap()
+            tags: Map<String, Any> = emptyMap(),
         ) : this(signature withArgs arguments, substitution, tags) {
             // a solution always refers to a fully instantiated Struct, that cannot have a vararg Signature
             noVarargSignatureCheck(signature)
@@ -88,13 +84,15 @@ internal sealed class SolutionImpl(
         /** The Struct representing the solution */
         override val solvedQuery: Struct by lazy { substitution.applyTo(query) as Struct }
 
-        override fun replaceTags(tags: Map<String, Any>): YesImpl =
-            if (tags === this.tags) this else YesImpl(query, substitution, tags)
+        override fun replaceTags(tags: Map<String, Any>): YesImpl = if (tags === this.tags) this else YesImpl(query, substitution, tags)
 
         override val isYes: Boolean
             get() = true
 
-        override fun copy(query: Struct, substitution: Substitution.Unifier) = YesImpl(query, substitution, tags)
+        override fun copy(
+            query: Struct,
+            substitution: Substitution.Unifier,
+        ) = YesImpl(query, substitution, tags)
 
         override fun toString(): String = "Yes(query=$query, substitution=$substitution)"
 
@@ -109,13 +107,12 @@ internal sealed class SolutionImpl(
     /** A class representing a failed solution */
     class NoImpl(
         query: Struct,
-        tags: Map<String, Any> = emptyMap()
+        tags: Map<String, Any> = emptyMap(),
     ) : SolutionImpl(query, tags), Solution.No {
-
         constructor(
             signature: Signature,
             arguments: List<Term>,
-            tags: Map<String, Any> = emptyMap()
+            tags: Map<String, Any> = emptyMap(),
         ) : this(signature withArgs arguments, tags) {
             noVarargSignatureCheck(signature)
         }
@@ -126,8 +123,7 @@ internal sealed class SolutionImpl(
         override val solvedQuery: Nothing?
             get() = null
 
-        override fun replaceTags(tags: Map<String, Any>): NoImpl =
-            if (tags === this.tags) this else NoImpl(query, tags)
+        override fun replaceTags(tags: Map<String, Any>): NoImpl = if (tags === this.tags) this else NoImpl(query, tags)
 
         override val isNo: Boolean
             get() = true
@@ -144,20 +140,18 @@ internal sealed class SolutionImpl(
         query: Struct,
         /** The exception that made the resolution to halt */
         override val exception: ResolutionException,
-        tags: Map<String, Any> = emptyMap()
+        tags: Map<String, Any> = emptyMap(),
     ) : SolutionImpl(query, tags), Solution.Halt {
-
         constructor(
             signature: Signature,
             arguments: List<Term>,
             exception: ResolutionException,
-            tags: Map<String, Any> = emptyMap()
+            tags: Map<String, Any> = emptyMap(),
         ) : this(signature withArgs arguments, exception, tags) {
             noVarargSignatureCheck(signature)
         }
 
-        override fun replaceTags(tags: Map<String, Any>): HaltImpl =
-            if (tags === this.tags) this else HaltImpl(query, exception, tags)
+        override fun replaceTags(tags: Map<String, Any>): HaltImpl = if (tags === this.tags) this else HaltImpl(query, exception, tags)
 
         override fun equals(other: Any?): Boolean {
             if (!super.equals(other)) return false
@@ -184,7 +178,10 @@ internal sealed class SolutionImpl(
         override val isHalt: Boolean
             get() = true
 
-        override fun copy(query: Struct, exception: ResolutionException) = HaltImpl(query, exception, tags)
+        override fun copy(
+            query: Struct,
+            exception: ResolutionException,
+        ) = HaltImpl(query, exception, tags)
 
         override fun toString(): String = "Halt(query=$query, exception=$exception)"
 

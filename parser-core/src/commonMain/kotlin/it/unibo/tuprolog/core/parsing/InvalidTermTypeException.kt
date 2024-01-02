@@ -11,5 +11,5 @@ class InvalidTermTypeException(
     line: Int = 1,
     column: Int = 1,
     message: String? = "Expected ${type.simpleName}, got: $offendingSymbol",
-    throwable: Throwable? = null
+    throwable: Throwable? = null,
 ) : ParseException(input, offendingSymbol, line, column, message, throwable)

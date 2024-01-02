@@ -13,8 +13,7 @@ abstract class AbstractClauseVisitor<T> : ClauseVisitor<T>, ExhaustiveTermVisito
             if (it.isClause) visitStruct(it.castToStruct()) else it.accept(this)
         }.let { reduce(it) }
 
-    private fun dispatchHead(head: Struct): T =
-        visitHead(head)
+    private fun dispatchHead(head: Struct): T = visitHead(head)
 
     private fun dispatchLiteral(literal: Struct): T =
         if (literal.isNegated) {
@@ -23,8 +22,7 @@ abstract class AbstractClauseVisitor<T> : ClauseVisitor<T>, ExhaustiveTermVisito
             visitNonNegatedLiteral(literal)
         }
 
-    protected fun dispatchHead(clause: Clause): Sequence<T> =
-        sequenceOf(clause.head).filterNotNull().map { dispatchHead(it) }
+    protected fun dispatchHead(clause: Clause): Sequence<T> = sequenceOf(clause.head).filterNotNull().map { dispatchHead(it) }
 
     protected fun dispatchBody(clause: Clause): Sequence<T> =
         clause.bodyItems.asSequence().map {

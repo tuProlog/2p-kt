@@ -8,7 +8,6 @@ import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 
 interface Scope {
-
     @JsName("variables")
     val variables: Map<String, Var>
 
@@ -48,16 +47,28 @@ interface Scope {
     fun atomOf(value: String): Atom
 
     @JsName("structOf")
-    fun structOf(functor: String, vararg args: Term): Struct
+    fun structOf(
+        functor: String,
+        vararg args: Term,
+    ): Struct
 
     @JsName("structOfSequence")
-    fun structOf(functor: String, args: Sequence<Term>): Struct
+    fun structOf(
+        functor: String,
+        args: Sequence<Term>,
+    ): Struct
 
     @JsName("structOfIterable")
-    fun structOf(functor: String, args: Iterable<Term>): Struct
+    fun structOf(
+        functor: String,
+        args: Iterable<Term>,
+    ): Struct
 
     @JsName("structOfList")
-    fun structOf(functor: String, args: List<Term>): Struct
+    fun structOf(
+        functor: String,
+        args: List<Term>,
+    ): Struct
 
     @JsName("tupleOf")
     fun tupleOf(vararg terms: Term): Tuple
@@ -75,7 +86,10 @@ interface Scope {
     fun <T> ktListOf(vararg items: T): List<T>
 
     @JsName("append")
-    fun <T> List<T>.append(item: T, vararg items: T): List<T>
+    fun <T> List<T>.append(
+        item: T,
+        vararg items: T,
+    ): List<T>
 
     @JsName("concat")
     fun <T> List<T>.concat(other: Iterable<T>): List<T>
@@ -90,13 +104,22 @@ interface Scope {
     fun listOf(terms: Sequence<Term>): LogicList
 
     @JsName("listFrom")
-    fun listFrom(vararg terms: Term, last: Term? = null): LogicList
+    fun listFrom(
+        vararg terms: Term,
+        last: Term? = null,
+    ): LogicList
 
     @JsName("listFromIterable")
-    fun listFrom(terms: Iterable<Term>, last: Term? = null): LogicList
+    fun listFrom(
+        terms: Iterable<Term>,
+        last: Term? = null,
+    ): LogicList
 
     @JsName("listFromSequence")
-    fun listFrom(terms: Sequence<Term>, last: Term? = null): LogicList
+    fun listFrom(
+        terms: Sequence<Term>,
+        last: Term? = null,
+    ): LogicList
 
     @JsName("setOf")
     fun blockOf(vararg terms: Term): Block
@@ -117,22 +140,41 @@ interface Scope {
     fun factOf(head: Struct): Fact
 
     @JsName("ruleOf")
-    fun ruleOf(head: Struct, body1: Term, vararg body: Term): Rule
+    fun ruleOf(
+        head: Struct,
+        body1: Term,
+        vararg body: Term,
+    ): Rule
 
     @JsName("directiveOf")
-    fun directiveOf(body1: Term, vararg body: Term): Directive
+    fun directiveOf(
+        body1: Term,
+        vararg body: Term,
+    ): Directive
 
     @JsName("clauseOf")
-    fun clauseOf(head: Struct?, vararg body: Term): Clause
+    fun clauseOf(
+        head: Struct?,
+        vararg body: Term,
+    ): Clause
 
     @JsName("consOf")
-    fun consOf(head: Term, tail: Term): Cons
+    fun consOf(
+        head: Term,
+        tail: Term,
+    ): Cons
 
     @JsName("indicatorOf")
-    fun indicatorOf(name: Term, arity: Term): Indicator
+    fun indicatorOf(
+        name: Term,
+        arity: Term,
+    ): Indicator
 
     @JsName("indicatorOfStringInt")
-    fun indicatorOf(name: String, arity: Int): Indicator
+    fun indicatorOf(
+        name: String,
+        arity: Int,
+    ): Indicator
 
     @JsName("anonymous")
     fun anonymous(): Var
@@ -189,7 +231,10 @@ interface Scope {
     fun intOf(value: String): Integer
 
     @JsName("parseIntRadix")
-    fun intOf(value: String, radix: Int): Integer
+    fun intOf(
+        value: String,
+        radix: Int,
+    ): Integer
 
     @JsName("realOfBigDecimal")
     fun realOf(value: BigDecimal): Real
@@ -225,7 +270,6 @@ interface Scope {
     fun substitutionOf(assignments: Sequence<Pair<Var, Term>>): Substitution
 
     companion object {
-
         @JvmStatic
         @JsName("empty")
         fun empty(): Scope = ScopeImpl(mutableMapOf())
@@ -236,7 +280,10 @@ interface Scope {
 
         @JvmStatic
         @JsName("ofVar")
-        fun of(`var`: Var, vararg vars: Var): Scope = of(listOf(`var`, *vars))
+        fun of(
+            `var`: Var,
+            vararg vars: Var,
+        ): Scope = of(listOf(`var`, *vars))
 
         @JvmStatic
         @JsName("ofVarIterable")
@@ -256,22 +303,38 @@ interface Scope {
 
         @JvmStatic
         @JsName("ofWithFunction")
-        fun <R> of(vararg vars: String, lambda: Scope.() -> R): R = of(*vars).with(lambda)
+        fun <R> of(
+            vararg vars: String,
+            lambda: Scope.() -> R,
+        ): R = of(*vars).with(lambda)
 
         @JvmStatic
         @JsName("ofVarWithFunction")
-        fun <R> of(`var`: Var, vararg vars: Var, lambda: Scope.() -> R): R = of(`var`, *vars).with(lambda)
+        fun <R> of(
+            `var`: Var,
+            vararg vars: Var,
+            lambda: Scope.() -> R,
+        ): R = of(`var`, *vars).with(lambda)
 
         @JvmStatic
         @JsName("ofVarIterableWithFunction")
-        fun <R> of(vars: Iterable<Var>, lambda: Scope.() -> R): R = of(vars).with(lambda)
+        fun <R> of(
+            vars: Iterable<Var>,
+            lambda: Scope.() -> R,
+        ): R = of(vars).with(lambda)
 
         @JvmStatic
         @JsName("ofVarSequenceWithFunction")
-        fun <R> of(vars: Sequence<Var>, lambda: Scope.() -> R): R = of(vars).with(lambda)
+        fun <R> of(
+            vars: Sequence<Var>,
+            lambda: Scope.() -> R,
+        ): R = of(vars).with(lambda)
 
         @JvmStatic
         @JsName("ofVariabledWithFunction")
-        fun <R> of(vars: Variabled, lambda: Scope.() -> R): R = of(vars).with(lambda)
+        fun <R> of(
+            vars: Variabled,
+            lambda: Scope.() -> R,
+        ): R = of(vars).with(lambda)
     }
 }

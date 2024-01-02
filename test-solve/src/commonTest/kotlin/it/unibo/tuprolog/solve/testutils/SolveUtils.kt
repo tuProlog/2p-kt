@@ -26,8 +26,8 @@ import kotlin.collections.List as KtList
  *
  * @author Enrico
  */
+@Suppress("ConstPropertyName", "ktlint:standard:property-naming")
 internal object SolveUtils {
-
     internal val someLibraries = Runtime.empty()
     internal val someFlags = emptyMap<String, Term>()
     internal val aStaticKB = Theory.empty()
@@ -61,9 +61,10 @@ internal object SolveUtils {
 
     // Response parameters
     internal val aSolution = Solution.no(Truth.FAIL)
-    internal val aSideEffectManager = object : SideEffectManager {
-        override fun cut() = throw NotImplementedError()
-    }
+    internal val aSideEffectManager =
+        object : SideEffectManager {
+            override fun cut() = throw NotImplementedError()
+        }
     internal val someSideEffects = listOf<SideEffect>(SideEffect.ResetDynamicKb())
 
     /** The success response to default values request */
@@ -74,7 +75,7 @@ internal object SolveUtils {
             SideEffect.ResetRuntime(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
             SideEffect.ResetStaticKb(differentStaticKB),
-            SideEffect.ResetDynamicKb(differentDynamicKB)
+            SideEffect.ResetDynamicKb(differentDynamicKB),
         )
     }
 
@@ -86,7 +87,7 @@ internal object SolveUtils {
             SideEffect.ResetRuntime(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
             SideEffect.ResetStaticKb(differentStaticKB),
-            SideEffect.ResetDynamicKb(differentDynamicKB)
+            SideEffect.ResetDynamicKb(differentDynamicKB),
         )
     }
 
@@ -98,7 +99,7 @@ internal object SolveUtils {
             SideEffect.ResetRuntime(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
             SideEffect.ResetStaticKb(differentStaticKB),
-            SideEffect.ResetDynamicKb(differentDynamicKB)
+            SideEffect.ResetDynamicKb(differentDynamicKB),
         )
     }
 
@@ -113,6 +114,6 @@ internal object SolveUtils {
         arguments: KtList<Term> = anArgumentList,
         executionContext: ExecutionContext = anExecutionContext,
         requestIssuingInstant: TimeInstant = aRequestIssuingInstant,
-        executionMaxDuration: TimeDuration = anExecutionMaxDuration
+        executionMaxDuration: TimeDuration = anExecutionMaxDuration,
     ) = Solve.Request(signature, arguments, executionContext, requestIssuingInstant, executionMaxDuration)
 }

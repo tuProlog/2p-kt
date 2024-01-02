@@ -11,15 +11,18 @@ private typealias MguRequest = Triple<*, *, Boolean>
 
 class CachedUnificator(
     val decorated: Unificator,
-    cacheCapacity: Int
+    cacheCapacity: Int,
 ) : Unificator {
-
     private val mguCache: Cache<MguRequest, Substitution> = Cache.simpleLru(cacheCapacity)
 
     override val context: Substitution
         get() = decorated.context
 
-    override fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean): Substitution {
+    override fun mgu(
+        term1: Term,
+        term2: Term,
+        occurCheckEnabled: Boolean,
+    ): Substitution {
         val mguRequest = MguRequestForTerms(term1, term2, occurCheckEnabled)
         return when (val cached = mguCache[mguRequest]) {
             is Optional.Some -> cached.value
@@ -34,7 +37,7 @@ class CachedUnificator(
     override fun merge(
         substitution1: Substitution,
         substitution2: Substitution,
-        occurCheckEnabled: Boolean
+        occurCheckEnabled: Boolean,
     ): Substitution {
         val mguRequest = MguRequestForSubstitutions(substitution1, substitution2, occurCheckEnabled)
         return when (val cached = mguCache[mguRequest]) {

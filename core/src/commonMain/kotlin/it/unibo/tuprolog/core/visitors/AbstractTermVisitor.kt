@@ -7,7 +7,11 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 
 abstract class AbstractTermVisitor<T> : TermVisitor<T> {
-    protected abstract fun <X : Term> join(term: X, f1: (X) -> T, vararg fs: (X) -> T): T
+    protected abstract fun <X : Term> join(
+        term: X,
+        f1: (X) -> T,
+        vararg fs: (X) -> T,
+    ): T
 
     override fun visitAtom(term: Atom): T = join(term, this::visitStruct, this::visitConstant)
 

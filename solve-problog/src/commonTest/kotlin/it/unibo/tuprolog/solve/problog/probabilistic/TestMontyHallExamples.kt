@@ -6,7 +6,6 @@ import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import kotlin.test.Test
 
 class TestMontyHallExamples {
-
     /***
      * https://dtai.cs.kuleuven.be/problog/tutorial/various/01_montyhall.html
      */
@@ -44,22 +43,22 @@ class TestMontyHallExamples {
                     listOf(
                         ExpectedSolution("prize(1)".parseAsStruct(), 0.33333333),
                         ExpectedSolution("prize(2)".parseAsStruct(), 0.33333333),
-                        ExpectedSolution("prize(3)".parseAsStruct(), 0.33333333)
-                    )
+                        ExpectedSolution("prize(3)".parseAsStruct(), 0.33333333),
+                    ),
                 ),
                 QueryWithSolutions(
                     "select_door(X)".parseAsStruct(),
-                    listOf(ExpectedSolution("select_door(1)".parseAsStruct(), 1.0))
+                    listOf(ExpectedSolution("select_door(1)".parseAsStruct(), 1.0)),
                 ),
                 QueryWithSolutions(
                     "win_keep".parseAsStruct(),
-                    listOf(ExpectedSolution("win_keep".parseAsStruct(), 0.33333333))
+                    listOf(ExpectedSolution("win_keep".parseAsStruct(), 0.33333333)),
                 ),
                 QueryWithSolutions(
                     "win_switch".parseAsStruct(),
-                    listOf(ExpectedSolution("win_switch".parseAsStruct(), 0.66666667))
-                )
-            )
+                    listOf(ExpectedSolution("win_switch".parseAsStruct(), 0.66666667)),
+                ),
+            ),
         )
     }
 
@@ -85,13 +84,13 @@ class TestMontyHallExamples {
             listOf(
                 QueryWithSolutions(
                     "switched_gets_goat".parseAsStruct(),
-                    listOf(ExpectedSolution("switched_gets_goat".parseAsStruct(), 0.33333333))
+                    listOf(ExpectedSolution("switched_gets_goat".parseAsStruct(), 0.33333333)),
                 ),
                 QueryWithSolutions(
                     "switched_gets_car".parseAsStruct(),
-                    listOf(ExpectedSolution("switched_gets_car".parseAsStruct(), 0.66666667))
-                )
-            )
+                    listOf(ExpectedSolution("switched_gets_car".parseAsStruct(), 0.66666667)),
+                ),
+            ),
         )
     }
 }

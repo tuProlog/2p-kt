@@ -9,7 +9,6 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class TestUrl {
-
     @Test
     fun testCreation1() {
         val urlString = "http://www.example.com:80/"
@@ -51,7 +50,7 @@ class TestUrl {
 
         assertSameLines(
             ExampleFiles.WRONG_PARENTS,
-            text
+            text,
         )
     }
 
@@ -63,7 +62,7 @@ class TestUrl {
 
         assertSameLines(
             ExampleFiles.PARENTS,
-            text
+            text,
         )
 
         val parsed = ClausesParser.withDefaultOperators().parseTheory(text)
@@ -118,12 +117,12 @@ class TestUrl {
         var url = findResource("Parents.pl")
         assertSameLines(
             ExampleFiles.PARENTS,
-            url.readAsText()
+            url.readAsText(),
         )
         url = findResource("WrongParents.pl")
         assertSameLines(
             ExampleFiles.WRONG_PARENTS,
-            url.readAsText()
+            url.readAsText(),
         )
     }
 

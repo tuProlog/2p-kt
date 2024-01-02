@@ -6,7 +6,6 @@ import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
 interface Block : Recursive {
-
     override val isBlock: Boolean
         get() = true
 
@@ -29,7 +28,6 @@ interface Block : Recursive {
     override fun asBlock(): Block = this
 
     companion object {
-
         const val FUNCTOR = Terms.BLOCK_FUNCTOR
 
         const val EMPTY_FUNCTOR = Terms.EMPTY_BLOCK_FUNCTOR

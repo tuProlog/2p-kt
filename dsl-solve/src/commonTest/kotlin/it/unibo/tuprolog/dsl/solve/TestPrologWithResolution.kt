@@ -15,11 +15,11 @@ class TestPrologWithResolution {
                 rule {
                     "ancestor"("X", "Y") `if` (
                         "parent"("X", "Z") and "ancestor"("Z", "Y")
-                        )
+                    )
                 },
                 fact { "parent"("abraham", "isaac") },
                 fact { "parent"("isaac", "jacob") },
-                fact { "parent"("jacob", "joseph") }
+                fact { "parent"("jacob", "joseph") },
             )
 
             val actual = mutableListOf<String>()
@@ -31,7 +31,7 @@ class TestPrologWithResolution {
 
             assertEquals(
                 mutableListOf("isaac", "jacob", "joseph"),
-                actual
+                actual,
             )
         }
     }

@@ -23,11 +23,7 @@ internal class CastVisitor<T : Comparable<T>, E> :
     var onTerminal: ((o: BinaryDecisionDiagram.Terminal<T>) -> E)? = null
     var onVariable: ((o: BinaryDecisionDiagram.Variable<T>) -> E)? = null
 
-    override fun visit(
-        node: BinaryDecisionDiagram.Terminal<T>
-    ): E = onTerminal!!(node)
+    override fun visit(node: BinaryDecisionDiagram.Terminal<T>): E = onTerminal!!(node)
 
-    override fun visit(
-        node: BinaryDecisionDiagram.Variable<T>
-    ): E = onVariable!!(node)
+    override fun visit(node: BinaryDecisionDiagram.Variable<T>): E = onVariable!!(node)
 }

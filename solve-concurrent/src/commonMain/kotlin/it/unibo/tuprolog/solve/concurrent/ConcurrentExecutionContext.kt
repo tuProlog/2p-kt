@@ -46,7 +46,7 @@ data class ConcurrentExecutionContext(
     override val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
     val parent: ConcurrentExecutionContext? = null,
     val depth: Int = 0,
-    val step: Long = 0
+    val step: Long = 0,
 ) : ExecutionContext {
     init {
         require((depth == 0 && parent == null) || (depth > 0 && parent != null))
@@ -59,13 +59,14 @@ data class ConcurrentExecutionContext(
     val isActivationRecord: Boolean
         get() = parent == null || depth - parent.depth >= 1
 
-    val pathToRoot: Sequence<ConcurrentExecutionContext> = sequence {
-        var current: ConcurrentExecutionContext? = this@ConcurrentExecutionContext
-        while (current != null) {
-            yield(current)
-            current = current.parent
+    val pathToRoot: Sequence<ConcurrentExecutionContext> =
+        sequence {
+            var current: ConcurrentExecutionContext? = this@ConcurrentExecutionContext
+            while (current != null) {
+                yield(current)
+                current = current.parent
+            }
         }
-    }
 
     val currentGoal: Term?
         get() = if (goals.isOver) null else goals.current
@@ -91,17 +92,18 @@ data class ConcurrentExecutionContext(
         staticKb: Theory,
         dynamicKb: Theory,
         inputChannels: InputStore,
-        outputChannels: OutputStore
-    ): ConcurrentSolver = ConcurrentSolverImpl(
-        unificator,
-        libraries,
-        flags,
-        staticKb,
-        dynamicKb,
-        inputChannels,
-        outputChannels,
-        trustKb = true
-    )
+        outputChannels: OutputStore,
+    ): ConcurrentSolver =
+        ConcurrentSolverImpl(
+            unificator,
+            libraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            inputChannels,
+            outputChannels,
+            trustKb = true,
+        )
 
     override fun createMutableSolver(
         unificator: Unificator,
@@ -110,16 +112,17 @@ data class ConcurrentExecutionContext(
         staticKb: Theory,
         dynamicKb: Theory,
         inputChannels: InputStore,
-        outputChannels: OutputStore
-    ): MutableSolver = MutableConcurrentSolver(
-        unificator,
-        libraries,
-        flags,
-        staticKb,
-        dynamicKb,
-        inputChannels,
-        outputChannels
-    )
+        outputChannels: OutputStore,
+    ): MutableSolver =
+        MutableConcurrentSolver(
+            unificator,
+            libraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            inputChannels,
+            outputChannels,
+        )
 
     override fun update(
         unificator: Unificator,
@@ -130,7 +133,7 @@ data class ConcurrentExecutionContext(
         operators: OperatorSet,
         inputChannels: InputStore,
         outputChannels: OutputStore,
-        customData: CustomDataStore
+        customData: CustomDataStore,
     ): ConcurrentExecutionContext {
         return copy(
             unificator = unificator,
@@ -141,7 +144,7 @@ data class ConcurrentExecutionContext(
             operators = operators,
             inputChannels = inputChannels,
             outputChannels = outputChannels,
-            customData = customData
+            customData = customData,
         )
     }
 

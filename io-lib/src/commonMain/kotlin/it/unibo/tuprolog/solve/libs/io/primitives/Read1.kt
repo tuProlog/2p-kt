@@ -8,6 +8,5 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
 object Read1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("read") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response =
-        readTermAndReply(currentInputChannel, first)
+    override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response = readTermAndReply(currentInputChannel, first)
 }

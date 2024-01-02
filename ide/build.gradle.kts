@@ -18,9 +18,10 @@ dependencies {
     api(libs.richtextFx)
     for (jfxModule in listOf(libs.javafx.base, libs.javafx.controls, libs.javafx.fxml, libs.javafx.graphics)) {
         for (platform in multiPlatformHelper.fatJarPlatforms) {
-            val dependency = jfxModule.get().let {
-                "${it.module.group}:${it.module.name}:${it.versionConstraint.requiredVersion}"
-            }
+            val dependency =
+                jfxModule.get().let {
+                    "${it.module.group}:${it.module.name}:${it.versionConstraint.requiredVersion}"
+                }
             api("$dependency:$platform")
         }
     }

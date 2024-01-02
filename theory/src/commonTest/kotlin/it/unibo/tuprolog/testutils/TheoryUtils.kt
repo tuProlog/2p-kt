@@ -21,15 +21,15 @@ import it.unibo.tuprolog.core.List as LogicList
  * @author Enrico
  */
 internal object TheoryUtils {
-
     /** Contains well formed clauses (the head is a [Struct] and the body doesn't contain [Numeric] values) */
     internal val wellFormedClauses get() = ReteNodeUtils.mixedClauses
 
     /** Contains a pair which has in its first element half clauses from [wellFormedClauses] in the second element the other half */
-    internal val wellFormedClausesHelves = Pair(
-        wellFormedClauses.subList(0, wellFormedClauses.count() / 2),
-        wellFormedClauses.subList(wellFormedClauses.count() / 2, wellFormedClauses.count())
-    )
+    internal val wellFormedClausesHelves =
+        Pair(
+            wellFormedClauses.subList(0, wellFormedClauses.count() / 2),
+            wellFormedClauses.subList(wellFormedClauses.count() / 2, wellFormedClauses.count()),
+        )
 
     /** Contains well formed clauses queries based on [wellFormedClauses] and expected responses from the ClauseDatabase */
     internal val clausesQueryResultsMap get() = ReteNodeUtils.mixedClausesQueryResultsMap
@@ -49,52 +49,59 @@ internal object TheoryUtils {
         listOf(
             Clause.of(Struct.of("test", Var.anonymous()), Struct.of("b", Var.anonymous()), Integer.of(1)),
             Directive.of(Atom.of("execute_this"), Real.of(1.5)),
-            Rule.of(Struct.of("f2", Atom.of("a")), Atom.of("do_something"), Numeric.of(1.5f))
+            Rule.of(Struct.of("f2", Atom.of("a")), Atom.of("do_something"), Numeric.of(1.5f)),
         )
 
-    internal val memberClause = listOf(
-        Scope.empty {
-            factOf(structOf("member", varOf("H"), consOf(varOf("H"), anonymous())))
-        }
-    )
+    internal val memberClause =
+        listOf(
+            Scope.empty {
+                factOf(structOf("member", varOf("H"), consOf(varOf("H"), anonymous())))
+            },
+        )
 
-    internal fun member(first: Term, second: Term): Fact =
-        Fact.of(Struct.of("member", first, second))
+    internal fun member(
+        first: Term,
+        second: Term,
+    ): Fact = Fact.of(Struct.of("member", first, second))
 
-    internal val positiveMemberQueries = listOf(
-        member(
-            LogicList.of(Struct.of("a", Var.of("X"))),
-            LogicList.of(LogicList.of(Struct.of("a", Integer.of(1))))
-        ),
-        member(Atom.of("a"), LogicList.of(Atom.of("a")))
-    )
+    internal val positiveMemberQueries =
+        listOf(
+            member(
+                LogicList.of(Struct.of("a", Var.of("X"))),
+                LogicList.of(LogicList.of(Struct.of("a", Integer.of(1)))),
+            ),
+            member(Atom.of("a"), LogicList.of(Atom.of("a"))),
+        )
 
-    internal val negativeMemberQueries = listOf(
-        member(
-            LogicList.of(Struct.of("a", Var.of("X"))),
-            LogicList.of(LogicList.of(Struct.of("b", Integer.of(1))))
-        ),
-        member(Atom.of("a"), LogicList.of(Atom.of("b")))
-    )
+    internal val negativeMemberQueries =
+        listOf(
+            member(
+                LogicList.of(Struct.of("a", Var.of("X"))),
+                LogicList.of(LogicList.of(Struct.of("b", Integer.of(1)))),
+            ),
+            member(Atom.of("a"), LogicList.of(Atom.of("b"))),
+        )
 
-    internal val deepClause = listOf(
-        Fact.of(
-            LogicList.of(
+    internal val deepClause =
+        listOf(
+            Fact.of(
                 LogicList.of(
                     LogicList.of(
-                        Atom.of("a"),
-                        Atom.of("b")
+                        LogicList.of(
+                            Atom.of("a"),
+                            Atom.of("b"),
+                        ),
+                        Atom.of("c"),
                     ),
-                    Atom.of("c")
+                    Atom.of("d"),
                 ),
-                Atom.of("d")
-            )
+            ),
         )
-    )
 
-    internal val deepQueries = sequenceOf(
-        LogicList.of(Var.of("ABC"), Var.of("D")),
-        LogicList.of(LogicList.of(Var.of("AB"), Var.of("C")), Var.of("D")),
-        LogicList.of(LogicList.of(LogicList.of(Var.of("A"), Var.of("B")), Var.of("C")), Var.of("D"))
-    ).map { Fact.of(it) }.toList()
+    internal val deepQueries =
+        sequenceOf(
+            LogicList.of(Var.of("ABC"), Var.of("D")),
+            LogicList.of(LogicList.of(Var.of("AB"), Var.of("C")), Var.of("D")),
+            LogicList.of(LogicList.of(LogicList.of(Var.of("A"), Var.of("B")), Var.of("C")), Var.of("D")),
+        ).map { Fact.of(it) }.toList()
 }

@@ -14,13 +14,14 @@ interface InputChannel<T : Any> : Channel<T> {
 
         @JvmStatic
         @JsName("ofWithAvailabilityChecker")
-        fun <X : Any> of(generator: () -> X?, availabilityChecker: () -> Boolean): InputChannel<X> =
-            InputChannelFromFunction(generator, availabilityChecker)
+        fun <X : Any> of(
+            generator: () -> X?,
+            availabilityChecker: () -> Boolean,
+        ): InputChannel<X> = InputChannelFromFunction(generator, availabilityChecker)
 
         @JvmStatic
         @JsName("of")
-        fun <X : Any> of(generator: () -> X?): InputChannel<X> =
-            InputChannelFromFunction(generator, { true })
+        fun <X : Any> of(generator: () -> X?): InputChannel<X> = InputChannelFromFunction(generator, { true })
 
         @JvmStatic
         @JsName("ofString")
@@ -45,6 +46,5 @@ interface InputChannel<T : Any> : Channel<T> {
     fun peek(): T?
 
     @JsName("use")
-    fun <R> use(function: InputChannel<T>.() -> R): R =
-        this.function().also { close() }
+    fun <R> use(function: InputChannel<T>.() -> R): R = this.function().also { close() }
 }

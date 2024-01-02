@@ -29,18 +29,17 @@ abstract class AbstractClassicSolver(
     initialDynamicKb: Theory = MutableTheory.empty(unificator),
     inputChannels: InputStore = InputStore.fromStandard(),
     outputChannels: OutputStore = OutputStore.fromStandard(),
-    trustKb: Boolean = false
+    trustKb: Boolean = false,
 ) : AbstractSolver<ClassicExecutionContext>(
-    unificator,
-    libraries,
-    flags,
-    initialStaticKb,
-    initialDynamicKb,
-    inputChannels,
-    outputChannels,
-    trustKb
-) {
-
+        unificator,
+        libraries,
+        flags,
+        initialStaticKb,
+        initialDynamicKb,
+        inputChannels,
+        outputChannels,
+        trustKb,
+    ) {
     override lateinit var currentContext: ClassicExecutionContext
 
     constructor(
@@ -53,7 +52,7 @@ abstract class AbstractClassicSolver(
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
         warnings: OutputChannel<Warning> = OutputChannel.warn(),
-        trustKb: Boolean = false
+        trustKb: Boolean = false,
     ) : this(
         unificator,
         libraries,
@@ -62,7 +61,7 @@ abstract class AbstractClassicSolver(
         dynamicKb,
         InputStore.fromStandard(stdIn),
         OutputStore.fromStandard(stdOut, stdErr, warnings),
-        trustKb
+        trustKb,
     )
 
     final override fun initializeContext(
@@ -74,7 +73,7 @@ abstract class AbstractClassicSolver(
         operators: OperatorSet,
         inputChannels: InputStore,
         outputChannels: OutputStore,
-        trustKb: Boolean
+        trustKb: Boolean,
     ) = ClassicExecutionContext(
         unificator = unificator,
         libraries = libraries,
@@ -84,34 +83,42 @@ abstract class AbstractClassicSolver(
         operators = getAllOperators(libraries).toOperatorSet(),
         inputChannels = inputChannels,
         outputChannels = outputChannels,
-        startTime = 0
+        startTime = 0,
     )
 
-    final override fun solveImpl(goal: Struct, options: SolveOptions): Sequence<Solution> {
-        currentContext = ClassicExecutionContext(
-            unificator = unificator,
-            query = goal,
-            libraries = libraries,
-            flags = flags,
-            staticKb = staticKb.toImmutableTheory(),
-            dynamicKb = dynamicKb.toMutableTheory(),
-            operators = operators,
-            inputChannels = inputChannels,
-            outputChannels = outputChannels,
-            customData = currentContext.customData,
-            startTime = currentTimeInstant(),
-            maxDuration = options.timeout
-        )
+    final override fun solveImpl(
+        goal: Struct,
+        options: SolveOptions,
+    ): Sequence<Solution> {
+        currentContext =
+            ClassicExecutionContext(
+                unificator = unificator,
+                query = goal,
+                libraries = libraries,
+                flags = flags,
+                staticKb = staticKb.toImmutableTheory(),
+                dynamicKb = dynamicKb.toMutableTheory(),
+                operators = operators,
+                inputChannels = inputChannels,
+                outputChannels = outputChannels,
+                customData = currentContext.customData,
+                startTime = currentTimeInstant(),
+                maxDuration = options.timeout,
+            )
         return solutionIterator(StateInit(currentContext), this::updateCurrentContextAfterStateTransition).asSequence()
     }
 
     protected abstract fun solutionIterator(
         initialState: State,
-        onStateTransition: (State, State, Long) -> Unit
+        onStateTransition: (State, State, Long) -> Unit,
     ): SolutionIterator
 
     @Suppress("UNUSED_PARAMETER")
-    private fun updateCurrentContextAfterStateTransition(source: State, destination: State, index: Long) {
+    private fun updateCurrentContextAfterStateTransition(
+        source: State,
+        destination: State,
+        index: Long,
+    ) {
         require(destination.context.step == index)
         currentContext = destination.context
     }
@@ -125,7 +132,7 @@ abstract class AbstractClassicSolver(
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ): AbstractClassicSolver
 
     abstract override fun clone(): AbstractClassicSolver

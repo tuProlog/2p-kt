@@ -10,7 +10,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class EmptyListTest {
-
     @Test
     fun emptyListCompanionReturnsEmptyListImpl() {
         assertEquals(EmptyListImpl(), EmptyList())

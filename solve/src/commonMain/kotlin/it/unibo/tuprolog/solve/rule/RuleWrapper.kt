@@ -12,7 +12,6 @@ import kotlin.collections.List as KtList
 
 // TODO: 16/01/2020 document and test this class
 abstract class RuleWrapper<C : ExecutionContext>(signature: Signature) : AbstractWrapper<Rule>(signature) {
-
     constructor(functor: String, arity: Int, vararg: Boolean = false) :
         this(Signature(functor, arity, vararg))
 

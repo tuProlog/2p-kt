@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentCopyTerm<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testCopyXNum() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

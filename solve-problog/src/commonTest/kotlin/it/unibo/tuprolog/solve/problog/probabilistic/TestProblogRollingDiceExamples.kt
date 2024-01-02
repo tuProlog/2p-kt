@@ -3,10 +3,10 @@ package it.unibo.tuprolog.solve.problog.probabilistic
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestProblogRollingDiceExamples {
-
     /***
      * https://dtai.cs.kuleuven.be/problog/tutorial/basic/03_dice.html#annotated-disjunctions-dealing-with-multi-valued-variables
      * */
@@ -23,21 +23,21 @@ class TestProblogRollingDiceExamples {
             listOf(
                 QueryWithSolutions(
                     "six1".parseAsStruct(),
-                    listOf(ExpectedSolution("six1".parseAsStruct(), 0.16666667))
+                    listOf(ExpectedSolution("six1".parseAsStruct(), 0.16666667)),
                 ),
                 QueryWithSolutions(
                     "six2".parseAsStruct(),
-                    listOf(ExpectedSolution("six2".parseAsStruct(), 0.25))
+                    listOf(ExpectedSolution("six2".parseAsStruct(), 0.25)),
                 ),
                 QueryWithSolutions(
                     "someSix".parseAsStruct(),
-                    listOf(ExpectedSolution("someSix".parseAsStruct(), 0.375))
+                    listOf(ExpectedSolution("someSix".parseAsStruct(), 0.375)),
                 ),
                 QueryWithSolutions(
                     "twoSix".parseAsStruct(),
-                    listOf(ExpectedSolution("twoSix".parseAsStruct(), 0.041666667))
-                )
-            )
+                    listOf(ExpectedSolution("twoSix".parseAsStruct(), 0.041666667)),
+                ),
+            ),
         )
     }
 
@@ -58,21 +58,21 @@ class TestProblogRollingDiceExamples {
             listOf(
                 QueryWithSolutions(
                     "odd(1)".parseAsStruct(),
-                    listOf(ExpectedSolution("odd(1)".parseAsStruct(), 0.5))
+                    listOf(ExpectedSolution("odd(1)".parseAsStruct(), 0.5)),
                 ),
                 QueryWithSolutions(
                     "even(1)".parseAsStruct(),
-                    listOf(ExpectedSolution("even(1)".parseAsStruct(), 0.5))
+                    listOf(ExpectedSolution("even(1)".parseAsStruct(), 0.5)),
                 ),
                 QueryWithSolutions(
                     "odd(2)".parseAsStruct(),
-                    listOf(ExpectedSolution("odd(2)".parseAsStruct(), 0.45))
+                    listOf(ExpectedSolution("odd(2)".parseAsStruct(), 0.45)),
                 ),
                 QueryWithSolutions(
                     "even(2)".parseAsStruct(),
-                    listOf(ExpectedSolution("even(2)".parseAsStruct(), 0.55))
-                )
-            )
+                    listOf(ExpectedSolution("even(2)".parseAsStruct(), 0.55)),
+                ),
+            ),
         )
     }
 
@@ -95,14 +95,14 @@ class TestProblogRollingDiceExamples {
                     "odd(X)".parseAsStruct(),
                     listOf(
                         ExpectedSolution("odd(1)".parseAsStruct(), 0.5),
-                        ExpectedSolution("odd(2)".parseAsStruct(), 0.45)
-                    )
+                        ExpectedSolution("odd(2)".parseAsStruct(), 0.45),
+                    ),
                 ),
                 QueryWithSolutions(
                     "even(_)".parseAsStruct(),
-                    emptyList()
-                )
-            )
+                    emptyList(),
+                ),
+            ),
         )
     }
 
@@ -131,9 +131,9 @@ class TestProblogRollingDiceExamples {
                     ExpectedSolution("sum(5)".parseAsStruct(), 0.22222222),
                     ExpectedSolution("sum(7)".parseAsStruct(), 0.33333333),
                     ExpectedSolution("sum(9)".parseAsStruct(), 0.22222222),
-                    ExpectedSolution("sum(11)".parseAsStruct(), 0.11111111)
-                )
-            )
+                    ExpectedSolution("sum(11)".parseAsStruct(), 0.11111111),
+                ),
+            ),
         )
     }
 
@@ -144,7 +144,8 @@ class TestProblogRollingDiceExamples {
     fun testArithmeticExpressions2() {
         TestUtils.assertQueryWithSolutions(
             """
-                1/6::dice(1,D); 1/6::dice(2,D); 1/6::dice(3,D); 1/6::dice(4,D); 1/6::dice(5,D); 1/6::dice(6,D) :- die(D).
+                1/6::dice(1,D); 1/6::dice(2,D); 1/6::dice(3,D); 1/6::dice(4,D); 1/6::dice(5,D); 1/6::dice(6,D) :- 
+                    die(D).
                 die(1).
                 die(2).
                 die(3).
@@ -165,87 +166,92 @@ class TestProblogRollingDiceExamples {
                     ExpectedSolution("sum(12)".parseAsStruct(), 0.15),
                     ExpectedSolution("sum(13)".parseAsStruct(), 0.1),
                     ExpectedSolution("sum(14)".parseAsStruct(), 0.05),
-                    ExpectedSolution("sum(15)".parseAsStruct(), 0.05)
-                )
-            )
+                    ExpectedSolution("sum(15)".parseAsStruct(), 0.05),
+                ),
+            ),
         )
     }
 
     /***
      * https://dtai.cs.kuleuven.be/problog/tutorial/basic/03_dice.html#built-in-predicate-between-3
      * */
-//    @Test
-//    fun testBetweenPredicate() {
-//        TestUtils.assertQueryWithSolutions(
-//            """
-//                1/6::dice(1,1); 1/6::dice(2,1); 1/6::dice(3,1); 1/6::dice(4,1); 1/6::dice(5,1); 1/6::dice(6,1).
-//                1/6::dice(1,D); 1/6::dice(2,D); 1/6::dice(3,D); 1/6::dice(4,D); 1/6::dice(5,D); 1/6::dice(6,D) :- D > 1, P is D-1, continue(P).
-//                stop(N) :- dice(6,N).
-//                continue(N) :- dice(X,N), X < 6.
-//            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
-//            listOf(
-//                QueryWithSolutions(
-//                    "stop(1)".parseAsStruct(),
-//                    listOf(ExpectedSolution("stop(1)".parseAsStruct(), 0.16666667))
-//                ),
-//                QueryWithSolutions(
-//                    "stop(2)".parseAsStruct(),
-//                    listOf(ExpectedSolution("stop(2)".parseAsStruct(), 0.13888889))
-//                ),
-//                QueryWithSolutions(
-//                    "stop(3)".parseAsStruct(),
-//                    listOf(ExpectedSolution("stop(3)".parseAsStruct(), 0.11574074))
-//                ),
-//                QueryWithSolutions(
-//                    "stop(4)".parseAsStruct(),
-//                    listOf(ExpectedSolution("stop(4)".parseAsStruct(), 0.096450617))
-//                ),
-//                QueryWithSolutions(
-//                    "stop(5)".parseAsStruct(),
-//                    listOf(ExpectedSolution("stop(5)".parseAsStruct(), 0.080375514))
-//                ),
-//            )
-//        )
-//    }
+    @Test
+    @Ignore
+    fun testBetweenPredicate() {
+        TestUtils.assertQueryWithSolutions(
+            """
+                1/6::dice(1,1); 1/6::dice(2,1); 1/6::dice(3,1); 1/6::dice(4,1); 1/6::dice(5,1); 1/6::dice(6,1).
+                1/6::dice(1,D); 1/6::dice(2,D); 1/6::dice(3,D); 1/6::dice(4,D); 1/6::dice(5,D); 1/6::dice(6,D) :- 
+                    D > 1, 
+                    P is D-1, 
+                    continue(P).
+                stop(N) :- dice(6,N).
+                continue(N) :- dice(X,N), X < 6.
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
+            listOf(
+                QueryWithSolutions(
+                    "stop(1)".parseAsStruct(),
+                    listOf(ExpectedSolution("stop(1)".parseAsStruct(), 0.16666667)),
+                ),
+                QueryWithSolutions(
+                    "stop(2)".parseAsStruct(),
+                    listOf(ExpectedSolution("stop(2)".parseAsStruct(), 0.13888889)),
+                ),
+                QueryWithSolutions(
+                    "stop(3)".parseAsStruct(),
+                    listOf(ExpectedSolution("stop(3)".parseAsStruct(), 0.11574074)),
+                ),
+                QueryWithSolutions(
+                    "stop(4)".parseAsStruct(),
+                    listOf(ExpectedSolution("stop(4)".parseAsStruct(), 0.096450617)),
+                ),
+                QueryWithSolutions(
+                    "stop(5)".parseAsStruct(),
+                    listOf(ExpectedSolution("stop(5)".parseAsStruct(), 0.080375514)),
+                ),
+            ),
+        )
+    }
 
     /***
      * https://dtai.cs.kuleuven.be/problog/tutorial/basic/03_dice.html#built-in-predicate-between-3
      * */
-//    @Test
-//    fun testRecursionAndLists() {
-//        TestUtils.assertQueryWithSolutions(
-//            """
-//                1/3::dice(1,D); 1/3::dice(2,D); 1/3::dice(3,D) :- die(D).
-//                die(X) :- between(1,3,X).
-//                roll(L) :-
-//                   next(1,[1],L).
-//                next(N,Seen,Rev) :-
-//                   dice(Now,N),
-//                   member(Now,Seen),
-//                   reverse(Seen,[],Rev).
-//                next(N,Seen,List) :-
-//                   dice(Now,N),
-//                   \+ member(Now,Seen),
-//                   next(Now,[Now|Seen],List).
-//                member(X,[X|_]).
-//                member(X,[_|Z]) :-
-//                   member(X,Z).
-//                reverse([],L,L).
-//                reverse([H|T],A,L) :-
-//                   reverse(T,[H|A],L).
-//            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
-//            listOf(
-//                QueryWithSolutions(
-//                    "roll(_)".parseAsStruct(),
-//                    listOf(
-//                        ExpectedSolution("roll([1, 2, 3])".parseAsStruct(), 0.11111111),
-//                        ExpectedSolution("roll([1, 2])".parseAsStruct(), 0.22222222),
-//                        ExpectedSolution("roll([1, 3, 2])".parseAsStruct(), 0.11111111),
-//                        ExpectedSolution("roll([1, 3])".parseAsStruct(), 0.22222222),
-//                        ExpectedSolution("roll([1])".parseAsStruct(), 0.33333333)
-//                    )
-//                ),
-//            )
-//        )
-//    }
+    @Test
+    @Ignore
+    fun testRecursionAndLists() {
+        TestUtils.assertQueryWithSolutions(
+            """
+                1/3::dice(1,D); 1/3::dice(2,D); 1/3::dice(3,D) :- die(D).
+                die(X) :- between(1,3,X).
+                roll(L) :-
+                   next(1,[1],L).
+                next(N,Seen,Rev) :-
+                   dice(Now,N),
+                   member(Now,Seen),
+                   reverse(Seen,[],Rev).
+                next(N,Seen,List) :-
+                   dice(Now,N),
+                   \+ member(Now,Seen),
+                   next(Now,[Now|Seen],List).
+                member(X,[X|_]).
+                member(X,[_|Z]) :-
+                   member(X,Z).
+                reverse([],L,L).
+                reverse([H|T],A,L) :-
+                   reverse(T,[H|A],L).
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
+            listOf(
+                QueryWithSolutions(
+                    "roll(_)".parseAsStruct(),
+                    listOf(
+                        ExpectedSolution("roll([1, 2, 3])".parseAsStruct(), 0.11111111),
+                        ExpectedSolution("roll([1, 2])".parseAsStruct(), 0.22222222),
+                        ExpectedSolution("roll([1, 3, 2])".parseAsStruct(), 0.11111111),
+                        ExpectedSolution("roll([1, 3])".parseAsStruct(), 0.22222222),
+                        ExpectedSolution("roll([1])".parseAsStruct(), 0.33333333),
+                    ),
+                ),
+            ),
+        )
+    }
 }

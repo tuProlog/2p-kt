@@ -9,8 +9,8 @@ import kotlin.test.assertEquals
  *
  * @author Enrico
  */
+@Suppress("ConstPropertyName", "ktlint:standard:property-naming")
 internal object HaltExceptionUtils {
-
     internal const val aMessage = TuPrologRuntimeExceptionUtils.aMessage
     internal val aCause = TuPrologRuntimeExceptionUtils.aCause
     internal val aContext = TuPrologRuntimeExceptionUtils.aContext
@@ -24,13 +24,13 @@ internal object HaltExceptionUtils {
         expectedCause: Throwable?,
         expectedContext: ExecutionContext,
         expectedExitStatus: Int,
-        actualException: HaltException
+        actualException: HaltException,
     ) {
         TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(
             expectedMessage,
             expectedCause,
             expectedContext,
-            actualException
+            actualException,
         )
         assertEquals(expectedExitStatus, actualException.exitStatus)
     }

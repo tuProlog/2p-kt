@@ -21,7 +21,7 @@ class TestThreadSafety {
                 results.add(
                     executors.submit<Substitution> {
                         unificator.mgu(equation.lhs, equation.rhs)
-                    }
+                    },
                 )
             }
         }

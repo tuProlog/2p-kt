@@ -12,7 +12,7 @@ class InvalidLiteralException : TuPrologException {
 
     constructor(literal: Term, clause: Clause?, cause: Throwable? = null) : super(
         message = "Invalid literal in clause${clause?.let { " $it" } ?: ""}: $literal",
-        cause = cause
+        cause = cause,
     ) {
         this.literal = literal
         this.clause = clause

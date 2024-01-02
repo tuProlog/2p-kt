@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.parsing.TermParser
 import kotlin.test.Test
 
 class TermParserTest {
-
     @Test
     fun testParsingWithCanonicalTerms() {
         val parser = TermParser.withNoOperator()

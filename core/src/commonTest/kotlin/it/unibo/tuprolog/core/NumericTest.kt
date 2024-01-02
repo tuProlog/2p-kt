@@ -14,10 +14,13 @@ import kotlin.test.assertNotEquals
  * @author Enrico
  */
 internal class NumericTest {
-
     private inline val loggingOn get() = false
 
-    fun <T> assertEquals(expected: T, actual: T, message: String? = "Failed assertion $expected == $actual") {
+    fun <T> assertEquals(
+        expected: T,
+        actual: T,
+        message: String? = "Failed assertion $expected == $actual",
+    ) {
         if (loggingOn) println("Object\n\t$actual\nis expected to be equal to\n\t$expected")
         try {
             kotlin.test.assertEquals(expected, actual, message)
@@ -36,7 +39,7 @@ internal class NumericTest {
             .flatMap {
                 listOf(
                     BigDecimal.of(it) to BigDecimal.of(it + "0"),
-                    BigDecimal.of(it) to BigDecimal.of(it + "00")
+                    BigDecimal.of(it) to BigDecimal.of(it + "00"),
                 )
             }
     }
@@ -138,7 +141,7 @@ internal class NumericTest {
         IntegerUtils.bigIntegers.map { it to it.toDouble() }.forEach { (integer, sameValueToDouble) ->
             assertNotEquals<Numeric>(
                 Numeric.of(integer),
-                Numeric.of(sameValueToDouble)
+                Numeric.of(sameValueToDouble),
             )
         }
     }
@@ -148,7 +151,7 @@ internal class NumericTest {
         realToRealWithTrailingZerosMap.forEach { (real, realWithTrailingZeros) ->
             assertEquals(
                 Real.of(real),
-                Real.of(realWithTrailingZeros)
+                Real.of(realWithTrailingZeros),
             )
         }
     }
@@ -158,7 +161,7 @@ internal class NumericTest {
         realToRealWithTrailingZerosMap.forEach { (real, realWithTrailingZeros) ->
             assertEquals(
                 Real.of(real).hashCode(),
-                Real.of(realWithTrailingZeros).hashCode()
+                Real.of(realWithTrailingZeros).hashCode(),
             )
         }
     }

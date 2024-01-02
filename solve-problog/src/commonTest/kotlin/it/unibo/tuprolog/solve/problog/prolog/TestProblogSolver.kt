@@ -8,10 +8,10 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestProblogSolver : TestSolver, SolverFactory by ProblogSolverFactory {
-
-    private val prototype = Signature("ensure_executable", 1).let {
-        TestSolver.prototype(this, it, it, it)
-    }
+    private val prototype =
+        Signature("ensure_executable", 1).let {
+            TestSolver.prototype(this, it, it, it)
+        }
 
     override val callErrorSignature: Signature
         get() = prototype.callErrorSignature
@@ -27,7 +27,7 @@ class TestProblogSolver : TestSolver, SolverFactory by ProblogSolverFactory {
         prototype.testUnknownFlag2()
     }
 
-    /* NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here */
+    // NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here
     @Ignore
     @Test
     override fun testUnknownFlag1() {
@@ -39,28 +39,28 @@ class TestProblogSolver : TestSolver, SolverFactory by ProblogSolverFactory {
         prototype.testSideEffectsPersistentAfterBacktracking1()
     }
 
-    /* NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here. */
+    // NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here.
     @Ignore
     @Test
     override fun testFindAll() {
         prototype.testFindAll()
     }
 
-    /* NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here */
+    // NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here
     @Ignore
     @Test
     override fun testAssert() {
         prototype.testAssert()
     }
 
-    /* NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here */
+    // NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here
     @Ignore
     @Test
     override fun testAssertZ() {
         prototype.testAssertZ()
     }
 
-    /* NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here */
+    // NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here
     @Ignore
     @Test
     override fun testAssertA() {
@@ -302,7 +302,7 @@ class TestProblogSolver : TestSolver, SolverFactory by ProblogSolverFactory {
         prototype.testBasicBacktracking4()
     }
 
-    /* NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here */
+    // NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here
     @Ignore
     @Test
     override fun testAssertRules() {

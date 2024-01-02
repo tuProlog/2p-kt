@@ -21,7 +21,6 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
 internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
-
     constructor(
         unificator: Unificator = Unificator.default,
         libraries: Runtime = Runtime.empty(),
@@ -30,7 +29,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         dynamicKb: Theory = MutableTheory.empty(unificator),
         inputChannels: InputStore = InputStore.fromStandard(),
         outputChannels: OutputStore = OutputStore.fromStandard(),
-        trustKb: Boolean = false
+        trustKb: Boolean = false,
     ) : super(unificator, libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb)
 
     constructor(
@@ -43,7 +42,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
         warnings: OutputChannel<Warning> = OutputChannel.warn(),
-        trustKb: Boolean = false
+        trustKb: Boolean = false,
     ) : super(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
 
     override fun loadLibrary(library: Library) {
@@ -51,7 +50,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
             val newLibraries = libraries + library
             copy(
                 libraries = newLibraries,
-                operators = operators + getAllOperators(newLibraries).toOperatorSet()
+                operators = operators + getAllOperators(newLibraries).toOperatorSet(),
             )
         }
     }
@@ -61,7 +60,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
             val newLibraries = libraries + library
             copy(
                 libraries = newLibraries,
-                operators = getAllOperators(newLibraries, staticKb, dynamicKb).toOperatorSet()
+                operators = getAllOperators(newLibraries, staticKb, dynamicKb).toOperatorSet(),
             )
         }
     }
@@ -70,7 +69,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         updateContext {
             copy(
                 libraries = libraries,
-                operators = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet()
+                operators = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
             )
         }
     }
@@ -78,7 +77,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
     override fun loadStaticKb(theory: Theory) {
         initializeKb(
             staticKb = theory,
-            appendStatic = false
+            appendStatic = false,
         )
     }
 
@@ -90,7 +89,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         updateContext {
             copy(
                 staticKb = Theory.empty(unificator),
-                operators = getAllOperators(libraries, dynamicKb).toOperatorSet()
+                operators = getAllOperators(libraries, dynamicKb).toOperatorSet(),
             )
         }
     }
@@ -98,7 +97,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
     override fun loadDynamicKb(theory: Theory) {
         initializeKb(
             dynamicKb = theory,
-            appendDynamic = false
+            appendDynamic = false,
         )
     }
 
@@ -110,7 +109,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         updateContext {
             copy(
                 dynamicKb = MutableTheory.empty(unificator),
-                operators = getAllOperators(libraries, staticKb).toOperatorSet()
+                operators = getAllOperators(libraries, staticKb).toOperatorSet(),
             )
         }
     }
@@ -119,7 +118,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         updateContext {
             copy(
                 dynamicKb = dynamicKb.assertA(clause),
-                operators = operators + listOf(clause).getAllOperators().toOperatorSet()
+                operators = operators + listOf(clause).getAllOperators().toOperatorSet(),
             )
         }
     }
@@ -134,7 +133,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         updateContext {
             copy(
                 dynamicKb = dynamicKb.assertZ(clause),
-                operators = operators + listOf(clause).getAllOperators().toOperatorSet()
+                operators = operators + listOf(clause).getAllOperators().toOperatorSet(),
             )
         }
     }
@@ -150,7 +149,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         updateContext {
             copy(
                 dynamicKb = result.theory.toMutableTheory(),
-                operators = operators - listOf(clause).getAllOperators().toOperatorSet()
+                operators = operators - listOf(clause).getAllOperators().toOperatorSet(),
             )
         }
         return result
@@ -169,7 +168,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         updateContext {
             copy(
                 dynamicKb = result.theory.toMutableTheory(),
-                operators = operators - result.theory.getAllOperators().toOperatorSet()
+                operators = operators - result.theory.getAllOperators().toOperatorSet(),
             )
         }
         return result
@@ -183,7 +182,10 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         return result
     }
 
-    override fun setFlag(name: String, value: Term) {
+    override fun setFlag(
+        name: String,
+        value: Term,
+    ) {
         updateContext {
             copy(flags = flags.set(name, value))
         }
@@ -234,7 +236,7 @@ internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ) = MutableConcurrentSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun clone(): MutableConcurrentSolver = copy()

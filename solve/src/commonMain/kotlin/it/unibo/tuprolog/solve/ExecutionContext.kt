@@ -14,9 +14,7 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 /** An interface representing the Solver execution context, containing important information that determines its behaviour */
-// TODO: 25/09/2019 solverStrategies should go here... in common with other implementations, if the idea is approved
 interface ExecutionContext : ExecutionContextAware, Durable {
-
     /** The current procedure being executed */
     @JsName("procedure")
     val procedure: Struct?
@@ -40,7 +38,7 @@ interface ExecutionContext : ExecutionContextAware, Durable {
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
         inputChannels: InputStore = this.inputChannels,
-        outputChannels: OutputStore = this.outputChannels
+        outputChannels: OutputStore = this.outputChannels,
     ): Solver
 
     @JsName("createMutableSolver")
@@ -51,7 +49,7 @@ interface ExecutionContext : ExecutionContextAware, Durable {
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
         inputChannels: InputStore = this.inputChannels,
-        outputChannels: OutputStore = this.outputChannels
+        outputChannels: OutputStore = this.outputChannels,
     ): MutableSolver
 
     @JsName("apply")
@@ -81,6 +79,6 @@ interface ExecutionContext : ExecutionContextAware, Durable {
         operators: OperatorSet = this.operators,
         inputChannels: InputStore = this.inputChannels,
         outputChannels: OutputStore = this.outputChannels,
-        customData: CustomDataStore = this.customData
+        customData: CustomDataStore = this.customData,
     ): ExecutionContext
 }

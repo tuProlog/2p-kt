@@ -13,6 +13,5 @@ interface TypeFactory {
 
     fun typeFromName(typeName: String): KClass<*>?
 
-    fun typeRefFromName(typeName: String): TypeRef? =
-        Optional.of(typeFromName(typeName)).map { TypeRef.of(it) }.value
+    fun typeRefFromName(typeName: String): TypeRef? = Optional.of(typeFromName(typeName)).map { TypeRef.of(it) }.value
 }

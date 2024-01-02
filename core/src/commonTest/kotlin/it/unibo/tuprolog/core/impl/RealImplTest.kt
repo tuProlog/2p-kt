@@ -22,7 +22,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class RealImplTest {
-
     private val realInstances = RealUtils.bigDecimals.map(::RealImpl)
 
     @Test
@@ -36,7 +35,7 @@ internal class RealImplTest {
     fun correctDecimalValue() {
         onCorrespondingItems(
             RealUtils.bigDecimals,
-            realInstances.map { it.decimalValue }
+            realInstances.map { it.decimalValue },
         ) { expectedValue, realDecimalValue -> assertEquals(expectedValue, realDecimalValue) }
     }
 
@@ -61,18 +60,18 @@ internal class RealImplTest {
     @Suppress("LocalVariableName")
     @Test
     fun compareToWorksAsExpected() {
-        val `1,1` = RealImpl(BigDecimal.of(1.1))
-        val `1,22f` = RealImpl(BigDecimal.of(1.22f))
+        val oneDotOne = RealImpl(BigDecimal.of(1.1))
+        val oneDotTwentyTwo = RealImpl(BigDecimal.of(1.22f))
 
-        assertTrue(`1,1`.compareValueTo(`1,1`) == 0)
-        assertTrue(`1,1`.compareValueTo(`1,1`) >= 0)
+        assertTrue(oneDotOne.compareValueTo(oneDotOne) == 0)
+        assertTrue(oneDotOne.compareValueTo(oneDotOne) >= 0)
 
-        assertTrue(`1,1`.compareValueTo(`1,22f`) != 0)
-        assertTrue(`1,1`.compareValueTo(`1,22f`) <= 0)
-        assertTrue(`1,1`.compareValueTo(`1,22f`) < 0)
+        assertTrue(oneDotOne.compareValueTo(oneDotTwentyTwo) != 0)
+        assertTrue(oneDotOne.compareValueTo(oneDotTwentyTwo) <= 0)
+        assertTrue(oneDotOne.compareValueTo(oneDotTwentyTwo) < 0)
 
-        assertFalse(`1,1`.compareValueTo(`1,22f`) >= 0)
-        assertFalse(`1,1`.compareValueTo(`1,22f`) > 0)
+        assertFalse(oneDotOne.compareValueTo(oneDotTwentyTwo) >= 0)
+        assertFalse(oneDotOne.compareValueTo(oneDotTwentyTwo) > 0)
     }
 
     @Test

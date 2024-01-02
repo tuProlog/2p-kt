@@ -13,12 +13,10 @@ interface SolutionFormatter : Formatter<Solution> {
         @JsName("of")
         @JvmStatic
         @JvmOverloads
-        fun of(termFormatter: TermFormatter = TermFormatter.prettyExpressions()): SolutionFormatter =
-            SolutionFormatterImpl(termFormatter)
+        fun of(termFormatter: TermFormatter = TermFormatter.prettyExpressions()): SolutionFormatter = SolutionFormatterImpl(termFormatter)
 
         @JsName("withOperators")
         @JvmStatic
-        fun withOperators(operators: OperatorSet): SolutionFormatter =
-            of(TermFormatter.prettyExpressions(true, operators))
+        fun withOperators(operators: OperatorSet): SolutionFormatter = of(TermFormatter.prettyExpressions(true, operators))
     }
 }

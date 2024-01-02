@@ -9,19 +9,22 @@ import it.unibo.tuprolog.dsl.unify.LogicProgrammingScopeWithUnification
 import kotlin.test.assertEquals
 
 /** Asserts terms are equal taking into account differences in complete variables names */
-fun assertTermsAreEqual(expected: Term, actual: Term) {
+fun assertTermsAreEqual(
+    expected: Term,
+    actual: Term,
+) {
     assertEquals(expected.isGround, actual.isGround)
     if (expected.isGround) {
         assertEquals(
             expected,
             actual,
             message =
-            """Comparing:
+                """Comparing:
             |   actual: $actual
             |     type: ${actual::class}
             | expected: $expected
             |     type: ${expected::class}
-            """.trimMargin()
+                """.trimMargin(),
         )
     } else {
         when {
@@ -41,19 +44,23 @@ fun assertTermsAreEqual(expected: Term, actual: Term) {
         }
         assertEquals(
             expected.variables.toSet().size,
-            actual.variables.toSet().size
+            actual.variables.toSet().size,
         )
     }
 }
 
 fun TermParser.assertTermIsCorrectlyParsed(
     stringToBeParsed: String,
-    expectedGenerator: LogicProgrammingScopeWithUnification.() -> Term
+    expectedGenerator: LogicProgrammingScopeWithUnification.() -> Term,
 ) {
     assertTermIsCorrectlyParsed(stringToBeParsed, LogicProgrammingScopeWithUnification.of().expectedGenerator())
 }
 
-fun TermParser.assertTermIsCorrectlyParsed(stringToBeParsed: String, expected: Term, loggingOn: Boolean = false) {
+fun TermParser.assertTermIsCorrectlyParsed(
+    stringToBeParsed: String,
+    expected: Term,
+    loggingOn: Boolean = false,
+) {
     if (loggingOn) println("Parsing:\n\t$stringToBeParsed")
 
     val actual = parseTerm(stringToBeParsed)

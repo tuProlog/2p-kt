@@ -6,6 +6,8 @@ import it.unibo.tuprolog.solve.primitive.ArithmeticRelation
 
 /** Implementation of '<'/2 predicate */
 object ArithmeticLowerThan : ArithmeticRelation<ExecutionContext>("<") {
-    override fun computeNumeric(x: Numeric, y: Numeric): Boolean =
-        x.compareValueTo(y) < 0
+    override fun computeNumeric(
+        x: Numeric,
+        y: Numeric,
+    ): Boolean = x.compareValueTo(y) < 0
 }

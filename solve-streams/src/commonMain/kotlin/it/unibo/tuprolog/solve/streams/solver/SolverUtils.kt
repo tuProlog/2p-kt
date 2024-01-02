@@ -36,31 +36,33 @@ fun Term.prepareForExecutionAsGoal(): Struct =
 /** Computes the ordered selection of elements, lazily, according to provided selection strategy */
 fun <E> Sequence<E>.orderWithStrategy(
     context: ExecutionContext,
-    selectionStrategy: (Sequence<E>, ExecutionContext) -> E
+    selectionStrategy: (Sequence<E>, ExecutionContext) -> E,
 ): Sequence<E> =
     when (any()) {
-        true -> sequence {
-            selectionStrategy(this@orderWithStrategy, context).let { selected ->
-                yield(selected)
-                yieldAll(
-                    filterIndexed { index, _ -> index != indexOf(selected) }
-                        .orderWithStrategy(context, selectionStrategy)
-                )
+        true ->
+            sequence {
+                selectionStrategy(this@orderWithStrategy, context).let { selected ->
+                    yield(selected)
+                    yieldAll(
+                        filterIndexed { index, _ -> index != indexOf(selected) }
+                            .orderWithStrategy(context, selectionStrategy),
+                    )
+                }
             }
-        }
         else -> emptySequence()
     }
 
 /** Checks if this sequence of elements holds more than one element, lazily */
-fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
-    when {
-        !hasNext() -> false // no element
-        else -> {
-            next()
-            hasNext() // more elements, if first element has a next element
+fun moreThanOne(elements: Sequence<*>): Boolean =
+    with(elements.iterator()) {
+        when {
+            !hasNext() -> false // no element
+            else -> {
+                next()
+                hasNext() // more elements, if first element has a next element
+            }
         }
     }
-}
 
 /**
  * A method to create a new [Solve.Request] physically chained to receiver request.
@@ -78,22 +80,23 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
     toPropagateContextData: ExecutionContext = context,
     baseSideEffectManager: SideEffectManagerImpl = context.sideEffectManager,
     requestIssuingInstant: TimeInstant = this.startTime,
-    isChoicePointChild: Boolean = false
-): Solve.Request<StreamsExecutionContext> = copy(
-    newGoal.extractSignature(),
-    newGoal.args,
-    context.copy(
-        libraries = toPropagateContextData.libraries,
-        flags = toPropagateContextData.flags,
-        staticKb = toPropagateContextData.staticKb,
-        dynamicKb = toPropagateContextData.dynamicKb,
-        inputChannels = toPropagateContextData.inputChannels,
-        outputChannels = toPropagateContextData.outputChannels,
-        substitution = (context.substitution + toAddSubstitutions) as Substitution.Unifier,
-        sideEffectManager = baseSideEffectManager.creatingNewRequest(context, isChoicePointChild, this)
-    ),
-    startTime = requestIssuingInstant
-)
+    isChoicePointChild: Boolean = false,
+): Solve.Request<StreamsExecutionContext> =
+    copy(
+        newGoal.extractSignature(),
+        newGoal.args,
+        context.copy(
+            libraries = toPropagateContextData.libraries,
+            flags = toPropagateContextData.flags,
+            staticKb = toPropagateContextData.staticKb,
+            dynamicKb = toPropagateContextData.dynamicKb,
+            inputChannels = toPropagateContextData.inputChannels,
+            outputChannels = toPropagateContextData.outputChannels,
+            substitution = (context.substitution + toAddSubstitutions) as Substitution.Unifier,
+            sideEffectManager = baseSideEffectManager.creatingNewRequest(context, isChoicePointChild, this),
+        ),
+        startTime = requestIssuingInstant,
+    )
 
 /** Responds to this solve request forwarding the provided [otherResponse] data */
 fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): Solve.Response =
@@ -101,7 +104,7 @@ fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): So
         replyWith(
             solution,
             sideEffectManager ?: this@replyWith.context.getSideEffectManager(),
-            *sideEffects.toTypedArray()
+            *sideEffects.toTypedArray(),
         )
     }
 

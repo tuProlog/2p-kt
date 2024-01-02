@@ -33,7 +33,10 @@ class TestCursor {
         }
     }
 
-    private fun <T> assertCursorContains(actual: Cursor<out T>, expected: Iterable<T>) {
+    private fun <T> assertCursorContains(
+        actual: Cursor<out T>,
+        expected: Iterable<T>,
+    ) {
         var i = 1
         val iterActual = actual.iterator()
         val iterExpected = expected.iterator()
@@ -44,14 +47,14 @@ class TestCursor {
             assertEquals(
                 iterExpected.next(),
                 iterActual.next(),
-                "Items with index ${i - 1} does not correspond"
+                "Items with index ${i - 1} does not correspond",
             )
             i++
         }
         assertEquals(
             iterExpected.hasNext(),
             iterActual.hasNext(),
-            "The cursor has more than $i items, while $i are expected"
+            "The cursor has more than $i items, while $i are expected",
         )
     }
 
@@ -109,7 +112,11 @@ class TestCursor {
     @Test
     fun testCursorDoNotRepeatSequence() {
         var x: Int = 0
-        val cursor = items.asSequence().map { x++; x }.cursor().map { it * 2 }
+        val cursor =
+            items.asSequence().map {
+                x++
+                x
+            }.cursor().map { it * 2 }
         testCursor(cursor)
         assertCursorContains(cursor, items.map { it * 2 })
         assertEquals(items.count(), x)
@@ -117,18 +124,19 @@ class TestCursor {
 
     @Test
     fun stressMapping() {
-        val N = 100000
+        val n = 100000
         var x: Int = 0
         var cursor = items.cursor()
-        for (i in 0 until N) {
-            cursor = cursor.map {
-                x++
-                it + 1
-            }
+        for (i in 0 until n) {
+            cursor =
+                cursor.map {
+                    x++
+                    it + 1
+                }
             assertTrue { x <= items.count() * (i + 1) }
         }
         testCursor(cursor)
-        assertCursorContains(cursor, items.map { it + N })
-        assertEquals(items.count() * N, x)
+        assertCursorContains(cursor, items.map { it + n })
+        assertEquals(items.count() * n, x)
     }
 }

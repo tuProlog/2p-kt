@@ -15,31 +15,35 @@ import it.unibo.tuprolog.solve.yes
 import kotlin.test.Test
 
 class TestSubstitutionMerging {
-    private val theory = logicProgramming {
-        theoryOf(
-            rule { "a"(X) impliedBy "b"(X) },
-            rule { "b"(Y) impliedBy "c"(Y) },
-            rule { "c"(Z) impliedBy "primitive"(Z) }
-        )
-    }
-
-    private val primitive = object : UnaryPredicate<ExecutionContext>("primitive") {
-        override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> = sequence {
-            val allVariables = context.substitution.let { it.keys.toSet() + it.values.filterIsInstance<Var>().toSet() }
-            for (x in allVariables.sortedBy { it.name }) {
-                yield(replySuccess(Substitution.unifier(x to Atom.of(x.name))))
-            }
+    private val theory =
+        logicProgramming {
+            theoryOf(
+                rule { "a"(X) impliedBy "b"(X) },
+                rule { "b"(Y) impliedBy "c"(Y) },
+                rule { "c"(Z) impliedBy "primitive"(Z) },
+            )
         }
-    }
+
+    private val primitive =
+        object : UnaryPredicate<ExecutionContext>("primitive") {
+            override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> =
+                sequence {
+                    val allVariables = context.substitution.let { it.keys.toSet() + it.values.filterIsInstance<Var>().toSet() }
+                    for (x in allVariables.sortedBy { it.name }) {
+                        yield(replySuccess(Substitution.unifier(x to Atom.of(x.name))))
+                    }
+                }
+        }
 
     @Test
     fun testSubstitutionsAreCorrectlyMergedAfterPrimitives() {
         logicProgramming {
-            val solver = ClassicSolverFactory.newBuilder()
-                .staticKb(theory)
-                .noBuiltins()
-                .runtime(libraryOf("test", primitive).toRuntime())
-                .build()
+            val solver =
+                ClassicSolverFactory.newBuilder()
+                    .staticKb(theory)
+                    .noBuiltins()
+                    .runtime(libraryOf("test", primitive).toRuntime())
+                    .build()
 
             val goal = "a"(A)
 
@@ -49,9 +53,9 @@ class TestSubstitutionMerging {
                     goal.yes(A to atomOf("A")),
                     goal.yes(A to atomOf("X")),
                     goal.yes(A to atomOf("Y")),
-                    goal.yes(A to atomOf("Z"))
+                    goal.yes(A to atomOf("Z")),
                 ),
-                solutions
+                solutions,
             )
         }
     }

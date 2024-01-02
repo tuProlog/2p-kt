@@ -6,7 +6,10 @@ internal fun jsObject(config: dynamic.() -> Unit): Any {
     return obj
 }
 
-internal fun jsObject(vararg properties: Pair<String, dynamic>, config: dynamic.() -> Unit = {}): Any {
+internal fun jsObject(
+    vararg properties: Pair<String, dynamic>,
+    config: dynamic.() -> Unit = {},
+): Any {
     return jsObject {
         for ((k, v) in properties) {
             this[k] = v
@@ -15,7 +18,10 @@ internal fun jsObject(vararg properties: Pair<String, dynamic>, config: dynamic.
     }
 }
 
-internal fun jsObject(properties: Iterable<Pair<String, dynamic>>, config: dynamic.() -> Unit = {}): Any {
+internal fun jsObject(
+    properties: Iterable<Pair<String, dynamic>>,
+    config: dynamic.() -> Unit = {},
+): Any {
     return jsObject {
         for ((k, v) in properties) {
             this[k] = v
@@ -24,5 +30,7 @@ internal fun jsObject(properties: Iterable<Pair<String, dynamic>>, config: dynam
     }
 }
 
-internal fun hasProperty(obj: dynamic, name: String): Boolean =
-    obj[name] != undefined
+internal fun hasProperty(
+    obj: dynamic,
+    name: String,
+): Boolean = obj[name] != undefined

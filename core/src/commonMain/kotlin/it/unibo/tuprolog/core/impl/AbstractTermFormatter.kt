@@ -21,9 +21,8 @@ import org.gciatto.kt.math.BigInteger
 internal abstract class AbstractTermFormatter(
     protected val quoted: Boolean = true,
     protected val numberVars: Boolean = false,
-    protected val ignoreOps: Boolean = false
+    protected val ignoreOps: Boolean = false,
 ) : TermFormatter {
-
     companion object {
         private val TWENTY_SIX = BigInteger.of(26)
         private const val A_INDEX = 'A'.code
@@ -43,9 +42,10 @@ internal abstract class AbstractTermFormatter(
     }
 
     private fun isNumberedVar(term: Struct): Boolean =
-        term.functor == "\$VAR" && term.arity == 1 && term[0].let {
-            it.isInteger && it.castToInteger().value >= BigInteger.ZERO
-        }
+        term.functor == "\$VAR" && term.arity == 1 &&
+            term[0].let {
+                it.isInteger && it.castToInteger().value >= BigInteger.ZERO
+            }
 
     private fun numberedVar(integer: Integer): String {
         val letterIndex = (integer.value % TWENTY_SIX).toInt() + A_INDEX
@@ -56,22 +56,24 @@ internal abstract class AbstractTermFormatter(
     private fun formatFunctor(term: Struct): String {
         return if (quoted) {
             Struct.enquoteFunctorIfNecessary(
-                Struct.escapeFunctorIfNecessary(term.functor)
+                Struct.escapeFunctorIfNecessary(term.functor),
             )
         } else {
             term.functor
         }
     }
 
-    private fun <T : Struct> visitStructImpl(term: T, actualVisit: (T) -> String): String =
+    private fun <T : Struct> visitStructImpl(
+        term: T,
+        actualVisit: (T) -> String,
+    ): String =
         if (ignoreOps) {
             visitStruct(term)
         } else {
             actualVisit(term)
         }
 
-    override fun visitCollection(term: Recursive): String =
-        visitStructImpl(term) { defaultValue(term) }
+    override fun visitCollection(term: Recursive): String = visitStructImpl(term) { defaultValue(term) }
 
     override fun visitList(term: List): String = visitCollection(term)
 
@@ -81,14 +83,16 @@ internal abstract class AbstractTermFormatter(
         visitStructImpl(term) {
             with(term.unfoldedList) {
                 val last = last()
-                val base = subList(0, lastIndex).joinToString(", ", "[", "") {
-                    it.accept(itemFormatter())
-                }
-                val lastString = if (last.isEmptyList) {
-                    "]"
-                } else {
-                    " | ${last.accept(itemFormatter())}]"
-                }
+                val base =
+                    subList(0, lastIndex).joinToString(", ", "[", "") {
+                        it.accept(itemFormatter())
+                    }
+                val lastString =
+                    if (last.isEmptyList) {
+                        "]"
+                    } else {
+                        " | ${last.accept(itemFormatter())}]"
+                    }
                 base + lastString
             }
         }

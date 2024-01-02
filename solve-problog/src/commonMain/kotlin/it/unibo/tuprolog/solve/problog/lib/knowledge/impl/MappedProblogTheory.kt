@@ -23,9 +23,8 @@ import it.unibo.tuprolog.unify.Unificator
 internal class MappedProblogTheory(
     clauses: Iterable<Clause>?,
     unificator: Unificator = Unificator.default,
-    val theory: Theory = Theory.indexedOf(unificator, clauses?.flatMap { ClauseMappingUtils.map(it) } ?: emptyList())
+    val theory: Theory = Theory.indexedOf(unificator, clauses?.flatMap { ClauseMappingUtils.map(it) } ?: emptyList()),
 ) : Theory by theory, ProblogTheory {
-
     override val isMutable: Boolean
         get() = false
 
@@ -62,10 +61,11 @@ internal class MappedProblogTheory(
     override fun retract(clauses: Iterable<Clause>): RetractResult<ProblogTheory> {
         val mapped = clauses.flatMap { ClauseMappingUtils.map(it) }
         return when (val result = theory.retract(mapped)) {
-            is RetractResult.Success -> RetractResult.Success(
-                MappedProblogTheory(null, unificator, result.theory),
-                result.clauses
-            )
+            is RetractResult.Success ->
+                RetractResult.Success(
+                    MappedProblogTheory(null, unificator, result.theory),
+                    result.clauses,
+                )
             else -> RetractResult.Failure(MappedProblogTheory(null, unificator, result.theory))
         }
     }
@@ -80,10 +80,11 @@ internal class MappedProblogTheory(
         }
 
         return when (result) {
-            is RetractResult.Success -> RetractResult.Success(
-                MappedProblogTheory(null, unificator, result.theory),
-                result.clauses
-            )
+            is RetractResult.Success ->
+                RetractResult.Success(
+                    MappedProblogTheory(null, unificator, result.theory),
+                    result.clauses,
+                )
             else -> RetractResult.Failure(this)
         }
     }
@@ -112,8 +113,7 @@ internal class MappedProblogTheory(
         return assertZ(clauses.asIterable())
     }
 
-    override fun retract(head: Struct): RetractResult<ProblogTheory> =
-        retract(Rule.of(head, Var.anonymous()))
+    override fun retract(head: Struct): RetractResult<ProblogTheory> = retract(Rule.of(head, Var.anonymous()))
 
     override fun retract(clause: Clause): RetractResult<ProblogTheory> {
         return retract(listOf(clause))
@@ -123,6 +123,5 @@ internal class MappedProblogTheory(
         return retract(clauses.asIterable())
     }
 
-    override fun retractAll(head: Struct): RetractResult<ProblogTheory> =
-        retractAll(Rule.of(head, Var.anonymous()))
+    override fun retractAll(head: Struct): RetractResult<ProblogTheory> = retractAll(Rule.of(head, Var.anonymous()))
 }

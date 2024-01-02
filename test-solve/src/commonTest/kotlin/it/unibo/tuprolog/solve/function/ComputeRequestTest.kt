@@ -25,23 +25,23 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class ComputeRequestTest {
-
     @Test
     fun requestInsertedDataCorrect() {
-        val toBeTested = Compute.Request(
-            aSignature,
-            anArgumentList,
-            anExecutionContext,
-            aRequestIssuingInstant,
-            anExecutionMaxDuration
-        )
+        val toBeTested =
+            Compute.Request(
+                aSignature,
+                anArgumentList,
+                anExecutionContext,
+                aRequestIssuingInstant,
+                anExecutionMaxDuration,
+            )
 
         toBeTested.assertContainsCorrectData(
             aSignature,
             anArgumentList,
             anExecutionContext,
             aRequestIssuingInstant,
-            anExecutionMaxDuration
+            anExecutionMaxDuration,
         )
     }
 
@@ -54,7 +54,7 @@ internal class ComputeRequestTest {
             anArgumentList,
             anExecutionContext,
             currentTimeInstant(),
-            TimeDuration.MAX_VALUE
+            TimeDuration.MAX_VALUE,
         )
     }
 
@@ -91,7 +91,7 @@ internal class ComputeRequestTest {
         assertEquals(Struct.of(aSignature.name, anArgumentList), createRequest(aSignature, anArgumentList).query)
         assertEquals(
             Struct.of(aVarargSignature.name, varargArgumentList),
-            createRequest(aVarargSignature, varargArgumentList).query
+            createRequest(aVarargSignature, varargArgumentList).query,
         )
     }
 

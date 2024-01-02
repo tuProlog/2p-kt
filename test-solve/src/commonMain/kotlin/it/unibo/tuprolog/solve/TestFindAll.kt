@@ -4,11 +4,10 @@ package it.unibo.tuprolog.solve
  * Tests of findall
  */
 interface TestFindAll : SolverTest {
-
     companion object {
         fun prototype(
             solverFactory: SolverFactory,
-            errorSignature: Signature = Signature("call", 1)
+            errorSignature: Signature = Signature("call", 1),
         ): TestFindAll = TestFindAllImpl(solverFactory, errorSignature)
     }
 

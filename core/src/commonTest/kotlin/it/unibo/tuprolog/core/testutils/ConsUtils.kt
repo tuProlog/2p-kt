@@ -15,7 +15,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
  * @author Enrico
  */
 internal object ConsUtils {
-
     private val headOfFirstList = Var.of("H")
     private val tailOfFirstList = Empty.list()
     private val elementsOfFirstList = listOf(headOfFirstList)
@@ -25,58 +24,57 @@ internal object ConsUtils {
 
     private val headOfSecondList = Var.of("H")
     private val tailOfSecondListElement = Var.of("T")
+
     private fun tailOfSecondList(constructor: (Term, Term) -> Cons) = constructor(tailOfSecondListElement, Empty.list())
+
     private val elementsOfSecondList = listOf(headOfSecondList, tailOfSecondListElement)
 
     /** Constructs a non ground Cons with two Terms */
-    internal fun twoElementList(constructor: (Term, Term) -> Cons) =
-        constructor(headOfSecondList, tailOfSecondList(constructor))
+    internal fun twoElementList(constructor: (Term, Term) -> Cons) = constructor(headOfSecondList, tailOfSecondList(constructor))
 
     private val headOfThirdList = Atom.of("bigList")
     private val tailOfThirdListFirstElement = Integer.of(4)
     private val tailOfThirdListSecondElement = Real.of(1.5)
+
     private fun tailOfThirdList(constructor: (Term, Term) -> Cons) =
         constructor(tailOfThirdListFirstElement, constructor(tailOfThirdListSecondElement, Empty.list()))
 
     private val elementsOfThirdList = listOf(headOfThirdList, tailOfThirdListFirstElement, tailOfThirdListSecondElement)
 
     /** Constructs a ground Cons with three Terms */
-    internal fun threeElementList(constructor: (Term, Term) -> Cons) =
-        constructor(headOfThirdList, tailOfThirdList(constructor))
+    internal fun threeElementList(constructor: (Term, Term) -> Cons) = constructor(headOfThirdList, tailOfThirdList(constructor))
 
     private val headOfFourthList = Var.of("Head")
     private val tailOfFourthList = Var.of("Tail")
     private val elementsOfFourthList = listOf(headOfFourthList, tailOfFourthList)
 
     /** Constructs a non ground Cons with two Terms, without terminal emptyList */
-    internal fun twoElementListWithPipe(constructor: (Term, Term) -> Cons) =
-        constructor(headOfFourthList, tailOfFourthList)
+    internal fun twoElementListWithPipe(constructor: (Term, Term) -> Cons) = constructor(headOfFourthList, tailOfFourthList)
 
     private val headOfFifthList = Atom.of("head")
     private val tailOfFifthListFirstElement = Var.of("M")
     private val tailOfFifthListSecondElement = Var.of("N")
-    private fun tailOfFifthList(constructor: (Term, Term) -> Cons) =
-        constructor(tailOfFifthListFirstElement, tailOfFifthListSecondElement)
+
+    private fun tailOfFifthList(constructor: (Term, Term) -> Cons) = constructor(tailOfFifthListFirstElement, tailOfFifthListSecondElement)
 
     private val elementsOfFifthList = listOf(headOfFifthList, tailOfFifthListFirstElement, tailOfFifthListSecondElement)
 
     /** Constructs a non ground Cons with three Terms, without terminal EmptyList */
-    internal fun threeElementListWithPipe(constructor: (Term, Term) -> Cons) =
-        constructor(headOfFifthList, tailOfFifthList(constructor))
+    internal fun threeElementListWithPipe(constructor: (Term, Term) -> Cons) = constructor(headOfFifthList, tailOfFifthList(constructor))
 
     /** Returns only those Cons that are terminated with an EmptyList */
     internal fun onlyConsEmptyListTerminated(constructor: (Term, Term) -> Cons) =
         listOf(
             oneElementList(constructor),
             twoElementList(constructor),
-            threeElementList(constructor)
+            threeElementList(constructor),
         )
 
     /** Returns only those Cons that *NOT* terminate with an EmptyList */
     internal fun onlyConsPipeTerminated(constructor: (Term, Term) -> Cons) =
         listOf(
             twoElementListWithPipe(constructor),
-            threeElementListWithPipe(constructor)
+            threeElementListWithPipe(constructor),
         )
 
     /** Returns all Cons mixing [onlyConsEmptyListTerminated] and [onlyConsPipeTerminated] */
@@ -95,7 +93,7 @@ internal object ConsUtils {
             tailOfSecondList(constructor),
             tailOfThirdList(constructor),
             tailOfFourthList,
-            tailOfFifthList(constructor)
+            tailOfFifthList(constructor),
         )
 
     /** All Cons correct toString representations */
@@ -124,7 +122,7 @@ internal object ConsUtils {
             elementsOfSecondList + Empty.list(),
             elementsOfThirdList + Empty.list(),
             elementsOfFourthList,
-            elementsOfFifthList
+            elementsOfFifthList,
         )
     }
 }

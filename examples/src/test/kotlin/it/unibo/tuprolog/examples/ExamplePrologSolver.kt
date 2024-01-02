@@ -28,16 +28,19 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Suppress("ktlint:standard:discouraged-comment-location")
 class ExamplePrologSolver {
     @Test
     fun exampleYesSolutionList() {
-        val prolog = Solver.prolog.solverWithDefaultBuiltins(
-            staticKb = Theory.of(
-                Fact.of(Struct.of("f", Atom.of("a"))),
-                Fact.of(Struct.of("f", Atom.of("b"))),
-                Fact.of(Struct.of("f", Atom.of("c")))
+        val prolog =
+            Solver.prolog.solverWithDefaultBuiltins(
+                staticKb =
+                    Theory.of(
+                        Fact.of(Struct.of("f", Atom.of("a"))),
+                        Fact.of(Struct.of("f", Atom.of("b"))),
+                        Fact.of(Struct.of("f", Atom.of("c"))),
+                    ),
             )
-        )
 
         val goal = Struct.of("f", Var.of("X"))
 
@@ -58,13 +61,15 @@ class ExamplePrologSolver {
 
     @Test
     fun exampleYesSolutions() {
-        val prolog = Solver.prolog.solverWithDefaultBuiltins(
-            staticKb = Theory.of(
-                Fact.of(Struct.of("f", Atom.of("a"))),
-                Fact.of(Struct.of("f", Atom.of("b"))),
-                Fact.of(Struct.of("f", Atom.of("c")))
+        val prolog =
+            Solver.prolog.solverWithDefaultBuiltins(
+                staticKb =
+                    Theory.of(
+                        Fact.of(Struct.of("f", Atom.of("a"))),
+                        Fact.of(Struct.of("f", Atom.of("b"))),
+                        Fact.of(Struct.of("f", Atom.of("c"))),
+                    ),
             )
-        )
 
         val goal = Struct.of("f", Var.of("X"))
 
@@ -83,15 +88,17 @@ class ExamplePrologSolver {
     }
 
     @Test
-    @Suppress("ktlint:experimental:comment-wrapping")
+    @Suppress("ktlint:standard:comment-wrapping")
     fun exampleTimeoutSolutions() {
-        val prolog = Solver.prolog.solverWithDefaultBuiltins(
-            staticKb = Theory.of(
-                Fact.of(Struct.of("f", Atom.of("a"))),
-                Fact.of(Struct.of("f", Atom.of("b"))),
-                Fact.of(Struct.of("f", Atom.of("c")))
+        val prolog =
+            Solver.prolog.solverWithDefaultBuiltins(
+                staticKb =
+                    Theory.of(
+                        Fact.of(Struct.of("f", Atom.of("a"))),
+                        Fact.of(Struct.of("f", Atom.of("b"))),
+                        Fact.of(Struct.of("f", Atom.of("c"))),
+                    ),
             )
-        )
 
         val goal = Struct.of("f", Var.of("X"))
 
@@ -127,17 +134,19 @@ class ExamplePrologSolver {
 
     @Test
     fun manySolutionsLazy() {
-        val prolog = Solver.prolog.solverOf(
-            staticKb = Theory.of(
-                { factOf(structOf("nat", atomOf("z"))) },
-                {
-                    ruleOf(
-                        structOf("nat", structOf("s", varOf("Z"))),
-                        structOf("nat", varOf("Z"))
-                    )
-                }
+        val prolog =
+            Solver.prolog.solverOf(
+                staticKb =
+                    Theory.of(
+                        { factOf(structOf("nat", atomOf("z"))) },
+                        {
+                            ruleOf(
+                                structOf("nat", structOf("s", varOf("Z"))),
+                                structOf("nat", varOf("Z")),
+                            )
+                        },
+                    ),
             )
-        )
 
         val goal = Struct.of("nat", Var.of("X"))
         val solutions = prolog.solve(goal, SolveOptions.someLazily(limit = 1000))
@@ -148,17 +157,19 @@ class ExamplePrologSolver {
     @Test
     @Ignore
     fun manySolutionsEager() {
-        val prolog = Solver.prolog.solverOf(
-            staticKb = Theory.of(
-                { factOf(structOf("nat", atomOf("z"))) },
-                {
-                    ruleOf(
-                        structOf("nat", structOf("s", varOf("Z"))),
-                        structOf("nat", varOf("Z"))
-                    )
-                }
+        val prolog =
+            Solver.prolog.solverOf(
+                staticKb =
+                    Theory.of(
+                        { factOf(structOf("nat", atomOf("z"))) },
+                        {
+                            ruleOf(
+                                structOf("nat", structOf("s", varOf("Z"))),
+                                structOf("nat", varOf("Z")),
+                            )
+                        },
+                    ),
             )
-        )
 
         val goal = Struct.of("nat", Var.of("X"))
         val solutions = prolog.solve(goal, SolveOptions.someEagerly(limit = 1000))
@@ -168,19 +179,21 @@ class ExamplePrologSolver {
 
     @Test
     fun mutableVsNonMutableSolvers() {
-        val theory = Theory.of(
-            Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
-            Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
-            Fact.of(Struct.of("f", Atom.of("c"))) // f(c).
-        )
+        val theory =
+            Theory.of(
+                Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
+                Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
+                Fact.of(Struct.of("f", Atom.of("c"))), // f(c).
+            )
 
         val fact = Struct.of("g", Integer.ONE) // g(1).
 
         // solvers require information to be provided at instantiation time:
-        val solver: Solver = Solver.prolog.solverOf(
-            libraries = Runtime.of(DefaultBuiltins),
-            staticKb = theory
-        )
+        val solver: Solver =
+            Solver.prolog.solverOf(
+                libraries = Runtime.of(DefaultBuiltins),
+                staticKb = theory,
+            )
 
         solver.solveOnce(Struct.of("assert", fact))
         println(solver.dynamicKb) // MutableIndexedTheory{ g(1) :- true }
@@ -197,19 +210,22 @@ class ExamplePrologSolver {
 
     @Test
     fun customTheoriesSolver() {
-        val theory1 = Theory.of(
-            Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
-            Fact.of(Struct.of("f", Atom.of("b"))) // f(b).
-        )
-        val theory2 = Theory.of(
-            Fact.of(Struct.of("g", Integer.of(1))), // g(1).
-            Fact.of(Struct.of("g", Integer.of(2))) // g(2).
-        )
+        val theory1 =
+            Theory.of(
+                Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
+                Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
+            )
+        val theory2 =
+            Theory.of(
+                Fact.of(Struct.of("g", Integer.of(1))), // g(1).
+                Fact.of(Struct.of("g", Integer.of(2))), // g(2).
+            )
 
-        val solver = Solver.prolog.solverWithDefaultBuiltins(
-            staticKb = theory1,
-            dynamicKb = theory2
-        )
+        val solver =
+            Solver.prolog.solverWithDefaultBuiltins(
+                staticKb = theory1,
+                dynamicKb = theory2,
+            )
 
         println(solver.staticKb) // IndexedTheory{ f(a) :- true. f(b) :- true }
         println(solver.dynamicKb) // MutableIndexedTheory{ g(1) :- true. g(2) :- true }
@@ -217,14 +233,16 @@ class ExamplePrologSolver {
 
     @Test
     fun customTheoriesMutableSolver() {
-        val theory1 = Theory.of(
-            Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
-            Fact.of(Struct.of("f", Atom.of("b"))) // f(b).
-        )
-        val theory2 = Theory.of(
-            Fact.of(Struct.of("g", Integer.of(1))), // g(1).
-            Fact.of(Struct.of("g", Integer.of(2))) // g(2).
-        )
+        val theory1 =
+            Theory.of(
+                Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
+                Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
+            )
+        val theory2 =
+            Theory.of(
+                Fact.of(Struct.of("g", Integer.of(1))), // g(1).
+                Fact.of(Struct.of("g", Integer.of(2))), // g(2).
+            )
 
         val solver = Solver.prolog.mutableSolverWithDefaultBuiltins()
         println(solver.staticKb) // IndexedTheory{  }
@@ -238,17 +256,19 @@ class ExamplePrologSolver {
 
     @Test
     fun directives() {
-        val theory = Theory.of(
-            Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
-            Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
-            Directive.of(Struct.of("dynamic", Indicator.of("g", 1))), // :- dynamic(g/1).
-            Fact.of(Struct.of("g", Integer.of(1))), // g(1).
-            Fact.of(Struct.of("g", Integer.of(2))) // g(2).
-        )
+        val theory =
+            Theory.of(
+                Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
+                Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
+                Directive.of(Struct.of("dynamic", Indicator.of("g", 1))), // :- dynamic(g/1).
+                Fact.of(Struct.of("g", Integer.of(1))), // g(1).
+                Fact.of(Struct.of("g", Integer.of(2))), // g(2).
+            )
 
-        val solver = Solver.prolog.solverWithDefaultBuiltins(
-            staticKb = theory
-        )
+        val solver =
+            Solver.prolog.solverWithDefaultBuiltins(
+                staticKb = theory,
+            )
 
         println(solver.staticKb) // IndexedTheory{ f(a) :- true. f(b) :- true. :- dynamic(g/1) }
         println(solver.dynamicKb) // MutableIndexedTheory{ g(1) :- true. g(2) :- true }
@@ -256,9 +276,10 @@ class ExamplePrologSolver {
 
     @Test
     fun usingLibraries() {
-        val solver = Solver.prolog.solverOf(
-            libraries = Runtime.of(DefaultBuiltins, IOLib, OOPLib)
-        )
+        val solver =
+            Solver.prolog.solverOf(
+                libraries = Runtime.of(DefaultBuiltins, IOLib, OOPLib),
+            )
 
         println(solver.libraries.keys) // [prolog.lang, prolog.io, prolog.oop]
     }
@@ -266,22 +287,27 @@ class ExamplePrologSolver {
     @Suppress("UNUSED_ANONYMOUS_PARAMETER")
     @Test
     fun definingLibraries() {
-        val myLibrary = object : Library by
-        Library.of(
-            alias = "alias.of.the.lib",
-            primitives = mapOf(
-                Signature("f", 2) to Primitive { request: Solve.Request<ExecutionContext> ->
-                    TODO("compute response sequence here")
-                }
-            ),
-            clauses = emptyList(),
-            operators = OperatorSet(),
-            functions = mapOf(
-                Signature("+", 2) to LogicFunction { request: Compute.Request<ExecutionContext> ->
-                    TODO("compute response here")
-                }
-            )
-        ) {}
+        val myLibrary =
+            object : Library by
+            Library.of(
+                alias = "alias.of.the.lib",
+                primitives =
+                    mapOf(
+                        Signature("f", 2) to
+                            Primitive { request: Solve.Request<ExecutionContext> ->
+                                TODO("compute response sequence here")
+                            },
+                    ),
+                clauses = emptyList(),
+                operators = OperatorSet(),
+                functions =
+                    mapOf(
+                        Signature("+", 2) to
+                            LogicFunction { request: Compute.Request<ExecutionContext> ->
+                                TODO("compute response here")
+                            },
+                    ),
+            ) {}
 
         println(myLibrary)
     }

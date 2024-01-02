@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import org.junit.Test
 
 class TestClassicStrictInvocation : TestStrictInvocation, SolverFactory by ClassicSolverFactory {
-
     private val prototype = TestStrictInvocation.prototype(this)
 
     @Test

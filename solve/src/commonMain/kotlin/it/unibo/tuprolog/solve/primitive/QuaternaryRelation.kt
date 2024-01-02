@@ -5,13 +5,12 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 
 abstract class QuaternaryRelation<E : ExecutionContext>(operator: String) : PrimitiveWrapper<E>(operator, 4) {
-
     /** Template method aimed at computing the application of this relation to three [Term]s */
     protected abstract fun Solve.Request<E>.computeAll(
         first: Term,
         second: Term,
         third: Term,
-        fourth: Term
+        fourth: Term,
     ): Sequence<Solve.Response>
 
     override fun uncheckedImplementation(request: Solve.Request<E>): Sequence<Solve.Response> {
@@ -19,7 +18,7 @@ abstract class QuaternaryRelation<E : ExecutionContext>(operator: String) : Prim
             request.arguments[0],
             request.arguments[1],
             request.arguments[2],
-            request.arguments[3]
+            request.arguments[3],
         )
     }
 
@@ -28,14 +27,14 @@ abstract class QuaternaryRelation<E : ExecutionContext>(operator: String) : Prim
             first: Term,
             second: Term,
             third: Term,
-            fourth: Term
+            fourth: Term,
         ): Sequence<Substitution>
 
         final override fun Solve.Request<E>.computeAll(
             first: Term,
             second: Term,
             third: Term,
-            fourth: Term
+            fourth: Term,
         ): Sequence<Solve.Response> {
             return computeAllSubstitutions(first, second, third, fourth).map { replyWith(it) }
         }
@@ -46,14 +45,14 @@ abstract class QuaternaryRelation<E : ExecutionContext>(operator: String) : Prim
             first: Term,
             second: Term,
             third: Term,
-            fourth: Term
+            fourth: Term,
         ): Solve.Response
 
         final override fun Solve.Request<E>.computeAll(
             first: Term,
             second: Term,
             third: Term,
-            fourth: Term
+            fourth: Term,
         ): Sequence<Solve.Response> {
             return sequenceOf(computeOne(first, second, third, fourth))
         }
@@ -64,14 +63,14 @@ abstract class QuaternaryRelation<E : ExecutionContext>(operator: String) : Prim
             first: Term,
             second: Term,
             third: Term,
-            fourth: Term
+            fourth: Term,
         ): Substitution
 
         final override fun Solve.Request<E>.computeOne(
             first: Term,
             second: Term,
             third: Term,
-            fourth: Term
+            fourth: Term,
         ): Solve.Response {
             return replyWith(computeOneSubstitution(first, second, third, fourth))
         }
@@ -82,14 +81,14 @@ abstract class QuaternaryRelation<E : ExecutionContext>(operator: String) : Prim
             first: Term,
             second: Term,
             third: Term,
-            fourth: Term
+            fourth: Term,
         ): Boolean
 
         final override fun Solve.Request<E>.computeOne(
             first: Term,
             second: Term,
             third: Term,
-            fourth: Term
+            fourth: Term,
         ): Solve.Response {
             return if (compute(first, second, third, fourth)) replySuccess() else replyFail()
         }

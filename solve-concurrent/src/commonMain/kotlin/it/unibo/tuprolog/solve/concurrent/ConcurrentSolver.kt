@@ -15,9 +15,11 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlin.js.JsName
 
 interface ConcurrentSolver : Solver {
-
     @JsName("solveConcurrently")
-    fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution>
+    fun solveConcurrently(
+        goal: Struct,
+        options: SolveOptions,
+    ): ReceiveChannel<Solution>
 
     override fun copy(
         unificator: Unificator,
@@ -28,7 +30,7 @@ interface ConcurrentSolver : Solver {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ): ConcurrentSolver
 
     override fun clone(): ConcurrentSolver

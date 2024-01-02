@@ -16,7 +16,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class ConversionsTest {
-
     @Test
     fun bigIntegersToTerm() {
         val correct = IntegerUtils.bigIntegers.map { Integer.of(it) }
@@ -84,9 +83,10 @@ internal class ConversionsTest {
     @Test
     fun numberToTerm() {
         @Suppress("USELESS_CAST")
-        val numberValues = (
-            with(IntegerUtils) { onlyBytes + onlyInts + onlyShorts + onlyLongs } +
-                with(RealUtils) { decimalsAsDoubles + decimalsAsFloats }
+        val numberValues =
+            (
+                with(IntegerUtils) { onlyBytes + onlyInts + onlyShorts + onlyLongs } +
+                    with(RealUtils) { decimalsAsDoubles + decimalsAsFloats }
             ).map { it as Number }
 
         val correct = numberValues.map { Numeric.of(it) }

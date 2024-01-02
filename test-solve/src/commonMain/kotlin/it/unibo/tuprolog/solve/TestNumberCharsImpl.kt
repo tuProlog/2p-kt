@@ -13,7 +13,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("L" to listOf("3", "3"))),
-                solutions
+                solutions,
             )
         }
     }
@@ -27,7 +27,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -41,7 +41,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 33)),
-                solutions
+                solutions,
             )
         }
     }
@@ -55,7 +55,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to intOf(-25))),
-                solutions
+                solutions,
             )
         }
     }
@@ -69,7 +69,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 3)),
-                solutions
+                solutions,
             )
         }
     }
@@ -83,7 +83,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 4.2)),
-                solutions
+                solutions,
             )
         }
     }
@@ -97,7 +97,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 3.9)),
-                solutions
+                solutions,
             )
         }
     }
@@ -116,11 +116,11 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
                             DummyInstances.executionContext,
                             Signature("number_chars", 2),
                             varOf("X"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

@@ -26,7 +26,6 @@ sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         get() = atomOf("!")
 
     object Recursive : PropertyReduce() {
-
         private val B1 by variables
         private val C by variables
         private val O by variables
@@ -36,11 +35,12 @@ sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
             get() = kotlin.collections.listOf(listFrom(A, B, last = C), O, P)
 
         override val Scope.body: Term
-            get() = tupleOf(
-                atomOf("!"),
-                structOf(InvokeMethod.functor, A, B, B1),
-                structOf(FUNCTOR, consOf(B1, C), O, P)
-            )
+            get() =
+                tupleOf(
+                    atomOf("!"),
+                    structOf(InvokeMethod.functor, A, B, B1),
+                    structOf(FUNCTOR, consOf(B1, C), O, P),
+                )
     }
 
     object Base : PropertyReduce() {

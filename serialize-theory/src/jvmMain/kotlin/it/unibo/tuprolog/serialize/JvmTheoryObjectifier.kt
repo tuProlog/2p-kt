@@ -3,7 +3,6 @@ package it.unibo.tuprolog.serialize
 import it.unibo.tuprolog.theory.Theory
 
 internal class JvmTheoryObjectifier : TheoryObjectifier {
-
     private val objectifier = TermObjectifier.default
 
     override fun objectify(value: Theory): Any {

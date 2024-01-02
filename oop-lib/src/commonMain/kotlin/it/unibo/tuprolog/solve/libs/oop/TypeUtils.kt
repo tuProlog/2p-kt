@@ -11,17 +11,18 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 
-private val PRIMITIVE_TYPES = setOf(
-    Long::class,
-    Int::class,
-    Short::class,
-    Byte::class,
-    Char::class,
-    Double::class,
-    Float::class
-)
+private val PRIMITIVE_TYPES =
+    setOf(
+        Long::class,
+        Int::class,
+        Short::class,
+        Byte::class,
+        Char::class,
+        Double::class,
+        Float::class,
+    )
 
-internal const val id = "[a-zA-Z_][a-zA-Z0-9_]*"
+internal const val ID = "[a-zA-Z_][a-zA-Z0-9_]*"
 
 expect val Any.identifier: String
 
@@ -33,7 +34,10 @@ expect val KClass<*>.companionObjectType: Optional<out KClass<*>>
 
 expect fun kClassFromName(qualifiedName: String): Optional<out KClass<*>>
 
-internal expect fun <T> KCallable<*>.catchingPlatformSpecificException(instance: Any?, action: () -> T): T
+internal expect fun <T> KCallable<*>.catchingPlatformSpecificException(
+    instance: Any?,
+    action: () -> T,
+): T
 
 expect fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>>
 
@@ -45,33 +49,43 @@ expect val KClass<*>.name: String
 
 expect fun KCallable<*>.pretty(): String
 
-expect fun <T> KCallable<T>.invoke(instance: Any?, vararg args: Any?): T
+expect fun <T> KCallable<T>.invoke(
+    instance: Any?,
+    vararg args: Any?,
+): T
 
 expect val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
 
-internal expect fun overloadSelector(type: KClass<*>, termToObjectConverter: TermToObjectConverter): OverloadSelector
+internal expect fun overloadSelector(
+    type: KClass<*>,
+    termToObjectConverter: TermToObjectConverter,
+): OverloadSelector
 
 val KClass<*>.isPrimitiveType: Boolean get() = this in PRIMITIVE_TYPES
 
-infix fun KClass<*>.isSupertypeOf(other: KClass<*>): Boolean =
-    isSupertypeOf(other, false)
+infix fun KClass<*>.isSupertypeOf(other: KClass<*>): Boolean = isSupertypeOf(other, false)
 
-fun KClass<*>.isSupertypeOf(other: KClass<*>, strict: Boolean): Boolean =
-    other.allSupertypes(strict).any { it == this }
+fun KClass<*>.isSupertypeOf(
+    other: KClass<*>,
+    strict: Boolean,
+): Boolean = other.allSupertypes(strict).any { it == this }
 
-fun KClass<*>.superTypeDistance(other: KClass<*>): Int? =
-    other.allSupertypes(false).indexed().firstOrNull { (_, it) -> it == this }?.index
+fun KClass<*>.superTypeDistance(other: KClass<*>): Int? = other.allSupertypes(false).indexed().firstOrNull { (_, it) -> it == this }?.index
 
-infix fun KClass<*>.isSubtypeOf(other: KClass<*>): Boolean =
-    isSubtypeOf(other, false)
+infix fun KClass<*>.isSubtypeOf(other: KClass<*>): Boolean = isSubtypeOf(other, false)
 
-fun KClass<*>.isSubtypeOf(other: KClass<*>, strict: Boolean): Boolean =
-    other.isSupertypeOf(this, strict)
+fun KClass<*>.isSubtypeOf(
+    other: KClass<*>,
+    strict: Boolean,
+): Boolean = other.isSupertypeOf(this, strict)
 
 fun KClass<*>.subTypeDistance(other: KClass<*>): Int? = other.superTypeDistance(this)
 
-internal fun Any.invoke(objectConverter: TermToObjectConverter, methodName: String, arguments: List<Term>): Result =
-    this::class.invoke(objectConverter, methodName, arguments, this)
+internal fun Any.invoke(
+    objectConverter: TermToObjectConverter,
+    methodName: String,
+    arguments: List<Term>,
+): Result = this::class.invoke(objectConverter, methodName, arguments, this)
 
 private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>): List<KClass<*>> {
     return formalParameterTypes.also { formalArgumentsTypes ->
@@ -92,7 +106,7 @@ internal fun KClass<*>.invoke(
     objectConverter: TermToObjectConverter,
     methodName: String,
     arguments: List<Term>,
-    instance: Any?
+    instance: Any?,
 ): Result {
     val methodRef = OverloadSelector.of(this, objectConverter).findMethod(methodName, arguments)
     return methodRef.callWithPrologArguments(objectConverter, arguments, instance)
@@ -101,26 +115,30 @@ internal fun KClass<*>.invoke(
 private fun KCallable<*>.callWithPrologArguments(
     converter: TermToObjectConverter,
     arguments: List<Term>,
-    instance: Any? = null
+    instance: Any? = null,
 ): Result {
     val formalArgumentsTypes = ensureArgumentsListIsOfSize(arguments)
-    val args = arguments.mapIndexed { i, it ->
-        converter.convertInto(formalArgumentsTypes[i], it)
-    }.toTypedArray()
+    val args =
+        arguments.mapIndexed { i, it ->
+            converter.convertInto(formalArgumentsTypes[i], it)
+        }.toTypedArray()
     return catchingPlatformSpecificException(instance) {
         val result = invoke(instance, *args)
         Result.Value(result)
     }
 }
 
-internal fun Any.assign(objectConverter: TermToObjectConverter, propertyName: String, value: Term): Result =
-    this::class.assign(objectConverter, propertyName, value, this)
+internal fun Any.assign(
+    objectConverter: TermToObjectConverter,
+    propertyName: String,
+    value: Term,
+): Result = this::class.assign(objectConverter, propertyName, value, this)
 
 internal fun KClass<*>.assign(
     objectConverter: TermToObjectConverter,
     propertyName: String,
     value: Term,
-    instance: Any?
+    instance: Any?,
 ): Result {
     val setterRef = OverloadSelector.of(this, objectConverter).findProperty(propertyName, value).setterMethod
     return setterRef.callWithPrologArguments(objectConverter, listOf(value), instance)
@@ -128,7 +146,7 @@ internal fun KClass<*>.assign(
 
 internal fun KClass<*>.create(
     objectConverter: TermToObjectConverter,
-    arguments: List<Term>
+    arguments: List<Term>,
 ): Result {
     val constructorRef = OverloadSelector.of(this, objectConverter).findConstructor(arguments)
     return constructorRef.callWithPrologArguments(objectConverter, arguments)

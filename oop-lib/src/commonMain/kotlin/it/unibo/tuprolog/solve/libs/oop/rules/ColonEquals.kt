@@ -18,9 +18,7 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.Cast as CastPrimitive
  * ```
  */
 sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
-
     object Cast : ColonEquals() {
-
         private val R by variables
         private val X by variables
         private val Y by variables
@@ -30,16 +28,16 @@ sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
             get() = ktListOf(R, structOf(CAST_OPERATOR, X, T))
 
         override val Scope.body: Term
-            get() = tupleOf(
-                structOf(Var.functor, R),
-                atomOf("!"),
-                structOf(FluentReduce.FUNCTOR, X, Y),
-                structOf(CastPrimitive.functor, Y, T, R)
-            )
+            get() =
+                tupleOf(
+                    structOf(Var.functor, R),
+                    atomOf("!"),
+                    structOf(FluentReduce.FUNCTOR, X, Y),
+                    structOf(CastPrimitive.functor, Y, T, R),
+                )
     }
 
     object Invocation : ColonEquals() {
-
         private val R by variables
         private val M by variables
 
@@ -47,11 +45,12 @@ sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
             get() = kotlin.collections.listOf(R, M)
 
         override val Scope.body: Term
-            get() = tupleOf(
-                structOf(Var.functor, R),
-                atomOf("!"),
-                structOf(FluentReduce.FUNCTOR, M, R)
-            )
+            get() =
+                tupleOf(
+                    structOf(Var.functor, R),
+                    atomOf("!"),
+                    structOf(FluentReduce.FUNCTOR, M, R),
+                )
     }
 
     object Assignment : ColonEquals() {
@@ -64,9 +63,10 @@ sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
             get() = kotlin.collections.listOf(C, V)
 
         override val Scope.body: Term
-            get() = tupleOf(
-                structOf(PropertyReduce.FUNCTOR, C, R, P),
-                structOf(Assign.functor, R, P, V)
-            )
+            get() =
+                tupleOf(
+                    structOf(PropertyReduce.FUNCTOR, C, R, P),
+                    structOf(Assign.functor, R, P, V),
+                )
     }
 }

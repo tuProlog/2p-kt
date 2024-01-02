@@ -5,9 +5,8 @@ import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 
 data class StateEnd(
     override val solution: Solution,
-    override val context: ClassicExecutionContext
+    override val context: ClassicExecutionContext,
 ) : AbstractEndState(solution, context) {
-
     override val isTimeout: Boolean
         get() = false
 

@@ -9,8 +9,9 @@ import kotlin.js.JsName
  *
  * @author Enrico
  */
-abstract class AbstractWrapper<out Wrapped>(@JsName("signature") val signature: Signature) {
-
+abstract class AbstractWrapper<out Wrapped>(
+    @JsName("signature") val signature: Signature,
+) {
     constructor(name: String, arity: Int, vararg: Boolean = false) : this(Signature(name, arity, vararg))
 
     /** The wrapped implementation */

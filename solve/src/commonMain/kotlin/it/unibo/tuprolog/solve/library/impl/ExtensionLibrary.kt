@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
 
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class ExtensionLibrary(
-    private val extended: Library
+    private val extended: Library,
 ) : AbstractLibrary() {
     override val alias: String
         get() = extended.alias

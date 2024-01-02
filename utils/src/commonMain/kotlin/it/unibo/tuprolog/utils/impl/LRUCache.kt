@@ -6,7 +6,6 @@ import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.synchronizedOnSelf
 
 internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
-
     init {
         require(capacity > 0)
     }
@@ -19,34 +18,41 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
     override val size
         get() = synchronizedOnSelf { cache.size }
 
-    override fun set(key: K, value: V): Optional<out Pair<K, V>> = synchronizedOnSelf {
-        val evicted: Optional<out Pair<K, V>> = insertionOrder[nextFreeIndex].let { evictedKey ->
-            if (evictedKey.isPresent) {
-                val evictedKeyValue = evictedKey.value!!
-                val evictedValue = cache[evictedKeyValue]!!
-                cache.remove(evictedKeyValue)
-                Optional.some(evictedKeyValue to evictedValue)
+    override fun set(
+        key: K,
+        value: V,
+    ): Optional<out Pair<K, V>> =
+        synchronizedOnSelf {
+            val evicted: Optional<out Pair<K, V>> =
+                insertionOrder[nextFreeIndex].let { evictedKey ->
+                    if (evictedKey.isPresent) {
+                        val evictedKeyValue = evictedKey.value!!
+                        val evictedValue = cache[evictedKeyValue]!!
+                        cache.remove(evictedKeyValue)
+                        Optional.some(evictedKeyValue to evictedValue)
+                    } else {
+                        Optional.none()
+                    }
+                }
+            insertionOrder[nextFreeIndex] = Optional.some(key)
+            cache[key] = value
+            nextFreeIndex = (nextFreeIndex + 1) % capacity
+            evicted
+        }
+
+    override fun get(key: K): Optional<out V> =
+        synchronizedOnSelf {
+            if (cache.containsKey(key)) {
+                Optional.of(cache[key])
             } else {
                 Optional.none()
             }
         }
-        insertionOrder[nextFreeIndex] = Optional.some(key)
-        cache[key] = value
-        nextFreeIndex = (nextFreeIndex + 1) % capacity
-        evicted
-    }
 
-    override fun get(key: K): Optional<out V> = synchronizedOnSelf {
-        if (cache.containsKey(key)) {
-            Optional.of(cache[key])
-        } else {
-            Optional.none()
+    override fun toMap(): Map<K, V> =
+        synchronizedOnSelf {
+            cache.toMap()
         }
-    }
-
-    override fun toMap(): Map<K, V> = synchronizedOnSelf {
-        cache.toMap()
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -68,18 +74,20 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
         return result
     }
 
-    override fun toSequence(): Sequence<Pair<K, V>> = synchronizedOnSelf {
-        val indexes = if (size < capacity) {
-            (0 until size).asSequence()
-        } else {
-            (0 until capacity).asSequence().map { (it + nextFreeIndex) % capacity }
+    override fun toSequence(): Sequence<Pair<K, V>> =
+        synchronizedOnSelf {
+            val indexes =
+                if (size < capacity) {
+                    (0 until size).asSequence()
+                } else {
+                    (0 until capacity).asSequence().map { (it + nextFreeIndex) % capacity }
+                }
+            indexes.map { insertionOrder[it] }
+                .filter { it.isPresent }
+                .map { it.value!! }
+                .map { it to cache[it]!! }
+                .buffered()
         }
-        indexes.map { insertionOrder[it] }
-            .filter { it.isPresent }
-            .map { it.value!! }
-            .map { it to cache[it]!! }
-            .buffered()
-    }
 
     override fun toString(): String {
         return "LRUCache(${toSequence().map { "${it.first} = ${it.second}" }.joinToString(", ")})"

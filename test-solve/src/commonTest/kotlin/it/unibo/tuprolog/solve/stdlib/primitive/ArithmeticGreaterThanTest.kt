@@ -10,7 +10,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class ArithmeticGreaterThanTest {
-
     @Test
     fun computesCorrectResult() {
         greaterQueryToResult.forEach { (input, result) ->

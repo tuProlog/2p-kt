@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class ExponentiationTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("**", 2), Exponentiation.signature)
@@ -25,8 +24,8 @@ internal class ExponentiationTest {
             Numeric.of(-125.0),
             Exponentiation.computeOf(
                 Integer.of(-5),
-                Integer.of(3)
-            )
+                Integer.of(3),
+            ),
         )
     }
 }

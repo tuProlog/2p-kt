@@ -12,9 +12,8 @@ import it.unibo.tuprolog.solve.primitive.Solve
 
 abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
     protected val request: Solve.Request<E>,
-    protected val index: Int?
+    protected val index: Int?,
 ) : TermVisitor<T> {
-
     /** Shorthand to access context loaded functions */
     @Suppress("MemberVisibilityCanBePrivate")
     protected val loadedFunctions by lazy { request.context.libraries.functions }
@@ -24,29 +23,31 @@ abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
 
     override fun defaultValue(term: Term): T = casting { term }
 
-    override fun visitTerm(term: Term): T =
-        defaultValue(term.apply { staticCheck() })
+    override fun visitTerm(term: Term): T = defaultValue(term.apply { staticCheck() })
 
-    override fun visitAtom(term: Atom): T = casting {
-        visitStruct(term)
-    }
+    override fun visitAtom(term: Atom): T =
+        casting {
+            visitStruct(term)
+        }
 
-    override fun visitIndicator(term: Indicator): T = casting {
-        visitStruct(term)
-    }
+    override fun visitIndicator(term: Indicator): T =
+        casting {
+            visitStruct(term)
+        }
 
-    override fun visitStruct(term: Struct): T = casting {
-        val functionSignature = term.extractSignature()
-        loadedFunctions[functionSignature]?.let { function ->
-            function.compute(
-                Compute.Request(
-                    functionSignature,
-                    term.argsSequence.map { it.accept(this).apply { dynamicCheck(term) } }.toList(),
-                    request.context
-                )
-            ).result
-        } ?: unevaluable(term)
-    }
+    override fun visitStruct(term: Struct): T =
+        casting {
+            val functionSignature = term.extractSignature()
+            loadedFunctions[functionSignature]?.let { function ->
+                function.compute(
+                    Compute.Request(
+                        functionSignature,
+                        term.argsSequence.map { it.accept(this).apply { dynamicCheck(term) } }.toList(),
+                        request.context,
+                    ),
+                ).result
+            } ?: unevaluable(term)
+        }
 
     open fun unevaluable(struct: Struct): Term =
         throw TypeError.forArgument(request.context, request.signature, TypeError.Expected.EVALUABLE, struct, index)

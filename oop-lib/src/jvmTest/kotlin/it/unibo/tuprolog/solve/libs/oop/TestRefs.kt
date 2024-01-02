@@ -15,12 +15,11 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class TestRefs {
-
     private fun testMethodInvocation(
         cases: List<TestDatum>,
         detectorCreator: () -> OverloadDetector = OverloadDetector.Companion::create,
         refCreator: (OverloadDetector) -> Ref = ObjectRef.Companion::of,
-        case2Term: (TestDatum) -> Term
+        case2Term: (TestDatum) -> Term,
     ) {
         val obj = detectorCreator()
         val ref = refCreator(obj)
@@ -50,7 +49,7 @@ class TestRefs {
     private fun testConstructorInvocation(
         cases: List<TestDatum>,
         detectorType: KClass<*> = ConstructorOverloadDetector::class,
-        case2Term: (TestDatum) -> Term
+        case2Term: (TestDatum) -> Term,
     ) {
         val ref = TypeRef.of(detectorType)
         for (case in cases) {
@@ -94,7 +93,7 @@ class TestRefs {
         testMethodInvocation(
             Conversions.bestCases,
             detectorCreator = OverloadDetectorObject::refresh,
-            refCreator = { TypeRef.of(OverloadDetectorObject::class) }
+            refCreator = { TypeRef.of(OverloadDetectorObject::class) },
         ) { it.term }
     }
 
@@ -103,7 +102,7 @@ class TestRefs {
         testMethodInvocation(
             Conversions.explicitCases,
             detectorCreator = OverloadDetectorObject::refresh,
-            refCreator = { TypeRef.of(OverloadDetectorObject::class) }
+            refCreator = { TypeRef.of(OverloadDetectorObject::class) },
         ) {
             Struct.of(CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
         }
@@ -114,7 +113,7 @@ class TestRefs {
         testMethodInvocation(
             Conversions.cornerCases,
             detectorCreator = OverloadDetectorObject::refresh,
-            refCreator = { TypeRef.of(OverloadDetectorObject::class) }
+            refCreator = { TypeRef.of(OverloadDetectorObject::class) },
         ) {
             Struct.of(CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
         }

@@ -6,7 +6,6 @@ import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 interface Var : Term {
-
     override val isVar: Boolean
         get() = true
 
@@ -37,7 +36,6 @@ interface Var : Term {
 
     @Suppress("MayBeConstant")
     companion object {
-
         @JvmField
         val ANONYMOUS_NAME = Terms.ANONYMOUS_VAR_NAME
 

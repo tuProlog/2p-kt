@@ -17,8 +17,8 @@ import kotlin.test.assertEquals
  *
  * @author Enrico
  */
+@Suppress("ConstPropertyName", "ktlint:standard:property-naming")
 internal object LogicErrorUtils {
-
     internal const val aMessage = TuPrologRuntimeExceptionUtils.aMessage
     internal val aCause = TuPrologRuntimeExceptionUtils.aCause
     internal val aContext = TuPrologRuntimeExceptionUtils.aContext
@@ -33,7 +33,7 @@ internal object LogicErrorUtils {
             Atom.of(InstantiationError.typeFunctor) to InstantiationError::class,
             Atom.of(SystemError.typeFunctor) to SystemError::class,
             Struct.of(TypeError.typeFunctor, Atom.of("callable"), Atom.of("someActualValue")) to TypeError::class,
-            Struct.of(EvaluationError.typeFunctor, Atom.of("zero_divisor")) to EvaluationError::class
+            Struct.of(EvaluationError.typeFunctor, Atom.of("zero_divisor")) to EvaluationError::class,
         )
     }
 
@@ -44,13 +44,13 @@ internal object LogicErrorUtils {
         expectedContext: ExecutionContext,
         expectedType: Struct,
         expectedExtraData: Term?,
-        actualException: LogicError
+        actualException: LogicError,
     ) {
         TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(
             expectedMessage,
             expectedCause,
             expectedContext,
-            actualException
+            actualException,
         )
         assertEquals(expectedType, actualException.type)
         assertEquals(expectedExtraData, actualException.extraData)
@@ -62,7 +62,7 @@ internal object LogicErrorUtils {
             logicError.extraData
                 ?.let { errorStructOf(logicError.type, it) }
                 ?: errorStructOf(logicError.type),
-            logicError.errorStruct
+            logicError.errorStruct,
         )
     }
 }

@@ -11,38 +11,41 @@ class SyntaxError constructor(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    extraData: Term? = null
+    extraData: Term? = null,
 ) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
-        extraData: Term? = null
+        extraData: Term? = null,
     ) : this(message, cause, arrayOf(context), extraData)
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): SyntaxError =
-        SyntaxError(message, cause, contexts.setItem(index, newContext), extraData)
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): SyntaxError = SyntaxError(message, cause, contexts.setItem(index, newContext), extraData)
 
-    override fun updateLastContext(newContext: ExecutionContext): SyntaxError =
-        updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): SyntaxError = updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): SyntaxError =
         SyntaxError(message, cause, contexts.addLast(newContext), extraData)
 
     companion object {
-
         /** The system error Struct functor */
+        @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "syntax_error"
 
         @JsName("of")
         @JvmStatic
-        fun of(context: ExecutionContext, message: String): SyntaxError =
+        fun of(
+            context: ExecutionContext,
+            message: String,
+        ): SyntaxError =
             message("Syntax error: $message") { m, extra ->
                 SyntaxError(
                     message = m,
                     context = context,
-                    extraData = extra
+                    extraData = extra,
                 )
             }
 
@@ -53,13 +56,13 @@ class SyntaxError constructor(
             input: String,
             row: Int,
             column: Int,
-            message: String
+            message: String,
         ): SyntaxError =
             message("Syntax error at $row:$column while parsing `$input`: $message") { m, extra ->
                 SyntaxError(
                     message = m,
                     context = context,
-                    extraData = extra
+                    extraData = extra,
                 )
             }
 
@@ -71,18 +74,18 @@ class SyntaxError constructor(
             index: Int,
             row: Int,
             column: Int,
-            message: String
+            message: String,
         ): SyntaxError =
             message(
                 """
                 |Syntax error at $row:$column while parsing clause $index: $message
                 |   ${errorDetector(input, row, column, message).replace("\n", "\n|   ")}
-                """.trimMargin()
+                """.trimMargin(),
             ) { m, extra ->
                 SyntaxError(
                     message = m,
                     context = context,
-                    extraData = extra
+                    extraData = extra,
                 )
             }
 
@@ -98,11 +101,21 @@ class SyntaxError constructor(
 
         @JsName("errorDetector")
         @JvmStatic
-        fun errorDetector(text: String, line: Int, column: Int, message: String? = null): String {
+        fun errorDetector(
+            text: String,
+            line: Int,
+            column: Int,
+            message: String? = null,
+        ): String {
             val lines = text.lineSequence().drop(line - 1).take(1).toList()
             if (lines.isEmpty()) return text
             val padding = kotlin.math.max(line.log10(), (line - 1).log10())
-            val prefix = if (line > 1) { "${(line - 1).toString().padStart(padding)}: ...\n" } else ""
+            val prefix =
+                if (line > 1) {
+                    "${(line - 1).toString().padStart(padding)}: ...\n"
+                } else {
+                    ""
+                }
             val culprit = "${line.toString().padStart(padding)}: ${lines.last()}\n"
             val detector = "".padStart(padding + column + 1) + "^ " + (message ?: "")
             return prefix + culprit + detector

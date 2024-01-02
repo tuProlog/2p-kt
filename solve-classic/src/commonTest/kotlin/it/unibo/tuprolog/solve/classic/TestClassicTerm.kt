@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.TestTerm
 import kotlin.test.Test
 
 class TestClassicTerm : TestTerm, SolverFactory by ClassicSolverFactory {
-
     private val prototype = TestTerm.prototype(this)
 
     @Test

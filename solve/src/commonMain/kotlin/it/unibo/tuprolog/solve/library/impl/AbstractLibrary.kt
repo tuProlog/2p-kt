@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
 
 abstract class AbstractLibrary : Library, AbstractPluggable() {
-
     override val operators: OperatorSet
         get() = OperatorSet.EMPTY
 
@@ -24,14 +23,17 @@ abstract class AbstractLibrary : Library, AbstractPluggable() {
     override fun toString(): String {
         return "${super.toString()}(" +
             "alias=" + alias +
-            ", primitives=" + primitives.keys.joinToString(", ", "{", "}") {
-            "'${it.name}'/${it.arity}"
-        } + ", functions=" + functions.keys.joinToString(", ", "{", "}") {
-            "'${it.name}'/${it.arity}"
-        } + ", theory=" + clauses.joinToString(". ", "{", "}") +
-            ", operators=" + operators.joinToString(", ", "{", "}") {
-            "'${it.functor}':${it.priority}:${it.specifier}"
-        } + ")"
+            ", primitives=" +
+            primitives.keys.joinToString(", ", "{", "}") {
+                "'${it.name}'/${it.arity}"
+            } + ", functions=" +
+            functions.keys.joinToString(", ", "{", "}") {
+                "'${it.name}'/${it.arity}"
+            } + ", theory=" + clauses.joinToString(". ", "{", "}") +
+            ", operators=" +
+            operators.joinToString(", ", "{", "}") {
+                "'${it.functor}':${it.priority}:${it.specifier}"
+            } + ")"
     }
 
     override fun equals(other: Any?): Boolean {

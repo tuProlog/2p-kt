@@ -6,7 +6,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object PutByte2 : BinaryRelation.NonBacktrackable<ExecutionContext>("put_byte") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+    ): Solve.Response {
         return notSupported()
     }
 }

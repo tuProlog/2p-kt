@@ -4,9 +4,8 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
 
 internal abstract class AbstractMutableReteClauseCollection<Self : AbstractMutableReteClauseCollection<Self>> protected constructor(
-    rete: ReteTree
+    rete: ReteTree,
 ) : MutableClauseCollection, AbstractClauseCollection<Self>(rete) {
-
     override fun add(clause: Clause): Self {
         rete.assertZ(clause)
         return self

@@ -9,7 +9,6 @@ import org.gciatto.kt.math.BigInteger
  * @author Enrico
  */
 internal object IntegerUtils {
-
     /** Map from an integer in string format to it's corresponding BigInteger instance */
     private val stringToIntegerCorrectnessMap by lazy {
         mapOf(
@@ -27,7 +26,7 @@ internal object IntegerUtils {
             "0b0" to BigInteger.of(0),
             "0B1" to BigInteger.of(1),
             "0o7" to BigInteger.of(7),
-            "0O10" to BigInteger.of(8)
+            "0O10" to BigInteger.of(8),
         )
     }
 

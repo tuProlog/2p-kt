@@ -9,7 +9,6 @@ import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
  * @author Enrico
  */
 internal interface State {
-
     /** The [Solve.Request] or [Solve.Response] that this state carries with it */
     val solve: Solve
 

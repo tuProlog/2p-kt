@@ -11,7 +11,11 @@ import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 
 object Op : TernaryRelation.NonBacktrackable<ExecutionContext>("op") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term, third: Term): Solve.Response {
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+        third: Term,
+    ): Solve.Response {
         ensuringArgumentIsInteger(0)
         ensuringArgumentIsNonNegativeInteger(0)
         ensuringArgumentIsAtom(1)
@@ -21,7 +25,7 @@ object Op : TernaryRelation.NonBacktrackable<ExecutionContext>("op") {
         return replySuccess(
             Substitution.empty(),
             null,
-            SideEffect.SetOperators(operator)
+            SideEffect.SetOperators(operator),
         )
     }
 }

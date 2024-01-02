@@ -62,5 +62,4 @@ fun Array<out Term>.toTerm(): List = List.of(*this)
 
 /** Conversion from a raw `Map<Var, Term>` to the [Substitution.Unifier] type */
 @JsName("asUnifier")
-fun Map<Var, Term>.asUnifier(): Substitution.Unifier =
-    this as? Substitution.Unifier ?: Substitution.of(this)
+fun Map<Var, Term>.asUnifier(): Substitution.Unifier = this as? Substitution.Unifier ?: Substitution.of(this)

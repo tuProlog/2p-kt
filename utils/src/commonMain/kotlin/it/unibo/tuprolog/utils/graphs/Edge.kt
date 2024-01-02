@@ -6,7 +6,6 @@ import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 interface Edge<T, W> {
-
     @JsName("source")
     val source: Node<T>
 
@@ -20,7 +19,10 @@ interface Edge<T, W> {
         @JsName("of")
         @JvmStatic
         @JvmOverloads
-        fun <T, W> of(source: Node<T>, destination: Node<T>, weight: W? = null): Edge<T, W> =
-            EdgeImpl(source, destination, weight)
+        fun <T, W> of(
+            source: Node<T>,
+            destination: Node<T>,
+            weight: W? = null,
+        ): Edge<T, W> = EdgeImpl(source, destination, weight)
     }
 }

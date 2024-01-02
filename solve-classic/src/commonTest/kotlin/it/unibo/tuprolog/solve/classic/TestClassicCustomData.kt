@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.TestCustomData
 import kotlin.test.Test
 
 class TestClassicCustomData : TestCustomData, SolverFactory by ClassicSolverFactory {
-
     val prototype = TestCustomData.prototype(this)
 
     @Test

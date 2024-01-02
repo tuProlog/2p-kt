@@ -24,7 +24,10 @@ interface Graph<T, W> : Iterable<Edge<T, W>> {
     operator fun contains(edge: Edge<T, W>): Boolean
 
     @JsName("containsEdgeAmong")
-    fun containsEdgeAmong(node1: Node<T>, node2: Node<T>): Boolean
+    fun containsEdgeAmong(
+        node1: Node<T>,
+        node2: Node<T>,
+    ): Boolean
 
     @JsName("toMutable")
     fun toMutable(): MutableGraph<T, W>
@@ -45,10 +48,16 @@ interface Graph<T, W> : Iterable<Edge<T, W>> {
     operator fun minus(edge: Edge<T, W>): Graph<T, W>
 
     @JsName("asIterable")
-    fun <S> asIterable(searchStrategy: SearchStrategy<T, W, S>, initialNode: Node<T>): Iterable<Visit<T, S>>
+    fun <S> asIterable(
+        searchStrategy: SearchStrategy<T, W, S>,
+        initialNode: Node<T>,
+    ): Iterable<Visit<T, S>>
 
     @JsName("asSequence")
-    fun <S> asSequence(searchStrategy: SearchStrategy<T, W, S>, initialNode: Node<T>): Sequence<Visit<T, S>>
+    fun <S> asSequence(
+        searchStrategy: SearchStrategy<T, W, S>,
+        initialNode: Node<T>,
+    ): Sequence<Visit<T, S>>
 
     @JsName("outgoingEdges")
     fun outgoingEdges(from: Node<T>): Iterable<Edge<T, W>>
@@ -65,11 +74,13 @@ interface Graph<T, W> : Iterable<Edge<T, W>> {
     companion object {
         @JsName("build")
         @JvmStatic
-        fun <T, W> build(builder: MutableGraph<T, W>.() -> Unit): Graph<T, W> =
-            MutableGraph.build(builder).toImmutable()
+        fun <T, W> build(builder: MutableGraph<T, W>.() -> Unit): Graph<T, W> = MutableGraph.build(builder).toImmutable()
 
         @JsName("of")
-        fun <T, W> of(edge: Edge<T, W>, vararg edges: Edge<T, W>): Graph<T, W> = of(listOf(edge, *edges))
+        fun <T, W> of(
+            edge: Edge<T, W>,
+            vararg edges: Edge<T, W>,
+        ): Graph<T, W> = of(listOf(edge, *edges))
 
         @JsName("empty")
         fun <T, W> empty(): Graph<T, W> = of(emptyList())

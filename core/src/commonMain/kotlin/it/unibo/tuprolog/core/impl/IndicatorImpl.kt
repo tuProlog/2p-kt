@@ -14,9 +14,8 @@ import it.unibo.tuprolog.core.Terms.INDICATOR_FUNCTOR
 internal class IndicatorImpl(
     override val nameTerm: Term,
     override val arityTerm: Term,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : AbstractStruct(INDICATOR_FUNCTOR, listOf(nameTerm, arityTerm), tags), Indicator {
-
     override val functor: String
         get() = INDICATOR_FUNCTOR
 

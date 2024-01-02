@@ -3,9 +3,10 @@ package it.unibo.tuprolog.solve
 import kotlin.test.Test
 
 class TestStreamsStaticFactory : TestStaticFactory {
-    private val prototype = TestStaticFactory.prototype(
-        SolveStreamsTest.expectations
-    )
+    private val prototype =
+        TestStaticFactory.prototype(
+            SolveStreamsTest.expectations,
+        )
 
     @Test
     override fun testStaticSolverFactoryForClassic() {

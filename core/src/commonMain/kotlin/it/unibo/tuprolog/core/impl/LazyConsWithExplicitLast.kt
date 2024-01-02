@@ -13,9 +13,8 @@ import it.unibo.tuprolog.utils.setTags
 internal class LazyConsWithExplicitLast(
     private val cursor: Cursor<out Term>,
     private val termination: Term = EmptyList.instance,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : AbstractCons(emptyList(), tags), Cons {
-
     override val head: Term
         get() = cursor.current!!
 
@@ -54,6 +53,6 @@ internal class LazyConsWithExplicitLast(
     override fun freshCopy(scope: Scope): Cons =
         LazyConsWithExplicitLast(
             unfoldedSequence.dropLast().map { it.freshCopy(scope) }.cursor(),
-            last.freshCopy(scope)
+            last.freshCopy(scope),
         ).setTags(tags).castToCons()
 }

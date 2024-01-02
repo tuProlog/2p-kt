@@ -25,22 +25,22 @@ class RepresentationError(
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
     @JsName("limit") val limit: Limit,
-    extraData: Term? = null
+    extraData: Term? = null,
 ) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
         limit: Limit,
-        extraData: Term? = null
+        extraData: Term? = null,
     ) : this(message, cause, arrayOf(context), limit, extraData)
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): RepresentationError =
-        RepresentationError(message, cause, contexts.setItem(index, newContext), limit, extraData)
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): RepresentationError = RepresentationError(message, cause, contexts.setItem(index, newContext), limit, extraData)
 
-    override fun updateLastContext(newContext: ExecutionContext): RepresentationError =
-        updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): RepresentationError = updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): RepresentationError =
         RepresentationError(message, cause, contexts.addLast(newContext), limit, extraData)
@@ -48,7 +48,7 @@ class RepresentationError(
     override val type: Struct by lazy {
         Struct.of(
             super.type.functor,
-            limit.toTerm()
+            limit.toTerm(),
         )
     }
 
@@ -59,21 +59,23 @@ class RepresentationError(
             context: ExecutionContext,
             signature: Signature,
             limit: Limit,
-            cause: Throwable? = null
-        ): RepresentationError = message(
-            "Reached representation limit while executing `${signature.pretty()}`: $limit" +
-                cause?.message?.let { ". $it" }
-        ) { m, extra ->
-            RepresentationError(
-                message = m,
-                context = context,
-                limit = limit,
-                extraData = extra,
-                cause = cause
-            )
-        }
+            cause: Throwable? = null,
+        ): RepresentationError =
+            message(
+                "Reached representation limit while executing `${signature.pretty()}`: $limit" +
+                    cause?.message?.let { ". $it" },
+            ) { m, extra ->
+                RepresentationError(
+                    message = m,
+                    context = context,
+                    limit = limit,
+                    extraData = extra,
+                    cause = cause,
+                )
+            }
 
         /** The permission error Struct functor */
+        @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "representation_error"
     }
 
@@ -88,7 +90,8 @@ class RepresentationError(
         MAX_INTEGER,
         MIN_INTEGER,
         OOP_OBJECT,
-        TOO_MANY_VARIABLES;
+        TOO_MANY_VARIABLES,
+        ;
 
         @JsName("limit")
         val limit: String by lazy { this.name.lowercase() }
@@ -99,7 +102,6 @@ class RepresentationError(
         override fun toString(): String = limit
 
         companion object {
-
             /** Returns the [Limit] instance described by [limit]; creates a new instance only if [limit] was not predefined */
             @JsName("of")
             @JvmStatic
@@ -108,10 +110,11 @@ class RepresentationError(
             /** Gets [Limit] instance from [term] representation, if possible */
             @JsName("fromTerm")
             @JvmStatic
-            fun fromTerm(term: Term): Limit? = when (term) {
-                is Atom -> of(term.value)
-                else -> null
-            }
+            fun fromTerm(term: Term): Limit? =
+                when (term) {
+                    is Atom -> of(term.value)
+                    else -> null
+                }
         }
     }
 }

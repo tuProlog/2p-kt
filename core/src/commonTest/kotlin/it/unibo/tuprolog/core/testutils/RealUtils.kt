@@ -8,8 +8,8 @@ import org.gciatto.kt.math.BigDecimal
  *
  * @author Enrico
  */
+@Suppress("ktlint:standard:max-line-length")
 internal object RealUtils {
-
     /** Map from a real number in string format to it's corresponding BigDecimal instance */
     private val stringToRealCorrectnessMap by lazy {
         mapOf(
@@ -37,7 +37,7 @@ internal object RealUtils {
             "-" + Double.MAX_VALUE.toString() to -BigDecimal.of(Double.MAX_VALUE.toString()),
             "-" + Double.MIN_VALUE.toString() to -BigDecimal.of(Double.MIN_VALUE.toString()),
             "10.0" to BigDecimal.TEN,
-            "10.000" to BigDecimal.TEN
+            "10.000" to BigDecimal.TEN,
         )
     }
 

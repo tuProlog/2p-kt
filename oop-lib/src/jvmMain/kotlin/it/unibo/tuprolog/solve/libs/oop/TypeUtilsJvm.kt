@@ -23,13 +23,14 @@ actual val KClass<*>.companionObjectRef: Optional<out Any>
     get() = Optional.of(objectInstance ?: companionObjectInstance)
 
 actual val KClass<*>.companionObjectType: Optional<out KClass<*>>
-    get() = Optional.of(
-        if (objectInstance != null) {
-            this
-        } else {
-            companionObject
-        }
-    )
+    get() =
+        Optional.of(
+            if (objectInstance != null) {
+                this
+            } else {
+                companionObject
+            },
+        )
 
 private val classCache = Cache.simpleLru<String, Optional<out KClass<*>>>(32)
 
@@ -57,7 +58,10 @@ private fun kClassFromNameImpl(qualifiedName: String): Optional<out KClass<*>> {
     }
 }
 
-private fun String.replaceAt(index: Int, char: Char): String {
+private fun String.replaceAt(
+    index: Int,
+    char: Char,
+): String {
     if (index < 0 || index >= length) throw IndexOutOfBoundsException()
     return substring(0, index) + char + substring(index + 1)
 }
@@ -69,7 +73,7 @@ private fun javaClassForName(qualifiedName: String): Class<*>? =
         null
     }
 
-private val classNamePattern = "^$id(\\.$id(\\$$id)*)*$".toRegex()
+private val classNamePattern = "^$ID(\\.$ID(\\$$ID)*)*$".toRegex()
 
 actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern
@@ -79,16 +83,17 @@ actual val Any.identifier: String
 
 internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
     instance: Any?,
-    action: () -> T
-): T = try {
-    action()
-} catch (e: IllegalCallableAccessException) {
-    throw RuntimePermissionException(this, instance, e)
-} catch (e: InvocationTargetException) {
-    throw OopRuntimeException(this, instance, e.targetException ?: e.cause ?: e)
-} catch (e: IllegalArgumentException) {
-    throw OopRuntimeException(this, instance, e.cause ?: e)
-}
+    action: () -> T,
+): T =
+    try {
+        action()
+    } catch (e: IllegalCallableAccessException) {
+        throw RuntimePermissionException(this, instance, e)
+    } catch (e: InvocationTargetException) {
+        throw OopRuntimeException(this, instance, e.targetException ?: e.cause ?: e)
+    } catch (e: IllegalArgumentException) {
+        throw OopRuntimeException(this, instance, e.cause ?: e)
+    }
 
 actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
     supertypes.asSequence()
@@ -99,9 +104,10 @@ actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
         .let { if (strict) it else sequenceOf(this) + it }
 
 actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
-    get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
-        it.type.classifier as? KClass<*> ?: Any::class
-    }
+    get() =
+        parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
+            it.type.classifier as? KClass<*> ?: Any::class
+        }
 
 actual val KClass<*>.fullName: String
     get() = qualifiedName!!
@@ -109,8 +115,7 @@ actual val KClass<*>.fullName: String
 actual val KClass<*>.name: String
     get() = simpleName!!
 
-actual fun KCallable<*>.pretty(): String =
-    "$name(${parameters.map { it.pretty() }}): ${returnType.classifier.pretty()}"
+actual fun KCallable<*>.pretty(): String = "$name(${parameters.map { it.pretty() }}): ${returnType.classifier.pretty()}"
 
 private fun KClassifier?.pretty(): String =
     if (this is KClass<*>) {
@@ -127,7 +132,10 @@ private fun KParameter.pretty(): String =
     }
 
 @Suppress("UNCHECKED_CAST")
-actual fun <T> KCallable<T>.invoke(instance: Any?, vararg args: Any?): T =
+actual fun <T> KCallable<T>.invoke(
+    instance: Any?,
+    vararg args: Any?,
+): T =
     when (this) {
         is KProperty0<T> -> get()
         is KProperty1<*, T> -> {
@@ -150,5 +158,7 @@ actual fun <T> KCallable<T>.invoke(instance: Any?, vararg args: Any?): T =
 actual val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
     get() = setter
 
-actual fun overloadSelector(type: KClass<*>, termToObjectConverter: TermToObjectConverter): OverloadSelector =
-    OverloadSelectorImpl(type, termToObjectConverter)
+actual fun overloadSelector(
+    type: KClass<*>,
+    termToObjectConverter: TermToObjectConverter,
+): OverloadSelector = OverloadSelectorImpl(type, termToObjectConverter)

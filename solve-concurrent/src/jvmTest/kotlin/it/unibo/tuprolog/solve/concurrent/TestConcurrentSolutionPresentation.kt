@@ -8,12 +8,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 interface TestConcurrentSolutionPresentation<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testSolutionWithDandlingVars() {
         logicProgramming {
-            val theory = theoryOf(
-                fact { "append"("seq"(X), X) }
-            )
+            val theory =
+                theoryOf(
+                    fact { "append"("seq"(X), X) },
+                )
             val solver = solverOf(staticKb = theory)
             val query = "append"(A, B)
             val sol = solver.solveOnce(query)

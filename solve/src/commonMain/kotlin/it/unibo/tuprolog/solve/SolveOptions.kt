@@ -38,16 +38,19 @@ interface SolveOptions {
     fun <X : Any> setOptions(options: Map<String, X>): SolveOptions
 
     @JsName("addOptions")
-    fun <X : Any> addOptions(options: Map<String, X>): SolveOptions =
-        setOptions(customOptions + options)
+    fun <X : Any> addOptions(options: Map<String, X>): SolveOptions = setOptions(customOptions + options)
 
     @JsName("setOption")
-    fun <X : Any> setOption(key: String, value: X): SolveOptions =
-        setOptions(customOptions.toMutableMap().also { it[key] = value })
+    fun <X : Any> setOption(
+        key: String,
+        value: X,
+    ): SolveOptions = setOptions(customOptions.toMutableMap().also { it[key] = value })
 
     @JsName("addOption")
-    fun <X : Any> addOption(key: String, value: X): SolveOptions =
-        addOptions(mapOf(key to (value as Any)))
+    fun <X : Any> addOption(
+        key: String,
+        value: X,
+    ): SolveOptions = addOptions(mapOf(key to (value as Any)))
 
     companion object {
         const val MAX_TIMEOUT: Long = Long.MAX_VALUE
@@ -64,13 +67,16 @@ interface SolveOptions {
             timeout: TimeDuration = MAX_TIMEOUT,
             limit: Int = ALL_SOLUTIONS,
             customOption: Pair<String, X>,
-            vararg customOptions: Pair<String, X>
+            vararg customOptions: Pair<String, X>,
         ): SolveOptions = SolveOptionsImpl(lazy, timeout, limit, arrayOf(customOption, *customOptions).toMap())
 
         @JsName("of")
         @JvmStatic
-        fun of(lazy: Boolean, timeout: TimeDuration = MAX_TIMEOUT, limit: Int = ALL_SOLUTIONS): SolveOptions =
-            SolveOptionsImpl(lazy, timeout, limit)
+        fun of(
+            lazy: Boolean,
+            timeout: TimeDuration = MAX_TIMEOUT,
+            limit: Int = ALL_SOLUTIONS,
+        ): SolveOptions = SolveOptionsImpl(lazy, timeout, limit)
 
         @JsName("allLazily")
         @JvmStatic
@@ -86,8 +92,10 @@ interface SolveOptions {
 
         @JsName("someLazilyWithTimeout")
         @JvmStatic
-        fun someLazilyWithTimeout(limit: Int, timeout: TimeDuration): SolveOptions =
-            of(true, timeout = timeout, limit = limit)
+        fun someLazilyWithTimeout(
+            limit: Int,
+            timeout: TimeDuration,
+        ): SolveOptions = of(true, timeout = timeout, limit = limit)
 
         @JsName("allEagerly")
         @JvmStatic
@@ -103,7 +111,9 @@ interface SolveOptions {
 
         @JsName("someEagerlyWithTimeout")
         @JvmStatic
-        fun someEagerlyWithTimeout(limit: Int, timeout: TimeDuration): SolveOptions =
-            of(false, timeout = timeout, limit = limit)
+        fun someEagerlyWithTimeout(
+            limit: Int,
+            timeout: TimeDuration,
+        ): SolveOptions = of(false, timeout = timeout, limit = limit)
     }
 }

@@ -10,7 +10,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class ArithmeticNotEqualTest {
-
     @Test
     fun computesCorrectResult() {
         notEqualQueryToResult.forEach { (input, result) ->

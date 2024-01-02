@@ -8,7 +8,6 @@ class TestConcurrentBagOfImpl :
     TestConcurrentBagOf<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testBagXInDifferentValues() = multiRunConcurrentTest { super.testBagXInDifferentValues() }

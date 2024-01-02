@@ -12,9 +12,8 @@ import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 class PrototypeProperIndexingTest(
-    private val theoryGenerator: (Iterable<Clause>) -> Theory
+    private val theoryGenerator: (Iterable<Clause>) -> Theory,
 ) {
-
     private val mixedClausesTheory =
         listOf(
             Fact.of(Struct.of("f", Atom.of("a"))),
@@ -35,14 +34,14 @@ class PrototypeProperIndexingTest(
             Fact.of(Struct.of("g", Var.of("X"), Atom.of("a"))),
             Fact.of(Struct.of("g", Atom.of("a"), Var.of("X"))),
             Fact.of(Struct.of("g", Atom.of("b"), Atom.of("a"))),
-            Fact.of(Struct.of("g", Numeric.of(1)))
+            Fact.of(Struct.of("g", Numeric.of(1))),
         )
 
     private data class FreshTheoryScope(val theory: Theory)
 
     private fun <R> withFreshTheory(
         theory: Theory = theoryGenerator(mixedClausesTheory),
-        action: FreshTheoryScope.() -> R
+        action: FreshTheoryScope.() -> R,
     ): R = FreshTheoryScope(theory).action()
 
     private val expectedIndexingOverF1 =
@@ -51,7 +50,7 @@ class PrototypeProperIndexingTest(
             Fact.of(Struct.of("f", Atom.of("b"))),
             Fact.of(Struct.of("f", Atom.of("c"))),
             Fact.of(Struct.of("f", Atom.of("a"))),
-            Fact.of(Struct.of("f", Atom.of("b")))
+            Fact.of(Struct.of("f", Atom.of("b"))),
         )
 
     private val expectedIndexingOverF2 =
@@ -60,7 +59,7 @@ class PrototypeProperIndexingTest(
             Fact.of(Struct.of("f", Atom.of("b"), Atom.of("a"))),
             Fact.of(Struct.of("f", Atom.of("b"), Var.of("X"))),
             Fact.of(Struct.of("f", Var.of("X"), Atom.of("a"))),
-            Fact.of(Struct.of("f", Var.of("X"), Var.of("Y")))
+            Fact.of(Struct.of("f", Var.of("X"), Var.of("Y"))),
         )
 
     private val expectedIndexingOverG1 =
@@ -69,7 +68,7 @@ class PrototypeProperIndexingTest(
             Fact.of(Struct.of("g", Numeric.of(2))),
             Fact.of(Struct.of("g", Var.of("X"))),
             Fact.of(Struct.of("g", Var.of("Y"))),
-            Fact.of(Struct.of("g", Numeric.of(1)))
+            Fact.of(Struct.of("g", Numeric.of(1))),
         )
 
     private val expectedIndexingOverG2 =
@@ -77,7 +76,7 @@ class PrototypeProperIndexingTest(
             Fact.of(Struct.of("g", Var.of("X"), Var.of("Y"))),
             Fact.of(Struct.of("g", Var.of("X"), Atom.of("a"))),
             Fact.of(Struct.of("g", Atom.of("a"), Var.of("X"))),
-            Fact.of(Struct.of("g", Atom.of("b"), Atom.of("a")))
+            Fact.of(Struct.of("g", Atom.of("b"), Atom.of("a"))),
         )
 
     private val newF1AtomClause = Fact.of(Struct.of("f", Numeric.of(0)))
@@ -93,25 +92,26 @@ class PrototypeProperIndexingTest(
 
     fun testCornerCaseInClauseRetrieval() {
         // f(f(f(1), 2), 3).
-        val fact = Fact.of(
-            Struct.of(
-                "f",
+        val fact =
+            Fact.of(
                 Struct.of(
                     "f",
-                    Struct.of("f", Integer.of(1)),
-                    Integer.of(2)
+                    Struct.of(
+                        "f",
+                        Struct.of("f", Integer.of(1)),
+                        Integer.of(2),
+                    ),
+                    Integer.of(3),
                 ),
-                Integer.of(3)
             )
-        )
         withFreshTheory(theoryGenerator(listOf(fact))) {
             assertClausesHaveSameLengthAndContent(
                 sequenceOf(fact),
-                theory[Fact.of(Struct.of("f", Var.anonymous(), Var.anonymous()))]
+                theory[Fact.of(Struct.of("f", Var.anonymous(), Var.anonymous()))],
             )
             assertClausesHaveSameLengthAndContent(
                 sequenceOf(fact),
-                theory[Fact.of(Struct.of("f", Struct.of("f", Var.anonymous(), Var.anonymous()), Var.anonymous()))]
+                theory[Fact.of(Struct.of("f", Struct.of("f", Var.anonymous(), Var.anonymous()), Var.anonymous()))],
             )
             assertClausesHaveSameLengthAndContent(
                 sequenceOf(fact),
@@ -120,10 +120,10 @@ class PrototypeProperIndexingTest(
                         Struct.of(
                             "f",
                             Struct.of("f", Struct.of("f", Var.anonymous()), Var.anonymous()),
-                            Var.anonymous()
-                        )
-                    )
-                ]
+                            Var.anonymous(),
+                        ),
+                    ),
+                ],
             )
         }
     }
@@ -172,7 +172,7 @@ class PrototypeProperIndexingTest(
 
             assertClausesHaveSameLengthAndContent(
                 expectedIndexingOverF1 + expectedIndexingOverF1,
-                generatedIndexingOverDoubledDatabaseForF1Family
+                generatedIndexingOverDoubledDatabaseForF1Family,
             )
         }
     }
@@ -184,7 +184,7 @@ class PrototypeProperIndexingTest(
 
             assertClausesHaveSameLengthAndContent(
                 expectedIndexingOverF2 + expectedIndexingOverF2,
-                generatedIndexingOverDoubledDatabaseForF2Family
+                generatedIndexingOverDoubledDatabaseForF2Family,
             )
         }
     }
@@ -196,7 +196,7 @@ class PrototypeProperIndexingTest(
 
             assertClausesHaveSameLengthAndContent(
                 expectedIndexingOverG1 + expectedIndexingOverG1,
-                generatedIndexingOverDoubledDatabaseForG1Family
+                generatedIndexingOverDoubledDatabaseForG1Family,
             )
         }
     }
@@ -208,7 +208,7 @@ class PrototypeProperIndexingTest(
 
             assertClausesHaveSameLengthAndContent(
                 expectedIndexingOverG2 + expectedIndexingOverG2,
-                generatedIndexingOverDoubledDatabaseForG2Family
+                generatedIndexingOverDoubledDatabaseForG2Family,
             )
         }
     }

@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     val errorSignature: Signature
 
     fun testNPTrue() {
@@ -56,12 +55,13 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
 
             val query = ((("X" eq 1) or ("X" eq 2)) and "not"(("!" and fail)))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                sequenceOf(
-                    query.yes("X" to 1),
-                    query.yes("X" to 2)
+            val expected =
+                fromSequence(
+                    sequenceOf(
+                        query.yes("X" to 1),
+                        query.yes("X" to 2),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -85,16 +85,17 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
 
             val query = "not"(3)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forGoal(
-                        DummyInstances.executionContext,
-                        errorSignature,
-                        TypeError.Expected.CALLABLE,
-                        numOf(3)
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            errorSignature,
+                            TypeError.Expected.CALLABLE,
+                            numOf(3),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -106,15 +107,16 @@ interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, 
 
             val query = "not"("X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forGoal(
-                        DummyInstances.executionContext,
-                        errorSignature,
-                        varOf("X")
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            errorSignature,
+                            varOf("X"),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

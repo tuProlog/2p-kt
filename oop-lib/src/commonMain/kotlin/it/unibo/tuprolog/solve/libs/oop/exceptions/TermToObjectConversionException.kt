@@ -11,20 +11,23 @@ import kotlin.reflect.KClass
 @Suppress("MemberVisibilityCanBePrivate")
 class TermToObjectConversionException(
     val term: Term,
-    val targetType: KClass<*>? = null
+    val targetType: KClass<*>? = null,
 ) : OopException(
-    targetType?.let {
-        "Term `$term` cannot be converted into an object of type ${targetType.fullName}"
-    } ?: "Term `$term` cannot be converted into an object"
-) {
+        targetType?.let {
+            "Term `$term` cannot be converted into an object of type ${targetType.fullName}"
+        } ?: "Term `$term` cannot be converted into an object",
+    ) {
     constructor(term: Term) : this(term, null)
 
-    override fun toLogicError(context: ExecutionContext, signature: Signature): LogicError {
+    override fun toLogicError(
+        context: ExecutionContext,
+        signature: Signature,
+    ): LogicError {
         return RepresentationError.of(
             context,
             signature,
             RepresentationError.Limit.OOP_OBJECT,
-            this
+            this,
         )
     }
 

@@ -15,7 +15,7 @@ abstract class AbstractCollectingPrimitive(name: String) : TernaryRelation.Witho
                     context.remainingTime <= 0 -> {
                         throw TimeOutException(
                             exceededDuration = context.maxDuration,
-                            context = context
+                            context = context,
                         )
                     }
                     solution.isHalt -> {

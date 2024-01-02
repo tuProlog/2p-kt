@@ -10,14 +10,13 @@ import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
  * @author Enrico
  */
 internal object Cut : PrimitiveWrapper<StreamsExecutionContext>("!", 0) {
-
     override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         with(request) {
             sequenceOf(
                 replySuccess(
                     context.substitution,
-                    sideEffectManager = context.sideEffectManager.cut()
-                )
+                    sideEffectManager = context.sideEffectManager.cut(),
+                ),
             )
         }
 }

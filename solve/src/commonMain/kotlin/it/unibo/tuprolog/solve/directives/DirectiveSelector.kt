@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.stdlib.primitive.SetFlag
 import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
 
 interface DirectiveSelector : DirectiveListener {
-
     @Suppress("MemberVisibilityCanBePrivate")
     companion object {
         private val scope = Scope.empty()
@@ -50,7 +49,11 @@ interface DirectiveSelector : DirectiveListener {
 
     override val patterns: List<Term> get() = PATTERNS
 
-    override fun listenDirectiveMatchingPattern(directive: Directive, pattern: Term, unifier: Unifier) {
+    override fun listenDirectiveMatchingPattern(
+        directive: Directive,
+        pattern: Term,
+        unifier: Unifier,
+    ) {
         when (pattern) {
             DYNAMIC -> onDynamic(directive, Indicator.of(unifier[Name]!!, unifier[Arity]!!))
             STATIC -> onStatic(directive, Indicator.of(unifier[Name]!!, unifier[Arity]!!))
@@ -62,15 +65,36 @@ interface DirectiveSelector : DirectiveListener {
         }
     }
 
-    fun onSetFlag(directive: Directive, name: Term, value: Term)
+    fun onSetFlag(
+        directive: Directive,
+        name: Term,
+        value: Term,
+    )
 
-    fun onOperator(directive: Directive, priority: Term, specifier: Term, name: Term)
+    fun onOperator(
+        directive: Directive,
+        priority: Term,
+        specifier: Term,
+        name: Term,
+    )
 
-    fun onLoad(directive: Directive, goal: Term)
+    fun onLoad(
+        directive: Directive,
+        goal: Term,
+    )
 
-    fun onSolve(directive: Directive, goal: Term)
+    fun onSolve(
+        directive: Directive,
+        goal: Term,
+    )
 
-    fun onStatic(directive: Directive, indicator: Indicator)
+    fun onStatic(
+        directive: Directive,
+        indicator: Indicator,
+    )
 
-    fun onDynamic(directive: Directive, indicator: Indicator)
+    fun onDynamic(
+        directive: Directive,
+        indicator: Indicator,
+    )
 }

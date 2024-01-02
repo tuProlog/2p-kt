@@ -3,10 +3,16 @@ package it.unibo.tuprolog.parser.dynamic
 import java.util.EnumSet
 
 enum class Associativity {
-    XF, YF, XFX, XFY, YFX, FX, FY;
+    XF,
+    YF,
+    XFX,
+    XFY,
+    YFX,
+    FX,
+    FY,
+    ;
 
     companion object {
-
         @JvmStatic
         fun values(i: Int): Associativity {
             return values()[i]
@@ -28,10 +34,12 @@ enum class Associativity {
         val POSTFIX: EnumSet<Associativity> = EnumSet.of(YF, XF)
 
         @JvmField
-        var NON_PREFIX: EnumSet<Associativity> = EnumSet.complementOf(PREFIX)
+        val NON_PREFIX: EnumSet<Associativity> = EnumSet.complementOf(PREFIX)
 
         @JvmStatic
         fun isAssociativity(value: String?): Boolean =
-            values().asSequence().any { it.name.equals(value, ignoreCase = true) }
+            values().asSequence().any {
+                it.name.equals(value, ignoreCase = true)
+            }
     }
 }

@@ -29,9 +29,8 @@ internal class ProbTerm(
     val id: Long,
     val probability: Double,
     val term: Term,
-    val extraVariables: Set<Term> = emptySet()
+    val extraVariables: Set<Term> = emptySet(),
 ) : Term by Struct.of(ANNOTATION_FUNCTOR, Numeric.of(probability), term) {
-
     override fun freshCopy(): ProbTerm {
         val termCopy = term.freshCopy()
         return ProbTerm(id, probability, termCopy, extraVariables.map { it.freshCopy() }.toSet())
@@ -42,11 +41,17 @@ internal class ProbTerm(
         return ProbTerm(id, probability, termCopy, extraVariables.map { it.freshCopy(scope) }.toSet())
     }
 
-    override fun get(substitution: Substitution, vararg substitutions: Substitution): ProbTerm {
+    override fun get(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): ProbTerm {
         return this.apply(substitution, *substitutions)
     }
 
-    override fun apply(substitution: Substitution, vararg substitutions: Substitution): ProbTerm {
+    override fun apply(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): ProbTerm {
         return this.apply(Substitution.of(substitution, *substitutions))
     }
 
@@ -54,13 +59,14 @@ internal class ProbTerm(
         return if (substitution.isEmpty() || this.isGround) {
             this
         } else {
-            val newExtraVars = if (!extraVariables.any { it.isVar }) {
-                extraVariables
-            } else {
-                extraVariables
-                    .mapNotNull { substitution.applyTo(it) }
-                    .toSet()
-            }
+            val newExtraVars =
+                if (!extraVariables.any { it.isVar }) {
+                    extraVariables
+                } else {
+                    extraVariables
+                        .mapNotNull { substitution.applyTo(it) }
+                        .toSet()
+                }
             ProbTerm(id, probability, term.apply(substitution), newExtraVars)
         }
     }

@@ -15,7 +15,6 @@ import it.unibo.tuprolog.solve.streams.solver.replyWith
  * @author Enrico
  */
 internal object Not : PrimitiveWrapper<StreamsExecutionContext>("\\+", 1) {
-
     override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         sequence {
             val goalArgument = request.arguments.single()

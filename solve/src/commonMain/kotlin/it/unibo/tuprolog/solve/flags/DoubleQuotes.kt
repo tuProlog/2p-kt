@@ -6,7 +6,6 @@ import kotlin.jvm.JvmField
 
 @Suppress("MemberVisibilityCanBePrivate")
 object DoubleQuotes : NotableFlag {
-
     @JvmField
     val ATOM = Atom.of("atom")
 

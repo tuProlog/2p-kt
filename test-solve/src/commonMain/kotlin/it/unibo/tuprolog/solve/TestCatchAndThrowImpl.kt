@@ -16,11 +16,11 @@ internal class TestCatchAndThrowImpl(private val solverFactory: SolverFactory) :
                     query.halt(
                         SystemError.forUncaughtException(
                             DummyInstances.executionContext,
-                            atomOf("blabla")
-                        )
-                    )
+                            atomOf("blabla"),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -34,9 +34,9 @@ internal class TestCatchAndThrowImpl(private val solverFactory: SolverFactory) :
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
-                    query.no()
+                    query.no(),
                 ),
-                solutions
+                solutions,
             )
         }
     }

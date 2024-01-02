@@ -17,9 +17,8 @@ import kotlin.jvm.JvmOverloads
 open class ResolutionException(
     message: String? = null,
     cause: Throwable? = null,
-    @JsName("contexts") val contexts: Array<ExecutionContext>
+    @JsName("contexts") val contexts: Array<ExecutionContext>,
 ) : TuPrologException(message, cause) {
-
     init {
         require(contexts.isNotEmpty())
     }
@@ -28,7 +27,7 @@ open class ResolutionException(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
-        vararg otherContexts: ExecutionContext
+        vararg otherContexts: ExecutionContext,
     ) : this(message, cause, arrayOf(context, *otherContexts))
 
     constructor(cause: Throwable?, context: ExecutionContext) : this(cause?.toString(), cause, context)
@@ -40,14 +39,15 @@ open class ResolutionException(
     /** The exception stacktrace; shorthand for `context.prologStackTrace` */
     @JsName("logicStackTrace")
     val logicStackTrace: List<Struct>
-        get() = when (contexts.size) {
-            1 -> context.logicStackTrace
-            else ->
-                (
-                    sequenceOf(*contexts).take(contexts.size - 1).flatMap { it.fullStackTraceButLast } +
-                        contexts.last().fullStackTrace
+        get() =
+            when (contexts.size) {
+                1 -> context.logicStackTrace
+                else ->
+                    (
+                        sequenceOf(*contexts).take(contexts.size - 1).flatMap { it.fullStackTraceButLast } +
+                            contexts.last().fullStackTrace
                     ).toList()
-        }
+            }
 
     private val ExecutionContext.fullStackTrace: Sequence<Struct>
         get() = logicStackTrace.asSequence()
@@ -61,20 +61,22 @@ open class ResolutionException(
      */
     @JsName("updateContext")
     @JvmOverloads
-    open fun updateContext(newContext: ExecutionContext, index: Int = 0): ResolutionException =
-        ResolutionException(message, cause, contexts.setItem(index, newContext))
+    open fun updateContext(
+        newContext: ExecutionContext,
+        index: Int = 0,
+    ): ResolutionException = ResolutionException(message, cause, contexts.setItem(index, newContext))
 
     @JsName("updateLastContext")
-    open fun updateLastContext(newContext: ExecutionContext): ResolutionException =
-        updateContext(newContext, contexts.lastIndex)
+    open fun updateLastContext(newContext: ExecutionContext): ResolutionException = updateContext(newContext, contexts.lastIndex)
 
     @JsName("pushContext")
     open fun pushContext(newContext: ExecutionContext): ResolutionException =
         ResolutionException(message, cause, contexts.addLast(newContext))
 
-    protected fun Array<ExecutionContext>.setItem(index: Int, item: ExecutionContext): Array<ExecutionContext> =
-        copyOf().also { it[index] = item }
+    protected fun Array<ExecutionContext>.setItem(
+        index: Int,
+        item: ExecutionContext,
+    ): Array<ExecutionContext> = copyOf().also { it[index] = item }
 
-    protected fun Array<ExecutionContext>.addLast(item: ExecutionContext): Array<ExecutionContext> =
-        arrayOf(*this, item)
+    protected fun Array<ExecutionContext>.addLast(item: ExecutionContext): Array<ExecutionContext> = arrayOf(*this, item)
 }

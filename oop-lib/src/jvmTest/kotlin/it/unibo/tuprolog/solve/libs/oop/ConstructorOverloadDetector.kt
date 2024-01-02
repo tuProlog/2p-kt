@@ -5,7 +5,6 @@ import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
 
 class ConstructorOverloadDetector {
-
     val args: Pair<Any, KClass<*>>
 
     constructor(x: Any) {

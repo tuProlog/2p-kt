@@ -2,9 +2,8 @@ package it.unibo.tuprolog.utils.impl
 
 internal class MapperCursor<T, R>(
     private val wrapped: AbstractCursor<out T>,
-    private val mapper: (T) -> R
+    private val mapper: (T) -> R,
 ) : AbstractCursor<R>() {
-
     override val next: AbstractCursor<out R>
         get() = wrapped.next.map(mapper)
 
@@ -34,6 +33,5 @@ internal class MapperCursor<T, R>(
         return result
     }
 
-    override fun <X> map(mapper: (R) -> X): AbstractCursor<out X> =
-        ValueCursor(mapper(current), next.map(mapper))
+    override fun <X> map(mapper: (R) -> X): AbstractCursor<out X> = ValueCursor(mapper(current), next.map(mapper))
 }

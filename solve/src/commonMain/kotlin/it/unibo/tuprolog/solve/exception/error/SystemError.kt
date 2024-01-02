@@ -21,50 +21,56 @@ class SystemError constructor(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    extraData: Term? = null
+    extraData: Term? = null,
 ) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
-        extraData: Term? = null
+        extraData: Term? = null,
     ) : this(message, cause, arrayOf(context), extraData)
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): SystemError =
-        SystemError(message, cause, contexts.setItem(index, newContext), extraData)
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): SystemError = SystemError(message, cause, contexts.setItem(index, newContext), extraData)
 
-    override fun updateLastContext(newContext: ExecutionContext): SystemError =
-        updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): SystemError = updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): SystemError =
         SystemError(message, cause, contexts.addLast(newContext), extraData)
 
     companion object {
-
         /** The system error Struct functor */
+        @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "system_error"
 
         @JsName("forUncaughtKtException")
         @JvmStatic
-        fun forUncaughtException(context: ExecutionContext, exception: Throwable): SystemError =
+        fun forUncaughtException(
+            context: ExecutionContext,
+            exception: Throwable,
+        ): SystemError =
             message("Uncaught exception `${exception::class.simpleName}: ${exception.message}`") { m, extra ->
                 SystemError(
                     message = m,
                     context = context,
                     extraData = extra,
-                    cause = exception
+                    cause = exception,
                 )
             }
 
         @JsName("forUncaughtException")
         @JvmStatic
-        fun forUncaughtException(context: ExecutionContext, exception: Term): SystemError =
+        fun forUncaughtException(
+            context: ExecutionContext,
+            exception: Term,
+        ): SystemError =
             message("Uncaught exception `${exception.pretty()}`") { m, extra ->
                 SystemError(
                     message = m,
                     context = context,
-                    extraData = extra
+                    extraData = extra,
                 )
             }
 

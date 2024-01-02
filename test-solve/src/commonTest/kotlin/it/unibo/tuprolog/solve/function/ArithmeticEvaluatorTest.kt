@@ -13,7 +13,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class ArithmeticEvaluatorTest {
-
     private val arithmeticEvaluator = ArithmeticEvaluator(ArithmeticEvaluatorUtils.commonFunctionsRequest)
 
     @Test

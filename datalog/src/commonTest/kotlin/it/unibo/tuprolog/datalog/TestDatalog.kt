@@ -9,8 +9,10 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class TestDatalog {
-
-    private fun assertTheoryIsBroken(theory: Theory, error: DatalogViolationException) {
+    private fun assertTheoryIsBroken(
+        theory: Theory,
+        error: DatalogViolationException,
+    ) {
         assertFalse(theory.isDatalog)
         try {
             theory.ensureIsDatalog()
@@ -25,12 +27,13 @@ class TestDatalog {
         Instances.theoryWithCompoundTerms.let {
             val rule = it.rules.first()
             assertFalse(rule.hasNoCompound)
-            val error: DatalogViolationException? = try {
-                rule.ensureHasNoCompound()
-                null
-            } catch (e: DatalogViolationException) {
-                e
-            }
+            val error: DatalogViolationException? =
+                try {
+                    rule.ensureHasNoCompound()
+                    null
+                } catch (e: DatalogViolationException) {
+                    e
+                }
             assertTheoryIsBroken(it, error!!)
         }
     }
@@ -40,12 +43,13 @@ class TestDatalog {
         Instances.theoryWithFreeVariablesInTheHead.let {
             val rule = it.rules.first()
             assertFalse(rule.allHeadVariablesInNonNegatedLiterals)
-            val error: DatalogViolationException? = try {
-                rule.ensureAllHeadVariablesInNonNegatedLiterals()
-                null
-            } catch (e: DatalogViolationException) {
-                e
-            }
+            val error: DatalogViolationException? =
+                try {
+                    rule.ensureAllHeadVariablesInNonNegatedLiterals()
+                    null
+                } catch (e: DatalogViolationException) {
+                    e
+                }
             assertTheoryIsBroken(it, error!!)
         }
     }
@@ -55,12 +59,13 @@ class TestDatalog {
         Instances.theoryWithFreeVariablesInNegatedBodyLiterals.let {
             val rule = it.rules.first()
             assertFalse(rule.allNegatedLiteralsVariablesInNonNegatedLiteralsToo)
-            val error: DatalogViolationException? = try {
-                rule.ensureAllNegatedLiteralsVariablesInNonNegatedLiteralsToo()
-                null
-            } catch (e: DatalogViolationException) {
-                e
-            }
+            val error: DatalogViolationException? =
+                try {
+                    rule.ensureAllNegatedLiteralsVariablesInNonNegatedLiteralsToo()
+                    null
+                } catch (e: DatalogViolationException) {
+                    e
+                }
             assertTheoryIsBroken(it, error!!)
         }
     }
@@ -69,12 +74,13 @@ class TestDatalog {
     fun testRecursionDetection() {
         Instances.theoryWithRecursion.let {
             assertFalse(it.isNonRecursive)
-            val error: DatalogViolationException? = try {
-                it.ensureIsNonRecursive()
-                null
-            } catch (e: DatalogViolationException) {
-                e
-            }
+            val error: DatalogViolationException? =
+                try {
+                    it.ensureIsNonRecursive()
+                    null
+                } catch (e: DatalogViolationException) {
+                    e
+                }
             assertTheoryIsBroken(it, error!!)
         }
     }

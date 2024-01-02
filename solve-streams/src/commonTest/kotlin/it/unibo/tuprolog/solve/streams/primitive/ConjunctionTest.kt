@@ -26,7 +26,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class ConjunctionTest {
-
     @Test
     fun conjunctionOfTrueReturnsTrue() {
         val responses = Conjunction.implementation.solve(trueAndTrueSolveRequest)
@@ -59,30 +58,35 @@ internal class ConjunctionTest {
             val firstSubstitution = "L" to "first"
             val secondSubstitution = "R" to "second"
 
-            val leftPrimitive = PrimitiveWrapper.wrap<ExecutionContext>("left", 0) {
-                sequenceOf(it.replySuccess(firstSubstitution))
-            }
-            val rightPrimitive = PrimitiveWrapper.wrap<ExecutionContext>("right", 0) {
-                sequenceOf(it.replySuccess(secondSubstitution))
-            }
+            val leftPrimitive =
+                PrimitiveWrapper.wrap<ExecutionContext>("left", 0) {
+                    sequenceOf(it.replySuccess(firstSubstitution))
+                }
+            val rightPrimitive =
+                PrimitiveWrapper.wrap<ExecutionContext>("right", 0) {
+                    sequenceOf(it.replySuccess(secondSubstitution))
+                }
 
             val goal = "left" and "right"
-            val request = Solve.Request(
-                goal.extractSignature(),
-                goal.args,
-                StreamsExecutionContext(
-                    substitution = preRequestSubstitution,
-                    libraries = Runtime.of(
-                        Library.of(
-                            alias = "conjunction.test",
-                            primitives = mapOf(
-                                *ktListOf(Conjunction, leftPrimitive, rightPrimitive)
-                                    .map { it.descriptionPair }.toTypedArray()
-                            )
-                        )
-                    )
+            val request =
+                Solve.Request(
+                    goal.extractSignature(),
+                    goal.args,
+                    StreamsExecutionContext(
+                        substitution = preRequestSubstitution,
+                        libraries =
+                            Runtime.of(
+                                Library.of(
+                                    alias = "conjunction.test",
+                                    primitives =
+                                        mapOf(
+                                            *ktListOf(Conjunction, leftPrimitive, rightPrimitive)
+                                                .map { it.descriptionPair }.toTypedArray(),
+                                        ),
+                                ),
+                            ),
+                    ),
                 )
-            )
 
             val responses = Conjunction.implementation.solve(request)
 

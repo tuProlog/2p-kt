@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom {
-
     override fun testAtomAtom() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -13,7 +12,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -27,7 +26,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -41,7 +40,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -55,7 +54,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -69,7 +68,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -83,7 +82,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -97,7 +96,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }

@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 
 interface TestConcurrentRepeat<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testRepeat() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

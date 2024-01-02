@@ -11,9 +11,8 @@ import kotlinx.coroutines.channels.SendChannel
 data class ConcurrentResolutionHandle(
     val solveOptions: SolveOptions,
     val solutionChannel: SendChannel<Solution>,
-    val solutionCounter: AtomicInt = AtomicInt.zero()
+    val solutionCounter: AtomicInt = AtomicInt.zero(),
 ) {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     fun terminateResolution(resolutionScope: CoroutineScope) {
         if (!solutionChannel.isClosedForSend) {
@@ -26,7 +25,7 @@ data class ConcurrentResolutionHandle(
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun publishSolutionAndTerminateResolutionIfNeed(
         solution: Solution,
-        resolutionScope: CoroutineScope
+        resolutionScope: CoroutineScope,
     ): Boolean {
         if (solutionChannel.isClosedForSend) return false
         solutionChannel.send(solution)

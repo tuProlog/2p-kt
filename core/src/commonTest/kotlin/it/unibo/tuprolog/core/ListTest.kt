@@ -14,7 +14,6 @@ import it.unibo.tuprolog.core.List as LogicList
  * @author Enrico
  */
 internal class ListTest {
-
     private val emptyTerminatedInstances = ConsUtils.onlyConsEmptyListTerminated(Cons.Companion::of)
     private val pipedListInstances = ConsUtils.onlyConsPipeTerminated(Cons.Companion::of)
 

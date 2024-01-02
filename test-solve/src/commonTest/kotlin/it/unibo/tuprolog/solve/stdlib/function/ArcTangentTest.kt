@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class ArcTangentTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("atan", 1), ArcTangent.signature)
@@ -23,7 +22,7 @@ internal class ArcTangentTest {
     fun computationCorrect() {
         assertEquals(
             PI,
-            ArcTangent.computeOf(Integer.of(1)).castToReal().value.toDouble() * 4
+            ArcTangent.computeOf(Integer.of(1)).castToReal().value.toDouble() * 4,
         )
     }
 }

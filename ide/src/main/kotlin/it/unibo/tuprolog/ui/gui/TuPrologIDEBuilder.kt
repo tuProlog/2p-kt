@@ -27,14 +27,17 @@ data class TuPrologIDEBuilder(
     var onAbout: () -> Unit = { showAboutDialog(title, Info.VERSION) },
     var stylesheets: List<String> = listOf(JAVA_KEYWORDS_LIGHT, LIGHT_CODE_AREA),
     var customLibraries: List<Library> = emptyList(),
-    var customTabs: List<CustomTab> = emptyList()
+    var customTabs: List<CustomTab> = emptyList(),
 ) {
-
     companion object {
         private const val DEFAULT_ICON_SCALE_RATIO: Double = 0.3
 
         @JvmStatic
-        fun showConfirmationDialog(title: String, header: String, content: String): Boolean =
+        fun showConfirmationDialog(
+            title: String,
+            header: String,
+            content: String,
+        ): Boolean =
             Alert(Alert.AlertType.CONFIRMATION).also {
                 it.title = title
                 it.headerText = header
@@ -46,7 +49,7 @@ data class TuPrologIDEBuilder(
             showConfirmationDialog(
                 "Close $what",
                 "Confirmation",
-                "Do you really want close the $what?"
+                "Do you really want close the $what?",
             )
 
         @JvmStatic
@@ -55,22 +58,24 @@ data class TuPrologIDEBuilder(
             version: String = Info.VERSION,
             image: Image = TUPROLOG_LOGO,
             width: Double = TUPROLOG_LOGO.width * DEFAULT_ICON_SCALE_RATIO,
-            height: Double = TUPROLOG_LOGO.height * DEFAULT_ICON_SCALE_RATIO
-        ): Optional<ButtonType> = Alert(Alert.AlertType.INFORMATION).also {
-            it.title = "About"
-            it.headerText = "$what v$version"
-            it.dialogPane.graphic = ImageView(image).also { img ->
-                img.fitWidth = width
-                img.fitHeight = height
-            }
-            it.contentText =
-                """
+            height: Double = TUPROLOG_LOGO.height * DEFAULT_ICON_SCALE_RATIO,
+        ): Optional<ButtonType> =
+            Alert(Alert.AlertType.INFORMATION).also {
+                it.title = "About"
+                it.headerText = "$what v$version"
+                it.dialogPane.graphic =
+                    ImageView(image).also { img ->
+                        img.fitWidth = width
+                        img.fitHeight = height
+                    }
+                it.contentText =
+                    """
                 |Running on:
                 |  - 2P-Kt v${Info.VERSION}
                 |  - JVM v${System.getProperty("java.version")}
                 |  - JavaFX v${System.getProperty("javafx.runtime.version")}
-                """.trimMargin()
-        }.showAndWait()
+                    """.trimMargin()
+            }.showAndWait()
     }
 
     fun title(title: String) = apply { this.title = title }
@@ -85,24 +90,23 @@ data class TuPrologIDEBuilder(
 
     fun stylesheet(stylesheet: String) = apply { this.stylesheets += stylesheet }
 
-    fun customLibraries(customLibraries: Iterable<Library>) =
-        apply { this.customLibraries = customLibraries.toList() }
+    fun customLibraries(customLibraries: Iterable<Library>) = apply { this.customLibraries = customLibraries.toList() }
 
-    fun customLibrary(customLibrary: Library) =
-        apply { this.customLibraries += customLibrary }
+    fun customLibrary(customLibrary: Library) = apply { this.customLibraries += customLibrary }
 
-    fun customTabs(customTabs: Iterable<CustomTab>) =
-        apply { this.customTabs = customTabs.toList() }
+    fun customTabs(customTabs: Iterable<CustomTab>) = apply { this.customTabs = customTabs.toList() }
 
-    fun customTab(customTab: CustomTab) =
-        apply { this.customTabs += customTab }
+    fun customTab(customTab: CustomTab) = apply { this.customTabs += customTab }
 
-    fun customTab(tab: Tab, modelConfigurator: ModelConfigurator) =
-        customTab(CustomTab(tab, modelConfigurator))
+    fun customTab(
+        tab: Tab,
+        modelConfigurator: ModelConfigurator,
+    ) = customTab(CustomTab(tab, modelConfigurator))
 
-    fun customTab(tab: Tab) = customTab(tab) {
-        /* do nothing */
-    }
+    fun customTab(tab: Tab) =
+        customTab(tab) {
+            // do nothing
+        }
 
     fun show() {
         val loader = FXMLLoader(javaClass.getResource("TuPrologIDEView.fxml"))

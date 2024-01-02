@@ -4,13 +4,17 @@ package it.unibo.tuprolog.utils
 
 import kotlin.jvm.JvmName
 
-fun <T> merge(comparator: Comparator<T>, iterables: Iterable<Iterable<T>>): Sequence<T> {
+fun <T> merge(
+    comparator: Comparator<T>,
+    iterables: Iterable<Iterable<T>>,
+): Sequence<T> {
     return sequence {
         val pipeline = iterables.asSequence().map { it.cursor() }.filterNot { it.isOver }.toMutableList()
         while (pipeline.isNotEmpty()) {
-            val (minIndex, minValue) = pipeline.asSequence().map { it.current!! }.indexed().minWithOrNull(
-                Comparator { a, b -> comparator.compare(a.value, b.value) }
-            )!!
+            val (minIndex, minValue) =
+                pipeline.asSequence().map { it.current!! }.indexed().minWithOrNull(
+                    Comparator { a, b -> comparator.compare(a.value, b.value) },
+                )!!
             yield(minValue)
             pipeline[minIndex].next.let {
                 if (it.isOver) {
@@ -23,63 +27,96 @@ fun <T> merge(comparator: Comparator<T>, iterables: Iterable<Iterable<T>>): Sequ
     }
 }
 
-fun <T> merge(iterables: Iterable<Iterable<T>>, comparator: (T, T) -> Int): Sequence<T> {
+fun <T> merge(
+    iterables: Iterable<Iterable<T>>,
+    comparator: (T, T) -> Int,
+): Sequence<T> {
     return merge(Comparator(comparator), iterables)
 }
 
-fun <T> merge(vararg iterables: Iterable<T>, comparator: (T, T) -> Int): Sequence<T> {
+fun <T> merge(
+    vararg iterables: Iterable<T>,
+    comparator: (T, T) -> Int,
+): Sequence<T> {
     return merge(Comparator(comparator), *iterables)
 }
 
-fun <T> merge(comparator: Comparator<T>, vararg iterables: Iterable<T>): Sequence<T> {
+fun <T> merge(
+    comparator: Comparator<T>,
+    vararg iterables: Iterable<T>,
+): Sequence<T> {
     return merge(comparator, listOf(*iterables))
 }
 
-fun <T> merge(iterables: Sequence<Iterable<T>>, comparator: (T, T) -> Int): Sequence<T> {
+fun <T> merge(
+    iterables: Sequence<Iterable<T>>,
+    comparator: (T, T) -> Int,
+): Sequence<T> {
     return merge(Comparator(comparator), iterables)
 }
 
-fun <T> merge(comparator: Comparator<T>, iterables: Sequence<Iterable<T>>): Sequence<T> {
+fun <T> merge(
+    comparator: Comparator<T>,
+    iterables: Sequence<Iterable<T>>,
+): Sequence<T> {
     return merge(comparator, iterables.asIterable())
 }
 
-fun <T> mergeSequences(iterables: Iterable<Sequence<T>>, comparator: (T, T) -> Int): Sequence<T> {
+fun <T> mergeSequences(
+    iterables: Iterable<Sequence<T>>,
+    comparator: (T, T) -> Int,
+): Sequence<T> {
     return merge(Comparator(comparator), iterables.map { it.asIterable() })
 }
 
-fun <T> mergeSequences(comparator: Comparator<T>, iterables: Iterable<Sequence<T>>): Sequence<T> {
+fun <T> mergeSequences(
+    comparator: Comparator<T>,
+    iterables: Iterable<Sequence<T>>,
+): Sequence<T> {
     return merge(comparator, iterables.map { it.asIterable() })
 }
 
-fun <T> mergeSequences(iterables: Sequence<Sequence<T>>, comparator: (T, T) -> Int): Sequence<T> {
+fun <T> mergeSequences(
+    iterables: Sequence<Sequence<T>>,
+    comparator: (T, T) -> Int,
+): Sequence<T> {
     return merge(Comparator(comparator), iterables.map { it.asIterable() }.asIterable())
 }
 
-fun <T> mergeSequences(comparator: Comparator<T>, iterables: Sequence<Sequence<T>>): Sequence<T> {
+fun <T> mergeSequences(
+    comparator: Comparator<T>,
+    iterables: Sequence<Sequence<T>>,
+): Sequence<T> {
     return merge(comparator, iterables.map { it.asIterable() }.asIterable())
 }
 
-fun <T> mergeSequences(vararg iterables: Sequence<T>, comparator: (T, T) -> Int): Sequence<T> {
+fun <T> mergeSequences(
+    vararg iterables: Sequence<T>,
+    comparator: (T, T) -> Int,
+): Sequence<T> {
     return merge(Comparator(comparator), iterables.map { it.asIterable() })
 }
 
-fun <T> mergeSequences(comparator: Comparator<T>, vararg iterables: Sequence<T>): Sequence<T> {
+fun <T> mergeSequences(
+    comparator: Comparator<T>,
+    vararg iterables: Sequence<T>,
+): Sequence<T> {
     return merge(comparator, iterables.map { it.asIterable() })
 }
 
-fun <T, U, R> Sequence<T>.product(other: Sequence<U>, combinator: (T, U) -> R): Sequence<R> =
+fun <T, U, R> Sequence<T>.product(
+    other: Sequence<U>,
+    combinator: (T, U) -> R,
+): Sequence<R> =
     flatMap { x ->
         other.map { y -> combinator(x, y) }
     }
 
-fun <T, U> Sequence<T>.product(other: Sequence<U>): Sequence<Pair<T, U>> =
-    product(other, ::Pair)
+fun <T, U> Sequence<T>.product(other: Sequence<U>): Sequence<Pair<T, U>> = product(other, ::Pair)
 
-fun <T, R> Sequence<T>.squared(combinator: (T, T) -> R): Sequence<R> =
-    product(this, combinator)
+fun <T, R> Sequence<T>.squared(combinator: (T, T) -> R): Sequence<R> = product(this, combinator)
 
-fun <T> Sequence<T>.squared(): Sequence<Pair<T, T>> =
-    product(this)
+fun <T> Sequence<T>.squared(): Sequence<Pair<T, T>> = product(this)
 
 fun <T> Sequence<T>.longIndexed(): Sequence<LongIndexed<T>> =
     zip(LongRange(0, Long.MAX_VALUE).asSequence()) { it, i ->
@@ -93,10 +130,11 @@ fun <T> Sequence<T>.indexed(): Sequence<IntIndexed<T>> =
 
 fun <T> interleave(iterables: Iterable<Iterable<T>>): Sequence<T> =
     sequence {
-        val pipeline = iterables.asSequence()
-            .map { it.iterator() }
-            .filter { it.hasNext() }
-            .toList()
+        val pipeline =
+            iterables.asSequence()
+                .map { it.iterator() }
+                .filter { it.hasNext() }
+                .toList()
         var nNonEmpty = pipeline.size
         while (nNonEmpty > 0) {
             nNonEmpty = 0
@@ -109,20 +147,16 @@ fun <T> interleave(iterables: Iterable<Iterable<T>>): Sequence<T> =
         }
     }
 
-fun <T> interleave(vararg iterables: Iterable<T>): Sequence<T> =
-    interleave(iterables.asIterable())
+fun <T> interleave(vararg iterables: Iterable<T>): Sequence<T> = interleave(iterables.asIterable())
 
-fun <T> interleave(iterables: Sequence<Iterable<T>>): Sequence<T> =
-    interleave(iterables.asIterable())
+fun <T> interleave(iterables: Sequence<Iterable<T>>): Sequence<T> = interleave(iterables.asIterable())
 
 fun <T> interleaveSequences(vararg iterables: Sequence<T>): Sequence<T> =
     interleave(sequenceOf(*iterables).map { it.asIterable() }.asIterable())
 
-fun <T> interleaveSequences(iterables: Sequence<Sequence<T>>): Sequence<T> =
-    interleave(iterables.map { it.asIterable() }.asIterable())
+fun <T> interleaveSequences(iterables: Sequence<Sequence<T>>): Sequence<T> = interleave(iterables.map { it.asIterable() }.asIterable())
 
-fun <T> interleaveSequences(iterables: Iterable<Sequence<T>>): Sequence<T> =
-    interleave(iterables.map { it.asIterable() })
+fun <T> interleaveSequences(iterables: Iterable<Sequence<T>>): Sequence<T> = interleave(iterables.map { it.asIterable() })
 
 fun <T> Sequence<T>.subsequences(): Sequence<Sequence<T>> {
     return sequence {
@@ -140,7 +174,11 @@ fun <T> Sequence<T>.subsequences(): Sequence<Sequence<T>> {
     }
 }
 
-fun <T> itemWiseEquals(iterable1: Iterable<T>, iterable2: Iterable<T>, comparator: (T, T) -> Boolean): Boolean {
+fun <T> itemWiseEquals(
+    iterable1: Iterable<T>,
+    iterable2: Iterable<T>,
+    comparator: (T, T) -> Boolean,
+): Boolean {
     val i = iterable1.iterator()
     val j = iterable2.iterator()
     while (i.hasNext() && j.hasNext()) {
@@ -153,16 +191,26 @@ fun <T> itemWiseEquals(iterable1: Iterable<T>, iterable2: Iterable<T>, comparato
     return i.hasNext() == j.hasNext()
 }
 
-fun <T> itemWiseEquals(iterable1: Iterable<T>, iterable2: Iterable<T>): Boolean =
+fun <T> itemWiseEquals(
+    iterable1: Iterable<T>,
+    iterable2: Iterable<T>,
+): Boolean =
     itemWiseEquals(iterable1, iterable2) { a, b ->
         a == b
     }
 
-fun <T> itemWiseEquals(sequence1: Sequence<T>, sequence2: Sequence<T>, comparator: (T, T) -> Boolean): Boolean {
+fun <T> itemWiseEquals(
+    sequence1: Sequence<T>,
+    sequence2: Sequence<T>,
+    comparator: (T, T) -> Boolean,
+): Boolean {
     return itemWiseEquals(sequence1.asIterable(), sequence2.asIterable(), comparator)
 }
 
-fun <T> itemWiseEquals(sequence1: Sequence<T>, sequence2: Sequence<T>): Boolean {
+fun <T> itemWiseEquals(
+    sequence1: Sequence<T>,
+    sequence2: Sequence<T>,
+): Boolean {
     return itemWiseEquals(sequence1.asIterable(), sequence2.asIterable())
 }
 
@@ -215,14 +263,11 @@ fun <T> Sequence<T>.skipIndex(index: Int): Sequence<T> {
     }
 }
 
-fun <T> permutations(vararg items: T): Sequence<List<T>> =
-    items.toList().permutations()
+fun <T> permutations(vararg items: T): Sequence<List<T>> = items.toList().permutations()
 
-fun <T> Iterable<T>.permutations(): Sequence<List<T>> =
-    toList().permutations()
+fun <T> Iterable<T>.permutations(): Sequence<List<T>> = toList().permutations()
 
-fun <T> Sequence<T>.permutations(): Sequence<List<T>> =
-    toList().permutations()
+fun <T> Sequence<T>.permutations(): Sequence<List<T>> = toList().permutations()
 
 fun <T> List<T>.permutations(): Sequence<List<T>> =
     when (size) {
@@ -239,22 +284,28 @@ fun <T> List<T>.permutations(): Sequence<List<T>> =
         }
     }
 
-fun <T> Sequence<T>.insertAt(index: Int, item: T, vararg items: T): Sequence<T> = sequence {
-    for ((i, x) in withIndex().asIterable()) {
-        if (i == index) {
-            yield(item)
-            yieldAll(items.asIterable())
+fun <T> Sequence<T>.insertAt(
+    index: Int,
+    item: T,
+    vararg items: T,
+): Sequence<T> =
+    sequence {
+        for ((i, x) in withIndex().asIterable()) {
+            if (i == index) {
+                yield(item)
+                yieldAll(items.asIterable())
+            }
+            yield(x)
         }
-        yield(x)
     }
-}
 
-fun <T> Sequence<T>.dropLast(): Sequence<T> = sequence {
-    val i = iterator()
-    while (i.hasNext()) {
-        val current = i.next()
-        if (i.hasNext()) {
-            yield(current)
+fun <T> Sequence<T>.dropLast(): Sequence<T> =
+    sequence {
+        val i = iterator()
+        while (i.hasNext()) {
+            val current = i.next()
+            if (i.hasNext()) {
+                yield(current)
+            }
         }
     }
-}

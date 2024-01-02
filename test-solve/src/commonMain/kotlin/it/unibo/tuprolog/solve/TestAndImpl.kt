@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.Unknown
 
 internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
-
     override fun testTermIsFreeVariable() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -16,7 +15,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -30,7 +29,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
 
             assertSolutionEquals(
                 ktListOf(query.yes("X" to 1)),
-                solutions
+                solutions,
             )
         }
     }
@@ -44,16 +43,17 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testNoFooIsCallable() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                flags = FlagStore.of(Unknown to Unknown.ERROR)
-            )
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    flags = FlagStore.of(Unknown to Unknown.ERROR),
+                )
 
             val query = "nofoo"("X") and call("X")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -63,11 +63,11 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
                     query.halt(
                         ExistenceError.forProcedure(
                             DummyInstances.executionContext,
-                            Signature("nofoo", 1)
-                        )
-                    )
+                            Signature("nofoo", 1),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -81,7 +81,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
 
             assertSolutionEquals(
                 ktListOf(query.yes("X" to true)),
-                solutions
+                solutions,
             )
         }
     }

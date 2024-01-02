@@ -16,7 +16,6 @@ import kotlin.test.fail
  * @author Enrico
  */
 internal class IsTest {
-
     @Test
     fun computesCorrectly() {
         isQueryToResult.forEach { (input, expectedResult) ->

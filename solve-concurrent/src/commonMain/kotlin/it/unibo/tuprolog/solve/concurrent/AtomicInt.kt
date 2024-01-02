@@ -20,7 +20,6 @@ interface AtomicInt {
     fun decAndGet(delta: Int = 1): Int
 
     companion object {
-
         @JsName("zero")
         @JvmStatic
         fun zero(): AtomicInt = atomicInt(0)

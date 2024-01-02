@@ -8,7 +8,7 @@ internal class JsTheoryDeobjectifier : TheoryDeobjectifier {
         return Theory.of(
             TermDeobjectifier.default.deobjectifyMany(`object`)
                 .asSequence()
-                .map { it as Clause }
+                .map { it as Clause },
         )
     }
 

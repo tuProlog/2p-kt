@@ -25,7 +25,6 @@ import kotlin.test.fail
  * @author Enrico
  */
 internal class StateMachineExecutorTest {
-
     @Test
     fun executeOfOneShotStateWorksAsExpected() {
         val stateSequence = StateMachineExecutor.execute(oneShotState)
@@ -103,16 +102,18 @@ internal class StateMachineExecutorTest {
         assertEquals(correctlyExecuted.flatten().count(), toBeTested.flatten().count())
         assertEquals(
             correctlyExecuted.flatten().map { it.toString() },
-            toBeTested.flatten().map { it.wrappedState.toString() }
+            toBeTested.flatten().map { it.wrappedState.toString() },
         )
     }
 
     @Test
     fun executeWrappingCanBeUsedTransparentlyInternallyBeforeExternalExecuteCall() {
-        val mixedBehavedAndNonBehavedStates = object : State by endState {
-            override val hasBehaved: Boolean = false
-            override fun behave(): Sequence<State> = StateMachineExecutor.executeWrapping(threeShotState)
-        }
+        val mixedBehavedAndNonBehavedStates =
+            object : State by endState {
+                override val hasBehaved: Boolean = false
+
+                override fun behave(): Sequence<State> = StateMachineExecutor.executeWrapping(threeShotState)
+            }
 
         val stateSequence = StateMachineExecutor.execute(mixedBehavedAndNonBehavedStates)
         assertEquals(4, stateSequence.count())

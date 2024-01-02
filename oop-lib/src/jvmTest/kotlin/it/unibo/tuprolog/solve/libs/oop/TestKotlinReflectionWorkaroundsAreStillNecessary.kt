@@ -9,7 +9,6 @@ import kotlin.test.fail
 
 @Ignore
 class TestKotlinReflectionWorkaroundsAreStillNecessary {
-
     private inline fun <reified T : Throwable> assertExceptionIsThrown(action: () -> Unit) {
         try {
             action()
@@ -25,9 +24,10 @@ class TestKotlinReflectionWorkaroundsAreStillNecessary {
     }
 
     private val KClass<*>.instanceMembersWithNoArg
-        get() = members.asSequence()
-            .filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }
-            .filterNot { it.name in setOf("hashCode", "toString") }
+        get() =
+            members.asSequence()
+                .filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }
+                .filterNot { it.name in setOf("hashCode", "toString") }
 
     @Test
     fun testIntInstanceMethods() {

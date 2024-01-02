@@ -58,14 +58,15 @@ object Terms {
     fun escapeChar(
         char: Char,
         singleQuotes: Boolean = true,
-        doubleQuotes: Boolean = !singleQuotes
-    ): String = when (char) {
-        '\n' -> "\\n"
-        '\t' -> "\\t"
-        '\r' -> "\\r"
-        '\\' -> "\\\\"
-        '\'' -> if (singleQuotes) "\\'" else "'"
-        '\"' -> if (doubleQuotes) "\\\"" else "\""
-        else -> "$char"
-    }
+        doubleQuotes: Boolean = !singleQuotes,
+    ): String =
+        when (char) {
+            '\n' -> "\\n"
+            '\t' -> "\\t"
+            '\r' -> "\\r"
+            '\\' -> "\\\\"
+            '\'' -> if (singleQuotes) "\\'" else "'"
+            '\"' -> if (doubleQuotes) "\\\"" else "\""
+            else -> "$char"
+        }
 }

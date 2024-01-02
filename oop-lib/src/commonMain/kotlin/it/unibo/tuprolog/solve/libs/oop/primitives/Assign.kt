@@ -9,26 +9,27 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 
 object Assign : TernaryRelation.Predicative<ExecutionContext>("assign") {
-
     override fun Solve.Request<ExecutionContext>.compute(
         first: Term,
         second: Term,
-        third: Term
+        third: Term,
     ): Boolean {
         ensuringArgumentIsAtom(0)
         ensuringArgumentIsAtom(1)
 
         return catchingOopExceptions {
-            val ref = when (first) {
-                is Ref -> first
-                else -> findRefFromAlias(first as Atom)
-            }
+            val ref =
+                when (first) {
+                    is Ref -> first
+                    else -> findRefFromAlias(first as Atom)
+                }
 
-            val value = if (match(third, DEALIASING_TEMPLATE)) {
-                findRefFromAlias(third as Struct)
-            } else {
-                third
-            }
+            val value =
+                if (match(third, DEALIASING_TEMPLATE)) {
+                    findRefFromAlias(third as Struct)
+                } else {
+                    third
+                }
 
             ref.assign(termToObjectConverter, (second as Atom).value, value)
         }

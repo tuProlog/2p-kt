@@ -11,6 +11,6 @@ object Open4 : QuaternaryRelation.NonBacktrackable<ExecutionContext>("open") {
         first: Term,
         second: Term,
         third: Term,
-        fourth: Term
+        fourth: Term,
     ): Solve.Response = open(third)
 }

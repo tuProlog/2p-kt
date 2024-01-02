@@ -36,8 +36,10 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Var as VarPrimitive
  * [NonVar]
  */
 internal class TypeTestingPrimitivesTest {
-
-    private fun assertTypeTestingWorks(primitive: UnaryPredicate<*>, cases: Map<Solve.Request<*>, Any>) {
+    private fun assertTypeTestingWorks(
+        primitive: UnaryPredicate<*>,
+        cases: Map<Solve.Request<*>, Any>,
+    ) {
         cases.forEach { (request, result) ->
             assertCorrectResponse(primitive, request, result)
         }

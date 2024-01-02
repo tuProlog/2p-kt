@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentFloat<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testFloatDec() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

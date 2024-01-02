@@ -14,10 +14,11 @@ internal actual fun currentPlatform(): Platform =
     }
 
 internal actual fun currentOs(): Os {
-    val name = when (currentPlatform()) {
-        Platform.NODE -> js("require('os').platform()") as String?
-        Platform.BROWSER -> window.navigator.platform
-        else -> null
-    }
+    val name =
+        when (currentPlatform()) {
+            Platform.NODE -> js("require('os').platform()") as String?
+            Platform.BROWSER -> window.navigator.platform
+            else -> null
+        }
     return name?.let(Os.Companion::detect) ?: error("Cannot determine current OS: $name")
 }

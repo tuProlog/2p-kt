@@ -19,7 +19,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class AbstractTimedStateTest {
-
     private val behaviourResponse = emptySequence<Nothing>()
 
     /** Creates an [AbstractTimedState] instance with provided parameters, and emptySequence returning behaviour */
@@ -29,13 +28,15 @@ internal class AbstractTimedStateTest {
         }
 
     /** Creates a test solve request with given timing fields, or defaults if not provided */
-    private fun createTimedRequest(requestIssuingInstant: TimeInstant? = null, maxDuration: TimeDuration? = null) =
-        with(createSolveRequest(Truth.TRUE)) {
-            copy(
-                startTime = requestIssuingInstant ?: this.startTime,
-                maxDuration = maxDuration ?: this.maxDuration
-            )
-        }
+    private fun createTimedRequest(
+        requestIssuingInstant: TimeInstant? = null,
+        maxDuration: TimeDuration? = null,
+    ) = with(createSolveRequest(Truth.TRUE)) {
+        copy(
+            startTime = requestIssuingInstant ?: this.startTime,
+            maxDuration = maxDuration ?: this.maxDuration,
+        )
+    }
 
     @Test
     fun behaveWorksAsUsualIfLongMaxValueTimeoutSpecified() {

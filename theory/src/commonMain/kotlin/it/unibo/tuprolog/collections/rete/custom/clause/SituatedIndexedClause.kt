@@ -5,12 +5,14 @@ import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.core.Clause
 
 internal interface SituatedIndexedClause : IndexedClause {
-
     /**Effectfully removes this [Clause] from whatever it is situated*/
     fun removeFromIndex()
 
     companion object {
-        fun of(indexed: IndexedClause, index: Retractable): SituatedIndexedClause {
+        fun of(
+            indexed: IndexedClause,
+            index: Retractable,
+        ): SituatedIndexedClause {
             return object : SituatedIndexedClause {
                 override val index: Long
                     get() = indexed.index
@@ -18,8 +20,7 @@ internal interface SituatedIndexedClause : IndexedClause {
                 override val value: Clause
                     get() = indexed.value
 
-                override fun <R> map(mapper: (Clause) -> R) =
-                    indexed.map(mapper)
+                override fun <R> map(mapper: (Clause) -> R) = indexed.map(mapper)
 
                 override fun removeFromIndex() {
                     index.retractIndexed(this)

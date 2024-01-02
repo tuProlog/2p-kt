@@ -14,8 +14,8 @@ import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.ClausesReader
 
+@Suppress("ktlint:standard:property-naming")
 object ConcurrentSolverPerformance {
-
     const val nQueens = 8
     val theoryNQueens = loadTheoryFromFile("nQueens.pl")
     val queryNQueens = Struct.of("queenCountSolution", Integer.of(nQueens), Var.of("Count"))
@@ -32,13 +32,19 @@ object ConcurrentSolverPerformance {
         return end - start
     }
 
-    fun runConcurrent(theory: Theory, query: Struct) {
+    fun runConcurrent(
+        theory: Theory,
+        query: Struct,
+    ) {
         val solver = ConcurrentSolverFactory.solverWithDefaultBuiltins(staticKb = theory)
         val executionTime = computeTime { solver.solveOnce(query) }
         println("Concurrent Execution time: ${executionTime}ms")
     }
 
-    fun runClassic(theory: Theory, query: Struct) {
+    fun runClassic(
+        theory: Theory,
+        query: Struct,
+    ) {
         val solver = ClassicSolverFactory.solverWithDefaultBuiltins(staticKb = theory)
         val executionTime = computeTime { solver.solveOnce(query) }
         println("Classic Execution time: ${executionTime}ms")

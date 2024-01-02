@@ -53,7 +53,6 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.collections.List as KtList
 
 object IOPrimitiveUtils {
-
     private val INPUT_STREAM_TERM_PATTERN by lazy { InputChannel.streamTerm() }
     private val OUTPUT_STREAM_TERM_PATTERN by lazy { OutputChannel.streamTerm() }
     private val PROPERTY_TYPE_PATTERN by lazy { Struct.of("type", Var.anonymous()) }
@@ -73,64 +72,63 @@ object IOPrimitiveUtils {
     private val INFO_SINGLETONS_PATTERN by lazy { singletons() }
 
     private val validPropertiesPattern: Sequence<Term>
-        get() = sequenceOf(
-            PROPERTY_INPUT,
-            PROPERTY_OUTPUT,
-            PROPERTY_ALIAS_PATTERN,
-            PROPERTY_TYPE_PATTERN,
-            PROPERTY_EOF_ACTION_PATTERN,
-            PROPERTY_REPOSITION_PATTERN
-        )
+        get() =
+            sequenceOf(
+                PROPERTY_INPUT,
+                PROPERTY_OUTPUT,
+                PROPERTY_ALIAS_PATTERN,
+                PROPERTY_TYPE_PATTERN,
+                PROPERTY_EOF_ACTION_PATTERN,
+                PROPERTY_REPOSITION_PATTERN,
+            )
 
     private val validOptionsPattern: Sequence<Term>
-        get() = sequenceOf(this::quoted, this::ignoreOps, this::numberVars)
-            .flatMap { sequenceOf(true, false).map(it) }
+        get() =
+            sequenceOf(this::quoted, this::ignoreOps, this::numberVars)
+                .flatMap { sequenceOf(true, false).map(it) }
 
     private val validInfoPattern: Sequence<Term>
-        get() = sequenceOf(
-            INFO_VARIABLES_PATTERN,
-            INFO_VARIABLE_NAMES_PATTERN,
-            INFO_SINGLETONS_PATTERN
-        )
+        get() =
+            sequenceOf(
+                INFO_VARIABLES_PATTERN,
+                INFO_VARIABLE_NAMES_PATTERN,
+                INFO_SINGLETONS_PATTERN,
+            )
 
     private val supportedPropertiesPattern: Sequence<Term>
-        get() = sequenceOf(
-            PROPERTY_INPUT,
-            PROPERTY_OUTPUT,
-            PROPERTY_ALIAS_PATTERN,
-            PROPERTY_TYPE_TEXT,
-            PROPERTY_EOF_ACTION_EOF_CODE,
-            PROPERTY_REPOSITION_FALSE
-        )
+        get() =
+            sequenceOf(
+                PROPERTY_INPUT,
+                PROPERTY_OUTPUT,
+                PROPERTY_ALIAS_PATTERN,
+                PROPERTY_TYPE_TEXT,
+                PROPERTY_EOF_ACTION_EOF_CODE,
+                PROPERTY_REPOSITION_FALSE,
+            )
 
-    private fun alias(alias: String? = null) =
-        Struct.of("alias", alias?.let { Atom.of(it) } ?: Var.anonymous())
+    private fun alias(alias: String? = null) = Struct.of("alias", alias?.let { Atom.of(it) } ?: Var.anonymous())
 
-    private fun quoted(value: Boolean? = null) =
-        Struct.of("quoted", value?.let { Truth.of(it) } ?: Var.anonymous())
+    private fun quoted(value: Boolean? = null) = Struct.of("quoted", value?.let { Truth.of(it) } ?: Var.anonymous())
 
-    private fun ignoreOps(value: Boolean? = null) =
-        Struct.of("ignore_ops", value?.let { Truth.of(it) } ?: Var.anonymous())
+    private fun ignoreOps(value: Boolean? = null) = Struct.of("ignore_ops", value?.let { Truth.of(it) } ?: Var.anonymous())
 
-    private fun numberVars(value: Boolean? = null) =
-        Struct.of("numbervars", value?.let { Truth.of(it) } ?: Var.anonymous())
+    private fun numberVars(value: Boolean? = null) = Struct.of("numbervars", value?.let { Truth.of(it) } ?: Var.anonymous())
 
-    private fun variables(variables: KtList<Var>? = null) =
-        Struct.of("variables", variables?.let { List.of(it) } ?: Var.anonymous())
+    private fun variables(variables: KtList<Var>? = null) = Struct.of("variables", variables?.let { List.of(it) } ?: Var.anonymous())
 
-    private fun vn(functor: String, vNames: KtList<Pair<Atom, Var>>? = null) =
-        Struct.of(
-            functor,
-            vNames?.map { (a, v) -> Struct.of("=", a, v) }
-                ?.let { List.of(it) }
-                ?: Var.anonymous()
-        )
+    private fun vn(
+        functor: String,
+        vNames: KtList<Pair<Atom, Var>>? = null,
+    ) = Struct.of(
+        functor,
+        vNames?.map { (a, v) -> Struct.of("=", a, v) }
+            ?.let { List.of(it) }
+            ?: Var.anonymous(),
+    )
 
-    private fun variableNames(vNames: KtList<Pair<Atom, Var>>? = null) =
-        vn("variable_names", vNames)
+    private fun variableNames(vNames: KtList<Pair<Atom, Var>>? = null) = vn("variable_names", vNames)
 
-    private fun singletons(vNames: KtList<Pair<Atom, Var>>? = null) =
-        vn("singletons", vNames)
+    private fun singletons(vNames: KtList<Pair<Atom, Var>>? = null) = vn("singletons", vNames)
 
     @Suppress("UNCHECKED_CAST")
     fun <C : ExecutionContext, T : Any> Solve.Request<C>.propertiesOf(channel: Channel<T>): Sequence<Struct> =
@@ -142,7 +140,7 @@ object IOPrimitiveUtils {
                         context.inputChannels
                             .aliasesOf(channel as InputChannel<String>)
                             .filterNot { it == ChannelStore.CURRENT }
-                            .map(::alias)
+                            .map(::alias),
                     )
                 }
                 is OutputChannel<*> -> {
@@ -151,7 +149,7 @@ object IOPrimitiveUtils {
                         context.outputChannels
                             .aliasesOf(channel as OutputChannel<String>)
                             .filterNot { it == ChannelStore.CURRENT }
-                            .map(::alias)
+                            .map(::alias),
                     )
                 }
             }
@@ -220,7 +218,10 @@ object IOPrimitiveUtils {
             }
         }
 
-    private fun KtList<Term>.getOption(unificator: Unificator, pattern: Term): Boolean =
+    private fun KtList<Term>.getOption(
+        unificator: Unificator,
+        pattern: Term,
+    ): Boolean =
         asSequence()
             .filterIsInstance<Struct>()
             .filter { unificator.match(it, pattern) }
@@ -229,7 +230,11 @@ object IOPrimitiveUtils {
             .map { it.isTrue }
             .firstOrNull() ?: false
 
-    private fun KtList<Term>.getInfo(unificator: Unificator, pattern: Term, value: Term): Substitution =
+    private fun KtList<Term>.getInfo(
+        unificator: Unificator,
+        pattern: Term,
+        value: Term,
+    ): Substitution =
         asSequence().filterIsInstance<Struct>()
             .firstOrNull { unificator.match(it, pattern) }
             ?.let { unificator.mgu(it, value) }
@@ -239,16 +244,18 @@ object IOPrimitiveUtils {
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsFormatter(index: Int): TermFormatter {
         ensuringArgumentIsValidOptionList(index)
         val optionList = (arguments[index] as List).toList()
-        val funcFormat = if (optionList.getOption(context.unificator, OPTION_QUOTED_PATTERN)) {
-            QUOTED_IF_NECESSARY
-        } else {
-            LITERAL
-        }
-        val opFormat = if (optionList.getOption(context.unificator, OPTION_IGNORE_OPS_PATTERN)) {
-            IGNORE_OPERATORS
-        } else {
-            EXPRESSIONS
-        }
+        val funcFormat =
+            if (optionList.getOption(context.unificator, OPTION_QUOTED_PATTERN)) {
+                QUOTED_IF_NECESSARY
+            } else {
+                LITERAL
+            }
+        val opFormat =
+            if (optionList.getOption(context.unificator, OPTION_IGNORE_OPS_PATTERN)) {
+                IGNORE_OPERATORS
+            } else {
+                EXPRESSIONS
+            }
         val numberVars = optionList.getOption(context.unificator, OPTION_NUMBER_VARS_PATTERN)
         return TermFormatter.of(UNDERSCORE, opFormat, funcFormat, numberVars, context.operators)
     }
@@ -296,18 +303,19 @@ object IOPrimitiveUtils {
         val term = arguments[index]
         when (term) {
             is Var -> return null
-            is Struct -> when {
-                match(term, OUTPUT_STREAM_TERM_PATTERN) -> {
-                    return context.outputChannels.findByTerm(term)
-                        .firstOrNull()
-                        ?: throw ExistenceError.forStream(context, term)
+            is Struct ->
+                when {
+                    match(term, OUTPUT_STREAM_TERM_PATTERN) -> {
+                        return context.outputChannels.findByTerm(term)
+                            .firstOrNull()
+                            ?: throw ExistenceError.forStream(context, term)
+                    }
+                    match(term, INPUT_STREAM_TERM_PATTERN) -> {
+                        return context.inputChannels.findByTerm(term)
+                            .firstOrNull()
+                            ?: throw ExistenceError.forStream(context, term)
+                    }
                 }
-                match(term, INPUT_STREAM_TERM_PATTERN) -> {
-                    return context.inputChannels.findByTerm(term)
-                        .firstOrNull()
-                        ?: throw ExistenceError.forStream(context, term)
-                }
-            }
         }
         throw DomainError.forArgument(context, signature, STREAM_OR_ALIAS, term, index)
     }
@@ -315,11 +323,12 @@ object IOPrimitiveUtils {
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVarOrChar(index: Int): Solve.Request<C> {
         return when (val arg = arguments[index]) {
             is Var -> this
-            is Atom -> when {
-                arg.value == "end_of_file" -> this
-                arg.value.length == 1 -> this
-                else -> throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
-            }
+            is Atom ->
+                when {
+                    arg.value == "end_of_file" -> this
+                    arg.value.length == 1 -> this
+                    else -> throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
+                }
             else -> throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
         }
     }
@@ -377,7 +386,7 @@ object IOPrimitiveUtils {
     fun Solve.Request<ExecutionContext>.writeTermAndReply(
         channel: OutputChannel<String>,
         term: Term,
-        formatter: TermFormatter
+        formatter: TermFormatter,
     ): Solve.Response {
         return try {
             channel.write(term.format(formatter))
@@ -389,7 +398,7 @@ object IOPrimitiveUtils {
 
     fun Solve.Request<ExecutionContext>.writeCodeAndReply(
         channel: OutputChannel<String>,
-        arg: Integer
+        arg: Integer,
     ): Solve.Response {
         return try {
             channel.write("${arg.intValue.toChar()}")
@@ -399,7 +408,10 @@ object IOPrimitiveUtils {
         }
     }
 
-    fun Solve.Request<ExecutionContext>.writeCharAndReply(channel: OutputChannel<String>, arg: Atom): Solve.Response {
+    fun Solve.Request<ExecutionContext>.writeCharAndReply(
+        channel: OutputChannel<String>,
+        arg: Atom,
+    ): Solve.Response {
         return try {
             channel.write(arg.value)
             replySuccess()
@@ -408,7 +420,10 @@ object IOPrimitiveUtils {
         }
     }
 
-    fun Solve.Request<ExecutionContext>.peekCodeAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+    fun Solve.Request<ExecutionContext>.peekCodeAndReply(
+        channel: InputChannel<String>,
+        arg: Term,
+    ): Solve.Response {
         return try {
             val code = channel.peek()?.get(0)?.code ?: -1
             replyWith(mgu(arg, Integer.of(code)))
@@ -417,7 +432,10 @@ object IOPrimitiveUtils {
         }
     }
 
-    fun Solve.Request<ExecutionContext>.peekCharAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+    fun Solve.Request<ExecutionContext>.peekCharAndReply(
+        channel: InputChannel<String>,
+        arg: Term,
+    ): Solve.Response {
         return try {
             val char = channel.peek() ?: "end_of_file"
             replyWith(mgu(arg, Atom.of(char)))
@@ -426,7 +444,10 @@ object IOPrimitiveUtils {
         }
     }
 
-    fun Solve.Request<ExecutionContext>.readCodeAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+    fun Solve.Request<ExecutionContext>.readCodeAndReply(
+        channel: InputChannel<String>,
+        arg: Term,
+    ): Solve.Response {
         return try {
             val code = channel.read()?.get(0)?.code ?: -1
             replyWith(mgu(arg, Integer.of(code)))
@@ -435,7 +456,10 @@ object IOPrimitiveUtils {
         }
     }
 
-    fun Solve.Request<ExecutionContext>.readCharAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+    fun Solve.Request<ExecutionContext>.readCharAndReply(
+        channel: InputChannel<String>,
+        arg: Term,
+    ): Solve.Response {
         return try {
             val char = channel.read() ?: "end_of_file"
             replyWith(mgu(arg, Atom.of(char)))
@@ -445,14 +469,14 @@ object IOPrimitiveUtils {
     }
 
     private val Term.singletons: Set<Var>
-        get() = variables.groupBy { it }
-            .asSequence()
-            .filter { it.value.size == 1 }
-            .map { it.key }
-            .toSet()
+        get() =
+            variables.groupBy { it }
+                .asSequence()
+                .filter { it.value.size == 1 }
+                .map { it.key }
+                .toSet()
 
-    private fun Iterable<Var>.toAssignments(): KtList<Pair<Atom, Var>> =
-        asSequence().toAssignments()
+    private fun Iterable<Var>.toAssignments(): KtList<Pair<Atom, Var>> = asSequence().toAssignments()
 
     private fun Sequence<Var>.toAssignments(): KtList<Pair<Atom, Var>> =
         groupBy { Atom.of(it.name) }
@@ -462,15 +486,16 @@ object IOPrimitiveUtils {
     fun Solve.Request<ExecutionContext>.readTermAndReply(
         channel: InputChannel<String>,
         arg: Term,
-        lastIsInfoList: Boolean = false
+        lastIsInfoList: Boolean = false,
     ): Solve.Response {
         try {
             val termsChannel = channel.asTermChannel(context.operators)
-            val infoList = if (lastIsInfoList) {
-                ensuringArgumentIsValidInfoList(arguments.lastIndex)
-            } else {
-                emptyList()
-            }
+            val infoList =
+                if (lastIsInfoList) {
+                    ensuringArgumentIsValidInfoList(arguments.lastIndex)
+                } else {
+                    emptyList()
+                }
             if (!termsChannel.available) return replyFail()
             return when (val read = termsChannel.read()) {
                 null -> replyFail()
@@ -478,12 +503,13 @@ object IOPrimitiveUtils {
                     val variables = variables(read.variables.toList())
                     val variableNames = variableNames(read.variables.toAssignments())
                     val singletons = singletons(read.singletons.toAssignments())
-                    val info = infoList?.let {
-                        val u = context.unificator
-                        it.getInfo(u, INFO_SINGLETONS_PATTERN, singletons) +
-                            it.getInfo(u, INFO_VARIABLES_PATTERN, variables) +
-                            it.getInfo(u, INFO_VARIABLE_NAMES_PATTERN, variableNames)
-                    } ?: mgu(arguments.last(), List.of(variables, variableNames, singletons))
+                    val info =
+                        infoList?.let {
+                            val u = context.unificator
+                            it.getInfo(u, INFO_SINGLETONS_PATTERN, singletons) +
+                                it.getInfo(u, INFO_VARIABLES_PATTERN, variables) +
+                                it.getInfo(u, INFO_VARIABLE_NAMES_PATTERN, variableNames)
+                        } ?: mgu(arguments.last(), List.of(variables, variableNames, singletons))
                     replyWith(mgu(arg, read) + info)
                 }
             }
@@ -495,7 +521,7 @@ object IOPrimitiveUtils {
                 channel.streamTerm.toString(),
                 e.line,
                 e.column,
-                e.message ?: "<no details provided>"
+                e.message ?: "<no details provided>",
             )
         }
     }
@@ -507,15 +533,16 @@ object IOPrimitiveUtils {
         val url = ensuringArgumentIsUrl(0)
         val mode = ensuringArgumentIsIOMode(1)
         ensuringArgumentIsVariable(2)
-        val options = if (arguments.size >= 4) {
-            ensuringArgumentIsList(3)
-            (arguments[3] as List).toSequence()
-                .map { ensureTermIsValidProperty(it) }
-                .map { ensureTermIsSupportedProperty(it) }
-                .toSet()
-        } else {
-            emptySet()
-        }
+        val options =
+            if (arguments.size >= 4) {
+                ensuringArgumentIsList(3)
+                (arguments[3] as List).toSequence()
+                    .map { ensureTermIsValidProperty(it) }
+                    .map { ensureTermIsSupportedProperty(it) }
+                    .toSet()
+            } else {
+                emptySet()
+            }
         val alias = options.firstOrNull { match(it, PROPERTY_ALIAS_PATTERN) }?.alias
         return when (mode) {
             IOMode.READ -> replyOpeningStream(url.openInputChannel(), third, alias)
@@ -527,7 +554,7 @@ object IOPrimitiveUtils {
     private fun Solve.Request<ExecutionContext>.replyOpeningStream(
         channel: OutputChannel<String>,
         third: Term,
-        alias: String? = null
+        alias: String? = null,
     ): Solve.Response {
         val streamTerm = channel.streamTerm
         return replyWith(mgu(third, streamTerm)) {
@@ -538,7 +565,7 @@ object IOPrimitiveUtils {
     private fun Solve.Request<ExecutionContext>.replyOpeningStream(
         channel: InputChannel<String>,
         third: Term,
-        alias: String? = null
+        alias: String? = null,
     ): Solve.Response {
         val streamTerm = channel.streamTerm
         return replyWith(mgu(third, streamTerm)) {

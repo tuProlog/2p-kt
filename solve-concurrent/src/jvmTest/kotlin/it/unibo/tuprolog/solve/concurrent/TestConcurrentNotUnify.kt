@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentNotUnify<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testNumberNotUnify() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

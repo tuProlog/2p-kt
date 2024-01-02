@@ -13,9 +13,8 @@ import it.unibo.tuprolog.core.Substitution
  * @author Jason Dellaluce
  */
 internal class ProbExplanationTerm(
-    val explanation: ProbExplanation
+    val explanation: ProbExplanation,
 ) : Atom by Atom.of("<expl:$explanation>") {
-
     override val isConstant: Boolean
         get() = false
 
@@ -29,11 +28,17 @@ internal class ProbExplanationTerm(
         return ProbExplanationTerm(explanation.apply { it.freshCopy(scope) })
     }
 
-    override fun get(substitution: Substitution, vararg substitutions: Substitution): ProbExplanationTerm {
+    override fun get(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): ProbExplanationTerm {
         return this.apply(substitution, *substitutions)
     }
 
-    override fun apply(substitution: Substitution, vararg substitutions: Substitution): ProbExplanationTerm {
+    override fun apply(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): ProbExplanationTerm {
         return this.apply(Substitution.of(substitution, *substitutions))
     }
 

@@ -10,7 +10,7 @@ internal class JvmTheoryDeobjectifier : TheoryDeobjectifier {
             Unificator.default,
             TermDeobjectifier.default.deobjectifyMany(`object`)
                 .asSequence()
-                .map { it as Clause }
+                .map { it as Clause },
         )
     }
 

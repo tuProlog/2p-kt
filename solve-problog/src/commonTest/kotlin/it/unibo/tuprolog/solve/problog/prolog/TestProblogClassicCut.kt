@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Test
 
 class TestProblogClassicCut : TestCut, SolverFactory by ProblogSolverFactory {
-
     private val prototype = TestCut.prototype(this)
 
     @Test

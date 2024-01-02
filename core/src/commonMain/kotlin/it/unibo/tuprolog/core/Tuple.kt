@@ -8,7 +8,6 @@ import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
 interface Tuple : Recursive {
-
     override val isTuple: Boolean
         get() = true
 
@@ -37,19 +36,23 @@ interface Tuple : Recursive {
     override fun freshCopy(scope: Scope): Tuple
 
     companion object {
-
         const val FUNCTOR = TUPLE_FUNCTOR
 
         @JvmStatic
         @JsName("wrapIfNeeded")
         @JvmOverloads
-        fun wrapIfNeeded(vararg terms: Term, ifEmpty: () -> Term = { Truth.TRUE }): Term =
-            wrapIfNeeded(terms.asIterable(), ifEmpty)
+        fun wrapIfNeeded(
+            vararg terms: Term,
+            ifEmpty: () -> Term = { Truth.TRUE },
+        ): Term = wrapIfNeeded(terms.asIterable(), ifEmpty)
 
         @JvmStatic
         @JsName("wrapIterableIfNeeded")
         @JvmOverloads
-        fun wrapIfNeeded(terms: Iterable<Term>, ifEmpty: () -> Term = { Truth.TRUE }): Term {
+        fun wrapIfNeeded(
+            terms: Iterable<Term>,
+            ifEmpty: () -> Term = { Truth.TRUE },
+        ): Term {
             val i = terms.iterator()
             if (!i.hasNext()) return ifEmpty()
             val first = i.next()
@@ -64,16 +67,25 @@ interface Tuple : Recursive {
         @JvmStatic
         @JsName("wrapSequenceIfNeeded")
         @JvmOverloads
-        fun wrapIfNeeded(terms: Sequence<Term>, ifEmpty: () -> Term = { Truth.TRUE }): Term =
-            wrapIfNeeded(terms.asIterable(), ifEmpty)
+        fun wrapIfNeeded(
+            terms: Sequence<Term>,
+            ifEmpty: () -> Term = { Truth.TRUE },
+        ): Term = wrapIfNeeded(terms.asIterable(), ifEmpty)
 
         @JvmStatic
         @JsName("of")
-        fun of(left: Term, right: Term): Tuple = TupleImpl(left, right)
+        fun of(
+            left: Term,
+            right: Term,
+        ): Tuple = TupleImpl(left, right)
 
         @JvmStatic
         @JsName("ofMany")
-        fun of(first: Term, second: Term, vararg others: Term): Tuple = of(listOf(first, second, *others))
+        fun of(
+            first: Term,
+            second: Term,
+            vararg others: Term,
+        ): Tuple = of(listOf(first, second, *others))
 
         @JvmStatic
         @JsName("ofIterable")

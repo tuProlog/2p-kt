@@ -14,10 +14,9 @@ import kotlin.test.assertEquals
 
 internal class PrototypeClauseMultiSetTestImpl(
     private val emptyGenerator: () -> ClauseMultiSet,
-    private val collectionGenerator: (Iterable<Clause>) -> ClauseMultiSet
+    private val collectionGenerator: (Iterable<Clause>) -> ClauseMultiSet,
 ) : PrototypeClauseMultiSetTest,
     PrototypeClauseCollectionTestImpl(emptyGenerator, collectionGenerator) {
-
     private val presentClause =
         Fact.of(Struct.of("f", Atom.of("a")))
 
@@ -28,16 +27,22 @@ internal class PrototypeClauseMultiSetTestImpl(
         listOf(
             Fact.of(Struct.of("f", Atom.of("a"))),
             Fact.of(Struct.of("f", Atom.of("b"))),
-            Fact.of(Struct.of("f", Atom.of("c")))
+            Fact.of(Struct.of("f", Atom.of("c"))),
         )
 
     private val emptyCollection = emptyGenerator()
 
-    override fun getClauses(collection: ClauseCollection, query: Clause): Sequence<Clause> {
+    override fun getClauses(
+        collection: ClauseCollection,
+        query: Clause,
+    ): Sequence<Clause> {
         return (collection as ClauseMultiSet).get(query)
     }
 
-    override fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause> {
+    override fun retractClauses(
+        collection: ClauseCollection,
+        query: Clause,
+    ): Sequence<Clause> {
         return when (val res = (collection as ClauseMultiSet).retrieve(query)) {
             is RetrieveResult.Success -> res.clauses.asSequence()
             else -> emptySequence()
@@ -93,7 +98,7 @@ internal class PrototypeClauseMultiSetTestImpl(
 
         assertEquals(
             1,
-            permutations.map { collectionGenerator(it) }.toSet().size
+            permutations.map { collectionGenerator(it) }.toSet().size,
         )
     }
 }

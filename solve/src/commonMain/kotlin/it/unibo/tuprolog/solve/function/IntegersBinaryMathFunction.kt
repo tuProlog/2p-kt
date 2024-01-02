@@ -13,25 +13,36 @@ import it.unibo.tuprolog.solve.ExecutionContext
  * @author Enrico
  */
 abstract class IntegersBinaryMathFunction(name: String) : BinaryMathFunction(name) {
-
-    override fun mathFunction(real: Real, integer: Integer, context: ExecutionContext): Numeric =
+    override fun mathFunction(
+        real: Real,
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric =
         throwTypeErrorBecauseOnlyIntegersAccepted(
             functor,
             real,
-            context
+            context,
         )
 
-    override fun mathFunction(integer: Integer, real: Real, context: ExecutionContext): Numeric =
+    override fun mathFunction(
+        integer: Integer,
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric =
         throwTypeErrorBecauseOnlyIntegersAccepted(
             functor,
             real,
-            context
+            context,
         )
 
-    override fun mathFunction(real1: Real, real2: Real, context: ExecutionContext): Numeric =
+    override fun mathFunction(
+        real1: Real,
+        real2: Real,
+        context: ExecutionContext,
+    ): Numeric =
         throwTypeErrorBecauseOnlyIntegersAccepted(
             functor,
             real1,
-            context
+            context,
         )
 }

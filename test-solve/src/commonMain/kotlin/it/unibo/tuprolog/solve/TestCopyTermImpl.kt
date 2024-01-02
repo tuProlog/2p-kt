@@ -12,7 +12,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -26,7 +26,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -40,7 +40,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes(X to "a")),
-                solutions
+                solutions,
             )
         }
     }
@@ -54,7 +54,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -68,7 +68,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes(A to B)),
-                solutions
+                solutions,
             )
         }
     }
@@ -82,7 +82,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -96,7 +96,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -110,7 +110,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes(X to "a")),
-                solutions
+                solutions,
             )
         }
     }
@@ -124,7 +124,7 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }

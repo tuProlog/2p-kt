@@ -9,7 +9,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class TimeRepresentationKtTest {
-
     @Test
     fun currentTimeBehavesAsExpected() {
         val startTime = currentTimeInstant()

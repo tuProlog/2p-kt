@@ -20,22 +20,24 @@ class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
             assertSolutionEquals(
                 ktListOf<Solution>(
                     query.halt(
-                        TimeOutException(context = DummyInstances.executionContext, exceededDuration = shortDuration)
-                    )
+                        TimeOutException(context = DummyInstances.executionContext, exceededDuration = shortDuration),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     private fun testInfiniteCollectingGoal(goalProvider: LogicProgrammingScopeWithTheories.() -> Struct) {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theoryOf(
-                    fact { "nat"("z") },
-                    rule { "nat"("s"(Z)) impliedBy "nat"(Z) }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theoryOf(
+                            fact { "nat"("z") },
+                            rule { "nat"("s"(Z)) impliedBy "nat"(Z) },
+                        ),
                 )
-            )
             solver.assertHasPredicateInAPI(FindAll)
 
             val query = goalProvider()
@@ -45,10 +47,10 @@ class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
             assertSolutionEquals(
                 ktListOf<Solution>(
                     query.halt(
-                        TimeOutException(context = DummyInstances.executionContext, exceededDuration = shortDuration)
-                    )
+                        TimeOutException(context = DummyInstances.executionContext, exceededDuration = shortDuration),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

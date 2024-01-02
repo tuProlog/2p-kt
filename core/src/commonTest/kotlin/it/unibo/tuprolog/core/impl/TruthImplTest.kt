@@ -13,7 +13,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class TruthImplTest {
-
     private val truthInstances = listOf(Truth.TRUE, Truth.FAIL, Truth.FALSE)
 
     @Test

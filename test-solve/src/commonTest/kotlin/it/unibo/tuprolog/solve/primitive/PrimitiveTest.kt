@@ -16,7 +16,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class PrimitiveTest {
-
     @Test
     fun primitiveOfReturnsPrimitiveBehavingExactlyAsProvidedOne() {
         wrapperToMatchingSignatureRequest(Primitive.Companion::enforcingSignature, primitive, ::createPrimitiveRequest)

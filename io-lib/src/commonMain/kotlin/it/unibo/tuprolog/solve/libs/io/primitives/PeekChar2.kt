@@ -9,7 +9,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object PeekChar2 : BinaryRelation.NonBacktrackable<ExecutionContext>("peek_char") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+    ): Solve.Response {
         val channel = ensuringArgumentIsInputChannel(0)
         ensuringArgumentIsVarOrChar(1)
         return peekCharAndReply(channel, second)

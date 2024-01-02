@@ -12,7 +12,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class AlreadyExecutedStateTest {
-
     private val endState = StateMachineExecutorUtils.endState
 
     @Test

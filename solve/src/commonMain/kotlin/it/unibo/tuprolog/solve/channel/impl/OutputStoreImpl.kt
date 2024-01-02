@@ -13,7 +13,7 @@ internal class OutputStoreImpl(
     override val stdOut: OutputChannel<String>,
     override val stdErr: OutputChannel<String>,
     override val warnings: OutputChannel<Warning> = OutputChannel.warn(),
-    outputChannels: Map<String, OutputChannel<String>> = emptyMap()
+    outputChannels: Map<String, OutputChannel<String>> = emptyMap(),
 ) : AbstractChannelStore<String, OutputChannel<String>, OutputStore>(checkChannels(stdOut, stdErr, outputChannels)),
     OutputStore {
     override fun setStdOut(channel: OutputChannel<String>): OutputStore =
@@ -34,8 +34,7 @@ internal class OutputStoreImpl(
             }
         }
 
-    override fun setWarnings(channel: OutputChannel<Warning>): OutputStore =
-        OutputStoreImpl(stdOut, stdErr, channel, channels)
+    override fun setWarnings(channel: OutputChannel<Warning>): OutputStore = OutputStoreImpl(stdOut, stdErr, channel, channels)
 
     override fun setCurrent(alias: String): OutputStore =
         when (val newCurrentChannel = get(alias)) {
@@ -44,22 +43,22 @@ internal class OutputStoreImpl(
         }
 
     override fun setCurrent(channel: OutputChannel<String>): OutputStore {
-        val key = entries.firstOrNull { (_, v) -> v == channel }?.key
-            ?: throw NoSuchElementException("Channel $channel has no alias")
+        val key =
+            entries.firstOrNull { (_, v) -> v == channel }?.key
+                ?: throw NoSuchElementException("Channel $channel has no alias")
         return setCurrent(key)
     }
 
     override fun plus(others: Map<String, OutputChannel<String>>): OutputStore =
         OutputStoreImpl(stdOut, stdErr, warnings, (this as Map<String, OutputChannel<String>>) + others)
 
-    override fun minus(others: Sequence<String>): OutputStore =
-        OutputStoreImpl(stdOut, stdErr, warnings, channels - others)
+    override fun minus(others: Sequence<String>): OutputStore = OutputStoreImpl(stdOut, stdErr, warnings, channels - others)
 
     companion object {
         private fun checkChannels(
             stdOut: OutputChannel<String>,
             stdErr: OutputChannel<String>,
-            channels: Map<String, OutputChannel<String>>
+            channels: Map<String, OutputChannel<String>>,
         ): Map<String, OutputChannel<String>> {
             return channels.toMutableMap()
                 .ensureAliasRefersToChannel(STDOUT, stdOut)

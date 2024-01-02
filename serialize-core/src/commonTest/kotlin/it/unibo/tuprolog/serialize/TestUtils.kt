@@ -8,7 +8,10 @@ import it.unibo.tuprolog.serialize.ObjectsUtils.parseAsObject
 /**
  * Utility assertion method aimed at checking if a serializer correctly works
  */
-fun <T : Term> Serializer<T>.assertSerializationWorks(expected: String, actual: T) {
+fun <T : Term> Serializer<T>.assertSerializationWorks(
+    expected: String,
+    actual: T,
+) {
     val expectedObj = parseAsObject(expected, mimeType)
     val actualObj = TermObjectifier.default.objectify(actual)
     kotlin.test.assertTrue(
@@ -18,7 +21,7 @@ fun <T : Term> Serializer<T>.assertSerializationWorks(expected: String, actual: 
         |got instead:
         |   $actualObj
         |
-        """.trimMargin()
+        """.trimMargin(),
     ) { deeplyEqual(expectedObj, actualObj) }
 }
 
@@ -36,14 +39,20 @@ fun <T : Term> Serializer<T>.assertSerializationWorks(expected: String, actual: 
  *
  * @see Scope https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/kotlindoc/it/unibo/tuprolog/core/scope/
  */
-fun Serializer<Term>.assertTermSerializationWorks(expected: String, actualGenerator: Scope.() -> Term) {
+fun Serializer<Term>.assertTermSerializationWorks(
+    expected: String,
+    actualGenerator: Scope.() -> Term,
+) {
     assertSerializationWorks(expected, Scope.empty().actualGenerator())
 }
 
 /**
  * Utility assertion method aimed at checking if a deserializer correctly works
  */
-fun <T : Term> Deserializer<T>.assertDeserializationWorks(expected: T, actual: String) {
+fun <T : Term> Deserializer<T>.assertDeserializationWorks(
+    expected: T,
+    actual: String,
+) {
     val deserialized = deserialize(actual)
     kotlin.test.assertTrue(
         """
@@ -52,7 +61,7 @@ fun <T : Term> Deserializer<T>.assertDeserializationWorks(expected: T, actual: S
         |got:
         |   $deserialized
         |
-        """.trimMargin()
+        """.trimMargin(),
     ) { expected.equals(deserialized, false) }
 }
 
@@ -70,6 +79,9 @@ fun <T : Term> Deserializer<T>.assertDeserializationWorks(expected: T, actual: S
  *
  * @see Scope https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/kotlindoc/it/unibo/tuprolog/core/scope/
  */
-fun Deserializer<Term>.assertTermDeserializationWorks(actual: String, expectedGenerator: Scope.() -> Term) {
+fun Deserializer<Term>.assertTermDeserializationWorks(
+    actual: String,
+    expectedGenerator: Scope.() -> Term,
+) {
     assertDeserializationWorks(Scope.empty().expectedGenerator(), actual)
 }

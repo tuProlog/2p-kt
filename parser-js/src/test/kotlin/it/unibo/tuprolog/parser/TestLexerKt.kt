@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TestLexerKt {
-
     private inline val loggingOn get() = false
 
     @Test

@@ -15,7 +15,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class TimeOutExceptionTest {
-
     private val exception = TimeOutException(aMessage, aCause, aContext, anExceededTimeDuration)
 
     @Test

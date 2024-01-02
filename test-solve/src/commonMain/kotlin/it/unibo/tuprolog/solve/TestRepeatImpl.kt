@@ -12,7 +12,7 @@ internal class TestRepeatImpl(private val solverFactory: SolverFactory) : TestRe
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }

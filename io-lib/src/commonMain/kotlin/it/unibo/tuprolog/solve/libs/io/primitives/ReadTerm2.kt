@@ -8,6 +8,8 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object ReadTerm2 : BinaryRelation.NonBacktrackable<ExecutionContext>("read_term") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response =
-        readTermAndReply(currentInputChannel, first, lastIsInfoList = true)
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+    ): Solve.Response = readTermAndReply(currentInputChannel, first, lastIsInfoList = true)
 }

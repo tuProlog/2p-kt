@@ -9,7 +9,6 @@ class TestConcurrentFlagsImpl :
     TestConcurrentFlags<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun defaultLastCallOptimizationIsOn() = multiRunConcurrentTest { super.defaultLastCallOptimizationIsOn() }
@@ -20,8 +19,7 @@ class TestConcurrentFlagsImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    override fun settingUnknownToAdmissibleValueSucceeds() =
-        multiRunConcurrentTest { super.settingUnknownToAdmissibleValueSucceeds() }
+    override fun settingUnknownToAdmissibleValueSucceeds() = multiRunConcurrentTest { super.settingUnknownToAdmissibleValueSucceeds() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
@@ -38,8 +36,7 @@ class TestConcurrentFlagsImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    override fun gettingFlagsByVariableEnumeratesFlags() =
-        multiRunConcurrentTest { super.gettingFlagsByVariableEnumeratesFlags() }
+    override fun gettingFlagsByVariableEnumeratesFlags() = multiRunConcurrentTest { super.gettingFlagsByVariableEnumeratesFlags() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

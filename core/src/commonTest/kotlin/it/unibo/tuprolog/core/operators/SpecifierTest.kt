@@ -27,7 +27,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class SpecifierTest {
-
     private val prefixSpecifiers = setOf(FX, FY)
     private val postfixSpecifiers = setOf(XF, YF)
     private val infixSpecifiers = setOf(XFX, YFX, XFY)

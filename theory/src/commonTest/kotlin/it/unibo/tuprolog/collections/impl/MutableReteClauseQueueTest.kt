@@ -4,11 +4,11 @@ import it.unibo.tuprolog.collections.PrototypeClauseQueueTest
 import kotlin.test.Test
 
 internal class MutableReteClauseQueueTest : PrototypeClauseQueueTest {
-
-    private val prototype = PrototypeClauseQueueTest.prototype(
-        Factories::emptyClauseQueue,
-        Factories::clauseQueueOf
-    )
+    private val prototype =
+        PrototypeClauseQueueTest.prototype(
+            Factories::emptyClauseQueue,
+            Factories::clauseQueueOf,
+        )
 
     @Test
     override fun getWithPresentClauseReturnsTheCorrectSequence() {

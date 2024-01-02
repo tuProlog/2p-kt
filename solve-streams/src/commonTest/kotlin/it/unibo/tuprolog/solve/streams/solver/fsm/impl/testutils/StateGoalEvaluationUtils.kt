@@ -24,19 +24,19 @@ import it.unibo.tuprolog.solve.streams.testutils.SolverTestUtils.createSolveRequ
  * @author Enrico
  */
 internal object StateGoalEvaluationUtils {
-
     internal val expectedContext = StreamsExecutionContext(sideEffectManager = SideEffectManagerImpl())
 
     /** Creates a request launching exactly given primitive behaviour */
     internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive): Solve.Request<StreamsExecutionContext> {
-        val testPrimitive = PrimitiveWrapper.wrap<StreamsExecutionContext>("testPrimitive", 0) {
-            primitiveBehaviour.solve(it)
-        }
+        val testPrimitive =
+            PrimitiveWrapper.wrap<StreamsExecutionContext>("testPrimitive", 0) {
+                primitiveBehaviour.solve(it)
+            }
 
         return testPrimitive.run {
             createSolveRequest(
                 signature withArgs emptyList(),
-                primitives = mapOf(descriptionPair, Throw.descriptionPair)
+                primitives = mapOf(descriptionPair, Throw.descriptionPair),
             )
         }
     }
@@ -56,15 +56,23 @@ internal object StateGoalEvaluationUtils {
                 to listOf(StateEnd.Halt::class),
             createRequestForPrimitiveResponding {
                 sequence {
-                    yieldAll(StreamsSolver.solveToResponses(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
+                    yieldAll(
+                        StreamsSolver.solveToResponses(
+                            createRequestForPrimitiveResponding { throw HaltException(context = it.context) },
+                        ),
+                    )
                 }
             } to listOf(StateEnd.Halt::class),
             createRequestForPrimitiveResponding {
                 sequence {
-                    yieldAll(StreamsSolver.solveToResponses(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
+                    yieldAll(
+                        StreamsSolver.solveToResponses(
+                            createRequestForPrimitiveResponding { throw HaltException(context = it.context) },
+                        ),
+                    )
                     yield(it.replyFail())
                 }
-            } to listOf(StateEnd.Halt::class)
+            } to listOf(StateEnd.Halt::class),
         )
     }
 
@@ -77,9 +85,9 @@ internal object StateGoalEvaluationUtils {
                 throw TypeError(
                     context = it.context,
                     expectedType = TypeError.Expected.CALLABLE,
-                    culprit = Var.of("X")
+                    culprit = Var.of("X"),
                 )
-            }
+            },
         )
     }
 

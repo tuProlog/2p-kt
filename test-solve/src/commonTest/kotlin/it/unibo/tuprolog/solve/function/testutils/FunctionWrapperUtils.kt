@@ -18,7 +18,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal object FunctionWrapperUtils {
-
     /** A default function result to be used in tests */
     internal val defaultFunctionResult = Compute.Response(Truth.TRUE)
 
@@ -26,13 +25,15 @@ internal object FunctionWrapperUtils {
     internal val function: LogicFunction = LogicFunction { defaultFunctionResult }
 
     /** A function to create a Compute.Request with provided [signature] and [argList] */
-    internal fun createFunctionRequest(signature: Signature, argList: List<Term>) =
-        Compute.Request(signature, argList, DummyInstances.executionContext)
+    internal fun createFunctionRequest(
+        signature: Signature,
+        argList: List<Term>,
+    ) = Compute.Request(signature, argList, DummyInstances.executionContext)
 
     /** Utility function to create a function wrapper */
     internal fun createFunctionWrapper(
         signature: Signature,
-        uncheckedImplementation: LogicFunction
+        uncheckedImplementation: LogicFunction,
     ): FunctionWrapper<ExecutionContext> =
         object : FunctionWrapper<ExecutionContext>(signature) {
             override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response =

@@ -11,29 +11,28 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class ErrorUtilsTest {
-
     private val errorDescription = Atom.of("myErrorDesc")
     private val errorExtraData = Atom.of("myExtra")
     private val defaultCustomErrorData = Atom.of("")
 
     @Test
     fun standardErrorWrapperFunctorCorrect() {
-        assertEquals("error", ErrorUtils.errorWrapperFunctor)
+        assertEquals("error", ErrorUtils.ERROR_FUNCTOR)
     }
 
     @Test
     fun errorStructOfWithArgsCreatesCorrectStruct() {
         assertEquals(
-            Struct.of(ErrorUtils.errorWrapperFunctor, errorDescription, errorExtraData),
-            ErrorUtils.errorStructOf(errorDescription, errorExtraData)
+            Struct.of(ErrorUtils.ERROR_FUNCTOR, errorDescription, errorExtraData),
+            ErrorUtils.errorStructOf(errorDescription, errorExtraData),
         )
     }
 
     @Test
     fun errorStructOfWithOnlyFirstArgFillsExtraDataWithTrue() {
         assertEquals(
-            Struct.of(ErrorUtils.errorWrapperFunctor, errorDescription, defaultCustomErrorData),
-            ErrorUtils.errorStructOf(errorDescription)
+            Struct.of(ErrorUtils.ERROR_FUNCTOR, errorDescription, defaultCustomErrorData),
+            ErrorUtils.errorStructOf(errorDescription),
         )
     }
 }

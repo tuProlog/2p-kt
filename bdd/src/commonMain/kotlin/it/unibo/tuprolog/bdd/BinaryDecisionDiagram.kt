@@ -84,8 +84,7 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
         /** Creates a new [BinaryDecisionDiagram] [Variable] from the given
          * value */
         @JsName("variableOf")
-        fun <E : Comparable<E>> variableOf(value: E): BinaryDecisionDiagram<E> =
-            variableOf(value, terminalOf(false), terminalOf(true))
+        fun <E : Comparable<E>> variableOf(value: E): BinaryDecisionDiagram<E> = variableOf(value, terminalOf(false), terminalOf(true))
 
         /** Creates a new [Variable] node from the given
          * value and low-high nodes. */
@@ -93,7 +92,7 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
         fun <E : Comparable<E>> variableOf(
             value: E,
             low: BinaryDecisionDiagram<E>,
-            high: BinaryDecisionDiagram<E>
+            high: BinaryDecisionDiagram<E>,
         ): BinaryDecisionDiagram<E> = BinaryDecisionDiagramBuilder.defaultOf<E>().buildVariable(value, low, high)
 
         /** Creates a new [Terminal] node from

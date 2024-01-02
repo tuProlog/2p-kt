@@ -21,7 +21,6 @@ import kotlin.test.assertNotSame
  * @author Enrico
  */
 internal class StructTest {
-
     private val correctNonSpecialStructInstances =
         StructUtils.nonSpecialStructs.map { (functor, args) -> StructImpl(functor, args) }
 
@@ -36,15 +35,16 @@ internal class StructTest {
         onCorrespondingItems(
             correctNonSpecialStructInstances,
             StructUtils.nonSpecialStructs.map { (functor, args) -> Struct.of(functor, args.asSequence()) },
-            ::assertEqualities
+            ::assertEqualities,
         )
     }
 
     @Test
     fun structOfCreatesConsIfNeeded() {
-        val consStructs = StructUtils.mixedStructs.filter { (functor, args) ->
-            args.size == 2 && Cons.FUNCTOR == functor
-        }
+        val consStructs =
+            StructUtils.mixedStructs.filter { (functor, args) ->
+                args.size == 2 && Cons.FUNCTOR == functor
+            }
 
         val correctInstances = consStructs.map { (_, args) -> Cons.of(args.first(), args.last()) }
         val toBeTested = consStructs.map { (functor, args) -> Struct.of(functor, args) }
@@ -54,9 +54,10 @@ internal class StructTest {
 
     @Test
     fun structOfCreatesRuleIfNeeded() {
-        val ruleStructs = StructUtils.mixedStructs.filter { (functor, args) ->
-            args.size == 2 && Clause.FUNCTOR == functor && args.first() is Struct
-        }
+        val ruleStructs =
+            StructUtils.mixedStructs.filter { (functor, args) ->
+                args.size == 2 && Clause.FUNCTOR == functor && args.first() is Struct
+            }
 
         val correctInstances = ruleStructs.map { (_, args) -> Rule.of(args.first() as Struct, args.last()) }
         val toBeTested = ruleStructs.map { (functor, args) -> Struct.of(functor, args) }
@@ -66,9 +67,10 @@ internal class StructTest {
 
     @Test
     fun structOfCreatesTupleIfNeeded() {
-        val tupleStructs = StructUtils.mixedStructs.filter { (functor, args) ->
-            args.size == 2 && Tuple.FUNCTOR == functor
-        }
+        val tupleStructs =
+            StructUtils.mixedStructs.filter { (functor, args) ->
+                args.size == 2 && Tuple.FUNCTOR == functor
+            }
 
         val correctInstances = tupleStructs.map { (_, args) -> Tuple.of(args.toList()) }
         val toBeTested = tupleStructs.map { (functor, args) -> Struct.of(functor, args) }
@@ -78,9 +80,10 @@ internal class StructTest {
 
     @Test
     fun structOfCreatesSetIfNeeded() {
-        val setStructs = StructUtils.mixedStructs.filter { (functor, args) ->
-            args.size == 1 && Block.FUNCTOR == functor
-        }
+        val setStructs =
+            StructUtils.mixedStructs.filter { (functor, args) ->
+                args.size == 1 && Block.FUNCTOR == functor
+            }
 
         val correctInstances = setStructs.map { (_, args) -> Block.of(args) }
         val toBeTested = setStructs.map { (functor, args) -> Struct.of(functor, args) }
@@ -90,9 +93,10 @@ internal class StructTest {
 
     @Test
     fun structOfCreatesDirectiveIfNeeded() {
-        val directiveStructs = StructUtils.mixedStructs.filter { (functor, args) ->
-            args.size == 1 && Clause.FUNCTOR == functor
-        }
+        val directiveStructs =
+            StructUtils.mixedStructs.filter { (functor, args) ->
+                args.size == 1 && Clause.FUNCTOR == functor
+            }
 
         val correctInstances = directiveStructs.map { (_, args) -> Directive.of(args.first()) }
         val toBeTested = directiveStructs.map { (functor, args) -> Struct.of(functor, args) }
@@ -112,9 +116,10 @@ internal class StructTest {
 
     @Test
     fun structOfCreatesIndicatorIfNeeded() {
-        val indicatorStructs = StructUtils.mixedStructs.filter { (functor, args) ->
-            args.size == 2 && Indicator.FUNCTOR == functor
-        }
+        val indicatorStructs =
+            StructUtils.mixedStructs.filter { (functor, args) ->
+                args.size == 2 && Indicator.FUNCTOR == functor
+            }
 
         val correctInstances = indicatorStructs.map { (_, args) -> Indicator.of(args.first(), args.last()) }
         val toBeTested = indicatorStructs.map { (functor, args) -> Struct.of(functor, args) }
@@ -179,10 +184,10 @@ internal class StructTest {
                     "f",
                     arrayOf(
                         Atom.of("world"),
-                        Atom.of("!")
-                    )
-                )
-            )
+                        Atom.of("!"),
+                    ),
+                ),
+            ),
         )
 
     @Test
@@ -194,32 +199,33 @@ internal class StructTest {
 
     @Test
     fun structFoldCreatesArbitraryFoldedStructsSpecifyingTerminal() {
-        val toBeTested = Struct.fold(
-            "f",
-            arbitraryFoldedStructElements.dropLast().asIterable(),
-            arbitraryFoldedStructElements.last()
-        )
+        val toBeTested =
+            Struct.fold(
+                "f",
+                arbitraryFoldedStructElements.dropLast().asIterable(),
+                arbitraryFoldedStructElements.last(),
+            )
 
         assertEqualities(arbitraryFoldedStructCorrectInstance, toBeTested)
     }
 
     @Test
     fun equalityOfNonGroundStructsWorksAsExpected() {
-        val f_ = Struct.of("f", Var.anonymous())
-        val g_ = Struct.of("g", Var.anonymous())
+        val f = Struct.of("f", Var.anonymous())
+        val g = Struct.of("g", Var.anonymous())
 
-        assertEqualities(f_, f_)
-        assertNoEqualities(f_, g_)
+        assertEqualities(f, f)
+        assertNoEqualities(f, g)
 
-        assertEqualsUsingVariablesSimpleNames(Struct.of("f", Var.of("_")), f_)
-        assertStructurallyEquals(Struct.of("f", Var.of("_")), f_)
-        assertEqualsUsingVariablesSimpleNames(Struct.of("f", Var.anonymous()), f_)
-        assertStructurallyEquals(Struct.of("f", Var.anonymous()), f_)
+        assertEqualsUsingVariablesSimpleNames(Struct.of("f", Var.of("_")), f)
+        assertStructurallyEquals(Struct.of("f", Var.of("_")), f)
+        assertEqualsUsingVariablesSimpleNames(Struct.of("f", Var.anonymous()), f)
+        assertStructurallyEquals(Struct.of("f", Var.anonymous()), f)
 
-        assertNotEquals(Struct.of("f", Var.of("_")), f_)
-        assertNotSame(Struct.of("f", Var.of("_")), f_)
-        assertNotEquals(Struct.of("f", Var.anonymous()), f_)
-        assertNotSame(Struct.of("f", Var.anonymous()), f_)
+        assertNotEquals(Struct.of("f", Var.of("_")), f)
+        assertNotSame(Struct.of("f", Var.of("_")), f)
+        assertNotEquals(Struct.of("f", Var.anonymous()), f)
+        assertNotSame(Struct.of("f", Var.anonymous()), f)
 
         val fX = Struct.of("f", Var.of("X"))
         val gX = Struct.of("g", Var.of("X"))

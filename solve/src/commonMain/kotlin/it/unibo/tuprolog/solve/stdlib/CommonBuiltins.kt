@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.library.impl.AbstractLibrary
 import it.unibo.tuprolog.solve.primitive.Primitive
 
 object CommonBuiltins : AbstractLibrary() {
-
     override val alias: String
         get() = "prolog.lang"
 

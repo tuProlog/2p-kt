@@ -8,11 +8,10 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 
 object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
-
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
-        third: Term
+        third: Term,
     ): Substitution {
         ensuringArgumentIsStruct(0)
         ensuringArgumentIsList(1)

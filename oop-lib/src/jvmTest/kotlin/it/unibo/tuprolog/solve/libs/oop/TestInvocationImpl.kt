@@ -20,7 +20,6 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : TestInvocation {
-
     internal abstract fun caseToResult(case: TestDatum): Term
 
     protected abstract val invoke: String
@@ -29,7 +28,7 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
         cases: List<TestDatum>,
         detectorCreator: () -> OverloadDetector = OverloadDetector.Companion::create,
         refCreator: (OverloadDetector) -> Ref = ObjectRef.Companion::of,
-        case2Term: (TestDatum) -> Term
+        case2Term: (TestDatum) -> Term,
     ) = logicProgramming {
         val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
         val obj = detectorCreator()
@@ -39,20 +38,21 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
             val solutions = solver.solveList(query)
             assertTrue(solutions.size == 1)
             when (val solution = solutions.single()) {
-                is Solution.Halt -> when (val exception = solution.exception) {
-                    is SystemError -> {
-                        assertTrue(exception.cause is OopRuntimeException)
-                        assertTrue(exception.cause?.cause is NullPointerException)
+                is Solution.Halt ->
+                    when (val exception = solution.exception) {
+                        is SystemError -> {
+                            assertTrue(exception.cause is OopRuntimeException)
+                            assertTrue(exception.cause?.cause is NullPointerException)
+                        }
+                        is RepresentationError -> {
+                            assertTrue(exception.cause is TermToObjectConversionException)
+                        }
+                        else -> fail("Unexpected exception: $exception")
                     }
-                    is RepresentationError -> {
-                        assertTrue(exception.cause is TermToObjectConversionException)
-                    }
-                    else -> fail("Unexpected exception: $exception")
-                }
                 is Solution.Yes -> {
                     assertSolutionEquals(
                         query.yes(R to caseToResult(case)),
-                        solution
+                        solution,
                     )
                 }
                 else -> fail("Unexpected solution: $solution")
@@ -62,12 +62,12 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
         val expectedSize = cases.size - cases.filter { it.isFailed }.count()
         assertSolutionEquals(
             query.yes(R to Integer.of(expectedSize)),
-            solver.solveOnce(query)
+            solver.solveOnce(query),
         )
         query = InvokeMethod.functor(ref, "toList", R)
         assertEquals(
             obj.toList(),
-            solver.solveOnce(query).asYes()?.substitution?.get(R)?.let { it as ObjectRef }?.`object`
+            solver.solveOnce(query).asYes()?.substitution?.get(R)?.let { it as ObjectRef }?.`object`,
         )
         assertEquals(cases.filterNot { it.isFailed }.map { it.converted!! }, obj.toList())
         assertEquals(cases.filterNot { it.isFailed }.map { it.converted!! to it.type }, obj.recordings)
@@ -93,7 +93,7 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
         testMethodInvocation(
             Conversions.bestCases,
             detectorCreator = OverloadDetectorObject::refresh,
-            refCreator = { TypeRef.of(OverloadDetectorObject::class) }
+            refCreator = { TypeRef.of(OverloadDetectorObject::class) },
         ) { it.term }
     }
 
@@ -101,7 +101,7 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
         testMethodInvocation(
             Conversions.explicitCases,
             detectorCreator = OverloadDetectorObject::refresh,
-            refCreator = { TypeRef.of(OverloadDetectorObject::class) }
+            refCreator = { TypeRef.of(OverloadDetectorObject::class) },
         ) {
             Struct.of(OOP.CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
         }
@@ -111,7 +111,7 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
         testMethodInvocation(
             Conversions.cornerCases,
             detectorCreator = OverloadDetectorObject::refresh,
-            refCreator = { TypeRef.of(OverloadDetectorObject::class) }
+            refCreator = { TypeRef.of(OverloadDetectorObject::class) },
         ) {
             Struct.of(OOP.CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
         }

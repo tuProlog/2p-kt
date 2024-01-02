@@ -16,7 +16,6 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface SolverBuilder {
-
     @JsName("toFactory")
     fun toFactory(): SolverFactory
 
@@ -39,10 +38,17 @@ interface SolverBuilder {
     fun runtime(runtime: Runtime): SolverBuilder
 
     @JsName("setLibrary")
-    fun library(alias: String?, item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): SolverBuilder
+    fun library(
+        alias: String?,
+        item1: AbstractWrapper<*>,
+        vararg items: AbstractWrapper<*>,
+    ): SolverBuilder
 
     @JsName("setLibraryWithDefaultAlias")
-    fun library(item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): SolverBuilder
+    fun library(
+        item1: AbstractWrapper<*>,
+        vararg items: AbstractWrapper<*>,
+    ): SolverBuilder
 
     @JsName("builtins")
     var builtins: Library?
@@ -60,7 +66,10 @@ interface SolverBuilder {
     fun flags(flags: FlagStore): SolverBuilder
 
     @JsName("setFlag")
-    fun flag(name: String, value: Term): SolverBuilder
+    fun flag(
+        name: String,
+        value: Term,
+    ): SolverBuilder
 
     @JsName("setFlagByPair")
     fun flag(flag: Pair<String, Term>): SolverBuilder
@@ -69,10 +78,16 @@ interface SolverBuilder {
     fun flag(flag: NotableFlag): SolverBuilder
 
     @JsName("setNotableFlagValue")
-    fun flag(flag: NotableFlag, value: Term): SolverBuilder
+    fun flag(
+        flag: NotableFlag,
+        value: Term,
+    ): SolverBuilder
 
     @JsName("setNotableFlagByValue")
-    fun <T : NotableFlag> flag(flag: T, value: T.() -> Term): SolverBuilder
+    fun <T : NotableFlag> flag(
+        flag: T,
+        value: T.() -> Term,
+    ): SolverBuilder
 
     @JsName("staticKb")
     var staticKb: Theory
@@ -111,7 +126,10 @@ interface SolverBuilder {
     fun inputs(inputs: InputStore): SolverBuilder
 
     @JsName("setInput")
-    fun input(alias: String, channel: InputChannel<String>): SolverBuilder
+    fun input(
+        alias: String,
+        channel: InputChannel<String>,
+    ): SolverBuilder
 
     @JsName("standardInput")
     var standardInput: InputChannel<String>
@@ -126,7 +144,10 @@ interface SolverBuilder {
     fun outputs(outputs: OutputStore): SolverBuilder
 
     @JsName("setOutput")
-    fun output(alias: String, channel: OutputChannel<String>): SolverBuilder
+    fun output(
+        alias: String,
+        channel: OutputChannel<String>,
+    ): SolverBuilder
 
     @JsName("standardOutput")
     var standardOutput: OutputChannel<String>

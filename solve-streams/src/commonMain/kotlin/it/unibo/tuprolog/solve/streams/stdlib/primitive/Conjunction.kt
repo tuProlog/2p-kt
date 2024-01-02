@@ -26,14 +26,14 @@ import it.unibo.tuprolog.solve.streams.solver.shouldExecuteThrowCut
  * @author Enrico
  */
 internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FUNCTOR, 2) {
-
     override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         sequence {
-            val subGoals = with(request) {
-                query.castToTuple().toSequence()
-                    .orderWithStrategy(context, context.solverStrategies::predicationChoiceStrategy)
-                    .toList()
-            }
+            val subGoals =
+                with(request) {
+                    query.castToTuple().toSequence()
+                        .orderWithStrategy(context, context.solverStrategies::predicationChoiceStrategy)
+                        .toList()
+                }
 
             solveConjunctionGoals(
                 request,
@@ -42,7 +42,7 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
                 Substitution.empty(),
                 emptyList(),
                 request.context.sideEffectManager,
-                previousGoalsHadAlternatives = false
+                previousGoalsHadAlternatives = false,
             )
         }
 
@@ -64,16 +64,17 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
         accumulatedSubstitutions: Substitution,
         accumulatedSideEffects: List<SideEffect>,
         previousResponseSideEffectManager: SideEffectManagerImpl?,
-        previousGoalsHadAlternatives: Boolean
+        previousGoalsHadAlternatives: Boolean,
     ): Pair<Boolean, List<SideEffect>> {
         val goal = goals.first().apply(accumulatedSubstitutions).prepareForExecutionAsGoal()
 
-        val goalRequest = mainRequest.newSolveRequest(
-            goal,
-            accumulatedSubstitutions,
-            toPropagateContext,
-            baseSideEffectManager = previousResponseSideEffectManager ?: mainRequest.context.sideEffectManager
-        )
+        val goalRequest =
+            mainRequest.newSolveRequest(
+                goal,
+                accumulatedSubstitutions,
+                toPropagateContext,
+                baseSideEffectManager = previousResponseSideEffectManager ?: mainRequest.context.sideEffectManager,
+            )
 
         var cutExecuted = false
         var currentSideEffects = emptyList<SideEffect>()
@@ -89,15 +90,16 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
                 goalResponse.sideEffectManager?.shouldExecuteThrowCut() == false &&
                     goalResponse.solution is Solution.Yes &&
                     moreThanOne(goals.asSequence()) -> {
-                    val sideEffectPair = solveConjunctionGoals(
-                        mainRequest,
-                        goals.drop(1),
-                        goalFinalState.context.apply(currentSideEffects),
-                        goalResponse.solution.substitution - mainRequest.context.substitution,
-                        currentSideEffects,
-                        goalResponse.sideEffectManager as? SideEffectManagerImpl,
-                        previousGoalsHadAlternatives || currentHasAlternatives
-                    )
+                    val sideEffectPair =
+                        solveConjunctionGoals(
+                            mainRequest,
+                            goals.drop(1),
+                            goalFinalState.context.apply(currentSideEffects),
+                            goalResponse.solution.substitution - mainRequest.context.substitution,
+                            currentSideEffects,
+                            goalResponse.sideEffectManager as? SideEffectManagerImpl,
+                            previousGoalsHadAlternatives || currentHasAlternatives,
+                        )
 
                     if (sideEffectPair.first) {
                         cutExecuted = true
@@ -107,11 +109,15 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
                 }
                 else ->
                     // yield only non-false responses or false responses when there are no open alternatives (because no more or cut)
-                    if (goalResponse.solution !is Solution.No || (!previousGoalsHadAlternatives && !currentHasAlternatives) || cutExecuted) {
+                    if (
+                        goalResponse.solution !is Solution.No ||
+                        (!previousGoalsHadAlternatives && !currentHasAlternatives) ||
+                        cutExecuted
+                    ) {
                         yield(
                             mainRequest.replyWith(
-                                goalResponse.copy(sideEffects = accumulatedSideEffects + currentSideEffects)
-                            )
+                                goalResponse.copy(sideEffects = accumulatedSideEffects + currentSideEffects),
+                            ),
                         )
                     }
             }

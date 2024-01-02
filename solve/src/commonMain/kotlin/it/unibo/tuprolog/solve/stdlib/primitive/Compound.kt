@@ -6,6 +6,5 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.TypeTester
 
 object Compound : TypeTester<ExecutionContext>("compound") {
-    override fun testType(term: Term): Boolean =
-        term is Struct && term.arity > 0
+    override fun testType(term: Term): Boolean = term is Struct && term.arity > 0
 }

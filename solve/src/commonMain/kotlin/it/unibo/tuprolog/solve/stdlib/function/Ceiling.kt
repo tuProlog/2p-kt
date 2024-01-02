@@ -13,9 +13,13 @@ import kotlin.math.ceil
  * @author Enrico
  */
 object Ceiling : UnaryMathFunction("ceiling") {
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric = integer
 
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric = integer
-
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        Numeric.of(ceil(real.value.toDouble()).toLong())
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = Numeric.of(ceil(real.value.toDouble()).toLong())
 }

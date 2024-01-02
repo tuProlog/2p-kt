@@ -49,7 +49,6 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Var as VarPrimitive
  * [NonVar]
  */
 object TypeTestingUtils {
-
     private val baseArgs: Sequence<Term> =
         logicProgramming {
             sequenceOf(
@@ -68,21 +67,22 @@ object TypeTestingUtils {
                 "f"(1),
                 "f"(-1),
                 "f"(-1.1),
-                "f"(2)
+                "f"(2),
             ).map { it.toTerm() }
         }
 
-    private val commonArgs: List<Term> = LogicProgrammingScope.empty().let {
-        baseArgs +
-            baseArgs.squared { x, y -> it.tupleOf(x, y) } +
-            baseArgs.squared { x, y -> it.structOf(";", x, y) } +
-            baseArgs.squared { x, y -> it.structOf("->", x, y) }
-    }.toList()
+    private val commonArgs: List<Term> =
+        LogicProgrammingScope.empty().let {
+            baseArgs +
+                baseArgs.squared { x, y -> it.tupleOf(x, y) } +
+                baseArgs.squared { x, y -> it.structOf(";", x, y) } +
+                baseArgs.squared { x, y -> it.structOf("->", x, y) }
+        }.toList()
 
     private inline fun typeTest(
         functor: String,
         terms: List<Term> = commonArgs,
-        crossinline predicate: (Term) -> Boolean
+        crossinline predicate: (Term) -> Boolean,
     ): Map<Solve.Request<*>, Boolean> {
         return logicProgramming {
             terms.asSequence()
@@ -95,12 +95,13 @@ object TypeTestingUtils {
     private fun isExecutable(term: Term): Boolean {
         return when (term) {
             is Numeric -> false
-            is Struct -> when {
-                term.functor in Clause.notableFunctors && term.arity == 2 -> {
-                    term.argsSequence.all(this::isExecutable)
+            is Struct ->
+                when {
+                    term.functor in Clause.notableFunctors && term.arity == 2 -> {
+                        term.argsSequence.all(this::isExecutable)
+                    }
+                    else -> true
                 }
-                else -> true
-            }
             else -> true
         }
     }
@@ -162,14 +163,16 @@ object TypeTestingUtils {
     fun assertCorrectResponse(
         unaryPredicate: UnaryPredicate<*>,
         input: Solve.Request<*>,
-        expectedResult: Any
+        expectedResult: Any,
     ) = when (expectedResult) {
-        true -> assertTrue("Requesting ${input.query} should result in positive response!") {
-            unaryPredicate.implementation.solve(input).single().solution is Solution.Yes
-        }
-        false -> assertTrue("Requesting ${input.query} should result in negative response!") {
-            unaryPredicate.implementation.solve(input).single().solution is Solution.No
-        }
+        true ->
+            assertTrue("Requesting ${input.query} should result in positive response!") {
+                unaryPredicate.implementation.solve(input).single().solution is Solution.Yes
+            }
+        false ->
+            assertTrue("Requesting ${input.query} should result in negative response!") {
+                unaryPredicate.implementation.solve(input).single().solution is Solution.No
+            }
         else ->
             @Suppress("UNCHECKED_CAST")
             (expectedResult as? KClass<out ResolutionException>)

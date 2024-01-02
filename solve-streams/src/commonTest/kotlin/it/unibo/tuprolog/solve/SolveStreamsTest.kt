@@ -4,7 +4,8 @@ import kotlin.jvm.JvmField
 
 object SolveStreamsTest {
     @JvmField
-    val expectations = Expectations(
-        streamsShouldWork = true
-    )
+    val expectations =
+        Expectations(
+            streamsShouldWork = true,
+        )
 }

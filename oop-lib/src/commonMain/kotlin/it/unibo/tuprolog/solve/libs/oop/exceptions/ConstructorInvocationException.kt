@@ -12,20 +12,20 @@ import kotlin.reflect.KClass
 @Suppress("MemberVisibilityCanBePrivate")
 class ConstructorInvocationException(
     val type: KClass<*>,
-    val admissibleTypes: List<Set<KClass<*>>>
+    val admissibleTypes: List<Set<KClass<*>>>,
 ) : OopException(
-    "There is no constructor on type ${type.fullName} which accepts " +
-        "[${admissibleTypes.pretty()}] as formal arguments"
-) {
+        "There is no constructor on type ${type.fullName} which accepts " +
+            "[${admissibleTypes.pretty()}] as formal arguments",
+    ) {
     override fun toLogicError(
         context: ExecutionContext,
-        signature: Signature
+        signature: Signature,
     ): LogicError {
         return ExistenceError.of(
             context,
             ExistenceError.ObjectType.OOP_CONSTRUCTOR,
             culprit,
-            message ?: ""
+            message ?: "",
         )
     }
 

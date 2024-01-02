@@ -15,20 +15,20 @@ import it.unibo.tuprolog.theory.Theory
  * @author Enrico
  */
 internal object PrimitiveUtils {
-
-    private fun contextWith(database: Theory) = object : ExecutionContext by DummyInstances.executionContext {
-        override val libraries: Runtime = Runtime.of(CommonBuiltins)
-        override val staticKb: Theory = database
-    }
+    private fun contextWith(database: Theory) =
+        object : ExecutionContext by DummyInstances.executionContext {
+            override val libraries: Runtime = Runtime.of(CommonBuiltins)
+            override val staticKb: Theory = database
+        }
 
     /** Creates a solve request with [database] and [CommonBuiltins] loaded and given query struct*/
     internal fun createSolveRequest(
         query: Struct,
-        database: Theory = Theory.empty()
+        database: Theory = Theory.empty(),
     ): Solve.Request<ExecutionContext> =
         Solve.Request<ExecutionContext>(
             query.extractSignature(),
             query.args,
-            contextWith(database)
+            contextWith(database),
         )
 }

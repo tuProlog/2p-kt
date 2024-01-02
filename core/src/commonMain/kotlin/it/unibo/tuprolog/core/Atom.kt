@@ -17,7 +17,6 @@ import kotlin.collections.List as KtList
  * to [value].
  */
 interface Atom : Struct, Constant {
-
     override val arity: Int
         get() = 0
 
@@ -52,16 +51,13 @@ interface Atom : Struct, Constant {
     override fun asAtom(): Atom = this
 
     companion object {
-
         @JvmStatic
         @JsName("escapeValue")
-        fun escapeValue(string: String): String =
-            Struct.enquoteFunctor(string)
+        fun escapeValue(string: String): String = Struct.enquoteFunctor(string)
 
         @JvmStatic
         @JsName("escapeValueIfNecessary")
-        fun escapeValueIfNecessary(string: String): String =
-            Struct.enquoteFunctorIfNecessary(string)
+        fun escapeValueIfNecessary(string: String): String = Struct.enquoteFunctorIfNecessary(string)
 
         @JvmField
         val ATOM_PATTERN = Terms.ATOM_PATTERN

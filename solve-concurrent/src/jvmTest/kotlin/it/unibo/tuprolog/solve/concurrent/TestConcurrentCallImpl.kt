@@ -9,7 +9,6 @@ class TestConcurrentCallImpl :
     TestConcurrentCall<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     override val errorSignature: Signature = Signature("ensure_executable", 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)

@@ -10,7 +10,10 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TypeEnsurer
 
 object EnsureExecutable : TypeEnsurer<ExecutionContext>("ensure_executable") {
-    override fun Solve.Request<ExecutionContext>.ensureType(context: ExecutionContext, term: Term) {
+    override fun Solve.Request<ExecutionContext>.ensureType(
+        context: ExecutionContext,
+        term: Term,
+    ) {
         val signature = context.procedure?.extractSignature() ?: signature
         when (term) {
             is Var -> {

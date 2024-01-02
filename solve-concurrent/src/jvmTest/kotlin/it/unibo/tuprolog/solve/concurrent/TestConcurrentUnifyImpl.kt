@@ -8,7 +8,6 @@ class TestConcurrentUnifyImpl :
     TestConcurrentUnify<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testNumberUnify() = multiRunConcurrentTest { super.testNumberUnify() }

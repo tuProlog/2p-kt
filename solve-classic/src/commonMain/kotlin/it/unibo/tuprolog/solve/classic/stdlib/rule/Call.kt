@@ -12,8 +12,9 @@ object Call : RuleWrapper<ClassicExecutionContext>("call", 1) {
         get() = ktListOf(varOf("G"))
 
     override val Scope.body: Term
-        get() = tupleOf(
-            structOf(EnsureExecutable.functor, varOf("G")),
-            varOf("G")
-        )
+        get() =
+            tupleOf(
+                structOf(EnsureExecutable.functor, varOf("G")),
+                varOf("G"),
+            )
 }

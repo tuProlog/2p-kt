@@ -9,7 +9,6 @@ import it.unibo.tuprolog.utils.impl.SimpleLRUCache
  * @param V is the type of the values stored in this cache
  */
 interface Cache<K, V> {
-
     /**
      * Retrieves the maximum amount of items this cache may ever store
      */
@@ -26,7 +25,10 @@ interface Cache<K, V> {
      * @param value is the value corresponding to [key]
      * @return the evicted key-value pair, if any
      */
-    operator fun set(key: K, value: V): Optional<out Pair<K, V>>
+    operator fun set(
+        key: K,
+        value: V,
+    ): Optional<out Pair<K, V>>
 
     /**
      * Retrieves the cached value corresponding to the provided [key]
@@ -41,7 +43,10 @@ interface Cache<K, V> {
      * @param valueGenerator is the function aimed at generating the value to be cached
      * @return the value corresponding to [key], if any, or the value produced by [valueGenerator] otherwise
      */
-    fun getOrSet(key: K, valueGenerator: () -> V): V =
+    fun getOrSet(
+        key: K,
+        valueGenerator: () -> V,
+    ): V =
         when (val got = get(key)) {
             is Optional.Some -> got.value
             else -> {

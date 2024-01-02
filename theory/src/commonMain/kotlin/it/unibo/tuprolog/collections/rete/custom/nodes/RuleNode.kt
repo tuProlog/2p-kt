@@ -12,14 +12,12 @@ import it.unibo.tuprolog.utils.dequeOf
 
 internal class RuleNode(
     override val unificator: Unificator,
-    private val ordered: Boolean
+    private val ordered: Boolean,
 ) : TopLevelReteNode {
-
     private val functors: MutableMap<String, FunctorRete> = mutableMapOf()
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
-    override fun get(clause: Clause): Sequence<Clause> =
-        functors[clause.nestedFunctor()]?.get(clause) ?: emptySequence()
+    override fun get(clause: Clause): Sequence<Clause> = functors[clause.nestedFunctor()]?.get(clause) ?: emptySequence()
 
     override fun assertA(clause: IndexedClause) {
         clause.nestedFunctor().let {
@@ -55,14 +53,11 @@ internal class RuleNode(
         functors[clause.nestedFunctor()]?.retractAll(clause)
             ?: emptySequence()
 
-    override fun getCache(): Sequence<SituatedIndexedClause> =
-        theoryCache.value.asSequence()
+    override fun getCache(): Sequence<SituatedIndexedClause> = theoryCache.value.asSequence()
 
-    private fun Clause.nestedFunctor(): String =
-        this.head!!.functorOfNestedFirstArgument(0)
+    private fun Clause.nestedFunctor(): String = this.head!!.functorOfNestedFirstArgument(0)
 
-    private fun IndexedClause.nestedFunctor(): String =
-        this.innerClause.nestedFunctor()
+    private fun IndexedClause.nestedFunctor(): String = this.innerClause.nestedFunctor()
 
     override fun invalidateCache() {
         theoryCache.invalidate()
@@ -75,14 +70,14 @@ internal class RuleNode(
                 Utils.merge(
                     functors.values.map {
                         it.getCache()
-                    }
+                    },
                 )
             } else {
                 Utils.flattenIndexed(
                     functors.values.map {
                         it.getCache()
-                    }
+                    },
                 )
-            }
+            },
         )
 }

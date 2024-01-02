@@ -9,9 +9,8 @@ open class ParseException(
     @JsName("line") var line: Int,
     @JsName("column") var column: Int,
     message: String?,
-    throwable: Throwable?
+    throwable: Throwable?,
 ) : TuPrologException(message, throwable) {
-
     @JsName("clauseIndex")
     var clauseIndex = -1
 

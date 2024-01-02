@@ -14,5 +14,5 @@ import it.unibo.tuprolog.solve.primitive.Solve
  */
 class ExpressionEvaluator<E : ExecutionContext>(
     request: Solve.Request<E>,
-    index: Int? = null
+    index: Int? = null,
 ) : AbstractEvaluator<E, Term>(request, index)

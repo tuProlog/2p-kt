@@ -13,13 +13,15 @@ import kotlin.reflect.KCallable
 class OopRuntimeException(
     private val callable: KCallable<*>,
     private val receiver: Any?,
-    inner: Throwable
+    inner: Throwable,
 ) : OopException(
-    inner.message ?: "Unhandled exception of type ${inner::class.fullName} while executing OOP code",
-    cause = inner
-) {
-    override fun toLogicError(context: ExecutionContext, signature: Signature): LogicError =
-        SystemError.forUncaughtException(context, this)
+        inner.message ?: "Unhandled exception of type ${inner::class.fullName} while executing OOP code",
+        cause = inner,
+    ) {
+    override fun toLogicError(
+        context: ExecutionContext,
+        signature: Signature,
+    ): LogicError = SystemError.forUncaughtException(context, this)
 
     override val message: String
         get() = super.message!!
@@ -28,11 +30,12 @@ class OopRuntimeException(
         get() = super.cause!!
 
     override val culprit: Term
-        get() = Atom.of(
-            if (receiver == null) {
-                callable.pretty()
-            } else {
-                "${receiver::class.fullName}::${callable.pretty()}"
-            }
-        )
+        get() =
+            Atom.of(
+                if (receiver == null) {
+                    callable.pretty()
+                } else {
+                    "${receiver::class.fullName}::${callable.pretty()}"
+                },
+            )
 }

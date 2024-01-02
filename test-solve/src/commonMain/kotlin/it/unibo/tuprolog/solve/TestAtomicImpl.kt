@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAtomic {
-
     override fun testAtomicAtom() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -13,7 +12,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -27,7 +26,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -41,7 +40,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -55,7 +54,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -69,7 +68,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -83,7 +82,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }

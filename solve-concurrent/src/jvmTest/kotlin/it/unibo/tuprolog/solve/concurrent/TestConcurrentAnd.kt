@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testTermIsFreeVariable() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -48,20 +47,22 @@ interface TestConcurrentAnd<T : WithAssertingEquals> : FromSequence<T>, SolverFa
 
     fun testNoFooIsCallable() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                flags = FlagStore.of(Unknown to Unknown.ERROR)
-            )
+            val solver =
+                solverWithDefaultBuiltins(
+                    flags = FlagStore.of(Unknown to Unknown.ERROR),
+                )
 
             val query = "nofoo"("X") and call("X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    ExistenceError.forProcedure(
-                        DummyInstances.executionContext,
-                        Signature("nofoo", 1)
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        ExistenceError.forProcedure(
+                            DummyInstances.executionContext,
+                            Signature("nofoo", 1),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

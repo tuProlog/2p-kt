@@ -5,7 +5,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Rule : Clause {
-
     override val head: Struct
 
     override val isRule: Boolean
@@ -42,7 +41,10 @@ interface Rule : Clause {
 
     override fun setHeadArgs(arguments: Sequence<Term>): Rule
 
-    override fun insertHeadArg(index: Int, argument: Term): Rule
+    override fun insertHeadArg(
+        index: Int,
+        argument: Term,
+    ): Rule
 
     override fun addFirstHeadArg(argument: Term): Rule
 
@@ -50,13 +52,19 @@ interface Rule : Clause {
 
     override fun appendHeadArg(argument: Term): Rule
 
-    override fun setBodyItems(argument: Term, vararg arguments: Term): Rule
+    override fun setBodyItems(
+        argument: Term,
+        vararg arguments: Term,
+    ): Rule
 
     override fun setBodyItems(arguments: Iterable<Term>): Rule
 
     override fun setBodyItems(arguments: Sequence<Term>): Rule
 
-    override fun insertBodyItem(index: Int, argument: Term): Rule
+    override fun insertBodyItem(
+        index: Int,
+        argument: Term,
+    ): Rule
 
     override fun addFirstBodyItem(argument: Term): Rule
 
@@ -65,16 +73,21 @@ interface Rule : Clause {
     override fun appendBodyItem(argument: Term): Rule
 
     companion object {
-
         const val FUNCTOR = Terms.CLAUSE_FUNCTOR
 
         @JvmStatic
         @JsName("of")
-        fun of(head: Struct, vararg body: Term): Rule = of(head, body.asIterable())
+        fun of(
+            head: Struct,
+            vararg body: Term,
+        ): Rule = of(head, body.asIterable())
 
         @JvmStatic
         @JsName("ofIterable")
-        fun of(head: Struct, body: Iterable<Term>): Rule {
+        fun of(
+            head: Struct,
+            body: Iterable<Term>,
+        ): Rule {
             val i = body.iterator()
             if (!i.hasNext()) return Fact.of(head)
             val first = i.next()
@@ -84,11 +97,17 @@ interface Rule : Clause {
 
         @JvmStatic
         @JsName("ofSequence")
-        fun of(head: Struct, body: Sequence<Term>): Rule = of(head, body.asIterable())
+        fun of(
+            head: Struct,
+            body: Sequence<Term>,
+        ): Rule = of(head, body.asIterable())
 
         @JvmStatic
         @JsName("template")
-        fun template(functor: String, arity: Int): Rule {
+        fun template(
+            functor: String,
+            arity: Int,
+        ): Rule {
             return of(Struct.template(functor, arity), Var.anonymous())
         }
     }

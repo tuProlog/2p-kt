@@ -23,21 +23,22 @@ fun interface Primitive {
         @JvmStatic
         fun <C : ExecutionContext> enforcingSignature(
             supportedSignature: Signature,
-            uncheckedPrimitive: (Solve.Request<C>) -> Sequence<Solve.Response>
-        ): Primitive = Primitive {
-            // TODO see TODO in "Signature"; here should be called that method to check if primitive could execute
-            @Suppress("UNCHECKED_CAST")
-            when (it.signature) {
-                supportedSignature -> uncheckedPrimitive(it as Solve.Request<C>)
-                else -> throw IllegalArgumentException("This primitive supports only this signature `$supportedSignature`")
+            uncheckedPrimitive: (Solve.Request<C>) -> Sequence<Solve.Response>,
+        ): Primitive =
+            Primitive {
+                // TODO see TODO in "Signature"; here should be called that method to check if primitive could execute
+                @Suppress("UNCHECKED_CAST")
+                when (it.signature) {
+                    supportedSignature -> uncheckedPrimitive(it as Solve.Request<C>)
+                    else -> throw IllegalArgumentException("This primitive supports only this signature `$supportedSignature`")
+                }
             }
-        }
 
         @JsName("enforcingSignatureForPrimitive")
         @JvmStatic
         fun enforcingSignature(
             supportedSignature: Signature,
-            uncheckedPrimitive: Primitive
+            uncheckedPrimitive: Primitive,
         ): Primitive = enforcingSignature<ExecutionContext>(supportedSignature, uncheckedPrimitive::solve)
     }
 }

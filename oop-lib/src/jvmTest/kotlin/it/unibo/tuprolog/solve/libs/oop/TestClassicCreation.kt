@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import org.junit.Test
 
 class TestClassicCreation : TestCreation, SolverFactory by ClassicSolverFactory {
-
     private val prototype = TestCreation.prototype(this)
 
     @Test

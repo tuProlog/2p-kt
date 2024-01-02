@@ -21,7 +21,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class UnificatorTest {
-
     private val aVar = Var.of("A")
     private val myExampleContext = Substitution.of("A", Atom.of("a"))
 

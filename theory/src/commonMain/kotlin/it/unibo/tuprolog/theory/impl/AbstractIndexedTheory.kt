@@ -9,9 +9,8 @@ import it.unibo.tuprolog.unify.Unificator
 
 internal abstract class AbstractIndexedTheory protected constructor(
     queue: ClauseQueue,
-    tags: Map<String, Any>
+    tags: Map<String, Any>,
 ) : AbstractTheory(tags) {
-
     @Suppress("UNUSED_PARAMETER")
     override var unificator: Unificator
         get() = queue.unificator

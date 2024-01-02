@@ -7,7 +7,6 @@ import it.unibo.tuprolog.utils.graphs.Node
 
 @Suppress("RedundantVisibilityModifier")
 internal class MutableGraphImpl<T, W> : MutableGraph<T, W>, AbstractGraph<T, W, MutableGraphImpl<T, W>> {
-
     constructor(edges: Iterable<Edge<T, W>> = emptyList()) : super(edges)
 
     internal constructor(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>) : super(connections)
@@ -24,10 +23,17 @@ internal class MutableGraphImpl<T, W> : MutableGraph<T, W>, AbstractGraph<T, W, 
 
     public override fun add(node: Node<T>) = addNode(node)
 
-    override fun set(edge: Pair<Node<T>, Node<T>>, weight: W) =
-        add(edge(edge.first, edge.second, weight))
+    override fun set(
+        edge: Pair<Node<T>, Node<T>>,
+        weight: W,
+    ) = add(edge(edge.first, edge.second, weight))
 
-    override fun connect(node1: Node<T>, node2: Node<T>, weight: W?, bidirectional: Boolean) {
+    override fun connect(
+        node1: Node<T>,
+        node2: Node<T>,
+        weight: W?,
+        bidirectional: Boolean,
+    ) {
         add(edge(node1, node2, weight))
         if (bidirectional) {
             add(edge(node2, node1, weight))

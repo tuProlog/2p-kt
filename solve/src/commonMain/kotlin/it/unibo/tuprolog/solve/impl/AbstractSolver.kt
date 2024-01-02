@@ -34,25 +34,25 @@ abstract class AbstractSolver<E : ExecutionContext>(
     initialDynamicKb: Theory,
     inputChannels: InputStore,
     outputChannels: OutputStore,
-    trustKb: Boolean = false
+    trustKb: Boolean = false,
 ) : Solver {
-
     protected abstract var currentContext: E
 
     init {
         val staticKb = initialStaticKb.setUnificator(unificator).toImmutableTheory()
         val dynamicKb = initialDynamicKb.setUnificator(unificator).toMutableTheory()
-        currentContext = initializeContext(
-            unificator,
-            libraries,
-            flags,
-            staticKb,
-            dynamicKb,
-            getAllOperators(libraries).toOperatorSet(),
-            inputChannels,
-            outputChannels,
-            trustKb
-        )
+        currentContext =
+            initializeContext(
+                unificator,
+                libraries,
+                flags,
+                staticKb,
+                dynamicKb,
+                getAllOperators(libraries).toOperatorSet(),
+                inputChannels,
+                outputChannels,
+                trustKb,
+            )
         if (!trustKb) {
             initializeKb(staticKb, dynamicKb)
         }
@@ -72,7 +72,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
         operators: OperatorSet,
         inputChannels: InputStore,
         outputChannels: OutputStore,
-        trustKb: Boolean = false
+        trustKb: Boolean = false,
     ): E
 
     protected fun updateContext(operator: E.() -> ExecutionContext) {
@@ -82,11 +82,14 @@ abstract class AbstractSolver<E : ExecutionContext>(
 
     protected fun loadGoal(theory: Atom): Struct = Struct.of("consult", theory)
 
-    private fun resetKb(resetStatic: Boolean, resetDynamic: Boolean) {
+    private fun resetKb(
+        resetStatic: Boolean,
+        resetDynamic: Boolean,
+    ) {
         updateContext {
             update(
                 staticKb = if (resetStatic) Theory.emptyIndexed(unificator) else this.staticKb,
-                dynamicKb = if (resetDynamic) MutableTheory.emptyIndexed(unificator) else this.dynamicKb
+                dynamicKb = if (resetDynamic) MutableTheory.emptyIndexed(unificator) else this.dynamicKb,
             )
         }
     }
@@ -97,7 +100,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
                 staticKb = (this.staticKb + clausePartition.staticClauses).toImmutableTheory(),
                 dynamicKb = (this.dynamicKb + clausePartition.dynamicClauses).toMutableTheory(),
                 operators = operators + clausePartition.operators,
-                flags = flags + clausePartition.flagStore
+                flags = flags + clausePartition.flagStore,
             )
         }
     }
@@ -106,17 +109,19 @@ abstract class AbstractSolver<E : ExecutionContext>(
         staticKb: Theory? = null,
         dynamicKb: Theory? = null,
         appendStatic: Boolean = true,
-        appendDynamic: Boolean = true
+        appendDynamic: Boolean = true,
     ) {
         val staticSkippable = staticKb.let { it == null || it.directives.none() }
         val dynamicSkippable = dynamicKb.let { it == null || it.directives.none() }
-        val merged = when {
-            staticSkippable && dynamicSkippable -> ClausePartition.of(unificator, staticKb, dynamicKb)
-            staticSkippable -> ClausePartition.of(unificator, staticKb) +
-                dynamicKb?.partition(unificator, staticByDefault = false)
-            dynamicSkippable -> ClausePartition.of(unificator, dynamicKb) + staticKb?.partition(unificator)
-            else -> staticKb?.partition(unificator) + dynamicKb?.partition(unificator, staticByDefault = false)
-        }
+        val merged =
+            when {
+                staticSkippable && dynamicSkippable -> ClausePartition.of(unificator, staticKb, dynamicKb)
+                staticSkippable ->
+                    ClausePartition.of(unificator, staticKb) +
+                        dynamicKb?.partition(unificator, staticByDefault = false)
+                dynamicSkippable -> ClausePartition.of(unificator, dynamicKb) + staticKb?.partition(unificator)
+                else -> staticKb?.partition(unificator) + dynamicKb?.partition(unificator, staticByDefault = false)
+            }
         resetKb(!appendStatic, !appendDynamic)
         merged?.includes?.map { loadGoal(it) }?.forEach(this::solveInitialGoal)
         merged?.let { updateContextWith(it) }
@@ -163,7 +168,10 @@ abstract class AbstractSolver<E : ExecutionContext>(
     final override val operators: OperatorSet
         get() = currentContext.operators
 
-    final override fun solve(goal: Struct, options: SolveOptions): Sequence<Solution> {
+    final override fun solve(
+        goal: Struct,
+        options: SolveOptions,
+    ): Sequence<Solution> {
         var solutionSequence = solveImpl(goal, options)
         if (options.limit > 0) {
             solutionSequence = solutionSequence.take(options.limit)
@@ -174,7 +182,10 @@ abstract class AbstractSolver<E : ExecutionContext>(
         return solutionSequence
     }
 
-    protected abstract fun solveImpl(goal: Struct, options: SolveOptions): Sequence<Solution>
+    protected abstract fun solveImpl(
+        goal: Struct,
+        options: SolveOptions,
+    ): Sequence<Solution>
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -200,7 +211,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ): AbstractSolver<E>
 
     abstract override fun clone(): AbstractSolver<E>

@@ -21,10 +21,11 @@ kotlin {
 tasks.create("run", JavaExec::class.java) {
     group = "application"
     dependsOn("jvmMainClasses")
-    classpath = files(
-        kotlin.jvm().compilations.getByName("main").output,
-        kotlin.jvm().compilations.getByName("main").compileDependencyFiles
-    )
+    classpath =
+        files(
+            kotlin.jvm().compilations.getByName("main").output,
+            kotlin.jvm().compilations.getByName("main").compileDependencyFiles,
+        )
     standardInput = System.`in`
     mainClass.set(multiPlatformHelper.fatJarEntryPoint)
     project.findProperty("arguments")?.let {

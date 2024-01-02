@@ -24,31 +24,36 @@ multiProjectHelper {
     jsProjects(":parser-js")
     otherProjects(":documentation")
 
-    val baseProjectTemplate = buildSet {
-        add(Plugins.documentation)
-        add(Plugins.linter)
-        add(Plugins.bugFinder)
-        add(Plugins.versions)
-    }
+    val baseProjectTemplate =
+        buildSet {
+            add(Plugins.documentation)
+            add(Plugins.linter)
+            add(Plugins.bugFinder)
+            add(Plugins.versions)
+        }
 
-    ktProjectTemplate = buildSet {
-        addAll(baseProjectTemplate)
-        add(Plugins.multiplatform)
-    }
+    ktProjectTemplate =
+        buildSet {
+            addAll(baseProjectTemplate)
+            add(Plugins.multiplatform)
+        }
 
-    jvmProjectTemplate = buildSet {
-        addAll(baseProjectTemplate)
-        add(Plugins.jvmOnly)
-    }
+    jvmProjectTemplate =
+        buildSet {
+            addAll(baseProjectTemplate)
+            add(Plugins.jvmOnly)
+        }
 
-    jsProjectTemplate = buildSet {
-        addAll(baseProjectTemplate)
-        add(Plugins.jsOnly)
-    }
+    jsProjectTemplate =
+        buildSet {
+            addAll(baseProjectTemplate)
+            add(Plugins.jsOnly)
+        }
 
-    otherProjectTemplate = buildSet {
-        add(Plugins.versions)
-    }
+    otherProjectTemplate =
+        buildSet {
+            add(Plugins.versions)
+        }
 
     applyProjectTemplates()
 }

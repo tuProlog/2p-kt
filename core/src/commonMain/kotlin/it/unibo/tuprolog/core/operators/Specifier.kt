@@ -39,7 +39,9 @@ enum class Specifier : TermConvertible {
     XFY,
 
     /** Infix and left-associative */
-    YFX;
+    YFX,
+
+    ;
 
     /** Whether this specifier is a prefix one */
     @JsName("isPrefix")
@@ -89,7 +91,8 @@ enum class Specifier : TermConvertible {
         fun fromTerm(atom: Atom): Specifier {
             try {
                 return valueOf(atom.value.uppercase())
-            } catch (e: IllegalStateException) { // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
+            } catch (e: IllegalStateException) {
+                // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
                 throw IllegalArgumentException(e.message, e.cause)
             }
         }

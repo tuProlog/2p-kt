@@ -8,9 +8,8 @@ import it.unibo.tuprolog.core.Var
 
 internal open class AtomImpl(
     override val functor: String,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : AbstractStruct(functor, emptyList(), tags), Atom {
-
     override val args: List<Term>
         get() = emptyList()
 

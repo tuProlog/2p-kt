@@ -5,11 +5,10 @@ import it.unibo.tuprolog.theory.PrototypeRetractResultTest
 import kotlin.test.Test
 
 internal class ListedRetractResultTest {
-
     private val prototype: PrototypeRetractResultTest =
         PrototypeRetractResultTest(
             Factories::emptyListedTheory,
-            Factories::listedTheoryOf
+            Factories::listedTheoryOf,
         )
 
     @Test

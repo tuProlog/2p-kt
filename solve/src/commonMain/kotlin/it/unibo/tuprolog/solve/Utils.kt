@@ -28,12 +28,10 @@ inline fun <T> Iterator<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) {
 }
 
 /** Performs the given [action] on each element, giving a lookahead hint (i.e. if there's another element to process after). */
-inline fun <T> Iterable<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) =
-    iterator().forEachWithLookahead(action)
+inline fun <T> Iterable<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) = iterator().forEachWithLookahead(action)
 
 /** Performs the given [action] on each element, giving a lookahead hint (i.e. if there's another element to process after). */
-inline fun <T> Sequence<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) =
-    iterator().forEachWithLookahead(action)
+inline fun <T> Sequence<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) = iterator().forEachWithLookahead(action)
 
 fun Iterable<Clause>.getAllOperators(): Sequence<Operator> {
     return asSequence()
@@ -53,7 +51,10 @@ fun Runtime.getAllOperators(): Sequence<Operator> {
     return operators.asSequence()
 }
 
-fun getAllOperators(libraries: Runtime, vararg theories: Theory): Sequence<Operator> {
+fun getAllOperators(
+    libraries: Runtime,
+    vararg theories: Theory,
+): Sequence<Operator> {
     return libraries.getAllOperators() + sequenceOf(*theories).flatMap { it.getAllOperators() }
 }
 
@@ -63,7 +64,11 @@ fun Sequence<Operator>.toOperatorSet(): OperatorSet {
 
 @JvmOverloads
 @JsName("libraryOf")
-fun libraryOf(alias: String? = null, item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): Library {
+fun libraryOf(
+    alias: String? = null,
+    item1: AbstractWrapper<*>,
+    vararg items: AbstractWrapper<*>,
+): Library {
     val clauses = mutableListOf<Clause>()
     val primitives = mutableMapOf<Signature, Primitive>()
     val functions = mutableMapOf<Signature, LogicFunction>()
@@ -81,6 +86,10 @@ fun libraryOf(alias: String? = null, item1: AbstractWrapper<*>, vararg items: Ab
 
 @JvmOverloads
 @JsName("runtimeOf")
-fun runtimeOf(alias: String? = null, item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): Runtime {
+fun runtimeOf(
+    alias: String? = null,
+    item1: AbstractWrapper<*>,
+    vararg items: AbstractWrapper<*>,
+): Runtime {
     return libraryOf(alias, item1, *items).toRuntime()
 }

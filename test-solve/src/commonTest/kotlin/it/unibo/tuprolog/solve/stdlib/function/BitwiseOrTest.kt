@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class BitwiseOrTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("\\/", 2), BitwiseOr.signature)
@@ -25,8 +24,8 @@ internal class BitwiseOrTest {
             Integer.of(255),
             BitwiseOr.computeOf(
                 Integer.of(125),
-                Integer.of(255)
-            )
+                Integer.of(255),
+            ),
         )
     }
 

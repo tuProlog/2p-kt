@@ -2,8 +2,7 @@ package it.unibo.tuprolog.solve
 
 interface TestFail : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestFail =
-            TestFailImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestFail = TestFailImpl(solverFactory)
     }
 
     /**

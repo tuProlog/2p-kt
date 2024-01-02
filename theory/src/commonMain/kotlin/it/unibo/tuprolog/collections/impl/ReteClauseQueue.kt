@@ -10,9 +10,8 @@ import it.unibo.tuprolog.theory.TheoryUtils
 import it.unibo.tuprolog.unify.Unificator
 
 internal class ReteClauseQueue private constructor(
-    rete: ReteTree
+    rete: ReteTree,
 ) : ClauseQueue, AbstractReteClauseCollection<ReteClauseQueue>(rete) {
-
     private val hashCodeCache by lazy {
         ClauseQueue.hashCode(this)
     }
@@ -30,33 +29,27 @@ internal class ReteClauseQueue private constructor(
         ReteClauseQueue(
             rete.deepCopy().apply {
                 assertA(TheoryUtils.checkClauseCorrect(clause))
-            }
+            },
         )
 
     override fun addLast(clause: Clause): ReteClauseQueue =
         ReteClauseQueue(
             rete.deepCopy().apply {
                 assertZ(TheoryUtils.checkClauseCorrect(clause))
-            }
+            },
         )
 
-    override fun getFifoOrdered(clause: Clause): Sequence<Clause> =
-        rete.get(clause)
+    override fun getFifoOrdered(clause: Clause): Sequence<Clause> = rete.get(clause)
 
-    override fun getLifoOrdered(clause: Clause): Sequence<Clause> =
-        getFifoOrdered(clause).toList().asReversed().asSequence()
+    override fun getLifoOrdered(clause: Clause): Sequence<Clause> = getFifoOrdered(clause).toList().asReversed().asSequence()
 
-    override fun add(clause: Clause): ReteClauseQueue =
-        addLast(clause)
+    override fun add(clause: Clause): ReteClauseQueue = addLast(clause)
 
-    override fun retrieve(clause: Clause): RetrieveResult<out ReteClauseQueue> =
-        super<AbstractReteClauseCollection>.retrieve(clause)
+    override fun retrieve(clause: Clause): RetrieveResult<out ReteClauseQueue> = super<AbstractReteClauseCollection>.retrieve(clause)
 
-    override fun retrieveFirst(clause: Clause): RetrieveResult<out ReteClauseQueue> =
-        super<AbstractReteClauseCollection>.retrieve(clause)
+    override fun retrieveFirst(clause: Clause): RetrieveResult<out ReteClauseQueue> = super<AbstractReteClauseCollection>.retrieve(clause)
 
-    override fun newCollectionBuilder(rete: ReteTree): ReteClauseQueue =
-        ReteClauseQueue(rete)
+    override fun newCollectionBuilder(rete: ReteTree): ReteClauseQueue = ReteClauseQueue(rete)
 
     override fun equals(other: Any?): Boolean {
         return if (other is ClauseQueue && other !is MutableClauseQueue) {

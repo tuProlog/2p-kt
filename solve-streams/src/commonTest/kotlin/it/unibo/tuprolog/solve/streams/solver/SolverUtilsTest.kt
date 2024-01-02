@@ -35,12 +35,12 @@ import kotlin.test.fail
  * @author Enrico
  */
 internal class SolverUtilsTest {
-
-    private val aContext = StreamsExecutionContext(
-        dynamicKb = Theory.of({ factOf(atomOf("a")) }),
-        staticKb = Theory.of({ factOf(atomOf("a")) }),
-        flags = FlagStore.EMPTY
-    )
+    private val aContext =
+        StreamsExecutionContext(
+            dynamicKb = Theory.of({ factOf(atomOf("a")) }),
+            staticKb = Theory.of({ factOf(atomOf("a")) }),
+            flags = FlagStore.EMPTY,
+        )
 
     /** A "true" solveRequest */
     private val solveRequest = Solve.Request(Signature("true", 0), emptyList(), aContext)
@@ -71,7 +71,7 @@ internal class SolverUtilsTest {
     fun orderWithStrategyWithEmptyElementsDoesNothing() {
         assertEquals(
             emptySequence<Nothing>().toList(),
-            emptySequence<Nothing>().orderWithStrategy(aContext) { seq, _ -> seq.first() }.toList()
+            emptySequence<Nothing>().orderWithStrategy(aContext) { seq, _ -> seq.first() }.toList(),
         )
     }
 
@@ -130,7 +130,7 @@ internal class SolverUtilsTest {
                     yield(1)
                     yield(1)
                     fail("Should not evaluate entire sequence")
-                }
+                },
             )
         }
     }
@@ -157,12 +157,13 @@ internal class SolverUtilsTest {
     @Test
     fun newSolveRequestPropagatesCorrectlyContextFields() {
         val aClause = Clause.of(Atom.of("ddd"), Atom.of("ccc"))
-        val modifiedContext = aContext.copy(
-            dynamicKb = Theory.empty(),
-            staticKb = aContext.staticKb.assertA(aClause),
-            flags = FlagStore.of("someFlag" to Atom.of("someFlagValue")),
-            libraries = Runtime.empty()
-        )
+        val modifiedContext =
+            aContext.copy(
+                dynamicKb = Theory.empty(),
+                staticKb = aContext.staticKb.assertA(aClause),
+                flags = FlagStore.of("someFlag" to Atom.of("someFlagValue")),
+                libraries = Runtime.empty(),
+            )
 
         val toBeTested = solveRequest.newSolveRequest(solveRequest.query, toPropagateContextData = modifiedContext)
 
@@ -196,13 +197,14 @@ internal class SolverUtilsTest {
 
         val underTestResponses = listOf(aYesResponse, aNoResponse, anHaltResponse)
 
-        val correct = with(solveRequest) {
-            listOf(
-                replySuccess(expectedSubstitution, sideEffectManager = expectedSideEffectsManager),
-                replyFail(sideEffectManager = expectedSideEffectsManager),
-                replyException(expectedException, sideEffectManager = expectedSideEffectsManager)
-            )
-        }
+        val correct =
+            with(solveRequest) {
+                listOf(
+                    replySuccess(expectedSubstitution, sideEffectManager = expectedSideEffectsManager),
+                    replyFail(sideEffectManager = expectedSideEffectsManager),
+                    replyException(expectedException, sideEffectManager = expectedSideEffectsManager),
+                )
+            }
         val toBeTested = underTestResponses.map { solveRequest.replyWith(it) }
 
         correct.zip(toBeTested).forEach { (expected, actual) ->

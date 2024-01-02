@@ -12,14 +12,15 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class AbstractStateTest {
-
     private val solveRequest = createSolveRequest(Atom.of("test"))
 
     /** An [AbstractState] instance with dummy parameters, and emptySequence returning behaviour */
-    private val abstractStateUnderTest = object : AbstractState(solveRequest) {
-        override fun behave(): Sequence<State> = emptySequence()
-        override val context: StreamsExecutionContext = solveRequest.context
-    }
+    private val abstractStateUnderTest =
+        object : AbstractState(solveRequest) {
+            override fun behave(): Sequence<State> = emptySequence()
+
+            override val context: StreamsExecutionContext = solveRequest.context
+        }
 
     @Test
     fun holdsInsertedData() {

@@ -34,15 +34,14 @@ import kotlin.test.assertTrue
  */
 class PrototypeTheoryTest(
     private val emptyTheoryGenerator: () -> Theory,
-    private val theoryGenerator: (Iterable<Clause>) -> Theory
+    private val theoryGenerator: (Iterable<Clause>) -> Theory,
 ) {
-
     private data class FreshTheoriesScope(var emptyTheory: Theory, var filledTheory: Theory)
 
     private fun <R> withFreshTheories(
         emptyTheory: Theory = emptyTheoryGenerator(),
         filledTheory: Theory = theoryGenerator(wellFormedClauses),
-        action: FreshTheoriesScope.() -> R
+        action: FreshTheoriesScope.() -> R,
     ): R = FreshTheoriesScope(emptyTheory, filledTheory).action()
 
     private val anIndependentFact: Fact = Fact.of(Atom.of("myTestingFact"))
@@ -97,12 +96,15 @@ class PrototypeTheoryTest(
 
     fun plusTheoryFailsOnBadTheory() {
         withFreshTheories {
-            val badTheory = object : Theory by emptyTheoryGenerator() {
-                override val clauses: Iterable<Clause> = notWellFormedClauses
-                override fun iterator(): Iterator<Clause> = notWellFormedClauses.iterator()
-                override val isEmpty: Boolean get() = notWellFormedClauses.isEmpty()
-                override val isNonEmpty: Boolean get() = !isEmpty
-            }
+            val badTheory =
+                object : Theory by emptyTheoryGenerator() {
+                    override val clauses: Iterable<Clause> = notWellFormedClauses
+
+                    override fun iterator(): Iterator<Clause> = notWellFormedClauses.iterator()
+
+                    override val isEmpty: Boolean get() = notWellFormedClauses.isEmpty()
+                    override val isNonEmpty: Boolean get() = !isEmpty
+                }
             assertFailsWith<IllegalArgumentException> { filledTheory + badTheory }
         }
     }
@@ -265,8 +267,9 @@ class PrototypeTheoryTest(
 
     fun assertAStruct() {
         withFreshTheories {
-            val correctPartiallyOrderedClauses = wellFormedClauses.toMutableList()
-                .apply { add(0, Fact.of(aRule.head)) }
+            val correctPartiallyOrderedClauses =
+                wellFormedClauses.toMutableList()
+                    .apply { add(0, Fact.of(aRule.head)) }
             val toBeTested = filledTheory.assertA(aRule.head)
 
             assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
@@ -320,7 +323,7 @@ class PrototypeTheoryTest(
 
             assertClauseHeadPartialOrderingRespected(
                 wellFormedClauses + Fact.of(aRule.head),
-                toBeTested.clauses
+                toBeTested.clauses,
             )
         }
     }
@@ -449,7 +452,10 @@ class PrototypeTheoryTest(
         }
     }
 
-    private fun assertSameIfMutableNotSameOtherwise(first: Theory, second: Theory) {
+    private fun assertSameIfMutableNotSameOtherwise(
+        first: Theory,
+        second: Theory,
+    ) {
         if (first is MutableTheory && second is MutableTheory) {
             assertSame(first, second)
         } else if (first !is MutableTheory && second !is MutableTheory) {
@@ -482,7 +488,7 @@ class PrototypeTheoryTest(
         withFreshTheories {
             assertClausesHaveSameLengthAndContent(
                 filledTheory.clauses.iterator().asSequence(),
-                filledTheory.iterator().asSequence()
+                filledTheory.iterator().asSequence(),
             )
         }
     }
@@ -493,22 +499,22 @@ class PrototypeTheoryTest(
         for (query in positiveMemberQueries) {
             assertClausesHaveSameLengthAndContent(
                 memberClause.asSequence(),
-                theory[query]
+                theory[query],
             )
             assertClausesHaveSameLengthAndContent(
                 memberClause.asSequence(),
-                theory[query.head]
+                theory[query.head],
             )
         }
 
         for (query in negativeMemberQueries) {
             assertClausesHaveSameLengthAndContent(
                 emptySequence(),
-                theory[query]
+                theory[query],
             )
             assertClausesHaveSameLengthAndContent(
                 emptySequence(),
-                theory[query.head]
+                theory[query.head],
             )
         }
     }
@@ -518,12 +524,12 @@ class PrototypeTheoryTest(
             var theory = theoryGenerator(memberClause)
             assertClausesHaveSameLengthAndContent(
                 memberClause,
-                (theory.retract(query) as RetractResult.Success).clauses
+                (theory.retract(query) as RetractResult.Success).clauses,
             )
             theory = theoryGenerator(memberClause)
             assertClausesHaveSameLengthAndContent(
                 memberClause,
-                (theory.retract(query.head) as RetractResult.Success).clauses
+                (theory.retract(query.head) as RetractResult.Success).clauses,
             )
         }
 
@@ -531,11 +537,11 @@ class PrototypeTheoryTest(
             val theory = theoryGenerator(memberClause)
             assertEquals(
                 RetractResult.Failure(theory),
-                theory.retract(query)
+                theory.retract(query),
             )
             assertEquals(
                 RetractResult.Failure(theory),
-                theory.retract(query.head)
+                theory.retract(query.head),
             )
         }
     }
@@ -546,7 +552,7 @@ class PrototypeTheoryTest(
         for (query in deepQueries) {
             assertClausesHaveSameLengthAndContent(
                 deepClause.asSequence(),
-                theory[query]
+                theory[query],
             )
         }
     }
@@ -556,7 +562,7 @@ class PrototypeTheoryTest(
             val theory = theoryGenerator(deepClause)
             assertClausesHaveSameLengthAndContent(
                 deepClause,
-                (theory.retract(query) as RetractResult.Success).clauses
+                (theory.retract(query) as RetractResult.Success).clauses,
             )
         }
     }

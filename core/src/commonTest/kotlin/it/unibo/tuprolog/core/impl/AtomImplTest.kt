@@ -19,14 +19,13 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class AtomImplTest {
-
     private val mixedAtomInstances = AtomUtils.mixedAtoms.map(::AtomImpl)
 
     @Test
     fun functorCorrectness() {
         onCorrespondingItems(
             AtomUtils.mixedAtoms,
-            mixedAtomInstances.map { it.functor }
+            mixedAtomInstances.map { it.functor },
         ) { atomString, atomInstanceFunctor -> assertEquals(atomString, atomInstanceFunctor) }
     }
 

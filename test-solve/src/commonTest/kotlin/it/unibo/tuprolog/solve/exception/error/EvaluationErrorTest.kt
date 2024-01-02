@@ -12,12 +12,12 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class EvaluationErrorTest {
-
     private val testErrorType = EvaluationError.Type.FLOAT_OVERFLOW
-    private val aCallableTypeError = EvaluationError(
-        context = LogicErrorUtils.aContext,
-        errorType = testErrorType
-    )
+    private val aCallableTypeError =
+        EvaluationError(
+            context = LogicErrorUtils.aContext,
+            errorType = testErrorType,
+        )
     private val correctTypeFunctor = "evaluation_error"
 
     @Test
@@ -34,7 +34,7 @@ internal class EvaluationErrorTest {
     fun evaluationErrorTypeCorrect() {
         assertEquals(
             Struct.of(correctTypeFunctor, testErrorType.toTerm()),
-            aCallableTypeError.type
+            aCallableTypeError.type,
         )
     }
 

@@ -9,7 +9,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object WriteCanonical2 : BinaryRelation.NonBacktrackable<ExecutionContext>("write_canonical") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+    ): Solve.Response {
         val channel = ensuringArgumentIsOutputChannel(0)
         return writeTermAndReply(channel, second, TermFormatter.canonical())
     }

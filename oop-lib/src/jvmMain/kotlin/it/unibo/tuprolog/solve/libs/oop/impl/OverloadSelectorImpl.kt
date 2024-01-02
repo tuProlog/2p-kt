@@ -16,10 +16,12 @@ import kotlin.reflect.KVisibility
 
 internal class OverloadSelectorImpl(
     override val type: KClass<*>,
-    override val termToObjectConverter: TermToObjectConverter
+    override val termToObjectConverter: TermToObjectConverter,
 ) : OverloadSelector {
-
-    override fun findMethod(name: String, arguments: List<Term>): KCallable<*> {
+    override fun findMethod(
+        name: String,
+        arguments: List<Term>,
+    ): KCallable<*> {
         KotlinTypesHacks[type, name, arguments]?.let { return it }
         return try {
             type.members
@@ -38,7 +40,10 @@ internal class OverloadSelectorImpl(
         }
     }
 
-    override fun findProperty(name: String, value: Term): KMutableProperty<*> {
+    override fun findProperty(
+        name: String,
+        value: Term,
+    ): KMutableProperty<*> {
         return type.members
             .filter { it.name == name }
             .filter { it.visibility == KVisibility.PUBLIC }

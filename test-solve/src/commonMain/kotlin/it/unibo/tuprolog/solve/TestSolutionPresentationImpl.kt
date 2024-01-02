@@ -8,9 +8,10 @@ import kotlin.test.assertTrue
 class TestSolutionPresentationImpl(private val solverFactory: SolverFactory) : TestSolutionPresentation {
     override fun testSolutionWithDandlingVars() {
         logicProgramming {
-            val theory = theoryOf(
-                fact { "append"("seq"(X), X) }
-            )
+            val theory =
+                theoryOf(
+                    fact { "append"("seq"(X), X) },
+                )
             val solver = solverFactory.solverOf(staticKb = theory)
             val query = "append"(A, B)
             val sol = solver.solveOnce(query)

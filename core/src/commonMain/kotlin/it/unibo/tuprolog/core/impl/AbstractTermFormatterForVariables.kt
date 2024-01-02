@@ -6,12 +6,14 @@ import it.unibo.tuprolog.core.Var
 internal abstract class AbstractTermFormatterForVariables(
     quoted: Boolean = true,
     numberVars: Boolean = false,
-    ignoreOps: Boolean = false
+    ignoreOps: Boolean = false,
 ) : AbstractTermFormatter(quoted, numberVars, ignoreOps) {
-
     private val variables: MutableMap<String, MutableMap<Var, String>> = mutableMapOf()
 
-    protected abstract fun formatVar(variable: Var, suffix: String): String
+    protected abstract fun formatVar(
+        variable: Var,
+        suffix: String,
+    ): String
 
     override fun visitVar(term: Var): String {
         return if (term.isAnonymous) {

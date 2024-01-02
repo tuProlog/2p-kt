@@ -9,9 +9,8 @@ import it.unibo.tuprolog.core.TermVisitor
 internal open class RuleImpl(
     override val head: Struct,
     override val body: Term,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : ClauseImpl(head, body, tags), Rule {
-
     override fun copyWithTags(tags: Map<String, Any>): Rule = RuleImpl(head, body, tags)
 
     override fun freshCopy(): Rule = super.freshCopy().castToRule()
@@ -36,7 +35,10 @@ internal open class RuleImpl(
 
     override fun setHeadArgs(arguments: Sequence<Term>): Rule = super.setHeadArgs(arguments).castToRule()
 
-    override fun insertHeadArg(index: Int, argument: Term): Rule = super.insertHeadArg(index, argument).castToRule()
+    override fun insertHeadArg(
+        index: Int,
+        argument: Term,
+    ): Rule = super.insertHeadArg(index, argument).castToRule()
 
     override fun addFirstHeadArg(argument: Term): Rule = super.addFirstHeadArg(argument).castToRule()
 
@@ -44,14 +46,19 @@ internal open class RuleImpl(
 
     override fun appendHeadArg(argument: Term): Rule = super.appendHeadArg(argument).castToRule()
 
-    override fun setBodyItems(argument: Term, vararg arguments: Term): Rule =
-        super.setBodyItems(argument, *arguments).castToRule()
+    override fun setBodyItems(
+        argument: Term,
+        vararg arguments: Term,
+    ): Rule = super.setBodyItems(argument, *arguments).castToRule()
 
     override fun setBodyItems(arguments: Iterable<Term>): Rule = super.setBodyItems(arguments).castToRule()
 
     override fun setBodyItems(arguments: Sequence<Term>): Rule = super.setBodyItems(arguments).castToRule()
 
-    override fun insertBodyItem(index: Int, argument: Term): Rule = super.insertBodyItem(index, argument).castToRule()
+    override fun insertBodyItem(
+        index: Int,
+        argument: Term,
+    ): Rule = super.insertBodyItem(index, argument).castToRule()
 
     override fun addFirstBodyItem(argument: Term): Rule = super.addFirstBodyItem(argument).castToRule()
 

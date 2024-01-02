@@ -5,8 +5,7 @@ package it.unibo.tuprolog.solve
  */
 interface TestArg : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestArg =
-            TestArgImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestArg = TestArgImpl(solverFactory)
     }
 
     /**

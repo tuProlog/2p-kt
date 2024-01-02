@@ -4,10 +4,8 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.SolverTest
 
 interface TestInclude : SolverTest {
-
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestInclude =
-            TestIncludeImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestInclude = TestIncludeImpl(solverFactory)
     }
 
     fun testLocalInclude()

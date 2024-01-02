@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testNumberUnify() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -133,13 +132,14 @@ interface TestConcurrentUnify<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = ("f"("A", "B", "C")) eq ("f"("g"("B", "B"), "g"("C", "C"), "g"("D", "D")))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.yes(
-                    "A" to "g"("g"("g"("D", "D"), "g"("D", "D")), "g"("g"("D", "D"), "g"("D", "D"))),
-                    "B" to "g"("g"("D", "D"), "g"("D", "D")),
-                    "C" to "g"("D", "D")
+            val expected =
+                fromSequence(
+                    query.yes(
+                        "A" to "g"("g"("g"("D", "D"), "g"("D", "D")), "g"("g"("D", "D"), "g"("D", "D"))),
+                        "B" to "g"("g"("D", "D"), "g"("D", "D")),
+                        "C" to "g"("D", "D"),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

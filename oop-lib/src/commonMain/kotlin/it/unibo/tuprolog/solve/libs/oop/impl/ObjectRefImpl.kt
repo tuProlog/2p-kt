@@ -20,10 +20,17 @@ internal class ObjectRefImpl(override val `object`: Any) : ObjectRef, Atom by At
 
     override fun asConstant(): Constant = this
 
-    override fun invoke(objectConverter: TermToObjectConverter, methodName: String, arguments: List<Term>): Result =
-        `object`.invoke(objectConverter, methodName, arguments)
+    override fun invoke(
+        objectConverter: TermToObjectConverter,
+        methodName: String,
+        arguments: List<Term>,
+    ): Result = `object`.invoke(objectConverter, methodName, arguments)
 
-    override fun assign(objectConverter: TermToObjectConverter, propertyName: String, value: Term): Boolean {
+    override fun assign(
+        objectConverter: TermToObjectConverter,
+        propertyName: String,
+        value: Term,
+    ): Boolean {
         `object`.assign(objectConverter, propertyName, value)
         return true
     }
@@ -38,9 +45,15 @@ internal class ObjectRefImpl(override val `object`: Any) : ObjectRef, Atom by At
 
     override fun apply(substitution: Substitution): Term = this
 
-    override fun apply(substitution: Substitution, vararg substitutions: Substitution): Term = this
+    override fun apply(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): Term = this
 
-    override fun get(substitution: Substitution, vararg substitutions: Substitution): Term = this
+    override fun get(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): Term = this
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitAtom(this)
 }

@@ -9,7 +9,6 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testNumberCodesListIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -88,17 +87,18 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
 
             val query = number_codes("a", "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("number_codes", 2),
-                        TypeError.Expected.NUMBER,
-                        atomOf("a"),
-                        index = 0
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("number_codes", 2),
+                            TypeError.Expected.NUMBER,
+                            atomOf("a"),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

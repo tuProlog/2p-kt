@@ -9,7 +9,6 @@ import kotlin.test.Test
  *
  */
 internal class TermNotIdenticalTest {
-
     @Test
     fun computesCorrectResult() {
         notEqualQueryToResult.forEach { (input, result) ->

@@ -14,7 +14,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("Result" to realOf(14.0))),
-                solutions
+                solutions,
             )
         }
     }
@@ -28,7 +28,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to intOf(1) + intOf(2), "Y" to intOf(9))),
-                solutions
+                solutions,
             )
         }
     }
@@ -42,7 +42,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -61,11 +61,11 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
                             DummyInstances.executionContext,
                             Signature("is", 2),
                             varOf("N"),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -85,11 +85,11 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
                             Signature("is", 2),
                             TypeError.Expected.EVALUABLE,
                             atomOf("foo"),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -103,7 +103,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to realOf(3.0))),
-                solutions
+                solutions,
             )
         }
     }

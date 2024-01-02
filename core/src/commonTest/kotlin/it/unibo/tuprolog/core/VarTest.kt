@@ -20,7 +20,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class VarTest {
-
     @Test
     fun varRegexCorrect() {
         assertTrue(VarUtils.correctlyNamedVars.all { it matches Var.NAME_PATTERN })

@@ -24,29 +24,29 @@ import kotlin.test.fail
  * @author Enrico
  */
 internal object ReteNodeUtils {
-
     /** Contains some well-formed rules */
-    internal val rules = listOf(
-        Fact.of(Truth.TRUE),
-        Fact.of(Truth.FAIL),
-        Fact.of(Atom.of("a")),
-        Fact.of(Atom.of("other")),
-        Fact.of(Struct.of("a", Atom.of("other"))),
-        Fact.of(Struct.of("other", Integer.of(1))),
-        Fact.of(Tuple.of(Var.of("A"), Var.of("B"))),
-        Rule.of(Atom.of("a"), Atom.of("other")),
-        Rule.of(Tuple.of(Var.of("A"), Var.of("B")), Atom.of("a")),
-        Rule.of(Struct.of("a", Atom.of("other")), Atom.of("a")),
-        Rule.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
-        Rule.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
-        Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-        Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-        Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
-        Rule.of(Struct.of("a", Atom.of("a")), Empty.block()),
-        Rule.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
-        Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
-        Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous())
-    )
+    internal val rules =
+        listOf(
+            Fact.of(Truth.TRUE),
+            Fact.of(Truth.FAIL),
+            Fact.of(Atom.of("a")),
+            Fact.of(Atom.of("other")),
+            Fact.of(Struct.of("a", Atom.of("other"))),
+            Fact.of(Struct.of("other", Integer.of(1))),
+            Fact.of(Tuple.of(Var.of("A"), Var.of("B"))),
+            Rule.of(Atom.of("a"), Atom.of("other")),
+            Rule.of(Tuple.of(Var.of("A"), Var.of("B")), Atom.of("a")),
+            Rule.of(Struct.of("a", Atom.of("other")), Atom.of("a")),
+            Rule.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
+            Rule.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
+            Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+            Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+            Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
+            Rule.of(Struct.of("a", Atom.of("a")), Empty.block()),
+            Rule.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
+            Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
+            Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
+        )
 
     /** Contains some well-formed rules with no args head */
     internal val noArgHeadedRules = rules.filter { it.head.isAtom }
@@ -71,7 +71,7 @@ internal object ReteNodeUtils {
             },
             Rule.of(Struct.of("a", Var.anonymous()), Var.anonymous()).run {
                 this to rules.filter { it matches this }
-            }
+            },
         )
 
     /** Contains a map of queries and results made excluding queries with non "a" functor from [rulesQueryResultsMap] */
@@ -96,7 +96,7 @@ internal object ReteNodeUtils {
             Directive.of(Struct.of("a", Atom.of("a")), Empty.block()),
             Directive.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
             Directive.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
-            Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous())
+            Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
         )
 
     /** Contains a map of queries and results crafted watching [directives] collection (NOTE: any modifications must be reviewed by hand)*/
@@ -110,7 +110,7 @@ internal object ReteNodeUtils {
             },
             Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())).run {
                 this to directives.filter { it matches this }
-            }
+            },
         )
 
     /** Contains well-formed mixed [rules] and [directives] */
@@ -120,8 +120,10 @@ internal object ReteNodeUtils {
     internal val mixedClausesQueryResultsMap = rulesQueryResultsMap + directivesQueryResultsMap
 
     /** Asserts that rete node has correct elements count */
-    internal fun assertReteNodeElementCount(reteNode: ReteNode<*, Clause>, expectedCount: Int) =
-        assertEquals(expectedCount, reteNode.indexedElements.count())
+    internal fun assertReteNodeElementCount(
+        reteNode: ReteNode<*, Clause>,
+        expectedCount: Int,
+    ) = assertEquals(expectedCount, reteNode.indexedElements.count())
 
     /** Asserts that rete node is empty */
     internal fun assertReteNodeEmpty(reteNode: ReteNode<*, out Clause>) {
@@ -130,13 +132,15 @@ internal object ReteNodeUtils {
     }
 
     /** Asserts that rete node clauses are the same as expected */
-    internal fun assertReteNodeClausesCorrect(reteNode: ReteNode<*, out Clause>, expectedClauses: Iterable<Clause>) =
-        assertEquals(expectedClauses.toList(), reteNode.indexedElements.toList())
+    internal fun assertReteNodeClausesCorrect(
+        reteNode: ReteNode<*, out Clause>,
+        expectedClauses: Iterable<Clause>,
+    ) = assertEquals(expectedClauses.toList(), reteNode.indexedElements.toList())
 
     /** Asserts that calling [idempotentAction] onto [reteNode] results in no actual change */
     internal inline fun assertNoChangesInReteNode(
         reteNode: ReteNode<*, out Clause>,
-        idempotentAction: ReteNode<*, Clause>.() -> Sequence<Clause>
+        idempotentAction: ReteNode<*, Clause>.() -> Sequence<Clause>,
     ) {
         val beforeContents = reteNode.indexedElements.toList()
 
@@ -151,7 +155,7 @@ internal object ReteNodeUtils {
     internal inline fun assertRemovedFromReteNode(
         reteNode: ReteNode<*, out Clause>,
         removedExpected: Iterable<Clause>,
-        removeAction: ReteNode<*, Clause>.() -> Sequence<Clause>
+        removeAction: ReteNode<*, Clause>.() -> Sequence<Clause>,
     ) {
         val allClauses = reteNode.indexedElements.asIterable()
         val allClauseCount = allClauses.count()
@@ -171,7 +175,7 @@ internal object ReteNodeUtils {
         reteNode: ReteNode<*, out Clause>,
         toRemoveMatched: Iterable<Clause>,
         removeLimit: Int = Int.MAX_VALUE,
-        removeAction: ReteNode<*, Clause>.() -> Sequence<Clause>
+        removeAction: ReteNode<*, Clause>.() -> Sequence<Clause>,
     ) {
         val allClauses = reteNode.indexedElements.asIterable()
         val allClauseCount = allClauses.count()
@@ -184,23 +188,24 @@ internal object ReteNodeUtils {
         val removedActual = partialOrderingHeadClauseMap(removedActualSequence.asIterable())
         val removeMatchExpected = partialOrderingHeadClauseMap(toRemoveMatched)
 
-        val checkerMap = removedActual.mapValues {
-            it.value.zip(removeMatchExpected[it.key] ?: emptyList())
-        }
+        val checkerMap =
+            removedActual.mapValues {
+                it.value.zip(removeMatchExpected[it.key] ?: emptyList())
+            }
         val (actualRemovedList, expectedRemovedList) = checkerMap.values.flatten().unzip()
 
         assertEquals(expectedRemovedList, actualRemovedList)
 
         assertClauseHeadPartialOrderingRespected(
             allClauses - expectedRemovedList,
-            reteNode.indexedElements.asIterable()
+            reteNode.indexedElements.asIterable(),
         )
     }
 
     /** Asserts that [actualClauses] respect partial ordering (checking for Clauses head structural equality) imposed by [expectedClauses] iteration order */
     internal fun assertClauseHeadPartialOrderingRespected(
         expectedClauses: Iterable<Clause>,
-        actualClauses: Iterable<Clause>
+        actualClauses: Iterable<Clause>,
     ) {
 //        assertEquals(expectedClauses.toList().sorted(), reteNode.indexedElements.toList().sorted()) TODO enable after solving issue #29 and delete two below assertions
         assertTrue("\nExpected:\t$expectedClauses\nActual:\t\t$actualClauses") {
@@ -217,14 +222,14 @@ internal object ReteNodeUtils {
                     else -> fail("Partial ordering not respected: $clause should come after these ${entry.value - clause}")
                 }
             },
-            onMissingEntry = { clause, _ -> fail("Clause $clause not expected among these: $expectedClauses") }
+            onMissingEntry = { clause, _ -> fail("Clause $clause not expected among these: $expectedClauses") },
         )
     }
 
     /** Asserts that ReteTree node respects partial ordering (checking for Clauses head structural equality) imposed by [expectedClauses] iteration order */
     internal fun assertCorrectAndPartialOrderRespected(
         reteNode: ReteNode<*, out Clause>,
-        expectedClauses: Iterable<Clause>
+        expectedClauses: Iterable<Clause>,
     ) = assertClauseHeadPartialOrderingRespected(expectedClauses, reteNode.indexedElements.asIterable())
 
     /** Creates a Map containing for each structurallyEquals Clause.head the clauses ordered (according to [clauses] iteration order),
@@ -234,7 +239,7 @@ internal object ReteNodeUtils {
             clauses.forEachStructurallyEqualsHead(
                 resultMap,
                 onPresentEntry = { clause, entry -> entry.setValue(entry.value + clause) },
-                onMissingEntry = { clause, map -> map[clause.head] = mutableListOf(clause) }
+                onMissingEntry = { clause, map -> map[clause.head] = mutableListOf(clause) },
             )
         }.toMap()
 
@@ -242,7 +247,7 @@ internal object ReteNodeUtils {
     private inline fun Iterable<Clause>.forEachStructurallyEqualsHead(
         partialOrderingMap: MutableMap<Struct?, Iterable<Clause>>,
         onPresentEntry: (Clause, MutableMap.MutableEntry<Struct?, Iterable<Clause>>) -> Unit,
-        onMissingEntry: (Clause, MutableMap<Struct?, Iterable<Clause>>) -> Unit
+        onMissingEntry: (Clause, MutableMap<Struct?, Iterable<Clause>>) -> Unit,
     ) {
         forEach { clause ->
             partialOrderingMap.entries.find { (clauseHead, _) ->

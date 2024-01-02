@@ -13,9 +13,8 @@ import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.utils.setTag
 
 internal object ProbSetConfig : UnaryPredicate.NonBacktrackable<ExecutionContext>(
-    "${ProblogLib.PREDICATE_PREFIX}_set_config"
+    "${ProblogLib.PREDICATE_PREFIX}_set_config",
 ) {
-
     private val CONFIG_FLAG = "${this.functor}_flag"
     private val CONFIG_TERM_NAME = "${this.functor}_term"
     private val CONFIG_TERM_TAG = "it.unibo.tuprolog.solve.probability${this.functor}_tag"

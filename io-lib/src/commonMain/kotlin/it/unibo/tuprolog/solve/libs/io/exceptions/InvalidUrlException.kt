@@ -16,7 +16,7 @@ class InvalidUrlException : TuPrologException {
         context: ExecutionContext,
         signature: Signature,
         culprit: Term,
-        index: Int
+        index: Int,
     ): LogicError {
         return TypeError.forArgument(context, signature, TypeError.Expected.URL, culprit, index)
     }

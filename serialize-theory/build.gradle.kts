@@ -35,10 +35,11 @@ listOf("yaml", "json").forEach {
     tasks.create("print${it.capitalized()}", JavaExec::class.java) {
         group = "application"
         dependsOn("jvmTestClasses")
-        classpath = files(
-            kotlin.jvm().compilations.getByName("test").output,
-            kotlin.jvm().compilations.getByName("test").compileDependencyFiles
-        )
+        classpath =
+            files(
+                kotlin.jvm().compilations.getByName("test").output,
+                kotlin.jvm().compilations.getByName("test").compileDependencyFiles,
+            )
         standardInput = System.`in`
         mainClass.set("${it.uppercase(Locale.getDefault())}PrinterKt")
     }

@@ -15,7 +15,6 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
  *
  * @author Jason Dellaluce */
 internal object PrologClauseMapper : ClauseMapper {
-
     override fun isCompatible(clause: Clause): Boolean {
         return clause is Rule
     }
@@ -25,13 +24,13 @@ internal object PrologClauseMapper : ClauseMapper {
             throw ClauseMappingException("Clause is not an instance of Rule: $clause")
         }
 
-        /* Map facts and truths differently */
+        // Map facts and truths differently
         if (clause.body is Truth) {
             return listOf(
                 Rule.of(
                     clause.head.withExplanation(ProbExplanation.TRUE.toTerm()),
-                    clause.body
-                )
+                    clause.body,
+                ),
             )
         }
 
@@ -39,8 +38,8 @@ internal object PrologClauseMapper : ClauseMapper {
         return listOf(
             Rule.of(
                 clause.head.withExplanation(explanationVar),
-                clause.body.withBodyExplanation(explanationVar)
-            )
+                clause.body.withBodyExplanation(explanationVar),
+            ),
         )
     }
 }

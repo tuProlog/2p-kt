@@ -9,7 +9,9 @@ class TestTermDeserializer {
         val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
         assertEquals(MimeType.Json, deserializer.mimeType)
 
-        deserializer.assertTermDeserializationWorks("{\"fun\":\"member\",\"args\":[{\"var\":\"H\"},{\"list\":[{\"var\":\"H\"}],\"tail\":{\"var\":\"_\"}}]}") {
+        deserializer.assertTermDeserializationWorks(
+            "{\"fun\":\"member\",\"args\":[{\"var\":\"H\"},{\"list\":[{\"var\":\"H\"}],\"tail\":{\"var\":\"_\"}}]}",
+        ) {
             structOf("member", varOf("H"), consOf(varOf("H"), anonymous()))
         }
     }
@@ -28,7 +30,7 @@ class TestTermDeserializer {
             |      - var: H
             |    tail: 
             |      var: _
-            """.trimMargin()
+            """.trimMargin(),
         ) {
             structOf("member", varOf("H"), consOf(varOf("H"), anonymous()))
         }
@@ -141,12 +143,14 @@ class TestTermDeserializer {
             structOf("f", atomOf("hello"), numOf(2))
         }
 
-        deserializer.assertTermDeserializationWorks("{\"fun\":\"f\",\"args\":[\"prova 2\",{\"real\":3.0},{\"list\":[\"qua ci va una lista\",true]}]}") {
+        deserializer.assertTermDeserializationWorks(
+            "{\"fun\":\"f\",\"args\":[\"prova 2\",{\"real\":3.0},{\"list\":[\"qua ci va una lista\",true]}]}",
+        ) {
             structOf(
                 "f",
                 atomOf("prova 2"),
                 realOf(3.0),
-                listOf(atomOf("qua ci va una lista"), truthOf(true))
+                listOf(atomOf("qua ci va una lista"), truthOf(true)),
             )
         }
     }
@@ -181,7 +185,7 @@ class TestTermDeserializer {
                 "f",
                 atomOf("prova 2"),
                 realOf(3.0),
-                listOf(atomOf("qua ci va una lista"), truthOf(true))
+                listOf(atomOf("qua ci va una lista"), truthOf(true)),
             )
         }
     }

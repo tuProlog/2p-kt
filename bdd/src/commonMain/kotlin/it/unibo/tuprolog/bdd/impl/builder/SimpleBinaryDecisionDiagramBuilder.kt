@@ -16,18 +16,18 @@ internal class SimpleBinaryDecisionDiagramBuilder<T : Comparable<T>> :
     override fun buildVariable(
         value: T,
         low: BinaryDecisionDiagram<T>,
-        high: BinaryDecisionDiagram<T>
+        high: BinaryDecisionDiagram<T>,
     ): BinaryDecisionDiagram<T> {
         return SimpleBinaryDecisionDiagramVariable(
             value,
             low,
-            high
+            high,
         )
     }
 
     override fun buildTerminal(truth: Boolean): BinaryDecisionDiagram<T> {
         return SimpleBinaryDecisionDiagramTerminal(
-            truth
+            truth,
         )
     }
 }

@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.libs.oop.ObjectToTermConverter
 import it.unibo.tuprolog.utils.NumberTypeTester
 
 internal class ObjectToTermConverterImpl : ObjectToTermConverter {
-
     private val numberTypeTester = NumberTypeTester()
 
     override fun convert(source: Any?): Term {
@@ -18,10 +17,11 @@ internal class ObjectToTermConverterImpl : ObjectToTermConverter {
             when (source) {
                 null -> ObjectRef.NULL
                 is String -> Atom.of(source)
-                is Number -> when {
-                    source.isInteger -> Integer.of(source.toInteger())
-                    else -> Real.of(source.toDecimal())
-                }
+                is Number ->
+                    when {
+                        source.isInteger -> Integer.of(source.toInteger())
+                        else -> Real.of(source.toDecimal())
+                    }
                 is Char -> Atom.of(charArrayOf(source).concatToString())
                 is Boolean -> Truth.of(source)
                 else -> ObjectRef.of(source)

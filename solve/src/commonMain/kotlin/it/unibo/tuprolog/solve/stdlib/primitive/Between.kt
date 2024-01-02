@@ -11,11 +11,10 @@ import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.Integer as LogicInteger
 
 object Between : TernaryRelation.WithoutSideEffects<ExecutionContext>("between") {
-
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
-        third: Term
+        third: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(0)
         ensuringArgumentIsInstantiated(1)

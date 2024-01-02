@@ -27,7 +27,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solver.solve(query, shortDuration).toList()
+                solver.solve(query, shortDuration).toList(),
             )
         }
     }
@@ -42,7 +42,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solver.solve(query, shortDuration).toList()
+                solver.solve(query, shortDuration).toList(),
             )
         }
     }
@@ -56,7 +56,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
                 assertSolutionEquals(
                     ktListOf(query.yes(V to value)),
-                    solver.solve(query, shortDuration).toList()
+                    solver.solve(query, shortDuration).toList(),
                 )
             }
         }
@@ -83,10 +83,10 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
                             CurrentFlag.signature,
                             TypeError.Expected.ATOM,
                             term,
-                            0
-                        )
+                            0,
+                        ),
                     ),
-                    solver.solveOnce(query, shortDuration)
+                    solver.solveOnce(query, shortDuration),
                 )
 
                 query = set_flag(term, "value")
@@ -97,10 +97,10 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
                             SetFlag.signature,
                             TypeError.Expected.ATOM,
                             term,
-                            0
-                        )
+                            0,
+                        ),
                     ),
-                    solver.solveOnce(query, shortDuration)
+                    solver.solveOnce(query, shortDuration),
                 )
             }
         }
@@ -117,7 +117,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
                 assertSolutionEquals(
                     query.no(),
-                    solver.solveOnce(query, shortDuration)
+                    solver.solveOnce(query, shortDuration),
                 )
             }
         }
@@ -134,7 +134,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
                 assertSolutionEquals(
                     query.yes(X to value),
-                    solver.solveOnce(query, shortDuration)
+                    solver.solveOnce(query, shortDuration),
                 )
 
                 assertEquals(value.toTerm(), solver.flags[flag])
@@ -151,10 +151,11 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
             val query = current_flag(F, X)
 
-            val selectedFlags = solver.solve(query, shortDuration)
-                .filterIsInstance<Solution.Yes>()
-                .map { it.substitution[F]!! to it.substitution[X]!! }
-                .toMap()
+            val selectedFlags =
+                solver.solve(query, shortDuration)
+                    .filterIsInstance<Solution.Yes>()
+                    .map { it.substitution[F]!! to it.substitution[X]!! }
+                    .toMap()
 
             assertEquals(defaultFlags, selectedFlags)
         }
@@ -173,11 +174,11 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
                             DummyInstances.executionContext,
                             SetFlag.signature,
                             F,
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solver.solveList(query, shortDuration)
+                solver.solveList(query, shortDuration),
             )
         }
     }
@@ -198,11 +199,11 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
                             SetFlag.signature,
                             LastCallOptimization.admissibleValues.asIterable(),
                             truthOf(true),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solver.solveList(query, shortDuration)
+                solver.solveList(query, shortDuration),
             )
         }
     }
@@ -221,11 +222,11 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
                             SetFlag.signature,
                             PermissionError.Operation.MODIFY,
                             PermissionError.Permission.FLAG,
-                            atomOf(MaxArity.name)
-                        )
-                    )
+                            atomOf(MaxArity.name),
+                        ),
+                    ),
                 ),
-                solver.solveList(query, shortDuration)
+                solver.solveList(query, shortDuration),
             )
         }
     }

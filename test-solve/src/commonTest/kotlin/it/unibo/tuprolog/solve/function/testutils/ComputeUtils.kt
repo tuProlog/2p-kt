@@ -18,8 +18,8 @@ import kotlin.test.assertTrue
  *
  * @author Enrico
  */
+@Suppress("ConstPropertyName", "ktlint:standard:property-naming")
 internal object ComputeUtils {
-
     // Request parameters
     internal val aSignature = Signature("ciao", 2)
     internal val anArgumentList = listOf(Atom.of("a"), Truth.TRUE)
@@ -36,13 +36,16 @@ internal object ComputeUtils {
         expectedArguments: List<Term>,
         expectedContext: ExecutionContext,
         expectedRequestIssuingInstant: TimeInstant,
-        expectedMaxDuration: TimeDuration
+        expectedMaxDuration: TimeDuration,
     ) {
         val toleranceInMillis = 10L // 10 ms
         assertEquals(expectedSignature, signature)
         assertEquals(expectedArguments, arguments)
         assertEquals(expectedContext, context)
-        assertTrue("Actual issuing instant `$requestIssuingInstant` diverges more than `$toleranceInMillis` from expected one `$expectedRequestIssuingInstant`") {
+        assertTrue(
+            "Actual issuing instant `$requestIssuingInstant` diverges more than `$toleranceInMillis` from " +
+                "expected one `$expectedRequestIssuingInstant`",
+        ) {
             requestIssuingInstant - expectedRequestIssuingInstant < toleranceInMillis
         }
         assertEquals(expectedMaxDuration, executionMaxDuration)
@@ -60,6 +63,6 @@ internal object ComputeUtils {
         arguments: List<Term> = anArgumentList,
         executionContext: ExecutionContext = anExecutionContext,
         requestIssuingInstant: TimeInstant = aRequestIssuingInstant,
-        executionMaxDuration: TimeDuration = anExecutionMaxDuration
+        executionMaxDuration: TimeDuration = anExecutionMaxDuration,
     ) = Compute.Request(signature, arguments, executionContext, requestIssuingInstant, executionMaxDuration)
 }

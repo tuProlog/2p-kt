@@ -33,7 +33,6 @@ interface Cursor<T> {
     fun asSequence(): Sequence<T> = Sequence { iterator() }
 
     companion object {
-
         @JvmStatic
         @JsName("of")
         fun <T> of(iterator: Iterator<T>): Cursor<out T> {

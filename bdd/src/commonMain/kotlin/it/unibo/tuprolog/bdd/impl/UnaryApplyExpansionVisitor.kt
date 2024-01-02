@@ -29,34 +29,31 @@ internal class UnaryApplyExpansionVisitor<T : Comparable<T>, E>(
     private val operator: (first: Boolean) -> Boolean,
     private val expansionFalseTerminal: E,
     private val expansionTrueTerminal: E,
-    private val expansionOperator: (node: T, low: E, high: E) -> E
+    private val expansionOperator: (node: T, low: E, high: E) -> E,
 ) : BinaryDecisionDiagramVisitor<T, ApplyExpansionResult<T, E>> {
     private val dynamicTable: MutableMap<Int, ApplyExpansionResult<T, E>> =
         mutableMapOf()
 
-    override fun visit(
-        node: BinaryDecisionDiagram.Terminal<T>
-    ): ApplyExpansionResult<T, E> {
+    override fun visit(node: BinaryDecisionDiagram.Terminal<T>): ApplyExpansionResult<T, E> {
         val resTruth = operator(node.truth)
         return ApplyExpansionResult(
             builder.buildTerminal(resTruth),
-            if (resTruth) expansionTrueTerminal else expansionFalseTerminal
+            if (resTruth) expansionTrueTerminal else expansionFalseTerminal,
         )
     }
 
-    override fun visit(
-        node: BinaryDecisionDiagram.Variable<T>
-    ): ApplyExpansionResult<T, E> {
+    override fun visit(node: BinaryDecisionDiagram.Variable<T>): ApplyExpansionResult<T, E> {
         val key = node.hashCode()
         if (dynamicTable.containsKey(key)) {
             return dynamicTable[key]!!
         }
         val lowNode = node.low.accept(this)
         val highNode = node.high.accept(this)
-        val result = ApplyExpansionResult(
-            builder.buildVariable(node.value, lowNode.first, highNode.first),
-            expansionOperator(node.value, lowNode.second, highNode.second)
-        )
+        val result =
+            ApplyExpansionResult(
+                builder.buildVariable(node.value, lowNode.first, highNode.first),
+                expansionOperator(node.value, lowNode.second, highNode.second),
+            )
         dynamicTable[key] = result
         return result
     }

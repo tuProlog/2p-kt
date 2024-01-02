@@ -9,7 +9,6 @@ import java.net.URL
 import kotlin.streams.asSequence
 
 data class JvmUrl(val url: URL) : Url {
-
     constructor(string: String) : this(string.toUrl())
 
     constructor(protocol: String, host: String = "", port: Int? = null, path: String = "", query: String? = null) :

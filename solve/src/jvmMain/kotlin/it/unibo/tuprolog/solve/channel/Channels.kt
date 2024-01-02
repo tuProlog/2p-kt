@@ -10,7 +10,9 @@ internal actual fun <T : Any> stderr(): OutputChannel<T> = PrintStreamChannel(Sy
 internal actual fun <T : Any> stdout(): OutputChannel<T> = PrintStreamChannel(System.out)
 
 internal actual fun warning(): OutputChannel<Warning> =
-    OutputChannel.of { System.err.println(it.message); System.err.flush() }
+    OutputChannel.of {
+        System.err.println(it.message)
+        System.err.flush()
+    }
 
-internal actual fun stringInputChannel(string: String): InputChannel<String> =
-    ReaderChannel(StringReader(string))
+internal actual fun stringInputChannel(string: String): InputChannel<String> = ReaderChannel(StringReader(string))

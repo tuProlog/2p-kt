@@ -10,7 +10,7 @@ class LogicProgrammingScopeWithResolutionImpl(
     override val solverFactory: SolverFactory,
     override val unificator: Unificator,
     scope: Scope,
-    override val defaultSolver: MutableSolver = solverFactory.mutableSolverWithDefaultBuiltins()
+    override val defaultSolver: MutableSolver = solverFactory.mutableSolverWithDefaultBuiltins(),
 ) : LogicProgrammingScopeWithResolution,
     LogicProgrammingScopeWithTheories by LogicProgrammingScopeWithTheories.of(unificator, scope),
     MutableSolver by defaultSolver

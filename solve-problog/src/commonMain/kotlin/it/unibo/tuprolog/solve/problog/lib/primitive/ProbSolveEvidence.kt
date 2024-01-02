@@ -36,9 +36,8 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.getSolverOpti
  * @author Jason Dellaluce
  */
 internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionContext>(
-    "${PREDICATE_PREFIX}_solve_evidence"
+    "${PREDICATE_PREFIX}_solve_evidence",
 ) {
-
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         val evidenceIndicator = Indicator.of(EVIDENCE_PREDICATE, 2)
         if (evidenceIndicator !in context.staticKb && evidenceIndicator !in context.dynamicKb) {
@@ -49,32 +48,34 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
         val evidenceTruthVar = Var.of("TruthVar")
         val subQuery = Struct.of(EVIDENCE_PREDICATE, evidenceTermVar, evidenceTruthVar)
         val subOptions = context.getSolverOptions().setLimit(SolveOptions.ALL_SOLUTIONS).setLazy(false)
-        val result = subSolver().solve(subQuery, subOptions)
-            .filterIsInstance<Solution.Yes>()
-            .toList()
-            .map {
-                val truth = it.substitution[evidenceTruthVar]
-                val term = it.substitution[evidenceTermVar]
+        val result =
+            subSolver().solve(subQuery, subOptions)
+                .filterIsInstance<Solution.Yes>()
+                .toList()
+                .map {
+                    val truth = it.substitution[evidenceTruthVar]
+                    val term = it.substitution[evidenceTermVar]
 
-                if (term == null || term.isVar || truth == null || truth !is Truth) {
-                    ProbExplanation.FALSE
-                } else {
-                    val explanationVar = Var.of(EXPLANATION_VAR_NAME)
-                    val totalExplanation = solve(Struct.of(ProbSolve.functor, explanationVar, term))
-                        .map { s -> s.substitution[explanationVar] }
-                        .filterIsInstance<ProbExplanationTerm>()
-                        .map { t -> t.explanation }
-                        .reduce { acc, t ->
-                            when {
-                                t.probability == 1.0 -> acc
-                                acc.probability == 1.0 -> t
-                                else -> t or acc
-                            }
-                        }
-                    if (truth.isTrue) totalExplanation else totalExplanation.not()
+                    if (term == null || term.isVar || truth == null || truth !is Truth) {
+                        ProbExplanation.FALSE
+                    } else {
+                        val explanationVar = Var.of(EXPLANATION_VAR_NAME)
+                        val totalExplanation =
+                            solve(Struct.of(ProbSolve.functor, explanationVar, term))
+                                .map { s -> s.substitution[explanationVar] }
+                                .filterIsInstance<ProbExplanationTerm>()
+                                .map { t -> t.explanation }
+                                .reduce { acc, t ->
+                                    when {
+                                        t.probability == 1.0 -> acc
+                                        acc.probability == 1.0 -> t
+                                        else -> t or acc
+                                    }
+                                }
+                        if (truth.isTrue) totalExplanation else totalExplanation.not()
+                    }
                 }
-            }
-            .filter { it != ProbExplanation.FALSE }
+                .filter { it != ProbExplanation.FALSE }
 
         val resultExplanation = if (result.isEmpty()) ProbExplanation.TRUE else result.reduce { acc, t -> t and acc }
         return replyWith(mgu(first, ProbExplanationTerm(resultExplanation)))

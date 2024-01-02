@@ -9,7 +9,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object StreamProperty : BinaryRelation<ExecutionContext>("stream_property") {
-    override fun Solve.Request<ExecutionContext>.computeAll(first: Term, second: Term): Sequence<Solve.Response> {
+    override fun Solve.Request<ExecutionContext>.computeAll(
+        first: Term,
+        second: Term,
+    ): Sequence<Solve.Response> {
         ensuringArgumentIsVarOrStream(0)
         ensuringArgumentIsStreamProperty(1)
         return sequenceOf(context.inputChannels, context.outputChannels)

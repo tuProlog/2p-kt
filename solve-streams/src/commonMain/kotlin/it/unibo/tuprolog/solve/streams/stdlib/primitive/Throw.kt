@@ -17,7 +17,6 @@ import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
  * @author Enrico
  */
 internal object Throw : UnaryPredicate.NonBacktrackable<StreamsExecutionContext>("throw") {
-
     override fun Solve.Request<StreamsExecutionContext>.computeOne(first: Term): Solve.Response =
         try {
             ensuringAllArgumentsAreInstantiated().arguments.single().freshCopy().let { throwArgument ->
@@ -29,7 +28,7 @@ internal object Throw : UnaryPredicate.NonBacktrackable<StreamsExecutionContext>
                         val newSubstitution = (context.substitution + catcher) as Substitution.Unifier
                         replySuccess(
                             newSubstitution,
-                            sideEffectManager = context.sideEffectManager.throwCut(ancestorCatch.context)
+                            sideEffectManager = context.sideEffectManager.throwCut(ancestorCatch.context),
                         )
                     }
 
@@ -51,13 +50,14 @@ internal object Throw : UnaryPredicate.NonBacktrackable<StreamsExecutionContext>
         }
 
     /** Utility function to extract error type from a term that should be `error(TYPE_STRUCT, ...)` */
-    private fun Term.extractErrorTypeAndExtra() = with(this as? Struct) {
-        when {
-            this?.functor == ErrorUtils.errorWrapperFunctor && this.arity == 2 ->
-                (this.args.firstOrNull() as? Struct)?.let { Pair(it, this.args[1]) }
-            else -> null
+    private fun Term.extractErrorTypeAndExtra() =
+        with(this as? Struct) {
+            when {
+                this?.functor == ErrorUtils.ERROR_FUNCTOR && this.arity == 2 ->
+                    (this.args.firstOrNull() as? Struct)?.let { Pair(it, this.args[1]) }
+                else -> null
+            }
         }
-    }
 
     /** Utility function to extract error, with filled cause field, till the error root */
     private fun Term.extractErrorCauseChain(withContext: ExecutionContext): LogicError? =
@@ -66,7 +66,7 @@ internal object Throw : UnaryPredicate.NonBacktrackable<StreamsExecutionContext>
                 context = withContext,
                 type = type,
                 extraData = extra,
-                cause = extra.extractErrorCauseChain(withContext)
+                cause = extra.extractErrorCauseChain(withContext),
             )
         }
 }

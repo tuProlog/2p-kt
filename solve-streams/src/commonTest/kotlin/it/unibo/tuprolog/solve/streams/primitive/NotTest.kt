@@ -21,13 +21,13 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class NotTest {
-
     @Test
     fun notRevertsProvidedNoResponse() {
         val query = logicProgramming { "\\+"(false) }
-        val solutions = Not.implementation.solve(
-            createSolveRequest(query, primitives = mapOf(Not.descriptionPair, Call.descriptionPair))
-        ).map { it.solution }.asIterable()
+        val solutions =
+            Not.implementation.solve(
+                createSolveRequest(query, primitives = mapOf(Not.descriptionPair, Call.descriptionPair)),
+            ).map { it.solution }.asIterable()
 
         assertSolutionEquals(listOf(query.yes()), solutions)
     }
@@ -35,9 +35,10 @@ internal class NotTest {
     @Test
     fun notRevertsProvidedYesResponse() {
         val query = logicProgramming { "\\+"(true) }
-        val solutions = Not.implementation.solve(
-            createSolveRequest(query, primitives = mapOf(Not.descriptionPair, Call.descriptionPair))
-        ).map { it.solution }.asIterable()
+        val solutions =
+            Not.implementation.solve(
+                createSolveRequest(query, primitives = mapOf(Not.descriptionPair, Call.descriptionPair)),
+            ).map { it.solution }.asIterable()
 
         assertSolutionEquals(listOf(query.no()), solutions)
     }
@@ -45,13 +46,14 @@ internal class NotTest {
     @Test
     fun notReturnsOnlyOneFailResponseIfMoreTrueOnes() {
         val query = logicProgramming { "\\+"("a") }
-        val solutions = Not.implementation.solve(
-            createSolveRequest(
-                query,
-                primitives = mapOf(Not.descriptionPair, Call.descriptionPair),
-                database = LogicProgrammingScopeWithTheories.of().theory({ "a" }, { "a" })
-            )
-        ).map { it.solution }.asIterable()
+        val solutions =
+            Not.implementation.solve(
+                createSolveRequest(
+                    query,
+                    primitives = mapOf(Not.descriptionPair, Call.descriptionPair),
+                    database = LogicProgrammingScopeWithTheories.of().theory({ "a" }, { "a" }),
+                ),
+            ).map { it.solution }.asIterable()
 
         assertSolutionEquals(listOf(query.no()), solutions)
     }
@@ -60,12 +62,13 @@ internal class NotTest {
     @Ignore
     fun notReturnsAsIsAnHaltSolution() {
         val query = logicProgramming { "\\+"(1) }
-        val solutions = Not.implementation.solve(
-            createSolveRequest(
-                query,
-                primitives = mapOf(Not.descriptionPair, Call.descriptionPair, Throw.descriptionPair)
-            )
-        ).map { it.solution }.asIterable()
+        val solutions =
+            Not.implementation.solve(
+                createSolveRequest(
+                    query,
+                    primitives = mapOf(Not.descriptionPair, Call.descriptionPair, Throw.descriptionPair),
+                ),
+            ).map { it.solution }.asIterable()
 
         assertSolutionEquals(
             listOf(
@@ -74,11 +77,11 @@ internal class NotTest {
                         DummyInstances.executionContext,
                         Not.signature,
                         TypeError.Expected.CALLABLE,
-                        logicProgramming { numOf(1) }
-                    )
-                )
+                        logicProgramming { numOf(1) },
+                    ),
+                ),
             ),
-            solutions
+            solutions,
         )
     }
 }

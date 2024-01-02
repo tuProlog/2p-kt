@@ -31,18 +31,19 @@ interface LogicProgrammingScopeWithResolution : LogicProgrammingScopeWithTheorie
         stdIn: InputChannel<String> = solverFactory.defaultInputChannel,
         stdOut: OutputChannel<String> = solverFactory.defaultOutputChannel,
         stdErr: OutputChannel<String> = solverFactory.defaultErrorChannel,
-        warnings: OutputChannel<Warning> = solverFactory.defaultWarningsChannel
-    ): MutableSolver = solverFactory.mutableSolverWithDefaultBuiltins(
-        unificator,
-        otherLibraries,
-        flags,
-        staticKb,
-        dynamicKb,
-        stdIn,
-        stdOut,
-        stdErr,
-        warnings
-    )
+        warnings: OutputChannel<Warning> = solverFactory.defaultWarningsChannel,
+    ): MutableSolver =
+        solverFactory.mutableSolverWithDefaultBuiltins(
+            unificator,
+            otherLibraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            stdIn,
+            stdOut,
+            stdErr,
+            warnings,
+        )
 
     @JsName("staticKbByArray")
     fun staticKb(vararg clauses: Clause) = loadStaticClauses(*clauses)
@@ -73,7 +74,7 @@ interface LogicProgrammingScopeWithResolution : LogicProgrammingScopeWithTheorie
         fun of(
             solverFactory: SolverFactory,
             unificator: Unificator = solverFactory.defaultUnificator,
-            scope: Scope = Scope.empty()
+            scope: Scope = Scope.empty(),
         ): LogicProgrammingScopeWithResolution = LogicProgrammingScopeWithResolutionImpl(solverFactory, unificator, scope)
     }
 }

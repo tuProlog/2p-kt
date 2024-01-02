@@ -10,7 +10,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class ArithmeticEqualTest {
-
     @Test
     fun computesCorrectResult() {
         equalQueryToResult.forEach { (input, result) ->

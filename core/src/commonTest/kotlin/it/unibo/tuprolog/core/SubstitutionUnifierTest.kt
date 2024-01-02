@@ -17,7 +17,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class SubstitutionUnifierTest {
-
     private val aVar = Var.of("A")
     private val bVar = Var.of("B")
     private val xAtom = Atom.of("x")
@@ -32,11 +31,12 @@ internal class SubstitutionUnifierTest {
     @Test
     fun unifierGetByNameRetrievesSomeMatchingVariable() {
         val anotherVar = Var.of("A")
-        val unifier = Substitution.unifier(
-            aVar to Integer.of(1),
-            anotherVar to Integer.of(2),
-            bVar to xAtom
-        )
+        val unifier =
+            Substitution.unifier(
+                aVar to Integer.of(1),
+                anotherVar to Integer.of(2),
+                bVar to xAtom,
+            )
         assertTrue { unifier.getByName("A") is Integer }
         assertTrue { unifier.getByName("B") is Atom }
         assertNull(unifier.getByName("C"))
@@ -101,7 +101,7 @@ internal class SubstitutionUnifierTest {
         assertEquals(Substitution.unifier(mapOf(aVar to xAtom)), Substitution.unifier(mapOf(aVar to xAtom)))
         assertNotEquals(
             Substitution.unifier(mapOf(Var.of("A") to xAtom)),
-            Substitution.unifier(mapOf(Var.of("A") to xAtom))
+            Substitution.unifier(mapOf(Var.of("A") to xAtom)),
         )
         assertNotEquals(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
@@ -134,10 +134,11 @@ internal class SubstitutionUnifierTest {
 
     @Test
     fun plusOtherSubstitutionContradictingBaseOneReturnsFailedSubstitution() {
-        val toBeTested = listOf(
-            Substitution.of(bVar to Truth.TRUE) + bVarToXAtomSubstitution,
-            bVarToXAtomSubstitution + Substitution.of(bVar to Truth.TRUE)
-        )
+        val toBeTested =
+            listOf(
+                Substitution.of(bVar to Truth.TRUE) + bVarToXAtomSubstitution,
+                bVarToXAtomSubstitution + Substitution.of(bVar to Truth.TRUE),
+            )
 
         toBeTested.forEach { assertEquals(Substitution.failed(), it) }
     }
@@ -155,19 +156,21 @@ internal class SubstitutionUnifierTest {
         val first = Substitution.unifier(mapOf(bVar to Struct.of("f", aVar)))
         val second = Substitution.unifier(mapOf(aVar to xAtom))
 
-        val firstComposedSecondExpected = Substitution.unifier(
-            mapOf(
-                bVar to Struct.of("f", xAtom),
-                aVar to xAtom
+        val firstComposedSecondExpected =
+            Substitution.unifier(
+                mapOf(
+                    bVar to Struct.of("f", xAtom),
+                    aVar to xAtom,
+                ),
             )
-        )
 
-        val secondComposedFirstExpected = Substitution.unifier(
-            mapOf(
-                aVar to xAtom,
-                bVar to Struct.of("f", aVar)
+        val secondComposedFirstExpected =
+            Substitution.unifier(
+                mapOf(
+                    aVar to xAtom,
+                    bVar to Struct.of("f", aVar),
+                ),
             )
-        )
 
         assertEquals(firstComposedSecondExpected, first + second)
         assertEquals(secondComposedFirstExpected, second + first)
@@ -208,7 +211,7 @@ internal class SubstitutionUnifierTest {
     fun filterMapEntryReturnsOnlyCorrectBindings() {
         assertEquals(
             aVarToXAtomSubstitution,
-            (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { (`var`, _) -> `var` == aVar }
+            (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { (`var`, _) -> `var` == aVar },
         )
         assertEquals(Substitution.empty(), bVarToXAtomSubstitution.filter { (`var`, _) -> `var` == aVar })
     }
@@ -217,7 +220,7 @@ internal class SubstitutionUnifierTest {
     fun filterPredicateReturnsOnlyCorrectBindings() {
         assertEquals(
             aVarToXAtomSubstitution,
-            (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { `var`, _ -> `var` == aVar }
+            (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { `var`, _ -> `var` == aVar },
         )
         assertEquals(Substitution.empty(), bVarToXAtomSubstitution.filter { `var`, _ -> `var` == aVar })
     }

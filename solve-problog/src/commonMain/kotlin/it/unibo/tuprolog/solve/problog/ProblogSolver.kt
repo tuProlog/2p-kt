@@ -27,29 +27,29 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
 internal open class ProblogSolver(
-    private val solver: Solver
+    private val solver: Solver,
 ) : Solver by solver {
-
     private fun solveNonProbabilistically(
         goal: Struct,
-        options: SolveOptions
+        options: SolveOptions,
     ): Sequence<Solution> {
         val anonVar = Var.anonymous()
         return solver.solve(
             Tuple.of(
                 Struct.of(
                     ProbSetConfig.functor,
-                    options.toProbConfigTerm()
+                    options.toProbConfigTerm(),
                 ),
-                Struct.of(Prob.functor, anonVar, goal)
+                Struct.of(Prob.functor, anonVar, goal),
             ),
-            options
+            options,
         ).map {
             when (it) {
-                is Solution.Yes -> Solution.yes(
-                    goal,
-                    it.substitution.filter { key, _ -> key != anonVar }
-                )
+                is Solution.Yes ->
+                    Solution.yes(
+                        goal,
+                        it.substitution.filter { key, _ -> key != anonVar },
+                    )
                 is Solution.Halt -> Solution.halt(goal, it.exception)
                 else -> Solution.no(goal)
             }
@@ -58,7 +58,7 @@ internal open class ProblogSolver(
 
     private fun solveProbabilistically(
         goal: Struct,
-        options: SolveOptions
+        options: SolveOptions,
     ): Sequence<Solution> {
         val probabilityVar = Var.of("Prob")
         val bddVar = Var.of("BDD")
@@ -68,41 +68,46 @@ internal open class ProblogSolver(
                 probabilityVar,
                 goal,
                 options.toProbConfigTerm(),
-                bddVar
+                bddVar,
             ),
-            options
+            options,
         ).map {
             val probabilityTerm = it.substitution[probabilityVar]
             val bddTerm = it.substitution[bddVar]
-            var newSolution = when (it) {
-                is Solution.Yes -> Solution.yes(
-                    goal,
-                    it.substitution.filter {
-                            key, _ ->
-                        key != probabilityVar && key != bddVar
-                    }
-                )
-                is Solution.Halt -> Solution.halt(goal, it.exception)
-                else -> Solution.no(goal)
-            }
+            var newSolution =
+                when (it) {
+                    is Solution.Yes ->
+                        Solution.yes(
+                            goal,
+                            it.substitution.filter {
+                                    key, _ ->
+                                key != probabilityVar && key != bddVar
+                            },
+                        )
+                    is Solution.Halt -> Solution.halt(goal, it.exception)
+                    else -> Solution.no(goal)
+                }
             if (!options.isProbabilistic) {
                 newSolution
             } else {
                 // Set the probability property
-                newSolution = when (probabilityTerm) {
-                    is Numeric -> newSolution.setProbability(
-                        probabilityTerm.decimalValue.toDouble()
-                    )
-                    else -> newSolution.setProbability(Double.NaN)
-                }
+                newSolution =
+                    when (probabilityTerm) {
+                        is Numeric ->
+                            newSolution.setProbability(
+                                probabilityTerm.decimalValue.toDouble(),
+                            )
+                        else -> newSolution.setProbability(Double.NaN)
+                    }
 
                 // Set the Binary Decision Diagram property
                 if (bddTerm != null && bddTerm is ProbExplanationTerm) {
                     val explanation = bddTerm.explanation
                     if (explanation is BinaryDecisionDiagramExplanation) {
-                        newSolution = newSolution.setBinaryDecisionDiagram(
-                            explanation.diagram
-                        )
+                        newSolution =
+                            newSolution.setBinaryDecisionDiagram(
+                                explanation.diagram,
+                            )
                     }
                 }
                 newSolution
@@ -112,7 +117,7 @@ internal open class ProblogSolver(
 
     override fun solve(
         goal: Struct,
-        options: SolveOptions
+        options: SolveOptions,
     ): Sequence<Solution> =
         if (!options.isProbabilistic) {
             solveNonProbabilistically(goal, options)
@@ -122,41 +127,33 @@ internal open class ProblogSolver(
 
     override fun solve(
         goal: Struct,
-        timeout: TimeDuration
-    ): Sequence<Solution> =
-        solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
+        timeout: TimeDuration,
+    ): Sequence<Solution> = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
 
-    override fun solve(
-        goal: Struct
-    ): Sequence<Solution> = solve(goal, SolveOptions.DEFAULT)
+    override fun solve(goal: Struct): Sequence<Solution> = solve(goal, SolveOptions.DEFAULT)
 
     override fun solveList(
         goal: Struct,
-        timeout: TimeDuration
+        timeout: TimeDuration,
     ): List<Solution> = solve(goal, timeout).toList()
 
-    override fun solveList(
-        goal: Struct
-    ): List<Solution> = solve(goal).toList()
+    override fun solveList(goal: Struct): List<Solution> = solve(goal).toList()
 
     override fun solveList(
         goal: Struct,
-        options: SolveOptions
+        options: SolveOptions,
     ): List<Solution> = solve(goal, options).toList()
 
     override fun solveOnce(
         goal: Struct,
-        timeout: TimeDuration
-    ): Solution =
-        solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout)).first()
+        timeout: TimeDuration,
+    ): Solution = solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout)).first()
 
-    override fun solveOnce(
-        goal: Struct
-    ): Solution = solve(goal, SolveOptions.someLazily(1)).first()
+    override fun solveOnce(goal: Struct): Solution = solve(goal, SolveOptions.someLazily(1)).first()
 
     override fun solveOnce(
         goal: Struct,
-        options: SolveOptions
+        options: SolveOptions,
     ): Solution = solve(goal, options.setLimit(1)).first()
 
     override fun copy(
@@ -168,7 +165,7 @@ internal open class ProblogSolver(
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ): Solver {
         return ProblogSolver(
             solver.copy(
@@ -180,8 +177,8 @@ internal open class ProblogSolver(
                 stdIn,
                 stdOut,
                 stdErr,
-                warnings
-            )
+                warnings,
+            ),
         )
     }
 

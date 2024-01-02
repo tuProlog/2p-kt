@@ -54,7 +54,7 @@ fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsObjectRef(index: I
             signature,
             TypeError.Expected.OBJECT_REFERENCE,
             arg,
-            index
+            index,
         )
         else -> this
     }
@@ -69,7 +69,7 @@ fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsTypeRef(index: Int
             signature,
             TypeError.Expected.TYPE_REFERENCE,
             arg,
-            index
+            index,
         )
         else -> this
     }
@@ -96,13 +96,14 @@ fun <C : ExecutionContext> Solve.Request<C>.getArgumentAsTypeRef(index: Int): Ty
 }
 
 private fun <C : ExecutionContext> Solve.Request<C>.findRefFromAliasOrNull(alias: Struct): Ref? {
-    val actualAlias = if (isDealiasingExpression(alias)) {
-        alias[0] as Struct
-    } else {
-        throw MalformedAliasException(alias)
-    }
+    val actualAlias =
+        if (isDealiasingExpression(alias)) {
+            alias[0] as Struct
+        } else {
+            throw MalformedAliasException(alias)
+        }
 
-    @Suppress("LocalVariableName")
+    @Suppress("LocalVariableName", "ktlint:standard:property-naming")
     val ActualRef = Var.of("ActualRef")
     return solve(Struct.of(Alias.FUNCTOR, actualAlias, ActualRef))
         .filterIsInstance<Solution.Yes>()
@@ -112,8 +113,7 @@ private fun <C : ExecutionContext> Solve.Request<C>.findRefFromAliasOrNull(alias
         ?.castTo()
 }
 
-fun <C : ExecutionContext> Solve.Request<C>.isAliasRegistered(alias: Struct): Boolean =
-    findRefFromAliasOrNull(alias) != null
+fun <C : ExecutionContext> Solve.Request<C>.isAliasRegistered(alias: Struct): Boolean = findRefFromAliasOrNull(alias) != null
 
 fun <C : ExecutionContext> Solve.Request<C>.ensureAliasIsRegistered(alias: Struct): Boolean =
     if (isAliasRegistered(alias)) true else throw NoSuchAnAliasException(alias)

@@ -4,13 +4,14 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 
 data class StateGoalSelection(override val context: ConcurrentExecutionContext) : AbstractState(context) {
+    @Suppress("ktlint:standard:discouraged-comment-location")
     override fun computeNext(): Iterable<State> {
         return listOf(
             if (context.goals.isOver) {
                 if (context.isRoot) {
                     StateEnd(
                         Solution.yes(context.query, context.substitution),
-                        context.copy(step = nextStep())
+                        context.copy(step = nextStep()),
                     )
                 } else {
                     StateGoalSelection(
@@ -28,15 +29,15 @@ data class StateGoalSelection(override val context: ConcurrentExecutionContext) 
                                 inputChannels = context.inputChannels,
                                 outputChannels = context.outputChannels,
                                 libraries = context.libraries,
-                                customData = context.customData
+                                customData = context.customData,
                             )
-                        }
+                        },
                     )
                 }
             } else {
                 val goalsWithSubstitution = context.goals.map { it[context.substitution] }
                 StatePrimitiveSelection(context.copy(goals = goalsWithSubstitution, step = nextStep()))
-            }
+            },
         )
     }
 

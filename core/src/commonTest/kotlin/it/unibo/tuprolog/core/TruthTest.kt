@@ -10,8 +10,8 @@ import kotlin.test.assertSame
  *
  * @author Enrico
  */
+@Suppress("ktlint:standard:property-naming", "PrivatePropertyName")
 internal class TruthTest {
-
     private val TRUE = TruthImpl(Terms.TRUE_FUNCTOR, true)
     private val FAIL = TruthImpl(Terms.FAIL_FUNCTOR, false)
     private val FALSE = TruthImpl(Terms.FALSE_FUNCTOR, false)

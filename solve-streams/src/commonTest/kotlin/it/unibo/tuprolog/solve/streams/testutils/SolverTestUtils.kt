@@ -17,23 +17,23 @@ import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
  * @author Enrico
  */
 internal object SolverTestUtils {
-
     /** Creates a Solve.Request with provided goal, against provided database as library theory, loading given primitives */
     internal fun createSolveRequest(
         query: Struct,
         database: Iterable<Clause> = emptyList(),
-        primitives: Map<Signature, Primitive> = mapOf()
+        primitives: Map<Signature, Primitive> = mapOf(),
     ) = Solve.Request(
         query.extractSignature(),
         query.args,
         StreamsExecutionContext(
-            libraries = Runtime.of(
-                Library.of(
-                    alias = "solve.solver.test",
-                    primitives = primitives,
-                    clauses = database
-                )
-            )
-        )
+            libraries =
+                Runtime.of(
+                    Library.of(
+                        alias = "solve.solver.test",
+                        primitives = primitives,
+                        clauses = database,
+                    ),
+                ),
+        ),
     )
 }

@@ -24,7 +24,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class TestSolutionMetadata {
-
+    @Suppress("PrivatePropertyName", "ktlint:standard:property-naming")
     private val X = Var.of("X")
 
     private val someKey = "some_key1"
@@ -34,29 +34,31 @@ class TestSolutionMetadata {
     private val someValue2 = Metadata("2")
     private val someOtherValue = Metadata("3")
 
-    private val queries = listOf<Struct>(
-        Struct.of("q", X),
-        Struct.of("q", Var.anonymous()),
-        Atom.of("atom"),
-        Struct.of("q", Integer.ONE),
-        Struct.of("q", Real.ONE_TENTH),
-        EmptyList(),
-        EmptyBlock(),
-        Cons.of(Real.ONE_HALF, X),
-        Struct.of("g", X),
-        List.of(X),
-        Block.of(X),
-        Tuple.of(X, X)
-    ).map { it.setTag(yetAnotherKey, someValue2) }
+    private val queries =
+        listOf<Struct>(
+            Struct.of("q", X),
+            Struct.of("q", Var.anonymous()),
+            Atom.of("atom"),
+            Struct.of("q", Integer.ONE),
+            Struct.of("q", Real.ONE_TENTH),
+            EmptyList(),
+            EmptyBlock(),
+            Cons.of(Real.ONE_HALF, X),
+            Struct.of("g", X),
+            List.of(X),
+            Block.of(X),
+            Tuple.of(X, X),
+        ).map { it.setTag(yetAnotherKey, someValue2) }
 
-    private val solutions = queries.flatMap {
-        listOf(
-            Solution.no(it),
-            Solution.halt(it, Dummy.RuntimeException),
-            Solution.yes(it),
-            Solution.yes(it, Substitution.of(X, Integer.ONE))
-        )
-    }
+    private val solutions =
+        queries.flatMap {
+            listOf(
+                Solution.no(it),
+                Solution.halt(it, Dummy.RuntimeException),
+                Solution.yes(it),
+                Solution.yes(it, Substitution.of(X, Integer.ONE)),
+            )
+        }
 
     private data class Metadata<T>(val value: T)
 

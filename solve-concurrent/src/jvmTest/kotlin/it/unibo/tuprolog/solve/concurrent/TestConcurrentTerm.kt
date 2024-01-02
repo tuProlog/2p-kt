@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentTerm<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testTermDiff() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

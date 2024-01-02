@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Var
 
 @Suppress("USELESS_CAST")
 internal class JsTermDeobjectifier : TermDeobjectifier {
-
     private val scope: Scope = Scope.empty()
 
     override fun deobjectify(`object`: Any): Term {
@@ -80,7 +79,7 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
             },
-            last = if (last != null) deobjectify(last) else scope.emptyList
+            last = if (last != null) deobjectify(last) else scope.emptyList,
         )
     }
 
@@ -89,16 +88,19 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
         return scope.tupleOf(
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
-            }
+            },
         )
     }
 
-    private fun deobjectifyBlock(value: dynamic, name: String = "block"): Term {
+    private fun deobjectifyBlock(
+        value: dynamic,
+        name: String = "block",
+    ): Term {
         val items = value[name] as? Array<*> ?: throw DeobjectificationException(value)
         return scope.blockOf(
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
-            }
+            },
         )
     }
 
@@ -109,7 +111,7 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
             name,
             args.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
-            }
+            },
         )
     }
 

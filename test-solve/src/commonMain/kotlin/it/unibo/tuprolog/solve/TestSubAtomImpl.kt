@@ -15,7 +15,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("S" to atomOf("a"))),
-                solutions
+                solutions,
             )
         }
     }
@@ -28,7 +28,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("S" to atomOf("dabra"))),
-                solutions
+                solutions,
             )
         }
     }
@@ -41,7 +41,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("S" to atomOf("acada")), query.yes("L" to 5)),
-                solutions
+                solutions,
             )
         }
     }
@@ -54,7 +54,7 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("S" to atomOf("an")), query.yes("T" to 1)),
-                solutions
+                solutions,
             )
         }
     }
@@ -72,11 +72,11 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
                             DummyInstances.executionContext,
                             Signature("sub_atom", 5),
                             varOf("Banana"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -96,11 +96,11 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
                             Signature("sub_atom", 5),
                             TypeError.Expected.ATOM,
                             Integer.of("5"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -121,11 +121,11 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
                             Signature("sub_atom", 5),
                             TypeError.Expected.ATOM,
                             Integer.of("2"),
-                            index = 4
-                        )
-                    )
+                            index = 4,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -146,11 +146,11 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
                             Signature("sub_atom", 5),
                             TypeError.Expected.INTEGER,
                             Atom.of("a"),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -170,11 +170,11 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
                             Signature("sub_atom", 5),
                             TypeError.Expected.INTEGER,
                             Atom.of("n"),
-                            index = 2
-                        )
-                    )
+                            index = 2,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -194,11 +194,11 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
                             Signature("sub_atom", 5),
                             TypeError.Expected.INTEGER,
                             Atom.of("m"),
-                            index = 3
-                        )
-                    )
+                            index = 3,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

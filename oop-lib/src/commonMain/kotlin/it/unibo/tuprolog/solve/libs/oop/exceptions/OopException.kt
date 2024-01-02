@@ -10,13 +10,15 @@ import kotlin.jvm.JvmOverloads
 import kotlin.reflect.KClass
 
 abstract class OopException : TuPrologException {
-
     @JvmOverloads
     constructor(message: String? = null, cause: Throwable? = null) : super(message, cause)
 
     constructor(cause: Throwable?) : super(cause)
 
-    abstract fun toLogicError(context: ExecutionContext, signature: Signature): LogicError
+    abstract fun toLogicError(
+        context: ExecutionContext,
+        signature: Signature,
+    ): LogicError
 
     protected abstract val culprit: Term
 

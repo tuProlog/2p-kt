@@ -4,7 +4,6 @@ import kotlin.collections.List
 import kotlin.js.JsName
 
 interface Recursive : Struct {
-
     override val isRecursive: Boolean
         get() = true
 

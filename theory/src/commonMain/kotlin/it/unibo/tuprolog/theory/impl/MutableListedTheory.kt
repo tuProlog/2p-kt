@@ -13,9 +13,8 @@ import it.unibo.tuprolog.utils.addFirst
 internal class MutableListedTheory private constructor(
     unificator: Unificator,
     override val clauses: MutableList<Clause>,
-    tags: Map<String, Any>
+    tags: Map<String, Any>,
 ) : AbstractListedTheory(unificator, clauses, tags), MutableTheory {
-
     override fun setUnificator(unificator: Unificator): MutableTheory {
         this.unificator = unificator
         return this
@@ -24,7 +23,7 @@ internal class MutableListedTheory private constructor(
     constructor(
         unificator: Unificator,
         clauses: Iterable<Clause>,
-        tags: Map<String, Any> = emptyMap()
+        tags: Map<String, Any> = emptyMap(),
     ) : this(unificator, clauses.toMutableList(), tags) {
         checkClausesCorrect(clauses)
     }
@@ -32,7 +31,7 @@ internal class MutableListedTheory private constructor(
     constructor(
         unificator: Unificator,
         clauses: Sequence<Clause>,
-        tags: Map<String, Any> = emptyMap()
+        tags: Map<String, Any> = emptyMap(),
     ) : this(unificator, clauses.toMutableList(), tags) {
         checkClausesCorrect(clauses)
     }
@@ -42,7 +41,7 @@ internal class MutableListedTheory private constructor(
     override fun createNewTheory(
         clauses: Sequence<Clause>,
         tags: Map<String, Any>,
-        unificator: Unificator
+        unificator: Unificator,
     ) = MutableListedTheory(unificator, clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<MutableListedTheory> {
@@ -103,19 +102,15 @@ internal class MutableListedTheory private constructor(
         }
     }
 
-    override fun assertA(clause: Clause): MutableListedTheory =
-        this.also { it.clauses.addFirst(checkClauseCorrect(clause)) }
+    override fun assertA(clause: Clause): MutableListedTheory = this.also { it.clauses.addFirst(checkClauseCorrect(clause)) }
 
-    override fun assertA(clauses: Iterable<Clause>): MutableListedTheory =
-        this.also { it.clauses.addFirst(checkClausesCorrect(clauses)) }
+    override fun assertA(clauses: Iterable<Clause>): MutableListedTheory = this.also { it.clauses.addFirst(checkClausesCorrect(clauses)) }
 
     override fun assertA(clauses: Sequence<Clause>): MutableListedTheory = assertA(clauses.asIterable())
 
-    override fun assertZ(clause: Clause): MutableListedTheory =
-        this.also { it.clauses.add(checkClauseCorrect(clause)) }
+    override fun assertZ(clause: Clause): MutableListedTheory = this.also { it.clauses.add(checkClauseCorrect(clause)) }
 
-    override fun assertZ(clauses: Iterable<Clause>): MutableListedTheory =
-        this.also { it.clauses.addAll(checkClausesCorrect(clauses)) }
+    override fun assertZ(clauses: Iterable<Clause>): MutableListedTheory = this.also { it.clauses.addAll(checkClausesCorrect(clauses)) }
 
     override fun assertZ(clauses: Sequence<Clause>): MutableListedTheory = assertZ(clauses.asIterable())
 

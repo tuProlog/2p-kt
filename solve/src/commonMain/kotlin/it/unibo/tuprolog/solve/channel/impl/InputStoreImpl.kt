@@ -9,12 +9,12 @@ import it.unibo.tuprolog.solve.channel.impl.ChannelStoreUtils.setCurrent
 
 internal class InputStoreImpl(
     override val stdIn: InputChannel<String>,
-    channels: Map<String, InputChannel<String>> = emptyMap()
+    channels: Map<String, InputChannel<String>> = emptyMap(),
 ) : InputStore, AbstractChannelStore<String, InputChannel<String>, InputStore>(
-    channels.toMutableMap()
-        .ensureAliasRefersToChannel(STDIN, stdIn)
-        .setCurrent(STDIN, stdIn)
-) {
+        channels.toMutableMap()
+            .ensureAliasRefersToChannel(STDIN, stdIn)
+            .setCurrent(STDIN, stdIn),
+    ) {
     override fun setStdIn(channel: InputChannel<String>): InputStore =
         (channels - STDIN).let {
             if (current == stdIn) {
@@ -31,8 +31,9 @@ internal class InputStoreImpl(
         }
 
     override fun setCurrent(channel: InputChannel<String>): InputStore {
-        val key = entries.firstOrNull { (_, v) -> v == channel }?.key
-            ?: throw NoSuchElementException("Channel $channel has no alias")
+        val key =
+            entries.firstOrNull { (_, v) -> v == channel }?.key
+                ?: throw NoSuchElementException("Channel $channel has no alias")
         return setCurrent(key)
     }
 

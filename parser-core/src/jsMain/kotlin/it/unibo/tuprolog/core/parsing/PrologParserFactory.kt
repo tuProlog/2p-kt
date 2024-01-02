@@ -17,7 +17,6 @@ import it.unibo.tuprolog.parser.isParseCancellationException
 import it.unibo.tuprolog.parser.isRecognitionException
 
 object PrologParserFactory {
-
     private fun newErrorListener(whileParsing: Any): dynamic {
         return object {
             private fun symbolToString(obj: dynamic): String {
@@ -35,7 +34,7 @@ object PrologParserFactory {
                 line: Int,
                 column: Int,
                 msg: String,
-                e: RecognitionException
+                e: RecognitionException,
             ) {
                 if (recognizer is PrologParser) {
                     recognizer.removeParseListeners()
@@ -46,21 +45,26 @@ object PrologParserFactory {
                     line,
                     column + 1,
                     msg,
-                    e
+                    e,
                 )
             }
         }
     }
 
-    fun parseExpression(string: String): SingletonExpressionContext =
-        parseExpression(string, OperatorSet.EMPTY)
+    fun parseExpression(string: String): SingletonExpressionContext = parseExpression(string, OperatorSet.EMPTY)
 
-    fun parseExpression(string: String, withOperators: OperatorSet): SingletonExpressionContext {
+    fun parseExpression(
+        string: String,
+        withOperators: OperatorSet,
+    ): SingletonExpressionContext {
         val parser = createParser(string, withOperators)
         return parseExpression(parser, string)
     }
 
-    private fun parseExpression(parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>, source: String): SingletonExpressionContext {
+    private fun parseExpression(
+        parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>,
+        source: String,
+    ): SingletonExpressionContext {
         var mark = -1
         var index = -1
         val parser = parserAndErrorStrategy.first
@@ -89,24 +93,26 @@ object PrologParserFactory {
         }
     }
 
-    fun parseExpressionWithStandardOperators(string: String): SingletonExpressionContext =
-        parseExpression(string, OperatorSet.DEFAULT)
+    fun parseExpressionWithStandardOperators(string: String): SingletonExpressionContext = parseExpression(string, OperatorSet.DEFAULT)
 
-    fun parseClauses(source: String, withOperators: OperatorSet): Sequence<ClauseContext> {
+    fun parseClauses(
+        source: String,
+        withOperators: OperatorSet,
+    ): Sequence<ClauseContext> {
         val parser = createParser(source, withOperators)
         return parseClauses(parser, source)
     }
 
-    fun parseClauses(source: String): Sequence<ClauseContext> =
-        parseClauses(source, OperatorSet.EMPTY)
+    fun parseClauses(source: String): Sequence<ClauseContext> = parseClauses(source, OperatorSet.EMPTY)
 
-    fun parseClausesWithStandardOperators(source: String): Sequence<ClauseContext> =
-        parseClauses(source, OperatorSet.DEFAULT)
+    fun parseClausesWithStandardOperators(source: String): Sequence<ClauseContext> = parseClauses(source, OperatorSet.DEFAULT)
 
-    fun createParser(string: String): Pair<PrologParser, ErrorStrategy> =
-        createParser(string, OperatorSet.DEFAULT)
+    fun createParser(string: String): Pair<PrologParser, ErrorStrategy> = createParser(string, OperatorSet.DEFAULT)
 
-    fun createParser(source: String, operators: OperatorSet): Pair<PrologParser, ErrorStrategy> {
+    fun createParser(
+        source: String,
+        operators: OperatorSet,
+    ): Pair<PrologParser, ErrorStrategy> {
         val stream = InputStream(source)
         val lexer = PrologLexer(stream)
         lexer.removeErrorListeners()
@@ -119,7 +125,10 @@ object PrologParserFactory {
         return addOperators(parser, operators) to originalErrorStrategy
     }
 
-    fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
+    fun addOperators(
+        prologParser: PrologParser,
+        operators: OperatorSet,
+    ): PrologParser {
         operators.forEach {
             prologParser.addOperator(it.functor, it.specifier.toAssociativity(), it.priority)
         }
@@ -127,7 +136,10 @@ object PrologParserFactory {
         return prologParser
     }
 
-    private fun parseClause(parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>, source: Any): OptClauseContext {
+    private fun parseClause(
+        parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>,
+        source: Any,
+    ): OptClauseContext {
         var mark = -1
         var index = -1
         val parser = parserAndErrorStrategy.first
@@ -156,7 +168,10 @@ object PrologParserFactory {
         }
     }
 
-    private fun parseClauses(parser: Pair<PrologParser, ErrorStrategy>, source: Any): Sequence<ClauseContext> {
+    private fun parseClauses(
+        parser: Pair<PrologParser, ErrorStrategy>,
+        source: Any,
+    ): Sequence<ClauseContext> {
         return generateSequence(0) { it + 1 }
             .map {
                 try {

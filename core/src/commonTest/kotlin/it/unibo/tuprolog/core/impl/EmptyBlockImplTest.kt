@@ -15,7 +15,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class EmptyBlockImplTest {
-
     private val testedObj = EmptyBlockImpl()
 
     @Test

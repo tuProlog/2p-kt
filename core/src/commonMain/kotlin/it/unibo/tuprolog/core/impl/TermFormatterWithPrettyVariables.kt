@@ -5,10 +5,12 @@ import it.unibo.tuprolog.core.Var
 internal class TermFormatterWithPrettyVariables(
     quoted: Boolean = true,
     numberVars: Boolean = false,
-    ignoreOps: Boolean = false
+    ignoreOps: Boolean = false,
 ) : AbstractTermFormatterForVariables(quoted, numberVars, ignoreOps) {
-
-    override fun formatVar(variable: Var, suffix: String): String {
+    override fun formatVar(
+        variable: Var,
+        suffix: String,
+    ): String {
         val baseName = variable.name + suffix
         return if (variable.isNameWellFormed) {
             baseName

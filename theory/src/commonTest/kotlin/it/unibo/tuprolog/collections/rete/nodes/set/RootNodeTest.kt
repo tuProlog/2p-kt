@@ -25,7 +25,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class RootNodeTest {
-
     private lateinit var emptyRootNode: RootNode
     private lateinit var filledRootNode: RootNode
 
@@ -36,13 +35,14 @@ internal class RootNodeTest {
         listOf(
             ReteNodeUtils.rules,
             ReteNodeUtils.directives,
-            ReteNodeUtils.mixedClauses
+            ReteNodeUtils.mixedClauses,
         )
     }
 
-    private val correctInstances = reteTreeTestContents.map { clauses ->
-        RootNode().apply { clauses.forEach { put(it) } }
-    }
+    private val correctInstances =
+        reteTreeTestContents.map { clauses ->
+            RootNode().apply { clauses.forEach { put(it) } }
+        }
 
     @BeforeTest
     fun init() {
@@ -90,7 +90,7 @@ internal class RootNodeTest {
             filledRootNode,
             ReteNodeUtils.mixedClauses.toMutableList().apply {
                 addAll(0, listOf(aRule, aDirective))
-            }
+            },
         )
     }
 

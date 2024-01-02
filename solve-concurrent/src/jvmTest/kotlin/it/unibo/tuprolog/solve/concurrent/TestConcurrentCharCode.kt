@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentCharCode<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testCharCodeSecondIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -38,16 +37,17 @@ interface TestConcurrentCharCode<T : WithAssertingEquals> : FromSequence<T>, Sol
             val solver = solverWithDefaultBuiltins()
             val query = atom_length("X", 4)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("atom_length", 2),
-                        varOf("X"),
-                        index = 0
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("atom_length", 2),
+                            varOf("X"),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 

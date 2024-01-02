@@ -30,17 +30,20 @@ import kotlin.test.fail
 
 private inline val loggingOn get() = false
 
-fun <T> ktListConcat(l1: List<T>, l2: List<T>): List<T> = l1 + l2
+fun <T> ktListConcat(
+    l1: List<T>,
+    l2: List<T>,
+): List<T> = l1 + l2
 
 /** Utility function to help writing tests; it creates a mapping between the receiver goal struct and the list of given solutions */
-fun <S : Solution> Struct.hasSolutions(vararg solution: Struct.() -> S) =
-    this to solution.map { it() }
+fun <S : Solution> Struct.hasSolutions(vararg solution: Struct.() -> S) = this to solution.map { it() }
 
 /** Utility function to help writing tests; it creates a [Solution.Yes] with receiver query and provided substitution */
-fun Struct.yes(vararg withSubstitution: Substitution) = Solution.yes(
-    this,
-    Substitution.of(withSubstitution.flatMap { s -> s.map { it.toPair() } }) as Substitution.Unifier
-)
+fun Struct.yes(vararg withSubstitution: Substitution) =
+    Solution.yes(
+        this,
+        Substitution.of(withSubstitution.flatMap { s -> s.map { it.toPair() } }) as Substitution.Unifier,
+    )
 
 /** Utility function to help writing tests; it creates a [Solution.No] with receiver query */
 fun Struct.no() = Solution.no(this)
@@ -49,24 +52,27 @@ fun Struct.no() = Solution.no(this)
 fun Struct.halt(withException: ResolutionException) = Solution.halt(this, withException)
 
 /** Utility function to help writing tests; it forwards the `copy` method call to subclasses changing only the `query` field */
-fun Solution.changeQueryTo(query: Struct) = whenIs(
-    yes = { it.copy(query) },
-    no = { it.copy(query) },
-    halt = { it.copy(query) }
-)
+fun Solution.changeQueryTo(query: Struct) =
+    whenIs(
+        yes = { it.copy(query) },
+        no = { it.copy(query) },
+        halt = { it.copy(query) },
+    )
 
 /** Utility function to help writing tests; applies [changeQueryTo] to all [Solution]s in receiver iterable */
 fun Iterable<Solution>.changeQueriesTo(query: Struct) = map { it.changeQueryTo(query) }
 
 /** Utility function to assert [assertion] over thrown exception by [throwExpression] */
-inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit, assertion: (E) -> Unit) =
-    try {
-        throwExpression()
-        fail("Expected an Exception to be thrown!")
-    } catch (error: Throwable) {
-        assertTrue("Thrown error `${error::class}` is not of expected type `${E::class}`") { error is E }
-        assertion(error as E)
-    }
+inline fun <reified E : Throwable> assertOverFailure(
+    throwExpression: () -> Unit,
+    assertion: (E) -> Unit,
+) = try {
+    throwExpression()
+    fail("Expected an Exception to be thrown!")
+} catch (error: Throwable) {
+    assertTrue("Thrown error `${error::class}` is not of expected type `${E::class}`") { error is E }
+    assertion(error as E)
+}
 
 /**
  * Utility method to assert that two [Solution]s are equals, with some exceptions.
@@ -76,15 +82,25 @@ inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit
  * 2) In case a substitution points to a variable or a term containing variables (i.e. `X/Y` or `X/a(Y)` ),
  * **these variables are compared only by name**, because instances will differ
  */
-fun assertSolutionEquals(expected: Solution, actual: Solution) {
-    fun reportMsg(expected: Any, actual: Any, motivation: String = "") =
-        "Expected: `$expected`\nActual\t: `$actual`" + if (motivation.isNotBlank()) " ($motivation)" else ""
+fun assertSolutionEquals(
+    expected: Solution,
+    actual: Solution,
+) {
+    fun reportMsg(
+        expected: Any,
+        actual: Any,
+        motivation: String = "",
+    ) = "Expected: `$expected`\nActual\t: `$actual`" + if (motivation.isNotBlank()) " ($motivation)" else ""
 
-    fun assertSameClass(expected: Solution, actual: Solution) =
-        assertEquals(expected::class, actual::class, reportMsg(expected, actual))
+    fun assertSameClass(
+        expected: Solution,
+        actual: Solution,
+    ) = assertEquals(expected::class, actual::class, reportMsg(expected, actual))
 
-    fun assertSameQuery(expected: Solution, actual: Solution) =
-        assertEquals(expected.query, actual.query, reportMsg(expected, actual))
+    fun assertSameQuery(
+        expected: Solution,
+        actual: Solution,
+    ) = assertEquals(expected.query, actual.query, reportMsg(expected, actual))
 
     when {
         expected is Solution.Halt -> {
@@ -95,7 +111,7 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
             assertEquals(
                 expected.exception::class,
                 (actual as Solution.Halt).exception::class,
-                reportMsg(expected, actual, "Wrong exception type")
+                reportMsg(expected, actual, "Wrong exception type"),
             )
             when (val expectedEx = expected.exception) {
                 is LogicError -> {
@@ -103,8 +119,8 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
                         reportMsg(
                             expected,
                             actual,
-                            "Exception is not LogicError"
-                        )
+                            "Exception is not LogicError",
+                        ),
                     ) { actual.exception is LogicError }
                     val actualEx = actual.exception as LogicError
                     assertTrue(reportMsg(expected, actual, "The error structs do not match")) {
@@ -113,7 +129,7 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
                     assertEquals(
                         expectedEx.message,
                         actualEx.message,
-                        reportMsg(expected, actual, "Different messages")
+                        reportMsg(expected, actual, "Different messages"),
                     )
                 }
             }
@@ -133,7 +149,7 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
                     assertEquals(
                         termExpected.variables.map { it.name }.toList(),
                         termActual.variables.map { it.name }.toList(),
-                        "Comparing variable names of expected `$expected` with `$actual`"
+                        "Comparing variable names of expected `$expected` with `$actual`",
                     )
                 }
             }
@@ -151,7 +167,7 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
 inline fun assertSolutionEquals(
     expected: Iterable<Solution>,
     actual: Iterable<Solution>,
-    equalityAssertion: (Solution, Solution) -> Unit = ::assertSolutionEquals
+    equalityAssertion: (Solution, Solution) -> Unit = ::assertSolutionEquals,
 ) {
     assertEquals(expected.count(), actual.count(), "Expected: `${expected.toList()}`\nActual: `${actual.toList()}`")
 
@@ -162,7 +178,7 @@ inline fun assertSolutionEquals(
 fun assertSolverSolutionsCorrect(
     solver: Solver,
     goalToSolutions: List<Pair<Struct, List<Solution>>>,
-    maxDuration: TimeDuration
+    maxDuration: TimeDuration,
 ) {
     goalToSolutions.forEach { (goal, solutionList) ->
         if (loggingOn) solver.logKBs()
@@ -186,7 +202,11 @@ fun Solver.assertHasPredicateInAPI(signature: Signature) {
     assertHasPredicateInAPI(signature.name, signature.arity, signature.vararg)
 }
 
-fun Solver.assertHasPredicateInAPI(functor: String, arity: Int, vararg: Boolean = false) {
+fun Solver.assertHasPredicateInAPI(
+    functor: String,
+    arity: Int,
+    vararg: Boolean = false,
+) {
     val varargMsg = if (vararg) "(vararg) " else ""
     assertTrue("Missing predicate $functor/$arity ${varargMsg}in solver API") {
         Signature(functor, arity, vararg) in libraries
@@ -201,7 +221,10 @@ fun Solver.logKBs() {
 }
 
 /** Utility function to log passed goal and solutions */
-fun logGoalAndSolutions(goal: Struct, solutions: Iterable<Solution>) {
+fun logGoalAndSolutions(
+    goal: Struct,
+    solutions: Iterable<Solution>,
+) {
     println("?- $goal.")
     solutions.forEach {
         when (it) {
@@ -220,7 +243,10 @@ expect fun internalsOf(x: () -> Any): String
 
 expect fun log(x: () -> Any): Unit
 
-expect fun <T : Any> assertClassNameIs(`class`: KClass<T>, name: String)
+expect fun <T : Any> assertClassNameIs(
+    `class`: KClass<T>,
+    name: String,
+)
 
 fun Solver.assertHas(
     libraries: Runtime,
@@ -228,7 +254,7 @@ fun Solver.assertHas(
     dynamicKb: Theory,
     flags: FlagStore,
     inputs: InputStore,
-    outputs: OutputStore
+    outputs: OutputStore,
 ) {
     assertRuntimesAreEqual(libraries, this.libraries)
     assertEquals(staticKb, this.staticKb)
@@ -238,7 +264,10 @@ fun Solver.assertHas(
     assertChannelStoresAreEquals(outputs, this.outputChannels)
 }
 
-internal fun assertRuntimesAreEqual(expected: Runtime, actual: Runtime) {
+internal fun assertRuntimesAreEqual(
+    expected: Runtime,
+    actual: Runtime,
+) {
     assertEquals(expected.keys, actual.keys)
     for ((alias, e) in expected) {
         val a = actual[alias]
@@ -247,7 +276,10 @@ internal fun assertRuntimesAreEqual(expected: Runtime, actual: Runtime) {
     }
 }
 
-internal fun assertLibrariesAreEqual(expected: Library, actual: Library) {
+internal fun assertLibrariesAreEqual(
+    expected: Library,
+    actual: Library,
+) {
     assertEquals(expected.alias, actual.alias)
     assertEquals(expected.clauses, actual.clauses)
     assertEquals(expected.operators, actual.operators)
@@ -257,7 +289,7 @@ internal fun assertLibrariesAreEqual(expected: Library, actual: Library) {
         assertEquals(
             expected = e,
             actual = a,
-            message = "Wrong primitive: $signature. Expected $e, actual $a."
+            message = "Wrong primitive: $signature. Expected $e, actual $a.",
         )
     }
     assertEquals(expected.functions.keys, actual.functions.keys)
@@ -266,21 +298,27 @@ internal fun assertLibrariesAreEqual(expected: Library, actual: Library) {
         assertEquals(
             expected = e,
             actual = a,
-            message = "Wrong function: $signature. Expected $e, actual $a."
+            message = "Wrong function: $signature. Expected $e, actual $a.",
         )
     }
 }
 
-internal fun <C : Channel<*>> assertChannelAreEquals(expected: C, actual: C) {
+internal fun <C : Channel<*>> assertChannelAreEquals(
+    expected: C,
+    actual: C,
+) {
     assertEquals(
         expected::class,
         actual::class,
-        message = "Wrong channel type. Expected ${expected::class}, actual ${actual::class}"
+        message = "Wrong channel type. Expected ${expected::class}, actual ${actual::class}",
     )
     assertEquals(expected.isClosed, actual.isClosed)
 }
 
-internal fun <C : Channel<*>, CS : ChannelStore<*, C, CS>> assertChannelStoresAreEquals(expected: CS, actual: CS) {
+internal fun <C : Channel<*>, CS : ChannelStore<*, C, CS>> assertChannelStoresAreEquals(
+    expected: CS,
+    actual: CS,
+) {
     assertEquals(expected.keys, actual.keys)
     for (alias in expected.keys) {
         assertChannelAreEquals(expected[alias]!!, actual[alias]!!)

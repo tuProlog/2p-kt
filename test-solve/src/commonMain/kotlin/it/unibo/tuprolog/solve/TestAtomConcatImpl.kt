@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomConcat {
-
     override fun testAtomConcatThirdIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -12,7 +11,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to atomOf("testconcat"))),
-                solutions
+                solutions,
             )
         }
     }
@@ -25,7 +24,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -38,7 +37,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to atomOf("Test"))),
-                solutions
+                solutions,
             )
         }
     }
@@ -51,7 +50,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to atomOf("test"))),
-                solutions
+                solutions,
             )
         }
     }

@@ -20,11 +20,11 @@ internal class TestRetractImpl(private val solverFactory: SolverFactory) : TestR
                             Signature("retract", 1),
                             DomainError.Expected.CLAUSE,
                             ":-"(4, "X"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -44,11 +44,11 @@ internal class TestRetractImpl(private val solverFactory: SolverFactory) : TestR
                             Signature("retract", 1),
                             PermissionError.Operation.MODIFY,
                             PermissionError.Permission.PRIVATE_PROCEDURE,
-                            "atom" / 1
-                        )
-                    )
-                ), // Permission_error
-                solutions
+                            "atom" / 1,
+                        ),
+                    ),
+                ),
+                solutions,
             )
         }
     }

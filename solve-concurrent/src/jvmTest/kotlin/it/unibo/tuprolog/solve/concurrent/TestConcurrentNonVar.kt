@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentNonVar<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testNonVarNumber() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

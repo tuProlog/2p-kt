@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     val errorSignature: Signature
 
     fun testFindXInDiffValues() {
@@ -92,16 +91,17 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
 
             val query = findall("X", "Goal", "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("findall", 3),
-                        varOf("Goal"),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("findall", 3),
+                            varOf("Goal"),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -113,17 +113,18 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
 
             val query = findall("X", 4, "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("findall", 3),
-                        TypeError.Expected.CALLABLE,
-                        numOf(4),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("findall", 3),
+                            TypeError.Expected.CALLABLE,
+                            numOf(4),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -135,16 +136,17 @@ interface TestConcurrentFindAll<T : WithAssertingEquals> : FromSequence<T>, Solv
 
             val query = findall("X", call(1), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forGoal(
-                        DummyInstances.executionContext,
-                        errorSignature,
-                        TypeError.Expected.CALLABLE,
-                        numOf(1)
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            errorSignature,
+                            TypeError.Expected.CALLABLE,
+                            numOf(1),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

@@ -8,7 +8,7 @@ data class JsClassName(val module: String, val qualifiedName: String) {
             val splitted = fullName.split(":")
             return JsClassName(
                 splitted.subList(0, splitted.lastIndex).joinToString(""),
-                splitted.last()
+                splitted.last(),
             )
         }
 

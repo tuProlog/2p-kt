@@ -14,7 +14,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class CosineTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("cos", 1), Cosine.signature)

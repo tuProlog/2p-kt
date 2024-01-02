@@ -2,8 +2,7 @@ package it.unibo.tuprolog.solve
 
 interface TestCut : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestCut =
-            TestCutImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestCut = TestCutImpl(solverFactory)
     }
 
     /**

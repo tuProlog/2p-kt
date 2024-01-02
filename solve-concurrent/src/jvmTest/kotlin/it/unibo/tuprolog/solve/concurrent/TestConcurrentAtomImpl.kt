@@ -8,7 +8,6 @@ class TestConcurrentAtomImpl :
     TestConcurrentAtom<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testAtomAtom() = multiRunConcurrentTest { super.testAtomAtom() }

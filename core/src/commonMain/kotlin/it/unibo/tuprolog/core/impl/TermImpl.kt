@@ -8,7 +8,6 @@ import kotlin.js.JsName
 
 @Suppress("EqualsOrHashCode")
 internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap()) : Term {
-
     @JsName("termMark")
     val termMark: Int
         get() = MARK
@@ -17,7 +16,10 @@ internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap(
 
     final override fun hashCode(): Int = hashCodeCache
 
-    abstract override fun equals(other: Term, useVarCompleteName: Boolean): Boolean
+    abstract override fun equals(
+        other: Term,
+        useVarCompleteName: Boolean,
+    ): Boolean
 
     abstract override fun toString(): String
 
@@ -34,16 +36,17 @@ internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap(
 
     protected abstract fun copyWithTags(tags: Map<String, Any>): Term
 
-    override fun apply(substitution: Substitution): Term = when {
-        substitution.isSuccess -> {
-            if (isUnifierSkippable(substitution.castToUnifier())) {
-                this
-            } else {
-                applyNonEmptyUnifier(substitution.castToUnifier())
+    override fun apply(substitution: Substitution): Term =
+        when {
+            substitution.isSuccess -> {
+                if (isUnifierSkippable(substitution.castToUnifier())) {
+                    this
+                } else {
+                    applyNonEmptyUnifier(substitution.castToUnifier())
+                }
             }
+            else -> throw SubstitutionApplicationException(this, substitution)
         }
-        else -> throw SubstitutionApplicationException(this, substitution)
-    }
 
     protected open fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty() || this.isGround
 

@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
  *
  * @author Jason Dellaluce */
 internal object DirectiveClauseMapper : ClauseMapper {
-
     override fun isCompatible(clause: Clause): Boolean {
         return clause.isDirective
     }
@@ -38,9 +37,9 @@ internal object DirectiveClauseMapper : ClauseMapper {
                 Directive.of(
                     Struct.of(
                         body.functor,
-                        Indicator.of(name, Numeric.of(arity.decimalValue.toInt() + 1))
-                    )
-                )
+                        Indicator.of(name, Numeric.of(arity.decimalValue.toInt() + 1)),
+                    ),
+                ),
             )
         }
 
@@ -49,9 +48,9 @@ internal object DirectiveClauseMapper : ClauseMapper {
                 Directive.of(
                     Struct.of(
                         body.functor,
-                        body[0].withBodyExplanation(Var.anonymous())
-                    )
-                )
+                        body[0].withBodyExplanation(Var.anonymous()),
+                    ),
+                ),
             )
         }
 

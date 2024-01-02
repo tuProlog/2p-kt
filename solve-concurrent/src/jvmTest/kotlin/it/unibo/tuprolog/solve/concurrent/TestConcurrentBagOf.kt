@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testBagXInDifferentValues() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -78,16 +77,17 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = bagof("X", "G", "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("bagof", 3),
-                        varOf("G"),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("bagof", 3),
+                            varOf("G"),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -99,17 +99,18 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = bagof("X", 1, "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("bagof", 3),
-                        TypeError.Expected.CALLABLE,
-                        numOf(1),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("bagof", 3),
+                            TypeError.Expected.CALLABLE,
+                            numOf(1),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

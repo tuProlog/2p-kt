@@ -14,12 +14,15 @@ import kotlin.math.exp
  * @author Enrico
  */
 object Exponential : UnaryMathFunction("exp") {
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(integer.decimalValue)
 
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-        commonBehaviour(integer.decimalValue)
-
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        commonBehaviour(real.value)
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(real.value)
 
     /** Implements the common behaviour for real and integer */
     private fun commonBehaviour(decimal: BigDecimal) =

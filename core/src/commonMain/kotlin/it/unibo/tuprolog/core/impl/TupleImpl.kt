@@ -11,9 +11,8 @@ import it.unibo.tuprolog.utils.setTags
 internal class TupleImpl(
     override val left: Term,
     override val right: Term,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : RecursiveImpl(TUPLE_FUNCTOR, listOf(left, right), tags), Tuple {
-
     override val isGround: Boolean = checkGroundness()
 
     override fun checkGroundness(): Boolean = left.isGround && right.isGround

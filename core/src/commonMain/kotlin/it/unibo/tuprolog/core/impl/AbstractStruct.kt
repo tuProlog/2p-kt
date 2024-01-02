@@ -12,9 +12,8 @@ import it.unibo.tuprolog.utils.setTags
 internal abstract class AbstractStruct(
     override val functor: String,
     override val args: List<Term>,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : TermImpl(tags), Struct {
-
     override val isGround: Boolean
         get() = checkGroundness()
 
@@ -22,15 +21,17 @@ internal abstract class AbstractStruct(
 
     override fun freshCopy(): Struct = freshCopy(Scope.empty())
 
-    override fun freshCopy(scope: Scope): Struct = when {
-        isGround -> this
-        else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) }).setTags(tags)
-    }
+    override fun freshCopy(scope: Scope): Struct =
+        when {
+            isGround -> this
+            else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) }).setTags(tags)
+        }
 
     final override fun structurallyEquals(other: Term): Boolean =
-        other.isStruct && other.castToStruct().let {
-            functor == it.functor && arity == it.arity && itemsAreStructurallyEqual(it)
-        }
+        other.isStruct &&
+            other.castToStruct().let {
+                functor == it.functor && arity == it.arity && itemsAreStructurallyEqual(it)
+            }
 
     @Suppress("RedundantAsSequence")
     protected open fun itemsAreStructurallyEqual(other: Struct): Boolean {
@@ -45,11 +46,13 @@ internal abstract class AbstractStruct(
     override val isFunctorWellFormed: Boolean
         get() = Struct.isWellFormedFunctor(functor)
 
-    final override fun equals(other: Any?): Boolean =
-        asTerm(other)?.asStruct()?.let { equalsImpl(it, true) } ?: false
+    final override fun equals(other: Any?): Boolean = asTerm(other)?.asStruct()?.let { equalsImpl(it, true) } ?: false
 
     @Suppress("RedundantAsSequence")
-    protected open fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean {
+    protected open fun itemsAreEqual(
+        other: Struct,
+        useVarCompleteName: Boolean,
+    ): Boolean {
         for (i in 0 until arity) {
             if (!getArgAt(i).equals(other[i], useVarCompleteName)) {
                 return false
@@ -58,10 +61,15 @@ internal abstract class AbstractStruct(
         return true
     }
 
-    final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        other.asStruct()?.let { equalsImpl(it, useVarCompleteName) } ?: false
+    final override fun equals(
+        other: Term,
+        useVarCompleteName: Boolean,
+    ): Boolean = other.asStruct()?.let { equalsImpl(it, useVarCompleteName) } ?: false
 
-    private fun equalsImpl(other: Struct, useVarCompleteName: Boolean): Boolean {
+    private fun equalsImpl(
+        other: Struct,
+        useVarCompleteName: Boolean,
+    ): Boolean {
         if (this === other) return true
         if (functor != other.functor) return false
         if (arity != other.arity) return false
@@ -88,14 +96,17 @@ internal abstract class AbstractStruct(
 
     override fun addFirst(argument: Term): Struct = Struct.of(functor, listOf(argument) + args)
 
-    override fun insertAt(index: Int, argument: Term): Struct =
+    override fun insertAt(
+        index: Int,
+        argument: Term,
+    ): Struct =
         if (index in 0 until arity) {
             val argsArray = args.toTypedArray()
             Struct.of(
                 functor,
                 *argsArray.sliceArray(0 until index),
                 argument,
-                *argsArray.sliceArray(index until arity)
+                *argsArray.sliceArray(index until arity),
             )
         } else {
             throw IndexOutOfBoundsException("Index $index is out of bounds ${args.indices}")

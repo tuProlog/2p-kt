@@ -17,13 +17,17 @@ object SetTheory : UnaryPredicate.NonBacktrackable<ExecutionContext>("set_theory
         return setTheory(first.castTo<Atom>().value, append = false)
     }
 
-    fun Solve.Request<ExecutionContext>.setTheory(text: String, append: Boolean = true): Solve.Response {
+    fun Solve.Request<ExecutionContext>.setTheory(
+        text: String,
+        append: Boolean = true,
+    ): Solve.Response {
         try {
             val theory = ClausesParser.withOperators(context.operators).parseTheory(text)
-            val solver = context.createMutableSolver(
-                staticKb = Theory.empty(context.unificator),
-                dynamicKb = MutableTheory.empty(context.unificator)
-            )
+            val solver =
+                context.createMutableSolver(
+                    staticKb = Theory.empty(context.unificator),
+                    dynamicKb = MutableTheory.empty(context.unificator),
+                )
             solver.loadStaticKb(theory)
             return replySuccess {
                 if (append) {
@@ -43,7 +47,7 @@ object SetTheory : UnaryPredicate.NonBacktrackable<ExecutionContext>("set_theory
                 e.clauseIndex,
                 e.line,
                 e.column,
-                e.message?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() } ?: "<no detail provided>"
+                e.message?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() } ?: "<no detail provided>",
             )
         }
     }

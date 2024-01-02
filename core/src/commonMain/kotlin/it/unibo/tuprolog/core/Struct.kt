@@ -21,16 +21,17 @@ import kotlin.collections.List as KtList
  * Each argument can be a [Term] of any sort.
  */
 interface Struct : Term {
-
     override val isStruct: Boolean
         get() = true
 
     override val isClause: Boolean
-        get() = CLAUSE_FUNCTOR == functor && when (arity) {
-            2 -> getArgAt(0).isStruct
-            1 -> true
-            else -> false
-        }
+        get() =
+            CLAUSE_FUNCTOR == functor &&
+                when (arity) {
+                    2 -> getArgAt(0).isStruct
+                    1 -> true
+                    else -> false
+                }
 
     override val isRule: Boolean
         get() = isClause && arity == 2
@@ -117,7 +118,10 @@ interface Struct : Term {
      * whose [arity] is greater than the current one, and whose [index]-th argument is [argument]
      */
     @JsName("insertAt")
-    fun insertAt(index: Int, argument: Term): Struct
+    fun insertAt(
+        index: Int,
+        argument: Term,
+    ): Struct
 
     /**
      * Creates a novel [Struct] which is a copy of the current one, expect that is has a different functor.
@@ -194,7 +198,6 @@ interface Struct : Term {
     operator fun get(index: Int): Term = getArgAt(index)
 
     companion object {
-
         /**
          * The pattern of a well-formed functor for a [Struct].
          * A functor is well-formed if and only if:
@@ -228,8 +231,7 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("enquoteFunctor")
-        fun enquoteFunctor(string: String): String =
-            "'$string'"
+        fun enquoteFunctor(string: String): String = "'$string'"
 
         /**
          * Wraps the provided [string] within single quotes, but only if it is not well-formed.
@@ -271,12 +273,13 @@ interface Struct : Term {
         fun escapeFunctor(
             string: String,
             escapeSingleQuotes: Boolean = true,
-            escapeDoubleQuotes: Boolean = !escapeSingleQuotes
-        ): String = string.toCharArray()
-            .asSequence()
-            .map { Terms.escapeChar(it, escapeSingleQuotes, escapeDoubleQuotes) }
-            .reduceOrNull(String::plus)
-            ?: ""
+            escapeDoubleQuotes: Boolean = !escapeSingleQuotes,
+        ): String =
+            string.toCharArray()
+                .asSequence()
+                .map { Terms.escapeChar(it, escapeSingleQuotes, escapeDoubleQuotes) }
+                .reduceOrNull(String::plus)
+                ?: ""
 
         /**
          * Escapes all occurrences of the characters `\n`, `\r`, `\t`, and `\` in [string], but only if a preliminary
@@ -295,12 +298,13 @@ interface Struct : Term {
         fun escapeFunctorIfNecessary(
             string: String,
             escapeSingleQuotes: Boolean = true,
-            escapeDoubleQuotes: Boolean = !escapeSingleQuotes
-        ): String = if (functorNeedsEscape(string)) {
-            escapeFunctor(string, escapeSingleQuotes, escapeDoubleQuotes)
-        } else {
-            string
-        }
+            escapeDoubleQuotes: Boolean = !escapeSingleQuotes,
+        ): String =
+            if (functorNeedsEscape(string)) {
+                escapeFunctor(string, escapeSingleQuotes, escapeDoubleQuotes)
+            } else {
+                string
+            }
 
         /**
          * Creates a new [Struct] with [functor] as functor and a given amount of anonymous [Var]iables, namely [arity].
@@ -312,7 +316,10 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("template")
-        fun template(functor: String, arity: Int): Struct {
+        fun template(
+            functor: String,
+            arity: Int,
+        ): Struct {
             require(arity >= 0) { "Arity must be a non-negative integer" }
             return of(functor, (0 until arity).map { Var.anonymous() })
         }
@@ -335,7 +342,10 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("ofList")
-        fun of(functor: String, args: KtList<Term>): Struct =
+        fun of(
+            functor: String,
+            args: KtList<Term>,
+        ): Struct =
             when {
                 args.size == 2 && CONS_FUNCTOR == functor -> Cons.of(args.first(), args.last())
                 args.size == 2 && CLAUSE_FUNCTOR == functor && args.first().isStruct ->
@@ -366,7 +376,10 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("of")
-        fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
+        fun of(
+            functor: String,
+            vararg args: Term,
+        ): Struct = of(functor, args.toList())
 
         /**
          * Creates a new [Struct] from the given [Sequence] of [Term]s.
@@ -386,7 +399,10 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
+        fun of(
+            functor: String,
+            args: Sequence<Term>,
+        ): Struct = of(functor, args.toList())
 
         /**
          * Creates a new [Struct] from the given [Iterable] of [Term]s.
@@ -406,7 +422,10 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(functor: String, args: Iterable<Term>): Struct = of(functor, args.toList())
+        fun of(
+            functor: String,
+            args: Iterable<Term>,
+        ): Struct = of(functor, args.toList())
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -423,8 +442,10 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("foldListNullTerminated")
-        fun fold(operator: String, terms: KtList<Term>): Struct =
-            fold(operator, terms, null)
+        fun fold(
+            operator: String,
+            terms: KtList<Term>,
+        ): Struct = fold(operator, terms, null)
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -449,7 +470,11 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("foldList")
-        fun fold(operator: String, terms: KtList<Term>, terminal: Term?): Struct =
+        fun fold(
+            operator: String,
+            terms: KtList<Term>,
+            terminal: Term?,
+        ): Struct =
             when {
                 operator == CONS_FUNCTOR && terminal == EmptyList() -> List.of(terms)
                 operator == CONS_FUNCTOR && terminal == null -> List.from(terms)
@@ -493,8 +518,11 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("foldSequence")
-        fun fold(operator: String, terms: Sequence<Term>, terminal: Term?): Struct =
-            fold(operator, terms.toList(), terminal)
+        fun fold(
+            operator: String,
+            terms: Sequence<Term>,
+            terminal: Term?,
+        ): Struct = fold(operator, terms.toList(), terminal)
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -511,8 +539,10 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("foldSequenceNullTerminated")
-        fun fold(operator: String, terms: Sequence<Term>): Struct =
-            fold(operator, terms, null)
+        fun fold(
+            operator: String,
+            terms: Sequence<Term>,
+        ): Struct = fold(operator, terms, null)
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -537,8 +567,11 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("foldIterable")
-        fun fold(operator: String, terms: Iterable<Term>, terminal: Term?): Struct =
-            fold(operator, terms.toList(), terminal)
+        fun fold(
+            operator: String,
+            terms: Iterable<Term>,
+            terminal: Term?,
+        ): Struct = fold(operator, terms.toList(), terminal)
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -555,8 +588,10 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("foldIterableNullTerminated")
-        fun fold(operator: String, terms: Iterable<Term>): Struct =
-            fold(operator, terms, null)
+        fun fold(
+            operator: String,
+            terms: Iterable<Term>,
+        ): Struct = fold(operator, terms, null)
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -581,8 +616,11 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("fold")
-        fun fold(operator: String, vararg terms: Term, terminal: Term?): Struct =
-            fold(operator, terms.toList(), terminal)
+        fun fold(
+            operator: String,
+            vararg terms: Term,
+            terminal: Term?,
+        ): Struct = fold(operator, terms.toList(), terminal)
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -599,7 +637,9 @@ interface Struct : Term {
          */
         @JvmStatic
         @JsName("foldNullTerminated")
-        fun fold(operator: String, vararg terms: Term): Struct =
-            fold(operator, listOf(*terms))
+        fun fold(
+            operator: String,
+            vararg terms: Term,
+        ): Struct = fold(operator, listOf(*terms))
     }
 }

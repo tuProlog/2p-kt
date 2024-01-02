@@ -28,24 +28,25 @@ object ProblogLib : ExtensionLibrary(Library.of("problog.lang")) {
         get() = PROBLOG_SPECIFIC_OPERATORS
 
     override val additionalRules: Iterable<RuleWrapper<*>>
-        get() = listOf(
-            Prob
-        )
+        get() =
+            listOf(
+                Prob,
+            )
 
     override val additionalPrimitives: Iterable<PrimitiveWrapper<*>>
-        get() = listOf(
-            ProbHelper,
-            ProbSolve,
-            ProbExplAnd,
-            ProbQuery,
-            ProbSolveEvidence,
-            ProbSolveWithEvidence,
-            ProbNegationAsFailure,
-            ProbSetConfig
-        )
+        get() =
+            listOf(
+                ProbHelper,
+                ProbSolve,
+                ProbExplAnd,
+                ProbQuery,
+                ProbSolveEvidence,
+                ProbSolveWithEvidence,
+                ProbNegationAsFailure,
+                ProbSetConfig,
+            )
 
     internal object DefaultBuiltins : ExtensionLibrary(ClassicDefaultBuiltins) {
-
         override val alias: String
             get() = ProblogLib.alias
 
@@ -60,15 +61,16 @@ object ProblogLib : ExtensionLibrary(Library.of("problog.lang")) {
     }
 
     internal object MinimalBuiltins : ExtensionLibrary(ProblogLib) {
-
         override val additionalPrimitives: Iterable<PrimitiveWrapper<*>>
-            get() = listOf(
-                EnsureExecutable
-            )
+            get() =
+                listOf(
+                    EnsureExecutable,
+                )
 
         override val additionalRules: Iterable<RuleWrapper<*>>
-            get() = listOf(
-                Call
-            )
+            get() =
+                listOf(
+                    Call,
+                )
     }
 }

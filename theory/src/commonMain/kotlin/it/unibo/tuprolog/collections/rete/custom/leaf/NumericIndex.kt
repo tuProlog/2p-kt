@@ -16,9 +16,8 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class NumericIndex(
     unificator: Unificator,
     private val ordered: Boolean,
-    private val nestingLevel: Int
+    private val nestingLevel: Int,
 ) : AbstractIndexingLeaf(unificator), Retractable {
-
     private val index: MutableMap<Numeric, MutableList<SituatedIndexedClause>> = mutableMapOf()
 
     override val size: Int
@@ -74,7 +73,10 @@ internal class NumericIndex(
             extractFirst(clause, it)
         }.minOrNull()
 
-    private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
+    private fun extractFirst(
+        clause: Clause,
+        index: MutableList<SituatedIndexedClause>,
+    ): SituatedIndexedClause? {
         val actualIndex = index.indexOfFirst { unificator.match(it.innerClause, clause) }
 
         return if (actualIndex == -1) {
@@ -109,32 +111,25 @@ internal class NumericIndex(
             Utils.merge(
                 index.values.asSequence().map {
                     removeAllLazily(it, clause)
-                }
+                },
             ).buffered()
         }
     }
 
-    override fun retractAll(clause: Clause): Sequence<Clause> =
-        retractAllIndexed(clause).map { it.innerClause }
+    override fun retractAll(clause: Clause): Sequence<Clause> = retractAllIndexed(clause).map { it.innerClause }
 
-    override fun getCache(): Sequence<SituatedIndexedClause> =
-        Utils.merge(index.values.asSequence().map { it.asSequence() })
+    override fun getCache(): Sequence<SituatedIndexedClause> = Utils.merge(index.values.asSequence().map { it.asSequence() })
 
     override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
         getCache().filter { unificator.match(it.innerClause, clause) }
 
-    private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
-        extractGlobalIndexedSequence(clause).map { it.innerClause }
+    private fun extractGlobalSequence(clause: Clause): Sequence<Clause> = extractGlobalIndexedSequence(clause).map { it.innerClause }
 
-    private fun Clause.nestedFirstArgument(): Term =
-        this.head!!.nestedFirstArgument(nestingLevel + 1)
+    private fun Clause.nestedFirstArgument(): Term = this.head!!.nestedFirstArgument(nestingLevel + 1)
 
-    private fun Clause.asInnerNumeric(): Numeric =
-        this.nestedFirstArgument().castToNumeric()
+    private fun Clause.asInnerNumeric(): Numeric = this.nestedFirstArgument().castToNumeric()
 
-    private fun SituatedIndexedClause.asInnerNumeric(): Numeric =
-        this.innerClause.nestedFirstArgument().castToNumeric()
+    private fun SituatedIndexedClause.asInnerNumeric(): Numeric = this.innerClause.nestedFirstArgument().castToNumeric()
 
-    private fun IndexedClause.asInnerNumeric(): Numeric =
-        this.innerClause.nestedFirstArgument().castToNumeric()
+    private fun IndexedClause.asInnerNumeric(): Numeric = this.innerClause.nestedFirstArgument().castToNumeric()
 }

@@ -13,8 +13,10 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * @author Enrico
  */
 object Is : BinaryRelation.Functional<ExecutionContext>("is") {
-
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
+    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
+        first: Term,
+        second: Term,
+    ): Substitution =
         ensuringArgumentIsInstantiated(1).run {
             mgu(first, second.evalAsExpression(this, 1))
         }

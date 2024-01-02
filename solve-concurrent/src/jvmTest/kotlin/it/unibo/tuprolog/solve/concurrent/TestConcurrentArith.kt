@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testArithDiff() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -36,32 +35,34 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             query = N arithNeq 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("=\\=", 2),
-                        N,
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=\\=", 2),
+                            N,
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
             query = "floot"(1) arithNeq 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("=\\=", 2),
-                        TypeError.Expected.EVALUABLE,
-                        "floot"(1),
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=\\=", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -91,32 +92,34 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             query = N arithEq 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("=:=", 2),
-                        N,
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=:=", 2),
+                            N,
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
             query = "floot"(1) arithEq 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("=:=", 2),
-                        TypeError.Expected.EVALUABLE,
-                        "floot"(1),
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=:=", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
@@ -152,32 +155,34 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             query = X greaterThan 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature(">", 2),
-                        X,
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature(">", 2),
+                            X,
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
             query = (2 + "floot"(1)) greaterThan 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature(">", 2),
-                        TypeError.Expected.EVALUABLE,
-                        "floot"(1),
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature(">", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -207,32 +212,34 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             query = X greaterThanOrEqualsTo 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature(">=", 2),
-                        X,
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature(">=", 2),
+                            X,
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
             query = (2 + "floot"(1)) greaterThanOrEqualsTo 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature(">=", 2),
-                        TypeError.Expected.EVALUABLE,
-                        "floot"(1),
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature(">=", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -262,32 +269,34 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             query = X lowerThan 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("<", 2),
-                        X,
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("<", 2),
+                            X,
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
             query = (2 + "floot"(1)) lowerThan 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("<", 2),
-                        TypeError.Expected.EVALUABLE,
-                        "floot"(1),
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("<", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -317,32 +326,34 @@ interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             query = X lowerThanOrEqualsTo 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("=<", 2),
-                        X,
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=<", 2),
+                            X,
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
             query = (2 + "floot"(1)) lowerThanOrEqualsTo 5
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("=<", 2),
-                        TypeError.Expected.EVALUABLE,
-                        "floot"(1),
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=<", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

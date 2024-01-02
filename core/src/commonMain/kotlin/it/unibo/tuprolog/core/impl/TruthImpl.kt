@@ -7,9 +7,8 @@ import it.unibo.tuprolog.core.Truth
 internal class TruthImpl(
     value: String,
     override val isTrue: Boolean,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : Truth, AtomImpl(value, tags) {
-
     override fun toString(): String = value
 
     override fun copyWithTags(tags: Map<String, Any>): Truth = TruthImpl(value, isTrue, tags)

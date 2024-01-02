@@ -20,7 +20,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class FactImplTest {
-
     private val mixedFactInstances by lazy { FactUtils.mixedFacts.map(::FactImpl) }
     private val groundFactInstances by lazy { FactUtils.groundFacts.map(::FactImpl) }
     private val nonGroundFactInstances by lazy { FactUtils.nonGroundFacts.map(::FactImpl) }

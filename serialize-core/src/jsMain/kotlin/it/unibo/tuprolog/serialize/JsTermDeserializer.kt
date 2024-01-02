@@ -3,11 +3,9 @@ package it.unibo.tuprolog.serialize
 import it.unibo.tuprolog.core.Term
 
 internal class JsTermDeserializer(override val mimeType: MimeType) : TermDeserializer {
-    override fun deserialize(string: String): Term =
-        JsTermDeobjectifier().deobjectify(parse(string))
+    override fun deserialize(string: String): Term = JsTermDeobjectifier().deobjectify(parse(string))
 
-    override fun deserializeMany(string: String): Iterable<Term> =
-        JsTermDeobjectifier().deobjectifyMany(parse(string))
+    override fun deserializeMany(string: String): Iterable<Term> = JsTermDeobjectifier().deobjectifyMany(parse(string))
 
     private fun parse(string: String): Any =
         when (mimeType) {

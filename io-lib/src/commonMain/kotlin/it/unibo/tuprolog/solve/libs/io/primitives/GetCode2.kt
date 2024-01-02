@@ -9,7 +9,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object GetCode2 : BinaryRelation.NonBacktrackable<ExecutionContext>("get_code") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+    ): Solve.Response {
         val channel = ensuringArgumentIsInputChannel(0)
         ensuringArgumentIsVarOrCharCode(0)
         return readCodeAndReply(channel, first)

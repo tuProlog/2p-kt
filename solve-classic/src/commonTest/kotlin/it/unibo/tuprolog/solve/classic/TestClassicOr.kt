@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.TestOr
 import kotlin.test.Test
 
 class TestClassicOr : TestOr, SolverFactory by ClassicSolverFactory {
-
     private val prototype = TestOr.prototype(this)
 
     @Test

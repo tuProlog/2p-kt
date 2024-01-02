@@ -23,7 +23,10 @@ private val REQUEST: dynamic by lazy {
     js("require('sync-request')")
 }
 
-internal fun <T> fetch(url: String, encoding: String? = null): T {
+internal fun <T> fetch(
+    url: String,
+    encoding: String? = null,
+): T {
     try {
         val response = REQUEST("GET", url, js("{}")) // js("{ cache: 'file' }"))
         return response.getBody(encoding).unsafeCast<T>()
@@ -32,17 +35,13 @@ internal fun <T> fetch(url: String, encoding: String? = null): T {
     }
 }
 
-private fun toByteArray(obj: dynamic): ByteArray =
-    ByteArray(obj.length) { obj[it] }
+private fun toByteArray(obj: dynamic): ByteArray = ByteArray(obj.length) { obj[it] }
 
-private fun Uint8Array.toByteArray(): ByteArray =
-    ByteArray(length) { this[it] }
+private fun Uint8Array.toByteArray(): ByteArray = ByteArray(length) { this[it] }
 
-private fun ArrayBuffer.toUInt8Array(): Uint8Array =
-    Uint8Array(this)
+private fun ArrayBuffer.toUInt8Array(): Uint8Array = Uint8Array(this)
 
-internal fun ArrayBuffer.toByteArray(): ByteArray =
-    toUInt8Array().toByteArray()
+internal fun ArrayBuffer.toByteArray(): ByteArray = toUInt8Array().toByteArray()
 
 private fun browserReadText(path: String): String =
     js("window").localStorage.getItem(path).unsafeCast<String?>()

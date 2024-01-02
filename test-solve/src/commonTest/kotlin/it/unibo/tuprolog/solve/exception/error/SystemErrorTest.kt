@@ -11,7 +11,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class SystemErrorTest {
-
     private val underTestError = SystemError(context = LogicErrorUtils.aContext)
     private val correctTypeFunctor = "system_error"
 

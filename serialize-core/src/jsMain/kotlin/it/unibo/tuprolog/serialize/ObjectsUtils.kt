@@ -1,8 +1,10 @@
 package it.unibo.tuprolog.serialize
 
 actual object ObjectsUtils {
-
-    actual fun parseAsObject(string: String, mimeType: MimeType): Any {
+    actual fun parseAsObject(
+        string: String,
+        mimeType: MimeType,
+    ): Any {
         return when (mimeType) {
             is MimeType.Xml -> throw NotImplementedError()
             is MimeType.Yaml -> YAML.parse(string)
@@ -10,7 +12,10 @@ actual object ObjectsUtils {
         } as Any
     }
 
-    actual fun deeplyEqual(obj1: Any?, obj2: Any?): Boolean {
+    actual fun deeplyEqual(
+        obj1: Any?,
+        obj2: Any?,
+    ): Boolean {
         return JSON.stringify(obj1) == JSON.stringify(obj2)
     }
 }

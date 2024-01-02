@@ -16,9 +16,8 @@ import it.unibo.tuprolog.core.List as LogicList
 
 class DynamicOpListener private constructor(
     private val parser: PrologParser,
-    private val operatorDefinedCallback: PrologParser?.(Operator) -> Unit
+    private val operatorDefinedCallback: PrologParser?.(Operator) -> Unit,
 ) : PrologParserListener() {
-
     override fun exitClause(ctx: ClauseContext) {
         val expr = ctx.expression()
         if (ctx.exception != null) {
@@ -56,7 +55,10 @@ class DynamicOpListener private constructor(
             return DynamicOpListener(parser) { }
         }
 
-        fun of(parser: PrologParser, operatorDefinedCallback: PrologParser?.(Operator) -> Unit): DynamicOpListener {
+        fun of(
+            parser: PrologParser,
+            operatorDefinedCallback: PrologParser?.(Operator) -> Unit,
+        ): DynamicOpListener {
             return DynamicOpListener(parser, operatorDefinedCallback)
         }
     }

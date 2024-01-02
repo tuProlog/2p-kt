@@ -16,10 +16,11 @@ import it.unibo.tuprolog.solve.streams.solver.fsm.impl.StateInit
  * @author Enrico
  */
 internal object StateInitUtils {
-
     /** Utility function to create a [Solve.Request] */
-    private fun createSolveRequest(signature: Signature, argList: List<Term> = emptyList()) =
-        Solve.Request(signature, argList, StreamsExecutionContext())
+    private fun createSolveRequest(
+        signature: Signature,
+        argList: List<Term> = emptyList(),
+    ) = Solve.Request(signature, argList, StreamsExecutionContext())
 
     /** Solve request for `true` Atom */
     internal val trueRequest = createSolveRequest(Signature("true", 0))
@@ -28,22 +29,25 @@ internal object StateInitUtils {
     private val failRequest = createSolveRequest(Signature("fail", 0))
 
     /** Solve request for some vararg primitive */
-    private val varargPrimitiveRequest = createSolveRequest(
-        Signature("varargPrimitive", 2, true),
-        listOf(Truth.TRUE, Truth.TRUE, Truth.TRUE)
-    )
+    private val varargPrimitiveRequest =
+        createSolveRequest(
+            Signature("varargPrimitive", 2, true),
+            listOf(Truth.TRUE, Truth.TRUE, Truth.TRUE),
+        )
 
     /** Solve request with well-formed goal */
-    private val wellFormedGoalRequest = createSolveRequest(
-        Signature(";", 2),
-        listOf(Truth.TRUE, Truth.FAIL)
-    )
+    private val wellFormedGoalRequest =
+        createSolveRequest(
+            Signature(";", 2),
+            listOf(Truth.TRUE, Truth.FAIL),
+        )
 
     /** Solve request with a goal that needs preparation for execution */
-    private val preparationNeededGoalRequest = createSolveRequest(
-        Signature(",", 2),
-        listOf(Var.of("A"), Var.of("B"))
-    )
+    private val preparationNeededGoalRequest =
+        createSolveRequest(
+            Signature(",", 2),
+            listOf(Var.of("A"), Var.of("B")),
+        )
 
     /** Well formed goals needing preparation for execution */
     internal val wellFormedGoalRequestsNeedingPreparationForExecution by lazy {
@@ -55,7 +59,7 @@ internal object StateInitUtils {
         listOf(
             failRequest,
             varargPrimitiveRequest,
-            wellFormedGoalRequest
+            wellFormedGoalRequest,
         )
     }
 
@@ -66,10 +70,11 @@ internal object StateInitUtils {
     }
 
     /** Solve request with non well-formed goal */
-    internal val nonWellFormedGoalRequest = createSolveRequest(
-        Signature(",", 2),
-        listOf(Truth.TRUE, Integer.of(2))
-    )
+    internal val nonWellFormedGoalRequest =
+        createSolveRequest(
+            Signature(",", 2),
+            listOf(Truth.TRUE, Integer.of(2)),
+        )
 
     /** All [StateInit] testing requests */
     internal val allRequests by lazy { allWellFormedGoalRequests + nonWellFormedGoalRequest }

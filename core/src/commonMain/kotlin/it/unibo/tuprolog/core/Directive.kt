@@ -5,7 +5,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Directive : Clause {
-
     override val head: Struct?
         get() = null
 
@@ -38,8 +37,10 @@ interface Directive : Clause {
 
         @JvmStatic
         @JsName("of")
-        fun of(body1: Term, vararg body: Term): Directive =
-            of(listOf(body1, *body))
+        fun of(
+            body1: Term,
+            vararg body: Term,
+        ): Directive = of(listOf(body1, *body))
 
         @JvmStatic
         @JsName("template")

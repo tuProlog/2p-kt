@@ -12,18 +12,18 @@ import kotlin.test.Test
 import it.unibo.tuprolog.core.List as LogicList
 
 class TestEmptyList {
-
     private val correctAtom = "[]"
     private val notCorrectAtom = "[ ]"
 
-    private val heterogeneousCreatedInstances = listOf(
-        EmptyList(),
-        Empty.list(),
-        LogicList.empty(),
-        LogicList.of(),
-        Atom.of(correctAtom),
-        Struct.of(correctAtom)
-    )
+    private val heterogeneousCreatedInstances =
+        listOf(
+            EmptyList(),
+            Empty.list(),
+            LogicList.empty(),
+            LogicList.of(),
+            Atom.of(correctAtom),
+            Struct.of(correctAtom),
+        )
 
     @Test
     fun variousCreationMethodsCreateCorrectlyEmptyList() {

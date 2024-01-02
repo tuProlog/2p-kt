@@ -19,7 +19,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class CutAndConjunctionIntegrationTest {
-
     @Test
     fun cutAsFirstGoalInConjunctionDoesNothing() {
         logicProgramming {
@@ -29,11 +28,12 @@ internal class CutAndConjunctionIntegrationTest {
                 }
 
             modifiedSimpleFactDatabaseGoals.forEach { (goal, solutionList) ->
-                val request = createSolveRequest(
-                    goal,
-                    simpleFactTheory,
-                    mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
-                )
+                val request =
+                    createSolveRequest(
+                        goal,
+                        simpleFactTheory,
+                        mapOf(Conjunction.descriptionPair, Cut.descriptionPair),
+                    )
                 val solutions = Conjunction.implementation.solve(request).map { it.solution }.asIterable()
 
                 assertSolutionEquals(solutionList, solutions)
@@ -50,11 +50,12 @@ internal class CutAndConjunctionIntegrationTest {
                 }
 
             modifiedSimpleFactDatabaseGoals.forEach { (goal, solutionList) ->
-                val request = createSolveRequest(
-                    goal,
-                    simpleFactTheory,
-                    mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
-                )
+                val request =
+                    createSolveRequest(
+                        goal,
+                        simpleFactTheory,
+                        mapOf(Conjunction.descriptionPair, Cut.descriptionPair),
+                    )
                 val solutions = Conjunction.implementation.solve(request).map { it.solution }.asIterable()
 
                 assertSolutionEquals(solutionList, solutions)
@@ -85,9 +86,9 @@ internal class CutAndConjunctionIntegrationTest {
             assertSolutionEquals(
                 ktListOf(
                     query.yes("A" to "a", "B" to "a"),
-                    query.yes("A" to "a", "B" to "b")
+                    query.yes("A" to "a", "B" to "b"),
                 ),
-                responses
+                responses,
             )
         }
     }
@@ -107,15 +108,16 @@ internal class CutAndConjunctionIntegrationTest {
     @Test
     fun deepCutsInConjunctionsDoesntCutOuterScopeNodes() {
         logicProgramming {
-            val database = theoryOf(
-                *simpleFactTheory.takeWhile { it.head != "g"("b") }.toTypedArray(),
-                rule { "g"("cutting") `if` "g1"("deep1") },
-                rule { "g1"("deep1") `if` "g2"("deep2") },
-                rule { "g1"("deep1") `if` "g3"("deep3") },
-                rule { "g2"("deep2") `if` "!" },
-                rule { "g3"("deep3") `if` "!" },
-                *simpleFactTheory.dropWhile { it.head != "g"("b") }.toTypedArray()
-            )
+            val database =
+                theoryOf(
+                    *simpleFactTheory.takeWhile { it.head != "g"("b") }.toTypedArray(),
+                    rule { "g"("cutting") `if` "g1"("deep1") },
+                    rule { "g1"("deep1") `if` "g2"("deep2") },
+                    rule { "g1"("deep1") `if` "g3"("deep3") },
+                    rule { "g2"("deep2") `if` "!" },
+                    rule { "g3"("deep3") `if` "!" },
+                    *simpleFactTheory.dropWhile { it.head != "g"("b") }.toTypedArray(),
+                )
             val query = "g"("A") and "!" and "g"("B")
             val request = createSolveRequest(query, database, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
             val responses = Conjunction.implementation.solve(request).map { it.solution }.asIterable()
@@ -125,9 +127,9 @@ internal class CutAndConjunctionIntegrationTest {
                     query.yes("A" to "a", "B" to "a"),
                     query.yes("A" to "a", "B" to "cutting"),
                     query.yes("A" to "a", "B" to "cutting"),
-                    query.yes("A" to "a", "B" to "b")
+                    query.yes("A" to "a", "B" to "b"),
                 ),
-                responses
+                responses,
             )
         }
     }

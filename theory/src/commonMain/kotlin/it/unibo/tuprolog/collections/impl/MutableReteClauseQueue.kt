@@ -9,9 +9,8 @@ import it.unibo.tuprolog.theory.TheoryUtils
 import it.unibo.tuprolog.unify.Unificator
 
 internal class MutableReteClauseQueue private constructor(
-    rete: ReteTree
+    rete: ReteTree,
 ) : MutableClauseQueue, AbstractMutableReteClauseCollection<MutableReteClauseQueue>(rete) {
-
     init {
         require(rete.isOrdered)
     }
@@ -21,11 +20,9 @@ internal class MutableReteClauseQueue private constructor(
         TheoryUtils.checkClausesCorrect(clauses)
     }
 
-    override fun getFifoOrdered(clause: Clause): Sequence<Clause> =
-        rete.get(clause)
+    override fun getFifoOrdered(clause: Clause): Sequence<Clause> = rete.get(clause)
 
-    override fun getLifoOrdered(clause: Clause): Sequence<Clause> =
-        getFifoOrdered(clause).toList().asReversed().asSequence()
+    override fun getLifoOrdered(clause: Clause): Sequence<Clause> = getFifoOrdered(clause).toList().asReversed().asSequence()
 
     override fun addFirst(clause: Clause): MutableReteClauseQueue {
         rete.assertA(clause)
@@ -46,7 +43,7 @@ internal class MutableReteClauseQueue private constructor(
             else ->
                 RetrieveResult.Success(
                     this,
-                    retracted.toList()
+                    retracted.toList(),
                 )
         }
     }

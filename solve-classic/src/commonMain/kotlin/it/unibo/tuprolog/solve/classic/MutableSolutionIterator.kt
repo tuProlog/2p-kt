@@ -8,7 +8,11 @@ import kotlin.jvm.JvmStatic
 
 interface MutableSolutionIterator : SolutionIterator {
     @JsName("hijackStateTransition")
-    fun hijackStateTransition(source: State, destination: State, index: Long): State
+    fun hijackStateTransition(
+        source: State,
+        destination: State,
+        index: Long,
+    ): State
 
     companion object {
         @JsName("of")
@@ -17,7 +21,7 @@ interface MutableSolutionIterator : SolutionIterator {
         fun of(
             initialState: State,
             hijackStateTransitionCallback: (State, State, Long) -> State = { _, dest, _ -> dest },
-            onStateTransitionCallback: (State, State, Long) -> Unit = { _, _, _ -> }
+            onStateTransitionCallback: (State, State, Long) -> Unit = { _, _, _ -> },
         ): SolutionIterator {
             return HijackableSolutionIterator(initialState, hijackStateTransitionCallback, onStateTransitionCallback)
         }

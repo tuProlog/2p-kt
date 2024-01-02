@@ -11,7 +11,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 class EmptyTest {
-
     @Test
     fun listMethodShouldReturnEmptyList() {
         assertEquals(EmptyListImpl(), Empty.list())

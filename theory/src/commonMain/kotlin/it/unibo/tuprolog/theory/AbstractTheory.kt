@@ -10,7 +10,6 @@ import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator
 
 internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Theory {
-
     abstract override var unificator: Unificator
         protected set
 
@@ -18,14 +17,11 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
 
     override fun plus(clause: Clause): Theory = super.plus(checkClauseCorrect(clause))
 
-    override fun contains(clause: Clause): Boolean =
-        get(clause).any()
+    override fun contains(clause: Clause): Boolean = get(clause).any()
 
-    override fun contains(head: Struct): Boolean =
-        contains(Rule.of(head, Var.anonymous()))
+    override fun contains(head: Struct): Boolean = contains(Rule.of(head, Var.anonymous()))
 
-    override fun contains(indicator: Indicator): Boolean =
-        get(indicator).any()
+    override fun contains(indicator: Indicator): Boolean = get(indicator).any()
 
     override fun get(head: Struct): Sequence<Rule> = get(Rule.of(head, Var.anonymous())).map { it.castToRule() }
 
@@ -35,8 +31,8 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
         return get(
             Rule.of(
                 Struct.of(indicator.indicatedName!!, (1..indicator.indicatedArity!!).map { Var.anonymous() }),
-                Var.anonymous()
-            )
+                Var.anonymous(),
+            ),
         ).map { it.castToRule() }
     }
 
@@ -64,7 +60,10 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
         return equals(other, true)
     }
 
-    final override fun equals(other: Theory, useVarCompleteName: Boolean): Boolean {
+    final override fun equals(
+        other: Theory,
+        useVarCompleteName: Boolean,
+    ): Boolean {
         if (this === other) return true
 
         val i = clauses.iterator()
@@ -92,7 +91,10 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
         get() {
             var i: Long = 0
             val iter = iterator()
-            while (iter.hasNext()) { iter.next(); i++ }
+            while (iter.hasNext()) {
+                iter.next()
+                i++
+            }
             return i
         }
 
@@ -116,32 +118,27 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
             this
         }
 
-    override fun assertA(clause: Clause): Theory =
-        createNewTheory(checkClausesCorrect(clause) + clauses.asSequence())
+    override fun assertA(clause: Clause): Theory = createNewTheory(checkClausesCorrect(clause) + clauses.asSequence())
 
     override fun assertA(clauses: Iterable<Clause>): Theory =
         createNewTheory(checkClausesCorrect(clauses.asSequence()) + this.clauses.asSequence())
 
-    override fun assertA(clauses: Sequence<Clause>): Theory =
-        createNewTheory(checkClausesCorrect(clauses) + this.clauses.asSequence())
+    override fun assertA(clauses: Sequence<Clause>): Theory = createNewTheory(checkClausesCorrect(clauses) + this.clauses.asSequence())
 
-    override fun assertZ(clause: Clause): Theory =
-        createNewTheory(clauses.asSequence() + checkClausesCorrect(sequenceOf(clause)))
+    override fun assertZ(clause: Clause): Theory = createNewTheory(clauses.asSequence() + checkClausesCorrect(sequenceOf(clause)))
 
     override fun assertZ(clauses: Iterable<Clause>): Theory =
         createNewTheory(this.clauses.asSequence() + checkClausesCorrect(clauses).asSequence())
 
-    override fun assertZ(clauses: Sequence<Clause>): Theory =
-        createNewTheory(this.clauses.asSequence() + checkClausesCorrect(clauses))
+    override fun assertZ(clauses: Sequence<Clause>): Theory = createNewTheory(this.clauses.asSequence() + checkClausesCorrect(clauses))
 
     protected abstract fun createNewTheory(
         clauses: Sequence<Clause>,
         tags: Map<String, Any> = this.tags,
-        unificator: Unificator = this.unificator
+        unificator: Unificator = this.unificator,
     ): AbstractTheory
 
-    override fun retract(clauses: Sequence<Clause>): RetractResult<AbstractTheory> =
-        retract(clauses.asIterable())
+    override fun retract(clauses: Sequence<Clause>): RetractResult<AbstractTheory> = retract(clauses.asIterable())
 
     abstract override fun retract(clauses: Iterable<Clause>): RetractResult<AbstractTheory>
 

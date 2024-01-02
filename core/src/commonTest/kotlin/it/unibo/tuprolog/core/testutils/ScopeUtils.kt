@@ -12,18 +12,18 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal object ScopeUtils {
-
     /** Returns an empty Scope */
     internal val emptyScope
         get() = mutableMapOf<String, Var>()
 
     /** Contains some non empty variable Scopes */
     internal val nonEmptyScopes
-        get() = listOf(
-            mutableMapOf("X" to Var.of("X")),
-            mutableMapOf("H" to Var.of("H"), "T" to Var.of("T")),
-            mutableMapOf("A" to Var.of("A"), "B" to Var.of("B"), "C" to Var.of("C"))
-        )
+        get() =
+            listOf(
+                mutableMapOf("X" to Var.of("X")),
+                mutableMapOf("H" to Var.of("H"), "T" to Var.of("T")),
+                mutableMapOf("A" to Var.of("A"), "B" to Var.of("B"), "C" to Var.of("C")),
+            )
 
     /** Contains the variables inside [nonEmptyScopes] */
     internal val nonEmptyScopeVars
@@ -38,7 +38,10 @@ internal object ScopeUtils {
         get() = nonEmptyScopes + emptyScope
 
     /** Asserts that two Scope Maps have same keys (Var names) and, on the value side, only Var name in common */
-    internal fun assertScopeCorrectContents(expected: Map<String, Var>, actual: Map<String, Var>) {
+    internal fun assertScopeCorrectContents(
+        expected: Map<String, Var>,
+        actual: Map<String, Var>,
+    ) {
         assertEquals(expected.keys, actual.keys)
         onCorrespondingItems(expected.values, actual.values, VarUtils::assertDifferentVariableExceptForName)
     }

@@ -4,7 +4,7 @@ import it.unibo.tuprolog.utils.Cursor
 
 internal class ConjunctionCursor<T>(
     val first: Cursor<out T>,
-    val second: AbstractCursor<out T>
+    val second: AbstractCursor<out T>,
 ) : AbstractCursor<T>() {
     override val isOver: Boolean
         get() = first.isOver && second.isOver

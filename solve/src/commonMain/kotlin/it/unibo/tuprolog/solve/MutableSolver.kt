@@ -21,7 +21,6 @@ import kotlin.js.JsName
  * of the solver -- e.g.  affecting the KB -- while no resolution process is ongoing.
  */
 interface MutableSolver : Solver {
-
     @JsName("loadLibrary")
     fun loadLibrary(library: Library)
 
@@ -35,16 +34,13 @@ interface MutableSolver : Solver {
     fun loadStaticKb(theory: Theory)
 
     @JsName("loadStaticClauses")
-    fun loadStaticClauses(vararg clauses: Clause) =
-        loadStaticKb(Theory.indexedOf(unificator, *clauses))
+    fun loadStaticClauses(vararg clauses: Clause) = loadStaticKb(Theory.indexedOf(unificator, *clauses))
 
     @JsName("loadStaticClausesIterable")
-    fun loadStaticClauses(clauses: Iterable<Clause>) =
-        loadStaticKb(Theory.indexedOf(unificator, clauses))
+    fun loadStaticClauses(clauses: Iterable<Clause>) = loadStaticKb(Theory.indexedOf(unificator, clauses))
 
     @JsName("loadStaticClausesSequence")
-    fun loadStaticClauses(clauses: Sequence<Clause>) =
-        loadStaticKb(Theory.indexedOf(unificator, clauses))
+    fun loadStaticClauses(clauses: Sequence<Clause>) = loadStaticKb(Theory.indexedOf(unificator, clauses))
 
     @JsName("appendStaticKb")
     fun appendStaticKb(theory: Theory)
@@ -56,16 +52,13 @@ interface MutableSolver : Solver {
     fun loadDynamicKb(theory: Theory)
 
     @JsName("loadDynamicClauses")
-    fun loadDynamicClauses(vararg clauses: Clause) =
-        loadDynamicKb(Theory.indexedOf(unificator, *clauses))
+    fun loadDynamicClauses(vararg clauses: Clause) = loadDynamicKb(Theory.indexedOf(unificator, *clauses))
 
     @JsName("loadDynamicClausesIterable")
-    fun loadDynamicClauses(clauses: Iterable<Clause>) =
-        loadDynamicKb(Theory.indexedOf(unificator, clauses))
+    fun loadDynamicClauses(clauses: Iterable<Clause>) = loadDynamicKb(Theory.indexedOf(unificator, clauses))
 
     @JsName("loadDynamicClausesSequence")
-    fun loadDynamicClauses(clauses: Sequence<Clause>) =
-        loadDynamicKb(Theory.indexedOf(unificator, clauses))
+    fun loadDynamicClauses(clauses: Sequence<Clause>) = loadDynamicKb(Theory.indexedOf(unificator, clauses))
 
     @JsName("appendDynamicKb")
     fun appendDynamicKb(theory: Theory)
@@ -98,7 +91,10 @@ interface MutableSolver : Solver {
     fun retractAll(fact: Struct): RetractResult<Theory>
 
     @JsName("setFlag")
-    fun setFlag(name: String, value: Term)
+    fun setFlag(
+        name: String,
+        value: Term,
+    )
 
     @JsName("setFlagPair")
     fun setFlag(flag: Pair<String, Term>)
@@ -127,7 +123,7 @@ interface MutableSolver : Solver {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ): MutableSolver
 
     override fun clone(): MutableSolver

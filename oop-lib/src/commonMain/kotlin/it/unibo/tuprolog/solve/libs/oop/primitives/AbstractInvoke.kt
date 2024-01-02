@@ -10,11 +10,10 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 
 abstract class AbstractInvoke(suffix: String) : TernaryRelation.Functional<ExecutionContext>("invoke_$suffix") {
-
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
-        third: Term
+        third: Term,
     ): Substitution {
         ensuringArgumentIsStruct(0)
         ensuringArgumentIsStruct(1)
@@ -35,7 +34,11 @@ abstract class AbstractInvoke(suffix: String) : TernaryRelation.Functional<Execu
         }
     }
 
-    private fun Solve.Request<ExecutionContext>.actuallyInvoke(ref: Ref, method: Struct, resultTerm: Term): Substitution {
+    private fun Solve.Request<ExecutionContext>.actuallyInvoke(
+        ref: Ref,
+        method: Struct,
+        resultTerm: Term,
+    ): Substitution {
         return when (val result = ref.invoke(termToObjectConverter, method.functor, method.args)) {
             is Result.Value -> mgu(resultTerm, result.getInvocationResult())
             else -> Substitution.failed()

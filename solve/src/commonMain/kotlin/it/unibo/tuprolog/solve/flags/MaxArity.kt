@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Integer
 
 @Suppress("MemberVisibilityCanBePrivate")
 object MaxArity : NotableFlag {
-
     override val name: String = "max_arity"
 
     override val defaultValue: Integer = Integer.of(Int.MAX_VALUE)

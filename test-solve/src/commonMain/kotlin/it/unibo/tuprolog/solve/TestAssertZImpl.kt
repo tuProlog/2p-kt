@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestAssertZ {
-
     override fun testAssertZClause() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -17,7 +16,7 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -36,11 +35,11 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
                             DummyInstances.executionContext,
                             Signature("assertz", 1),
                             `_`,
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -60,11 +59,11 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
                             Signature("assertz", 1),
                             TypeError.Expected.CALLABLE,
                             numOf(4),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -84,11 +83,11 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
                             Signature("assertz", 1),
                             DomainError.Expected.CLAUSE,
                             ("foo" `if` 4),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -108,11 +107,11 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
                             Signature("assertz", 1),
                             PermissionError.Operation.MODIFY,
                             PermissionError.Permission.PRIVATE_PROCEDURE,
-                            "atom" / 1
-                        )
-                    )
+                            "atom" / 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

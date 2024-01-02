@@ -22,15 +22,15 @@ import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.cursor
 
 data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
-
     companion object {
         private val catchSignature = Catch.signature
 
-        private val transparentToCut = setOf(
-            Signature(",", 2),
-            Signature(";", 2),
-            Signature("->", 2)
-        )
+        private val transparentToCut =
+            setOf(
+                Signature(",", 2),
+                Signature(";", 2),
+                Signature("->", 2),
+            )
 
         private sealed class CutLimit {
             abstract val depthToCut: Int
@@ -57,26 +57,31 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
     private fun exceptionalState(exception: ResolutionException): StateException =
         StateException(exception, context.copy(step = nextStep()))
 
-    private fun missingProcedure(ruleSources: Sequence<Theory>, missing: Signature): State =
+    private fun missingProcedure(
+        ruleSources: Sequence<Theory>,
+        missing: Signature,
+    ): State =
         when (val unknown = context.flags[Unknown]) {
             Unknown.FAIL -> failureState
             else -> {
                 if (ruleSources.none { missing.toIndicator() in it }) {
                     when (unknown) {
-                        Unknown.ERROR -> exceptionalState(
-                            ExistenceError.forProcedure(
-                                context = context,
-                                procedure = missing
-                            )
-                        )
-                        Unknown.WARNING -> failureState.also {
-                            context.warnings.write(
-                                MissingPredicate(
+                        Unknown.ERROR ->
+                            exceptionalState(
+                                ExistenceError.forProcedure(
                                     context = context,
-                                    signature = missing
-                                )
+                                    procedure = missing,
+                                ),
                             )
-                        }
+                        Unknown.WARNING ->
+                            failureState.also {
+                                context.warnings.write(
+                                    MissingPredicate(
+                                        context = context,
+                                        signature = missing,
+                                    ),
+                                )
+                            }
                         else -> failureState
                     }
                 } else {
@@ -86,18 +91,20 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
         }
 
     private val ignoreState: StateGoalSelection
-        get() = StateGoalSelection(
-            context.copy(goals = context.goals.next, step = nextStep())
-        )
+        get() =
+            StateGoalSelection(
+                context.copy(goals = context.goals.next, step = nextStep()),
+            )
 
     private fun Term.isCut(): Boolean = this.isAtom && this.castToAtom().value == "!"
 
     private fun ClassicExecutionContext.computeCutLimit(magicCut: Boolean = false): CutLimit {
-        val cutLimit = if (magicCut) {
-            this.pathToRoot.firstOrNull()
-        } else {
-            this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
-        }
+        val cutLimit =
+            if (magicCut) {
+                this.pathToRoot.firstOrNull()
+            } else {
+                this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
+            }
         return if (cutLimit == null) {
             CutLimit.None
         } else {
@@ -105,7 +112,10 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
         }
     }
 
-    private fun cutCanBeSkipped(cutLimit: CutLimit, executionContext: ClassicExecutionContext): Boolean =
+    private fun cutCanBeSkipped(
+        cutLimit: CutLimit,
+        executionContext: ClassicExecutionContext,
+    ): Boolean =
         cutLimit.isNone ||
             cutLimit.depthToCut > executionContext.depth ||
             cutLimit.depthToCut == executionContext.depth &&
@@ -120,9 +130,10 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
                 this
             }
             else -> {
-                val cutCandidates = pathToRoot.filter {
-                    it.executionContext!!.procedure == cutLimit.procedure
-                }
+                val cutCandidates =
+                    pathToRoot.filter {
+                        it.executionContext!!.procedure == cutLimit.procedure
+                    }
                 if (cutCandidates.any()) {
                     cutCandidates.firstOrNull {
                         it.executionContext!!.depth <= cutLimit.depthToCut
@@ -134,11 +145,13 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
         }
 
     private val ClassicExecutionContext.isTailRecursive: Boolean
-        get() = goals.next.isOver && flags[LastCallOptimization] == ON && currentGoal!!.let { currentGoal ->
-            currentGoal.asStruct()?.extractSignature()?.let {
-                it == procedure?.extractSignature() && it != catchSignature
-            } ?: false
-        }
+        get() =
+            goals.next.isOver && flags[LastCallOptimization] == ON &&
+                currentGoal!!.let { currentGoal ->
+                    currentGoal.asStruct()?.extractSignature()?.let {
+                        it == procedure?.extractSignature() && it != catchSignature
+                    } ?: false
+                }
 
     override fun computeNext(): State {
         val currentGoal = context.currentGoal!!
@@ -148,54 +161,56 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
                     InstantiationError.forGoal(
                         context = context,
                         procedure = context.procedure!!.extractSignature(),
-                        variable = currentGoal.castToVar()
-                    )
+                        variable = currentGoal.castToVar(),
+                    ),
                 )
             }
-            currentGoal.isStruct -> with(context) {
-                val currentGoalStruct = currentGoal.castToStruct()
-                val ruleSources = sequenceOf(libraries.asTheory(unificator), staticKb, dynamicKb)
+            currentGoal.isStruct ->
+                with(context) {
+                    val currentGoalStruct = currentGoal.castToStruct()
+                    val ruleSources = sequenceOf(libraries.asTheory(unificator), staticKb, dynamicKb)
 
-                when {
-                    currentGoalStruct.isTruth -> {
-                        if (currentGoalStruct.isTrue) {
-                            ignoreState
-                        } else {
-                            failureState
+                    when {
+                        currentGoalStruct.isTruth -> {
+                            if (currentGoalStruct.isTrue) {
+                                ignoreState
+                            } else {
+                                failureState
+                            }
                         }
-                    }
 
-                    currentGoalStruct.isCut() -> {
-                        val cutLimit = computeCutLimit(currentGoalStruct is MagicCut)
-                        ignoreState.let {
-                            it.copy(
-                                context = it.context.copy(
-                                    choicePoints = it.context.choicePoints.performCut(cutLimit)
+                        currentGoalStruct.isCut() -> {
+                            val cutLimit = computeCutLimit(currentGoalStruct is MagicCut)
+                            ignoreState.let {
+                                it.copy(
+                                    context =
+                                        it.context.copy(
+                                            choicePoints = it.context.choicePoints.performCut(cutLimit),
+                                        ),
                                 )
-                            )
+                            }
                         }
-                    }
 
-                    ruleSources.any { currentGoalStruct in it } -> {
-                        val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }.cursor()
-                        if (context.isTailRecursive) {
-                            StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
-                        } else {
-                            StateRuleExecution(context.createChildAppendingRulesAndChoicePoints(rules))
+                        ruleSources.any { currentGoalStruct in it } -> {
+                            val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }.cursor()
+                            if (context.isTailRecursive) {
+                                StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
+                            } else {
+                                StateRuleExecution(context.createChildAppendingRulesAndChoicePoints(rules))
+                            }
                         }
-                    }
 
-                    else -> missingProcedure(ruleSources, currentGoalStruct.extractSignature())
+                        else -> missingProcedure(ruleSources, currentGoalStruct.extractSignature())
+                    }
                 }
-            }
             else -> {
                 exceptionalState(
                     TypeError.forGoal(
                         context = context,
                         procedure = context.procedure!!.extractSignature(),
                         expectedType = TypeError.Expected.CALLABLE,
-                        culprit = currentGoal
-                    )
+                        culprit = currentGoal,
+                    ),
                 )
             }
         }

@@ -6,9 +6,8 @@ sealed class MimeType(
     @JsName("type")
     val type: String,
     @JsName("subType")
-    val subType: String
+    val subType: String,
 ) {
-
     object Json : MimeType("application", "json")
 
     object Yaml : MimeType("application", "yaml")

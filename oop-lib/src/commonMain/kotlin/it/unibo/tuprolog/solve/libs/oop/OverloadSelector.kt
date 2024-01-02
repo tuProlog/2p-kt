@@ -11,9 +11,15 @@ interface OverloadSelector {
 
     val termToObjectConverter: TermToObjectConverter
 
-    fun findMethod(name: String, arguments: List<Term>): KCallable<*>
+    fun findMethod(
+        name: String,
+        arguments: List<Term>,
+    ): KCallable<*>
 
-    fun findProperty(name: String, value: Term): KMutableProperty<*>
+    fun findProperty(
+        name: String,
+        value: Term,
+    ): KMutableProperty<*>
 
     fun findConstructor(arguments: List<Term>): KCallable<*>
 
@@ -21,7 +27,7 @@ interface OverloadSelector {
         @JvmStatic
         fun of(
             type: KClass<*>,
-            termToObjectConverter: TermToObjectConverter = TermToObjectConverter.default
+            termToObjectConverter: TermToObjectConverter = TermToObjectConverter.default,
         ): OverloadSelector = overloadSelector(type, termToObjectConverter)
     }
 }

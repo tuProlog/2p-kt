@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-/* NOTE: Ignored because the heavier stack usage of this implementation makes this not meaningful. */
+// NOTE: Ignored because the heavier stack usage of this implementation makes this not meaningful.
 @Ignore
 class TestProblogStackTrace : TestStackTrace, SolverFactory by ProblogSolverFactory {
     val prototype = TestStackTrace.prototype(this)

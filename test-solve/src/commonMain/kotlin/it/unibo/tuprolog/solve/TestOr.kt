@@ -4,10 +4,8 @@ package it.unibo.tuprolog.solve
  * Tests of ';'/2 (= or, disjunction)
  */
 interface TestOr : SolverTest {
-
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestOr =
-            TestOrImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestOr = TestOrImpl(solverFactory)
     }
 
     /**

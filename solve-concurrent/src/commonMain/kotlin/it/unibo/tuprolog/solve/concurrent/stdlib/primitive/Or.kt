@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.stdlib.rule.Arrow
 object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
     override fun Solve.Request<ConcurrentExecutionContext>.computeAll(
         first: Term,
-        second: Term
+        second: Term,
     ): Sequence<Solve.Response> {
         ensuringArgumentIsCallable(0)
         ensuringArgumentIsCallable(1)
@@ -41,7 +41,7 @@ object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
 
     private fun Solve.Request<ConcurrentExecutionContext>.mapSolution(
         solution: Solution,
-        conditionSubstitution: Substitution = Substitution.empty()
+        conditionSubstitution: Substitution = Substitution.empty(),
     ): Solve.Response {
         return when (solution) {
             is Solution.Yes -> {

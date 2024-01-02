@@ -45,8 +45,7 @@ private val executionContext = Executors.newCachedThreadPool()
 internal actual val backgroundScope: CoroutineScope =
     CoroutineScope(SupervisorJob() + backgroundExecutionContext.asCoroutineDispatcher())
 
-actual fun createScope(): CoroutineScope =
-    CoroutineScope(SupervisorJob() + executionContext.asCoroutineDispatcher())
+actual fun createScope(): CoroutineScope = CoroutineScope(SupervisorJob() + executionContext.asCoroutineDispatcher())
 
 // todo need checks, computation never ends with shorter timeout of executionContext.awaitTermination
 actual fun closeExecution() {

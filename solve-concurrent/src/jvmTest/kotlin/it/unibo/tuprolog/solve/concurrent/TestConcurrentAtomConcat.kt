@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentAtomConcat<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testAtomConcatThirdIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

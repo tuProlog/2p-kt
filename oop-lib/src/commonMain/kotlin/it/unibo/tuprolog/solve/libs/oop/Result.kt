@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermConvertible
 
 sealed class Result {
-
     abstract fun toTerm(): Term?
 
     abstract fun asObjectRef(): ObjectRef?
@@ -20,7 +19,6 @@ sealed class Result {
     }
 
     data class Value(val value: Any?) : Result(), TermConvertible {
-
         private val termValue by lazy {
             ObjectToTermConverter.default.convert(value)
         }

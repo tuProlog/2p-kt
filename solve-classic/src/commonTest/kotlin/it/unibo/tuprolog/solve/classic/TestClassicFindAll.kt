@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.TestFindAll
 import kotlin.test.Test
 
 class TestClassicFindAll : TestFindAll, SolverFactory by ClassicSolverFactory {
-
     private val prototype = TestFindAll.prototype(this, Signature("ensure_executable", 1))
 
     override val errorSignature: Signature

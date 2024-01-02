@@ -23,11 +23,18 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
         private fun nameOf(type: KClass<*>): String = "<type:${type.fullName}>"
     }
 
-    override fun create(objectConverter: TermToObjectConverter, arguments: List<Term>): Result {
+    override fun create(
+        objectConverter: TermToObjectConverter,
+        arguments: List<Term>,
+    ): Result {
         return type.create(objectConverter, arguments)
     }
 
-    override fun invoke(objectConverter: TermToObjectConverter, methodName: String, arguments: List<Term>): Result =
+    override fun invoke(
+        objectConverter: TermToObjectConverter,
+        methodName: String,
+        arguments: List<Term>,
+    ): Result =
         when (val companionObjectRef = type.companionObjectRef) {
             is Optional.Some<out Any> -> companionObjectRef.value.invoke(objectConverter, methodName, arguments)
             else -> type.invoke(objectConverter, methodName, arguments, null)
@@ -48,13 +55,23 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
 
     override fun apply(substitution: Substitution): Term = this
 
-    override fun apply(substitution: Substitution, vararg substitutions: Substitution): Term = this
+    override fun apply(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): Term = this
 
-    override fun get(substitution: Substitution, vararg substitutions: Substitution): Term = this
+    override fun get(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): Term = this
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitAtom(this)
 
-    override fun assign(objectConverter: TermToObjectConverter, propertyName: String, value: Term): Boolean {
+    override fun assign(
+        objectConverter: TermToObjectConverter,
+        propertyName: String,
+        value: Term,
+    ): Boolean {
         when (val companionObjectRef = type.companionObjectRef) {
             is Optional.Some<out Any> -> companionObjectRef.value.assign(objectConverter, propertyName, value)
             else -> type.assign(objectConverter, propertyName, value, null)

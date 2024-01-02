@@ -10,13 +10,11 @@ interface Serializer<T> {
     fun serialize(value: T): String
 
     @JsName("serializeMany")
-    fun serializeMany(vararg values: T): String =
-        serializeMany(listOf(*values))
+    fun serializeMany(vararg values: T): String = serializeMany(listOf(*values))
 
     @JsName("serializeManyIterable")
     fun serializeMany(values: Iterable<T>): String
 
     @JsName("serializeManySequence")
-    fun serializeMany(values: Sequence<T>): String =
-        serializeMany(values.asIterable())
+    fun serializeMany(values: Sequence<T>): String = serializeMany(values.asIterable())
 }

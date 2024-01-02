@@ -16,7 +16,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class LogicFunctionTest {
-
     @Test
     fun functionOfReturnsPrologFunctionBehavingExactlyAsProvidedOne() {
         wrapperToMatchingSignatureRequest(LogicFunction.Companion::enforcingSignature, function, ::createFunctionRequest).zip(allSignatures)

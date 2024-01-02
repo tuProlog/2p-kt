@@ -8,7 +8,6 @@ class TestConcurrentAndImpl :
     TestConcurrentAnd<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testTermIsFreeVariable() = multiRunConcurrentTest { super.testTermIsFreeVariable() }

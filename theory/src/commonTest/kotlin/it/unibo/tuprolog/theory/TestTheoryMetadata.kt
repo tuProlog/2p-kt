@@ -17,17 +17,17 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class TestTheoryMetadata {
-
-    private val theories get() = listOf<Theory>(
-        Theory.emptyIndexed(Unificator.default),
-        Theory.emptyListed(Unificator.default),
-        Theory.indexedOf(Unificator.default, TheoryUtils.wellFormedClauses),
-        Theory.listedOf(Unificator.default, TheoryUtils.wellFormedClauses),
-        MutableTheory.emptyIndexed(Unificator.default),
-        MutableTheory.emptyListed(Unificator.default),
-        MutableTheory.indexedOf(Unificator.default, TheoryUtils.wellFormedClauses),
-        MutableTheory.listedOf(Unificator.default, TheoryUtils.wellFormedClauses)
-    )
+    private val theories get() =
+        listOf<Theory>(
+            Theory.emptyIndexed(Unificator.default),
+            Theory.emptyListed(Unificator.default),
+            Theory.indexedOf(Unificator.default, TheoryUtils.wellFormedClauses),
+            Theory.listedOf(Unificator.default, TheoryUtils.wellFormedClauses),
+            MutableTheory.emptyIndexed(Unificator.default),
+            MutableTheory.emptyListed(Unificator.default),
+            MutableTheory.indexedOf(Unificator.default, TheoryUtils.wellFormedClauses),
+            MutableTheory.listedOf(Unificator.default, TheoryUtils.wellFormedClauses),
+        )
 
     private data class Metadata<T>(val value: T)
 
@@ -38,24 +38,26 @@ class TestTheoryMetadata {
     private val someValue2 = Metadata<Boolean?>(false)
     private val someOtherValue = Metadata<Boolean?>(null)
 
-    private val taggedTheories get() = TheoryUtils.wellFormedClauses
-        .map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
-        .let {
-            listOf(
-                Theory.emptyIndexed(Unificator.default).setTag(yetAnotherKey, someValue2),
-                Theory.emptyListed(Unificator.default).setTag(yetAnotherKey, someValue2),
-                Theory.indexedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2),
-                Theory.listedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2),
-                MutableTheory.emptyIndexed(Unificator.default).setTag(yetAnotherKey, someValue2),
-                MutableTheory.emptyListed(Unificator.default).setTag(yetAnotherKey, someValue2),
-                MutableTheory.indexedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2),
-                MutableTheory.listedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2)
-            )
-        }
+    private val taggedTheories get() =
+        TheoryUtils.wellFormedClauses
+            .map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
+            .let {
+                listOf(
+                    Theory.emptyIndexed(Unificator.default).setTag(yetAnotherKey, someValue2),
+                    Theory.emptyListed(Unificator.default).setTag(yetAnotherKey, someValue2),
+                    Theory.indexedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2),
+                    Theory.listedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2),
+                    MutableTheory.emptyIndexed(Unificator.default).setTag(yetAnotherKey, someValue2),
+                    MutableTheory.emptyListed(Unificator.default).setTag(yetAnotherKey, someValue2),
+                    MutableTheory.indexedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2),
+                    MutableTheory.listedOf(Unificator.default, it).setTag(yetAnotherKey, someValue2),
+                )
+            }
 
-    private val missingClauses = TheoryUtils.wellFormedClauses
-        .filterIsInstance<Rule>()
-        .map { Rule.of(it.head.setFunctor(it.head.functor + "'"), it.body) }
+    private val missingClauses =
+        TheoryUtils.wellFormedClauses
+            .filterIsInstance<Rule>()
+            .map { Rule.of(it.head.setFunctor(it.head.functor + "'"), it.body) }
 
     private val presentClauses = TheoryUtils.wellFormedClauses
 
@@ -188,7 +190,7 @@ class TestTheoryMetadata {
     private fun editingATheoryPreservesClausesTags(
         clausesSource: Iterable<Clause>,
         clausesShouldBeUntaggedAfterEdit: Boolean = true,
-        edit: Theory.(Clause) -> Theory
+        edit: Theory.(Clause) -> Theory,
     ) {
         for ((untaggedTheory, taggedTheory) in theories.zip(taggedTheories)) {
             assertEquals(untaggedTheory, taggedTheory)

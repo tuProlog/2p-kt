@@ -20,22 +20,21 @@ import kotlin.jvm.JvmStatic
  * A particular sort of [Formatter]s aimed at representing terms
  */
 interface TermFormatter : Formatter<Term>, TermVisitor<String> {
-
     enum class VarFormat {
         COMPLETE_NAME,
         UNDERSCORE,
-        PRETTY
+        PRETTY,
     }
 
     enum class OpFormat {
         IGNORE_OPERATORS,
         COLLECTIONS,
-        EXPRESSIONS
+        EXPRESSIONS,
     }
 
     enum class FuncFormat {
         QUOTED_IF_NECESSARY,
-        LITERAL
+        LITERAL,
     }
 
     /**
@@ -46,7 +45,6 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
     override fun format(value: Term): String = value.accept(this)
 
     companion object {
-
         @JvmStatic
         @JsName("of")
         fun of(
@@ -54,15 +52,16 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
             opFormat: OpFormat,
             funcFormat: FuncFormat = QUOTED_IF_NECESSARY,
             numberVars: Boolean = false,
-            operators: OperatorSet = OperatorSet.DEFAULT
+            operators: OperatorSet = OperatorSet.DEFAULT,
         ): TermFormatter {
             val quoted = funcFormat == QUOTED_IF_NECESSARY
             val ignoreOps = opFormat == IGNORE_OPERATORS
-            val inner = when (varFormat) {
-                COMPLETE_NAME -> SimpleTermFormatter(quoted, numberVars, ignoreOps)
-                UNDERSCORE -> TermFormatterWithAnonymousVariables(quoted, numberVars, ignoreOps)
-                PRETTY -> TermFormatterWithPrettyVariables(quoted, numberVars, ignoreOps)
-            }
+            val inner =
+                when (varFormat) {
+                    COMPLETE_NAME -> SimpleTermFormatter(quoted, numberVars, ignoreOps)
+                    UNDERSCORE -> TermFormatterWithAnonymousVariables(quoted, numberVars, ignoreOps)
+                    PRETTY -> TermFormatterWithPrettyVariables(quoted, numberVars, ignoreOps)
+                }
             return when (opFormat) {
                 EXPRESSIONS -> TermFormatterWithPrettyExpressions(inner, operators, quoted, numberVars, ignoreOps)
                 else -> inner
@@ -71,8 +70,7 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
 
         @JvmStatic
         @JsName("default")
-        fun default(operators: OperatorSet = OperatorSet.DEFAULT): TermFormatter =
-            of(UNDERSCORE, EXPRESSIONS, LITERAL, true, operators)
+        fun default(operators: OperatorSet = OperatorSet.DEFAULT): TermFormatter = of(UNDERSCORE, EXPRESSIONS, LITERAL, true, operators)
 
         @JvmStatic
         @JsName("canonical")
@@ -105,8 +103,10 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          */
         @JvmStatic
         @JsName("prettyExpressions")
-        fun prettyExpressions(prettyVariables: Boolean, operatorSet: OperatorSet): TermFormatter =
-            of(if (prettyVariables) PRETTY else COMPLETE_NAME, EXPRESSIONS, operators = operatorSet)
+        fun prettyExpressions(
+            prettyVariables: Boolean,
+            operatorSet: OperatorSet,
+        ): TermFormatter = of(if (prettyVariables) PRETTY else COMPLETE_NAME, EXPRESSIONS, operators = operatorSet)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions
@@ -130,8 +130,7 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          */
         @JvmStatic
         @JsName("prettyExpressionsDefaultOperators")
-        fun prettyExpressions(prettyVariables: Boolean): TermFormatter =
-            prettyExpressions(prettyVariables, OperatorSet.DEFAULT)
+        fun prettyExpressions(prettyVariables: Boolean): TermFormatter = prettyExpressions(prettyVariables, OperatorSet.DEFAULT)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions

@@ -35,7 +35,7 @@ actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
     }
 }
 
-private val classNamePattern = "^($id):($id(\\.$id)*)$".toRegex()
+private val classNamePattern = "^($ID):($ID(\\.$ID)*)$".toRegex()
 
 actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern
@@ -45,7 +45,7 @@ actual val Any.identifier: String
 
 internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
     instance: Any?,
-    action: () -> T
+    action: () -> T,
 ): T = action()
 
 actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> = throw TODO_EXCEPTION
@@ -61,10 +61,15 @@ actual val KClass<*>.name: String
 
 actual fun KCallable<*>.pretty(): String = throw TODO_EXCEPTION
 
-actual fun <T> KCallable<T>.invoke(instance: Any?, vararg args: Any?): T = throw TODO_EXCEPTION
+actual fun <T> KCallable<T>.invoke(
+    instance: Any?,
+    vararg args: Any?,
+): T = throw TODO_EXCEPTION
 
 actual val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
     get() = throw TODO_EXCEPTION
 
-actual fun overloadSelector(type: KClass<*>, termToObjectConverter: TermToObjectConverter): OverloadSelector =
-    throw TODO_EXCEPTION
+actual fun overloadSelector(
+    type: KClass<*>,
+    termToObjectConverter: TermToObjectConverter,
+): OverloadSelector = throw TODO_EXCEPTION

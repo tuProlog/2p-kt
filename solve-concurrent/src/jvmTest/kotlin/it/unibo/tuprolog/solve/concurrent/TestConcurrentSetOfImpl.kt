@@ -8,7 +8,6 @@ class TestConcurrentSetOfImpl :
     TestConcurrentSetOf<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testSetOfBasic() = multiRunConcurrentTest { super.testSetOfBasic() }

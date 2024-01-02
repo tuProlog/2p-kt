@@ -8,7 +8,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.mergeSequences
 
 internal object Utils {
-
     /**Calculate the arity of the first argument of any [Struct], at the given nesting level.
      * No checks are performed upon the validity of the Struct this extension method is called upon. */
     fun Struct.arityOfNestedFirstArgument(nestingLevel: Int): Int =
@@ -21,8 +20,7 @@ internal object Utils {
 
     /**Calculate the [Term] representing the first argument of any [Struct], at the given nesting level.
      * No checks are performed upon the validity of the Struct this extension method is called upon. */
-    fun Struct.nestedFirstArgument(nestingLevel: Int): Term =
-        this.firstArguments().takeFirstAfterSkipping(nestingLevel)
+    fun Struct.nestedFirstArgument(nestingLevel: Int): Term = this.firstArguments().takeFirstAfterSkipping(nestingLevel)
 
     private fun Struct.firstArguments(): Sequence<Term> =
         sequence {
@@ -35,43 +33,39 @@ internal object Utils {
         }
 
     /**Sorts all the given [Sequence] of [SituatedIndexedClause]*/
-    fun merge(vararg args: Sequence<SituatedIndexedClause>): Sequence<SituatedIndexedClause> =
-        merge(listOf(*args))
+    fun merge(vararg args: Sequence<SituatedIndexedClause>): Sequence<SituatedIndexedClause> = merge(listOf(*args))
 
     /**Sorts all the given [Sequence] of [SituatedIndexedClause]*/
-    fun merge(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
-        merge(sequence.asIterable())
+    fun merge(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> = merge(sequence.asIterable())
 
     /**Sorts all the given [Sequence] of [SituatedIndexedClause]*/
     fun merge(iterable: Iterable<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
         mergeSequences(iterable, SituatedIndexedClause::compareTo)
 
     /**Composes all the given [Sequence] of [SituatedIndexedClause], disregarding order*/
-    fun flattenIndexed(vararg args: Sequence<SituatedIndexedClause>): Sequence<SituatedIndexedClause> =
-        flattenIndexed(sequenceOf(*args))
+    fun flattenIndexed(vararg args: Sequence<SituatedIndexedClause>): Sequence<SituatedIndexedClause> = flattenIndexed(sequenceOf(*args))
 
     /**Composes all the given [Sequence] of [SituatedIndexedClause], disregarding order*/
-    fun flattenIndexed(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
-        sequence.flatten()
+    fun flattenIndexed(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> = sequence.flatten()
 
     /**Composes all the given [Sequence] of [SituatedIndexedClause], disregarding order*/
     fun flattenIndexed(iterable: Iterable<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
         flattenIndexed(iterable.asSequence())
 
     /**Composes all the given [Sequence] of [Clause], disregarding order*/
-    fun flatten(vararg args: Sequence<Clause>): Sequence<Clause> =
-        flatten(sequenceOf(*args))
+    fun flatten(vararg args: Sequence<Clause>): Sequence<Clause> = flatten(sequenceOf(*args))
 
     /**Composes all the given [Sequence] of [Clause], disregarding order*/
-    fun flatten(sequence: Sequence<Sequence<Clause>>): Sequence<Clause> =
-        sequence.flatten()
+    fun flatten(sequence: Sequence<Sequence<Clause>>): Sequence<Clause> = sequence.flatten()
 
     /**Composes all the given [Sequence] of [Clause], disregarding order*/
-    fun flatten(iterable: Iterable<Sequence<Clause>>): Sequence<Clause> =
-        flatten(iterable.asSequence())
+    fun flatten(iterable: Iterable<Sequence<Clause>>): Sequence<Clause> = flatten(iterable.asSequence())
 
     /**Compares two nullable [SituatedIndexedClause]. If both are null, null is returned*/
-    fun comparePriority(a: SituatedIndexedClause?, b: SituatedIndexedClause?): SituatedIndexedClause? =
+    fun comparePriority(
+        a: SituatedIndexedClause?,
+        b: SituatedIndexedClause?,
+    ): SituatedIndexedClause? =
         when {
             a == null && b == null -> null
             a == null -> b

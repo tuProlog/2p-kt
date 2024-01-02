@@ -4,7 +4,6 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLength {
-
     override fun testAtomLengthNoVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -13,7 +12,7 @@ class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLen
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -26,7 +25,7 @@ class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLen
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 4)),
-                solutions
+                solutions,
             )
         }
     }
@@ -45,11 +44,11 @@ class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLen
                             Signature("char_code", 2),
                             TypeError.Expected.INTEGER,
                             atomOf("a"),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -62,7 +61,7 @@ class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLen
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 10)),
-                solutions
+                solutions,
             )
         }
     }
@@ -75,7 +74,7 @@ class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLen
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }

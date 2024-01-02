@@ -11,7 +11,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class InstantiationErrorTest {
-
     private val underTestError = InstantiationError(context = LogicErrorUtils.aContext)
     private val correctTypeFunctor = "instantiation_error"
 

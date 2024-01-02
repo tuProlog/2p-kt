@@ -7,11 +7,10 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.core.List as LogicList
 
 object FindAll : AbstractCollectingPrimitive("findall") {
-
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
-        third: Term
+        third: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)

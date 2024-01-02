@@ -20,7 +20,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class RuleImplTest {
-
     private val groundRulesInstances = RuleUtils.groundRules.map { (head, body) -> RuleImpl(head, body) }
     private val nonGroundRulesInstances = RuleUtils.nonGroundRules.map { (head, body) -> RuleImpl(head, body) }
     private val wellFormedRulesInstances = RuleUtils.wellFormedRules.map { (head, body) -> RuleImpl(head, body) }

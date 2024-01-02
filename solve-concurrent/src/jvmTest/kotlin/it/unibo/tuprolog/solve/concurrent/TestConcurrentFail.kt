@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 
 interface TestConcurrentFail<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testFail() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -26,20 +25,22 @@ interface TestConcurrentFail<T : WithAssertingEquals> : FromSequence<T>, SolverF
 
     fun testUndefPred() { // streams solver: `No(query=undef_pred)` instead of undef_pred/0
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                flags = FlagStore.of(Unknown to Unknown.ERROR)
-            )
+            val solver =
+                solverWithDefaultBuiltins(
+                    flags = FlagStore.of(Unknown to Unknown.ERROR),
+                )
 
             val query = atomOf("undef_pred")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    ExistenceError.forProcedure(
-                        DummyInstances.executionContext,
-                        Signature("undef_pred", 0)
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        ExistenceError.forProcedure(
+                            DummyInstances.executionContext,
+                            Signature("undef_pred", 0),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

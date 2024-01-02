@@ -8,13 +8,19 @@ import java.io.InputStream
 import java.io.Reader
 
 internal class ClausesReaderImpl(override val defaultOperatorSet: OperatorSet) : ClausesReader {
-    override fun readClausesLazily(inputStream: InputStream, operators: OperatorSet): Sequence<Clause> =
+    override fun readClausesLazily(
+        inputStream: InputStream,
+        operators: OperatorSet,
+    ): Sequence<Clause> =
         PrologParserFactory.parseClauses(inputStream, operators)
             .asSequence()
             .map { it.accept(PrologExpressionVisitor()) }
             .map { it.toClause() }
 
-    override fun readClausesLazily(reader: Reader, operators: OperatorSet): Sequence<Clause> =
+    override fun readClausesLazily(
+        reader: Reader,
+        operators: OperatorSet,
+    ): Sequence<Clause> =
         PrologParserFactory.parseClauses(reader, operators)
             .asSequence()
             .map { it.accept(PrologExpressionVisitor()) }

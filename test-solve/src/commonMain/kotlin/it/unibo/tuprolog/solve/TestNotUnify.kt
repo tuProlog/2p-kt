@@ -2,8 +2,7 @@ package it.unibo.tuprolog.solve
 
 interface TestNotUnify : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestNotUnify =
-            TestNotUnifyImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestNotUnify = TestNotUnifyImpl(solverFactory)
     }
 
     /**

@@ -18,9 +18,8 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
 internal class MutableProblogSolver(
-    private val solver: MutableSolver
+    private val solver: MutableSolver,
 ) : ProblogSolver(solver), MutableSolver {
-
     override fun loadLibrary(library: Library) {
         solver.loadLibrary(library)
     }
@@ -89,7 +88,10 @@ internal class MutableProblogSolver(
         return solver.retractAll(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
     }
 
-    override fun setFlag(name: String, value: Term) {
+    override fun setFlag(
+        name: String,
+        value: Term,
+    ) {
         solver.setFlag(name, value)
     }
 
@@ -126,10 +128,10 @@ internal class MutableProblogSolver(
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ): MutableSolver {
         return MutableProblogSolver(
-            solver.copy(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+            solver.copy(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings),
         )
     }
 

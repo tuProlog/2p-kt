@@ -13,12 +13,12 @@ import kotlin.jvm.JvmOverloads
 @JsName("partitionClauses")
 fun <C : Clause> Iterable<C>.partition(
     unificator: Unificator = Unificator.default,
-    staticByDefault: Boolean = true
+    staticByDefault: Boolean = true,
 ): ClausePartition = ClausePartitioner(unificator, this, staticByDefault)
 
 @JvmOverloads
 @JsName("partitionTheory")
 fun Theory.partition(
     unificator: Unificator = this.unificator,
-    staticByDefault: Boolean = true
+    staticByDefault: Boolean = true,
 ): ClausePartition = ClausePartitioner(unificator, this, staticByDefault)

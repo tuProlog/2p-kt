@@ -9,7 +9,7 @@ data class StateBacktracking(override val context: ClassicExecutionContext) : Ab
         return if (choicePoints.let { it === null || !it.hasOpenAlternatives }) {
             StateEnd(
                 solution = Solution.no(context.query),
-                context = context.copy(step = nextStep())
+                context = context.copy(step = nextStep()),
             )
         } else {
             val choicePointContext = choicePoints!!.pathToRoot.first { it.alternatives.hasNext }

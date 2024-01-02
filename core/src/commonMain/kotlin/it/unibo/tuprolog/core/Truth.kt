@@ -6,7 +6,6 @@ import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 interface Truth : Atom {
-
     override val isTrue: Boolean
 
     override val isFail: Boolean
@@ -23,7 +22,6 @@ interface Truth : Atom {
 
     @Suppress("MayBeConstant")
     companion object {
-
         @JvmField
         val TRUE_FUNCTOR = Terms.TRUE_FUNCTOR
 
@@ -44,8 +42,7 @@ interface Truth : Atom {
 
         @JvmStatic
         @JsName("of")
-        fun of(truth: Boolean): Truth =
-            if (truth) TRUE else FALSE
+        fun of(truth: Boolean): Truth = if (truth) TRUE else FALSE
 
         @JvmStatic
         @JsName("ofString")

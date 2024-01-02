@@ -24,7 +24,6 @@ import javafx.scene.shape.Circle
 import java.io.IOException
 
 sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() {
-
     companion object {
         private const val FXML = "PLPSolutionView.fxml"
 
@@ -39,7 +38,7 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
             solution.whenIs(
                 yes = { YesViewPLP(it) },
                 no = { NoViewPLP(it) },
-                halt = { HaltViewPLP(it) }
+                halt = { HaltViewPLP(it) },
             )
     }
 

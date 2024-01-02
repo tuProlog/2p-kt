@@ -15,13 +15,12 @@ import kotlin.collections.listOf as ktListOf
  * @author Enrico
  */
 internal object SubstitutionUtils {
-
     /** Returns terms that internally can have multiple times the provided [internalTerm] */
     internal fun termsWith(internalTerm: Term) =
         ktListOf(
             internalTerm,
             Struct.of("f", internalTerm, internalTerm),
-            Struct.fold("f", internalTerm, Atom.of("ciao"), internalTerm)
+            Struct.fold("f", internalTerm, Atom.of("ciao"), internalTerm),
         )
 
     /** Contains mixed groundSubstitutions and nonGroundSubstitutions */
@@ -30,11 +29,11 @@ internal object SubstitutionUtils {
             mapOf(Var.of("X") to Atom.of("x")),
             mapOf(
                 Var.of("A") to Struct.of("f", Atom.of("ciao")),
-                Var.of("B") to Empty.list()
+                Var.of("B") to Empty.list(),
             ),
             mapOf(Var.of("Var") to Struct.of("f", Var.of("A"), Var.of("B"))),
             mapOf(Var.of("Z") to Struct.of("f", Var.of("Z"))),
-            mapOf(Var.anonymous() to Var.of("A"))
+            mapOf(Var.anonymous() to Var.of("A")),
         )
     }
 
@@ -50,8 +49,8 @@ internal object SubstitutionUtils {
                     varOf("A") to atomOf("a"),
                     varOf("A") to atomOf("a"),
                     varOf("B") to atomOf("b"),
-                    varOf("B") to atomOf("b")
-                )
+                    varOf("B") to atomOf("b"),
+                ),
             )
         }
     }
@@ -63,7 +62,7 @@ internal object SubstitutionUtils {
                 ktListOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("b")),
                 ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C")),
                 ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("a")),
-                ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("b"))
+                ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("b")),
             )
         }
     }

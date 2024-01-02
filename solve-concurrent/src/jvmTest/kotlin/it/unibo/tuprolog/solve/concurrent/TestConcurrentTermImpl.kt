@@ -8,7 +8,6 @@ class TestConcurrentTermImpl :
     TestConcurrentTerm<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testTermDiff() = multiRunConcurrentTest { super.testTermDiff() }

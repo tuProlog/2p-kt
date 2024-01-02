@@ -16,7 +16,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class StateGoalEvaluationTest {
-
     @Test
     fun signaturesNotRecognizedAsPrimitivesFlowToStateRuleSelection() {
         StateGoalEvaluationUtils.nonPrimitiveRequests.forEach { request ->
@@ -38,19 +37,20 @@ internal class StateGoalEvaluationTest {
     @Test
     fun returningSolutionHaltHasSameBehaviourOfThrowingTheException() {
         val throwingPrimitive = createRequestForPrimitiveResponding { throw HaltException(context = expectedContext) }
-        val nonThrowingPrimitive = createRequestForPrimitiveResponding {
-            sequenceOf(
-                it.replyException(HaltException(context = expectedContext)),
-                it.replyFail()
-            )
-        }
+        val nonThrowingPrimitive =
+            createRequestForPrimitiveResponding {
+                sequenceOf(
+                    it.replyException(HaltException(context = expectedContext)),
+                    it.replyFail(),
+                )
+            }
 
         val throwingEndState = StateGoalEvaluation(throwingPrimitive).behave().single()
         val nonThrowingEndState = StateGoalEvaluation(nonThrowingPrimitive).behave().single()
 
         assertEquals(
             throwingEndState.solve.getSideEffectsManager(),
-            nonThrowingEndState.solve.getSideEffectsManager()
+            nonThrowingEndState.solve.getSideEffectsManager(),
         )
     }
 

@@ -14,7 +14,6 @@ import it.unibo.tuprolog.theory.Theory
  * @author Enrico
  */
 object PrologStandardExampleTheories {
-
     /**
      * The clause database used in Prolog Standard reference manual, when explaining solver functionality and search-trees
      *
@@ -39,7 +38,7 @@ object PrologStandardExampleTheories {
                 { "q"("b") },
                 { "q"("c") },
                 { "r"("b", "b1") },
-                { "r"("c", "c1") }
+                { "r"("c", "c1") },
             )
         }
     }
@@ -56,8 +55,8 @@ object PrologStandardExampleTheories {
                 "p"("U", "V").hasSolutions(
                     { yes("U" to "b", "V" to "b1") },
                     { yes("U" to "c", "V" to "c1") },
-                    { yes("U" to "d", "V" to "Y") }
-                )
+                    { yes("U" to "d", "V" to "Y") },
+                ),
             )
         }
     }
@@ -92,7 +91,7 @@ object PrologStandardExampleTheories {
     val prologStandardExampleWithCutTheoryNotableGoalToSolution by lazy {
         logicProgramming {
             ktListOf(
-                "p"("U", "V").hasSolutions({ no() })
+                "p"("U", "V").hasSolutions({ no() }),
             )
         }
     }
@@ -114,7 +113,7 @@ object PrologStandardExampleTheories {
                 { "legs"("A", 4) `if` "animal"("A") },
                 { "insect"("bee") },
                 { "insect"("ant") },
-                { "fly"("bee") }
+                { "fly"("bee") },
             )
         }
     }
@@ -131,13 +130,13 @@ object PrologStandardExampleTheories {
                 (("insect"("X") or "legs"("X", 6)) and "fly"("X")).hasSolutions(
                     { yes("X" to "bee") },
                     { yes("X" to "bee") },
-                    { no() }
+                    { no() },
                 ),
                 (("insect"("X") and "fly"("X")) or ("legs"("X", 6) and "fly"("X"))).hasSolutions(
                     { yes("X" to "bee") },
                     { yes("X" to "bee") },
-                    { no() }
-                )
+                    { no() },
+                ),
             )
         }
     }
@@ -153,7 +152,7 @@ object PrologStandardExampleTheories {
         logicProgramming {
             theory(
                 { "a"(1) },
-                { "a"(2) }
+                { "a"(2) },
             )
         }
     }
@@ -174,15 +173,15 @@ object PrologStandardExampleTheories {
             ktListOf(
                 ("call"("!") or true).hasSolutions({ yes() }, { yes() }),
                 ("="("Z", "!") and "call"("="("Z", "!") and "a"("X") and "Z")).hasSolutions(
-                    { yes("X" to 1, "Z" to "!") }
+                    { yes("X" to 1, "Z" to "!") },
                 ),
                 "call"("="("Z", "!") and "a"("X") and "Z").hasSolutions(
                     { yes("X" to 1, "Z" to "!") },
-                    { yes("X" to 2, "Z" to "!") }
+                    { yes("X" to 2, "Z" to "!") },
                 ),
                 "call"(false).hasSolutions({ no() }),
                 "call"(true and "X").hasSolutions({ halt(instantiationError(errorSignature, varOf("X"))) }),
-                "call"(true and (false and 1)).hasSolutions({ halt(typeError(errorSignature, true and (false and 1))) })
+                "call"(true and (false and 1)).hasSolutions({ halt(typeError(errorSignature, true and (false and 1))) }),
             )
         }
 
@@ -201,7 +200,7 @@ object PrologStandardExampleTheories {
                 { "p" },
                 { "p" `if` "throw"("b") },
                 { "r"("X") `if` "throw"("X") },
-                { "q" `if` ("catch"("p", "B", true) and "r"("c")) }
+                { "q" `if` ("catch"("p", "B", true) and "r"("c")) },
             )
         }
     }
@@ -224,17 +223,17 @@ object PrologStandardExampleTheories {
             ktListOf(
                 "catch"("p", "X", true).hasSolutions(
                     { yes("X" to "E") },
-                    { yes("X" to "b") }
+                    { yes("X" to "b") },
                 ),
                 "catch"("q", "C", true).hasSolutions({ yes("C" to "c") }),
                 "catch"("throw"("exit"(1)), "exit"("X"), true).hasSolutions({ yes("X" to 1) }),
                 "catch"("throw"(true), "X", "X").hasSolutions({ yes("X" to true) }),
                 "catch"("throw"(false), "X", "X").hasSolutions({ no() }),
                 "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions(
-                    { halt(systemError("f"("X", "X"))) }
+                    { halt(systemError("f"("X", "X"))) },
                 ),
                 "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError(";", 2, intOf(1))) }),
-                "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError(truthOf(false))) })
+                "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError(truthOf(false))) }),
             )
         }
     }
@@ -258,15 +257,13 @@ object PrologStandardExampleTheories {
         logicProgramming {
             theory(
                 { "shave"("barber", "X") `if` "not"("shave"("X", "X")) },
-
                 { "test_Prolog_unifiable"("X", "Y") `if` "not"("not"("X" equalsTo "Y")) },
-
                 { "p1" `if` "not"("q1") },
                 { "q1" `if` false },
                 { "q1" `if` true },
                 { "p2" `if` "not"("q2") },
                 { "q2" `if` ("!" and false) },
-                { "q2" `if` true }
+                { "q2" `if` true },
             )
         }
     }
@@ -292,34 +289,32 @@ object PrologStandardExampleTheories {
      * ?- p2.
      * ```
      */
-    fun notStandardExampleTheoryNotableGoalToSolution(nafErrorSignature: Signature, notErrorSignature: Signature) =
-        logicProgramming {
-            ktListOf(
-                (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
-                "\\+"(fail).hasSolutions({ yes() }),
-                ("\\+"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
-                ("\\+"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
-                (("X" equalsTo 1) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
-                "\\+"(fail and 1).hasSolutions({ halt(typeError(nafErrorSignature, fail and 1)) }),
-
-                "shave"("barber", "'Donald'").hasSolutions({ yes() }),
-                "shave"("barber", "barber").hasSolutions({ halt(timeOutException) }),
-
-                "test_Prolog_unifiable"("f"("a", "X"), "f"("X", "a")).hasSolutions({ yes() }),
-                "test_Prolog_unifiable"("f"("a", "X"), "f"("X", "b")).hasSolutions({ no() }),
-                "test_Prolog_unifiable"("X", "f"("X")).hasSolutions({ no() }),
-
-                atomOf("p1").hasSolutions({ no() }),
-                atomOf("p2").hasSolutions({ yes() }),
-
-                (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
-                "not"(fail).hasSolutions({ yes() }),
-                ("not"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
-                ("not"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
-                (("X" equalsTo 1) and "not"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
-                "not"(fail and 1).hasSolutions({ halt(typeError(notErrorSignature, fail and 1)) })
-            )
-        }
+    fun notStandardExampleTheoryNotableGoalToSolution(
+        nafErrorSignature: Signature,
+        notErrorSignature: Signature,
+    ) = logicProgramming {
+        ktListOf(
+            (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
+            "\\+"(fail).hasSolutions({ yes() }),
+            ("\\+"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
+            ("\\+"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
+            (("X" equalsTo 1) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
+            "\\+"(fail and 1).hasSolutions({ halt(typeError(nafErrorSignature, fail and 1)) }),
+            "shave"("barber", "'Donald'").hasSolutions({ yes() }),
+            "shave"("barber", "barber").hasSolutions({ halt(timeOutException) }),
+            "test_Prolog_unifiable"("f"("a", "X"), "f"("X", "a")).hasSolutions({ yes() }),
+            "test_Prolog_unifiable"("f"("a", "X"), "f"("X", "b")).hasSolutions({ no() }),
+            "test_Prolog_unifiable"("X", "f"("X")).hasSolutions({ no() }),
+            atomOf("p1").hasSolutions({ no() }),
+            atomOf("p2").hasSolutions({ yes() }),
+            (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
+            "not"(fail).hasSolutions({ yes() }),
+            ("not"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
+            ("not"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
+            (("X" equalsTo 1) and "not"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
+            "not"(fail and 1).hasSolutions({ halt(typeError(notErrorSignature, fail and 1)) }),
+        )
+    }
 
     /**
      * The database used in Prolog standard while writing examples for If-Then
@@ -336,7 +331,7 @@ object PrologStandardExampleTheories {
                 { "legs"("A", 6) `if` "insect"("A") },
                 { "legs"("horse", 4) },
                 { "insect"("bee") },
-                { "insect"("ant") }
+                { "insect"("ant") },
             )
         }
     }
@@ -356,7 +351,7 @@ object PrologStandardExampleTheories {
                 ("->"("X" equalsTo 0, true)).hasSolutions({ yes("X" to 0) }),
                 ("->"("legs"("A", 6), true)).hasSolutions({ yes("A" to "bee") }),
                 ("->"("\\="("X", 0), true)).hasSolutions({ no() }),
-                ("->"(false, ";"(true, true))).hasSolutions({ no() })
+                ("->"(false, ";"(true, true))).hasSolutions({ no() }),
             )
         }
     }
@@ -380,12 +375,12 @@ object PrologStandardExampleTheories {
                     (
                         "->"(
                             "!" and ("X" equalsTo 1) and false,
-                            true
+                            true,
                         ) or false
-                        ) or ("X" equalsTo 2)
-                    ).hasSolutions({ yes("X" to 2) }),
+                    ) or ("X" equalsTo 2)
+                ).hasSolutions({ yes("X" to 2) }),
                 ("->"(false, true) or true).hasSolutions({ yes() }),
-                ("->"("!" and ("X" equalsTo 1) and false, true) or false).hasSolutions({ no() })
+                ("->"("!" and ("X" equalsTo 1) and false, true) or false).hasSolutions({ no() }),
             )
         }
     }
@@ -394,7 +389,7 @@ object PrologStandardExampleTheories {
     fun allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions(
         callErrorSignature: Signature,
         nafErrorSignature: Signature,
-        notErrorSignature: Signature
+        notErrorSignature: Signature,
     ) = mapOf(
         prologStandardExampleTheory to prologStandardExampleTheoryNotableGoalToSolution,
         prologStandardExampleWithCutTheory to prologStandardExampleWithCutTheoryNotableGoalToSolution,
@@ -403,6 +398,6 @@ object PrologStandardExampleTheories {
         catchAndThrowTheoryExample to catchAndThrowTheoryExampleNotableGoalToSolution,
         notStandardExampleTheory to notStandardExampleTheoryNotableGoalToSolution(nafErrorSignature, notErrorSignature),
         ifThenStandardExampleTheory to ifThenStandardExampleTheoryNotableGoalToSolution,
-        Theory.empty() to ifThenElseStandardExampleNotableGoalToSolution
+        Theory.empty() to ifThenElseStandardExampleNotableGoalToSolution,
     )
 }

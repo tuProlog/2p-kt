@@ -13,7 +13,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("L" to listOf(51, 51))),
-                solutions
+                solutions,
             )
         }
     }
@@ -27,7 +27,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("L" to listOf(51, 51, 46, 49))),
-                solutions
+                solutions,
             )
         }
     }
@@ -41,7 +41,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("L" to listOf(57, 57, 50, 49, 46, 49))),
-                solutions
+                solutions,
             )
         }
     }
@@ -55,7 +55,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -69,7 +69,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -83,7 +83,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to numOf("-3.8"))),
-                solutions
+                solutions,
             )
         }
     }
@@ -103,11 +103,11 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
                             Signature("number_codes", 2),
                             TypeError.Expected.NUMBER,
                             atomOf("a"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

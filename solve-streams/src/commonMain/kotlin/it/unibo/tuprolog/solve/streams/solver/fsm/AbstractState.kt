@@ -8,6 +8,5 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * @author Enrico
  */
 internal abstract class AbstractState(override val solve: Solve) : State {
-
     override val hasBehaved = false
 }

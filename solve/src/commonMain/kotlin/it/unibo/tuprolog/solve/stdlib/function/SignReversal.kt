@@ -12,11 +12,15 @@ import it.unibo.tuprolog.solve.function.UnaryMathFunction
  * @author Enrico
  */
 object SignReversal : UnaryMathFunction("-") {
-
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric =
         // TODO: 25/10/2019 "int_overflow" check missing (see the standard)
         Integer.of(-integer.value)
 
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        Real.of(-real.value)
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = Real.of(-real.value)
 }

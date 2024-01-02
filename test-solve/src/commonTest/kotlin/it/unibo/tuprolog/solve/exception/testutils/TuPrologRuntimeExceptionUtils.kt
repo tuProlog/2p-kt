@@ -12,26 +12,28 @@ import kotlin.test.assertSame
  *
  * @author Enrico
  */
+@Suppress("ConstPropertyName", "ktlint:standard:property-naming")
 internal object TuPrologRuntimeExceptionUtils {
-
     internal const val aMessage = "ciao"
     internal val aCause = IllegalArgumentException()
 
     /** A context with emptySequence [ExecutionContext.logicStackTrace] field */
-    internal val aContext = object : ExecutionContext by DummyInstances.executionContext {
-        override val logicStackTrace: List<Struct> = emptyList()
-    }
+    internal val aContext =
+        object : ExecutionContext by DummyInstances.executionContext {
+            override val logicStackTrace: List<Struct> = emptyList()
+        }
 
     /** Different instance from [aContext] with same behaviour */
-    internal val aDifferentContext = object : ExecutionContext by aContext {}
-        .also { assertNotEquals(it, aContext) }
+    internal val aDifferentContext =
+        object : ExecutionContext by aContext {}
+            .also { assertNotEquals(it, aContext) }
 
     /** Utility function to check if exception contains same expected values */
     internal fun assertSameMessageCauseContext(
         expectedMessage: String?,
         expectedCause: Throwable?,
         expectedContext: ExecutionContext,
-        actualException: ResolutionException
+        actualException: ResolutionException,
     ) {
         assertSame(expectedMessage, actualException.message)
         assertSame(expectedCause, actualException.cause)

@@ -14,7 +14,6 @@ import it.unibo.tuprolog.solve.streams.testutils.SolverTestUtils.createSolveRequ
  * @author Enrico
  */
 internal object ThrowUtils {
-
     /** Requests that will return exceptions, if primitive invoked */
     internal val errorThrowingBehaviourRequest by lazy {
         logicProgramming {
@@ -23,7 +22,7 @@ internal object ThrowUtils {
                 Throw.functor(1).run { to(SystemError::class) },
                 Throw.functor("ciao").run { to(SystemError::class) },
                 Throw.functor(ErrorUtils.errorStructOf(atomOf(SystemError.typeFunctor))).run { to(SystemError::class) },
-                Throw.functor(ErrorUtils.errorStructOf("type_error"("integer", "ciao"))).run { to(TypeError::class) }
+                Throw.functor(ErrorUtils.errorStructOf("type_error"("integer", "ciao"))).run { to(TypeError::class) },
             ).mapKeys { (query, _) -> createSolveRequest(query, primitives = mapOf(Throw.descriptionPair)) }
         }
     }

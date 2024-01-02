@@ -4,7 +4,7 @@ class BreadthFirst<T, W>(private val maxDepth: Int = -1) : AbstractSearchStrateg
     override fun selectNextVisit(
         graph: Graph<T, W>,
         lastTraversal: Traversal<T, W, Int>,
-        fringe: MutableList<Traversal<T, W, Int>>
+        fringe: MutableList<Traversal<T, W, Int>>,
     ): Visit<T, Int>? {
         if (maxDepth > 0 && lastTraversal.state > maxDepth) return null
         expandFringe(graph, lastTraversal, fringe)
@@ -14,12 +14,12 @@ class BreadthFirst<T, W>(private val maxDepth: Int = -1) : AbstractSearchStrateg
     private fun expandFringe(
         graph: Graph<T, W>,
         lastTraversal: Traversal<T, W, Int>,
-        fringe: MutableList<Traversal<T, W, Int>>
+        fringe: MutableList<Traversal<T, W, Int>>,
     ) {
         fringe.addAll(
             graph.outgoingEdges(lastTraversal.destination).map {
                 Traversal(lastTraversal.state + 1, it)
-            }
+            },
         )
     }
 }

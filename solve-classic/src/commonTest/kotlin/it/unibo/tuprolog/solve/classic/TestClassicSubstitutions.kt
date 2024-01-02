@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.TestSubstitutions
 import kotlin.test.Test
 
 class TestClassicSubstitutions : TestSubstitutions, SolverFactory by ClassicSolverFactory {
-
     private val prototype = TestSubstitutions.prototype(this)
 
     @Test

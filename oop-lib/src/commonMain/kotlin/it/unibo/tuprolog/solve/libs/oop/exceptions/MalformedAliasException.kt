@@ -13,24 +13,23 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.DEALIASING_TEMPLATE
 
 @Suppress("MemberVisibilityCanBePrivate")
 class MalformedAliasException(
-    val dealiasingExpression: Struct
+    val dealiasingExpression: Struct,
 ) : OopException(
-    "This is not a dealiasing expression `$dealiasingExpression` in the form ${
-    DEALIASING_TEMPLATE.format(
-        prettyExpressions()
-    )
-    }"
-) {
-
+        "This is not a dealiasing expression `$dealiasingExpression` in the form ${
+            DEALIASING_TEMPLATE.format(
+                prettyExpressions(),
+            )
+        }",
+    ) {
     override fun toLogicError(
         context: ExecutionContext,
-        signature: Signature
+        signature: Signature,
     ): LogicError {
         return TypeError.of(
             context,
             DEALIASING_EXPRESSION,
             culprit,
-            "Error in ${signature.toIndicator()}: ${message?.replaceFirstChar { it.lowercase() }}"
+            "Error in ${signature.toIndicator()}: ${message?.replaceFirstChar { it.lowercase() }}",
         )
     }
 

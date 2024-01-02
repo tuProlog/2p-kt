@@ -3,7 +3,6 @@ package it.unibo.tuprolog.core
 import kotlin.js.JsName
 
 interface TermVisitor<T> {
-
     @JsName("defaultValue")
     fun defaultValue(term: Term): T
 

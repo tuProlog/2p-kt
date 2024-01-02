@@ -9,17 +9,18 @@ internal sealed class SyntaxException(override val cause: ParseException) : TuPr
     class InTheorySyntaxError(val file: File, cause: ParseException) : SyntaxException(cause) {
         override val message: String
             get() {
-                val errorDetector = SyntaxError.errorDetector(
-                    cause.input?.toString() ?: file.readText(),
-                    cause.line,
-                    cause.column,
-                    cause.message
-                )
+                val errorDetector =
+                    SyntaxError.errorDetector(
+                        cause.input?.toString() ?: file.readText(),
+                        cause.line,
+                        cause.column,
+                        cause.message,
+                    )
                 return """
                     |Syntax error at ${cause.line}:${cause.column} of ${file.name}, while parsing clause ${cause.clauseIndex}
                     |
                     |    ${errorDetector.replace("\n", "\n|    ")}
-                """.trimMargin()
+                    """.trimMargin()
             }
     }
 
@@ -34,7 +35,7 @@ internal sealed class SyntaxException(override val cause: ParseException) : TuPr
                     |Syntax error in query, near column ${cause.column}
                     |
                     |    ${errorDetector.replace("\n", "\n|    ")}
-                """.trimMargin()
+                    """.trimMargin()
             }
     }
 

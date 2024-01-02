@@ -13,31 +13,33 @@ import kotlin.js.JsName
 import it.unibo.tuprolog.core.toTerm as extToTerm
 
 internal interface AnyToTermConverter {
-
     @JsName("prologScope")
     val prologScope: LogicProgrammingScope
 
     @JsName("toTerm")
-    fun toTerm(any: Any): Term = when (any) {
-        is Term -> any
-        is TermConvertible -> any.toTerm()
-        is BigInteger -> prologScope.numOf(any)
-        is BigDecimal -> prologScope.numOf(any)
-        is Number -> when {
-            any.isInteger -> any.toInteger()
-            else -> any.toReal()
+    fun toTerm(any: Any): Term =
+        when (any) {
+            is Term -> any
+            is TermConvertible -> any.toTerm()
+            is BigInteger -> prologScope.numOf(any)
+            is BigDecimal -> prologScope.numOf(any)
+            is Number ->
+                when {
+                    any.isInteger -> any.toInteger()
+                    else -> any.toReal()
+                }
+            is String ->
+                when {
+                    any.isVariable -> prologScope.varOf(any)
+                    else -> prologScope.atomOf(any)
+                }
+            is Boolean -> any.toTruth()
+            is Array<*> -> any.map { toTerm(it!!) }.extToTerm()
+            is Sequence<*> -> any.map { toTerm(it!!) }.extToTerm()
+            is Iterable<*> -> any.map { toTerm(it!!) }.extToTerm()
+            else ->
+                any.raiseErrorConvertingTo(Term::class)
         }
-        is String -> when {
-            any.isVariable -> prologScope.varOf(any)
-            else -> prologScope.atomOf(any)
-        }
-        is Boolean -> any.toTruth()
-        is Array<*> -> any.map { toTerm(it!!) }.extToTerm()
-        is Sequence<*> -> any.map { toTerm(it!!) }.extToTerm()
-        is Iterable<*> -> any.map { toTerm(it!!) }.extToTerm()
-        else ->
-            any.raiseErrorConvertingTo(Term::class)
-    }
 
     val Number.isInteger: Boolean
 

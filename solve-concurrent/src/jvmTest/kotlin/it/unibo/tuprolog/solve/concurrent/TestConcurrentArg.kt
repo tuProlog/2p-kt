@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testArgFromFoo() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -127,16 +126,17 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
 
             val query = arg(1, "X", "a")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("arg", 3),
-                        varOf("X"),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("arg", 3),
+                            varOf("X"),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -148,17 +148,18 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
 
             val query = arg(0, "atom", "A")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("arg", 3),
-                        TypeError.Expected.COMPOUND,
-                        atomOf("atom"),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("arg", 3),
+                            TypeError.Expected.COMPOUND,
+                            atomOf("atom"),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -170,17 +171,18 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
 
             val query = arg(0, 3, "A")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("arg", 3),
-                        TypeError.Expected.COMPOUND,
-                        numOf(3),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("arg", 3),
+                            TypeError.Expected.COMPOUND,
+                            numOf(3),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -192,17 +194,18 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
 
             val query = arg(intOf(-3), "foo"("a", "b"), "A")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    DomainError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("arg", 3),
-                        DomainError.Expected.NOT_LESS_THAN_ZERO,
-                        numOf(-3),
-                        index = 0
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        DomainError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("arg", 3),
+                            DomainError.Expected.NOT_LESS_THAN_ZERO,
+                            numOf(-3),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -214,17 +217,18 @@ interface TestConcurrentArg<T : WithAssertingEquals> : FromSequence<T>, SolverFa
 
             val query = arg("a", "foo"("a", "b"), "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("arg", 3),
-                        TypeError.Expected.INTEGER,
-                        atomOf("a"),
-                        index = 0
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("arg", 3),
+                            TypeError.Expected.INTEGER,
+                            atomOf("a"),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

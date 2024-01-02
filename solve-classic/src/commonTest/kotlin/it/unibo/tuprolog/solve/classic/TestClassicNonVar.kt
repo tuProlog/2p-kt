@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.TestNonVar
 import kotlin.test.Test
 
 class TestClassicNonVar : TestNonVar, SolverFactory by ClassicSolverFactory {
-
     private val prototype = TestNonVar.prototype(this)
 
     @Test

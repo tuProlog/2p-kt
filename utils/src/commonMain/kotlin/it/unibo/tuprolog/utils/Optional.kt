@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.utils
 
 sealed class Optional<T> {
-
     companion object {
         fun <T> some(value: T): Some<out T> = Some(value)
 
@@ -19,8 +18,7 @@ sealed class Optional<T> {
         override val isPresent: Boolean
             get() = true
 
-        override fun <R> map(function: (T) -> R): Some<R> =
-            Some(function(value))
+        override fun <R> map(function: (T) -> R): Some<R> = Some(function(value))
 
         override fun filter(predicate: (T) -> Boolean): Optional<out T> =
             when {
@@ -28,11 +26,9 @@ sealed class Optional<T> {
                 else -> None
             }
 
-        override fun toSequence(): Sequence<T> =
-            sequenceOf(value)
+        override fun toSequence(): Sequence<T> = sequenceOf(value)
 
-        override fun toString(): String =
-            "Some($value)"
+        override fun toString(): String = "Some($value)"
     }
 
     object None : Optional<Nothing>() {
@@ -42,17 +38,13 @@ sealed class Optional<T> {
         override val isPresent: Boolean
             get() = false
 
-        override fun <R> map(function: (Nothing) -> R): None =
-            None
+        override fun <R> map(function: (Nothing) -> R): None = None
 
-        override fun filter(predicate: (Nothing) -> Boolean): None =
-            None
+        override fun filter(predicate: (Nothing) -> Boolean): None = None
 
-        override fun toSequence(): Sequence<Nothing> =
-            emptySequence()
+        override fun toSequence(): Sequence<Nothing> = emptySequence()
 
-        override fun toString(): String =
-            "None"
+        override fun toString(): String = "None"
     }
 
     abstract val value: T?

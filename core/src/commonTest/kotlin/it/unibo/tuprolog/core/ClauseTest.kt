@@ -17,7 +17,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class ClauseTest {
-
     private val mixedClauses = RuleUtils.mixedRules + DirectiveUtils.mixedDirectives.map { Pair(null, it) }
 
     private val correctInstances =
@@ -38,17 +37,18 @@ internal class ClauseTest {
      * For example, the [Clause] `product(A) :- A, A` is stored in the database, after preparation for execution,
      * as the Term: `product(A) :- call(A), call(A)`
      */
-    private fun replaceCorrectVarWithCalls(term: Term): Term = when (term) {
-        is Clause -> Clause.of(term.head, replaceCorrectVarWithCalls(term.body))
-        is Struct ->
-            when {
-                term.functor in Clause.notableFunctors && term.arity == 2 ->
-                    Struct.of(term.functor, term.argsSequence.map { replaceCorrectVarWithCalls(it) })
-                else -> term
-            }
-        is Var -> Struct.of("call", term)
-        else -> term
-    }
+    private fun replaceCorrectVarWithCalls(term: Term): Term =
+        when (term) {
+            is Clause -> Clause.of(term.head, replaceCorrectVarWithCalls(term.body))
+            is Struct ->
+                when {
+                    term.functor in Clause.notableFunctors && term.arity == 2 ->
+                        Struct.of(term.functor, term.argsSequence.map { replaceCorrectVarWithCalls(it) })
+                    else -> term
+                }
+            is Var -> Struct.of("call", term)
+            else -> term
+        }
 
     private val wellFormedClausesCorrectlyPreparedForExecution =
         correctInstances.filter { it.isWellFormed }.map { replaceCorrectVarWithCalls(it) as Clause }
@@ -119,19 +119,23 @@ internal class ClauseTest {
         val aRuleWithVarInHeadAfterPreparation =
             Rule.of(Tuple.of(aVar, aVar), Tuple.of(Struct.of("call", aVar), Struct.of("call", aVar)))
 
-        val toBeTested = (
-            correctInstances.filter { it.isWellFormed } + listOf(
-                aFactWithVarInHead,
-                aRuleWithVarInHead,
-                aRuleWithVarInHeadAfterPreparation
-            )
+        val toBeTested =
+            (
+                correctInstances.filter { it.isWellFormed } +
+                    listOf(
+                        aFactWithVarInHead,
+                        aRuleWithVarInHead,
+                        aRuleWithVarInHeadAfterPreparation,
+                    )
             ).map { it.accept(Clause.defaultPreparationForExecutionVisitor) }
 
-        val correct = wellFormedClausesCorrectlyPreparedForExecution + listOf(
-            aFactWithVarInHead,
-            aRuleWithVarInHeadAfterPreparation,
-            aRuleWithVarInHeadAfterPreparation
-        )
+        val correct =
+            wellFormedClausesCorrectlyPreparedForExecution +
+                listOf(
+                    aFactWithVarInHead,
+                    aRuleWithVarInHeadAfterPreparation,
+                    aRuleWithVarInHeadAfterPreparation,
+                )
 
         assertEquals(correct, toBeTested)
     }

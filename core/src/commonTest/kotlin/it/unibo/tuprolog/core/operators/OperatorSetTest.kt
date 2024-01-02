@@ -12,7 +12,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class OperatorSetTest {
-
     private val fakePlusOperator = Operator("+", Specifier.YFX, 500)
     private val fakeMinusOperator = Operator("-", Specifier.YFX, 500)
     private val fakeTimesOperator = Operator("*", Specifier.YFX, 400)
@@ -68,11 +67,11 @@ internal class OperatorSetTest {
         assertEquals(OperatorSet(), OperatorSet())
         assertEquals(
             operatorSet,
-            OperatorSet(fakePlusOperator, fakeMinusOperator, fakeTimesOperator, fakeDivisionOperator)
+            OperatorSet(fakePlusOperator, fakeMinusOperator, fakeTimesOperator, fakeDivisionOperator),
         )
         assertEquals(
             operatorSet,
-            OperatorSet(fakeMinusOperator, fakePlusOperator, fakeDivisionOperator, fakeTimesOperator)
+            OperatorSet(fakeMinusOperator, fakePlusOperator, fakeDivisionOperator, fakeTimesOperator),
         )
 
         assertNotEquals(operatorSet, OperatorSet())
@@ -92,17 +91,17 @@ internal class OperatorSetTest {
             assertEquals(
                 expectedFunctor,
                 actualOperator.functor,
-                "$actualOperator functor expected to be: $expectedFunctor"
+                "$actualOperator functor expected to be: $expectedFunctor",
             )
             assertEquals(
                 expectedSpecifier,
                 actualOperator.specifier,
-                "$actualOperator specifier expected to be: $expectedSpecifier"
+                "$actualOperator specifier expected to be: $expectedSpecifier",
             )
             assertEquals(
                 expectedPriority,
                 actualOperator.priority,
-                "$actualOperator priority expected to be: $expectedPriority"
+                "$actualOperator priority expected to be: $expectedPriority",
             )
         }
     }

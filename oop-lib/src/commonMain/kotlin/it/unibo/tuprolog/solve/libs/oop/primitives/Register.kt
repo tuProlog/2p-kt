@@ -10,7 +10,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object Register : BinaryRelation.NonBacktrackable<ExecutionContext>("register") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+    ): Solve.Response {
         ensuringAllArgumentsAreInstantiated()
         ensuringArgumentIsRef(0)
         ensuringArgumentIsStruct(1)

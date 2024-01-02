@@ -9,7 +9,6 @@ import kotlin.test.Test
  *
  */
 internal class TermGreaterThanTest {
-
     @Test
     fun computesCorrectResult() {
         greaterQueryToResult.forEach { (input, result) ->

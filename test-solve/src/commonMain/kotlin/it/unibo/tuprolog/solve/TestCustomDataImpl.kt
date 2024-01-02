@@ -9,7 +9,6 @@ import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
 import it.unibo.tuprolog.solve.stdlib.primitive.SetPersistent
 
 class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomData {
-
     override fun testApi() {
         val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -31,20 +30,20 @@ class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomD
 
             assertSolutionEquals(
                 ktListOf(setQuery.yes()),
-                solver.solve(setQuery, shortDuration).toList()
+                solver.solve(setQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
                 ktListOf(getQuery.no()),
-                solver.solve(getQuery, shortDuration).toList()
+                solver.solve(getQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
                 ktListOf(
                     query.yes(X to 1),
-                    query.no()
+                    query.no(),
                 ),
-                solver.solve(query, shortDuration).toList()
+                solver.solve(query, shortDuration).toList(),
             )
         }
     }
@@ -59,20 +58,20 @@ class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomD
 
             assertSolutionEquals(
                 ktListOf(setQuery.yes()),
-                solver.solve(setQuery, shortDuration).toList()
+                solver.solve(setQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
                 ktListOf(getQuery.no()),
-                solver.solve(getQuery, shortDuration).toList()
+                solver.solve(getQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
                 ktListOf(
                     query.yes(X to 1),
-                    query.yes(X to 1)
+                    query.yes(X to 1),
                 ),
-                solver.solve(query, shortDuration).toList()
+                solver.solve(query, shortDuration).toList(),
             )
         }
     }
@@ -87,20 +86,20 @@ class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomD
 
             assertSolutionEquals(
                 ktListOf(setQuery.yes()),
-                solver.solve(setQuery, shortDuration).toList()
+                solver.solve(setQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
                 ktListOf(getQuery.yes(X to 1)),
-                solver.solve(getQuery, shortDuration).toList()
+                solver.solve(getQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
                 ktListOf(
                     query.yes(X to 1),
-                    query.yes(X to 1)
+                    query.yes(X to 1),
                 ),
-                solver.solve(query, shortDuration).toList()
+                solver.solve(query, shortDuration).toList(),
             )
         }
     }

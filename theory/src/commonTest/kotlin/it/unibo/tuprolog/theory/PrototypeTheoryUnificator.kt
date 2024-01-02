@@ -12,19 +12,20 @@ import kotlin.test.assertSame
 import kotlin.collections.List as KtList
 
 class PrototypeTheoryUnificator(
-    private val theoryGenerator: (Unificator, Iterable<Clause>) -> Theory
+    private val theoryGenerator: (Unificator, Iterable<Clause>) -> Theory,
 ) {
     private val unificator1 = Unificator.strict()
 
     private val unificator2 = Unificator.naive()
 
-    private val clauses: KtList<Clause> = logicProgramming {
-        ktListOf(
-            fact { "f"("a") },
-            fact { "f"(intOf(1)) },
-            fact { "f"(realOf(1.0)) }
-        )
-    }
+    private val clauses: KtList<Clause> =
+        logicProgramming {
+            ktListOf(
+                fact { "f"("a") },
+                fact { "f"(intOf(1)) },
+                fact { "f"(realOf(1.0)) },
+            )
+        }
 
     private lateinit var theory1: Theory
     private lateinit var theory2: Theory

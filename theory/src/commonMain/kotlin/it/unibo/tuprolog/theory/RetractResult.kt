@@ -5,7 +5,6 @@ import kotlin.js.JsName
 
 /** A result given after a "retract" operation */
 sealed class RetractResult<out T : Theory> {
-
     open val isSuccess: Boolean
         get() = false
 
@@ -26,7 +25,7 @@ sealed class RetractResult<out T : Theory> {
     /** A successful "retract" operation result, carrying the new [theory] and removed [clauses] */
     data class Success<T : Theory>(
         override val theory: T,
-        override val clauses: Iterable<Clause>
+        override val clauses: Iterable<Clause>,
     ) : RetractResult<T>() {
         override val isSuccess: Boolean
             get() = true

@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class BitwiseLeftShiftTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("<<", 2), BitwiseLeftShift.signature)
@@ -25,8 +24,8 @@ internal class BitwiseLeftShiftTest {
             Integer.of(64),
             BitwiseLeftShift.computeOf(
                 Integer.of(16),
-                Integer.of(2)
-            )
+                Integer.of(2),
+            ),
         )
     }
 

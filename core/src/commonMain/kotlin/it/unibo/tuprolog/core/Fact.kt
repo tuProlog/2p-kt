@@ -5,7 +5,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Fact : Rule {
-
     override val body: Term
         get() = Truth.TRUE
 
@@ -26,7 +25,10 @@ interface Fact : Rule {
 
     override fun setHeadArgs(arguments: Sequence<Term>): Fact
 
-    override fun insertHeadArg(index: Int, argument: Term): Fact
+    override fun insertHeadArg(
+        index: Int,
+        argument: Term,
+    ): Fact
 
     override fun addFirstHeadArg(argument: Term): Fact
 
@@ -35,7 +37,6 @@ interface Fact : Rule {
     override fun appendHeadArg(argument: Term): Fact
 
     companion object {
-
         const val FUNCTOR = Terms.CLAUSE_FUNCTOR
 
         @JvmStatic
@@ -44,7 +45,10 @@ interface Fact : Rule {
 
         @JvmStatic
         @JsName("template")
-        fun template(functor: String, arity: Int): Fact {
+        fun template(
+            functor: String,
+            arity: Int,
+        ): Fact {
             return of(Struct.template(functor, arity))
         }
     }

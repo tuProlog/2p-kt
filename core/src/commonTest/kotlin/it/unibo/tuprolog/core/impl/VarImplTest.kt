@@ -24,7 +24,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class VarImplTest {
-
     /** Contains mixed variables instances, correctly and incorrectly named */
     private val mixedVarInstances = VarUtils.mixedVars.map { VarImpl(it) }
 

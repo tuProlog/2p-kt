@@ -8,7 +8,6 @@ class TestConcurrentArithImpl :
     TestConcurrentArith<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testArithDiff() = multiRunConcurrentTest { super.testArithDiff() }

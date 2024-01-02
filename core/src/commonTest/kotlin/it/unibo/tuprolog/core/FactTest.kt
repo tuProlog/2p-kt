@@ -12,7 +12,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class FactTest {
-
     private val correctInstances = FactUtils.mixedFacts.map(::FactImpl)
 
     @Test

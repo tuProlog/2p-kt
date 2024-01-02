@@ -16,7 +16,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -30,7 +30,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to "foo", "Y" to 3)),
-                solutions
+                solutions,
             )
         }
     }
@@ -44,7 +44,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to "foo")),
-                solutions
+                solutions,
             )
         }
     }
@@ -58,7 +58,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("A" to "mats", "B" to 2)),
-                solutions
+                solutions,
             )
         }
     }
@@ -72,7 +72,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -86,7 +86,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -100,7 +100,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 1, "Y" to 0)),
-                solutions
+                solutions,
             )
         }
     }
@@ -114,7 +114,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 1.1)),
-                solutions
+                solutions,
             )
         }
     }
@@ -128,7 +128,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -142,7 +142,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -161,11 +161,11 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
                             DummyInstances.executionContext,
                             Signature("functor", 3),
                             varOf("Y"),
-                            1
-                        )
-                    )
+                            1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -184,11 +184,11 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
                             DummyInstances.executionContext,
                             Signature("functor", 3),
                             varOf("N"),
-                            index = 2
-                        )
-                    )
+                            index = 2,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -208,11 +208,11 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
                             Signature("functor", 3),
                             TypeError.Expected.INTEGER,
                             atomOf("a"),
-                            index = 2
-                        )
-                    )
+                            index = 2,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -232,11 +232,11 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
                             Signature("functor", 3),
                             TypeError.Expected.ATOM,
                             numOf(1.5),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -256,11 +256,11 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
                             Signature("functor", 3),
                             TypeError.Expected.ATOMIC,
                             "foo"("a"),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -269,8 +269,9 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = current_flag("max_arity", A) and (
-                (X `is` (A + 1)) and functor(T, "foo", X)
+            val query =
+                current_flag("max_arity", A) and (
+                    (X `is` (A + 1)) and functor(T, "foo", X)
                 )
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -280,11 +281,11 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
                         RepresentationError.of(
                             DummyInstances.executionContext,
                             Signature("functor", 3),
-                            RepresentationError.Limit.MAX_ARITY
-                        )
-                    )
+                            RepresentationError.Limit.MAX_ARITY,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -304,11 +305,11 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
                             Signature("functor", 3),
                             DomainError.Expected.NOT_LESS_THAN_ZERO,
                             intOf(-1),
-                            index = 2
-                        )
-                    )
+                            index = 2,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

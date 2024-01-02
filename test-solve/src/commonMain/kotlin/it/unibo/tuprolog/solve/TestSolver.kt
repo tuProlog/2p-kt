@@ -29,13 +29,12 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSo
 
 /** A prototype class for testing solver implementations */
 interface TestSolver : SolverTest {
-
     companion object {
         fun prototype(
             solverFactory: SolverFactory,
             callErrorSignature: Signature = Signature("call", 1),
             nafErrorSignature: Signature = Signature("\\+", 1),
-            notErrorSignature: Signature = Signature("not", 1)
+            notErrorSignature: Signature = Signature("not", 1),
         ): TestSolver = TestSolverImpl(solverFactory, callErrorSignature, nafErrorSignature, notErrorSignature)
     }
 
@@ -152,29 +151,52 @@ interface TestSolver : SolverTest {
 
     /** Test with [customRangeListGeneratorTheoryNotableGoalToSolution] */
     fun testNumbersRangeListGeneration()
+
     fun testFailure()
+
     fun testBasicBacktracking1()
+
     fun testBasicBacktracking2()
+
     fun testBasicBacktracking3()
+
     fun testBasicBacktracking4()
+
     fun testConjunction()
+
     fun testConjunctionOfConjunctions()
+
     fun testConjunctionWithUnification()
+
     fun testDisjunction()
+
     fun testDisjunctionWithUnification()
+
     fun testMember()
+
     fun testAssertRules()
+
     fun testRetract()
+
     fun testNatural()
+
     fun testFunctor()
+
     fun testUniv()
+
     fun testAppend()
+
     fun testRetractAll()
 
     fun testTermGreaterThan()
+
     fun testTermGreaterThanOrEqual()
+
     fun testTermSame()
+
     fun testTermNotSame()
+
     fun testTermLowerThan()
+
     fun testTermLowerThanOrEqual()
 }

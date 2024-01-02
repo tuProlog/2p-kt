@@ -14,7 +14,7 @@ object Arg : TernaryRelation.WithoutSideEffects<ExecutionContext>("arg") {
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
-        third: Term
+        third: Term,
     ): Sequence<Substitution> =
         ensuringArgumentIsInstantiated(1)
             .ensuringArgumentIsCompound(1)

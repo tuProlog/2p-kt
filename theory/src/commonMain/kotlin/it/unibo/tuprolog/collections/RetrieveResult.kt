@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Clause
 import kotlin.js.JsName
 
 sealed class RetrieveResult<C : ClauseCollection> {
-
     open val isSuccess: Boolean
         get() = false
 
@@ -22,7 +21,7 @@ sealed class RetrieveResult<C : ClauseCollection> {
 
     data class Success<C : ClauseCollection>(
         override val collection: C,
-        override val clauses: List<Clause>
+        override val clauses: List<Clause>,
     ) : RetrieveResult<C>() {
         override val isSuccess: Boolean
             get() = true

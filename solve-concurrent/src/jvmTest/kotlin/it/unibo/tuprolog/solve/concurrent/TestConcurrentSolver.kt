@@ -59,70 +59,77 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     val callErrorSignature: Signature
     val nafErrorSignature: Signature
     val notErrorSignature: Signature
 
     fun testUnknownFlag2() {
         logicProgramming {
-            val theory = theoryOf(
-                rule {
-                    "ancestor"(X, Y) `if` "parent"(X, Y)
-                },
-                rule {
-                    "ancestor"(X, Y) `if` ("parent"(X, Z) and "ancestor"(Z, Y))
-                },
-                fact { "parent"("abraham", "isaac") },
-                fact { "parent"("isaac", "jacob") },
-                fact { "parent"("jacob", "joseph") }
-            )
+            val theory =
+                theoryOf(
+                    rule {
+                        "ancestor"(X, Y) `if` "parent"(X, Y)
+                    },
+                    rule {
+                        "ancestor"(X, Y) `if` ("parent"(X, Z) and "ancestor"(Z, Y))
+                    },
+                    fact { "parent"("abraham", "isaac") },
+                    fact { "parent"("isaac", "jacob") },
+                    fact { "parent"("jacob", "joseph") },
+                )
 
             val observedWarnings = mutableListOf<Warning>()
 
-            var solver = solverWithDefaultBuiltins(
-                staticKb = theory,
-                flags = FlagStore.of(Unknown to Unknown.WARNING),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            var solver =
+                solverWithDefaultBuiltins(
+                    staticKb = theory,
+                    flags = FlagStore.of(Unknown to Unknown.WARNING),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             val query = "ancestor"("abraham", X)
 
             var solutions = fromSequence(solver.solve(query))
-            val expected = fromSequence(
-                sequenceOf(
-                    query.yes(X to "isaac"),
-                    query.yes(X to "jacob"),
-                    query.yes(X to "joseph"),
-                    query.no()
+            val expected =
+                fromSequence(
+                    sequenceOf(
+                        query.yes(X to "isaac"),
+                        query.yes(X to "jacob"),
+                        query.yes(X to "joseph"),
+                        query.no(),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
             assertEquals(mutableListOf(), observedWarnings)
 
-            solver = solverWithDefaultBuiltins(
-                staticKb = theory,
-                flags = FlagStore.of(Unknown to Unknown.ERROR),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            solver =
+                solverWithDefaultBuiltins(
+                    staticKb = theory,
+                    flags = FlagStore.of(Unknown to Unknown.ERROR),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             solutions = fromSequence(solver.solve(query))
 
             expected.assertingEquals(solutions)
             assertEquals(mutableListOf(), observedWarnings)
 
-            solver = solverWithDefaultBuiltins(
-                staticKb = theory,
-                flags = FlagStore.of(Unknown to Unknown.FAIL),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            solver =
+                solverWithDefaultBuiltins(
+                    staticKb = theory,
+                    flags = FlagStore.of(Unknown to Unknown.FAIL),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
             solutions = fromSequence(solver.solve(query))
 
             expected.assertingEquals(solutions)
@@ -136,32 +143,37 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             val observedWarnings = mutableListOf<Warning>()
 
-            var solver = solverWithDefaultBuiltins(
-                flags = FlagStore.of(Unknown to Unknown.ERROR),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            var solver =
+                solverWithDefaultBuiltins(
+                    flags = FlagStore.of(Unknown to Unknown.ERROR),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             var solutions = fromSequence(solver.solve(query))
-            var expected = fromSequence(
-                query.halt(
-                    ExistenceError.forProcedure(
-                        DummyInstances.executionContext,
-                        query.extractSignature()
-                    )
+            var expected =
+                fromSequence(
+                    query.halt(
+                        ExistenceError.forProcedure(
+                            DummyInstances.executionContext,
+                            query.extractSignature(),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
             assertTrue { observedWarnings.isEmpty() }
 
-            solver = solverWithDefaultBuiltins(
-                flags = FlagStore.of(Unknown to Unknown.WARNING),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            solver =
+                solverWithDefaultBuiltins(
+                    flags = FlagStore.of(Unknown to Unknown.WARNING),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             solutions = fromSequence(solver.solve(query))
             expected = fromSequence(query.no())
@@ -171,12 +183,14 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             assertTrue { observedWarnings[0] is MissingPredicate }
             assertEquals(query.extractSignature(), (observedWarnings[0] as MissingPredicate).signature)
 
-            solver = solverWithDefaultBuiltins(
-                flags = FlagStore.of(Unknown to Unknown.FAIL),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            solver =
+                solverWithDefaultBuiltins(
+                    flags = FlagStore.of(Unknown to Unknown.FAIL),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             solutions = fromSequence(solver.solve(query))
             expected = fromSequence(query.no())
@@ -278,15 +292,19 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         }
     }
 
-    private fun testAssert(suffix: String, inverse: Boolean) {
+    private fun testAssert(
+        suffix: String,
+        inverse: Boolean,
+    ) {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val assertX = "assert$suffix"
 
-            val query = assertX("f"(1)) and
-                assertX("f"(2)) and
-                assertX("f"(3)) and
-                "f"(X)
+            val query =
+                assertX("f"(1)) and
+                    assertX("f"(2)) and
+                    assertX("f"(3)) and
+                    "f"(X)
 
             val solutions = solver.solve(query, mediumDuration).toList()
             val ints = if (inverse) (3 downTo 1) else (1..3)
@@ -320,14 +338,15 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             solver.standardOutput.addListener { outputs += it!! }
 
-            val terms = ktListOf(
-                atomOf("atom"),
-                atomOf("a string"),
-                varOf("A_Var"),
-                numOf(1),
-                numOf(2.1),
-                "f"("x")
-            )
+            val terms =
+                ktListOf(
+                    atomOf("atom"),
+                    atomOf("a string"),
+                    varOf("A_Var"),
+                    numOf(1),
+                    numOf(2.1),
+                    "f"("x"),
+                )
 
             val query = tupleOf(terms.map { write(it) }.append(nl))
 
@@ -338,7 +357,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             assertEquals(
                 terms.map { it.format(TermFormatter.default()) }.append("\n"),
-                outputs
+                outputs,
             )
         }
     }
@@ -364,20 +383,22 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             assertEquals(
                 ktListOf("a", "b", "c", "d", "\n", "e"),
-                outputs
+                outputs,
             )
         }
     }
 
     fun testFindAll() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theoryOf(
-                    fact { "a"(1) },
-                    fact { "a"(2) },
-                    fact { "a"(3) }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theoryOf(
+                            fact { "a"(1) },
+                            fact { "a"(2) },
+                            fact { "a"(3) },
+                        ),
                 )
-            )
 
             var query = findall(N, "a"(N), L)
 
@@ -394,16 +415,17 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             query = findall(`_`, G, `_`)
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("findall", 3),
-                        variable = G,
-                        index = 1
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("findall", 3),
+                            variable = G,
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -411,35 +433,39 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testSideEffectsPersistentAfterBacktracking1() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                dynamicKb = theoryOf(
-                    fact { "f"(1) },
-                    fact { "f"(2) },
-                    fact { "f"(3) }
-                ),
-                staticKb = theoryOf(
-                    clause { "getf"(F) `if` findall(X, "f"(X), F) },
-                    clause { "getg"(G) `if` findall(X, "g"(X), G) },
-                    clause {
-                        "ftog"(F, G) `if` (
-                            retract("f"(X)) and
-                                assert("g"(X)) and
-                                "getf"(F) and
-                                "getg"(G)
-                            )
-                    }
+            val solver =
+                solverWithDefaultBuiltins(
+                    dynamicKb =
+                        theoryOf(
+                            fact { "f"(1) },
+                            fact { "f"(2) },
+                            fact { "f"(3) },
+                        ),
+                    staticKb =
+                        theoryOf(
+                            clause { "getf"(F) `if` findall(X, "f"(X), F) },
+                            clause { "getg"(G) `if` findall(X, "g"(X), G) },
+                            clause {
+                                "ftog"(F, G) `if` (
+                                    retract("f"(X)) and
+                                        assert("g"(X)) and
+                                        "getf"(F) and
+                                        "getg"(G)
+                                )
+                            },
+                        ),
                 )
-            )
 
             val query = "ftog"(X, Y)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                sequenceOf(
-                    query.yes(X to listOf(2, 3), Y to listOf(1)),
-                    query.yes(X to listOf(3), Y to listOf(1, 2)),
-                    query.yes(X to emptyList, Y to listOf(1, 2, 3))
+            val expected =
+                fromSequence(
+                    sequenceOf(
+                        query.yes(X to listOf(2, 3), Y to listOf(1)),
+                        query.yes(X to listOf(3), Y to listOf(1, 2)),
+                        query.yes(X to emptyList, Y to listOf(1, 2, 3)),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -460,44 +486,48 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     /** Test with [lessThan500MsGoalToSolution] */
     fun testTimeout1() {
         assertConcurrentSolverSolutionsCorrect(
-            solver = solverWithDefaultBuiltins(
-                staticKb = TimeRelatedTheories.timeRelatedTheory
-            ),
+            solver =
+                solverWithDefaultBuiltins(
+                    staticKb = TimeRelatedTheories.timeRelatedTheory,
+                ),
             goalToSolutions = lessThan500MsGoalToSolution,
-            maxDuration = 400L
+            maxDuration = 400L,
         )
     }
 
     /** Test with [slightlyMoreThan500MsGoalToSolution] */
     fun testTimeout2() {
         assertConcurrentSolverSolutionsCorrect(
-            solver = solverWithDefaultBuiltins(
-                staticKb = TimeRelatedTheories.timeRelatedTheory
-            ),
+            solver =
+                solverWithDefaultBuiltins(
+                    staticKb = TimeRelatedTheories.timeRelatedTheory,
+                ),
             goalToSolutions = slightlyMoreThan500MsGoalToSolution,
-            maxDuration = 599L
+            maxDuration = 599L,
         )
     }
 
     /** Test with [slightlyMoreThan600MsGoalToSolution] */
     fun testTimeout3() {
         assertConcurrentSolverSolutionsCorrect(
-            solver = solverWithDefaultBuiltins(
-                staticKb = TimeRelatedTheories.timeRelatedTheory
-            ),
+            solver =
+                solverWithDefaultBuiltins(
+                    staticKb = TimeRelatedTheories.timeRelatedTheory,
+                ),
             goalToSolutions = slightlyMoreThan600MsGoalToSolution,
-            maxDuration = 699L
+            maxDuration = 699L,
         )
     }
 
     /** Test with [slightlyMoreThan700MsGoalToSolution] */
     fun testTimeout4() {
         assertConcurrentSolverSolutionsCorrect(
-            solver = solverWithDefaultBuiltins(
-                staticKb = TimeRelatedTheories.timeRelatedTheory
-            ),
+            solver =
+                solverWithDefaultBuiltins(
+                    staticKb = TimeRelatedTheories.timeRelatedTheory,
+                ),
             goalToSolutions = slightlyMoreThan700MsGoalToSolution,
-            maxDuration = 799L
+            maxDuration = 799L,
         )
     }
 
@@ -506,7 +536,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solver = solverWithDefaultBuiltins(staticKb = CustomTheories.ifThenTheory1),
             goalToSolutions = ifThen1ToSolution,
-            maxDuration = mediumDuration
+            maxDuration = mediumDuration,
         )
     }
 
@@ -515,7 +545,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solver = solverWithDefaultBuiltins(staticKb = CustomTheories.ifThenTheory1),
             goalToSolutions = ifThenElse1ToSolution,
-            maxDuration = mediumDuration
+            maxDuration = mediumDuration,
         )
     }
 
@@ -524,7 +554,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solver = solverWithDefaultBuiltins(staticKb = CustomTheories.ifThenTheory2),
             goalToSolutions = ifThenElse2ToSolution,
-            maxDuration = mediumDuration
+            maxDuration = mediumDuration,
         )
     }
 
@@ -533,7 +563,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solver = solverWithDefaultBuiltins(staticKb = CustomTheories.ifThenTheory2),
             goalToSolutions = ifThen2ToSolution,
-            maxDuration = mediumDuration
+            maxDuration = mediumDuration,
         )
     }
 
@@ -542,7 +572,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = TestingClauseTheories.simpleFactTheory),
             simpleFactTheoryNotableGoalToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -551,7 +581,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = TestingClauseTheories.simpleCutTheory),
             simpleCutTheoryNotableGoalToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -560,7 +590,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = TestingClauseTheories.simpleCutAndConjunctionTheory),
             simpleCutAndConjunctionTheoryNotableGoalToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -569,7 +599,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = TestingClauseTheories.cutConjunctionAndBacktrackingTheory),
             cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -578,7 +608,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = TestingClauseTheories.infiniteComputationTheory),
             infiniteComputationTheoryNotableGoalToSolution,
-            shortDuration
+            shortDuration,
         )
     }
 
@@ -587,7 +617,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.prologStandardExampleTheory),
             prologStandardExampleTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -596,7 +626,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.prologStandardExampleWithCutTheory),
             prologStandardExampleWithCutTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -605,7 +635,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = TestingClauseTheories.customReverseListTheory),
             customReverseListTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -614,7 +644,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.conjunctionStandardExampleTheory),
             conjunctionStandardExampleTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -625,14 +655,13 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
                 TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                     callErrorSignature,
                     nafErrorSignature,
-                    notErrorSignature
+                    notErrorSignature,
                 )
                     .mapValues { (_, listOfGoalToSolutions) ->
                         listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                             ktListOf(
                                 (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
                                 (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
-
                                 (goal and false).run {
                                     when {
                                         expectedSolutions.any { it is Solution.Halt } ->
@@ -640,8 +669,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
                                         else -> hasSolutions({ no() })
                                     }
                                 },
-
-                                (false and goal).hasSolutions({ no() })
+                                (false and goal).hasSolutions({ no() }),
                             )
                         }
                     }
@@ -651,7 +679,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
                 assertConcurrentSolverSolutionsCorrect(
                     solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
-                    mediumDuration
+                    mediumDuration,
                 )
             }
         }
@@ -662,13 +690,13 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.callStandardExampleTheory),
             callStandardExampleTheoryGoalsToSolution(callErrorSignature),
-            mediumDuration
+            mediumDuration,
         )
 
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(),
             callTestingGoalsToSolutions(callErrorSignature),
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -678,7 +706,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                 callErrorSignature,
                 nafErrorSignature,
-                notErrorSignature
+                notErrorSignature,
             )
                 .mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.map { (goal, expectedSolutions) ->
@@ -688,7 +716,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
                     assertConcurrentSolverSolutionsCorrect(
                         solverWithDefaultBuiltins(staticKb = database),
                         goalToSolutions,
-                        mediumDuration
+                        mediumDuration,
                     )
                 }
         }
@@ -699,28 +727,29 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.catchAndThrowTheoryExample),
             catchAndThrowTheoryExampleNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
 
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(),
             catchTestingGoalsToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
     /** A test in which all testing goals are called through the Catch primitive */
     fun testCatchPrimitiveTransparency() {
         logicProgramming {
-            fun Struct.containsHaltPrimitive(): Boolean = when (functor) {
-                "halt" -> true
-                else -> argsSequence.filterIsInstance<Struct>().any { it.containsHaltPrimitive() }
-            }
+            fun Struct.containsHaltPrimitive(): Boolean =
+                when (functor) {
+                    "halt" -> true
+                    else -> argsSequence.filterIsInstance<Struct>().any { it.containsHaltPrimitive() }
+                }
 
             TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                 callErrorSignature,
                 nafErrorSignature,
-                notErrorSignature
+                notErrorSignature,
             )
                 .mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
@@ -737,14 +766,14 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
                             },
                             `catch`(goal, "notUnifyingCatcher", false).run {
                                 to(expectedSolutions.changeQueriesTo(this))
-                            }
+                            },
                         )
                     }
                 }.forEach { (database, goalToSolutions) ->
                     assertConcurrentSolverSolutionsCorrect(
                         solverWithDefaultBuiltins(staticKb = database),
                         goalToSolutions,
-                        mediumDuration
+                        mediumDuration,
                     )
                 }
         }
@@ -755,7 +784,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(),
             haltTestingGoalsToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -764,7 +793,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.notStandardExampleTheory),
             notStandardExampleTheoryNotableGoalToSolution(nafErrorSignature, notErrorSignature),
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -774,7 +803,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                 callErrorSignature,
                 nafErrorSignature,
-                notErrorSignature
+                notErrorSignature,
             )
                 .mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
@@ -806,14 +835,14 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
                                     expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
                                     else -> to(expectedSolutions.changeQueriesTo(this))
                                 }
-                            }
+                            },
                         )
                     }
                 }.forEach { (database, goalToSolutions) ->
                     assertConcurrentSolverSolutionsCorrect(
                         solverWithDefaultBuiltins(staticKb = database),
                         goalToSolutions,
-                        mediumDuration
+                        mediumDuration,
                     )
                 }
         }
@@ -824,7 +853,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.ifThenStandardExampleTheory),
             ifThenStandardExampleTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -833,7 +862,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(),
             ifThenElseStandardExampleNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -842,7 +871,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(staticKb = TestingClauseTheories.customRangeListGeneratorTheory),
             customRangeListGeneratorTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -860,16 +889,18 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testBasicBacktracking1() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy ("b"(X) and "c"(X)) },
-                    { "b"(1) },
-                    { "b"(2) impliedBy cut },
-                    { "b"(3) },
-                    { "c"(2) },
-                    { "c"(3) }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy ("b"(X) and "c"(X)) },
+                            { "b"(1) },
+                            { "b"(2) impliedBy cut },
+                            { "b"(3) },
+                            { "c"(2) },
+                            { "c"(3) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes(N to 2))
@@ -880,15 +911,17 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testBasicBacktracking2() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy ("c"(X) and "b"(X)) },
-                    { "b"(2) impliedBy cut },
-                    { "b"(3) },
-                    { "c"(3) },
-                    { "c"(2) }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy ("c"(X) and "b"(X)) },
+                            { "b"(2) impliedBy cut },
+                            { "b"(3) },
+                            { "c"(3) },
+                            { "c"(2) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(sequenceOf(query.yes(N to 3), query.yes(N to 2)))
@@ -899,15 +932,17 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testBasicBacktracking3() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy (("b"(X) and cut) and "c"(X)) },
-                    { "b"(2) },
-                    { "b"(3) },
-                    { "c"(2) },
-                    { "c"(3) }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy (("b"(X) and cut) and "c"(X)) },
+                            { "b"(2) },
+                            { "b"(3) },
+                            { "c"(2) },
+                            { "c"(3) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes(N to 2))
@@ -918,15 +953,17 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testBasicBacktracking4() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy ("b"(X) and (cut and "c"(X))) },
-                    { "b"(2) },
-                    { "b"(3) },
-                    { "c"(2) },
-                    { "c"(3) }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy ("b"(X) and (cut and "c"(X))) },
+                            { "b"(2) },
+                            { "b"(3) },
+                            { "c"(2) },
+                            { "c"(3) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes(N to 2))
@@ -937,13 +974,15 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testConjunction() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a" impliedBy ("b" and "c") },
-                    { "b" },
-                    { "c" }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a" impliedBy ("b" and "c") },
+                            { "b" },
+                            { "c" },
+                        ),
                 )
-            )
             val query = atomOf("a")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
@@ -954,15 +993,17 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testConjunctionOfConjunctions() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
-                    { "b" },
-                    { "c" },
-                    { "d" },
-                    { "e" }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
+                            { "b" },
+                            { "c" },
+                            { "d" },
+                            { "e" },
+                        ),
                 )
-            )
             val query = atomOf("a")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
@@ -973,13 +1014,15 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testConjunctionWithUnification() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy ("b"(X) and "c"(X)) },
-                    { "b"(1) },
-                    { "c"(1) }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy ("b"(X) and "c"(X)) },
+                            { "b"(1) },
+                            { "c"(1) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes(N to 1))
@@ -990,13 +1033,15 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testDisjunction() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a" impliedBy ("b" or "c") },
-                    { "b" },
-                    { "c" }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a" impliedBy ("b" or "c") },
+                            { "b" },
+                            { "c" },
+                        ),
                 )
-            )
             val query = atomOf("a")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(sequenceOf(query.yes(), query.yes()))
@@ -1007,13 +1052,15 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testDisjunctionWithUnification() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy ("b"(X) or "c"(X)) },
-                    { "b"(1) },
-                    { "c"(2) }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy ("b"(X) or "c"(X)) },
+                            { "b"(1) },
+                            { "c"(2) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(sequenceOf(query.yes(N to 1), query.yes(N to 2)))
@@ -1044,21 +1091,23 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             assertEquals(
                 ktListOf(
                     factOf(structOf("f", numOf(1))),
-                    ruleOf(structOf("f", numOf(2)), atomOf("false"))
+                    ruleOf(structOf("f", numOf(2)), atomOf("false")),
                 ),
-                solver.dynamicKb.toList()
+                solver.dynamicKb.toList(),
             )
         }
     }
 
     fun testRetract() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                dynamicKb = theoryOf(
-                    factOf(structOf("f", numOf(1))),
-                    ruleOf(structOf("f", numOf(2)), atomOf("false"))
+            val solver =
+                solverWithDefaultBuiltins(
+                    dynamicKb =
+                        theoryOf(
+                            factOf(structOf("f", numOf(1))),
+                            ruleOf(structOf("f", numOf(2)), atomOf("false")),
+                        ),
                 )
-            )
 
             val query = retract("f"(X)) // retract(f(X))
 
@@ -1069,7 +1118,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             assertEquals(
                 ktListOf(),
-                solver.dynamicKb.toList()
+                solver.dynamicKb.toList(),
             )
             assertEquals(0L, solver.dynamicKb.size)
         }
@@ -1125,33 +1174,35 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             query = functor(X, Y, 2)
 
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("functor", 3),
-                        variable = Y,
-                        index = 1
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            variable = Y,
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
             query = functor(X, "a", "2")
 
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("functor", 3),
-                        TypeError.Expected.INTEGER,
-                        atomOf("2"),
-                        2
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            TypeError.Expected.INTEGER,
+                            atomOf("2"),
+                            2,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -1178,33 +1229,35 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             query = X univ Y
 
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("=..", 2),
-                        variable = X,
-                        index = 0
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=..", 2),
+                            variable = X,
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
             query = "a"("b", "c") univ "a"
 
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("=..", 2),
-                        TypeError.Expected.LIST,
-                        atomOf("a"),
-                        1
-                    )
+            expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=..", 2),
+                            TypeError.Expected.LIST,
+                            atomOf("a"),
+                            1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -1212,12 +1265,14 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testRetractAll() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                dynamicKb = theoryOf(
-                    factOf(structOf("f", numOf(1))),
-                    ruleOf(structOf("f", numOf(2)), atomOf("false"))
+            val solver =
+                solverWithDefaultBuiltins(
+                    dynamicKb =
+                        theoryOf(
+                            factOf(structOf("f", numOf(1))),
+                            ruleOf(structOf("f", numOf(2)), atomOf("false")),
+                        ),
                 )
-            )
 
             var query = retractall("f"(X))
 
@@ -1228,7 +1283,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             assertEquals(
                 ktListOf(),
-                solver.dynamicKb.toList()
+                solver.dynamicKb.toList(),
             )
             assertEquals(0L, solver.dynamicKb.size)
 
@@ -1269,17 +1324,18 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             query = append(X, Y, listOf(1, 2, 3, 4, 5, 6))
 
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(
-                sequenceOf(
-                    query.yes(X to emptyList, Y to listOf(1, 2, 3, 4, 5, 6)),
-                    query.yes(X to listOf(1), Y to listOf(2, 3, 4, 5, 6)),
-                    query.yes(X to listOf(1, 2), Y to listOf(3, 4, 5, 6)),
-                    query.yes(X to listOf(1, 2, 3), Y to listOf(4, 5, 6)),
-                    query.yes(X to listOf(1, 2, 3, 4), Y to listOf(5, 6)),
-                    query.yes(X to listOf(1, 2, 3, 4, 5), Y to listOf(6)),
-                    query.yes(X to listOf(1, 2, 3, 4, 5, 6), Y to emptyList)
+            expected =
+                fromSequence(
+                    sequenceOf(
+                        query.yes(X to emptyList, Y to listOf(1, 2, 3, 4, 5, 6)),
+                        query.yes(X to listOf(1), Y to listOf(2, 3, 4, 5, 6)),
+                        query.yes(X to listOf(1, 2), Y to listOf(3, 4, 5, 6)),
+                        query.yes(X to listOf(1, 2, 3), Y to listOf(4, 5, 6)),
+                        query.yes(X to listOf(1, 2, 3, 4), Y to listOf(5, 6)),
+                        query.yes(X to listOf(1, 2, 3, 4, 5), Y to listOf(6)),
+                        query.yes(X to listOf(1, 2, 3, 4, 5, 6), Y to emptyList),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -1289,7 +1345,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(),
             TestingTermOperators.greaterThanTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -1297,7 +1353,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(),
             TestingTermOperators.greaterThanOrEqualTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -1305,7 +1361,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(),
             TestingTermOperators.equalTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -1313,7 +1369,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(),
             TestingTermOperators.notEqualTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -1321,7 +1377,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(),
             TestingTermOperators.lowerThanTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -1329,7 +1385,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         assertConcurrentSolverSolutionsCorrect(
             solverWithDefaultBuiltins(),
             TestingTermOperators.lowerThanOrEqualTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 }

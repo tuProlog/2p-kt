@@ -13,13 +13,21 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.reflect.KClass
 
 class Alias private constructor(val alias: Struct, val ref: Ref) : RuleWrapper<ExecutionContext>(FUNCTOR, 2) {
-
     companion object {
-        fun forObject(alias: String, `object`: Any?) = Alias(Atom.of(alias), ObjectRef.of(`object`))
+        fun forObject(
+            alias: String,
+            `object`: Any?,
+        ) = Alias(Atom.of(alias), ObjectRef.of(`object`))
 
-        fun forType(alias: String, type: KClass<*>) = Alias(Atom.of(alias), TypeRef.of(type))
+        fun forType(
+            alias: String,
+            type: KClass<*>,
+        ) = Alias(Atom.of(alias), TypeRef.of(type))
 
-        fun of(alias: Struct, ref: Ref) = Alias(alias, ref)
+        fun of(
+            alias: Struct,
+            ref: Ref,
+        ) = Alias(alias, ref)
 
         const val FUNCTOR = OOP.ALIAS_FUNCTOR
     }

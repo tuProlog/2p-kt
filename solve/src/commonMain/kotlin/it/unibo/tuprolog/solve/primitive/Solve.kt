@@ -21,7 +21,6 @@ import kotlin.js.JsName
 
 /** A base class for Solve requests and responses */
 sealed class Solve {
-
     /** Class representing a Request to be full-filled by the Solver */
     data class Request<out C : ExecutionContext>(
         /** Signature of the goal to be solved in this [Request] */
@@ -36,23 +35,25 @@ sealed class Solve {
         /** The time instant when the request was submitted for resolution */
         override val startTime: TimeInstant = currentTimeInstant(),
         /** The execution max duration after which the computation should end, because no more useful */
-        override val maxDuration: TimeDuration = context.endTime - startTime
+        override val maxDuration: TimeDuration = context.endTime - startTime,
     ) : Durable, Solve() {
         init {
             when {
-                signature.vararg -> require(arguments.count() >= signature.arity) {
-                    "Trying to create Solve.Request of signature `$signature` with not enough arguments ${arguments.toList()}"
-                }
-                else -> require(arguments.count() == signature.arity) {
-                    "Trying to create Solve.Request of signature `$signature` with wrong number of arguments ${arguments.toList()}"
-                }
+                signature.vararg ->
+                    require(arguments.count() >= signature.arity) {
+                        "Trying to create Solve.Request of signature `$signature` with not enough arguments ${arguments.toList()}"
+                    }
+                else ->
+                    require(arguments.count() == signature.arity) {
+                        "Trying to create Solve.Request of signature `$signature` with wrong number of arguments ${arguments.toList()}"
+                    }
             }
             require(startTime >= 0) { "The request issuing instant can't be negative: $startTime" }
             if (maxDuration < 0) {
                 throw TimeOutException(
                     message = "Request's max duration can't be negative: $maxDuration",
                     context = context,
-                    exceededDuration = context.maxDuration
+                    exceededDuration = context.maxDuration,
                 )
             }
         }
@@ -70,7 +71,7 @@ sealed class Solve {
         fun replyWith(
             substitution: Substitution,
             sideEffectManager: SideEffectManager? = null,
-            vararg sideEffects: SideEffect
+            vararg sideEffects: SideEffect,
         ) = when (substitution) {
             is Substitution.Unifier -> replySuccess(substitution, sideEffectManager, *sideEffects)
             else -> replyFail(sideEffectManager, *sideEffects)
@@ -81,7 +82,7 @@ sealed class Solve {
         fun replyWith(
             substitution: Substitution,
             sideEffectManager: SideEffectManager? = null,
-            buildSideEffects: SideEffectsBuilder.() -> Unit
+            buildSideEffects: SideEffectsBuilder.() -> Unit,
         ) = when (substitution) {
             is Substitution.Unifier -> replySuccess(substitution, sideEffectManager, buildSideEffects)
             else -> replyFail(sideEffectManager, buildSideEffects)
@@ -92,11 +93,11 @@ sealed class Solve {
         fun replyWith(
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
-            vararg sideEffects: SideEffect
+            vararg sideEffects: SideEffect,
         ) = solution.whenIs(
             yes = { replySuccess(it.substitution, sideEffectManager, *sideEffects) },
             no = { replyFail(sideEffectManager, *sideEffects) },
-            halt = { replyException(it.exception, sideEffectManager, *sideEffects) }
+            halt = { replyException(it.exception, sideEffectManager, *sideEffects) },
         )
 
         /** Creates a new [Response] to this Request */
@@ -104,11 +105,11 @@ sealed class Solve {
         fun replyWith(
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
-            buildSideEffects: SideEffectsBuilder.() -> Unit
+            buildSideEffects: SideEffectsBuilder.() -> Unit,
         ) = solution.whenIs(
             yes = { replySuccess(it.substitution, sideEffectManager, buildSideEffects) },
             no = { replyFail(sideEffectManager, buildSideEffects) },
-            halt = { replyException(it.exception, sideEffectManager, buildSideEffects) }
+            halt = { replyException(it.exception, sideEffectManager, buildSideEffects) },
         )
 
         /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
@@ -116,7 +117,7 @@ sealed class Solve {
         fun replyWith(
             condition: Boolean,
             sideEffectManager: SideEffectManager? = null,
-            vararg sideEffects: SideEffect
+            vararg sideEffects: SideEffect,
         ) = if (condition) {
             replySuccess(Substitution.empty(), sideEffectManager, *sideEffects)
         } else {
@@ -128,7 +129,7 @@ sealed class Solve {
         fun replyWith(
             condition: Boolean,
             sideEffectManager: SideEffectManager? = null,
-            buildSideEffects: SideEffectsBuilder.() -> Unit
+            buildSideEffects: SideEffectsBuilder.() -> Unit,
         ) = if (condition) {
             replySuccess(Substitution.empty(), sideEffectManager, buildSideEffects)
         } else {
@@ -140,11 +141,11 @@ sealed class Solve {
         fun replySuccess(
             substitution: Substitution.Unifier = Substitution.empty(),
             sideEffectManager: SideEffectManager? = null,
-            vararg sideEffects: SideEffect
+            vararg sideEffects: SideEffect,
         ) = Response(
             Solution.yes(query, substitution),
             sideEffectManager,
-            *sideEffects
+            *sideEffects,
         )
 
         /** Creates a new successful [Response] to this Request, with substitution */
@@ -152,33 +153,33 @@ sealed class Solve {
         fun replySuccess(
             substitution: Substitution.Unifier = Substitution.empty(),
             sideEffectManager: SideEffectManager? = null,
-            buildSideEffects: SideEffectsBuilder.() -> Unit
+            buildSideEffects: SideEffectsBuilder.() -> Unit,
         ) = Response(
             Solution.yes(query, substitution),
             sideEffectManager,
-            SideEffectsBuilder.empty().also { it.buildSideEffects() }.build()
+            SideEffectsBuilder.empty().also { it.buildSideEffects() }.build(),
         )
 
         /** Creates a new failed [Response] to this Request */
         @JsName("replyFail")
         fun replyFail(
             sideEffectManager: SideEffectManager? = null,
-            vararg sideEffects: SideEffect
+            vararg sideEffects: SideEffect,
         ) = Response(
             Solution.no(query),
             sideEffectManager,
-            *sideEffects
+            *sideEffects,
         )
 
         /** Creates a new failed [Response] to this Request */
         @JsName("replyFailBuildingSideEffects")
         fun replyFail(
             sideEffectManager: SideEffectManager? = null,
-            buildSideEffects: SideEffectsBuilder.() -> Unit
+            buildSideEffects: SideEffectsBuilder.() -> Unit,
         ) = Response(
             Solution.no(query),
             sideEffectManager,
-            SideEffectsBuilder.empty().also { it.buildSideEffects() }.build()
+            SideEffectsBuilder.empty().also { it.buildSideEffects() }.build(),
         )
 
         /** Creates a new halt [Response] to this Request, with cause exception */
@@ -186,11 +187,11 @@ sealed class Solve {
         fun replyException(
             exception: ResolutionException,
             sideEffectManager: SideEffectManager? = null,
-            vararg sideEffects: SideEffect
+            vararg sideEffects: SideEffect,
         ) = Response(
             Solution.halt(query, exception),
             sideEffectManager,
-            *sideEffects
+            *sideEffects,
         )
 
         /** Creates a new halt [Response] to this Request, with cause exception */
@@ -198,11 +199,11 @@ sealed class Solve {
         fun replyException(
             exception: ResolutionException,
             sideEffectManager: SideEffectManager? = null,
-            buildSideEffects: SideEffectsBuilder.() -> Unit
+            buildSideEffects: SideEffectsBuilder.() -> Unit,
         ) = Response(
             Solution.halt(query, exception),
             sideEffectManager,
-            SideEffectsBuilder.empty().also { it.buildSideEffects() }.build()
+            SideEffectsBuilder.empty().also { it.buildSideEffects() }.build(),
         )
 
         @JsName("subSolver")
@@ -211,7 +212,10 @@ sealed class Solve {
         }
 
         @JsName("solve")
-        fun solve(goal: Struct, maxDuration: TimeDuration = this.maxDuration): Sequence<Solution> {
+        fun solve(
+            goal: Struct,
+            maxDuration: TimeDuration = this.maxDuration,
+        ): Sequence<Solution> {
             return subSolver().solve(goal, maxDuration)
         }
     }
@@ -227,24 +231,24 @@ sealed class Solve {
         /** The (possibly empty) [List] of [SideEffect]s to be applied to the execution context after a primitive has been
          * executed */
         @JsName("sideEffects")
-        val sideEffects: List<SideEffect>
+        val sideEffects: List<SideEffect>,
     ) : Solve() {
         constructor(
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
-            sideEffects: Iterable<SideEffect>
+            sideEffects: Iterable<SideEffect>,
         ) : this(solution, sideEffectManager, sideEffects as? List<SideEffect> ?: sideEffects.toList())
 
         constructor(
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
-            sideEffects: Sequence<SideEffect>
+            sideEffects: Sequence<SideEffect>,
         ) : this(solution, sideEffectManager, sideEffects.asIterable())
 
         constructor(
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
-            vararg sideEffects: SideEffect
+            vararg sideEffects: SideEffect,
         ) : this(solution, sideEffectManager, listOf(*sideEffects))
     }
 }

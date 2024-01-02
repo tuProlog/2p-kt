@@ -23,7 +23,6 @@ import kotlin.jvm.JvmStatic
  * @author Jason Dellaluce
  * */
 interface MutableProblogTheory : ProblogTheory, MutableTheory {
-
     override val isMutable: Boolean get() = true
 
     override fun toMutableTheory(): MutableProblogTheory = this
@@ -58,13 +57,11 @@ interface MutableProblogTheory : ProblogTheory, MutableTheory {
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<MutableProblogTheory>
 
-    override fun retract(head: Struct): RetractResult<MutableProblogTheory> =
-        retract(Rule.of(head, Var.anonymous()))
+    override fun retract(head: Struct): RetractResult<MutableProblogTheory> = retract(Rule.of(head, Var.anonymous()))
 
     override fun retractAll(clause: Clause): RetractResult<MutableProblogTheory>
 
-    override fun retractAll(head: Struct): RetractResult<MutableProblogTheory> =
-        retractAll(Rule.of(head, Var.anonymous()))
+    override fun retractAll(head: Struct): RetractResult<MutableProblogTheory> = retractAll(Rule.of(head, Var.anonymous()))
 
     override fun abolish(indicator: Indicator): MutableProblogTheory
 
@@ -72,32 +69,39 @@ interface MutableProblogTheory : ProblogTheory, MutableTheory {
         /** Creates an empty [MutableProblogTheory] */
         @JvmStatic
         @JsName("empty")
-        fun empty(unificator: Unificator): MutableTheory =
-            of(unificator, emptyList())
+        fun empty(unificator: Unificator): MutableTheory = of(unificator, emptyList())
 
         /** Creates a [MutableProblogTheory], containing the given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(unificator: Unificator, vararg clauses: Clause): MutableTheory =
-            of(unificator, clauses.asIterable())
+        fun of(
+            unificator: Unificator,
+            vararg clauses: Clause,
+        ): MutableTheory = of(unificator, clauses.asIterable())
 
         /** Creates a [MutableProblogTheory], containing the given clauses */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(unificator: Unificator, clauses: Sequence<Clause>): MutableTheory =
-            of(unificator, clauses.asIterable())
+        fun of(
+            unificator: Unificator,
+            clauses: Sequence<Clause>,
+        ): MutableTheory = of(unificator, clauses.asIterable())
 
         /** Let developers easily create a [[MutableProblogTheory], while avoiding variables names clashing by using a
          * different [Scope] for each [Clause] */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(unificator: Unificator, vararg clauses: Scope.() -> Clause): MutableTheory =
-            of(unificator, clauses.map { Scope.empty().it() })
+        fun of(
+            unificator: Unificator,
+            vararg clauses: Scope.() -> Clause,
+        ): MutableTheory = of(unificator, clauses.map { Scope.empty().it() })
 
         /** Creates a [MutableProblogTheory] containing the given clauses */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(unificator: Unificator, clauses: Iterable<Clause>): MutableProblogTheory =
-            MappedMutableProblogTheory(clauses, unificator)
+        fun of(
+            unificator: Unificator,
+            clauses: Iterable<Clause>,
+        ): MutableProblogTheory = MappedMutableProblogTheory(clauses, unificator)
     }
 }

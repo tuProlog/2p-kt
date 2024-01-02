@@ -5,14 +5,13 @@ import it.unibo.tuprolog.theory.PrototypeTheoryCreationTest
 import kotlin.test.Test
 
 internal class MutableListedTheoryCreationTest {
-
     private val prototype: PrototypeTheoryCreationTest =
         PrototypeTheoryCreationTest(
             Factories::emptyMutableIndexedTheory,
             Factories::mutableIndexedTheoryOf,
             Factories::mutableIndexedTheoryOf,
             Factories::mutableIndexedTheoryOf,
-            Factories::mutableIndexedTheoryOf
+            Factories::mutableIndexedTheoryOf,
         )
 
     @Test

@@ -9,7 +9,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal object AtomUtils {
-
     /** For non special atoms are intended all valid atoms excluding: `true, fail, [], {}` */
     internal val nonSpecialAtoms by lazy {
         // these could be randomly generated from some library in future, maybe starting from Atom regex
@@ -24,7 +23,7 @@ internal object AtomUtils {
             "+",
             ",",
             "is",
-            "!"
+            "!",
         )
     }
 
@@ -35,7 +34,7 @@ internal object AtomUtils {
             "{}",
             "true",
             "fail",
-            "false"
+            "false",
         )
     }
 

@@ -15,16 +15,17 @@ internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testUndefPred() { // streams solver: `No(query=undef_pred)` instead of undef_pred/0
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                flags = FlagStore.of(Unknown to Unknown.ERROR)
-            )
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    flags = FlagStore.of(Unknown to Unknown.ERROR),
+                )
 
             val query = atomOf("undef_pred")
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -34,11 +35,11 @@ internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail
                     query.halt(
                         ExistenceError.forProcedure(
                             DummyInstances.executionContext,
-                            Signature("undef_pred", 0)
-                        )
-                    )
+                            Signature("undef_pred", 0),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -52,7 +53,7 @@ internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -66,7 +67,7 @@ internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }

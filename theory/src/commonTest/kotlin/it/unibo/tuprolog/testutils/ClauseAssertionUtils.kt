@@ -8,12 +8,17 @@ import it.unibo.tuprolog.core.Var
 import kotlin.test.assertEquals
 
 internal object ClauseAssertionUtils {
-
-    fun assertClausesHaveSameLengthAndContent(a: Sequence<Clause>, b: Sequence<Clause>) {
+    fun assertClausesHaveSameLengthAndContent(
+        a: Sequence<Clause>,
+        b: Sequence<Clause>,
+    ) {
         return assertClausesHaveSameLengthAndContent(a.asIterable(), b.asIterable())
     }
 
-    fun assertClausesHaveSameLengthAndContent(a: Iterable<Clause>, b: Iterable<Clause>) {
+    fun assertClausesHaveSameLengthAndContent(
+        a: Iterable<Clause>,
+        b: Iterable<Clause>,
+    ) {
         val i = a.iterator()
         val j = b.iterator()
 
@@ -24,19 +29,22 @@ internal object ClauseAssertionUtils {
         assertEquals(i.hasNext(), j.hasNext())
     }
 
-    fun assertTermsAreEqual(expected: Term, actual: Term) {
+    fun assertTermsAreEqual(
+        expected: Term,
+        actual: Term,
+    ) {
         assertEquals(expected.isGround, actual.isGround)
         if (expected.isGround) {
             assertEquals(
                 expected,
                 actual,
                 message =
-                """Comparing:
+                    """Comparing:
                     |   actual: $actual
                     |     type: ${actual::class}
                     | expected: $expected
                     |     type: ${expected::class}
-                """.trimMargin()
+                    """.trimMargin(),
             )
         } else {
             when {
@@ -56,7 +64,7 @@ internal object ClauseAssertionUtils {
             }
             assertEquals(
                 expected.variables.toSet().size,
-                actual.variables.toSet().size
+                actual.variables.toSet().size,
             )
         }
     }

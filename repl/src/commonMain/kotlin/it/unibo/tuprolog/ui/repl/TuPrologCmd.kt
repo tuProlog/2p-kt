@@ -27,9 +27,8 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
     invokeWithoutSubcommand = true,
     allowMultipleSubcommands = true,
     name = "java -jar 2p-repl.jar",
-    help = "Start a Prolog Read-Eval-Print loop"
+    help = "Start a Prolog Read-Eval-Print loop",
 ) {
-
     companion object {
         const val DEFAULT_TIMEOUT: Int = 1000 // 1 s
     }
@@ -42,12 +41,12 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
     private val timeout by option(
         "-t",
         "--timeout",
-        help = "Maximum amount of time for computing a solution (default: $DEFAULT_TIMEOUT ms)"
+        help = "Maximum amount of time for computing a solution (default: $DEFAULT_TIMEOUT ms)",
     ).int().default(DEFAULT_TIMEOUT)
 
     private val oop by option(
         "--oop",
-        help = "Loads the OOP library"
+        help = "Loads the OOP library",
     ).flag(default = false)
 
     override fun run() {
@@ -77,7 +76,7 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
                         |#     Column : ${e.column}
                         |#     Clause : ${e.clauseIndex}
                         """.trimMargin(),
-                        err = true
+                        err = true,
                     )
                 }
             }
@@ -113,18 +112,20 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
     fun getSolver(): Solver {
         echo("# 2P-Kt version ${Info.VERSION}")
         val theory: Theory = this.loadTheory()
-        val outputChannel = OutputChannel.of<Warning> { w ->
-            echo("# ${w.message}", err = true)
-            val sep = "\n    at "
-            val formatter = TermFormatter.Companion.prettyExpressions(w.context.operators)
-            val stacktrace = w.logicStackTrace.joinToString(sep) { it.format(formatter) }
-            echo("#    at $stacktrace", err = true)
-        }
-        val libraries = if (oop) {
-            Runtime.of(IOLib, OOPLib, *additionalLibraries)
-        } else {
-            Runtime.of(IOLib, *additionalLibraries)
-        }
+        val outputChannel =
+            OutputChannel.of<Warning> { w ->
+                echo("# ${w.message}", err = true)
+                val sep = "\n    at "
+                val formatter = TermFormatter.Companion.prettyExpressions(w.context.operators)
+                val stacktrace = w.logicStackTrace.joinToString(sep) { it.format(formatter) }
+                echo("#    at $stacktrace", err = true)
+            }
+        val libraries =
+            if (oop) {
+                Runtime.of(IOLib, OOPLib, *additionalLibraries)
+            } else {
+                Runtime.of(IOLib, *additionalLibraries)
+            }
         return Solver.prolog.newBuilder()
             .runtime(libraries)
             .staticKb(theory)

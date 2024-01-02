@@ -9,14 +9,14 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 
+@Suppress("LocalVariableName", "ktlint:standard:property-naming")
 class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTrace {
-
     private fun threeLayersTheory(errorExpression: LogicProgrammingScope.() -> Struct): Theory =
         logicProgramming {
             theoryOf(
                 rule { "foo"(X) impliedBy "bar"(X) },
                 rule { "bar"(X) impliedBy "baz"(X) },
-                rule { "baz"(X) impliedBy errorExpression() }
+                rule { "baz"(X) impliedBy errorExpression() },
             )
         }
 
@@ -33,15 +33,15 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
                         DummyInstances.executionContext,
                         Signature("+", 2),
                         Y,
-                        index = 0
-                    )
+                        index = 0,
+                    ),
                 ),
-                solution
+                solution,
             )
 
             assertEquals(
                 ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
-                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }
+                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
     }
@@ -59,15 +59,15 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
                         DummyInstances.executionContext,
                         Signature("+", 2),
                         Y,
-                        index = 0
-                    )
+                        index = 0,
+                    ),
                 ),
-                solution
+                solution,
             )
 
             assertEquals(
                 ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
-                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }
+                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
     }
@@ -85,15 +85,15 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
                         DummyInstances.executionContext,
                         Signature("+", 2),
                         Y,
-                        index = 0
-                    )
+                        index = 0,
+                    ),
                 ),
-                solution
+                solution,
             )
 
             assertEquals(
                 ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
-                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }
+                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
     }
@@ -109,16 +109,16 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
                     SystemError.forUncaughtError(
                         MessageError(
                             context = DummyInstances.executionContext,
-                            extraData = atomOf("x")
-                        )
-                    )
+                            extraData = atomOf("x"),
+                        ),
+                    ),
                 ),
-                solution
+                solution,
             )
 
             assertEquals(
                 ktListOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
-                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }
+                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
     }

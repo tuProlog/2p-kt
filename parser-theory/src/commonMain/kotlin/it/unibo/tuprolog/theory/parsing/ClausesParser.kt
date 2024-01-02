@@ -13,33 +13,44 @@ interface ClausesParser {
     val defaultOperatorSet: OperatorSet
 
     @JsName("parseTheoryWithOperators")
-    fun parseTheory(input: String, operators: OperatorSet, unificator: Unificator): Theory =
-        Theory.indexedOf(unificator, parseClausesLazily(input, operators))
+    fun parseTheory(
+        input: String,
+        operators: OperatorSet,
+        unificator: Unificator,
+    ): Theory = Theory.indexedOf(unificator, parseClausesLazily(input, operators))
 
     @JsName("parseTheoryWithOperatorsAndDefaultUnificator")
-    fun parseTheory(input: String, operators: OperatorSet): Theory = parseTheory(input, operators, Unificator.default)
+    fun parseTheory(
+        input: String,
+        operators: OperatorSet,
+    ): Theory = parseTheory(input, operators, Unificator.default)
 
     @JsName("parseTheory")
-    fun parseTheory(input: String, unificator: Unificator): Theory =
-        parseTheory(input, defaultOperatorSet, unificator)
+    fun parseTheory(
+        input: String,
+        unificator: Unificator,
+    ): Theory = parseTheory(input, defaultOperatorSet, unificator)
 
     @JsName("parseTheoryWithDefaultUnificator")
     fun parseTheory(input: String): Theory = parseTheory(input, Unificator.default)
 
     @JsName("parseClausesLazilyWithOperators")
-    fun parseClausesLazily(input: String, operators: OperatorSet): Sequence<Clause>
+    fun parseClausesLazily(
+        input: String,
+        operators: OperatorSet,
+    ): Sequence<Clause>
 
     @JsName("parseClausesLazily")
-    fun parseClausesLazily(input: String): Sequence<Clause> =
-        parseClausesLazily(input, defaultOperatorSet)
+    fun parseClausesLazily(input: String): Sequence<Clause> = parseClausesLazily(input, defaultOperatorSet)
 
     @JsName("parseClausesWithOperators")
-    fun parseClauses(input: String, operators: OperatorSet): List<Clause> =
-        parseClausesLazily(input, operators).toList()
+    fun parseClauses(
+        input: String,
+        operators: OperatorSet,
+    ): List<Clause> = parseClausesLazily(input, operators).toList()
 
     @JsName("parseClauses")
-    fun parseClauses(input: String): List<Clause> =
-        parseClauses(input, defaultOperatorSet)
+    fun parseClauses(input: String): List<Clause> = parseClauses(input, defaultOperatorSet)
 
     companion object {
         @JvmStatic

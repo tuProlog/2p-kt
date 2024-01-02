@@ -4,7 +4,10 @@ import java.io.StringWriter
 import java.io.Writer
 
 interface WritingSerializer<T> : Serializer<T> {
-    fun serialize(writer: Writer, value: T)
+    fun serialize(
+        writer: Writer,
+        value: T,
+    )
 
     override fun serialize(value: T): String =
         StringWriter().use {
@@ -12,10 +15,15 @@ interface WritingSerializer<T> : Serializer<T> {
             it.toString()
         }
 
-    fun serializeMany(writer: Writer, vararg values: T) =
-        serializeMany(writer, listOf(*values))
+    fun serializeMany(
+        writer: Writer,
+        vararg values: T,
+    ) = serializeMany(writer, listOf(*values))
 
-    fun serializeMany(writer: Writer, values: Iterable<T>)
+    fun serializeMany(
+        writer: Writer,
+        values: Iterable<T>,
+    )
 
     override fun serializeMany(values: Iterable<T>): String =
         StringWriter().use {
@@ -23,6 +31,8 @@ interface WritingSerializer<T> : Serializer<T> {
             it.toString()
         }
 
-    fun serializeMany(writer: Writer, values: Sequence<T>) =
-        serializeMany(writer, values.asIterable())
+    fun serializeMany(
+        writer: Writer,
+        values: Sequence<T>,
+    ) = serializeMany(writer, values.asIterable())
 }

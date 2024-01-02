@@ -10,7 +10,6 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface LogicProgrammingScopeWithTheories : LogicProgrammingScopeWithUnification {
-
     @JsName("emptyTheory")
     fun emptyTheory(): Theory {
         return Theory.emptyIndexed(unificator)
@@ -22,21 +21,28 @@ interface LogicProgrammingScopeWithTheories : LogicProgrammingScopeWithUnificati
     }
 
     @JsName("theoryOfIterable")
-    fun theoryOf(clauses: Iterable<Clause>, vararg otherClauses: Iterable<Clause>): Theory {
+    fun theoryOf(
+        clauses: Iterable<Clause>,
+        vararg otherClauses: Iterable<Clause>,
+    ): Theory {
         return Theory.indexedOf(unificator, sequenceOf(clauses, *otherClauses).flatMap { it.asSequence() })
     }
 
     @JsName("theoryOfSequence")
-    fun theoryOf(clauses: Sequence<Clause>, vararg otherClauses: Sequence<Clause>): Theory {
+    fun theoryOf(
+        clauses: Sequence<Clause>,
+        vararg otherClauses: Sequence<Clause>,
+    ): Theory {
         return Theory.indexedOf(unificator, sequenceOf(clauses, *otherClauses).flatten())
     }
 
     @JsName("theory")
-    fun theory(vararg clauseFunctions: LogicProgrammingScope.() -> Any): Theory = theoryOf(
-        *clauseFunctions.map { function ->
-            LogicProgrammingScope.empty().function().let { clause { it } }
-        }.toTypedArray()
-    )
+    fun theory(vararg clauseFunctions: LogicProgrammingScope.() -> Any): Theory =
+        theoryOf(
+            *clauseFunctions.map { function ->
+                LogicProgrammingScope.empty().function().let { clause { it } }
+            }.toTypedArray(),
+        )
 
     @JsName("emptyMutableTheory")
     fun emptyMutableTheory(): MutableTheory {
@@ -49,27 +55,34 @@ interface LogicProgrammingScopeWithTheories : LogicProgrammingScopeWithUnificati
     }
 
     @JsName("mutableTheoryOfIterable")
-    fun mutableTheoryOf(clauses: Iterable<Clause>, vararg otherClauses: Iterable<Clause>): MutableTheory {
+    fun mutableTheoryOf(
+        clauses: Iterable<Clause>,
+        vararg otherClauses: Iterable<Clause>,
+    ): MutableTheory {
         return MutableTheory.indexedOf(unificator, sequenceOf(clauses, *otherClauses).flatMap { it.asSequence() })
     }
 
     @JsName("mutableTheoryOfSequence")
-    fun mutableTheoryOf(clauses: Sequence<Clause>, vararg otherClauses: Sequence<Clause>): MutableTheory {
+    fun mutableTheoryOf(
+        clauses: Sequence<Clause>,
+        vararg otherClauses: Sequence<Clause>,
+    ): MutableTheory {
         return MutableTheory.indexedOf(unificator, sequenceOf(clauses, *otherClauses).flatten())
     }
 
     @JsName("mutableTheory")
-    fun mutableTheory(vararg clauseFunctions: LogicProgrammingScope.() -> Any): MutableTheory = mutableTheoryOf(
-        *clauseFunctions.map { function ->
-            LogicProgrammingScope.empty().function().let { clause { it } }
-        }.toTypedArray()
-    )
+    fun mutableTheory(vararg clauseFunctions: LogicProgrammingScope.() -> Any): MutableTheory =
+        mutableTheoryOf(
+            *clauseFunctions.map { function ->
+                LogicProgrammingScope.empty().function().let { clause { it } }
+            }.toTypedArray(),
+        )
 
     companion object {
         @JsName("of")
         fun of(
             unificator: Unificator = Unificator.default,
-            scope: Scope = Scope.empty()
+            scope: Scope = Scope.empty(),
         ): LogicProgrammingScopeWithTheories = LogicProgrammingScopeWithTheoriesImpl(unificator, scope)
     }
 }

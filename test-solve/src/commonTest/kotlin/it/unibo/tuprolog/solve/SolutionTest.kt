@@ -19,7 +19,6 @@ import kotlin.test.assertNull
  * @author Enrico
  */
 internal class SolutionTest {
-
     @Test
     fun yesSolutionContainsInsertedData() {
         val toBeTested = Solution.yes(aQuery, aSubstitution)

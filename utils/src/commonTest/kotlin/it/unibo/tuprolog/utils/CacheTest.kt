@@ -3,9 +3,7 @@ package it.unibo.tuprolog.utils
 import kotlin.test.assertEquals
 
 interface CacheTest {
-
     companion object {
-
         fun prototype(cacheConstructor: (Int) -> Cache<String, Int>): CacheTest =
             object : CacheTest {
                 override fun cacheFactory(capacity: Int): Cache<String, Int> {
@@ -13,9 +11,10 @@ interface CacheTest {
                 }
             }
 
-        private val ITEMS: List<Pair<String, Int>> = (0 until 26).asSequence()
-            .map { charArrayOf('a' + it).concatToString() to it }
-            .toList()
+        private val ITEMS: List<Pair<String, Int>> =
+            (0 until 26).asSequence()
+                .map { charArrayOf('a' + it).concatToString() to it }
+                .toList()
 
         private const val DEFAULT_CAPACITY = 5
     }

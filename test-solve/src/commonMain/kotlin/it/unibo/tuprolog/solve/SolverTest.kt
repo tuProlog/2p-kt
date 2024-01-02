@@ -17,9 +17,10 @@ interface SolverTest {
         get() = 4 * mediumDuration
 
     companion object {
-        private val OS_SPECIFIC_TIME_MULTIPLIER: Int = when (Info.OS) {
-            Os.WINDOWS -> 2
-            else -> 1
-        }
+        private val OS_SPECIFIC_TIME_MULTIPLIER: Int =
+            when (Info.OS) {
+                Os.WINDOWS -> 2
+                else -> 1
+            }
     }
 }

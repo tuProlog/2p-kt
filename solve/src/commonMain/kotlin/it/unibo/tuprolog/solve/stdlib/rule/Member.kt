@@ -9,23 +9,24 @@ import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
 sealed class Member : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
-
     abstract override val Scope.head: KtList<Term>
 
     object Base : Member() {
         override val Scope.head: KtList<Term>
-            get() = ktListOf(
-                varOf("H"),
-                consOf(varOf("H"), whatever())
-            )
+            get() =
+                ktListOf(
+                    varOf("H"),
+                    consOf(varOf("H"), whatever()),
+                )
     }
 
     object Recursive : Member() {
         override val Scope.head: KtList<Term>
-            get() = ktListOf(
-                varOf("H"),
-                consOf(whatever(), varOf("T"))
-            )
+            get() =
+                ktListOf(
+                    varOf("H"),
+                    consOf(whatever(), varOf("T")),
+                )
 
         override val Scope.body: Term
             get() = structOf("member", varOf("H"), varOf("T"))

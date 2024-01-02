@@ -4,7 +4,6 @@ import it.unibo.tuprolog.solve.Solution
 import kotlin.js.JsName
 
 interface EndState : State {
-
     @JsName("solution")
     val solution: Solution
 

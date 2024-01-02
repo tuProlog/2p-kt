@@ -3,7 +3,6 @@ package it.unibo.tuprolog.parser
 import kotlin.test.Test
 
 class TestAntlrImport {
-
     @Test
     fun antlr4() {
         js("require('antlr4')")

@@ -51,7 +51,7 @@ data class ClassicExecutionContext(
     val parent: ClassicExecutionContext? = null,
     val depth: Int = 0,
     val step: Long = 0,
-    val relevantVariables: KtSet<Var> = emptySet()
+    val relevantVariables: KtSet<Var> = emptySet(),
 ) : ExecutionContext {
     init {
         require((depth == 0 && parent == null) || (depth > 0 && parent != null))
@@ -69,13 +69,14 @@ data class ClassicExecutionContext(
     val isActivationRecord: Boolean
         get() = parent == null || depth - parent.depth >= 1
 
-    val pathToRoot: Sequence<ClassicExecutionContext> = sequence {
-        var current: ClassicExecutionContext? = this@ClassicExecutionContext
-        while (current != null) {
-            yield(current)
-            current = current.parent
+    val pathToRoot: Sequence<ClassicExecutionContext> =
+        sequence {
+            var current: ClassicExecutionContext? = this@ClassicExecutionContext
+            while (current != null) {
+                yield(current)
+                current = current.parent
+            }
         }
-    }
 
     val currentGoal: Term? by lazy {
         if (goals.isOver) null else goals.current?.apply(substitution)
@@ -90,8 +91,7 @@ data class ClassicExecutionContext(
             .cached()
     }
 
-    fun isVariableInteresting(variable: Var) =
-        variable in interestingVariables
+    fun isVariableInteresting(variable: Var) = variable in interestingVariables
 
     override val logicStackTrace: KtList<Struct> by lazy {
         pathToRoot.filter { it.isActivationRecord }
@@ -106,7 +106,7 @@ data class ClassicExecutionContext(
         staticKb: Theory,
         dynamicKb: Theory,
         inputChannels: InputStore,
-        outputChannels: OutputStore
+        outputChannels: OutputStore,
     ): Solver = ClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb = true)
 
     override fun createMutableSolver(
@@ -116,7 +116,7 @@ data class ClassicExecutionContext(
         staticKb: Theory,
         dynamicKb: Theory,
         inputChannels: InputStore,
-        outputChannels: OutputStore
+        outputChannels: OutputStore,
     ): MutableSolver =
         MutableClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb = true)
 
@@ -129,7 +129,7 @@ data class ClassicExecutionContext(
         operators: OperatorSet,
         inputChannels: InputStore,
         outputChannels: OutputStore,
-        customData: CustomDataStore
+        customData: CustomDataStore,
     ): ClassicExecutionContext {
         return copy(
             unificator = unificator,
@@ -140,7 +140,7 @@ data class ClassicExecutionContext(
             operators = operators,
             inputChannels = inputChannels,
             outputChannels = outputChannels,
-            customData = customData
+            customData = customData,
         )
     }
 

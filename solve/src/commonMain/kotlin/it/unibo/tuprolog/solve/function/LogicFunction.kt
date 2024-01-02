@@ -17,8 +17,7 @@ fun interface LogicFunction {
     companion object {
         @JsName("of")
         @JvmStatic
-        fun of(function: (Compute.Request<ExecutionContext>) -> Compute.Response): LogicFunction =
-            LogicFunction(function)
+        fun of(function: (Compute.Request<ExecutionContext>) -> Compute.Response): LogicFunction = LogicFunction(function)
 
         /**
          * Creates a new [LogicFunction], behaving exactly as given [uncheckedFunction], but accepting only provided [supportedSignature]
@@ -28,21 +27,22 @@ fun interface LogicFunction {
         @JvmStatic
         fun <C : ExecutionContext> enforcingSignature(
             supportedSignature: Signature,
-            uncheckedFunction: (Compute.Request<C>) -> Compute.Response
-        ): LogicFunction = LogicFunction {
-            // TODO see TODO in "Signature"; here should be called that method to check if primitive could execute
-            @Suppress("UNCHECKED_CAST")
-            when (it.signature) {
-                supportedSignature -> uncheckedFunction(it as Compute.Request<C>)
-                else -> throw IllegalArgumentException("This function supports only this signature `$supportedSignature`")
+            uncheckedFunction: (Compute.Request<C>) -> Compute.Response,
+        ): LogicFunction =
+            LogicFunction {
+                // TODO see TODO in "Signature"; here should be called that method to check if primitive could execute
+                @Suppress("UNCHECKED_CAST")
+                when (it.signature) {
+                    supportedSignature -> uncheckedFunction(it as Compute.Request<C>)
+                    else -> throw IllegalArgumentException("This function supports only this signature `$supportedSignature`")
+                }
             }
-        }
 
         @JsName("enforcingSignatureForLogicFunction")
         @JvmStatic
         fun enforcingSignature(
             supportedSignature: Signature,
-            uncheckedFunction: LogicFunction
+            uncheckedFunction: LogicFunction,
         ): LogicFunction = enforcingSignature<ExecutionContext>(supportedSignature, uncheckedFunction::compute)
     }
 }

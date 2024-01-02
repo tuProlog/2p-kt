@@ -9,7 +9,7 @@ data class CustomDataStore private constructor(
     @JsName("durable")
     val durable: CustomData = emptyMap(),
     @JsName("ephemeral")
-    val ephemeral: CustomData = emptyMap()
+    val ephemeral: CustomData = emptyMap(),
 ) {
     companion object {
         @JsName("empty")
@@ -18,10 +18,8 @@ data class CustomDataStore private constructor(
     }
 
     @JsName("discardEphemeral")
-    fun discardEphemeral(): CustomDataStore =
-        copy(ephemeral = emptyMap())
+    fun discardEphemeral(): CustomDataStore = copy(ephemeral = emptyMap())
 
     @JsName("preservePersistent")
-    fun preservePersistent(): CustomDataStore =
-        copy(durable = emptyMap(), ephemeral = emptyMap())
+    fun preservePersistent(): CustomDataStore = copy(durable = emptyMap(), ephemeral = emptyMap())
 }

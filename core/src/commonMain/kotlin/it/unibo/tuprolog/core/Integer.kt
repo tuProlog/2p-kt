@@ -8,7 +8,6 @@ import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 interface Integer : Numeric {
-
     override val isInteger: Boolean
         get() = true
 
@@ -27,7 +26,6 @@ interface Integer : Numeric {
     override fun asInteger(): Integer = this
 
     companion object {
-
         @JvmField
         val PATTERN = Terms.INTEGER_PATTERN
 
@@ -57,7 +55,10 @@ interface Integer : Numeric {
 
         @JvmStatic
         @JsName("parseRadix")
-        fun of(integer: String, radix: Int): Integer = of(BigInteger.of(integer, radix))
+        fun of(
+            integer: String,
+            radix: Int,
+        ): Integer = of(BigInteger.of(integer, radix))
 
         @JvmField
         val ZERO = Integer.of(BigInteger.ZERO)

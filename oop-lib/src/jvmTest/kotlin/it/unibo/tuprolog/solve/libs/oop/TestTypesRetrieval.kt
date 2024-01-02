@@ -6,18 +6,27 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class TestTypesRetrieval {
-
-    private fun assertFactoryRetrievesTypeCorrectly(factory: TypeFactory, type: KClass<*>) {
+    private fun assertFactoryRetrievesTypeCorrectly(
+        factory: TypeFactory,
+        type: KClass<*>,
+    ) {
         assertEquals(type, factory.typeFromName(type.fullName))
         assertEquals(TypeRef.of(type), factory.typeRefFromName(type.fullName))
     }
 
-    private fun assertFactoryRetrievesKotlinTypeFromJavaName(factory: TypeFactory, kType: KClass<*>, jType: Class<*>) {
+    private fun assertFactoryRetrievesKotlinTypeFromJavaName(
+        factory: TypeFactory,
+        kType: KClass<*>,
+        jType: Class<*>,
+    ) {
         assertEquals(kType, factory.typeFromName(jType.name))
         assertEquals(TypeRef.of(kType), factory.typeRefFromName(jType.name))
     }
 
-    private fun assertFactoryRetrievesNoType(factory: TypeFactory, typeName: String) {
+    private fun assertFactoryRetrievesNoType(
+        factory: TypeFactory,
+        typeName: String,
+    ) {
         assertNull(factory.typeFromName(typeName))
         assertNull(factory.typeRefFromName(typeName))
     }

@@ -15,7 +15,6 @@ import kotlin.test.assertSame
  * @author Enrico
  */
 internal class ResolutionExceptionTest {
-
     private val exception = ResolutionException(aMessage, aCause, aContext)
 
     @Test

@@ -64,7 +64,7 @@ object CommonFunctions {
             Sine,
             SquareRoot,
             Subtraction,
-            Truncate
+            Truncate,
         )
 
     val functions: Map<Signature, LogicFunction> = wrappers.map { it.descriptionPair }.toMap()

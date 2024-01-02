@@ -23,7 +23,7 @@ object TimeRelatedTheories {
                 rule { "a"("X") `if` "b"("X") },
                 rule { "b"(500) `if` "sleep"(500) },
                 rule { "b"(600) `if` "sleep"(600) },
-                rule { "b"(700) `if` "sleep"(700) }
+                rule { "b"(700) `if` "sleep"(700) },
             )
         }
     }
@@ -37,8 +37,8 @@ object TimeRelatedTheories {
         logicProgramming {
             ktListOf(
                 "a"("X").hasSolutions(
-                    { halt(timeOutException) }
-                )
+                    { halt(timeOutException) },
+                ),
             )
         }
     }
@@ -54,8 +54,8 @@ object TimeRelatedTheories {
             ktListOf(
                 "a"("X").hasSolutions(
                     { yes("X" to 500) },
-                    { halt(timeOutException) }
-                )
+                    { halt(timeOutException) },
+                ),
             )
         }
     }
@@ -72,8 +72,8 @@ object TimeRelatedTheories {
                 "a"("X").hasSolutions(
                     { yes("X" to 500) },
                     { yes("X" to 600) },
-                    { halt(timeOutException) }
-                )
+                    { halt(timeOutException) },
+                ),
             )
         }
     }
@@ -89,8 +89,8 @@ object TimeRelatedTheories {
                 "a"("X").hasSolutions(
                     { yes("X" to 500) },
                     { yes("X" to 600) },
-                    { yes("X" to 700) }
-                )
+                    { yes("X" to 700) },
+                ),
             )
         }
     }

@@ -10,8 +10,9 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class CurrentTimeInstantKtJsTest {
-
-    private val TOLERANCE = 10L // 10 ms
+    companion object {
+        private const val TOLERANCE = 10L // 10 ms
+    }
 
     @Test
     fun currentTimeReturnsActualTimeInMillis() {

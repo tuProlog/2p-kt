@@ -14,14 +14,16 @@ import org.gciatto.kt.math.RoundingMode
  * @author Enrico
  */
 object Floor : UnaryMathFunction("floor") {
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(integer.decimalValue)
 
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-        commonBehaviour(integer.decimalValue)
-
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        commonBehaviour(real.value)
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(real.value)
 
     /** Implementation of common behaviour for Real and Integer */
-    private fun commonBehaviour(decimal: BigDecimal): Integer =
-        Numeric.of(decimal.setScale(0, RoundingMode.FLOOR).toBigInteger())
+    private fun commonBehaviour(decimal: BigDecimal): Integer = Numeric.of(decimal.setScale(0, RoundingMode.FLOOR).toBigInteger())
 }

@@ -28,7 +28,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class StructImplTest {
-
     private val mixedStructInstances = StructUtils.mixedStructs.map { (functor, args) -> StructImpl(functor, args) }
     private val nonSpecialStructInstances =
         StructUtils.nonSpecialStructs.map { (functor, args) -> StructImpl(functor, args) }
@@ -40,7 +39,7 @@ internal class StructImplTest {
     fun functorCorrect() {
         onCorrespondingItems(
             StructUtils.mixedStructFunctors,
-            mixedStructInstances.map { it.functor }
+            mixedStructInstances.map { it.functor },
         ) { expected, actual ->
             assertEquals(expected, actual)
         }
@@ -50,7 +49,7 @@ internal class StructImplTest {
     fun argsCorrect() {
         onCorrespondingItems(
             StructUtils.mixedStructArguments,
-            mixedStructInstances.map { it.args }
+            mixedStructInstances.map { it.args },
         ) { expected, actual ->
             assertEquals(expected, actual)
         }
@@ -78,7 +77,7 @@ internal class StructImplTest {
     fun variablesCorrect() {
         onCorrespondingItems(
             StructUtils.mixedStructVariables,
-            mixedStructInstances.map { it.variables }
+            mixedStructInstances.map { it.variables },
         ) { expected, actual -> assertEquals(expected.toList(), actual.toList()) }
     }
 
@@ -110,10 +109,11 @@ internal class StructImplTest {
 
     @Test
     fun toStringWorksAsExpected() {
-        val correctToStrings = mixedStructInstances.map {
-            (if (it.isFunctorWellFormed) it.functor else "'${it.functor}'") +
-                (if (it.arity > 0) "(${it.args.joinToString(", ")})" else "")
-        }
+        val correctToStrings =
+            mixedStructInstances.map {
+                (if (it.isFunctorWellFormed) it.functor else "'${it.functor}'") +
+                    (if (it.arity > 0) "(${it.args.joinToString(", ")})" else "")
+            }
         onCorrespondingItems(correctToStrings, mixedStructInstances.map { it.toString() }) { expected, actual ->
             assertEquals(expected, actual)
         }
@@ -265,8 +265,9 @@ internal class StructImplTest {
 
     @Test
     fun freshCopyShouldRenewVariables() {
-        val nonGroundNonSpecialStructInstances = (StructUtils.nonGroundStructs - StructUtils.specialStructs)
-            .map { (functor, args) -> StructImpl(functor, args) }
+        val nonGroundNonSpecialStructInstances =
+            (StructUtils.nonGroundStructs - StructUtils.specialStructs)
+                .map { (functor, args) -> StructImpl(functor, args) }
 
         nonGroundNonSpecialStructInstances.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
     }

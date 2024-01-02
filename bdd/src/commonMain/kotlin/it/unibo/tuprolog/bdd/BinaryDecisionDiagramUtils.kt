@@ -16,16 +16,13 @@ import kotlin.jvm.JvmName
  * Shortcut for the [BinaryDecisionDiagram.variableOf] method.
  */
 @JsName("bddOf")
-fun <T : Comparable<T>> bddOf(value: T): BinaryDecisionDiagram<T> =
-    BinaryDecisionDiagram.variableOf(value)
+fun <T : Comparable<T>> bddOf(value: T): BinaryDecisionDiagram<T> = BinaryDecisionDiagram.variableOf(value)
 
 /**
  * Shortcut for the [BinaryDecisionDiagram.terminalOf] method.
  */
 @JsName("bddTerminalOf")
-fun <T : Comparable<T>> bddTerminalOf(
-    value: Boolean
-): BinaryDecisionDiagram<T> = BinaryDecisionDiagram.terminalOf(value)
+fun <T : Comparable<T>> bddTerminalOf(value: Boolean): BinaryDecisionDiagram<T> = BinaryDecisionDiagram.terminalOf(value)
 
 /** Internal helper function to catch all exceptions and wrap them into
  * BBD-specific ones. */
@@ -35,7 +32,7 @@ internal fun <T> runOperationAndCatchErrors(action: () -> T): T {
     } catch (e: Throwable) {
         throw BinaryDecisionDiagramOperationException(
             "BinaryDecisionDiagram operation failure",
-            e
+            e,
         )
     }
 }
@@ -50,15 +47,15 @@ internal fun <T> runOperationAndCatchErrors(action: () -> T): T {
 fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
     falseTerminal: E,
     trueTerminal: E,
-    operator: (node: T, low: E, high: E) -> E
+    operator: (node: T, low: E, high: E) -> E,
 ): E {
     return runOperationAndCatchErrors {
         this.accept(
             ExpansionVisitor(
                 operator,
                 falseTerminal,
-                trueTerminal
-            )
+                trueTerminal,
+            ),
         )
     }
 }
@@ -68,9 +65,7 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
  * element matching the given predicate.
  */
 @JsName("anyWhere")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(
-    predicate: (T) -> Boolean
-): Boolean {
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(predicate: (T) -> Boolean): Boolean {
     return runOperationAndCatchErrors {
         this.accept(AnyVisitor(predicate))
     }
@@ -92,14 +87,12 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(): Boolean {
  * The internal structure of the diagram is maintained.
  */
 @JsName("map")
-fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
-    mapper: (T) -> E
-): BinaryDecisionDiagram<E> {
+fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(mapper: (T) -> E): BinaryDecisionDiagram<E> {
     val builder = BinaryDecisionDiagramBuilder.reducedOf<E>()
     return runOperationAndCatchErrors {
         this.expansion(
             builder.buildTerminal(false),
-            builder.buildTerminal(true)
+            builder.buildTerminal(true),
         ) { node, low, high -> builder.buildVariable(mapper(node), low, high) }
     }
 }
@@ -124,7 +117,7 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toDotString(): String {
             val nodeValue = Triple(node, low, high).hashCode()
             if (nodeValue !in checkSet) {
                 labelBuilder.append(
-                    "$nodeValue [shape=record, label=\"$node\"]\n"
+                    "$nodeValue [shape=record, label=\"$node\"]\n",
                 )
                 graphBuilder.append("$nodeValue -> $low [style=dashed]\n")
                 graphBuilder.append("$nodeValue -> $high\n")
