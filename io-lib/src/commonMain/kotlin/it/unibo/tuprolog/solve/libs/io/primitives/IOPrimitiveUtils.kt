@@ -110,11 +110,25 @@ object IOPrimitiveUtils {
 
     private fun quoted(value: Boolean? = null) = Struct.of("quoted", value?.let { Truth.of(it) } ?: Var.anonymous())
 
-    private fun ignoreOps(value: Boolean? = null) = Struct.of("ignore_ops", value?.let { Truth.of(it) } ?: Var.anonymous())
+    private fun ignoreOps(value: Boolean? = null) =
+        Struct.of(
+            "ignore_ops",
+            value?.let { Truth.of(it) } ?: Var.anonymous(),
+        )
 
-    private fun numberVars(value: Boolean? = null) = Struct.of("numbervars", value?.let { Truth.of(it) } ?: Var.anonymous())
+    private fun numberVars(value: Boolean? = null) =
+        Struct.of(
+            "numbervars",
+            value?.let { Truth.of(it) } ?: Var.anonymous(),
+        )
 
-    private fun variables(variables: KtList<Var>? = null) = Struct.of("variables", variables?.let { List.of(it) } ?: Var.anonymous())
+    private fun variables(variables: KtList<Var>? = null) =
+        Struct.of(
+            "variables",
+            variables?.let {
+                List.of(it)
+            } ?: Var.anonymous(),
+        )
 
     private fun vn(
         functor: String,

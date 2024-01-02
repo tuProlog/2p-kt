@@ -56,6 +56,9 @@ internal object DirectiveUtils {
 
     /** Contains mixed [groundDirectives] and [nonGroundDirectives] */
     val mixedDirectives by lazy {
-        groundWellFormedDirectives + groundNonWellFormedDirectives + nonGroundWellFormedDirectives + nonGroundNonWellFormedDirectives
+        groundWellFormedDirectives +
+            groundNonWellFormedDirectives +
+            nonGroundWellFormedDirectives +
+            nonGroundNonWellFormedDirectives
     }
 }

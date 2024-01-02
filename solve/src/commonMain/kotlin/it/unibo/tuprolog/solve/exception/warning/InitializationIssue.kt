@@ -22,7 +22,11 @@ class InitializationIssue(
         index: Int,
     ): InitializationIssue = InitializationIssue(goal, cause, contexts.setItem(index, newContext))
 
-    override fun updateLastContext(newContext: ExecutionContext): InitializationIssue = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): InitializationIssue =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): InitializationIssue =
         InitializationIssue(goal, cause, contexts.addLast(newContext))

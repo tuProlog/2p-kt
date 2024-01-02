@@ -22,7 +22,10 @@ abstract class AbstractClauseVisitor<T> : ClauseVisitor<T>, ExhaustiveTermVisito
             visitNonNegatedLiteral(literal)
         }
 
-    protected fun dispatchHead(clause: Clause): Sequence<T> = sequenceOf(clause.head).filterNotNull().map { dispatchHead(it) }
+    protected fun dispatchHead(clause: Clause): Sequence<T> =
+        sequenceOf(clause.head).filterNotNull().map {
+            dispatchHead(it)
+        }
 
     protected fun dispatchBody(clause: Clause): Sequence<T> =
         clause.bodyItems.asSequence().map {

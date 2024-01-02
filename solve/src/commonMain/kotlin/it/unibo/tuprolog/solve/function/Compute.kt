@@ -33,15 +33,21 @@ sealed class Compute {
             when {
                 signature.vararg ->
                     require(arguments.count() >= signature.arity) {
-                        "Trying to create Compute.Request of signature `$signature` with not enough arguments ${arguments.toList()}"
+                        "Trying to create Compute.Request of signature `$signature` " +
+                            "with not enough arguments ${arguments.toList()}"
                     }
                 else ->
                     require(arguments.count() == signature.arity) {
-                        "Trying to create Compute.Request of signature `$signature` with wrong number of arguments ${arguments.toList()}"
+                        "Trying to create Compute.Request of signature `$signature` " +
+                            "with wrong number of arguments ${arguments.toList()}"
                     }
             }
-            require(requestIssuingInstant >= 0) { "The request issuing instant can't be negative: $requestIssuingInstant" }
-            require(executionMaxDuration >= 0) { "The execution max duration can't be negative: $executionMaxDuration" }
+            require(requestIssuingInstant >= 0) {
+                "The request issuing instant can't be negative: $requestIssuingInstant"
+            }
+            require(executionMaxDuration >= 0) {
+                "The execution max duration can't be negative: $executionMaxDuration"
+            }
         }
 
         /** The current expression [Struct] of this request */

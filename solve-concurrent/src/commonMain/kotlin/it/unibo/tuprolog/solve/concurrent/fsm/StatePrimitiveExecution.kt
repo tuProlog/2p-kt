@@ -46,7 +46,10 @@ data class StatePrimitiveExecution(override val context: ConcurrentExecutionCont
                         failureState(context.parent!!.copyFromCurrentPrimitive())
                     },
                     halt = {
-                        StateException(it.exception.updateLastContext(context.skipThrow()), context.copyFromCurrentPrimitive())
+                        StateException(
+                            it.exception.updateLastContext(context.skipThrow()),
+                            context.copyFromCurrentPrimitive(),
+                        )
                     },
                     otherwise = { throw IllegalStateException("This should never happen") },
                 ) ?: failureState(context.parent!!.copyFromCurrentPrimitive())

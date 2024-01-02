@@ -118,12 +118,20 @@ internal class NumericIndex(
 
     override fun retractAll(clause: Clause): Sequence<Clause> = retractAllIndexed(clause).map { it.innerClause }
 
-    override fun getCache(): Sequence<SituatedIndexedClause> = Utils.merge(index.values.asSequence().map { it.asSequence() })
+    override fun getCache(): Sequence<SituatedIndexedClause> =
+        Utils.merge(
+            index.values.asSequence().map {
+                it.asSequence()
+            },
+        )
 
     override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
         getCache().filter { unificator.match(it.innerClause, clause) }
 
-    private fun extractGlobalSequence(clause: Clause): Sequence<Clause> = extractGlobalIndexedSequence(clause).map { it.innerClause }
+    private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
+        extractGlobalIndexedSequence(clause).map {
+            it.innerClause
+        }
 
     private fun Clause.nestedFirstArgument(): Term = this.head!!.nestedFirstArgument(nestingLevel + 1)
 

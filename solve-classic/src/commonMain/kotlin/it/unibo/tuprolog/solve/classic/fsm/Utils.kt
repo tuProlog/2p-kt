@@ -73,7 +73,9 @@ fun ClassicExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>):
     return copy(rules = rules, choicePoints = newChoicePointContext)
 }
 
-fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions: Cursor<out Solve.Response>): ClassicExecutionContext {
+fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(
+    primitiveExecutions: Cursor<out Solve.Response>,
+): ClassicExecutionContext {
     val newChoicePointContext =
         if (primitiveExecutions.hasNext) {
             choicePoints.appendPrimitives(primitiveExecutions.next, this)

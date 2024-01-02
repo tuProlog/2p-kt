@@ -18,18 +18,24 @@ internal object TupleUtils {
     private val elementsOfFirstTuple = listOf(firstOfFirstTuple, secondOfFirstTuple)
 
     /** Constructs a Tuple with two Terms */
-    internal fun twoElementTuple(constructor: (Term, Term) -> Tuple) = constructor(firstOfFirstTuple, secondOfFirstTuple)
+    internal fun twoElementTuple(constructor: (Term, Term) -> Tuple) =
+        constructor(firstOfFirstTuple, secondOfFirstTuple)
 
     private val firstOfSecondTuple = Atom.of("bigTuple")
     private val secondOfSecondTuple = Integer.of(4)
     private val thirdOfSecondTuple = Real.of(1.5)
 
-    private fun rightOfSecondTuple(constructor: (Term, Term) -> Tuple) = constructor(secondOfSecondTuple, thirdOfSecondTuple)
+    private fun rightOfSecondTuple(constructor: (Term, Term) -> Tuple) =
+        constructor(
+            secondOfSecondTuple,
+            thirdOfSecondTuple,
+        )
 
     private val elementsOfSecondTuple = listOf(firstOfSecondTuple, secondOfSecondTuple, thirdOfSecondTuple)
 
     /** Constructs a Tuple with three Terms */
-    internal fun threeElementTuple(constructor: (Term, Term) -> Tuple) = constructor(firstOfSecondTuple, rightOfSecondTuple(constructor))
+    internal fun threeElementTuple(constructor: (Term, Term) -> Tuple) =
+        constructor(firstOfSecondTuple, rightOfSecondTuple(constructor))
 
     /** Returns all constructed Tuples (of 2, 3 elements respectively) */
     internal fun tupleInstances(constructor: (Term, Term) -> Tuple) =

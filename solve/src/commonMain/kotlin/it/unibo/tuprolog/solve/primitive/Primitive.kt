@@ -30,7 +30,9 @@ fun interface Primitive {
                 @Suppress("UNCHECKED_CAST")
                 when (it.signature) {
                     supportedSignature -> uncheckedPrimitive(it as Solve.Request<C>)
-                    else -> throw IllegalArgumentException("This primitive supports only this signature `$supportedSignature`")
+                    else -> throw IllegalArgumentException(
+                        "This primitive supports only this signature `$supportedSignature`",
+                    )
                 }
             }
 

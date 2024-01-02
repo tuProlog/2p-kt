@@ -67,7 +67,8 @@ open class ResolutionException(
     ): ResolutionException = ResolutionException(message, cause, contexts.setItem(index, newContext))
 
     @JsName("updateLastContext")
-    open fun updateLastContext(newContext: ExecutionContext): ResolutionException = updateContext(newContext, contexts.lastIndex)
+    open fun updateLastContext(newContext: ExecutionContext): ResolutionException =
+        updateContext(newContext, contexts.lastIndex)
 
     @JsName("pushContext")
     open fun pushContext(newContext: ExecutionContext): ResolutionException =
@@ -78,5 +79,9 @@ open class ResolutionException(
         item: ExecutionContext,
     ): Array<ExecutionContext> = copyOf().also { it[index] = item }
 
-    protected fun Array<ExecutionContext>.addLast(item: ExecutionContext): Array<ExecutionContext> = arrayOf(*this, item)
+    protected fun Array<ExecutionContext>.addLast(item: ExecutionContext): Array<ExecutionContext> =
+        arrayOf(
+            *this,
+            item,
+        )
 }

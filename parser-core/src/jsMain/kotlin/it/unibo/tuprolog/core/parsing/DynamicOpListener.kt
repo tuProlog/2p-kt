@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.parser.Associativity

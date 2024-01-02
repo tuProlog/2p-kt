@@ -39,7 +39,7 @@ internal object CatchUtils {
             *catchTestingGoalsToSolutions.map { (goal, solutionList) ->
                 createSolveRequest(
                     goal,
-                    primitives = mapOf(*ktListOf(Call, Catch, Conjunction, Throw).map { it.descriptionPair }.toTypedArray()),
+                    primitives = sequenceOf(Call, Catch, Conjunction, Throw).associate { it.descriptionPair },
                 ) to solutionList
             }.toTypedArray(),
             *CallUtils.requestSolutionMap.flatMap { (callRequest, solutions) ->

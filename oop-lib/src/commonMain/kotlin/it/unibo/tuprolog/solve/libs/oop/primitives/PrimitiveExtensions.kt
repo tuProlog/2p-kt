@@ -113,7 +113,8 @@ private fun <C : ExecutionContext> Solve.Request<C>.findRefFromAliasOrNull(alias
         ?.castTo()
 }
 
-fun <C : ExecutionContext> Solve.Request<C>.isAliasRegistered(alias: Struct): Boolean = findRefFromAliasOrNull(alias) != null
+fun <C : ExecutionContext> Solve.Request<C>.isAliasRegistered(alias: Struct): Boolean =
+    findRefFromAliasOrNull(alias) != null
 
 fun <C : ExecutionContext> Solve.Request<C>.ensureAliasIsRegistered(alias: Struct): Boolean =
     if (isAliasRegistered(alias)) true else throw NoSuchAnAliasException(alias)

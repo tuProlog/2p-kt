@@ -46,7 +46,8 @@ internal class StateGoalEvaluation(
 
                     yield(ifTimeIsNotOver(stateEnd(it.copy(sideEffects = allSideEffectsSoFar))))
 
-                    if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
+                    // if halt reached, overall computation should stop
+                    if (it.solution is Solution.Halt) return@sequence
                 }
             } ?: yield(StateRuleSelection(solve))
         }

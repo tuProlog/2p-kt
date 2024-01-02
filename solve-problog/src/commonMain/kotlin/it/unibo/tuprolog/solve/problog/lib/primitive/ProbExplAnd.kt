@@ -20,6 +20,9 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.isPrologMode
 internal object ProbExplAnd : TernaryRelation.NonBacktrackable<ExecutionContext>(
     "${ProblogLib.PREDICATE_PREFIX}_expl_and",
 ) {
+    private val ProbExplanationTerm.prob: Double
+        get() = explanation.probability
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,
@@ -36,10 +39,10 @@ internal object ProbExplAnd : TernaryRelation.NonBacktrackable<ExecutionContext>
         return if (first is Var && second is ProbExplanationTerm && third is ProbExplanationTerm) {
             val explanation =
                 when {
-                    second.explanation.probability == 0.0 || third.explanation.probability == 0.0 -> ProbExplanation.FALSE
-                    second.explanation.probability == 1.0 && third.explanation.probability == 1.0 -> ProbExplanation.TRUE
-                    second.explanation.probability == 1.0 -> third.explanation
-                    third.explanation.probability == 1.0 -> second.explanation
+                    second.prob == 0.0 || third.prob == 0.0 -> ProbExplanation.FALSE
+                    second.prob == 1.0 && third.prob == 1.0 -> ProbExplanation.TRUE
+                    second.prob == 1.0 -> third.explanation
+                    third.prob == 1.0 -> second.explanation
                     else -> second.explanation and third.explanation
                 }
             if (explanation.probability == 0.0) {

@@ -42,7 +42,10 @@ internal class StateInit(
                                         solve.copy(
                                             signature = preparedGoal.extractSignature(),
                                             arguments = preparedGoal.args,
-                                            context = with(solve.context) { copy(sideEffectManager = initializedSideEffectsManager) },
+                                            context =
+                                                with(
+                                                    solve.context,
+                                                ) { copy(sideEffectManager = initializedSideEffectsManager) },
                                         ),
                                     ),
                                 )

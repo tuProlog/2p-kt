@@ -717,7 +717,9 @@ internal class TestSolverImpl(
     /** Test with [prologStandardExampleWithCutTheoryNotableGoalToSolution] */
     override fun testPrologStandardSearchTreeWithCutExample() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.prologStandardExampleWithCutTheory),
+            solverFactory.solverWithDefaultBuiltins(
+                staticKb = PrologStandardExampleTheories.prologStandardExampleWithCutTheory,
+            ),
             prologStandardExampleWithCutTheoryNotableGoalToSolution,
             mediumDuration,
         )

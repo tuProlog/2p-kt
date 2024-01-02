@@ -47,7 +47,9 @@ object SetTheory : UnaryPredicate.NonBacktrackable<ExecutionContext>("set_theory
                 e.clauseIndex,
                 e.line,
                 e.column,
-                e.message?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() } ?: "<no detail provided>",
+                e.message
+                    ?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                    ?: "<no detail provided>",
             )
         }
     }

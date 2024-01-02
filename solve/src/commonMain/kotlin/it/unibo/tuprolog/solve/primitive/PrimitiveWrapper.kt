@@ -107,7 +107,10 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive) :
                 this(Signature(name, arity, vararg), uncheckedPrimitive)
 
-            override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> = uncheckedPrimitive.solve(request)
+            override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
+                uncheckedPrimitive.solve(
+                    request,
+                )
         }
 
         private fun ensurerVisitor(
@@ -191,7 +194,9 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         }
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedIndicator(index: Int): Solve.Request<C> {
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedIndicator(
+            index: Int,
+        ): Solve.Request<C> {
             ensuringArgumentIsInstantiated(index)
             val candidate = arguments[index]
             when {
@@ -264,7 +269,13 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStruct(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
-                !arg.isStruct -> throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, arg, index)
+                !arg.isStruct -> throw TypeError.forArgument(
+                    context,
+                    signature,
+                    TypeError.Expected.CALLABLE,
+                    arg,
+                    index,
+                )
                 else -> this
             }
         }

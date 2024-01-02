@@ -139,7 +139,10 @@ internal class TermToObjectConverterImpl(
             else -> throw TermToObjectConversionException(castExpression)
         }
 
-    override fun possibleConversions(term: Term): Sequence<Any?> = admissibleTypes(term).asSequence().map { convertInto(it, term) }
+    override fun possibleConversions(term: Term): Sequence<Any?> =
+        admissibleTypes(term).asSequence().map {
+            convertInto(it, term)
+        }
 
     override fun mostAdequateType(term: Term): KClass<*> = admissibleTypesByPriority(term).first()
 

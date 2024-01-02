@@ -37,7 +37,10 @@ internal class LibrariesTest {
 
     @Test
     fun sequenceConstructor() {
-        assertEquals(differentAliasInstances.toSet(), Runtime.of(differentAliasInstances.asSequence()).libraries.toSet())
+        assertEquals(
+            differentAliasInstances.toSet(),
+            Runtime.of(differentAliasInstances.asSequence()).libraries.toSet(),
+        )
     }
 
     @Test

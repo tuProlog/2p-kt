@@ -22,7 +22,8 @@ fun <T : Comparable<T>> bddOf(value: T): BinaryDecisionDiagram<T> = BinaryDecisi
  * Shortcut for the [BinaryDecisionDiagram.terminalOf] method.
  */
 @JsName("bddTerminalOf")
-fun <T : Comparable<T>> bddTerminalOf(value: Boolean): BinaryDecisionDiagram<T> = BinaryDecisionDiagram.terminalOf(value)
+fun <T : Comparable<T>> bddTerminalOf(value: Boolean): BinaryDecisionDiagram<T> =
+    BinaryDecisionDiagram.terminalOf(value)
 
 /** Internal helper function to catch all exceptions and wrap them into
  * BBD-specific ones. */

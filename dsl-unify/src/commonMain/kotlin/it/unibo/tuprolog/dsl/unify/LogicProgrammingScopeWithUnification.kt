@@ -12,13 +12,16 @@ interface LogicProgrammingScopeWithUnification : LogicProgrammingScope, Unificat
     val unificator: Unificator
 
     @JsName("anyMguWith")
-    infix fun Any.mguWith(other: Any): Substitution = this@LogicProgrammingScopeWithUnification.mgu(this.toTerm(), other.toTerm())
+    infix fun Any.mguWith(other: Any): Substitution =
+        this@LogicProgrammingScopeWithUnification.mgu(this.toTerm(), other.toTerm())
 
     @JsName("anyMatches")
-    infix fun Any.matches(other: Any): Boolean = this@LogicProgrammingScopeWithUnification.match(this.toTerm(), other.toTerm())
+    infix fun Any.matches(other: Any): Boolean =
+        this@LogicProgrammingScopeWithUnification.match(this.toTerm(), other.toTerm())
 
     @JsName("anyUnifyWith")
-    infix fun Any.unifyWith(other: Any): Term? = this@LogicProgrammingScopeWithUnification.unify(this.toTerm(), other.toTerm())
+    infix fun Any.unifyWith(other: Any): Term? =
+        this@LogicProgrammingScopeWithUnification.unify(this.toTerm(), other.toTerm())
 
     @JsName("mguAny")
     fun mgu(

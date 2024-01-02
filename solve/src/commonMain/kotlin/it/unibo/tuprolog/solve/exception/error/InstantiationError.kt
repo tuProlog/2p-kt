@@ -39,7 +39,11 @@ class InstantiationError(
         index: Int,
     ): InstantiationError = InstantiationError(message, cause, contexts.setItem(index, newContext), culprit, extraData)
 
-    override fun updateLastContext(newContext: ExecutionContext): InstantiationError = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): InstantiationError =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): InstantiationError =
         InstantiationError(message, cause, contexts.addLast(newContext), culprit, extraData)

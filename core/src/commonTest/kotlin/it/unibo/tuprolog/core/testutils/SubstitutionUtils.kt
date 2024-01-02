@@ -38,7 +38,14 @@ internal object SubstitutionUtils {
     }
 
     /** Contains [mixedSubstitutions] represented as list of pairs */
-    internal val mixedSubstitutionsAsPairs by lazy { mixedSubstitutions.map { it.entries.map { entry -> entry.toPair() } } }
+    internal val mixedSubstitutionsAsPairs by lazy {
+        mixedSubstitutions.map {
+            it.entries.map {
+                    entry ->
+                entry.toPair()
+            }
+        }
+    }
 
     /** Contains a duplicated pair substitution, that should result in unique final substitution */
     internal val duplicatedPairSubstitution by lazy {

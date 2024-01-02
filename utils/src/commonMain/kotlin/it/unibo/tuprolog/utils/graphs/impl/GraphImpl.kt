@@ -11,5 +11,8 @@ internal class GraphImpl<T, W> : Graph<T, W>, AbstractGraph<T, W, GraphImpl<T, W
 
     override fun toMutable(): MutableGraphImpl<T, W> = MutableGraphImpl(connections.toMutableMap())
 
-    override fun newInstance(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>): GraphImpl<T, W> = GraphImpl(connections)
+    override fun newInstance(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>): GraphImpl<T, W> =
+        GraphImpl(
+            connections,
+        )
 }

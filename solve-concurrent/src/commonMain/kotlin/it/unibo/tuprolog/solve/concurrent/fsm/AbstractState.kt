@@ -37,5 +37,8 @@ abstract class AbstractState(override val context: ConcurrentExecutionContext) :
 
     protected fun nextStep(): Long = context.step + 1
 
-    protected fun ConcurrentExecutionContext.skipThrow(): ExecutionContext = pathToRoot.first { it.procedure?.functor != Throw.functor }
+    protected fun ConcurrentExecutionContext.skipThrow(): ExecutionContext =
+        pathToRoot.first {
+            it.procedure?.functor != Throw.functor
+        }
 }

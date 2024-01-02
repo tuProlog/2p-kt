@@ -99,5 +99,9 @@ data class StateException(
         )
     }
 
-    override fun clone(context: ConcurrentExecutionContext): StateException = copy(exception = exception, context = context)
+    override fun clone(context: ConcurrentExecutionContext): StateException =
+        copy(
+            exception = exception,
+            context = context,
+        )
 }

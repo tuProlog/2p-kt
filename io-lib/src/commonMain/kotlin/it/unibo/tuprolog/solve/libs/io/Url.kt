@@ -44,10 +44,18 @@ interface Url {
         private fun <T : Any> T?.str(transformation: (T) -> String = { it.toString() }): String =
             if (this == null) "" else transformation(this)
 
-        internal fun Int.ensureValidPort(): Int = if (this < 0) throw IllegalArgumentException("Invalid port: $this") else this
+        internal fun Int.ensureValidPort(): Int =
+            if (this < 0) {
+                throw IllegalArgumentException(
+                    "Invalid port: $this",
+                )
+            } else {
+                this
+            }
 
         internal enum class UrlField { PROTOCOL, UNIT, HOST, PORT, PATH, QUERY, ANCHOR }
 
+        @Suppress("ktlint:standard:max-line-length")
         private fun urlRegex(
             protocol: String? = null,
             unit: String? = null,

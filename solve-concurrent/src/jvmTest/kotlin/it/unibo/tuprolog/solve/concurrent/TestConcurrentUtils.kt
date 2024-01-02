@@ -198,9 +198,10 @@ class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf())
 
     constructor(vararg solutions: Solution) : this(solutions.asIterable())
 
-    fun add(solution: Solution): MultiSet = MultiSet(
-        solutionOccurrences + (solution.key() to (solutionOccurrences[solution.key()] ?: 1))
-    )
+    fun add(solution: Solution): MultiSet =
+        MultiSet(
+            solutionOccurrences + (solution.key() to (solutionOccurrences[solution.key()] ?: 1)),
+        )
 
     override fun assertingEquals(other: Any?) {
         if (this === other) {

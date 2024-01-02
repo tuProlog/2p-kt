@@ -25,7 +25,8 @@ fun <T, S> visitOf(
 fun <T, W> Graph<T, W>.isLeaf(node: Node<T>): Boolean = outdegree(node) == 0
 
 @JsName("map")
-fun <T1, W1, T2, W2> Graph<T1, W1>.map(f: (Edge<T1, W1>) -> Edge<T2, W2>): Graph<T2, W2> = Graph.of(this.asSequence().map(f))
+fun <T1, W1, T2, W2> Graph<T1, W1>.map(f: (Edge<T1, W1>) -> Edge<T2, W2>): Graph<T2, W2> =
+    Graph.of(this.asSequence().map(f))
 
 @JsName("filter")
 fun <T, W> Graph<T, W>.filter(p: (Edge<T, W>) -> Boolean): Graph<T, W> = Graph.of(this.asSequence().filter(p))

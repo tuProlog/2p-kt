@@ -24,7 +24,13 @@ import it.unibo.tuprolog.unify.Unificator
 internal class MappedMutableProblogTheory(
     clauses: Iterable<Clause>?,
     unificator: Unificator = Unificator.default,
-    val theory: MutableTheory = MutableTheory.indexedOf(unificator, clauses?.flatMap { ClauseMappingUtils.map(it) } ?: emptyList()),
+    val theory: MutableTheory =
+        MutableTheory.indexedOf(
+            unificator,
+            clauses?.flatMap {
+                ClauseMappingUtils.map(it)
+            } ?: emptyList(),
+        ),
 ) : MutableTheory by theory, MutableProblogTheory {
     override val isMutable: Boolean
         get() = false
@@ -89,7 +95,10 @@ internal class MappedMutableProblogTheory(
                     MappedMutableProblogTheory(null, unificator, result.theory),
                     result.clauses,
                 )
-            is RetractResult.Failure -> RetractResult.Failure(MappedMutableProblogTheory(null, unificator, result.theory))
+            is RetractResult.Failure ->
+                RetractResult.Failure(
+                    MappedMutableProblogTheory(null, unificator, result.theory),
+                )
             else -> RetractResult.Failure(this)
         }
     }
@@ -128,5 +137,8 @@ internal class MappedMutableProblogTheory(
         return retract(clauses.asIterable())
     }
 
-    override fun retractAll(head: Struct): RetractResult<MutableProblogTheory> = retractAll(Rule.of(head, Var.anonymous()))
+    override fun retractAll(head: Struct): RetractResult<MutableProblogTheory> =
+        retractAll(
+            Rule.of(head, Var.anonymous()),
+        )
 }

@@ -83,19 +83,25 @@ internal class StateRuleSelection(
                                         yield(
                                             stateEnd(
                                                 subState.solve.copy(
-                                                    solution = subState.solve.solution.removeSubstitutionFor(refreshedRule.variables),
+                                                    solution =
+                                                        subState.solve.solution.removeSubstitutionFor(
+                                                            refreshedRule.variables,
+                                                        ),
                                                     sideEffectManager = extendedScopeSideEffectManager,
                                                 ),
                                             ),
                                         )
                                     }
 
-                                    if (subState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
+                                    // if halt reached, overall computation should stop
+                                    if (subState is StateEnd.Halt) return@sequence
                                 } else {
-                                    yield(it) // return wrapped subState as is, only if not interested in it
+                                    // return wrapped subState as is, only if not interested in it
+                                    yield(it)
                                 }
                             }
-                            if (cutNextSiblings) return@sequence // cut here other matching rules trial
+                            // cut here other matching rules trial
+                            if (cutNextSiblings) return@sequence
                         }
             }
         }

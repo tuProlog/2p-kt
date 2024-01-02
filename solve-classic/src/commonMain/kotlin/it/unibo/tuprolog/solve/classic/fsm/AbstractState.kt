@@ -39,5 +39,8 @@ abstract class AbstractState(override val context: ClassicExecutionContext) : St
 
     protected fun previousDepth(): Int = context.depth - 1
 
-    protected fun ClassicExecutionContext.skipThrow(): ExecutionContext = pathToRoot.first { it.procedure?.functor != Throw.functor }
+    protected fun ClassicExecutionContext.skipThrow(): ExecutionContext =
+        pathToRoot.first {
+            it.procedure?.functor != Throw.functor
+        }
 }

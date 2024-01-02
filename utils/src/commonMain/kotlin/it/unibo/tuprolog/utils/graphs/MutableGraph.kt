@@ -56,7 +56,8 @@ interface MutableGraph<T, W> : Graph<T, W> {
     companion object {
         @JsName("build")
         @JvmStatic
-        fun <T, W> build(builder: MutableGraph<T, W>.() -> Unit): MutableGraph<T, W> = MutableGraphImpl<T, W>().also(builder)
+        fun <T, W> build(builder: MutableGraph<T, W>.() -> Unit): MutableGraph<T, W> =
+            MutableGraphImpl<T, W>().also(builder)
 
         @JsName("empty")
         @JvmStatic

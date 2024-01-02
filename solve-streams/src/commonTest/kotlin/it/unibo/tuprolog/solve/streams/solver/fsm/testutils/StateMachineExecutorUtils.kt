@@ -21,7 +21,9 @@ internal object StateMachineExecutorUtils {
             override fun behave(): Sequence<State> = emptySequence()
 
             override val hasBehaved: Boolean = false
-            override val context: StreamsExecutionContext by lazy<StreamsExecutionContext> { throw NotImplementedError() }
+            override val context: StreamsExecutionContext by lazy<StreamsExecutionContext> {
+                throw NotImplementedError()
+            }
 
             override fun toString(): String = this::class.className()
         }

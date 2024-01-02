@@ -154,9 +154,19 @@ fun <T> interleave(iterables: Sequence<Iterable<T>>): Sequence<T> = interleave(i
 fun <T> interleaveSequences(vararg iterables: Sequence<T>): Sequence<T> =
     interleave(sequenceOf(*iterables).map { it.asIterable() }.asIterable())
 
-fun <T> interleaveSequences(iterables: Sequence<Sequence<T>>): Sequence<T> = interleave(iterables.map { it.asIterable() }.asIterable())
+fun <T> interleaveSequences(iterables: Sequence<Sequence<T>>): Sequence<T> =
+    interleave(
+        iterables.map {
+            it.asIterable()
+        }.asIterable(),
+    )
 
-fun <T> interleaveSequences(iterables: Iterable<Sequence<T>>): Sequence<T> = interleave(iterables.map { it.asIterable() })
+fun <T> interleaveSequences(iterables: Iterable<Sequence<T>>): Sequence<T> =
+    interleave(
+        iterables.map {
+            it.asIterable()
+        },
+    )
 
 fun <T> Sequence<T>.subsequences(): Sequence<Sequence<T>> {
     return sequence {

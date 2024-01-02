@@ -70,7 +70,8 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
 
         @JvmStatic
         @JsName("default")
-        fun default(operators: OperatorSet = OperatorSet.DEFAULT): TermFormatter = of(UNDERSCORE, EXPRESSIONS, LITERAL, true, operators)
+        fun default(operators: OperatorSet = OperatorSet.DEFAULT): TermFormatter =
+            of(UNDERSCORE, EXPRESSIONS, LITERAL, true, operators)
 
         @JvmStatic
         @JsName("canonical")
@@ -130,7 +131,8 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          */
         @JvmStatic
         @JsName("prettyExpressionsDefaultOperators")
-        fun prettyExpressions(prettyVariables: Boolean): TermFormatter = prettyExpressions(prettyVariables, OperatorSet.DEFAULT)
+        fun prettyExpressions(prettyVariables: Boolean): TermFormatter =
+            prettyExpressions(prettyVariables, OperatorSet.DEFAULT)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions

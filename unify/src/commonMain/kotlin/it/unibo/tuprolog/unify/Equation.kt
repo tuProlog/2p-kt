@@ -28,21 +28,24 @@ sealed class Equation(
 
     open fun asIdentity(): Identity? = null
 
-    fun castToIdentity(): Identity = asIdentity() ?: throw ClassCastException("Cannot cast $this to ${Identity::class.simpleName}")
+    fun castToIdentity(): Identity =
+        asIdentity() ?: throw ClassCastException("Cannot cast $this to ${Identity::class.simpleName}")
 
     open val isAssignment: Boolean
         get() = false
 
     open fun asAssignment(): Assignment? = null
 
-    fun castToAssignment(): Assignment = asAssignment() ?: throw ClassCastException("Cannot cast $this to ${Assignment::class.simpleName}")
+    fun castToAssignment(): Assignment =
+        asAssignment() ?: throw ClassCastException("Cannot cast $this to ${Assignment::class.simpleName}")
 
     open val isComparison: Boolean
         get() = false
 
     open fun asComparison(): Comparison? = null
 
-    fun castToComparison(): Comparison = asComparison() ?: throw ClassCastException("Cannot cast $this to ${Comparison::class.simpleName}")
+    fun castToComparison(): Comparison =
+        asComparison() ?: throw ClassCastException("Cannot cast $this to ${Comparison::class.simpleName}")
 
     open val isContradiction: Boolean
         get() = false
@@ -212,7 +215,10 @@ sealed class Equation(
         ): Sequence<Equation> =
             lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
                 when {
-                    l.isTuple && r.isTuple -> sequenceOf(of(l.castToTuple().left, r.castToTuple().left, equalityChecker))
+                    l.isTuple && r.isTuple ->
+                        sequenceOf(
+                            of(l.castToTuple().left, r.castToTuple().left, equalityChecker),
+                        )
                     else -> allOf(l, r, equalityChecker)
                 }
             }

@@ -78,4 +78,5 @@ val Solution.binaryDecisionDiagram: BinaryDecisionDiagram<out Term>?
  * of [BinaryDecisionDiagram] to [this] [Solution].
  */
 @JsName("setBinaryDecisionDiagram")
-fun Solution.setBinaryDecisionDiagram(value: BinaryDecisionDiagram<out Term>) = setTag(BINARY_DECISION_DIAGRAM_TAG, value)
+fun Solution.setBinaryDecisionDiagram(value: BinaryDecisionDiagram<out Term>) =
+    setTag(BINARY_DECISION_DIAGRAM_TAG, value)

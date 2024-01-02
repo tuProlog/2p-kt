@@ -27,5 +27,6 @@ object Truncate : UnaryMathFunction("truncate") {
     ): Numeric = commonBehaviour(real.value)
 
     /** Implements common behaviour for Real and Integer */
-    private fun commonBehaviour(decimal: BigDecimal): Integer = Numeric.of(decimal.setScale(0, RoundingMode.DOWN).toBigInteger())
+    private fun commonBehaviour(decimal: BigDecimal): Integer =
+        Numeric.of(decimal.setScale(0, RoundingMode.DOWN).toBigInteger())
 }

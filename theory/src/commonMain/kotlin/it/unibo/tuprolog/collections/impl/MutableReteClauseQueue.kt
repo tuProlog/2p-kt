@@ -22,7 +22,10 @@ internal class MutableReteClauseQueue private constructor(
 
     override fun getFifoOrdered(clause: Clause): Sequence<Clause> = rete.get(clause)
 
-    override fun getLifoOrdered(clause: Clause): Sequence<Clause> = getFifoOrdered(clause).toList().asReversed().asSequence()
+    override fun getLifoOrdered(clause: Clause): Sequence<Clause> =
+        getFifoOrdered(
+            clause,
+        ).toList().asReversed().asSequence()
 
     override fun addFirst(clause: Clause): MutableReteClauseQueue {
         rete.assertA(clause)

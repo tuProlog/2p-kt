@@ -58,7 +58,13 @@ internal sealed class SubstitutionImpl : Substitution {
 
     override fun filter(variables: KtCollection<Var>): Substitution = filter { k, _ -> k in variables }
 
-    override fun filter(predicate: (key: Var, value: Term) -> Boolean): Substitution = filter { (key, value) -> predicate(key, value) }
+    override fun filter(predicate: (key: Var, value: Term) -> Boolean): Substitution =
+        filter { (key, value) ->
+            predicate(
+                key,
+                value,
+            )
+        }
 
     override fun <T> whenIs(
         unifier: ((Unifier) -> T)?,
@@ -120,9 +126,15 @@ internal sealed class SubstitutionImpl : Substitution {
             vararg otherVariables: Var,
         ): Unifier = super.minus(variable, *otherVariables).castToUnifier()
 
-        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier = super.filter(predicate).castToUnifier()
+        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier =
+            super.filter(
+                predicate,
+            ).castToUnifier()
 
-        override fun filter(predicate: (key: Var, value: Term) -> Boolean): Unifier = super.filter(predicate).castToUnifier()
+        override fun filter(predicate: (key: Var, value: Term) -> Boolean): Unifier =
+            super.filter(
+                predicate,
+            ).castToUnifier()
 
         override fun filter(variables: KtCollection<Var>): Unifier = super.filter(variables).castToUnifier()
 
@@ -144,7 +156,15 @@ internal sealed class SubstitutionImpl : Substitution {
 
         override fun applyTo(term: Term): Term = term.apply(this)
 
-        override fun replaceTags(tags: Map<String, Any>): Unifier = if (tags == this.tags) this else UnifierImpl(assignments, tags)
+        override fun replaceTags(tags: Map<String, Any>): Unifier =
+            if (tags == this.tags) {
+                this
+            } else {
+                UnifierImpl(
+                    assignments,
+                    tags,
+                )
+            }
     }
 
     /** The Failed Substitution instance */
@@ -271,6 +291,10 @@ internal sealed class SubstitutionImpl : Substitution {
         }
 
         /** Utility function to filter out identity mappings from a Map<Var, Term> */
-        private fun Map<Var, Term>.withoutIdentityMappings(): Map<Var, Term> = filterNot { (`var`, term) -> `var` == term }
+        private fun Map<Var, Term>.withoutIdentityMappings(): Map<Var, Term> =
+            filterNot {
+                    (`var`, term) ->
+                `var` == term
+            }
     }
 }

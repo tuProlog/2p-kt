@@ -44,7 +44,8 @@ interface DirectiveSelector : DirectiveListener {
 
         val SET_PROLOG_FLAG = scope.structOf(SetPrologFlag.functor, Name, Value)
 
-        private val PATTERNS = listOf(DYNAMIC, STATIC, INITIALIZATION, SOLVE, INCLUDE, LOAD, OP, SET_FLAG, SET_PROLOG_FLAG)
+        private val PATTERNS =
+            listOf(DYNAMIC, STATIC, INITIALIZATION, SOLVE, INCLUDE, LOAD, OP, SET_FLAG, SET_PROLOG_FLAG)
     }
 
     override val patterns: List<Term> get() = PATTERNS

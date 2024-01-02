@@ -165,9 +165,13 @@ interface SideEffectFactory {
         outputChannel: OutputChannel<String>,
     ): SideEffect.OpenOutputChannels
 
-    fun resetOutputChannels(outputChannels: Iterable<Pair<String, OutputChannel<String>>>): SideEffect.ResetOutputChannels
+    fun resetOutputChannels(
+        outputChannels: Iterable<Pair<String, OutputChannel<String>>>,
+    ): SideEffect.ResetOutputChannels
 
-    fun resetOutputChannels(outputChannels: Sequence<Pair<String, OutputChannel<String>>>): SideEffect.ResetOutputChannels
+    fun resetOutputChannels(
+        outputChannels: Sequence<Pair<String, OutputChannel<String>>>,
+    ): SideEffect.ResetOutputChannels
 
     fun resetOutputChannels(outputChannels: Map<String, OutputChannel<String>>): SideEffect.ResetOutputChannels
 

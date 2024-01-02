@@ -123,14 +123,23 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
     override fun assertA(clauses: Iterable<Clause>): Theory =
         createNewTheory(checkClausesCorrect(clauses.asSequence()) + this.clauses.asSequence())
 
-    override fun assertA(clauses: Sequence<Clause>): Theory = createNewTheory(checkClausesCorrect(clauses) + this.clauses.asSequence())
+    override fun assertA(clauses: Sequence<Clause>): Theory =
+        createNewTheory(
+            checkClausesCorrect(clauses) + this.clauses.asSequence(),
+        )
 
-    override fun assertZ(clause: Clause): Theory = createNewTheory(clauses.asSequence() + checkClausesCorrect(sequenceOf(clause)))
+    override fun assertZ(clause: Clause): Theory =
+        createNewTheory(
+            clauses.asSequence() + checkClausesCorrect(sequenceOf(clause)),
+        )
 
     override fun assertZ(clauses: Iterable<Clause>): Theory =
         createNewTheory(this.clauses.asSequence() + checkClausesCorrect(clauses).asSequence())
 
-    override fun assertZ(clauses: Sequence<Clause>): Theory = createNewTheory(this.clauses.asSequence() + checkClausesCorrect(clauses))
+    override fun assertZ(clauses: Sequence<Clause>): Theory =
+        createNewTheory(
+            this.clauses.asSequence() + checkClausesCorrect(clauses),
+        )
 
     protected abstract fun createNewTheory(
         clauses: Sequence<Clause>,

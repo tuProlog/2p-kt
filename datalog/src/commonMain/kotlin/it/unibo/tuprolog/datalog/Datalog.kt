@@ -121,7 +121,9 @@ fun Theory.ensureIsNonRecursive() {
 val Theory.isDatalog: Boolean
     get() =
         rules.all {
-            it.hasNoCompound && it.allHeadVariablesInNonNegatedLiterals && it.allNegatedLiteralsVariablesInNonNegatedLiteralsToo
+            it.hasNoCompound &&
+                it.allHeadVariablesInNonNegatedLiterals &&
+                it.allNegatedLiteralsVariablesInNonNegatedLiteralsToo
         } && isNonRecursive
 
 fun Theory.ensureIsDatalog() {

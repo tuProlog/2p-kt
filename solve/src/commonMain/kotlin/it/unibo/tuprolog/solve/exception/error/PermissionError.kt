@@ -43,9 +43,22 @@ class PermissionError(
     override fun updateContext(
         newContext: ExecutionContext,
         index: Int,
-    ): PermissionError = PermissionError(message, cause, contexts.setItem(index, newContext), operation, permission, culprit, extraData)
+    ): PermissionError =
+        PermissionError(
+            message,
+            cause,
+            contexts.setItem(index, newContext),
+            operation,
+            permission,
+            culprit,
+            extraData,
+        )
 
-    override fun updateLastContext(newContext: ExecutionContext): PermissionError = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): PermissionError =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): PermissionError =
         PermissionError(message, cause, contexts.addLast(newContext), operation, permission, culprit, extraData)

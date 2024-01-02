@@ -74,7 +74,8 @@ interface Graph<T, W> : Iterable<Edge<T, W>> {
     companion object {
         @JsName("build")
         @JvmStatic
-        fun <T, W> build(builder: MutableGraph<T, W>.() -> Unit): Graph<T, W> = MutableGraph.build(builder).toImmutable()
+        fun <T, W> build(builder: MutableGraph<T, W>.() -> Unit): Graph<T, W> =
+            MutableGraph.build(builder).toImmutable()
 
         @JsName("of")
         fun <T, W> of(

@@ -22,7 +22,11 @@ fun Equation.toSubstitution(): Substitution.Unifier = Substitution.unifier(toAss
 fun Iterable<Equation>.toSubstitution(): Substitution = Substitution.of(this.asSequence().map { it.toAssignmentPair() })
 
 /** Transforms a [Substitution] into the list of corresponding [Equation]s */
-fun Substitution.toEquations(): List<Equation> = this.entries.map { (variable, term) -> Equation.Assignment(variable, term) }
+fun Substitution.toEquations(): List<Equation> =
+    this.entries.map {
+            (variable, term) ->
+        Equation.Assignment(variable, term)
+    }
 
 /** Creates an equation with [this] and [that] terms */
 @Suppress("unused", "FunctionName")

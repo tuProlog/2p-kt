@@ -124,7 +124,7 @@ interface List : Recursive {
         ): List {
             if (items.isEmpty()) {
                 return (last ?: empty()).asList()
-                    ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
+                    ?: error("Cannot create a list out of the provided arguments: $items, $last")
             }
             val i = items.asReversed().iterator()
             var right =
@@ -153,7 +153,7 @@ interface List : Recursive {
             return when {
                 items.isOver ->
                     (last ?: empty()).asList()
-                        ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
+                        ?: error("Cannot create a list out of the provided arguments: $items, $last")
                 last == null -> LazyConsWithImplicitLast(items)
                 else -> LazyConsWithExplicitLast(items, last)
             }

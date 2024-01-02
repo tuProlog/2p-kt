@@ -123,4 +123,5 @@ internal data class StreamsExecutionContext(
 }
 
 /** Extension method to get [SideEffectManagerImpl], if this context is of right type*/
-internal fun ExecutionContext.getSideEffectManager(): SideEffectManagerImpl? = (this as? StreamsExecutionContext)?.sideEffectManager
+internal fun ExecutionContext.getSideEffectManager(): SideEffectManagerImpl? =
+    (this as? StreamsExecutionContext)?.sideEffectManager

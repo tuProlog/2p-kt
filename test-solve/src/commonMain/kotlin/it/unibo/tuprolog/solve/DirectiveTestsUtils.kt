@@ -64,7 +64,9 @@ object DirectiveTestsUtils {
             { solverFactory.mutableSolverOf().also { s -> s.loadDynamicKb(it.toMutableTheory()) } },
         )
 
-    fun solverInitializersWithEventsList(solverFactory: SolverFactory): List<Pair<(Theory) -> Solver, MutableList<Any>>> {
+    fun solverInitializersWithEventsList(
+        solverFactory: SolverFactory,
+    ): List<Pair<(Theory) -> Solver, MutableList<Any>>> {
         fun <R> stdOut(action: (MutableList<Any>, OutputChannel<String>, OutputChannel<Warning>) -> R): R {
             val events = mutableListOf<Any>()
             val outputChannel = OutputChannel.of<String> { events.add(it) }

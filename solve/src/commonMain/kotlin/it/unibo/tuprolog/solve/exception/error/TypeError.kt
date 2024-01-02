@@ -45,7 +45,11 @@ class TypeError(
         index: Int,
     ): TypeError = TypeError(message, cause, contexts.setItem(index, newContext), expectedType, culprit, extraData)
 
-    override fun updateLastContext(newContext: ExecutionContext): TypeError = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): TypeError =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): TypeError =
         TypeError(message, cause, contexts.addLast(newContext), expectedType, culprit, extraData)

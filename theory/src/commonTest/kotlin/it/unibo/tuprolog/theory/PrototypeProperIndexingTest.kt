@@ -222,7 +222,10 @@ class PrototypeProperIndexingTest(
                     .filter { it matches anonymousF1Clause }
 
             assertTermsAreEqual(newF1AtomClause, generatedIndexingAfterAssertionA.first())
-            assertClausesHaveSameLengthAndContent(listOf(newF1AtomClause) + expectedIndexingOverF1, generatedIndexingAfterAssertionA)
+            assertClausesHaveSameLengthAndContent(
+                listOf(newF1AtomClause) + expectedIndexingOverF1,
+                generatedIndexingAfterAssertionA,
+            )
         }
     }
 
@@ -235,7 +238,10 @@ class PrototypeProperIndexingTest(
                     .filter { it matches anonymousF1Clause }
 
             assertTermsAreEqual(newF1VarClause, generatedIndexingAfterAssertionA.first())
-            assertClausesHaveSameLengthAndContent(listOf(newF1VarClause) + expectedIndexingOverF1, generatedIndexingAfterAssertionA)
+            assertClausesHaveSameLengthAndContent(
+                listOf(newF1VarClause) + expectedIndexingOverF1,
+                generatedIndexingAfterAssertionA,
+            )
         }
     }
 
@@ -248,7 +254,10 @@ class PrototypeProperIndexingTest(
                     .filter { it matches anonymousF2Clause }
 
             assertTermsAreEqual(newF2AtomClause, generatedIndexingAfterAssertionA.first())
-            assertClausesHaveSameLengthAndContent(listOf(newF2AtomClause) + expectedIndexingOverF2, generatedIndexingAfterAssertionA)
+            assertClausesHaveSameLengthAndContent(
+                listOf(newF2AtomClause) + expectedIndexingOverF2,
+                generatedIndexingAfterAssertionA,
+            )
         }
     }
 
@@ -261,7 +270,10 @@ class PrototypeProperIndexingTest(
                     .filter { it matches anonymousF2Clause }
 
             assertTermsAreEqual(newF2VarClause, generatedIndexingAfterAssertionA.first())
-            assertClausesHaveSameLengthAndContent(listOf(newF2VarClause) + expectedIndexingOverF2, generatedIndexingAfterAssertionA)
+            assertClausesHaveSameLengthAndContent(
+                listOf(newF2VarClause) + expectedIndexingOverF2,
+                generatedIndexingAfterAssertionA,
+            )
         }
     }
 
@@ -274,7 +286,10 @@ class PrototypeProperIndexingTest(
                     .filter { it matches anonymousF2Clause }
 
             assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.first())
-            assertClausesHaveSameLengthAndContent(listOf(newF2MixedClause) + expectedIndexingOverF2, generatedIndexingAfterAssertionA)
+            assertClausesHaveSameLengthAndContent(
+                listOf(newF2MixedClause) + expectedIndexingOverF2,
+                generatedIndexingAfterAssertionA,
+            )
         }
     }
 
@@ -287,7 +302,10 @@ class PrototypeProperIndexingTest(
                     .filter { it matches anonymousF1Clause }
 
             assertTermsAreEqual(newF1AtomClause, generatedIndexingAfterAssertionA.asReversed().first())
-            assertClausesHaveSameLengthAndContent(expectedIndexingOverF1 + listOf(newF1AtomClause), generatedIndexingAfterAssertionA)
+            assertClausesHaveSameLengthAndContent(
+                expectedIndexingOverF1 + listOf(newF1AtomClause),
+                generatedIndexingAfterAssertionA,
+            )
         }
     }
 
@@ -300,7 +318,10 @@ class PrototypeProperIndexingTest(
                     .filter { it matches anonymousF1Clause }
 
             assertTermsAreEqual(newF1VarClause, generatedIndexingAfterAssertionA.asReversed().first())
-            assertClausesHaveSameLengthAndContent(expectedIndexingOverF1 + listOf(newF1VarClause), generatedIndexingAfterAssertionA)
+            assertClausesHaveSameLengthAndContent(
+                expectedIndexingOverF1 + listOf(newF1VarClause),
+                generatedIndexingAfterAssertionA,
+            )
         }
     }
 
@@ -313,7 +334,10 @@ class PrototypeProperIndexingTest(
                     .filter { it matches anonymousF2Clause }
 
             assertTermsAreEqual(newF2AtomClause, generatedIndexingAfterAssertionA.asReversed().first())
-            assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + listOf(newF2AtomClause), generatedIndexingAfterAssertionA)
+            assertClausesHaveSameLengthAndContent(
+                expectedIndexingOverF2 + listOf(newF2AtomClause),
+                generatedIndexingAfterAssertionA,
+            )
         }
     }
 
@@ -326,7 +350,10 @@ class PrototypeProperIndexingTest(
                     .filter { it matches anonymousF2Clause }
 
             assertTermsAreEqual(newF2VarClause, generatedIndexingAfterAssertionA.asReversed().first())
-            assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + listOf(newF2VarClause), generatedIndexingAfterAssertionA)
+            assertClausesHaveSameLengthAndContent(
+                expectedIndexingOverF2 + listOf(newF2VarClause),
+                generatedIndexingAfterAssertionA,
+            )
         }
     }
 
@@ -339,7 +366,10 @@ class PrototypeProperIndexingTest(
                     .filter { it matches anonymousF2Clause }
 
             assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.asReversed().first())
-            assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + listOf(newF2MixedClause), generatedIndexingAfterAssertionA)
+            assertClausesHaveSameLengthAndContent(
+                expectedIndexingOverF2 + listOf(newF2MixedClause),
+                generatedIndexingAfterAssertionA,
+            )
         }
     }
 }

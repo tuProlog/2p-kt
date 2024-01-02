@@ -6,6 +6,7 @@ import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
 object ParsingExamples {
+    @Suppress("ktlint:standard:multiline-expression-wrapping")
     val canonicalTerms: Sequence<Pair<String, Term>> =
         sequenceOf(
             "f(X)" to logicProgramming { "f"("X") },
@@ -38,7 +39,9 @@ object ParsingExamples {
             "1.2" to logicProgramming { numOf("1.2") },
             "-1" to logicProgramming { numOf(-1) },
             "-1.2" to logicProgramming { numOf("-1.2") },
-            "${BigInteger.of("".padEnd(17, 'F'), 16)}" to logicProgramming { numOf(BigInteger.of("295147905179352825855")) },
+            "${BigInteger.of("".padEnd(17, 'F'), 16)}" to logicProgramming {
+                numOf(BigInteger.of("295147905179352825855"))
+            },
             "0xFF" to logicProgramming { numOf(255) },
             "0XFF" to logicProgramming { numOf(255) },
             "-0xFF" to logicProgramming { numOf(-255) },

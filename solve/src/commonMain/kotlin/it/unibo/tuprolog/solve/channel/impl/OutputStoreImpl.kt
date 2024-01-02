@@ -34,7 +34,13 @@ internal class OutputStoreImpl(
             }
         }
 
-    override fun setWarnings(channel: OutputChannel<Warning>): OutputStore = OutputStoreImpl(stdOut, stdErr, channel, channels)
+    override fun setWarnings(channel: OutputChannel<Warning>): OutputStore =
+        OutputStoreImpl(
+            stdOut,
+            stdErr,
+            channel,
+            channels,
+        )
 
     override fun setCurrent(alias: String): OutputStore =
         when (val newCurrentChannel = get(alias)) {
@@ -52,7 +58,13 @@ internal class OutputStoreImpl(
     override fun plus(others: Map<String, OutputChannel<String>>): OutputStore =
         OutputStoreImpl(stdOut, stdErr, warnings, (this as Map<String, OutputChannel<String>>) + others)
 
-    override fun minus(others: Sequence<String>): OutputStore = OutputStoreImpl(stdOut, stdErr, warnings, channels - others)
+    override fun minus(others: Sequence<String>): OutputStore =
+        OutputStoreImpl(
+            stdOut,
+            stdErr,
+            warnings,
+            channels - others,
+        )
 
     companion object {
         private fun checkChannels(

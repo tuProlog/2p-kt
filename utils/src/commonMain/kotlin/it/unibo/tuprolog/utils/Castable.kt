@@ -16,5 +16,6 @@ interface Castable<T : Castable<T>> {
      * Casts the current object to [U], if possible, or returns `null` otherwise
      * @return the current object, casted to [U], or `null`, if the current object is not an instance of [U]
      */
+    @Suppress("ktlint:standard:function-naming")
     fun <U : T> `as`(): U? = this as? U
 }

@@ -17,7 +17,10 @@ object Natural : UnaryPredicate<ExecutionContext>("natural") {
             else -> sequenceOf(replyFail())
         }
 
-    private fun generateValues(): Sequence<Term> = generateSequence(BigInteger.ZERO) { it + BigInteger.ONE }.map { Integer.of(it) }
+    private fun generateValues(): Sequence<Term> =
+        generateSequence(BigInteger.ZERO) {
+            it + BigInteger.ONE
+        }.map { Integer.of(it) }
 
     private fun checkValue(value: Integer): Boolean = value.intValue.signum >= 0
 }

@@ -40,7 +40,8 @@ data class FlagStore(private val flags: Map<String, Term>) : Map<String, Term> b
     operator fun plus(flagValue: Pair<String, Term>): FlagStore = FlagStore(this.flags + mapOf(flagValue))
 
     @JsName("plusNotable")
-    operator fun plus(notableFlagValue: NotableFlag): FlagStore = FlagStore(this.flags + mapOf(notableFlagValue.toPair()))
+    operator fun plus(notableFlagValue: NotableFlag): FlagStore =
+        FlagStore(this.flags + mapOf(notableFlagValue.toPair()))
 
     @JsName("plusMap")
     operator fun plus(flags: Map<String, Term>): FlagStore = FlagStore(this.flags + flags)

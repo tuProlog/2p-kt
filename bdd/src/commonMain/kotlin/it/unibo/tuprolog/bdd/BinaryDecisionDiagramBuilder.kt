@@ -70,7 +70,9 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
          * to the same node
          * */
         @JsName("reducedOf")
-        fun <E : Comparable<E>> reducedOf(delegate: BinaryDecisionDiagramBuilder<E> = defaultOf()): BinaryDecisionDiagramBuilder<E> {
+        fun <E : Comparable<E>> reducedOf(
+            delegate: BinaryDecisionDiagramBuilder<E> = defaultOf(),
+        ): BinaryDecisionDiagramBuilder<E> {
             return ReducedBinaryDecisionDiagramBuilder(delegate)
         }
     }

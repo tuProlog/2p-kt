@@ -18,7 +18,11 @@ import kotlin.test.assertFailsWith
 internal class LogicFunctionTest {
     @Test
     fun functionOfReturnsPrologFunctionBehavingExactlyAsProvidedOne() {
-        wrapperToMatchingSignatureRequest(LogicFunction.Companion::enforcingSignature, function, ::createFunctionRequest).zip(allSignatures)
+        wrapperToMatchingSignatureRequest(
+            LogicFunction.Companion::enforcingSignature,
+            function,
+            ::createFunctionRequest,
+        ).zip(allSignatures)
             .forEach { (functionToGoodRequests, functionSignature) ->
                 val (checkedFunction, goodRequests) = functionToGoodRequests
                 goodRequests.forEach {
@@ -36,7 +40,11 @@ internal class LogicFunctionTest {
 
     @Test
     fun functionOfComplainsIfDifferentRequestSignatureIsDetected() {
-        wrapperToNotMatchingSignatureRequest(LogicFunction.Companion::enforcingSignature, function, ::createFunctionRequest)
+        wrapperToNotMatchingSignatureRequest(
+            LogicFunction.Companion::enforcingSignature,
+            function,
+            ::createFunctionRequest,
+        )
             .forEach { (checkedFunction, badRequests) ->
                 badRequests.forEach {
                     assertFailsWith<IllegalArgumentException> { checkedFunction.compute(it) }

@@ -61,7 +61,10 @@ interface MutableProblogTheory : ProblogTheory, MutableTheory {
 
     override fun retractAll(clause: Clause): RetractResult<MutableProblogTheory>
 
-    override fun retractAll(head: Struct): RetractResult<MutableProblogTheory> = retractAll(Rule.of(head, Var.anonymous()))
+    override fun retractAll(head: Struct): RetractResult<MutableProblogTheory> =
+        retractAll(
+            Rule.of(head, Var.anonymous()),
+        )
 
     override fun abolish(indicator: Indicator): MutableProblogTheory
 

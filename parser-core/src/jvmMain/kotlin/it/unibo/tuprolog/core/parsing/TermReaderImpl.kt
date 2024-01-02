@@ -23,14 +23,16 @@ class TermReaderImpl(
     override fun readTerms(
         reader: Reader,
         operators: OperatorSet,
-    ): Sequence<Term> = PrologParserFactory.parseExpressions(reader, operators).map {
-        it.accept(PrologExpressionVisitor(scope))
-    }
+    ): Sequence<Term> =
+        PrologParserFactory.parseExpressions(reader, operators).map {
+            it.accept(PrologExpressionVisitor(scope))
+        }
 
     override fun readTerms(
         inputStream: InputStream,
         operators: OperatorSet,
-    ): Sequence<Term> = PrologParserFactory.parseExpressions(inputStream, operators).map {
-        it.accept(PrologExpressionVisitor(scope))
-    }
+    ): Sequence<Term> =
+        PrologParserFactory.parseExpressions(inputStream, operators).map {
+            it.accept(PrologExpressionVisitor(scope))
+        }
 }

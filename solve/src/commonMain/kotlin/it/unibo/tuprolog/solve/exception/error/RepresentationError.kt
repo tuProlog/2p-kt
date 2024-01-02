@@ -40,7 +40,11 @@ class RepresentationError(
         index: Int,
     ): RepresentationError = RepresentationError(message, cause, contexts.setItem(index, newContext), limit, extraData)
 
-    override fun updateLastContext(newContext: ExecutionContext): RepresentationError = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): RepresentationError =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): RepresentationError =
         RepresentationError(message, cause, contexts.addLast(newContext), limit, extraData)

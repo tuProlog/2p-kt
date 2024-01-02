@@ -303,7 +303,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      * @return the current [Term], casted to [Clause]
      */
     @JsName("castToClause")
-    fun castToClause(): Clause = asClause() ?: throw ClassCastException("Cannot cast $this to ${Clause::class.simpleName}")
+    fun castToClause(): Clause =
+        asClause() ?: throw ClassCastException("Cannot cast $this to ${Clause::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Cons], if possible
@@ -319,7 +320,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      * @return the current [Term], casted to [Constant]
      */
     @JsName("castToConstant")
-    fun castToConstant(): Constant = asConstant() ?: throw ClassCastException("Cannot cast $this to ${Constant::class.simpleName}")
+    fun castToConstant(): Constant =
+        asConstant() ?: throw ClassCastException("Cannot cast $this to ${Constant::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Directive], if possible
@@ -327,7 +329,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      * @return the current [Term], casted to [Directive]
      */
     @JsName("castToDirective")
-    fun castToDirective(): Directive = asDirective() ?: throw ClassCastException("Cannot cast $this to ${Directive::class.simpleName}")
+    fun castToDirective(): Directive =
+        asDirective() ?: throw ClassCastException("Cannot cast $this to ${Directive::class.simpleName}")
 
     /**
      * Casts the current [Term] to [EmptyList], if possible
@@ -335,7 +338,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      * @return the current [Term], casted to [EmptyList]
      */
     @JsName("castToEmptyList")
-    fun castToEmptyList(): EmptyList = asEmptyList() ?: throw ClassCastException("Cannot cast $this to ${EmptyList::class.simpleName}")
+    fun castToEmptyList(): EmptyList =
+        asEmptyList() ?: throw ClassCastException("Cannot cast $this to ${EmptyList::class.simpleName}")
 
     /**
      * Casts the current [Term] to [EmptyBlock], if possible
@@ -343,7 +347,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      * @return the current [Term], casted to [EmptyBlock]
      */
     @JsName("castToEmptyBlock")
-    fun castToEmptyBlock(): EmptyBlock = asEmptyBlock() ?: throw ClassCastException("Cannot cast $this to ${EmptyBlock::class.simpleName}")
+    fun castToEmptyBlock(): EmptyBlock =
+        asEmptyBlock() ?: throw ClassCastException("Cannot cast $this to ${EmptyBlock::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Fact], if possible
@@ -359,7 +364,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      * @return the current [Term], casted to [Indicator]
      */
     @JsName("castToIndicator")
-    fun castToIndicator(): Indicator = asIndicator() ?: throw ClassCastException("Cannot cast $this to ${Indicator::class.simpleName}")
+    fun castToIndicator(): Indicator =
+        asIndicator() ?: throw ClassCastException("Cannot cast $this to ${Indicator::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Integer], if possible
@@ -367,7 +373,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      * @return the current [Term], casted to [Integer]
      */
     @JsName("castToInteger")
-    fun castToInteger(): Integer = asInteger() ?: throw ClassCastException("Cannot cast $this to ${Integer::class.simpleName}")
+    fun castToInteger(): Integer =
+        asInteger() ?: throw ClassCastException("Cannot cast $this to ${Integer::class.simpleName}")
 
     /**
      * Casts the current [Term] to [List], if possible
@@ -383,7 +390,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      * @return the current [Term], casted to [Numeric]
      */
     @JsName("castToNumeric")
-    fun castToNumeric(): Numeric = asNumeric() ?: throw ClassCastException("Cannot cast $this to ${Numeric::class.simpleName}")
+    fun castToNumeric(): Numeric =
+        asNumeric() ?: throw ClassCastException("Cannot cast $this to ${Numeric::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Real], if possible
@@ -415,7 +423,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      * @return the current [Term], casted to [Struct]
      */
     @JsName("castToStruct")
-    fun castToStruct(): Struct = asStruct() ?: throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
+    fun castToStruct(): Struct =
+        asStruct() ?: throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Recursive], if possible
@@ -423,7 +432,8 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      * @return the current [Term], casted to [Recursive]
      */
     @JsName("castToRecursive")
-    fun castToRecursive(): Recursive = asRecursive() ?: throw ClassCastException("Cannot cast $this to ${Recursive::class.simpleName}")
+    fun castToRecursive(): Recursive =
+        asRecursive() ?: throw ClassCastException("Cannot cast $this to ${Recursive::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Term]

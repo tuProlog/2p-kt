@@ -37,7 +37,11 @@ internal class PrimitiveTest {
 
     @Test
     fun primitiveOfComplainsIfDifferentRequestSignatureIsDetected() {
-        wrapperToNotMatchingSignatureRequest(Primitive.Companion::enforcingSignature, primitive, ::createPrimitiveRequest)
+        wrapperToNotMatchingSignatureRequest(
+            Primitive.Companion::enforcingSignature,
+            primitive,
+            ::createPrimitiveRequest,
+        )
             .forEach { (checkedPrimitive, badRequests) ->
                 badRequests.forEach {
                     assertFailsWith<IllegalArgumentException> { checkedPrimitive.solve(it) }

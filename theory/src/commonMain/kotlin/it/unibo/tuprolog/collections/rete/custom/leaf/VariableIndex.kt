@@ -48,7 +48,11 @@ internal class VariableIndex(
         variables.remove(indexed)
     }
 
-    override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> = removeAllLazily(variables, clause).buffered()
+    override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
+        removeAllLazily(
+            variables,
+            clause,
+        ).buffered()
 
     private fun extractFirst(
         clause: Clause,
@@ -66,5 +70,8 @@ internal class VariableIndex(
     override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
         variables.asSequence().filter { unificator.match(it.innerClause, clause) }
 
-    private fun extractGlobalSequence(clause: Clause): Sequence<Clause> = extractGlobalIndexedSequence(clause).map { it.innerClause }
+    private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
+        extractGlobalIndexedSequence(clause).map {
+            it.innerClause
+        }
 }

@@ -84,7 +84,16 @@ internal sealed class SolutionImpl(
         /** The Struct representing the solution */
         override val solvedQuery: Struct by lazy { substitution.applyTo(query) as Struct }
 
-        override fun replaceTags(tags: Map<String, Any>): YesImpl = if (tags === this.tags) this else YesImpl(query, substitution, tags)
+        override fun replaceTags(tags: Map<String, Any>): YesImpl =
+            if (tags === this.tags) {
+                this
+            } else {
+                YesImpl(
+                    query,
+                    substitution,
+                    tags,
+                )
+            }
 
         override val isYes: Boolean
             get() = true
@@ -151,7 +160,16 @@ internal sealed class SolutionImpl(
             noVarargSignatureCheck(signature)
         }
 
-        override fun replaceTags(tags: Map<String, Any>): HaltImpl = if (tags === this.tags) this else HaltImpl(query, exception, tags)
+        override fun replaceTags(tags: Map<String, Any>): HaltImpl =
+            if (tags === this.tags) {
+                this
+            } else {
+                HaltImpl(
+                    query,
+                    exception,
+                    tags,
+                )
+            }
 
         override fun equals(other: Any?): Boolean {
             if (!super.equals(other)) return false

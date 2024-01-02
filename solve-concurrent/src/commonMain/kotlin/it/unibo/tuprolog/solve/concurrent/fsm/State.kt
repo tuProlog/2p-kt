@@ -12,7 +12,8 @@ interface State {
     fun asEndState(): EndState? = null
 
     @JsName("castToEndState")
-    fun castToEndState(): EndState = asEndState() ?: throw ClassCastException("Cannot cast $this to ${EndState::class.simpleName}")
+    fun castToEndState(): EndState =
+        asEndState() ?: throw ClassCastException("Cannot cast $this to ${EndState::class.simpleName}")
 
     @JsName("next")
     fun next(): Iterable<State>

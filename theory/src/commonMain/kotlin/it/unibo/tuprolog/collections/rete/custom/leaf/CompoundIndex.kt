@@ -158,7 +158,10 @@ internal class CompoundIndex(
 
     private fun Clause.nestedFunctor(): String = this.head!!.functorOfNestedFirstArgument(nestingLevel)
 
-    private fun IndexedClause.nestedFunctor(): String = this.innerClause.head!!.functorOfNestedFirstArgument(nestingLevel)
+    private fun IndexedClause.nestedFunctor(): String =
+        this.innerClause.head!!.functorOfNestedFirstArgument(
+            nestingLevel,
+        )
 
     private fun Clause.isGlobal(): Boolean = this.head!!.nestedFirstArgument(nestingLevel).isVar
 

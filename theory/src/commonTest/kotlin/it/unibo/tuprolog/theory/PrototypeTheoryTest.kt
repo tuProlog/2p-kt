@@ -461,7 +461,9 @@ class PrototypeTheoryTest(
         } else if (first !is MutableTheory && second !is MutableTheory) {
             assertNotSame(first, second)
         } else {
-            throw IllegalStateException("There must be a problem: trying to compare a mutable theory with an immutable one")
+            throw IllegalStateException(
+                "There must be a problem: trying to compare a mutable theory with an immutable one",
+            )
         }
     }
 

@@ -127,7 +127,13 @@ class TestSubstitutionsMetadata {
 
     @Test
     fun settingMultipleTagsPreservesEquality() {
-        val taggedSubstitutions = substitutions.map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
+        val taggedSubstitutions =
+            substitutions.map {
+                it.setTags(
+                    someKey to someValue1,
+                    someOtherKey to someOtherValue,
+                )
+            }
         for ((nonTagged, tagged) in substitutions.zip(taggedSubstitutions)) {
             assertEquals(nonTagged, tagged)
             assertEquals(nonTagged.hashCode(), tagged.hashCode())
@@ -138,7 +144,13 @@ class TestSubstitutionsMetadata {
 
     @Test
     fun clearingTagsPreservesEquality() {
-        val taggedSubstitutions = substitutions.map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
+        val taggedSubstitutions =
+            substitutions.map {
+                it.setTags(
+                    someKey to someValue1,
+                    someOtherKey to someOtherValue,
+                )
+            }
         for ((tagged, cleared) in taggedSubstitutions.zip(taggedSubstitutions.map { it.clearTags() })) {
             assertEquals(tagged, cleared)
             assertEquals(tagged.hashCode(), cleared.hashCode())
@@ -149,7 +161,13 @@ class TestSubstitutionsMetadata {
 
     @Test
     fun addingAnExistingTagReplacesThatTag() {
-        val taggedSubstitutions = substitutions.map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
+        val taggedSubstitutions =
+            substitutions.map {
+                it.setTags(
+                    someKey to someValue1,
+                    someOtherKey to someOtherValue,
+                )
+            }
         for (replaced in taggedSubstitutions.map { it.addTag(someKey, someValue2) }) {
             assertEquals(someValue2, replaced.getTag<Metadata<Long>>(someKey))
         }

@@ -101,5 +101,13 @@ internal class IndexedTheory private constructor(
     override val size: Long
         get() = sizeCache
 
-    override fun replaceTags(tags: Map<String, Any>): IndexedTheory = if (tags === this.tags) this else IndexedTheory(queue, tags)
+    override fun replaceTags(tags: Map<String, Any>): IndexedTheory =
+        if (tags === this.tags) {
+            this
+        } else {
+            IndexedTheory(
+                queue,
+                tags,
+            )
+        }
 }

@@ -181,7 +181,9 @@ object PrologStandardExampleTheories {
                 ),
                 "call"(false).hasSolutions({ no() }),
                 "call"(true and "X").hasSolutions({ halt(instantiationError(errorSignature, varOf("X"))) }),
-                "call"(true and (false and 1)).hasSolutions({ halt(typeError(errorSignature, true and (false and 1))) }),
+                "call"(
+                    true and (false and 1),
+                ).hasSolutions({ halt(typeError(errorSignature, true and (false and 1))) }),
             )
         }
 

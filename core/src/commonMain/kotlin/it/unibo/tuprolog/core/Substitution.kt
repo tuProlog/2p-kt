@@ -36,7 +36,8 @@ sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable
      * @return the current [Substitution], casted to [Unifier]
      */
     @JsName("castToUnifier")
-    fun castToUnifier(): Unifier = asUnifier() ?: throw ClassCastException("Cannot cast $this to ${Unifier::class.simpleName}")
+    fun castToUnifier(): Unifier =
+        asUnifier() ?: throw ClassCastException("Cannot cast $this to ${Unifier::class.simpleName}")
 
     /**
      * Casts the current [Substitution] to [Fail], if possible, or returns `null` otherwise
@@ -313,7 +314,8 @@ sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable
          */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(substitutionPairs: Iterable<Pair<Var, Term>>): Substitution = SubstitutionImpl.of(substitutionPairs.asSequence())
+        fun of(substitutionPairs: Iterable<Pair<Var, Term>>): Substitution =
+            SubstitutionImpl.of(substitutionPairs.asSequence())
 
         /**
          * Crates a [Unifier] from the given [Iterable] of [Var]-[Term] [Pair]s.
@@ -329,7 +331,8 @@ sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable
          */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(substitutionPairs: Sequence<Pair<Var, Term>>): Substitution = SubstitutionImpl.of(substitutionPairs.asSequence())
+        fun of(substitutionPairs: Sequence<Pair<Var, Term>>): Substitution =
+            SubstitutionImpl.of(substitutionPairs.asSequence())
 
         /**
          * Crates a [Unifier] from the given [Sequence] of [Var]-[Term] [Pair]s.

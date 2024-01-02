@@ -41,13 +41,22 @@ internal class ReteClauseQueue private constructor(
 
     override fun getFifoOrdered(clause: Clause): Sequence<Clause> = rete.get(clause)
 
-    override fun getLifoOrdered(clause: Clause): Sequence<Clause> = getFifoOrdered(clause).toList().asReversed().asSequence()
+    override fun getLifoOrdered(clause: Clause): Sequence<Clause> =
+        getFifoOrdered(
+            clause,
+        ).toList().asReversed().asSequence()
 
     override fun add(clause: Clause): ReteClauseQueue = addLast(clause)
 
-    override fun retrieve(clause: Clause): RetrieveResult<out ReteClauseQueue> = super<AbstractReteClauseCollection>.retrieve(clause)
+    override fun retrieve(clause: Clause): RetrieveResult<out ReteClauseQueue> =
+        super<AbstractReteClauseCollection>.retrieve(
+            clause,
+        )
 
-    override fun retrieveFirst(clause: Clause): RetrieveResult<out ReteClauseQueue> = super<AbstractReteClauseCollection>.retrieve(clause)
+    override fun retrieveFirst(clause: Clause): RetrieveResult<out ReteClauseQueue> =
+        super<AbstractReteClauseCollection>.retrieve(
+            clause,
+        )
 
     override fun newCollectionBuilder(rete: ReteTree): ReteClauseQueue = ReteClauseQueue(rete)
 

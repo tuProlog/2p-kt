@@ -35,7 +35,11 @@ class TimeOutException(
         index: Int,
     ): TimeOutException = TimeOutException(message, cause, contexts.setItem(index, newContext), exceededDuration)
 
-    override fun updateLastContext(newContext: ExecutionContext): TimeOutException = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): TimeOutException =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): TimeOutException =
         TimeOutException(message, cause, arrayOf(*contexts, newContext), exceededDuration)

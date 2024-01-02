@@ -109,7 +109,10 @@ internal class BlockImplTest {
     fun toArrayReturnValue() {
         val mixedBlocks = BlockUtils.mixedBlocks.map { it.toList() }
 
-        onCorrespondingItems(mixedBlocks, mixedBlocksInstances.map { it.toArray().toList() }) { expectedList, actualList ->
+        onCorrespondingItems(
+            mixedBlocks,
+            mixedBlocksInstances.map { it.toArray().toList() },
+        ) { expectedList, actualList ->
             assertEquals(expectedList, actualList)
         }
     }

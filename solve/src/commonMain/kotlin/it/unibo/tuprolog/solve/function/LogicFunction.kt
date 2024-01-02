@@ -17,7 +17,8 @@ fun interface LogicFunction {
     companion object {
         @JsName("of")
         @JvmStatic
-        fun of(function: (Compute.Request<ExecutionContext>) -> Compute.Response): LogicFunction = LogicFunction(function)
+        fun of(function: (Compute.Request<ExecutionContext>) -> Compute.Response): LogicFunction =
+            LogicFunction(function)
 
         /**
          * Creates a new [LogicFunction], behaving exactly as given [uncheckedFunction], but accepting only provided [supportedSignature]
@@ -34,7 +35,9 @@ fun interface LogicFunction {
                 @Suppress("UNCHECKED_CAST")
                 when (it.signature) {
                     supportedSignature -> uncheckedFunction(it as Compute.Request<C>)
-                    else -> throw IllegalArgumentException("This function supports only this signature `$supportedSignature`")
+                    else -> throw IllegalArgumentException(
+                        "This function supports only this signature `$supportedSignature`",
+                    )
                 }
             }
 

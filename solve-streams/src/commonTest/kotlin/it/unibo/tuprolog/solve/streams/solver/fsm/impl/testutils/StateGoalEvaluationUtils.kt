@@ -27,7 +27,9 @@ internal object StateGoalEvaluationUtils {
     internal val expectedContext = StreamsExecutionContext(sideEffectManager = SideEffectManagerImpl())
 
     /** Creates a request launching exactly given primitive behaviour */
-    internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive): Solve.Request<StreamsExecutionContext> {
+    internal fun createRequestForPrimitiveResponding(
+        primitiveBehaviour: Primitive,
+    ): Solve.Request<StreamsExecutionContext> {
         val testPrimitive =
             PrimitiveWrapper.wrap<StreamsExecutionContext>("testPrimitive", 0) {
                 primitiveBehaviour.solve(it)

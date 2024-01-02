@@ -107,7 +107,17 @@ data class ClassicExecutionContext(
         dynamicKb: Theory,
         inputChannels: InputStore,
         outputChannels: OutputStore,
-    ): Solver = ClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb = true)
+    ): Solver =
+        ClassicSolver(
+            unificator,
+            libraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            inputChannels,
+            outputChannels,
+            trustKb = true,
+        )
 
     override fun createMutableSolver(
         unificator: Unificator,
@@ -118,7 +128,16 @@ data class ClassicExecutionContext(
         inputChannels: InputStore,
         outputChannels: OutputStore,
     ): MutableSolver =
-        MutableClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb = true)
+        MutableClassicSolver(
+            unificator,
+            libraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            inputChannels,
+            outputChannels,
+            trustKb = true,
+        )
 
     override fun update(
         unificator: Unificator,

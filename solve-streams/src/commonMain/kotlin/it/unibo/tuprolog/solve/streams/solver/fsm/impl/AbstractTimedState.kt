@@ -26,7 +26,8 @@ internal abstract class AbstractTimedState(
 
     override fun behave(): Sequence<State> =
         when {
-            solve.maxDuration == TimeDuration.MAX_VALUE -> behaveTimed() // optimized without check, when maxDuration is infinite
+            // optimized without check, when maxDuration is infinite
+            solve.maxDuration == TimeDuration.MAX_VALUE -> behaveTimed()
 
             timeIsOver(stateCurrentTime - solve.startTime, solve.maxDuration) ->
                 sequenceOf(statEndHaltTimeout())

@@ -27,7 +27,8 @@ internal abstract class AbstractReteNode<K, E : Clause>(
 
     override fun asArgNode(): ArgNode? = null
 
-    override fun castToArgNode(): ArgNode = asArgNode() ?: throw ClassCastException("Cannot cast $this to ${ArgNode::class.simpleName}")
+    override fun castToArgNode(): ArgNode =
+        asArgNode() ?: throw ClassCastException("Cannot cast $this to ${ArgNode::class.simpleName}")
 
     override val isArityNode: Boolean
         get() = false
@@ -50,14 +51,16 @@ internal abstract class AbstractReteNode<K, E : Clause>(
 
     override fun asRootNode(): RootNode? = null
 
-    override fun castToRootNode(): RootNode = asRootNode() ?: throw ClassCastException("Cannot cast $this to ${RootNode::class.simpleName}")
+    override fun castToRootNode(): RootNode =
+        asRootNode() ?: throw ClassCastException("Cannot cast $this to ${RootNode::class.simpleName}")
 
     override val isRuleNode: Boolean
         get() = false
 
     override fun asRuleNode(): RuleNode? = null
 
-    override fun castToRuleNode(): RuleNode = asRuleNode() ?: throw ClassCastException("Cannot cast $this to ${RuleNode::class.simpleName}")
+    override fun castToRuleNode(): RuleNode =
+        asRuleNode() ?: throw ClassCastException("Cannot cast $this to ${RuleNode::class.simpleName}")
 
     override val isNoArgsNode: Boolean
         get() = false

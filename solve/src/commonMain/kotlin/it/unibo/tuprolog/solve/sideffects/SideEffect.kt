@@ -79,7 +79,10 @@ abstract class SideEffect {
 
         constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(dynamicKb = mutableTheory(context))
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                dynamicKb = mutableTheory(context),
+            )
     }
 
     data class AddDynamicClauses(
@@ -131,7 +134,10 @@ abstract class SideEffect {
 
         constructor(flags: Sequence<Pair<String, Term>>) : this(flags.toMap())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(flags = context.flags + flags)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                flags = context.flags + flags,
+            )
     }
 
     data class ResetFlags(override val flags: Map<String, Term>) : AlterFlagsByEntries(flags) {
@@ -149,7 +155,10 @@ abstract class SideEffect {
 
         constructor(names: Sequence<String>) : this(names.toList())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(flags = context.flags - names)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                flags = context.flags - names,
+            )
     }
 
     abstract class AlterRuntime : SideEffect()
@@ -165,7 +174,8 @@ abstract class SideEffect {
     abstract class AlterLibrariesByName(open val aliases: Iterable<String>) : AlterRuntime()
 
     data class LoadLibrary(override val library: Library) : AlterLibrary(library) {
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(libraries = context.libraries + library)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(libraries = context.libraries + library)
     }
 
     data class UnloadLibraries(override val aliases: Iterable<String>) : AlterLibrariesByName(aliases) {
@@ -175,11 +185,15 @@ abstract class SideEffect {
 
         constructor(vararg aliases: String) : this(listOf(*aliases))
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(libraries = context.libraries - aliases)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                libraries = context.libraries - aliases,
+            )
     }
 
     data class UpdateLibrary(override val library: Library) : AlterLibrary(library) {
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(libraries = context.libraries.update(library))
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(libraries = context.libraries.update(library))
     }
 
     data class AddLibraries(override val libraries: Runtime) : AlterAliasedRuntime() {
@@ -189,7 +203,10 @@ abstract class SideEffect {
 
         constructor(vararg libraries: Library) : this(Runtime.of(*libraries))
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(libraries = context.libraries + libraries)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                libraries = context.libraries + libraries,
+            )
     }
 
     data class ResetRuntime(override val libraries: Runtime) : AlterAliasedRuntime() {
@@ -219,7 +236,10 @@ abstract class SideEffect {
 
         constructor(operators: Sequence<Operator>) : this(operators.toOperatorSet())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(operators = context.operators + operatorSet)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                operators = context.operators + operatorSet,
+            )
     }
 
     data class ResetOperators(override val operators: Iterable<Operator>) : AlterOperators(operators) {
@@ -227,7 +247,10 @@ abstract class SideEffect {
 
         constructor(operators: Sequence<Operator>) : this(operators.toOperatorSet())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(operators = context.operators + operatorSet)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                operators = context.operators + operatorSet,
+            )
     }
 
     data class RemoveOperators(override val operators: Iterable<Operator>) : AlterOperators(operators) {
@@ -235,7 +258,10 @@ abstract class SideEffect {
 
         constructor(operators: Sequence<Operator>) : this(operators.toOperatorSet())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(operators = context.operators - operatorSet)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                operators = context.operators - operatorSet,
+            )
     }
 
     abstract class AlterChannels : SideEffect()
@@ -268,7 +294,10 @@ abstract class SideEffect {
 
         constructor(inputChannels: Sequence<Pair<String, InputChannel<String>>>) : this(inputChannels.toMap())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(inputChannels = InputStore.of(inputChannels))
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                inputChannels = InputStore.of(inputChannels),
+            )
     }
 
     data class CloseInputChannels(override val names: Iterable<String>) : AlterChannelsByName(names) {
@@ -276,7 +305,10 @@ abstract class SideEffect {
 
         constructor(names: Sequence<String>) : this(names.toList())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(inputChannels = context.inputChannels - names)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                inputChannels = context.inputChannels - names,
+            )
     }
 
     data class OpenOutputChannels(
@@ -301,7 +333,10 @@ abstract class SideEffect {
 
         constructor(outputChannels: Sequence<Pair<String, OutputChannel<String>>>) : this(outputChannels.toMap())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(outputChannels = OutputStore.of(outputChannels))
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                outputChannels = OutputStore.of(outputChannels),
+            )
     }
 
     data class CloseOutputChannels(override val names: Iterable<String>) : AlterChannelsByName(names) {
@@ -309,7 +344,10 @@ abstract class SideEffect {
 
         constructor(names: Sequence<String>) : this(names.toList())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(outputChannels = context.outputChannels - names)
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                outputChannels = context.outputChannels - names,
+            )
     }
 
     abstract class AlterCustomData(open val data: Map<String, Any>, open val reset: Boolean = false) : SideEffect()

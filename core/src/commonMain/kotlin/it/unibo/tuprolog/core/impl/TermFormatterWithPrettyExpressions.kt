@@ -134,7 +134,16 @@ internal class TermFormatterWithPrettyExpressions private constructor(
     private fun childFormatter(
         priority: Int,
         forceParentheses: Set<String> = emptySet(),
-    ): TermFormatter = TermFormatterWithPrettyExpressions(priority, delegate, operators, forceParentheses, quoted, numberVars, ignoreOps)
+    ): TermFormatter =
+        TermFormatterWithPrettyExpressions(
+            priority,
+            delegate,
+            operators,
+            forceParentheses,
+            quoted,
+            numberVars,
+            ignoreOps,
+        )
 
     private fun String.isOperator() = operators.containsKey(this)
 

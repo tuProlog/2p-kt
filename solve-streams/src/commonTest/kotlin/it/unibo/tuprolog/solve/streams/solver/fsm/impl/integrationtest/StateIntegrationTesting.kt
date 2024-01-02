@@ -47,7 +47,10 @@ import kotlin.test.assertEquals
  */
 internal class StateIntegrationTesting {
     /** Shorthand function to execute a solveRequest */
-    private fun Solve.Request<StreamsExecutionContext>.executeFSM(): Sequence<State> = StateMachineExecutor.execute(StateInit(this))
+    private fun Solve.Request<StreamsExecutionContext>.executeFSM(): Sequence<State> =
+        StateMachineExecutor.execute(
+            StateInit(this),
+        )
 
     /** Utility function to test correct states behaviour inside this class */
     private fun assertSolutionsCorrect(

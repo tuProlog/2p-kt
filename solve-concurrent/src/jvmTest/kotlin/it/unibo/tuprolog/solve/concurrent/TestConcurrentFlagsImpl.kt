@@ -33,10 +33,11 @@ class TestConcurrentFlagsImpl :
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     @Ignore
-    override fun settingMissingFlagsSucceeds() = multiRunConcurrentTest {
-        // todo handle set flag side effect
-        super.settingMissingFlagsSucceeds()
-    }
+    override fun settingMissingFlagsSucceeds() =
+        multiRunConcurrentTest {
+            // todo handle set flag side effect
+            super.settingMissingFlagsSucceeds()
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

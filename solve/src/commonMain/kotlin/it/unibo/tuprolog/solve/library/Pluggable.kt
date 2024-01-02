@@ -34,7 +34,8 @@ interface Pluggable {
      * The default implementation, checks for signature presence among primitives and theory clauses by indicator-like search
      */
     @JsName("containsSignature")
-    operator fun contains(signature: Signature): Boolean = hasPrimitive(signature) || hasRule(signature) || hasFunction(signature)
+    operator fun contains(signature: Signature): Boolean =
+        hasPrimitive(signature) || hasRule(signature) || hasFunction(signature)
 
     /** Checks whether this library contains the definition of provided operator */
     @JsName("containsOperator")

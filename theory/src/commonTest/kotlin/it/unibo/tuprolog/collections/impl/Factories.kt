@@ -13,11 +13,19 @@ import it.unibo.tuprolog.unify.Unificator
 object Factories {
     fun emptyMutableClauseMultiset(): MutableClauseMultiSet = MutableClauseMultiSet.empty(Unificator.default)
 
-    fun mutableClauseMultisetOf(clauses: Iterable<Clause>): MutableClauseMultiSet = MutableClauseMultiSet.of(Unificator.default, clauses)
+    fun mutableClauseMultisetOf(clauses: Iterable<Clause>): MutableClauseMultiSet =
+        MutableClauseMultiSet.of(
+            Unificator.default,
+            clauses,
+        )
 
     fun emptyMutableClauseQueue(): MutableClauseQueue = MutableClauseQueue.empty(Unificator.default)
 
-    fun mutableClauseQueueOf(clauses: Iterable<Clause>): MutableClauseQueue = MutableClauseQueue.of(Unificator.default, clauses)
+    fun mutableClauseQueueOf(clauses: Iterable<Clause>): MutableClauseQueue =
+        MutableClauseQueue.of(
+            Unificator.default,
+            clauses,
+        )
 
     fun emptyClauseMultiset(): ClauseMultiSet = ClauseMultiSet.empty(Unificator.default)
 
@@ -39,13 +47,29 @@ object Factories {
 
     fun emptyMutableIndexedTheory(): MutableTheory = MutableTheory.emptyIndexed(Unificator.default)
 
-    fun mutableIndexedTheoryOf(clauses: Iterable<Clause>): MutableTheory = MutableTheory.indexedOf(Unificator.default, clauses)
+    fun mutableIndexedTheoryOf(clauses: Iterable<Clause>): MutableTheory =
+        MutableTheory.indexedOf(
+            Unificator.default,
+            clauses,
+        )
 
-    fun mutableIndexedTheoryOf(clauses: Array<Clause>): MutableTheory = MutableTheory.indexedOf(Unificator.default, *clauses)
+    fun mutableIndexedTheoryOf(clauses: Array<Clause>): MutableTheory =
+        MutableTheory.indexedOf(
+            Unificator.default,
+            *clauses,
+        )
 
-    fun mutableIndexedTheoryOf(clauses: Sequence<Clause>): MutableTheory = MutableTheory.indexedOf(Unificator.default, clauses)
+    fun mutableIndexedTheoryOf(clauses: Sequence<Clause>): MutableTheory =
+        MutableTheory.indexedOf(
+            Unificator.default,
+            clauses,
+        )
 
-    fun mutableIndexedTheoryOf(clauses: Array<Scope.() -> Clause>): MutableTheory = MutableTheory.indexedOf(Unificator.default, *clauses)
+    fun mutableIndexedTheoryOf(clauses: Array<Scope.() -> Clause>): MutableTheory =
+        MutableTheory.indexedOf(
+            Unificator.default,
+            *clauses,
+        )
 
     fun emptyListedTheory(): Theory = Theory.emptyListed(Unificator.default)
 
@@ -59,11 +83,27 @@ object Factories {
 
     fun emptyMutableListedTheory(): MutableTheory = MutableTheory.emptyListed(Unificator.default)
 
-    fun mutableListedTheoryOf(clauses: Iterable<Clause>): MutableTheory = MutableTheory.listedOf(Unificator.default, clauses)
+    fun mutableListedTheoryOf(clauses: Iterable<Clause>): MutableTheory =
+        MutableTheory.listedOf(
+            Unificator.default,
+            clauses,
+        )
 
-    fun mutableListedTheoryOf(clauses: Array<Clause>): MutableTheory = MutableTheory.listedOf(Unificator.default, *clauses)
+    fun mutableListedTheoryOf(clauses: Array<Clause>): MutableTheory =
+        MutableTheory.listedOf(
+            Unificator.default,
+            *clauses,
+        )
 
-    fun mutableListedTheoryOf(clauses: Sequence<Clause>): MutableTheory = MutableTheory.listedOf(Unificator.default, clauses)
+    fun mutableListedTheoryOf(clauses: Sequence<Clause>): MutableTheory =
+        MutableTheory.listedOf(
+            Unificator.default,
+            clauses,
+        )
 
-    fun mutableListedTheoryOf(clauses: Array<Scope.() -> Clause>): MutableTheory = MutableTheory.listedOf(Unificator.default, *clauses)
+    fun mutableListedTheoryOf(clauses: Array<Scope.() -> Clause>): MutableTheory =
+        MutableTheory.listedOf(
+            Unificator.default,
+            *clauses,
+        )
 }

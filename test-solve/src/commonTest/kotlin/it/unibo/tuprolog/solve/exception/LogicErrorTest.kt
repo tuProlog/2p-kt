@@ -26,9 +26,20 @@ internal class LogicErrorTest {
             override fun updateContext(
                 newContext: ExecutionContext,
                 index: Int,
-            ): LogicError = of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+            ): LogicError =
+                of(
+                    this.message,
+                    this.cause,
+                    this.contexts.setItem(index, newContext),
+                    this.type,
+                    this.extraData,
+                )
 
-            override fun updateLastContext(newContext: ExecutionContext): LogicError = updateContext(newContext, contexts.lastIndex)
+            override fun updateLastContext(newContext: ExecutionContext): LogicError =
+                updateContext(
+                    newContext,
+                    contexts.lastIndex,
+                )
 
             override fun pushContext(newContext: ExecutionContext): LogicError =
                 of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
@@ -52,9 +63,20 @@ internal class LogicErrorTest {
                 override fun updateContext(
                     newContext: ExecutionContext,
                     index: Int,
-                ): LogicError = of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+                ): LogicError =
+                    of(
+                        this.message,
+                        this.cause,
+                        this.contexts.setItem(index, newContext),
+                        this.type,
+                        this.extraData,
+                    )
 
-                override fun updateLastContext(newContext: ExecutionContext): LogicError = updateContext(newContext, contexts.lastIndex)
+                override fun updateLastContext(newContext: ExecutionContext): LogicError =
+                    updateContext(
+                        newContext,
+                        contexts.lastIndex,
+                    )
 
                 override fun pushContext(newContext: ExecutionContext): LogicError =
                     of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
@@ -71,9 +93,20 @@ internal class LogicErrorTest {
                 override fun updateContext(
                     newContext: ExecutionContext,
                     index: Int,
-                ): LogicError = of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+                ): LogicError =
+                    of(
+                        this.message,
+                        this.cause,
+                        this.contexts.setItem(index, newContext),
+                        this.type,
+                        this.extraData,
+                    )
 
-                override fun updateLastContext(newContext: ExecutionContext): LogicError = updateContext(newContext, contexts.lastIndex)
+                override fun updateLastContext(newContext: ExecutionContext): LogicError =
+                    updateContext(
+                        newContext,
+                        contexts.lastIndex,
+                    )
 
                 override fun pushContext(newContext: ExecutionContext): LogicError =
                     of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
@@ -90,9 +123,20 @@ internal class LogicErrorTest {
                 override fun updateContext(
                     newContext: ExecutionContext,
                     index: Int,
-                ): LogicError = of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+                ): LogicError =
+                    of(
+                        this.message,
+                        this.cause,
+                        this.contexts.setItem(index, newContext),
+                        this.type,
+                        this.extraData,
+                    )
 
-                override fun updateLastContext(newContext: ExecutionContext): LogicError = updateContext(newContext, contexts.lastIndex)
+                override fun updateLastContext(newContext: ExecutionContext): LogicError =
+                    updateContext(
+                        newContext,
+                        contexts.lastIndex,
+                    )
 
                 override fun pushContext(newContext: ExecutionContext): LogicError =
                     of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)

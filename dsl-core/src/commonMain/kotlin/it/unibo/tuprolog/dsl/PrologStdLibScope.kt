@@ -222,7 +222,10 @@ interface PrologStdLibScope : LogicProgrammingAwareScope {
         value: Any,
     ): Struct = structOf("current_flag", name.toTerm(), value.toTerm())
 
-    @Deprecated("Despite current_prolog_flag/2 is a standard predicate, we suggest using current_flag/2", ReplaceWith("current_flag"))
+    @Deprecated(
+        "Despite current_prolog_flag/2 is a standard predicate, we suggest using current_flag/2",
+        ReplaceWith("current_flag"),
+    )
     @JsName("current_prolog_flag2")
     fun current_prolog_flag(
         name: Any,
@@ -273,7 +276,10 @@ interface PrologStdLibScope : LogicProgrammingAwareScope {
         value: Any,
     ): Struct = structOf("set_flag", name.toTerm(), value.toTerm())
 
-    @Deprecated("Despite set_prolog_flag/2 is a standard predicate, we suggest using set_flag/2", ReplaceWith("set_flag"))
+    @Deprecated(
+        "Despite set_prolog_flag/2 is a standard predicate, we suggest using set_flag/2",
+        ReplaceWith("set_flag"),
+    )
     @JsName("set_prolog_flag2")
     fun set_prolog_flag(
         name: Any,

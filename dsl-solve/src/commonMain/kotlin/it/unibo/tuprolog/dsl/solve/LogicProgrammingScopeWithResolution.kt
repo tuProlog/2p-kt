@@ -75,6 +75,11 @@ interface LogicProgrammingScopeWithResolution : LogicProgrammingScopeWithTheorie
             solverFactory: SolverFactory,
             unificator: Unificator = solverFactory.defaultUnificator,
             scope: Scope = Scope.empty(),
-        ): LogicProgrammingScopeWithResolution = LogicProgrammingScopeWithResolutionImpl(solverFactory, unificator, scope)
+        ): LogicProgrammingScopeWithResolution =
+            LogicProgrammingScopeWithResolutionImpl(
+                solverFactory,
+                unificator,
+                scope,
+            )
     }
 }

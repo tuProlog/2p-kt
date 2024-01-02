@@ -43,7 +43,10 @@ data class StatePrimitiveExecution(override val context: ClassicExecutionContext
                     StateBacktracking(context.parent!!.copyFromCurrentPrimitive())
                 },
                 halt = {
-                    StateException(it.exception.updateLastContext(context.skipThrow()), context.copyFromCurrentPrimitive())
+                    StateException(
+                        it.exception.updateLastContext(context.skipThrow()),
+                        context.copyFromCurrentPrimitive(),
+                    )
                 },
                 otherwise = { throw IllegalStateException("This should never happen") },
             ) ?: StateBacktracking(context.copyFromCurrentPrimitive())

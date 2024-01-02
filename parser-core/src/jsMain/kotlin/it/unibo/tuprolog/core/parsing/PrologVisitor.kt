@@ -298,6 +298,5 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
             sequenceOf(it) + flatten(it.outers.asSequence())
         }
 
-    private fun flatten(outers: List<OuterContext>): List<OuterContext> =
-        flatten(outers.asSequence()).toList()
+    private fun flatten(outers: List<OuterContext>): List<OuterContext> = flatten(outers.asSequence()).toList()
 }

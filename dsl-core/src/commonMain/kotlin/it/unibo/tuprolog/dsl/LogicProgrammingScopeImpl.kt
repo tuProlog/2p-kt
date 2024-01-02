@@ -83,7 +83,13 @@ internal class LogicProgrammingScopeImpl(scope: Scope) :
 
     override fun Any.`if`(other: Any): Rule = this impliedBy other
 
-    override fun Any.impliedBy(vararg other: Any): Rule = this impliedBy Tuple.wrapIfNeeded(*other.map { it.toTerm() }.toTypedArray())
+    override fun Any.impliedBy(vararg other: Any): Rule =
+        this impliedBy
+            Tuple.wrapIfNeeded(
+                *other.map {
+                    it.toTerm()
+                }.toTypedArray(),
+            )
 
     override fun Any.`if`(vararg other: Any): Rule = this.impliedBy(*other)
 
@@ -119,7 +125,8 @@ internal class LogicProgrammingScopeImpl(scope: Scope) :
             }
         }
 
-    override fun rule(function: LogicProgrammingScope.() -> Any): Rule = LogicProgrammingScope.empty().function().toTerm() as Rule
+    override fun rule(function: LogicProgrammingScope.() -> Any): Rule =
+        LogicProgrammingScope.empty().function().toTerm() as Rule
 
     override fun clause(function: LogicProgrammingScope.() -> Any): Clause =
         LogicProgrammingScope.empty().function().let {

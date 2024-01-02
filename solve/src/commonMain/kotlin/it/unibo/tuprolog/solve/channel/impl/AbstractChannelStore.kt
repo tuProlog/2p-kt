@@ -32,7 +32,8 @@ abstract class AbstractChannelStore<T : Any, C : Channel<T>, Self : ChannelStore
         return channels.hashCode()
     }
 
-    override fun findByTerm(streamTerm: Term): Sequence<C> = values.asSequence().filter { it.streamTerm matches streamTerm }
+    override fun findByTerm(streamTerm: Term): Sequence<C> =
+        values.asSequence().filter { it.streamTerm matches streamTerm }
 
     override fun aliasesOf(channel: C): Sequence<String> =
         entries.asSequence().filter { (_, v) -> v == channel }.map { it.key }.filterNot { it == ChannelStore.CURRENT }

@@ -41,9 +41,21 @@ class DomainError(
     override fun updateContext(
         newContext: ExecutionContext,
         index: Int,
-    ): DomainError = DomainError(message, cause, contexts.setItem(index, newContext), expectedDomain, culprit, extraData)
+    ): DomainError =
+        DomainError(
+            message,
+            cause,
+            contexts.setItem(index, newContext),
+            expectedDomain,
+            culprit,
+            extraData,
+        )
 
-    override fun updateLastContext(newContext: ExecutionContext): DomainError = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): DomainError =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): DomainError =
         DomainError(message, cause, contexts.addLast(newContext), expectedDomain, culprit, extraData)

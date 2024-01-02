@@ -142,7 +142,14 @@ internal object LibraryUtils {
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
         constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>, String) -> Library,
-    ): Library = constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions, rawLibrary.name)
+    ): Library =
+        constructor(
+            rawLibrary.opSet,
+            rawLibrary.theory,
+            rawLibrary.primitives,
+            rawLibrary.functions,
+            rawLibrary.name,
+        )
 
     /** Utility function to alias a primitive/function */
     internal fun aliasPrimitiveOrFunction(

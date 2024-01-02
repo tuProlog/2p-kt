@@ -21,7 +21,9 @@ internal object Call : PrimitiveWrapper<StreamsExecutionContext>("call", 1) {
         request.ensuringAllArgumentsAreInstantiated().arguments.single().let { toBeCalledGoal ->
             when {
                 toBeCalledGoal.isWellFormed() ->
-                    StreamsSolver.solveToResponses(request.newSolveRequest(toBeCalledGoal.prepareForExecutionAsGoal())).map {
+                    StreamsSolver.solveToResponses(
+                        request.newSolveRequest(toBeCalledGoal.prepareForExecutionAsGoal()),
+                    ).map {
                         request.replyWith(
                             it.copy(
                                 sideEffectManager =

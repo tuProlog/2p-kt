@@ -36,17 +36,20 @@ internal object Utils {
     fun merge(vararg args: Sequence<SituatedIndexedClause>): Sequence<SituatedIndexedClause> = merge(listOf(*args))
 
     /**Sorts all the given [Sequence] of [SituatedIndexedClause]*/
-    fun merge(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> = merge(sequence.asIterable())
+    fun merge(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
+        merge(sequence.asIterable())
 
     /**Sorts all the given [Sequence] of [SituatedIndexedClause]*/
     fun merge(iterable: Iterable<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
         mergeSequences(iterable, SituatedIndexedClause::compareTo)
 
     /**Composes all the given [Sequence] of [SituatedIndexedClause], disregarding order*/
-    fun flattenIndexed(vararg args: Sequence<SituatedIndexedClause>): Sequence<SituatedIndexedClause> = flattenIndexed(sequenceOf(*args))
+    fun flattenIndexed(vararg args: Sequence<SituatedIndexedClause>): Sequence<SituatedIndexedClause> =
+        flattenIndexed(sequenceOf(*args))
 
     /**Composes all the given [Sequence] of [SituatedIndexedClause], disregarding order*/
-    fun flattenIndexed(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> = sequence.flatten()
+    fun flattenIndexed(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
+        sequence.flatten()
 
     /**Composes all the given [Sequence] of [SituatedIndexedClause], disregarding order*/
     fun flattenIndexed(iterable: Iterable<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =

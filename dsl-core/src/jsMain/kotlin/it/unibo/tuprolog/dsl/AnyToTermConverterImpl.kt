@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.utils.NumberTypeTester
 
 actual class AnyToTermConverterImpl actual constructor(
-    override val prologScope: LogicProgrammingScope
+    override val prologScope: LogicProgrammingScope,
 ) : AnyToTermConverter {
     private val numberTypeTester = NumberTypeTester()
 

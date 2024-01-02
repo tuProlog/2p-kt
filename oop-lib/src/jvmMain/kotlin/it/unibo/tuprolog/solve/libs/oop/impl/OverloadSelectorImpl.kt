@@ -31,16 +31,22 @@ internal class OverloadSelectorImpl(
                 .map { it to it.instanceParameters.score(arguments) }
                 .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
                 ?.first
-                ?: throw MethodInvocationException(type, name, arguments.map {
-                    termToObjectConverter.admissibleTypes(it) }
+                ?: throw MethodInvocationException(
+                    type, name,
+                    arguments.map {
+                        termToObjectConverter.admissibleTypes(it)
+                    },
                 )
         } catch (e: IllegalStateException) {
             type.allSupertypes(strict = true)
                 .firstOrNull()
                 ?.let { OverloadSelector.of(it, termToObjectConverter) }
                 ?.findMethod(name, arguments)
-                ?: throw MethodInvocationException(type, name, arguments.map {
-                    termToObjectConverter.admissibleTypes(it) }
+                ?: throw MethodInvocationException(
+                    type, name,
+                    arguments.map {
+                        termToObjectConverter.admissibleTypes(it)
+                    },
                 )
         }
     }

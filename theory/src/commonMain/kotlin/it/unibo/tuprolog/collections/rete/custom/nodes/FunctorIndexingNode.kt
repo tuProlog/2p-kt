@@ -104,7 +104,8 @@ internal class FunctorIndexingNode(
         }
     }
 
-    private fun Clause.isGlobal(): Boolean = this.isRule && this.castToRule().head.nestedFirstArgument(nestingLevel).isVar
+    private fun Clause.isGlobal(): Boolean =
+        this.isRule && this.castToRule().head.nestedFirstArgument(nestingLevel).isVar
 
     private fun Clause.nestedArity(): Int =
         asRule()?.head?.arityOfNestedFirstArgument(nestingLevel)

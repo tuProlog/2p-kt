@@ -55,7 +55,8 @@ interface Library : Pluggable {
 
         @JvmStatic
         @JsName("iterableToMapEnsuringNoDuplicates")
-        fun <T> Iterable<Pair<Signature, T>>.toMapEnsuringNoDuplicates(): Map<Signature, T> = asSequence().toMapEnsuringNoDuplicates()
+        fun <T> Iterable<Pair<Signature, T>>.toMapEnsuringNoDuplicates(): Map<Signature, T> =
+            asSequence().toMapEnsuringNoDuplicates()
 
         /** Creates an instance of [Library] with given parameters */
         @JvmStatic

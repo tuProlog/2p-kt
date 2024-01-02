@@ -219,7 +219,10 @@ internal object ReteNodeUtils {
                 when {
                     entry.value.none() -> fail("Clause $clause not indexed under its head Struct")
                     entry.value.first() == clause -> entry.setValue(entry.value - clause)
-                    else -> fail("Partial ordering not respected: $clause should come after these ${entry.value - clause}")
+                    else ->
+                        fail(
+                            "Partial ordering not respected: $clause should come after these ${entry.value - clause}",
+                        )
                 }
             },
             onMissingEntry = { clause, _ -> fail("Clause $clause not expected among these: $expectedClauses") },

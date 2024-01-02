@@ -44,7 +44,16 @@ internal class ConsImpl(
             ConsImpl(head.apply(unifier), tail.apply(unifier), tags)
         }
 
-    override fun copyWithTags(tags: Map<String, Any>): ConsImpl = if (this.tags === tags) this else ConsImpl(head, tail, tags)
+    override fun copyWithTags(tags: Map<String, Any>): ConsImpl =
+        if (this.tags === tags) {
+            this
+        } else {
+            ConsImpl(
+                head,
+                tail,
+                tags,
+            )
+        }
 
     override fun freshCopy(scope: Scope): Cons =
         when {

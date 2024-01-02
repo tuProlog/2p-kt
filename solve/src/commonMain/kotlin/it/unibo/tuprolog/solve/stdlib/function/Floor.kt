@@ -25,5 +25,6 @@ object Floor : UnaryMathFunction("floor") {
     ): Numeric = commonBehaviour(real.value)
 
     /** Implementation of common behaviour for Real and Integer */
-    private fun commonBehaviour(decimal: BigDecimal): Integer = Numeric.of(decimal.setScale(0, RoundingMode.FLOOR).toBigInteger())
+    private fun commonBehaviour(decimal: BigDecimal): Integer =
+        Numeric.of(decimal.setScale(0, RoundingMode.FLOOR).toBigInteger())
 }

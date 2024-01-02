@@ -112,9 +112,10 @@ actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
         .let { if (strict) it else sequenceOf(this) + it }
 
 actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
-    get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
-        it.type.classifier as? KClass<*> ?: Any::class
-    }
+    get() =
+        parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
+            it.type.classifier as? KClass<*> ?: Any::class
+        }
 
 actual val KClass<*>.fullName: String
     get() = qualifiedName ?: error("Reflection issue: cannot get qualified name of $this")

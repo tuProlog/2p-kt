@@ -17,7 +17,8 @@ internal class RuleNode(
     private val functors: MutableMap<String, FunctorRete> = mutableMapOf()
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
-    override fun get(clause: Clause): Sequence<Clause> = functors[clause.nestedFunctor()]?.get(clause) ?: emptySequence()
+    override fun get(clause: Clause): Sequence<Clause> =
+        functors[clause.nestedFunctor()]?.get(clause) ?: emptySequence()
 
     override fun assertA(clause: IndexedClause) {
         clause.nestedFunctor().let {

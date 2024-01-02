@@ -16,7 +16,10 @@ internal class ZeroArityReteNode(
     private val atoms: MutableList<SituatedIndexedClause> =
         dequeOf()
 
-    override fun retractFirst(clause: Clause): Sequence<Clause> = removeAllLazily(atoms, clause).map { it.innerClause }.take(1).buffered()
+    override fun retractFirst(clause: Clause): Sequence<Clause> =
+        removeAllLazily(atoms, clause).map {
+            it.innerClause
+        }.take(1).buffered()
 
     override val size: Int
         get() = atoms.size
@@ -49,7 +52,10 @@ internal class ZeroArityReteNode(
         )
     }
 
-    override fun retractAll(clause: Clause): Sequence<Clause> = removeAllLazily(atoms, clause).map { it.innerClause }.buffered()
+    override fun retractAll(clause: Clause): Sequence<Clause> =
+        removeAllLazily(atoms, clause).map {
+            it.innerClause
+        }.buffered()
 
     override fun getCache(): Sequence<SituatedIndexedClause> {
         return atoms.asSequence()

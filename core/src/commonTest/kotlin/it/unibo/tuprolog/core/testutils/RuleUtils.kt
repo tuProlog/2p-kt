@@ -75,5 +75,7 @@ internal object RuleUtils {
     val nonGroundRules by lazy { nonGroundWellFormedRules + nonGroundNonWellFormedRules }
 
     /** Contains mixed Rules, ground and non ground, well-formed and not */
-    val mixedRules by lazy { groundWellFormedRules + nonGroundWellFormedRules + groundNonWellFormedRules + nonGroundNonWellFormedRules }
+    val mixedRules by lazy {
+        groundWellFormedRules + nonGroundWellFormedRules + groundNonWellFormedRules + nonGroundNonWellFormedRules
+    }
 }

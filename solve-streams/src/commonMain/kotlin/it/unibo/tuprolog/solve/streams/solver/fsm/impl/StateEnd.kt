@@ -41,7 +41,9 @@ internal sealed class StateEnd(
         override val solve: Solve.Response,
     ) : StateEnd(sourceContext, solve), FinalState {
         init {
-            require(solve.solution is Solution.Yes) { "True end state can be created only with Solution.Yes. Current: `${solve.solution}`" }
+            require(solve.solution is Solution.Yes) {
+                "True end state can be created only with Solution.Yes. Current: `${solve.solution}`"
+            }
         }
     }
 
@@ -51,7 +53,9 @@ internal sealed class StateEnd(
         override val solve: Solve.Response,
     ) : StateEnd(sourceContext, solve), FinalState {
         init {
-            require(solve.solution is Solution.No) { "False end state can be created only with Solution.No. Current: `${solve.solution}`" }
+            require(solve.solution is Solution.No) {
+                "False end state can be created only with Solution.No. Current: `${solve.solution}`"
+            }
         }
     }
 

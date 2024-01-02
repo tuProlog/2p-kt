@@ -46,5 +46,6 @@ internal class BlockUnfolder(block: Block) : Iterator<Term> {
         }
 
     override fun next(): Term =
-        current?.accept(if (setUnfolded) tupleUnfolderVisitor else blockUnfolderVisitor) ?: throw NoSuchElementException()
+        current?.accept(if (setUnfolded) tupleUnfolderVisitor else blockUnfolderVisitor)
+            ?: throw NoSuchElementException()
 }

@@ -70,7 +70,10 @@ fun KClass<*>.isSupertypeOf(
     strict: Boolean,
 ): Boolean = other.allSupertypes(strict).any { it == this }
 
-fun KClass<*>.superTypeDistance(other: KClass<*>): Int? = other.allSupertypes(false).indexed().firstOrNull { (_, it) -> it == this }?.index
+fun KClass<*>.superTypeDistance(other: KClass<*>): Int? =
+    other.allSupertypes(
+        false,
+    ).indexed().firstOrNull { (_, it) -> it == this }?.index
 
 infix fun KClass<*>.isSubtypeOf(other: KClass<*>): Boolean = isSubtypeOf(other, false)
 

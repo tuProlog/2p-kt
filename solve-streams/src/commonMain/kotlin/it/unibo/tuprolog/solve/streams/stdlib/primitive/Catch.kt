@@ -47,11 +47,12 @@ internal object Catch : PrimitiveWrapper<StreamsExecutionContext>("catch", 3) {
     private fun call(goal: Term) = Struct.of(Call.functor, goal)
 
     /** Calls [SideEffectManagerImpl.ensureNoMoreSelectableCatch] */
-    private fun Solve.Request<StreamsExecutionContext>.ensureNoMoreSelectableCatch(notSelectableContext: StreamsExecutionContext) =
-        copy(
-            context =
-                context.copy(
-                    sideEffectManager = context.sideEffectManager.ensureNoMoreSelectableCatch(notSelectableContext),
-                ),
-        )
+    private fun Solve.Request<StreamsExecutionContext>.ensureNoMoreSelectableCatch(
+        notSelectableContext: StreamsExecutionContext,
+    ) = copy(
+        context =
+            context.copy(
+                sideEffectManager = context.sideEffectManager.ensureNoMoreSelectableCatch(notSelectableContext),
+            ),
+    )
 }

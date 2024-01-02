@@ -24,11 +24,14 @@ class TestSubstitutionMerging {
             )
         }
 
+    @Suppress("ktlint:standard:multiline-expression-wrapping")
     private val primitive =
         object : UnaryPredicate<ExecutionContext>("primitive") {
             override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> =
                 sequence {
-                    val allVariables = context.substitution.let { it.keys.toSet() + it.values.filterIsInstance<Var>().toSet() }
+                    val allVariables = context.substitution.let {
+                        it.keys.toSet() + it.values.filterIsInstance<Var>().toSet()
+                    }
                     for (x in allVariables.sortedBy { it.name }) {
                         yield(replySuccess(Substitution.unifier(x to Atom.of(x.name))))
                     }

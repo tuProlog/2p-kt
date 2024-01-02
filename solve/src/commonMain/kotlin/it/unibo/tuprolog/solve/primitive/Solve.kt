@@ -41,11 +41,13 @@ sealed class Solve {
             when {
                 signature.vararg ->
                     require(arguments.count() >= signature.arity) {
-                        "Trying to create Solve.Request of signature `$signature` with not enough arguments ${arguments.toList()}"
+                        "Trying to create Solve.Request of signature `$signature` " +
+                            "with not enough arguments ${arguments.toList()}"
                     }
                 else ->
                     require(arguments.count() == signature.arity) {
-                        "Trying to create Solve.Request of signature `$signature` with wrong number of arguments ${arguments.toList()}"
+                        "Trying to create Solve.Request of signature `$signature` " +
+                            "with wrong number of arguments ${arguments.toList()}"
                     }
             }
             require(startTime >= 0) { "The request issuing instant can't be negative: $startTime" }

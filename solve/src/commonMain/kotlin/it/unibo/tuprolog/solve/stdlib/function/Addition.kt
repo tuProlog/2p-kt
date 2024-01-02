@@ -17,7 +17,10 @@ object Addition : BinaryMathFunction("+") {
         integer1: Integer,
         integer2: Integer,
         context: ExecutionContext,
-    ): Numeric = Numeric.of(integer1.value + integer2.value) // TODO: 24/10/2019 "int_overflow" check missing (see the standard)
+    ): Numeric =
+        Numeric.of(
+            integer1.value + integer2.value,
+        ) // TODO: 24/10/2019 "int_overflow" check missing (see the standard)
 
     override fun mathFunction(
         real: Real,
@@ -41,5 +44,7 @@ object Addition : BinaryMathFunction("+") {
     private fun commonBehaviour(
         decimal1: BigDecimal,
         decimal2: BigDecimal,
-    ) = Numeric.of(decimal1 + decimal2) // TODO: 24/10/2019 "float_overflow" and "underflow" checks missing (see the standard)
+    ) = Numeric.of(
+        decimal1 + decimal2,
+    ) // TODO: 24/10/2019 "float_overflow" and "underflow" checks missing (see the standard)
 }

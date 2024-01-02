@@ -97,11 +97,17 @@ internal open class FamilyArityReteNode(
 
     override fun getCache(): Sequence<SituatedIndexedClause> = theoryCache.value.asSequence()
 
-    private fun retractAllOrdered(clause: Clause): Sequence<Clause> = retractAllOrderedIndexed(clause).map { it.innerClause }
+    private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
+        retractAllOrderedIndexed(clause).map {
+            it.innerClause
+        }
 
     private fun getOrdered(clause: Clause): Sequence<Clause> = getOrderedIndexed(clause).map { it.innerClause }
 
-    private fun retractAllUnordered(clause: Clause): Sequence<Clause> = retractAllUnorderedIndexed(clause).map { it.innerClause }
+    private fun retractAllUnordered(clause: Clause): Sequence<Clause> =
+        retractAllUnorderedIndexed(clause).map {
+            it.innerClause
+        }
 
     private fun getUnordered(clause: Clause): Sequence<Clause> = getUnorderedIndexed(clause).map { it.innerClause }
 

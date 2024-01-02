@@ -26,5 +26,7 @@ object Exponential : UnaryMathFunction("exp") {
 
     /** Implements the common behaviour for real and integer */
     private fun commonBehaviour(decimal: BigDecimal) =
-        Numeric.of(exp(decimal.toDouble())) // TODO: 24/10/2019 missing "float_overflow" and "underflow" check (see the standard)
+        Numeric.of(
+            exp(decimal.toDouble()),
+        ) // TODO: 24/10/2019 missing "float_overflow" and "underflow" check (see the standard)
 }

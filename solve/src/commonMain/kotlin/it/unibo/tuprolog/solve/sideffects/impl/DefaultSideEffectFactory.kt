@@ -128,9 +128,15 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
 
     override fun removeOperators(vararg operators: Operator) = SideEffect.RemoveOperators(*operators)
 
-    override fun openInputChannels(inputChannels: Map<String, InputChannel<String>>) = SideEffect.OpenInputChannels(inputChannels)
+    override fun openInputChannels(inputChannels: Map<String, InputChannel<String>>) =
+        SideEffect.OpenInputChannels(
+            inputChannels,
+        )
 
-    override fun openInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>) = SideEffect.OpenInputChannels(*inputChannels)
+    override fun openInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>) =
+        SideEffect.OpenInputChannels(
+            *inputChannels,
+        )
 
     override fun openInputChannel(
         name: String,
@@ -146,7 +152,10 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
     override fun resetInputChannels(inputChannels: Sequence<Pair<String, InputChannel<String>>>) =
         SideEffect.ResetInputChannels(inputChannels)
 
-    override fun resetInputChannels(inputChannels: Map<String, InputChannel<String>>) = SideEffect.ResetInputChannels(inputChannels)
+    override fun resetInputChannels(inputChannels: Map<String, InputChannel<String>>) =
+        SideEffect.ResetInputChannels(
+            inputChannels,
+        )
 
     override fun closeInputChannels(names: Iterable<String>) = SideEffect.CloseInputChannels(names)
 
@@ -154,7 +163,10 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
 
     override fun closeInputChannels(vararg names: String) = SideEffect.CloseInputChannels(*names)
 
-    override fun openOutputChannels(outputChannels: Map<String, OutputChannel<String>>) = SideEffect.OpenOutputChannels(outputChannels)
+    override fun openOutputChannels(outputChannels: Map<String, OutputChannel<String>>) =
+        SideEffect.OpenOutputChannels(
+            outputChannels,
+        )
 
     override fun openOutputChannels(vararg outputChannels: Pair<String, OutputChannel<String>>) =
         SideEffect.OpenOutputChannels(*outputChannels)
@@ -170,7 +182,10 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
     override fun resetOutputChannels(outputChannels: Sequence<Pair<String, OutputChannel<String>>>) =
         SideEffect.ResetOutputChannels(outputChannels)
 
-    override fun resetOutputChannels(outputChannels: Map<String, OutputChannel<String>>) = SideEffect.ResetOutputChannels(outputChannels)
+    override fun resetOutputChannels(outputChannels: Map<String, OutputChannel<String>>) =
+        SideEffect.ResetOutputChannels(
+            outputChannels,
+        )
 
     override fun resetOutputChannels(vararg outputChannels: Pair<String, OutputChannel<String>>) =
         SideEffect.ResetOutputChannels(*outputChannels)
@@ -186,7 +201,13 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
         value: Any,
     ) = SideEffect.SetEphemeralData(key, value, reset = false)
 
-    override fun <X> addEphemeralData(data: Map<String, X>) = SideEffect.SetEphemeralData(data.mapValues { it }, reset = false)
+    override fun <X> addEphemeralData(data: Map<String, X>) =
+        SideEffect.SetEphemeralData(
+            data.mapValues {
+                it
+            },
+            reset = false,
+        )
 
     override fun <X> addEphemeralData(vararg data: Pair<String, X>) =
         SideEffect.SetEphemeralData(data.map { (a, b) -> a to (b as Any) }, reset = false)
@@ -196,7 +217,13 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
         value: Any,
     ) = SideEffect.SetEphemeralData(key, value, reset = false)
 
-    override fun <X> setEphemeralData(data: Map<String, X>) = SideEffect.SetEphemeralData(data.mapValues { it }, reset = false)
+    override fun <X> setEphemeralData(data: Map<String, X>) =
+        SideEffect.SetEphemeralData(
+            data.mapValues {
+                it
+            },
+            reset = false,
+        )
 
     override fun <X> setEphemeralData(vararg data: Pair<String, X>) =
         SideEffect.SetEphemeralData(data.map { (a, b) -> a to (b as Any) }, reset = false)
@@ -206,7 +233,11 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
         value: Any,
     ) = SideEffect.SetDurableData(key, value, reset = false)
 
-    override fun <X> addDurableData(data: Map<String, X>) = SideEffect.SetDurableData(data.mapValues { it }, reset = false)
+    override fun <X> addDurableData(data: Map<String, X>) =
+        SideEffect.SetDurableData(
+            data.mapValues { it },
+            reset = false,
+        )
 
     override fun <X> addDurableData(vararg data: Pair<String, X>) =
         SideEffect.SetDurableData(data.map { (a, b) -> a to (b as Any) }, reset = false)
@@ -216,7 +247,11 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
         value: Any,
     ) = SideEffect.SetDurableData(key, value, reset = false)
 
-    override fun <X> setDurableData(data: Map<String, X>) = SideEffect.SetDurableData(data.mapValues { it }, reset = false)
+    override fun <X> setDurableData(data: Map<String, X>) =
+        SideEffect.SetDurableData(
+            data.mapValues { it },
+            reset = false,
+        )
 
     override fun <X> setDurableData(vararg data: Pair<String, X>) =
         SideEffect.SetDurableData(data.map { (a, b) -> a to (b as Any) }, reset = false)
@@ -226,7 +261,13 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
         value: Any,
     ) = SideEffect.SetPersistentData(key, value, reset = false)
 
-    override fun <X> addPersistentData(data: Map<String, X>) = SideEffect.SetPersistentData(data.mapValues { it }, reset = false)
+    override fun <X> addPersistentData(data: Map<String, X>) =
+        SideEffect.SetPersistentData(
+            data.mapValues {
+                it
+            },
+            reset = false,
+        )
 
     override fun <X> addPersistentData(vararg data: Pair<String, X>) =
         SideEffect.SetPersistentData(data.map { (a, b) -> a to (b as Any) }, reset = false)
@@ -236,7 +277,13 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
         value: Any,
     ) = SideEffect.SetPersistentData(key, value, reset = false)
 
-    override fun <X> setPersistentData(data: Map<String, X>) = SideEffect.SetPersistentData(data.mapValues { it }, reset = false)
+    override fun <X> setPersistentData(data: Map<String, X>) =
+        SideEffect.SetPersistentData(
+            data.mapValues {
+                it
+            },
+            reset = false,
+        )
 
     override fun <X> setPersistentData(vararg data: Pair<String, X>) =
         SideEffect.SetPersistentData(data.map { (a, b) -> a to (b as Any) }, reset = false)

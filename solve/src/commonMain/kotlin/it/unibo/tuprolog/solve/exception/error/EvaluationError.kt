@@ -40,7 +40,11 @@ class EvaluationError(
         index: Int,
     ): EvaluationError = EvaluationError(message, cause, contexts.setItem(index, newContext), errorType, extraData)
 
-    override fun updateLastContext(newContext: ExecutionContext): EvaluationError = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): EvaluationError =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): EvaluationError =
         EvaluationError(message, cause, contexts.addLast(newContext), errorType, extraData)

@@ -35,7 +35,11 @@ class SystemError constructor(
         index: Int,
     ): SystemError = SystemError(message, cause, contexts.setItem(index, newContext), extraData)
 
-    override fun updateLastContext(newContext: ExecutionContext): SystemError = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): SystemError =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): SystemError =
         SystemError(message, cause, contexts.addLast(newContext), extraData)

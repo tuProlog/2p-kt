@@ -36,7 +36,11 @@ class MessageError internal constructor(
         index: Int,
     ): MessageError = MessageError(message, cause, contexts.setItem(index, newContext), extraData)
 
-    override fun updateLastContext(newContext: ExecutionContext): MessageError = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): MessageError =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): MessageError =
         MessageError(message, cause, contexts.addLast(newContext), extraData)

@@ -104,7 +104,8 @@ internal data class SideEffectManagerImpl(
         )
 
     /** Method to query if provided context was that selected by [throwCut] invocation */
-    internal fun isSelectedThrowCatch(contextImpl: StreamsExecutionContext) = throwRelatedToCutContextsParent == contextImpl
+    internal fun isSelectedThrowCatch(contextImpl: StreamsExecutionContext) =
+        throwRelatedToCutContextsParent == contextImpl
 
     /** Method to remove catch request with that [contextImpl], ensuring that's no more selectable */
     internal fun ensureNoMoreSelectableCatch(contextImpl: StreamsExecutionContext) =
@@ -138,8 +139,9 @@ internal fun SideEffectManager?.shouldCutExecuteInRuleSelection(): Boolean =
     (this as? SideEffectManagerImpl)?.shouldCutExecuteInRuleSelection() ?: false
 
 /** Bridge method to reach [SideEffectManagerImpl.extendParentScopeWith] homonym method from a [SideEffectManager] */
-internal fun SideEffectManager?.extendParentScopeWith(upperScopeSideEffectsManager: SideEffectManagerImpl): SideEffectManagerImpl? =
-    (this as? SideEffectManagerImpl)?.extendParentScopeWith(upperScopeSideEffectsManager)
+internal fun SideEffectManager?.extendParentScopeWith(
+    upperScopeSideEffectsManager: SideEffectManagerImpl,
+): SideEffectManagerImpl? = (this as? SideEffectManagerImpl)?.extendParentScopeWith(upperScopeSideEffectsManager)
 
 /** Bridge method to reach [SideEffectManagerImpl.resetCutWorkChanges] homonym method from a [SideEffectManager] */
 internal fun SideEffectManager?.resetCutWorkChanges(toRecoverSituation: SideEffectManagerImpl): SideEffectManagerImpl? =
@@ -150,4 +152,5 @@ internal fun SideEffectManager?.isSelectedThrowCatch(context: StreamsExecutionCo
     (this as? SideEffectManagerImpl)?.isSelectedThrowCatch(context) ?: false
 
 /** Bridge method to reach [SideEffectManagerImpl.shouldExecuteThrowCut] homonym method from a [SideEffectManager] */
-internal fun SideEffectManager?.shouldExecuteThrowCut(): Boolean = (this as? SideEffectManagerImpl)?.shouldExecuteThrowCut() ?: false
+internal fun SideEffectManager?.shouldExecuteThrowCut(): Boolean =
+    (this as? SideEffectManagerImpl)?.shouldExecuteThrowCut() ?: false

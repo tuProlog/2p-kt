@@ -42,9 +42,21 @@ class ExistenceError(
     override fun updateContext(
         newContext: ExecutionContext,
         index: Int,
-    ): ExistenceError = ExistenceError(message, cause, contexts.setItem(index, newContext), expectedObject, culprit, extraData)
+    ): ExistenceError =
+        ExistenceError(
+            message,
+            cause,
+            contexts.setItem(index, newContext),
+            expectedObject,
+            culprit,
+            extraData,
+        )
 
-    override fun updateLastContext(newContext: ExecutionContext): ExistenceError = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): ExistenceError =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): ExistenceError =
         ExistenceError(message, cause, contexts.addLast(newContext), expectedObject, culprit, extraData)

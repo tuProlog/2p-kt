@@ -26,7 +26,11 @@ class MissingPredicate(
         index: Int,
     ): MissingPredicate = MissingPredicate(cause, contexts.setItem(index, newContext), signature)
 
-    override fun updateLastContext(newContext: ExecutionContext): MissingPredicate = updateContext(newContext, contexts.lastIndex)
+    override fun updateLastContext(newContext: ExecutionContext): MissingPredicate =
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): MissingPredicate =
         MissingPredicate(cause, contexts.addLast(newContext), signature)
