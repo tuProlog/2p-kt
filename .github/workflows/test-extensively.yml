@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ windows-2022, macos-12, ubuntu-22.04 ]
-        java-version: [11, 17, 19]
+        java-version: [11, 17, 21]
         jdk-dist:
           - adopt-hotspot
           - temurin
@@ -40,8 +40,8 @@ jobs:
         node-version:
           - 'latest-16'
           - 'latest-18'
-          - 'latest-19'
           - 'latest-20'
+          - 'latest-21'
     runs-on: ${{ matrix.os }}
     env:
       ORG_GRADLE_PROJECT_nodeVersion: ${{ matrix.node-version }}
