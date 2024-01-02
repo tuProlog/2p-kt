@@ -3,7 +3,7 @@
 
 package it.unibo.tuprolog.parser
 
-external enum class StringType {
-    SINGLE_QUOTED,
-    DOUBLE_QUOTED,
+external object StringType {
+    val SINGLE_QUOTED: Int
+    val DOUBLE_QUOTED: Int
 }

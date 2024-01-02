@@ -15,7 +15,7 @@ external class PrologLexer(input: dynamic) {
 
     fun escape(
         string: String,
-        stringType: StringType,
+        stringType: Int,
     ): String
 
     fun getAllTokens(): Array<Token>

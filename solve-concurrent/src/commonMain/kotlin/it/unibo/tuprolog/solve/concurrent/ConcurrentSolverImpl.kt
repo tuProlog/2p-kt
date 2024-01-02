@@ -28,7 +28,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import kotlin.jvm.Volatile
+import kotlin.concurrent.Volatile
 import kotlinx.coroutines.channels.Channel as KtChannel
 
 internal open class ConcurrentSolverImpl(
