@@ -15,7 +15,7 @@ npm-syncRequest = "6.1.0" # sync-request
 ktlint = "10.3.0"
 detekt = "1.22.0"
 shadowJar = "8.0.0"
-ktMpp = "2.1.3"
+ktMpp = "4.1.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
