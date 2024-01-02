@@ -72,54 +72,201 @@ internal object Conversions {
         datum: (Term, KClass<*>) -> TestDatum,
     ): List<TestDatum> = sequenceOf(this).product(sequenceOf(*types)).map { (t, k) -> datum(t, k) }.toList()
 
-    private inline operator fun <reified T> Array<T>.minus(item: T): Array<T> =
-        this.filterNot { it == item }.toTypedArray()
+    private fun MutableList<TestDatum>.cornerCase(
+        term: Term,
+        vararg types: KClass<*>,
+    ) {
+        addAll(term.product(*types, datum = TestDatum::failed))
+    }
 
-    val cornerCases: List<TestDatum> =
-        buildList {
-            val literalTypes =
-                arrayOf(
-                    String::class,
-                    Char::class,
-                    BigInteger::class,
-                    BigDecimal::class,
-                    Int::class,
-                    Short::class,
-                    Long::class,
-                    Byte::class,
-                    Double::class,
-                    Float::class,
-                    Boolean::class,
-                )
-            val literalTypesExceptBoolean = literalTypes - Boolean::class
-            Var.of("X").product(*literalTypesExceptBoolean, datum = TestDatum::failed).let(::addAll)
-            Var.anonymous().product(*literalTypesExceptBoolean, datum = TestDatum::failed).let(::addAll)
-            ObjectRef.of(A.B(1, "a")).product(*literalTypesExceptBoolean, datum = TestDatum::failed).let(::addAll)
-            ObjectRef.of(A.C(2, "b")).product(*literalTypesExceptBoolean, datum = TestDatum::failed).let(::addAll)
-            val literalTypesExceptBooleanAndString = literalTypesExceptBoolean - String::class
-            Truth.TRUE.product(*literalTypesExceptBooleanAndString, datum = TestDatum::failed).let(::addAll)
-            Truth.FAIL.product(*literalTypesExceptBooleanAndString, datum = TestDatum::failed).let(::addAll)
-            Truth.FALSE.product(*literalTypesExceptBooleanAndString, datum = TestDatum::failed).let(::addAll)
-            val numericLiteralTypes = literalTypes - String::class - Char::class
-            Atom.of("a").product(*numericLiteralTypes, datum = TestDatum::failed).let(::addAll)
-            val numericLiteralTypesAndChar = literalTypes - String::class
-            Atom.of("ab").product(*numericLiteralTypesAndChar, datum = TestDatum::failed).let(::addAll)
-            val nonFloatingLiteralTypes = literalTypes - Double::class - Float::class
-            Integer.of(higherThanMaxLong).product(*nonFloatingLiteralTypes, datum = TestDatum::failed).let(::addAll)
-            Integer.of(lowerThanMinLong).product(*nonFloatingLiteralTypes, datum = TestDatum::failed).let(::addAll)
-            val nonFloatingLiteralTypesMinusLong = nonFloatingLiteralTypes - Long::class
-            Integer.of(higherThanMaxInt).product(*nonFloatingLiteralTypesMinusLong, datum = TestDatum::failed)
-                .let(::addAll)
-            Integer.of(lowerThanMinInt).product(*nonFloatingLiteralTypesMinusLong, datum = TestDatum::failed)
-                .let(::addAll)
-            val shortNumbersAndAlphanumeric = nonFloatingLiteralTypesMinusLong - Int::class
-            Integer.of(higherThanMaxShort).product(*shortNumbersAndAlphanumeric, datum = TestDatum::failed)
-                .let(::addAll)
-            Integer.of(lowerThanMinShort).product(*shortNumbersAndAlphanumeric, datum = TestDatum::failed).let(::addAll)
-            val byteBoolsAndAlphanumeric = shortNumbersAndAlphanumeric - Short::class
-            Integer.of(higherThanMaxByte).product(*byteBoolsAndAlphanumeric, datum = TestDatum::failed).let(::addAll)
-            Integer.of(lowerThanMinByte).product(*byteBoolsAndAlphanumeric, datum = TestDatum::failed).let(::addAll)
-            val boolsAndAlphanumeric = byteBoolsAndAlphanumeric - Byte::class
-            Integer.of(0).product(*boolsAndAlphanumeric, datum = TestDatum::failed).let(::addAll)
-        }
+    @Suppress("ktlint:standard:multiline-expression-wrapping")
+    val cornerCases: List<TestDatum> = buildList {
+        cornerCase(
+            Var.of("X"),
+            String::class,
+            Char::class,
+            BigInteger::class,
+            BigDecimal::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Double::class,
+            Float::class,
+        )
+        cornerCase(
+            Var.anonymous(),
+            String::class,
+            Char::class,
+            BigInteger::class,
+            BigDecimal::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Double::class,
+            Float::class,
+        )
+        cornerCase(
+            ObjectRef.of(A.B(1, "a")),
+            String::class,
+            Char::class,
+            BigInteger::class,
+            BigDecimal::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Double::class,
+            Float::class,
+        )
+        cornerCase(
+            ObjectRef.of(A.C(2, "b")),
+            String::class,
+            Char::class,
+            BigInteger::class,
+            BigDecimal::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Double::class,
+            Float::class,
+        )
+        cornerCase(
+            Truth.TRUE,
+            Char::class,
+            BigInteger::class,
+            BigDecimal::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Double::class,
+            Float::class,
+        )
+        cornerCase(
+            Truth.FAIL,
+            Char::class,
+            BigInteger::class,
+            BigDecimal::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Double::class,
+            Float::class,
+        )
+        cornerCase(
+            Truth.FALSE,
+            Char::class,
+            BigInteger::class,
+            BigDecimal::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Double::class,
+            Float::class,
+        )
+        cornerCase(
+            Atom.of("a"),
+            BigInteger::class,
+            BigDecimal::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Double::class,
+            Float::class,
+            Boolean::class,
+        )
+        cornerCase(
+            Atom.of("ab"),
+            Char::class,
+            BigInteger::class,
+            BigDecimal::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Double::class,
+            Float::class,
+            Boolean::class,
+        )
+        cornerCase(
+            Integer.of(higherThanMaxLong),
+            String::class,
+            Char::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Boolean::class,
+        )
+        cornerCase(
+            Integer.of(lowerThanMinLong),
+            String::class,
+            Char::class,
+            Int::class,
+            Short::class,
+            Long::class,
+            Byte::class,
+            Boolean::class,
+        )
+        cornerCase(
+            Integer.of(higherThanMaxInt),
+            String::class,
+            Char::class,
+            Int::class,
+            Short::class,
+            Byte::class,
+            Boolean::class,
+        )
+        cornerCase(
+            Integer.of(lowerThanMinInt),
+            String::class,
+            Char::class,
+            Int::class,
+            Short::class,
+            Byte::class,
+            Boolean::class,
+        )
+        cornerCase(
+            Integer.of(higherThanMaxShort),
+            String::class,
+            Char::class,
+            Short::class,
+            Byte::class,
+            Boolean::class,
+        )
+        cornerCase(
+            Integer.of(lowerThanMinShort),
+            String::class,
+            Char::class,
+            Short::class,
+            Byte::class,
+            Boolean::class,
+        )
+        cornerCase(
+            Integer.of(higherThanMaxByte),
+            String::class,
+            Char::class,
+            Byte::class,
+            Boolean::class,
+        )
+        cornerCase(
+            Integer.of(lowerThanMinByte),
+            String::class,
+            Char::class,
+            Byte::class,
+            Boolean::class,
+        )
+        cornerCase(
+            Integer.of(0),
+            String::class,
+            Char::class,
+            Boolean::class,
+        )
+    }
 }
