@@ -23,16 +23,16 @@ internal class SimpleLRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
         }
 
     private fun removeLeastRecent(): Optional<out Pair<K, V>> {
-        val entry = cache.iterator().next()
-        cache.remove(entry.key)
-        return Optional.some(entry.toPair())
+        val (key, value) = cache.asIterable().first()
+        cache.remove(key)
+        return Optional.some(key to value)
     }
 
     private fun removeLeastRecentIfNecessary(): Optional<out Pair<K, V>> {
         return if (cache.size >= capacity) {
             removeLeastRecent()
         } else {
-            return Optional.none()
+            Optional.none()
         }
     }
 
