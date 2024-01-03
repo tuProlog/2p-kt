@@ -13,7 +13,6 @@ import kotlin.test.assertSame
  * @author Enrico
  */
 internal object ConstantUtils {
-
     /** Asserts that a freshCopy of a ground [Term] is the [Term] itself */
     internal fun assertFreshCopyIsItself(constant: Term) {
         assertEqualities(constant, constant.freshCopy())

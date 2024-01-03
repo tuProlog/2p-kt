@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     val errorSignature: Signature
 
     fun testCallCut() {
@@ -68,15 +67,16 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
 
             val query = call(write(3) and "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forGoal(
-                        DummyInstances.executionContext,
-                        errorSignature,
-                        varOf("X")
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            errorSignature,
+                            varOf("X"),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -88,16 +88,17 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
 
             val query = call(write(3) and call(1))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forGoal(
-                        DummyInstances.executionContext,
-                        errorSignature,
-                        TypeError.Expected.CALLABLE,
-                        numOf(1)
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            errorSignature,
+                            TypeError.Expected.CALLABLE,
+                            numOf(1),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -109,15 +110,16 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
 
             val query = call("X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forGoal(
-                        DummyInstances.executionContext,
-                        errorSignature,
-                        varOf("X")
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            errorSignature,
+                            varOf("X"),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -129,16 +131,17 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
 
             val query = call(1)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forGoal(
-                        DummyInstances.executionContext,
-                        errorSignature,
-                        TypeError.Expected.CALLABLE,
-                        numOf(1)
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            errorSignature,
+                            TypeError.Expected.CALLABLE,
+                            numOf(1),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -150,16 +153,18 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
 
             val query = call(fail and 1)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forGoal(
-                        DummyInstances.executionContext,
-                        errorSignature,
-                        TypeError.Expected.CALLABLE,
-                        fail and 1 // solver returns 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            errorSignature,
+                            TypeError.Expected.CALLABLE,
+                            // solver returns 1
+                            fail and 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -171,16 +176,18 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
 
             val query = call(write(3) and 1)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forGoal(
-                        DummyInstances.executionContext,
-                        errorSignature,
-                        TypeError.Expected.CALLABLE,
-                        write(3) and 1 // solver returns 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            errorSignature,
+                            TypeError.Expected.CALLABLE,
+                            // solver returns 1
+                            write(3) and 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -192,16 +199,18 @@ interface TestConcurrentCall<T : WithAssertingEquals> : FromSequence<T>, SolverF
 
             val query = call(1 or true)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forGoal(
-                        DummyInstances.executionContext,
-                        errorSignature,
-                        TypeError.Expected.CALLABLE,
-                        (1 or true) // solver returns 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            errorSignature,
+                            TypeError.Expected.CALLABLE,
+                            // solver returns 1
+                            (1 or true),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

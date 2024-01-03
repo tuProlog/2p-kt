@@ -9,25 +9,26 @@ import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
 sealed class Append : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
-
     abstract override val Scope.head: KtList<Term>
 
     object Base : Append() {
         override val Scope.head: KtList<Term>
-            get() = ktListOf(
-                emptyList,
-                varOf("X"),
-                varOf("X")
-            )
+            get() =
+                ktListOf(
+                    emptyList,
+                    varOf("X"),
+                    varOf("X"),
+                )
     }
 
     object Recursive : Append() {
         override val Scope.head: KtList<Term>
-            get() = ktListOf(
-                consOf(varOf("X"), varOf("Y")),
-                varOf("Z"),
-                consOf(varOf("X"), varOf("W"))
-            )
+            get() =
+                ktListOf(
+                    consOf(varOf("X"), varOf("Y")),
+                    varOf("Z"),
+                    consOf(varOf("X"), varOf("W")),
+                )
 
         override val Scope.body: Term
             get() = structOf("append", varOf("Y"), varOf("Z"), varOf("W"))

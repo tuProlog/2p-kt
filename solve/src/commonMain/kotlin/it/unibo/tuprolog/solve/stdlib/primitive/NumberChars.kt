@@ -12,7 +12,10 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.core.List as LogicList
 
 object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars") {
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution {
+    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
+        first: Term,
+        second: Term,
+    ): Substitution {
         return when {
             first is Var && second is Var -> {
                 ensuringAllArgumentsAreInstantiated()
@@ -34,9 +37,10 @@ object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars")
             else -> {
                 ensuringArgumentIsNumeric(0)
                 ensuringArgumentIsList(1)
-                val chars = LogicList.of(
-                    (first).toString().toAtom().value.map { Atom.of("" + it) }
-                )
+                val chars =
+                    LogicList.of(
+                        (first).toString().toAtom().value.map { Atom.of("" + it) },
+                    )
                 mgu(chars, second)
             }
         }

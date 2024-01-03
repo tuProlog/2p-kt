@@ -13,7 +13,6 @@ import kotlin.test.Test
  */
 @Ignore
 internal class CatchTest {
-
     @Test
     fun catchWorksLikeCallIfNoErrorIsThrownByFirstArgument() {
         CatchUtils.requestSolutionMap.forEach { (request, solutionList) ->

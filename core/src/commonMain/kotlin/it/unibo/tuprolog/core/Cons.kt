@@ -7,7 +7,6 @@ import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 
 interface Cons : LogicList {
-
     override val isCons: Boolean
         get() = true
 
@@ -33,12 +32,14 @@ interface Cons : LogicList {
     override fun asCons(): Cons = this
 
     companion object {
-
         const val FUNCTOR = CONS_FUNCTOR
 
         @JvmStatic
         @JsName("of")
-        fun of(head: Term, tail: Term): Cons = ConsImpl(head, tail)
+        fun of(
+            head: Term,
+            tail: Term,
+        ): Cons = ConsImpl(head, tail)
 
         @JvmStatic
         @JsName("singleton")

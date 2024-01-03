@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Substitution
 import kotlin.jvm.JvmOverloads
 
 open class SubstitutionException : TuPrologException {
-
     val substitution: Substitution
 
     @JvmOverloads

@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 
 internal class ListUnfolder(list: List) : Iterator<Term> {
-
     private var current: Term? = list
 
     override fun hasNext(): Boolean = current != null
@@ -16,20 +15,21 @@ internal class ListUnfolder(list: List) : Iterator<Term> {
         return current?.accept(listUnfolderVisitor) ?: throw NoSuchElementException()
     }
 
-    private val listUnfolderVisitor = object : TermVisitor<Term> {
-        override fun visitCons(term: Cons): Term {
-            current = term.tail
-            return term
-        }
+    private val listUnfolderVisitor =
+        object : TermVisitor<Term> {
+            override fun visitCons(term: Cons): Term {
+                current = term.tail
+                return term
+            }
 
-        override fun visitEmptyList(term: EmptyList): Term {
-            current = null
-            return term
-        }
+            override fun visitEmptyList(term: EmptyList): Term {
+                current = null
+                return term
+            }
 
-        override fun defaultValue(term: Term): Term {
-            current = null
-            return term
+            override fun defaultValue(term: Term): Term {
+                current = null
+                return term
+            }
         }
-    }
 }

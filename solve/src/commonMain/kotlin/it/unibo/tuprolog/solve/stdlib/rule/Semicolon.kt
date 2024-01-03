@@ -10,7 +10,6 @@ import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
 sealed class Semicolon : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
-
     abstract override val Scope.head: KtList<Term>
 
     abstract override val Scope.body: Term
@@ -21,21 +20,23 @@ sealed class Semicolon : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
 
         object Then : If() {
             override val Scope.body: Term
-                get() = tupleOf(
+                get() =
+                    tupleOf(
 //                    structOf(EnsureExecutable.functor, varOf("Cond")),
-                    structOf("call", varOf("Cond")),
-                    MagicCut,
-                    varOf("Then")
-                )
+                        structOf("call", varOf("Cond")),
+                        MagicCut,
+                        varOf("Then"),
+                    )
         }
 
         object Else : If() {
             override val Scope.body: Term
-                get() = tupleOf(
-                    MagicCut,
+                get() =
+                    tupleOf(
+                        MagicCut,
 //                    structOf(EnsureExecutable.functor, varOf("Else")),
-                    varOf("Else")
-                )
+                        varOf("Else"),
+                    )
         }
     }
 

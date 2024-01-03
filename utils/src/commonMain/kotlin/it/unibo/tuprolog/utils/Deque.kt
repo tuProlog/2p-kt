@@ -10,6 +10,7 @@ expect fun <T> dequeOf(items: Iterable<T>): MutableList<T>
 
 expect fun <T> dequeOf(items: Sequence<T>): MutableList<T>
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 expect fun <T> MutableList<T>.addFirst(item: T)
 
 expect fun <T> MutableList<T>.addFirst(items: Iterable<T>)

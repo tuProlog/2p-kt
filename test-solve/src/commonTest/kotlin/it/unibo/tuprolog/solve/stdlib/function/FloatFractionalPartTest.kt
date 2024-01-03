@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class FloatFractionalPartTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("float_fractional_part", 1), FloatFractionalPart.signature)
@@ -25,7 +24,7 @@ internal class FloatFractionalPartTest {
             val (_, fractionalPart) = parts
             assertEquals(
                 fractionalPart,
-                FloatFractionalPart.computeOf(Numeric.of(input)).castToReal().value
+                FloatFractionalPart.computeOf(Numeric.of(input)).castToReal().value,
             )
         }
     }

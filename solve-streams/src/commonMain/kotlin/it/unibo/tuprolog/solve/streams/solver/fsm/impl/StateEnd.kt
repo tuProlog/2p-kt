@@ -24,45 +24,50 @@ import it.unibo.tuprolog.solve.streams.solver.getSideEffectManager
  */
 internal sealed class StateEnd(
     private val sourceContext: ExecutionContext,
-    override val solve: Solve.Response
+    override val solve: Solve.Response,
 ) : AbstractState(solve), FinalState {
-
     override fun behave(): Sequence<State> = emptySequence()
 
     override val context: StreamsExecutionContext by lazy {
         StreamsExecutionContext(
             sourceContext,
-            newCurrentSubstitution = solve.solution.substitution as? Substitution.Unifier ?: Substitution.empty()
+            newCurrentSubstitution = solve.solution.substitution as? Substitution.Unifier ?: Substitution.empty(),
         )
     }
 
     /** The *True* state is reached when a successful computational path has ended */
     internal data class True(
         private val sourceContext: ExecutionContext,
-        override val solve: Solve.Response
+        override val solve: Solve.Response,
     ) : StateEnd(sourceContext, solve), FinalState {
         init {
-            require(solve.solution is Solution.Yes) { "True end state can be created only with Solution.Yes. Current: `${solve.solution}`" }
+            require(solve.solution is Solution.Yes) {
+                "True end state can be created only with Solution.Yes. Current: `${solve.solution}`"
+            }
         }
     }
 
     /** The *False* state is reached when a failed computational path has ended */
     internal data class False(
         private val sourceContext: ExecutionContext,
-        override val solve: Solve.Response
+        override val solve: Solve.Response,
     ) : StateEnd(sourceContext, solve), FinalState {
         init {
-            require(solve.solution is Solution.No) { "False end state can be created only with Solution.No. Current: `${solve.solution}`" }
+            require(solve.solution is Solution.No) {
+                "False end state can be created only with Solution.No. Current: `${solve.solution}`"
+            }
         }
     }
 
     /** The *Halt* state is reached when an [HaltException] is caught, terminating the computation */
     internal data class Halt(
         private val sourceContext: ExecutionContext,
-        override val solve: Solve.Response
+        override val solve: Solve.Response,
     ) : StateEnd(sourceContext, solve), FinalState {
         init {
-            require(solve.solution is Solution.Halt) { "Halt end state can be created only with Solution.Halt. Current: `${solve.solution}`" }
+            require(
+                solve.solution is Solution.Halt,
+            ) { "Halt end state can be created only with Solution.Halt. Current: `${solve.solution}`" }
         }
 
         /** Shorthand property to access `solve.solution.exception` */
@@ -74,33 +79,33 @@ internal sealed class StateEnd(
 internal fun IntermediateState.stateEndTrue(
     substitution: Substitution.Unifier = Substitution.empty(),
     sideEffectManager: SideEffectManager? = null,
-    vararg sideEffects: SideEffect
+    vararg sideEffects: SideEffect,
 ) = StateEnd.True(
     context,
     solve.replySuccess(
         substitution,
         sideEffectManager ?: solve.context.getSideEffectManager(),
-        *sideEffects
-    )
+        *sideEffects,
+    ),
 )
 
 /** Transition from this intermediate state to [StateEnd.False], creating a [Solve.Response] with given data */
 internal fun IntermediateState.stateEndFalse(
     sideEffectManager: SideEffectManager? = null,
-    vararg sideEffects: SideEffect
+    vararg sideEffects: SideEffect,
 ) = StateEnd.False(
     context,
     solve.replyFail(
         sideEffectManager ?: solve.context.getSideEffectManager(),
-        *sideEffects
-    )
+        *sideEffects,
+    ),
 )
 
 /** Transition from this intermediate state to [StateEnd.Halt], creating a [Solve.Response] with given data */
 internal fun IntermediateState.stateEndHalt(
     exception: ResolutionException,
     sideEffectManager: SideEffectManager? = null,
-    vararg sideEffects: SideEffect
+    vararg sideEffects: SideEffect,
 ) = StateEnd.Halt(
     context,
     solve.replyException(
@@ -108,28 +113,30 @@ internal fun IntermediateState.stateEndHalt(
         sideEffectManager
             ?: exception.context.getSideEffectManager()
             ?: solve.context.getSideEffectManager(),
-        *sideEffects
-    )
+        *sideEffects,
+    ),
 )
 
 /** Transition from this intermediate state to the correct [StateEnd] depending on provided [solution] */
 internal fun IntermediateState.stateEnd(
     solution: Solution,
     sideEffectManager: SideEffectManager? = null,
-    vararg sideEffects: SideEffect
-): StateEnd = solution.whenIs(
-    yes = { sol ->
-        stateEndTrue(
-            sol.substitution.takeUnless { it.isEmpty() } ?: solve.context.substitution,
-            sideEffectManager,
-            *sideEffects
-        )
-    },
-    no = { stateEndFalse(sideEffectManager, *sideEffects) },
-    halt = { stateEndHalt(it.exception, sideEffectManager, *sideEffects) }
-)
+    vararg sideEffects: SideEffect,
+): StateEnd =
+    solution.whenIs(
+        yes = { sol ->
+            stateEndTrue(
+                sol.substitution.takeUnless { it.isEmpty() } ?: solve.context.substitution,
+                sideEffectManager,
+                *sideEffects,
+            )
+        },
+        no = { stateEndFalse(sideEffectManager, *sideEffects) },
+        halt = { stateEndHalt(it.exception, sideEffectManager, *sideEffects) },
+    )
 
 /** Transition from this intermediate state to a [StateEnd] containing provided [response] data */
-internal fun IntermediateState.stateEnd(response: Solve.Response) = with(response) {
-    stateEnd(solution, sideEffectManager, *sideEffects.toTypedArray())
-}
+internal fun IntermediateState.stateEnd(response: Solve.Response) =
+    with(response) {
+        stateEnd(solution, sideEffectManager, *sideEffects.toTypedArray())
+    }

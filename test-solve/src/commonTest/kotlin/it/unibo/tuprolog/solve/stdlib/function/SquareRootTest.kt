@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class SquareRootTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("sqrt", 1), SquareRoot.signature)
@@ -23,7 +22,7 @@ internal class SquareRootTest {
     fun computationCorrect() {
         assertEquals(
             Numeric.of("1.1"),
-            SquareRoot.computeOf(Real.of("1.21"))
+            SquareRoot.computeOf(Real.of("1.21")),
         )
     }
 }

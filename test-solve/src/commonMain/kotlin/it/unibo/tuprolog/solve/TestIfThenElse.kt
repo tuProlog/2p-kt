@@ -2,8 +2,7 @@ package it.unibo.tuprolog.solve
 
 interface TestIfThenElse : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestIfThenElse =
-            TestIfThenElseImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestIfThenElse = TestIfThenElseImpl(solverFactory)
     }
 
     /**

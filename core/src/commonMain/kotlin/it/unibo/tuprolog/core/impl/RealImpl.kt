@@ -10,9 +10,8 @@ import org.gciatto.kt.math.BigInteger
 @Suppress("EqualsOrHashCode")
 internal class RealImpl(
     override val value: BigDecimal,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : NumericImpl(tags), Real {
-
     override val decimalValue: BigDecimal
         get() = value
 
@@ -28,11 +27,12 @@ internal class RealImpl(
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun equalsToReal(other: Real) =
-        value.compareTo(other.value) == 0
+    private inline fun equalsToReal(other: Real) = value.compareTo(other.value) == 0
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        other.isReal && equalsToReal(other.castToReal())
+    override fun equals(
+        other: Term,
+        useVarCompleteName: Boolean,
+    ): Boolean = other.isReal && equalsToReal(other.castToReal())
 
     override val hashCodeCache: Int by lazy { value.stripTrailingZeros().hashCode() }
 

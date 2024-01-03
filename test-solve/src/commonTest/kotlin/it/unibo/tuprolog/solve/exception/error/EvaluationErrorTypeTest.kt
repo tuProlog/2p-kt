@@ -13,7 +13,6 @@ import kotlin.test.assertNull
  * @author Enrico
  */
 internal class EvaluationErrorTypeTest {
-
     @Test
     fun evaluationErrorTypeEnumToAtomWorksAsExpected() {
         EvaluationError.Type.values().forEach {

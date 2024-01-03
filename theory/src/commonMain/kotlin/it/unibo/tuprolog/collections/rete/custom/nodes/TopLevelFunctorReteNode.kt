@@ -14,9 +14,8 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class TopLevelFunctorReteNode(
     unificator: Unificator,
     private val ordered: Boolean,
-    private val nestingLevel: Int
+    private val nestingLevel: Int,
 ) : FunctorNode(unificator), FunctorRete {
-
     private val arities: MutableMap<Int, TopLevelReteNode> = mutableMapOf()
 
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
@@ -27,8 +26,7 @@ internal class TopLevelFunctorReteNode(
     override val isEmpty: Boolean
         get() = arities.isEmpty() || arities.values.all { it.isEmpty }
 
-    override fun get(clause: Clause): Sequence<Clause> =
-        selectArity(clause)?.get(clause) ?: emptySequence()
+    override fun get(clause: Clause): Sequence<Clause> = selectArity(clause)?.get(clause) ?: emptySequence()
 
     override fun assertA(clause: IndexedClause) {
         chooseAssertionBranch(clause + this, ReteNode::assertA)
@@ -46,21 +44,24 @@ internal class TopLevelFunctorReteNode(
         selectArity(clause)?.retractAll(clause)
             ?: emptySequence()
 
-    override fun getCache(): Sequence<SituatedIndexedClause> =
-        theoryCache.value.asSequence()
+    override fun getCache(): Sequence<SituatedIndexedClause> = theoryCache.value.asSequence()
 
-    private fun selectArity(clause: Clause) =
-        arities[clause.head!!.arityOfNestedFirstArgument(nestingLevel)]
+    private fun selectArity(clause: Clause) = arities[clause.head!!.arityOfNestedFirstArgument(nestingLevel)]
 
-    private fun chooseAssertionBranch(clause: IndexedClause, op: ReteNode.(IndexedClause) -> Unit) {
+    private fun chooseAssertionBranch(
+        clause: IndexedClause,
+        op: ReteNode.(IndexedClause) -> Unit,
+    ) {
         clause.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel).let {
             when (it) {
-                0 -> arities.getOrPut(it) {
-                    ZeroArityReteNode(unificator, ordered)
-                }
-                else -> arities.getOrPut(it) {
-                    FamilyArityReteNode(unificator, ordered, nestingLevel)
-                }
+                0 ->
+                    arities.getOrPut(it) {
+                        ZeroArityReteNode(unificator, ordered)
+                    }
+                else ->
+                    arities.getOrPut(it) {
+                        FamilyArityReteNode(unificator, ordered, nestingLevel)
+                    }
             }
         }.op(clause)
     }
@@ -76,14 +77,14 @@ internal class TopLevelFunctorReteNode(
                 Utils.merge(
                     arities.values.map {
                         it.getCache()
-                    }
+                    },
                 )
             } else {
                 Utils.flattenIndexed(
                     arities.values.map { outer ->
                         outer.getCache()
-                    }
+                    },
                 )
-            }
+            },
         )
 }

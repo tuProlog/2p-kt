@@ -15,9 +15,8 @@ import it.unibo.tuprolog.utils.insertAt
 internal abstract class ClauseImpl(
     override val head: Struct?,
     override val body: Term,
-    tags: Map<String, Any>
+    tags: Map<String, Any>,
 ) : AbstractStruct(CLAUSE_FUNCTOR, (if (head === null) listOf(body) else listOf(head, body)), tags), Clause {
-
     override val isWellFormed: Boolean by lazy { body.accept(bodyWellFormedVisitor) }
 
     override val functor: String = super<Clause>.functor
@@ -35,23 +34,25 @@ internal abstract class ClauseImpl(
     override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope).castToClause()
 
     private val bodyItemsSequence: Sequence<Term>
-        get() = body.let {
-            when {
-                it.isTuple -> it.castToTuple().toSequence()
-                else -> sequenceOf(it)
+        get() =
+            body.let {
+                when {
+                    it.isTuple -> it.castToTuple().toSequence()
+                    else -> sequenceOf(it)
+                }
             }
-        }
 
     override val bodyItems: Iterable<Term>
         get() = bodyItemsSequence.asIterable()
 
     override val bodySize: Int
-        get() = body.let {
-            when {
-                it.isTuple -> it.castToTuple().size
-                else -> 1
+        get() =
+            body.let {
+                when {
+                    it.isTuple -> it.castToTuple().size
+                    else -> 1
+                }
             }
-        }
 
     override val bodyAsTuple: Tuple?
         get() = body.asTuple()
@@ -80,7 +81,10 @@ internal abstract class ClauseImpl(
 
     override fun setHeadArgs(arguments: Sequence<Term>): Clause = of(head?.setArgs(arguments), body)
 
-    override fun insertHeadArg(index: Int, argument: Term): Clause = of(head?.insertAt(index, argument), body)
+    override fun insertHeadArg(
+        index: Int,
+        argument: Term,
+    ): Clause = of(head?.insertAt(index, argument), body)
 
     override fun addFirstHeadArg(argument: Term): Clause = of(head?.addFirst(argument), body)
 
@@ -88,13 +92,19 @@ internal abstract class ClauseImpl(
 
     override fun appendHeadArg(argument: Term): Clause = addLastHeadArg(argument)
 
-    override fun setBodyItems(argument: Term, vararg arguments: Term): Clause = of(head, argument, *arguments)
+    override fun setBodyItems(
+        argument: Term,
+        vararg arguments: Term,
+    ): Clause = of(head, argument, *arguments)
 
     override fun setBodyItems(arguments: Iterable<Term>): Clause = of(head, arguments)
 
     override fun setBodyItems(arguments: Sequence<Term>): Clause = of(head, arguments)
 
-    override fun insertBodyItem(index: Int, argument: Term): Clause {
+    override fun insertBodyItem(
+        index: Int,
+        argument: Term,
+    ): Clause {
         ensureIndexIsInBodyRange(index)
         return of(head, bodyItemsSequence.insertAt(index, argument))
     }

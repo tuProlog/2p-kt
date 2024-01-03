@@ -6,10 +6,10 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 internal class MutableIndexedClauseIndexingTest {
-
-    private val prototype = PrototypeProperIndexingTest(
-        Factories::mutableIndexedTheoryOf
-    )
+    private val prototype =
+        PrototypeProperIndexingTest(
+            Factories::mutableIndexedTheoryOf,
+        )
 
     @BeforeTest
     fun init() {

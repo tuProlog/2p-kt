@@ -28,13 +28,11 @@ interface OutputChannel<T : Any> : Channel<T> {
         @JvmStatic
         @JvmOverloads
         @JsName("streamTerm")
-        fun streamTerm(id: String? = null): Struct =
-            Channel.streamTerm(input = false, id)
+        fun streamTerm(id: String? = null): Struct = Channel.streamTerm(input = false, id)
     }
 
     @JsName("use")
-    fun <R> use(function: OutputChannel<T>.() -> R): R =
-        this.function().also { close() }
+    fun <R> use(function: OutputChannel<T>.() -> R): R = this.function().also { close() }
 
     @JsName("write")
     fun write(value: T)

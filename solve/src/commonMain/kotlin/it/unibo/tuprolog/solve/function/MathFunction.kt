@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
  * @author Enrico
  */
 abstract class MathFunction : FunctionWrapper<ExecutionContext> {
-
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)
 
@@ -40,11 +39,12 @@ abstract class MathFunction : FunctionWrapper<ExecutionContext> {
     protected fun throwTypeErrorBecauseOnlyIntegersAccepted(
         opName: String,
         actualValue: Term,
-        context: ExecutionContext
-    ): Nothing = throw TypeError(
-        "Operator `$opName` accepts only integers!",
-        context = context,
-        expectedType = TypeError.Expected.INTEGER,
-        culprit = actualValue
-    )
+        context: ExecutionContext,
+    ): Nothing =
+        throw TypeError(
+            "Operator `$opName` accepts only integers!",
+            context = context,
+            expectedType = TypeError.Expected.INTEGER,
+            culprit = actualValue,
+        )
 }

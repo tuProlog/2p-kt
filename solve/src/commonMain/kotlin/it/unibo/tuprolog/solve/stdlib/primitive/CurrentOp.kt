@@ -12,13 +12,13 @@ object CurrentOp : TernaryRelation.WithoutSideEffects<ExecutionContext>("current
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
-        third: Term
+        third: Term,
     ): Sequence<Substitution> =
         context.operators.asSequence().map {
             listOf(
                 mgu(first, Integer.of(it.priority)),
                 mgu(second, it.specifier.toTerm()),
-                mgu(third, Atom.of(it.functor))
+                mgu(third, Atom.of(it.functor)),
             )
         }.filter {
             it.all { sub -> sub is Substitution.Unifier }

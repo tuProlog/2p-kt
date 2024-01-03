@@ -23,19 +23,19 @@ internal class TermFormatterWithPrettyExpressions private constructor(
     private val forceParentheses: Set<String>,
     quoted: Boolean = true,
     numberVars: Boolean = false,
-    ignoreOps: Boolean = false
+    ignoreOps: Boolean = false,
 ) : AbstractTermFormatter(quoted, numberVars, ignoreOps) {
-
     companion object {
         private data class OperatorDecorations(val prefix: String, val suffix: String)
 
         private val defaultDecorations = OperatorDecorations(" ", " ")
 
-        private val adHocDecorations: Map<String, OperatorDecorations> = mapOf(
-            "," to OperatorDecorations("", " "),
-            ";" to OperatorDecorations("", " "),
-            "\\+" to OperatorDecorations("", " ")
-        )
+        private val adHocDecorations: Map<String, OperatorDecorations> =
+            mapOf(
+                "," to OperatorDecorations("", " "),
+                ";" to OperatorDecorations("", " "),
+                "\\+" to OperatorDecorations("", " "),
+            )
 
         private val String.decorations: OperatorDecorations
             get() = adHocDecorations[this] ?: defaultDecorations
@@ -52,26 +52,20 @@ internal class TermFormatterWithPrettyExpressions private constructor(
         operators: OperatorSet,
         quoted: Boolean = true,
         numberVars: Boolean = false,
-        ignoreOps: Boolean = false
+        ignoreOps: Boolean = false,
     ) : this(Int.MAX_VALUE, delegate, operators.toOperatorsIndex(), emptySet(), quoted, numberVars, ignoreOps)
 
-    override fun visitVar(term: Var): String =
-        term.accept(delegate)
+    override fun visitVar(term: Var): String = term.accept(delegate)
 
-    override fun visitAtom(term: Atom): String =
-        term.accept(delegate)
+    override fun visitAtom(term: Atom): String = term.accept(delegate)
 
-    override fun visitInteger(term: Integer): String =
-        term.accept(delegate)
+    override fun visitInteger(term: Integer): String = term.accept(delegate)
 
-    override fun visitReal(term: Real): String =
-        term.accept(delegate)
+    override fun visitReal(term: Real): String = term.accept(delegate)
 
-    override fun visitEmptyBlock(term: EmptyBlock): String =
-        term.accept(delegate)
+    override fun visitEmptyBlock(term: EmptyBlock): String = term.accept(delegate)
 
-    override fun visitEmptyList(term: EmptyList): String =
-        term.accept(delegate)
+    override fun visitEmptyList(term: EmptyList): String = term.accept(delegate)
 
     override fun visitStruct(term: Struct): String =
         if (term.functor.isOperator()) {
@@ -82,7 +76,10 @@ internal class TermFormatterWithPrettyExpressions private constructor(
 
     private fun String.wrapWithinParentheses(): String = "($this)"
 
-    private fun addingParenthesesIfForced(struct: Struct, stringGenerator: Struct.() -> String): String {
+    private fun addingParenthesesIfForced(
+        struct: Struct,
+        stringGenerator: Struct.() -> String,
+    ): String {
         val string = struct.stringGenerator()
         if (struct.functor in forceParentheses) {
             return string.wrapWithinParentheses()
@@ -92,9 +89,10 @@ internal class TermFormatterWithPrettyExpressions private constructor(
 
     override fun visitTuple(term: Tuple): String {
         val op = TUPLE_FUNCTOR
-        val string = term.unfoldedSequence
-            .map { it.accept(itemFormatter()) }
-            .joinToString("${op.prefix}$op${op.suffix}")
+        val string =
+            term.unfoldedSequence
+                .map { it.accept(itemFormatter()) }
+                .joinToString("${op.prefix}$op${op.suffix}")
         if (op in forceParentheses) {
             return string.wrapWithinParentheses()
         }
@@ -133,31 +131,43 @@ internal class TermFormatterWithPrettyExpressions private constructor(
 
     override fun childFormatter(): TermFormatter = childFormatter(Int.MAX_VALUE, setOf(","))
 
-    private fun childFormatter(priority: Int, forceParentheses: Set<String> = emptySet()): TermFormatter =
-        TermFormatterWithPrettyExpressions(priority, delegate, operators, forceParentheses, quoted, numberVars, ignoreOps)
+    private fun childFormatter(
+        priority: Int,
+        forceParentheses: Set<String> = emptySet(),
+    ): TermFormatter =
+        TermFormatterWithPrettyExpressions(
+            priority,
+            delegate,
+            operators,
+            forceParentheses,
+            quoted,
+            numberVars,
+            ignoreOps,
+        )
 
     private fun String.isOperator() = operators.containsKey(this)
 
     private fun OperatorsIndex.getSpecifierAndIndex(
         functor: String,
         priorityPredicate: (Int) -> Boolean,
-        specifierPredicate: Specifier.() -> Boolean
-    ): Pair<Specifier, Int>? = this[functor]?.asSequence()
-        ?.filter { it.key.specifierPredicate() && priorityPredicate(it.value) }
-        ?.filter { it.key.name !in forceParentheses }
-        ?.map { it.toPair() }
-        ?.firstOrNull()
+        specifierPredicate: Specifier.() -> Boolean,
+    ): Pair<Specifier, Int>? =
+        this[functor]?.asSequence()
+            ?.filter { it.key.specifierPredicate() && priorityPredicate(it.value) }
+            ?.filter { it.key.name !in forceParentheses }
+            ?.map { it.toPair() }
+            ?.firstOrNull()
 
     private fun OperatorsIndex.getSpecifierAndIndexWithNonGreaterPriority(
         functor: String,
         priority: Int,
-        specifierPredicate: Specifier.() -> Boolean
+        specifierPredicate: Specifier.() -> Boolean,
     ): Pair<Specifier, Int>? = getSpecifierAndIndex(functor, { it <= priority }, specifierPredicate)
 
     private fun OperatorsIndex.getSpecifierAndIndexWithGreaterPriority(
         functor: String,
         priority: Int,
-        specifierPredicate: Specifier.() -> Boolean
+        specifierPredicate: Specifier.() -> Boolean,
     ): Pair<Specifier, Int>? = getSpecifierAndIndex(functor, { it > priority }, specifierPredicate)
 
     private fun Struct.isPrefix(): Pair<Specifier, Int>? =

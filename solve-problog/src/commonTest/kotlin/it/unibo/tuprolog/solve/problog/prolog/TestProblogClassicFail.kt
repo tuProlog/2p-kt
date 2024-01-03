@@ -14,21 +14,21 @@ class TestProblogClassicFail : TestFail, SolverFactory by ProblogSolverFactory {
         prototype.testFail()
     }
 
-    /* NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here */
+    // NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here
     @Ignore
     @Test
     override fun testUndefPred() {
         prototype.testUndefPred()
     }
 
-    /* NOTE: Ignored because of a mismatch between error codes */
+    // NOTE: Ignored because of a mismatch between error codes
     @Ignore
     @Test
     override fun testSetFlagFail() {
         prototype.testSetFlagFail()
     }
 
-    /* NOTE: Ignored because of a mismatch between error codes */
+    // NOTE: Ignored because of a mismatch between error codes
     @Ignore
     @Test
     override fun testSetFlagWarning() {

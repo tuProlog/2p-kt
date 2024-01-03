@@ -13,21 +13,20 @@ import kotlin.reflect.KClass
 class PropertyAssignmentException(
     val type: KClass<*>,
     val missingPropertyName: String,
-    val admissibleTypes: Set<KClass<*>>
+    val admissibleTypes: Set<KClass<*>>,
 ) : OopException(
-    "There is no property on type ${type.fullName} which is named `$missingPropertyName` and can be " +
-        "assigned to a value of type ${admissibleTypes.pretty()}"
-) {
-
+        "There is no property on type ${type.fullName} which is named `$missingPropertyName` and can be " +
+            "assigned to a value of type ${admissibleTypes.pretty()}",
+    ) {
     override fun toLogicError(
         context: ExecutionContext,
-        signature: Signature
+        signature: Signature,
     ): LogicError {
         return ExistenceError.of(
             context,
             ExistenceError.ObjectType.OOP_PROPERTY,
             culprit,
-            message ?: ""
+            message ?: "",
         )
     }
 

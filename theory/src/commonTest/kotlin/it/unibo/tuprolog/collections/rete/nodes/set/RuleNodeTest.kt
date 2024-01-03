@@ -21,7 +21,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class RuleNodeTest {
-
     private lateinit var emptyRuleNode: RuleNode
     private lateinit var filledRuleNode: RuleNode
 

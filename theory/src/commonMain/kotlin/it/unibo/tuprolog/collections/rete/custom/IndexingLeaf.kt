@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.Clause
 /**Denotes a [ReteNode] capable of managing intermediate operation upon its children,
  * so that the results these will provide can be more fine grained elaborated*/
 internal interface IndexingLeaf : ReteNode {
-
     /**Read the single first [SituatedIndexedClause] matching the given [Clause], returning null if
      * such a condition is never met. The concept of "first" may vary between implementations */
     fun getFirstIndexed(clause: Clause): SituatedIndexedClause?

@@ -7,7 +7,6 @@ import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 interface Numeric : Constant {
-
     override val isNumber: Boolean
         get() = true
 
@@ -30,7 +29,6 @@ interface Numeric : Constant {
     override fun asNumeric(): Numeric = this
 
     companion object {
-
         @JvmField
         val INTEGER_PATTERN = Terms.INTEGER_PATTERN
 
@@ -71,16 +69,17 @@ interface Numeric : Constant {
 
         @JvmStatic
         @JsName("of")
-        fun of(value: Number): Numeric = when (value) {
-            // avoiding string format is necessary for "floats", to maintain full precision during conversions
-            is Double -> of(value)
-            is Int -> of(value)
-            is Float -> of(value)
-            is Long -> of(value)
-            is Short -> of(value)
-            is Byte -> of(value)
-            else -> of(value.toString())
-        }
+        fun of(value: Number): Numeric =
+            when (value) {
+                // avoiding string format is necessary for "floats", to maintain full precision during conversions
+                is Double -> of(value)
+                is Int -> of(value)
+                is Float -> of(value)
+                is Long -> of(value)
+                is Short -> of(value)
+                is Byte -> of(value)
+                else -> of(value.toString())
+            }
 
         @JvmStatic
         @JsName("parse")

@@ -42,15 +42,14 @@ abstract class LogicError(
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
     @JsName("type") open val type: Struct,
-    @JsName("extraData") open val extraData: Term? = null
+    @JsName("extraData") open val extraData: Term? = null,
 ) : ResolutionException(message, cause, contexts) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
         type: Struct,
-        extraData: Term? = null
+        extraData: Term? = null,
     ) : this(message, cause, arrayOf(context), type, extraData)
 
     constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null) :
@@ -60,10 +59,12 @@ abstract class LogicError(
     @JsName("errorStruct")
     val errorStruct: Struct by lazy { generateErrorStruct() }
 
-    private fun generateErrorStruct() =
-        extraData?.let { errorStructOf(type, it) } ?: errorStructOf(type)
+    private fun generateErrorStruct() = extraData?.let { errorStructOf(type, it) } ?: errorStructOf(type)
 
-    abstract override fun updateContext(newContext: ExecutionContext, index: Int): LogicError
+    abstract override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): LogicError
 
     abstract override fun updateLastContext(newContext: ExecutionContext): LogicError
 
@@ -72,15 +73,14 @@ abstract class LogicError(
     override fun toString(): String = errorStruct.toString()
 
     companion object {
+        internal fun <E : LogicError> message(
+            message: String,
+            f: (String, Atom) -> E,
+        ): E = f(message, Atom.of(message))
 
-        internal fun <E : LogicError> message(message: String, f: (String, Atom) -> E): E =
-            f(message, Atom.of(message))
+        internal fun Term.pretty(): String = format(TermFormatter.prettyVariables())
 
-        internal fun Term.pretty(): String =
-            format(TermFormatter.prettyVariables())
-
-        internal fun Signature.pretty(): String =
-            toIndicator().toString()
+        internal fun Signature.pretty(): String = toIndicator().toString()
 
         /**
          * Factory method for [LogicError]s
@@ -94,7 +94,7 @@ abstract class LogicError(
             cause: Throwable? = null,
             context: ExecutionContext,
             type: Struct,
-            extraData: Term? = null
+            extraData: Term? = null,
         ): LogicError = of(message, cause, arrayOf(context), type, extraData)
 
         private fun customError(
@@ -102,17 +102,30 @@ abstract class LogicError(
             cause: Throwable? = null,
             contexts: Array<ExecutionContext>,
             type: Struct,
-            extraData: Term? = null
-        ): LogicError = object : LogicError(message ?: type.pretty(), cause, contexts, type, extraData) {
-            override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
-                of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+            extraData: Term? = null,
+        ): LogicError =
+            object : LogicError(message ?: type.pretty(), cause, contexts, type, extraData) {
+                override fun updateContext(
+                    newContext: ExecutionContext,
+                    index: Int,
+                ): LogicError =
+                    of(
+                        this.message,
+                        this.cause,
+                        this.contexts.setItem(index, newContext),
+                        this.type,
+                        this.extraData,
+                    )
 
-            override fun updateLastContext(newContext: ExecutionContext): LogicError =
-                updateContext(newContext, this.contexts.lastIndex)
+                override fun updateLastContext(newContext: ExecutionContext): LogicError =
+                    updateContext(
+                        newContext,
+                        this.contexts.lastIndex,
+                    )
 
-            override fun pushContext(newContext: ExecutionContext): LogicError =
-                of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
-        }
+                override fun pushContext(newContext: ExecutionContext): LogicError =
+                    of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
+            }
 
         @JvmStatic
         @JsName("ofManyContexts")
@@ -121,70 +134,71 @@ abstract class LogicError(
             cause: Throwable? = null,
             contexts: Array<ExecutionContext>,
             type: Struct,
-            extraData: Term? = null
-        ): LogicError = with(type) {
-            val actualMessage = message ?: type.pretty()
-            try {
-                when {
-                    functor == InstantiationError.typeFunctor ->
-                        InstantiationError(actualMessage, cause, contexts, Var.anonymous(), extraData)
-                    functor == SystemError.typeFunctor ->
-                        SystemError(actualMessage, cause, contexts, extraData)
-                    functor == SyntaxError.typeFunctor ->
-                        SyntaxError(actualMessage, cause, contexts, extraData)
-                    functor == MessageError.typeFunctor ->
-                        MessageError(actualMessage, cause, contexts, extraData)
-                    functor == RepresentationError.typeFunctor && arity == 1 ->
-                        RepresentationError(actualMessage, cause, contexts, Limit.fromTerm(type[0])!!, extraData)
-                    functor == ExistenceError.typeFunctor && arity == 2 ->
-                        ExistenceError(
-                            actualMessage,
-                            cause,
-                            contexts,
-                            ExistenceError.ObjectType.fromTerm(type[0])!!,
-                            type[1]
-                        )
-                    functor == DomainError.typeFunctor && arity == 2 ->
-                        DomainError(
-                            actualMessage,
-                            cause,
-                            contexts,
-                            DomainError.Expected.fromTerm(getArgAt(0))!!,
-                            getArgAt(1),
-                            extraData
-                        )
-                    functor == TypeError.typeFunctor && arity == 2 ->
-                        TypeError(
-                            actualMessage,
-                            cause,
-                            contexts,
-                            TypeError.Expected.fromTerm(getArgAt(0))!!,
-                            getArgAt(1),
-                            extraData
-                        )
-                    functor == EvaluationError.typeFunctor && arity == 1 ->
-                        EvaluationError(
-                            actualMessage,
-                            cause,
-                            contexts,
-                            EvaluationError.Type.fromTerm(getArgAt(0))!!,
-                            extraData
-                        )
-                    functor == PermissionError.typeFunctor && arity == 3 ->
-                        PermissionError(
-                            actualMessage,
-                            cause,
-                            contexts,
-                            Operation.fromTerm(getArgAt(0))!!,
-                            Permission.fromTerm(getArgAt(1))!!,
-                            getArgAt(2),
-                            extraData
-                        )
-                    else -> customError(message, cause, contexts, type, extraData)
+            extraData: Term? = null,
+        ): LogicError =
+            with(type) {
+                val actualMessage = message ?: type.pretty()
+                try {
+                    when {
+                        functor == InstantiationError.typeFunctor ->
+                            InstantiationError(actualMessage, cause, contexts, Var.anonymous(), extraData)
+                        functor == SystemError.typeFunctor ->
+                            SystemError(actualMessage, cause, contexts, extraData)
+                        functor == SyntaxError.typeFunctor ->
+                            SyntaxError(actualMessage, cause, contexts, extraData)
+                        functor == MessageError.typeFunctor ->
+                            MessageError(actualMessage, cause, contexts, extraData)
+                        functor == RepresentationError.typeFunctor && arity == 1 ->
+                            RepresentationError(actualMessage, cause, contexts, Limit.fromTerm(type[0])!!, extraData)
+                        functor == ExistenceError.typeFunctor && arity == 2 ->
+                            ExistenceError(
+                                actualMessage,
+                                cause,
+                                contexts,
+                                ExistenceError.ObjectType.fromTerm(type[0])!!,
+                                type[1],
+                            )
+                        functor == DomainError.typeFunctor && arity == 2 ->
+                            DomainError(
+                                actualMessage,
+                                cause,
+                                contexts,
+                                DomainError.Expected.fromTerm(getArgAt(0))!!,
+                                getArgAt(1),
+                                extraData,
+                            )
+                        functor == TypeError.typeFunctor && arity == 2 ->
+                            TypeError(
+                                actualMessage,
+                                cause,
+                                contexts,
+                                TypeError.Expected.fromTerm(getArgAt(0))!!,
+                                getArgAt(1),
+                                extraData,
+                            )
+                        functor == EvaluationError.typeFunctor && arity == 1 ->
+                            EvaluationError(
+                                actualMessage,
+                                cause,
+                                contexts,
+                                EvaluationError.Type.fromTerm(getArgAt(0))!!,
+                                extraData,
+                            )
+                        functor == PermissionError.typeFunctor && arity == 3 ->
+                            PermissionError(
+                                actualMessage,
+                                cause,
+                                contexts,
+                                Operation.fromTerm(getArgAt(0))!!,
+                                Permission.fromTerm(getArgAt(1))!!,
+                                getArgAt(2),
+                                extraData,
+                            )
+                        else -> customError(message, cause, contexts, type, extraData)
+                    }
+                } catch (_: NullPointerException) {
+                    customError(message, cause, contexts, type, extraData)
                 }
-            } catch (_: NullPointerException) {
-                customError(message, cause, contexts, type, extraData)
             }
-        }
     }
 }

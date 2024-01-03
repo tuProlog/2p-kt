@@ -9,9 +9,7 @@ import kotlin.test.assertTrue
 import kotlin.collections.List as KtList
 
 class TermTest {
-
     private data class MyStruct(override val functor: String, override val args: KtList<Term>) : Struct {
-
         override fun freshCopy(): Struct {
             return freshCopy(Scope.empty())
         }
@@ -24,7 +22,10 @@ class TermTest {
 
         override fun addFirst(argument: Term): Struct = throw NotImplementedError()
 
-        override fun insertAt(index: Int, argument: Term): Struct = throw NotImplementedError()
+        override fun insertAt(
+            index: Int,
+            argument: Term,
+        ): Struct = throw NotImplementedError()
 
         override fun setFunctor(functor: String): Struct = throw NotImplementedError()
 
@@ -41,7 +42,10 @@ class TermTest {
             return if (other is Term) equals(other, true) else false
         }
 
-        override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
+        override fun equals(
+            other: Term,
+            useVarCompleteName: Boolean,
+        ): Boolean {
             return other is MyStruct && other.arity == arity && other.functor == functor &&
                 other.args.mapIndexed { i, term -> term.equals(args[i], useVarCompleteName) }.all { it }
         }
@@ -69,35 +73,38 @@ class TermTest {
         override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitStruct(this)
     }
 
+    @Suppress("ktlint:standard:property-naming", "PrivatePropertyName")
     private val X = Var.of("X")
 
     private val sub = Substitution.unifier(X, Integer.ONE)
 
-    private val compounds = listOf(
-        MyStruct("f", listOf(X)),
-        Struct.of("g", X),
-        List.of(X),
-        Block.of(X),
-        Tuple.of(X, X),
-        Fact.of(MyStruct("f", listOf(X))),
-        Fact.of(Struct.of("g", X)),
-        Fact.of(List.of(X)),
-        Fact.of(Block.of(X)),
-        Fact.of(Tuple.of(X, X))
-    )
+    private val compounds =
+        listOf(
+            MyStruct("f", listOf(X)),
+            Struct.of("g", X),
+            List.of(X),
+            Block.of(X),
+            Tuple.of(X, X),
+            Fact.of(MyStruct("f", listOf(X))),
+            Fact.of(Struct.of("g", X)),
+            Fact.of(List.of(X)),
+            Fact.of(Block.of(X)),
+            Fact.of(Tuple.of(X, X)),
+        )
 
-    private val expected = listOf(
-        MyStruct("f", listOf(Integer.ONE)),
-        Struct.of("g", Integer.ONE),
-        List.of(Integer.ONE),
-        Block.of(Integer.ONE),
-        Tuple.of(Integer.ONE, Integer.ONE),
-        Fact.of(MyStruct("f", listOf(Integer.ONE))),
-        Fact.of(Struct.of("g", Integer.ONE)),
-        Fact.of(List.of(Integer.ONE)),
-        Fact.of(Block.of(Integer.ONE)),
-        Fact.of(Tuple.of(Integer.ONE, Integer.ONE))
-    )
+    private val expected =
+        listOf(
+            MyStruct("f", listOf(Integer.ONE)),
+            Struct.of("g", Integer.ONE),
+            List.of(Integer.ONE),
+            Block.of(Integer.ONE),
+            Tuple.of(Integer.ONE, Integer.ONE),
+            Fact.of(MyStruct("f", listOf(Integer.ONE))),
+            Fact.of(Struct.of("g", Integer.ONE)),
+            Fact.of(List.of(Integer.ONE)),
+            Fact.of(Block.of(Integer.ONE)),
+            Fact.of(Tuple.of(Integer.ONE, Integer.ONE)),
+        )
 
     @Test
     fun substitutionApplyToPreservesReturnsNullWithFailedSubstitution() {

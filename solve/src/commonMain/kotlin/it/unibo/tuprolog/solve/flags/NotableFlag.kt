@@ -5,7 +5,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface NotableFlag {
-
     @JsName("name")
     val name: String
 
@@ -20,20 +19,19 @@ interface NotableFlag {
     val admissibleValues: Sequence<Term>
 
     @JsName("isAdmissibleValue")
-    fun isAdmissibleValue(value: Term): Boolean =
-        value in admissibleValues
+    fun isAdmissibleValue(value: Term): Boolean = value in admissibleValues
 
     @JsName("toPair")
-    fun toPair(): Pair<String, Term> =
-        this to defaultValue
+    fun toPair(): Pair<String, Term> = this to defaultValue
 
     @JsName("to")
     infix fun to(value: Term): Pair<String, Term> =
-        name to value.also {
-            require(isAdmissibleValue(it)) {
-                "$value is not an admissible value for flag $name"
+        name to
+            value.also {
+                require(isAdmissibleValue(it)) {
+                    "$value is not an admissible value for flag $name"
+                }
             }
-        }
 
     companion object {
         @JsName("fromName")
@@ -43,7 +41,7 @@ interface NotableFlag {
                 DoubleQuotes,
                 LastCallOptimization,
                 MaxArity,
-                Unknown
+                Unknown,
             ).firstOrNull { it.name == name }
     }
 }

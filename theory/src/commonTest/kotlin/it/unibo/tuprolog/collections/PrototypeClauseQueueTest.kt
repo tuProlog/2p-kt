@@ -4,7 +4,6 @@ import it.unibo.tuprolog.collections.prototypes.PrototypeClauseQueueTestImpl
 import it.unibo.tuprolog.core.Clause
 
 internal interface PrototypeClauseQueueTest : PrototypeClauseCollectionTest {
-
     fun getWithPresentClauseReturnsTheCorrectSequence()
 
     fun getWithAbsentClauseReturnsAnEmptySequence()
@@ -32,11 +31,11 @@ internal interface PrototypeClauseQueueTest : PrototypeClauseCollectionTest {
     companion object {
         internal fun prototype(
             emptyGenerator: () -> ClauseQueue,
-            collectionGenerator: (Iterable<Clause>) -> ClauseQueue
+            collectionGenerator: (Iterable<Clause>) -> ClauseQueue,
         ): PrototypeClauseQueueTest =
             PrototypeClauseQueueTestImpl(
                 emptyGenerator,
-                collectionGenerator
+                collectionGenerator,
             )
     }
 }

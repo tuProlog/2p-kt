@@ -15,7 +15,8 @@ val tuPrologPackageDir: String
     get() = tuPrologPackage.replace('.', File.separatorChar)
 
 val infoKtFileContent: String
-    get() = """|package $tuPrologPackage
+    get() =
+        """|package $tuPrologPackage
         |
         |object Info {
         |    const val VERSION = "$version"
@@ -23,7 +24,7 @@ val infoKtFileContent: String
         |    val OS: Os by lazy { currentOs() }
         |}
         |
-    """.trimMargin()
+        """.trimMargin()
 
 kotlin {
     sourceSets {

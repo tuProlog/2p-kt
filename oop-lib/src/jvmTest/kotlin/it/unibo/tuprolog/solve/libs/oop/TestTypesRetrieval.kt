@@ -1,23 +1,36 @@
+@file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+
 package it.unibo.tuprolog.solve.libs.oop
 
 import org.junit.Test
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import java.lang.annotation.Annotation as JavaAnnotation
+import kotlin.Annotation as KtAnnotation
 
 class TestTypesRetrieval {
-
-    private fun assertFactoryRetrievesTypeCorrectly(factory: TypeFactory, type: KClass<*>) {
+    private fun assertFactoryRetrievesTypeCorrectly(
+        factory: TypeFactory,
+        type: KClass<*>,
+    ) {
         assertEquals(type, factory.typeFromName(type.fullName))
         assertEquals(TypeRef.of(type), factory.typeRefFromName(type.fullName))
     }
 
-    private fun assertFactoryRetrievesKotlinTypeFromJavaName(factory: TypeFactory, kType: KClass<*>, jType: Class<*>) {
+    private fun assertFactoryRetrievesKotlinTypeFromJavaName(
+        factory: TypeFactory,
+        kType: KClass<*>,
+        jType: Class<*>,
+    ) {
         assertEquals(kType, factory.typeFromName(jType.name))
         assertEquals(TypeRef.of(kType), factory.typeRefFromName(jType.name))
     }
 
-    private fun assertFactoryRetrievesNoType(factory: TypeFactory, typeName: String) {
+    private fun assertFactoryRetrievesNoType(
+        factory: TypeFactory,
+        typeName: String,
+    ) {
         assertNull(factory.typeFromName(typeName))
         assertNull(factory.typeRefFromName(typeName))
     }
@@ -59,7 +72,7 @@ class TestTypesRetrieval {
         assertFactoryRetrievesTypeCorrectly(factory, Number::class)
         assertFactoryRetrievesTypeCorrectly(factory, Comparable::class)
         assertFactoryRetrievesTypeCorrectly(factory, Enum::class)
-        assertFactoryRetrievesTypeCorrectly(factory, Annotation::class)
+        assertFactoryRetrievesTypeCorrectly(factory, KtAnnotation::class)
         assertFactoryRetrievesTypeCorrectly(factory, Iterable::class)
         assertFactoryRetrievesTypeCorrectly(factory, Iterator::class)
         assertFactoryRetrievesTypeCorrectly(factory, Collection::class)
@@ -90,7 +103,7 @@ class TestTypesRetrieval {
         assertFactoryRetrievesNoType(factory, Number::class.fullName + "1")
         assertFactoryRetrievesNoType(factory, Comparable::class.fullName + "1")
         assertFactoryRetrievesNoType(factory, Enum::class.fullName + "1")
-        assertFactoryRetrievesNoType(factory, Annotation::class.fullName + "1")
+        assertFactoryRetrievesNoType(factory, KtAnnotation::class.fullName + "1")
         assertFactoryRetrievesNoType(factory, Iterable::class.fullName + "1")
         assertFactoryRetrievesNoType(factory, Iterator::class.fullName + "1")
         assertFactoryRetrievesNoType(factory, Collection::class.fullName + "1")
@@ -121,7 +134,7 @@ class TestTypesRetrieval {
         assertFactoryRetrievesKotlinTypeFromJavaName(factory, Number::class, java.lang.Number::class.java)
         assertFactoryRetrievesKotlinTypeFromJavaName(factory, Comparable::class, java.lang.Comparable::class.java)
         assertFactoryRetrievesKotlinTypeFromJavaName(factory, Enum::class, java.lang.Enum::class.java)
-        assertFactoryRetrievesKotlinTypeFromJavaName(factory, Annotation::class, java.lang.annotation.Annotation::class.java)
+        assertFactoryRetrievesKotlinTypeFromJavaName(factory, KtAnnotation::class, JavaAnnotation::class.java)
         assertFactoryRetrievesKotlinTypeFromJavaName(factory, Iterable::class, java.lang.Iterable::class.java)
         assertFactoryRetrievesKotlinTypeFromJavaName(factory, Iterator::class, java.util.Iterator::class.java)
         assertFactoryRetrievesKotlinTypeFromJavaName(factory, Collection::class, java.util.Collection::class.java)

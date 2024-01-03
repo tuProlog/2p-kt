@@ -5,12 +5,13 @@ import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.flags.TrackVariables
 
 data class StateGoalSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
+    @Suppress("ktlint:standard:discouraged-comment-location")
     override fun computeNext(): State {
         return if (context.goals.isOver) {
             if (context.isRoot) {
                 StateEnd(
                     Solution.yes(context.query, context.substitution),
-                    context.copy(step = nextStep())
+                    context.copy(step = nextStep()),
                 )
             } else {
                 StateGoalSelection(
@@ -29,21 +30,21 @@ data class StateGoalSelection(override val context: ClassicExecutionContext) : A
                             inputChannels = context.inputChannels,
                             outputChannels = context.outputChannels,
                             libraries = context.libraries,
-                            customData = context.customData
+                            customData = context.customData,
                         )
-                    }
+                    },
                 )
             }
         } else if (context.flags[TrackVariables] == TrackVariables.ON) {
             StatePrimitiveSelection(
                 context.copy(
                     step = nextStep(),
-                    relevantVariables = context.relevantVariables + context.goals.current!!.variables.toSet()
-                )
+                    relevantVariables = context.relevantVariables + context.goals.current!!.variables.toSet(),
+                ),
             )
         } else {
             StatePrimitiveSelection(
-                context.copy(step = nextStep())
+                context.copy(step = nextStep()),
             )
         }
     }

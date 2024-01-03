@@ -16,7 +16,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal object PrimitiveWrapperUtils {
-
     /** A default primitive result to be used in tests */
     internal val defaultPrimitiveResult = emptySequence<Nothing>()
 
@@ -24,13 +23,15 @@ internal object PrimitiveWrapperUtils {
     internal val primitive: Primitive = Primitive { defaultPrimitiveResult }
 
     /** A function to create a Solve.Request with provided [signature] and [argList] */
-    internal fun createPrimitiveRequest(signature: Signature, argList: List<Term>) =
-        Solve.Request(signature, argList, DummyInstances.executionContext)
+    internal fun createPrimitiveRequest(
+        signature: Signature,
+        argList: List<Term>,
+    ) = Solve.Request(signature, argList, DummyInstances.executionContext)
 
     /** Utility function to create a primitive wrapper */
     internal fun createPrimitiveWrapper(
         signature: Signature,
-        uncheckedImplementation: Primitive
+        uncheckedImplementation: Primitive,
     ): PrimitiveWrapper<ExecutionContext> = PrimitiveWrapper.wrap(signature) { uncheckedImplementation.solve(it) }
 
     /** All under test requests */

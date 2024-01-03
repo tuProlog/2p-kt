@@ -36,20 +36,20 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class SolveRequestTest {
-
     companion object {
         private const val TOLERANCE = 10L
     }
 
     @Test
     fun requestInsertedDataCorrect() {
-        val toBeTested = Solve.Request(
-            aSignature,
-            anArgumentList,
-            anExecutionContext,
-            aRequestIssuingInstant,
-            anExecutionMaxDuration
-        )
+        val toBeTested =
+            Solve.Request(
+                aSignature,
+                anArgumentList,
+                anExecutionContext,
+                aRequestIssuingInstant,
+                anExecutionMaxDuration,
+            )
 
         assertEquals(aSignature, toBeTested.signature)
         assertEquals(anArgumentList, toBeTested.arguments)
@@ -100,7 +100,7 @@ internal class SolveRequestTest {
         assertEquals(Struct.of(aSignature.name, anArgumentList), createRequest(aSignature, anArgumentList).query)
         assertEquals(
             Struct.of(aVarargSignature.name, varargArgumentList),
-            createRequest(aVarargSignature, varargArgumentList).query
+            createRequest(aVarargSignature, varargArgumentList).query,
         )
     }
 
@@ -116,14 +116,14 @@ internal class SolveRequestTest {
             assertEquals(
                 createRequest().replyWith(
                     it.solution,
-                    aSideEffectManager
+                    aSideEffectManager,
                 ) {
                     resetRuntime(differentLibraries)
                     resetFlags(differentFlags)
                     resetStaticKb(differentStaticKB)
                     resetDynamicKb(differentDynamicKB)
                 },
-                it
+                it,
             )
         }
     }
@@ -133,14 +133,14 @@ internal class SolveRequestTest {
         assertEquals(
             createRequest().replySuccess(
                 solutionSubstitution,
-                aSideEffectManager
+                aSideEffectManager,
             ) {
                 resetRuntime(differentLibraries)
                 resetFlags(differentFlags)
                 resetStaticKb(differentStaticKB)
                 resetDynamicKb(differentDynamicKB)
             },
-            defaultRequestSuccessResponse
+            defaultRequestSuccessResponse,
         )
     }
 
@@ -148,14 +148,14 @@ internal class SolveRequestTest {
     fun replyFailCreatesCorrectResponse() {
         assertEquals(
             createRequest().replyFail(
-                aSideEffectManager
+                aSideEffectManager,
             ) {
                 resetRuntime(differentLibraries)
                 resetFlags(differentFlags)
                 resetStaticKb(differentStaticKB)
                 resetDynamicKb(differentDynamicKB)
             },
-            defaultRequestFailedResponse
+            defaultRequestFailedResponse,
         )
     }
 
@@ -164,14 +164,14 @@ internal class SolveRequestTest {
         assertEquals(
             createRequest().replyException(
                 solutionException,
-                aSideEffectManager
+                aSideEffectManager,
             ) {
                 resetRuntime(differentLibraries)
                 resetFlags(differentFlags)
                 resetStaticKb(differentStaticKB)
                 resetDynamicKb(differentDynamicKB)
             },
-            defaultRequestHaltedResponse
+            defaultRequestHaltedResponse,
         )
     }
 
@@ -180,7 +180,7 @@ internal class SolveRequestTest {
         assertEquals(
             createRequest().replyWith(
                 true,
-                aSideEffectManager
+                aSideEffectManager,
             ) {
                 resetRuntime(differentLibraries)
                 resetFlags(differentFlags)
@@ -188,23 +188,24 @@ internal class SolveRequestTest {
                 resetDynamicKb(differentDynamicKB)
             },
             defaultRequestSuccessResponse.copy(
-                solution = (defaultRequestSuccessResponse.solution as Solution.Yes).copy(
-                    substitution = Substitution.empty()
-                )
-            )
+                solution =
+                    (defaultRequestSuccessResponse.solution as Solution.Yes).copy(
+                        substitution = Substitution.empty(),
+                    ),
+            ),
         )
 
         assertEquals(
             createRequest().replyWith(
                 false,
-                aSideEffectManager
+                aSideEffectManager,
             ) {
                 resetRuntime(differentLibraries)
                 resetFlags(differentFlags)
                 resetStaticKb(differentStaticKB)
                 resetDynamicKb(differentDynamicKB)
             },
-            defaultRequestFailedResponse
+            defaultRequestFailedResponse,
         )
     }
 }

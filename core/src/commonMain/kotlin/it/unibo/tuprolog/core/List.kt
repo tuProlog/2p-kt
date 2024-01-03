@@ -9,7 +9,6 @@ import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
 interface List : Recursive {
-
     override val isList: Boolean
         get() = true
 
@@ -36,13 +35,14 @@ interface List : Recursive {
     override val unfoldedArray: Array<Term>
 
     override val size: Int
-        get() = unfoldedSequence.count().let {
-            if (isWellFormed) {
-                it - 1
-            } else {
-                it
+        get() =
+            unfoldedSequence.count().let {
+                if (isWellFormed) {
+                    it - 1
+                } else {
+                    it
+                }
             }
-        }
 
     override fun freshCopy(): List
 
@@ -51,7 +51,6 @@ interface List : Recursive {
     override fun asList(): List = this
 
     companion object {
-
         const val CONS_FUNCTOR = Terms.CONS_FUNCTOR
 
         const val EMPTY_LIST_FUNCTOR = Terms.EMPTY_LIST_FUNCTOR
@@ -82,17 +81,21 @@ interface List : Recursive {
 
         @JvmStatic
         @JsName("from")
-        fun from(vararg items: Term, last: Term?): List =
-            from(items.toList(), last)
+        fun from(
+            vararg items: Term,
+            last: Term?,
+        ): List = from(items.toList(), last)
 
         @JvmStatic
         @JsName("fromNullTerminated")
-        fun from(vararg items: Term): List =
-            from(items.cursor(), null)
+        fun from(vararg items: Term): List = from(items.cursor(), null)
 
         @JvmStatic
         @JsName("fromIterable")
-        fun from(items: Iterable<Term>, last: Term?): List =
+        fun from(
+            items: Iterable<Term>,
+            last: Term?,
+        ): List =
             when (items) {
                 is KtList<Term> -> from(items, last)
                 else -> from(items.cursor(), last)
@@ -100,33 +103,39 @@ interface List : Recursive {
 
         @JvmStatic
         @JsName("fromIterableNullTerminated")
-        fun from(items: Iterable<Term>): List =
-            from(items, null)
+        fun from(items: Iterable<Term>): List = from(items, null)
 
         @JvmStatic
         @JsName("fromSequence")
-        fun from(items: Sequence<Term>, last: Term?): List =
-            from(items.cursor(), last)
+        fun from(
+            items: Sequence<Term>,
+            last: Term?,
+        ): List = from(items.cursor(), last)
 
         @JvmStatic
         @JsName("fromSequenceNullTerminated")
-        fun from(items: Sequence<Term>): List =
-            from(items.cursor(), null)
+        fun from(items: Sequence<Term>): List = from(items.cursor(), null)
 
         @JvmStatic
         @JsName("fromList")
-        fun from(items: KtList<Term>, last: Term?): List {
+        fun from(
+            items: KtList<Term>,
+            last: Term?,
+        ): List {
             if (items.isEmpty()) {
                 return (last ?: empty()).asList()
-                    ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
+                    ?: throw IllegalArgumentException(
+                        "Cannot create a list out of the provided arguments: $items, $last",
+                    )
             }
             val i = items.asReversed().iterator()
-            var right = if (last == null) {
-                i.next()
-                items.last()
-            } else {
-                last
-            }
+            var right =
+                if (last == null) {
+                    i.next()
+                    items.last()
+                } else {
+                    last
+                }
             while (i.hasNext()) {
                 right = Cons.of(i.next(), right)
             }
@@ -135,16 +144,20 @@ interface List : Recursive {
 
         @JvmStatic
         @JsName("fromListNullTerminated")
-        fun from(items: KtList<Term>): List =
-            from(items, null)
+        fun from(items: KtList<Term>): List = from(items, null)
 
         @JvmStatic
         @JsName("fromCursor")
-        fun from(items: Cursor<out Term>, last: Term?): List {
+        fun from(
+            items: Cursor<out Term>,
+            last: Term?,
+        ): List {
             return when {
                 items.isOver ->
                     (last ?: empty()).asList()
-                        ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
+                        ?: throw IllegalArgumentException(
+                            "Cannot create a list out of the provided arguments: $items, $last",
+                        )
                 last == null -> LazyConsWithImplicitLast(items)
                 else -> LazyConsWithExplicitLast(items, last)
             }
@@ -152,7 +165,6 @@ interface List : Recursive {
 
         @JvmStatic
         @JsName("fromCursorNullTerminated")
-        fun from(items: Cursor<out Term>): List =
-            from(items, null)
+        fun from(items: Cursor<out Term>): List = from(items, null)
     }
 }

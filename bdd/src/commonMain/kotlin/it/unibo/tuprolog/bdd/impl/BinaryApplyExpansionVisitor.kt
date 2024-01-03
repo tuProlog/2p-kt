@@ -38,17 +38,15 @@ internal class BinaryApplyExpansionVisitor<T : Comparable<T>, E>(
     private val operator: (first: Boolean, second: Boolean) -> Boolean,
     private val expansionFalseTerminal: E,
     private val expansionTrueTerminal: E,
-    private val expansionOperator: (node: T, low: E, high: E) -> E
+    private val expansionOperator: (node: T, low: E, high: E) -> E,
 ) : BinaryDecisionDiagramVisitor<T, ApplyExpansionResult<T, E>> {
     private val dynamicTable:
         MutableMap<Int, MutableMap<Int, ApplyExpansionResult<T, E>>> =
-            mutableMapOf()
+        mutableMapOf()
 
     private val castVisitor = CastVisitor<T, ApplyExpansionResult<T, E>>()
 
-    override fun visit(
-        node: BinaryDecisionDiagram.Terminal<T>
-    ): ApplyExpansionResult<T, E> {
+    override fun visit(node: BinaryDecisionDiagram.Terminal<T>): ApplyExpansionResult<T, E> {
         return visitWithTable(node, thatNode) {
             castVisitor.onTerminal = { that -> this.apply(node, that) }
             castVisitor.onVariable = { that -> this.apply(node, that) }
@@ -56,9 +54,7 @@ internal class BinaryApplyExpansionVisitor<T : Comparable<T>, E>(
         }
     }
 
-    override fun visit(
-        node: BinaryDecisionDiagram.Variable<T>
-    ): ApplyExpansionResult<T, E> {
+    override fun visit(node: BinaryDecisionDiagram.Variable<T>): ApplyExpansionResult<T, E> {
         return visitWithTable(node, thatNode) {
             castVisitor.onTerminal = { that -> this.apply(node, that) }
             castVisitor.onVariable = { that -> this.apply(node, that) }
@@ -69,7 +65,7 @@ internal class BinaryApplyExpansionVisitor<T : Comparable<T>, E>(
     private fun visitWithTable(
         first: BinaryDecisionDiagram<T>,
         second: BinaryDecisionDiagram<T>,
-        computation: () -> ApplyExpansionResult<T, E>
+        computation: () -> ApplyExpansionResult<T, E>,
     ): ApplyExpansionResult<T, E> {
         val firstKey = first.hashCode()
         val secondKey = second.hashCode()
@@ -88,18 +84,18 @@ internal class BinaryApplyExpansionVisitor<T : Comparable<T>, E>(
 
     private fun apply(
         first: BinaryDecisionDiagram.Terminal<T>,
-        second: BinaryDecisionDiagram.Terminal<T>
+        second: BinaryDecisionDiagram.Terminal<T>,
     ): ApplyExpansionResult<T, E> {
         val truth = operator(first.truth, second.truth)
         return ApplyExpansionResult(
             builder.buildTerminal(truth),
-            if (truth) expansionTrueTerminal else expansionFalseTerminal
+            if (truth) expansionTrueTerminal else expansionFalseTerminal,
         )
     }
 
     private fun apply(
         first: BinaryDecisionDiagram.Terminal<T>,
-        second: BinaryDecisionDiagram.Variable<T>
+        second: BinaryDecisionDiagram.Variable<T>,
     ): ApplyExpansionResult<T, E> {
         thatNode = second.low
         val lowNode = first.accept(this)
@@ -107,13 +103,13 @@ internal class BinaryApplyExpansionVisitor<T : Comparable<T>, E>(
         val highNode = first.accept(this)
         return ApplyExpansionResult(
             builder.buildVariable(second.value, lowNode.first, highNode.first),
-            expansionOperator(second.value, lowNode.second, highNode.second)
+            expansionOperator(second.value, lowNode.second, highNode.second),
         )
     }
 
     private fun apply(
         first: BinaryDecisionDiagram.Variable<T>,
-        second: BinaryDecisionDiagram.Terminal<T>
+        second: BinaryDecisionDiagram.Terminal<T>,
     ): ApplyExpansionResult<T, E> {
         thatNode = first
         return second.accept(this)
@@ -121,7 +117,7 @@ internal class BinaryApplyExpansionVisitor<T : Comparable<T>, E>(
 
     private fun apply(
         first: BinaryDecisionDiagram.Variable<T>,
-        second: BinaryDecisionDiagram.Variable<T>
+        second: BinaryDecisionDiagram.Variable<T>,
     ): ApplyExpansionResult<T, E> {
         val newValue: T
         val firstLow: BinaryDecisionDiagram<T>
@@ -152,7 +148,7 @@ internal class BinaryApplyExpansionVisitor<T : Comparable<T>, E>(
         val highNode = firstHigh.accept(this)
         return ApplyExpansionResult(
             builder.buildVariable(newValue, lowNode.first, highNode.first),
-            expansionOperator(newValue, lowNode.second, highNode.second)
+            expansionOperator(newValue, lowNode.second, highNode.second),
         )
     }
 }

@@ -50,9 +50,8 @@ import kotlin.math.pow
 import kotlin.math.round
 import kotlin.system.exitProcess
 
-@Suppress("UNUSED_PARAMETER", "unused", "VarCouldBeVal", "TooManyFunctions")
+@Suppress("UNUSED_PARAMETER", "unused", "VarCouldBeVal", "TooManyFunctions", "LargeClass")
 class TuPrologIDEController : Initializable {
-
     companion object {
         private const val DAYS_PER_YEAR = 365
     }
@@ -244,12 +243,14 @@ class TuPrologIDEController : Initializable {
     private val currentFileTab: FileTabView?
         get() = model.currentFile?.let { tabForFile(it) }
 
-    private fun tabForFile(file: File): FileTabView? =
-        fileTabs.firstOrNull { it.file == file }
+    private fun tabForFile(file: File): FileTabView? = fileTabs.firstOrNull { it.file == file }
 
     @Suppress("NoNameShadowing")
     @FXML
-    override fun initialize(location: URL, resources: ResourceBundle?) {
+    override fun initialize(
+        location: URL,
+        resources: ResourceBundle?,
+    ) {
         model.onResolutionStarted.subscribe(this::onResolutionStarted)
         model.onResolutionOver.subscribe(this::onResolutionOver)
         model.onNewQuery.subscribe(this::onNewQuery)
@@ -305,9 +306,10 @@ class TuPrologIDEController : Initializable {
     }
 
     private fun onTimeoutSliderMoved(value: Number) {
-        model.solveOptions = model.solveOptions.setTimeout(
-            round(10.0.pow(value.toDouble())).toLong()
-        )
+        model.solveOptions =
+            model.solveOptions.setTimeout(
+                round(10.0.pow(value.toDouble())).toLong(),
+            )
     }
 
     private fun onSolveOptionsChanged(newSolveOptions: SolveOptions) {
@@ -332,41 +334,45 @@ class TuPrologIDEController : Initializable {
             hours.pretty("h"),
             minutes.pretty("m"),
             seconds.pretty("s"),
-            milliseconds.pretty("ms")
+            milliseconds.pretty("ms"),
         ).filterNotNull().joinToString()
     }
 
-    private fun Long.pretty(unit: String): String? =
-        if (this == 0L) null else "$this$unit"
+    private fun Long.pretty(unit: String): String? = if (this == 0L) null else "$this$unit"
 
     private fun Int.pretty(unit: String): String? = toLong().pretty(unit)
 
-    private fun onNewSolver(e: SolverEvent<Unit>) = onUiThread {
-        updateContextSensitiveView(e)
-    }
-
-    private fun onNewStaticKb(e: SolverEvent<Unit>) = onUiThread {
-        updateContextSensitiveView(e)
-    }
-
-    private fun onFileLoaded(e: Pair<File, String>) = onUiThread {
-        tabsFiles.tabs.add(FileTabView(e.first, model, this, e.second))
-        handleSomeOpenFiles()
-    }
-
-    private fun onFileClosed(e: File) = onUiThread {
-        fileTabs.firstOrNull { it.file == e }?.let {
-            tabsFiles.tabs -= it
-            handleNoMoreOpenFiles()
+    private fun onNewSolver(e: SolverEvent<Unit>) =
+        onUiThread {
+            updateContextSensitiveView(e)
         }
-    }
 
-    private fun onFileSelected(e: File) = onUiThread {
-        fileTabs.firstOrNull { it.file == e }?.let {
-            it.updateSyntaxColoring()
-            tabsFiles.selectionModel.select(it)
+    private fun onNewStaticKb(e: SolverEvent<Unit>) =
+        onUiThread {
+            updateContextSensitiveView(e)
         }
-    }
+
+    private fun onFileLoaded(e: Pair<File, String>) =
+        onUiThread {
+            tabsFiles.tabs.add(FileTabView(e.first, model, this, e.second))
+            handleSomeOpenFiles()
+        }
+
+    private fun onFileClosed(e: File) =
+        onUiThread {
+            fileTabs.firstOrNull { it.file == e }?.let {
+                tabsFiles.tabs -= it
+                handleNoMoreOpenFiles()
+            }
+        }
+
+    private fun onFileSelected(e: File) =
+        onUiThread {
+            fileTabs.firstOrNull { it.file == e }?.let {
+                it.updateSyntaxColoring()
+                tabsFiles.selectionModel.select(it)
+            }
+        }
 
     private fun handleNoMoreOpenFiles() {
         if (fileTabs.none()) {
@@ -387,10 +393,11 @@ class TuPrologIDEController : Initializable {
         }
     }
 
-    private fun onStdoutPrinted(output: String) = onUiThread {
-        txaStdout.text += output
-        tabStdout.showNotification()
-    }
+    private fun onStdoutPrinted(output: String) =
+        onUiThread {
+            txaStdout.text += output
+            tabStdout.showNotification()
+        }
 
     private fun Tab.showNotification() {
         if (!isSelected && !text.endsWith("*")) {
@@ -447,102 +454,114 @@ class TuPrologIDEController : Initializable {
         lastEvent = event
     }
 
-    private fun updatingContextSensitiveView(event: SolverEvent<*>, action: () -> Unit) {
+    private fun updatingContextSensitiveView(
+        event: SolverEvent<*>,
+        action: () -> Unit,
+    ) {
         action()
         updateContextSensitiveView(event)
     }
 
-    private fun onStderrPrinted(output: String) = onUiThread {
-        txaStderr.text += output
-        tabStderr.showNotification()
-    }
-
-    private fun onWarning(warning: Warning) = onUiThread {
-        lsvWarnings.items.add(warning)
-        lsvWarnings.scrollTo(warning)
-        tabWarnings.showNotification()
-    }
-
-    private fun onError(exception: Exception) = onUiThread {
-        val dialog = Alert(Alert.AlertType.ERROR)
-        dialog.title = exception::class.java.simpleName
-        when (exception) {
-            is SyntaxException.InTheorySyntaxError -> {
-                dialog.headerText = "Syntax error in ${exception.file.name}"
-                dialog.dialogPane.content = exception.message.toMonospacedText()
-            }
-            is SyntaxException.InQuerySyntaxError -> {
-                dialog.headerText = "Syntax error in query"
-                dialog.dialogPane.content = exception.message.toMonospacedText()
-            }
-            else -> {
-                dialog.headerText = "Error"
-                dialog.dialogPane.content = exception.message?.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-                }?.toMonospacedText()
-            }
+    private fun onStderrPrinted(output: String) =
+        onUiThread {
+            txaStderr.text += output
+            tabStderr.showNotification()
         }
-        dialog.dialogPane.minHeight = Region.USE_PREF_SIZE
-        dialog.dialogPane.minWidth = Region.USE_PREF_SIZE
-        dialog.showAndWait()
-    }
+
+    private fun onWarning(warning: Warning) =
+        onUiThread {
+            lsvWarnings.items.add(warning)
+            lsvWarnings.scrollTo(warning)
+            tabWarnings.showNotification()
+        }
+
+    private fun onError(exception: Exception) =
+        onUiThread {
+            val dialog = Alert(Alert.AlertType.ERROR)
+            dialog.title = exception::class.java.simpleName
+            when (exception) {
+                is SyntaxException.InTheorySyntaxError -> {
+                    dialog.headerText = "Syntax error in ${exception.file.name}"
+                    dialog.dialogPane.content = exception.message.toMonospacedText()
+                }
+                is SyntaxException.InQuerySyntaxError -> {
+                    dialog.headerText = "Syntax error in query"
+                    dialog.dialogPane.content = exception.message.toMonospacedText()
+                }
+                else -> {
+                    dialog.headerText = "Error"
+                    dialog.dialogPane.content =
+                        exception.message?.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                        }?.toMonospacedText()
+                }
+            }
+            dialog.dialogPane.minHeight = Region.USE_PREF_SIZE
+            dialog.dialogPane.minWidth = Region.USE_PREF_SIZE
+            dialog.showAndWait()
+        }
 
     private fun String?.toMonospacedText(): Node {
         if (this == null) return Text()
         return Text(this).also { it.style = "-fx-font-family: monospaced" }
     }
 
-    private fun onNewSolution(e: SolverEvent<Solution>) = onUiThread {
-        updatingContextSensitiveView(e) {
-            lsvSolutions.items.add(e.event)
-            lsvSolutions.scrollTo(e.event)
-            tabSolutions.showNotification()
+    private fun onNewSolution(e: SolverEvent<Solution>) =
+        onUiThread {
+            updatingContextSensitiveView(e) {
+                lsvSolutions.items.add(e.event)
+                lsvSolutions.scrollTo(e.event)
+                tabSolutions.showNotification()
+            }
         }
-    }
 
-    private fun onNewQuery(e: SolverEvent<Struct>) = onUiThread {
-        updatingContextSensitiveView(e) {
-            cleanUpAfterResolution()
-            btnStop.isDisable = false
-            txaStdin.isDisable = true
-            btnNext.text = "Next"
-            btnNextAll.text = "All next"
+    private fun onNewQuery(e: SolverEvent<Struct>) =
+        onUiThread {
+            updatingContextSensitiveView(e) {
+                cleanUpAfterResolution()
+                btnStop.isDisable = false
+                txaStdin.isDisable = true
+                btnNext.text = "Next"
+                btnNextAll.text = "All next"
+            }
         }
-    }
 
-    private fun onQueryOver(e: SolverEvent<Struct>) = onUiThread {
-        updatingContextSensitiveView(e) {
-            lblStatus.text = "Idle"
-            btnStop.isDisable = true
-            txaStdin.isDisable = false
-            btnNext.text = "Solve"
-            btnNextAll.text = "Solve all"
+    private fun onQueryOver(e: SolverEvent<Struct>) =
+        onUiThread {
+            updatingContextSensitiveView(e) {
+                lblStatus.text = "Idle"
+                btnStop.isDisable = true
+                txaStdin.isDisable = false
+                btnNext.text = "Solve"
+                btnNextAll.text = "Solve all"
+            }
         }
-    }
 
-    private fun onResolutionStarted(e: SolverEvent<Int>) = onUiThread {
-        updatingContextSensitiveView(e) {
-            btnNext.isDisable = true
-            btnNextAll.isDisable = true
-            btnStop.isDisable = true
-            btnReset.isDisable = true
-            prbResolution.isVisible = true
-            txfQuery.isDisable = true
-            lblStatus.text = "Solving..."
+    private fun onResolutionStarted(e: SolverEvent<Int>) =
+        onUiThread {
+            updatingContextSensitiveView(e) {
+                btnNext.isDisable = true
+                btnNextAll.isDisable = true
+                btnStop.isDisable = true
+                btnReset.isDisable = true
+                prbResolution.isVisible = true
+                txfQuery.isDisable = true
+                lblStatus.text = "Solving..."
+            }
         }
-    }
 
-    private fun onResolutionOver(e: SolverEvent<Int>) = onUiThread {
-        updatingContextSensitiveView(e) {
-            btnNext.isDisable = false
-            btnNextAll.isDisable = false
-            prbResolution.isVisible = false
-            btnStop.isDisable = false
-            btnReset.isDisable = false
-            txfQuery.isDisable = false
-            lblStatus.text = "Solution ${e.event}"
+    private fun onResolutionOver(e: SolverEvent<Int>) =
+        onUiThread {
+            updatingContextSensitiveView(e) {
+                btnNext.isDisable = false
+                btnNextAll.isDisable = false
+                prbResolution.isVisible = false
+                btnStop.isDisable = false
+                btnReset.isDisable = false
+                txfQuery.isDisable = false
+                lblStatus.text = "Solution ${e.event}"
+            }
         }
-    }
 
     @FXML
     fun onKeyTypedOnCurrentFile(e: KeyEvent) {
@@ -665,7 +684,7 @@ class TuPrologIDEController : Initializable {
         fileChooser.extensionFilters.addAll(
             FileChooser.ExtensionFilter("Prolog file", "*.pl", "*.2p"),
             FileChooser.ExtensionFilter("Text file", "*.txt"),
-            FileChooser.ExtensionFilter("Any file", "*")
+            FileChooser.ExtensionFilter("Any file", "*"),
         )
         fileChooser.initialDirectory = File(System.getProperty("user.home"))
         fileChooser.title = "Open file..."
@@ -704,7 +723,7 @@ class TuPrologIDEController : Initializable {
         fileChooser.extensionFilters.addAll(
             FileChooser.ExtensionFilter("Prolog file", "*.pl"),
             FileChooser.ExtensionFilter("Text file", "*.txt"),
-            FileChooser.ExtensionFilter("2P file", "*.2p")
+            FileChooser.ExtensionFilter("2P file", "*.2p"),
         )
         fileChooser.initialDirectory = File(System.getProperty("user.home"))
         fileChooser.title = "Save file as..."

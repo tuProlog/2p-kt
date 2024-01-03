@@ -16,31 +16,32 @@ class ThermostatAgentKt(
     name: String,
     private val coldThreshold: Int,
     private val hotThreshold: Int,
-    initialTemperature: Int
+    initialTemperature: Int,
 ) : Thread(name) {
-
     var temperature: Int = initialTemperature
         private set
 
-    private val getTemp = object : UnaryPredicate.Functional<ExecutionContext>("get_temp") {
-        override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term): Substitution {
-            ensuringArgumentIsVariable(0)
-            return mgu(first, Integer.of(temperature))
-        }
-    }
-
-    private val push = object : UnaryPredicate.Predicative<ExecutionContext>("push") {
-        override fun Solve.Request<ExecutionContext>.compute(first: Term): Boolean {
-            ensuringAllArgumentsAreInstantiated()
-            ensuringArgumentIsAtom(0)
-            when (first.castToAtom().value) {
-                "hot" -> temperature++
-                "cold" -> temperature--
-                else -> return false
+    private val getTemp =
+        object : UnaryPredicate.Functional<ExecutionContext>("get_temp") {
+            override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term): Substitution {
+                ensuringArgumentIsVariable(0)
+                return mgu(first, Integer.of(temperature))
             }
-            return true
         }
-    }
+
+    private val push =
+        object : UnaryPredicate.Predicative<ExecutionContext>("push") {
+            override fun Solve.Request<ExecutionContext>.compute(first: Term): Boolean {
+                ensuringAllArgumentsAreInstantiated()
+                ensuringArgumentIsAtom(0)
+                when (first.castToAtom().value) {
+                    "hot" -> temperature++
+                    "cold" -> temperature--
+                    else -> return false
+                }
+                return true
+            }
+        }
 
     private fun agentProgram(): String =
         this::class.java.getResource("thermostat.pl")!!.readText()
@@ -51,11 +52,12 @@ class ThermostatAgentKt(
 
     override fun run() {
         val theory = prologParser.parseTheory(agentProgram())
-        val solver = Solver.prolog.newBuilder()
-            .staticKb(theory)
-            .flag(TrackVariables) { ON }
-            .library("libs.agency.thermostat", getTemp, push)
-            .build()
+        val solver =
+            Solver.prolog.newBuilder()
+                .staticKb(theory)
+                .flag(TrackVariables) { ON }
+                .library("libs.agency.thermostat", getTemp, push)
+                .build()
         when (val solution = solver.solveOnce(Atom.of("start"))) {
             is Solution.Yes -> println("Reached target temperature: $temperature")
             is Solution.No -> println("Failure in logic program")
@@ -71,12 +73,13 @@ class ThermostatAgentKt(
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val thermostatAgent = ThermostatAgentKt(
-                name = "thermostat",
-                coldThreshold = 20,
-                hotThreshold = 24,
-                initialTemperature = 15
-            )
+            val thermostatAgent =
+                ThermostatAgentKt(
+                    name = "thermostat",
+                    coldThreshold = 20,
+                    hotThreshold = 24,
+                    initialTemperature = 15,
+                )
             thermostatAgent.start()
             thermostatAgent.join()
         }

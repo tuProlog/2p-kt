@@ -1,6 +1,6 @@
 @file:JsModule("antlr4")
 @file:JsNonModule
-@file:Suppress("TooManyFunctions", "FunctionNaming", "UnusedPrivateProperty")
+@file:Suppress("TooManyFunctions", "FunctionNaming", "UnusedPrivateProperty", "ktlint:standard:function-naming")
 
 package it.unibo.tuprolog.parser
 
@@ -39,7 +39,6 @@ open external class Token {
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/Token.js
  */
 external class CommonToken(source: dynamic, type: Int, channel: Int, start: Int, stop: Int) : Token {
-
     fun clone(): CommonToken
 
     override fun toString(): String
@@ -60,13 +59,23 @@ external class InputStream(input: dynamic, decodeToUnicodeCodePoints: Boolean) {
     val size: Int
 
     fun reset()
+
     fun consume()
+
     fun LA(offset: Int): Int
+
     fun LT(offset: Int): Int
+
     fun mark(): Int
+
     fun release()
+
     fun seek(index: Int)
-    fun getText(start: Int, stop: Int): String
+
+    fun getText(
+        start: Int,
+        stop: Int,
+    ): String
 
     override fun toString(): String
 }
@@ -86,17 +95,32 @@ open external class BufferedTokenStream(tokenSource: dynamic) : TokenStream {
     val fetchedEOF: Boolean
 
     fun mark(): Int
+
     fun release(marker: Int)
+
     fun reset()
+
     fun seek(index: Int)
+
     operator fun get(index: Int): Token
+
     fun consume()
+
     fun sync(index: Int): Boolean
+
     fun fetch(n: Int): Int
-    fun getTokens(start: Int, stop: Int)
+
+    fun getTokens(
+        start: Int,
+        stop: Int,
+    )
+
     fun LA(offset: Int): Int
+
     open fun LB(offset: Int): Int
+
     open fun LT(offset: Int): Int
+
     fun fill()
 }
 
@@ -107,7 +131,9 @@ external class CommonTokenStream(lexer: dynamic, channel: Int) : BufferedTokenSt
     constructor(lexer: dynamic)
 
     override fun LB(offset: Int): Int
+
     override fun LT(offset: Int): Int
+
     fun getNumberOfChannelTokens(): Int
 
     val channel: Int

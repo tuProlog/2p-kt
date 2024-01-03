@@ -64,8 +64,10 @@ interface Applicable<T : Applicable<T>> {
      * @see Substitution.of
      */
     @JsName("apply")
-    fun apply(substitution: Substitution, vararg substitutions: Substitution): T =
-        apply(Substitution.of(substitution, *substitutions))
+    fun apply(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): T = apply(Substitution.of(substitution, *substitutions))
 
     /**
      * This is an alias for [apply] aimed at supporting a square-brackets syntax for substitutions applications in
@@ -86,6 +88,8 @@ interface Applicable<T : Applicable<T>> {
      * @see Substitution.of
      */
     @JsName("getSubstituted")
-    operator fun get(substitution: Substitution, vararg substitutions: Substitution): T =
-        apply(substitution, *substitutions)
+    operator fun get(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): T = apply(substitution, *substitutions)
 }

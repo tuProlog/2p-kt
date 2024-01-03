@@ -9,7 +9,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface MutableClauseQueue : ClauseQueue {
-
     /** Adds the given [Clause] as the first element in this [MutableClauseQueue] **/
     override fun addFirst(clause: Clause): MutableClauseQueue
 
@@ -32,7 +31,6 @@ interface MutableClauseQueue : ClauseQueue {
     override fun retrieveAll(clause: Clause): RetrieveResult<out MutableClauseQueue>
 
     companion object {
-
         /** Creates an empty [MutableClauseQueue] **/
         @JvmStatic
         @JsName("empty")
@@ -41,34 +39,47 @@ interface MutableClauseQueue : ClauseQueue {
         /** Creates a [MutableClauseQueue] with given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(unificator: Unificator, vararg clause: Clause): MutableClauseQueue = of(unificator, clause.asIterable())
+        fun of(
+            unificator: Unificator,
+            vararg clause: Clause,
+        ): MutableClauseQueue = of(unificator, clause.asIterable())
 
         /** Let developers easily create a [MutableClauseQueue] programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(unificator: Unificator, vararg clause: Scope.() -> Clause): MutableClauseQueue =
+        fun of(
+            unificator: Unificator,
+            vararg clause: Scope.() -> Clause,
+        ): MutableClauseQueue =
             of(
                 unificator,
                 clause.map {
                     Scope.empty(it)
-                }
+                },
             )
 
         /** Creates a [MutableClauseQueue] from the given [Sequence] of [Clause] */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(unificator: Unificator, clauses: Sequence<Clause>): MutableClauseQueue =
-            of(unificator, clauses.asIterable())
+        fun of(
+            unificator: Unificator,
+            clauses: Sequence<Clause>,
+        ): MutableClauseQueue = of(unificator, clauses.asIterable())
 
         /** Creates a [MutableClauseQueue] from the given [Iterable] of [Clause] */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(unificator: Unificator, clauses: Iterable<Clause>): MutableClauseQueue =
-            MutableReteClauseQueue(unificator, clauses)
+        fun of(
+            unificator: Unificator,
+            clauses: Iterable<Clause>,
+        ): MutableClauseQueue = MutableReteClauseQueue(unificator, clauses)
 
         @JvmStatic
         @JsName("areEquals")
-        fun equals(queue1: MutableClauseQueue, queue2: MutableClauseQueue): Boolean {
+        fun equals(
+            queue1: MutableClauseQueue,
+            queue2: MutableClauseQueue,
+        ): Boolean {
             return ClauseQueue.equals(queue1, queue2)
         }
 
@@ -77,7 +88,7 @@ interface MutableClauseQueue : ClauseQueue {
         fun hashCode(queue: MutableClauseQueue): Int {
             return itemWiseHashCode(
                 MutableClauseQueue::class,
-                itemWiseHashCode(queue)
+                itemWiseHashCode(queue),
             )
         }
     }

@@ -14,35 +14,36 @@ import kotlin.reflect.KCallable
 class RuntimePermissionException(
     val callable: KCallable<*>,
     val receiver: Any?,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : OopException(
-    "Invoking method ${callable.pretty()}" + if (receiver != null) {
-        " on object `$receiver` of type `${receiver::class.fullName} "
-    } else {
-        " "
-    } + "is not permitted",
-    cause
-) {
-
+        "Invoking method ${callable.pretty()}" +
+            if (receiver != null) {
+                " on object `$receiver` of type `${receiver::class.fullName} "
+            } else {
+                " "
+            } + "is not permitted",
+        cause,
+    ) {
     override fun toLogicError(
         context: ExecutionContext,
-        signature: Signature
+        signature: Signature,
     ): LogicError {
         return PermissionError.of(
             context,
             signature,
             PermissionError.Operation.INVOKE,
             PermissionError.Permission.OOP_METHOD,
-            culprit
+            culprit,
         )
     }
 
     override val culprit: Term
-        get() = Atom.of(
-            if (receiver == null) {
-                callable.pretty()
-            } else {
-                "${receiver::class.fullName}::${callable.pretty()}"
-            }
-        )
+        get() =
+            Atom.of(
+                if (receiver == null) {
+                    callable.pretty()
+                } else {
+                    "${receiver::class.fullName}::${callable.pretty()}"
+                },
+            )
 }

@@ -6,8 +6,10 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 
 class TermParserImpl(
     override val scope: Scope,
-    override val defaultOperatorSet: OperatorSet
+    override val defaultOperatorSet: OperatorSet,
 ) : TermParser {
-    override fun parseTerm(input: String, operators: OperatorSet): Term =
-        PrologParserFactory.parseExpression(input, operators).accept(PrologVisitor(scope))
+    override fun parseTerm(
+        input: String,
+        operators: OperatorSet,
+    ): Term = PrologParserFactory.parseExpression(input, operators).accept(PrologVisitor(scope))
 }

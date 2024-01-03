@@ -4,7 +4,7 @@ interface TestNotProvable : SolverTest {
     companion object {
         fun prototype(
             solverFactory: SolverFactory,
-            errorSignature: Signature = Signature("not", 1)
+            errorSignature: Signature = Signature("not", 1),
         ): TestNotProvable = TestNotProvableImpl(solverFactory, errorSignature)
     }
 

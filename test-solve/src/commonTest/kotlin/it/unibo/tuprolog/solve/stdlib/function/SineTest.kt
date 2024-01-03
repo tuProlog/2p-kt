@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class SineTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("sin", 1), Sine.signature)
@@ -23,7 +22,7 @@ internal class SineTest {
     fun computationCorrect() {
         assertEquals(
             Numeric.of(1.0),
-            Sine.computeOf(Numeric.of(PI / 2.0))
+            Sine.computeOf(Numeric.of(PI / 2.0)),
         )
     }
 }

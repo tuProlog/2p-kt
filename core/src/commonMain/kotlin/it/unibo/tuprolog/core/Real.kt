@@ -8,7 +8,6 @@ import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 interface Real : Numeric {
-
     override val isReal: Boolean
         get() = true
 
@@ -27,7 +26,6 @@ interface Real : Numeric {
     override fun asReal(): Real = this
 
     companion object {
-
         @JvmField
         val PATTERN = Terms.REAL_PATTERN
 

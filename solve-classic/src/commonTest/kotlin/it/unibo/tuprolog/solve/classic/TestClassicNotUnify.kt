@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.TestNotUnify
 import kotlin.test.Test
 
 class TestClassicNotUnify : TestNotUnify, SolverFactory by ClassicSolverFactory {
-
     private val prototype = TestNotUnify.prototype(this)
 
     @Test

@@ -18,7 +18,6 @@ internal class RuntimeImpl(private val delegate: Map<String, Library>) :
     Runtime,
     AbstractPluggable(),
     Map<String, Library> by delegate {
-
     constructor(libraries: Sequence<Library>) : this(libraries.map { it.alias to it }.toMap())
 
     /** All aliases of all libraries included in this library group */
@@ -47,7 +46,7 @@ internal class RuntimeImpl(private val delegate: Map<String, Library>) :
             lib.primitives.entries.asSequence().flatMap {
                 sequenceOf(
                     it.toPair(),
-                    it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value
+                    it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value,
                 )
             }
         }.toMap()
@@ -58,7 +57,7 @@ internal class RuntimeImpl(private val delegate: Map<String, Library>) :
             lib.functions.entries.asSequence().flatMap {
                 sequenceOf(
                     it.toPair(),
-                    it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value
+                    it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value,
                 )
             }
         }.toMap()
@@ -90,12 +89,13 @@ internal class RuntimeImpl(private val delegate: Map<String, Library>) :
     }
 
     override operator fun minus(aliases: Iterable<String>): RuntimeImpl {
-        val toBeRemoved = aliases.map {
-            if (it in this.aliases) {
-                noSuchALibraryError(it)
-            }
-            it
-        }.toSet()
+        val toBeRemoved =
+            aliases.map {
+                if (it in this.aliases) {
+                    noSuchALibraryError(it)
+                }
+                it
+            }.toSet()
         return RuntimeImpl(libraries.asSequence().filterNot { it.alias in toBeRemoved })
     }
 
@@ -125,8 +125,7 @@ internal class RuntimeImpl(private val delegate: Map<String, Library>) :
         private inline fun alreadyLoadedError(library: Library): Nothing =
             throw AlreadyLoadedLibraryException("A library aliased as `${library.alias}` has already been loaded")
 
-        private inline fun noSuchALibraryError(library: Library): Nothing =
-            noSuchALibraryError(library.alias)
+        private inline fun noSuchALibraryError(library: Library): Nothing = noSuchALibraryError(library.alias)
 
         private inline fun noSuchALibraryError(alias: String): Nothing =
             throw NoSuchALibraryException("No library with alias `$alias` has been loaded")

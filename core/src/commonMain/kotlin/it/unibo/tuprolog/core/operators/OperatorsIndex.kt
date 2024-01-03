@@ -19,5 +19,4 @@ fun Iterable<Operator>.toOperatorsIndex(): OperatorsIndex {
     return temp
 }
 
-fun Sequence<Operator>.toOperatorsIndex(): OperatorsIndex =
-    this.asIterable().toOperatorsIndex()
+fun Sequence<Operator>.toOperatorsIndex(): OperatorsIndex = this.asIterable().toOperatorsIndex()

@@ -27,7 +27,6 @@ import kotlin.test.assertSame
  * @author Enrico
  */
 internal object StructUtils {
-
     /**
      * Asserts that passed term with variables, when copied, renews variables contained;
      *
@@ -75,7 +74,7 @@ internal object StructUtils {
             "." to listOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar")),
             "," to listOf<Term>(EmptyList(), EmptyBlock(), Truth.TRUE),
             "/" to listOf<Term>(Truth.FALSE),
-            "sameVar" to Scope.empty { ktListOf<Term>(varOf("X"), varOf("X")) }
+            "sameVar" to Scope.empty { ktListOf<Term>(varOf("X"), varOf("X")) },
         )
     }
 
@@ -93,7 +92,7 @@ internal object StructUtils {
             Empty.EMPTY_BLOCK_FUNCTOR to listOf(),
             Truth.TRUE_FUNCTOR to listOf(),
             Truth.FAIL_FUNCTOR to listOf(),
-            Indicator.FUNCTOR to listOf<Term>(Atom.of("func"), Integer.of(4))
+            Indicator.FUNCTOR to listOf<Term>(Atom.of("func"), Integer.of(4)),
         )
     }
 

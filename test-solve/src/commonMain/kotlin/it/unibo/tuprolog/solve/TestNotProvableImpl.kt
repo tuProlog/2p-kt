@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestNotProvableImpl(
     private val solverFactory: SolverFactory,
-    override val errorSignature: Signature
+    override val errorSignature: Signature,
 ) : TestNotProvable {
     override fun testNPTrue() {
         logicProgramming {
@@ -17,9 +17,9 @@ class TestNotProvableImpl(
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
-                    query.no()
+                    query.no(),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -33,9 +33,9 @@ class TestNotProvableImpl(
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
-                    query.no()
+                    query.no(),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -49,9 +49,9 @@ class TestNotProvableImpl(
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
-                    query.yes()
+                    query.yes(),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -67,10 +67,10 @@ class TestNotProvableImpl(
                 with(query) {
                     kotlin.collections.listOf(
                         yes("X" to 1),
-                        yes("X" to 2)
+                        yes("X" to 2),
                     )
                 },
-                solutions
+                solutions,
             )
         }
     }
@@ -84,9 +84,9 @@ class TestNotProvableImpl(
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
-                    query.yes()
+                    query.yes(),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -105,12 +105,11 @@ class TestNotProvableImpl(
                             DummyInstances.executionContext,
                             errorSignature,
                             TypeError.Expected.CALLABLE,
-                            numOf(3)
-
-                        )
-                    )
+                            numOf(3),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -128,11 +127,11 @@ class TestNotProvableImpl(
                         InstantiationError.forGoal(
                             DummyInstances.executionContext,
                             errorSignature,
-                            varOf("X")
-                        )
-                    )
+                            varOf("X"),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

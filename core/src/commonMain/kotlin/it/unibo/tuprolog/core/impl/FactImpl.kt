@@ -9,9 +9,8 @@ import it.unibo.tuprolog.core.Truth
 
 internal class FactImpl(
     override val head: Struct,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : RuleImpl(head, Truth.TRUE, tags), Fact {
-
     override val isWellFormed: Boolean = true
 
     override val body: Term = super<RuleImpl>.body
@@ -30,7 +29,10 @@ internal class FactImpl(
 
     override fun setHeadArgs(arguments: Sequence<Term>): Fact = super.setHeadArgs(arguments).castToFact()
 
-    override fun insertHeadArg(index: Int, argument: Term): Fact = super.insertHeadArg(index, argument).castToFact()
+    override fun insertHeadArg(
+        index: Int,
+        argument: Term,
+    ): Fact = super.insertHeadArg(index, argument).castToFact()
 
     override fun addFirstHeadArg(argument: Term): Fact = super.addFirstHeadArg(argument).castToFact()
 

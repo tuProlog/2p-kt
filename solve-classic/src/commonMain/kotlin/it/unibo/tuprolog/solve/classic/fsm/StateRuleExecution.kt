@@ -20,8 +20,8 @@ data class StateRuleExecution(override val context: ClassicExecutionContext) : A
                         goals = subGoals.toGoals(),
                         rules = Cursor.empty(),
                         substitution = newSubstitution,
-                        step = nextStep()
-                    )
+                        step = nextStep(),
+                    ),
                 )
             }
             else -> failureState

@@ -2,8 +2,7 @@ package it.unibo.tuprolog.solve
 
 interface TestAtomCodes : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestAtomCodesImpl =
-            TestAtomCodesImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestAtomCodesImpl = TestAtomCodesImpl(solverFactory)
     }
 
     /**

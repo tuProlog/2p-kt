@@ -12,19 +12,20 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 
 object DefaultBuiltins : ExtensionLibrary(CommonBuiltins) {
-
     override val additionalPrimitives: Iterable<PrimitiveWrapper<*>>
-        get() = listOf(
-            Throw
-        )
+        get() =
+            listOf(
+                Throw,
+            )
 
     override val additionalRules: Iterable<RuleWrapper<*>>
-        get() = listOf(
-            Catch,
-            Call,
-            Comma,
-            Cut,
-            NegationAsFailure.Fail,
-            NegationAsFailure.Success
-        )
+        get() =
+            listOf(
+                Catch,
+                Call,
+                Comma,
+                Cut,
+                NegationAsFailure.Fail,
+                NegationAsFailure.Success,
+            )
 }

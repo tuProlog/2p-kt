@@ -23,7 +23,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun defaultLastCallOptimizationIsOn() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -81,33 +80,35 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
             for (term in ktListOf(5, "f"("x"), 2.3).map { it.toTerm() }) {
                 var query = current_flag(term, `_`)
                 var solutions2 = fromSequence(solver.solveOnce(query, shortDuration))
-                var expected = fromSequence(
-                    query.halt(
-                        TypeError.forArgument(
-                            DummyInstances.executionContext,
-                            CurrentFlag.signature,
-                            TypeError.Expected.ATOM,
-                            term,
-                            0
-                        )
+                var expected =
+                    fromSequence(
+                        query.halt(
+                            TypeError.forArgument(
+                                DummyInstances.executionContext,
+                                CurrentFlag.signature,
+                                TypeError.Expected.ATOM,
+                                term,
+                                0,
+                            ),
+                        ),
                     )
-                )
 
                 expected.assertingEquals(solutions2)
 
                 query = set_flag(term, "value")
                 solutions2 = fromSequence(solver.solveOnce(query, shortDuration))
-                expected = fromSequence(
-                    query.halt(
-                        TypeError.forArgument(
-                            DummyInstances.executionContext,
-                            SetFlag.signature,
-                            TypeError.Expected.ATOM,
-                            term,
-                            0
-                        )
+                expected =
+                    fromSequence(
+                        query.halt(
+                            TypeError.forArgument(
+                                DummyInstances.executionContext,
+                                SetFlag.signature,
+                                TypeError.Expected.ATOM,
+                                term,
+                                0,
+                            ),
+                        ),
                     )
-                )
 
                 expected.assertingEquals(solutions2)
             }
@@ -157,10 +158,11 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = current_flag(F, X)
 
-            val selectedFlags = solver.solve(query, shortDuration)
-                .filterIsInstance<Solution.Yes>()
-                .map { it.substitution[F]!! to it.substitution[X]!! }
-                .toMap()
+            val selectedFlags =
+                solver.solve(query, shortDuration)
+                    .filterIsInstance<Solution.Yes>()
+                    .map { it.substitution[F]!! to it.substitution[X]!! }
+                    .toMap()
 
             assertEquals(defaultFlags, selectedFlags)
         }
@@ -172,16 +174,17 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = set_flag(F, "value")
             val solutions = fromSequence(solver.solveList(query, shortDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        SetFlag.signature,
-                        F,
-                        index = 0
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            SetFlag.signature,
+                            F,
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -196,17 +199,18 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
             assertFalse { LastCallOptimization.admissibleValues.contains(truthOf(true)) }
 
             val solutions = fromSequence(solver.solveList(query, shortDuration))
-            val expected = fromSequence(
-                query.halt(
-                    DomainError.forFlagValues(
-                        DummyInstances.executionContext,
-                        SetFlag.signature,
-                        LastCallOptimization.admissibleValues.asIterable(),
-                        truthOf(true),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        DomainError.forFlagValues(
+                            DummyInstances.executionContext,
+                            SetFlag.signature,
+                            LastCallOptimization.admissibleValues.asIterable(),
+                            truthOf(true),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -218,17 +222,18 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = set_flag(MaxArity.name, 10)
             val solutions = fromSequence(solver.solveList(query, shortDuration))
-            val expected = fromSequence(
-                query.halt(
-                    PermissionError.of(
-                        DummyInstances.executionContext,
-                        SetFlag.signature,
-                        PermissionError.Operation.MODIFY,
-                        PermissionError.Permission.FLAG,
-                        atomOf(MaxArity.name)
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        PermissionError.of(
+                            DummyInstances.executionContext,
+                            SetFlag.signature,
+                            PermissionError.Operation.MODIFY,
+                            PermissionError.Permission.FLAG,
+                            atomOf(MaxArity.name),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

@@ -12,7 +12,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class IndicatorTest {
-
     private val correctInstances = IndicatorUtils.mixedIndicators.map { (name, arity) -> IndicatorImpl(name, arity) }
 
     @Test
@@ -24,14 +23,15 @@ internal class IndicatorTest {
 
     @Test
     fun ofNameAndArityCreatesCorrectInstance() {
-        val toBeTested = IndicatorUtils.mixedIndicators
-            .filter { (name, arity) -> name.isAtom && arity.isInteger }
-            .map { (name, arity) ->
-                Indicator.of(
-                    name.castToAtom().value,
-                    arity.castToInteger().intValue.toInt()
-                )
-            }
+        val toBeTested =
+            IndicatorUtils.mixedIndicators
+                .filter { (name, arity) -> name.isAtom && arity.isInteger }
+                .map { (name, arity) ->
+                    Indicator.of(
+                        name.castToAtom().value,
+                        arity.castToInteger().intValue.toInt(),
+                    )
+                }
 
         onCorrespondingItems(correctInstances.filter { it.isWellFormed }, toBeTested, ::assertEqualities)
     }

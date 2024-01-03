@@ -14,7 +14,6 @@ import kotlin.js.JsName
 
 /** Base type for all entities which must be aware of the current state of a solver */
 interface ExecutionContextAware {
-
     @JsName("unificator")
     val unificator: Unificator
 

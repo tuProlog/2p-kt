@@ -26,9 +26,15 @@ internal object NullRefImpl : NullRef, Atom by Atom.of(ObjectRef.nameOf(null)) {
 
     override fun apply(substitution: Substitution): Term = this
 
-    override fun apply(substitution: Substitution, vararg substitutions: Substitution): Term = this
+    override fun apply(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): Term = this
 
-    override fun get(substitution: Substitution, vararg substitutions: Substitution): Term = this
+    override fun get(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): Term = this
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitAtom(this)
 }

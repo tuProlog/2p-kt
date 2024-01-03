@@ -6,6 +6,6 @@ import it.unibo.tuprolog.unify.Unificator
 
 internal abstract class AbstractIndexingLeaf(unificator: Unificator) : IndexingLeaf, AbstractReteNode(unificator) {
     override fun invalidateCache() {
-        /* do nothing */
+        // do nothing
     }
 }

@@ -34,11 +34,12 @@ class PLPIDEApplication : Application() {
             TuPrologIDEBuilder(
                 stage,
                 title = "tuProlog IDE for Probabilistic Logic Programming",
-                customTabs = listOf(
-                    CustomTab(
-                        customSolutionsTab
-                    ) { this.configureModel(it, solutionsListView, customSolutionsTab) }
-                )
+                customTabs =
+                    listOf(
+                        CustomTab(
+                            customSolutionsTab,
+                        ) { this.configureModel(it, solutionsListView, customSolutionsTab) },
+                    ),
             ).show()
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -53,7 +54,7 @@ class PLPIDEApplication : Application() {
     private fun configureModel(
         model: TuPrologIDEModel,
         listView: ListView<Solution>,
-        listTab: Tab
+        listTab: Tab,
     ) {
         // Hook events to the custom solutions tab
         model.onReset.subscribe { listView.items.clear() }
@@ -76,7 +77,7 @@ class PLPIDEApplication : Application() {
                 stdIn = it.standardInput,
                 stdOut = it.standardOutput,
                 stdErr = it.standardError,
-                warnings = it.warnings
+                warnings = it.warnings,
             )
         }
     }

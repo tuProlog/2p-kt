@@ -17,7 +17,6 @@ import kotlin.test.assertNotEquals
  * @author Enrico
  */
 internal class LibrariesTest {
-
     private val emptyLibrary = makeLib(LibraryUtils.emptyLibrary, ::libraryWithAliasConstructor)
     private val library = makeLib(LibraryUtils.library, ::libraryWithAliasConstructor)
     private val overridingLibrary = makeLib(LibraryUtils.overridingLibrary, ::libraryWithAliasConstructor)
@@ -38,14 +37,17 @@ internal class LibrariesTest {
 
     @Test
     fun sequenceConstructor() {
-        assertEquals(differentAliasInstances.toSet(), Runtime.of(differentAliasInstances.asSequence()).libraries.toSet())
+        assertEquals(
+            differentAliasInstances.toSet(),
+            Runtime.of(differentAliasInstances.asSequence()).libraries.toSet(),
+        )
     }
 
     @Test
     fun varargConstructor() {
         assertEquals(
             differentAliasInstances.toSet(),
-            Runtime.of(*differentAliasInstances.toTypedArray()).libraries.toSet()
+            Runtime.of(*differentAliasInstances.toTypedArray()).libraries.toSet(),
         )
     }
 
@@ -108,14 +110,15 @@ internal class LibrariesTest {
 
         assertEquals(
             overriddenLibrary.primitives,
-            toBeTested.primitives.filterKeys { !it.name.contains(Library.ALIAS_SEPARATOR) }
+            toBeTested.primitives.filterKeys { !it.name.contains(Library.ALIAS_SEPARATOR) },
         )
     }
 
     @Test
     fun primitivesShouldReturnAllAliasedPrimitivesEvenAfterOverriding() {
-        val correct = aliasLibraryMap(overridingLibrary.alias, overriddenLibrary.primitives) +
-            library.primitives.map { aliasPrimitiveOrFunction(library.alias, it) }
+        val correct =
+            aliasLibraryMap(overridingLibrary.alias, overriddenLibrary.primitives) +
+                library.primitives.map { aliasPrimitiveOrFunction(library.alias, it) }
         val toBeTested = Runtime.of(library, overridingLibrary)
 
         assertEquals(correct, toBeTested.primitives)
@@ -137,14 +140,15 @@ internal class LibrariesTest {
 
         assertEquals(
             overriddenLibrary.functions,
-            toBeTested.functions.filterKeys { !it.name.contains(Library.ALIAS_SEPARATOR) }
+            toBeTested.functions.filterKeys { !it.name.contains(Library.ALIAS_SEPARATOR) },
         )
     }
 
     @Test
     fun functionsShouldReturnAllAliasedPrimitivesEvenAfterOverriding() {
-        val correct = aliasLibraryMap(overridingLibrary.alias, overriddenLibrary.functions) +
-            library.functions.map { aliasPrimitiveOrFunction(library.alias, it) }
+        val correct =
+            aliasLibraryMap(overridingLibrary.alias, overriddenLibrary.functions) +
+                library.functions.map { aliasPrimitiveOrFunction(library.alias, it) }
         val toBeTested = Runtime.of(library, overridingLibrary)
 
         assertEquals(correct, toBeTested.functions)
@@ -171,7 +175,7 @@ internal class LibrariesTest {
 
         assertEquals(
             Runtime.of(instances),
-            Runtime.of(instances.take(instancesCount / 2)) + Runtime.of(instances.drop(instancesCount / 2))
+            Runtime.of(instances.take(instancesCount / 2)) + Runtime.of(instances.drop(instancesCount / 2)),
         )
     }
 

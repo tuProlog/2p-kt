@@ -15,7 +15,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class HaltTest {
-
     private val haltSolveRequest = createSolveRequest(Atom.of("halt"))
 
     @Test

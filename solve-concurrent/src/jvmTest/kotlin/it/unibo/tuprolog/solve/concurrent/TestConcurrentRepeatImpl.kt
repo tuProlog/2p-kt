@@ -9,7 +9,6 @@ class TestConcurrentRepeatImpl :
     TestConcurrentRepeat<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     @Ignore // does not terminate when concurrent

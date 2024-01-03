@@ -15,7 +15,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
  * @author Enrico
  */
 internal object ConsUtils {
-
     private val headOfFirstList = Var.of("H")
     private val tailOfFirstList = Empty.list()
     private val elementsOfFirstList = listOf(headOfFirstList)
@@ -25,7 +24,9 @@ internal object ConsUtils {
 
     private val headOfSecondList = Var.of("H")
     private val tailOfSecondListElement = Var.of("T")
+
     private fun tailOfSecondList(constructor: (Term, Term) -> Cons) = constructor(tailOfSecondListElement, Empty.list())
+
     private val elementsOfSecondList = listOf(headOfSecondList, tailOfSecondListElement)
 
     /** Constructs a non ground Cons with two Terms */
@@ -35,6 +36,7 @@ internal object ConsUtils {
     private val headOfThirdList = Atom.of("bigList")
     private val tailOfThirdListFirstElement = Integer.of(4)
     private val tailOfThirdListSecondElement = Real.of(1.5)
+
     private fun tailOfThirdList(constructor: (Term, Term) -> Cons) =
         constructor(tailOfThirdListFirstElement, constructor(tailOfThirdListSecondElement, Empty.list()))
 
@@ -55,8 +57,12 @@ internal object ConsUtils {
     private val headOfFifthList = Atom.of("head")
     private val tailOfFifthListFirstElement = Var.of("M")
     private val tailOfFifthListSecondElement = Var.of("N")
+
     private fun tailOfFifthList(constructor: (Term, Term) -> Cons) =
-        constructor(tailOfFifthListFirstElement, tailOfFifthListSecondElement)
+        constructor(
+            tailOfFifthListFirstElement,
+            tailOfFifthListSecondElement,
+        )
 
     private val elementsOfFifthList = listOf(headOfFifthList, tailOfFifthListFirstElement, tailOfFifthListSecondElement)
 
@@ -69,14 +75,14 @@ internal object ConsUtils {
         listOf(
             oneElementList(constructor),
             twoElementList(constructor),
-            threeElementList(constructor)
+            threeElementList(constructor),
         )
 
     /** Returns only those Cons that *NOT* terminate with an EmptyList */
     internal fun onlyConsPipeTerminated(constructor: (Term, Term) -> Cons) =
         listOf(
             twoElementListWithPipe(constructor),
-            threeElementListWithPipe(constructor)
+            threeElementListWithPipe(constructor),
         )
 
     /** Returns all Cons mixing [onlyConsEmptyListTerminated] and [onlyConsPipeTerminated] */
@@ -95,7 +101,7 @@ internal object ConsUtils {
             tailOfSecondList(constructor),
             tailOfThirdList(constructor),
             tailOfFourthList,
-            tailOfFifthList(constructor)
+            tailOfFifthList(constructor),
         )
 
     /** All Cons correct toString representations */
@@ -124,7 +130,7 @@ internal object ConsUtils {
             elementsOfSecondList + Empty.list(),
             elementsOfThirdList + Empty.list(),
             elementsOfFourthList,
-            elementsOfFifthList
+            elementsOfFifthList,
         )
     }
 }

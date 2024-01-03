@@ -16,7 +16,6 @@ import kotlin.test.assertSame
  * @author Enrico
  */
 internal class TupleTest {
-
     private val correctInstances = TupleUtils.tupleInstances(::TupleImpl)
 
     @Test

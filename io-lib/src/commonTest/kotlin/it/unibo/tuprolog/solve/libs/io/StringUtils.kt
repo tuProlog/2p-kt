@@ -8,5 +8,7 @@ internal fun String.trimAndCorrectLineTermination(lineTerminator: String = "\n")
     return trim().replace(TERMINATOR, lineTerminator)
 }
 
-fun assertSameLines(expected: String, actual: String) =
-    assertEquals(expected.trimAndCorrectLineTermination(), actual.trimAndCorrectLineTermination())
+fun assertSameLines(
+    expected: String,
+    actual: String,
+) = assertEquals(expected.trimAndCorrectLineTermination(), actual.trimAndCorrectLineTermination())

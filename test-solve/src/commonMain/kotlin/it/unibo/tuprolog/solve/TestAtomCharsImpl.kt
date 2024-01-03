@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChars {
-
     override fun atomCharsTestFirstIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -14,7 +13,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to "test")),
-                solutions
+                solutions,
             )
         }
     }
@@ -27,7 +26,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -40,7 +39,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes(("T" to "t"))),
-                solutions
+                solutions,
             )
         }
     }
@@ -53,7 +52,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -66,7 +65,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("L" to emptyList)),
-                solutions
+                solutions,
             )
         }
     }
@@ -79,7 +78,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("C" to "c")),
-                solutions
+                solutions,
             )
         }
     }
@@ -97,11 +96,11 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
                             DummyInstances.executionContext,
                             Signature("atom_chars", 2),
                             varOf("A"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -120,11 +119,11 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
                             Signature("atom_chars", 2),
                             TypeError.Expected.LIST,
                             atomOf("iso"),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

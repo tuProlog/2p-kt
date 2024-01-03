@@ -18,10 +18,9 @@ import kotlin.test.assertNotEquals
 
 internal class PrototypeClauseQueueTestImpl(
     private val emptyGenerator: () -> ClauseQueue,
-    private val collectionGenerator: (Iterable<Clause>) -> ClauseQueue
+    private val collectionGenerator: (Iterable<Clause>) -> ClauseQueue,
 ) : PrototypeClauseQueueTest,
     PrototypeClauseCollectionTestImpl(emptyGenerator, collectionGenerator) {
-
     private val fFamilySelector =
         Fact.of(Struct.of("f", Var.anonymous()))
 
@@ -38,14 +37,14 @@ internal class PrototypeClauseQueueTestImpl(
         listOf(
             Fact.of(Struct.of("f", Atom.of("a"))),
             Fact.of(Struct.of("f", Atom.of("b"))),
-            Fact.of(Struct.of("f", Atom.of("c")))
+            Fact.of(Struct.of("f", Atom.of("c"))),
         )
 
     private val newClauses =
         listOf(
             Fact.of(Struct.of("f", Atom.of("d"))),
             Fact.of(Struct.of("f", Atom.of("e"))),
-            Fact.of(Struct.of("f", Atom.of("f")))
+            Fact.of(Struct.of("f", Atom.of("f"))),
         )
 
     private val orderSensitiveClauses =
@@ -55,23 +54,29 @@ internal class PrototypeClauseQueueTestImpl(
             Fact.of(Struct.of("f", Atom.of("b"))),
             Fact.of(Struct.of("g", Numeric.of(2))),
             Fact.of(Struct.of("f", Atom.of("c"))),
-            Fact.of(Struct.of("g", Numeric.of(3)))
+            Fact.of(Struct.of("g", Numeric.of(3))),
         )
 
     private val numericClauses =
         listOf(
             Fact.of(Struct.of("g", Numeric.of(1))),
             Fact.of(Struct.of("g", Numeric.of(2))),
-            Fact.of(Struct.of("g", Numeric.of(3)))
+            Fact.of(Struct.of("g", Numeric.of(3))),
         )
 
     private val emptyCollection = emptyGenerator()
 
-    override fun getClauses(collection: ClauseCollection, query: Clause): Sequence<Clause> {
+    override fun getClauses(
+        collection: ClauseCollection,
+        query: Clause,
+    ): Sequence<Clause> {
         return (collection as ClauseQueue).get(query)
     }
 
-    override fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause> {
+    override fun retractClauses(
+        collection: ClauseCollection,
+        query: Clause,
+    ): Sequence<Clause> {
         return when (val res = (collection as ClauseQueue).retrieve(query)) {
             is RetrieveResult.Success -> res.clauses.asSequence()
             else -> emptySequence()
@@ -83,7 +88,7 @@ internal class PrototypeClauseQueueTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             listOf(presentClause, presentClause),
-            sequence.toList()
+            sequence.toList(),
         )
     }
 
@@ -98,7 +103,7 @@ internal class PrototypeClauseQueueTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             collectionGenerator(listOf(newClause) + clauses),
-            prependedCollectionSnapshot
+            prependedCollectionSnapshot,
         )
     }
 
@@ -107,7 +112,7 @@ internal class PrototypeClauseQueueTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             collectionGenerator(clauses + listOf(newClause)),
-            appendedCollectionSnapshot
+            appendedCollectionSnapshot,
         )
     }
 
@@ -128,7 +133,7 @@ internal class PrototypeClauseQueueTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             collectionGenerator(clauses + listOf(newClause)),
-            appendedCollectionSnapshot
+            appendedCollectionSnapshot,
         )
     }
 
@@ -175,7 +180,7 @@ internal class PrototypeClauseQueueTestImpl(
 
         assertEquals(
             permutations.size,
-            permutations.map { collectionGenerator(it) }.toSet().size
+            permutations.map { collectionGenerator(it) }.toSet().size,
         )
     }
 }

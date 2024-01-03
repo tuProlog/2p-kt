@@ -13,7 +13,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testFunArity() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -140,16 +139,17 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
 
             val query = functor("X", "Y", 3)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("functor", 3),
-                        varOf("Y"),
-                        1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            varOf("Y"),
+                            1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -161,16 +161,17 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
 
             val query = functor("X", "foo", "N")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("functor", 3),
-                        varOf("N"),
-                        index = 2
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            varOf("N"),
+                            index = 2,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -182,17 +183,18 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
 
             val query = functor("X", "foo", "a")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("functor", 3),
-                        TypeError.Expected.INTEGER,
-                        atomOf("a"),
-                        index = 2
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            TypeError.Expected.INTEGER,
+                            atomOf("a"),
+                            index = 2,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -204,17 +206,18 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
 
             val query = functor("F", 1.5, 1)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("functor", 3),
-                        TypeError.Expected.ATOM,
-                        numOf(1.5),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            TypeError.Expected.ATOM,
+                            numOf(1.5),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -226,17 +229,18 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
 
             val query = functor("F", "foo"("a"), 1)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("functor", 3),
-                        TypeError.Expected.ATOMIC,
-                        "foo"("a"),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            TypeError.Expected.ATOMIC,
+                            "foo"("a"),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -246,19 +250,21 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = current_flag("max_arity", A) and (
-                (X `is` (A + 1)) and functor(T, "foo", X)
+            val query =
+                current_flag("max_arity", A) and (
+                    (X `is` (A + 1)) and functor(T, "foo", X)
                 )
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    RepresentationError.of(
-                        DummyInstances.executionContext,
-                        Signature("functor", 3),
-                        RepresentationError.Limit.MAX_ARITY
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        RepresentationError.of(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            RepresentationError.Limit.MAX_ARITY,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -270,17 +276,18 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
 
             val query = functor("T", "foo", intOf(-1))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    DomainError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("functor", 3),
-                        DomainError.Expected.NOT_LESS_THAN_ZERO,
-                        intOf(-1),
-                        index = 2
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        DomainError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            DomainError.Expected.NOT_LESS_THAN_ZERO,
+                            intOf(-1),
+                            index = 2,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

@@ -19,35 +19,50 @@ import kotlin.jvm.JvmStatic
  * __Solvers are not immutable entities__. Their state may mutate as an effect of solving queries.
  */
 interface Solver : ExecutionContextAware {
-
     @JsName("solveWithTimeout")
-    fun solve(goal: Struct, timeout: TimeDuration): Sequence<Solution> =
-        solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
+    fun solve(
+        goal: Struct,
+        timeout: TimeDuration,
+    ): Sequence<Solution> = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
 
     @JsName("solve")
     fun solve(goal: Struct): Sequence<Solution> = solve(goal, SolveOptions.DEFAULT)
 
     @JsName("solveWithOptions")
-    fun solve(goal: Struct, options: SolveOptions): Sequence<Solution>
+    fun solve(
+        goal: Struct,
+        options: SolveOptions,
+    ): Sequence<Solution>
 
     @JsName("solveListWithTimeout")
-    fun solveList(goal: Struct, timeout: TimeDuration): List<Solution> = solve(goal, timeout).toList()
+    fun solveList(
+        goal: Struct,
+        timeout: TimeDuration,
+    ): List<Solution> = solve(goal, timeout).toList()
 
     @JsName("solveList")
     fun solveList(goal: Struct): List<Solution> = solve(goal).toList()
 
     @JsName("solveListWithOptions")
-    fun solveList(goal: Struct, options: SolveOptions): List<Solution> = solve(goal, options).toList()
+    fun solveList(
+        goal: Struct,
+        options: SolveOptions,
+    ): List<Solution> = solve(goal, options).toList()
 
     @JsName("solveOnceWithTimeout")
-    fun solveOnce(goal: Struct, timeout: TimeDuration): Solution =
-        solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout)).first()
+    fun solveOnce(
+        goal: Struct,
+        timeout: TimeDuration,
+    ): Solution = solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout)).first()
 
     @JsName("solveOnce")
     fun solveOnce(goal: Struct): Solution = solve(goal, SolveOptions.someLazily(1)).first()
 
     @JsName("solveOnceWithOptions")
-    fun solveOnce(goal: Struct, options: SolveOptions): Solution = solve(goal, options.setLimit(1)).first()
+    fun solveOnce(
+        goal: Struct,
+        options: SolveOptions,
+    ): Solution = solve(goal, options.setLimit(1)).first()
 
     @JsName("copy")
     fun copy(
@@ -59,7 +74,7 @@ interface Solver : ExecutionContextAware {
         stdIn: InputChannel<String> = this.standardInput,
         stdOut: OutputChannel<String> = this.standardOutput,
         stdErr: OutputChannel<String> = this.standardError,
-        warnings: OutputChannel<Warning> = this.warnings
+        warnings: OutputChannel<Warning> = this.warnings,
     ): Solver
 
     @JsName("clone")
@@ -71,7 +86,7 @@ interface Solver : ExecutionContextAware {
         @JsName("classic")
         @Deprecated(
             message = "This method is being renamed into \"prolog\" and its usage in this form is now deprecated",
-            replaceWith = ReplaceWith("Solver.prolog")
+            replaceWith = ReplaceWith("Solver.prolog"),
         )
         val classic: SolverFactory by lazy { classicSolverFactory() }
 

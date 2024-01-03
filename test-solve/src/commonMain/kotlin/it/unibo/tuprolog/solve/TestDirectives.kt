@@ -2,8 +2,7 @@ package it.unibo.tuprolog.solve
 
 interface TestDirectives : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestDirectives =
-            TestDirectivesImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestDirectives = TestDirectivesImpl(solverFactory)
     }
 
     fun testDynamic1()

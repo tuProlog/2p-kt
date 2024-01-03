@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Rule
 import kotlin.js.JsName
 
 interface ClauseListener {
-
     @JsName("onDirective")
     fun onDirective(directive: Directive)
 

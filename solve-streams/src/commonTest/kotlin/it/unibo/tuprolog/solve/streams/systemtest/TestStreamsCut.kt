@@ -7,7 +7,6 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestStreamsCut : TestCut, SolverFactory by StreamsSolverFactory {
-
     private val prototype = TestCut.prototype(this)
 
     @Test

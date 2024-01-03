@@ -17,9 +17,8 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class CompoundIndex(
     unificator: Unificator,
     private val ordered: Boolean,
-    private val nestingLevel: Int
+    private val nestingLevel: Int,
 ) : IndexingNode, AbstractReteNode(unificator) {
-
     private val functors: MutableMap<String, FunctorIndexing> = mutableMapOf()
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
@@ -35,13 +34,13 @@ internal class CompoundIndex(
                 Utils.merge(
                     functors.values.asSequence().flatMap {
                         it.getIndexed(clause)
-                    }
+                    },
                 ).map { it.innerClause }
             } else {
                 Utils.flatten(
                     functors.values.asSequence().flatMap {
                         it.get(clause)
-                    }
+                    },
                 )
             }
         } else {
@@ -73,15 +72,14 @@ internal class CompoundIndex(
             retractAllUnordered(clause)
         }
 
-    override fun getCache(): Sequence<SituatedIndexedClause> =
-        theoryCache.value.asSequence()
+    override fun getCache(): Sequence<SituatedIndexedClause> = theoryCache.value.asSequence()
 
     private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
         if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
                     it.retractAllIndexed(clause)
-                }
+                },
             ).map { it.innerClause }
         } else {
             functors[clause.nestedFunctor()]
@@ -94,7 +92,7 @@ internal class CompoundIndex(
             Utils.flatten(
                 functors.values.map {
                     it.retractAll(clause)
-                }
+                },
             )
         } else {
             functors[clause.nestedFunctor()]
@@ -108,8 +106,8 @@ internal class CompoundIndex(
                 sequenceOf(
                     functors.values.mapNotNull {
                         it.getFirstIndexed(clause)
-                    }.asSequence()
-                )
+                    }.asSequence(),
+                ),
             ).firstOrNull()
         } else {
             functors[clause.nestedFunctor()]
@@ -121,7 +119,7 @@ internal class CompoundIndex(
             Utils.merge(
                 functors.values.map {
                     it.extractGlobalIndexedSequence(clause)
-                }
+                },
             )
         } else {
             functors[clause.nestedFunctor()]
@@ -134,7 +132,7 @@ internal class CompoundIndex(
             Utils.merge(
                 functors.values.map {
                     it.retractAllIndexed(clause)
-                }
+                },
             )
         } else {
             functors[clause.nestedFunctor()]
@@ -147,25 +145,25 @@ internal class CompoundIndex(
             Utils.merge(
                 functors.values.map {
                     it.extractGlobalIndexedSequence(clause)
-                }
+                },
             )
         } else {
             Utils.flattenIndexed(
                 functors.values.map {
                     it.extractGlobalIndexedSequence(clause)
-                }
+                },
             )
         }
     }
 
-    private fun Clause.nestedFunctor(): String =
-        this.head!!.functorOfNestedFirstArgument(nestingLevel)
+    private fun Clause.nestedFunctor(): String = this.head!!.functorOfNestedFirstArgument(nestingLevel)
 
     private fun IndexedClause.nestedFunctor(): String =
-        this.innerClause.head!!.functorOfNestedFirstArgument(nestingLevel)
+        this.innerClause.head!!.functorOfNestedFirstArgument(
+            nestingLevel,
+        )
 
-    private fun Clause.isGlobal(): Boolean =
-        this.head!!.nestedFirstArgument(nestingLevel).isVar
+    private fun Clause.isGlobal(): Boolean = this.head!!.nestedFirstArgument(nestingLevel).isVar
 
     override fun invalidateCache() {
         theoryCache.invalidate()
@@ -178,14 +176,14 @@ internal class CompoundIndex(
                 Utils.merge(
                     functors.values.map {
                         it.getCache()
-                    }
+                    },
                 )
             } else {
                 Utils.flattenIndexed(
                     functors.values.map { outer ->
                         outer.getCache()
-                    }
+                    },
                 )
-            }
+            },
         )
 }

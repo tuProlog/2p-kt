@@ -8,7 +8,6 @@ class TestConcurrentAtomLengthImpl :
     TestConcurrentAtomLength<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testAtomLengthNoVar() = multiRunConcurrentTest { super.testAtomLengthNoVar() }

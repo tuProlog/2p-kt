@@ -19,7 +19,6 @@ import kotlin.js.JsExport
 @Suppress("NON_EXPORTABLE_TYPE")
 @JsExport
 object ClassicSolverFactory : SolverFactory {
-
     override val defaultBuiltins: Library
         get() = DefaultBuiltins
 
@@ -30,7 +29,7 @@ object ClassicSolverFactory : SolverFactory {
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
-        outputs: OutputStore
+        outputs: OutputStore,
     ): Solver = ClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, inputs, outputs)
 
     override fun solverOf(
@@ -42,7 +41,7 @@ object ClassicSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ): Solver = ClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
@@ -54,8 +53,9 @@ object ClassicSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
-    ): MutableSolver = MutableClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+        warnings: OutputChannel<Warning>,
+    ): MutableSolver =
+        MutableClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
         unificator: Unificator,
@@ -64,6 +64,6 @@ object ClassicSolverFactory : SolverFactory {
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
-        outputs: OutputStore
+        outputs: OutputStore,
     ): MutableSolver = MutableClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, inputs, outputs)
 }

@@ -24,9 +24,8 @@ import it.unibo.tuprolog.utils.dequeOf
 class ClausePartitioner(
     override val unificator: Unificator,
     private val source: Iterable<Clause>,
-    private val staticByDefault: Boolean = true
+    private val staticByDefault: Boolean = true,
 ) : ClausePartition, DirectiveSelector {
-
     private val _staticClauses: MutableTheory = MutableTheory.emptyIndexed(unificator)
     private val _dynamicClauses: MutableTheory = MutableTheory.emptyIndexed(unificator)
     private val _operators: MutableList<Operator> = dequeOf()
@@ -84,14 +83,23 @@ class ClausePartitioner(
 
     private val defaultClauses: MutableTheory by lazy { if (staticByDefault) _staticClauses else _dynamicClauses }
 
-    override fun onSetFlag(directive: Directive, name: Term, value: Term) {
+    override fun onSetFlag(
+        directive: Directive,
+        name: Term,
+        value: Term,
+    ) {
         onDirective(directive)
         if (name is Atom) {
             _flagStore += name.value to value
         }
     }
 
-    override fun onOperator(directive: Directive, priority: Term, specifier: Term, name: Term) {
+    override fun onOperator(
+        directive: Directive,
+        priority: Term,
+        specifier: Term,
+        name: Term,
+    ) {
         onDirective(directive)
         if (priority is Integer) {
             try {
@@ -105,35 +113,51 @@ class ClausePartitioner(
         }
     }
 
-    override fun onLoad(directive: Directive, goal: Term) {
+    override fun onLoad(
+        directive: Directive,
+        goal: Term,
+    ) {
         onDirective(directive)
         if (goal is Atom) {
             _includes += goal
         }
     }
 
-    override fun onSolve(directive: Directive, goal: Term) {
+    override fun onSolve(
+        directive: Directive,
+        goal: Term,
+    ) {
         onDirective(directive)
         if (goal is Struct) {
             _initialGoals += goal
         }
     }
 
-    override fun onStatic(directive: Directive, indicator: Indicator) {
+    override fun onStatic(
+        directive: Directive,
+        indicator: Indicator,
+    ) {
         onDirective(directive)
         if (indicator.isWellFormed) {
             staticSignatures += Signature.fromIndicator(indicator)!!
         }
     }
 
-    override fun onDynamic(directive: Directive, indicator: Indicator) {
+    override fun onDynamic(
+        directive: Directive,
+        indicator: Indicator,
+    ) {
         onDirective(directive)
         if (indicator.isWellFormed) {
             dynamicSignatures += Signature.fromIndicator(indicator)!!
         }
     }
 
-    override fun onDirectiveMatchingPattern(directive: Directive, pattern: Term, unifier: Substitution.Unifier) {
+    override fun onDirectiveMatchingPattern(
+        directive: Directive,
+        pattern: Term,
+        unifier: Substitution.Unifier,
+    ) {
         onDirective(directive)
     }
 

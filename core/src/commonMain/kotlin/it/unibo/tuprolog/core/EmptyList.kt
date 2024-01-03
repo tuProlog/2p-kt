@@ -6,7 +6,6 @@ import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 
 interface EmptyList : Empty, LogicList {
-
     override val isCons: Boolean
         get() = false
 
@@ -32,7 +31,6 @@ interface EmptyList : Empty, LogicList {
     override fun asEmptyList(): EmptyList = this
 
     companion object {
-
         const val FUNCTOR: String = Terms.EMPTY_LIST_FUNCTOR
 
         @JvmStatic

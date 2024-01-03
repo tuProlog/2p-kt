@@ -12,7 +12,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class StreamsSolverTest {
-
     @Test
     fun defaultConstructorParameters() {
         val toBeTested = StreamsSolver()

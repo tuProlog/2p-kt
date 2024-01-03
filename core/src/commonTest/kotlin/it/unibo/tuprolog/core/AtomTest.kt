@@ -13,7 +13,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class AtomTest {
-
     @Test
     fun emptySetAtomDetected() {
         assertEqualities(Atom.of("{}"), Empty.block())

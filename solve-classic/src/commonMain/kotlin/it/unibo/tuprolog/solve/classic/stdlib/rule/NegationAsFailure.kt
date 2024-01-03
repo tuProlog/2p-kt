@@ -9,22 +9,23 @@ import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import kotlin.collections.List as KtList
 
 sealed class NegationAsFailure : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
-
     override val Scope.head: KtList<Term>
-        get() = ktListOf(
-            varOf("X")
-        )
+        get() =
+            ktListOf(
+                varOf("X"),
+            )
 
     abstract override val Scope.body: Term
 
     object Fail : NegationAsFailure() {
         override val Scope.body: Term
-            get() = tupleOf(
-                structOf(EnsureExecutable.functor, varOf("X")),
-                structOf(Call.functor, varOf("X")),
-                MagicCut,
-                truthOf(false)
-            )
+            get() =
+                tupleOf(
+                    structOf(EnsureExecutable.functor, varOf("X")),
+                    structOf(Call.functor, varOf("X")),
+                    MagicCut,
+                    truthOf(false),
+                )
     }
 
     object Success : NegationAsFailure() {

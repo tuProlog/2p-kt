@@ -46,22 +46,23 @@ internal object AnnotatedDisjunctionClauseMapper : ClauseMapper {
         collectAllHeads(clause.head, disjointHeads)
 
         var probSum = 0.0
-        val mappedRules = disjointHeads.map { cur ->
-            val curProb = (cur[0] as Numeric).decimalValue.toDouble()
-            val curRuleHead = if (cur[1] is Struct) cur[1] as Struct else Struct.of(cur[1].toString())
+        val mappedRules =
+            disjointHeads.map { cur ->
+                val curProb = (cur[0] as Numeric).decimalValue.toDouble()
+                val curRuleHead = if (cur[1] is Struct) cur[1] as Struct else Struct.of(cur[1].toString())
 
-            probSum += curProb
-            ProbabilisticClauseMapper.mapRuleInternal(
-                Rule.of(
-                    Struct.of(
-                        ANNOTATION_FUNCTOR,
-                        Numeric.of(curProb / (1.0 - (probSum - curProb))),
-                        curRuleHead
+                probSum += curProb
+                ProbabilisticClauseMapper.mapRuleInternal(
+                    Rule.of(
+                        Struct.of(
+                            ANNOTATION_FUNCTOR,
+                            Numeric.of(curProb / (1.0 - (probSum - curProb))),
+                            curRuleHead,
+                        ),
+                        body,
                     ),
-                    body
                 )
-            )
-        }.toList()
+            }.toList()
 
         var explanation: ProbExplanation = ProbExplanation.TRUE
         return mappedRules.map {
@@ -72,7 +73,10 @@ internal object AnnotatedDisjunctionClauseMapper : ClauseMapper {
         }
     }
 
-    private fun collectAllHeads(head: Term, accumulator: MutableList<Struct>) {
+    private fun collectAllHeads(
+        head: Term,
+        accumulator: MutableList<Struct>,
+    ) {
         if (head is Struct && head.arity == 2) {
             if (head.functor != Semicolon.FUNCTOR && head.functor != ANNOTATION_FUNCTOR) {
                 throw TuPrologException("Badly formatted disjoint annotation: $head")
@@ -88,10 +92,11 @@ internal object AnnotatedDisjunctionClauseMapper : ClauseMapper {
             curHead = if (head.functor == Semicolon.FUNCTOR) head[0] else head
             if (curHead is Struct && curHead.functor == ANNOTATION_FUNCTOR) {
                 val curHeadProbTerm = curHead[0]
-                curHeadProb = when (curHeadProbTerm) {
-                    is Numeric -> curHeadProbTerm.decimalValue.toDouble()
-                    else -> curHeadProbTerm.solveArithmeticExpression()
-                }
+                curHeadProb =
+                    when (curHeadProbTerm) {
+                        is Numeric -> curHeadProbTerm.decimalValue.toDouble()
+                        else -> curHeadProbTerm.solveArithmeticExpression()
+                    }
                 curHead = curHead[1]
             }
         }

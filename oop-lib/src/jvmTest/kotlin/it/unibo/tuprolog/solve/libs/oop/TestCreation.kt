@@ -7,7 +7,10 @@ interface TestCreation : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestCreation = TestCreationImpl(solverFactory)
     }
+
     fun mostProperConstructorIsSelectedWhenInstantiatingTypeRef()
+
     fun constructorCanBeSelectedViaExplicitCastWhenInstantiatingTypeRef()
+
     fun constructorSelectionMayFailWhenInstantiatingTypeRef()
 }

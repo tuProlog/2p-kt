@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.NewObject3
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 
 object NewObject2 : RuleWrapper<ExecutionContext>(NewObject3.functor, 2) {
-
     private val Type by variables
     private val Instance by variables
 

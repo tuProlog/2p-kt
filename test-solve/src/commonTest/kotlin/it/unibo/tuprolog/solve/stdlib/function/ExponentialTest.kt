@@ -15,7 +15,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class ExponentialTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("exp", 1), Exponential.signature)
@@ -25,7 +24,7 @@ internal class ExponentialTest {
     fun computationCorrect() {
         assertAlmostEquals(
             Numeric.of(E),
-            Exponential.computeOf(Integer.of(1)).castToNumeric()
+            Exponential.computeOf(Integer.of(1)).castToNumeric(),
         )
     }
 }

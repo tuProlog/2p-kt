@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.utils.impl
 
 internal class NonLastCursor<T>(source: Iterator<T>) : AbstractCursor<T>() {
-
     private var source: Iterator<T>? = source
 
     override val next: AbstractCursor<out T> by lazy {

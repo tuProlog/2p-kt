@@ -38,7 +38,7 @@ object Dummy {
             staticKb: Theory,
             dynamicKb: Theory,
             inputChannels: InputStore,
-            outputChannels: OutputStore
+            outputChannels: OutputStore,
         ): Solver {
             TODO("Not yet implemented")
         }
@@ -50,7 +50,7 @@ object Dummy {
             staticKb: Theory,
             dynamicKb: Theory,
             inputChannels: InputStore,
-            outputChannels: OutputStore
+            outputChannels: OutputStore,
         ): MutableSolver {
             TODO("Not yet implemented")
         }
@@ -64,7 +64,7 @@ object Dummy {
             operators: OperatorSet,
             inputChannels: InputStore,
             outputChannels: OutputStore,
-            customData: CustomDataStore
+            customData: CustomDataStore,
         ): ExecutionContext {
             TODO("Not yet implemented")
         }

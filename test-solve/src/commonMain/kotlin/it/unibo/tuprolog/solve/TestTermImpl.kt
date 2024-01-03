@@ -12,7 +12,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "\\=="("X", "X")
@@ -20,7 +20,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "\\=="(intOf(1), intOf(2))
@@ -28,7 +28,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "\\=="("X", intOf(1))
@@ -36,7 +36,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "\\=="("X", "Y")
@@ -44,7 +44,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "\\=="(`_`, `_`)
@@ -52,7 +52,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "\\=="("X", "a"("X"))
@@ -60,7 +60,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "\\=="("f"("a"), "f"("a"))
@@ -68,7 +68,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -82,7 +82,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "=="("X", "X")
@@ -90,7 +90,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "=="(intOf(1), intOf(2))
@@ -98,7 +98,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "=="("X", intOf(1))
@@ -106,7 +106,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "=="("X", "Y")
@@ -114,7 +114,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "=="(`_`, `_`)
@@ -122,7 +122,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "=="("X", "a"("X"))
@@ -130,7 +130,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "=="("f"("a"), "f"("a"))
@@ -138,7 +138,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -152,7 +152,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@>"("aardvark", "zebra")
@@ -160,7 +160,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@>"("short", "short")
@@ -168,7 +168,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@>"("short", "shorter")
@@ -176,7 +176,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@>"("foo"("b"), "foo"("a"))
@@ -184,7 +184,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@>"("X", "X")
@@ -192,7 +192,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@>"("foo"("a", "X"), "foo"("b", "Y"))
@@ -200,7 +200,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -214,7 +214,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@>="("aardvark", "zebra")
@@ -222,7 +222,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@>="("short", "short")
@@ -230,7 +230,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@>="("short", "shorter")
@@ -238,7 +238,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@>="("foo"("b"), "foo"("a"))
@@ -246,7 +246,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@>="("X", "X")
@@ -254,7 +254,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@>="("foo"("a", "X"), "foo"("b", "Y"))
@@ -262,7 +262,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -276,7 +276,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@<"("aardvark", "zebra")
@@ -284,7 +284,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@<"("short", "short")
@@ -292,7 +292,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@<"("short", "shorter")
@@ -300,7 +300,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@<"("foo"("b"), "foo"("a"))
@@ -308,7 +308,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@<"("X", "X")
@@ -316,7 +316,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@<"("foo"("a", "X"), "foo"("b", "Y"))
@@ -324,7 +324,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -338,7 +338,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@=<"(realOf(1.1), realOf(1.1))
@@ -346,7 +346,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@=<"(realOf(1.0), realOf(1.2))
@@ -354,7 +354,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@=<"(intOf(1), intOf(1))
@@ -362,7 +362,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@=<"(intOf(1), intOf(2))
@@ -370,7 +370,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@=<"("aardvark", "zebra")
@@ -378,7 +378,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@=<"("short", "short")
@@ -386,7 +386,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@=<"("short", "shorter")
@@ -394,7 +394,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@=<"("foo"("b"), "foo"("a"))
@@ -402,7 +402,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "@=<"("X", "X")
@@ -410,7 +410,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "@=<"("foo"("a", "X"), "foo"("b", "Y"))
@@ -418,7 +418,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }

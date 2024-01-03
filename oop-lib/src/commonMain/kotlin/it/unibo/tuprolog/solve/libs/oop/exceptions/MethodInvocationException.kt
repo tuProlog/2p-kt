@@ -13,20 +13,20 @@ import kotlin.reflect.KClass
 class MethodInvocationException(
     val type: KClass<*>,
     val missingMethodName: String,
-    val admissibleTypes: List<Set<KClass<*>>>
+    val admissibleTypes: List<Set<KClass<*>>>,
 ) : OopException(
-    "There is no method on type ${type.fullName} which is named `$missingMethodName` and accepts " +
-        "[${admissibleTypes.pretty()}] as formal arguments"
-) {
+        "There is no method on type ${type.fullName} which is named `$missingMethodName` and accepts " +
+            "[${admissibleTypes.pretty()}] as formal arguments",
+    ) {
     override fun toLogicError(
         context: ExecutionContext,
-        signature: Signature
+        signature: Signature,
     ): LogicError {
         return ExistenceError.of(
             context,
             ExistenceError.ObjectType.OOP_METHOD,
             culprit,
-            message ?: ""
+            message ?: "",
         )
     }
 

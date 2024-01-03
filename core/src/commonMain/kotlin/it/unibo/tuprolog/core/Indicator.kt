@@ -16,7 +16,6 @@ import kotlin.jvm.JvmStatic
  * @author Enrico
  */
 interface Indicator : Struct {
-
     override val isIndicator: Boolean
         get() = true
 
@@ -66,18 +65,23 @@ interface Indicator : Struct {
     operator fun component2(): Term = arityTerm
 
     companion object {
-
         /** The canonical indicator functor: `/` */
         const val FUNCTOR = INDICATOR_FUNCTOR
 
         /** Creates an indicator denoting functor named [name] with [arity] */
         @JvmStatic
         @JsName("of")
-        fun of(name: Term, arity: Term): Indicator = IndicatorImpl(name, arity)
+        fun of(
+            name: Term,
+            arity: Term,
+        ): Indicator = IndicatorImpl(name, arity)
 
         /** Creates an indicator denoting functor named [name] with [arity] */
         @JvmStatic
         @JsName("ofString")
-        fun of(name: String, arity: Int): Indicator = of(Atom.of(name), Integer.of(arity))
+        fun of(
+            name: String,
+            arity: Int,
+        ): Indicator = of(Atom.of(name), Integer.of(arity))
     }
 }

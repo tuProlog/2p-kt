@@ -6,10 +6,10 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 internal class IndexedClauseIndexingTest {
-
-    private val prototype = PrototypeProperIndexingTest(
-        Factories::indexedTheoryOf
-    )
+    private val prototype =
+        PrototypeProperIndexingTest(
+            Factories::indexedTheoryOf,
+        )
 
     @BeforeTest
     fun init() {

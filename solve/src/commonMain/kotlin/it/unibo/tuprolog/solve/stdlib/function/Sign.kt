@@ -12,10 +12,13 @@ import it.unibo.tuprolog.solve.function.UnaryMathFunction
  * @author Enrico
  */
 object Sign : UnaryMathFunction("sign") {
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric = Integer.of(integer.value.signum.takeIf { it != 0 } ?: 1)
 
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-        Integer.of(integer.value.signum.takeIf { it != 0 } ?: 1)
-
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        Real.of(real.value.signum.takeIf { it != 0 }?.toDouble() ?: 1.0)
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = Real.of(real.value.signum.takeIf { it != 0 }?.toDouble() ?: 1.0)
 }

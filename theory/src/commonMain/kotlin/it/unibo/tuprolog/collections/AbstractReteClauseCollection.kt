@@ -5,16 +5,15 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.TheoryUtils
 
 internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCollection<Self>> protected constructor(
-    rete: ReteTree
+    rete: ReteTree,
 ) : AbstractClauseCollection<Self>(rete) {
-
     protected abstract fun newCollectionBuilder(rete: ReteTree): Self
 
     override fun add(clause: Clause): Self =
         newCollectionBuilder(
             rete.deepCopy().apply {
                 assertZ(TheoryUtils.checkClauseCorrect(clause))
-            }
+            },
         )
 
     override fun addAll(clauses: Iterable<Clause>): Self =
@@ -23,7 +22,7 @@ internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCo
                 clauses.forEach {
                     assertZ(TheoryUtils.checkClauseCorrect(it))
                 }
-            }
+            },
         )
 
     override fun retrieve(clause: Clause): RetrieveResult<out Self> {

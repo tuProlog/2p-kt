@@ -18,8 +18,10 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
 }
 
-fun tag(format: String, vararg properties: String): String =
-    format.format(*properties.map { System.getProperty(it) ?: error("Missing property $it") }.toTypedArray())
+fun tag(
+    format: String,
+    vararg properties: String,
+): String = format.format(*properties.map { System.getProperty(it) ?: error("Missing property $it") }.toTypedArray())
 
 val ci = !System.getenv("CI").isNullOrBlank()
 val ciTag = if (ci) "CI" else "Local"

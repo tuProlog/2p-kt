@@ -11,11 +11,13 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class FloatIntegerPartTest {
-
     companion object {
         private inline val loggingOn get() = false
 
-        fun <T> assertEquals(expected: T, actual: T) {
+        fun <T> assertEquals(
+            expected: T,
+            actual: T,
+        ) {
             if (loggingOn) {
                 println(
                     """
@@ -23,7 +25,7 @@ internal class FloatIntegerPartTest {
                     |    $expected
                     |got
                     |    $actual
-                    """.trimMargin()
+                    """.trimMargin(),
                 )
             }
 
@@ -44,7 +46,7 @@ internal class FloatIntegerPartTest {
             val (integerPart, _) = parts
             assertEquals(
                 integerPart,
-                FloatIntegerPart.computeOf(Numeric.of(input)).castToReal().value
+                FloatIntegerPart.computeOf(Numeric.of(input)).castToReal().value,
             )
         }
     }

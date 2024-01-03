@@ -23,7 +23,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class FunctorNodeTest {
-
     private lateinit var emptyAFunctorNode: FunctorNode
     private lateinit var filledAFunctorNode: FunctorNode
 
@@ -78,7 +77,7 @@ internal class FunctorNodeTest {
 
         assertCorrectAndPartialOrderRespected(
             filledAFunctorNode,
-            ReteNodeUtils.aFunctorRules.toMutableList().apply { add(0, aRule) }
+            ReteNodeUtils.aFunctorRules.toMutableList().apply { add(0, aRule) },
         )
     }
 

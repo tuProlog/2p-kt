@@ -28,7 +28,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import kotlin.jvm.Volatile
+import kotlin.concurrent.Volatile
 import kotlinx.coroutines.channels.Channel as KtChannel
 
 internal open class ConcurrentSolverImpl(
@@ -39,18 +39,17 @@ internal open class ConcurrentSolverImpl(
     initialDynamicKb: Theory = MutableTheory.empty(unificator),
     inputChannels: InputStore = InputStore.fromStandard(),
     outputChannels: OutputStore = OutputStore.fromStandard(),
-    trustKb: Boolean = false
+    trustKb: Boolean = false,
 ) : ConcurrentSolver, AbstractSolver<ConcurrentExecutionContext>(
-    unificator,
-    libraries,
-    flags,
-    initialStaticKb,
-    initialDynamicKb,
-    inputChannels,
-    outputChannels,
-    trustKb
-) {
-
+        unificator,
+        libraries,
+        flags,
+        initialStaticKb,
+        initialDynamicKb,
+        inputChannels,
+        outputChannels,
+        trustKb,
+    ) {
     constructor(
         unificator: Unificator,
         libraries: Runtime = Runtime.empty(),
@@ -61,7 +60,7 @@ internal open class ConcurrentSolverImpl(
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
         warnings: OutputChannel<Warning> = OutputChannel.warn(),
-        trustKb: Boolean = false
+        trustKb: Boolean = false,
     ) : this(
         unificator,
         libraries,
@@ -70,13 +69,16 @@ internal open class ConcurrentSolverImpl(
         dynamicKb,
         InputStore.fromStandard(stdIn),
         OutputStore.fromStandard(stdOut, stdErr, warnings),
-        trustKb
+        trustKb,
     )
 
     @Volatile
     override lateinit var currentContext: ConcurrentExecutionContext
 
-    private fun CoroutineScope.handleAsyncStateTransition(state: State, handle: ConcurrentResolutionHandle): Job =
+    private fun CoroutineScope.handleAsyncStateTransition(
+        state: State,
+        handle: ConcurrentResolutionHandle,
+    ): Job =
         launch {
             if (state is EndState) {
                 handle.publishSolutionAndTerminateResolutionIfNeed(state.solution, this)
@@ -88,47 +90,58 @@ internal open class ConcurrentSolverImpl(
             }
         }
 
-    private fun Sequence<Solution>.ensureAtMostOneNegative(): Sequence<Solution> = sequence {
-        var lastNegative: Solution.No? = null
-        val i = iterator()
-        while (i.hasNext()) {
-            when (val it = i.next()) {
-                is Solution.No -> {
-                    lastNegative = it
-                }
-                else -> {
-                    yield(it)
+    private fun Sequence<Solution>.ensureAtMostOneNegative(): Sequence<Solution> =
+        sequence {
+            var lastNegative: Solution.No? = null
+            val i = iterator()
+            while (i.hasNext()) {
+                when (val it = i.next()) {
+                    is Solution.No -> {
+                        lastNegative = it
+                    }
+                    else -> {
+                        yield(it)
+                    }
                 }
             }
+            lastNegative?.let { yield(it) }
         }
-        lastNegative?.let { yield(it) }
-    }
 
-    private suspend fun startAsyncResolution(initialState: State, handle: ConcurrentResolutionHandle) = coroutineScope {
+    private suspend fun startAsyncResolution(
+        initialState: State,
+        handle: ConcurrentResolutionHandle,
+    ) = coroutineScope {
         handleAsyncStateTransition(initialState, handle).join()
         handle.closeSolutionChannelWithNoSolutionIfNeeded(initialState.context.query)
     }
 
-    private fun initialState(goal: Struct, options: SolveOptions): State {
-        currentContext = ConcurrentExecutionContext(
-            goals = goal.toGoals(),
-            step = 1,
-            query = goal,
-            libraries = libraries,
-            flags = flags,
-            staticKb = staticKb.toImmutableTheory(),
-            dynamicKb = dynamicKb.toMutableTheory(),
-            operators = operators,
-            inputChannels = inputChannels,
-            outputChannels = outputChannels,
-            customData = currentContext.customData,
-            maxDuration = options.timeout,
-            startTime = currentTimeInstant()
-        )
+    private fun initialState(
+        goal: Struct,
+        options: SolveOptions,
+    ): State {
+        currentContext =
+            ConcurrentExecutionContext(
+                goals = goal.toGoals(),
+                step = 1,
+                query = goal,
+                libraries = libraries,
+                flags = flags,
+                staticKb = staticKb.toImmutableTheory(),
+                dynamicKb = dynamicKb.toMutableTheory(),
+                operators = operators,
+                inputChannels = inputChannels,
+                outputChannels = outputChannels,
+                customData = currentContext.customData,
+                maxDuration = options.timeout,
+                startTime = currentTimeInstant(),
+            )
         return StateGoalSelection(currentContext)
     }
 
-    override fun solveConcurrently(goal: Struct, options: SolveOptions): ReceiveChannel<Solution> {
+    override fun solveConcurrently(
+        goal: Struct,
+        options: SolveOptions,
+    ): ReceiveChannel<Solution> {
         val channel = KtChannel<Solution>(KtChannel.UNLIMITED)
         val initialState = initialState(goal, options)
         val handle = ConcurrentResolutionHandle(options, channel)
@@ -139,7 +152,10 @@ internal open class ConcurrentSolverImpl(
         return channel
     }
 
-    override fun solveImpl(goal: Struct, options: SolveOptions): Sequence<Solution> {
+    override fun solveImpl(
+        goal: Struct,
+        options: SolveOptions,
+    ): Sequence<Solution> {
         return solveConcurrently(goal, options).toSequence().ensureAtMostOneNegative()
     }
 
@@ -152,7 +168,7 @@ internal open class ConcurrentSolverImpl(
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ) = ConcurrentSolverImpl(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun clone(): ConcurrentSolverImpl = copy()
@@ -166,16 +182,17 @@ internal open class ConcurrentSolverImpl(
         operators: OperatorSet,
         inputChannels: InputStore,
         outputChannels: OutputStore,
-        trustKb: Boolean
-    ): ConcurrentExecutionContext = ConcurrentExecutionContext(
-        unificator = unificator,
-        libraries = libraries,
-        flags = flags,
-        staticKb = if (trustKb) staticKb.toImmutableTheory() else Theory.empty(unificator),
-        dynamicKb = if (trustKb) dynamicKb.toMutableTheory() else MutableTheory.empty(unificator),
-        operators = getAllOperators(libraries).toOperatorSet(),
-        inputChannels = inputChannels,
-        outputChannels = outputChannels,
-        startTime = 0L
-    )
+        trustKb: Boolean,
+    ): ConcurrentExecutionContext =
+        ConcurrentExecutionContext(
+            unificator = unificator,
+            libraries = libraries,
+            flags = flags,
+            staticKb = if (trustKb) staticKb.toImmutableTheory() else Theory.empty(unificator),
+            dynamicKb = if (trustKb) dynamicKb.toMutableTheory() else MutableTheory.empty(unificator),
+            operators = getAllOperators(libraries).toOperatorSet(),
+            inputChannels = inputChannels,
+            outputChannels = outputChannels,
+            startTime = 0L,
+        )
 }

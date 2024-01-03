@@ -8,9 +8,8 @@ import it.unibo.tuprolog.theory.TheoryUtils
 import it.unibo.tuprolog.unify.Unificator
 
 internal class MutableReteClauseMultiSet private constructor(
-    rete: ReteTree
+    rete: ReteTree,
 ) : MutableClauseMultiSet, AbstractMutableReteClauseCollection<MutableReteClauseMultiSet>(rete) {
-
     init {
         require(!rete.isOrdered)
     }
@@ -20,11 +19,9 @@ internal class MutableReteClauseMultiSet private constructor(
         TheoryUtils.checkClausesCorrect(clauses)
     }
 
-    override fun count(clause: Clause): Long =
-        rete.get(clause).count().toLong()
+    override fun count(clause: Clause): Long = rete.get(clause).count().toLong()
 
-    override fun get(clause: Clause): Sequence<Clause> =
-        rete.get(clause)
+    override fun get(clause: Clause): Sequence<Clause> = rete.get(clause)
 
     override fun equals(other: Any?): Boolean {
         return if (other is MutableClauseMultiSet) {

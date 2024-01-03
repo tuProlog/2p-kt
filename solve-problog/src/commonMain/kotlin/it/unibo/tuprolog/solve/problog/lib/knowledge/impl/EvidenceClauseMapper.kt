@@ -37,7 +37,7 @@ internal object EvidenceClauseMapper : ClauseMapper {
             throw TuPrologException("Invalid evidence predicate: ${clause.head}")
         }
 
-        /* Adjust implicit evidence predicates */
+        // Adjust implicit evidence predicates
         var headTerm = clause.head
         if (headTerm.arity == 1) {
             headTerm = Struct.of(headTerm.functor, headTerm[0], Truth.TRUE)
@@ -49,9 +49,9 @@ internal object EvidenceClauseMapper : ClauseMapper {
             } else {
                 Rule.of(
                     headTerm,
-                    clause.body.withBodyExplanation(Var.anonymous())
+                    clause.body.withBodyExplanation(Var.anonymous()),
                 )
-            }
+            },
         )
     }
 }

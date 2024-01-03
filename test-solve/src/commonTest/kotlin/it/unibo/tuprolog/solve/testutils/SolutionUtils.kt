@@ -14,7 +14,6 @@ import it.unibo.tuprolog.solve.extractSignature
  * @author Enrico
  */
 internal object SolutionUtils {
-
     private val solutionScope = Scope.empty()
     internal val aQuery = with(solutionScope) { Struct.of("f", varOf("A")) }
     internal val querySignature = aQuery.extractSignature()

@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestCallImpl(
     private val solverFactory: SolverFactory,
-    override val errorSignature: Signature
+    override val errorSignature: Signature,
 ) : TestCall {
     override fun testCallCut() {
         logicProgramming {
@@ -17,7 +17,7 @@ internal class TestCallImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -31,7 +31,7 @@ internal class TestCallImpl(
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -45,7 +45,7 @@ internal class TestCallImpl(
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -59,7 +59,7 @@ internal class TestCallImpl(
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -77,11 +77,11 @@ internal class TestCallImpl(
                         InstantiationError.forGoal(
                             DummyInstances.executionContext,
                             errorSignature,
-                            varOf("X")
-                        )
-                    )
+                            varOf("X"),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -100,11 +100,11 @@ internal class TestCallImpl(
                             DummyInstances.executionContext,
                             errorSignature,
                             TypeError.Expected.CALLABLE,
-                            numOf(1)
-                        )
-                    )
+                            numOf(1),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -122,11 +122,11 @@ internal class TestCallImpl(
                         InstantiationError.forGoal(
                             DummyInstances.executionContext,
                             errorSignature,
-                            varOf("X")
-                        )
-                    )
+                            varOf("X"),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -145,11 +145,11 @@ internal class TestCallImpl(
                             DummyInstances.executionContext,
                             errorSignature,
                             TypeError.Expected.CALLABLE,
-                            numOf(1)
-                        )
-                    )
+                            numOf(1),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -168,11 +168,12 @@ internal class TestCallImpl(
                             DummyInstances.executionContext,
                             errorSignature,
                             TypeError.Expected.CALLABLE,
-                            fail and 1 // solver returns 1
-                        )
-                    )
+                            // solver returns 1
+                            fail and 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -191,11 +192,12 @@ internal class TestCallImpl(
                             DummyInstances.executionContext,
                             errorSignature,
                             TypeError.Expected.CALLABLE,
-                            write(3) and 1 // solver returns 1
-                        )
-                    )
+                            // solver returns 1
+                            write(3) and 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -214,11 +216,12 @@ internal class TestCallImpl(
                             DummyInstances.executionContext,
                             errorSignature,
                             TypeError.Expected.CALLABLE,
-                            (1 or true) // solver returns 1
-                        )
-                    )
+                            // solver returns 1
+                            (1 or true),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

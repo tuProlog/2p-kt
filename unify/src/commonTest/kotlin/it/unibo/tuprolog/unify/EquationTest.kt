@@ -22,7 +22,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class EquationTest {
-
     /** Correct instances of equations, whose type is recognizable without exploring in deep the components */
     private val correctShallowEquationsInstances =
         EquationUtils.shallowIdentityEquations.map { (lhs, rhs) -> Equation.Identity(lhs, rhs) } +
@@ -76,17 +75,19 @@ internal class EquationTest {
     fun equationOfShouldReturnCorrectNumberOfEquations() {
         assertEquals(
             EquationUtils.mixedAllEquations.count(),
-            EquationUtils.mixedAllEquations.map { Equation.of(it) }.count()
+            EquationUtils.mixedAllEquations.map { Equation.of(it) }.count(),
         )
     }
 
     @Test
     fun equationOfAutomaticallySwapsAssignments() {
-        val correct = EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.of(lhs, rhs) } +
-            EquationUtils.assignmentEquations.map { Equation.of(it) }
+        val correct =
+            EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.of(lhs, rhs) } +
+                EquationUtils.assignmentEquations.map { Equation.of(it) }
 
-        val toBeTested = EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) -> Equation.of(lhs, rhs) } +
-            EquationUtils.assignmentEquationsShuffled.map { Equation.of(it) }
+        val toBeTested =
+            EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) -> Equation.of(lhs, rhs) } +
+                EquationUtils.assignmentEquationsShuffled.map { Equation.of(it) }
 
         assertEquals(correct, toBeTested)
     }
@@ -135,8 +136,9 @@ internal class EquationTest {
 
     @Test
     fun equationAllOfAutomaticallySwapsAssignments() {
-        val correct = EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.allOf(lhs, rhs).toList() } +
-            EquationUtils.assignmentEquations.map { Equation.allOf(it).toList() }
+        val correct =
+            EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.allOf(lhs, rhs).toList() } +
+                EquationUtils.assignmentEquations.map { Equation.allOf(it).toList() }
 
         val toBeTested =
             EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) -> Equation.allOf(lhs, rhs).toList() } +
@@ -168,9 +170,10 @@ internal class EquationTest {
 
     @Test
     fun swapCanInvertAllInvertibleEquations() {
-        val testableItems = EquationUtils.allIdentityEquations +
-            EquationUtils.allContradictionEquations +
-            EquationUtils.comparisonEquations
+        val testableItems =
+            EquationUtils.allIdentityEquations +
+                EquationUtils.allContradictionEquations +
+                EquationUtils.comparisonEquations
 
         val correct = testableItems.map { (lhs, rhs) -> rhs to lhs }.map { Equation.of(it) }
         val toBeTested = testableItems.map { Equation.of(it) }.map(Equation::swap)
@@ -194,7 +197,7 @@ internal class EquationTest {
         assertNoIdentities(
             EquationUtils.mixedAllEquations.map { (lhs, rhs) ->
                 Equation.of(lhs, rhs, { _, _ -> false })
-            }.asSequence()
+            }.asSequence(),
         )
     }
 
@@ -203,7 +206,7 @@ internal class EquationTest {
         assertNoIdentities(
             EquationUtils.mixedAllEquations.map {
                 Equation.of(it) { _, _ -> false }
-            }.asSequence()
+            }.asSequence(),
         )
     }
 
@@ -212,7 +215,7 @@ internal class EquationTest {
         assertNoIdentities(
             EquationUtils.mixedAllEquations.flatMap { (lhs, rhs) ->
                 Equation.allOf(lhs, rhs, { _, _ -> false }).asIterable()
-            }.asSequence()
+            }.asSequence(),
         )
     }
 
@@ -221,7 +224,7 @@ internal class EquationTest {
         assertNoIdentities(
             EquationUtils.mixedAllEquations.flatMap {
                 Equation.allOf(it) { _, _ -> false }.asIterable()
-            }.asSequence()
+            }.asSequence(),
         )
     }
 
@@ -256,9 +259,10 @@ internal class EquationTest {
         val correct = EquationUtils.assignmentEquations.map { Substitution.of(it) }
 
         @Suppress("UNCHECKED_CAST")
-        val toBeTested = EquationUtils.assignmentEquations
-            .map { Equation.of(it) }
-            .map { it.toSubstitution() }
+        val toBeTested =
+            EquationUtils.assignmentEquations
+                .map { Equation.of(it) }
+                .map { it.toSubstitution() }
 
         assertEquals(correct, toBeTested)
     }
@@ -268,9 +272,10 @@ internal class EquationTest {
         val correct = Substitution.of(EquationUtils.assignmentEquations)
 
         @Suppress("UNCHECKED_CAST")
-        val toBeTested = EquationUtils.assignmentEquations
-            .map { Equation.of(it) }
-            .toSubstitution()
+        val toBeTested =
+            EquationUtils.assignmentEquations
+                .map { Equation.of(it) }
+                .toSubstitution()
 
         assertEquals(correct, toBeTested)
     }

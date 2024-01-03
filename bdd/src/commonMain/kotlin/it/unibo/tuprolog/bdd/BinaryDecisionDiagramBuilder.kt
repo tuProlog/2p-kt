@@ -16,13 +16,16 @@ import kotlin.js.JsName
  * @author Jason Dellaluce
  */
 interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
-
     /**
      * Returns an instance of [BinaryDecisionDiagram.Variable] with
      * the provided input.
      * */
     @JsName("buildVariable")
-    fun buildVariable(value: T, low: BinaryDecisionDiagram<T>, high: BinaryDecisionDiagram<T>): BinaryDecisionDiagram<T>
+    fun buildVariable(
+        value: T,
+        low: BinaryDecisionDiagram<T>,
+        high: BinaryDecisionDiagram<T>,
+    ): BinaryDecisionDiagram<T>
 
     /**
      * Returns an instance of [BinaryDecisionDiagram.Terminal] with
@@ -68,7 +71,7 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
          * */
         @JsName("reducedOf")
         fun <E : Comparable<E>> reducedOf(
-            delegate: BinaryDecisionDiagramBuilder<E> = defaultOf()
+            delegate: BinaryDecisionDiagramBuilder<E> = defaultOf(),
         ): BinaryDecisionDiagramBuilder<E> {
             return ReducedBinaryDecisionDiagramBuilder(delegate)
         }

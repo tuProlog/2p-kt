@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.Clause
  * foreseeing to take strong decisions upon the actions to be performed on the subtrees it branches on
  */
 internal interface TopLevelReteNode : ReteNode {
-
     /**Retracts the first matching occurrence of the given [Clause] from this [ReteTree]*/
     fun retractFirst(clause: Clause): Sequence<Clause>
 }

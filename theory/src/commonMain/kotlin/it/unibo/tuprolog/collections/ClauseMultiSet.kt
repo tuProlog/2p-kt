@@ -11,7 +11,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface ClauseMultiSet : ClauseCollection {
-
     /** Gives the number of [Clause] that would unify over the given clause. **/
     @JsName("count")
     fun count(clause: Clause): Long
@@ -34,7 +33,6 @@ interface ClauseMultiSet : ClauseCollection {
     override fun retrieveAll(clause: Clause): RetrieveResult<out ClauseMultiSet>
 
     companion object {
-
         /** Creates an empty [ClauseMultiSet] **/
         @JvmStatic
         @JsName("empty")
@@ -43,38 +41,50 @@ interface ClauseMultiSet : ClauseCollection {
         /** Creates a [ClauseMultiSet] with given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(unificator: Unificator, vararg clause: Clause): ClauseMultiSet =
-            of(unificator, clause.asIterable())
+        fun of(
+            unificator: Unificator,
+            vararg clause: Clause,
+        ): ClauseMultiSet = of(unificator, clause.asIterable())
 
         /** Let developers easily create a [ClauseMultiSet] programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(unificator: Unificator, vararg clause: Scope.() -> Clause): ClauseMultiSet =
+        fun of(
+            unificator: Unificator,
+            vararg clause: Scope.() -> Clause,
+        ): ClauseMultiSet =
             of(
                 unificator,
                 clause.map {
                     Scope.empty(it)
-                }
+                },
             )
 
         /** Creates a [ClauseMultiSet] from the given [Sequence] of [Clause] */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(unificator: Unificator, clauses: Sequence<Clause>): ClauseMultiSet =
-            of(unificator, clauses.asIterable())
+        fun of(
+            unificator: Unificator,
+            clauses: Sequence<Clause>,
+        ): ClauseMultiSet = of(unificator, clauses.asIterable())
 
         /** Creates a [ClauseMultiSet] from the given [Iterable] of [Clause] */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(unificator: Unificator, clauses: Iterable<Clause>): ClauseMultiSet =
-            ReteClauseMultiSet(unificator, clauses)
+        fun of(
+            unificator: Unificator,
+            clauses: Iterable<Clause>,
+        ): ClauseMultiSet = ReteClauseMultiSet(unificator, clauses)
 
         @JvmStatic
         @JsName("areEquals")
-        fun equals(multiSet1: ClauseMultiSet, multiSet2: ClauseMultiSet): Boolean {
+        fun equals(
+            multiSet1: ClauseMultiSet,
+            multiSet2: ClauseMultiSet,
+        ): Boolean {
             return itemWiseEquals(
                 multiSet1.sortedWith(TermComparator.DefaultComparator),
-                multiSet2.sortedWith(TermComparator.DefaultComparator)
+                multiSet2.sortedWith(TermComparator.DefaultComparator),
             )
         }
 
@@ -83,7 +93,7 @@ interface ClauseMultiSet : ClauseCollection {
         fun hashCode(multiSet: ClauseMultiSet): Int {
             return itemWiseHashCode(
                 ClauseMultiSet::class,
-                multiSet.sortedWith(TermComparator.DefaultComparator)
+                multiSet.sortedWith(TermComparator.DefaultComparator),
             )
         }
     }

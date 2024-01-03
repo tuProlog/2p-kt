@@ -15,39 +15,46 @@ import it.unibo.tuprolog.solve.exception.LogicError
  *
  * @author Giovanni
  */
-class MessageError internal constructor( // TODO: 16/01/2020 test this class
+class MessageError internal constructor(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    extraData: Term? = null
+    extraData: Term? = null,
 ) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
-        extraData: Term? = null
+        extraData: Term? = null,
     ) : this(message, cause, arrayOf(context), extraData)
 
     /** The content of this message error */
     val content: Term by lazy { extraData ?: errorStruct }
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): MessageError =
-        MessageError(message, cause, contexts.setItem(index, newContext), extraData)
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): MessageError = MessageError(message, cause, contexts.setItem(index, newContext), extraData)
 
     override fun updateLastContext(newContext: ExecutionContext): MessageError =
-        updateContext(newContext, contexts.lastIndex)
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): MessageError =
         MessageError(message, cause, contexts.addLast(newContext), extraData)
 
     companion object {
-
         /** The message error Struct functor */
+        @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = ""
 
         /** Factory method to create a [MessageError] */
-        fun of(content: Term, context: ExecutionContext, cause: Throwable? = null) =
-            MessageError(content.toString(), cause, context, content)
+        fun of(
+            content: Term,
+            context: ExecutionContext,
+            cause: Throwable? = null,
+        ) = MessageError(content.toString(), cause, context, content)
     }
 }

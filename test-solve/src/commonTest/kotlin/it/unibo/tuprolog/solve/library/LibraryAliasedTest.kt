@@ -11,7 +11,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class LibraryAliasedTest {
-
     private val library = LibraryUtils.makeLib(LibraryUtils.library, ::libraryWithAliasConstructor)
     private val overridingLibrary = LibraryUtils.makeLib(LibraryUtils.overridingLibrary, ::libraryWithAliasConstructor)
 

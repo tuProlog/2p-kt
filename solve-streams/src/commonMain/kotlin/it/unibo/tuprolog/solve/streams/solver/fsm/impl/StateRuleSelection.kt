@@ -27,79 +27,86 @@ import it.unibo.tuprolog.solve.streams.solver.shouldCutExecuteInRuleSelection
  * @author Enrico
  */
 internal class StateRuleSelection(
-    override val solve: Solve.Request<StreamsExecutionContext>
+    override val solve: Solve.Request<StreamsExecutionContext>,
 ) : AbstractTimedState(solve) {
-
     /** The execute function to be used when a [State] needs, internally, to execute sub-[State]s behaviour */
     private val subStateExecute: (State) -> Sequence<AlreadyExecutedState> = StateMachineExecutor::executeWrapping
 
-    override fun behaveTimed(): Sequence<State> = sequence {
-        val currentGoal = solve.query
-        val matchingRules = solve.context.retrieveRulesMatching(currentGoal)
-        val isChoicePoint = moreThanOne(matchingRules)
+    override fun behaveTimed(): Sequence<State> =
+        sequence {
+            val currentGoal = solve.query
+            val matchingRules = solve.context.retrieveRulesMatching(currentGoal)
+            val isChoicePoint = moreThanOne(matchingRules)
 
-        when {
-            matchingRules.none() -> yield(stateEndFalse())
+            when {
+                matchingRules.none() -> yield(stateEndFalse())
 
-            else ->
-                with(solve.context) {
-                    matchingRules.orderWithStrategy(this, solverStrategies::clauseChoiceStrategy)
-                }.map { it.prepareForExecution().freshCopy() as Rule }
-                    .forEachWithLookahead { refreshedRule, hasAlternatives ->
-                        val unifyingSubstitution = context.unificator.mgu(currentGoal, refreshedRule.head)
+                else ->
+                    with(solve.context) {
+                        matchingRules.orderWithStrategy(this, solverStrategies::clauseChoiceStrategy)
+                    }.map { it.prepareForExecution().freshCopy() as Rule }
+                        .forEachWithLookahead { refreshedRule, hasAlternatives ->
+                            val unifyingSubstitution = context.unificator.mgu(currentGoal, refreshedRule.head)
 
-                        val wellFormedRuleBody = refreshedRule.body.apply(unifyingSubstitution) as Struct
+                            val wellFormedRuleBody = refreshedRule.body.apply(unifyingSubstitution) as Struct
 
-                        val subSolveRequest =
-                            solve.newSolveRequest(
-                                wellFormedRuleBody,
-                                unifyingSubstitution,
-                                isChoicePointChild = isChoicePoint,
-                                requestIssuingInstant = currentTimeInstant()
-                            )
+                            val subSolveRequest =
+                                solve.newSolveRequest(
+                                    wellFormedRuleBody,
+                                    unifyingSubstitution,
+                                    isChoicePointChild = isChoicePoint,
+                                    requestIssuingInstant = currentTimeInstant(),
+                                )
 
-                        val subInitialState = StateInit(subSolveRequest.initializeForSubRuleScope())
-                            .also { yield(it.asAlreadyExecuted()) }
+                            val subInitialState =
+                                StateInit(subSolveRequest.initializeForSubRuleScope())
+                                    .also { yield(it.asAlreadyExecuted()) }
 
-                        var cutNextSiblings = false
+                            var cutNextSiblings = false
 
-                        // execute internally the sub-request in a sub-state-machine, to see what it will respond
-                        subStateExecute(subInitialState).forEach {
-                            val subState = it.wrappedState
+                            // execute internally the sub-request in a sub-state-machine, to see what it will respond
+                            subStateExecute(subInitialState).forEach {
+                                val subState = it.wrappedState
 
-                            // find in sub-goal state sequence, the final state responding to current solveRequest
-                            if (subState is FinalState && subState.solve.solution.query == subSolveRequest.query) {
-                                if (subState.solve.sideEffectManager.shouldCutExecuteInRuleSelection()) {
-                                    cutNextSiblings = true
-                                }
+                                // find in sub-goal state sequence, the final state responding to current solveRequest
+                                if (subState is FinalState && subState.solve.solution.query == subSolveRequest.query) {
+                                    if (subState.solve.sideEffectManager.shouldCutExecuteInRuleSelection()) {
+                                        cutNextSiblings = true
+                                    }
 
-                                // yield only non-false states or false states when there are no open alternatives (because no more or cut)
-                                if (subState !is StateEnd.False || !hasAlternatives || cutNextSiblings) {
-                                    val extendedScopeSideEffectManager = subState.solve.sideEffectManager
-                                        .extendParentScopeWith(solve.context.sideEffectManager)
+                                    // yield only non-false states or false states when there are no open alternatives (because no more or cut)
+                                    if (subState !is StateEnd.False || !hasAlternatives || cutNextSiblings) {
+                                        val extendedScopeSideEffectManager =
+                                            subState.solve.sideEffectManager
+                                                .extendParentScopeWith(solve.context.sideEffectManager)
 
-                                    yield(
-                                        stateEnd(
-                                            subState.solve.copy(
-                                                solution = subState.solve.solution.removeSubstitutionFor(refreshedRule.variables),
-                                                sideEffectManager = extendedScopeSideEffectManager
-                                            )
+                                        yield(
+                                            stateEnd(
+                                                subState.solve.copy(
+                                                    solution =
+                                                        subState.solve.solution.removeSubstitutionFor(
+                                                            refreshedRule.variables,
+                                                        ),
+                                                    sideEffectManager = extendedScopeSideEffectManager,
+                                                ),
+                                            ),
                                         )
-                                    )
-                                }
+                                    }
 
-                                if (subState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
-                            } else {
-                                yield(it) // return wrapped subState as is, only if not interested in it
+                                    // if halt reached, overall computation should stop
+                                    if (subState is StateEnd.Halt) return@sequence
+                                } else {
+                                    // return wrapped subState as is, only if not interested in it
+                                    yield(it)
+                                }
                             }
+                            // cut here other matching rules trial
+                            if (cutNextSiblings) return@sequence
                         }
-                        if (cutNextSiblings) return@sequence // cut here other matching rules trial
-                    }
+            }
         }
-    }
 
     private companion object {
-
         /**
          * Retrieves from receiver [ExecutionContext] those rules whose head matches [currentGoal]
          *
@@ -120,9 +127,10 @@ internal class StateRuleSelection(
          * Utility function to eliminate from solution substitution non meaningful variables
          * for the "upper scope" query, (i.e. variables introduced only for solving the "current" query)
          */
-        private fun Solution.removeSubstitutionFor(unusedVariables: Sequence<Var>) = when (this) {
-            is Solution.Yes -> copy(substitution = substitution - unusedVariables.asIterable())
-            else -> this
-        }
+        private fun Solution.removeSubstitutionFor(unusedVariables: Sequence<Var>) =
+            when (this) {
+                is Solution.Yes -> copy(substitution = substitution - unusedVariables.asIterable())
+                else -> this
+            }
     }
 }

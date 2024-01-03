@@ -32,7 +32,6 @@ import it.unibo.tuprolog.core.List as LogicList
  * @author Enrico
  */
 internal object TermTypeAssertionUtils {
-
     /** Checks passed term to be a Variable or fails otherwise */
     fun assertIsVar(any: Any) {
         assertTrue(any is Term)
@@ -65,7 +64,7 @@ internal object TermTypeAssertionUtils {
             any is Struct,
             any is Clause,
             any is Cons,
-            any is Constant
+            any is Constant,
         )
     }
 
@@ -78,7 +77,7 @@ internal object TermTypeAssertionUtils {
         assertTrue(
             any.isConstant,
             any.isNumber,
-            any.isGround
+            any.isGround,
         )
 
         assertFalse(
@@ -101,7 +100,7 @@ internal object TermTypeAssertionUtils {
             any is Var,
             any is Struct,
             any is Clause,
-            any is Cons
+            any is Cons,
         )
     }
 
@@ -160,7 +159,7 @@ internal object TermTypeAssertionUtils {
             any is Cons,
             any is Tuple,
             any is Constant,
-            any is Indicator
+            any is Indicator,
         )
     }
 
@@ -175,7 +174,7 @@ internal object TermTypeAssertionUtils {
             any.isStruct,
             any.isConstant,
             any.isAtom,
-            any.isGround
+            any.isGround,
         )
 
         assertFalse(
@@ -193,7 +192,7 @@ internal object TermTypeAssertionUtils {
             any is Numeric,
             any is Clause,
             any is Var,
-            any is Cons
+            any is Cons,
         )
     }
 
@@ -213,7 +212,7 @@ internal object TermTypeAssertionUtils {
             any is LogicList,
             any is Block,
             any is Empty,
-            any is Truth
+            any is Truth,
         )
     }
 
@@ -235,7 +234,7 @@ internal object TermTypeAssertionUtils {
             any is LogicList,
             any is Empty,
             any is EmptyBlock,
-            any is EmptyList
+            any is EmptyList,
         )
     }
 
@@ -247,7 +246,7 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(
             any.isStruct,
-            any.isTuple
+            any.isTuple,
         )
 
         assertFalse(
@@ -275,7 +274,7 @@ internal object TermTypeAssertionUtils {
             any is Cons,
             any is Var,
             any is Constant,
-            any is Indicator
+            any is Indicator,
         )
     }
 
@@ -287,7 +286,7 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(
             any.isStruct,
-            any.isIndicator
+            any.isIndicator,
         )
 
         assertFalse(
@@ -315,7 +314,7 @@ internal object TermTypeAssertionUtils {
             any is Cons,
             any is Var,
             any is Constant,
-            any is Tuple
+            any is Tuple,
         )
     }
 
@@ -329,7 +328,7 @@ internal object TermTypeAssertionUtils {
         assertTrue(
             any.isStruct,
             any.isList,
-            any.isCons
+            any.isCons,
         )
 
         assertFalse(
@@ -354,7 +353,7 @@ internal object TermTypeAssertionUtils {
             any is Atom,
             any is Clause,
             any is Var,
-            any is Constant
+            any is Constant,
         )
     }
 
@@ -366,7 +365,7 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(
             any.isStruct,
-            any.isBlock
+            any.isBlock,
         )
 
         assertFalse(
@@ -393,7 +392,7 @@ internal object TermTypeAssertionUtils {
             any is Clause,
             any is Cons,
             any is Var,
-            any is Constant
+            any is Constant,
         )
     }
 
@@ -406,7 +405,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(
             any.isTrue,
             any.isFail,
-            any is Truth
+            any is Truth,
         )
     }
 
@@ -419,14 +418,14 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(
             any.isList,
-            any.isEmptyList
+            any.isEmptyList,
         )
 
         assertFalse(
             any.isEmptyBlock,
             any.isBlock,
             any is Block,
-            any is EmptyBlock
+            any is EmptyBlock,
         )
     }
 
@@ -439,14 +438,14 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(
             any.isEmptyBlock,
-            any.isBlock
+            any.isBlock,
         )
 
         assertFalse(
             any.isList,
             any.isEmptyList,
             any is LogicList,
-            any is EmptyList
+            any is EmptyList,
         )
     }
 
@@ -458,7 +457,7 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(
             any.isStruct,
-            any.isClause
+            any.isClause,
         )
 
         assertFalse(
@@ -484,7 +483,7 @@ internal object TermTypeAssertionUtils {
             any is LogicList,
             any is Atom,
             any is Constant,
-            any is Indicator
+            any is Indicator,
         )
     }
 
@@ -497,7 +496,7 @@ internal object TermTypeAssertionUtils {
 
         assertFalse(
             any.isDirective,
-            any is Directive
+            any is Directive,
         )
     }
 
@@ -512,7 +511,7 @@ internal object TermTypeAssertionUtils {
             any.isRule,
             any.isFact,
             any is Rule,
-            any is Fact
+            any is Fact,
         )
     }
 
@@ -525,12 +524,12 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(
             any.isRule,
-            any.isFact
+            any.isFact,
         )
 
         assertFalse(
             any.isDirective,
-            any is Directive
+            any is Directive,
         )
     }
 }

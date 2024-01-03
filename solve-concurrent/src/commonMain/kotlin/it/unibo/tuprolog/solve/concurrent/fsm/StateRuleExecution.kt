@@ -5,12 +5,12 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 
 data class StateRuleExecution(override val context: ConcurrentExecutionContext) : AbstractState(context) {
-
     private val failureState: EndState
-        get() = StateEnd(
-            solution = Solution.no(context.query),
-            context = context.copy(step = nextStep())
-        )
+        get() =
+            StateEnd(
+                solution = Solution.no(context.query),
+                context = context.copy(step = nextStep()),
+            )
 
     override fun computeNext(): Iterable<State> {
         val substitution = with(context) { unificator.mgu(currentGoal!!, rule!!.head) }
@@ -24,12 +24,12 @@ data class StateRuleExecution(override val context: ConcurrentExecutionContext) 
                             goals = subGoals.toGoals(),
                             rule = null,
                             substitution = newSubstitution,
-                            step = nextStep()
-                        )
+                            step = nextStep(),
+                        ),
                     )
                 }
                 else -> failureState
-            }
+            },
         )
     }
 

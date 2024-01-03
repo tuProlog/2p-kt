@@ -8,7 +8,6 @@ import kotlin.test.Test
 class TestClassicSolverConstruction :
     TestSolverConstruction<ClassicSolver, MutableClassicSolver>,
     SolverFactory by ClassicSolverFactory {
-
     private val prototype = TestSolverConstruction.prototype<ClassicSolver, MutableClassicSolver>(this, DefaultBuiltins)
 
     @Test

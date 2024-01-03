@@ -12,9 +12,8 @@ import it.unibo.tuprolog.solve.TimeDuration
 
 class TuPrologSolveQuery : AbstractTuPrologCommand(
     help = "Compute a particular query and then terminate",
-    name = "solve"
+    name = "solve",
 ) {
-
     private val query: String by argument()
     private val maxSolutions: Int by option("-n", "--numberOfSolutions", help = "Number of solution to calculate").int()
         .default(0)

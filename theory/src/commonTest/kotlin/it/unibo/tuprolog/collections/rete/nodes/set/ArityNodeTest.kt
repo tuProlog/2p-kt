@@ -27,7 +27,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class ArityNodeTest {
-
     private lateinit var emptyArityNodes: Iterable<ArityNode>
     private lateinit var filledArityNodes: Iterable<ArityNode>
 
@@ -36,16 +35,17 @@ internal class ArityNodeTest {
     @BeforeTest
     fun init() {
         emptyArityNodes = (0..3).map { ArityNode(it) }
-        filledArityNodes = (0..3).map { arity ->
-            ArityNode(arity).apply { ReteNodeUtils.rules.forEach { put(it) } }
-        }
+        filledArityNodes =
+            (0..3).map { arity ->
+                ArityNode(arity).apply { ReteNodeUtils.rules.forEach { put(it) } }
+            }
     }
 
     @Test
     fun arityNodeCannotAcceptNegativeArityUponConstruction() {
         assertFailsWith<IllegalArgumentException> {
             ArityNode(
-                -1
+                -1,
             )
         }
     }

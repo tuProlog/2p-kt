@@ -15,17 +15,19 @@ import it.unibo.tuprolog.utils.buffered
 object Retract : UnaryPredicate<ExecutionContext>("retract") {
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> {
         ensuringArgumentIsWellFormedClause(0)
-        val clause: Clause = when (first) {
-            is Clause -> first
-            is Struct -> Rule.of(first, Var.anonymous())
-            else -> return sequenceOf(ensuringArgumentIsCallable(0).replyFail())
-        }
+        val clause: Clause =
+            when (first) {
+                is Clause -> first
+                is Struct -> Rule.of(first, Var.anonymous())
+                else -> return sequenceOf(ensuringArgumentIsCallable(0).replyFail())
+            }
         ensuringClauseProcedureHasPermission(clause, PermissionError.Operation.MODIFY)
         return context.dynamicKb[clause].buffered().map {
-            val substitution = when (first) {
-                is Clause -> mgu(first, it) as Substitution.Unifier
-                else -> mgu(first, it.head!!) as Substitution.Unifier
-            }
+            val substitution =
+                when (first) {
+                    is Clause -> mgu(first, it) as Substitution.Unifier
+                    else -> mgu(first, it.head!!) as Substitution.Unifier
+                }
             replySuccess(substitution) {
                 removeDynamicClauses(it)
             }

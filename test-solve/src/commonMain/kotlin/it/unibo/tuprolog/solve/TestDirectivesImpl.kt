@@ -21,16 +21,16 @@ import kotlin.test.assertTrue
 
 @Suppress("DEPRECATION")
 class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirectives {
-
     override fun testDynamic1() {
         logicProgramming {
-            val initialStaticKb = theoryOf(
-                facts("f", 1..3),
-                staticDirective("g", 1),
-                facts("g", 4..6),
-                dynamicDirective("h", 1),
-                facts("h", 7..9)
-            )
+            val initialStaticKb =
+                theoryOf(
+                    facts("f", 1..3),
+                    staticDirective("g", 1),
+                    facts("g", 4..6),
+                    dynamicDirective("h", 1),
+                    facts("h", 7..9),
+                )
 
             val expectedStatic = theoryOf(initialStaticKb.take(8))
             val expectedDynamic = mutableTheoryOf(initialStaticKb.drop(8))
@@ -54,21 +54,23 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
 
     override fun testStatic1() {
         logicProgramming {
-            val initialDynamicKb = theoryOf(
-                facts("f", 1..3),
-                staticDirective("g", 1),
-                facts("g", 4..6),
-                dynamicDirective("h", 1),
-                facts("h", 7..9)
-            )
+            val initialDynamicKb =
+                theoryOf(
+                    facts("f", 1..3),
+                    staticDirective("g", 1),
+                    facts("g", 4..6),
+                    dynamicDirective("h", 1),
+                    facts("h", 7..9),
+                )
 
             val expectedStatic = theoryOf(initialDynamicKb.drop(4).take(3))
-            val expectedDynamic = theoryOf(
-                facts("f", 1..3),
-                staticDirective("g", 1),
-                dynamicDirective("h", 1),
-                facts("h", 7..9)
-            ).toMutableTheory()
+            val expectedDynamic =
+                theoryOf(
+                    facts("f", 1..3),
+                    staticDirective("g", 1),
+                    dynamicDirective("h", 1),
+                    facts("h", 7..9),
+                ).toMutableTheory()
 
             val solver = solverFactory.solverOf(staticKb = emptyTheory(), dynamicKb = initialDynamicKb)
 
@@ -87,15 +89,16 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
         }
     }
 
-    private fun theoryWithInit(initGoal: String): Theory = logicProgramming {
-        theoryOf(
-            directive { initGoal(write("a")) },
-            fact { "f"(1) },
-            directive { initGoal(tupleOf("f"(X), write("f"(X)))) },
-            fact { "f"(2) },
-            directive { initGoal(write("b")) }
-        )
-    }
+    private fun theoryWithInit(initGoal: String): Theory =
+        logicProgramming {
+            theoryOf(
+                directive { initGoal(write("a")) },
+                fact { "f"(1) },
+                directive { initGoal(tupleOf("f"(X), write("f"(X)))) },
+                fact { "f"(2) },
+                directive { initGoal(write("b")) },
+            )
+        }
 
     private fun testInit(initGoal: String) =
         logicProgramming {
@@ -105,18 +108,19 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
 
                 assertEquals(
                     ktListOf<Any>("a", "f(1)", "f(2)", "b"),
-                    writeEvents
+                    writeEvents,
                 )
 
                 val query = "f"(X)
-                val expectedSolutions = ktListOf(
-                    query.yes(X to 1),
-                    query.yes(X to 2)
-                )
+                val expectedSolutions =
+                    ktListOf(
+                        query.yes(X to 1),
+                        query.yes(X to 2),
+                    )
 
                 assertEquals(
                     expectedSolutions,
-                    solver.solve(query).toList()
+                    solver.solve(query).toList(),
                 )
             }
         }
@@ -128,13 +132,14 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     override fun testSetFlag2() {
         logicProgramming {
             for (solverOf in solverInitializers(solverFactory)) {
-                val solver = solverOf(
-                    theoryOf(
-                        directive { set_flag("a", 1) },
-                        directive { set_flag("b", 2) },
-                        directive { set_flag("c", 3) }
+                val solver =
+                    solverOf(
+                        theoryOf(
+                            directive { set_flag("a", 1) },
+                            directive { set_flag("b", 2) },
+                            directive { set_flag("c", 3) },
+                        ),
                     )
-                )
 
                 assertTrue { solver.flags.size >= 3 }
                 assertEquals(Integer.of(1), solver.flags["a"])
@@ -147,13 +152,14 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     override fun testSetPrologFlag2() {
         logicProgramming {
             for (solverOf in solverInitializers(solverFactory)) {
-                val solver = solverOf(
-                    theoryOf(
-                        directive { set_prolog_flag("a", 1) },
-                        directive { set_prolog_flag("b", 2) },
-                        directive { set_prolog_flag("c", 3) }
+                val solver =
+                    solverOf(
+                        theoryOf(
+                            directive { set_prolog_flag("a", 1) },
+                            directive { set_prolog_flag("b", 2) },
+                            directive { set_prolog_flag("c", 3) },
+                        ),
                     )
-                )
 
                 assertTrue { solver.flags.size >= 3 }
                 assertEquals(Integer.of(1), solver.flags["a"])
@@ -166,19 +172,21 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     override fun testOp3() {
         logicProgramming {
             for (solverOf in solverInitializers(solverFactory)) {
-                val solver = solverOf(
-                    theoryOf(
-                        directive { op(2, XFX, "++") },
-                        directive { op(3, XFY, "+++") },
-                        directive { op(4, YFX, "++++") }
+                val solver =
+                    solverOf(
+                        theoryOf(
+                            directive { op(2, XFX, "++") },
+                            directive { op(3, XFY, "+++") },
+                            directive { op(4, YFX, "++++") },
+                        ),
                     )
-                )
 
-                val expectedOperators = OperatorSet(
-                    Operator("++++", YFX, 4),
-                    Operator("+++", XFY, 3),
-                    Operator("++", XFX, 2)
-                )
+                val expectedOperators =
+                    OperatorSet(
+                        Operator("++++", YFX, 4),
+                        Operator("+++", XFY, 3),
+                        Operator("++", XFX, 2),
+                    )
 
                 for (operator in expectedOperators) {
                     assertTrue { operator in solver.operators }
@@ -190,21 +198,22 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     override fun testWrongDirectives() {
         logicProgramming {
             for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
-                val theory = theoryOf(
-                    directive { op("a", XFX, "++") },
-                    directive { op(3, "b", "+++") },
-                    directive { "set_flag"("a", "x") },
-                    directive { "dinamic"("f" / 1) },
-                    fact { "f"("a") },
-                    directive { "statyc"("g" / 1) },
-                    fact { "g"("b") },
-                    directive { "init"(write("something")) }
-                )
+                val theory =
+                    theoryOf(
+                        directive { op("a", XFX, "++") },
+                        directive { op(3, "b", "+++") },
+                        directive { "set_flag"("a", "x") },
+                        directive { "dinamic"("f" / 1) },
+                        fact { "f"("a") },
+                        directive { "statyc"("g" / 1) },
+                        fact { "g"("b") },
+                        directive { "init"(write("something")) },
+                    )
                 val solver = solverOf(theory)
 
                 assertEquals(
                     ktListOf<Any>(),
-                    events
+                    events,
                 )
 
                 sequenceOf(solver.staticKb, solver.dynamicKb)
@@ -214,9 +223,10 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
         }
     }
 
-    private fun theoryWithFailingInit(initGoal: String): Theory = logicProgramming {
-        theoryOf(directive { initGoal(fail) })
-    }
+    private fun theoryWithFailingInit(initGoal: String): Theory =
+        logicProgramming {
+            theoryOf(directive { initGoal(fail) })
+        }
 
     private fun testFailingInit(initGoal: String) =
         logicProgramming {
@@ -242,9 +252,10 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
         testFailingInit("solve")
     }
 
-    private fun theoryWithExceptionalInit(initGoal: String): Theory = logicProgramming {
-        theoryOf(directive { initGoal(X `is` (Y + 1)) })
-    }
+    private fun theoryWithExceptionalInit(initGoal: String): Theory =
+        logicProgramming {
+            theoryOf(directive { initGoal(X `is` (Y + 1)) })
+        }
 
     private fun testExceptionalInit(initGoal: String) =
         logicProgramming {

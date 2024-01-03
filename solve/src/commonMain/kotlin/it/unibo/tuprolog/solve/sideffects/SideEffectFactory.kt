@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.sideffects.impl.DefaultSideEffectFactory
 import kotlin.jvm.JvmStatic
 
 interface SideEffectFactory {
-
     companion object {
         @JvmStatic
         val default: SideEffectFactory = DefaultSideEffectFactory
@@ -23,11 +22,20 @@ interface SideEffectFactory {
 
     fun resetStaticKb(vararg clauses: Clause): SideEffect.ResetStaticKb
 
-    fun addStaticClauses(clauses: Iterable<Clause>, onTop: Boolean = false): SideEffect.AddStaticClauses
+    fun addStaticClauses(
+        clauses: Iterable<Clause>,
+        onTop: Boolean = false,
+    ): SideEffect.AddStaticClauses
 
-    fun addStaticClauses(clauses: Sequence<Clause>, onTop: Boolean = false): SideEffect.AddStaticClauses
+    fun addStaticClauses(
+        clauses: Sequence<Clause>,
+        onTop: Boolean = false,
+    ): SideEffect.AddStaticClauses
 
-    fun addStaticClauses(vararg clauses: Clause, onTop: Boolean = false): SideEffect.AddStaticClauses
+    fun addStaticClauses(
+        vararg clauses: Clause,
+        onTop: Boolean = false,
+    ): SideEffect.AddStaticClauses
 
     fun removeStaticClauses(clauses: Iterable<Clause>): SideEffect.RemoveStaticClauses
 
@@ -41,11 +49,20 @@ interface SideEffectFactory {
 
     fun resetDynamicKb(vararg clauses: Clause): SideEffect.ResetDynamicKb
 
-    fun addDynamicClauses(clauses: Iterable<Clause>, onTop: Boolean = false): SideEffect.AddDynamicClauses
+    fun addDynamicClauses(
+        clauses: Iterable<Clause>,
+        onTop: Boolean = false,
+    ): SideEffect.AddDynamicClauses
 
-    fun addDynamicClauses(clauses: Sequence<Clause>, onTop: Boolean = false): SideEffect.AddDynamicClauses
+    fun addDynamicClauses(
+        clauses: Sequence<Clause>,
+        onTop: Boolean = false,
+    ): SideEffect.AddDynamicClauses
 
-    fun addDynamicClauses(vararg clauses: Clause, onTop: Boolean = false): SideEffect.AddDynamicClauses
+    fun addDynamicClauses(
+        vararg clauses: Clause,
+        onTop: Boolean = false,
+    ): SideEffect.AddDynamicClauses
 
     fun removeDynamicClauses(clauses: Iterable<Clause>): SideEffect.RemoveDynamicClauses
 
@@ -57,7 +74,10 @@ interface SideEffectFactory {
 
     fun setFlags(vararg flags: Pair<String, Term>): SideEffect.SetFlags
 
-    fun setFlag(name: String, value: Term): SideEffect.SetFlags
+    fun setFlag(
+        name: String,
+        value: Term,
+    ): SideEffect.SetFlags
 
     fun resetFlags(flags: Map<String, Term>): SideEffect.ResetFlags
 
@@ -117,7 +137,10 @@ interface SideEffectFactory {
 
     fun openInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>): SideEffect.OpenInputChannels
 
-    fun openInputChannel(name: String, inputChannel: InputChannel<String>): SideEffect.OpenInputChannels
+    fun openInputChannel(
+        name: String,
+        inputChannel: InputChannel<String>,
+    ): SideEffect.OpenInputChannels
 
     fun resetInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>): SideEffect.ResetInputChannels
 
@@ -137,11 +160,18 @@ interface SideEffectFactory {
 
     fun openOutputChannels(vararg outputChannels: Pair<String, OutputChannel<String>>): SideEffect.OpenOutputChannels
 
-    fun openOutputChannel(name: String, outputChannel: OutputChannel<String>): SideEffect.OpenOutputChannels
+    fun openOutputChannel(
+        name: String,
+        outputChannel: OutputChannel<String>,
+    ): SideEffect.OpenOutputChannels
 
-    fun resetOutputChannels(outputChannels: Iterable<Pair<String, OutputChannel<String>>>): SideEffect.ResetOutputChannels
+    fun resetOutputChannels(
+        outputChannels: Iterable<Pair<String, OutputChannel<String>>>,
+    ): SideEffect.ResetOutputChannels
 
-    fun resetOutputChannels(outputChannels: Sequence<Pair<String, OutputChannel<String>>>): SideEffect.ResetOutputChannels
+    fun resetOutputChannels(
+        outputChannels: Sequence<Pair<String, OutputChannel<String>>>,
+    ): SideEffect.ResetOutputChannels
 
     fun resetOutputChannels(outputChannels: Map<String, OutputChannel<String>>): SideEffect.ResetOutputChannels
 
@@ -153,37 +183,55 @@ interface SideEffectFactory {
 
     fun closeOutputChannels(vararg names: String): SideEffect.CloseOutputChannels
 
-    fun addEphemeralData(key: String, value: Any): SideEffect.SetEphemeralData
+    fun addEphemeralData(
+        key: String,
+        value: Any,
+    ): SideEffect.SetEphemeralData
 
     fun <X> addEphemeralData(data: Map<String, X>): SideEffect.SetEphemeralData
 
     fun <X> addEphemeralData(vararg data: Pair<String, X>): SideEffect.SetEphemeralData
 
-    fun setEphemeralData(key: String, value: Any): SideEffect.SetEphemeralData
+    fun setEphemeralData(
+        key: String,
+        value: Any,
+    ): SideEffect.SetEphemeralData
 
     fun <X> setEphemeralData(data: Map<String, X>): SideEffect.SetEphemeralData
 
     fun <X> setEphemeralData(vararg data: Pair<String, X>): SideEffect.SetEphemeralData
 
-    fun addDurableData(key: String, value: Any): SideEffect.SetDurableData
+    fun addDurableData(
+        key: String,
+        value: Any,
+    ): SideEffect.SetDurableData
 
     fun <X> addDurableData(data: Map<String, X>): SideEffect.SetDurableData
 
     fun <X> addDurableData(vararg data: Pair<String, X>): SideEffect.SetDurableData
 
-    fun setDurableData(key: String, value: Any): SideEffect.SetDurableData
+    fun setDurableData(
+        key: String,
+        value: Any,
+    ): SideEffect.SetDurableData
 
     fun <X> setDurableData(data: Map<String, X>): SideEffect.SetDurableData
 
     fun <X> setDurableData(vararg data: Pair<String, X>): SideEffect.SetDurableData
 
-    fun addPersistentData(key: String, value: Any): SideEffect.SetPersistentData
+    fun addPersistentData(
+        key: String,
+        value: Any,
+    ): SideEffect.SetPersistentData
 
     fun <X> addPersistentData(data: Map<String, X>): SideEffect.SetPersistentData
 
     fun <X> addPersistentData(vararg data: Pair<String, X>): SideEffect.SetPersistentData
 
-    fun setPersistentData(key: String, value: Any): SideEffect.SetPersistentData
+    fun setPersistentData(
+        key: String,
+        value: Any,
+    ): SideEffect.SetPersistentData
 
     fun <X> setPersistentData(data: Map<String, X>): SideEffect.SetPersistentData
 

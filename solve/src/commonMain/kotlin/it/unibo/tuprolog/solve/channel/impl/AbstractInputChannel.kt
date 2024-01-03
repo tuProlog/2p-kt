@@ -7,7 +7,6 @@ import it.unibo.tuprolog.utils.synchronizedOnSelf
 import it.unibo.tuprolog.utils.takeFirst
 
 abstract class AbstractInputChannel<T : Any> : AbstractChannel<T>(), InputChannel<T> {
-
     private val queue: MutableList<T?> = dequeOf()
 
     override val available: Boolean
@@ -15,19 +14,21 @@ abstract class AbstractInputChannel<T : Any> : AbstractChannel<T>(), InputChanne
 
     protected abstract fun readActually(): T?
 
-    final override fun read(): T? = synchronizedOnSelf {
-        if (isClosed) throw IllegalStateException("Input channel is closed")
-        refillQueueIfNecessary()
-        val read = queue.takeFirst()
-        notify(read)
-        read
-    }
+    final override fun read(): T? =
+        synchronizedOnSelf {
+            if (isClosed) throw IllegalStateException("Input channel is closed")
+            refillQueueIfNecessary()
+            val read = queue.takeFirst()
+            notify(read)
+            read
+        }
 
-    final override fun peek(): T? = synchronizedOnSelf {
-        if (isClosed) throw IllegalStateException("Input channel is closed")
-        refillQueueIfNecessary()
-        queue[0]
-    }
+    final override fun peek(): T? =
+        synchronizedOnSelf {
+            if (isClosed) throw IllegalStateException("Input channel is closed")
+            refillQueueIfNecessary()
+            queue[0]
+        }
 
     private fun refillQueue() {
         queue.add(readActually())
@@ -40,11 +41,12 @@ abstract class AbstractInputChannel<T : Any> : AbstractChannel<T>(), InputChanne
     }
 
     override val isOver: Boolean
-        get() = synchronizedOnSelf {
-            if (isClosed) throw IllegalStateException("Input channel is closed")
-            refillQueueIfNecessary()
-            queue.first() == null
-        }
+        get() =
+            synchronizedOnSelf {
+                if (isClosed) throw IllegalStateException("Input channel is closed")
+                refillQueueIfNecessary()
+                queue.first() == null
+            }
 
     override fun toString(): String = "${this::class.simpleName}(id=$id, available=$available, closed=$isClosed)"
 

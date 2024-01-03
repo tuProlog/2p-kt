@@ -2,8 +2,7 @@ package it.unibo.tuprolog.solve
 
 interface TestFlags : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestFlags =
-            TestFlagsImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestFlags = TestFlagsImpl(solverFactory)
     }
 
     fun defaultLastCallOptimizationIsOn()

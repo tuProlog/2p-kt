@@ -6,7 +6,6 @@ import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import kotlin.test.Test
 
 class TestProblogTossingCoinsExamples {
-
     /***
      * https://dtai.cs.kuleuven.be/problog/tutorial/basic/01_coins.html#basic-problog-probabilistic-facts-and-clauses
      */
@@ -21,17 +20,17 @@ class TestProblogTossingCoinsExamples {
             listOf(
                 QueryWithSolutions(
                     "heads1".parseAsStruct(),
-                    listOf(ExpectedSolution("heads1".parseAsStruct(), 0.5))
+                    listOf(ExpectedSolution("heads1".parseAsStruct(), 0.5)),
                 ),
                 QueryWithSolutions(
                     "heads2".parseAsStruct(),
-                    listOf(ExpectedSolution("heads2".parseAsStruct(), 0.6))
+                    listOf(ExpectedSolution("heads2".parseAsStruct(), 0.6)),
                 ),
                 QueryWithSolutions(
                     "twoHeads".parseAsStruct(),
-                    listOf(ExpectedSolution("twoHeads".parseAsStruct(), 0.3))
-                )
-            )
+                    listOf(ExpectedSolution("twoHeads".parseAsStruct(), 0.3)),
+                ),
+            ),
         )
     }
 
@@ -49,8 +48,8 @@ class TestProblogTossingCoinsExamples {
             """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
-                listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.8))
-            )
+                listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.8)),
+            ),
         )
     }
 
@@ -71,8 +70,8 @@ class TestProblogTossingCoinsExamples {
             """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
-                listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.9744))
-            )
+                listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.9744)),
+            ),
         )
     }
 
@@ -92,8 +91,8 @@ class TestProblogTossingCoinsExamples {
             """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
-                listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.9744))
-            )
+                listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.9744)),
+            ),
         )
     }
 }

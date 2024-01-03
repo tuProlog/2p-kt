@@ -17,9 +17,8 @@ internal class PrototypeTheoryCreationTest(
     private val theoryConstructorFromArray: (Array<Clause>) -> Theory,
     private val theoryConstructorFromIterable: (Iterable<Clause>) -> Theory,
     private val theoryConstructorFromSequence: (Sequence<Clause>) -> Theory,
-    private val theoryConstructorFromScopes: (Array<Scope.() -> Clause>) -> Theory
+    private val theoryConstructorFromScopes: (Array<Scope.() -> Clause>) -> Theory,
 ) {
-
     private val correctInstance = theoryConstructorFromIterable(TheoryUtils.wellFormedClauses)
 
     fun emptyCreatesEmptyTheory() {
@@ -35,11 +34,12 @@ internal class PrototypeTheoryCreationTest(
     }
 
     fun ofVarargScopeToClauseCreatesCorrectInstance() {
-        val toBeTested = theoryConstructorFromScopes(
-            TheoryUtils.wellFormedClauses
-                .map<Clause, Scope.() -> Clause> { { clauseOf(it.head, it.body) } }
-                .toTypedArray()
-        )
+        val toBeTested =
+            theoryConstructorFromScopes(
+                TheoryUtils.wellFormedClauses
+                    .map<Clause, Scope.() -> Clause> { { clauseOf(it.head, it.body) } }
+                    .toTypedArray(),
+            )
 
         assertEquals(correctInstance, toBeTested)
     }

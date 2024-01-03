@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestOnceImpl(
     private val solverFactory: SolverFactory,
-    override val errorSignature: Signature
+    override val errorSignature: Signature,
 ) : TestOnce {
     override fun testOnceCut() {
         logicProgramming {
@@ -17,7 +17,7 @@ internal class TestOnceImpl(
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -33,10 +33,10 @@ internal class TestOnceImpl(
                 with(query) {
                     kotlin.collections.listOf(
                         yes("X" to 1),
-                        yes("X" to 2)
+                        yes("X" to 2),
                     )
                 },
-                solutions
+                solutions,
             )
         }
     }
@@ -50,7 +50,7 @@ internal class TestOnceImpl(
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -64,7 +64,7 @@ internal class TestOnceImpl(
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -83,12 +83,11 @@ internal class TestOnceImpl(
                             DummyInstances.executionContext,
                             errorSignature,
                             TypeError.Expected.CALLABLE,
-                            numOf(3)
-
-                        )
-                    )
+                            numOf(3),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -106,11 +105,11 @@ internal class TestOnceImpl(
                         InstantiationError.forGoal(
                             DummyInstances.executionContext,
                             errorSignature,
-                            varOf("X")
-                        )
-                    )
+                            varOf("X"),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

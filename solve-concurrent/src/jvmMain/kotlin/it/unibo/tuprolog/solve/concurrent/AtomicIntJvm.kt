@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.concurrent
 import java.util.concurrent.atomic.AtomicInteger
 
 class AtomicIntJvm private constructor(private val atomicValue: AtomicInteger) : AtomicInt {
-
     constructor(value: Int) : this(AtomicInteger(value))
 
     override var value: Int
@@ -18,11 +17,9 @@ class AtomicIntJvm private constructor(private val atomicValue: AtomicInteger) :
         this += (-delta)
     }
 
-    override fun incAndGet(delta: Int): Int =
-        atomicValue.addAndGet(delta)
+    override fun incAndGet(delta: Int): Int = atomicValue.addAndGet(delta)
 
-    override fun decAndGet(delta: Int): Int =
-        atomicValue.addAndGet(-delta)
+    override fun decAndGet(delta: Int): Int = atomicValue.addAndGet(-delta)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

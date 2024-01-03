@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
-
     override fun testTrueOrFalse() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -15,10 +14,10 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
                 with(query) {
                     ktListOf(
                         yes(),
-                        no()
+                        no(),
                     )
                 },
-                solutions
+                solutions,
             )
         }
     }
@@ -33,7 +32,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -48,7 +47,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -63,7 +62,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
 
             assertSolutionEquals(
                 ktListOf(query.yes("X" to 1)),
-                solutions
+                solutions,
             )
         }
     }
@@ -80,10 +79,10 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
                 with(query) {
                     ktListOf(
                         yes("X" to 1),
-                        yes("X" to 2)
+                        yes("X" to 2),
                     )
                 },
-                solutions
+                solutions,
             )
         }
     }

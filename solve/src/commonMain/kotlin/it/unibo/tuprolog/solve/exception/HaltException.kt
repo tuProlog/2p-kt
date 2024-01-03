@@ -17,24 +17,28 @@ class HaltException(
     @JsName("exitStatus") val exitStatus: Int = 0,
     message: String? = "Resolution has been halted with exit code $exitStatus",
     cause: Throwable? = null,
-    contexts: Array<ExecutionContext>
+    contexts: Array<ExecutionContext>,
 ) : ResolutionException(message, cause, contexts) {
-
     constructor(
         exitStatus: Int = 0,
         message: String? = "Resolution has been halted with exit code $exitStatus",
         cause: Throwable? = null,
-        context: ExecutionContext
+        context: ExecutionContext,
     ) : this(exitStatus, message, cause, arrayOf(context))
 
     constructor(exitStatus: Int = 0, cause: Throwable?, context: ExecutionContext) :
         this(exitStatus, cause?.toString(), cause, context)
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): HaltException =
-        HaltException(exitStatus, message, cause, contexts.setItem(index, newContext))
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): HaltException = HaltException(exitStatus, message, cause, contexts.setItem(index, newContext))
 
     override fun updateLastContext(newContext: ExecutionContext): HaltException =
-        updateContext(newContext, contexts.lastIndex)
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): HaltException =
         HaltException(exitStatus, message, cause, contexts.addLast(newContext))

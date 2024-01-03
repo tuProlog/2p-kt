@@ -19,7 +19,6 @@ import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.createS
  * @author Enrico
  */
 internal object ArithmeticUtils {
-
     /** [Is] primitive test data (input, [Substitution | ErrorType]) */
     internal val isQueryToResult by lazy {
         logicProgramming {
@@ -29,7 +28,7 @@ internal object ArithmeticUtils {
                 Is.functor("foo", 77) to Substitution.failed(),
                 Is.functor(numOf(1.0), numOf(1)) to Substitution.failed(),
                 Is.functor("X", "+"("+"("N", 1), "/"(3, 0))) to InstantiationError::class,
-                Is.functor("C", "/"(3, 0)) to EvaluationError::class
+                Is.functor("C", "/"(3, 0)) to EvaluationError::class,
             ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
@@ -42,7 +41,7 @@ internal object ArithmeticUtils {
                 ArithmeticEqual.functor("*"(3, 2), "-"(7, 1)) to true,
                 ArithmeticEqual.functor(0.333, "/"(1, 3)) to false,
                 ArithmeticEqual.functor(0, 1) to false,
-                ArithmeticEqual.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
+                ArithmeticEqual.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class,
             ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
@@ -55,7 +54,7 @@ internal object ArithmeticUtils {
                 ArithmeticNotEqual.functor(0.333, "/"(1, 3)) to true,
                 ArithmeticNotEqual.functor(1.0, 1) to false,
                 ArithmeticNotEqual.functor("*"(3, 2), "-"(7, 1)) to false,
-                ArithmeticNotEqual.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
+                ArithmeticNotEqual.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class,
             ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
@@ -69,7 +68,7 @@ internal object ArithmeticUtils {
                 ArithmeticGreaterThan.functor(0, 1) to false,
                 ArithmeticGreaterThan.functor(0.333, "/"(1, 3)) to false,
                 ArithmeticGreaterThan.functor("X", 5) to InstantiationError::class,
-                ArithmeticGreaterThan.functor("N", "/"(3, 0)) to InstantiationError::class
+                ArithmeticGreaterThan.functor("N", "/"(3, 0)) to InstantiationError::class,
             ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
@@ -83,7 +82,7 @@ internal object ArithmeticUtils {
                 ArithmeticGreaterThanOrEqualTo.functor(0, 1) to false,
                 ArithmeticGreaterThanOrEqualTo.functor(0.333, "/"(1, 3)) to false,
                 ArithmeticGreaterThanOrEqualTo.functor("X", 5) to InstantiationError::class,
-                ArithmeticGreaterThanOrEqualTo.functor("N", "/"(3, 0)) to InstantiationError::class
+                ArithmeticGreaterThanOrEqualTo.functor("N", "/"(3, 0)) to InstantiationError::class,
             ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
@@ -97,7 +96,7 @@ internal object ArithmeticUtils {
                 ArithmeticLowerThan.functor(1.0, 1) to false,
                 ArithmeticLowerThan.functor("*"(3, 2), "-"(7, 1)) to false,
                 ArithmeticLowerThan.functor("X", 5) to InstantiationError::class,
-                ArithmeticLowerThan.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
+                ArithmeticLowerThan.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class,
             ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
@@ -111,7 +110,7 @@ internal object ArithmeticUtils {
                 ArithmeticLowerThanOrEqualTo.functor(0.333, "/"(1, 3)) to true,
                 ArithmeticLowerThanOrEqualTo.functor("*"(3, 2), "-"(6, 1)) to false,
                 ArithmeticLowerThanOrEqualTo.functor("X", 5) to InstantiationError::class,
-                ArithmeticLowerThanOrEqualTo.functor("N", "/"(3, 0)) to InstantiationError::class
+                ArithmeticLowerThanOrEqualTo.functor("N", "/"(3, 0)) to InstantiationError::class,
             ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }

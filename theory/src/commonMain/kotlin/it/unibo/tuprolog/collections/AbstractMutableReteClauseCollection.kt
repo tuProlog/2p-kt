@@ -3,9 +3,10 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
 
-internal abstract class AbstractMutableReteClauseCollection<Self : AbstractMutableReteClauseCollection<Self>> protected constructor(
-    rete: ReteTree
-) : MutableClauseCollection, AbstractClauseCollection<Self>(rete) {
+internal abstract class AbstractMutableReteClauseCollection<Self : AbstractMutableReteClauseCollection<Self>> :
+    MutableClauseCollection, AbstractClauseCollection<Self> {
+    @Suppress("ConvertSecondaryConstructorToPrimary")
+    protected constructor(rete: ReteTree) : super(rete)
 
     override fun add(clause: Clause): Self {
         rete.assertZ(clause)

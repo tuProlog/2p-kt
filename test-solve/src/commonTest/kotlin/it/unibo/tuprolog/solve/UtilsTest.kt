@@ -11,7 +11,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class UtilsTest {
-
     @Test
     fun foreachWithLookAheadWorksExactlyLikeNormalForeach() {
         // should not launch exception

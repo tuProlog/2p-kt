@@ -14,14 +14,16 @@ import kotlin.math.sin
  * @author Enrico
  */
 object Sine : UnaryMathFunction("sin") {
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(integer.decimalValue)
 
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-        commonBehaviour(integer.decimalValue)
-
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        commonBehaviour(real.value)
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(real.value)
 
     /** Implementation of common behaviour for Integer and Real */
-    private fun commonBehaviour(decimal: BigDecimal) =
-        Numeric.of(sin(decimal.toDouble()))
+    private fun commonBehaviour(decimal: BigDecimal) = Numeric.of(sin(decimal.toDouble()))
 }

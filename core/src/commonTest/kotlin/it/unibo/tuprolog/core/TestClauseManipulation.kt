@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TestClauseManipulation {
-
     val directive = Directive.of(Atom.of("a"), Atom.of("b")) // :- a, b.
 
     val fact = Fact.of(Struct.of("f", Integer.ONE)) // f(1).
@@ -16,15 +15,15 @@ class TestClauseManipulation {
         val otherHead = Struct.of("f", Integer.of(2))
         assertEquals(
             Rule.of(otherHead, directive.body),
-            directive.setHead(otherHead)
+            directive.setHead(otherHead),
         )
         assertEquals(
             Rule.of(otherHead, rule.body),
-            rule.setHead(otherHead)
+            rule.setHead(otherHead),
         )
         assertEquals(
             Fact.of(otherHead),
-            fact.setHead(otherHead)
+            fact.setHead(otherHead),
         )
     }
 
@@ -33,15 +32,15 @@ class TestClauseManipulation {
         val otherHead = Struct.of("g", Integer.ONE)
         assertEquals(
             directive,
-            directive.setHeadFunctor("g")
+            directive.setHeadFunctor("g"),
         )
         assertEquals(
             Rule.of(otherHead, rule.body),
-            rule.setHeadFunctor("g")
+            rule.setHeadFunctor("g"),
         )
         assertEquals(
             Fact.of(otherHead),
-            fact.setHeadFunctor("g")
+            fact.setHeadFunctor("g"),
         )
     }
 
@@ -50,15 +49,15 @@ class TestClauseManipulation {
         val otherHead = Struct.of("f", Atom.of("a"), Atom.of("b"))
         assertEquals(
             directive,
-            directive.setHeadArgs(*otherHead.args.toTypedArray())
+            directive.setHeadArgs(*otherHead.args.toTypedArray()),
         )
         assertEquals(
             Rule.of(otherHead, rule.body),
-            rule.setHeadArgs(*otherHead.args.toTypedArray())
+            rule.setHeadArgs(*otherHead.args.toTypedArray()),
         )
         assertEquals(
             Fact.of(otherHead),
-            fact.setHeadArgs(*otherHead.args.toTypedArray())
+            fact.setHeadArgs(*otherHead.args.toTypedArray()),
         )
     }
 
@@ -67,15 +66,15 @@ class TestClauseManipulation {
         val otherHead = Struct.of("f", Integer.ONE, Atom.of("b"))
         assertEquals(
             directive,
-            directive.addLastHeadArg(otherHead.args.last())
+            directive.addLastHeadArg(otherHead.args.last()),
         )
         assertEquals(
             Rule.of(otherHead, rule.body),
-            rule.addLastHeadArg(otherHead.args.last())
+            rule.addLastHeadArg(otherHead.args.last()),
         )
         assertEquals(
             Fact.of(otherHead),
-            fact.addLastHeadArg(otherHead.args.last())
+            fact.addLastHeadArg(otherHead.args.last()),
         )
     }
 
@@ -84,15 +83,15 @@ class TestClauseManipulation {
         val otherHead = Struct.of("f", Integer.ONE, Atom.of("b"))
         assertEquals(
             directive,
-            directive.appendHeadArg(otherHead.args.last())
+            directive.appendHeadArg(otherHead.args.last()),
         )
         assertEquals(
             Rule.of(otherHead, rule.body),
-            rule.appendHeadArg(otherHead.args.last())
+            rule.appendHeadArg(otherHead.args.last()),
         )
         assertEquals(
             Fact.of(otherHead),
-            fact.appendHeadArg(otherHead.args.last())
+            fact.appendHeadArg(otherHead.args.last()),
         )
     }
 
@@ -101,15 +100,15 @@ class TestClauseManipulation {
         val otherHead = Struct.of("f", Atom.of("b"), Integer.ONE)
         assertEquals(
             directive,
-            directive.addFirstHeadArg(otherHead.args.first())
+            directive.addFirstHeadArg(otherHead.args.first()),
         )
         assertEquals(
             Rule.of(otherHead, rule.body),
-            rule.addFirstHeadArg(otherHead.args.first())
+            rule.addFirstHeadArg(otherHead.args.first()),
         )
         assertEquals(
             Fact.of(otherHead),
-            fact.addFirstHeadArg(otherHead.args.first())
+            fact.addFirstHeadArg(otherHead.args.first()),
         )
     }
 
@@ -118,15 +117,15 @@ class TestClauseManipulation {
         val otherHead = Struct.of("f", Atom.of("b"), Integer.ONE)
         assertEquals(
             directive,
-            directive.insertHeadArg(0, otherHead[0])
+            directive.insertHeadArg(0, otherHead[0]),
         )
         assertEquals(
             Rule.of(otherHead, rule.body),
-            rule.insertHeadArg(0, otherHead[0])
+            rule.insertHeadArg(0, otherHead[0]),
         )
         assertEquals(
             Fact.of(otherHead),
-            fact.insertHeadArg(0, otherHead[0])
+            fact.insertHeadArg(0, otherHead[0]),
         )
     }
 
@@ -134,19 +133,19 @@ class TestClauseManipulation {
     fun testHeadInspection() {
         assertEquals(
             rule.head.args,
-            rule.headArgs.toList()
+            rule.headArgs.toList(),
         )
         assertEquals(
             fact.head.args,
-            fact.headArgs.toList()
+            fact.headArgs.toList(),
         )
         assertEquals(
             rule.head.arity,
-            rule.headArity
+            rule.headArity,
         )
         assertEquals(
             fact.head.arity,
-            fact.headArity
+            fact.headArity,
         )
 
         for (i in 0 until rule.headArity) {
@@ -163,15 +162,15 @@ class TestClauseManipulation {
         val otherBody = Tuple.of(Integer.ONE, Integer.of(2), Integer.of(3))
         assertEquals(
             Directive.of(otherBody),
-            directive.setBody(otherBody)
+            directive.setBody(otherBody),
         )
         assertEquals(
             Rule.of(rule.head, otherBody),
-            rule.setBody(otherBody)
+            rule.setBody(otherBody),
         )
         assertEquals(
             Rule.of(fact.head, otherBody),
-            fact.setBody(otherBody)
+            fact.setBody(otherBody),
         )
     }
 
@@ -180,15 +179,15 @@ class TestClauseManipulation {
         val otherBody = Var.of("X")
         assertEquals(
             Directive.of(otherBody),
-            directive.setBodyItems(otherBody)
+            directive.setBodyItems(otherBody),
         )
         assertEquals(
             Rule.of(rule.head, otherBody),
-            rule.setBodyItems(otherBody)
+            rule.setBodyItems(otherBody),
         )
         assertEquals(
             Rule.of(fact.head, otherBody),
-            fact.setBodyItems(otherBody)
+            fact.setBodyItems(otherBody),
         )
     }
 
@@ -198,15 +197,15 @@ class TestClauseManipulation {
             val otherBody = tupleOf(varOf("X"), varOf("Y"))
             assertEquals(
                 directiveOf(otherBody),
-                directive.setBodyItems(varOf("X"), varOf("Y"))
+                directive.setBodyItems(varOf("X"), varOf("Y")),
             )
             assertEquals(
                 ruleOf(rule.head, otherBody),
-                rule.setBodyItems(varOf("X"), varOf("Y"))
+                rule.setBodyItems(varOf("X"), varOf("Y")),
             )
             assertEquals(
                 ruleOf(fact.head, otherBody),
-                fact.setBodyItems(varOf("X"), varOf("Y"))
+                fact.setBodyItems(varOf("X"), varOf("Y")),
             )
         }
     }
@@ -216,15 +215,15 @@ class TestClauseManipulation {
         val otherBody = Tuple.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
         assertEquals(
             Directive.of(otherBody),
-            directive.addLastBodyItem(otherBody.unfoldedSequence.last())
+            directive.addLastBodyItem(otherBody.unfoldedSequence.last()),
         )
         assertEquals(
             Rule.of(rule.head, otherBody),
-            rule.addLastBodyItem(otherBody.unfoldedSequence.last())
+            rule.addLastBodyItem(otherBody.unfoldedSequence.last()),
         )
         assertEquals(
             Rule.of(fact.head, Truth.TRUE, otherBody.unfoldedSequence.last()),
-            fact.addLastBodyItem(otherBody.unfoldedSequence.last())
+            fact.addLastBodyItem(otherBody.unfoldedSequence.last()),
         )
     }
 
@@ -233,15 +232,15 @@ class TestClauseManipulation {
         val otherBody = Tuple.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
         assertEquals(
             Directive.of(otherBody),
-            directive.appendBodyItem(otherBody.unfoldedSequence.last())
+            directive.appendBodyItem(otherBody.unfoldedSequence.last()),
         )
         assertEquals(
             Rule.of(rule.head, otherBody),
-            rule.appendBodyItem(otherBody.unfoldedSequence.last())
+            rule.appendBodyItem(otherBody.unfoldedSequence.last()),
         )
         assertEquals(
             Rule.of(fact.head, Truth.TRUE, otherBody.unfoldedSequence.last()),
-            fact.appendBodyItem(otherBody.unfoldedSequence.last())
+            fact.appendBodyItem(otherBody.unfoldedSequence.last()),
         )
     }
 
@@ -250,15 +249,15 @@ class TestClauseManipulation {
         val otherBody = Tuple.of(Atom.of("c"), Atom.of("a"), Atom.of("b"))
         assertEquals(
             Directive.of(otherBody),
-            directive.addFirstBodyItem(otherBody.left)
+            directive.addFirstBodyItem(otherBody.left),
         )
         assertEquals(
             Rule.of(rule.head, otherBody),
-            rule.addFirstBodyItem(otherBody.left)
+            rule.addFirstBodyItem(otherBody.left),
         )
         assertEquals(
             Rule.of(fact.head, otherBody.left, Truth.TRUE),
-            fact.addFirstBodyItem(otherBody.left)
+            fact.addFirstBodyItem(otherBody.left),
         )
     }
 
@@ -267,15 +266,15 @@ class TestClauseManipulation {
         val otherBody = Tuple.of(Atom.of("c"), Atom.of("a"), Atom.of("b"))
         assertEquals(
             Directive.of(otherBody),
-            directive.insertBodyItem(0, otherBody.left)
+            directive.insertBodyItem(0, otherBody.left),
         )
         assertEquals(
             Rule.of(rule.head, otherBody),
-            rule.insertBodyItem(0, otherBody.left)
+            rule.insertBodyItem(0, otherBody.left),
         )
         assertEquals(
             Rule.of(fact.head, otherBody.left, Truth.TRUE),
-            fact.insertBodyItem(0, otherBody.left)
+            fact.insertBodyItem(0, otherBody.left),
         )
     }
 
@@ -283,40 +282,40 @@ class TestClauseManipulation {
     fun testBodyInspection() {
         assertEquals(
             directive.bodyAsTuple?.toList(),
-            directive.bodyItems.toList()
+            directive.bodyItems.toList(),
         )
         assertEquals(
             rule.bodyAsTuple?.toList(),
-            rule.bodyItems.toList()
+            rule.bodyItems.toList(),
         )
         assertEquals(
             fact.body,
-            fact.bodyItems.single()
+            fact.bodyItems.single(),
         )
         assertEquals(
             directive.body.asTuple()?.size,
-            directive.bodySize
+            directive.bodySize,
         )
         assertEquals(
             rule.body.asTuple()?.size,
-            rule.bodySize
+            rule.bodySize,
         )
         assertEquals(
             1,
-            fact.bodySize
+            fact.bodySize,
         )
 
         for (i in 0 until directive.bodySize) {
             assertEquals(
                 directive.bodyAsTuple?.unfoldedSequence?.drop(i)?.first(),
-                directive.getBodyItem(i)
+                directive.getBodyItem(i),
             )
         }
 
         for (i in 0 until rule.bodySize) {
             assertEquals(
                 rule.bodyAsTuple?.unfoldedSequence?.drop(i)?.first(),
-                rule.getBodyItem(i)
+                rule.getBodyItem(i),
             )
         }
 

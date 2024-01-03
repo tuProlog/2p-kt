@@ -5,8 +5,7 @@ import it.unibo.tuprolog.solve.SolverTest
 
 interface TestAlias : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestAlias =
-            TestAliasImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestAlias = TestAliasImpl(solverFactory)
     }
 
     fun testDefaultAliases()

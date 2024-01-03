@@ -10,7 +10,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface ClauseQueue : ClauseCollection {
-
     /** Gives a freshly produced [ClauseQueue] including the given [Clause] in the first position and the content
      *  of this one **/
     @JsName("addFirst")
@@ -32,13 +31,11 @@ interface ClauseQueue : ClauseCollection {
     fun getLifoOrdered(clause: Clause): Sequence<Clause>
 
     /** Produces a [Sequence] of the clauses that would unify over the given [Clause]. Analogous to [getFifoOrdered] **/
-    operator fun get(clause: Clause): Sequence<Clause> =
-        getFifoOrdered(clause)
+    operator fun get(clause: Clause): Sequence<Clause> = getFifoOrdered(clause)
 
     /** Gives a freshly produced [ClauseQueue] including the given [Clause] and the content of this one.
      *  Analogous to [addFirst] **/
-    override fun add(clause: Clause): ClauseQueue =
-        addLast(clause)
+    override fun add(clause: Clause): ClauseQueue = addLast(clause)
 
     /** Gives a freshly produced [ClauseQueue] including all the given [Clause] and the content of this one **/
     override fun addAll(clauses: Iterable<Clause>): ClauseQueue
@@ -48,52 +45,61 @@ interface ClauseQueue : ClauseCollection {
     fun retrieveFirst(clause: Clause): RetrieveResult<out ClauseQueue>
 
     /** Retrieve the first [Clause] unifying the given one. Analogous to [retrieveFirst] **/
-    override fun retrieve(clause: Clause): RetrieveResult<out ClauseQueue> =
-        retrieveFirst(clause)
+    override fun retrieve(clause: Clause): RetrieveResult<out ClauseQueue> = retrieveFirst(clause)
 
     /** Retrieve all the [Clause] unifying the given one **/
     override fun retrieveAll(clause: Clause): RetrieveResult<out ClauseQueue>
 
     companion object {
-
         /** Creates an empty [ClauseQueue] **/
         @JvmStatic
         @JsName("empty")
-        fun empty(unificator: Unificator): ClauseQueue =
-            of(unificator, emptyList())
+        fun empty(unificator: Unificator): ClauseQueue = of(unificator, emptyList())
 
         /** Creates a [ClauseQueue] with given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(unificator: Unificator, vararg clause: Clause): ClauseQueue =
-            of(unificator, clause.asIterable())
+        fun of(
+            unificator: Unificator,
+            vararg clause: Clause,
+        ): ClauseQueue = of(unificator, clause.asIterable())
 
         /** Let developers easily create a [ClauseQueue] programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(unificator: Unificator, vararg clause: Scope.() -> Clause): ClauseQueue =
+        fun of(
+            unificator: Unificator,
+            vararg clause: Scope.() -> Clause,
+        ): ClauseQueue =
             of(
                 unificator,
                 clause.map {
                     Scope.empty(it)
-                }
+                },
             )
 
         /** Creates a [ClauseQueue] from the given [Sequence] of [Clause] */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(unificator: Unificator, clauses: Sequence<Clause>): ClauseQueue =
-            of(unificator, clauses.asIterable())
+        fun of(
+            unificator: Unificator,
+            clauses: Sequence<Clause>,
+        ): ClauseQueue = of(unificator, clauses.asIterable())
 
         /** Creates a [ClauseQueue] from the given [Iterable] of [Clause] */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(unificator: Unificator, clauses: Iterable<Clause>): ClauseQueue =
-            ReteClauseQueue(unificator, clauses)
+        fun of(
+            unificator: Unificator,
+            clauses: Iterable<Clause>,
+        ): ClauseQueue = ReteClauseQueue(unificator, clauses)
 
         @JvmStatic
         @JsName("areEquals")
-        fun equals(queue1: ClauseQueue, queue2: ClauseQueue): Boolean {
+        fun equals(
+            queue1: ClauseQueue,
+            queue2: ClauseQueue,
+        ): Boolean {
             return itemWiseEquals(queue1, queue2)
         }
 
@@ -102,7 +108,7 @@ interface ClauseQueue : ClauseCollection {
         fun hashCode(queue: ClauseQueue): Int {
             return itemWiseHashCode(
                 ClauseQueue::class,
-                itemWiseHashCode(queue)
+                itemWiseHashCode(queue),
             )
         }
     }

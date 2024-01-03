@@ -24,7 +24,6 @@ import kotlin.js.JsName
  * @author Jason Dellaluce
  */
 internal interface ProbExplanation {
-
     override fun toString(): String
 
     /**
@@ -84,24 +83,26 @@ internal interface ProbExplanation {
 
     companion object {
         /** A [ProbExplanation] representing a logic falsity. */
-        val FALSE: ProbExplanation = BinaryDecisionDiagramExplanation(
-            bddTerminalOf(false),
-            BinaryDecisionDiagramExplanation.FALSE_COMPUTED_VALUE
-        )
+        val FALSE: ProbExplanation =
+            BinaryDecisionDiagramExplanation(
+                bddTerminalOf(false),
+                BinaryDecisionDiagramExplanation.FALSE_COMPUTED_VALUE,
+            )
 
         /** A [ProbExplanation] representing a logic truth. */
-        val TRUE: ProbExplanation = BinaryDecisionDiagramExplanation(
-            bddTerminalOf(true),
-            BinaryDecisionDiagramExplanation.TRUE_COMPUTED_VALUE
-        )
+        val TRUE: ProbExplanation =
+            BinaryDecisionDiagramExplanation(
+                bddTerminalOf(true),
+                BinaryDecisionDiagramExplanation.TRUE_COMPUTED_VALUE,
+            )
 
         /** Creates a new [ProbExplanation] representing the single probabilistic logic term [term]. */
         fun of(term: ProbTerm): ProbExplanation {
             return BinaryDecisionDiagramExplanation(
                 bddOf(term),
                 BinaryDecisionDiagramExplanation.ComputedValue(
-                    term.probability
-                )
+                    term.probability,
+                ),
             )
         }
     }

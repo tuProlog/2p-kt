@@ -4,7 +4,6 @@ import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import kotlin.js.JsName
 
 interface State {
-
     @JsName("isEndState")
     val isEndState: Boolean
         get() = false

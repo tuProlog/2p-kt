@@ -11,7 +11,6 @@ import kotlin.test.Test
  */
 
 internal class ArithmeticGreaterThanOrEqualToTest {
-
     @Test
     fun computesCorrectResult() {
         greaterOrEqualQueryToResult.forEach { (input, result) ->

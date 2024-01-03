@@ -22,11 +22,11 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
                             Signature("abolish", 1),
                             PermissionError.Operation.MODIFY,
                             PermissionError.Permission.PRIVATE_PROCEDURE,
-                            "abolish" / 1
-                        )
-                    )
+                            "abolish" / 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -46,11 +46,11 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
                             Signature("abolish", 1),
                             TypeError.Expected.INTEGER,
                             atomOf("a"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -70,11 +70,11 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
                             Signature("abolish", 1),
                             DomainError.Expected.NOT_LESS_THAN_ZERO,
                             intOf(-1),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -92,11 +92,11 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
                         RepresentationError.of(
                             DummyInstances.executionContext,
                             Signature("abolish", 1),
-                            RepresentationError.Limit.MAX_ARITY
-                        )
-                    )
+                            RepresentationError.Limit.MAX_ARITY,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -116,11 +116,11 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
                             Signature("abolish", 1),
                             TypeError.Expected.ATOM,
                             intOf(5),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

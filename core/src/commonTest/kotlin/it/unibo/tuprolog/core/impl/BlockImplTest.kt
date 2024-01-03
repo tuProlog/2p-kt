@@ -22,7 +22,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class BlockImplTest {
-
     private val mixedBlocksInstances = BlockUtils.mixedBlocksTupleWrapped.map(::BlockImpl)
 
     @Test
@@ -35,7 +34,7 @@ internal class BlockImplTest {
         onCorrespondingItems(
             BlockUtils.mixedBlocksTupleWrapped,
             mixedBlocksInstances.map { it.args.first() },
-            ::assertEqualities
+            ::assertEqualities,
         )
     }
 
@@ -54,7 +53,7 @@ internal class BlockImplTest {
 
         onCorrespondingItems(
             correctElementLists,
-            mixedBlocksInstances.map { it.unfoldedSequence.toList() }
+            mixedBlocksInstances.map { it.unfoldedSequence.toList() },
         ) { expected, actual -> assertEquals(expected, actual) }
     }
 
@@ -64,7 +63,7 @@ internal class BlockImplTest {
 
         onCorrespondingItems(
             correctElementLists,
-            mixedBlocksInstances.map { it.unfoldedArray.toList() }
+            mixedBlocksInstances.map { it.unfoldedArray.toList() },
         ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
@@ -74,7 +73,7 @@ internal class BlockImplTest {
 
         onCorrespondingItems(
             blocksToString,
-            mixedBlocksInstances.map { it.toString() }
+            mixedBlocksInstances.map { it.toString() },
         ) { expectedToString, actualToString -> assertEquals(expectedToString, actualToString) }
     }
 
@@ -110,7 +109,10 @@ internal class BlockImplTest {
     fun toArrayReturnValue() {
         val mixedBlocks = BlockUtils.mixedBlocks.map { it.toList() }
 
-        onCorrespondingItems(mixedBlocks, mixedBlocksInstances.map { it.toArray().toList() }) { expectedList, actualList ->
+        onCorrespondingItems(
+            mixedBlocks,
+            mixedBlocksInstances.map { it.toArray().toList() },
+        ) { expectedList, actualList ->
             assertEquals(expectedList, actualList)
         }
     }
@@ -121,7 +123,7 @@ internal class BlockImplTest {
 
         onCorrespondingItems(
             mixedBlocks,
-            mixedBlocksInstances.map { it.toSequence().toList() }
+            mixedBlocksInstances.map { it.toSequence().toList() },
         ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 

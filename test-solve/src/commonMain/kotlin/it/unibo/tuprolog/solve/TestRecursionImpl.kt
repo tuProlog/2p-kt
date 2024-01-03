@@ -11,11 +11,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class TestRecursionImpl(private val solverFactory: SolverFactory) : TestRecursion {
-
     override val shortDuration: TimeDuration
         get() = 1000
 
-    private fun thermostat(initialTemp: Int, goodRange: IntRange) = logicProgramming {
+    private fun thermostat(
+        initialTemp: Int,
+        goodRange: IntRange,
+    ) = logicProgramming {
         theoryOf(
             directive { dynamic("temp" / 1) },
             fact { "temp"(initialTemp) },
@@ -27,7 +29,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
                     write(X),
                     T `is` (X - 1),
                     "change_temperature"(T),
-                    "check_temperature"
+                    "check_temperature",
                 )
             },
             rule {
@@ -38,7 +40,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
                     write(X),
                     T `is` (X + 1),
                     "change_temperature"(T),
-                    "check_temperature"
+                    "check_temperature",
                 )
             },
             rule {
@@ -47,25 +49,29 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
                     X greaterThan goodRange.first,
                     X lowerThan goodRange.last,
                     cut,
-                    write(X)
+                    write(X),
                 )
             },
             rule {
                 "change_temperature"(X).impliedBy(
                     retract("temp"(`_`)),
-                    assert("temp"(X))
+                    assert("temp"(X)),
                 )
-            }
+            },
         )
     }
 
-    private fun testRecursion(init: Int, range: IntRange) {
+    private fun testRecursion(
+        init: Int,
+        range: IntRange,
+    ) {
         logicProgramming {
             val prints = mutableListOf<String>()
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = thermostat(init, range),
-                stdOut = OutputChannel.of { prints.add(it) }
-            )
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb = thermostat(init, range),
+                    stdOut = OutputChannel.of { prints.add(it) },
+                )
 
             val sol = solver.solveOnce(atomOf("check_temperature"), mediumDuration)
 
@@ -74,12 +80,12 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
             if (init <= range.first) {
                 assertEquals(
                     (init..range.first + 1).map { it.toString() },
-                    prints
+                    prints,
                 )
             } else if (init >= range.last) {
                 assertEquals(
                     (range.last - 1..init).toList().asReversed().map { it.toString() },
-                    prints
+                    prints,
                 )
             }
         }
@@ -93,27 +99,32 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
         testRecursion(30, 18..22)
     }
 
-    private fun canary(message: String) = logicProgramming {
-        theoryOf(
-            rule { "recursive"(0) impliedBy `throw`(message) },
-            rule {
-                "recursive"(N).impliedBy(
-                    N greaterThan 0,
-                    M `is` (N - 1),
-                    "recursive"(M)
-                )
-            }
-        )
-    }
+    private fun canary(message: String) =
+        logicProgramming {
+            theoryOf(
+                rule { "recursive"(0) impliedBy `throw`(message) },
+                rule {
+                    "recursive"(N).impliedBy(
+                        N greaterThan 0,
+                        M `is` (N - 1),
+                        "recursive"(M),
+                    )
+                },
+            )
+        }
 
-    private fun testTailRecursion(lastCallOptimization: Boolean, n: Int = 100) {
+    private fun testTailRecursion(
+        lastCallOptimization: Boolean,
+        n: Int = 100,
+    ) {
         logicProgramming {
             val prints = mutableListOf<String>()
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = canary("ball"),
-                flags = FlagStore.DEFAULT.set(LastCallOptimization, if (lastCallOptimization) ON else OFF),
-                stdOut = OutputChannel.of { prints.add(it) }
-            )
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb = canary("ball"),
+                    flags = FlagStore.DEFAULT.set(LastCallOptimization, if (lastCallOptimization) ON else OFF),
+                    stdOut = OutputChannel.of { prints.add(it) },
+                )
 
             assertEquals(if (lastCallOptimization) ON else OFF, solver.flags[LastCallOptimization])
 
@@ -125,10 +136,10 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
                 query.halt(
                     SystemError.forUncaughtException(
                         DummyInstances.executionContext,
-                        atomOf("ball")
-                    )
+                        atomOf("ball"),
+                    ),
                 ),
-                sol
+                sol,
             )
             if (lastCallOptimization) {
                 assertEquals(2, (sol as Solution.Halt).exception.logicStackTrace.size)

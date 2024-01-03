@@ -12,28 +12,30 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class TestTermMetadata {
+    @Suppress("ktlint:standard:property-naming", "PrivatePropertyName")
     private val X = Var.of("X")
 
-    private val terms = listOf(
-        X,
-        Var.anonymous(),
-        Atom.of("atom"),
-        Integer.ONE,
-        Real.ONE_TENTH,
-        EmptyList(),
-        EmptyBlock(),
-        Cons.of(Real.ONE_HALF, X),
-        Struct.of("g", X),
-        List.of(X),
-        Block.of(X),
-        Tuple.of(X, X),
-        Fact.of(Struct.of("f", X)),
-        Fact.of(List.of(X)),
-        Fact.of(Block.of(X)),
-        Fact.of(Tuple.of(X, X)),
-        Directive.of(Struct.of("h", X), Tuple.of(X, X)),
-        Rule.of(Struct.of("h", X), Tuple.of(X, X))
-    )
+    private val terms =
+        listOf(
+            X,
+            Var.anonymous(),
+            Atom.of("atom"),
+            Integer.ONE,
+            Real.ONE_TENTH,
+            EmptyList(),
+            EmptyBlock(),
+            Cons.of(Real.ONE_HALF, X),
+            Struct.of("g", X),
+            List.of(X),
+            Block.of(X),
+            Tuple.of(X, X),
+            Fact.of(Struct.of("f", X)),
+            Fact.of(List.of(X)),
+            Fact.of(Block.of(X)),
+            Fact.of(Tuple.of(X, X)),
+            Directive.of(Struct.of("h", X), Tuple.of(X, X)),
+            Rule.of(Struct.of("h", X), Tuple.of(X, X)),
+        )
 
     private data class Metadata<T>(val value: T)
 

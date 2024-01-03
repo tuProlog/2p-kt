@@ -9,7 +9,6 @@ class TestConcurrentBigListImpl :
     TestConcurrentBigList<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     override val shortDuration: TimeDuration
         get() = 6000
 

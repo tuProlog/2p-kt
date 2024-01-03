@@ -8,7 +8,6 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface DirectiveListener : ClauseListener {
-
     @JsName("unificator")
     val unificator: Unificator
 
@@ -16,7 +15,11 @@ interface DirectiveListener : ClauseListener {
     val patterns: List<Term>
 
     @JsName("onDirectiveMatchingPattern")
-    fun onDirectiveMatchingPattern(directive: Directive, pattern: Term, unifier: Unifier)
+    fun onDirectiveMatchingPattern(
+        directive: Directive,
+        pattern: Term,
+        unifier: Unifier,
+    )
 
     @JsName("listenDirective")
     fun listenDirective(directive: Directive) {
@@ -30,8 +33,11 @@ interface DirectiveListener : ClauseListener {
     }
 
     @JsName("listenDirectiveMatchingPattern")
-    fun listenDirectiveMatchingPattern(directive: Directive, pattern: Term, unifier: Unifier) =
-        onDirectiveMatchingPattern(directive, pattern, unifier)
+    fun listenDirectiveMatchingPattern(
+        directive: Directive,
+        pattern: Term,
+        unifier: Unifier,
+    ) = onDirectiveMatchingPattern(directive, pattern, unifier)
 
     override fun listen(clause: Clause) {
         when (clause) {

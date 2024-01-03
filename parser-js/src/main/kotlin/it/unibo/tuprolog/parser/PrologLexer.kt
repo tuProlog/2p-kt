@@ -5,15 +5,23 @@ package it.unibo.tuprolog.parser
 
 @Suppress("UnusedPrivateProperty")
 external class PrologLexer(input: dynamic) {
-
     fun addOperators(vararg operators: String)
+
     fun getOperators(): Array<String>
+
     fun isOperator(string: String): Boolean
+
     fun unquote(string: String): String
-    fun escape(string: String, stringType: StringType): String
+
+    fun escape(
+        string: String,
+        stringType: Int,
+    ): String
+
     fun getAllTokens(): Array<Token>
 
     fun addErrorListener(listener: dynamic)
+
     fun removeErrorListeners()
 
     companion object {

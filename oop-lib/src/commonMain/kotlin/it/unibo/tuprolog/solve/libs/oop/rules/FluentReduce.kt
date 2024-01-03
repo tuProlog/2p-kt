@@ -27,28 +27,28 @@ sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         get() = atomOf("!")
 
     object Recursive : FluentReduce() {
-
         private val P by variables
         private val M by variables
         private val P1 by variables
         private val X by variables
 
         override val Scope.head: List<Term>
-            get() = kotlin.collections.listOf(
-                listFrom(P, M, last = X),
-                R
-            )
+            get() =
+                kotlin.collections.listOf(
+                    listFrom(P, M, last = X),
+                    R,
+                )
 
         override val Scope.body: Term
-            get() = tupleOf(
-                atomOf("!"),
-                structOf(InvokeMethod.functor, P, M, P1),
-                structOf(FUNCTOR, consOf(P1, X), R)
-            )
+            get() =
+                tupleOf(
+                    atomOf("!"),
+                    structOf(InvokeMethod.functor, P, M, P1),
+                    structOf(FUNCTOR, consOf(P1, X), R),
+                )
     }
 
     object Couple : FluentReduce() {
-
         private val P by variables
         private val M by variables
 
@@ -56,10 +56,11 @@ sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
             get() = kotlin.collections.listOf(consOf(P, M), R)
 
         override val Scope.body: Term
-            get() = tupleOf(
-                atomOf("!"),
-                structOf(InvokeMethod.functor, P, M, R)
-            )
+            get() =
+                tupleOf(
+                    atomOf("!"),
+                    structOf(InvokeMethod.functor, P, M, R),
+                )
     }
 
     // object Base : FluentReduce() {

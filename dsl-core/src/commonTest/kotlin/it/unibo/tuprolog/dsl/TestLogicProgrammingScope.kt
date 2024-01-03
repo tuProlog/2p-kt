@@ -18,13 +18,18 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertSame
 
 class TestLogicProgrammingScope {
-
     companion object {
-        fun assertDSLCreationIsCorrect(expected: Term, actualCreator: LogicProgrammingScope.() -> Term) {
+        fun assertDSLCreationIsCorrect(
+            expected: Term,
+            actualCreator: LogicProgrammingScope.() -> Term,
+        ) {
             assertEquals(expected, LogicProgrammingScope.empty().actualCreator())
         }
 
-        fun assertDSLCreationIsCorrect(expectedCreator: LogicProgrammingScope.() -> Term, actualCreator: LogicProgrammingScope.() -> Term) {
+        fun assertDSLCreationIsCorrect(
+            expectedCreator: LogicProgrammingScope.() -> Term,
+            actualCreator: LogicProgrammingScope.() -> Term,
+        ) {
             val prolog = LogicProgrammingScope.empty()
             assertEquals(prolog.expectedCreator(), prolog.actualCreator())
         }

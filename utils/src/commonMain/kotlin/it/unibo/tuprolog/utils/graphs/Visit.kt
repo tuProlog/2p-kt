@@ -14,6 +14,9 @@ interface Visit<T, S> {
     companion object {
         @JsName("of")
         @JvmStatic
-        fun <T, S> of(state: S, node: Node<T>): Visit<T, S> = VisitImpl(state, node)
+        fun <T, S> of(
+            state: S,
+            node: Node<T>,
+        ): Visit<T, S> = VisitImpl(state, node)
     }
 }

@@ -5,7 +5,6 @@ import it.unibo.tuprolog.utils.TagsOperator
 import kotlin.collections.Collection as KtCollection
 
 internal sealed class SubstitutionImpl : Substitution {
-
     override val isSuccess: Boolean
         get() = false
 
@@ -16,30 +15,36 @@ internal sealed class SubstitutionImpl : Substitution {
 
     override fun plus(other: Substitution): Substitution = plus(other) { x, y -> x + y }
 
-    override fun plus(other: Substitution, tagsMerger: TagsOperator): Substitution = when {
-        anyFailed(this, other) || anyContradiction(this, other) -> {
-            FailImpl(tagsMerger(tags, other.tags))
+    override fun plus(
+        other: Substitution,
+        tagsMerger: TagsOperator,
+    ): Substitution =
+        when {
+            anyFailed(this, other) || anyContradiction(this, other) -> {
+                FailImpl(tagsMerger(tags, other.tags))
+            }
+            else -> {
+                UnifierImpl.of(
+                    this.mapValues { (_, value) -> value.apply(other) } + other,
+                    tagsMerger(tags, other.tags),
+                )
+            }
         }
-        else -> {
-            UnifierImpl.of(
-                this.mapValues { (_, value) -> value.apply(other) } + other,
-                tagsMerger(tags, other.tags)
-            )
-        }
-    }
 
     override operator fun minus(keys: Iterable<Var>): Substitution {
         val thiz: Map<Var, Term> = this
         return whenIs(
             unifier = { UnifierImpl.of(thiz - keys, tags) },
-            fail = { FailImpl(tags) }
+            fail = { FailImpl(tags) },
         )
     }
 
     override fun minus(variable: Var): Substitution = minus(listOf(variable))
 
-    override fun minus(variable: Var, vararg otherVariables: Var): Substitution =
-        minus(listOf(variable, *otherVariables))
+    override fun minus(
+        variable: Var,
+        vararg otherVariables: Var,
+    ): Substitution = minus(listOf(variable, *otherVariables))
 
     override operator fun minus(other: Substitution): Substitution = this - other.keys
 
@@ -47,19 +52,24 @@ internal sealed class SubstitutionImpl : Substitution {
         val thiz: Map<Var, Term> = this
         return whenIs(
             unifier = { UnifierImpl.of(thiz.filter(predicate), tags) },
-            fail = { FailImpl(tags) }
+            fail = { FailImpl(tags) },
         )
     }
 
     override fun filter(variables: KtCollection<Var>): Substitution = filter { k, _ -> k in variables }
 
     override fun filter(predicate: (key: Var, value: Term) -> Boolean): Substitution =
-        filter { (key, value) -> predicate(key, value) }
+        filter { (key, value) ->
+            predicate(
+                key,
+                value,
+            )
+        }
 
     override fun <T> whenIs(
         unifier: ((Unifier) -> T)?,
         fail: ((Substitution.Fail) -> T)?,
-        otherwise: (Substitution) -> T
+        otherwise: (Substitution) -> T,
     ): T {
         if (isSuccess && unifier != null) {
             return unifier(castToUnifier())
@@ -73,12 +83,13 @@ internal sealed class SubstitutionImpl : Substitution {
     /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
     class UnifierImpl private constructor(
         private val assignments: Map<Var, Term>,
-        override val tags: Map<String, Any>
+        override val tags: Map<String, Any>,
     ) : SubstitutionImpl(), Unifier, Map<Var, Term> by (assignments) {
-
         companion object {
-            fun of(mappings: Map<Var, Term>, tags: Map<String, Any> = emptyMap()) =
-                UnifierImpl(mappings.trimVariableChains().withoutIdentityMappings(), tags)
+            fun of(
+                mappings: Map<Var, Term>,
+                tags: Map<String, Any> = emptyMap(),
+            ) = UnifierImpl(mappings.trimVariableChains().withoutIdentityMappings(), tags)
         }
 
         // NOTE: no check for contradictions is made upon object construction
@@ -110,17 +121,22 @@ internal sealed class SubstitutionImpl : Substitution {
 
         override fun minus(variable: Var): Unifier = super.minus(variable).castToUnifier()
 
-        override fun minus(variable: Var, vararg otherVariables: Var): Unifier =
-            super.minus(variable, *otherVariables).castToUnifier()
+        override fun minus(
+            variable: Var,
+            vararg otherVariables: Var,
+        ): Unifier = super.minus(variable, *otherVariables).castToUnifier()
 
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier =
-            super.filter(predicate).castToUnifier()
+            super.filter(
+                predicate,
+            ).castToUnifier()
 
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Unifier =
-            super.filter(predicate).castToUnifier()
+            super.filter(
+                predicate,
+            ).castToUnifier()
 
-        override fun filter(variables: KtCollection<Var>): Unifier =
-            super.filter(variables).castToUnifier()
+        override fun filter(variables: KtCollection<Var>): Unifier = super.filter(variables).castToUnifier()
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -141,14 +157,20 @@ internal sealed class SubstitutionImpl : Substitution {
         override fun applyTo(term: Term): Term = term.apply(this)
 
         override fun replaceTags(tags: Map<String, Any>): Unifier =
-            if (tags == this.tags) this else UnifierImpl(assignments, tags)
+            if (tags == this.tags) {
+                this
+            } else {
+                UnifierImpl(
+                    assignments,
+                    tags,
+                )
+            }
     }
 
     /** The Failed Substitution instance */
     class FailImpl constructor(
-        override val tags: Map<String, Any> = emptyMap()
+        override val tags: Map<String, Any> = emptyMap(),
     ) : SubstitutionImpl(), Substitution.Fail, Map<Var, Term> by emptyMap() {
-
         override val isFailed: Boolean
             get() = true
 
@@ -160,7 +182,10 @@ internal sealed class SubstitutionImpl : Substitution {
 
         override fun minus(variable: Var): FailImpl = this
 
-        override fun minus(variable: Var, vararg otherVariables: Var): FailImpl = this
+        override fun minus(
+            variable: Var,
+            vararg otherVariables: Var,
+        ): FailImpl = this
 
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): FailImpl = this
 
@@ -172,8 +197,7 @@ internal sealed class SubstitutionImpl : Substitution {
 
         override fun applyTo(term: Term): Nothing? = null
 
-        override fun replaceTags(tags: Map<String, Any>): FailImpl =
-            if (tags == this.tags) this else FailImpl(tags)
+        override fun replaceTags(tags: Map<String, Any>): FailImpl = if (tags == this.tags) this else FailImpl(tags)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -189,12 +213,12 @@ internal sealed class SubstitutionImpl : Substitution {
 
     /** Substitution companion with factory functionality */
     companion object {
-
         /** Crates a Substitution from given substitution pairs; if any contradiction is found, the result will be [Substitution.Fail] */
-        fun of(substitutionPairs: Sequence<Pair<Var, Term>>): Substitution = when {
-            anyContradiction(substitutionPairs) -> FailImpl()
-            else -> UnifierImpl.of(substitutionPairs.toMap())
-        }
+        fun of(substitutionPairs: Sequence<Pair<Var, Term>>): Substitution =
+            when {
+                anyContradiction(substitutionPairs) -> FailImpl()
+                else -> UnifierImpl.of(substitutionPairs.toMap())
+            }
 
         /** Utility function to check if any of provided Substitution is failed */
         private fun anyFailed(vararg substitution: Substitution): Boolean = substitution.any { it.isFailed }
@@ -204,7 +228,10 @@ internal sealed class SubstitutionImpl : Substitution {
          *
          * Computational Complexity: length of the smaller among provided substitutions
          */
-        private fun anyContradiction(substitution: Substitution, other: Substitution): Boolean =
+        private fun anyContradiction(
+            substitution: Substitution,
+            other: Substitution,
+        ): Boolean =
             when {
                 substitution.size < other.size -> substitution to other
                 else -> other to substitution
@@ -223,7 +250,10 @@ internal sealed class SubstitutionImpl : Substitution {
         private fun anyContradiction(substitutionPairs: Sequence<Pair<Var, Term>>): Boolean =
             when {
                 substitutionPairs.none() -> false // no pair, no contradiction
-                with(substitutionPairs.iterator()) { next(); !hasNext() } -> false // one pair, no contradiction
+                with(substitutionPairs.iterator()) {
+                    next()
+                    !hasNext()
+                } -> false // one pair, no contradiction
                 else ->
                     mutableMapOf<Var, Term>().let { alreadySeenSubstitutions ->
                         substitutionPairs.forEach { (variable, substitution) ->
@@ -262,6 +292,9 @@ internal sealed class SubstitutionImpl : Substitution {
 
         /** Utility function to filter out identity mappings from a Map<Var, Term> */
         private fun Map<Var, Term>.withoutIdentityMappings(): Map<Var, Term> =
-            filterNot { (`var`, term) -> `var` == term }
+            filterNot {
+                    (`var`, term) ->
+                `var` == term
+            }
     }
 }

@@ -11,7 +11,7 @@ class SubstitutionApplicationException : SubstitutionException {
     constructor(term: Term, substitution: Substitution, message: String?, cause: Throwable? = null) : super(
         substitution,
         message,
-        cause
+        cause,
     ) {
         this.term = term
     }
@@ -22,7 +22,7 @@ class SubstitutionApplicationException : SubstitutionException {
             term,
             substitution,
             "Could not apply $substitution to $term",
-            cause
+            cause,
         )
 
     @JvmOverloads
@@ -30,6 +30,6 @@ class SubstitutionApplicationException : SubstitutionException {
         this(
             term,
             Substitution.failed(),
-            cause
+            cause,
         )
 }

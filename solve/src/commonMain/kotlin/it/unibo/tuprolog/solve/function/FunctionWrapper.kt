@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.Signature
  * @author Enrico
  */
 abstract class FunctionWrapper<C : ExecutionContext> : AbstractWrapper<LogicFunction> {
-
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)
 

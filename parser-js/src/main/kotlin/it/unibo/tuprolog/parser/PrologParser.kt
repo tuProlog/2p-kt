@@ -1,6 +1,6 @@
 @file:JsModule("@tuprolog/parser-utils")
 @file:JsNonModule
-@file:Suppress("VariableNaming", "TooManyFunctions", "UnusedPrivateProperty")
+@file:Suppress("VariableNaming", "TooManyFunctions", "UnusedPrivateProperty", "ktlint:standard:property-naming")
 
 package it.unibo.tuprolog.parser
 
@@ -60,27 +60,51 @@ external class PrologParser(input: TokenStream) {
     fun reset()
 
     fun addParseListener(listener: PrologParserListener)
+
     fun addErrorListener(listener: dynamic)
+
     fun removeErrorListeners()
 
     fun isOperator(operator: String): Boolean
+
     fun getTokenStream(): CommonTokenStream
-    fun addOperator(functor: String, associativity: String, priority: Int)
+
+    fun addOperator(
+        functor: String,
+        associativity: String,
+        priority: Int,
+    )
+
     fun singletonTerm(): SingletonTermContext
+
     fun singletonExpression(): SingletonExpressionContext
+
     fun theory(): TheoryContext
+
     fun optClause(): OptClauseContext
+
     fun clause(): ClauseContext
+
     fun expression(): ExpressionContext
+
     fun outer(): OuterContext
+
     fun op(): OpContext
+
     fun term(): TermContext
+
     fun number(): NumberContext
+
     fun integer(): IntegerContext
+
     fun real(): RealContext
+
     fun variable(): VariableContext
+
     fun structure(): StructureContext
+
     fun list(): ListContext
+
     fun set(): BlockContext
 }
 
@@ -121,8 +145,11 @@ external class ExpressionContext : ParserRuleContext {
     val outers: Array<OuterContext>
 
     fun term(): TermContext
+
     fun op(): OpContext
+
     fun expression(): ExpressionContext
+
     fun outer(): OuterContext
 }
 
@@ -140,7 +167,9 @@ external class OuterContext : ParserRuleContext {
     val outers: Array<OuterContext>
 
     fun op(): OpContext
+
     fun expression(): ExpressionContext
+
     fun outer(): OuterContext
 }
 
@@ -159,17 +188,24 @@ external class TermContext : ParserRuleContext {
     val isBlock: Boolean
 
     fun variable(): VariableContext
+
     fun structure(): StructureContext
+
     fun list(): ListContext
+
     fun set(): BlockContext
+
     fun number(): NumberContext
+
     fun expression(): ExpressionContext
 }
 
 external class NumberContext : ParserRuleContext {
     val isInt: Boolean
     val isReal: Boolean
+
     fun integer(): IntegerContext
+
     fun real(): RealContext
 }
 

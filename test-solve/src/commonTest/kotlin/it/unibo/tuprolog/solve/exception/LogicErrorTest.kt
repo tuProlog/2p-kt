@@ -20,23 +20,36 @@ import kotlin.test.assertNull
  * @author Enrico
  */
 internal class LogicErrorTest {
-
     /** A non specific LogicError instance */
-    private val underTestPrologError = object : LogicError(aMessage, aCause, aContext, aType, someExtraData) {
-        override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
-            of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+    private val underTestPrologError =
+        object : LogicError(aMessage, aCause, aContext, aType, someExtraData) {
+            override fun updateContext(
+                newContext: ExecutionContext,
+                index: Int,
+            ): LogicError =
+                of(
+                    this.message,
+                    this.cause,
+                    this.contexts.setItem(index, newContext),
+                    this.type,
+                    this.extraData,
+                )
 
-        override fun updateLastContext(newContext: ExecutionContext): LogicError =
-            updateContext(newContext, contexts.lastIndex)
+            override fun updateLastContext(newContext: ExecutionContext): LogicError =
+                updateContext(
+                    newContext,
+                    contexts.lastIndex,
+                )
 
-        override fun pushContext(newContext: ExecutionContext): LogicError =
-            of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
-    }
+            override fun pushContext(newContext: ExecutionContext): LogicError =
+                of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
+        }
 
     /** Specific prolog error instances */
-    private val logicErrorTypeToInstanceMap = LogicErrorUtils.recognizedSubTypes.map { (typeParam, _) ->
-        typeParam to LogicError.of(aMessage, aCause, aContext, typeParam, someExtraData)
-    }
+    private val logicErrorTypeToInstanceMap =
+        LogicErrorUtils.recognizedSubTypes.map { (typeParam, _) ->
+            typeParam to LogicError.of(aMessage, aCause, aContext, typeParam, someExtraData)
+        }
 
     @Test
     fun holdsInsertedData() {
@@ -45,16 +58,29 @@ internal class LogicErrorTest {
 
     @Test
     fun defaultsAreNull() {
-        val toBeTested = object : LogicError(context = aContext, type = aType) {
-            override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
-                of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+        val toBeTested =
+            object : LogicError(context = aContext, type = aType) {
+                override fun updateContext(
+                    newContext: ExecutionContext,
+                    index: Int,
+                ): LogicError =
+                    of(
+                        this.message,
+                        this.cause,
+                        this.contexts.setItem(index, newContext),
+                        this.type,
+                        this.extraData,
+                    )
 
-            override fun updateLastContext(newContext: ExecutionContext): LogicError =
-                updateContext(newContext, contexts.lastIndex)
+                override fun updateLastContext(newContext: ExecutionContext): LogicError =
+                    updateContext(
+                        newContext,
+                        contexts.lastIndex,
+                    )
 
-            override fun pushContext(newContext: ExecutionContext): LogicError =
-                of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
-        }
+                override fun pushContext(newContext: ExecutionContext): LogicError =
+                    of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
+            }
         assertNull(toBeTested.message)
         assertNull(toBeTested.cause)
         assertNull(toBeTested.extraData)
@@ -62,16 +88,29 @@ internal class LogicErrorTest {
 
     @Test
     fun constructorInsertsMessageIfOnlyCauseSpecified() {
-        val logicError = object : LogicError(aCause, aContext, aType, someExtraData) {
-            override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
-                of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+        val logicError =
+            object : LogicError(aCause, aContext, aType, someExtraData) {
+                override fun updateContext(
+                    newContext: ExecutionContext,
+                    index: Int,
+                ): LogicError =
+                    of(
+                        this.message,
+                        this.cause,
+                        this.contexts.setItem(index, newContext),
+                        this.type,
+                        this.extraData,
+                    )
 
-            override fun updateLastContext(newContext: ExecutionContext): LogicError =
-                updateContext(newContext, contexts.lastIndex)
+                override fun updateLastContext(newContext: ExecutionContext): LogicError =
+                    updateContext(
+                        newContext,
+                        contexts.lastIndex,
+                    )
 
-            override fun pushContext(newContext: ExecutionContext): LogicError =
-                of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
-        }
+                override fun pushContext(newContext: ExecutionContext): LogicError =
+                    of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
+            }
 
         assertEquals(aCause.toString(), logicError.message)
     }
@@ -81,15 +120,27 @@ internal class LogicErrorTest {
         assertErrorStructCorrect(underTestPrologError)
         assertErrorStructCorrect(
             object : LogicError(context = aContext, type = aType) {
-                override fun updateContext(newContext: ExecutionContext, index: Int): LogicError =
-                    of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+                override fun updateContext(
+                    newContext: ExecutionContext,
+                    index: Int,
+                ): LogicError =
+                    of(
+                        this.message,
+                        this.cause,
+                        this.contexts.setItem(index, newContext),
+                        this.type,
+                        this.extraData,
+                    )
 
                 override fun updateLastContext(newContext: ExecutionContext): LogicError =
-                    updateContext(newContext, contexts.lastIndex)
+                    updateContext(
+                        newContext,
+                        contexts.lastIndex,
+                    )
 
                 override fun pushContext(newContext: ExecutionContext): LogicError =
                     of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
-            }
+            },
         )
     }
 

@@ -18,7 +18,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class TupleImplTest {
-
     private val twoElementsTuple = TupleUtils.twoElementTuple(::TupleImpl)
     private val threeElementsTuple = TupleUtils.threeElementTuple(::TupleImpl)
 
@@ -56,7 +55,7 @@ internal class TupleImplTest {
     fun unfoldedListCorrect() {
         onCorrespondingItems(
             tupleInstancesElementLists,
-            tupleInstances.map { it.unfoldedList }
+            tupleInstances.map { it.unfoldedList },
         ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
@@ -64,7 +63,7 @@ internal class TupleImplTest {
     fun unfoldedSequenceCorrect() {
         onCorrespondingItems(
             tupleInstancesElementLists,
-            tupleInstances.map { it.unfoldedSequence.toList() }
+            tupleInstances.map { it.unfoldedSequence.toList() },
         ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
@@ -72,7 +71,7 @@ internal class TupleImplTest {
     fun unfoldedArrayCorrect() {
         onCorrespondingItems(
             tupleInstancesElementLists,
-            tupleInstances.map { it.unfoldedArray.toList() }
+            tupleInstances.map { it.unfoldedArray.toList() },
         ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
@@ -80,7 +79,7 @@ internal class TupleImplTest {
     fun toListReturnValue() {
         onCorrespondingItems(
             tupleInstancesElementLists,
-            tupleInstances.map { it.toList() }
+            tupleInstances.map { it.toList() },
         ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
@@ -88,7 +87,7 @@ internal class TupleImplTest {
     fun toArrayReturnValue() {
         onCorrespondingItems(
             tupleInstancesElementLists,
-            tupleInstances.map { it.toArray().toList() }
+            tupleInstances.map { it.toArray().toList() },
         ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
@@ -96,7 +95,7 @@ internal class TupleImplTest {
     fun toSequenceReturnValue() {
         onCorrespondingItems(
             tupleInstancesElementLists,
-            tupleInstances.map { it.toSequence().toList() }
+            tupleInstances.map { it.toSequence().toList() },
         ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 

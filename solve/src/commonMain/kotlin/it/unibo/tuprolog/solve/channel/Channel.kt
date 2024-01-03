@@ -28,11 +28,14 @@ interface Channel<T : Any> {
     companion object {
         @JvmStatic
         @JsName("streamTerm")
-        fun streamTerm(input: Boolean? = null, id: String? = null): Struct =
+        fun streamTerm(
+            input: Boolean? = null,
+            id: String? = null,
+        ): Struct =
             Struct.of(
                 "\$stream",
                 input?.let { if (it) "in" else "out" }?.let { Atom.of(it) } ?: Var.anonymous(),
-                id?.let { Atom.of(it) } ?: Var.anonymous()
+                id?.let { Atom.of(it) } ?: Var.anonymous(),
             )
     }
 }

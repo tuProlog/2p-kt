@@ -12,7 +12,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -26,7 +26,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -40,7 +40,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -54,7 +54,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -68,7 +68,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -82,7 +82,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -96,7 +96,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }

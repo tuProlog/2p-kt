@@ -11,11 +11,16 @@ import it.unibo.tuprolog.solve.primitive.Solve
 
 object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom") {
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
-        first: Term, // string
-        second: Term, // before
-        third: Term, // length
-        fourth: Term, // after
-        fifth: Term // sub
+        // string
+        first: Term,
+        // before
+        second: Term,
+        // length
+        third: Term,
+        // after
+        fourth: Term,
+        // sub
+        fifth: Term,
     ): Sequence<Substitution> {
         return if (fifth is Var) {
             ensuringArgumentIsInstantiated(0)

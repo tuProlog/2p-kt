@@ -11,7 +11,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class ThrowTest {
-
     @Test
     fun throwPrimitiveThrowCorrectErrors() {
         ThrowUtils.errorThrowingBehaviourRequest.forEach { (request, errorType) ->

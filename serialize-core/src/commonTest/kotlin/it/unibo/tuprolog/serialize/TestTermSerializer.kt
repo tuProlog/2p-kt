@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TestTermSerializer {
-
     @Test
     fun testAtomSerializationInJSON() {
         val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
@@ -80,7 +79,9 @@ class TestTermSerializer {
         val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
         assertEquals(MimeType.Json, serializer.mimeType)
 
-        serializer.assertTermSerializationWorks("{\"fun\":\"member\",\"args\":[{\"var\":\"H\"},{\"list\":[{\"var\":\"H\"}],\"tail\":{\"var\":\"_\"}}]}") {
+        serializer.assertTermSerializationWorks(
+            "{\"fun\":\"member\",\"args\":[{\"var\":\"H\"},{\"list\":[{\"var\":\"H\"}],\"tail\":{\"var\":\"_\"}}]}",
+        ) {
             structOf("member", varOf("H"), consOf(varOf("H"), anonymous()))
         }
     }
@@ -126,7 +127,7 @@ class TestTermSerializer {
             |      - var: H
             |    tail: 
             |      var: _
-            """.trimMargin()
+            """.trimMargin(),
         ) {
             structOf("member", varOf("H"), consOf(varOf("H"), anonymous()))
         }

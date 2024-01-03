@@ -12,24 +12,30 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class TestClausesParser {
-
     companion object {
-        fun assertMatch(expected: Term, actual: Term) {
+        fun assertMatch(
+            expected: Term,
+            actual: Term,
+        ) {
             assertTrue("Term `$actual` does not unify with `$expected`") {
                 Unificator.default.match(expected, actual)
             }
         }
 
-        fun assertMatch(expected: Term, actual: LogicProgrammingScopeWithTheories.() -> Term) {
+        fun assertMatch(
+            expected: Term,
+            actual: LogicProgrammingScopeWithTheories.() -> Term,
+        ) {
             assertMatch(expected, LogicProgrammingScopeWithTheories.of().actual())
         }
     }
 
     @Test
     fun testTheoryParsing() {
-        val db = with(ClausesParser.withStandardOperators()) {
-            parseTheory("f(1).\nf(2).\n:- f(X), g(X).\nf(X) :- g(X).")
-        }
+        val db =
+            with(ClausesParser.withStandardOperators()) {
+                parseTheory("f(1).\nf(2).\n:- f(X), g(X).\nf(X) :- g(X).")
+            }
 
         val rules = db.rules.toList()
         val directives = db.directives.toList()
@@ -71,9 +77,10 @@ class TestClausesParser {
             |1 :: 2 :: nil.
             """.trimMargin()
 
-        val th = with(ClausesParser.withStandardOperators()) {
-            parseTheory(input)
-        }
+        val th =
+            with(ClausesParser.withStandardOperators()) {
+                parseTheory(input)
+            }
 
         assertMatch(th.elementAt(0)) {
             directive { "op"(900, "xfy", "::") }
@@ -103,9 +110,10 @@ class TestClausesParser {
             |1 ++ 2 -- 3 ++ 4.
             """.trimMargin()
 
-        val th = with(ClausesParser.withStandardOperators()) {
-            parseTheory(input)
-        }
+        val th =
+            with(ClausesParser.withStandardOperators()) {
+                parseTheory(input)
+            }
 
         assertMatch(th.elementAt(0)) {
             directive { "op"(900, "yfx", listOf("++", "--")) }

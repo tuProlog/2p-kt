@@ -8,7 +8,6 @@ class TestConcurrentNumberImpl :
     TestConcurrentNumber<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testBasicNum() = multiRunConcurrentTest { super.testBasicNum() }

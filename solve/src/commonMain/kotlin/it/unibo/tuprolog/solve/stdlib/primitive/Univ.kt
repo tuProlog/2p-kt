@@ -16,18 +16,27 @@ import it.unibo.tuprolog.core.List as LogicList
  * Implementation of '=..'/2 predicate
  */
 object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
-    private fun Solve.Request<ExecutionContext>.decompose(first: Struct, second: Term): Substitution {
+    private fun Solve.Request<ExecutionContext>.decompose(
+        first: Struct,
+        second: Term,
+    ): Substitution {
         val decomposed = LogicList.of(Atom.of(first.functor), *first.args.toTypedArray())
         return mgu(second, decomposed)
     }
 
-    private fun Solve.Request<ExecutionContext>.recompose(first: Term, second: LogicList): Substitution {
+    private fun Solve.Request<ExecutionContext>.recompose(
+        first: Term,
+        second: LogicList,
+    ): Substitution {
         val list = second.toList()
         val composed = Struct.of(list[0].castTo<Atom>().value, list.subList(1, list.size))
         return mgu(first, composed)
     }
 
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution {
+    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
+        first: Term,
+        second: Term,
+    ): Substitution {
         return when (first) {
             is Struct -> {
                 when (second) {

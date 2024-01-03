@@ -144,7 +144,7 @@ object CommonPrimitives {
             UnifiesWith,
             Univ,
             Var,
-            Write
+            Write,
         )
 
     val primitives: Map<Signature, Primitive> = wrappers.map { it.descriptionPair }.toMap()

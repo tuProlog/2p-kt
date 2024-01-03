@@ -19,13 +19,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class OrderedReteTreeTest {
-
     companion object {
-        private fun reteTreeOf(vararg clauses: Clause): ReteTree =
-            ReteTree.ordered(Unificator.default, *clauses)
+        private fun reteTreeOf(vararg clauses: Clause): ReteTree = ReteTree.ordered(Unificator.default, *clauses)
 
-        private fun reteTreeOf(clauses: Iterable<Clause>): ReteTree =
-            ReteTree.ordered(Unificator.default, clauses)
+        private fun reteTreeOf(clauses: Iterable<Clause>): ReteTree = ReteTree.ordered(Unificator.default, clauses)
     }
 
     @Test
@@ -429,11 +426,12 @@ class OrderedReteTreeTest {
 
     @Test
     fun anOrderedTreeFiltersClausesByBodyAsWell() {
-        val groundTerms = defaultClauses.asSequence()
-            .filterIsInstance<Rule>()
-            .flatMap { sequenceOf(it.head) + it.head.argsSequence }
-            .filter { it.isGround }
-            .toSet()
+        val groundTerms =
+            defaultClauses.asSequence()
+                .filterIsInstance<Rule>()
+                .flatMap { sequenceOf(it.head) + it.head.argsSequence }
+                .filter { it.isGround }
+                .toSet()
         val families = defaultClauses.filterIsInstance<Rule>().map { it.head.functor to it.head.arity }.toSet()
         for ((functor, arity) in families) {
             for (args in groundTerms.allChunksOfSize(arity)) {
@@ -497,15 +495,17 @@ class OrderedReteTreeTest {
 
     @Test
     fun nonGroundClausesAreMatchedByGroundQueries() {
-        val groundTerms = defaultClauses.asSequence()
-            .filterIsInstance<Rule>()
-            .flatMap { sequenceOf(it.head) + it.head.argsSequence }
-            .filter { it.isGround }
-            .toSet()
-        val families = defaultClauses.filterIsInstance<Rule>()
-            .map { it.head.functor to it.head.arity }
-            .filter { (_, arity) -> arity > 0 }
-            .toSet()
+        val groundTerms =
+            defaultClauses.asSequence()
+                .filterIsInstance<Rule>()
+                .flatMap { sequenceOf(it.head) + it.head.argsSequence }
+                .filter { it.isGround }
+                .toSet()
+        val families =
+            defaultClauses.filterIsInstance<Rule>()
+                .map { it.head.functor to it.head.arity }
+                .filter { (_, arity) -> arity > 0 }
+                .toSet()
 
         for ((functor, arity) in families) {
             for (args in groundTerms.allChunksOfSize(arity)) {

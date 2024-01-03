@@ -10,14 +10,13 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DoubleChecksOnEqualities {
-
     @Test
     fun testNumsAreEquals1() {
         assertEquals(
             Integer.of(1),
             logicProgramming {
                 1.toTerm()
-            }
+            },
         )
     }
 
@@ -27,7 +26,7 @@ class DoubleChecksOnEqualities {
             Real.of("3.100000000000000088817841970012523233890533447265625"),
             logicProgramming {
                 numOf(3.1)
-            }
+            },
         )
     }
 
@@ -37,7 +36,7 @@ class DoubleChecksOnEqualities {
             Integer.of(1),
             logicProgramming {
                 numOf(1)
-            }
+            },
         )
     }
 
@@ -47,7 +46,7 @@ class DoubleChecksOnEqualities {
             Integer.of(1),
             logicProgramming {
                 numOf(1L)
-            }
+            },
         )
     }
 
@@ -57,7 +56,7 @@ class DoubleChecksOnEqualities {
             Integer.of(1),
             logicProgramming {
                 numOf(BigInteger.ONE)
-            }
+            },
         )
     }
 
@@ -67,7 +66,7 @@ class DoubleChecksOnEqualities {
             Integer.of(1),
             logicProgramming {
                 numOf(BigInteger.TEN / BigInteger.TEN)
-            }
+            },
         )
     }
 
@@ -77,7 +76,7 @@ class DoubleChecksOnEqualities {
             Cons.singleton(Integer.of(1)),
             logicProgramming {
                 listOf(1)
-            }
+            },
         )
     }
 
@@ -87,7 +86,7 @@ class DoubleChecksOnEqualities {
             Cons.singleton(Integer.of(1)),
             logicProgramming {
                 listOf(numOf(1))
-            }
+            },
         )
     }
 
@@ -97,7 +96,7 @@ class DoubleChecksOnEqualities {
             Cons.singleton(Integer.of(1)),
             logicProgramming {
                 consOf(1, emptyList)
-            }
+            },
         )
     }
 
@@ -107,7 +106,7 @@ class DoubleChecksOnEqualities {
             Cons.singleton(Integer.of(1)),
             logicProgramming {
                 consOf(numOf(1), emptyList)
-            }
+            },
         )
     }
 
@@ -117,7 +116,7 @@ class DoubleChecksOnEqualities {
             Cons.singleton(Integer.of(1)),
             logicProgramming {
                 consOf(Integer.of(1), emptyList)
-            }
+            },
         )
     }
 
@@ -127,7 +126,7 @@ class DoubleChecksOnEqualities {
             Struct.of("+", Integer.of(1), Integer.of(2)),
             logicProgramming {
                 1.toTerm() + 2
-            }
+            },
         )
     }
 }

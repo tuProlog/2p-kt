@@ -14,15 +14,18 @@ import it.unibo.tuprolog.solve.ExecutionContext
 abstract class Warning(
     message: String? = null,
     cause: Throwable? = null,
-    contexts: Array<ExecutionContext>
+    contexts: Array<ExecutionContext>,
 ) : ResolutionException(message, cause, contexts) {
     constructor(
         message: String? = null,
         cause: Throwable? = null,
-        context: ExecutionContext
+        context: ExecutionContext,
     ) : this(message, cause, arrayOf(context))
 
-    abstract override fun updateContext(newContext: ExecutionContext, index: Int): Warning
+    abstract override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): Warning
 
     abstract override fun updateLastContext(newContext: ExecutionContext): Warning
 

@@ -25,14 +25,13 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 class IntegerImplTest {
-
     private val integerInstances = IntegerUtils.bigIntegers.map(::IntegerImpl)
 
     @Test
     fun correctValue() {
         onCorrespondingItems(
             IntegerUtils.bigIntegers,
-            integerInstances.map { it.value }
+            integerInstances.map { it.value },
         ) { expectedValue, integerValue -> assertEquals(expectedValue, integerValue) }
     }
 
@@ -40,7 +39,7 @@ class IntegerImplTest {
     fun correctIntValue() {
         onCorrespondingItems(
             IntegerUtils.bigIntegers,
-            integerInstances.map { it.intValue }
+            integerInstances.map { it.intValue },
         ) { expectedValue, integerIntValue -> assertEquals(expectedValue, integerIntValue) }
     }
 
@@ -50,7 +49,7 @@ class IntegerImplTest {
 
         onCorrespondingItems(
             expectedDecimals,
-            integerInstances.map { it.decimalValue }
+            integerInstances.map { it.decimalValue },
         ) { expectedValue, integerDecimalValue -> assertEquals(expectedValue, integerDecimalValue) }
     }
 
@@ -60,25 +59,25 @@ class IntegerImplTest {
 
         onCorrespondingItems(
             expectedToString,
-            integerInstances.map { it.toString() }
+            integerInstances.map { it.toString() },
         ) { expectedString, integerToString -> assertEquals(expectedString, integerToString) }
     }
 
     @Suppress("LocalVariableName")
     @Test
     fun compareToWorksAsExpected() {
-        val `1` = IntegerImpl(BigInteger.of(1))
-        val `2` = IntegerImpl(BigInteger.of(2))
+        val one = IntegerImpl(BigInteger.of(1))
+        val two = IntegerImpl(BigInteger.of(2))
 
-        assertTrue(`1`.compareValueTo(`1`) == 0)
-        assertTrue(`1`.compareValueTo(`1`) >= 0)
+        assertTrue(one.compareValueTo(one) == 0)
+        assertTrue(one.compareValueTo(one) >= 0)
 
-        assertTrue(`1`.compareValueTo(`2`) != 0)
-        assertTrue(`1`.compareValueTo(`2`) <= 0)
-        assertTrue(`1`.compareValueTo(`2`) < 0)
+        assertTrue(one.compareValueTo(two) != 0)
+        assertTrue(one.compareValueTo(two) <= 0)
+        assertTrue(one.compareValueTo(two) < 0)
 
-        assertFalse(`1`.compareValueTo(`2`) >= 0)
-        assertFalse(`1`.compareValueTo(`2`) > 0)
+        assertFalse(one.compareValueTo(two) >= 0)
+        assertFalse(one.compareValueTo(two) > 0)
     }
 
     @Test

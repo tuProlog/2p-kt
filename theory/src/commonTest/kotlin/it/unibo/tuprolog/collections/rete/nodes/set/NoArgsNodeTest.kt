@@ -22,7 +22,6 @@ import kotlin.test.assertSame
  * @author Enrico
  */
 internal class NoArgsNodeTest {
-
     private lateinit var emptyNoArgsNode: NoArgsNode
     private lateinit var filledNoArgsNode: NoArgsNode
 

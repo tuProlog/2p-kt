@@ -14,7 +14,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class NaturalLogarithmTest {
-
     @Test
     fun functorNameCorrect() {
         assertEquals(Signature("log", 1), NaturalLogarithm.signature)
@@ -24,7 +23,7 @@ internal class NaturalLogarithmTest {
     fun computationCorrect() {
         assertEquals(
             Numeric.of(1.0),
-            NaturalLogarithm.computeOf(Real.of(E))
+            NaturalLogarithm.computeOf(Real.of(E)),
         )
     }
 }

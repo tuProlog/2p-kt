@@ -4,7 +4,7 @@ plugins {
     id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
     id(libs.plugins.ktMpp.npmPublish.get().pluginId)
     id(libs.plugins.ktMpp.multiProjectHelper.get().pluginId)
-    id(libs.plugins.shadowJar.get().pluginId)
+    id(libs.plugins.ktMpp.fatJar.get().pluginId)
 }
 
 val thisProject = project.name
@@ -33,12 +33,4 @@ multiProjectHelper {
             }
         }
     }
-}
-
-val supportedPlatforms by extra { listOf("win", "linux", "mac", "mac-aarch64") }
-
-shadowJar(classifier = "full")
-
-for (platform in supportedPlatforms) {
-    shadowJar(platform = platform, classifier = "full")
 }

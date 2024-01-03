@@ -10,7 +10,6 @@ import it.unibo.tuprolog.core.operators.Specifier
  * @author Enrico
  */
 internal object OperatorSetUtils {
-
     /** The reference "table" of [Operator]s to test if they are stored correctly */
     internal val defaultOperators by lazy {
         listOf(
@@ -53,7 +52,7 @@ internal object OperatorSetUtils {
             Triple(":-", Specifier.FX, 1200),
             Triple("?-", Specifier.FX, 1200),
             Triple(":-", Specifier.XFX, 1200),
-            Triple("-->", Specifier.XFX, 1200)
+            Triple("-->", Specifier.XFX, 1200),
         )
     }
 }

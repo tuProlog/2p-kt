@@ -16,7 +16,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class FunctionWrapperTest {
-
     @Test
     fun functionWorksIfCorrectRequestProvided() {
         wrapperToMatchingSignatureRequest(::createFunctionWrapper, function, ::createFunctionRequest)

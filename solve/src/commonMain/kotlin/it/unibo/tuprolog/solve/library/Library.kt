@@ -22,7 +22,6 @@ import kotlin.jvm.JvmStatic
  * A library alias is aimed at identifying the library in the eyes of a solver.
  * */
 interface Library : Pluggable {
-
     /** The alias identifying this library */
     @JsName("alias")
     val alias: String
@@ -34,7 +33,6 @@ interface Library : Pluggable {
     override fun toString(): String // Leave this here to allow delegation in `: ... by`
 
     companion object {
-
         /** The character used to separate library alias from original name */
         const val ALIAS_SEPARATOR = "."
 
@@ -69,7 +67,7 @@ interface Library : Pluggable {
             primitives: Map<Signature, Primitive> = emptyMap(),
             clauses: Iterable<Clause> = emptyList(),
             operators: OperatorSet = OperatorSet(),
-            functions: Map<Signature, LogicFunction> = emptyMap()
+            functions: Map<Signature, LogicFunction> = emptyMap(),
         ): Library {
             require(ALIAS_PATTERN.matches(alias)) {
                 "Aliases should match the pattern $ALIAS_PATTERN"
@@ -84,7 +82,7 @@ interface Library : Pluggable {
             primitives: Map<Signature, Primitive> = emptyMap(),
             clauses: Iterable<Clause> = emptyList(),
             operators: OperatorSet = OperatorSet(),
-            functions: Map<Signature, LogicFunction> = emptyMap()
+            functions: Map<Signature, LogicFunction> = emptyMap(),
         ): Library = of(DEFAULT_ALIAS, primitives, clauses, operators, functions)
 
         @JvmStatic
@@ -92,7 +90,7 @@ interface Library : Pluggable {
         @JvmOverloads
         fun of(
             alias: String = DEFAULT_ALIAS,
-            library: Library
+            library: Library,
         ): Library = of(alias, library.primitives, library.clauses, library.operators, library.functions)
     }
 }

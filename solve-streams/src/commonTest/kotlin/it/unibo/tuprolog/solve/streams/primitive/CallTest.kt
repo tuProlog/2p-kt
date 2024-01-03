@@ -19,7 +19,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class CallTest {
-
     @Test
     fun callForwardsResponsesFromArgumentExecutionIfWellFormedGoalAndNotVariable() {
         requestSolutionMap.forEach { (request, solutionList) ->

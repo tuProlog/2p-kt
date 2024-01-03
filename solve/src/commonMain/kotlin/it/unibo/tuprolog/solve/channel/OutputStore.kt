@@ -36,7 +36,7 @@ interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore>
         fun fromStandard(
             output: OutputChannel<String> = OutputChannel.stdOut(),
             error: OutputChannel<String> = OutputChannel.stdErr(),
-            warnings: OutputChannel<Warning> = OutputChannel.warn()
+            warnings: OutputChannel<Warning> = OutputChannel.warn(),
         ): OutputStore = OutputStoreImpl(output, error, warnings, mapOf("user_output" to output))
 
         @JsName("of")
@@ -44,7 +44,7 @@ interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore>
         @JvmOverloads
         fun of(
             channels: Map<String, OutputChannel<String>>,
-            warnings: OutputChannel<Warning> = OutputChannel.warn()
+            warnings: OutputChannel<Warning> = OutputChannel.warn(),
         ): OutputStore {
             val stdOut = channels[STDOUT] ?: OutputChannel.stdOut()
             val stdErr = channels[STDERR] ?: OutputChannel.stdErr()

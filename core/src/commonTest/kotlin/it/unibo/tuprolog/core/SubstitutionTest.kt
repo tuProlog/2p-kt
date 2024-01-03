@@ -16,7 +16,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class SubstitutionTest {
-
     private val aVar = Var.of("A")
     private val bVar = Var.of("B")
 
@@ -73,8 +72,9 @@ internal class SubstitutionTest {
     @Test
     fun ofVariableAndTerm() {
         val correct = correctInstances.filter { it.size == 1 }
-        val toBeTested = SubstitutionUtils.mixedSubstitutionsAsPairs.filter { it.size == 1 }.map { it.first() }
-            .map { (variable, withTerm) -> Substitution.of(variable, withTerm) }
+        val toBeTested =
+            SubstitutionUtils.mixedSubstitutionsAsPairs.filter { it.size == 1 }.map { it.first() }
+                .map { (variable, withTerm) -> Substitution.of(variable, withTerm) }
 
         onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
     }
@@ -82,8 +82,9 @@ internal class SubstitutionTest {
     @Test
     fun ofStringVariableAndTerm() {
         val correct = correctInstances.filter { it.size == 1 }
-        val toBeTested = SubstitutionUtils.mixedSubstitutionsAsPairs.filter { it.size == 1 }.map { it.first() }
-            .map { (variable, withTerm) -> Substitution.of(variable.name, withTerm) }
+        val toBeTested =
+            SubstitutionUtils.mixedSubstitutionsAsPairs.filter { it.size == 1 }.map { it.first() }
+                .map { (variable, withTerm) -> Substitution.of(variable.name, withTerm) }
 
         onCorrespondingItems(correct, toBeTested) { expectedMap, actualMap ->
             onCorrespondingItems(expectedMap.keys, actualMap.keys, ::assertDifferentVariableExceptForName)
@@ -93,18 +94,20 @@ internal class SubstitutionTest {
 
     @Test
     fun ofVariableTermPairs() {
-        val toBeTested = SubstitutionUtils.mixedSubstitutionsAsPairs.map {
-            Substitution.of(it.first(), *it.dropFirst().toTypedArray())
-        }
+        val toBeTested =
+            SubstitutionUtils.mixedSubstitutionsAsPairs.map {
+                Substitution.of(it.first(), *it.dropFirst().toTypedArray())
+            }
 
         onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
     }
 
     @Test
     fun ofVariableTermPairsDoesntComplainIfExactDuplicates() {
-        val toBeTested = SubstitutionUtils.duplicatedPairSubstitution.map {
-            Substitution.of(it.first(), *it.dropFirst().toTypedArray())
-        }
+        val toBeTested =
+            SubstitutionUtils.duplicatedPairSubstitution.map {
+                Substitution.of(it.first(), *it.dropFirst().toTypedArray())
+            }
 
         val correctInstances = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.of(it.toMap()) }
 
@@ -113,9 +116,10 @@ internal class SubstitutionTest {
 
     @Test
     fun ofVariableTermPairsResultInFailedSubstitutionIfContradicting() {
-        val toBeTested = SubstitutionUtils.contradictingSubstitutions.map {
-            Substitution.of(it.first(), *it.dropFirst().toTypedArray())
-        }
+        val toBeTested =
+            SubstitutionUtils.contradictingSubstitutions.map {
+                Substitution.of(it.first(), *it.dropFirst().toTypedArray())
+            }
 
         toBeTested.forEach { assertEquals(Substitution.failed(), it) }
     }
@@ -159,20 +163,22 @@ internal class SubstitutionTest {
     @Test
     fun ofSubstitutionsWithAlwaysSameSubstitutionsReturnsThemNotDuplicated() {
         Scope.of("A", "B") {
-            val correct = Substitution.unifier(
-                mapOf(
-                    varOf("A") to atomOf("a"),
-                    varOf("B") to atomOf("b")
+            val correct =
+                Substitution.unifier(
+                    mapOf(
+                        varOf("A") to atomOf("a"),
+                        varOf("B") to atomOf("b"),
+                    ),
                 )
-            )
 
-            val toBeTested = Substitution.of(
-                Substitution.unifier(mapOf(varOf("B") to atomOf("b"))),
-                Substitution.unifier(mapOf(varOf("A") to atomOf("a"))),
-                Substitution.unifier(mapOf(varOf("B") to atomOf("b"))),
-                Substitution.unifier(mapOf(varOf("A") to atomOf("a"))),
-                Substitution.unifier(mapOf(varOf("B") to atomOf("b")))
-            )
+            val toBeTested =
+                Substitution.of(
+                    Substitution.unifier(mapOf(varOf("B") to atomOf("b"))),
+                    Substitution.unifier(mapOf(varOf("A") to atomOf("a"))),
+                    Substitution.unifier(mapOf(varOf("B") to atomOf("b"))),
+                    Substitution.unifier(mapOf(varOf("A") to atomOf("a"))),
+                    Substitution.unifier(mapOf(varOf("B") to atomOf("b"))),
+                )
 
             assertEquals(correct, toBeTested)
         }
@@ -181,13 +187,14 @@ internal class SubstitutionTest {
     @Test
     fun ofSubstitutionsWithContradictingOnesReturnsFailed() {
         Scope.of("A", "B") {
-            val toBeTested = Substitution.of(
-                Substitution.unifier(mapOf(varOf("B") to atomOf("f"))),
-                Substitution.unifier(mapOf(varOf("B") to varOf("A"))),
-                Substitution.unifier(mapOf(varOf("A") to atomOf("b"))),
-                Substitution.unifier(mapOf(varOf("A") to atomOf("a"))),
-                Substitution.unifier(mapOf(varOf("B") to atomOf("b")))
-            )
+            val toBeTested =
+                Substitution.of(
+                    Substitution.unifier(mapOf(varOf("B") to atomOf("f"))),
+                    Substitution.unifier(mapOf(varOf("B") to varOf("A"))),
+                    Substitution.unifier(mapOf(varOf("A") to atomOf("b"))),
+                    Substitution.unifier(mapOf(varOf("A") to atomOf("a"))),
+                    Substitution.unifier(mapOf(varOf("B") to atomOf("b"))),
+                )
 
             assertEquals(Substitution.failed(), toBeTested)
         }
@@ -200,19 +207,21 @@ internal class SubstitutionTest {
         val first = Substitution.unifier(mapOf(bVar to Struct.of("f", aVar)))
         val second = Substitution.unifier(mapOf(aVar to xAtom))
 
-        val firstComposedSecondExpected = Substitution.unifier(
-            mapOf(
-                bVar to Struct.of("f", xAtom),
-                aVar to xAtom
+        val firstComposedSecondExpected =
+            Substitution.unifier(
+                mapOf(
+                    bVar to Struct.of("f", xAtom),
+                    aVar to xAtom,
+                ),
             )
-        )
 
-        val secondComposedFirstExpected = Substitution.unifier(
-            mapOf(
-                aVar to xAtom,
-                bVar to Struct.of("f", aVar)
+        val secondComposedFirstExpected =
+            Substitution.unifier(
+                mapOf(
+                    aVar to xAtom,
+                    bVar to Struct.of("f", aVar),
+                ),
             )
-        )
 
         assertEquals(firstComposedSecondExpected, Substitution.of(first, second))
         assertEquals(secondComposedFirstExpected, Substitution.of(second, first))
@@ -223,12 +232,13 @@ internal class SubstitutionTest {
         Scope.empty {
             val identityPairA = varOf("A") to varOf("A")
             val identityPairB = varOf("B") to varOf("B")
-            val toBeTested = ktListOf(
-                Substitution.of(identityPairA.first, identityPairA.second),
-                Substitution.of(identityPairA, identityPairB),
-                Substitution.of(ktListOf(identityPairA, identityPairB)),
-                Substitution.of(Substitution.of(identityPairA), Substitution.of(identityPairB))
-            )
+            val toBeTested =
+                ktListOf(
+                    Substitution.of(identityPairA.first, identityPairA.second),
+                    Substitution.of(identityPairA, identityPairB),
+                    Substitution.of(ktListOf(identityPairA, identityPairB)),
+                    Substitution.of(Substitution.of(identityPairA), Substitution.of(identityPairB)),
+                )
 
             toBeTested.forEach { assertEquals(Substitution.empty(), it) }
         }

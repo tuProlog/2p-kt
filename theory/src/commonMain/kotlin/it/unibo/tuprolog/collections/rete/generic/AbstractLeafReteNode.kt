@@ -5,16 +5,18 @@ import kotlin.math.min
 
 /** A leaf Rete Node */
 internal abstract class AbstractLeafReteNode<E : Clause>(
-    override val children: MutableMap<Nothing, ReteNode<*, E>> = mutableMapOf()
+    override val children: MutableMap<Nothing, ReteNode<*, E>> = mutableMapOf(),
 ) : AbstractReteNode<Nothing, E>(children) {
-
     /** Internal data structure to store leaf elements */
     protected abstract val leafElements: MutableList<E>
 
     override val indexedElements: Sequence<E>
         get() = leafElements.asSequence()
 
-    override fun put(element: E, beforeOthers: Boolean) {
+    override fun put(
+        element: E,
+        beforeOthers: Boolean,
+    ) {
         if (beforeOthers) {
             leafElements.add(0, element)
         } else {
@@ -22,7 +24,10 @@ internal abstract class AbstractLeafReteNode<E : Clause>(
         }
     }
 
-    override fun removeWithLimit(element: E, limit: Int): Sequence<E> =
+    override fun removeWithLimit(
+        element: E,
+        limit: Int,
+    ): Sequence<E> =
         get(element)
             .take(if (limit > 0) min(limit, leafElements.count()) else leafElements.count())
             .toList()

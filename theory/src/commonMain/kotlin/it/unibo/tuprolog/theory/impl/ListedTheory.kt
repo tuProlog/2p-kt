@@ -12,13 +12,12 @@ import kotlin.collections.List as KtList
 internal class ListedTheory private constructor(
     unificator: Unificator,
     clauses: KtList<Clause>,
-    tags: Map<String, Any>
+    tags: Map<String, Any>,
 ) : AbstractListedTheory(unificator, clauses, tags) {
-
     constructor(
         unificator: Unificator,
         clauses: Iterable<Clause>,
-        tags: Map<String, Any> = emptyMap()
+        tags: Map<String, Any> = emptyMap(),
     ) : this(unificator, clauses.toList(), tags) {
         checkClausesCorrect(clauses)
     }
@@ -26,7 +25,7 @@ internal class ListedTheory private constructor(
     constructor(
         unificator: Unificator,
         clauses: Sequence<Clause>,
-        tags: Map<String, Any> = emptyMap()
+        tags: Map<String, Any> = emptyMap(),
     ) : this(unificator, clauses.toList(), tags) {
         checkClausesCorrect(clauses)
     }
@@ -34,7 +33,7 @@ internal class ListedTheory private constructor(
     override fun createNewTheory(
         clauses: Sequence<Clause>,
         tags: Map<String, Any>,
-        unificator: Unificator
+        unificator: Unificator,
     ) = ListedTheory(unificator, clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<ListedTheory> {
@@ -46,7 +45,7 @@ internal class ListedTheory private constructor(
                 val newTheory = clauses.filter { it != toBeActuallyRetracted }
                 RetractResult.Success(
                     ListedTheory(unificator, newTheory, tags),
-                    listOf(toBeActuallyRetracted)
+                    listOf(toBeActuallyRetracted),
                 )
             }
         }
@@ -82,7 +81,7 @@ internal class ListedTheory private constructor(
                 val toBeActuallyRetracted = partitionedClauses.first
                 RetractResult.Success(
                     ListedTheory(unificator, newTheory, tags),
-                    toBeActuallyRetracted
+                    toBeActuallyRetracted,
                 )
             }
         }

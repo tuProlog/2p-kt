@@ -9,13 +9,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
-
     private fun theoryWithLocalInclude(loadGoal: String) =
         logicProgramming {
             val parentsPath = findResource("Parents.pl")
             theoryOf(
                 directive { loadGoal(parentsPath.toString()) },
-                fact { "someFact" }
+                fact { "someFact" },
             )
         }
 
@@ -46,7 +45,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
         logicProgramming {
             theoryOf(
                 directive { loadGoal(ExampleUrls.PARENTS) },
-                fact { "someFact" }
+                fact { "someFact" },
             )
         }
 
@@ -77,7 +76,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
         logicProgramming {
             theoryOf(
                 directive { loadGoal("/path/to/missing.pl") },
-                fact { "someFact" }
+                fact { "someFact" },
             )
         }
 

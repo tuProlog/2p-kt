@@ -12,7 +12,6 @@ import kotlin.jvm.JvmStatic
 
 /** A type representing a solution to a goal */
 sealed interface Solution : Taggable<Solution>, Castable<Solution> {
-
     /** The query to which the solution refers */
     @JsName("query")
     val query: Struct
@@ -87,7 +86,7 @@ sealed interface Solution : Taggable<Solution>, Castable<Solution> {
         yes: ((Yes) -> T)? = null,
         no: ((No) -> T)? = null,
         halt: ((Halt) -> T)? = null,
-        otherwise: ((Solution) -> T) = { throw IllegalStateException("Cannot handle solution $it") }
+        otherwise: ((Solution) -> T) = { throw IllegalStateException("Cannot handle solution $it") },
     ): T
 
     @JsName("cleanUp")
@@ -108,7 +107,10 @@ sealed interface Solution : Taggable<Solution>, Castable<Solution> {
         override fun replaceTags(tags: Map<String, Any>): Yes
 
         @JsName("copy")
-        fun copy(query: Struct = this.query, substitution: Substitution.Unifier = this.substitution): Yes
+        fun copy(
+            query: Struct = this.query,
+            substitution: Substitution.Unifier = this.substitution,
+        ): Yes
 
         override fun cleanUp(): Yes
 
@@ -138,7 +140,10 @@ sealed interface Solution : Taggable<Solution>, Castable<Solution> {
         override fun replaceTags(tags: Map<String, Any>): Halt
 
         @JsName("copy")
-        fun copy(query: Struct = this.query, exception: ResolutionException = this.exception): Halt
+        fun copy(
+            query: Struct = this.query,
+            exception: ResolutionException = this.exception,
+        ): Halt
 
         override fun cleanUp(): Halt
 
@@ -148,15 +153,17 @@ sealed interface Solution : Taggable<Solution>, Castable<Solution> {
     companion object {
         @JvmStatic
         @JsName("yes")
-        fun yes(query: Struct, substitution: Substitution.Unifier = Substitution.empty()): Yes =
-            SolutionImpl.YesImpl(query, substitution)
+        fun yes(
+            query: Struct,
+            substitution: Substitution.Unifier = Substitution.empty(),
+        ): Yes = SolutionImpl.YesImpl(query, substitution)
 
         @JvmStatic
         @JsName("yesBySignature")
         fun yes(
             signature: Signature,
             arguments: List<Term>,
-            substitution: Substitution.Unifier = Substitution.empty()
+            substitution: Substitution.Unifier = Substitution.empty(),
         ): Yes = SolutionImpl.YesImpl(signature, arguments, substitution)
 
         @JvmStatic
@@ -165,18 +172,24 @@ sealed interface Solution : Taggable<Solution>, Castable<Solution> {
 
         @JvmStatic
         @JsName("noBySignature")
-        fun no(signature: Signature, arguments: List<Term>): No = SolutionImpl.NoImpl(signature, arguments)
+        fun no(
+            signature: Signature,
+            arguments: List<Term>,
+        ): No = SolutionImpl.NoImpl(signature, arguments)
 
         @JvmStatic
         @JsName("halt")
-        fun halt(query: Struct, exception: ResolutionException): Halt = SolutionImpl.HaltImpl(query, exception)
+        fun halt(
+            query: Struct,
+            exception: ResolutionException,
+        ): Halt = SolutionImpl.HaltImpl(query, exception)
 
         @JvmStatic
         @JsName("haltBySignature")
         fun halt(
             signature: Signature,
             arguments: List<Term>,
-            exception: ResolutionException
+            exception: ResolutionException,
         ): Halt = SolutionImpl.HaltImpl(signature, arguments, exception)
     }
 }

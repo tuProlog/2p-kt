@@ -18,6 +18,7 @@ actual fun <T> dequeOf(items: Sequence<T>): MutableList<T> {
     return items.toCollection(LinkedList())
 }
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 actual fun <T> MutableList<T>.addFirst(item: T) {
     if (this is LinkedList) {
         this.addFirst(item)

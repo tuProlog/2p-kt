@@ -37,9 +37,8 @@ internal class StreamsSolver constructor(
     staticKb: Theory = Theory.empty(unificator),
     dynamicKb: Theory = Theory.empty(unificator),
     inputChannels: InputStore = InputStore.fromStandard(),
-    outputChannels: OutputStore = OutputStore.fromStandard()
+    outputChannels: OutputStore = OutputStore.fromStandard(),
 ) : Solver {
-
     constructor(
         unificator: Unificator = Unificator.default,
         libraries: Runtime = Runtime.empty(),
@@ -49,7 +48,7 @@ internal class StreamsSolver constructor(
         stdIn: InputChannel<String> = InputChannel.stdIn(),
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
-        warnings: OutputChannel<Warning> = OutputChannel.warn()
+        warnings: OutputChannel<Warning> = OutputChannel.warn(),
     ) : this(
         unificator,
         libraries,
@@ -57,42 +56,48 @@ internal class StreamsSolver constructor(
         staticKb,
         dynamicKb,
         InputStore.fromStandard(stdIn),
-        OutputStore.fromStandard(stdOut, stdErr, warnings)
+        OutputStore.fromStandard(stdOut, stdErr, warnings),
     )
 
-    private var executionContext: StreamsExecutionContext = StreamsExecutionContext(
-        unificator,
-        libraries,
-        flags,
-        staticKb,
-        dynamicKb,
-        getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
-        inputChannels,
-        outputChannels
-    )
-
-    override fun solve(goal: Struct, options: SolveOptions): Sequence<Solution> {
-        executionContext = StreamsExecutionContext(
-            unificator = unificator,
-            libraries = libraries,
-            flags = flags,
-            staticKb = staticKb,
-            dynamicKb = dynamicKb,
-            inputChannels = inputChannels,
-            outputChannels = outputChannels,
-            maxDuration = options.timeout
+    private var executionContext: StreamsExecutionContext =
+        StreamsExecutionContext(
+            unificator,
+            libraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
+            inputChannels,
+            outputChannels,
         )
 
-        var solutionSequence = solveToFinalStates(
-            Solve.Request<StreamsExecutionContext>(
-                goal.extractSignature(),
-                goal.args,
-                executionContext
+    override fun solve(
+        goal: Struct,
+        options: SolveOptions,
+    ): Sequence<Solution> {
+        executionContext =
+            StreamsExecutionContext(
+                unificator = unificator,
+                libraries = libraries,
+                flags = flags,
+                staticKb = staticKb,
+                dynamicKb = dynamicKb,
+                inputChannels = inputChannels,
+                outputChannels = outputChannels,
+                maxDuration = options.timeout,
             )
-        ).map {
-            executionContext = it.context.apply(it.solve.sideEffects)
-            it.solve.solution.cleanUp()
-        }
+
+        var solutionSequence =
+            solveToFinalStates(
+                Solve.Request<StreamsExecutionContext>(
+                    goal.extractSignature(),
+                    goal.args,
+                    executionContext,
+                ),
+            ).map {
+                executionContext = it.context.apply(it.solve.sideEffects)
+                it.solve.solution.cleanUp()
+            }
         if (options.limit > 0) {
             solutionSequence = solutionSequence.take(options.limit)
         }
@@ -111,7 +116,7 @@ internal class StreamsSolver constructor(
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ) = StreamsSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override val unificator: Unificator
@@ -139,7 +144,6 @@ internal class StreamsSolver constructor(
         get() = executionContext.operators
 
     internal companion object {
-
         /** Internal version of other [solve] method, that accepts raw requests and returns raw statemachine final states */
         internal fun solveToFinalStates(goalRequest: Solve.Request<StreamsExecutionContext>): Sequence<FinalState> =
             StateMachineExecutor.execute(StateInit(goalRequest))

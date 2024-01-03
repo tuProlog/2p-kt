@@ -14,7 +14,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class EmptyListImplTest {
-
     private val testedObj = EmptyListImpl()
 
     @Test

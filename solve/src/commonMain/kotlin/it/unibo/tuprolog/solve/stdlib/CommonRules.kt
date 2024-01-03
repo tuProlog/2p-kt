@@ -13,21 +13,22 @@ import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
 
 object CommonRules {
-    val wrappers: Sequence<RuleWrapper<ExecutionContext>> = sequenceOf(
-        Not,
-        Arrow,
-        Semicolon.If.Then,
-        Semicolon.If.Else,
-        Semicolon.Or.Left,
-        Semicolon.Or.Right,
-        Member.Base,
-        Member.Recursive,
-        Append.Base,
-        Append.Recursive,
-        Once,
-        SetPrologFlag,
-        CurrentPrologFlag
-    )
+    val wrappers: Sequence<RuleWrapper<ExecutionContext>> =
+        sequenceOf(
+            Not,
+            Arrow,
+            Semicolon.If.Then,
+            Semicolon.If.Else,
+            Semicolon.Or.Left,
+            Semicolon.Or.Right,
+            Member.Base,
+            Member.Recursive,
+            Append.Base,
+            Append.Recursive,
+            Once,
+            SetPrologFlag,
+            CurrentPrologFlag,
+        )
 
     val clauses: List<Clause>
         get() = wrappers.map { it.implementation }.toList()

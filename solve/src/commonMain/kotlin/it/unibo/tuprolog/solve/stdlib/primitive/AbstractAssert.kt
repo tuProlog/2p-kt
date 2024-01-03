@@ -12,16 +12,16 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
 abstract class AbstractAssert(
     suffix: String,
-    private val before: Boolean
+    private val before: Boolean,
 ) : UnaryPredicate.NonBacktrackable<ExecutionContext>("assert$suffix") {
-
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsWellFormedClause(0)
-        val clause: Clause = when (first) {
-            is Clause -> first
-            is Struct -> Fact.of(first)
-            else -> return ensuringArgumentIsCallable(0).replyFail()
-        }
+        val clause: Clause =
+            when (first) {
+                is Clause -> first
+                is Struct -> Fact.of(first)
+                else -> return ensuringArgumentIsCallable(0).replyFail()
+            }
         ensuringClauseProcedureHasPermission(clause, MODIFY)
         return replySuccess {
             addDynamicClauses(clause.prepareForExecution(), onTop = before)

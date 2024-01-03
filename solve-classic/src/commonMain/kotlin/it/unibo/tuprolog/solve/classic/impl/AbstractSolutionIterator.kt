@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.classic.SolutionIterator
 import it.unibo.tuprolog.solve.classic.fsm.State
 
 internal abstract class AbstractSolutionIterator(state: State) : SolutionIterator {
-
     final override var state: State = state
         private set
 
@@ -23,5 +22,8 @@ internal abstract class AbstractSolutionIterator(state: State) : SolutionIterato
         return state.castToEndState().solution.cleanUp()
     }
 
-    protected abstract fun computeNextState(state: State, step: Long): State
+    protected abstract fun computeNextState(
+        state: State,
+        step: Long,
+    ): State
 }

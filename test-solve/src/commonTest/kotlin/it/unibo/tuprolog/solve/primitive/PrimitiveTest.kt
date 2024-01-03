@@ -16,7 +16,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class PrimitiveTest {
-
     @Test
     fun primitiveOfReturnsPrimitiveBehavingExactlyAsProvidedOne() {
         wrapperToMatchingSignatureRequest(Primitive.Companion::enforcingSignature, primitive, ::createPrimitiveRequest)
@@ -38,7 +37,11 @@ internal class PrimitiveTest {
 
     @Test
     fun primitiveOfComplainsIfDifferentRequestSignatureIsDetected() {
-        wrapperToNotMatchingSignatureRequest(Primitive.Companion::enforcingSignature, primitive, ::createPrimitiveRequest)
+        wrapperToNotMatchingSignatureRequest(
+            Primitive.Companion::enforcingSignature,
+            primitive,
+            ::createPrimitiveRequest,
+        )
             .forEach { (checkedPrimitive, badRequests) ->
                 badRequests.forEach {
                     assertFailsWith<IllegalArgumentException> { checkedPrimitive.solve(it) }

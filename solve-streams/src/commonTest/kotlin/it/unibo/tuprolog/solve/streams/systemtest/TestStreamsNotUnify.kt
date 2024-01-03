@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.streams.StreamsSolverFactory
 import kotlin.test.Test
 
 class TestStreamsNotUnify : TestNotUnify, SolverFactory by StreamsSolverFactory {
-
     private val prototype = TestNotUnify.prototype(this)
 
     @Test

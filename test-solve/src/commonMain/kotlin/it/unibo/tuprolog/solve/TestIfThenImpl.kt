@@ -12,7 +12,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -26,7 +26,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -40,7 +40,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -54,7 +54,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 1)),
-                solutions
+                solutions,
             )
         }
     }
@@ -68,7 +68,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 1)),
-                solutions
+                solutions,
             )
         }
     }
@@ -84,10 +84,10 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
                 with(query) {
                     kotlin.collections.listOf(
                         yes("X" to 1),
-                        yes("X" to 2)
+                        yes("X" to 2),
                     )
                 },
-                solutions
+                solutions,
             )
         }
     }

@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import kotlin.collections.Set
 import it.unibo.tuprolog.core.List as LogicList
 
-@Suppress("PrivatePropertyName")
+@Suppress("PrivatePropertyName", "ktlint:standard:property-naming")
 abstract class AbstractCollectionOf(val name: String) : AbstractCollectingPrimitive(name) {
     private val VARS = Var.of("VARS")
     private val GOAL = Var.of("GOAL")
@@ -19,19 +19,21 @@ abstract class AbstractCollectionOf(val name: String) : AbstractCollectingPrimit
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
-        third: Term
+        third: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
         val mgu = mgu(APEX_TEMPLATE, second)
-        val uninteresting: Set<Var> = when (mgu) {
-            is Substitution.Unifier -> when (val vars = mgu[VARS]) {
-                is Tuple -> vars.toSequence().filterIsInstance<Var>().toSet()
-                is Var -> setOf(vars)
+        val uninteresting: Set<Var> =
+            when (mgu) {
+                is Substitution.Unifier ->
+                    when (val vars = mgu[VARS]) {
+                        is Tuple -> vars.toSequence().filterIsInstance<Var>().toSet()
+                        is Var -> setOf(vars)
+                        else -> emptySet()
+                    }
                 else -> emptySet()
             }
-            else -> emptySet()
-        }
         val goal = if (mgu is Substitution.Unifier) mgu[GOAL]!! else second
         val solutions = computeIntermediateSolutions(goal.castToStruct())
         val free = goal.variables.toSet() - first.variables.toSet()
@@ -39,9 +41,10 @@ abstract class AbstractCollectionOf(val name: String) : AbstractCollectingPrimit
         val groups = solutions.groupBy { it.substitution.filter(interesting) }
         val nonPresentable = first.variables.toSet()
         return groups.asSequence().map { (sub, sols) ->
-            val solValues = sols.map { first[it.substitution] }
-                .filterNot { it in nonPresentable }
-                .map { it.freshCopy() }
+            val solValues =
+                sols.map { first[it.substitution] }
+                    .filterNot { it in nonPresentable }
+                    .map { it.freshCopy() }
             sub + mgu(third, LogicList.of(processSolutions(solValues)))
         }
     }

@@ -8,7 +8,9 @@ import kotlin.jvm.JvmOverloads
  * @param message the detail message string.
  * @param cause the cause of this exception.
  */
-open class BinaryDecisionDiagramException @JvmOverloads constructor(
-    override val message: String? = null,
-    override val cause: Throwable? = null
-) : RuntimeException(message, cause)
+open class BinaryDecisionDiagramException
+    @JvmOverloads
+    constructor(
+        override val message: String? = null,
+        override val cause: Throwable? = null,
+    ) : RuntimeException(message, cause)

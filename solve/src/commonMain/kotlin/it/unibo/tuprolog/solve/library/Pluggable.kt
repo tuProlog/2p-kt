@@ -55,12 +55,13 @@ interface Pluggable {
 
     @JsName("ruleSignatures")
     val rulesSignatures: Sequence<Signature>
-        get() = clauses.asSequence()
-            .filterIsInstance<Rule>()
-            .map { it.head.indicator }
-            .map { Signature.fromIndicator(it) }
-            .filterNotNull()
-            .distinct()
+        get() =
+            clauses.asSequence()
+                .filterIsInstance<Rule>()
+                .map { it.head.indicator }
+                .map { Signature.fromIndicator(it) }
+                .filterNotNull()
+                .distinct()
 
     /** Checks whether the provided signature, is protected in this library */
     @JsName("hasProtected")

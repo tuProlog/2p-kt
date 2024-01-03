@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testIsResult() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -54,16 +53,17 @@ interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFac
 
             val query = intOf(77) `is` "N"
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("is", 2),
-                        varOf("N"),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("is", 2),
+                            varOf("N"),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -75,17 +75,18 @@ interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFac
 
             val query = intOf(77) `is` "foo"
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("is", 2),
-                        TypeError.Expected.EVALUABLE,
-                        atomOf("foo"),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("is", 2),
+                            TypeError.Expected.EVALUABLE,
+                            atomOf("foo"),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

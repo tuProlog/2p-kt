@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
-
     override fun testArgFromFoo() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -16,7 +15,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -30,7 +29,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
             assertSolutionEquals(
                 ktListOf(query.yes("X" to "a")),
-                solutions
+                solutions,
             )
         }
     }
@@ -44,7 +43,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
             assertSolutionEquals(
                 ktListOf(query.yes("X" to "a")),
-                solutions
+                solutions,
             )
         }
     }
@@ -59,10 +58,10 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             assertSolutionEquals(
                 with(query) {
                     ktListOf(
-                        yes("X" to "a", "Y" to "b")
+                        yes("X" to "a", "Y" to "b"),
                     )
                 },
-                solutions
+                solutions,
             )
         }
     }
@@ -76,7 +75,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
             assertSolutionEquals(
                 ktListOf(query.yes("Y" to "X")),
-                solutions
+                solutions,
             )
         }
     }
@@ -90,7 +89,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -104,7 +103,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -118,7 +117,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -132,9 +131,9 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes("X" to 1)
+                    query.yes("X" to 1),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -153,11 +152,11 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
                             DummyInstances.executionContext,
                             Signature("arg", 3),
                             varOf("X"),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -177,11 +176,11 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
                             Signature("arg", 3),
                             TypeError.Expected.COMPOUND,
                             atomOf("atom"),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -201,11 +200,11 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
                             Signature("arg", 3),
                             TypeError.Expected.COMPOUND,
                             numOf(3),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -225,11 +224,11 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
                             Signature("arg", 3),
                             DomainError.Expected.NOT_LESS_THAN_ZERO,
                             numOf(-3),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -249,11 +248,11 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
                             Signature("arg", 3),
                             TypeError.Expected.INTEGER,
                             atomOf("a"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

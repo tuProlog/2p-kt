@@ -18,9 +18,9 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class TestProbabilisticMode {
-
     private fun createSolver(): Solver {
-        val theory = """
+        val theory =
+            """
             0.6::heads(C) :- coin(C).
             coin(c1).
             coin(c2).
@@ -85,7 +85,7 @@ class TestProbabilisticMode {
         assertNotNull(solutions[0].binaryDecisionDiagram)
         assertEquals(
             solutions[0].binaryDecisionDiagram!!.countVariableNodes(),
-            4
+            4,
         )
     }
 }

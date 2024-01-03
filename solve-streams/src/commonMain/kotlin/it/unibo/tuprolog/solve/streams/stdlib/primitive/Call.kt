@@ -17,17 +17,19 @@ import it.unibo.tuprolog.solve.streams.solver.resetCutWorkChanges
  * @author Enrico
  */
 internal object Call : PrimitiveWrapper<StreamsExecutionContext>("call", 1) {
-
     override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         request.ensuringAllArgumentsAreInstantiated().arguments.single().let { toBeCalledGoal ->
             when {
                 toBeCalledGoal.isWellFormed() ->
-                    StreamsSolver.solveToResponses(request.newSolveRequest(toBeCalledGoal.prepareForExecutionAsGoal())).map {
+                    StreamsSolver.solveToResponses(
+                        request.newSolveRequest(toBeCalledGoal.prepareForExecutionAsGoal()),
+                    ).map {
                         request.replyWith(
                             it.copy(
-                                sideEffectManager = it.sideEffectManager
-                                    .resetCutWorkChanges(request.context.sideEffectManager)
-                            )
+                                sideEffectManager =
+                                    it.sideEffectManager
+                                        .resetCutWorkChanges(request.context.sideEffectManager),
+                            ),
                         )
                     }
 
@@ -35,7 +37,7 @@ internal object Call : PrimitiveWrapper<StreamsExecutionContext>("call", 1) {
                     message = "call/1 argument is neither a Variable nor a well-formed goal",
                     context = request.context,
                     expectedType = TypeError.Expected.CALLABLE,
-                    culprit = toBeCalledGoal
+                    culprit = toBeCalledGoal,
                 )
             }
         }

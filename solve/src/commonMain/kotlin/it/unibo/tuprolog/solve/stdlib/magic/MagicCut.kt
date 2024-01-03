@@ -9,7 +9,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 
 object MagicCut : Atom by Atom.of("!") {
-
     const val FUNCTOR: String = "!MagicCut!"
 
     override val isConstant: Boolean
@@ -33,9 +32,15 @@ object MagicCut : Atom by Atom.of("!") {
 
     override fun apply(substitution: Substitution): Term = this
 
-    override fun get(substitution: Substitution, vararg substitutions: Substitution): Term = this
+    override fun get(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): Term = this
 
-    override fun apply(substitution: Substitution, vararg substitutions: Substitution): Term = this
+    override fun apply(
+        substitution: Substitution,
+        vararg substitutions: Substitution,
+    ): Term = this
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitAtom(this)
 

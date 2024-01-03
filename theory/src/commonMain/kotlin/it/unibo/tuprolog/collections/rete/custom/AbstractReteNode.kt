@@ -5,7 +5,10 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator
 
 internal abstract class AbstractReteNode(override val unificator: Unificator) : ReteNode {
-    fun <T : IndexedClause> removeAllLazily(source: MutableList<T>, clause: Clause): Sequence<T> =
+    fun <T : IndexedClause> removeAllLazily(
+        source: MutableList<T>,
+        clause: Clause,
+    ): Sequence<T> =
         sequence {
             val iter = source.iterator()
             while (iter.hasNext()) {

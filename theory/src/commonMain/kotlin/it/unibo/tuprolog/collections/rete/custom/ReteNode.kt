@@ -8,7 +8,6 @@ import kotlin.js.JsName
 
 /**A data structure to manage the basic behaviour of the [ReteTree]*/
 internal interface ReteNode : Cacheable<SituatedIndexedClause> {
-
     @JsName("unificator")
     val unificator: Unificator
 

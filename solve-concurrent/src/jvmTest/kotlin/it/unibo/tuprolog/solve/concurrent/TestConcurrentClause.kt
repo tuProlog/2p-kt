@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testClauseXBody() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -31,16 +30,17 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             val query = clause(`_`, "B")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("clause", 2),
-                        `_`,
-                        index = 0
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("clause", 2),
+                            `_`,
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
@@ -66,17 +66,18 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             val query = clause(4, "B")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("clause", 2),
-                        TypeError.Expected.CALLABLE,
-                        numOf(4),
-                        index = 0
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("clause", 2),
+                            TypeError.Expected.CALLABLE,
+                            numOf(4),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
@@ -103,17 +104,18 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             val query = clause("f"(`_`), 5)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("clause", 2),
-                        TypeError.Expected.CALLABLE,
-                        numOf(5),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("clause", 2),
+                            TypeError.Expected.CALLABLE,
+                            numOf(5),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
@@ -140,17 +142,18 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
 
             val query = clause(atom(`_`), "Body")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    PermissionError.of(
-                        DummyInstances.executionContext,
-                        Signature("clause", 2),
-                        PermissionError.Operation.ACCESS,
-                        PermissionError.Permission.PRIVATE_PROCEDURE,
-                        "atom" / 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        PermissionError.of(
+                            DummyInstances.executionContext,
+                            Signature("clause", 2),
+                            PermissionError.Operation.ACCESS,
+                            PermissionError.Permission.PRIVATE_PROCEDURE,
+                            "atom" / 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
 
@@ -173,11 +176,13 @@ interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, Solve
 
     fun testClauseVariables() {
         logicProgramming {
-            val solver = solverWithDefaultBuiltins(
-                staticKb = theoryOf(
-                    rule { "f"(X) impliedBy "g"(X) }
+            val solver =
+                solverWithDefaultBuiltins(
+                    staticKb =
+                        theoryOf(
+                            rule { "f"(X) impliedBy "g"(X) },
+                        ),
                 )
-            )
 
             var query = clause("f"(A), B)
             var solutions = fromSequence(solver.solve(query, mediumDuration))

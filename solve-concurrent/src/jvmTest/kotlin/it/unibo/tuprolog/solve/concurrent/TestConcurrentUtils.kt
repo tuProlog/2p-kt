@@ -30,7 +30,7 @@ private inline val loggingOn get() = false
 fun multiRunConcurrentTest(
     times: Int = 5,
     coroutineContext: CoroutineContext = Dispatchers.Default,
-    block: suspend CoroutineScope.() -> Unit
+    block: suspend CoroutineScope.() -> Unit,
 ) = (0 until times).forEach { _ -> runBlocking(coroutineContext) { block() } }
 
 interface WithAssertingEquals {
@@ -39,7 +39,9 @@ interface WithAssertingEquals {
 
 interface FromSequence<T : WithAssertingEquals> : SolverTest {
     fun fromSequence(sequence: Sequence<Solution>): T
+
     fun fromSequence(solutions: Iterable<Solution>): T = fromSequence(solutions.asSequence())
+
     fun fromSequence(solution: Solution): T = fromSequence(sequenceOf(solution))
 }
 
@@ -48,11 +50,10 @@ object ConcurrentFromSequence : FromSequence<MultiSet> {
 }
 
 class KeySolution(val solution: Solution) {
-
+    @Suppress("ReturnCount")
     private fun ResolutionException.similar(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
-
         return if (this is LogicError && other is LogicError) {
             errorStruct.equals(other.errorStruct, false) && message == other.message
         } else {
@@ -61,16 +62,18 @@ class KeySolution(val solution: Solution) {
     }
 
     private val ResolutionException.hash: Int
-        get() = if (this is LogicError) {
-            31 * errorStruct.hashCode() + message.hashCode()
-        } else {
-            hashCode()
-        }
+        get() =
+            if (this is LogicError) {
+                31 * errorStruct.hashCode() + message.hashCode()
+            } else {
+                hashCode()
+            }
 
     private val Substitution.Unifier.hash: Int
-        get() = entries.fold(0) { base, entry ->
-            base + entry.value.hash
-        }
+        get() =
+            entries.fold(0) { base, entry ->
+                base + entry.value.hash
+            }
 
     private val Term.hash: Int
         get() {
@@ -91,10 +94,10 @@ class KeySolution(val solution: Solution) {
             return hashCode
         }
 
+    @Suppress("ReturnCount")
     private fun List<Term>.similar(other: List<Term>): Boolean {
         if (this === other) return true
         if (size != other.size) return false
-
         return all {
             other.any { otherIt ->
                 otherIt.similar(it)
@@ -117,26 +120,27 @@ class KeySolution(val solution: Solution) {
         return args.similar(other.args)
     }
 
-    private fun Term.similar(other: Term): Boolean = when {
-        isTuple -> {
-            other.asTuple()?.similar(castToTuple()) ?: false
+    private fun Term.similar(other: Term): Boolean =
+        when {
+            isTuple -> {
+                other.asTuple()?.similar(castToTuple()) ?: false
+            }
+            isCons -> {
+                other.asCons()?.similar(castToCons()) ?: false
+            }
+            isVar -> {
+                other.asVar()?.equals(castToVar(), false) ?: false
+            }
+            isStruct -> {
+                other.asStruct()?.similar(castToStruct()) ?: false
+            }
+            else -> this == other
         }
-        isCons -> {
-            other.asCons()?.similar(castToCons()) ?: false
-        }
-        isVar -> {
-            other.asVar()?.equals(castToVar(), false) ?: false
-        }
-        isStruct -> {
-            other.asStruct()?.similar(castToStruct()) ?: false
-        }
-        else -> this == other
-    }
 
+    @Suppress("ReturnCount")
     private fun Substitution.Unifier.similar(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
-
         other as Substitution.Unifier
         if (isSuccess != other.isSuccess) return false
         if (this.size != other.size) return false
@@ -151,26 +155,29 @@ class KeySolution(val solution: Solution) {
 
         other as KeySolution
         val queryEqual = solution.query == other.solution.query
-        val substitutionEqual = solution.substitution.whenIs(
-            { it.similar(other.solution.substitution) },
-            { it == other.solution.substitution },
-            { it == other.solution.substitution }
-        )
-        val exceptionEqual = if (solution is Solution.Halt && other.solution is Solution.Halt) {
-            solution.exception.similar(other.solution.exception)
-        } else {
-            true
-        }
+        val substitutionEqual =
+            solution.substitution.whenIs(
+                { it.similar(other.solution.substitution) },
+                { it == other.solution.substitution },
+                { it == other.solution.substitution },
+            )
+        val exceptionEqual =
+            if (solution is Solution.Halt && other.solution is Solution.Halt) {
+                solution.exception.similar(other.solution.exception)
+            } else {
+                true
+            }
         return queryEqual && substitutionEqual && exceptionEqual
     }
 
     override fun hashCode(): Int {
         var result = solution.query.hashCode()
-        result = 31 * result + solution.substitution.whenIs(
-            { it.hash },
-            { it.hashCode() },
-            { it.hashCode() }
-        )
+        result = 31 * result +
+            solution.substitution.whenIs(
+                { it.hash },
+                { it.hashCode() },
+                { it.hashCode() },
+            )
         if (solution is Solution.Halt) {
             result = 31 * result + solution.exception.hash
         }
@@ -183,17 +190,18 @@ class KeySolution(val solution: Solution) {
 fun Solution.key(): KeySolution = KeySolution(this)
 
 class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf()) : WithAssertingEquals {
-
     constructor(solutions: Iterable<Solution>) : this(solutions.asSequence())
 
     constructor(solutions: Sequence<Solution>) : this(
-        solutions.map { it.key() }.groupBy { it }.mapValues { it.value.size }
+        solutions.map { it.key() }.groupBy { it }.mapValues { it.value.size },
     )
 
     constructor(vararg solutions: Solution) : this(solutions.asIterable())
 
     fun add(solution: Solution): MultiSet =
-        MultiSet(solutionOccurrences + (solution.key() to (solutionOccurrences[solution.key()] ?: 1)))
+        MultiSet(
+            solutionOccurrences + (solution.key() to (solutionOccurrences[solution.key()] ?: 1)),
+        )
 
     override fun assertingEquals(other: Any?) {
         if (this === other) {
@@ -207,27 +215,28 @@ class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf())
         val failMsg = "Expected solutions: ${printSolutions()} \nActual solutions: ${actual.printSolutions()}"
 
         assertEquals(
-            solutionOccurrences.entries.filter { !it.key.solution.isNo }.size,
-            actual.solutionOccurrences.entries.filter { !it.key.solution.isNo }.size,
-            "Expected MultiSet size did not match actual MultiSet size.\n$failMsg"
+            solutionOccurrences.entries.count { !it.key.solution.isNo },
+            actual.solutionOccurrences.entries.count { !it.key.solution.isNo },
+            "Expected MultiSet size did not match actual MultiSet size.\n$failMsg",
         )
         solutionOccurrences.forEach { (key, value) ->
             val foundValue: Int? = actual.solutionOccurrences[key]?.let { if (key.solution.isNo) 1 else it }
             assertNotNull(
                 foundValue,
-                "Expected solution not found in actual. Missing expected solution: $key\n$failMsg"
+                "Expected solution not found in actual. Missing expected solution: $key\n$failMsg",
             )
             assertEquals(
                 value,
                 foundValue,
-                "Expected solution count ($value) did not match actual solution count ($foundValue).\n$failMsg"
+                "Expected solution count ($value) did not match actual solution count ($foundValue).\n$failMsg",
             )
         }
     }
 
-    private fun printSolutions(): String = solutionOccurrences.entries.fold("") { base, kv ->
-        "${base}Solution:${kv.key} Times:${kv.value}\n"
-    }
+    private fun printSolutions(): String =
+        solutionOccurrences.entries.fold("") { base, kv ->
+            "${base}Solution:${kv.key} Times:${kv.value}\n"
+        }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -249,7 +258,7 @@ class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf())
 fun assertConcurrentSolverSolutionsCorrect(
     solver: Solver,
     goalToSolutions: List<Pair<Struct, List<Solution>>>,
-    maxDuration: TimeDuration
+    maxDuration: TimeDuration,
 ) {
     goalToSolutions.forEach { (goal, solutionList) ->
         if (loggingOn) solver.logKBs()
@@ -262,7 +271,10 @@ fun assertConcurrentSolverSolutionsCorrect(
     }
 }
 
-fun <T> logGoalAndSolutions(goal: Struct, solutions: T) {
+fun <T> logGoalAndSolutions(
+    goal: Struct,
+    solutions: T,
+) {
     println("?- $goal.")
     println(solutions.toString()) // todo replace with better print
     println("".padEnd(80, '-'))

@@ -93,7 +93,7 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
         fun <E : Comparable<E>> variableOf(
             value: E,
             low: BinaryDecisionDiagram<E>,
-            high: BinaryDecisionDiagram<E>
+            high: BinaryDecisionDiagram<E>,
         ): BinaryDecisionDiagram<E> = BinaryDecisionDiagramBuilder.defaultOf<E>().buildVariable(value, low, high)
 
         /** Creates a new [Terminal] node from

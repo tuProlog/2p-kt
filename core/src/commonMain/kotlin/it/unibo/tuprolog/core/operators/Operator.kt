@@ -14,21 +14,20 @@ import kotlin.jvm.JvmStatic
 /** Class representing a logic operator */
 class Operator(val functor: String, val specifier: Specifier, val priority: Int) :
     Comparable<Operator>, TermConvertible {
-
     override fun compareTo(other: Operator): Int =
         when {
             priority > other.priority -> 1
             priority < other.priority -> -1
-            else -> specifier.compareTo(other.specifier).let { specifierCompareTo ->
-                when (specifierCompareTo) {
-                    0 -> functor.compareTo(other.functor)
-                    else -> specifierCompareTo
+            else ->
+                specifier.compareTo(other.specifier).let { specifierCompareTo ->
+                    when (specifierCompareTo) {
+                        0 -> functor.compareTo(other.functor)
+                        else -> specifierCompareTo
+                    }
                 }
-            }
         }
 
-    override fun toTerm(): Struct =
-        Struct.of(FUNCTOR, priority.toTerm(), specifier.toTerm(), functor.toAtom())
+    override fun toTerm(): Struct = Struct.of(FUNCTOR, priority.toTerm(), specifier.toTerm(), functor.toAtom())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -51,7 +50,6 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
     override fun toString(): String = "Operator($priority, $specifier, '$functor')"
 
     companion object {
-
         /** The Operator functor */
         const val FUNCTOR = "op"
 
@@ -61,31 +59,35 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
 
         @JvmStatic
         @JsName("fromTerms")
-        fun fromTerms(priority: Integer, specifier: Atom, functor: Atom): Operator? =
-            fromTerm(Struct.of(FUNCTOR, priority, specifier, functor))
+        fun fromTerms(
+            priority: Integer,
+            specifier: Atom,
+            functor: Atom,
+        ): Operator? = fromTerm(Struct.of(FUNCTOR, priority, specifier, functor))
 
         /** Creates an Operator instance from a well-formed Struct, or returns `null` if it cannot be interpreted as Operator */
         @JvmStatic
         @JsName("fromTerm")
-        fun fromTerm(struct: Struct): Operator? = with(struct) {
-            when {
-                functor == FUNCTOR && arity == 3 &&
-                    getArgAt(0).isInteger && getArgAt(1).isAtom && getArgAt(2).isAtom -> {
-                    try {
-                        Operator(
-                            getArgAt(2).castToAtom().value,
-                            Specifier.fromTerm(getArgAt(1)),
-                            getArgAt(0).castToNumeric().intValue.toInt()
-                        )
-                    } catch (ex: IllegalArgumentException) {
-                        null
-                    } catch (ex: IllegalStateException) {
-                        // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
-                        null
+        fun fromTerm(struct: Struct): Operator? =
+            with(struct) {
+                when {
+                    functor == FUNCTOR && arity == 3 &&
+                        getArgAt(0).isInteger && getArgAt(1).isAtom && getArgAt(2).isAtom -> {
+                        try {
+                            Operator(
+                                getArgAt(2).castToAtom().value,
+                                Specifier.fromTerm(getArgAt(1)),
+                                getArgAt(0).castToNumeric().intValue.toInt(),
+                            )
+                        } catch (ex: IllegalArgumentException) {
+                            null
+                        } catch (ex: IllegalStateException) {
+                            // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
+                            null
+                        }
                     }
+                    else -> null
                 }
-                else -> null
             }
-        }
     }
 }

@@ -6,7 +6,6 @@ import kotlin.jvm.JvmField
 
 @Suppress("MemberVisibilityCanBePrivate")
 object LastCallOptimization : NotableFlag {
-
     @JvmField
     val ON = Atom.of("on")
 

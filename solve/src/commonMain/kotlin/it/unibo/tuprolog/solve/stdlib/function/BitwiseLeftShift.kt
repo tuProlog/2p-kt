@@ -11,7 +11,9 @@ import it.unibo.tuprolog.solve.function.IntegersBinaryMathFunction
  * @author Enrico
  */
 object BitwiseLeftShift : IntegersBinaryMathFunction("<<") {
-
-    override fun mathFunction(integer1: Integer, integer2: Integer, context: ExecutionContext): Numeric =
-        Numeric.of(integer1.value.shl(integer2.value.toInt()))
+    override fun mathFunction(
+        integer1: Integer,
+        integer2: Integer,
+        context: ExecutionContext,
+    ): Numeric = Numeric.of(integer1.value.shl(integer2.value.toInt()))
 }

@@ -14,7 +14,6 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface SolverFactory {
-
     @JsName("newBuilder")
     fun newBuilder(): SolverBuilder = SolverBuilderImpl(this)
 
@@ -65,11 +64,12 @@ interface SolverFactory {
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         inputs: InputStore = InputStore.fromStandard(defaultInputChannel),
-        outputs: OutputStore = OutputStore.fromStandard(
-            defaultOutputChannel,
-            defaultErrorChannel,
-            defaultWarningsChannel
-        )
+        outputs: OutputStore =
+            OutputStore.fromStandard(
+                defaultOutputChannel,
+                defaultErrorChannel,
+                defaultWarningsChannel,
+            ),
     ): Solver
 
     @JsName("solverOf")
@@ -82,7 +82,7 @@ interface SolverFactory {
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
-        warnings: OutputChannel<Warning> = defaultWarningsChannel
+        warnings: OutputChannel<Warning> = defaultWarningsChannel,
     ): Solver
 
     @JsName("solverWithDefaultBuiltinsAnd")
@@ -95,18 +95,19 @@ interface SolverFactory {
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
-        warnings: OutputChannel<Warning> = defaultWarningsChannel
-    ): Solver = solverOf(
-        unificator,
-        otherLibraries + defaultBuiltins,
-        flags,
-        staticKb,
-        dynamicKb,
-        stdIn,
-        stdOut,
-        stdErr,
-        warnings
-    )
+        warnings: OutputChannel<Warning> = defaultWarningsChannel,
+    ): Solver =
+        solverOf(
+            unificator,
+            otherLibraries + defaultBuiltins,
+            flags,
+            staticKb,
+            dynamicKb,
+            stdIn,
+            stdOut,
+            stdErr,
+            warnings,
+        )
 
     @JsName("mutableSolverOf")
     fun mutableSolverOf(
@@ -118,7 +119,7 @@ interface SolverFactory {
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
-        warnings: OutputChannel<Warning> = defaultWarningsChannel
+        warnings: OutputChannel<Warning> = defaultWarningsChannel,
     ): MutableSolver
 
     @JsName("mutableSolverWithDefaultBuiltinsAnd")
@@ -131,18 +132,19 @@ interface SolverFactory {
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
-        warnings: OutputChannel<Warning> = defaultWarningsChannel
-    ): MutableSolver = mutableSolverOf(
-        unificator,
-        otherLibraries + defaultBuiltins,
-        flags,
-        staticKb,
-        dynamicKb,
-        stdIn,
-        stdOut,
-        stdErr,
-        warnings
-    )
+        warnings: OutputChannel<Warning> = defaultWarningsChannel,
+    ): MutableSolver =
+        mutableSolverOf(
+            unificator,
+            otherLibraries + defaultBuiltins,
+            flags,
+            staticKb,
+            dynamicKb,
+            stdIn,
+            stdOut,
+            stdErr,
+            warnings,
+        )
 
     @JsName("rawMutableSolverOf")
     fun mutableSolverOf(
@@ -152,10 +154,11 @@ interface SolverFactory {
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         inputs: InputStore = InputStore.fromStandard(defaultInputChannel),
-        outputs: OutputStore = OutputStore.fromStandard(
-            defaultOutputChannel,
-            defaultErrorChannel,
-            defaultWarningsChannel
-        )
+        outputs: OutputStore =
+            OutputStore.fromStandard(
+                defaultOutputChannel,
+                defaultErrorChannel,
+                defaultWarningsChannel,
+            ),
     ): MutableSolver
 }

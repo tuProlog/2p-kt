@@ -23,19 +23,20 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
     private val factory: SolverFactory,
     private val defaultBuiltIns: Library,
     private val solverType: KClass<T>,
-    private val mutableSolverType: KClass<MT>
+    private val mutableSolverType: KClass<MT>,
 ) : TestSolverConstruction<T, MT> {
-
     private object Dummy {
         val library = libraryOf("dummy", Sleep)
         val runtime = library.toRuntime()
         val flags = FlagStore.of(Unknown { ERROR }, LastCallOptimization { OFF })
-        val theory1 = logicProgramming {
-            theoryOf(fact { "a" }, fact { "b" }, fact { "c" })
-        }
-        val theory2 = logicProgramming {
-            theoryOf(fact { "nat"("z") }, rule { "nat"("s"(X)) impliedBy "nat"(X) })
-        }
+        val theory1 =
+            logicProgramming {
+                theoryOf(fact { "a" }, fact { "b" }, fact { "c" })
+            }
+        val theory2 =
+            logicProgramming {
+                theoryOf(fact { "nat"("z") }, rule { "nat"("s"(X)) impliedBy "nat"(X) })
+            }
         val input = InputChannel.of("")
         val output = OutputChannel.of<String> { }
         val error = OutputChannel.of<String> { }
@@ -51,11 +52,12 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
         val dynamicKb = Theory.empty(unificator)
         val flags = FlagStore.DEFAULT
         val inputs = InputStore.fromStandard(InputChannel.stdIn())
-        val outputs = OutputStore.fromStandard(
-            OutputChannel.stdOut(),
-            OutputChannel.stdErr(),
-            OutputChannel.warn()
-        )
+        val outputs =
+            OutputStore.fromStandard(
+                OutputChannel.stdOut(),
+                OutputChannel.stdErr(),
+                OutputChannel.warn(),
+            )
     }
 
     private fun Solver.asserHasDefaultProperties(mutable: Boolean) {
@@ -65,7 +67,7 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
             dynamicKb = Default.dynamicKb,
             flags = Default.flags,
             inputs = Default.inputs,
-            outputs = Default.outputs
+            outputs = Default.outputs,
         )
         assertEquals(true, solverType.isInstance(this))
         assertEquals(mutable, mutableSolverType.isInstance(this))
@@ -82,7 +84,7 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
             dynamicKb = Dummy.theory2,
             flags = Dummy.flags,
             inputs = Dummy.inputs,
-            outputs = Dummy.outputs
+            outputs = Dummy.outputs,
         )
         assertEquals(mutable, this is MutableSolver)
     }
@@ -96,7 +98,7 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
             stdIn = Dummy.input,
             stdOut = Dummy.output,
             stdErr = Dummy.error,
-            warnings = Dummy.warning
+            warnings = Dummy.warning,
         ).asserHasCustomProperties(mutable = false)
     }
 
@@ -107,7 +109,7 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
             dynamicKb = Default.dynamicKb,
             flags = Default.flags,
             inputs = Default.inputs,
-            outputs = Default.outputs
+            outputs = Default.outputs,
         )
         assertEquals(mutable, this is MutableSolver)
     }
@@ -123,7 +125,7 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
             dynamicKb = Dummy.theory2,
             flags = Dummy.flags,
             inputs = Dummy.inputs,
-            outputs = Dummy.outputs
+            outputs = Dummy.outputs,
         )
         assertEquals(mutable, this is MutableSolver)
     }
@@ -137,7 +139,7 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
             stdIn = Dummy.input,
             stdOut = Dummy.output,
             stdErr = Dummy.error,
-            warnings = Dummy.warning
+            warnings = Dummy.warning,
         ).asserHasDefaultBultinsAndCustomProperties(mutable = false)
     }
 
@@ -154,7 +156,7 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
             stdIn = Dummy.input,
             stdOut = Dummy.output,
             stdErr = Dummy.error,
-            warnings = Dummy.warning
+            warnings = Dummy.warning,
         ).asserHasCustomProperties(mutable = true)
     }
 
@@ -171,7 +173,7 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
             stdIn = Dummy.input,
             stdOut = Dummy.output,
             stdErr = Dummy.error,
-            warnings = Dummy.warning
+            warnings = Dummy.warning,
         ).asserHasDefaultBultinsAndCustomProperties(mutable = true)
     }
 

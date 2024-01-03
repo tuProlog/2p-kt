@@ -21,9 +21,8 @@ import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
 class GraphRenderView(
-    private val dotGraph: String
+    private val dotGraph: String,
 ) : VBox() {
-
     companion object {
         private const val FXML = "GraphRenderView.fxml"
     }
@@ -51,13 +50,13 @@ class GraphRenderView(
             showMessage(
                 "The image renderer is still initializing...\n" +
                     "Close and reopen this panel in few seconds.",
-                true
+                true,
             )
         } else if (!GraphvizRenderer.isAvailable) {
             showMessage(
                 "The image renderer is not available.\n" +
                     "Please check the docs at: https://github.com/nidi3/graphviz-java",
-                true
+                true,
             )
         } else {
             showMessage("The image rendered is ready.", false)
@@ -128,7 +127,7 @@ class GraphRenderView(
                 fileChooser.title = "Save Image"
                 fileChooser.extensionFilters.addAll(
                     FileChooser.ExtensionFilter("PNG image file", "*.png"),
-                    FileChooser.ExtensionFilter("All files", "*.*")
+                    FileChooser.ExtensionFilter("All files", "*.*"),
                 )
                 fileChooser.initialFileName = "bdd-${System.currentTimeMillis()}.png"
                 val file = fileChooser.showSaveDialog(scene.window)
@@ -139,7 +138,10 @@ class GraphRenderView(
         }
     }
 
-    private fun showMessage(text: String, error: Boolean) {
+    private fun showMessage(
+        text: String,
+        error: Boolean,
+    ) {
         labelMsg.text = text
         labelMsg.textFill = Color.color(if (error) 1.0 else 0.0, 0.0, 0.0)
         labelMsg.isVisible = true

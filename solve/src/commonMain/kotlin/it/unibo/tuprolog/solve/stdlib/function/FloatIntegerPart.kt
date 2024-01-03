@@ -14,18 +14,22 @@ import org.gciatto.kt.math.RoundingMode
  * @author Enrico
  */
 object FloatIntegerPart : UnaryMathFunction("float_integer_part") {
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(integer.decimalValue)
 
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-        commonBehaviour(integer.decimalValue)
-
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        commonBehaviour(real.decimalValue)
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(real.decimalValue)
 
     /** Implements common behaviour for Integer and Real */
-    private fun commonBehaviour(decimal: BigDecimal): Numeric = Numeric.of(
-        when {
-            decimal >= BigDecimal.ZERO -> decimal.setScale(0, RoundingMode.FLOOR)
-            else -> -commonBehaviour(-decimal).decimalValue
-        }.stripTrailingZeros()
-    )
+    private fun commonBehaviour(decimal: BigDecimal): Numeric =
+        Numeric.of(
+            when {
+                decimal >= BigDecimal.ZERO -> decimal.setScale(0, RoundingMode.FLOOR)
+                else -> -commonBehaviour(-decimal).decimalValue
+            }.stripTrailingZeros(),
+        )
 }

@@ -14,20 +14,21 @@ import kotlin.test.assertNull
  * @author Enrico
  */
 internal class ExecutionContextImplTest {
-
     @Test
     fun logicStackTraceCorrectlyComputed() {
-        val sideEffectManagerWithLogicalParents = SideEffectManagerImpl(
-            logicalParentRequests = listOf(
-                createSolveRequest(Atom.of("ciao")),
-                createSolveRequest(Atom.of("ciao2"))
+        val sideEffectManagerWithLogicalParents =
+            SideEffectManagerImpl(
+                logicalParentRequests =
+                    listOf(
+                        createSolveRequest(Atom.of("ciao")),
+                        createSolveRequest(Atom.of("ciao2")),
+                    ),
             )
-        )
         val toBeTested = StreamsExecutionContext(sideEffectManager = sideEffectManagerWithLogicalParents)
 
         assertEquals(
             sequenceOf(Atom.of("ciao"), Atom.of("ciao2")).toList(),
-            toBeTested.logicStackTrace.toList()
+            toBeTested.logicStackTrace.toList(),
         )
     }
 

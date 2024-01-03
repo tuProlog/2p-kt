@@ -5,5 +5,5 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputChannel
 
 actual fun InputChannel<String>.asTermChannel(operators: OperatorSet): InputChannel<Term> {
-    throw IllegalStateException("Reading terms is still not supported for JS")
+    TODO("reading terms is still not supported for JS")
 }

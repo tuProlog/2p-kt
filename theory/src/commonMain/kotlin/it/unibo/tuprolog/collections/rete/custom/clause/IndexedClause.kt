@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.utils.LongIndexed
 
 internal interface IndexedClause : LongIndexed<Clause> {
-
     /**Retrieves the decorated [Clause]*/
     val innerClause: Clause
         get() = value
@@ -14,11 +13,13 @@ internal interface IndexedClause : LongIndexed<Clause> {
 
     fun invalidateAllCaches()
 
-    operator fun plus(traversed: Cacheable<*>): IndexedClause =
-        of(index, innerClause, traversedCacheables + traversed)
+    operator fun plus(traversed: Cacheable<*>): IndexedClause = of(index, innerClause, traversedCacheables + traversed)
 
     companion object {
-        fun wrap(indexedClause: LongIndexed<Clause>, vararg traversed: Cacheable<*>): IndexedClause {
+        fun wrap(
+            indexedClause: LongIndexed<Clause>,
+            vararg traversed: Cacheable<*>,
+        ): IndexedClause {
             return object : IndexedClause {
                 override val index: Long
                     get() = indexedClause.index
@@ -32,22 +33,29 @@ internal interface IndexedClause : LongIndexed<Clause> {
                     traversedCacheables.forEach { it.invalidateCache() }
                 }
 
-                override fun <R> map(mapper: (Clause) -> R) =
-                    indexedClause.map(mapper)
+                override fun <R> map(mapper: (Clause) -> R) = indexedClause.map(mapper)
             }
         }
 
-        fun of(index: Long, clause: Clause, vararg traversed: Cacheable<*>): IndexedClause {
+        fun of(
+            index: Long,
+            clause: Clause,
+            vararg traversed: Cacheable<*>,
+        ): IndexedClause {
             return wrap(
                 LongIndexed.of(index, clause),
-                *traversed
+                *traversed,
             )
         }
 
-        fun of(index: Long, clause: Clause, traversed: List<Cacheable<*>>): IndexedClause {
+        fun of(
+            index: Long,
+            clause: Clause,
+            traversed: List<Cacheable<*>>,
+        ): IndexedClause {
             return wrap(
                 LongIndexed.of(index, clause),
-                *traversed.toTypedArray()
+                *traversed.toTypedArray(),
             )
         }
     }

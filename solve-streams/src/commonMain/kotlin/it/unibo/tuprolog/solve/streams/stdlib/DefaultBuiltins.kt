@@ -11,14 +11,14 @@ import it.unibo.tuprolog.solve.streams.stdlib.primitive.Not
 import it.unibo.tuprolog.solve.streams.stdlib.primitive.Throw
 
 object DefaultBuiltins : ExtensionLibrary(CommonBuiltins) {
-
     override val additionalPrimitives: Iterable<PrimitiveWrapper<*>>
-        get() = listOf(
-            Call,
-            Catch,
-            Conjunction,
-            Cut,
-            Throw,
-            Not
-        )
+        get() =
+            listOf(
+                Call,
+                Catch,
+                Conjunction,
+                Cut,
+                Throw,
+                Not,
+            )
 }

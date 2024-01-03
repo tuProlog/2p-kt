@@ -6,9 +6,8 @@ class ParsingException(
     val line: Int,
     val column: Int,
     message: String?,
-    throwable: Throwable?
+    throwable: Throwable?,
 ) : RuntimeException(message, throwable) {
-
     override fun toString(): String {
         return "ParsingException{" +
             "message='" + message?.replace("\\n", "\\\\n") + '\'' +

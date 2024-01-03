@@ -9,9 +9,8 @@ import it.unibo.tuprolog.theory.TheoryUtils
 import it.unibo.tuprolog.unify.Unificator
 
 internal class ReteClauseMultiSet private constructor(
-    rete: ReteTree
+    rete: ReteTree,
 ) : ClauseMultiSet, AbstractReteClauseCollection<ReteClauseMultiSet>(rete) {
-
     private val hashCodeCache by lazy {
         ClauseMultiSet.hashCode(this)
     }
@@ -25,11 +24,9 @@ internal class ReteClauseMultiSet private constructor(
         TheoryUtils.checkClausesCorrect(clauses)
     }
 
-    override fun count(clause: Clause): Long =
-        rete.get(clause).count().toLong()
+    override fun count(clause: Clause): Long = rete.get(clause).count().toLong()
 
-    override fun get(clause: Clause): Sequence<Clause> =
-        rete.get(clause)
+    override fun get(clause: Clause): Sequence<Clause> = rete.get(clause)
 
     override fun newCollectionBuilder(rete: ReteTree): ReteClauseMultiSet {
         return ReteClauseMultiSet(rete)

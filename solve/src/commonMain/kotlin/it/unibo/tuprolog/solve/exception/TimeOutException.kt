@@ -18,24 +18,28 @@ class TimeOutException(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    @JsName("exceededDuration") val exceededDuration: TimeDuration
+    @JsName("exceededDuration") val exceededDuration: TimeDuration,
 ) : ResolutionException(message, cause, contexts) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
-        exceededDuration: TimeDuration
+        exceededDuration: TimeDuration,
     ) : this(message, cause, arrayOf(context), exceededDuration)
 
     constructor(cause: Throwable?, context: ExecutionContext, exceededDuration: TimeDuration) :
         this(cause?.toString(), cause, context, exceededDuration)
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): TimeOutException =
-        TimeOutException(message, cause, contexts.setItem(index, newContext), exceededDuration)
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): TimeOutException = TimeOutException(message, cause, contexts.setItem(index, newContext), exceededDuration)
 
     override fun updateLastContext(newContext: ExecutionContext): TimeOutException =
-        updateContext(newContext, contexts.lastIndex)
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): TimeOutException =
         TimeOutException(message, cause, arrayOf(*contexts, newContext), exceededDuration)

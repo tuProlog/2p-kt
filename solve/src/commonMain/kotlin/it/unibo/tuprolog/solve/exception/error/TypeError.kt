@@ -29,23 +29,27 @@ class TypeError(
     contexts: Array<ExecutionContext>,
     @JsName("expectedType") val expectedType: Expected,
     @JsName("culprit") val culprit: Term,
-    extraData: Term? = null
+    extraData: Term? = null,
 ) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
         expectedType: Expected,
         culprit: Term,
-        extraData: Term? = null
+        extraData: Term? = null,
     ) : this(message, cause, arrayOf(context), expectedType, culprit, extraData)
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): TypeError =
-        TypeError(message, cause, contexts.setItem(index, newContext), expectedType, culprit, extraData)
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): TypeError = TypeError(message, cause, contexts.setItem(index, newContext), expectedType, culprit, extraData)
 
     override fun updateLastContext(newContext: ExecutionContext): TypeError =
-        updateContext(newContext, contexts.lastIndex)
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): TypeError =
         TypeError(message, cause, contexts.addLast(newContext), expectedType, culprit, extraData)
@@ -53,21 +57,20 @@ class TypeError(
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toTerm(), culprit) }
 
     companion object {
-
         @JsName("of")
         @JvmStatic
         fun of(
             context: ExecutionContext,
             expectedType: Expected,
             actualValue: Term,
-            message: String
+            message: String,
         ) = message(message) { m, extra ->
             TypeError(
                 message = m,
                 context = context,
                 expectedType = expectedType,
                 culprit = actualValue,
-                extraData = extra
+                extraData = extra,
             )
         }
 
@@ -78,18 +81,18 @@ class TypeError(
             procedure: Signature,
             expectedType: Expected,
             culprit: Term,
-            index: Int? = null
+            index: Int? = null,
         ) = message(
             (index?.let { "The $it-th argument" } ?: "An argument") +
                 " of `${procedure.pretty()}` should be a list of `$expectedType`, " +
-                "but `${culprit.pretty()}` has been provided instead"
+                "but `${culprit.pretty()}` has been provided instead",
         ) { m, extra ->
             TypeError(
                 message = m,
                 context = context,
                 expectedType = expectedType,
                 culprit = culprit,
-                extraData = extra
+                extraData = extra,
             )
         }
 
@@ -100,18 +103,18 @@ class TypeError(
             procedure: Signature,
             expectedType: Expected,
             culprit: Term,
-            index: Int? = null
+            index: Int? = null,
         ) = message(
             (index?.let { "The $it-th argument" } ?: "An argument") +
                 " of `${procedure.pretty()}` should be a `$expectedType`, " +
-                "but `${culprit.pretty()}` has been provided instead"
+                "but `${culprit.pretty()}` has been provided instead",
         ) { m, extra ->
             TypeError(
                 message = m,
                 context = context,
                 expectedType = expectedType,
                 culprit = culprit,
-                extraData = extra
+                extraData = extra,
             )
         }
 
@@ -121,20 +124,21 @@ class TypeError(
             context: ExecutionContext,
             procedure: Signature,
             expectedType: Expected,
-            culprit: Term
+            culprit: Term,
         ) = message(
-            "Subgoal `${culprit.pretty()}` of ${procedure.pretty()} is not a $expectedType term"
+            "Subgoal `${culprit.pretty()}` of ${procedure.pretty()} is not a $expectedType term",
         ) { m, extra ->
             TypeError(
                 message = m,
                 context = context,
                 expectedType = expectedType,
                 culprit = culprit,
-                extraData = extra
+                extraData = extra,
             )
         }
 
         /** The type error Struct functor */
+        @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "type_error"
     }
 
@@ -164,7 +168,8 @@ class TypeError(
         REFERENCE,
         TYPE_REFERENCE,
         URL,
-        VARIABLE;
+        VARIABLE,
+        ;
 
         /**
          * The type expected string description
@@ -185,10 +190,11 @@ class TypeError(
             /** Gets [Expected] instance from [term] representation, if possible */
             @JsName("fromTerm")
             @JvmStatic
-            fun fromTerm(term: Term): Expected? = when (term) {
-                is Atom -> of(term.value)
-                else -> null
-            }
+            fun fromTerm(term: Term): Expected? =
+                when (term) {
+                    is Atom -> of(term.value)
+                    else -> null
+                }
         }
     }
 }

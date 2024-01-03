@@ -21,9 +21,8 @@ sealed class Equation(
     /** The left-hand side of the equation */
     @JsName("lhs") open val lhs: Term,
     /** The right-hand side of the equation */
-    @JsName("rhs") open val rhs: Term
+    @JsName("rhs") open val rhs: Term,
 ) : TermConvertible, Castable<Equation> {
-
     open val isIdentity: Boolean
         get() = false
 
@@ -110,17 +109,20 @@ sealed class Equation(
     @JsName("apply")
     fun apply(
         substitution: Substitution,
-        equalityChecker: (Term, Term) -> Boolean = Term::equals
+        equalityChecker: (Term, Term) -> Boolean = Term::equals,
     ): Equation = of(lhs[substitution], rhs[substitution], equalityChecker)
 
     /** Equation companion object */
     companion object {
-
         /** Creates an [Equation] with provided left-hand and right-hand sides */
         @JvmStatic
         @JvmOverloads
         @JsName("of")
-        fun of(lhs: Term, rhs: Term, equalityChecker: (Term, Term) -> Boolean = Term::equals): Equation =
+        fun of(
+            lhs: Term,
+            rhs: Term,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals,
+        ): Equation =
             when {
                 lhs.isVar && rhs.isVar -> {
                     if (equalityChecker(lhs, rhs)) {
@@ -157,7 +159,7 @@ sealed class Equation(
         @JsName("ofPair")
         fun of(
             pair: Pair<Term, Term>,
-            equalityChecker: (Term, Term) -> Boolean = Term::equals
+            equalityChecker: (Term, Term) -> Boolean = Term::equals,
         ): Equation = of(pair.first, pair.second, equalityChecker)
 
         @JvmStatic
@@ -165,7 +167,7 @@ sealed class Equation(
         @JsName("fromSequence")
         fun from(
             pairs: Sequence<Pair<Term, Term>>,
-            equalityChecker: (Term, Term) -> Boolean = Term::equals
+            equalityChecker: (Term, Term) -> Boolean = Term::equals,
         ): Sequence<Equation> = pairs.flatMap { allOf(it, equalityChecker) }
 
         @JvmStatic
@@ -173,7 +175,7 @@ sealed class Equation(
         @JsName("fromIterable")
         fun from(
             pairs: Iterable<Pair<Term, Term>>,
-            equalityChecker: (Term, Term) -> Boolean = Term::equals
+            equalityChecker: (Term, Term) -> Boolean = Term::equals,
         ): Sequence<Equation> = from(pairs.asSequence(), equalityChecker)
 
         @JvmStatic
@@ -181,7 +183,7 @@ sealed class Equation(
         @JsName("from")
         fun from(
             vararg pairs: Pair<Term, Term>,
-            equalityChecker: (Term, Term) -> Boolean = Term::equals
+            equalityChecker: (Term, Term) -> Boolean = Term::equals,
         ): Sequence<Equation> = from(sequenceOf(*pairs), equalityChecker)
 
         /** Creates all equations resulting from the deep inspection of given [Pair] of [Term]s */
@@ -190,10 +192,14 @@ sealed class Equation(
         @JsName("allOfPair")
         fun allOf(
             pair: Pair<Term, Term>,
-            equalityChecker: (Term, Term) -> Boolean = Term::equals
+            equalityChecker: (Term, Term) -> Boolean = Term::equals,
         ): Sequence<Equation> = allOf(pair.first, pair.second, equalityChecker)
 
-        private fun allOfLists(lhs: LogicList, rhs: LogicList, equalityChecker: (Term, Term) -> Boolean = Term::equals): Sequence<Equation> =
+        private fun allOfLists(
+            lhs: LogicList,
+            rhs: LogicList,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals,
+        ): Sequence<Equation> =
             lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
                 when {
                     l.isCons && r.isCons -> sequenceOf(of(l.castToCons().head, r.castToCons().head, equalityChecker))
@@ -202,10 +208,17 @@ sealed class Equation(
                 }
             }
 
-        private fun allOfTuples(lhs: Tuple, rhs: Tuple, equalityChecker: (Term, Term) -> Boolean = Term::equals): Sequence<Equation> =
+        private fun allOfTuples(
+            lhs: Tuple,
+            rhs: Tuple,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals,
+        ): Sequence<Equation> =
             lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
                 when {
-                    l.isTuple && r.isTuple -> sequenceOf(of(l.castToTuple().left, r.castToTuple().left, equalityChecker))
+                    l.isTuple && r.isTuple ->
+                        sequenceOf(
+                            of(l.castToTuple().left, r.castToTuple().left, equalityChecker),
+                        )
                     else -> allOf(l, r, equalityChecker)
                 }
             }
@@ -214,7 +227,11 @@ sealed class Equation(
         @JvmStatic
         @JvmOverloads
         @JsName("allOf")
-        fun allOf(lhs: Term, rhs: Term, equalityChecker: (Term, Term) -> Boolean = Term::equals): Sequence<Equation> =
+        fun allOf(
+            lhs: Term,
+            rhs: Term,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals,
+        ): Sequence<Equation> =
             when {
                 lhs.isAtom && rhs.isAtom -> {
                     sequenceOf(of(lhs, rhs, equalityChecker))

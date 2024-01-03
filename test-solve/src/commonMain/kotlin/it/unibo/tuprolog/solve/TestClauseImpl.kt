@@ -15,7 +15,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -34,11 +34,11 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
                             DummyInstances.executionContext,
                             Signature("clause", 2),
                             `_`,
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -58,11 +58,11 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
                             Signature("clause", 2),
                             TypeError.Expected.CALLABLE,
                             numOf(4),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -82,11 +82,11 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
                             Signature("clause", 2),
                             TypeError.Expected.CALLABLE,
                             numOf(5),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -106,31 +106,33 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
                             Signature("clause", 2),
                             PermissionError.Operation.ACCESS,
                             PermissionError.Permission.PRIVATE_PROCEDURE,
-                            "atom" / 1
-                        )
-                    )
+                            "atom" / 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testClauseVariables() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theoryOf(
-                    rule { "f"(X) impliedBy "g"(X) }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theoryOf(
+                            rule { "f"(X) impliedBy "g"(X) },
+                        ),
                 )
-            )
 
             var query = clause("f"(A), B)
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes(B to "g"(A))
+                    query.yes(B to "g"(A)),
                 ),
-                solutions
+                solutions,
             )
 
             query = clause("f"(1), Z)
@@ -138,9 +140,9 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes(Z to "g"(1))
+                    query.yes(Z to "g"(1)),
                 ),
-                solutions
+                solutions,
             )
         }
     }

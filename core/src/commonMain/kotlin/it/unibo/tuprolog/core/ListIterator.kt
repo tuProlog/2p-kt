@@ -1,26 +1,26 @@
 package it.unibo.tuprolog.core
 
 sealed class ListIterator(list: List) : Iterator<Term> {
-
     protected open var current: Term? = list
 
     override fun hasNext(): Boolean = current != null
 
-    private val listIteratorVisitor = object : TermVisitor<Term> {
-        override fun visitCons(term: Cons): Term {
-            current = term.tail
-            return term.head
-        }
+    private val listIteratorVisitor =
+        object : TermVisitor<Term> {
+            override fun visitCons(term: Cons): Term {
+                current = term.tail
+                return term.head
+            }
 
-        override fun visitEmptyList(term: EmptyList): Term {
-            return onEmptyList(term)
-        }
+            override fun visitEmptyList(term: EmptyList): Term {
+                return onEmptyList(term)
+            }
 
-        override fun defaultValue(term: Term): Term {
-            current = null
-            return term
+            override fun defaultValue(term: Term): Term {
+                current = null
+                return term
+            }
         }
-    }
 
     override fun next(): Term = current?.accept(listIteratorVisitor) ?: throw NoSuchElementException()
 
@@ -40,12 +40,14 @@ sealed class ListIterator(list: List) : Iterator<Term> {
 
         class SkippingLast(list: List, unifier: Substitution.Unifier) : Substituting(list, unifier) {
             override fun hasNext(): Boolean = hasNextSkippingLast()
+
             override fun onEmptyList(item: EmptyList): Term = onEmptyListSkippingLast(item)
         }
     }
 
     class SkippingLast(list: List) : ListIterator(list) {
         override fun hasNext(): Boolean = hasNextSkippingLast()
+
         override fun onEmptyList(item: EmptyList): Term = onEmptyListSkippingLast(item)
     }
 

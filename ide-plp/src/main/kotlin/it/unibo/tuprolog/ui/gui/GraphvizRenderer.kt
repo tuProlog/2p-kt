@@ -12,31 +12,34 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
 object GraphvizRenderer {
-
     private var available: Future<Boolean> = CompletableFuture.completedFuture(false)
 
     @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun initialize() {
-        available = CompletableFuture.supplyAsync {
-            try {
-                val outputStream = ByteArrayOutputStream()
-                val sampleBDD = BinaryDecisionDiagram.terminalOf<Boolean>(true)
-                Graphviz
-                    .fromString(sampleBDD.toDotString())
-                    .render(Format.PNG)
-                    .toOutputStream(outputStream)
-                true
-            } catch (e: Exception) {
-                false
+        available =
+            CompletableFuture.supplyAsync {
+                try {
+                    val outputStream = ByteArrayOutputStream()
+                    val sampleBDD = BinaryDecisionDiagram.terminalOf<Boolean>(true)
+                    Graphviz
+                        .fromString(sampleBDD.toDotString())
+                        .render(Format.PNG)
+                        .toOutputStream(outputStream)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
             }
-        }
     }
 
     val isAvailable: Boolean get() = if (available.isDone) available.get() else false
 
     val isReady: Boolean get() = available.isDone
 
-    fun renderAsPNG(graph: String, imageOutputStream: OutputStream) {
+    fun renderAsPNG(
+        graph: String,
+        imageOutputStream: OutputStream,
+    ) {
         if (!isAvailable) {
             throw UnsupportedOperationException("Graphviz renderer is not available")
         }

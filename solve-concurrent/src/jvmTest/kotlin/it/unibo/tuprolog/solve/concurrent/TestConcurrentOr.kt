@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentOr<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testTrueOrFalse() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -61,12 +60,13 @@ interface TestConcurrentOr<T : WithAssertingEquals> : FromSequence<T>, SolverFac
 
             val query = ("X" eq 1) or ("X" eq 2)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                sequenceOf(
-                    query.yes("X" to 1),
-                    query.yes("X" to 2)
+            val expected =
+                fromSequence(
+                    sequenceOf(
+                        query.yes("X" to 1),
+                        query.yes("X" to 2),
+                    ),
                 )
-            )
             expected.assertingEquals(solutions)
         }
     }

@@ -14,9 +14,8 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
 internal class ExpansionVisitor<T : Comparable<T>, E>(
     private val varOp: (node: T, low: E, high: E) -> E,
     private val falseTerminal: E,
-    private val trueTerminal: E
+    private val trueTerminal: E,
 ) : BinaryDecisionDiagramVisitor<T, E> {
-
     override fun visit(node: BinaryDecisionDiagram.Terminal<T>): E {
         return if (node.truth) trueTerminal else falseTerminal
     }

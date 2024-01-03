@@ -6,7 +6,7 @@ import it.unibo.tuprolog.unify.Unificator
 
 class LogicProgrammingScopeWithUnificationImpl(
     override val unificator: Unificator,
-    scope: Scope
+    scope: Scope,
 ) : LogicProgrammingScopeWithUnification,
     LogicProgrammingScope by LogicProgrammingScope.of(scope),
     Unificator by unificator

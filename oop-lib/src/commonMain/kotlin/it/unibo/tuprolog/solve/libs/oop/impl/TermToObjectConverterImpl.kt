@@ -27,10 +27,12 @@ import kotlin.reflect.KClass
 
 internal class TermToObjectConverterImpl(
     private val typeFactory: TypeFactory,
-    private val dealiaser: (Struct) -> Ref?
+    private val dealiaser: (Struct) -> Ref?,
 ) : TermToObjectConverter {
-
-    override fun convertInto(type: KClass<*>, term: Term): Any? {
+    override fun convertInto(
+        type: KClass<*>,
+        term: Term,
+    ): Any? {
         return when (term) {
             is NullRef, is Var -> {
                 if (type.isPrimitiveType) {
@@ -46,46 +48,51 @@ internal class TermToObjectConverterImpl(
                     throw TermToObjectConversionException(term, type)
                 }
             }
-            is Truth -> when {
-                Boolean::class isSubtypeOf type -> term.isTrue
-                String::class isSubtypeOf type -> term.value
-                else -> throw TermToObjectConversionException(term, type)
-            }
-            is Atom -> when {
-                String::class isSubtypeOf type -> term.value
-                Char::class isSubtypeOf type -> {
-                    if (term.value.length == 1) {
-                        term.value[0]
-                    } else {
-                        throw TermToObjectConversionException(term, type)
-                    }
+            is Truth ->
+                when {
+                    Boolean::class isSubtypeOf type -> term.isTrue
+                    String::class isSubtypeOf type -> term.value
+                    else -> throw TermToObjectConversionException(term, type)
                 }
-                else -> throw TermToObjectConversionException(term, type)
-            }
-            is Real -> when {
-                BigDecimal::class isSubtypeOf type -> term.decimalValue
-                Double::class isSubtypeOf type -> term.decimalValue.toDouble()
-                Float::class isSubtypeOf type -> term.decimalValue.toFloat()
-                else -> throw TermToObjectConversionException(term, type)
-            }
-            is Integer -> when {
-                BigInteger::class isSubtypeOf type -> term.intValue
-                Long::class isSubtypeOf type -> term.intValue.toLongExact()
-                Int::class isSubtypeOf type -> term.intValue.toIntExact()
-                Short::class isSubtypeOf type -> term.intValue.toShortExact()
-                Byte::class isSubtypeOf type -> term.intValue.toByteExact()
-                BigDecimal::class isSubtypeOf type -> term.decimalValue
-                Double::class isSubtypeOf type -> term.decimalValue.toDouble()
-                Float::class isSubtypeOf type -> term.decimalValue.toFloat()
-                else -> throw TermToObjectConversionException(term, type)
-            }
+            is Atom ->
+                when {
+                    String::class isSubtypeOf type -> term.value
+                    Char::class isSubtypeOf type -> {
+                        if (term.value.length == 1) {
+                            term.value[0]
+                        } else {
+                            throw TermToObjectConversionException(term, type)
+                        }
+                    }
+                    else -> throw TermToObjectConversionException(term, type)
+                }
+            is Real ->
+                when {
+                    BigDecimal::class isSubtypeOf type -> term.decimalValue
+                    Double::class isSubtypeOf type -> term.decimalValue.toDouble()
+                    Float::class isSubtypeOf type -> term.decimalValue.toFloat()
+                    else -> throw TermToObjectConversionException(term, type)
+                }
+            is Integer ->
+                when {
+                    BigInteger::class isSubtypeOf type -> term.intValue
+                    Long::class isSubtypeOf type -> term.intValue.toLongExact()
+                    Int::class isSubtypeOf type -> term.intValue.toIntExact()
+                    Short::class isSubtypeOf type -> term.intValue.toShortExact()
+                    Byte::class isSubtypeOf type -> term.intValue.toByteExact()
+                    BigDecimal::class isSubtypeOf type -> term.decimalValue
+                    Double::class isSubtypeOf type -> term.decimalValue.toDouble()
+                    Float::class isSubtypeOf type -> term.decimalValue.toFloat()
+                    else -> throw TermToObjectConversionException(term, type)
+                }
             is Struct ->
                 when {
                     term matches CAST_TEMPLATE -> explicitConversion(term, term[0], term[1])
-                    term matches DEALIASING_TEMPLATE -> when (val ref = dealiaser(term)) {
-                        is ObjectRef -> convertInto(type, ref)
-                        else -> throw TermToObjectConversionException(term)
-                    }
+                    term matches DEALIASING_TEMPLATE ->
+                        when (val ref = dealiaser(term)) {
+                            is ObjectRef -> convertInto(type, ref)
+                            else -> throw TermToObjectConversionException(term)
+                        }
                     else -> throw TermToObjectConversionException(term)
                 }.also {
                     if (it != null && !(it::class isSubtypeOf type)) {
@@ -96,7 +103,11 @@ internal class TermToObjectConverterImpl(
         }
     }
 
-    private fun explicitConversion(castExpression: Struct, term: Term, type: Term): Any? {
+    private fun explicitConversion(
+        castExpression: Struct,
+        term: Term,
+        type: Term,
+    ): Any? {
         val targetType = getType(castExpression, type)
         try {
             return convertInto(targetType, term)
@@ -107,28 +118,38 @@ internal class TermToObjectConverterImpl(
         }
     }
 
-    private fun getType(castExpression: Struct, typeTerm: Term): KClass<*> =
+    private fun getType(
+        castExpression: Struct,
+        typeTerm: Term,
+    ): KClass<*> =
         when (typeTerm) {
             is TypeRef -> typeTerm.type
             is Atom -> {
                 typeFactory.typeFromName(typeTerm.value) ?: throw TermToObjectConversionException(castExpression)
             }
-            is Struct -> when {
-                typeTerm matches DEALIASING_TEMPLATE -> when (val ref = dealiaser(typeTerm)) {
-                    is TypeRef -> ref.type
+            is Struct ->
+                when {
+                    typeTerm matches DEALIASING_TEMPLATE ->
+                        when (val ref = dealiaser(typeTerm)) {
+                            is TypeRef -> ref.type
+                            else -> throw TermToObjectConversionException(castExpression)
+                        }
                     else -> throw TermToObjectConversionException(castExpression)
                 }
-                else -> throw TermToObjectConversionException(castExpression)
-            }
             else -> throw TermToObjectConversionException(castExpression)
         }
 
     override fun possibleConversions(term: Term): Sequence<Any?> =
-        admissibleTypes(term).asSequence().map { convertInto(it, term) }
+        admissibleTypes(term).asSequence().map {
+            convertInto(it, term)
+        }
 
     override fun mostAdequateType(term: Term): KClass<*> = admissibleTypesByPriority(term).first()
 
-    override fun priorityOfConversion(type: KClass<*>, term: Term): Int? =
+    override fun priorityOfConversion(
+        type: KClass<*>,
+        term: Term,
+    ): Int? =
         admissibleTypes(term).asSequence()
             .map { type.subTypeDistance(it) }
             .indexed()
@@ -172,14 +193,16 @@ internal class TermToObjectConverterImpl(
                 }
                 admissible
             }
-            is Struct -> when {
-                term matches CAST_TEMPLATE -> sequenceOf(getType(term, term[1]))
-                term matches DEALIASING_TEMPLATE -> when (val ref = dealiaser(term)) {
-                    is ObjectRef -> admissibleTypesByPriority(ref)
+            is Struct ->
+                when {
+                    term matches CAST_TEMPLATE -> sequenceOf(getType(term, term[1]))
+                    term matches DEALIASING_TEMPLATE ->
+                        when (val ref = dealiaser(term)) {
+                            is ObjectRef -> admissibleTypesByPriority(ref)
+                            else -> throw TermToObjectConversionException(term)
+                        }
                     else -> throw TermToObjectConversionException(term)
                 }
-                else -> throw TermToObjectConversionException(term)
-            }
             else -> throw TermToObjectConversionException(term)
         }
     }

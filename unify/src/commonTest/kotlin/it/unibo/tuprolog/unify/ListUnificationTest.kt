@@ -10,12 +10,14 @@ class ListUnificationTest {
     @Test
     fun testListUnificationInMember() {
         val scope = Scope.empty()
-        val actual = scope.with {
-            structOf("member", atomOf("a"), listOf(arrayOf("a", "b", "c").map { atomOf(it) }))
-        }
-        val pattern = scope.with {
-            structOf("member", varOf("H"), consOf(varOf("H"), varOf("T")))
-        }
+        val actual =
+            scope.with {
+                structOf("member", atomOf("a"), listOf(arrayOf("a", "b", "c").map { atomOf(it) }))
+            }
+        val pattern =
+            scope.with {
+                structOf("member", varOf("H"), consOf(varOf("H"), varOf("T")))
+            }
         val mgu1 = actual mguWith pattern
         val mgu2 = pattern mguWith actual
         assertEquals(mgu1, mgu2)
@@ -23,9 +25,9 @@ class ListUnificationTest {
             assertEquals(
                 Substitution.unifier(
                     varOf("H") to atomOf("a"),
-                    varOf("T") to listOf(arrayOf("b", "c").map { atomOf(it) })
+                    varOf("T") to listOf(arrayOf("b", "c").map { atomOf(it) }),
                 ),
-                mgu1
+                mgu1,
             )
         }
     }
@@ -42,9 +44,9 @@ class ListUnificationTest {
             assertEquals(
                 Substitution.unifier(
                     varOf("H") to atomOf("a"),
-                    varOf("T") to listOf(arrayOf("b", "c").map { atomOf(it) })
+                    varOf("T") to listOf(arrayOf("b", "c").map { atomOf(it) }),
                 ),
-                mgu1
+                mgu1,
             )
         }
     }

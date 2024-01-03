@@ -9,7 +9,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object Reverse : BinaryRelation.Functional<ExecutionContext>("reverse") {
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution {
+    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
+        first: Term,
+        second: Term,
+    ): Substitution {
         return when {
             first is Var -> {
                 ensuringArgumentIsWellFormedList(1)
@@ -38,7 +41,10 @@ object Reverse : BinaryRelation.Functional<ExecutionContext>("reverse") {
         }
     }
 
-    private fun Solve.Request<ExecutionContext>.reverse(list: List, other: Term): Substitution {
+    private fun Solve.Request<ExecutionContext>.reverse(
+        list: List,
+        other: Term,
+    ): Substitution {
         val reversed = List.of(list.toList().asReversed())
         return mgu(reversed, other)
     }

@@ -20,7 +20,6 @@ import kotlin.test.assertNotSame
  * @author Enrico
  */
 internal class CutTest {
-
     private val cutPrimitiveSignature = Signature("!", 0)
 
     private fun cutRequest(context: ExecutionContext = StreamsExecutionContext()) =

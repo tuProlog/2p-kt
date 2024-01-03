@@ -8,7 +8,6 @@ class TestConcurrentFailImpl :
     TestConcurrentFail<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testFail() = multiRunConcurrentTest { super.testFail() }

@@ -8,7 +8,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object Read2 : BinaryRelation.NonBacktrackable<ExecutionContext>("read") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+    ): Solve.Response {
         val channel = ensuringArgumentIsInputChannel(0)
         return readTermAndReply(channel, second)
     }

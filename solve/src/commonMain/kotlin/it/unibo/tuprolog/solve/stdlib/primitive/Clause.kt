@@ -15,7 +15,7 @@ import it.unibo.tuprolog.utils.buffered
 object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
-        second: Term
+        second: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(0)
         ensuringArgumentIsStruct(0)

@@ -12,18 +12,18 @@ import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 
 class TestEmptyBlock {
-
     private val correctAtom = "{}"
     private val notCorrectAtom = "{ }"
 
-    private val heterogeneousCreatedInstances = listOf(
-        EmptyBlock(),
-        Empty.block(),
-        Block.empty(),
-        Block.of(),
-        Atom.of(correctAtom),
-        Struct.of(correctAtom)
-    )
+    private val heterogeneousCreatedInstances =
+        listOf(
+            EmptyBlock(),
+            Empty.block(),
+            Block.empty(),
+            Block.of(),
+            Atom.of(correctAtom),
+            Struct.of(correctAtom),
+        )
 
     @Test
     fun variousCreationMethodsCreateCorrectlyEmptyBlock() {

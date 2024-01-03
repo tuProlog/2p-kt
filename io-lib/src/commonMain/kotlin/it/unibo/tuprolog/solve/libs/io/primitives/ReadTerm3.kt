@@ -8,7 +8,11 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 
 object ReadTerm3 : TernaryRelation.NonBacktrackable<ExecutionContext>("read_term") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term, third: Term): Solve.Response {
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+        third: Term,
+    ): Solve.Response {
         val channel = ensuringArgumentIsInputChannel(0)
         return readTermAndReply(channel, second, lastIsInfoList = true)
     }

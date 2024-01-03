@@ -8,7 +8,7 @@ data class JsClassName(val module: String, val qualifiedName: String) {
             val splitted = fullName.split(":")
             return JsClassName(
                 splitted.subList(0, splitted.lastIndex).joinToString(""),
-                splitted.last()
+                splitted.last(),
             )
         }
 
@@ -19,6 +19,7 @@ data class JsClassName(val module: String, val qualifiedName: String) {
         qualifiedName.split('.')
     }
 
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun resolve(): dynamic {
         try {
             var resolved = require(module)

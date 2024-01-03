@@ -14,11 +14,9 @@ import it.unibo.tuprolog.utils.plus
 
 data class StateException(
     override val exception: ResolutionException,
-    override val context: ConcurrentExecutionContext
+    override val context: ConcurrentExecutionContext,
 ) : AbstractState(context), ExceptionalState {
-
-    private fun Struct.isCatch(): Boolean =
-        arity == 3 && functor == Catch.functor
+    private fun Struct.isCatch(): Boolean = arity == 3 && functor == Catch.functor
 
     private fun LogicError.getExceptionContent(): Term {
         return when (this) {
@@ -34,18 +32,24 @@ data class StateException(
         }
 
     private val finalState: EndState
-        get() = StateHalt(
-            exception.toPublicException(),
-            context.copy(step = nextStep())
-        )
+        get() =
+            StateHalt(
+                exception.toPublicException(),
+                context.copy(step = nextStep()),
+            )
 
     private val handleExceptionInParentContext: StateException
-        get() = StateException(
-            exception,
-            context.parent!!.copy(step = nextStep())
-        )
+        get() =
+            StateException(
+                exception,
+                context.parent!!.copy(step = nextStep()),
+            )
 
-    private fun handleStruct(unificator: Unificator, catchGoal: Struct, error: LogicError): State =
+    private fun handleStruct(
+        unificator: Unificator,
+        catchGoal: Struct,
+        error: LogicError,
+    ): State =
         when {
             catchGoal.isCatch() -> {
                 val catcher = unificator.mgu(catchGoal[1], error.getExceptionContent())
@@ -55,27 +59,29 @@ data class StateException(
             else -> handleExceptionInParentContext
         }
 
-    private fun handleCatch(catchGoal: Struct, catcher: Substitution) =
-        when {
-            catcher.isSuccess -> {
-                val newSubstitution =
-                    (context.substitution + catcher).filter(context.interestingVariables)
-                val subGoals = catchGoal[2][newSubstitution]
-                val newGoals = subGoals.toGoals() + context.goals.next
+    private fun handleCatch(
+        catchGoal: Struct,
+        catcher: Substitution,
+    ) = when {
+        catcher.isSuccess -> {
+            val newSubstitution =
+                (context.substitution + catcher).filter(context.interestingVariables)
+            val subGoals = catchGoal[2][newSubstitution]
+            val newGoals = subGoals.toGoals() + context.goals.next
 
-                StateGoalSelection(
-                    context.copy(
-                        goals = newGoals,
-                        rule = null,
-                        primitive = null,
-                        substitution = newSubstitution.castToUnifier(),
-                        step = nextStep()
-                    )
-                )
-            }
-            context.isRoot -> finalState
-            else -> handleExceptionInParentContext
+            StateGoalSelection(
+                context.copy(
+                    goals = newGoals,
+                    rule = null,
+                    primitive = null,
+                    substitution = newSubstitution.castToUnifier(),
+                    step = nextStep(),
+                ),
+            )
         }
+        context.isRoot -> finalState
+        else -> handleExceptionInParentContext
+    }
 
     override fun computeNext(): Iterable<State> {
         return listOf(
@@ -89,10 +95,13 @@ data class StateException(
                     }
                 }
                 else -> finalState
-            }
+            },
         )
     }
 
     override fun clone(context: ConcurrentExecutionContext): StateException =
-        copy(exception = exception, context = context)
+        copy(
+            exception = exception,
+            context = context,
+        )
 }

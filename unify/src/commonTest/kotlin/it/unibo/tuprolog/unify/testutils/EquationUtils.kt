@@ -26,7 +26,6 @@ import it.unibo.tuprolog.core.List.Companion as LogicList
  * @author Enrico
  */
 internal object EquationUtils {
-
     /** A list of equations that should immediately be interpreted as Identities, without deeper exploration */
     internal val shallowIdentityEquations by lazy {
         listOf(
@@ -41,7 +40,7 @@ internal object EquationUtils {
             Real.of("1.5") to Real.of("1.500"),
             Integer.of(0) to Integer.of(0),
             Var.anonymous().let { it to it },
-            Scope.empty { varOf("X") to varOf("X") }
+            Scope.empty { varOf("X") to varOf("X") },
         )
     }
 
@@ -68,7 +67,7 @@ internal object EquationUtils {
             },
             Scope.empty {
                 indicatorOf(atomOf("ciao"), varOf("A")) to indicatorOf(atomOf("ciao"), varOf("A"))
-            }
+            },
         )
     }
 
@@ -92,7 +91,7 @@ internal object EquationUtils {
             Var.anonymous() to Fact.of(Struct.of("aa", Var.of("A"))),
             Var.anonymous() to Directive.of(Atom.of("here"), Struct.of("f", Truth.TRUE)),
             Var.anonymous() to Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.FALSE),
-            Var.anonymous() to Var.anonymous()
+            Var.anonymous() to Var.anonymous(),
         )
     }
 
@@ -116,7 +115,7 @@ internal object EquationUtils {
             Directive.of(Atom.of("here"), Struct.of("f", Var.of("A"))) to
                 Directive.of(Atom.of("here"), Struct.of("f", Var.of("B"))),
             Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.FALSE) to
-                Rule.of(Struct.fold("k", Var.of("B"), Var.of("C")), Truth.FALSE)
+                Rule.of(Struct.fold("k", Var.of("B"), Var.of("C")), Truth.FALSE),
         )
     }
 
@@ -135,7 +134,7 @@ internal object EquationUtils {
             Atom.of("X") to Atom.of("Y"),
             Real.of("1.5") to Real.of("1.3"),
             Integer.of(0) to Integer.of(1),
-            Real.of(1.0) to Integer.of(1)
+            Real.of(1.0) to Integer.of(1),
         )
     }
 
@@ -151,7 +150,7 @@ internal object EquationUtils {
             Directive.of(Atom.of("here"), Struct.of("f", Truth.TRUE)) to
                 Directive.of(Atom.of("here"), Struct.of("f", Truth.TRUE, Atom.of("extra"))),
             Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.FAIL) to
-                Rule.of(Struct.fold("different", Var.of("A"), Var.of("A")), Truth.FAIL)
+                Rule.of(Struct.fold("different", Var.of("A"), Var.of("A")), Truth.FAIL),
         )
     }
 
@@ -204,10 +203,11 @@ internal object EquationUtils {
         }
 
     /** A function to count in how many equations will be transformed a term */
-    internal fun countDeepGeneratedEquations(term: Term): Int = when (term) {
-        is Var -> 1
-        is Constant -> 1
-        is Struct -> term.argsSequence.sumOf { countDeepGeneratedEquations(it) }
-        else -> fail("Should never be there")
-    }
+    internal fun countDeepGeneratedEquations(term: Term): Int =
+        when (term) {
+            is Var -> 1
+            is Constant -> 1
+            is Struct -> term.argsSequence.sumOf { countDeepGeneratedEquations(it) }
+            else -> fail("Should never be there")
+        }
 }

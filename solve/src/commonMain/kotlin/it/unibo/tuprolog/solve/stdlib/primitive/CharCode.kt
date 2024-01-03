@@ -10,14 +10,18 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object CharCode : BinaryRelation.Functional<ExecutionContext>("char_code") {
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution {
+    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
+        first: Term,
+        second: Term,
+    ): Substitution {
         return when {
             first is Var -> {
                 ensuringArgumentIsInstantiated(1)
                 ensuringArgumentIsCharCode(1)
-                val atom: Atom = Atom.of(
-                    charArrayOf((second as Integer).intValue.toChar()).concatToString()
-                )
+                val atom: Atom =
+                    Atom.of(
+                        charArrayOf((second as Integer).intValue.toChar()).concatToString(),
+                    )
                 Substitution.of(first, atom)
             }
             else -> {

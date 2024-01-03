@@ -20,20 +20,23 @@ abstract class AbstractTuPrologCommand(
     autoCompleteEnvvar: String? = "",
     allowMultipleSubcommands: Boolean = false,
     treatUnknownOptionsAsArgs: Boolean = false,
-    hidden: Boolean = false
+    hidden: Boolean = false,
 ) : CliktCommand(
-    help,
-    epilog,
-    name,
-    invokeWithoutSubcommand,
-    printHelpOnEmptyArgs,
-    helpTags,
-    autoCompleteEnvvar,
-    allowMultipleSubcommands,
-    treatUnknownOptionsAsArgs,
-    hidden
-) {
-    private fun printSolution(sol: Solution, operatorSet: OperatorSet) {
+        help,
+        epilog,
+        name,
+        invokeWithoutSubcommand,
+        printHelpOnEmptyArgs,
+        helpTags,
+        autoCompleteEnvvar,
+        allowMultipleSubcommands,
+        treatUnknownOptionsAsArgs,
+        hidden,
+    ) {
+    private fun printSolution(
+        sol: Solution,
+        operatorSet: OperatorSet,
+    ) {
         when (sol) {
             is Solution.Yes -> {
                 printYesSolution(sol, operatorSet)
@@ -47,11 +50,17 @@ abstract class AbstractTuPrologCommand(
         }
     }
 
-    private fun printYesSolution(sol: Solution.Yes, operatorSet: OperatorSet) {
+    private fun printYesSolution(
+        sol: Solution.Yes,
+        operatorSet: OperatorSet,
+    ) {
         echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
     }
 
-    private fun printHaltSolution(sol: Solution.Halt, operatorSet: OperatorSet) {
+    private fun printHaltSolution(
+        sol: Solution.Halt,
+        operatorSet: OperatorSet,
+    ) {
         when (val ex = sol.exception) {
             is HaltException -> {
                 echo("# goodbye.")
@@ -96,11 +105,17 @@ abstract class AbstractTuPrologCommand(
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun printNoSolution(sol: Solution.No, operatorSet: OperatorSet) {
+    private fun printNoSolution(
+        sol: Solution.No,
+        operatorSet: OperatorSet,
+    ) {
         echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
     }
 
-    protected fun printSolutions(solutions: Iterator<Solution>, operatorSet: OperatorSet) {
+    protected fun printSolutions(
+        solutions: Iterator<Solution>,
+        operatorSet: OperatorSet,
+    ) {
         var first = true
         while (solutions.hasNext()) {
             if (!first) {
@@ -114,7 +129,11 @@ abstract class AbstractTuPrologCommand(
         printEndOfSolutions()
     }
 
-    protected fun printNumSolutions(solutions: Iterator<Solution>, maxSolutions: Int, operatorSet: OperatorSet) {
+    protected fun printNumSolutions(
+        solutions: Iterator<Solution>,
+        maxSolutions: Int,
+        operatorSet: OperatorSet,
+    ) {
         var i = 0
         while (i < maxSolutions && solutions.hasNext()) {
             i++

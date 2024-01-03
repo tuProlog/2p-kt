@@ -10,8 +10,8 @@ import kotlin.test.assertEquals
  *
  * @author Enrico
  */
+@Suppress("ConstPropertyName", "ktlint:standard:property-naming")
 internal object TimeOutExceptionUtils {
-
     internal const val aMessage = TuPrologRuntimeExceptionUtils.aMessage
     internal val aCause = TuPrologRuntimeExceptionUtils.aCause
     internal val aContext = TuPrologRuntimeExceptionUtils.aContext
@@ -25,13 +25,13 @@ internal object TimeOutExceptionUtils {
         expectedCause: Throwable?,
         expectedContext: ExecutionContext,
         expectedExceededTimeDuration: TimeDuration,
-        actualException: TimeOutException
+        actualException: TimeOutException,
     ) {
         TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(
             expectedMessage,
             expectedCause,
             expectedContext,
-            actualException
+            actualException,
         )
         assertEquals(expectedExceededTimeDuration, actualException.exceededDuration)
     }

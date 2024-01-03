@@ -12,8 +12,7 @@ import kotlin.jvm.JvmName
  * as the Term: `product(A) :- call(A), call(A)`
  */
 @JsName("prepareForExecution")
-fun Clause.prepareForExecution(): Clause =
-    accept(Clause.defaultPreparationForExecutionVisitor).castToClause()
+fun Clause.prepareForExecution(): Clause = accept(Clause.defaultPreparationForExecutionVisitor).castToClause()
 
 @JsName("prepareForExecutionWithUnifier")
 fun Clause.prepareForExecution(unifier: Substitution.Unifier): Clause =

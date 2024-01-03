@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
  * @author Enrico
  */
 internal interface IntermediateState : State {
-
     /** The [Solve.Request] that drives the State behaviour towards [Response]s */
     override val solve: Solve.Request<ExecutionContext>
 

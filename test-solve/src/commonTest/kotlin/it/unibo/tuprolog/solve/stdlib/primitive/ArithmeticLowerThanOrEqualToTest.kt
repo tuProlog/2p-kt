@@ -10,7 +10,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class ArithmeticLowerThanOrEqualToTest {
-
     @Test
     fun computesCorrectResult() {
         lowerOrEqualQueryToResult.forEach { (input, result) ->

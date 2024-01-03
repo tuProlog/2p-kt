@@ -16,7 +16,7 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
-        third: Term
+        third: Term,
     ): Substitution {
         return when {
             third is Var -> {

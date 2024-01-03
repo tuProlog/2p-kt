@@ -9,11 +9,10 @@ import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.utils.cursor
 
 data class StatePrimitiveSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
-
     private fun exceptionalState(exception: ResolutionException): StateException {
         return StateException(
             exception,
-            context.copy(step = nextStep())
+            context.copy(step = nextStep()),
         )
     }
 
@@ -26,8 +25,8 @@ data class StatePrimitiveSelection(override val context: ClassicExecutionContext
                         InstantiationError.forGoal(
                             context = context,
                             procedure = context.procedure!!.extractSignature(),
-                            variable = goal.castToVar()
-                        )
+                            variable = goal.castToVar(),
+                        ),
                     )
                 }
                 goal.isStruct -> {
@@ -38,8 +37,9 @@ data class StatePrimitiveSelection(override val context: ClassicExecutionContext
                         val childContext = createChild()
                         try {
                             val request = childContext.toRequest(goalStruct, signature, executionTime)
-                            val primitive = libraries.primitives[signature]
-                                ?: error("Inconsistent behaviour of Library.contains and Library.get")
+                            val primitive =
+                                libraries.primitives[signature]
+                                    ?: error("Inconsistent behaviour of Library.contains and Library.get")
                             val primitiveExecutions = primitive.solve(request).cursor()
                             StatePrimitiveExecution(childContext.appendPrimitivesAndChoicePoints(primitiveExecutions))
                         } catch (exception: ResolutionException) {
@@ -55,8 +55,8 @@ data class StatePrimitiveSelection(override val context: ClassicExecutionContext
                             context = context,
                             procedure = context.procedure?.extractSignature() ?: Signature("?-", 1),
                             expectedType = TypeError.Expected.CALLABLE,
-                            culprit = goal
-                        )
+                            culprit = goal,
+                        ),
                     )
                 }
             }

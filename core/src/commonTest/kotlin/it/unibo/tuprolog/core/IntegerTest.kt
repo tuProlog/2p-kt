@@ -13,7 +13,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class IntegerTest {
-
     @Test
     fun integerOfBigInteger() {
         val correct = IntegerUtils.bigIntegers.map(::IntegerImpl)

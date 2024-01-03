@@ -4,7 +4,7 @@ interface TestOnce : SolverTest {
     companion object {
         fun prototype(
             solverFactory: SolverFactory,
-            errorSignature: Signature = Signature("once", 1)
+            errorSignature: Signature = Signature("once", 1),
         ): TestOnce = TestOnceImpl(solverFactory, errorSignature)
     }
 

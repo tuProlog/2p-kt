@@ -8,7 +8,6 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface ReteTree {
-
     @JsName("unificator")
     val unificator: Unificator
 
@@ -46,7 +45,10 @@ interface ReteTree {
     fun retractFirst(clause: Clause): Sequence<Clause>
 
     /**Retracts only the given number of matching clauses from this [ReteTree]*/
-    fun retractOnly(clause: Clause, limit: Int): Sequence<Clause>
+    fun retractOnly(
+        clause: Clause,
+        limit: Int,
+    ): Sequence<Clause>
 
     /**Retracts all the matching clauses from this [ReteTree]*/
     fun retractAll(clause: Clause): Sequence<Clause>
@@ -56,27 +58,33 @@ interface ReteTree {
 
     companion object {
         /**Creates an empty unordered [ReteTree]*/
-        fun emptyUnordered(unificator: Unificator): ReteTree =
-            unordered(unificator, emptyList())
+        fun emptyUnordered(unificator: Unificator): ReteTree = unordered(unificator, emptyList())
 
         /**Creates an unordered ReteTree based on the given [Iterable]*/
-        fun unordered(unificator: Unificator, clauses: Iterable<Clause>): ReteTree =
-            RootNode(unificator, clauses, false)
+        fun unordered(
+            unificator: Unificator,
+            clauses: Iterable<Clause>,
+        ): ReteTree = RootNode(unificator, clauses, false)
 
         /**Creates an unordered ReteTree based on the given vararg*/
-        fun unordered(unificator: Unificator, vararg clauses: Clause): ReteTree =
-            unordered(unificator, listOf(*clauses))
+        fun unordered(
+            unificator: Unificator,
+            vararg clauses: Clause,
+        ): ReteTree = unordered(unificator, listOf(*clauses))
 
         /**Creates an empty ordered [ReteTree]*/
-        fun emptyOrdered(unificator: Unificator): ReteTree =
-            ordered(unificator, emptyList())
+        fun emptyOrdered(unificator: Unificator): ReteTree = ordered(unificator, emptyList())
 
         /**Creates an ordered ReteTree based on the given [Iterable]*/
-        fun ordered(unificator: Unificator, clauses: Iterable<Clause>): ReteTree =
-            RootNode(unificator, clauses, true)
+        fun ordered(
+            unificator: Unificator,
+            clauses: Iterable<Clause>,
+        ): ReteTree = RootNode(unificator, clauses, true)
 
         /**Creates an ordered ReteTree based on the given vararg*/
-        fun ordered(unificator: Unificator, vararg clauses: Clause): ReteTree =
-            ordered(unificator, listOf(*clauses))
+        fun ordered(
+            unificator: Unificator,
+            vararg clauses: Clause,
+        ): ReteTree = ordered(unificator, listOf(*clauses))
     }
 }

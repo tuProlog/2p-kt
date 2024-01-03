@@ -28,9 +28,8 @@ import java.util.concurrent.ExecutorService
 @Suppress("UnsafeCallOnNullableType", "TooManyFunctions")
 internal class TuPrologIDEModelImpl(
     override val executor: ExecutorService,
-    var customizer: ((MutableSolver) -> MutableSolver)? = { it }
+    var customizer: ((MutableSolver) -> MutableSolver)? = { it },
 ) : TuPrologIDEModel {
-
     companion object {
         const val DEFAULT_TIMEOUT: Long = 5000
     }
@@ -101,7 +100,10 @@ internal class TuPrologIDEModelImpl(
         return files[file]!!.text
     }
 
-    override fun setFile(file: File, theory: String) {
+    override fun setFile(
+        file: File,
+        theory: String,
+    ) {
         if (file in files) {
             files[file]?.text(theory)
         } else {
@@ -109,7 +111,10 @@ internal class TuPrologIDEModelImpl(
         }
     }
 
-    override fun renameFile(file: File, newFile: File) {
+    override fun renameFile(
+        file: File,
+        newFile: File,
+    ) {
         files[newFile] = files[file]!!
         files -= file
     }
@@ -140,7 +145,11 @@ internal class TuPrologIDEModelImpl(
         this.solver.regenerate()
     }
 
-    private inline fun <T> ensuringStateIs(state: State, vararg states: State, action: () -> T): T {
+    private inline fun <T> ensuringStateIs(
+        state: State,
+        vararg states: State,
+        action: () -> T,
+    ): T {
         val admissibleStates = EnumSet.of(state, *states)
         if (this.state in admissibleStates) {
             return action()
@@ -149,22 +158,24 @@ internal class TuPrologIDEModelImpl(
         }
     }
 
-    private val solver = Cached.of {
-        var newSolver = Solver.prolog.newBuilder()
-            .runtime(Runtime.of(OOPLib, IOLib))
-            .flag(TrackVariables) { ON }
-            .standardInput(InputChannel.of(stdin))
-            .standardOutput(OutputChannel.of { onStdoutPrinted.push(it) })
-            .standardError(OutputChannel.of { onStderrPrinted.push(it) })
-            .warnings(OutputChannel.of { onWarning.push(it) })
-            .buildMutable()
-        if (this.customizer != null) {
-            newSolver = this.customizer!!(newSolver)
+    private val solver =
+        Cached.of {
+            var newSolver =
+                Solver.prolog.newBuilder()
+                    .runtime(Runtime.of(OOPLib, IOLib))
+                    .flag(TrackVariables) { ON }
+                    .standardInput(InputChannel.of(stdin))
+                    .standardOutput(OutputChannel.of { onStdoutPrinted.push(it) })
+                    .standardError(OutputChannel.of { onStderrPrinted.push(it) })
+                    .warnings(OutputChannel.of { onWarning.push(it) })
+                    .buildMutable()
+            if (this.customizer != null) {
+                newSolver = this.customizer!!(newSolver)
+            }
+            newSolver.also {
+                onNewSolver.push(SolverEvent(Unit, it))
+            }
         }
-        newSolver.also {
-            onNewSolver.push(SolverEvent(Unit, it))
-        }
-    }
 
     override fun closeFile(file: File) {
         files -= file
@@ -241,14 +252,15 @@ internal class TuPrologIDEModelImpl(
         solver: MutableSolver,
         file: File,
         content: FileContent?,
-        onlyIfChanged: Boolean
+        onlyIfChanged: Boolean,
     ) {
         if (onlyIfChanged && content?.changed == true) {
             return
         }
         try {
-            val theory = content?.text()?.parseAsTheory(solver.operators)
-                ?: Theory.empty(solver.unificator)
+            val theory =
+                content?.text()?.parseAsTheory(solver.operators)
+                    ?: Theory.empty(solver.unificator)
             solver.resetDynamicKb()
             solver.loadStaticKb(theory)
             onNewStaticKb.push(SolverEvent(Unit, solver))
@@ -264,12 +276,13 @@ internal class TuPrologIDEModelImpl(
             val sol = solutions!!.next()
             onResolutionOver.push(SolverEvent(solutionCount, solver.value))
             onNewSolution.push(SolverEvent(sol, solver.value))
-            state = if (!sol.isYes || !solutions!!.hasNext()) {
-                onQueryOver.push(SolverEvent(sol.query, solver.value))
-                State.IDLE
-            } else {
-                State.SOLUTION
-            }
+            state =
+                if (!sol.isYes || !solutions!!.hasNext()) {
+                    onQueryOver.push(SolverEvent(sol.query, solver.value))
+                    State.IDLE
+                } else {
+                    State.SOLUTION
+                }
         }
     }
 

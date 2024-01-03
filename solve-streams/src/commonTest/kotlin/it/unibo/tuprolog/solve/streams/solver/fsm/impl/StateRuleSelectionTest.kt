@@ -25,27 +25,28 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class StateRuleSelectionTest {
-
     private val theQueryVariable = Var.of("V")
 
     /** A struct query in the form `f(V)` */
     private val theQuery = logicProgramming { "f"(theQueryVariable) }
 
     /** A Solve.Request with three databases and three different facts, to test how they should be used/combined in searching */
-    private val threeDBSolveRequest = Solve.Request(
-        theQuery.extractSignature(),
-        theQuery.args,
-        StreamsExecutionContext(
-            libraries = Runtime.of(
-                Library.of(
-                    alias = "testLib",
-                    clauses = logicProgramming { theory({ "f"("a") }) }
-                )
+    private val threeDBSolveRequest =
+        Solve.Request(
+            theQuery.extractSignature(),
+            theQuery.args,
+            StreamsExecutionContext(
+                libraries =
+                    Runtime.of(
+                        Library.of(
+                            alias = "testLib",
+                            clauses = logicProgramming { theory({ "f"("a") }) },
+                        ),
+                    ),
+                staticKb = logicProgramming { theory({ "f"("b") }) },
+                dynamicKb = logicProgramming { theory({ "f"("c") }) },
             ),
-            staticKb = logicProgramming { theory({ "f"("b") }) },
-            dynamicKb = logicProgramming { theory({ "f"("c") }) }
         )
-    )
 
     @Test
     fun noMatchingRulesFoundMakeItGoIntoFalseState() {
@@ -104,12 +105,13 @@ internal class StateRuleSelectionTest {
     fun stateRuleSelectionUsesCombinationOfStaticAndDynamicKBWhenLibraryTheoriesDoesntProvideMatches() {
         val dynamicAndStaticKBSolveRequest =
             with(threeDBSolveRequest) { copy(context = context.copy(libraries = Runtime.empty())) }
-        val correctSubstitutions = logicProgramming {
-            ktListOf(
-                theQueryVariable to "b",
-                theQueryVariable to "c"
-            )
-        }
+        val correctSubstitutions =
+            logicProgramming {
+                ktListOf(
+                    theQueryVariable to "b",
+                    theQueryVariable to "c",
+                )
+            }
 
         val nextStates = StateRuleSelection(dynamicAndStaticKBSolveRequest).behave()
 

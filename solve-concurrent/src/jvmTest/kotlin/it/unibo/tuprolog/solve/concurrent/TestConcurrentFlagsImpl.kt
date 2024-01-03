@@ -9,7 +9,6 @@ class TestConcurrentFlagsImpl :
     TestConcurrentFlags<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun defaultLastCallOptimizationIsOn() = multiRunConcurrentTest { super.defaultLastCallOptimizationIsOn() }
@@ -33,8 +32,12 @@ class TestConcurrentFlagsImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    @Ignore // todo handle set flag side effect
-    override fun settingMissingFlagsSucceeds() = multiRunConcurrentTest { super.settingMissingFlagsSucceeds() }
+    @Ignore
+    override fun settingMissingFlagsSucceeds() =
+        multiRunConcurrentTest {
+            // todo handle set flag side effect
+            super.settingMissingFlagsSucceeds()
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

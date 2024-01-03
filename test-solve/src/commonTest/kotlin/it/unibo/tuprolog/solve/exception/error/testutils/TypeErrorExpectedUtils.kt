@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
  * @author Enrico
  */
 internal object TypeErrorExpectedUtils {
-
     /** A map from predefined error names to predefined error instances */
     internal val predefinedErrorNamesToInstances by lazy {
         TypeError.Expected.values().map { it.toString() to it }.toMap()

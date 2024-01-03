@@ -24,7 +24,7 @@ fun gt(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> {
             request.context,
             request.signature,
             TypeError.Expected.NUMBER,
-            arg1
+            arg1,
         )
     }
     if (arg2 !is Numeric) {
@@ -32,7 +32,7 @@ fun gt(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> {
             request.context,
             request.signature,
             TypeError.Expected.NUMBER,
-            arg2
+            arg2,
         )
     }
 
@@ -45,19 +45,22 @@ fun gt(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> {
 
 fun main() {
     logicProgramming {
-        val solver = Solver.prolog.solverWithDefaultBuiltins(
-            otherLibraries = Runtime.of(
-                Library.of(
-                    alias = "it.unibo.lrizzato.myprimives",
-                    primitives = mapOf(gtSignature to Primitive(::gt))
-                )
-            ),
-            staticKb = theoryOf(
-                fact { "user"("giovanni") },
-                fact { "user"("lorenzo") },
-                rule { "user"(`_`) impliedBy fail }
+        val solver =
+            Solver.prolog.solverWithDefaultBuiltins(
+                otherLibraries =
+                    Runtime.of(
+                        Library.of(
+                            alias = "it.unibo.lrizzato.myprimives",
+                            primitives = mapOf(gtSignature to Primitive(::gt)),
+                        ),
+                    ),
+                staticKb =
+                    theoryOf(
+                        fact { "user"("giovanni") },
+                        fact { "user"("lorenzo") },
+                        rule { "user"(`_`) impliedBy fail },
+                    ),
             )
-        )
         val query = "user"("X") and "write"("hello: ") and "write"("X") and "nl" and "gt"(2, 1)
         solver.solve(query).forEach {
             when (it) {

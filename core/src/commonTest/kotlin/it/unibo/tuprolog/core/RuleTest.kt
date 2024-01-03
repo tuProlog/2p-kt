@@ -13,7 +13,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class RuleTest {
-
     private val correctInstances = RuleUtils.mixedRules.map { (head, body) -> RuleImpl(head, body) }
 
     @Test

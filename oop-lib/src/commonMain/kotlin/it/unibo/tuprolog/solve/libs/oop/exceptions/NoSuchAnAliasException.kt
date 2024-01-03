@@ -11,11 +11,10 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 @Suppress("MemberVisibilityCanBePrivate")
 class NoSuchAnAliasException(
-    val dealiasingExpression: Struct
+    val dealiasingExpression: Struct,
 ) : OopException(
-    "There exists no reference whose alias is `${dealiasingExpression[0]}`"
-) {
-
+        "There exists no reference whose alias is `${dealiasingExpression[0]}`",
+    ) {
     init {
         require(dealiasingExpression matches DEALIASING_TEMPLATE)
         require(dealiasingExpression[0] is Struct)
@@ -25,13 +24,13 @@ class NoSuchAnAliasException(
 
     override fun toLogicError(
         context: ExecutionContext,
-        signature: Signature
+        signature: Signature,
     ): LogicError {
         return ExistenceError.of(
             context,
             ExistenceError.ObjectType.OOP_ALIAS,
             culprit,
-            message ?: ""
+            message ?: "",
         )
     }
 

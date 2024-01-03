@@ -13,26 +13,30 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.core.List as LogicList
 
 object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
+    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
+        first: Term,
+        second: Term,
+    ): Substitution =
         when (first) {
             is Var -> {
                 ensuringArgumentIsInstantiated(1)
                 ensuringArgumentIsList(1)
                 val codeList = second as LogicList
-                val chars: List<Char> = codeList.toList().map {
-                    when (it) {
-                        is Integer -> {
-                            ensuringTermIsCharCode(it)
-                            it.intValue.toChar()
-                        }
-                        is Var -> {
-                            throw InstantiationError.forArgument(context, signature, it, 1)
-                        }
-                        else -> {
-                            throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, it, 1)
+                val chars: List<Char> =
+                    codeList.toList().map {
+                        when (it) {
+                            is Integer -> {
+                                ensuringTermIsCharCode(it)
+                                it.intValue.toChar()
+                            }
+                            is Var -> {
+                                throw InstantiationError.forArgument(context, signature, it, 1)
+                            }
+                            else -> {
+                                throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, it, 1)
+                            }
                         }
                     }
-                }
                 Substitution.of(first, Atom.of(chars.joinToString(separator = "")))
             }
             else -> {

@@ -15,7 +15,10 @@ import it.unibo.tuprolog.utils.cursor
 import kotlin.jvm.JvmName
 
 fun Sequence<Clause>.ensureRules(): Sequence<Rule> =
-    map { require(it.isRule); it.castToRule() }
+    map {
+        require(it.isRule)
+        it.castToRule()
+    }
 
 fun Term.unfoldGoals(): Sequence<Term> =
     when {
@@ -39,7 +42,7 @@ fun ConcurrentExecutionContext.createChild(inferProcedureFromGoals: Boolean = tr
         procedure = if (inferProcedureFromGoals) currentGoal else procedure,
         parent = this,
         depth = depth + 1,
-        step = step + 1
+        step = step + 1,
     )
 }
 
@@ -50,13 +53,13 @@ fun ConcurrentExecutionContext.replaceWithChild(inferProcedureFromGoals: Boolean
         goals = currentGoal.toGoals(),
         procedure = if (inferProcedureFromGoals) currentGoal else procedure,
         depth = depth + 1,
-        step = step + 1
+        step = step + 1,
     )
 }
 
 fun ConcurrentExecutionContext.createChildAppendingRules(
     rule: Rule,
-    inferProcedureFromGoals: Boolean = true
+    inferProcedureFromGoals: Boolean = true,
 ): ConcurrentExecutionContext {
     val tempExecutionContext = createChild(inferProcedureFromGoals)
     return tempExecutionContext.copy(rule = rule)
@@ -64,7 +67,7 @@ fun ConcurrentExecutionContext.createChildAppendingRules(
 
 fun ConcurrentExecutionContext.replaceWithChildAppendingRules(
     rule: Rule,
-    inferProcedureFromGoals: Boolean = true
+    inferProcedureFromGoals: Boolean = true,
 ): ConcurrentExecutionContext {
     val tempExecutionContext = replaceWithChild(inferProcedureFromGoals)
     return tempExecutionContext.copy(rule = rule)
@@ -73,5 +76,5 @@ fun ConcurrentExecutionContext.replaceWithChildAppendingRules(
 fun ConcurrentExecutionContext.toRequest(
     goal: Struct,
     signature: Signature,
-    startTime: TimeInstant
+    startTime: TimeInstant,
 ) = Solve.Request(signature, goal.args, this, startTime)

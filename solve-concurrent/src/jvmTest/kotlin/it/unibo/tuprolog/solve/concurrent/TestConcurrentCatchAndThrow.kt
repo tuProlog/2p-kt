@@ -8,21 +8,21 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 
 interface TestConcurrentCatchAndThrow<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testCatchThrow() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
             val query = (catch(true, C, write("something")) and `throw`("blabla"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    SystemError.forUncaughtException(
-                        DummyInstances.executionContext,
-                        atomOf("blabla")
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        SystemError.forUncaughtException(
+                            DummyInstances.executionContext,
+                            atomOf("blabla"),
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

@@ -17,7 +17,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class SolverStrategiesTest {
-
     private val aContext = DummyInstances.executionContext
 
     private val predication = logicProgramming { "a" and "b" and "c" }.argsSequence

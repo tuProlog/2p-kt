@@ -9,20 +9,24 @@ import kotlin.js.JsName
 class InitializationIssue(
     @JsName("goal") val goal: Struct,
     override val cause: ResolutionException? = null,
-    contexts: Array<ExecutionContext>
+    contexts: Array<ExecutionContext>,
 ) : Warning("Error while solving initialization goal $goal: ${cause ?: "failure"}", cause, contexts) {
-
     constructor(
         goal: Struct,
         cause: ResolutionException? = null,
-        context: ExecutionContext
+        context: ExecutionContext,
     ) : this(goal, cause, arrayOf(context))
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): InitializationIssue =
-        InitializationIssue(goal, cause, contexts.setItem(index, newContext))
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): InitializationIssue = InitializationIssue(goal, cause, contexts.setItem(index, newContext))
 
     override fun updateLastContext(newContext: ExecutionContext): InitializationIssue =
-        updateContext(newContext, contexts.lastIndex)
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): InitializationIssue =
         InitializationIssue(goal, cause, contexts.addLast(newContext))

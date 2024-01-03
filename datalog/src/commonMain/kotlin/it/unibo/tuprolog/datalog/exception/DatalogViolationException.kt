@@ -6,9 +6,8 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 class DatalogViolationException(prefix: String = "", val culprit: Any, suffix: String = "", cause: Throwable? = null) :
     TuPrologException(
         message = "Datalog restriction violation: $prefix$culprit$suffix",
-        cause = cause
+        cause = cause,
     ) {
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false

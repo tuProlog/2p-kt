@@ -17,9 +17,8 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class RootNode(
     override val unificator: Unificator,
     clauses: Iterable<Clause>,
-    override val isOrdered: Boolean
+    override val isOrdered: Boolean,
 ) : ReteTree, Cacheable<Clause> {
-
     private val theoryCache: Cached<MutableList<Clause>> = Cached.of(this::regenerateCache)
 
     private val ruleIndex: RuleNode = RuleNode(unificator, isOrdered)
@@ -63,8 +62,10 @@ internal class RootNode(
             ruleIndex.retractFirst(clause)
         }
 
-    override fun retractOnly(clause: Clause, limit: Int): Sequence<Clause> =
-        (1..limit).asSequence().flatMap { retractFirst(clause) }.buffered()
+    override fun retractOnly(
+        clause: Clause,
+        limit: Int,
+    ): Sequence<Clause> = (1..limit).asSequence().flatMap { retractFirst(clause) }.buffered()
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) {
@@ -73,8 +74,7 @@ internal class RootNode(
             ruleIndex.retractAll(clause)
         }
 
-    override fun deepCopy(): ReteTree =
-        RootNode(unificator, clauses.asIterable(), isOrdered)
+    override fun deepCopy(): ReteTree = RootNode(unificator, clauses.asIterable(), isOrdered)
 
     override fun assertA(clause: Clause) {
         val indexed = assignLowerIndex(clause)
@@ -107,25 +107,23 @@ internal class RootNode(
         }
     }
 
-    private fun assignHigherIndex(clause: Clause): IndexedClause =
-        IndexedClause.of(++highestIndex, clause, this)
+    private fun assignHigherIndex(clause: Clause): IndexedClause = IndexedClause.of(++highestIndex, clause, this)
 
-    private fun assignLowerIndex(clause: Clause): IndexedClause =
-        IndexedClause.of(--lowestIndex, clause, this)
+    private fun assignLowerIndex(clause: Clause): IndexedClause = IndexedClause.of(--lowestIndex, clause, this)
 
     private fun regenerateCache(): MutableList<Clause> {
         return dequeOf(
             if (isOrdered) {
                 Utils.merge(
                     directiveIndex.getCache(),
-                    ruleIndex.getCache()
+                    ruleIndex.getCache(),
                 ).map { it.innerClause }
             } else {
                 Utils.flatten(
                     directiveIndex.getCache().map { it.innerClause },
-                    ruleIndex.getCache().map { it.innerClause }
+                    ruleIndex.getCache().map { it.innerClause },
                 )
-            }
+            },
         )
     }
 

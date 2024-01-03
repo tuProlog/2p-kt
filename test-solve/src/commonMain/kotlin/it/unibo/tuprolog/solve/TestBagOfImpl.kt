@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
-
     override fun testBagXInDifferentValues() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -14,7 +13,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
 
             assertSolutionEquals(
                 ktListOf(query.yes("S" to listOf(1, 2))),
-                solutions
+                solutions,
             )
         }
     }
@@ -28,7 +27,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
 
             assertSolutionEquals(
                 ktListOf(query.yes("X" to listOf(1, 2))),
-                solutions
+                solutions,
             )
         }
     }
@@ -42,7 +41,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
 
             assertSolutionEquals(
                 ktListOf(query.yes("L" to listOf("Y", "Z"))),
-                solutions
+                solutions,
             )
         }
     }
@@ -56,7 +55,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -70,7 +69,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
 
             assertSolutionEquals(
                 ktListOf(query.yes("S" to listOf(1))),
-                solutions
+                solutions,
             )
         }
     }
@@ -89,11 +88,11 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
                             DummyInstances.executionContext,
                             Signature("bagof", 3),
                             varOf("G"),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -113,11 +112,11 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
                             Signature("bagof", 3),
                             TypeError.Expected.CALLABLE,
                             numOf(1),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

@@ -18,7 +18,6 @@ import it.unibo.tuprolog.solve.streams.solver.replyWith
  * @author Enrico
  */
 internal object Catch : PrimitiveWrapper<StreamsExecutionContext>("catch", 3) {
-
     override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         sequence {
             val goalArgument = request.arguments.first()
@@ -30,11 +29,12 @@ internal object Catch : PrimitiveWrapper<StreamsExecutionContext>("catch", 3) {
                         val recoverGoalArgument = request.arguments.last().apply(goalResponse.solution.substitution)
 
                         // attaching recover goal's solve request to catch/3 parent, to not re-execute this catch/3 if error thrown
-                        val recoverGoalSolveRequest = request.newSolveRequest(
-                            call(recoverGoalArgument),
-                            goalResponse.solution.substitution - request.context.substitution,
-                            requestIssuingInstant = currentTimeInstant()
-                        ).ensureNoMoreSelectableCatch(request.context)
+                        val recoverGoalSolveRequest =
+                            request.newSolveRequest(
+                                call(recoverGoalArgument),
+                                goalResponse.solution.substitution - request.context.substitution,
+                                requestIssuingInstant = currentTimeInstant(),
+                            ).ensureNoMoreSelectableCatch(request.context)
 
                         yieldAll(StreamsSolver.solveToResponses(recoverGoalSolveRequest).map { request.replyWith(it) })
                     }
@@ -47,10 +47,12 @@ internal object Catch : PrimitiveWrapper<StreamsExecutionContext>("catch", 3) {
     private fun call(goal: Term) = Struct.of(Call.functor, goal)
 
     /** Calls [SideEffectManagerImpl.ensureNoMoreSelectableCatch] */
-    private fun Solve.Request<StreamsExecutionContext>.ensureNoMoreSelectableCatch(notSelectableContext: StreamsExecutionContext) =
-        copy(
-            context = context.copy(
-                sideEffectManager = context.sideEffectManager.ensureNoMoreSelectableCatch(notSelectableContext)
-            )
-        )
+    private fun Solve.Request<StreamsExecutionContext>.ensureNoMoreSelectableCatch(
+        notSelectableContext: StreamsExecutionContext,
+    ) = copy(
+        context =
+            context.copy(
+                sideEffectManager = context.sideEffectManager.ensureNoMoreSelectableCatch(notSelectableContext),
+            ),
+    )
 }

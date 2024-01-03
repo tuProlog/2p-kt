@@ -27,23 +27,35 @@ class DomainError(
     contexts: Array<ExecutionContext>,
     @JsName("expectedDomain") val expectedDomain: Expected,
     @JsName("culprit") val culprit: Term,
-    extraData: Term? = null
+    extraData: Term? = null,
 ) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
         expectedDomain: Expected,
         actualValue: Term,
-        extraData: Term? = null
+        extraData: Term? = null,
     ) : this(message, cause, arrayOf(context), expectedDomain, actualValue, extraData)
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): DomainError =
-        DomainError(message, cause, contexts.setItem(index, newContext), expectedDomain, culprit, extraData)
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): DomainError =
+        DomainError(
+            message,
+            cause,
+            contexts.setItem(index, newContext),
+            expectedDomain,
+            culprit,
+            extraData,
+        )
 
     override fun updateLastContext(newContext: ExecutionContext): DomainError =
-        updateContext(newContext, contexts.lastIndex)
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): DomainError =
         DomainError(message, cause, contexts.addLast(newContext), expectedDomain, culprit, extraData)
@@ -51,7 +63,6 @@ class DomainError(
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedDomain.toTerm(), culprit) }
 
     companion object {
-
         @JsName("forFlagValues")
         @JvmStatic
         fun forFlagValues(
@@ -59,21 +70,22 @@ class DomainError(
             procedure: Signature,
             flagValues: Iterable<Term>,
             actualValue: Term,
-            index: Int? = null
-        ): DomainError = message(
-            (index?.let { "The $it-th argument" } ?: "An argument") +
-                "of `${procedure.pretty()}` should be one of " +
-                flagValues.joinToString(", ", "{", "}") { "`${it.pretty()}`" } +
-                " but `${actualValue.pretty()}` has been provided instead"
-        ) { m, extra ->
-            DomainError(
-                message = m,
-                context = context,
-                expectedDomain = Expected.FLAG_VALUE,
-                actualValue = actualValue,
-                extraData = extra
-            )
-        }
+            index: Int? = null,
+        ): DomainError =
+            message(
+                (index?.let { "The $it-th argument" } ?: "An argument") +
+                    "of `${procedure.pretty()}` should be one of " +
+                    flagValues.joinToString(", ", "{", "}") { "`${it.pretty()}`" } +
+                    " but `${actualValue.pretty()}` has been provided instead",
+            ) { m, extra ->
+                DomainError(
+                    message = m,
+                    context = context,
+                    expectedDomain = Expected.FLAG_VALUE,
+                    actualValue = actualValue,
+                    extraData = extra,
+                )
+            }
 
         @JsName("forArgument")
         @JvmStatic
@@ -82,38 +94,40 @@ class DomainError(
             procedure: Signature,
             expectedDomain: Expected,
             actualValue: Term,
-            index: Int? = null
-        ): DomainError = message(
-            (index?.let { "The $it-th argument" } ?: "An argument") +
-                "of `${procedure.pretty()}` should be `$expectedDomain`, " +
-                "but `${actualValue.pretty()}` has been provided instead"
-        ) { m, extra ->
-            DomainError(
-                message = m,
-                context = context,
-                expectedDomain = expectedDomain,
-                actualValue = actualValue,
-                extraData = extra
-            )
-        }
+            index: Int? = null,
+        ): DomainError =
+            message(
+                (index?.let { "The $it-th argument" } ?: "An argument") +
+                    "of `${procedure.pretty()}` should be `$expectedDomain`, " +
+                    "but `${actualValue.pretty()}` has been provided instead",
+            ) { m, extra ->
+                DomainError(
+                    message = m,
+                    context = context,
+                    expectedDomain = expectedDomain,
+                    actualValue = actualValue,
+                    extraData = extra,
+                )
+            }
 
         @JsName("forTerm")
         @JvmStatic
         fun forTerm(
             context: ExecutionContext,
             expectedDomain: Expected,
-            actualValue: Term
-        ): DomainError = message(
-            "Term `${actualValue.pretty()}` is not a valid $expectedDomain"
-        ) { m, extra ->
-            DomainError(
-                message = m,
-                context = context,
-                expectedDomain = expectedDomain,
-                actualValue = actualValue,
-                extraData = extra
-            )
-        }
+            actualValue: Term,
+        ): DomainError =
+            message(
+                "Term `${actualValue.pretty()}` is not a valid $expectedDomain",
+            ) { m, extra ->
+                DomainError(
+                    message = m,
+                    context = context,
+                    expectedDomain = expectedDomain,
+                    actualValue = actualValue,
+                    extraData = extra,
+                )
+            }
 
         @JsName("forGoal")
         @JvmStatic
@@ -121,20 +135,22 @@ class DomainError(
             context: ExecutionContext,
             procedure: Signature,
             expectedDomain: Expected,
-            actualValue: Term
-        ): DomainError = message(
-            "Subgoal `${actualValue.pretty()}` of ${procedure.pretty()} is not $expectedDomain term"
-        ) { m, extra ->
-            DomainError(
-                message = m,
-                context = context,
-                expectedDomain = expectedDomain,
-                actualValue = actualValue,
-                extraData = extra
-            )
-        }
+            actualValue: Term,
+        ): DomainError =
+            message(
+                "Subgoal `${actualValue.pretty()}` of ${procedure.pretty()} is not $expectedDomain term",
+            ) { m, extra ->
+                DomainError(
+                    message = m,
+                    context = context,
+                    expectedDomain = expectedDomain,
+                    actualValue = actualValue,
+                    extraData = extra,
+                )
+            }
 
         /** The domain error Struct functor */
+        @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "domain_error"
     }
 
@@ -180,7 +196,8 @@ class DomainError(
         CLAUSE,
         RULE,
         FACT,
-        DIRECTIVE;
+        DIRECTIVE,
+        ;
 
         /** The expected domain string description */
         @JsName("domain")
@@ -192,7 +209,6 @@ class DomainError(
         override fun toString(): String = domain
 
         companion object {
-
             /** Returns the Expected instance described by [domain]; creates a new instance only if [domain] was not predefined */
             @JsName("of")
             @JvmStatic
@@ -201,10 +217,11 @@ class DomainError(
             /** Gets [Expected] instance from [term] representation, if possible */
             @JsName("fromTerm")
             @JvmStatic
-            fun fromTerm(term: Term): Expected? = when (term) {
-                is Atom -> of(term.value)
-                else -> null
-            }
+            fun fromTerm(term: Term): Expected? =
+                when (term) {
+                    is Atom -> of(term.value)
+                    else -> null
+                }
         }
     }
 }

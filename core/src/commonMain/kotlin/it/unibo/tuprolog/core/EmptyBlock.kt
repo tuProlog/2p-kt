@@ -5,7 +5,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface EmptyBlock : Empty, Block {
-
     override val isEmptyBlock: Boolean
         get() = true
 

@@ -41,7 +41,7 @@ internal object Prob : RuleWrapper<ClassicExecutionContext>(ProblogLib.PREDICATE
                 atomOf("!"),
                 structOf("ensure_executable", goal),
                 structOf(ProbHelper.functor, expl, goal, newGoal),
-                newGoal
+                newGoal,
             )
         }
 }

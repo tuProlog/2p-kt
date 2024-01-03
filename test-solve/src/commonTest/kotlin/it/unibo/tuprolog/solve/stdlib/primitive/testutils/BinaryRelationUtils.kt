@@ -11,20 +11,21 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 object BinaryRelationUtils {
-
     /** Utility method to check if the term relation responses are correct */
     @Suppress("IMPLICIT_CAST_TO_ANY")
     internal fun assertCorrectResponse(
         termRelation: BinaryRelation<out ExecutionContext>,
         input: Solve.Request<ExecutionContext>,
-        expectedResult: Any
+        expectedResult: Any,
     ) = when (expectedResult) {
-        true -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            termRelation.implementation.solve(input).single().solution is Solution.Yes
-        }
-        false -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            termRelation.implementation.solve(input).single().solution is Solution.No
-        }
+        true ->
+            assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
+                termRelation.implementation.solve(input).single().solution is Solution.Yes
+            }
+        false ->
+            assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
+                termRelation.implementation.solve(input).single().solution is Solution.No
+            }
         else ->
             @Suppress("UNCHECKED_CAST")
             (expectedResult as? KClass<out ResolutionException>)

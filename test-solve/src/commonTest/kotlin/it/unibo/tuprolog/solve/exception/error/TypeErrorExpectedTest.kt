@@ -16,7 +16,6 @@ import kotlin.test.fail
  * @author Enrico
  */
 internal class TypeErrorExpectedTest {
-
     @Test
     fun typeErrorExpectedToAtomWorksAsExpected() {
         TypeErrorExpectedUtils.allNamesToInstances.forEach { (name, instance) ->

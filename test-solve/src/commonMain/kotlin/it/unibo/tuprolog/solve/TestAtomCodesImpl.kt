@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
 class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCodes {
-
     override fun testAtomCodesSecondIsVar1() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -12,7 +11,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to listOf(97, 98, 99))),
-                solutions
+                solutions,
             )
         }
     }
@@ -25,7 +24,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to listOf(116, 101, 115, 116))),
-                solutions
+                solutions,
             )
         }
     }
@@ -38,7 +37,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to "abc")),
-                solutions
+                solutions,
             )
         }
     }
@@ -51,7 +50,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -64,7 +63,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }

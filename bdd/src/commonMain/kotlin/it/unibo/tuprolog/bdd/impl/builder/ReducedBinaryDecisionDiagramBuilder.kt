@@ -17,14 +17,14 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramBuilder.Companion.defaultOf
  * to the same node
  * */
 internal class ReducedBinaryDecisionDiagramBuilder<T : Comparable<T>>(
-    private val delegate: BinaryDecisionDiagramBuilder<T>
+    private val delegate: BinaryDecisionDiagramBuilder<T>,
 ) : BinaryDecisionDiagramBuilder<T> {
     private val table: MutableMap<Int, BinaryDecisionDiagram<T>> = mutableMapOf()
 
     override fun buildVariable(
         value: T,
         low: BinaryDecisionDiagram<T>,
-        high: BinaryDecisionDiagram<T>
+        high: BinaryDecisionDiagram<T>,
     ): BinaryDecisionDiagram<T> {
         if (low == high) {
             return low

@@ -14,11 +14,11 @@ import kotlin.math.max
 import kotlin.math.min
 import it.unibo.tuprolog.core.List as LogicList
 
+@Suppress("CyclomaticComplexMethod", "NestedBlockDepth", "MagicNumber")
 class DynamicOpListener private constructor(
     private val parser: PrologParser,
-    private val operatorDefinedCallback: PrologParser?.(Operator) -> Unit
+    private val operatorDefinedCallback: PrologParser?.(Operator) -> Unit,
 ) : PrologParserListener() {
-
     override fun exitClause(ctx: ClauseContext) {
         val expr = ctx.expression()
         if (ctx.exception != null) {
@@ -27,8 +27,8 @@ class DynamicOpListener private constructor(
         if (expr._op != null && ":-" == expr._op?.symbol?.text && expr.associativity in Associativity.PREFIX) {
             val directive = ctx.accept(PrologVisitor()) as Directive
             val op = directive.body
-            if (op is Struct && op.arity == 3 && op.functor == "op" && op[0] is Numeric && op[1] is Atom && op.isGround) {
-                val priority = min(1200, max(0, (op[0] as Numeric).intValue.toInt()))
+            if (op.isOpDirective) {
+                val priority = min(1200, max(0, ((op as Struct)[0] as Numeric).intValue.toInt()))
                 val specifier = Specifier.fromTerm(op[1])
                 when (val operator = op[2]) {
                     is Atom -> {
@@ -56,7 +56,10 @@ class DynamicOpListener private constructor(
             return DynamicOpListener(parser) { }
         }
 
-        fun of(parser: PrologParser, operatorDefinedCallback: PrologParser?.(Operator) -> Unit): DynamicOpListener {
+        fun of(
+            parser: PrologParser,
+            operatorDefinedCallback: PrologParser?.(Operator) -> Unit,
+        ): DynamicOpListener {
             return DynamicOpListener(parser, operatorDefinedCallback)
         }
     }

@@ -10,7 +10,6 @@ import kotlin.test.Test
 class TestStreamsSolverConstruction :
     TestSolverConstruction<StreamsSolver, MutableSolver>,
     SolverFactory by StreamsSolverFactory {
-
     private val prototype = TestSolverConstruction.prototype<StreamsSolver, MutableSolver>(this, DefaultBuiltins)
 
     @Test

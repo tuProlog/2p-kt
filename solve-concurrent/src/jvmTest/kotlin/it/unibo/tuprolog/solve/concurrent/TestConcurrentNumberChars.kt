@@ -9,7 +9,6 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testNumberCharsListIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -100,16 +99,17 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
 
             val query = number_chars("X", "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("number_chars", 2),
-                        varOf("X"),
-                        index = 0
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("number_chars", 2),
+                            varOf("X"),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

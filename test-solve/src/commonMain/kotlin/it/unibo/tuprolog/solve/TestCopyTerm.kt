@@ -2,8 +2,7 @@ package it.unibo.tuprolog.solve
 
 interface TestCopyTerm : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestCopyTerm =
-            TestCopyTermImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestCopyTerm = TestCopyTermImpl(solverFactory)
     }
 
     /**

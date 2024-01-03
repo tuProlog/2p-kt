@@ -8,7 +8,6 @@ class TestConcurrentClauseImpl :
     TestConcurrentClause<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testClauseXBody() = multiRunConcurrentTest { super.testClauseXBody() }

@@ -24,17 +24,17 @@ import it.unibo.tuprolog.utils.setTag
  * @author Jason Dellaluce
  */
 internal object ClauseMappingUtils {
-
     private var clauseIndex: Long = 1
 
-    private val cascadeMappers = listOf(
-        DirectiveClauseMapper,
-        AnnotatedDisjunctionClauseMapper,
-        ProbabilisticClauseMapper,
-        EvidenceClauseMapper,
-        PrologClauseMapper,
-        NothingClauseMapper
-    )
+    private val cascadeMappers =
+        listOf(
+            DirectiveClauseMapper,
+            AnnotatedDisjunctionClauseMapper,
+            ProbabilisticClauseMapper,
+            EvidenceClauseMapper,
+            PrologClauseMapper,
+            NothingClauseMapper,
+        )
 
     /** Generates a new clause identifier.
      * Identifying clauses is necessary to distinguish them
@@ -60,7 +60,7 @@ internal object ClauseMappingUtils {
             when (arityTerm) {
                 is Numeric -> Numeric.of(arityTerm.intValue.toInt() + 1)
                 else -> arityTerm
-            }
+            },
         )
     }
 }
@@ -79,7 +79,7 @@ internal val Term.isWrappableWithExplanation: Boolean get() = this.safeToStruct(
 internal fun Term.withExplanationNonWrappable(explanation: Term): Struct {
     return Tuple.of(
         this,
-        Struct.of("=", explanation, ProbExplanation.TRUE.toTerm())
+        Struct.of("=", explanation, ProbExplanation.TRUE.toTerm()),
     )
 }
 
@@ -113,7 +113,10 @@ internal fun Term.withBodyExplanation(explanation: Term): Struct {
  *
  * The wrapping is not applied recursively.
  * */
-internal fun Term.wrapInPredicate(functor: String, explanation: Term): Struct {
+internal fun Term.wrapInPredicate(
+    functor: String,
+    explanation: Term,
+): Struct {
     return if (!this.isWrappableWithExplanation) {
         this.withExplanationNonWrappable(explanation)
     } else {
@@ -134,7 +137,11 @@ internal fun Term.wrapInPredicate(functor: String, explanation: Term): Struct {
  * semantics provided by Prolog for those predicates. Most of them represent, in fact,
  * an operator.
  * */
-internal fun Term.wrapInPredicateRecursive(functor: String, explanation: Term, depth: Int = 1): Struct {
+internal fun Term.wrapInPredicateRecursive(
+    functor: String,
+    explanation: Term,
+    depth: Int = 1,
+): Struct {
     return when (this) {
         is Struct -> {
             when (this.functor) {
@@ -144,21 +151,21 @@ internal fun Term.wrapInPredicateRecursive(functor: String, explanation: Term, d
                     Tuple.of(
                         this[0].wrapInPredicateRecursive(functor, leftVar, depth + 1),
                         this[1].wrapInPredicateRecursive(functor, rightVar, depth + 1),
-                        Struct.of(ProbExplAnd.functor, explanation, leftVar, rightVar)
+                        Struct.of(ProbExplAnd.functor, explanation, leftVar, rightVar),
                     )
                 }
                 ";" -> {
                     Struct.of(
                         ";",
                         this[0].wrapInPredicateRecursive(functor, explanation, depth + 1),
-                        this[1].wrapInPredicateRecursive(functor, explanation, depth + 1)
+                        this[1].wrapInPredicateRecursive(functor, explanation, depth + 1),
                     )
                 }
                 "->" -> {
                     Struct.of(
                         "->",
                         this[0].wrapInPredicateRecursive(functor, Var.anonymous(), depth + 1),
-                        this[1].wrapInPredicateRecursive(functor, explanation, depth + 1)
+                        this[1].wrapInPredicateRecursive(functor, explanation, depth + 1),
                     )
                 }
                 else -> {
@@ -200,24 +207,26 @@ internal fun Term.safeToStruct(): Struct {
 /** Given a [this], removes all anonymous [Var] variables contained
  * in head and body, substituting them with non-anonymous variables. */
 internal fun Rule.withoutAnonymousVars(): Rule {
-    val anonVarSubstitution = Substitution.of(
-        this.head.variables.toSet()
-            .plus(this.body.variables.toSet())
-            .filter {
-                it.isAnonymous
-            }
-            .mapIndexed { index, it ->
-                Pair(it, Var.of("ANON_$index"))
-            }
-    )
+    val anonVarSubstitution =
+        Substitution.of(
+            this.head.variables.toSet()
+                .plus(this.body.variables.toSet())
+                .filter {
+                    it.isAnonymous
+                }
+                .mapIndexed { index, it ->
+                    Pair(it, Var.of("ANON_$index"))
+                },
+        )
     return when (this) {
         is Fact -> {
             Fact.of(this.head.apply(anonVarSubstitution).safeToStruct())
         }
-        else -> Rule.of(
-            this.head.apply(anonVarSubstitution).safeToStruct(),
-            this.body.apply(anonVarSubstitution).safeToStruct()
-        )
+        else ->
+            Rule.of(
+                this.head.apply(anonVarSubstitution).safeToStruct(),
+                this.body.apply(anonVarSubstitution).safeToStruct(),
+            )
     }
 }
 
@@ -231,16 +240,17 @@ internal fun ProbExplanation.toTerm(): Term {
  * an exception is thrown. */
 internal fun Term.solveArithmeticExpression(): Double {
     val termStr = this.toString().replace("\\s".toRegex(), "")
-    val regexMatch = Regex("([0-9.]+)(/)([0-9.]+).*").find(termStr)
-        ?: throw TuPrologException(
-            "Unsupported probability notation in annotated disjunction: $termStr"
-        )
+    val regexMatch =
+        Regex("([0-9.]+)(/)([0-9.]+).*").find(termStr)
+            ?: throw TuPrologException(
+                "Unsupported probability notation in annotated disjunction: $termStr",
+            )
     val (dividendStr, _, divisorStr) = regexMatch.destructured
     val dividend = dividendStr.toDoubleOrNull()
     val divisor = divisorStr.toDoubleOrNull()
     if (dividend == null || divisor == null) {
         throw TuPrologException(
-            "Unable to parse arithmetic division expression: $termStr"
+            "Unable to parse arithmetic division expression: $termStr",
         )
     }
     return dividend / divisor

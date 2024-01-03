@@ -7,6 +7,8 @@ import it.unibo.tuprolog.solve.primitive.Solve
 
 /** Implementation of '\='/2 predicate */
 object NotUnifiableWith : BinaryRelation.Predicative<ExecutionContext>("\\=") {
-    override fun Solve.Request<ExecutionContext>.compute(first: Term, second: Term): Boolean =
-        !match(first, second)
+    override fun Solve.Request<ExecutionContext>.compute(
+        first: Term,
+        second: Term,
+    ): Boolean = !match(first, second)
 }

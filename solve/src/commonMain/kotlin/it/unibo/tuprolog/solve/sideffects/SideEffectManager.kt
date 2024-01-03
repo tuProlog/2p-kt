@@ -8,7 +8,6 @@ import kotlin.js.JsName
  * @author Enrico
  */
 interface SideEffectManager {
-
     /** A function to execute cut, and return a new [SideEffectManager] with executed cut */
     @JsName("cut")
     fun cut(): SideEffectManager

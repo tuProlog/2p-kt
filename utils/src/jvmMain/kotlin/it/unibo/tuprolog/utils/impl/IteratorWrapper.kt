@@ -5,8 +5,9 @@ internal class IteratorWrapper<T>(private val wrapped: Iterator<T>) : MutableIte
 
     override fun next(): T = wrapped.next()
 
-    override fun remove() = when (wrapped) {
-        is MutableIterator<T> -> wrapped.remove()
-        else -> throw UnsupportedOperationException()
-    }
+    override fun remove() =
+        when (wrapped) {
+            is MutableIterator<T> -> wrapped.remove()
+            else -> throw UnsupportedOperationException()
+        }
 }

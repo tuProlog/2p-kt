@@ -4,7 +4,8 @@ import kotlin.jvm.JvmField
 
 object SolveConcurrentTest {
     @JvmField
-    val expectations = Expectations(
-        concurrentShouldWork = true
-    )
+    val expectations =
+        Expectations(
+            concurrentShouldWork = true,
+        )
 }

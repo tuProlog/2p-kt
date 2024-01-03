@@ -13,14 +13,14 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class TypeErrorTest {
-
     private val callableTypeErrorActualValue = Integer.of(1)
     private val testErrorType = TypeError.Expected.CALLABLE
-    private val aCallableTypeError = TypeError(
-        context = LogicErrorUtils.aContext,
-        expectedType = testErrorType,
-        culprit = callableTypeErrorActualValue
-    )
+    private val aCallableTypeError =
+        TypeError(
+            context = LogicErrorUtils.aContext,
+            expectedType = testErrorType,
+            culprit = callableTypeErrorActualValue,
+        )
     private val correctTypeFunctor = "type_error"
 
     @Test
@@ -37,7 +37,7 @@ internal class TypeErrorTest {
     fun typeErrorTypeCorrect() {
         assertEquals(
             Struct.of(correctTypeFunctor, testErrorType.toTerm(), callableTypeErrorActualValue),
-            aCallableTypeError.type
+            aCallableTypeError.type,
         )
     }
 

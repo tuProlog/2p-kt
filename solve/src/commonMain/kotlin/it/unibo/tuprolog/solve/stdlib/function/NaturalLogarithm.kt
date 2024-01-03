@@ -15,14 +15,16 @@ import kotlin.math.log
  * @author Enrico
  */
 object NaturalLogarithm : UnaryMathFunction("log") {
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(integer.decimalValue)
 
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-        commonBehaviour(integer.decimalValue)
-
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        commonBehaviour(real.value)
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(real.value)
 
     /** Implementation of common behaviour for Integer and Real */
-    private fun commonBehaviour(decimal: BigDecimal): Real =
-        Numeric.of(log(decimal.toDouble(), E))
+    private fun commonBehaviour(decimal: BigDecimal): Real = Numeric.of(log(decimal.toDouble(), E))
 }

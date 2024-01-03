@@ -22,7 +22,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class ArgNodeTest {
-
     private val aAtom = Atom.of("a")
     private val bAtom = Atom.of("b")
 
@@ -57,12 +56,13 @@ internal class ArgNodeTest {
         twoIndexEmptyArgNodes = listOf(argNodeTwoIndexAndAAtom, argNodeTwoIndexAndBAtom)
         allEmptyArgNodes = zeroIndexEmptyArgNodes + twoIndexEmptyArgNodes
 
-        allFilledArgNodes = listOf(
-            ArgNode(0, aAtom),
-            ArgNode(0, bAtom),
-            ArgNode(2, aAtom),
-            ArgNode(2, bAtom)
-        ).map { argNode -> argNode.apply { aAtomRules.forEach { put(it) } } }
+        allFilledArgNodes =
+            listOf(
+                ArgNode(0, aAtom),
+                ArgNode(0, bAtom),
+                ArgNode(2, aAtom),
+                ArgNode(2, bAtom),
+            ).map { argNode -> argNode.apply { aAtomRules.forEach { put(it) } } }
     }
 
     @Test
@@ -70,7 +70,7 @@ internal class ArgNodeTest {
         assertFailsWith<IllegalArgumentException> {
             ArgNode(
                 -1,
-                Atom.of("a")
+                Atom.of("a"),
             )
         }
     }
@@ -103,10 +103,10 @@ internal class ArgNodeTest {
             assertEquals(
                 RuleNode(
                     mutableListOf(
-                        noArgsHeadedRule
-                    )
+                        noArgsHeadedRule,
+                    ),
                 ),
-                it.children[null]
+                it.children[null],
             )
         }
     }
@@ -146,10 +146,11 @@ internal class ArgNodeTest {
     @Test
     fun putClauseForwardsCorrectlyTheBeforeFlagToChildren() {
         zeroIndexEmptyArgNodes.forEach {
-            val clauses = listOf(
-                Fact.of(Struct.of("f", aAtom, Var.of("A"))),
-                Fact.of(Struct.of("f", aAtom, Var.anonymous()))
-            )
+            val clauses =
+                listOf(
+                    Fact.of(Struct.of("f", aAtom, Var.of("A"))),
+                    Fact.of(Struct.of("f", aAtom, Var.anonymous())),
+                )
 
             it.run { clauses.forEach { clause -> put(clause, true) } }
 

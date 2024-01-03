@@ -16,10 +16,13 @@ import kotlin.reflect.KVisibility
 
 internal class OverloadSelectorImpl(
     override val type: KClass<*>,
-    override val termToObjectConverter: TermToObjectConverter
+    override val termToObjectConverter: TermToObjectConverter,
 ) : OverloadSelector {
-
-    override fun findMethod(name: String, arguments: List<Term>): KCallable<*> {
+    @Suppress("SwallowedException")
+    override fun findMethod(
+        name: String,
+        arguments: List<Term>,
+    ): KCallable<*> {
         KotlinTypesHacks[type, name, arguments]?.let { return it }
         return try {
             type.members
@@ -28,17 +31,30 @@ internal class OverloadSelectorImpl(
                 .map { it to it.instanceParameters.score(arguments) }
                 .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
                 ?.first
-                ?: throw MethodInvocationException(type, name, arguments.map { termToObjectConverter.admissibleTypes(it) })
+                ?: throw MethodInvocationException(
+                    type, name,
+                    arguments.map {
+                        termToObjectConverter.admissibleTypes(it)
+                    },
+                )
         } catch (e: IllegalStateException) {
             type.allSupertypes(strict = true)
                 .firstOrNull()
                 ?.let { OverloadSelector.of(it, termToObjectConverter) }
                 ?.findMethod(name, arguments)
-                ?: throw MethodInvocationException(type, name, arguments.map { termToObjectConverter.admissibleTypes(it) })
+                ?: throw MethodInvocationException(
+                    type, name,
+                    arguments.map {
+                        termToObjectConverter.admissibleTypes(it)
+                    },
+                )
         }
     }
 
-    override fun findProperty(name: String, value: Term): KMutableProperty<*> {
+    override fun findProperty(
+        name: String,
+        value: Term,
+    ): KMutableProperty<*> {
         return type.members
             .filter { it.name == name }
             .filter { it.visibility == KVisibility.PUBLIC }
@@ -61,6 +77,7 @@ internal class OverloadSelectorImpl(
             ?: throw ConstructorInvocationException(type, arguments.map { termToObjectConverter.admissibleTypes(it) })
     }
 
+    @Suppress("ReturnCount")
     private fun List<KParameter>.score(arguments: List<Term>): Int? {
         if (size != arguments.size) return null
         var score = 0

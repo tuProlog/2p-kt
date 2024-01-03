@@ -7,6 +7,7 @@ import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
 interface ObjectRef : Ref {
+    @Suppress("ktlint:standard:property-naming")
     val `object`: Any
 
     companion object {
@@ -17,8 +18,10 @@ interface ObjectRef : Ref {
                 else -> nameOf(any::class, any.identifier)
             }
 
-        private fun nameOf(type: KClass<*>, identifier: String): String =
-            "<object:${type.fullName}#$identifier>"
+        private fun nameOf(
+            type: KClass<*>,
+            identifier: String,
+        ): String = "<object:${type.fullName}#$identifier>"
 
         @JvmStatic
         fun of(any: Any?): ObjectRef =

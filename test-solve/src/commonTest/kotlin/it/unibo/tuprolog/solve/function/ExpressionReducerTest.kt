@@ -14,7 +14,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class ExpressionReducerTest {
-
     @Test
     fun doesNothingIfGivenExecutionContextDoesNotDefineFunctions() {
         inputFunctionOutputTriple.forEach { (input, _, _) ->

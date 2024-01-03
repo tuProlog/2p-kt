@@ -6,7 +6,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ListCreationTest {
-
     private fun IntRange.toTerms(): Sequence<Term> = asSequence().map { Integer.of(it) }
 
     @Test

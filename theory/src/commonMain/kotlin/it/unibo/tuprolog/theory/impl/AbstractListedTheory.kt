@@ -8,9 +8,8 @@ import kotlin.collections.List as KtList
 internal abstract class AbstractListedTheory protected constructor(
     unificator: Unificator,
     override val clauses: KtList<Clause>,
-    tags: Map<String, Any>
+    tags: Map<String, Any>,
 ) : AbstractTheory(tags) {
-
     override var unificator: Unificator = unificator
 
     final override fun get(clause: Clause): Sequence<Clause> =

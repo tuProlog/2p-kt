@@ -13,7 +13,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class DirectiveTest {
-
     private val correctInstances = DirectiveUtils.mixedDirectives.map(::DirectiveImpl)
 
     @Test

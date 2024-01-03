@@ -1,11 +1,13 @@
+import io.github.gciatto.kt.mpp.jar.javaFxFatJars
+
 plugins {
-    id(libs.plugins.shadowJar.get().pluginId)
     id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(libs.plugins.ktMpp.fatJar.get().pluginId)
 }
 
-val arguments: String? by project
-
-val supportedPlatforms by extra { listOf("win", "linux", "mac", "mac-aarch64") }
+multiPlatformHelper {
+    javaFxFatJars()
+}
 
 dependencies {
     api(project(":ide"))
@@ -14,22 +16,13 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
-val entryPoint = "it.unibo.tuprolog.ui.gui.PLPMain"
-
 tasks.create<JavaExec>("run") {
     group = "application"
-    mainClass.set(entryPoint)
+    mainClass.set(multiPlatformHelper.fatJarEntryPoint)
     dependsOn("jvmMainClasses")
     classpath = sourceSets.getByName("main").runtimeClasspath
     standardInput = System.`in`
-}
-
-shadowJar(entryPoint)
-
-for (platform in supportedPlatforms) {
-    if ("mac" in platform) {
-        shadowJar(entryPoint, platform, excludedPlatforms = supportedPlatforms - setOf(platform, "linux"))
-    } else {
-        shadowJar(entryPoint, platform)
+    project.findProperty("arguments")?.let {
+        args = it.toString().split("\\s+".toRegex()).filterNot(String::isBlank)
     }
 }

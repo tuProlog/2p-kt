@@ -12,7 +12,7 @@ internal class TestCutImpl(private val solverFactory: SolverFactory) : TestCut {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -26,7 +26,7 @@ internal class TestCutImpl(private val solverFactory: SolverFactory) : TestCut {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -40,7 +40,7 @@ internal class TestCutImpl(private val solverFactory: SolverFactory) : TestCut {
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }

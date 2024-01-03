@@ -8,13 +8,13 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class BigListTest {
-
     companion object {
         private const val MAX = 200_000
     }
 
     private val nums = 0..MAX
 
+    @Suppress("ktlint:standard:property-naming", "PrivatePropertyName")
     private val X = Var.of("X")
 
     private val list1 by lazy {
@@ -72,7 +72,7 @@ class BigListTest {
         assertTrue {
             itemWiseEquals(
                 (nums.asSequence() + nums.asSequence()).map { Integer.of(it) },
-                list2[Substitution.unifier(X, list1)].castToList().toSequence()
+                list2[Substitution.unifier(X, list1)].castToList().toSequence(),
             )
         }
     }
@@ -86,7 +86,7 @@ class BigListTest {
         assertTrue {
             itemWiseEquals(
                 nums.asSequence().map { Integer.of(it) },
-                list.apply(Substitution.unifier(X, Integer.of(n))).castToList().toSequence()
+                list.apply(Substitution.unifier(X, Integer.of(n))).castToList().toSequence(),
             )
         }
     }

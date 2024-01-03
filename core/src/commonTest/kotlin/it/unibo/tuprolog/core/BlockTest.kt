@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class BlockTest {
-
     private val correctInstances = BlockUtils.mixedBlocksTupleWrapped.map(::BlockImpl)
 
     @Test

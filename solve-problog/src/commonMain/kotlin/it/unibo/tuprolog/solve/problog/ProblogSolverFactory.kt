@@ -23,15 +23,13 @@ import kotlin.js.JsExport
 @Suppress("NON_EXPORTABLE_TYPE")
 @JsExport
 object ProblogSolverFactory : SolverFactory {
-
     override val defaultBuiltins: Library
         get() = ProblogLib.DefaultBuiltins
 
     override val defaultFlags: FlagStore
         get() = ensureVariablesTracking(super.defaultFlags)
 
-    private fun ensureVariablesTracking(flags: FlagStore): FlagStore =
-        flags + TrackVariables { ON }
+    private fun ensureVariablesTracking(flags: FlagStore): FlagStore = flags + TrackVariables { ON }
 
     override fun solverOf(
         unificator: Unificator,
@@ -40,7 +38,7 @@ object ProblogSolverFactory : SolverFactory {
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
-        outputs: OutputStore
+        outputs: OutputStore,
     ): Solver =
         ProblogSolver(
             ClassicSolverFactory.solverOf(
@@ -50,8 +48,8 @@ object ProblogSolverFactory : SolverFactory {
                 ProblogTheory.of(unificator, staticKb),
                 ProblogTheory.of(unificator, dynamicKb),
                 inputs,
-                outputs
-            )
+                outputs,
+            ),
         )
 
     private fun fixLibraries(libraries: Runtime): Runtime {
@@ -71,7 +69,7 @@ object ProblogSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ): Solver =
         ProblogSolver(
             ClassicSolverFactory.solverOf(
@@ -83,8 +81,8 @@ object ProblogSolverFactory : SolverFactory {
                 stdIn,
                 stdOut,
                 stdErr,
-                warnings
-            )
+                warnings,
+            ),
         )
 
     override fun mutableSolverOf(
@@ -96,7 +94,7 @@ object ProblogSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ): MutableSolver =
         MutableProblogSolver(
             ClassicSolverFactory.mutableSolverOf(
@@ -108,8 +106,8 @@ object ProblogSolverFactory : SolverFactory {
                 stdIn,
                 stdOut,
                 stdErr,
-                warnings
-            )
+                warnings,
+            ),
         )
 
     override fun mutableSolverOf(
@@ -119,7 +117,7 @@ object ProblogSolverFactory : SolverFactory {
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
-        outputs: OutputStore
+        outputs: OutputStore,
     ): MutableSolver =
         MutableProblogSolver(
             ClassicSolverFactory.mutableSolverOf(
@@ -129,7 +127,7 @@ object ProblogSolverFactory : SolverFactory {
                 ProblogTheory.of(unificator, staticKb),
                 ProblogTheory.of(unificator, dynamicKb),
                 inputs,
-                outputs
-            )
+                outputs,
+            ),
         )
 }

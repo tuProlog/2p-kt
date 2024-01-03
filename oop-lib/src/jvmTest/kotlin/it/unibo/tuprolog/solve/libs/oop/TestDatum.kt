@@ -17,7 +17,10 @@ internal data class TestDatum(val term: Term, val type: KClass<*>, val converted
         get() = converted == null || exception != null
 
     companion object {
-        fun failed(term: Term, type: KClass<*>): TestDatum {
+        fun failed(
+            term: Term,
+            type: KClass<*>,
+        ): TestDatum {
             return TestDatum(term, type, TermToObjectConversionException(term, type))
         }
     }

@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testSetOfBasic() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

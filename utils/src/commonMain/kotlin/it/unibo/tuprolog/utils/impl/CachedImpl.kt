@@ -4,7 +4,6 @@ import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.Optional
 
 data class CachedImpl<T>(private val generator: () -> T) : Cached<T> {
-
     private var cached: Optional<out T> = Optional.none()
 
     override val isValid: Boolean

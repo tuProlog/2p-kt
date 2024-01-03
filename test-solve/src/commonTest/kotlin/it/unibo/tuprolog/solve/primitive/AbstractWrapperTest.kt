@@ -11,7 +11,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class AbstractWrapperTest {
-
     private val signature = Signature("a", 0)
 
     private val underTest1 = WrapperOfConstant(signature, 1)
@@ -41,7 +40,6 @@ internal class AbstractWrapperTest {
     }
 
     private companion object {
-
         /** A testing class for AbstractWrapper functionality */
         private class WrapperOfConstant<out T>(signature: Signature, value: T) : AbstractWrapper<T>(signature) {
             // this class was added since Kotlin/JS won't pass tests using "object literals"

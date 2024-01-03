@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testAtomCodesSecondIsVar1() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

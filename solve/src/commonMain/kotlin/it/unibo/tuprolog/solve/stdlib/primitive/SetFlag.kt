@@ -12,7 +12,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object SetFlag : BinaryRelation.NonBacktrackable<ExecutionContext>("set_flag") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {
+    override fun Solve.Request<ExecutionContext>.computeOne(
+        first: Term,
+        second: Term,
+    ): Solve.Response {
         ensuringArgumentIsInstantiated(0)
         ensuringArgumentIsAtom(0)
         ensuringArgumentIsInstantiated(1)

@@ -12,5 +12,5 @@ internal data class ClausePartitionImpl(
     override val operators: OperatorSet,
     override val initialGoals: List<Struct>,
     override val includes: List<Atom>,
-    override val flagStore: FlagStore
+    override val flagStore: FlagStore,
 ) : ClausePartition

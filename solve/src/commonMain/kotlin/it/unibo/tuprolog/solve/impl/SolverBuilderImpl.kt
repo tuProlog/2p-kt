@@ -21,7 +21,6 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
 internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBuilder {
-
     private inline fun returningThis(action: () -> Unit): SolverBuilder {
         action()
         return this
@@ -29,100 +28,127 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
 
     override var unificator: Unificator = factory.defaultUnificator
 
-    override fun unificator(unificator: Unificator): SolverBuilder = returningThis {
-        this.unificator = unificator
-    }
+    override fun unificator(unificator: Unificator): SolverBuilder =
+        returningThis {
+            this.unificator = unificator
+        }
 
     override var runtime: Runtime = factory.defaultRuntime
 
-    override fun runtime(runtime: Runtime): SolverBuilder = returningThis {
-        this.runtime = runtime
-    }
+    override fun runtime(runtime: Runtime): SolverBuilder =
+        returningThis {
+            this.runtime = runtime
+        }
 
     private var anonymousCount = 0
 
-    override fun library(alias: String?, item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): SolverBuilder =
-        runtime(runtime + runtimeOf(alias ?: "anonymous${anonymousCount++}", item1, *items))
+    override fun library(
+        alias: String?,
+        item1: AbstractWrapper<*>,
+        vararg items: AbstractWrapper<*>,
+    ): SolverBuilder = runtime(runtime + runtimeOf(alias ?: "anonymous${anonymousCount++}", item1, *items))
 
-    override fun library(item1: AbstractWrapper<*>, vararg items: AbstractWrapper<*>): SolverBuilder =
-        library(null, item1, *items)
+    override fun library(
+        item1: AbstractWrapper<*>,
+        vararg items: AbstractWrapper<*>,
+    ): SolverBuilder = library(null, item1, *items)
 
     override var builtins: Library? = factory.defaultBuiltins
 
-    override fun builtins(builtins: Library): SolverBuilder = returningThis {
-        this.builtins = builtins
-    }
+    override fun builtins(builtins: Library): SolverBuilder =
+        returningThis {
+            this.builtins = builtins
+        }
 
-    override fun noBuiltins(): SolverBuilder = returningThis {
-        this.builtins = null
-    }
+    override fun noBuiltins(): SolverBuilder =
+        returningThis {
+            this.builtins = null
+        }
 
     override var flags: FlagStore = factory.defaultFlags
 
-    override fun flags(flags: FlagStore): SolverBuilder = returningThis {
-        this.flags = flags
-    }
+    override fun flags(flags: FlagStore): SolverBuilder =
+        returningThis {
+            this.flags = flags
+        }
 
-    override fun flag(name: String, value: Term): SolverBuilder =
-        flags(flags + (name to value))
+    override fun flag(
+        name: String,
+        value: Term,
+    ): SolverBuilder = flags(flags + (name to value))
 
-    override fun flag(flag: Pair<String, Term>): SolverBuilder =
-        flags(flags + flag)
+    override fun flag(flag: Pair<String, Term>): SolverBuilder = flags(flags + flag)
 
-    override fun flag(flag: NotableFlag): SolverBuilder =
-        flags(flags.set(flag))
+    override fun flag(flag: NotableFlag): SolverBuilder = flags(flags.set(flag))
 
-    override fun flag(flag: NotableFlag, value: Term): SolverBuilder =
-        flags(flags.set(flag, value))
+    override fun flag(
+        flag: NotableFlag,
+        value: Term,
+    ): SolverBuilder = flags(flags.set(flag, value))
 
-    override fun <T : NotableFlag> flag(flag: T, value: T.() -> Term): SolverBuilder =
-        flags(flags.set(flag, flag.value()))
+    override fun <T : NotableFlag> flag(
+        flag: T,
+        value: T.() -> Term,
+    ): SolverBuilder = flags(flags.set(flag, flag.value()))
 
     override var staticKb: Theory = factory.defaultStaticKb
 
-    override fun staticKb(theory: Theory): SolverBuilder = returningThis {
-        staticKb = theory
-    }
+    override fun staticKb(theory: Theory): SolverBuilder =
+        returningThis {
+            staticKb = theory
+        }
 
-    override fun staticKb(vararg clauses: Clause): SolverBuilder = returningThis {
-        staticKb = Theory.of(unificator, *clauses)
-    }
+    override fun staticKb(vararg clauses: Clause): SolverBuilder =
+        returningThis {
+            staticKb = Theory.of(unificator, *clauses)
+        }
 
-    override fun staticKb(clauses: Iterable<Clause>): SolverBuilder = returningThis {
-        staticKb = Theory.of(unificator, clauses)
-    }
+    override fun staticKb(clauses: Iterable<Clause>): SolverBuilder =
+        returningThis {
+            staticKb = Theory.of(unificator, clauses)
+        }
 
-    override fun staticKb(clauses: Sequence<Clause>): SolverBuilder = returningThis {
-        staticKb = Theory.of(unificator, clauses)
-    }
+    override fun staticKb(clauses: Sequence<Clause>): SolverBuilder =
+        returningThis {
+            staticKb = Theory.of(unificator, clauses)
+        }
 
     override var dynamicKb: Theory = factory.defaultDynamicKb
 
-    override fun dynamicKb(theory: Theory): SolverBuilder = returningThis {
-        dynamicKb = theory
-    }
+    override fun dynamicKb(theory: Theory): SolverBuilder =
+        returningThis {
+            dynamicKb = theory
+        }
 
-    override fun dynamicKb(vararg clauses: Clause): SolverBuilder = returningThis {
-        dynamicKb = Theory.listedOf(unificator, *clauses)
-    }
+    override fun dynamicKb(vararg clauses: Clause): SolverBuilder =
+        returningThis {
+            dynamicKb = Theory.listedOf(unificator, *clauses)
+        }
 
-    override fun dynamicKb(clauses: Iterable<Clause>): SolverBuilder = returningThis {
-        dynamicKb = Theory.listedOf(unificator, clauses)
-    }
+    override fun dynamicKb(clauses: Iterable<Clause>): SolverBuilder =
+        returningThis {
+            dynamicKb = Theory.listedOf(unificator, clauses)
+        }
 
-    override fun dynamicKb(clauses: Sequence<Clause>): SolverBuilder = returningThis {
-        dynamicKb = Theory.listedOf(unificator, clauses)
-    }
+    override fun dynamicKb(clauses: Sequence<Clause>): SolverBuilder =
+        returningThis {
+            dynamicKb = Theory.listedOf(unificator, clauses)
+        }
 
     override var inputs: InputStore = InputStore.fromStandard(factory.defaultInputChannel)
 
-    override fun inputs(inputs: InputStore): SolverBuilder = returningThis {
-        this.inputs = inputs
-    }
+    override fun inputs(inputs: InputStore): SolverBuilder =
+        returningThis {
+            this.inputs = inputs
+        }
 
-    override fun input(alias: String, channel: InputChannel<String>): SolverBuilder = returningThis {
-        this.inputs += (alias to channel)
-    }
+    override fun input(
+        alias: String,
+        channel: InputChannel<String>,
+    ): SolverBuilder =
+        returningThis {
+            this.inputs += (alias to channel)
+        }
 
     override var standardInput: InputChannel<String>
         get() = inputs.stdIn
@@ -130,23 +156,30 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
             inputs = inputs.setStdIn(value)
         }
 
-    override fun standardInput(channel: InputChannel<String>): SolverBuilder = returningThis {
-        standardInput = channel
-    }
+    override fun standardInput(channel: InputChannel<String>): SolverBuilder =
+        returningThis {
+            standardInput = channel
+        }
 
-    override var outputs: OutputStore = OutputStore.fromStandard(
-        factory.defaultOutputChannel,
-        factory.defaultErrorChannel,
-        factory.defaultWarningsChannel
-    )
+    override var outputs: OutputStore =
+        OutputStore.fromStandard(
+            factory.defaultOutputChannel,
+            factory.defaultErrorChannel,
+            factory.defaultWarningsChannel,
+        )
 
-    override fun outputs(outputs: OutputStore): SolverBuilder = returningThis {
-        this.outputs = outputs
-    }
+    override fun outputs(outputs: OutputStore): SolverBuilder =
+        returningThis {
+            this.outputs = outputs
+        }
 
-    override fun output(alias: String, channel: OutputChannel<String>): SolverBuilder = returningThis {
-        outputs += (alias to channel)
-    }
+    override fun output(
+        alias: String,
+        channel: OutputChannel<String>,
+    ): SolverBuilder =
+        returningThis {
+            outputs += (alias to channel)
+        }
 
     override var standardOutput: OutputChannel<String>
         get() = outputs.stdOut
@@ -154,9 +187,10 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
             outputs = outputs.setStdOut(value)
         }
 
-    override fun standardOutput(channel: OutputChannel<String>): SolverBuilder = returningThis {
-        standardOutput = channel
-    }
+    override fun standardOutput(channel: OutputChannel<String>): SolverBuilder =
+        returningThis {
+            standardOutput = channel
+        }
 
     override var standardError: OutputChannel<String>
         get() = outputs.stdErr
@@ -164,9 +198,10 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
             outputs = outputs.setStdErr(value)
         }
 
-    override fun standardError(channel: OutputChannel<String>): SolverBuilder = returningThis {
-        standardError = channel
-    }
+    override fun standardError(channel: OutputChannel<String>): SolverBuilder =
+        returningThis {
+            standardError = channel
+        }
 
     override var warnings: OutputChannel<Warning>
         get() = outputs.warnings
@@ -174,9 +209,10 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
             outputs = outputs.setWarnings(value)
         }
 
-    override fun warnings(channel: OutputChannel<Warning>): SolverBuilder = returningThis {
-        warnings = channel
-    }
+    override fun warnings(channel: OutputChannel<Warning>): SolverBuilder =
+        returningThis {
+            warnings = channel
+        }
 
     private val runtimeWithBuiltins: Runtime
         get() = builtins?.let { runtime + it } ?: runtime
@@ -189,7 +225,7 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
             dynamicKb = dynamicKb,
             flags = flags,
             inputs = inputs,
-            outputs = outputs
+            outputs = outputs,
         )
 
     override fun buildMutable(): MutableSolver =
@@ -200,7 +236,7 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
             dynamicKb = dynamicKb,
             flags = flags,
             inputs = inputs,
-            outputs = outputs
+            outputs = outputs,
         )
 
     override fun equals(other: Any?): Boolean {

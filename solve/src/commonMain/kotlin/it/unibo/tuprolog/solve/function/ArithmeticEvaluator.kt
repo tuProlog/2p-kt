@@ -31,7 +31,6 @@ import it.unibo.tuprolog.solve.stdlib.function.BitwiseRightShift
  */
 class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, index: Int?) :
     AbstractEvaluator<E, Numeric>(request, index) {
-
     constructor(request: Solve.Request<E>) : this(request, null)
 
     /** This method implements all the check required by the Prolog Standard for expressions to be considered valid (statically) */
@@ -60,7 +59,6 @@ class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, index
     }
 
     companion object {
-
         /** All allowed arithmetic signatures in Prolog expressions */
         val allowedArithmeticSignatures by lazy {
             CommonBuiltins.functions.map { (signature, _) -> signature }
@@ -73,7 +71,7 @@ class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, index
                 BitwiseComplement,
                 BitwiseLeftShift,
                 BitwiseOr,
-                BitwiseRightShift
+                BitwiseRightShift,
             ).map { it.signature }
         }
     }

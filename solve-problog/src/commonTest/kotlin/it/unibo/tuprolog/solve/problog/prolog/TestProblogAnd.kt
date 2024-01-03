@@ -7,7 +7,6 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestProblogAnd : TestAnd, SolverFactory by ProblogSolverFactory {
-
     private val prototype = TestAnd.prototype(this)
 
     @Test
@@ -25,7 +24,7 @@ class TestProblogAnd : TestAnd, SolverFactory by ProblogSolverFactory {
         prototype.testFailIsCallable()
     }
 
-    /* NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here */
+    // NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here
     @Ignore
     @Test
     override fun testNoFooIsCallable() {

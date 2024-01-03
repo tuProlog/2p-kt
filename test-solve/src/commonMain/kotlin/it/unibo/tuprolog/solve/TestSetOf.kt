@@ -2,8 +2,7 @@ package it.unibo.tuprolog.solve
 
 interface TestSetOf : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestSetOfImpl =
-            TestSetOfImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestSetOfImpl = TestSetOfImpl(solverFactory)
     }
 
     /**
@@ -28,7 +27,7 @@ interface TestSetOf : SolverTest {
      * ?- setof(X,(X=2;X=1),L)
      * ```
      */
-    fun testSetOfNoSorted()
+    fun testSetOfSorted()
 
     /**
      * Tests the queries

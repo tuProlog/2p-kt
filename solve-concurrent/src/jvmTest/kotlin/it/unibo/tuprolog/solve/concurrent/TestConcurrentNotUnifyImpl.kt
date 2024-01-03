@@ -8,7 +8,6 @@ class TestConcurrentNotUnifyImpl :
     TestConcurrentNotUnify<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun testNumberNotUnify() = multiRunConcurrentTest { super.testNumberNotUnify() }

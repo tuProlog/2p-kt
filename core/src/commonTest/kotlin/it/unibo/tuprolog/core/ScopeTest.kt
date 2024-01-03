@@ -14,7 +14,6 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class ScopeTest {
-
     private val correctEmptyInstance = ScopeImpl(ScopeUtils.emptyScope)
     private val correctNonEmptyScopeInstances = ScopeUtils.nonEmptyScopes.map(::ScopeImpl)
 
@@ -40,7 +39,7 @@ internal class ScopeTest {
         onCorrespondingItems(
             correctNonEmptyScopeInstances.map { it.variables },
             toBeTested,
-            ::assertScopeCorrectContents
+            ::assertScopeCorrectContents,
         )
     }
 
@@ -51,7 +50,7 @@ internal class ScopeTest {
         onCorrespondingItems(
             correctNonEmptyScopeInstances.map { it.variables },
             toBeTested,
-            ::assertScopeCorrectContents
+            ::assertScopeCorrectContents,
         )
     }
 
@@ -66,7 +65,11 @@ internal class ScopeTest {
     @Test
     fun emptyWithLambdaCreatesCorrectInstanceAndReturnsLambdaResult() {
         val correctResult = 3
-        val toBeTestedResult = Scope.empty { assertEquals(correctEmptyInstance, this); correctResult }
+        val toBeTestedResult =
+            Scope.empty {
+                assertEquals(correctEmptyInstance, this)
+                correctResult
+            }
 
         assertEquals(correctResult, toBeTestedResult)
     }
@@ -76,12 +79,19 @@ internal class ScopeTest {
         val myResult = 3
         Var.of("A").let { aVar ->
             val correct = Scope.of(aVar)
-            val toBeTestedResult = Scope.of<Int>(aVar) { assertEquals(correct, this); myResult }
+            val toBeTestedResult =
+                Scope.of<Int>(aVar) {
+                    assertEquals(correct, this)
+                    myResult
+                }
 
             assertEquals(myResult, toBeTestedResult)
 
             val toBeTestedResult2 =
-                Scope.of<Int>(aVar.name) { assertEquals(aVar.name, this[aVar.name]?.name); myResult }
+                Scope.of<Int>(aVar.name) {
+                    assertEquals(aVar.name, this[aVar.name]?.name)
+                    myResult
+                }
             assertEquals(myResult, toBeTestedResult2)
         }
     }

@@ -7,7 +7,6 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestStreamsUnify : TestUnify, SolverFactory by StreamsSolverFactory {
-
     private val prototype = TestUnify.prototype(this)
 
     @Test

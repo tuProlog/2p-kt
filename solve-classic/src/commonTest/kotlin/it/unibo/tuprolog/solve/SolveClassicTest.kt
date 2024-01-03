@@ -4,8 +4,9 @@ import kotlin.jvm.JvmField
 
 object SolveClassicTest {
     @JvmField
-    val expectations = Expectations(
-        prologShouldWork = true,
-        classicShouldWork = true
-    )
+    val expectations =
+        Expectations(
+            prologShouldWork = true,
+            classicShouldWork = true,
+        )
 }

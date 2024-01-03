@@ -41,10 +41,9 @@ internal data class StreamsExecutionContext(
     /** The key strategies that a solver should use during resolution process */
     val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
     /** The side effects manager to be used during resolution process */
-    val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl()
+    val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl(),
 ) : ExecutionContext {
-
-    constructor(context: ExecutionContext, newCurrentSubstitution: Substitution.Unifier) : this( // to be tested
+    constructor(context: ExecutionContext, newCurrentSubstitution: Substitution.Unifier) : this(
         context.unificator,
         context.libraries,
         context.flags,
@@ -56,7 +55,7 @@ internal data class StreamsExecutionContext(
         context.customData,
         newCurrentSubstitution,
         solverStrategies = (context as? StreamsExecutionContext)?.solverStrategies ?: SolverStrategies.prologStandard,
-        sideEffectManager = (context as? StreamsExecutionContext)?.sideEffectManager ?: SideEffectManagerImpl()
+        sideEffectManager = (context as? StreamsExecutionContext)?.sideEffectManager ?: SideEffectManagerImpl(),
     )
 
     override val procedure: Struct?
@@ -73,7 +72,7 @@ internal data class StreamsExecutionContext(
         staticKb: Theory,
         dynamicKb: Theory,
         inputChannels: InputStore,
-        outputChannels: OutputStore
+        outputChannels: OutputStore,
     ) = StreamsSolver(unificator, libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels)
 
     override fun createMutableSolver(
@@ -83,7 +82,7 @@ internal data class StreamsExecutionContext(
         staticKb: Theory,
         dynamicKb: Theory,
         inputChannels: InputStore,
-        outputChannels: OutputStore
+        outputChannels: OutputStore,
     ) = TODO("Not yet implemented")
 
     override fun apply(sideEffect: SideEffect): StreamsExecutionContext {
@@ -107,7 +106,7 @@ internal data class StreamsExecutionContext(
         operators: OperatorSet,
         inputChannels: InputStore,
         outputChannels: OutputStore,
-        customData: CustomDataStore
+        customData: CustomDataStore,
     ): StreamsExecutionContext {
         return copy(
             unificator = unificator,
@@ -118,7 +117,7 @@ internal data class StreamsExecutionContext(
             operators = operators,
             inputChannels = inputChannels,
             outputChannels = outputChannels,
-            customData = customData
+            customData = customData,
         )
     }
 }

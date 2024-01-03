@@ -18,7 +18,6 @@ import it.unibo.tuprolog.core.Var
  * @author Enrico
  */
 internal object RuleUtils {
-
     /** Contains ground Rules (aka without variables) "well formed" */
     val groundWellFormedRules by lazy {
         listOf(
@@ -28,7 +27,7 @@ internal object RuleUtils {
             Atom.of("a") to Struct.of("?", Integer.of(1), Integer.of(2)),
             Atom.of("b") to Struct.of(",", Real.of(0.5), Real.of(0.6), Real.of(0.7)),
             Empty.block() to Struct.of(";", Integer.of(2)),
-            Empty.list() to Struct.of("->", Integer.of(4))
+            Empty.list() to Struct.of("->", Integer.of(4)),
         )
     }
 
@@ -38,7 +37,7 @@ internal object RuleUtils {
             Struct.of("f", Var.anonymous()) to Atom.of("ciao"),
             Struct.of("f", Integer.of(2)) to Var.of("Ciao"),
             Struct.of("x", Var.of("X")) to Struct.of("y", Var.of("X"), Real.of(1f)),
-            Struct.of("myFunc", Atom.of("a")) to Tuple.wrapIfNeeded(Var.anonymous(), Var.anonymous())
+            Struct.of("myFunc", Atom.of("a")) to Tuple.wrapIfNeeded(Var.anonymous(), Var.anonymous()),
         )
     }
 
@@ -50,7 +49,7 @@ internal object RuleUtils {
             Atom.of("a") to Tuple.wrapIfNeeded(Atom.of("b"), Integer.of(2)),
             Atom.of("b") to Tuple.wrapIfNeeded(Real.of(0.5), Real.of(0.6), Real.of(0.7)),
             Atom.of("a") to Struct.fold(";", Truth.TRUE, Empty.list(), Real.of("2.4")),
-            Atom.of("a") to Struct.fold("->", Truth.TRUE, Empty.list(), Numeric.of(2.8))
+            Atom.of("a") to Struct.fold("->", Truth.TRUE, Empty.list(), Numeric.of(2.8)),
         )
     }
 
@@ -59,7 +58,7 @@ internal object RuleUtils {
         listOf(
             Struct.of("A", Var.anonymous()) to Struct.of(",", Var.of("B"), Integer.of(1)),
             Atom.of("a") to Struct.fold(";", Truth.TRUE, Var.of("A"), Real.of("2.4")),
-            Atom.of("a") to Struct.fold("->", Truth.TRUE, Var.anonymous(), Var.anonymous(), Numeric.of(2.8))
+            Atom.of("a") to Struct.fold("->", Truth.TRUE, Var.anonymous(), Var.anonymous(), Numeric.of(2.8)),
         )
     }
 
@@ -76,5 +75,7 @@ internal object RuleUtils {
     val nonGroundRules by lazy { nonGroundWellFormedRules + nonGroundNonWellFormedRules }
 
     /** Contains mixed Rules, ground and non ground, well-formed and not */
-    val mixedRules by lazy { groundWellFormedRules + nonGroundWellFormedRules + groundNonWellFormedRules + nonGroundNonWellFormedRules }
+    val mixedRules by lazy {
+        groundWellFormedRules + nonGroundWellFormedRules + groundNonWellFormedRules + nonGroundNonWellFormedRules
+    }
 }

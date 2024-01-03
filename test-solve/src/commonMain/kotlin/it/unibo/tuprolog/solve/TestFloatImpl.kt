@@ -12,7 +12,7 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -26,7 +26,7 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -40,7 +40,7 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -54,7 +54,7 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -68,7 +68,7 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }

@@ -41,7 +41,6 @@ import kotlin.jvm.JvmStatic
  * @author Giovanni
  */
 abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitive> {
-
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)
 
@@ -52,25 +51,32 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
     final override val implementation: Primitive = Primitive.enforcingSignature(signature, ::uncheckedImplementation)
 
     companion object {
+        @JvmStatic
+        fun <C : ExecutionContext> Solve.Request<C>.mgu(
+            term1: Term,
+            term2: Term,
+        ): Substitution = context.unificator.mgu(term1, term2)
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.mgu(term1: Term, term2: Term): Substitution =
-            context.unificator.mgu(term1, term2)
+        fun <C : ExecutionContext> Solve.Request<C>.match(
+            term1: Term,
+            term2: Term,
+        ): Boolean = context.unificator.match(term1, term2)
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.match(term1: Term, term2: Term): Boolean =
-            context.unificator.match(term1, term2)
-
-        @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.unify(term1: Term, term2: Term): Term? =
-            context.unificator.unify(term1, term2)
+        fun <C : ExecutionContext> Solve.Request<C>.unify(
+            term1: Term,
+            term2: Term,
+        ): Term? = context.unificator.unify(term1, term2)
 
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Signature] and a [Primitive] function
          */
         @JvmStatic
-        fun <C : ExecutionContext> wrap(signature: Signature, primitive: Primitive): PrimitiveWrapper<C> =
-            FromFunction(signature, primitive)
+        fun <C : ExecutionContext> wrap(
+            signature: Signature,
+            primitive: Primitive,
+        ): PrimitiveWrapper<C> = FromFunction(signature, primitive)
 
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Primitive] function
@@ -80,39 +86,47 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             name: String,
             arity: Int,
             vararg: Boolean,
-            primitive: Primitive
+            primitive: Primitive,
         ): PrimitiveWrapper<C> = FromFunction(name, arity, vararg, primitive)
 
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Primitive] function
          */
         @JvmStatic
-        fun <C : ExecutionContext> wrap(name: String, arity: Int, primitive: Primitive): PrimitiveWrapper<C> =
-            wrap(name, arity, false, primitive)
+        fun <C : ExecutionContext> wrap(
+            name: String,
+            arity: Int,
+            primitive: Primitive,
+        ): PrimitiveWrapper<C> = wrap(name, arity, false, primitive)
 
         /** Private class to support the wrap methods, without using the object literal notation */
         private class FromFunction<C : ExecutionContext>(
             signature: Signature,
-            private val uncheckedPrimitive: Primitive
+            private val uncheckedPrimitive: Primitive,
         ) : PrimitiveWrapper<C>(signature) {
-
             constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive) :
                 this(Signature(name, arity, vararg), uncheckedPrimitive)
 
             override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
-                uncheckedPrimitive.solve(request)
+                uncheckedPrimitive.solve(
+                    request,
+                )
         }
 
-        private fun ensurerVisitor(context: ExecutionContext, procedure: Signature): TermVisitor<TypeError?> =
+        private fun ensurerVisitor(
+            context: ExecutionContext,
+            procedure: Signature,
+        ): TermVisitor<TypeError?> =
             object : TermVisitor<TypeError?> {
                 override fun defaultValue(term: Term): Nothing? = null
 
-                override fun visitStruct(term: Struct) = when {
-                    Clause.notableFunctors.contains(term.functor) && term.arity == 2 -> {
-                        term.argsSequence.map { it.accept(this) }.filterNotNull().firstOrNull()
+                override fun visitStruct(term: Struct) =
+                    when {
+                        Clause.notableFunctors.contains(term.functor) && term.arity == 2 -> {
+                            term.argsSequence.map { it.accept(this) }.filterNotNull().firstOrNull()
+                        }
+                        else -> defaultValue(term)
                     }
-                    else -> defaultValue(term)
-                }
 
                 override fun visitNumeric(term: Numeric): TypeError =
                     TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
@@ -131,21 +145,21 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         private fun <C : ExecutionContext> Solve.Request<C>.ensureIsInstantiated(
             term: Term?,
-            index: Int
+            index: Int,
         ): Solve.Request<C> =
             term?.asVar()?.let {
                 throw InstantiationError.forArgument(
                     context,
                     signature,
                     it,
-                    index
+                    index,
                 )
             } ?: this
 
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringProcedureHasPermission(
             signature: Signature?,
-            operation: PermissionError.Operation
+            operation: PermissionError.Operation,
         ): Solve.Request<C> {
             if (signature != null) {
                 if (context.libraries.hasProtected(signature)) {
@@ -154,7 +168,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                         this.signature,
                         operation,
                         PRIVATE_PROCEDURE,
-                        signature.toIndicator()
+                        signature.toIndicator(),
                     )
                 }
                 if (context.staticKb.contains(signature.toIndicator())) {
@@ -163,7 +177,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                         this.signature,
                         operation,
                         STATIC_PROCEDURE,
-                        signature.toIndicator()
+                        signature.toIndicator(),
                     )
                 }
             }
@@ -173,14 +187,16 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringClauseProcedureHasPermission(
             clause: Clause,
-            operation: PermissionError.Operation
+            operation: PermissionError.Operation,
         ): Solve.Request<C> {
             val headSignature: Signature? = clause.head?.extractSignature()
             return ensuringProcedureHasPermission(headSignature, operation)
         }
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedIndicator(index: Int): Solve.Request<C> {
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedIndicator(
+            index: Int,
+        ): Solve.Request<C> {
             ensuringArgumentIsInstantiated(index)
             val candidate = arguments[index]
             when {
@@ -209,12 +225,12 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.notImplemented(
-            message: String = "Primitive for ${signature.name}/${signature.arity} is not implemented, yet"
+            message: String = "Primitive for ${signature.name}/${signature.arity} is not implemented, yet",
         ): Solve.Response = throw SystemError.forUncaughtException(context, NotImplementedError(message))
 
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.notSupported(
-            message: String = "Operation ${signature.name}/${signature.arity} is not supported"
+            message: String = "Operation ${signature.name}/${signature.arity} is not supported",
         ): Solve.Response = throw SystemError.forUncaughtException(context, IllegalStateException(message))
 
         @JvmStatic
@@ -253,7 +269,13 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStruct(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
-                !arg.isStruct -> throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, arg, index)
+                !arg.isStruct -> throw TypeError.forArgument(
+                    context,
+                    signature,
+                    TypeError.Expected.CALLABLE,
+                    arg,
+                    index,
+                )
                 else -> this
             }
         }
@@ -271,7 +293,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                     signature,
                     TypeError.Expected.VARIABLE,
                     arg,
-                    index
+                    index,
                 )
                 else -> this
             }
@@ -286,7 +308,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                     signature,
                     TypeError.Expected.COMPOUND,
                     arg,
-                    index
+                    index,
                 )
                 else -> this
             }
@@ -393,7 +415,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                         signature,
                         NOT_LESS_THAN_ZERO,
                         arg,
-                        index
+                        index,
                     )
                     else -> this
                 }
@@ -426,10 +448,11 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedList(index: Int): Solve.Request<C> {
             val term = arguments[index]
             return when {
-                term.isList -> when {
-                    term.castToList().isWellFormed -> this
-                    else -> throw DomainError.forArgument(context, signature, WELL_FORMED_LIST, term, index)
-                }
+                term.isList ->
+                    when {
+                        term.castToList().isWellFormed -> this
+                        else -> throw DomainError.forArgument(context, signature, WELL_FORMED_LIST, term, index)
+                    }
                 else -> throw TypeError.forArgument(context, signature, LIST, term, index)
             }
         }

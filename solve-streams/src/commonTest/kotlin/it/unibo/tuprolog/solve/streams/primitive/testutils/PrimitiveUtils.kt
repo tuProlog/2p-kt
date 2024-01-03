@@ -12,9 +12,11 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal object PrimitiveUtils {
-
     /** Utility function to assert that there's only one Solution of given type, with given query and substitution */
-    internal fun assertOnlyOneSolution(expectedSolution: Solution, solutions: Sequence<Solve.Response>) {
+    internal fun assertOnlyOneSolution(
+        expectedSolution: Solution,
+        solutions: Sequence<Solve.Response>,
+    ) {
         assertEquals(1, solutions.count(), "Expected only one solution, but ${solutions.toList()}")
         with(solutions.single().solution) {
             assertEquals(expectedSolution::class, this::class)
@@ -35,6 +37,8 @@ internal object PrimitiveUtils {
     }
 
     /** Utility function to assert the [LogicError] type correctness of [Solution.Halt] */
-    internal fun assertPrologError(expected: KClass<out LogicError>, actualSolution: Solution) =
-        assertEquals(expected, (actualSolution as Solution.Halt).exception::class)
+    internal fun assertPrologError(
+        expected: KClass<out LogicError>,
+        actualSolution: Solution,
+    ) = assertEquals(expected, (actualSolution as Solution.Halt).exception::class)
 }

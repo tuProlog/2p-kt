@@ -10,7 +10,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object AtomLength : BinaryRelation.Functional<ExecutionContext>("atom_length") {
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
+    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
+        first: Term,
+        second: Term,
+    ): Substitution =
         when {
             first is Var -> {
                 ensuringAllArgumentsAreInstantiated()

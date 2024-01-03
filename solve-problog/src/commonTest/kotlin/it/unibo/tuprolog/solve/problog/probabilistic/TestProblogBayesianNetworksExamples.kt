@@ -6,7 +6,6 @@ import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import kotlin.test.Test
 
 class TestProblogBayesianNetworksExamples {
-
     /***
      * https://dtai.cs.kuleuven.be/problog/tutorial/basic/02_bayes.html#probabilistic-facts
      * */
@@ -27,13 +26,13 @@ class TestProblogBayesianNetworksExamples {
             listOf(
                 QueryWithSolutions(
                     "burglary".parseAsStruct(),
-                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517))
+                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517)),
                 ),
                 QueryWithSolutions(
                     "earthquake".parseAsStruct(),
-                    listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22758621))
-                )
-            )
+                    listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22758621)),
+                ),
+            ),
         )
     }
 
@@ -54,13 +53,13 @@ class TestProblogBayesianNetworksExamples {
             listOf(
                 QueryWithSolutions(
                     "burglary".parseAsStruct(),
-                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98193926))
+                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98193926)),
                 ),
                 QueryWithSolutions(
                     "earthquake".parseAsStruct(),
-                    listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22685136))
-                )
-            )
+                    listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22685136)),
+                ),
+            ),
         )
     }
 
@@ -86,13 +85,13 @@ class TestProblogBayesianNetworksExamples {
             listOf(
                 QueryWithSolutions(
                     "burglary".parseAsStruct(),
-                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517))
+                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517)),
                 ),
                 QueryWithSolutions(
                     "earthquake".parseAsStruct(),
-                    listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22758621))
-                )
-            )
+                    listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22758621)),
+                ),
+            ),
         )
     }
 
@@ -120,17 +119,17 @@ class TestProblogBayesianNetworksExamples {
             listOf(
                 QueryWithSolutions(
                     "burglary".parseAsStruct(),
-                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517))
+                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517)),
                 ),
                 QueryWithSolutions(
                     "earthquake(X)".parseAsStruct(),
                     listOf(
                         ExpectedSolution("earthquake(heavy)".parseAsStruct(), 0.012476167),
                         ExpectedSolution("earthquake(mild)".parseAsStruct(), 0.20644476),
-                        ExpectedSolution("earthquake(none)".parseAsStruct(), 0.78107907)
-                    )
-                )
-            )
+                        ExpectedSolution("earthquake(none)".parseAsStruct(), 0.78107907),
+                    ),
+                ),
+            ),
         )
     }
 }

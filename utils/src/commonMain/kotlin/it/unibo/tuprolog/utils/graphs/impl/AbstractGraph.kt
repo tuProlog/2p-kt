@@ -8,9 +8,8 @@ import it.unibo.tuprolog.utils.graphs.SearchStrategy
 import it.unibo.tuprolog.utils.graphs.Visit
 
 internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> protected constructor(
-    protected val connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>
+    protected val connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>,
 ) : Graph<T, W> {
-
     companion object {
         private fun <T, W> MutableMap<Node<T>, MutableMap<Node<T>, W?>>.putEdge(edge: Edge<T, W>) {
             val destination = edge.destination
@@ -34,12 +33,16 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
             for (edge in edges) {
                 it.putEdge(edge)
             }
-        }
+        },
     )
 
     protected fun node(value: T): Node<T> = Node.of(value)
 
-    protected fun edge(node1: Node<T>, node2: Node<T>, weight: W?): Edge<T, W> = Edge.of(node1, node2, weight)
+    protected fun edge(
+        node1: Node<T>,
+        node2: Node<T>,
+        weight: W?,
+    ): Edge<T, W> = Edge.of(node1, node2, weight)
 
     protected fun removeEdge(edge: Edge<T, W>) {
         connections[edge.source]?.remove(edge.destination)
@@ -69,21 +72,24 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
 
     @Suppress("MemberVisibilityCanBePrivate")
     protected val lazyEdges: Sequence<Edge<T, W>>
-        get() = sequence {
-            for ((node1, connectedNodes) in connections) {
-                for ((node2, weight) in connectedNodes) {
-                    yield(edge(node1, node2, weight))
+        get() =
+            sequence {
+                for ((node1, connectedNodes) in connections) {
+                    for ((node2, weight) in connectedNodes) {
+                        yield(edge(node1, node2, weight))
+                    }
                 }
             }
-        }
 
     override fun get(edge: Pair<Node<T>, Node<T>>): W? = connections[edge.first]?.get(edge.second)
 
     override val size: Int
         get() = connections.size
 
-    override fun containsEdgeAmong(node1: Node<T>, node2: Node<T>): Boolean =
-        connections[node1]?.containsKey(node2) == true
+    override fun containsEdgeAmong(
+        node1: Node<T>,
+        node2: Node<T>,
+    ): Boolean = connections[node1]?.containsKey(node2) == true
 
     override fun contains(edge: Edge<T, W>): Boolean =
         connections[edge.source]?.let {
@@ -110,11 +116,15 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
             "${it.source.value} -${it.weight ?: ""}-> ${it.destination.value}"
         }
 
-    override fun <S> asIterable(searchStrategy: SearchStrategy<T, W, S>, initialNode: Node<T>): Iterable<Visit<T, S>> =
-        asSequence(searchStrategy, initialNode).asIterable()
+    override fun <S> asIterable(
+        searchStrategy: SearchStrategy<T, W, S>,
+        initialNode: Node<T>,
+    ): Iterable<Visit<T, S>> = asSequence(searchStrategy, initialNode).asIterable()
 
-    override fun <S> asSequence(searchStrategy: SearchStrategy<T, W, S>, initialNode: Node<T>): Sequence<Visit<T, S>> =
-        searchStrategy.search(this, initialNode)
+    override fun <S> asSequence(
+        searchStrategy: SearchStrategy<T, W, S>,
+        initialNode: Node<T>,
+    ): Sequence<Visit<T, S>> = searchStrategy.search(this, initialNode)
 
     override fun toMutable(): MutableGraph<T, W> = MutableGraphImpl(connections)
 
@@ -130,8 +140,7 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
     override fun indegree(to: Node<T>): Int =
         connections.asSequence().filter { (_, destinations) -> to in destinations }.count()
 
-    override fun outdegree(from: Node<T>): Int =
-        connections[from]?.size ?: 0
+    override fun outdegree(from: Node<T>): Int = connections[from]?.size ?: 0
 
     protected abstract fun newInstance(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>): Self
 

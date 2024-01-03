@@ -39,13 +39,14 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
             throw TuPrologException("Invalid probabilistic rule: ${rule.head}")
         }
 
-        /* Extract probability value */
-        var probability = when (val probTerm = rule.head[0]) {
-            is Numeric -> probTerm.decimalValue.toDouble()
-            else -> probTerm.solveArithmeticExpression()
-        }
+        // Extract probability value
+        var probability =
+            when (val probTerm = rule.head[0]) {
+                is Numeric -> probTerm.decimalValue.toDouble()
+                else -> probTerm.solveArithmeticExpression()
+            }
 
-        /* Extract head predicate */
+        // Extract head predicate
         var headTerm = rule.head[1].safeToStruct()
         if (headTerm.functor == ProblogLib.EVIDENCE_PREDICATE) {
             throw TuPrologException("Probability notation can't be expressed on evidence: " + rule.head)
@@ -65,28 +66,31 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
             }
         }
 
-        /* Remove anonymous variables */
+        // Remove anonymous variables
         val anonVariablesFix = Rule.of(headTerm, bodyTerm).withoutAnonymousVars()
         headTerm = anonVariablesFix.head
         bodyTerm = anonVariablesFix.body
 
-        /* Probabilistic term of this rule */
+        // Probabilistic term of this rule
         val extraVariables = Rule.of(headTerm, bodyTerm).extraVariables
         val probTerm = ProbTerm(ClauseMappingUtils.newClauseId(), probability, headTerm, extraVariables)
 
         return Pair(Rule.of(headTerm, bodyTerm), probTerm)
     }
 
-    fun mapRuleWithExplanation(rule: Rule, explanation: ProbExplanation): Rule {
-        /* Problog probabilistic facts */
+    fun mapRuleWithExplanation(
+        rule: Rule,
+        explanation: ProbExplanation,
+    ): Rule {
+        // Problog probabilistic facts
         if (rule.body is Truth) {
             return Rule.of(
                 rule.head.withExplanation(explanation.toTerm()),
-                rule.body
+                rule.body,
             )
         }
 
-        /* Problog probabilistic rules */
+        // Problog probabilistic rules
         val explanationVar = Var.of("${ProblogLib.EXPLANATION_VAR_NAME}_Res")
         val explanationBodyVar = Var.of("${ProblogLib.EXPLANATION_VAR_NAME}_Body")
         val newBody = rule.body.withBodyExplanation(explanationBodyVar)
@@ -95,8 +99,8 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
             Struct.of(
                 ",",
                 newBody,
-                Struct.of(ProbExplAnd.functor, explanationVar, explanationBodyVar, explanation.toTerm())
-            )
+                Struct.of(ProbExplAnd.functor, explanationVar, explanationBodyVar, explanation.toTerm()),
+            ),
         )
     }
 }

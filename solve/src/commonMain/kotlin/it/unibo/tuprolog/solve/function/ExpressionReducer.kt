@@ -15,7 +15,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
  */
 class ExpressionReducer<E : ExecutionContext>(
     request: Solve.Request<E>,
-    index: Int? = null
+    index: Int? = null,
 ) : AbstractEvaluator<E, Term>(request, index) {
     override fun unevaluable(struct: Struct): Term {
         return if (struct.arity > 0) {

@@ -21,7 +21,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class DirectiveNodeTest {
-
     private lateinit var emptyDirectiveNode: DirectiveNode
     private lateinit var filledDirectiveNode: DirectiveNode
 

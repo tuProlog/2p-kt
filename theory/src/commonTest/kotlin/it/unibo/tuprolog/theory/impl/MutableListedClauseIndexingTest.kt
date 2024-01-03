@@ -5,10 +5,10 @@ import it.unibo.tuprolog.theory.PrototypeProperIndexingTest
 import kotlin.test.Test
 
 internal class MutableListedClauseIndexingTest {
-
-    private val prototype = PrototypeProperIndexingTest(
-        Factories::mutableListedTheoryOf
-    )
+    private val prototype =
+        PrototypeProperIndexingTest(
+            Factories::mutableListedTheoryOf,
+        )
 
     @Test
     fun testCornerCaseInClauseRetrieval() {

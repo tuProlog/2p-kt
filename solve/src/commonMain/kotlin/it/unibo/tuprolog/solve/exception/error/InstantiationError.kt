@@ -24,58 +24,69 @@ class InstantiationError(
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
     @JsName("culprit") val culprit: Var = Var.anonymous(),
-    extraData: Term? = null
+    extraData: Term? = null,
 ) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
         culprit: Var = Var.anonymous(),
-        extraData: Term? = null
+        extraData: Term? = null,
     ) : this(message, cause, arrayOf(context), culprit, extraData)
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): InstantiationError =
-        InstantiationError(message, cause, contexts.setItem(index, newContext), culprit, extraData)
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): InstantiationError = InstantiationError(message, cause, contexts.setItem(index, newContext), culprit, extraData)
 
     override fun updateLastContext(newContext: ExecutionContext): InstantiationError =
-        updateContext(newContext, contexts.lastIndex)
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): InstantiationError =
         InstantiationError(message, cause, contexts.addLast(newContext), culprit, extraData)
 
     companion object {
-
         /** The instantiation error Struct functor */
+        @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "instantiation_error"
 
         @JsName("forArgument")
         @JvmStatic
-        fun forArgument(context: ExecutionContext, procedure: Signature, variable: Var, index: Int? = null) =
-            message(
-                "${index?.let { "The $it-th argument" } ?: "The argument"} `${variable.pretty()}` " +
-                    "of ${procedure.pretty()} is unexpectedly not instantiated"
-            ) { m, extra ->
-                InstantiationError(
-                    message = m,
-                    context = context,
-                    culprit = variable,
-                    extraData = extra
-                )
-            }
+        fun forArgument(
+            context: ExecutionContext,
+            procedure: Signature,
+            variable: Var,
+            index: Int? = null,
+        ) = message(
+            "${index?.let { "The $it-th argument" } ?: "The argument"} `${variable.pretty()}` " +
+                "of ${procedure.pretty()} is unexpectedly not instantiated",
+        ) { m, extra ->
+            InstantiationError(
+                message = m,
+                context = context,
+                culprit = variable,
+                extraData = extra,
+            )
+        }
 
         @JsName("forGoal")
         @JvmStatic
-        fun forGoal(context: ExecutionContext, procedure: Signature, variable: Var) =
-            message(
-                "Uninstantiated subgoal ${variable.pretty()} in procedure ${procedure.pretty()}"
-            ) { m, extra ->
-                InstantiationError(
-                    message = m,
-                    context = context,
-                    culprit = variable,
-                    extraData = extra
-                )
-            }
+        fun forGoal(
+            context: ExecutionContext,
+            procedure: Signature,
+            variable: Var,
+        ) = message(
+            "Uninstantiated subgoal ${variable.pretty()} in procedure ${procedure.pretty()}",
+        ) { m, extra ->
+            InstantiationError(
+                message = m,
+                context = context,
+                culprit = variable,
+                extraData = extra,
+            )
+        }
     }
 }

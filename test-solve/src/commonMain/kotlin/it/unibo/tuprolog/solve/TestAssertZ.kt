@@ -5,8 +5,7 @@ package it.unibo.tuprolog.solve
  */
 interface TestAssertZ : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestAssertZ =
-            TestAssertZImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestAssertZ = TestAssertZImpl(solverFactory)
     }
 
     /**

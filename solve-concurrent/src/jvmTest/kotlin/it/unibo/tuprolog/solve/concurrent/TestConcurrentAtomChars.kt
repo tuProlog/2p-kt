@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun atomCharsTestFirstIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -84,16 +83,17 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
             val query = atom_chars("A", "L")
 
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    InstantiationError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("atom_chars", 2),
-                        varOf("A"),
-                        index = 0
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("atom_chars", 2),
+                            varOf("A"),
+                            index = 0,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }
@@ -105,17 +105,18 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
             val query = atom_chars("A", "iso")
 
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("atom_chars", 2),
-                        TypeError.Expected.LIST,
-                        atomOf("iso"),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("atom_chars", 2),
+                            TypeError.Expected.LIST,
+                            atomOf("iso"),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

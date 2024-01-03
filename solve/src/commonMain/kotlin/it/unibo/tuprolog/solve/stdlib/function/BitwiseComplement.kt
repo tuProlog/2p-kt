@@ -12,10 +12,13 @@ import it.unibo.tuprolog.solve.function.UnaryMathFunction
  * @author Enrico
  */
 object BitwiseComplement : UnaryMathFunction("\\") {
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric = Numeric.of(integer.value.not())
 
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-        Numeric.of(integer.value.not())
-
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        throwTypeErrorBecauseOnlyIntegersAccepted(functor, real, context)
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = throwTypeErrorBecauseOnlyIntegersAccepted(functor, real, context)
 }

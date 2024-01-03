@@ -48,7 +48,6 @@ import it.unibo.tuprolog.core.List as LogicList
  * @author Enrico
  */
 internal class ScopeImplTest {
-
     private lateinit var emptyScopeInstance: Scope
     private lateinit var nonEmptyScopeInstances: List<Scope>
     private lateinit var mixedScopeInstances: List<Scope>
@@ -87,7 +86,7 @@ internal class ScopeImplTest {
         onCorrespondingItems(
             ScopeUtils.mixedScopes,
             mixedScopeInstances.map { it.variables },
-            ::assertScopeCorrectContents
+            ::assertScopeCorrectContents,
         )
     }
 
@@ -151,7 +150,7 @@ internal class ScopeImplTest {
         val myResult = 3
         onCorrespondingItems(
             mixedScopeInstances.map { myResult },
-            mixedScopeInstances.map { it.with { myResult } }
+            mixedScopeInstances.map { it.with { myResult } },
         ) { expected, actual -> assertEquals(expected, actual) }
     }
 

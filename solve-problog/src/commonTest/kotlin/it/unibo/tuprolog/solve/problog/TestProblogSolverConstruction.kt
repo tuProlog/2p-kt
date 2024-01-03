@@ -9,11 +9,11 @@ import kotlin.test.Test
 class TestProblogSolverConstruction :
     TestSolverConstruction<ProblogSolver, MutableProblogSolver>,
     SolverFactory by ProblogSolverFactory {
-
-    private val prototype = TestSolverConstruction.prototype<ProblogSolver, MutableProblogSolver>(
-        this,
-        ProblogSolverFactory.defaultBuiltins
-    )
+    private val prototype =
+        TestSolverConstruction.prototype<ProblogSolver, MutableProblogSolver>(
+            this,
+            ProblogSolverFactory.defaultBuiltins,
+        )
 
     @Test
     override fun testCreatingEmptySolver() {

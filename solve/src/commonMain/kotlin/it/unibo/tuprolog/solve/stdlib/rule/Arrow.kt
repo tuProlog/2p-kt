@@ -12,9 +12,10 @@ object Arrow : RuleWrapper<ExecutionContext>("->", 2) {
     override val Scope.head: KtList<Term>
         get() = ktListOf(varOf("Cond"), varOf("Then"))
 
-    override val Scope.body: Term get() = tupleOf(
-        structOf("call", varOf("Cond")),
-        MagicCut,
-        varOf("Then")
-    )
+    override val Scope.body: Term get() =
+        tupleOf(
+            structOf("call", varOf("Cond")),
+            MagicCut,
+            varOf("Then"),
+        )
 }

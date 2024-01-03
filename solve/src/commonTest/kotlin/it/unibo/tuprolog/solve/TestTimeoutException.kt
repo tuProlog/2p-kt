@@ -35,7 +35,7 @@ class TestTimeoutException {
             staticKb: Theory,
             dynamicKb: Theory,
             inputChannels: InputStore,
-            outputChannels: OutputStore
+            outputChannels: OutputStore,
         ): Solver {
             TODO("Not yet implemented")
         }
@@ -47,7 +47,7 @@ class TestTimeoutException {
             staticKb: Theory,
             dynamicKb: Theory,
             inputChannels: InputStore,
-            outputChannels: OutputStore
+            outputChannels: OutputStore,
         ): MutableSolver {
             TODO("Not yet implemented")
         }
@@ -61,7 +61,7 @@ class TestTimeoutException {
             operators: OperatorSet,
             inputChannels: InputStore,
             outputChannels: OutputStore,
-            customData: CustomDataStore
+            customData: CustomDataStore,
         ): ExecutionContext {
             TODO("Not yet implemented")
         }
@@ -88,11 +88,12 @@ class TestTimeoutException {
         override fun toString(): String = "DummyContext"
     }
 
-    private val exception = TimeOutException(
-        message = "dummy message",
-        context = DummyContext,
-        exceededDuration = DummyContext.maxDuration
-    )
+    private val exception =
+        TimeOutException(
+            message = "dummy message",
+            context = DummyContext,
+            exceededDuration = DummyContext.maxDuration,
+        )
 
     @Test
     fun testToString() {
@@ -102,7 +103,7 @@ class TestTimeoutException {
                 "exceededDuration=${DummyContext.maxDuration}, " +
                 "contexts=[${DummyContext::class.simpleName}]" +
                 ")",
-            exception.toString()
+            exception.toString(),
         )
     }
 

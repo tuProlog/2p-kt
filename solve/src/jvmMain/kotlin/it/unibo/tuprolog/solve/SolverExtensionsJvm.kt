@@ -1,8 +1,10 @@
 package it.unibo.tuprolog.solve
 
-import java.lang.IllegalStateException
-
-internal actual fun solverFactory(className: String, vararg classNames: String): SolverFactory {
+@Suppress("SwallowedException")
+internal actual fun solverFactory(
+    className: String,
+    vararg classNames: String,
+): SolverFactory {
     return sequenceOf(className, *classNames)
         .map {
             try {
@@ -15,17 +17,13 @@ internal actual fun solverFactory(className: String, vararg classNames: String):
         .map { it.objectInstance }
         .filterIsInstance<SolverFactory>()
         .firstOrNull()
-        ?: throw IllegalStateException("No viable implementation for ${SolverFactory::class.simpleName}")
+        ?: error("No viable implementation for ${SolverFactory::class.simpleName}")
 }
 
-actual fun classicSolverFactory(): SolverFactory =
-    solverFactory(FactoryClassNames.classic)
+actual fun classicSolverFactory(): SolverFactory = solverFactory(FactoryClassNames.CLASSIC)
 
-actual fun streamsSolverFactory(): SolverFactory =
-    solverFactory(FactoryClassNames.streams)
+actual fun streamsSolverFactory(): SolverFactory = solverFactory(FactoryClassNames.STREAMS)
 
-actual fun problogSolverFactory(): SolverFactory =
-    solverFactory(FactoryClassNames.problog)
+actual fun problogSolverFactory(): SolverFactory = solverFactory(FactoryClassNames.PROBLOG)
 
-actual fun concurrentSolverFactory(): SolverFactory =
-    solverFactory(FactoryClassNames.concurrent)
+actual fun concurrentSolverFactory(): SolverFactory = solverFactory(FactoryClassNames.CONCURRENT)

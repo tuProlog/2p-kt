@@ -149,63 +149,70 @@ internal class TestSolverImpl(
     private val solverFactory: SolverFactory,
     override val callErrorSignature: Signature,
     override val nafErrorSignature: Signature,
-    override val notErrorSignature: Signature
+    override val notErrorSignature: Signature,
 ) : TestSolver {
-
     override fun testUnknownFlag2() {
         logicProgramming {
-            val theory = theoryOf(
-                rule {
-                    "ancestor"(X, Y) `if` "parent"(X, Y)
-                },
-                rule {
-                    "ancestor"(X, Y) `if` ("parent"(X, Z) and "ancestor"(Z, Y))
-                },
-                fact { "parent"("abraham", "isaac") },
-                fact { "parent"("isaac", "jacob") },
-                fact { "parent"("jacob", "joseph") }
-            )
+            val theory =
+                theoryOf(
+                    rule {
+                        "ancestor"(X, Y) `if` "parent"(X, Y)
+                    },
+                    rule {
+                        "ancestor"(X, Y) `if` ("parent"(X, Z) and "ancestor"(Z, Y))
+                    },
+                    fact { "parent"("abraham", "isaac") },
+                    fact { "parent"("isaac", "jacob") },
+                    fact { "parent"("jacob", "joseph") },
+                )
 
             val observedWarnings = mutableListOf<Warning>()
 
-            var solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory,
-                flags = FlagStore.of(Unknown to WARNING),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            var solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb = theory,
+                    flags = FlagStore.of(Unknown to WARNING),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             val query = "ancestor"("abraham", X)
 
-            val expectedSolutions = ktListOf(
-                query.yes(X to "isaac"),
-                query.yes(X to "jacob"),
-                query.yes(X to "joseph"),
-                query.no()
-            )
+            val expectedSolutions =
+                ktListOf(
+                    query.yes(X to "isaac"),
+                    query.yes(X to "jacob"),
+                    query.yes(X to "joseph"),
+                    query.no(),
+                )
 
             assertSolutionEquals(expectedSolutions, solver.solve(query).toList())
             assertEquals(mutableListOf(), observedWarnings)
 
-            solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory,
-                flags = FlagStore.of(Unknown to ERROR),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb = theory,
+                    flags = FlagStore.of(Unknown to ERROR),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             assertSolutionEquals(expectedSolutions, solver.solve(query).toList())
             assertEquals(mutableListOf(), observedWarnings)
 
-            solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory,
-                flags = FlagStore.of(Unknown to FAIL),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb = theory,
+                    flags = FlagStore.of(Unknown to FAIL),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             assertSolutionEquals(expectedSolutions, solver.solve(query).toList())
             assertEquals(mutableListOf(), observedWarnings)
@@ -218,51 +225,57 @@ internal class TestSolverImpl(
 
             val observedWarnings = mutableListOf<Warning>()
 
-            var solver = solverFactory.solverWithDefaultBuiltins(
-                flags = FlagStore.of(Unknown to ERROR),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            var solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    flags = FlagStore.of(Unknown to ERROR),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
                         ExistenceError.forProcedure(
                             DummyInstances.executionContext,
-                            query.extractSignature()
-                        )
-                    )
+                            query.extractSignature(),
+                        ),
+                    ),
                 ),
-                solver.solve(query).toList()
+                solver.solve(query).toList(),
             )
             assertTrue { observedWarnings.isEmpty() }
 
-            solver = solverFactory.solverWithDefaultBuiltins(
-                flags = FlagStore.of(Unknown to WARNING),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    flags = FlagStore.of(Unknown to WARNING),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solver.solve(query).toList()
+                solver.solve(query).toList(),
             )
             assertEquals(1, observedWarnings.size)
             assertTrue { observedWarnings[0] is MissingPredicate }
             assertEquals(query.extractSignature(), (observedWarnings[0] as MissingPredicate).signature)
 
-            solver = solverFactory.solverWithDefaultBuiltins(
-                flags = FlagStore.of(Unknown to FAIL),
-                warnings = OutputChannel.of {
-                    observedWarnings.add(it)
-                }
-            )
+            solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    flags = FlagStore.of(Unknown to FAIL),
+                    warnings =
+                        OutputChannel.of {
+                            observedWarnings.add(it)
+                        },
+                )
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solver.solve(query).toList()
+                solver.solve(query).toList(),
             )
             assertTrue { observedWarnings.size == 1 }
         }
@@ -360,22 +373,26 @@ internal class TestSolverImpl(
         }
     }
 
-    private fun testAssert(suffix: String, inverse: Boolean) {
+    private fun testAssert(
+        suffix: String,
+        inverse: Boolean,
+    ) {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val assertX = "assert$suffix"
 
-            val query = assertX("f"(1)) and
-                assertX("f"(2)) and
-                assertX("f"(3)) and
-                "f"(X)
+            val query =
+                assertX("f"(1)) and
+                    assertX("f"(2)) and
+                    assertX("f"(3)) and
+                    "f"(X)
 
             val solutions = solver.solve(query, mediumDuration).toList()
             val ints = if (inverse) (3 downTo 1) else (1..3)
 
             assertSolutionEquals(
                 (ints).map { query.yes(X to it) },
-                solutions
+                solutions,
             )
 
             ints.forEach {
@@ -405,14 +422,15 @@ internal class TestSolverImpl(
 
             solver.standardOutput.addListener { outputs += it!! }
 
-            val terms = ktListOf(
-                atomOf("atom"),
-                atomOf("a string"),
-                varOf("A_Var"),
-                numOf(1),
-                numOf(2.1),
-                "f"("x")
-            )
+            val terms =
+                ktListOf(
+                    atomOf("atom"),
+                    atomOf("a string"),
+                    varOf("A_Var"),
+                    numOf(1),
+                    numOf(2.1),
+                    "f"("x"),
+                )
 
             val query = tupleOf(terms.map { write(it) }.append(nl))
 
@@ -420,12 +438,12 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             assertEquals(
                 terms.map { it.format(TermFormatter.default()) }.append("\n"),
-                outputs
+                outputs,
             )
         }
     }
@@ -446,34 +464,36 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             solver.standardOutput.write("e")
 
             assertEquals(
                 ktListOf("a", "b", "c", "d", "\n", "e"),
-                outputs
+                outputs,
             )
         }
     }
 
     override fun testFindAll() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theoryOf(
-                    fact { "a"(1) },
-                    fact { "a"(2) },
-                    fact { "a"(3) }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theoryOf(
+                            fact { "a"(1) },
+                            fact { "a"(2) },
+                            fact { "a"(3) },
+                        ),
                 )
-            )
 
             var query = findall(N, "a"(N), L)
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.yes(L to listOf(1, 2, 3))),
-                solutions
+                solutions,
             )
 
             query = findall(`_`, false, L)
@@ -481,7 +501,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes(L to emptyList)),
-                solutions
+                solutions,
             )
 
             query = findall(`_`, G, `_`)
@@ -494,36 +514,39 @@ internal class TestSolverImpl(
                             DummyInstances.executionContext,
                             Signature("findall", 3),
                             variable = G,
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testSideEffectsPersistentAfterBacktracking1() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                dynamicKb = theoryOf(
-                    fact { "f"(1) },
-                    fact { "f"(2) },
-                    fact { "f"(3) }
-                ),
-                staticKb = theoryOf(
-                    clause { "getf"(F) `if` findall(X, "f"(X), F) },
-                    clause { "getg"(G) `if` findall(X, "g"(X), G) },
-                    clause {
-                        "ftog"(F, G) `if` (
-                            retract("f"(X)) and
-                                assert("g"(X)) and
-                                "getf"(F) and
-                                "getg"(G)
-                            )
-                    }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    dynamicKb =
+                        theoryOf(
+                            fact { "f"(1) },
+                            fact { "f"(2) },
+                            fact { "f"(3) },
+                        ),
+                    staticKb =
+                        theoryOf(
+                            clause { "getf"(F) `if` findall(X, "f"(X), F) },
+                            clause { "getg"(G) `if` findall(X, "g"(X), G) },
+                            clause {
+                                "ftog"(F, G) `if` (
+                                    retract("f"(X)) and
+                                        assert("g"(X)) and
+                                        "getf"(F) and
+                                        "getg"(G)
+                                )
+                            },
+                        ),
                 )
-            )
 
             val query = "ftog"(X, Y)
             val solutions = solver.solve(query, longDuration).toList()
@@ -532,9 +555,9 @@ internal class TestSolverImpl(
                 ktListOf(
                     query.yes(X to listOf(2, 3), Y to listOf(1)),
                     query.yes(X to listOf(3), Y to listOf(1, 2)),
-                    query.yes(X to emptyList, Y to listOf(1, 2, 3))
+                    query.yes(X to emptyList, Y to listOf(1, 2, 3)),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -548,7 +571,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }
@@ -556,44 +579,48 @@ internal class TestSolverImpl(
     /** Test with [lessThan500MsGoalToSolution] */
     override fun testTimeout1() {
         assertSolverSolutionsCorrect(
-            solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedTheory
-            ),
+            solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb = timeRelatedTheory,
+                ),
             goalToSolutions = lessThan500MsGoalToSolution,
-            maxDuration = 400L
+            maxDuration = 400L,
         )
     }
 
     /** Test with [slightlyMoreThan500MsGoalToSolution] */
     override fun testTimeout2() {
         assertSolverSolutionsCorrect(
-            solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedTheory
-            ),
+            solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb = timeRelatedTheory,
+                ),
             goalToSolutions = slightlyMoreThan500MsGoalToSolution,
-            maxDuration = 599L
+            maxDuration = 599L,
         )
     }
 
     /** Test with [slightlyMoreThan600MsGoalToSolution] */
     override fun testTimeout3() {
         assertSolverSolutionsCorrect(
-            solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedTheory
-            ),
+            solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb = timeRelatedTheory,
+                ),
             goalToSolutions = slightlyMoreThan600MsGoalToSolution,
-            maxDuration = 699L
+            maxDuration = 699L,
         )
     }
 
     /** Test with [slightlyMoreThan700MsGoalToSolution] */
     override fun testTimeout4() {
         assertSolverSolutionsCorrect(
-            solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedTheory
-            ),
+            solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb = timeRelatedTheory,
+                ),
             goalToSolutions = slightlyMoreThan700MsGoalToSolution,
-            maxDuration = 799L
+            maxDuration = 799L,
         )
     }
 
@@ -602,7 +629,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory1),
             goalToSolutions = ifThen1ToSolution,
-            maxDuration = mediumDuration
+            maxDuration = mediumDuration,
         )
     }
 
@@ -611,7 +638,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory1),
             goalToSolutions = ifThenElse1ToSolution,
-            maxDuration = mediumDuration
+            maxDuration = mediumDuration,
         )
     }
 
@@ -620,7 +647,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory2),
             goalToSolutions = ifThenElse2ToSolution,
-            maxDuration = mediumDuration
+            maxDuration = mediumDuration,
         )
     }
 
@@ -629,7 +656,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory2),
             goalToSolutions = ifThen2ToSolution,
-            maxDuration = mediumDuration
+            maxDuration = mediumDuration,
         )
     }
 
@@ -638,7 +665,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = simpleFactTheory),
             simpleFactTheoryNotableGoalToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -647,7 +674,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutTheory),
             simpleCutTheoryNotableGoalToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -656,7 +683,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutAndConjunctionTheory),
             simpleCutAndConjunctionTheoryNotableGoalToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -665,7 +692,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = cutConjunctionAndBacktrackingTheory),
             cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -674,7 +701,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = infiniteComputationTheory),
             infiniteComputationTheoryNotableGoalToSolution,
-            shortDuration
+            shortDuration,
         )
     }
 
@@ -683,16 +710,18 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = prologStandardExampleTheory),
             prologStandardExampleTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
     /** Test with [prologStandardExampleWithCutTheoryNotableGoalToSolution] */
     override fun testPrologStandardSearchTreeWithCutExample() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.prologStandardExampleWithCutTheory),
+            solverFactory.solverWithDefaultBuiltins(
+                staticKb = PrologStandardExampleTheories.prologStandardExampleWithCutTheory,
+            ),
             prologStandardExampleWithCutTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -701,7 +730,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = customReverseListTheory),
             customReverseListTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -710,7 +739,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = conjunctionStandardExampleTheory),
             conjunctionStandardExampleTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -721,14 +750,13 @@ internal class TestSolverImpl(
                 allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                     callErrorSignature,
                     nafErrorSignature,
-                    notErrorSignature
+                    notErrorSignature,
                 )
                     .mapValues { (_, listOfGoalToSolutions) ->
                         listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                             ktListOf(
                                 (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
                                 (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
-
                                 (goal and false).run {
                                     when {
                                         expectedSolutions.any { it is Solution.Halt } ->
@@ -736,8 +764,7 @@ internal class TestSolverImpl(
                                         else -> hasSolutions({ no() })
                                     }
                                 },
-
-                                (false and goal).hasSolutions({ no() })
+                                (false and goal).hasSolutions({ no() }),
                             )
                         }
                     }
@@ -747,7 +774,7 @@ internal class TestSolverImpl(
                 assertSolverSolutionsCorrect(
                     solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
-                    mediumDuration
+                    mediumDuration,
                 )
             }
         }
@@ -758,13 +785,13 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = callStandardExampleTheory),
             callStandardExampleTheoryGoalsToSolution(callErrorSignature),
-            mediumDuration
+            mediumDuration,
         )
 
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             callTestingGoalsToSolutions(callErrorSignature),
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -774,7 +801,7 @@ internal class TestSolverImpl(
             allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                 callErrorSignature,
                 nafErrorSignature,
-                notErrorSignature
+                notErrorSignature,
             )
                 .mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.map { (goal, expectedSolutions) ->
@@ -784,7 +811,7 @@ internal class TestSolverImpl(
                     assertSolverSolutionsCorrect(
                         solverFactory.solverWithDefaultBuiltins(staticKb = database),
                         goalToSolutions,
-                        mediumDuration
+                        mediumDuration,
                     )
                 }
         }
@@ -795,28 +822,29 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = catchAndThrowTheoryExample),
             catchAndThrowTheoryExampleNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
 
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             catchTestingGoalsToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
     /** A test in which all testing goals are called through the Catch primitive */
     override fun testCatchPrimitiveTransparency() {
         logicProgramming {
-            fun Struct.containsHaltPrimitive(): Boolean = when (functor) {
-                "halt" -> true
-                else -> argsSequence.filterIsInstance<Struct>().any { it.containsHaltPrimitive() }
-            }
+            fun Struct.containsHaltPrimitive(): Boolean =
+                when (functor) {
+                    "halt" -> true
+                    else -> argsSequence.filterIsInstance<Struct>().any { it.containsHaltPrimitive() }
+                }
 
             allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                 callErrorSignature,
                 nafErrorSignature,
-                notErrorSignature
+                notErrorSignature,
             )
                 .mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
@@ -833,14 +861,14 @@ internal class TestSolverImpl(
                             },
                             `catch`(goal, "notUnifyingCatcher", false).run {
                                 to(expectedSolutions.changeQueriesTo(this))
-                            }
+                            },
                         )
                     }
                 }.forEach { (database, goalToSolutions) ->
                     assertSolverSolutionsCorrect(
                         solverFactory.solverWithDefaultBuiltins(staticKb = database),
                         goalToSolutions,
-                        mediumDuration
+                        mediumDuration,
                     )
                 }
         }
@@ -851,7 +879,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             haltTestingGoalsToSolutions,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -860,7 +888,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = notStandardExampleTheory),
             notStandardExampleTheoryNotableGoalToSolution(nafErrorSignature, notErrorSignature),
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -870,7 +898,7 @@ internal class TestSolverImpl(
             allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
                 callErrorSignature,
                 nafErrorSignature,
-                notErrorSignature
+                notErrorSignature,
             )
                 .mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
@@ -902,14 +930,14 @@ internal class TestSolverImpl(
                                     expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
                                     else -> to(expectedSolutions.changeQueriesTo(this))
                                 }
-                            }
+                            },
                         )
                     }
                 }.forEach { (database, goalToSolutions) ->
                     assertSolverSolutionsCorrect(
                         solverFactory.solverWithDefaultBuiltins(staticKb = database),
                         goalToSolutions,
-                        mediumDuration
+                        mediumDuration,
                     )
                 }
         }
@@ -920,7 +948,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = ifThenStandardExampleTheory),
             ifThenStandardExampleTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -929,7 +957,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             ifThenElseStandardExampleNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -938,7 +966,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = customRangeListGeneratorTheory),
             customRangeListGeneratorTheoryNotableGoalToSolution,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -951,203 +979,221 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(
-                    query.no()
+                    query.no(),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testBasicBacktracking1() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy ("b"(X) and "c"(X)) },
-                    { "b"(1) },
-                    { "b"(2) impliedBy cut },
-                    { "b"(3) },
-                    { "c"(2) },
-                    { "c"(3) }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy ("b"(X) and "c"(X)) },
+                            { "b"(1) },
+                            { "b"(2) impliedBy cut },
+                            { "b"(3) },
+                            { "c"(2) },
+                            { "c"(3) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes(N to 2)
+                    query.yes(N to 2),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testBasicBacktracking2() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy ("c"(X) and "b"(X)) },
-                    { "b"(2) impliedBy cut },
-                    { "b"(3) },
-                    { "c"(3) },
-                    { "c"(2) }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy ("c"(X) and "b"(X)) },
+                            { "b"(2) impliedBy cut },
+                            { "b"(3) },
+                            { "c"(3) },
+                            { "c"(2) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 with(query) { ktListOf(yes(N to 3), yes(N to 2)) },
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testBasicBacktracking3() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy (("b"(X) and cut) and "c"(X)) },
-                    { "b"(2) },
-                    { "b"(3) },
-                    { "c"(2) },
-                    { "c"(3) }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy (("b"(X) and cut) and "c"(X)) },
+                            { "b"(2) },
+                            { "b"(3) },
+                            { "c"(2) },
+                            { "c"(3) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes(N to 2)
+                    query.yes(N to 2),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testBasicBacktracking4() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy ("b"(X) and (cut and "c"(X))) },
-                    { "b"(2) },
-                    { "b"(3) },
-                    { "c"(2) },
-                    { "c"(3) }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy ("b"(X) and (cut and "c"(X))) },
+                            { "b"(2) },
+                            { "b"(3) },
+                            { "c"(2) },
+                            { "c"(3) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes(N to 2)
+                    query.yes(N to 2),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testConjunction() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a" impliedBy ("b" and "c") },
-                    { "b" },
-                    { "c" }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a" impliedBy ("b" and "c") },
+                            { "b" },
+                            { "c" },
+                        ),
                 )
-            )
             val query = atomOf("a")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes()
+                    query.yes(),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testConjunctionOfConjunctions() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
-                    { "b" },
-                    { "c" },
-                    { "d" },
-                    { "e" }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
+                            { "b" },
+                            { "c" },
+                            { "d" },
+                            { "e" },
+                        ),
                 )
-            )
             val query = atomOf("a")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes()
+                    query.yes(),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testConjunctionWithUnification() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy ("b"(X) and "c"(X)) },
-                    { "b"(1) },
-                    { "c"(1) }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy ("b"(X) and "c"(X)) },
+                            { "b"(1) },
+                            { "c"(1) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes(N to 1)
+                    query.yes(N to 1),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testDisjunction() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a" impliedBy ("b" or "c") },
-                    { "b" },
-                    { "c" }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a" impliedBy ("b" or "c") },
+                            { "b" },
+                            { "c" },
+                        ),
                 )
-            )
             val query = atomOf("a")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 with(query) { ktListOf(yes(), yes()) },
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testDisjunctionWithUnification() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = theory(
-                    { "a"(X) impliedBy ("b"(X) or "c"(X)) },
-                    { "b"(1) },
-                    { "c"(2) }
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    staticKb =
+                        theory(
+                            { "a"(X) impliedBy ("b"(X) or "c"(X)) },
+                            { "b"(1) },
+                            { "c"(2) },
+                        ),
                 )
-            )
             val query = "a"(N)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 with(query) { ktListOf(yes(N to 1), yes(N to 2)) },
-                solutions
+                solutions,
             )
 
             assertEquals(2, solutions.size)
@@ -1172,27 +1218,29 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             assertEquals(
                 ktListOf(
                     factOf(structOf("f", numOf(1))),
-                    ruleOf(structOf("f", numOf(2)), atomOf("false"))
+                    ruleOf(structOf("f", numOf(2)), atomOf("false")),
                 ),
-                solver.dynamicKb.toList()
+                solver.dynamicKb.toList(),
             )
         }
     }
 
     override fun testRetract() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                dynamicKb = theoryOf(
-                    factOf(structOf("f", numOf(1))),
-                    ruleOf(structOf("f", numOf(2)), atomOf("false"))
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    dynamicKb =
+                        theoryOf(
+                            factOf(structOf("f", numOf(1))),
+                            ruleOf(structOf("f", numOf(2)), atomOf("false")),
+                        ),
                 )
-            )
 
             val query = retract("f"(X)) // retract(f(X))
 
@@ -1201,15 +1249,14 @@ internal class TestSolverImpl(
             assertSolutionEquals(
                 ktListOf(
                     query.yes(X to 1),
-                    query.yes(X to 2)
-
+                    query.yes(X to 2),
                 ),
-                solutions
+                solutions,
             )
 
             assertEquals(
                 ktListOf(),
-                solver.dynamicKb.toList()
+                solver.dynamicKb.toList(),
             )
             assertEquals(0L, solver.dynamicKb.size)
         }
@@ -1227,7 +1274,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 (0 until n).map { query.yes(X to it) },
-                solutions
+                solutions,
             )
         }
     }
@@ -1241,7 +1288,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes(X to "a", Y to 2)),
-                solutions
+                solutions,
             )
 
             query = functor("a"("b", "c"), "a", Y)
@@ -1249,7 +1296,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes(Y to 2)),
-                solutions
+                solutions,
             )
 
             query = functor("a"("b", "c"), X, 2)
@@ -1257,7 +1304,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes(X to "a")),
-                solutions
+                solutions,
             )
 
             query = functor(X, "a", 2)
@@ -1265,7 +1312,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes(X to structOf("a", anonymous(), anonymous()))),
-                solutions
+                solutions,
             )
 
             query = functor(X, Y, 2)
@@ -1278,11 +1325,11 @@ internal class TestSolverImpl(
                             DummyInstances.executionContext,
                             Signature("functor", 3),
                             variable = Y,
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
 
             query = functor(X, "a", "2")
@@ -1296,11 +1343,11 @@ internal class TestSolverImpl(
                             Signature("functor", 3),
                             TypeError.Expected.INTEGER,
                             atomOf("2"),
-                            2
-                        )
-                    )
+                            2,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -1314,7 +1361,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes(X to listOf("a", "b", "c"))),
-                solutions
+                solutions,
             )
 
             query = X univ listOf("a", "b", "c")
@@ -1322,7 +1369,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes(X to structOf("a", "b", "c"))),
-                solutions
+                solutions,
             )
 
             query = X univ Y
@@ -1335,11 +1382,11 @@ internal class TestSolverImpl(
                             DummyInstances.executionContext,
                             Signature("=..", 2),
                             variable = X,
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
 
             query = "a"("b", "c") univ "a"
@@ -1353,23 +1400,25 @@ internal class TestSolverImpl(
                             Signature("=..", 2),
                             TypeError.Expected.LIST,
                             atomOf("a"),
-                            1
-                        )
-                    )
+                            1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
 
     override fun testRetractAll() {
         logicProgramming {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                dynamicKb = theoryOf(
-                    factOf(structOf("f", numOf(1))),
-                    ruleOf(structOf("f", numOf(2)), atomOf("false"))
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    dynamicKb =
+                        theoryOf(
+                            factOf(structOf("f", numOf(1))),
+                            ruleOf(structOf("f", numOf(2)), atomOf("false")),
+                        ),
                 )
-            )
 
             var query = retractall("f"(X))
 
@@ -1377,14 +1426,14 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes()
+                    query.yes(),
                 ),
-                solutions
+                solutions,
             )
 
             assertEquals(
                 ktListOf(),
-                solver.dynamicKb.toList()
+                solver.dynamicKb.toList(),
             )
             assertEquals(0L, solver.dynamicKb.size)
 
@@ -1393,9 +1442,9 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes()
+                    query.yes(),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -1409,7 +1458,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes(X to listOf(1, 2, 3, 4, 5, 6))),
-                solutions
+                solutions,
             )
 
             query = append(listOf(1, 2, 3), X, listOf(1, 2, 3, 4, 5, 6))
@@ -1417,7 +1466,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes(X to listOf(4, 5, 6))),
-                solutions
+                solutions,
             )
 
             query = append(X, X, listOf(1, 2, 3, 4, 5, 6))
@@ -1425,7 +1474,7 @@ internal class TestSolverImpl(
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = append(X, Y, listOf(1, 2, 3, 4, 5, 6))
@@ -1439,9 +1488,9 @@ internal class TestSolverImpl(
                     query.yes(X to listOf(1, 2, 3), Y to listOf(4, 5, 6)),
                     query.yes(X to listOf(1, 2, 3, 4), Y to listOf(5, 6)),
                     query.yes(X to listOf(1, 2, 3, 4, 5), Y to listOf(6)),
-                    query.yes(X to listOf(1, 2, 3, 4, 5, 6), Y to emptyList)
+                    query.yes(X to listOf(1, 2, 3, 4, 5, 6), Y to emptyList),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -1450,7 +1499,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             greaterThanTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -1458,7 +1507,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             greaterThanOrEqualTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -1466,7 +1515,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             equalTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -1474,7 +1523,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             notEqualTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -1482,7 +1531,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             lowerThanTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 
@@ -1490,7 +1539,7 @@ internal class TestSolverImpl(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             lowerThanOrEqualTesting,
-            mediumDuration
+            mediumDuration,
         )
     }
 }

@@ -19,51 +19,71 @@ import it.unibo.tuprolog.theory.Theory
  * @author Enrico
  */
 object TestingClauseTheories {
-
     internal val aContext = DummyInstances.executionContext
 
     internal val haltException = HaltException(context = aContext)
 
-    internal fun instantiationError(functor: String, arity: Int, culprit: Var, index: Int? = null) =
-        instantiationError(Signature(functor, arity), culprit, index)
+    internal fun instantiationError(
+        functor: String,
+        arity: Int,
+        culprit: Var,
+        index: Int? = null,
+    ) = instantiationError(Signature(functor, arity), culprit, index)
 
-    internal fun instantiationError(signature: Signature, culprit: Var, index: Int? = null) =
-        if (index != null) {
-            InstantiationError.forArgument(aContext, signature, culprit, index)
-        } else {
-            InstantiationError.forGoal(aContext, signature, culprit)
-        }
+    internal fun instantiationError(
+        signature: Signature,
+        culprit: Var,
+        index: Int? = null,
+    ) = if (index != null) {
+        InstantiationError.forArgument(aContext, signature, culprit, index)
+    } else {
+        InstantiationError.forGoal(aContext, signature, culprit)
+    }
 
-    internal fun typeError(functor: String, arity: Int, actualValue: Term, index: Int? = null) =
-        typeError(Signature(functor, arity), actualValue, index)
+    internal fun typeError(
+        functor: String,
+        arity: Int,
+        actualValue: Term,
+        index: Int? = null,
+    ) = typeError(Signature(functor, arity), actualValue, index)
 
-    internal fun typeError(signature: Signature, actualValue: Term, index: Int? = null) =
-        if (index != null) {
-            TypeError.forArgument(aContext, signature, TypeError.Expected.CALLABLE, actualValue, index)
-        } else {
-            TypeError.forGoal(aContext, signature, TypeError.Expected.CALLABLE, actualValue)
-        }
+    internal fun typeError(
+        signature: Signature,
+        actualValue: Term,
+        index: Int? = null,
+    ) = if (index != null) {
+        TypeError.forArgument(aContext, signature, TypeError.Expected.CALLABLE, actualValue, index)
+    } else {
+        TypeError.forGoal(aContext, signature, TypeError.Expected.CALLABLE, actualValue)
+    }
 
     internal fun systemError(uncaught: Term) = SystemError.forUncaughtException(aContext, uncaught)
 
     internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
 
     /** Utility function to deeply replace all occurrences of one functor with another in a Struct */
-    internal fun Struct.replaceAllFunctors(oldFunctor: String, withFunctor: String): Struct =
+    internal fun Struct.replaceAllFunctors(
+        oldFunctor: String,
+        withFunctor: String,
+    ): Struct =
         logicProgramming {
-            val synonymReplacer = object : TermVisitor<Term> {
-                override fun defaultValue(term: Term): Term = term
-                override fun visitStruct(term: Struct): Term = when (term.functor) {
-                    oldFunctor -> withFunctor(term.args.single().accept(this))
-                    else -> term.args.map { it.accept(this) }.let {
-                        if (it.none()) {
-                            term
-                        } else {
-                            term.functor(it.first(), *it.drop(1).toTypedArray())
+            val synonymReplacer =
+                object : TermVisitor<Term> {
+                    override fun defaultValue(term: Term): Term = term
+
+                    override fun visitStruct(term: Struct): Term =
+                        when (term.functor) {
+                            oldFunctor -> withFunctor(term.args.single().accept(this))
+                            else ->
+                                term.args.map { it.accept(this) }.let {
+                                    if (it.none()) {
+                                        term
+                                    } else {
+                                        term.functor(it.first(), *it.drop(1).toTypedArray())
+                                    }
+                                }
                         }
-                    }
                 }
-            }
 
             this@replaceAllFunctors.accept(synonymReplacer) as Struct
         }
@@ -87,7 +107,7 @@ object TestingClauseTheories {
                 { "g"("b") },
                 { "h"("a") },
                 { "h"("b") },
-                { "h"("c") }
+                { "h"("c") },
             )
         }
     }
@@ -104,7 +124,7 @@ object TestingClauseTheories {
                 rule { "a"(A) `if` ("b"(A) and "d"(Z)) },
                 rule { "b"(B) `if` ("c"(B) and "d"(W)) },
                 fact { "d"(`_`) },
-                fact { "c"(1) }
+                fact { "c"(1) },
             )
         }
     }
@@ -119,21 +139,23 @@ object TestingClauseTheories {
      *   <observe>([f(A), f(B), f(C), f(D), f(E)]).
      * ```
      */
-    fun callsWithVariablesAndInspectorTheory(predicate: String, observe: String) =
-        logicProgramming {
-            val observeOne = "${observe}_one"
-            theoryOf(
-                rule { observeOne(X) `if` observe(listOf(X)) },
-                rule {
-                    predicate(A, B, C).`if`(
-                        observe(listOf(A, B, C)),
-                        observeOne(D),
-                        observeOne(E),
-                        observe(listOf("f"(A), "f"(B), "f"(C), "f"(D), "f"(E)))
-                    )
-                }
-            )
-        }
+    fun callsWithVariablesAndInspectorTheory(
+        predicate: String,
+        observe: String,
+    ) = logicProgramming {
+        val observeOne = "${observe}_one"
+        theoryOf(
+            rule { observeOne(X) `if` observe(listOf(X)) },
+            rule {
+                predicate(A, B, C).`if`(
+                    observe(listOf(A, B, C)),
+                    observeOne(D),
+                    observeOne(E),
+                    observe(listOf("f"(A), "f"(B), "f"(C), "f"(D), "f"(E))),
+                )
+            },
+        )
+    }
 
     /**
      * Notable [simpleFactTheory] request goals and respective expected [Solution]s
@@ -147,17 +169,17 @@ object TestingClauseTheories {
         logicProgramming {
             ktListOf(
                 "f"("A").hasSolutions(
-                    { yes("A" to "a") }
+                    { yes("A" to "a") },
                 ),
                 "g"("A").hasSolutions(
                     { yes("A" to "a") },
-                    { yes("A" to "b") }
+                    { yes("A" to "b") },
                 ),
                 "h"("A").hasSolutions(
                     { yes("A" to "a") },
                     { yes("A" to "b") },
-                    { yes("A" to "c") }
-                )
+                    { yes("A" to "c") },
+                ),
             )
         }
     }
@@ -180,23 +202,22 @@ object TestingClauseTheories {
      * d(d).
      * ```
      */
-    val simpleCutTheory = logicProgramming {
-        theory(
-            { "f"("only") `if` "!" },
-            { "f"("a") },
-
-            { "g"("a") },
-            { "g"("only") `if` "!" },
-            { "g"("b") },
-
-            { "h"("A") `if` "e"("A") },
-            { "h"("A") `if` "d"("A") },
-            { "e"("a") `if` "!" },
-            { "e"("b") },
-            { "d"("c") },
-            { "d"("d") }
-        )
-    }
+    val simpleCutTheory =
+        logicProgramming {
+            theory(
+                { "f"("only") `if` "!" },
+                { "f"("a") },
+                { "g"("a") },
+                { "g"("only") `if` "!" },
+                { "g"("b") },
+                { "h"("A") `if` "e"("A") },
+                { "h"("A") `if` "d"("A") },
+                { "e"("a") `if` "!" },
+                { "e"("b") },
+                { "d"("c") },
+                { "d"("d") },
+            )
+        }
 
     /**
      * Notable [simpleCutTheory] request goals and respective expected [Solution]s
@@ -210,17 +231,17 @@ object TestingClauseTheories {
         logicProgramming {
             ktListOf(
                 "f"("A").hasSolutions(
-                    { yes("A" to "only") }
+                    { yes("A" to "only") },
                 ),
                 "g"("A").hasSolutions(
                     { yes("A" to "a") },
-                    { yes("A" to "only") }
+                    { yes("A" to "only") },
                 ),
                 "h"("A").hasSolutions(
                     { yes("A" to "a") },
                     { yes("A" to "c") },
-                    { yes("A" to "d") }
-                )
+                    { yes("A" to "d") },
+                ),
             )
         }
     }
@@ -236,16 +257,17 @@ object TestingClauseTheories {
      * r(b1).
      * ```
      */
-    val simpleCutAndConjunctionTheory = logicProgramming {
-        theory(
-            { "f"("X", "Y") `if` ("q"("X") and "!" and "r"("Y")) },
-            { "f"("X", "Y") `if` "r"("X") },
-            { "q"("a") },
-            { "q"("b") },
-            { "r"("a1") },
-            { "r"("b1") }
-        )
-    }
+    val simpleCutAndConjunctionTheory =
+        logicProgramming {
+            theory(
+                { "f"("X", "Y") `if` ("q"("X") and "!" and "r"("Y")) },
+                { "f"("X", "Y") `if` "r"("X") },
+                { "q"("a") },
+                { "q"("b") },
+                { "r"("a1") },
+                { "r"("b1") },
+            )
+        }
 
     /**
      * Notable [simpleCutAndConjunctionTheory] request goals and respective expected [Solution]s
@@ -258,8 +280,8 @@ object TestingClauseTheories {
             ktListOf(
                 "f"("A", "B").hasSolutions(
                     { yes("A" to "a", "B" to "a1") },
-                    { yes("A" to "a", "B" to "b1") }
-                )
+                    { yes("A" to "a", "B" to "b1") },
+                ),
             )
         }
     }
@@ -279,20 +301,21 @@ object TestingClauseTheories {
      * d(3).
      * ```
      */
-    val cutConjunctionAndBacktrackingTheory = logicProgramming {
-        theory(
-            { "a"("X") `if` "b"("X") },
-            { "a"(6) },
-            { "b"("X") `if` ("c"("X") and "d"("X")) },
-            { "b"(4) `if` "!" },
-            { "b"(5) },
-            { "c"(1) },
-            { "c"(2) `if` "!" },
-            { "c"(3) },
-            { "d"(2) },
-            { "d"(3) }
-        )
-    }
+    val cutConjunctionAndBacktrackingTheory =
+        logicProgramming {
+            theory(
+                { "a"("X") `if` "b"("X") },
+                { "a"(6) },
+                { "b"("X") `if` ("c"("X") and "d"("X")) },
+                { "b"(4) `if` "!" },
+                { "b"(5) },
+                { "c"(1) },
+                { "c"(2) `if` "!" },
+                { "c"(3) },
+                { "d"(2) },
+                { "d"(3) },
+            )
+        }
 
     /**
      * Notable [cutConjunctionAndBacktrackingTheory] request goals and respective expected [Solution]s
@@ -306,8 +329,8 @@ object TestingClauseTheories {
                 "a"("X").hasSolutions(
                     { yes("X" to 2) },
                     { yes("X" to 4) },
-                    { yes("X" to 6) }
-                )
+                    { yes("X" to 6) },
+                ),
             )
         }
     }
@@ -319,12 +342,13 @@ object TestingClauseTheories {
      * b :- a.
      * ```
      */
-    val infiniteComputationTheory = logicProgramming {
-        theory(
-            { "a" `if` "b" },
-            { "b" `if` "a" }
-        )
-    }
+    val infiniteComputationTheory =
+        logicProgramming {
+            theory(
+                { "a" `if` "b" },
+                { "b" `if` "a" },
+            )
+        }
 
     /**
      * Notable [infiniteComputationTheory] request goals and respective expected [Solution]s
@@ -335,7 +359,7 @@ object TestingClauseTheories {
     val infiniteComputationTheoryNotableGoalToSolution by lazy {
         logicProgramming {
             ktListOf(
-                atomOf("a").hasSolutions({ halt(timeOutException) })
+                atomOf("a").hasSolutions({ halt(timeOutException) }),
             )
         }
     }
@@ -358,7 +382,7 @@ object TestingClauseTheories {
                 {
                     "my_rev"(consOf("X", "Xs"), "L2", "Acc") `if`
                         "my_rev"("Xs", "L2", consOf("X", "Acc"))
-                }
+                },
             )
         }
     }
@@ -373,8 +397,8 @@ object TestingClauseTheories {
         logicProgramming {
             ktListOf(
                 "my_reverse"(listOf(1, 2, 3, 4), "L").hasSolutions(
-                    { yes("L" to listOf(4, 3, 2, 1)) }
-                )
+                    { yes("L" to listOf(4, 3, 2, 1)) },
+                ),
             )
         }
     }
@@ -399,8 +423,8 @@ object TestingClauseTheories {
                         "<"("M", "N") and
                             ("M1" `is` (varOf("M") + 1)) and
                             "range"("M1", "N", "Ns")
-                        )
-                }
+                    )
+                },
             )
         }
     }
@@ -417,6 +441,7 @@ object TestingClauseTheories {
      * ?- range(2, A, [2, 3, 4]).
      * ```
      */
+    @Suppress("LocalVariableName", "ktlint:standard:property-naming")
     val customRangeListGeneratorTheoryNotableGoalToSolution by lazy {
         val N = customRangeListGeneratorTheory.last().head!![1] as Var
         logicProgramming {
@@ -428,8 +453,8 @@ object TestingClauseTheories {
                 "range"(2, 1, "L").hasSolutions({ no() }),
                 "range"("A", 4, listOf(2, 3, 4)).hasSolutions({ yes("A" to 2) }),
                 "range"(2, "A", listOf(2, 3, 4)).hasSolutions(
-                    { halt(instantiationError("<", 2, N, 1)) }
-                )
+                    { halt(instantiationError("<", 2, N, 1)) },
+                ),
             )
         }
     }
@@ -457,7 +482,7 @@ object TestingClauseTheories {
                 call("true" and "true").hasSolutions({ yes() }),
                 call(cut).hasSolutions({ yes() }),
                 call("X").hasSolutions({ halt(instantiationError(errorSignature, varOf("X"))) }),
-                call("true" and 1).hasSolutions({ halt(typeError(errorSignature, ("true" and 1))) })
+                call("true" and 1).hasSolutions({ halt(typeError(errorSignature, ("true" and 1))) }),
             )
         }
 
@@ -480,10 +505,10 @@ object TestingClauseTheories {
                 catch(catch(`throw`("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
                     .hasSolutions({ yes("E" to "deepBall") }),
                 catch(`throw`("first"), "X", `throw`("second")).hasSolutions(
-                    { halt(systemError(atomOf("second"))) }
+                    { halt(systemError(atomOf("second"))) },
                 ),
                 catch(`throw`("hello"), "X", true).hasSolutions({ yes("X" to "hello") }),
-                catch(`throw`("hello") and false, "X", true).hasSolutions({ yes("X" to "hello") })
+                catch(`throw`("hello") and false, "X", true).hasSolutions({ yes("X" to "hello") }),
             )
         }
     }
@@ -504,8 +529,8 @@ object TestingClauseTheories {
                 halt.hasSolutions({ halt(haltException) }),
                 catch(halt, `_`, true).hasSolutions({ halt(haltException) }),
                 catch(catch(`throw`("something"), `_`, halt), `_`, true).hasSolutions(
-                    { halt(haltException) }
-                )
+                    { halt(haltException) },
+                ),
             )
         }
     }
@@ -514,7 +539,7 @@ object TestingClauseTheories {
     fun allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
         callErrorSignature: Signature,
         nafErrorSignature: Signature,
-        notErrorSignature: Signature
+        notErrorSignature: Signature,
     ) = mapOf(
         simpleFactTheory to simpleFactTheoryNotableGoalToSolutions,
         simpleCutTheory to simpleCutTheoryNotableGoalToSolutions,
@@ -523,10 +548,11 @@ object TestingClauseTheories {
         customReverseListTheory to customReverseListTheoryNotableGoalToSolution,
         Theory.empty() to callTestingGoalsToSolutions(callErrorSignature),
         Theory.empty() to catchTestingGoalsToSolutions,
-        Theory.empty() to haltTestingGoalsToSolutions
-    ) + allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions(
-        callErrorSignature,
-        nafErrorSignature,
-        notErrorSignature
-    )
+        Theory.empty() to haltTestingGoalsToSolutions,
+    ) +
+        allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions(
+            callErrorSignature,
+            nafErrorSignature,
+            notErrorSignature,
+        )
 }

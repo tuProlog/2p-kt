@@ -31,7 +31,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal object CallUtils {
-
     private val aContext = DummyInstances.executionContext
 
     /**
@@ -59,12 +58,12 @@ internal object CallUtils {
                 }.toTypedArray(),
                 *simpleFactTheoryNotableGoalToSolutions.map { (goal, solutionList) ->
                     Call.functor(goal and "!").run { to(solutionList.subList(0, 1).changeQueriesTo(this)) }
-                }.toTypedArray()
+                }.toTypedArray(),
             ).mapKeys { (query, _) ->
                 createSolveRequest(
                     query,
                     database = simpleFactTheory,
-                    primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
+                    primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray()),
                 )
             }
         }
@@ -89,17 +88,18 @@ internal object CallUtils {
                         TypeError(
                             context = aContext,
                             expectedType = TypeError.Expected.CALLABLE,
-                            culprit = true and 1
-                        )
+                            culprit = true and 1,
+                        ),
                     )
-                })
+                }),
             ).mapKeys { (query, _) ->
                 createSolveRequest(
                     query,
-                    primitives = mapOf(
-                        *ktListOf(Call, Cut, Throw, Conjunction)
-                            .map { it.descriptionPair }.toTypedArray()
-                    )
+                    primitives =
+                        mapOf(
+                            *ktListOf(Call, Cut, Throw, Conjunction)
+                                .map { it.descriptionPair }.toTypedArray(),
+                        ),
                 )
             }
         }
@@ -117,12 +117,12 @@ internal object CallUtils {
                     Call.functor(goal and Call.functor("!")).run {
                         to(solutionList.changeQueriesTo(this))
                     }
-                }.toTypedArray()
+                }.toTypedArray(),
             ).mapKeys { (query, _) ->
                 createSolveRequest(
                     query,
                     database = simpleFactTheory,
-                    primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
+                    primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray()),
                 )
             }
         }
@@ -136,7 +136,7 @@ internal object CallUtils {
      */
     internal fun assertErrorCauseChainComputedCorrectly(
         request: Solve.Request<StreamsExecutionContext>,
-        expectedErrorSolution: Solution.Halt
+        expectedErrorSolution: Solution.Halt,
     ) {
         val nextState = StateGoalEvaluation(request).behave().toList().single()
 

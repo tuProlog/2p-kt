@@ -21,7 +21,6 @@ import kotlin.collections.listOf as ktListOf
  * @author Enrico
  */
 internal object CatchUtils {
-
     /**
      * Catch primitive examples, with expected responses
      *
@@ -40,21 +39,19 @@ internal object CatchUtils {
             *catchTestingGoalsToSolutions.map { (goal, solutionList) ->
                 createSolveRequest(
                     goal,
-                    primitives = mapOf(*ktListOf(Call, Catch, Conjunction, Throw).map { it.descriptionPair }.toTypedArray())
+                    primitives = sequenceOf(Call, Catch, Conjunction, Throw).associate { it.descriptionPair },
                 ) to solutionList
             }.toTypedArray(),
-
             *CallUtils.requestSolutionMap.flatMap { (callRequest, solutions) ->
                 ktListOf(
                     logicProgramming { Catch.functor(callRequest.query, `_`, false) },
-                    logicProgramming { Catch.functor(callRequest.arguments.single(), `_`, false) }
+                    logicProgramming { Catch.functor(callRequest.arguments.single(), `_`, false) },
                 ).map {
                     with(callRequest.context.libraries) {
                         createSolveRequest(it, clauses, primitives + Catch.descriptionPair)
                     } to solutions.changeQueriesTo(it)
                 }
             }.toTypedArray(),
-
             *CallUtils.requestToErrorSolutionMap.map { (callRequest, solutions) ->
                 val updatedPrimitives = callRequest.context.libraries.primitives + Catch.descriptionPair
                 logicProgramming {
@@ -65,7 +62,7 @@ internal object CatchUtils {
                             }
                     }
                 }
-            }.toTypedArray()
+            }.toTypedArray(),
         )
     }
 
@@ -86,10 +83,11 @@ internal object CatchUtils {
             .map { (goal, solutionList) ->
                 createSolveRequest(
                     goal,
-                    primitives = mapOf(
-                        *ktListOf(Call, Catch, Conjunction, Throw).map { it.descriptionPair }.toTypedArray()
-                    ),
-                    database = catchAndThrowTheoryExample
+                    primitives =
+                        mapOf(
+                            *ktListOf(Call, Catch, Conjunction, Throw).map { it.descriptionPair }.toTypedArray(),
+                        ),
+                    database = catchAndThrowTheoryExample,
                 ) to solutionList
             }
     }

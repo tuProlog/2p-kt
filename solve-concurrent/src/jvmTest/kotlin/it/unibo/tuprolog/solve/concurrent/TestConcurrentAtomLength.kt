@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
 interface TestConcurrentAtomLength<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
-
     fun testAtomLengthNoVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -41,17 +40,18 @@ interface TestConcurrentAtomLength<T : WithAssertingEquals> : FromSequence<T>, S
 
             val query = char_code("X", "a")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(
-                query.halt(
-                    TypeError.forArgument(
-                        DummyInstances.executionContext,
-                        Signature("char_code", 2),
-                        TypeError.Expected.INTEGER,
-                        atomOf("a"),
-                        index = 1
-                    )
+            val expected =
+                fromSequence(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("char_code", 2),
+                            TypeError.Expected.INTEGER,
+                            atomOf("a"),
+                            index = 1,
+                        ),
+                    ),
                 )
-            )
 
             expected.assertingEquals(solutions)
         }

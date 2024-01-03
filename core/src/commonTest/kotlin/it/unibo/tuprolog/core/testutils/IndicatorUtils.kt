@@ -14,7 +14,6 @@ import it.unibo.tuprolog.core.Var
  * @author Enrico
  */
 internal object IndicatorUtils {
-
     /** Contains well-formed [Indicator]s in raw format */
     internal val rawWellFormedIndicators by lazy {
         listOf(
@@ -26,7 +25,7 @@ internal object IndicatorUtils {
             "true" to 0,
             "fail" to 0,
             "[]" to 0,
-            "{}" to 0
+            "{}" to 0,
         )
     }
 
@@ -39,7 +38,7 @@ internal object IndicatorUtils {
     internal val nonWellFormedNameIndicator by lazy {
         listOf(
             Var.anonymous() to Integer.of(2),
-            Struct.of(".", Truth.TRUE) to Integer.of(2)
+            Struct.of(".", Truth.TRUE) to Integer.of(2),
         )
     }
 
@@ -49,7 +48,7 @@ internal object IndicatorUtils {
             Atom.of("/") to Integer.of(-2),
             Atom.of("animal") to Integer.of(-1),
             Atom.of("1") to Real.of(0.5),
-            Truth.TRUE to Var.anonymous()
+            Truth.TRUE to Var.anonymous(),
         )
     }
 

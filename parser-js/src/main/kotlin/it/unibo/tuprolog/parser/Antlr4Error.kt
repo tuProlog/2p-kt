@@ -6,10 +6,15 @@ package it.unibo.tuprolog.parser
 
 abstract external class ErrorStrategy {
     fun reset(recognizer: dynamic)
+
     fun recoverInline(recognizer: dynamic)
+
     fun recover(recognizer: dynamic)
+
     fun sync(recognizer: dynamic)
+
     fun inErrorRecoveryMode(recognizer: dynamic)
+
     fun reportError(recognizer: dynamic)
 }
 
@@ -29,7 +34,7 @@ abstract external class ErrorListener {
         line: Int,
         column: Int,
         msg: String,
-        e: dynamic
+        e: dynamic,
     )
 }
 
@@ -40,7 +45,7 @@ open external class ConsoleErrorListener : ErrorListener {
         line: Int,
         column: Int,
         msg: String,
-        e: dynamic
+        e: dynamic,
     )
 }
 
@@ -56,7 +61,7 @@ external class DiagnosticErrorListener : ErrorListener {
         line: Int,
         column: Int,
         msg: String,
-        e: dynamic
+        e: dynamic,
     )
 }
 

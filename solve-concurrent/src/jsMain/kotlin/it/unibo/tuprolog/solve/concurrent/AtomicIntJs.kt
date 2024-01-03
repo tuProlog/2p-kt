@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
 class AtomicIntJs(override var value: Int) : AtomicInt {
-
     override fun plusAssign(delta: Int) {
         value += delta
     }

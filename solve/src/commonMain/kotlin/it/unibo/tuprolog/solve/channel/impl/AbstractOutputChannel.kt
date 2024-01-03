@@ -5,11 +5,12 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.utils.synchronizedOnSelf
 
 abstract class AbstractOutputChannel<T : Any> : AbstractChannel<T>(), OutputChannel<T> {
-    final override fun write(value: T) = synchronizedOnSelf {
-        if (isClosed) throw IllegalStateException("Output channel is closed")
-        writeActually(value)
-        notify(value)
-    }
+    final override fun write(value: T) =
+        synchronizedOnSelf {
+            if (isClosed) throw IllegalStateException("Output channel is closed")
+            writeActually(value)
+            notify(value)
+        }
 
     protected abstract fun writeActually(value: T)
 
@@ -17,10 +18,11 @@ abstract class AbstractOutputChannel<T : Any> : AbstractChannel<T>(), OutputChan
 
     override val streamTerm: Struct by lazy { OutputChannel.streamTerm(id) }
 
-    final override fun flush() = synchronizedOnSelf {
-        if (isClosed) throw IllegalStateException("Output channel is closed")
-        flushActually()
-    }
+    final override fun flush() =
+        synchronizedOnSelf {
+            if (isClosed) throw IllegalStateException("Output channel is closed")
+            flushActually()
+        }
 
     protected abstract fun flushActually()
 }

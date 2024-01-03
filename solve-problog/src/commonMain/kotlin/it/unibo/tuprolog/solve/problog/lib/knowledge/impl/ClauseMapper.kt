@@ -9,7 +9,6 @@ import it.unibo.tuprolog.core.Clause
  * @author Jason Dellaluce
  */
 internal interface ClauseMapper {
-
     /** Returns true if this mapping can be applied to [clause]. */
     fun isCompatible(clause: Clause): Boolean
 

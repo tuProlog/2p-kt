@@ -6,7 +6,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNotSame
 import kotlin.test.fail
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "ConstPropertyName", "ktlint:standard:property-naming")
 class TestStaticFactoryImpl(private val expectations: Expectations) : TestStaticFactory {
     companion object {
         private const val classicSolverClass = "it.unibo.tuprolog.solve.classic.ClassicSolver"
@@ -52,7 +52,10 @@ class TestStaticFactoryImpl(private val expectations: Expectations) : TestStatic
         }
     }
 
-    fun testStaticSolverFactoryShouldWork(`class`: String, factory: () -> SolverFactory) {
+    fun testStaticSolverFactoryShouldWork(
+        `class`: String,
+        factory: () -> SolverFactory,
+    ) {
         assertNotNull(factory())
         val solver = factory().solverOf()
         assertNotNull(solver)
@@ -64,7 +67,10 @@ class TestStaticFactoryImpl(private val expectations: Expectations) : TestStatic
         assertClassNameIs(solver2::class, `class`)
     }
 
-    private fun testStaticFactoryShouldFail(name: String, factory: () -> SolverFactory) {
+    private fun testStaticFactoryShouldFail(
+        name: String,
+        factory: () -> SolverFactory,
+    ) {
         try {
             // this may either fail or not on JS, depending on how the tests are launched
             // while it should always fail on JVM
@@ -77,7 +83,7 @@ class TestStaticFactoryImpl(private val expectations: Expectations) : TestStatic
             // ... in any case, if it fails, an IllegalStateException should be thrown
             assertEquals(
                 true,
-                e.message?.startsWith("No viable implementation for SolverFactory")
+                e.message?.startsWith("No viable implementation for SolverFactory"),
             )
         }
     }

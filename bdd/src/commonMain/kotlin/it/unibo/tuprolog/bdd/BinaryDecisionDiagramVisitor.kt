@@ -11,7 +11,6 @@ import kotlin.js.JsName
  * @author Jason Dellaluce
  */
 interface BinaryDecisionDiagramVisitor<T : Comparable<T>, E> {
-
     companion object
 
     @JsName("visitTerminal")

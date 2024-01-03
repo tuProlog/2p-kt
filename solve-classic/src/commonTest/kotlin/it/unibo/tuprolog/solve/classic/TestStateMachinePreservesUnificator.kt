@@ -23,27 +23,29 @@ class TestStateMachinePreservesUnificator {
     private class DebuggableClassicSolver(staticKb: Theory) : AbstractClassicSolver(
         unificator = CustomUnificator,
         staticKb = staticKb,
-        libraries = Runtime.of(DefaultBuiltins)
+        libraries = Runtime.of(DefaultBuiltins),
     ) {
         override fun solutionIterator(
             initialState: State,
-            onStateTransition: (State, State, Long) -> Unit
-        ): SolutionIterator = SolutionIterator.of(initialState) { src, dst, i ->
-            println(src)
-            if (dst.isEndState && dst.context.choicePoints == null) {
-                println(dst)
+            onStateTransition: (State, State, Long) -> Unit,
+        ): SolutionIterator =
+            SolutionIterator.of(initialState) { src, dst, i ->
+                println(src)
+                if (dst.isEndState && dst.context.choicePoints == null) {
+                    println(dst)
+                }
+                for (state in listOf(src, dst)) {
+                    assertSame(
+                        expected = state.context.unificator,
+                        actual = CustomUnificator,
+                        message =
+                            "Unificator is unexpectedly reset after $i steps while transitioning from\n" +
+                                "      source=$src\n" +
+                                " destination=$dst",
+                    )
+                }
+                onStateTransition(src, dst, i)
             }
-            for (state in listOf(src, dst)) {
-                assertSame(
-                    expected = state.context.unificator,
-                    actual = CustomUnificator,
-                    message = "Unificator is unexpectedly reset after $i steps while transitioning from\n" +
-                        "      source=$src\n" +
-                        " destination=$dst"
-                )
-            }
-            onStateTransition(src, dst, i)
-        }
 
         override fun copy(
             unificator: Unificator,
@@ -54,37 +56,38 @@ class TestStateMachinePreservesUnificator {
             stdIn: InputChannel<String>,
             stdOut: OutputChannel<String>,
             stdErr: OutputChannel<String>,
-            warnings: OutputChannel<Warning>
+            warnings: OutputChannel<Warning>,
         ): AbstractClassicSolver = TODO()
 
         override fun clone(): AbstractClassicSolver = TODO()
     }
 
-    private val theoryInvolvingAllStates = logicProgramming {
-        theoryOf(
-            rule {
-                "countUpTo"(X, X, Z).impliedBy(
-                    Z `is` (X + Y)
-                )
-            },
-            rule {
-                "countUpTo"(X, Y, Z).impliedBy(
-                    write(X),
-                    nl,
-                    X lowerThan Y,
-                    W `is` (X + 1),
-                    "countUpTo"(W, Y, Z)
-                )
-            },
-            rule {
-                "count"(X).impliedBy(
-                    X greaterThan 0,
-                    catch("countUpTo"(0, X, `_`), E, write(E) and nl and fail)
-                )
-            },
-            rule { "count"(X).impliedBy(write(X), nl) }
-        )
-    }
+    private val theoryInvolvingAllStates =
+        logicProgramming {
+            theoryOf(
+                rule {
+                    "countUpTo"(X, X, Z).impliedBy(
+                        Z `is` (X + Y),
+                    )
+                },
+                rule {
+                    "countUpTo"(X, Y, Z).impliedBy(
+                        write(X),
+                        nl,
+                        X lowerThan Y,
+                        W `is` (X + 1),
+                        "countUpTo"(W, Y, Z),
+                    )
+                },
+                rule {
+                    "count"(X).impliedBy(
+                        X greaterThan 0,
+                        catch("countUpTo"(0, X, `_`), E, write(E) and nl and fail),
+                    )
+                },
+                rule { "count"(X).impliedBy(write(X), nl) },
+            )
+        }
 
     @Test
     fun testUnificatorIsPreserved() {
@@ -93,7 +96,7 @@ class TestStateMachinePreservesUnificator {
         val goal = Struct.of("count", Integer.of(4))
         assertEquals(
             listOf(goal.yes()),
-            solver.solveList(goal)
+            solver.solveList(goal),
         )
     }
 }

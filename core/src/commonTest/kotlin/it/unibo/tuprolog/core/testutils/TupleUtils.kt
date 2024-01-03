@@ -13,7 +13,6 @@ import it.unibo.tuprolog.core.Var
  * @author Enrico
  */
 internal object TupleUtils {
-
     private val firstOfFirstTuple = Var.of("A")
     private val secondOfFirstTuple = Var.of("B")
     private val elementsOfFirstTuple = listOf(firstOfFirstTuple, secondOfFirstTuple)
@@ -25,8 +24,12 @@ internal object TupleUtils {
     private val firstOfSecondTuple = Atom.of("bigTuple")
     private val secondOfSecondTuple = Integer.of(4)
     private val thirdOfSecondTuple = Real.of(1.5)
+
     private fun rightOfSecondTuple(constructor: (Term, Term) -> Tuple) =
-        constructor(secondOfSecondTuple, thirdOfSecondTuple)
+        constructor(
+            secondOfSecondTuple,
+            thirdOfSecondTuple,
+        )
 
     private val elementsOfSecondTuple = listOf(firstOfSecondTuple, secondOfSecondTuple, thirdOfSecondTuple)
 
@@ -38,7 +41,7 @@ internal object TupleUtils {
     internal fun tupleInstances(constructor: (Term, Term) -> Tuple) =
         listOf(
             twoElementTuple(constructor),
-            threeElementTuple(constructor)
+            threeElementTuple(constructor),
         )
 
     /** Tuple instances left element */
@@ -50,7 +53,7 @@ internal object TupleUtils {
     internal fun tupleInstancesRights(constructor: (Term, Term) -> Tuple) =
         listOf(
             secondOfFirstTuple,
-            rightOfSecondTuple(constructor)
+            rightOfSecondTuple(constructor),
         )
 
     /** Tuples elements lists */

@@ -5,11 +5,11 @@ import it.unibo.tuprolog.theory.PrototypeTheoryTest
 import kotlin.test.Test
 
 internal class ListedTheoryTest {
-
-    private val prototype = PrototypeTheoryTest(
-        Factories::emptyListedTheory,
-        Factories::listedTheoryOf
-    )
+    private val prototype =
+        PrototypeTheoryTest(
+            Factories::emptyListedTheory,
+            Factories::listedTheoryOf,
+        )
 
     // @BeforeTest
     // fun init() {

@@ -12,14 +12,13 @@ import it.unibo.tuprolog.utils.dequeOf
 
 internal class IndexedTheory private constructor(
     queue: ClauseQueue,
-    tags: Map<String, Any>
+    tags: Map<String, Any>,
 ) : AbstractIndexedTheory(queue, tags) {
-
     /** Construct a Clause database from given clauses */
     constructor(
         unificator: Unificator,
         clauses: Iterable<Clause>,
-        tags: Map<String, Any> = emptyMap()
+        tags: Map<String, Any> = emptyMap(),
     ) : this(ClauseQueue.of(unificator, clauses), tags) {
         checkClausesCorrect(clauses)
     }
@@ -28,13 +27,13 @@ internal class IndexedTheory private constructor(
     constructor(
         unificator: Unificator,
         clauses: Sequence<Clause>,
-        tags: Map<String, Any> = emptyMap()
+        tags: Map<String, Any> = emptyMap(),
     ) : this(unificator, clauses.asIterable(), tags)
 
     override fun createNewTheory(
         clauses: Sequence<Clause>,
         tags: Map<String, Any>,
-        unificator: Unificator
+        unificator: Unificator,
     ) = IndexedTheory(unificator, clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<IndexedTheory> {
@@ -42,10 +41,11 @@ internal class IndexedTheory private constructor(
         val retracted = newTheory.retrieveFirst(clause)
         return when {
             retracted.isFailure -> RetractResult.Failure(this)
-            else -> RetractResult.Success(
-                IndexedTheory(retracted.collection, tags),
-                retracted.clauses!!
-            )
+            else ->
+                RetractResult.Success(
+                    IndexedTheory(retracted.collection, tags),
+                    retracted.clauses!!,
+                )
         }
     }
 
@@ -72,7 +72,7 @@ internal class IndexedTheory private constructor(
         } else {
             RetractResult.Success(
                 IndexedTheory(newTheory, tags),
-                removed
+                removed,
             )
         }
     }
@@ -82,16 +82,19 @@ internal class IndexedTheory private constructor(
         val retracted = newTheory.retrieveAll(clause)
         return when {
             retracted.isFailure -> RetractResult.Failure(this)
-            else -> RetractResult.Success(
-                IndexedTheory(retracted.collection, tags),
-                retracted.clauses!!
-            )
+            else ->
+                RetractResult.Success(
+                    IndexedTheory(retracted.collection, tags),
+                    retracted.clauses!!,
+                )
         }
     }
 
     private val hashCodeCache: Int by lazy { super.hashCode() }
 
-    override fun hashCode(): Int { return hashCodeCache }
+    override fun hashCode(): Int {
+        return hashCodeCache
+    }
 
     private val sizeCache: Long by lazy { super.size }
 
@@ -99,5 +102,12 @@ internal class IndexedTheory private constructor(
         get() = sizeCache
 
     override fun replaceTags(tags: Map<String, Any>): IndexedTheory =
-        if (tags === this.tags) this else IndexedTheory(queue, tags)
+        if (tags === this.tags) {
+            this
+        } else {
+            IndexedTheory(
+                queue,
+                tags,
+            )
+        }
 }

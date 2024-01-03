@@ -12,9 +12,8 @@ import kotlin.jvm.JvmStatic
 
 /** Abstract base class for Rete Tree nodes */
 internal abstract class AbstractReteNode<K, E : Clause>(
-    override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf()
+    override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf(),
 ) : ReteNode<K, E> {
-
     override val isFunctorNode: Boolean
         get() = false
 
@@ -74,13 +73,20 @@ internal abstract class AbstractReteNode<K, E : Clause>(
     /** Description for current Rete Tree Node */
     protected abstract val header: String
 
-    override fun remove(element: E, limit: Int): Sequence<E> = when (limit) {
-        0 -> emptySequence()
-        else -> removeWithLimit(element, limit)
-    }
+    override fun remove(
+        element: E,
+        limit: Int,
+    ): Sequence<E> =
+        when (limit) {
+            0 -> emptySequence()
+            else -> removeWithLimit(element, limit)
+        }
 
     /** Called when a non-zero-limit removal is required inside a node */
-    protected abstract fun removeWithLimit(element: E, limit: Int): Sequence<E>
+    protected abstract fun removeWithLimit(
+        element: E,
+        limit: Int,
+    ): Sequence<E>
 
     override fun removeAll(element: E): Sequence<E> = remove(element, Int.MAX_VALUE)
 
@@ -101,13 +107,11 @@ internal abstract class AbstractReteNode<K, E : Clause>(
     }
 
     companion object {
-
         /** Utility function to deeply copy a MutableMap */
         @JvmStatic
         protected inline fun <K, V> MutableMap<K, V>.deepCopy(
             deepCopyKey: (K) -> K,
-            deepCopyValue: (V) -> V
-        ): MutableMap<K, V> =
-            entries.map { deepCopyKey(it.key) to deepCopyValue(it.value) }.toMap(mutableMapOf())
+            deepCopyValue: (V) -> V,
+        ): MutableMap<K, V> = entries.map { deepCopyKey(it.key) to deepCopyValue(it.value) }.toMap(mutableMapOf())
     }
 }

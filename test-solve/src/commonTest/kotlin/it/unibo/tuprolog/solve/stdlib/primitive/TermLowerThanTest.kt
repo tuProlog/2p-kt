@@ -9,7 +9,6 @@ import kotlin.test.Test
  *
  */
 internal class TermLowerThanTest {
-
     @Test
     fun computesCorrectResult() {
         lowerQueryToResult.forEach { (input, result) ->

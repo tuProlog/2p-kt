@@ -21,13 +21,13 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.toSolveOption
  * @author Jason Dellaluce
  */
 internal object ProbQuery : QuaternaryRelation.WithoutSideEffects<ExecutionContext>(
-    "${PREDICATE_PREFIX}_query"
+    "${PREDICATE_PREFIX}_query",
 ) {
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
         third: Term,
-        fourth: Term
+        fourth: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
@@ -36,13 +36,14 @@ internal object ProbQuery : QuaternaryRelation.WithoutSideEffects<ExecutionConte
 
         val queryWithEvidenceExplanation = Var.of("QueryWithEvidenceExplanation")
         val evidenceExplanation = Var.of("EvidenceExplanation")
-        val solutions = subSolver().solve(
-            Tuple.of(
-                Struct.of(ProbSetConfig.functor, third),
-                Struct.of(ProbSolveWithEvidence.functor, queryWithEvidenceExplanation, evidenceExplanation, second)
-            ),
-            third.toSolveOptions()
-        )
+        val solutions =
+            subSolver().solve(
+                Tuple.of(
+                    Struct.of(ProbSetConfig.functor, third),
+                    Struct.of(ProbSolveWithEvidence.functor, queryWithEvidenceExplanation, evidenceExplanation, second),
+                ),
+                third.toSolveOptions(),
+            )
 
         return sequence {
             for (solution in solutions) {
@@ -63,17 +64,18 @@ internal object ProbQuery : QuaternaryRelation.WithoutSideEffects<ExecutionConte
                     if (queryWithEvidenceProbability == null || evidenceProbability == null) {
                         yield(Substitution.failed())
                     } else {
-                        val solutionSubstitution = solution.substitution.filter {
-                                v, _ ->
-                            v != evidenceExplanation && v != queryWithEvidenceExplanation
-                        }
+                        val solutionSubstitution =
+                            solution.substitution.filter {
+                                    v, _ ->
+                                v != evidenceExplanation && v != queryWithEvidenceExplanation
+                            }
                         val probabilityTerm = Numeric.of(queryWithEvidenceProbability / evidenceProbability)
                         yield(
                             Substitution.of(
                                 solutionSubstitution,
                                 mgu(first, probabilityTerm),
-                                mgu(fourth, queryWithEvidenceExplanationTerm)
-                            )
+                                mgu(fourth, queryWithEvidenceExplanationTerm),
+                            ),
                         )
                     }
                 }

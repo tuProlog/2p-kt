@@ -26,7 +26,7 @@ object ConcurrentSolverFactory : SolverFactory {
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
-        outputs: OutputStore
+        outputs: OutputStore,
     ): Solver = ConcurrentSolverImpl(unificator, libraries, flags, staticKb, dynamicKb, inputs, outputs)
 
     override fun solverOf(
@@ -38,7 +38,7 @@ object ConcurrentSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ): Solver = ConcurrentSolverImpl(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
@@ -50,8 +50,9 @@ object ConcurrentSolverFactory : SolverFactory {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
-    ): MutableSolver = MutableConcurrentSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+        warnings: OutputChannel<Warning>,
+    ): MutableSolver =
+        MutableConcurrentSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
         unificator: Unificator,
@@ -60,6 +61,6 @@ object ConcurrentSolverFactory : SolverFactory {
         staticKb: Theory,
         dynamicKb: Theory,
         inputs: InputStore,
-        outputs: OutputStore
+        outputs: OutputStore,
     ): MutableSolver = MutableConcurrentSolver(unificator, libraries, flags, staticKb, dynamicKb, inputs, outputs)
 }

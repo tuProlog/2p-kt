@@ -13,7 +13,6 @@ import kotlin.test.assertNotEquals
  * @author Enrico
  */
 internal class LibraryAliasedTest {
-
     private val libraryAliasedInstances = LibraryUtils.allLibraries.map { makeLib(it, ::libraryWithAliasConstructor) }
 
     @Test
@@ -29,7 +28,7 @@ internal class LibraryAliasedTest {
         LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
             assertNotEquals(
                 libraryWithAliasConstructor(opSet, theory, primitives, functions, alias),
-                libraryWithAliasConstructor(opSet, theory, primitives, functions, alias + "x")
+                libraryWithAliasConstructor(opSet, theory, primitives, functions, alias + "x"),
             )
         }
     }

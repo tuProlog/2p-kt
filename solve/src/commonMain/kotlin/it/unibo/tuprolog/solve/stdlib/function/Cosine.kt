@@ -14,14 +14,16 @@ import kotlin.math.cos
  * @author Enrico
  */
 object Cosine : UnaryMathFunction("cos") {
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(integer.decimalValue)
 
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-        commonBehaviour(integer.decimalValue)
-
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        commonBehaviour(real.value)
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = commonBehaviour(real.value)
 
     /** Implements the common behaviour for real and integer */
-    private fun commonBehaviour(decimal: BigDecimal) =
-        Numeric.of(cos(decimal.toDouble()))
+    private fun commonBehaviour(decimal: BigDecimal) = Numeric.of(cos(decimal.toDouble()))
 }

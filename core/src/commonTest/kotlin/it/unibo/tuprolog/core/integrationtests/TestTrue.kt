@@ -11,16 +11,16 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class TestTrue {
-
     private val correctAtom = "true"
     private val notCorrectAtom = "true "
 
-    private val heterogeneousCreatedInstances = listOf(
-        Truth.TRUE,
-        Truth.of(true),
-        Atom.of(correctAtom),
-        Struct.of(correctAtom)
-    )
+    private val heterogeneousCreatedInstances =
+        listOf(
+            Truth.TRUE,
+            Truth.of(true),
+            Atom.of(correctAtom),
+            Struct.of(correctAtom),
+        )
 
     @Test
     fun variousCreationMethodsCreateCorrectlyTrue() {

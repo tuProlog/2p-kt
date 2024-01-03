@@ -12,7 +12,6 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class ConsTest {
-
     @Test
     fun consOfWorksAsExpected() {
         val correctInstances = ConsUtils.mixedConsInstances(::ConsImpl)

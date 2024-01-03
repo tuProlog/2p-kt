@@ -7,5 +7,6 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod
 
 class TestMethodInvocationImpl(solverFactory: SolverFactory) : TestInvocationImpl(solverFactory), TestMethodInvocation {
     override fun caseToResult(case: TestDatum): Term = Atom.of(case.type.name)
+
     override val invoke: String get() = InvokeMethod.functor
 }

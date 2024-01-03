@@ -12,10 +12,16 @@ import it.unibo.tuprolog.solve.function.UnaryMathFunction
  * @author Enrico
  */
 object AbsoluteValue : UnaryMathFunction("abs") {
+    override fun mathFunction(
+        integer: Integer,
+        context: ExecutionContext,
+    ): Numeric =
+        Numeric.of(
+            integer.value.absoluteValue,
+        ) // TODO: 24/10/2019 missing Prolog Standard "int_overflow" check (see the standard)
 
-    override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-        Numeric.of(integer.value.absoluteValue) // TODO: 24/10/2019 missing Prolog Standard "int_overflow" check (see the standard)
-
-    override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-        Numeric.of(real.value.absoluteValue)
+    override fun mathFunction(
+        real: Real,
+        context: ExecutionContext,
+    ): Numeric = Numeric.of(real.value.absoluteValue)
 }

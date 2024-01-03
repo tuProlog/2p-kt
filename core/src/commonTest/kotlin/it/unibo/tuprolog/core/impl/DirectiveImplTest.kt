@@ -19,7 +19,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class DirectiveImplTest {
-
     private val groundDirectivesInstances = DirectiveUtils.groundDirectives.map(::DirectiveImpl)
     private val nonGroundDirectivesInstances = DirectiveUtils.nonGroundDirectives.map(::DirectiveImpl)
     private val wellFormedDirectivesInstances = DirectiveUtils.wellFormedDirectives.map(::DirectiveImpl)
@@ -36,7 +35,7 @@ internal class DirectiveImplTest {
         onCorrespondingItems(
             DirectiveUtils.mixedDirectives,
             mixedDirectivesInstances.map { it.body },
-            ::assertEqualities
+            ::assertEqualities,
         )
     }
 

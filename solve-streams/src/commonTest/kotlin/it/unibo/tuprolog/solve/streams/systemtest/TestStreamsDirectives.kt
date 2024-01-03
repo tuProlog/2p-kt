@@ -8,7 +8,6 @@ import kotlin.test.Test
 
 @Ignore
 class TestStreamsDirectives : TestDirectives, SolverFactory by StreamsSolverFactory {
-
     private val prototype = TestDirectives.prototype(this)
 
     @Test

@@ -3,7 +3,6 @@ package it.unibo.tuprolog.core
 import kotlin.js.JsName
 
 interface Constant : Term {
-
     override val isConstant: Boolean get() = true
 
     @JsName("value")

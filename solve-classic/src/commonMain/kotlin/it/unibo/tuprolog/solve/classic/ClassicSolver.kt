@@ -13,7 +13,6 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
 internal open class ClassicSolver : AbstractClassicSolver {
-
     constructor(
         unificator: Unificator = Unificator.default,
         libraries: Runtime = Runtime.empty(),
@@ -22,7 +21,7 @@ internal open class ClassicSolver : AbstractClassicSolver {
         initialDynamicKb: Theory = MutableTheory.empty(unificator),
         inputChannels: InputStore = InputStore.fromStandard(),
         outputChannels: OutputStore = OutputStore.fromStandard(),
-        trustKb: Boolean = false
+        trustKb: Boolean = false,
     ) : super(unificator, libraries, flags, initialStaticKb, initialDynamicKb, inputChannels, outputChannels, trustKb)
 
     constructor(
@@ -35,12 +34,12 @@ internal open class ClassicSolver : AbstractClassicSolver {
         stdOut: OutputChannel<String> = OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = OutputChannel.stdErr(),
         warnings: OutputChannel<Warning> = OutputChannel.warn(),
-        trustKb: Boolean = false
+        trustKb: Boolean = false,
     ) : super(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
 
     override fun solutionIterator(
         initialState: State,
-        onStateTransition: (State, State, Long) -> Unit
+        onStateTransition: (State, State, Long) -> Unit,
     ) = SolutionIterator.of(initialState, onStateTransition)
 
     override fun copy(
@@ -52,7 +51,7 @@ internal open class ClassicSolver : AbstractClassicSolver {
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
-        warnings: OutputChannel<Warning>
+        warnings: OutputChannel<Warning>,
     ) = ClassicSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun clone(): ClassicSolver = copy()

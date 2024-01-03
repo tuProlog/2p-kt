@@ -15,7 +15,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class HaltExceptionTest {
-
     private val exception = HaltException(anExitStatus, aMessage, aCause, aContext)
 
     @Test

@@ -6,9 +6,8 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestFindAllImpl(
     private val solverFactory: SolverFactory,
-    override val errorSignature: Signature
+    override val errorSignature: Signature,
 ) : TestFindAll {
-
     override fun testFindXInDiffValues() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -18,7 +17,7 @@ internal class TestFindAllImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes("S" to listOf(1, 2))),
-                solutions
+                solutions,
             )
         }
     }
@@ -32,7 +31,7 @@ internal class TestFindAllImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes("S" to listOf(1 + "Y"))),
-                solutions
+                solutions,
             )
         }
     }
@@ -46,7 +45,7 @@ internal class TestFindAllImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes("L" to emptyList)),
-                solutions
+                solutions,
             )
         }
     }
@@ -60,7 +59,7 @@ internal class TestFindAllImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes("S" to listOf(1, 1))),
-                solutions
+                solutions,
             )
         }
     }
@@ -74,7 +73,7 @@ internal class TestFindAllImpl(
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -88,7 +87,7 @@ internal class TestFindAllImpl(
 
             assertSolutionEquals(
                 ktListOf(query.yes("X" to 1, "Y" to 2)),
-                solutions
+                solutions,
             )
         }
     }
@@ -107,11 +106,11 @@ internal class TestFindAllImpl(
                             DummyInstances.executionContext,
                             Signature("findall", 3),
                             varOf("Goal"),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -131,11 +130,11 @@ internal class TestFindAllImpl(
                             Signature("findall", 3),
                             TypeError.Expected.CALLABLE,
                             numOf(4),
-                            index = 1
-                        )
-                    )
+                            index = 1,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -154,11 +153,11 @@ internal class TestFindAllImpl(
                             DummyInstances.executionContext,
                             errorSignature,
                             TypeError.Expected.CALLABLE,
-                            numOf(1)
-                        )
-                    )
+                            numOf(1),
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

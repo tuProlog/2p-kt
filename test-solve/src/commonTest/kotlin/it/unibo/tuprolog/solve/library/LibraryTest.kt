@@ -14,15 +14,15 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class LibraryTest {
-
     private val correctInstances = LibraryUtils.allLibraries.map { makeLib(it, ::libraryWithoutAliasConstructor) }
     private val correctInstancesWithAlias = LibraryUtils.allLibraries.map { makeLib(it, ::libraryWithAliasConstructor) }
 
     @Test
     fun ofCreatesCorrectInstance() {
-        val toBeTested = LibraryUtils.allLibraries.map { (_, opSet, theory, primitives, functions) ->
-            Library.of(primitives, theory, opSet, functions)
-        }
+        val toBeTested =
+            LibraryUtils.allLibraries.map { (_, opSet, theory, primitives, functions) ->
+                Library.of(primitives, theory, opSet, functions)
+            }
 
         assertEquals(correctInstances, toBeTested)
     }
@@ -38,18 +38,20 @@ internal class LibraryTest {
 
     @Test
     fun ofWithAliasCreatesCorrectInstance() {
-        val toBeTested = LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
-            Library.of(alias, primitives, theory, opSet, functions)
-        }
+        val toBeTested =
+            LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
+                Library.of(alias, primitives, theory, opSet, functions)
+            }
 
         assertEquals(correctInstancesWithAlias, toBeTested)
     }
 
     @Test
     fun ofLibraryAndAliasCreatesCorrectInstance() {
-        val toBeTested = LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
-            Library.of(alias, libraryWithoutAliasConstructor(opSet, theory, primitives, functions))
-        }
+        val toBeTested =
+            LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
+                Library.of(alias, libraryWithoutAliasConstructor(opSet, theory, primitives, functions))
+            }
 
         assertEquals(correctInstancesWithAlias, toBeTested)
     }

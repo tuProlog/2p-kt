@@ -14,9 +14,8 @@ import kotlin.test.assertFailsWith
  */
 internal class PrototypeRetractResultTest(
     private val emptyTheoryGenerator: () -> Theory,
-    private val theoryGenerator: (Iterable<Clause>) -> Theory
+    private val theoryGenerator: (Iterable<Clause>) -> Theory,
 ) {
-
     private val clause1 = Clause.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous()))
     private val clause2 = Clause.of(Struct.of("p", Atom.of("john")))
 

@@ -9,7 +9,6 @@ import kotlin.test.Test
 /* NOTE: Many of these tests are ignored because they heavily rely on the representation of static and dynamic
 Knowledge Base, which is altered in this implementation due to internal mappings. */
 class TestProblogDirectives : TestDirectives, SolverFactory by ProblogSolverFactory {
-
     private val prototype = TestDirectives.prototype(this)
 
     @Ignore

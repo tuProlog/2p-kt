@@ -4,11 +4,11 @@ import it.unibo.tuprolog.collections.PrototypeClauseMultiSetTest
 import kotlin.test.Test
 
 internal class ReteClauseMultiSetTest : PrototypeClauseMultiSetTest {
-
-    private val prototype = PrototypeClauseMultiSetTest.prototype(
-        Factories::emptyClauseMultiset,
-        Factories::mutableClauseMultisetOf
-    )
+    private val prototype =
+        PrototypeClauseMultiSetTest.prototype(
+            Factories::emptyClauseMultiset,
+            Factories::mutableClauseMultisetOf,
+        )
 
     @Test
     override fun collectionHasTheCorrectSize() {

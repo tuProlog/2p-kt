@@ -18,12 +18,17 @@ import kotlin.js.JsName
 import it.unibo.tuprolog.core.List as LogicList
 
 interface LogicProgrammingScope : PrologStdLibScope, VariablesProvider {
-
     @JsName("stringInvoke")
-    operator fun String.invoke(term: Any, vararg terms: Any): Struct
+    operator fun String.invoke(
+        term: Any,
+        vararg terms: Any,
+    ): Struct
 
     @JsName("structOfAny")
-    fun structOf(functor: String, vararg args: Any): Struct
+    fun structOf(
+        functor: String,
+        vararg args: Any,
+    ): Struct
 
     @JsName("anyPlus")
     operator fun Any.plus(other: Any): Struct
@@ -80,6 +85,7 @@ interface LogicProgrammingScope : PrologStdLibScope, VariablesProvider {
     @JsName("anySup")
     infix fun Any.sup(other: Any): Struct
 
+    @Suppress("ktlint:standard:function-naming")
     @JsName("anyIs")
     infix fun Any.`is`(other: Any): Struct
 
@@ -89,12 +95,14 @@ interface LogicProgrammingScope : PrologStdLibScope, VariablesProvider {
     @JsName("anyImpliedBy")
     infix fun Any.impliedBy(other: Any): Rule
 
+    @Suppress("ktlint:standard:function-naming")
     @JsName("anyIf")
     infix fun Any.`if`(other: Any): Rule
 
     @JsName("anyImpliedByVararg")
     fun Any.impliedBy(vararg other: Any): Rule
 
+    @Suppress("ktlint:standard:function-naming")
     @JsName("anyIfVararg")
     fun Any.`if`(vararg other: Any): Rule
 
@@ -111,16 +119,25 @@ interface LogicProgrammingScope : PrologStdLibScope, VariablesProvider {
     fun factOf(term: Any): Fact
 
     @JsName("consOfAny")
-    fun consOf(head: Any, tail: Any): Cons
+    fun consOf(
+        head: Any,
+        tail: Any,
+    ): Cons
 
     @JsName("directiveOfAny")
-    fun directiveOf(term: Any, vararg terms: Any): Directive
+    fun directiveOf(
+        term: Any,
+        vararg terms: Any,
+    ): Directive
 
     @JsName("scope")
     fun <R> scope(function: LogicProgrammingScope.() -> R): R
 
     @JsName("list")
-    fun list(vararg items: Any, tail: Any? = null): LogicList
+    fun list(
+        vararg items: Any,
+        tail: Any? = null,
+    ): LogicList
 
     @JsName("rule")
     fun rule(function: LogicProgrammingScope.() -> Any): Rule

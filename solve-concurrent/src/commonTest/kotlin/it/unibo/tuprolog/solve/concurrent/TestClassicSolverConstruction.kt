@@ -8,11 +8,11 @@ import kotlin.test.Test
 class TestClassicSolverConstruction :
     TestSolverConstruction<ConcurrentSolver, MutableConcurrentSolver>,
     SolverFactory by ConcurrentSolverFactory {
-
-    private val prototype = TestSolverConstruction.prototype<ConcurrentSolver, MutableConcurrentSolver>(
-        this,
-        DefaultBuiltins
-    )
+    private val prototype =
+        TestSolverConstruction.prototype<ConcurrentSolver, MutableConcurrentSolver>(
+            this,
+            DefaultBuiltins,
+        )
 
     @Test
     override fun testCreatingEmptySolver() {

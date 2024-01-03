@@ -11,7 +11,9 @@ import it.unibo.tuprolog.solve.function.IntegersBinaryMathFunction
  * @author Enrico
  */
 object BitwiseOr : IntegersBinaryMathFunction("\\/") {
-
-    override fun mathFunction(integer1: Integer, integer2: Integer, context: ExecutionContext): Numeric =
-        Numeric.of(integer1.value.or(integer2.value))
+    override fun mathFunction(
+        integer1: Integer,
+        integer2: Integer,
+        context: ExecutionContext,
+    ): Numeric = Numeric.of(integer1.value.or(integer2.value))
 }

@@ -10,10 +10,11 @@ import it.unibo.tuprolog.core.Substitution
  */
 fun main() {
     Scope.empty {
-        val substitution = Substitution.of(
-            varOf("X") to atomOf("abraham"),
-            varOf("Y") to atomOf("isaac")
-        )
+        val substitution =
+            Substitution.of(
+                varOf("X") to atomOf("abraham"),
+                varOf("Y") to atomOf("isaac"),
+            )
 
         println(substitution)
     }

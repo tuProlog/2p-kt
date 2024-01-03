@@ -9,8 +9,8 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import it.unibo.tuprolog.core.Integer as LogicInteger
 
+@Suppress("TooManyFunctions")
 internal class JvmTermDeobjectifier : TermDeobjectifier {
-
     private val scope: Scope = Scope.empty()
 
     override fun deobjectify(`object`: Any): Term {
@@ -62,12 +62,10 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
     }
 
     private fun deobjectifyClause(value: Map<*, *>): Term {
-        val head = value["head"]?.let {
-            deobjectify(it) as? Struct ?: throw DeobjectificationException(value)
-        }
+        val head = value["head"]?.let { deobjectify(it) as? Struct } ?: throw DeobjectificationException(value)
         val body = value["body"]?.let { deobjectify(it) }
         return if (body == null) {
-            scope.factOf(head!!)
+            scope.factOf(head)
         } else {
             scope.clauseOf(head, body)
         }
@@ -80,7 +78,7 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
             },
-            last = last?.let { deobjectify(it) } ?: scope.emptyList
+            last = last?.let { deobjectify(it) } ?: scope.emptyList,
         )
     }
 
@@ -89,19 +87,23 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
         return scope.tupleOf(
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
-            }
+            },
         )
     }
 
-    private fun deobjectifyBlock(value: Map<*, *>, name: String = "block"): Term {
+    private fun deobjectifyBlock(
+        value: Map<*, *>,
+        name: String = "block",
+    ): Term {
         val items = value[name] as? List<*> ?: throw DeobjectificationException(value)
         return scope.blockOf(
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
-            }
+            },
         )
     }
 
+    @Suppress("ThrowsCount")
     private fun deobjectifyStructure(value: Map<*, *>): Term {
         val name = value["fun"] as? String ?: throw DeobjectificationException(value)
         val args = value["args"] as? List<*> ?: throw DeobjectificationException(value)
@@ -109,7 +111,7 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
             name,
             args.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
-            }
+            },
         )
     }
 

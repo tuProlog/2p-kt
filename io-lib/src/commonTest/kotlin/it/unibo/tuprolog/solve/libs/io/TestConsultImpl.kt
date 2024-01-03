@@ -12,14 +12,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
-
     private fun testConsultCorrectTheory(url: Url) {
         logicProgramming {
             val canaryTheory = theoryOf(factOf("canary"))
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                otherLibraries = Runtime.of(IOLib),
-                staticKb = canaryTheory
-            )
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    otherLibraries = Runtime.of(IOLib),
+                    staticKb = canaryTheory,
+                )
             assertEquals(canaryTheory, solver.staticKb)
             val query = consult(url.toString())
             val solutions = solver.solve(query).toList()
@@ -37,10 +37,11 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
     private fun testConsultWrongTheory(url: Url) {
         logicProgramming {
             val canaryTheory = theoryOf(factOf("canary"))
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                otherLibraries = Runtime.of(IOLib),
-                staticKb = canaryTheory
-            )
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    otherLibraries = Runtime.of(IOLib),
+                    staticKb = canaryTheory,
+                )
             assertEquals(canaryTheory, solver.staticKb)
             val query = consult(url.toString())
             val solutions = solver.solve(query).toList()
@@ -62,10 +63,11 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
     private fun testConsultMissingTheory(url: Url) {
         logicProgramming {
             val canaryTheory = theoryOf(factOf("canary"))
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                otherLibraries = Runtime.of(IOLib),
-                staticKb = canaryTheory
-            )
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    otherLibraries = Runtime.of(IOLib),
+                    staticKb = canaryTheory,
+                )
             assertEquals(canaryTheory, solver.staticKb)
             val query = consult(url.toString())
             val solutions = solver.solve(query).toList()
@@ -85,9 +87,10 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
     }
 
     override fun testApi() {
-        val solver = solverFactory.solverWithDefaultBuiltins(
-            otherLibraries = Runtime.of(IOLib)
-        )
+        val solver =
+            solverFactory.solverWithDefaultBuiltins(
+                otherLibraries = Runtime.of(IOLib),
+            )
         assertEquals(IOLib, solver.libraries[IOLib.alias])
         solver.assertHasPredicateInAPI(Consult)
     }

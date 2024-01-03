@@ -19,17 +19,19 @@ import it.unibo.tuprolog.core.VariablesProvider
 internal class LogicProgrammingScopeImpl(scope: Scope) :
     LogicProgrammingScope,
     VariablesProvider by VariablesProvider.of(scope) {
-
     private val anyToTermConverter = AnyToTermConverter.of(this)
 
-    override fun Any.toTerm(): Term =
-        anyToTermConverter.toTerm(this)
+    override fun Any.toTerm(): Term = anyToTermConverter.toTerm(this)
 
-    override fun String.invoke(term: Any, vararg terms: Any): Struct =
-        structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
+    override fun String.invoke(
+        term: Any,
+        vararg terms: Any,
+    ): Struct = structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
 
-    override fun structOf(functor: String, vararg args: Any): Struct =
-        structOf(functor, *args.map { it.toTerm() }.toTypedArray())
+    override fun structOf(
+        functor: String,
+        vararg args: Any,
+    ): Struct = structOf(functor, *args.map { it.toTerm() }.toTypedArray())
 
     override fun Any.plus(other: Any): Struct = structOf("+", this.toTerm(), other.toTerm())
 
@@ -46,15 +48,13 @@ internal class LogicProgrammingScopeImpl(scope: Scope) :
 
     override fun Any.greaterThan(other: Any): Struct = structOf(">", this.toTerm(), other.toTerm())
 
-    override fun Any.greaterThanOrEqualsTo(other: Any): Struct =
-        structOf(">=", this.toTerm(), other.toTerm())
+    override fun Any.greaterThanOrEqualsTo(other: Any): Struct = structOf(">=", this.toTerm(), other.toTerm())
 
     override fun Any.nonLowerThan(other: Any): Struct = this greaterThanOrEqualsTo other
 
     override fun Any.lowerThan(other: Any): Struct = structOf("<", this.toTerm(), other.toTerm())
 
-    override fun Any.lowerThanOrEqualsTo(other: Any): Struct =
-        structOf("=<", this.toTerm(), other.toTerm())
+    override fun Any.lowerThanOrEqualsTo(other: Any): Struct = structOf("=<", this.toTerm(), other.toTerm())
 
     override fun Any.nonGreaterThan(other: Any): Struct = this lowerThanOrEqualsTo other
 
@@ -84,61 +84,76 @@ internal class LogicProgrammingScopeImpl(scope: Scope) :
     override fun Any.`if`(other: Any): Rule = this impliedBy other
 
     override fun Any.impliedBy(vararg other: Any): Rule =
-        this impliedBy Tuple.wrapIfNeeded(*other.map { it.toTerm() }.toTypedArray())
+        this impliedBy
+            Tuple.wrapIfNeeded(
+                *other.map {
+                    it.toTerm()
+                }.toTypedArray(),
+            )
 
-    override fun Any.`if`(vararg other: Any): Rule =
-        this.impliedBy(*other)
+    override fun Any.`if`(vararg other: Any): Rule = this.impliedBy(*other)
 
     override fun tupleOf(vararg terms: Any): Tuple = tupleOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    override fun listOf(vararg terms: Any): List =
-        this.listOf(*terms.map { it.toTerm() }.toTypedArray())
+    override fun listOf(vararg terms: Any): List = this.listOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    override fun blockOf(vararg terms: Any): Block =
-        this.blockOf(*terms.map { it.toTerm() }.toTypedArray())
+    override fun blockOf(vararg terms: Any): Block = this.blockOf(*terms.map { it.toTerm() }.toTypedArray())
 
     override fun factOf(term: Any): Fact = factOf(term.toTerm() as Struct)
 
-    override fun consOf(head: Any, tail: Any): Cons = consOf(head.toTerm(), tail.toTerm())
+    override fun consOf(
+        head: Any,
+        tail: Any,
+    ): Cons = consOf(head.toTerm(), tail.toTerm())
 
-    override fun directiveOf(term: Any, vararg terms: Any): Directive =
-        directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
+    override fun directiveOf(
+        term: Any,
+        vararg terms: Any,
+    ): Directive = directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
 
     override fun <R> scope(function: LogicProgrammingScope.() -> R): R = LogicProgrammingScope.empty().function()
 
-    override fun list(vararg items: Any, tail: Any?): List = ktListOf(*items).map { it.toTerm() }.let {
-        if (tail != null) {
-            listFrom(it, last = tail.toTerm())
-        } else {
-            listOf(it)
+    override fun list(
+        vararg items: Any,
+        tail: Any?,
+    ): List =
+        ktListOf(*items).map { it.toTerm() }.let {
+            if (tail != null) {
+                listFrom(it, last = tail.toTerm())
+            } else {
+                listOf(it)
+            }
         }
-    }
 
-    override fun rule(function: LogicProgrammingScope.() -> Any): Rule = LogicProgrammingScope.empty().function().toTerm() as Rule
+    override fun rule(function: LogicProgrammingScope.() -> Any): Rule =
+        LogicProgrammingScope.empty().function().toTerm() as Rule
 
-    override fun clause(function: LogicProgrammingScope.() -> Any): Clause = LogicProgrammingScope.empty().function().let {
-        when (val t = it.toTerm()) {
-            is Clause -> t
-            is Struct -> return factOf(t)
-            else -> it.raiseErrorConvertingTo(Clause::class)
+    override fun clause(function: LogicProgrammingScope.() -> Any): Clause =
+        LogicProgrammingScope.empty().function().let {
+            when (val t = it.toTerm()) {
+                is Clause -> t
+                is Struct -> return factOf(t)
+                else -> it.raiseErrorConvertingTo(Clause::class)
+            }
         }
-    }
 
-    override fun directive(function: LogicProgrammingScope.() -> Any): Directive = LogicProgrammingScope.empty().function().let {
-        when (val t = it.toTerm()) {
-            is Directive -> t
-            is Struct -> return directiveOf(t)
-            else -> it.raiseErrorConvertingTo(Directive::class)
+    override fun directive(function: LogicProgrammingScope.() -> Any): Directive =
+        LogicProgrammingScope.empty().function().let {
+            when (val t = it.toTerm()) {
+                is Directive -> t
+                is Struct -> return directiveOf(t)
+                else -> it.raiseErrorConvertingTo(Directive::class)
+            }
         }
-    }
 
-    override fun fact(function: LogicProgrammingScope.() -> Any): Fact = LogicProgrammingScope.empty().function().let {
-        when (val t = it.toTerm()) {
-            is Fact -> t
-            is Struct -> return factOf(t)
-            else -> it.raiseErrorConvertingTo(Fact::class)
+    override fun fact(function: LogicProgrammingScope.() -> Any): Fact =
+        LogicProgrammingScope.empty().function().let {
+            when (val t = it.toTerm()) {
+                is Fact -> t
+                is Struct -> return factOf(t)
+                else -> it.raiseErrorConvertingTo(Fact::class)
+            }
         }
-    }
 
     override fun Var.to(termObject: Any) = Substitution.of(this, termObject.toTerm())
 
@@ -158,6 +173,5 @@ internal class LogicProgrammingScopeImpl(scope: Scope) :
 
     override fun Substitution.contains(term: Any): Boolean = containsKey(term)
 
-    override fun Substitution.containsValue(term: Any): Boolean =
-        this.containsValue(term.toTerm())
+    override fun Substitution.containsValue(term: Any): Boolean = this.containsValue(term.toTerm())
 }

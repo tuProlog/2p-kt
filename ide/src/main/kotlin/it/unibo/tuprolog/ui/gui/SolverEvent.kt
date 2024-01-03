@@ -18,7 +18,7 @@ data class SolverEvent<T>(
     override val staticKb: Theory,
     override val dynamicKb: Theory,
     override val inputChannels: InputStore,
-    override val outputChannels: OutputStore
+    override val outputChannels: OutputStore,
 ) : ExecutionContextAware {
     constructor(event: T, other: ExecutionContextAware) :
         this(
@@ -30,6 +30,6 @@ data class SolverEvent<T>(
             libraries = other.libraries,
             operators = other.operators,
             outputChannels = other.outputChannels,
-            staticKb = other.staticKb.toImmutableTheory()
+            staticKb = other.staticKb.toImmutableTheory(),
         )
 }

@@ -17,10 +17,9 @@ import it.unibo.tuprolog.parser.dynamic.Associativity.YF
 import it.unibo.tuprolog.parser.dynamic.Associativity.YFX
 import org.gciatto.kt.math.BigInteger
 
+@Suppress("TooManyFunctions")
 class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : PrologParserBaseVisitor<Term>() {
-
-    override fun visitSingletonTerm(ctx: PrologParser.SingletonTermContext): Term =
-        visitTerm(ctx.term())
+    override fun visitSingletonTerm(ctx: PrologParser.SingletonTermContext): Term = visitTerm(ctx.term())
 
     override fun visitSingletonExpression(ctx: PrologParser.SingletonExpressionContext): Term =
         visitExpression(ctx.expression())
@@ -36,9 +35,9 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
                 POSTFIX.contains(ctx.associativity) -> visitPostfixExpression(ctx)
                 PREFIX.contains(ctx.associativity) -> visitPrefixExpression(ctx)
                 ctx.exception != null -> throw ctx.exception
-                else -> throw IllegalArgumentException() // use kotlin's IllegalArgumentException
+                else -> error("Unknown expression type: $ctx")
             },
-            flatten(ctx.outers)
+            flatten(ctx.outers),
         )
     }
 
@@ -70,17 +69,16 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
         }
 
     override fun visitStructure(ctx: PrologParser.StructureContext): Term {
-        if (ctx.isList) {
-            return scope.listOf()
+        return if (ctx.isList) {
+            scope.listOf()
         } else if (ctx.isBlock) {
-            return scope.blockOf()
-        }
-        return if (ctx.arity == 0) {
+            scope.blockOf()
+        } else if (ctx.arity == 0) {
             scope.atomOf(ctx.functor.text)
         } else {
             scope.structOf(
                 ctx.functor.text,
-                ctx.args.asSequence().map(this::visitExpression)
+                ctx.args.asSequence().map(this::visitExpression),
             )
         }
     }
@@ -102,7 +100,7 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
         }
     }
 
-    @Suppress("NullableBooleanElvis", "UNNECESSARY_SAFE_CALL")
+    @Suppress("NullableBooleanElvis", "MagicNumber")
     private fun parseInteger(ctx: PrologParser.IntegerContext): BigInteger {
         val str = ctx.value.text
         val base: Int
@@ -129,7 +127,7 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
                         ctx.value.line,
                         ctx.value.charPositionInLine,
                         "Invalid character literal: " + ctx.text,
-                        null
+                        null,
                     )
                 }
                 return with(BigInteger.of(clean[0].code)) {
@@ -156,10 +154,13 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
             ctx.left.accept(this),
             ctx.operators.map {
                 it.symbol.text
-            }
+            },
         )
 
-    private fun postfix(term: Term, ops: List<String>): Term {
+    private fun postfix(
+        term: Term,
+        ops: List<String>,
+    ): Term {
         val operator = ops.iterator()
         var result: Term = scope.structOf(operator.next(), term)
         while (operator.hasNext()) {
@@ -173,10 +174,13 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
             ctx.right[0].accept(this),
             ctx.operators.map {
                 it.symbol.text
-            }
+            },
         )
 
-    private fun prefix(term: Term, ops: List<String>): Term {
+    private fun prefix(
+        term: Term,
+        ops: List<String>,
+    ): Term {
         var i = ops.size - 1
         var result: Term = scope.structOf(ops[i--], term)
         while (i >= 0) {
@@ -191,7 +195,7 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
             XFY -> visitInfixRightAssociativeExpression(ctx)
             YFX -> visitInfixLeftAssociativeExpression(ctx)
             XFX -> visitInfixNonAssociativeExpression(ctx)
-            else -> throw IllegalStateException()
+            else -> error("Expected infix associativity, got ${ctx.associativity} instead")
         }
     }
 
@@ -201,27 +205,37 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
         return infixNonAssociative(operands, operators)
     }
 
-    private fun infixNonAssociative(terms: List<Term>, ops: List<String>): Term {
+    private fun infixNonAssociative(
+        terms: List<Term>,
+        ops: List<String>,
+    ): Term {
         return scope.structOf(ops[0], terms[0], terms[1])
     }
 
-    private fun handleOuters(expression: Term, outers: List<PrologParser.OuterContext>): Term {
+    private fun handleOuters(
+        expression: Term,
+        outers: List<PrologParser.OuterContext>,
+    ): Term {
         var result = expression
         for (o in outers) {
             val operands = listOf(result) + o.right.map { it.accept(this) }
             val operators = o.operators.map { it.symbol.text }
-            result = when (o.associativity!!) {
-                XFY -> infixRight(operands, operators)
-                XF, YF -> postfix(result, operators)
-                XFX -> infixNonAssociative(operands, operators)
-                YFX -> infixLeft(operands, operators)
-                FX, FY -> prefix(result, operators)
-            }
+            result =
+                when (o.associativity!!) {
+                    XFY -> infixRight(operands, operators)
+                    XF, YF -> postfix(result, operators)
+                    XFX -> infixNonAssociative(operands, operators)
+                    YFX -> infixLeft(operands, operators)
+                    FX, FY -> prefix(result, operators)
+                }
         }
         return result
     }
 
-    private fun infixRight(terms: List<Term>, ops: List<String>): Term {
+    private fun infixRight(
+        terms: List<Term>,
+        ops: List<String>,
+    ): Term {
         var i = terms.size - 1
         var j = ops.size - 1
         var result: Term = scope.structOf(ops[j--], terms[i - 1], terms[i])
@@ -233,7 +247,10 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
         return result
     }
 
-    private fun infixLeft(terms: List<Term>, ops: List<String>): Term {
+    private fun infixLeft(
+        terms: List<Term>,
+        ops: List<String>,
+    ): Term {
         var i = 0
         var j = 0
         var result: Term = scope.structOf(ops[j++], terms[i++], terms[i++])

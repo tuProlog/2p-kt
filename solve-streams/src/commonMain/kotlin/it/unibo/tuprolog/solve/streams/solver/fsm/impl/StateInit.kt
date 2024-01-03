@@ -13,42 +13,47 @@ import it.unibo.tuprolog.solve.streams.solver.prepareForExecutionAsGoal
  * @author Enrico
  */
 internal class StateInit(
-    override val solve: Solve.Request<StreamsExecutionContext>
+    override val solve: Solve.Request<StreamsExecutionContext>,
 ) : AbstractTimedState(solve) {
+    override fun behaveTimed(): Sequence<State> =
+        sequence {
+            val initializedSideEffectsManager = with(solve.context) { sideEffectManager.stateInitInitialize(this) }
+            val currentGoal = solve.query
 
-    override fun behaveTimed(): Sequence<State> = sequence {
-        val initializedSideEffectsManager = with(solve.context) { sideEffectManager.stateInitInitialize(this) }
-        val currentGoal = solve.query
-
-        when {
-            with(solve.context) { solverStrategies.successCheckStrategy(currentGoal, this) } ->
-                // current goal is already demonstrated
-                yield(
-                    ifTimeIsNotOver(
-                        stateEndTrue(
-                            solve.context.substitution,
-                            sideEffectManager = initializedSideEffectsManager
-                        )
-                    )
-                )
-
-            else -> when {
-                currentGoal.isWellFormed() -> currentGoal.prepareForExecutionAsGoal().also { preparedGoal ->
-                    // a primitive call or well-formed goal
+            when {
+                with(solve.context) { solverStrategies.successCheckStrategy(currentGoal, this) } ->
+                    // current goal is already demonstrated
                     yield(
-                        StateGoalEvaluation(
-                            solve.copy(
-                                signature = preparedGoal.extractSignature(),
-                                arguments = preparedGoal.args,
-                                context = with(solve.context) { copy(sideEffectManager = initializedSideEffectsManager) }
-                            )
-                        )
+                        ifTimeIsNotOver(
+                            stateEndTrue(
+                                solve.context.substitution,
+                                sideEffectManager = initializedSideEffectsManager,
+                            ),
+                        ),
                     )
-                }
 
-                // goal non well-formed
-                else -> yield(stateEndFalse(sideEffectManager = initializedSideEffectsManager))
+                else ->
+                    when {
+                        currentGoal.isWellFormed() ->
+                            currentGoal.prepareForExecutionAsGoal().also { preparedGoal ->
+                                // a primitive call or well-formed goal
+                                yield(
+                                    StateGoalEvaluation(
+                                        solve.copy(
+                                            signature = preparedGoal.extractSignature(),
+                                            arguments = preparedGoal.args,
+                                            context =
+                                                with(
+                                                    solve.context,
+                                                ) { copy(sideEffectManager = initializedSideEffectsManager) },
+                                        ),
+                                    ),
+                                )
+                            }
+
+                        // goal non well-formed
+                        else -> yield(stateEndFalse(sideEffectManager = initializedSideEffectsManager))
+                    }
             }
         }
-    }
 }

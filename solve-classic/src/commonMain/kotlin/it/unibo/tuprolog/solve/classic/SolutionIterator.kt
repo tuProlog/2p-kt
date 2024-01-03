@@ -18,14 +18,18 @@ interface SolutionIterator : Iterator<Solution> {
     override fun next(): Solution
 
     @JsName("onStateTransition")
-    fun onStateTransition(source: State, destination: State, index: Long)
+    fun onStateTransition(
+        source: State,
+        destination: State,
+        index: Long,
+    )
 
     companion object {
         @JsName("of")
         @JvmStatic
         fun of(
             initialState: State,
-            onStateTransition: (State, State, Long) -> Unit = { _, _, _ -> }
+            onStateTransition: (State, State, Long) -> Unit = { _, _, _ -> },
         ): SolutionIterator = SimpleSolutionIterator(initialState, onStateTransition)
     }
 }

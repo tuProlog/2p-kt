@@ -11,6 +11,9 @@ actual fun log(x: () -> Any) {
     console.log(x())
 }
 
-actual fun <T : Any> assertClassNameIs(`class`: KClass<T>, name: String) {
-    assertEquals(`class`.simpleName, name.split('.').last())
+actual fun <T : Any> assertClassNameIs(
+    klass: KClass<T>,
+    name: String,
+) {
+    assertEquals(klass.simpleName, name.split('.').last())
 }

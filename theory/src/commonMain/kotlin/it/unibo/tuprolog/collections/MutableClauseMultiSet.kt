@@ -10,7 +10,6 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface MutableClauseMultiSet : ClauseMultiSet {
-
     /** Adds a [Clause] to this [MutableClauseMultiSet] **/
     override fun add(clause: Clause): MutableClauseMultiSet
 
@@ -24,7 +23,6 @@ interface MutableClauseMultiSet : ClauseMultiSet {
     override fun retrieveAll(clause: Clause): RetrieveResult<out MutableClauseMultiSet>
 
     companion object {
-
         /** Creates an empty [MutableClauseMultiSet] **/
         @JvmStatic
         @JsName("empty")
@@ -33,35 +31,47 @@ interface MutableClauseMultiSet : ClauseMultiSet {
         /** Creates a [MutableClauseMultiSet] with given clauses */
         @JvmStatic
         @JsName("of")
-        fun of(unificator: Unificator, vararg clause: Clause): MutableClauseMultiSet =
-            of(unificator, clause.asIterable())
+        fun of(
+            unificator: Unificator,
+            vararg clause: Clause,
+        ): MutableClauseMultiSet = of(unificator, clause.asIterable())
 
         /** Let developers easily create a [MutableClauseMultiSet] programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("ofScopes")
-        fun of(unificator: Unificator, vararg clause: Scope.() -> Clause): MutableClauseMultiSet =
+        fun of(
+            unificator: Unificator,
+            vararg clause: Scope.() -> Clause,
+        ): MutableClauseMultiSet =
             of(
                 unificator,
                 clause.map {
                     Scope.empty(it)
-                }
+                },
             )
 
         /** Creates a [MutableClauseMultiSet] from the given [Sequence] of [Clause] */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(unificator: Unificator, clauses: Sequence<Clause>): MutableClauseMultiSet =
-            of(unificator, clauses.asIterable())
+        fun of(
+            unificator: Unificator,
+            clauses: Sequence<Clause>,
+        ): MutableClauseMultiSet = of(unificator, clauses.asIterable())
 
         /** Creates a [MutableClauseMultiSet] from the given [Iterable] of [Clause] */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(unificator: Unificator, clauses: Iterable<Clause>): MutableClauseMultiSet =
-            MutableReteClauseMultiSet(unificator, clauses)
+        fun of(
+            unificator: Unificator,
+            clauses: Iterable<Clause>,
+        ): MutableClauseMultiSet = MutableReteClauseMultiSet(unificator, clauses)
 
         @JvmStatic
         @JsName("areEquals")
-        fun equals(multiSet1: MutableClauseMultiSet, multiSet2: MutableClauseMultiSet): Boolean {
+        fun equals(
+            multiSet1: MutableClauseMultiSet,
+            multiSet2: MutableClauseMultiSet,
+        ): Boolean {
             return ClauseMultiSet.equals(multiSet1, multiSet2)
         }
 
@@ -70,7 +80,7 @@ interface MutableClauseMultiSet : ClauseMultiSet {
         fun hashCode(multiSet: MutableClauseMultiSet): Int {
             return itemWiseHashCode(
                 MutableClauseMultiSet::class,
-                multiSet.sortedWith(TermComparator.DefaultComparator)
+                multiSet.sortedWith(TermComparator.DefaultComparator),
             )
         }
     }

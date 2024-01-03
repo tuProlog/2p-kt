@@ -7,24 +7,29 @@ import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
 interface TermToObjectConverter {
-    fun convertInto(type: KClass<*>, term: Term): Any?
+    fun convertInto(
+        type: KClass<*>,
+        term: Term,
+    ): Any?
 
     fun possibleConversions(term: Term): Sequence<Any?>
 
     fun admissibleTypes(term: Term): Set<KClass<*>>
 
-    fun priorityOfConversion(type: KClass<*>, term: Term): Int?
+    fun priorityOfConversion(
+        type: KClass<*>,
+        term: Term,
+    ): Int?
 
     fun mostAdequateType(term: Term): KClass<*>
 
-    fun convert(term: Term): Any? =
-        convertInto(mostAdequateType(term), term)
+    fun convert(term: Term): Any? = convertInto(mostAdequateType(term), term)
 
     companion object {
         @JvmStatic
         fun of(
             typeFactory: TypeFactory = TypeFactory.default,
-            dealiaser: (Struct) -> Ref? = { null }
+            dealiaser: (Struct) -> Ref? = { null },
         ): TermToObjectConverter = TermToObjectConverterImpl(typeFactory, dealiaser)
 
         @JvmStatic

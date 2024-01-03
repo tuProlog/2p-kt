@@ -4,7 +4,6 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 
 class TestCharCodeImpl(private val solverFactory: SolverFactory) : TestCharCode {
-
     override fun testCharCodeSecondIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -13,7 +12,7 @@ class TestCharCodeImpl(private val solverFactory: SolverFactory) : TestCharCode 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to 97)),
-                solutions
+                solutions,
             )
         }
     }
@@ -26,7 +25,7 @@ class TestCharCodeImpl(private val solverFactory: SolverFactory) : TestCharCode 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes("X" to "a")),
-                solutions
+                solutions,
             )
         }
     }
@@ -44,11 +43,11 @@ class TestCharCodeImpl(private val solverFactory: SolverFactory) : TestCharCode 
                             DummyInstances.executionContext,
                             Signature("atom_length", 2),
                             varOf("X"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -61,7 +60,7 @@ class TestCharCodeImpl(private val solverFactory: SolverFactory) : TestCharCode 
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }

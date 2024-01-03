@@ -15,13 +15,12 @@ import it.unibo.tuprolog.core.Var
  * @author Enrico
  */
 internal object BlockUtils {
-
     /** Contains block arguments, containing ground terms */
     internal val groundBlocks by lazy {
         listOf(
             arrayOf(Truth.TRUE),
             arrayOf(Atom.of("hey"), Atom.of("!")),
-            arrayOf(Integer.of(1), Real.of(1.5), Truth.FALSE, Atom.of("ciao"))
+            arrayOf(Integer.of(1), Real.of(1.5), Truth.FALSE, Atom.of("ciao")),
         )
     }
 
@@ -32,7 +31,7 @@ internal object BlockUtils {
     internal val nonGroundBlocks by lazy {
         listOf(
             arrayOf(Var.of("MyVar")),
-            arrayOf(Var.of("A"), Var.anonymous(), Cons.singleton(Var.of("Var")))
+            arrayOf(Var.of("A"), Var.anonymous(), Cons.singleton(Var.of("Var"))),
         )
     }
 

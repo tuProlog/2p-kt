@@ -17,7 +17,7 @@ internal data class LibraryImpl(
     override val operators: OperatorSet,
     override val clauses: List<Clause>,
     override val primitives: Map<Signature, Primitive>,
-    override val functions: Map<Signature, LogicFunction>
+    override val functions: Map<Signature, LogicFunction>,
 ) : AbstractLibrary() {
     init {
         require(alias.isNotBlank())

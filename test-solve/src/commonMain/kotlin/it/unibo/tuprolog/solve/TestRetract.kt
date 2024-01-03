@@ -2,8 +2,7 @@ package it.unibo.tuprolog.solve
 
 interface TestRetract : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestRetract =
-            TestRetractImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestRetract = TestRetractImpl(solverFactory)
     }
 
     /**

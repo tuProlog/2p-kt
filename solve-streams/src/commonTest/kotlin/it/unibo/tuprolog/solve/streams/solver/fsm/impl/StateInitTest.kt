@@ -26,14 +26,13 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class StateInitTest {
-
     @Test
     fun trueGoalGoesIntoTrueEndState() {
         // precondition
         assertTrue {
             SolverStrategies.prologStandard.successCheckStrategy(
                 Truth.TRUE,
-                DummyInstances.executionContext
+                DummyInstances.executionContext,
             )
         }
 
@@ -71,7 +70,7 @@ internal class StateInitTest {
 
                 assertEquals(
                     prepareGoalForExecution(it.query),
-                    (nextStates.single().solve as Solve.Request<*>).query
+                    (nextStates.single().solve as Solve.Request<*>).query,
                 )
             }
     }

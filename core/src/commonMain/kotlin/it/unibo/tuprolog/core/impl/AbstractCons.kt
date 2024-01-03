@@ -11,9 +11,8 @@ import it.unibo.tuprolog.core.ListIterator as LogicListIterator
 
 internal abstract class AbstractCons(
     args: List<Term>,
-    tags: Map<String, Any> = emptyMap()
+    tags: Map<String, Any> = emptyMap(),
 ) : RecursiveImpl(CONS_FUNCTOR, args, tags), Cons {
-
     companion object {
         const val SWITCH_TO_LAZY_THRESHOLD = 100
     }
@@ -48,11 +47,12 @@ internal abstract class AbstractCons(
         get() = unfoldedSequence.last()
 
     override fun toString(): String {
-        val (ending, take) = if (isWellFormed) {
-            "]" to size
-        } else {
-            " | $last]" to size - 1
-        }
+        val (ending, take) =
+            if (isWellFormed) {
+                "]" to size
+            } else {
+                " | $last]" to size - 1
+            }
         return unfoldedSequence.take(take).joinToString(", ", "[", ending)
     }
 

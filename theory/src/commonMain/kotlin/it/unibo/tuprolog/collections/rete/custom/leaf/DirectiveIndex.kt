@@ -13,9 +13,8 @@ import it.unibo.tuprolog.utils.dequeOf
 
 internal class DirectiveIndex(
     unificator: Unificator,
-    private val ordered: Boolean
+    private val ordered: Boolean,
 ) : TopLevelReteNode, AbstractReteNode(unificator) {
-
     private val directives: MutableList<IndexedClause> = dequeOf()
 
     override val size: Int
@@ -46,7 +45,9 @@ internal class DirectiveIndex(
         removeAllLazily(directives, clause).map { it.innerClause }.take(1).buffered()
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
-        removeAllLazily(directives, clause).map { it.innerClause }.buffered()
+        removeAllLazily(directives, clause).map {
+            it.innerClause
+        }.buffered()
 
     override fun getCache(): Sequence<SituatedIndexedClause> =
         directives.asSequence().map {
@@ -55,17 +56,17 @@ internal class DirectiveIndex(
                 object : Retractable {
                     override fun retractIndexed(indexed: SituatedIndexedClause) {
                         TODO(
-                            "Directives are adapted as a SituatedIndexedClause, but they are not actually stored " +
-                                "with this type. Given their particular semantic, try retracting directly with a proper " +
-                                "query, or opening a pull request implementing this indexing class as a proper typed data " +
-                                "structure"
+                            "Directives are adapted as a SituatedIndexedClause, but they are not " +
+                                "actually stored with this type. Given their particular semantic, try retracting " +
+                                "directly with a proper query, or opening a pull request implementing this indexing " +
+                                "class as a proper typed data structure",
                         )
                     }
-                }
+                },
             )
         }
 
     override fun invalidateCache() {
-        /* do nothing */
+        // do nothing
     }
 }

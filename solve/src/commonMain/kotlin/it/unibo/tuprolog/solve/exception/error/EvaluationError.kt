@@ -25,22 +25,26 @@ class EvaluationError(
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
     @JsName("errorType") val errorType: Type,
-    extraData: Term? = null
+    extraData: Term? = null,
 ) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
         errorType: Type,
-        extraData: Term? = null
+        extraData: Term? = null,
     ) : this(message, cause, arrayOf(context), errorType, extraData)
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): EvaluationError =
-        EvaluationError(message, cause, contexts.setItem(index, newContext), errorType, extraData)
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): EvaluationError = EvaluationError(message, cause, contexts.setItem(index, newContext), errorType, extraData)
 
     override fun updateLastContext(newContext: ExecutionContext): EvaluationError =
-        updateContext(newContext, contexts.lastIndex)
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): EvaluationError =
         EvaluationError(message, cause, contexts.addLast(newContext), errorType, extraData)
@@ -48,8 +52,8 @@ class EvaluationError(
     override val type: Struct by lazy { Struct.of(super.type.functor, errorType.toTerm()) }
 
     companion object {
-
         /** The evaluation error Struct functor */
+        @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "evaluation_error"
     }
 
@@ -59,7 +63,12 @@ class EvaluationError(
      * @author Enrico
      */
     enum class Type : TermConvertible {
-        INT_OVERFLOW, FLOAT_OVERFLOW, UNDERFLOW, ZERO_DIVISOR, UNDEFINED;
+        INT_OVERFLOW,
+        FLOAT_OVERFLOW,
+        UNDERFLOW,
+        ZERO_DIVISOR,
+        UNDEFINED,
+        ;
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(toString())
@@ -67,21 +76,21 @@ class EvaluationError(
         override fun toString(): String = super.toString().lowercase()
 
         companion object {
-
             /** Gets [Type] instance from [term] representation, if possible */
             @JsName("fromTerm")
             @JvmStatic
-            fun fromTerm(term: Term): Type? = when (term) {
-                is Atom ->
-                    try {
-                        valueOf(term.value.uppercase())
-                    } catch (e: IllegalArgumentException) {
-                        null
-                    } catch (e: IllegalStateException) {
-                        null
-                    }
-                else -> null
-            }
+            fun fromTerm(term: Term): Type? =
+                when (term) {
+                    is Atom ->
+                        try {
+                            valueOf(term.value.uppercase())
+                        } catch (e: IllegalArgumentException) {
+                            null
+                        } catch (e: IllegalStateException) {
+                            null
+                        }
+                    else -> null
+                }
         }
     }
 }

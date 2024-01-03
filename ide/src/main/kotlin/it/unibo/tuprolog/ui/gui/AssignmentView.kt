@@ -14,9 +14,8 @@ import java.io.IOException
 class AssignmentView(
     variable: Var,
     value: Term,
-    formatter: TermFormatter = TermFormatter.prettyExpressions()
+    formatter: TermFormatter = TermFormatter.prettyExpressions(),
 ) : HBox() {
-
     companion object {
         private const val FXML = "AssignmentView.fxml"
     }

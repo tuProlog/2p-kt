@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.EVALUABLE
 
 internal class TestArithImpl(private val solverFactory: SolverFactory) : TestArith {
-
     override fun testArithDiff() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -16,7 +15,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = 1.0 arithNeq 1
@@ -24,7 +23,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = (numOf(3) * 2) arithNeq (numOf(7) - 1)
@@ -32,7 +31,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "N" arithNeq 5
@@ -45,11 +44,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             DummyInstances.executionContext,
                             Signature("=\\=", 2),
                             varOf("N"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
 
             query = "floot"(1) arithNeq 5
@@ -63,11 +62,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             Signature("=\\=", 2),
                             EVALUABLE,
                             "floot"(1),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -81,7 +80,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = 1.0 arithEq 1
@@ -89,7 +88,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = (numOf(3) * 2) arithEq (numOf(7) - 1)
@@ -97,7 +96,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "N" arithEq 5
@@ -110,11 +109,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             DummyInstances.executionContext,
                             Signature("=:=", 2),
                             varOf("N"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
 
             query = "floot"(1) arithEq 5
@@ -128,11 +127,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             Signature("=:=", 2),
                             EVALUABLE,
                             "floot"(1),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
 
             query = 0.333 arithEq (numOf(1) / 3)
@@ -140,7 +139,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
         }
     }
@@ -154,7 +153,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = 1.0 greaterThan 1
@@ -162,7 +161,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = (numOf(3) * 2) greaterThan (numOf(7) - 1)
@@ -170,7 +169,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "X" greaterThan 5
@@ -183,11 +182,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             DummyInstances.executionContext,
                             Signature(">", 2),
                             varOf("X"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
 
             query = (2 + "floot"(1)) greaterThan 5
@@ -201,11 +200,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             Signature(">", 2),
                             EVALUABLE,
                             "floot"(1),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -219,7 +218,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = 1.0 greaterThanOrEqualsTo 1
@@ -227,7 +226,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = (numOf(3) * 2) greaterThanOrEqualsTo (numOf(7) - 1)
@@ -235,7 +234,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "X" greaterThanOrEqualsTo 5
@@ -248,11 +247,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             DummyInstances.executionContext,
                             Signature(">=", 2),
                             varOf("X"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
 
             query = (2 + "floot"(1)) greaterThanOrEqualsTo 5
@@ -266,11 +265,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             Signature(">=", 2),
                             EVALUABLE,
                             "floot"(1),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -284,7 +283,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = 1.0 lowerThan 1
@@ -292,7 +291,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = (numOf(3) * 2) lowerThan (numOf(7) - 1)
@@ -300,7 +299,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.no()),
-                solutions
+                solutions,
             )
 
             query = "X" lowerThan 5
@@ -313,11 +312,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             DummyInstances.executionContext,
                             Signature("<", 2),
                             varOf("X"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
 
             query = (2 + "floot"(1)) lowerThan 5
@@ -331,11 +330,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             Signature("<", 2),
                             EVALUABLE,
                             "floot"(1),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }
@@ -349,7 +348,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = 1.0 lowerThanOrEqualsTo 1
@@ -357,7 +356,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = (numOf(3) * 2) lowerThanOrEqualsTo (numOf(7) - 1)
@@ -365,7 +364,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
-                solutions
+                solutions,
             )
 
             query = "X" lowerThanOrEqualsTo 5
@@ -378,11 +377,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             DummyInstances.executionContext,
                             Signature("=<", 2),
                             varOf("X"),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
 
             query = (2 + "floot"(1)) lowerThanOrEqualsTo 5
@@ -396,11 +395,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
                             Signature("=<", 2),
                             EVALUABLE,
                             "floot"(1),
-                            index = 0
-                        )
-                    )
+                            index = 0,
+                        ),
+                    ),
                 ),
-                solutions
+                solutions,
             )
         }
     }

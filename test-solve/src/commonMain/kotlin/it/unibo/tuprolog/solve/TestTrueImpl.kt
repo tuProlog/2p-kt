@@ -12,7 +12,7 @@ internal class TestTrueImpl(private val solverFactory: SolverFactory) : TestTrue
 
             assertSolutionEquals(
                 kotlin.collections.listOf(query.yes()),
-                solutions
+                solutions,
             )
         }
     }

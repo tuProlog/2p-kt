@@ -8,7 +8,6 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestProblogClassicFindAll : TestFindAll, SolverFactory by ProblogSolverFactory {
-
     private val prototype = TestFindAll.prototype(this, Signature("ensure_executable", 1))
 
     override val errorSignature: Signature
@@ -53,7 +52,7 @@ class TestProblogClassicFindAll : TestFindAll, SolverFactory by ProblogSolverFac
         prototype.testFindXinGoal()
     }
 
-    /* NOTE: See comment above */
+    // NOTE: See comment above
     @Ignore
     @Test
     override fun testFindXinNumber() {

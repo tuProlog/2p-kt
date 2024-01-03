@@ -3,7 +3,6 @@ package it.unibo.tuprolog.theory
 import it.unibo.tuprolog.core.Clause
 
 internal object TheoryUtils {
-
     /** Utility method to check clause well-formed property */
     fun checkClauseCorrect(clause: Clause) =
         clause.also {
@@ -13,8 +12,7 @@ internal object TheoryUtils {
             }
         }
 
-    fun checkClausesCorrect(vararg clauses: Clause) =
-        clauses.asSequence().also { actualCheck(it) }
+    fun checkClausesCorrect(vararg clauses: Clause) = clauses.asSequence().also { actualCheck(it) }
 
     private fun actualCheck(clauses: Sequence<Clause>) {
         require(clauses.all { it.isWellFormed }) {
@@ -24,9 +22,7 @@ internal object TheoryUtils {
     }
 
     /** Utility method to check more than one clause well-formed property */
-    fun checkClausesCorrect(clauses: Iterable<Clause>) =
-        clauses.also { actualCheck(it.asSequence()) }
+    fun checkClausesCorrect(clauses: Iterable<Clause>) = clauses.also { actualCheck(it.asSequence()) }
 
-    fun checkClausesCorrect(clauses: Sequence<Clause>) =
-        clauses.also { actualCheck(it) }
+    fun checkClausesCorrect(clauses: Sequence<Clause>) = clauses.also { actualCheck(it) }
 }

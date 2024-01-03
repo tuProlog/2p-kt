@@ -28,9 +28,8 @@ class PermissionError(
     @JsName("operation") val operation: Operation,
     @JsName("permission") val permission: Permission,
     @JsName("culprit") val culprit: Term,
-    extraData: Term? = null
+    extraData: Term? = null,
 ) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
-
     constructor(
         message: String? = null,
         cause: Throwable? = null,
@@ -38,14 +37,28 @@ class PermissionError(
         operation: Operation,
         permission: Permission,
         culprit: Term,
-        extraData: Term? = null
+        extraData: Term? = null,
     ) : this(message, cause, arrayOf(context), operation, permission, culprit, extraData)
 
-    override fun updateContext(newContext: ExecutionContext, index: Int): PermissionError =
-        PermissionError(message, cause, contexts.setItem(index, newContext), operation, permission, culprit, extraData)
+    override fun updateContext(
+        newContext: ExecutionContext,
+        index: Int,
+    ): PermissionError =
+        PermissionError(
+            message,
+            cause,
+            contexts.setItem(index, newContext),
+            operation,
+            permission,
+            culprit,
+            extraData,
+        )
 
     override fun updateLastContext(newContext: ExecutionContext): PermissionError =
-        updateContext(newContext, contexts.lastIndex)
+        updateContext(
+            newContext,
+            contexts.lastIndex,
+        )
 
     override fun pushContext(newContext: ExecutionContext): PermissionError =
         PermissionError(message, cause, contexts.addLast(newContext), operation, permission, culprit, extraData)
@@ -55,12 +68,11 @@ class PermissionError(
             super.type.functor,
             operation.toTerm(),
             permission.toTerm(),
-            culprit
+            culprit,
         )
     }
 
     companion object {
-
         @JsName("of")
         @JvmStatic
         fun of(
@@ -68,22 +80,24 @@ class PermissionError(
             procedure: Signature,
             operation: Operation,
             permission: Permission,
-            culprit: Term
-        ): PermissionError = message(
-            "Permission error while executing ${procedure.pretty()}: " +
-                "operation of type `$operation` is not possible on $permission: ${culprit.pretty()}"
-        ) { m, extra ->
-            PermissionError(
-                message = m,
-                context = context,
-                operation = operation,
-                permission = permission,
-                culprit = culprit,
-                extraData = extra
-            )
-        }
+            culprit: Term,
+        ): PermissionError =
+            message(
+                "Permission error while executing ${procedure.pretty()}: " +
+                    "operation of type `$operation` is not possible on $permission: ${culprit.pretty()}",
+            ) { m, extra ->
+                PermissionError(
+                    message = m,
+                    context = context,
+                    operation = operation,
+                    permission = permission,
+                    culprit = culprit,
+                    extraData = extra,
+                )
+            }
 
         /** The permission error Struct functor */
+        @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "permission_error"
     }
 
@@ -100,7 +114,8 @@ class PermissionError(
         MODIFY,
         OPEN,
         OUTPUT,
-        REPOSITION;
+        REPOSITION,
+        ;
 
         @JsName("operation")
         val operation: String by lazy { this.name.lowercase() }
@@ -111,7 +126,6 @@ class PermissionError(
         override fun toString(): String = operation
 
         companion object {
-
             /** Returns the [Operation] instance described by [operation]; creates a new instance only if [operation] was not predefined */
             @JsName("of")
             @JvmStatic
@@ -120,10 +134,11 @@ class PermissionError(
             /** Gets [Operation] instance from [term] representation, if possible */
             @JsName("fromTerm")
             @JvmStatic
-            fun fromTerm(term: Term): Operation? = when (term) {
-                is Atom -> of(term.value)
-                else -> null
-            }
+            fun fromTerm(term: Term): Operation? =
+                when (term) {
+                    is Atom -> of(term.value)
+                    else -> null
+                }
         }
     }
 
@@ -140,7 +155,8 @@ class PermissionError(
         STATIC_PROCEDURE,
         OOP_METHOD,
         STREAM,
-        TEXT_STREAM;
+        TEXT_STREAM,
+        ;
 
         @JsName("permission")
         val permission: String by lazy { this.name.lowercase() }
@@ -151,7 +167,6 @@ class PermissionError(
         override fun toString(): String = permission
 
         companion object {
-
             /** Returns the [Permission] instance described by [permission]; creates a new instance only if [permission] was not predefined */
             @JsName("of")
             @JvmStatic
@@ -160,10 +175,11 @@ class PermissionError(
             /** Gets [Permission] instance from [term] representation, if possible */
             @JsName("fromTerm")
             @JvmStatic
-            fun fromTerm(term: Term): Permission? = when (term) {
-                is Atom -> of(term.value)
-                else -> null
-            }
+            fun fromTerm(term: Term): Permission? =
+                when (term) {
+                    is Atom -> of(term.value)
+                    else -> null
+                }
         }
     }
 }

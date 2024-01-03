@@ -22,14 +22,13 @@ import it.unibo.tuprolog.theory.Theory
  * @author Enrico
  */
 internal object LibraryUtils {
-
     /** A class to represent raw library data in tests */
     internal data class RawLibrary(
         val name: String,
         val opSet: OperatorSet,
         val theory: Theory,
         val primitives: Map<Signature, Primitive>,
-        val functions: Map<Signature, LogicFunction>
+        val functions: Map<Signature, LogicFunction>,
     )
 
     private val plusOperator = Operator("+", Specifier.YFX, 500)
@@ -40,20 +39,24 @@ internal object LibraryUtils {
     private val theory = Theory.of(Rule.of(Atom.of("a")), Rule.of(Atom.of("b")))
     private val theoryWithDuplicates = Theory.of(Rule.of(Atom.of("c")), Rule.of(Atom.of("b")))
 
-    private fun myPrimitive(@Suppress("UNUSED_PARAMETER") r: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-        throw NotImplementedError()
+    private fun myPrimitive(
+        @Suppress("UNUSED_PARAMETER") r: Solve.Request<ExecutionContext>,
+    ): Sequence<Solve.Response> = throw NotImplementedError()
 
-    private fun myOtherPrimitive(@Suppress("UNUSED_PARAMETER") r: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-        throw NotImplementedError()
+    private fun myOtherPrimitive(
+        @Suppress("UNUSED_PARAMETER") r: Solve.Request<ExecutionContext>,
+    ): Sequence<Solve.Response> = throw NotImplementedError()
 
     private val primitives = mapOf(Signature("myPrimitive1", 1) to Primitive(::myPrimitive))
     private val primitivesOverridden = mapOf(Signature("myPrimitive1", 1) to Primitive(::myOtherPrimitive))
 
-    private fun myFunction(@Suppress("UNUSED_PARAMETER") r: Compute.Request<ExecutionContext>): Compute.Response =
-        throw NotImplementedError()
+    private fun myFunction(
+        @Suppress("UNUSED_PARAMETER") r: Compute.Request<ExecutionContext>,
+    ): Compute.Response = throw NotImplementedError()
 
-    private fun myOtherFunction(@Suppress("UNUSED_PARAMETER") r: Compute.Request<ExecutionContext>): Compute.Response =
-        throw NotImplementedError()
+    private fun myOtherFunction(
+        @Suppress("UNUSED_PARAMETER") r: Compute.Request<ExecutionContext>,
+    ): Compute.Response = throw NotImplementedError()
 
     private val functions = mapOf(Signature("myFunc1", 1) to LogicFunction(::myFunction))
     private val functionsOverridden = mapOf(Signature("myFunc1", 1) to LogicFunction(::myOtherFunction))
@@ -70,7 +73,7 @@ internal object LibraryUtils {
             OperatorSet(plusOperator, minusOperator),
             theory,
             primitives,
-            functions
+            functions,
         )
     }
 
@@ -81,7 +84,7 @@ internal object LibraryUtils {
             OperatorSet(minusOperatorOverridden),
             theoryWithDuplicates,
             primitivesOverridden,
-            functionsOverridden
+            functionsOverridden,
         )
     }
 
@@ -92,7 +95,7 @@ internal object LibraryUtils {
             OperatorSet(plusOperator, minusOperatorOverridden),
             theory + theoryWithDuplicates,
             primitives + primitivesOverridden,
-            functions + functionsOverridden
+            functions + functionsOverridden,
         )
     }
 
@@ -108,7 +111,7 @@ internal object LibraryUtils {
             library,
             overridingLibrary,
             overriddenLibrary,
-            duplicatedAliasLibrary
+            duplicatedAliasLibrary,
         )
     }
 
@@ -118,7 +121,7 @@ internal object LibraryUtils {
         theory: Theory,
         primitives: Map<Signature, Primitive>,
         functions: Map<Signature, LogicFunction>,
-        alias: String
+        alias: String,
     ): Library = Library.of(alias, primitives, theory, opSet, functions)
 
     /** A method to disambiguate use of Library.of reference */
@@ -126,29 +129,39 @@ internal object LibraryUtils {
         opSet: OperatorSet,
         theory: Theory,
         primitives: Map<Signature, Primitive>,
-        functions: Map<Signature, LogicFunction>
+        functions: Map<Signature, LogicFunction>,
     ): Library = Library.of(primitives, theory, opSet, functions)
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
-        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>) -> Library
+        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>) -> Library,
     ): Library = constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions)
 
     /** Utility function to construct a library with alias from raw data */
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
-        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>, String) -> Library
+        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, LogicFunction>, String) -> Library,
     ): Library =
-        constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions, rawLibrary.name)
+        constructor(
+            rawLibrary.opSet,
+            rawLibrary.theory,
+            rawLibrary.primitives,
+            rawLibrary.functions,
+            rawLibrary.name,
+        )
 
     /** Utility function to alias a primitive/function */
-    internal fun aliasPrimitiveOrFunction(libAlias: String, entry: Map.Entry<Signature, *>) =
-        entry.key.copy(name = libAlias + Library.ALIAS_SEPARATOR + entry.key.name) to entry.value
+    internal fun aliasPrimitiveOrFunction(
+        libAlias: String,
+        entry: Map.Entry<Signature, *>,
+    ) = entry.key.copy(name = libAlias + Library.ALIAS_SEPARATOR + entry.key.name) to entry.value
 
     /** Utility function to duplicate all primitive/functions aliasing them in library */
-    internal fun aliasLibraryMap(libAlias: String, toAliasMap: Map<Signature, *>) =
-        toAliasMap.flatMap {
-            listOf(it.toPair(), aliasPrimitiveOrFunction(libAlias, it))
-        }.toMap()
+    internal fun aliasLibraryMap(
+        libAlias: String,
+        toAliasMap: Map<Signature, *>,
+    ) = toAliasMap.flatMap {
+        listOf(it.toPair(), aliasPrimitiveOrFunction(libAlias, it))
+    }.toMap()
 }

@@ -22,7 +22,6 @@ import kotlin.test.assertSame
  * @author Enrico
  */
 internal class PrimitiveWrapperTest {
-
     @Test
     fun primitiveWorksIfCorrectRequestProvided() {
         wrapperToMatchingSignatureRequest(::createPrimitiveWrapper, primitive, ::createPrimitiveRequest)

@@ -48,12 +48,13 @@ class TestBinaryDecisionDiagram {
      * Probabilities to base-level "someHeads" predicates have been added to simulate "Probabilistic Clauses". */
     @Test
     fun testApplyWithProbSomeHeads() {
-        val solution = (
-            bddOf(ComparablePair(0, "someHeads", 0.2)) and
-                bddOf(ComparablePair(1, "heads1", 0.5))
+        val solution =
+            (
+                bddOf(ComparablePair(0, "someHeads", 0.2)) and
+                    bddOf(ComparablePair(1, "heads1", 0.5))
             ) or (
-            bddOf(ComparablePair(2, "someHeads", 0.5)) and
-                bddOf(ComparablePair(3, "heads2", 0.6))
+                bddOf(ComparablePair(2, "someHeads", 0.5)) and
+                    bddOf(ComparablePair(3, "heads2", 0.6))
             )
         val prob = solution.probability()
         assertTrue(prob >= 0.37 - doubleEpsilon)
@@ -66,15 +67,16 @@ class TestBinaryDecisionDiagram {
     fun testApplyWithProbAlarmNegationsNoEvidence() {
         val burglary = bddOf(ComparablePair(0, "burglary", 0.7))
         val earthquake = bddOf(ComparablePair(1, "earthquake", 0.2))
-        val solution = (
-            bddOf(ComparablePair(2, "alarm", 0.9))
-                and burglary and earthquake
+        val solution =
+            (
+                bddOf(ComparablePair(2, "alarm", 0.9))
+                    and burglary and earthquake
             ) or (
-            bddOf(ComparablePair(3, "alarm", 0.8))
-                and burglary and earthquake.not()
+                bddOf(ComparablePair(3, "alarm", 0.8))
+                    and burglary and earthquake.not()
             ) or (
-            bddOf(ComparablePair(4, "alarm", 0.1))
-                and burglary.not() and earthquake
+                bddOf(ComparablePair(4, "alarm", 0.1))
+                    and burglary.not() and earthquake
             )
         val prob = solution.probability()
         assertTrue(prob >= 0.58 - doubleEpsilon)

@@ -10,12 +10,9 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
  * @author Jason Dellaluce
  */
 internal class AnyVisitor<T : Comparable<T>>(
-    private val predicate: (T) -> Boolean
+    private val predicate: (T) -> Boolean,
 ) : BinaryDecisionDiagramVisitor<T, Boolean> {
-
-    override fun visit(
-        node: BinaryDecisionDiagram.Terminal<T>
-    ): Boolean = false
+    override fun visit(node: BinaryDecisionDiagram.Terminal<T>): Boolean = false
 
     override fun visit(node: BinaryDecisionDiagram.Variable<T>): Boolean {
         var result = predicate(node.value)

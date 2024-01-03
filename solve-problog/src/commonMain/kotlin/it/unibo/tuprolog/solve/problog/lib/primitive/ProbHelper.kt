@@ -35,11 +35,10 @@ import it.unibo.tuprolog.solve.problog.lib.rules.Prob
  * @author Jason Dellaluce
  */
 internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext>("${PREDICATE_PREFIX}_helper") {
-
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
-        third: Term
+        third: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
@@ -47,32 +46,34 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
         val goalSignature = goal.extractSignature()
 
         return sequence {
-            /* Apply selective behavior based on goal's functor */
+            // Apply selective behavior based on goal's functor
             when (goal.functor) {
-                /* Edge case: Negation as failure */
-                "\\+", "not" -> yield(
-                    /* Optimize Prolog-only queries */
-                    if (context.isPrologMode()) {
-                        mgu(third, Struct.of(goal.functor, Struct.of(Prob.functor, Var.anonymous(), goal[0]))) +
-                            mgu(first, ProbExplanation.TRUE.toTerm())
-                    } else {
-                        mgu(third, Struct.of(ProbNegationAsFailure.functor, first, goal[0]))
-                    }
-                )
+                // Edge case: Negation as failure
+                "\\+", "not" ->
+                    yield(
+                        // Optimize Prolog-only queries
+                        if (context.isPrologMode()) {
+                            mgu(third, Struct.of(goal.functor, Struct.of(Prob.functor, Var.anonymous(), goal[0]))) +
+                                mgu(first, ProbExplanation.TRUE.toTerm())
+                        } else {
+                            mgu(third, Struct.of(ProbNegationAsFailure.functor, first, goal[0]))
+                        },
+                    )
                 /* Edge case: The current goal is a conjunction/disjunction or any sort of recursive predicate.
                  * NOTE: This is not supposed to trigger regularly because we map the theory prior to query execution,
                  * however this happens when the current goal is the initial query itself. As such, we want recursive
                  * predicates in queries to be supported. */
-                ",", ";", "->" -> yield(
-                    /* Optimize Prolog-only queries */
-                    if (context.isPrologMode()) {
-                        mgu(third, goal.withBodyExplanation(Var.anonymous())) +
-                            mgu(first, ProbExplanation.TRUE.toTerm())
-                    } else {
-                        mgu(third, goal.withBodyExplanation(first))
-                    }
-                )
-                /* Edge case: call/1 predicate*/
+                ",", ";", "->" ->
+                    yield(
+                        // Optimize Prolog-only queries
+                        if (context.isPrologMode()) {
+                            mgu(third, goal.withBodyExplanation(Var.anonymous())) +
+                                mgu(first, ProbExplanation.TRUE.toTerm())
+                        } else {
+                            mgu(third, goal.withBodyExplanation(first))
+                        },
+                    )
+                // Edge case: call/1 predicate
                 "call" -> {
                     val newGoal = goal[0]
                     yield(
@@ -80,12 +81,12 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                             third,
                             Tuple.of(
                                 Struct.of("ensure_executable", newGoal),
-                                Struct.of(goal.functor, newGoal.withBodyExplanation(first))
-                            )
-                        )
+                                Struct.of(goal.functor, newGoal.withBodyExplanation(first)),
+                            ),
+                        ),
                     )
                 }
-                /* Edge case: catch/3 predicate*/
+                // Edge case: catch/3 predicate
                 "catch" -> {
                     yield(
                         mgu(
@@ -94,45 +95,48 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                                 goal.functor,
                                 goal[0].withBodyExplanation(first),
                                 goal[1],
-                                goal[2].withBodyExplanation(first)
-                            )
-                        )
+                                goal[2].withBodyExplanation(first),
+                            ),
+                        ),
                     )
                 }
-                /* Edge case: findall/3, findall/4. NOTE: Should we handle `bagof` too? */
+                // Edge case: findall/3, findall/4. NOTE: Should we handle `bagof` too?
                 "findall" -> {
                     val goalArgs = goal.args.toTypedArray()
                     goalArgs[1] = goalArgs[1].withBodyExplanation(Var.anonymous())
                     yield(
                         mgu(third, Struct.of(goal.functor, *goalArgs)) +
-                            mgu(first, ProbExplanation.TRUE.toTerm())
+                            mgu(first, ProbExplanation.TRUE.toTerm()),
                     )
                 }
-                /* Edge case: assert family */
+                // Edge case: assert family
                 "assert", "asserta", "assertz" -> {
                     val subGoal = goal[0]
-                    val subGoalSignature = when (subGoal) {
-                        is Clause -> subGoal.head!!.extractSignature()
-                        else -> subGoal.safeToStruct().extractSignature()
-                    }
+                    val subGoalSignature =
+                        when (subGoal) {
+                            is Clause -> subGoal.head!!.extractSignature()
+                            else -> subGoal.safeToStruct().extractSignature()
+                        }
                     if (subGoalSignature in context.libraries || (subGoal is Clause && !subGoal.isWellFormed)) {
                         yield(mgu(third, goal) + mgu(first, ProbExplanation.TRUE.toTerm()))
                     } else {
-                        val newGoals = when (subGoal) {
-                            is Clause -> ClauseMappingUtils.map(subGoal)
-                            is Struct -> ClauseMappingUtils.map(Fact.of(subGoal)).map {
-                                it.head!!
+                        val newGoals =
+                            when (subGoal) {
+                                is Clause -> ClauseMappingUtils.map(subGoal)
+                                is Struct ->
+                                    ClauseMappingUtils.map(Fact.of(subGoal)).map {
+                                        it.head!!
+                                    }
+                                else -> listOf(subGoal)
                             }
-                            else -> listOf(subGoal)
-                        }
                         yieldAll(
                             newGoals.map {
                                 mgu(third, Struct.of(goal.functor, it)) + mgu(first, ProbExplanation.TRUE.toTerm())
-                            }
+                            },
                         )
                     }
                 }
-                /* Edge case: retract family */
+                // Edge case: retract family
                 "retract", "retractall" -> {
                     val goalArg = goal[0]
                     yield(
@@ -147,12 +151,12 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                                     goalArg
                                 } else {
                                     goalArg.withExplanation(first)
-                                }
-                            )
-                        )
+                                },
+                            ),
+                        ),
                     )
                 }
-                /* Edge case: clause */
+                // Edge case: clause
                 "clause" -> {
                     val subGoal = goal[0]
                     if (subGoal !is Struct || context.libraries.hasProtected(subGoal.extractSignature())) {
@@ -164,15 +168,15 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                                 Struct.of(
                                     goal.functor,
                                     goal[0].withExplanation(first),
-                                    goal[1]
-                                )
-                            )
+                                    goal[1],
+                                ),
+                            ),
                         )
                     }
                 }
-                /* Bottom-line general case */
+                // Bottom-line general case
                 else -> {
-                    /* Support for Prolog libraries backwards compatibility */
+                    // Support for Prolog libraries backwards compatibility
                     val isPrologOnly = second is Truth || goalSignature in context.libraries
                     if (isPrologOnly ||
                         goalSignature.toIndicator() in context.staticKb ||
@@ -181,7 +185,7 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                         yield(mgu(third, goal) + mgu(first, ProbExplanation.TRUE.toTerm()))
                     }
 
-                    /* Solve probabilistic goal */
+                    // Solve probabilistic goal
                     if (!isPrologOnly) {
                         yield(mgu(third, goal.withExplanation(first)))
                     }

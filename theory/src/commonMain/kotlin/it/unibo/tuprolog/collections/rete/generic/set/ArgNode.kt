@@ -10,9 +10,8 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 internal data class ArgNode(
     private val index: Int,
     private val term: Term,
-    override val children: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf()
+    override val children: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf(),
 ) : AbstractIntermediateReteNode<Term?, Rule>(children) {
-
     init {
         require(index >= 0) { "ArgNode index should be greater than or equal to 0" }
     }
@@ -24,17 +23,21 @@ internal data class ArgNode(
 
     override val header = "Argument($index, $term)"
 
-    override fun put(element: Rule, beforeOthers: Boolean) = when {
+    override fun put(
+        element: Rule,
+        beforeOthers: Boolean,
+    ) = when {
         index < element.head.arity - 1 -> { // if more arguments after "index" arg
             val nextArg = element.head[index + 1]
 
-            val child = children.getOrElse(nextArg) {
-                children.retrieve(
-                    keyFilter = { head -> head != null && head structurallyEquals nextArg },
-                    typeChecker = { it.isArgNode },
-                    caster = { it.castToArgNode() }
-                ).singleOrNull()
-            }
+            val child =
+                children.getOrElse(nextArg) {
+                    children.retrieve(
+                        keyFilter = { head -> head != null && head structurallyEquals nextArg },
+                        typeChecker = { it.isArgNode },
+                        caster = { it.castToArgNode() },
+                    ).singleOrNull()
+                }
 
             child ?: ArgNode(index + 1, nextArg)
                 .also { children[nextArg] = it }
@@ -43,19 +46,23 @@ internal data class ArgNode(
         else -> children.getOrPut(null) { RuleNode() }
     }.put(element, beforeOthers)
 
-    override fun selectChildren(element: Rule): Sequence<ReteNode<*, Rule>?> = when {
-        index < element.head.arity - 1 -> {
-            val nextArg = element.head[index + 1]
-            children.retrieve(
-                keyFilter = { head -> head != null && head matches nextArg },
-                typeChecker = { it.isArgNode },
-                caster = { it.castToArgNode() }
-            )
+    override fun selectChildren(element: Rule): Sequence<ReteNode<*, Rule>?> =
+        when {
+            index < element.head.arity - 1 -> {
+                val nextArg = element.head[index + 1]
+                children.retrieve(
+                    keyFilter = { head -> head != null && head matches nextArg },
+                    typeChecker = { it.isArgNode },
+                    caster = { it.castToArgNode() },
+                )
+            }
+            else -> sequenceOf(children[null])
         }
-        else -> sequenceOf(children[null])
-    }
 
-    override fun removeWithLimit(element: Rule, limit: Int): Sequence<Rule> =
+    override fun removeWithLimit(
+        element: Rule,
+        limit: Int,
+    ): Sequence<Rule> =
         selectChildren(element)
             .foldWithLimit(mutableListOf<Rule>(), limit) { yetRemoved, currentChild ->
                 yetRemoved.also {
@@ -77,6 +84,6 @@ internal data class ArgNode(
         ArgNode(
             index,
             term,
-            children.deepCopy({ it }, { it.deepCopy() })
+            children.deepCopy({ it }, { it.deepCopy() }),
         )
 }

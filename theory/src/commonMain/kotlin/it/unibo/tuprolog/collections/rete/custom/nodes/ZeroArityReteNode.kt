@@ -11,14 +11,15 @@ import it.unibo.tuprolog.utils.dequeOf
 
 internal class ZeroArityReteNode(
     unificator: Unificator,
-    private val ordered: Boolean
+    private val ordered: Boolean,
 ) : ArityNode(unificator), ArityRete, Retractable {
-
     private val atoms: MutableList<SituatedIndexedClause> =
         dequeOf()
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
-        removeAllLazily(atoms, clause).map { it.innerClause }.take(1).buffered()
+        removeAllLazily(atoms, clause).map {
+            it.innerClause
+        }.take(1).buffered()
 
     override val size: Int
         get() = atoms.size
@@ -34,8 +35,8 @@ internal class ZeroArityReteNode(
             atoms.addFirst(
                 SituatedIndexedClause.of(
                     clause + this,
-                    this
-                )
+                    this,
+                ),
             )
         } else {
             assertZ(clause)
@@ -46,20 +47,22 @@ internal class ZeroArityReteNode(
         atoms.add(
             SituatedIndexedClause.of(
                 clause + this,
-                this
-            )
+                this,
+            ),
         )
     }
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
-        removeAllLazily(atoms, clause).map { it.innerClause }.buffered()
+        removeAllLazily(atoms, clause).map {
+            it.innerClause
+        }.buffered()
 
     override fun getCache(): Sequence<SituatedIndexedClause> {
         return atoms.asSequence()
     }
 
     override fun invalidateCache() {
-        /* do nothing */
+        // do nothing
     }
 
     override fun retractIndexed(indexed: SituatedIndexedClause) {

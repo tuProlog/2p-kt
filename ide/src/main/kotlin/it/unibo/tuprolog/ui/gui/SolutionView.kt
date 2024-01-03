@@ -17,7 +17,6 @@ import javafx.scene.shape.Circle
 import java.io.IOException
 
 sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
-
     companion object {
         private const val FXML = "SolutionView.fxml"
 
@@ -32,7 +31,7 @@ sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
             solution.whenIs(
                 yes = { YesView(it) },
                 no = { NoView(it) },
-                halt = { HaltView(it) }
+                halt = { HaltView(it) },
             )
     }
 

@@ -6,7 +6,6 @@ import kotlin.jvm.JvmField
 
 @Suppress("MemberVisibilityCanBePrivate")
 object Unknown : NotableFlag {
-
     @JvmField
     val ERROR = Atom.of("error")
 

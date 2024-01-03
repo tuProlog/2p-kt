@@ -46,29 +46,30 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class StateIntegrationTesting {
-
     /** Shorthand function to execute a solveRequest */
     private fun Solve.Request<StreamsExecutionContext>.executeFSM(): Sequence<State> =
-        StateMachineExecutor.execute(StateInit(this))
+        StateMachineExecutor.execute(
+            StateInit(this),
+        )
 
     /** Utility function to test correct states behaviour inside this class */
     private fun assertSolutionsCorrect(
         querySolutionsMap: List<Pair<Struct, List<Solution>>>,
-        database: Theory
+        database: Theory,
     ) {
         querySolutionsMap.forEach { (goal, solutionList) ->
             val nextStates = createSolveRequest(goal, database, DefaultBuiltins.primitives).executeFSM()
 
             assertOverFilteredStateInstances<FinalState>(
                 nextStates,
-                { it.solve.solution.query == goal }
+                { it.solve.solution.query == goal },
             ) { index, finalState ->
                 assertSolutionEquals(
                     solutionList[index],
                     finalState.solve.solution.let {
                         // cleanUp as in StreamsSolver
                         (it as? Solution.Yes)?.copy(substitution = it.substitution.filter { _, t -> t !is Var }) ?: it
-                    }
+                    },
                 )
             }
         }
@@ -89,9 +90,9 @@ internal class StateIntegrationTesting {
             listOf(
                 StateGoalEvaluation::class,
                 StateRuleSelection::class,
-                StateEnd.False::class
+                StateEnd.False::class,
             ),
-            nextStates.map { it::class }
+            nextStates.map { it::class },
         )
     }
 
@@ -114,7 +115,7 @@ internal class StateIntegrationTesting {
     fun queriesWithCutConjunctionAndBacktrackingTheory() {
         assertSolutionsCorrect(
             cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
-            cutConjunctionAndBacktrackingTheory
+            cutConjunctionAndBacktrackingTheory,
         )
     }
 
@@ -122,17 +123,18 @@ internal class StateIntegrationTesting {
     fun timeoutExceptionCorrectlyThrown() {
         infiniteComputationTheoryNotableGoalToSolution.forEach { (goal, solutionList) ->
             val maxDuration = 100L
-            val request = Solve.Request(
-                goal.extractSignature(),
-                goal.args,
-                StreamsExecutionContext(staticKb = infiniteComputationTheory),
-                maxDuration = maxDuration
-            )
+            val request =
+                Solve.Request(
+                    goal.extractSignature(),
+                    goal.args,
+                    StreamsExecutionContext(staticKb = infiniteComputationTheory),
+                    maxDuration = maxDuration,
+                )
             val nextStates = request.executeFSM()
 
             assertOverFilteredStateInstances<FinalState>(
                 nextStates,
-                { it.solve.solution.query == goal }
+                { it.solve.solution.query == goal },
             ) { index, finalState ->
                 assertEquals(solutionList[index]::class, finalState.solve.solution::class)
             }
@@ -149,7 +151,7 @@ internal class StateIntegrationTesting {
     fun prologStandardSearchTreeWithCutExample() {
         assertSolutionsCorrect(
             prologStandardExampleWithCutTheoryNotableGoalToSolution,
-            prologStandardExampleWithCutTheory
+            prologStandardExampleWithCutTheory,
         )
     }
 

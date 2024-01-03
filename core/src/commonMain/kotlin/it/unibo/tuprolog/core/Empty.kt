@@ -4,13 +4,11 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Empty : Atom {
-
     override fun freshCopy(): Empty
 
     override fun freshCopy(scope: Scope): Empty
 
     companion object {
-
         const val EMPTY_LIST_FUNCTOR = Terms.EMPTY_LIST_FUNCTOR
 
         const val EMPTY_BLOCK_FUNCTOR = Terms.EMPTY_BLOCK_FUNCTOR

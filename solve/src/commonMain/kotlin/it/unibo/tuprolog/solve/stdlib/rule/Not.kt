@@ -13,8 +13,9 @@ object Not : RuleWrapper<ExecutionContext>("not", 1) {
         get() = ktListOf(varOf("G"))
 
     override val Scope.body: Term
-        get() = tupleOf(
-            structOf(EnsureExecutable.functor, varOf("G")),
-            structOf("\\+", varOf("G"))
-        )
+        get() =
+            tupleOf(
+                structOf(EnsureExecutable.functor, varOf("G")),
+                structOf("\\+", varOf("G")),
+            )
 }

@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.TestAtom
 import kotlin.test.Test
 
 class TestClassicAtom : TestAtom, SolverFactory by ClassicSolverFactory {
-
     private val prototype = TestAtom.prototype(this)
 
     @Test

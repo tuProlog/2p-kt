@@ -21,18 +21,19 @@ import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
  * @author Enrico
  */
 internal object ArithmeticEvaluatorUtils {
+    /** A context with [CommonBuiltins] loaded */
+    internal val commonFunctionsContext =
+        object : ExecutionContext by ExpressionEvaluatorUtils.noFunctionsContext {
+            override val libraries: Runtime = Runtime.of(CommonBuiltins)
+        }
 
     /** A context with [CommonBuiltins] loaded */
-    internal val commonFunctionsContext = object : ExecutionContext by ExpressionEvaluatorUtils.noFunctionsContext {
-        override val libraries: Runtime = Runtime.of(CommonBuiltins)
-    }
-
-    /** A context with [CommonBuiltins] loaded */
-    internal val commonFunctionsRequest = Solve.Request(
-        Signature("dummy", 0),
-        emptyList(),
-        commonFunctionsContext
-    )
+    internal val commonFunctionsRequest =
+        Solve.Request(
+            Signature("dummy", 0),
+            emptyList(),
+            commonFunctionsContext,
+        )
 
     /** A map from term input to raised error type */
     internal val inputToErrorType by lazy {
@@ -40,7 +41,7 @@ internal object ArithmeticEvaluatorUtils {
             Var.of("MyVar") to InstantiationError::class,
             Atom.of("PI") to TypeError::class,
             Struct.of("ciao", Integer.of(2)) to TypeError::class,
-            Struct.of("/", Integer.of(2), Integer.of(0)) to EvaluationError::class
+            Struct.of("/", Integer.of(2), Integer.of(0)) to EvaluationError::class,
         )
     }
 
@@ -49,7 +50,7 @@ internal object ArithmeticEvaluatorUtils {
         mapOf(
             Struct.of("abs", Integer.of(-1)) to Integer.of(1),
             Struct.of("rem", Integer.of(5), Integer.of(2)) to Integer.of(1),
-            Struct.of("/", Integer.of(2), Integer.of(4)) to Real.of(0.5)
+            Struct.of("/", Integer.of(2), Integer.of(4)) to Real.of(0.5),
         )
     }
 }

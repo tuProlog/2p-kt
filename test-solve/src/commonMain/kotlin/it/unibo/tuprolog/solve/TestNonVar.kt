@@ -4,10 +4,8 @@ package it.unibo.tuprolog.solve
  * Tests of nonvar
  */
 interface TestNonVar : SolverTest {
-
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestNonVar =
-            TestNonVarImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestNonVar = TestNonVarImpl(solverFactory)
     }
 
     /**

@@ -18,9 +18,8 @@ import it.unibo.tuprolog.utils.dequeOf
 internal open class FamilyArityReteNode(
     unificator: Unificator,
     private val ordered: Boolean,
-    private val nestingLevel: Int
+    private val nestingLevel: Int,
 ) : ArityNode(unificator), ArityRete {
-
     protected val numericIndex: IndexingLeaf =
         NumericIndex(unificator, ordered, nestingLevel)
 
@@ -37,11 +36,12 @@ internal open class FamilyArityReteNode(
         Cached.of(this::regenerateCache)
 
     override fun retractFirst(clause: Clause): Sequence<Clause> {
-        val result = if (ordered) {
-            orderedLookahead(clause)
-        } else {
-            anyLookahead(clause)
-        }
+        val result =
+            if (ordered) {
+                orderedLookahead(clause)
+            } else {
+                anyLookahead(clause)
+            }
 
         return if (result == null) {
             emptySequence()
@@ -65,14 +65,14 @@ internal open class FamilyArityReteNode(
                     atomicIndex.extractGlobalIndexedSequence(clause),
                     variableIndex.extractGlobalIndexedSequence(clause),
                     numericIndex.extractGlobalIndexedSequence(clause),
-                    compoundIndex.extractGlobalIndexedSequence(clause)
+                    compoundIndex.extractGlobalIndexedSequence(clause),
                 ).map { it.innerClause }
             } else {
                 Utils.flattenIndexed(
                     atomicIndex.extractGlobalIndexedSequence(clause),
                     variableIndex.extractGlobalIndexedSequence(clause),
                     numericIndex.extractGlobalIndexedSequence(clause),
-                    compoundIndex.extractGlobalIndexedSequence(clause)
+                    compoundIndex.extractGlobalIndexedSequence(clause),
                 ).map { it.innerClause }
             }
         } else {
@@ -84,11 +84,9 @@ internal open class FamilyArityReteNode(
         }
     }
 
-    override fun assertA(clause: IndexedClause) =
-        assertByFirstParameter(clause).assertA(clause + this)
+    override fun assertA(clause: IndexedClause) = assertByFirstParameter(clause).assertA(clause + this)
 
-    override fun assertZ(clause: IndexedClause) =
-        assertByFirstParameter(clause).assertZ(clause + this)
+    override fun assertZ(clause: IndexedClause) = assertByFirstParameter(clause).assertZ(clause + this)
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
         if (ordered) {
@@ -97,20 +95,21 @@ internal open class FamilyArityReteNode(
             retractAllUnordered(clause)
         }
 
-    override fun getCache(): Sequence<SituatedIndexedClause> =
-        theoryCache.value.asSequence()
+    override fun getCache(): Sequence<SituatedIndexedClause> = theoryCache.value.asSequence()
 
     private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
-        retractAllOrderedIndexed(clause).map { it.innerClause }
+        retractAllOrderedIndexed(clause).map {
+            it.innerClause
+        }
 
-    private fun getOrdered(clause: Clause): Sequence<Clause> =
-        getOrderedIndexed(clause).map { it.innerClause }
+    private fun getOrdered(clause: Clause): Sequence<Clause> = getOrderedIndexed(clause).map { it.innerClause }
 
     private fun retractAllUnordered(clause: Clause): Sequence<Clause> =
-        retractAllUnorderedIndexed(clause).map { it.innerClause }
+        retractAllUnorderedIndexed(clause).map {
+            it.innerClause
+        }
 
-    private fun getUnordered(clause: Clause): Sequence<Clause> =
-        getUnorderedIndexed(clause).map { it.innerClause }
+    private fun getUnordered(clause: Clause): Sequence<Clause> = getUnorderedIndexed(clause).map { it.innerClause }
 
     protected fun retractAllOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
         val innerFirst = clause.nestedFirstArgument()
@@ -118,13 +117,13 @@ internal open class FamilyArityReteNode(
             innerFirst.isNumber -> {
                 Utils.merge(
                     variableIndex.retractAllIndexed(clause),
-                    numericIndex.retractAllIndexed(clause)
+                    numericIndex.retractAllIndexed(clause),
                 )
             }
             innerFirst.isAtom -> {
                 Utils.merge(
                     variableIndex.retractAllIndexed(clause),
-                    atomicIndex.retractAllIndexed(clause)
+                    atomicIndex.retractAllIndexed(clause),
                 )
             }
             innerFirst.isVar -> {
@@ -132,13 +131,13 @@ internal open class FamilyArityReteNode(
                     variableIndex.retractAllIndexed(clause),
                     numericIndex.retractAllIndexed(clause),
                     atomicIndex.retractAllIndexed(clause),
-                    compoundIndex.retractAllIndexed(clause)
+                    compoundIndex.retractAllIndexed(clause),
                 )
             }
             else -> {
                 Utils.merge(
                     variableIndex.retractAllIndexed(clause),
-                    compoundIndex.retractAllIndexed(clause)
+                    compoundIndex.retractAllIndexed(clause),
                 )
             }
         }
@@ -147,24 +146,28 @@ internal open class FamilyArityReteNode(
     protected fun retractAllUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
         val innerFirst = clause.nestedFirstArgument()
         return when {
-            innerFirst.isNumber -> Utils.flattenIndexed(
-                variableIndex.retractAllIndexed(clause),
-                numericIndex.retractAllIndexed(clause)
-            )
-            innerFirst.isAtom -> Utils.flattenIndexed(
-                variableIndex.retractAllIndexed(clause),
-                atomicIndex.retractAllIndexed(clause)
-            )
-            innerFirst.isVar -> Utils.flattenIndexed(
-                variableIndex.retractAllIndexed(clause),
-                numericIndex.retractAllIndexed(clause),
-                atomicIndex.retractAllIndexed(clause),
-                compoundIndex.retractAllIndexed(clause)
-            )
-            else -> Utils.flattenIndexed(
-                variableIndex.retractAllIndexed(clause),
-                compoundIndex.retractAllIndexed(clause)
-            )
+            innerFirst.isNumber ->
+                Utils.flattenIndexed(
+                    variableIndex.retractAllIndexed(clause),
+                    numericIndex.retractAllIndexed(clause),
+                )
+            innerFirst.isAtom ->
+                Utils.flattenIndexed(
+                    variableIndex.retractAllIndexed(clause),
+                    atomicIndex.retractAllIndexed(clause),
+                )
+            innerFirst.isVar ->
+                Utils.flattenIndexed(
+                    variableIndex.retractAllIndexed(clause),
+                    numericIndex.retractAllIndexed(clause),
+                    atomicIndex.retractAllIndexed(clause),
+                    compoundIndex.retractAllIndexed(clause),
+                )
+            else ->
+                Utils.flattenIndexed(
+                    variableIndex.retractAllIndexed(clause),
+                    compoundIndex.retractAllIndexed(clause),
+                )
         }
     }
 
@@ -174,24 +177,24 @@ internal open class FamilyArityReteNode(
             innerFirst.isNumber ->
                 Utils.merge(
                     variableIndex.getIndexed(clause),
-                    numericIndex.getIndexed(clause)
+                    numericIndex.getIndexed(clause),
                 )
             innerFirst.isAtom ->
                 Utils.merge(
                     variableIndex.getIndexed(clause),
-                    atomicIndex.getIndexed(clause)
+                    atomicIndex.getIndexed(clause),
                 )
             innerFirst.isVar ->
                 Utils.merge(
                     variableIndex.getIndexed(clause),
                     numericIndex.getIndexed(clause),
                     atomicIndex.getIndexed(clause),
-                    compoundIndex.getIndexed(clause)
+                    compoundIndex.getIndexed(clause),
                 )
             else ->
                 Utils.merge(
                     variableIndex.getIndexed(clause),
-                    compoundIndex.getIndexed(clause)
+                    compoundIndex.getIndexed(clause),
                 )
         }
     }
@@ -199,24 +202,28 @@ internal open class FamilyArityReteNode(
     protected fun getUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
         val innerFirst = clause.nestedFirstArgument()
         return when {
-            innerFirst.isNumber -> Utils.flattenIndexed(
-                variableIndex.getIndexed(clause),
-                numericIndex.getIndexed(clause)
-            )
-            innerFirst.isAtom -> Utils.flattenIndexed(
-                variableIndex.getIndexed(clause),
-                atomicIndex.getIndexed(clause)
-            )
-            innerFirst.isVar -> Utils.flattenIndexed(
-                variableIndex.getIndexed(clause),
-                numericIndex.getIndexed(clause),
-                atomicIndex.getIndexed(clause),
-                compoundIndex.getIndexed(clause)
-            )
-            else -> Utils.flattenIndexed(
-                variableIndex.getIndexed(clause),
-                compoundIndex.getIndexed(clause)
-            )
+            innerFirst.isNumber ->
+                Utils.flattenIndexed(
+                    variableIndex.getIndexed(clause),
+                    numericIndex.getIndexed(clause),
+                )
+            innerFirst.isAtom ->
+                Utils.flattenIndexed(
+                    variableIndex.getIndexed(clause),
+                    atomicIndex.getIndexed(clause),
+                )
+            innerFirst.isVar ->
+                Utils.flattenIndexed(
+                    variableIndex.getIndexed(clause),
+                    numericIndex.getIndexed(clause),
+                    atomicIndex.getIndexed(clause),
+                    compoundIndex.getIndexed(clause),
+                )
+            else ->
+                Utils.flattenIndexed(
+                    variableIndex.getIndexed(clause),
+                    compoundIndex.getIndexed(clause),
+                )
         }
     }
 
@@ -250,29 +257,31 @@ internal open class FamilyArityReteNode(
             innerFirst.isNumber -> {
                 Utils.comparePriority(
                     numericIndex.getFirstIndexed(clause),
-                    variableIndex.getFirstIndexed(clause)
+                    variableIndex.getFirstIndexed(clause),
                 )
             }
             innerFirst.isAtom -> {
                 Utils.comparePriority(
                     atomicIndex.getFirstIndexed(clause),
-                    variableIndex.getFirstIndexed(clause)
+                    variableIndex.getFirstIndexed(clause),
                 )
             }
-            innerFirst.isVar -> Utils.comparePriority(
+            innerFirst.isVar ->
                 Utils.comparePriority(
-                    numericIndex.getFirstIndexed(clause),
-                    atomicIndex.getFirstIndexed(clause)
-                ),
+                    Utils.comparePriority(
+                        numericIndex.getFirstIndexed(clause),
+                        atomicIndex.getFirstIndexed(clause),
+                    ),
+                    Utils.comparePriority(
+                        variableIndex.getFirstIndexed(clause),
+                        compoundIndex.getFirstIndexed(clause),
+                    ),
+                )
+            else ->
                 Utils.comparePriority(
                     variableIndex.getFirstIndexed(clause),
-                    compoundIndex.getFirstIndexed(clause)
+                    compoundIndex.getFirstIndexed(clause),
                 )
-            )
-            else -> Utils.comparePriority(
-                variableIndex.getFirstIndexed(clause),
-                compoundIndex.getFirstIndexed(clause)
-            )
         }
     }
 
@@ -291,20 +300,19 @@ internal open class FamilyArityReteNode(
                     atomicIndex.getCache(),
                     numericIndex.getCache(),
                     variableIndex.getCache(),
-                    compoundIndex.getCache()
+                    compoundIndex.getCache(),
                 )
             } else {
                 Utils.flattenIndexed(
                     atomicIndex.getCache(),
                     numericIndex.getCache(),
                     variableIndex.getCache(),
-                    compoundIndex.getCache()
+                    compoundIndex.getCache(),
                 )
-            }
+            },
         )
 
-    private fun Clause.nestedFirstArgument(): Term =
-        this.head!!.nestedFirstArgument(nestingLevel + 1)
+    private fun Clause.nestedFirstArgument(): Term = this.head!!.nestedFirstArgument(nestingLevel + 1)
 
     private fun assertByFirstParameter(clause: IndexedClause): IndexingLeaf {
         val innerFirst = clause.innerClause.nestedFirstArgument()
@@ -316,6 +324,5 @@ internal open class FamilyArityReteNode(
         }
     }
 
-    private fun Clause.isGlobal(): Boolean =
-        this.head!!.nestedFirstArgument(nestingLevel + 1).isVar
+    private fun Clause.isGlobal(): Boolean = this.head!!.nestedFirstArgument(nestingLevel + 1).isVar
 }

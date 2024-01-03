@@ -10,8 +10,8 @@ fun main() {
 
     while (true) {
         print("> ")
-        val line = readLine()
-        val term = parser.parseTerm(line!!)
+        val line = readlnOrNull() ?: break
+        val term = parser.parseTerm(line)
         println(term.format(TermFormatter.prettyExpressions()))
     }
 }

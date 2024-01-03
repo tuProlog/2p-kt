@@ -19,9 +19,8 @@ class FileTabView(
     file: File,
     private val model: TuPrologIDEModel,
     private val ideController: TuPrologIDEController,
-    initialText: String = ""
+    initialText: String = "",
 ) : Tab() {
-
     companion object {
         private const val FXML = "FileTabView.fxml"
         private const val MIN_FONT_SIZE = 13

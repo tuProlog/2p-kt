@@ -8,7 +8,6 @@ class TestConcurrentAtomCharsImpl :
     TestConcurrentAtomChars<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     override fun atomCharsTestFirstIsVar() = multiRunConcurrentTest { super.atomCharsTestFirstIsVar() }
@@ -35,7 +34,8 @@ class TestConcurrentAtomCharsImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    override fun atomCharsTestIstantationErrorCheck() = multiRunConcurrentTest { super.atomCharsTestIstantationErrorCheck() }
+    override fun atomCharsTestIstantationErrorCheck() =
+        multiRunConcurrentTest { super.atomCharsTestIstantationErrorCheck() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

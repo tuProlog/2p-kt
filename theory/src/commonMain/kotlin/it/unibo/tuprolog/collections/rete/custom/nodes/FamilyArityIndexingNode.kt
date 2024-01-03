@@ -8,9 +8,8 @@ import it.unibo.tuprolog.unify.Unificator
 internal class FamilyArityIndexingNode(
     unificator: Unificator,
     private val ordered: Boolean,
-    nestingLevel: Int
+    nestingLevel: Int,
 ) : FamilyArityReteNode(unificator, ordered, nestingLevel), ArityIndexing {
-
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
         if (ordered) {
             orderedLookahead(clause)
@@ -38,14 +37,14 @@ internal class FamilyArityIndexingNode(
                 atomicIndex.extractGlobalIndexedSequence(clause),
                 numericIndex.extractGlobalIndexedSequence(clause),
                 variableIndex.extractGlobalIndexedSequence(clause),
-                compoundIndex.extractGlobalIndexedSequence(clause)
+                compoundIndex.extractGlobalIndexedSequence(clause),
             )
         } else {
             Utils.flattenIndexed(
                 atomicIndex.extractGlobalIndexedSequence(clause),
                 numericIndex.extractGlobalIndexedSequence(clause),
                 variableIndex.extractGlobalIndexedSequence(clause),
-                compoundIndex.extractGlobalIndexedSequence(clause)
+                compoundIndex.extractGlobalIndexedSequence(clause),
             )
         }
     }

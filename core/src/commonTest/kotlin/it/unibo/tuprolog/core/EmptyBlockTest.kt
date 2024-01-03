@@ -10,7 +10,6 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class EmptyBlockTest {
-
     @Test
     fun emptyBlockCompanionReturnsEmptySetImpl() {
         assertEquals(EmptyBlockImpl(), EmptyBlock())

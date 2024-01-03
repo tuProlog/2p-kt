@@ -12,9 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class PrologParserTest {
-
     companion object {
-
         private fun lexerForString(input: String): PrologLexer {
             return PrologLexer(CharStreams.fromString(input))
         }
@@ -53,11 +51,11 @@ class PrologParserTest {
                         line: Int,
                         charPositionInLine: Int,
                         msg: String,
-                        e: RecognitionException
+                        e: RecognitionException,
                     ) {
                         throw e
                     }
-                }
+                },
             )
             return parser.singletonTerm()
         }
@@ -85,9 +83,9 @@ class PrologParserTest {
             return PrologParser(
                 tokenStreamFromLexer(
                     lexerForString(
-                        string
-                    )
-                )
+                        string,
+                    ),
+                ),
             )
         }
     }
@@ -124,7 +122,7 @@ class PrologParserTest {
                 !sc.isBlock &&
                 !sc.isTruth &&
                 sc.functor.text == "a" &&
-                sc.functor.type == PrologLexer.ATOM
+                sc.functor.type == PrologLexer.ATOM,
         )
     }
 
@@ -138,7 +136,7 @@ class PrologParserTest {
                 s.arity == s.args.count() &&
                     s.arity == 0 && s.isString && !s.isBlock && !s.isList && !s.isTruth &&
                     s.functor.text == "a" &&
-                    (s.functor.type == PrologLexer.DQ_STRING || s.functor.type == PrologLexer.SQ_STRING)
+                    (s.functor.type == PrologLexer.DQ_STRING || s.functor.type == PrologLexer.SQ_STRING),
             )
         }
     }
@@ -152,7 +150,7 @@ class PrologParserTest {
             s.arity == s.args.count() &&
                 s.isTruth && !s.isList && !s.isString &&
                 s.functor.text == "true" &&
-                s.functor.type == PrologLexer.BOOL
+                s.functor.type == PrologLexer.BOOL,
         )
     }
 
@@ -165,7 +163,7 @@ class PrologParserTest {
             s.arity == s.args.count() &&
                 s.isTruth && !s.isList && !s.isString &&
                 s.functor.text == "fail" &&
-                s.functor.type == PrologLexer.BOOL
+                s.functor.type == PrologLexer.BOOL,
         )
     }
 
@@ -178,7 +176,7 @@ class PrologParserTest {
             s.arity == s.args.count() &&
                 s.isTruth && !s.isList && !s.isString &&
                 s.functor.text == "false" &&
-                s.functor.type == PrologLexer.BOOL
+                s.functor.type == PrologLexer.BOOL,
         )
     }
 
@@ -192,7 +190,7 @@ class PrologParserTest {
                 s.arity == s.args.count() &&
                     s.arity == 0 &&
                     s.isList && !s.isTruth && !s.isString &&
-                    s.functor.type == PrologLexer.EMPTY_LIST
+                    s.functor.type == PrologLexer.EMPTY_LIST,
             )
         }
     }
@@ -206,7 +204,7 @@ class PrologParserTest {
             assertTrue(
                 !v.isAnonymous &&
                     v.value.text.contains("A") &&
-                    v.value.type == PrologLexer.VARIABLE
+                    v.value.type == PrologLexer.VARIABLE,
             )
         }
     }
@@ -221,7 +219,7 @@ class PrologParserTest {
             assertTrue(
                 l.length == l.items.count() &&
                     l.length == 1 &&
-                    !l.hasTail && l.tail == null
+                    !l.hasTail && l.tail == null,
             )
             val expr = l.items[0]
             assertTrue(expr.isTerm && expr.left != null && expr.operators.isEmpty() && expr.right.isEmpty())

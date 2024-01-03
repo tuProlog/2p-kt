@@ -13,15 +13,15 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  *
  */
 object Dot : RuleWrapper<ExecutionContext>(ACCESS_OPERATOR, 2) {
-
     private val Method by variables
     private val Ref by variables
 
     override val Scope.head: List<Term>
-        get() = kotlin.collections.listOf(
-            Ref,
-            Method
-        )
+        get() =
+            kotlin.collections.listOf(
+                Ref,
+                Method,
+            )
 
     override val Scope.body: Term
         get() = structOf(FluentReduce.FUNCTOR, consOf(Ref, Method), `_`)

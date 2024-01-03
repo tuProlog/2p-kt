@@ -4,8 +4,11 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class TestKotlinTypeRefs {
-
-    private fun assertPropertyReturns(typeRef: TypeRef, property: String, expected: Any?) {
+    private fun assertPropertyReturns(
+        typeRef: TypeRef,
+        property: String,
+        expected: Any?,
+    ) {
         val result = typeRef.invoke(property)
         assertEquals(expected, result.asValue()?.value)
     }

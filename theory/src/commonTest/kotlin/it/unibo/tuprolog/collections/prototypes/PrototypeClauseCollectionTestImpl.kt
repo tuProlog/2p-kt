@@ -22,9 +22,8 @@ import it.unibo.tuprolog.core.List as LogicList
 
 internal abstract class PrototypeClauseCollectionTestImpl(
     private val emptyGenerator: () -> ClauseCollection,
-    private val collectionGenerator: (Iterable<Clause>) -> ClauseCollection
+    private val collectionGenerator: (Iterable<Clause>) -> ClauseCollection,
 ) : PrototypeClauseCollectionTest {
-
     private val fFamilySelector =
         Fact.of(Struct.of("f", Var.anonymous()))
 
@@ -41,21 +40,27 @@ internal abstract class PrototypeClauseCollectionTestImpl(
         listOf(
             Fact.of(Struct.of("f", Atom.of("a"))),
             Fact.of(Struct.of("f", Atom.of("b"))),
-            Fact.of(Struct.of("f", Atom.of("c")))
+            Fact.of(Struct.of("f", Atom.of("c"))),
         )
 
     private val newClauses =
         listOf(
             Fact.of(Struct.of("f", Atom.of("d"))),
             Fact.of(Struct.of("f", Atom.of("e"))),
-            Fact.of(Struct.of("f", Atom.of("f")))
+            Fact.of(Struct.of("f", Atom.of("f"))),
         )
 
     private val emptyCollection = emptyGenerator()
 
-    protected abstract fun getClauses(collection: ClauseCollection, query: Clause): Sequence<Clause>
+    protected abstract fun getClauses(
+        collection: ClauseCollection,
+        query: Clause,
+    ): Sequence<Clause>
 
-    protected abstract fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause>
+    protected abstract fun retractClauses(
+        collection: ClauseCollection,
+        query: Clause,
+    ): Sequence<Clause>
 
     override fun getTakesUnificationIntoAccount() {
         val collection = collectionGenerator(memberClause)
@@ -66,13 +71,13 @@ internal abstract class PrototypeClauseCollectionTestImpl(
                 collection,
                 member(
                     LogicList.of(Struct.of("a", Var.of("X"))),
-                    LogicList.of(LogicList.of(Struct.of("a", Integer.of(1))))
-                )
-            )
+                    LogicList.of(LogicList.of(Struct.of("a", Integer.of(1)))),
+                ),
+            ),
         )
         assertClausesHaveSameLengthAndContent(
             memberClause.asSequence(),
-            getClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("a"))))
+            getClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("a")))),
         )
         assertClausesHaveSameLengthAndContent(
             sequenceOf(),
@@ -80,13 +85,13 @@ internal abstract class PrototypeClauseCollectionTestImpl(
                 collection,
                 member(
                     LogicList.of(Struct.of("a", Var.of("X"))),
-                    LogicList.of(LogicList.of(Struct.of("b", Integer.of(1))))
-                )
-            )
+                    LogicList.of(LogicList.of(Struct.of("b", Integer.of(1)))),
+                ),
+            ),
         )
         assertClausesHaveSameLengthAndContent(
             sequenceOf(),
-            getClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("b"))))
+            getClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("b")))),
         )
     }
 
@@ -99,16 +104,16 @@ internal abstract class PrototypeClauseCollectionTestImpl(
                 collection,
                 member(
                     LogicList.of(Struct.of("a", Var.of("X"))),
-                    LogicList.of(LogicList.of(Struct.of("a", Integer.of(1))))
-                )
-            )
+                    LogicList.of(LogicList.of(Struct.of("a", Integer.of(1)))),
+                ),
+            ),
         )
 
         collection = collectionGenerator(memberClause)
 
         assertClausesHaveSameLengthAndContent(
             memberClause.asSequence(),
-            retractClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("a"))))
+            retractClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("a")))),
         )
 
         collection = collectionGenerator(memberClause)
@@ -119,16 +124,16 @@ internal abstract class PrototypeClauseCollectionTestImpl(
                 collection,
                 member(
                     LogicList.of(Struct.of("a", Var.of("X"))),
-                    LogicList.of(LogicList.of(Struct.of("b", Integer.of(1))))
-                )
-            )
+                    LogicList.of(LogicList.of(Struct.of("b", Integer.of(1)))),
+                ),
+            ),
         )
 
         collection = collectionGenerator(memberClause)
 
         assertClausesHaveSameLengthAndContent(
             sequenceOf(),
-            retractClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("b"))))
+            retractClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("b")))),
         )
     }
 
@@ -211,7 +216,7 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             collectionGenerator(clauses),
-            retrieveResult.collection
+            retrieveResult.collection,
         )
     }
 
@@ -222,11 +227,11 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             listOf(presentClause, presentClause),
-            retrieveResult.clauses
+            retrieveResult.clauses,
         )
         assertClausesHaveSameLengthAndContent(
             clauses - presentClause,
-            retrieveResult.collection
+            retrieveResult.collection,
         )
     }
 

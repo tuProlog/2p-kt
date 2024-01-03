@@ -14,7 +14,6 @@ import kotlin.test.assertNull
  * @author Enrico
  */
 internal class SolveResponseTest {
-
     private val aResponse =
         Solve.Response(aSolution, aSideEffectManager, someSideEffects)
 

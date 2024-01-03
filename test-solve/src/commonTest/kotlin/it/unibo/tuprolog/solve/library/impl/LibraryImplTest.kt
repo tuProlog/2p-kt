@@ -24,7 +24,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class LibraryImplTest {
-
     private val libraryInstances = LibraryUtils.allLibraries.map { makeLib(it, ::libraryWithoutAliasConstructor) }
 
     @Test
@@ -64,8 +63,9 @@ internal class LibraryImplTest {
         LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
             val (_, _, theory, primitives) = libraryToAlias
 
-            theory.rules.map { it.head.extractSignature() } + primitives.keys
-                .forEach { signature -> assertTrue { signature in libraryInstance } }
+            theory.rules.map { it.head.extractSignature() } +
+                primitives.keys
+                    .forEach { signature -> assertTrue { signature in libraryInstance } }
 
             assertFalse { Signature("ciao", 3) in libraryInstance }
         }
@@ -73,12 +73,13 @@ internal class LibraryImplTest {
 
     @Test
     fun containsSignatureDiscardsVarargSignatures() {
-        val library = libraryWithoutAliasConstructor(
-            OperatorSet(),
-            Theory.of(Fact.of(Struct.of("f", Atom.of("a")))),
-            emptyMap(),
-            emptyMap()
-        )
+        val library =
+            libraryWithoutAliasConstructor(
+                OperatorSet(),
+                Theory.of(Fact.of(Struct.of("f", Atom.of("a")))),
+                emptyMap(),
+                emptyMap(),
+            )
 
         assertTrue { Signature("f", 1, false) in library }
         assertFalse { Signature("f", 1, true) in library }
@@ -103,11 +104,12 @@ internal class LibraryImplTest {
             primitives.keys.forEach { signature -> assertTrue { libraryInstance.hasPrimitive(signature) } }
 
             (
-                theory.rules.map { it.head.extractSignature() } + Signature(
-                    "ciao",
-                    3
-                )
-                ).forEach {
+                theory.rules.map { it.head.extractSignature() } +
+                    Signature(
+                        "ciao",
+                        3,
+                    )
+            ).forEach {
                 assertFalse { libraryInstance.hasPrimitive(it) }
             }
         }
@@ -118,8 +120,9 @@ internal class LibraryImplTest {
         LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
             val (_, _, theory, primitives) = libraryToAlias
 
-            theory.rules.map { it.head.extractSignature() } + primitives.keys
-                .forEach { signature -> assertTrue { libraryInstance.hasProtected(signature) } }
+            theory.rules.map { it.head.extractSignature() } +
+                primitives.keys
+                    .forEach { signature -> assertTrue { libraryInstance.hasProtected(signature) } }
 
             assertFalse { libraryInstance.hasProtected(Signature("ciao", 3)) }
         }

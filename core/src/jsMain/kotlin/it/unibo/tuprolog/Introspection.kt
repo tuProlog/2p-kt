@@ -2,6 +2,7 @@ package it.unibo.tuprolog
 
 import kotlinx.browser.window
 
+@Suppress("TooGenericExceptionCaught", "SwallowedException")
 internal actual fun currentPlatform(): Platform =
     try {
         if (window === undefined) {
@@ -14,10 +15,11 @@ internal actual fun currentPlatform(): Platform =
     }
 
 internal actual fun currentOs(): Os {
-    val name = when (currentPlatform()) {
-        Platform.NODE -> js("require('os').platform()") as String?
-        Platform.BROWSER -> window.navigator.platform
-        else -> null
-    }
+    val name =
+        when (currentPlatform()) {
+            Platform.NODE -> js("require('os').platform()") as String?
+            Platform.BROWSER -> window.navigator.platform
+            else -> null
+        }
     return name?.let(Os.Companion::detect) ?: error("Cannot determine current OS: $name")
 }

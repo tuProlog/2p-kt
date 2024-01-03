@@ -7,11 +7,16 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
 @JsName("addTag")
-fun <T : U, U : Taggable<U>, X : Any> T.addTag(name: String, value: X): T = addTags(name to value)
+fun <T : U, U : Taggable<U>, X : Any> T.addTag(
+    name: String,
+    value: X,
+): T = addTags(name to value)
 
 @JsName("addTagPairs")
-fun <T : U, U : Taggable<U>, X : Any> T.addTags(tag: Pair<String, X>, vararg otherTags: Pair<String, X>): T =
-    this.addTags(mapOf(tag, *otherTags))
+fun <T : U, U : Taggable<U>, X : Any> T.addTags(
+    tag: Pair<String, X>,
+    vararg otherTags: Pair<String, X>,
+): T = this.addTags(mapOf(tag, *otherTags))
 
 @JsName("plusTag")
 operator fun <T : U, U : Taggable<U>, X : Any> T.plus(tag: Pair<String, X>): T = addTags(tag)
@@ -26,12 +31,16 @@ operator fun <T : U, U : Taggable<U>, X : Any> T.plus(tags: Map<String, X>): T =
 fun <T : U, U : Taggable<U>, X : Any> T.setTags(tags: Map<String, X>): T = replaceTags(tags) as T
 
 @JsName("setTagPairs")
-fun <T : U, U : Taggable<U>, X : Any> T.setTags(tag: Pair<String, X>, vararg otherTags: Pair<String, X>): T =
-    setTags(mapOf(tag, *otherTags))
+fun <T : U, U : Taggable<U>, X : Any> T.setTags(
+    tag: Pair<String, X>,
+    vararg otherTags: Pair<String, X>,
+): T = setTags(mapOf(tag, *otherTags))
 
 @JsName("setTag")
-fun <T : U, U : Taggable<U>, X : Any> T.setTag(key: String, value: X): T =
-    setTags(tags.toMutableMap().also { it[key] = value })
+fun <T : U, U : Taggable<U>, X : Any> T.setTag(
+    key: String,
+    value: X,
+): T = setTags(tags.toMutableMap().also { it[key] = value })
 
 @JsName("clearTags")
 fun <T : U, U : Taggable<U>> T.clearTags(): T = setTags(emptyMap())

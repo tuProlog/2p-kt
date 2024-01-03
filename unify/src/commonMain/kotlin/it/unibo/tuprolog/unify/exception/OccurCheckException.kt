@@ -8,9 +8,8 @@ class OccurCheckException(
     term2: Term,
     private val innerVar: Var,
     private val innerTerm: Term,
-    other: Throwable?
+    other: Throwable?,
 ) : NoUnifyException(term1, term2, other) {
-
     constructor(term1: Term, term2: Term, innerVar: Var, innerTerm: Term) :
         this(term1, term2, innerVar, innerTerm, null)
 
