@@ -1,3 +1,15 @@
+## [0.32.0](https://github.com/tuProlog/2p-kt/compare/0.31.21...0.32.0) (2024-01-03)
+
+
+### Features
+
+* use Kotlin 1.9.22 ([#621](https://github.com/tuProlog/2p-kt/issues/621)) ([0344422](https://github.com/tuProlog/2p-kt/commit/034442275a66fcf7a08a5f1c206cd5585e984ec9))
+
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.85 ([f3beae8](https://github.com/tuProlog/2p-kt/commit/f3beae8a90efd099341dfa29283790d02d39d48e))
+
 ## [0.31.21](https://github.com/tuProlog/2p-kt/compare/0.31.20...0.31.21) (2023-12-24)
 
 
