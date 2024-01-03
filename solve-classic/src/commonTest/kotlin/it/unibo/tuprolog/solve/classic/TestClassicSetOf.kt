@@ -18,8 +18,8 @@ class TestClassicSetOf : TestSetOf, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    override fun testSetOfNoSorted() {
-        prototype.testSetOfNoSorted()
+    override fun testSetOfSorted() {
+        prototype.testSetOfSorted()
     }
 
     @Test

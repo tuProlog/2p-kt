@@ -31,7 +31,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
         }
     }
 
-    override fun testSetOfNoSorted() {
+    override fun testSetOfSorted() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -39,7 +39,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to listOf(1, 2))),
+                ktListOf(query.yes("X" to listOf(2, 1))),
                 solutions,
             )
         }

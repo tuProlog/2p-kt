@@ -27,7 +27,7 @@ interface TestSetOf : SolverTest {
      * ?- setof(X,(X=2;X=1),L)
      * ```
      */
-    fun testSetOfNoSorted()
+    fun testSetOfSorted()
 
     /**
      * Tests the queries

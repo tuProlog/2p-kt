@@ -20,8 +20,8 @@ class TestStreamsSetOf : TestSetOf, SolverFactory by StreamsSolverFactory {
     }
 
     @Test
-    override fun testSetOfNoSorted() {
-        prototype.testSetOfNoSorted()
+    override fun testSetOfSorted() {
+        prototype.testSetOfSorted()
     }
 
     @Test
