@@ -319,3 +319,34 @@ fun <T> Sequence<T>.dropLast(): Sequence<T> =
             }
         }
     }
+
+fun <T> Array<T?>.assertItemsAreNotNull(): Array<T> {
+    for ((index, value) in this.withIndex()) {
+        if (value == null) {
+            throw IllegalArgumentException("Item at index $index is null")
+        }
+    }
+    @Suppress("UNCHECKED_CAST")
+    return this as Array<T>
+}
+
+fun <T> List<T?>.assertItemsAreNotNull(): List<T> {
+    for ((index, value) in this.withIndex()) {
+        if (value == null) {
+            throw IllegalArgumentException("Item at index $index is null")
+        }
+    }
+    @Suppress("UNCHECKED_CAST")
+    return this as List<T>
+}
+
+fun <T> Sequence<T?>.assertItemsAreNotNull(): Sequence<T> =
+    indexed().map {
+        when (val value = it.value ) {
+            null -> throw IllegalArgumentException("Item at index ${it.index} is null")
+            else -> value
+        }
+    }
+
+fun <T> Iterable<T?>.assertItemsAreNotNull(): Iterable<T> =
+    asSequence().assertItemsAreNotNull().asIterable()

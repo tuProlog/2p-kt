@@ -19,7 +19,7 @@ import it.unibo.tuprolog.core.VariablesProvider
 internal class LogicProgrammingScopeImpl(scope: Scope) :
     LogicProgrammingScope,
     VariablesProvider by VariablesProvider.of(scope) {
-    private val anyToTermConverter = AnyToTermConverter.of(this)
+    private val anyToTermConverter = Termificator.default(this)
 
     override fun Any.toTerm(): Term = anyToTermConverter.toTerm(this)
 
