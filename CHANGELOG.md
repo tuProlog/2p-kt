@@ -1,3 +1,15 @@
+## [0.32.2](https://github.com/tuProlog/2p-kt/compare/0.32.1...0.32.2) (2024-03-22)
+
+
+### Dependency updates
+
+* **deps:** update plugin gradlemockservice to v1.0.8 ([804e579](https://github.com/tuProlog/2p-kt/commit/804e57913f072066a4e66455ccd91d13a5d9299a))
+
+
+### Bug Fixes
+
+* **deps:** downgrade Javafx version ([#650](https://github.com/tuProlog/2p-kt/issues/650)) ([b743615](https://github.com/tuProlog/2p-kt/commit/b7436152fcbf21e0467a01d2ad50a71bd5085a78))
+
 ## [0.32.1](https://github.com/tuProlog/2p-kt/compare/0.32.0...0.32.1) (2024-02-09)
 
 
