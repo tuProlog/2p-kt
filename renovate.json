@@ -25,6 +25,10 @@
     {
       "matchPackageNames": ["net.sourceforge.plantuml:plantuml"],
       "allowedVersions": "/^1\\./"
+    },
+    {
+      "matchPackagePatterns": ["^org\\.openjfx:javafx-"],
+      "allowedVersions": "/^1\\./"
     }
   ],
   "prConcurrentLimit": 25,
