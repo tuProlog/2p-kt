@@ -40,7 +40,7 @@ jobs:
         uses: nicolasfara/precompute-semantic-release-version-action@1.0.2
         with:
           github-token: ${{ github.token }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.0
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.10
         with:
           maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
           maven-central-username: gciatto
@@ -86,7 +86,7 @@ jobs:
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.0
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.10
         timeout-minutes: 120
         with:
           # Dry-deployment
@@ -128,7 +128,7 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4.1.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.0
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.10
         with:
           maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
           maven-central-username: gciatto
@@ -169,7 +169,7 @@ jobs:
         uses: actions/setup-node@v4.0.2
         with:
           node-version: ${{ steps.node-version.outputs.version }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.0
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.10
         env:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.maven-central-repo-id }}
           ENFORCE_VERSION: "${{ needs.staging-repo.outputs.next-version }}"
