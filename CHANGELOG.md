@@ -1,3 +1,24 @@
+## [0.32.3](https://github.com/tuProlog/2p-kt/compare/0.32.2...0.32.3) (2024-03-24)
+
+
+### Dependency updates
+
+* **deps:** update dependency gradle to v8.7 ([59d53a9](https://github.com/tuProlog/2p-kt/commit/59d53a9e318a3d2a551f81d3041134da1305cbff))
+* **deps:** update kotlin monorepo to v1.9.23 ([a90b393](https://github.com/tuProlog/2p-kt/commit/a90b3937e9552f67711edcb00370153105521e2d))
+* **deps:** update ktmpp to v4.1.3 ([851b045](https://github.com/tuProlog/2p-kt/commit/851b0455707aad7e4b0acde02429f11b3c589d39))
+* **deps:** update plugin gitsemver to v3.1.4 ([5c79acc](https://github.com/tuProlog/2p-kt/commit/5c79acce0d000054894139162930df6c76962e5f))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.4 ([d21b6ef](https://github.com/tuProlog/2p-kt/commit/d21b6ef088b503abeb875cfbbd7021052c643bd0))
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.fasterxml.jackson.dataformat:jackson-dataformat-yaml to v2.16.2 ([8da0154](https://github.com/tuProlog/2p-kt/commit/8da015471620156b58bcd58e5cf96fb2f6c24fc0))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.10 ([e645926](https://github.com/tuProlog/2p-kt/commit/e6459265a107ab6dafd16a53e0046c043cec4ef8))
+
 ## [0.32.2](https://github.com/tuProlog/2p-kt/compare/0.32.1...0.32.2) (2024-03-22)
 
 
