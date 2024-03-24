@@ -1,3 +1,10 @@
+## [0.32.5](https://github.com/tuProlog/2p-kt/compare/0.32.4...0.32.5) (2024-03-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2024.3 ([500d7df](https://github.com/tuProlog/2p-kt/commit/500d7dfff03fa8444ad2b91e83267e018fd8fd21))
+
 ## [0.32.4](https://github.com/tuProlog/2p-kt/compare/0.32.3...0.32.4) (2024-03-24)
 
 
