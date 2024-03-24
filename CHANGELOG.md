@@ -1,3 +1,10 @@
+## [0.32.4](https://github.com/tuProlog/2p-kt/compare/0.32.3...0.32.4) (2024-03-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.fasterxml.jackson.dataformat:jackson-dataformat-yaml to v2.17.0 ([4c19c63](https://github.com/tuProlog/2p-kt/commit/4c19c63b933c9a6261fdaba05c26de41ffd6702d))
+
 ## [0.32.3](https://github.com/tuProlog/2p-kt/compare/0.32.2...0.32.3) (2024-03-24)
 
 
