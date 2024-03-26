@@ -5,7 +5,8 @@ import it.unibo.tuprolog.core.Struct
 import kotlin.js.JsName
 
 @Suppress("PropertyName", "unused", "FunctionName")
-interface PrologStdLibScope : LogicProgrammingAwareScope {
+interface LogicProgrammingScopeWithPrologStandardLibrary<S : LogicProgrammingScopeWithPrologStandardLibrary<S>> :
+    BaseLogicProgrammingScope<S> {
     val at_end_of_stream: Atom
         get() = atomOf("at_end_of_stream")
 

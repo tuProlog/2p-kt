@@ -7,21 +7,25 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.assertItemsAreNotNull
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
-import kotlin.collections.List as KtList
 import kotlin.reflect.KClass
+import kotlin.collections.List as KtList
 
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class AbstractTermificator(protected val scope: Scope) : Termificator {
+abstract class AbstractTermificator(override val scope: Scope) : Termificator {
     private val converters: MutableMap<KClass<*>, (Any) -> Term> = linkedMapOf()
 
-    fun <T : Any> handleType(type: KClass<T>, conversion: (T) -> Term) {
+    fun <T : Any> handleType(
+        type: KClass<T>,
+        conversion: (T) -> Term,
+    ) {
         converters[type] = {
             @Suppress("UNCHECKED_CAST")
             conversion(it as T)
         }
     }
 
-    override fun toTerm(value: Any): Term {
+    override fun termify(value: Any?): Term {
+        requireNotNull(value) { "Cannot termify null" }
         if (value is Term) {
             return value
         }
@@ -57,29 +61,26 @@ abstract class AbstractTermificator(protected val scope: Scope) : Termificator {
     fun handleBigDecimalAsReal(value: BigDecimal) = scope.realOf(value)
 
     fun handleArrayAsList(value: Array<*>) =
-        scope.listOf(value.asIterable().assertItemsAreNotNull().map { toTerm(it) })
+        scope.listOf(value.asIterable().assertItemsAreNotNull().map { termify(it) })
 
-    fun handleSequenceAsList(value: Sequence<*>) =
-        scope.listOf(value.assertItemsAreNotNull().map { toTerm(it) })
+    fun handleSequenceAsList(value: Sequence<*>) = scope.listOf(value.assertItemsAreNotNull().map { termify(it) })
 
-    fun handleIterableAsList(value: Iterable<*>) =
-        scope.listOf(value.assertItemsAreNotNull().map { toTerm(it) })
+    fun handleIterableAsList(value: Iterable<*>) = scope.listOf(value.assertItemsAreNotNull().map { termify(it) })
 
-    fun handleKotlinListAsLogicList(value: KtList<*>) =
-        scope.listOf(value.assertItemsAreNotNull().map { toTerm(it) })
+    fun handleKotlinListAsLogicList(value: KtList<*>) = scope.listOf(value.assertItemsAreNotNull().map { termify(it) })
 
-    fun handleSetAsBlock(value: Set<*>) = scope.blockOf(value.assertItemsAreNotNull().map { toTerm(it) })
+    fun handleSetAsBlock(value: Set<*>) = scope.blockOf(value.assertItemsAreNotNull().map { termify(it) })
 
-    fun handlePairAsTuple(value: Pair<*, *>) = scope.tupleOf(toTerm(value.first!!), toTerm(value.second!!))
+    fun handlePairAsTuple(value: Pair<*, *>) = scope.tupleOf(termify(value.first), termify(value.second))
 
     fun handleTripletAsTuple(value: Triple<*, *, *>) =
-        scope.tupleOf(toTerm(value.first!!), toTerm(value.second!!), toTerm(value.third!!))
+        scope.tupleOf(termify(value.first), termify(value.second), termify(value.third))
 
     fun handlePairValuePairAsStruct(value: Pair<*, *>) =
-        scope.structOf(":", toTerm(value.first!!), toTerm(value.second!!))
+        scope.structOf(":", termify(value.first), termify(value.second))
 
     fun handleKeyValuePairAsStruct(value: Map.Entry<*, *>) =
-        scope.structOf(":", toTerm(value.key!!), toTerm(value.value!!))
+        scope.structOf(":", termify(value.key), termify(value.value))
 
     fun handleMapAsBlock(value: Map<*, *>) =
         scope.blockOf(value.entries.assertItemsAreNotNull().map { handleKeyValuePairAsStruct(it) })

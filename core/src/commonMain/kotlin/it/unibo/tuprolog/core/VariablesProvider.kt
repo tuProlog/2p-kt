@@ -8,6 +8,11 @@ import kotlin.reflect.KProperty
 
 @Suppress("PropertyName")
 interface VariablesProvider : Scope {
+
+    @JsName("scope")
+    val scope: Scope
+
+    @JsName("getValue")
     operator fun getValue(
         thisRef: Any?,
         property: KProperty<*>,
