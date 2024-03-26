@@ -21,6 +21,13 @@ interface Termificator {
             }
 
         @JvmStatic
+        @JsName("novel")
+        fun novel(scope: Scope): Termificator =
+            custom(scope) {
+                novelConfiguration()
+            }
+
+        @JvmStatic
         @JsName("custom")
         fun custom(
             scope: Scope,

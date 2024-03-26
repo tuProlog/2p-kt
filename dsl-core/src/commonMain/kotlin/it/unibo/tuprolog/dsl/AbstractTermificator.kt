@@ -96,7 +96,7 @@ abstract class AbstractTermificator(override val scope: Scope) : Termificator {
         handleType(Iterable::class, ::handleIterableAsList)
     }
 
-    fun defaultConfiguration() {
+    fun novelConfiguration() {
         handleType(Boolean::class, ::handleBooleanAsTruth)
         handleType(String::class, ::handleStringAsAtomOrVariable)
         handleType(BigInteger::class, ::handleBigIntegerAsInteger)
@@ -104,7 +104,6 @@ abstract class AbstractTermificator(override val scope: Scope) : Termificator {
         handleType(Number::class, ::handleNumberAsNumeric)
         handleType(Array::class, ::handleArrayAsList)
         handleType(Sequence::class, ::handleSequenceAsList)
-        handleType(Iterable::class, ::handleIterableAsList)
         handleType(KtList::class, ::handleKotlinListAsLogicList)
         handleType(Set::class, ::handleSetAsBlock)
         handleType(Pair::class, ::handlePairAsTuple)
@@ -112,5 +111,6 @@ abstract class AbstractTermificator(override val scope: Scope) : Termificator {
         handleType(Map.Entry::class, ::handleKeyValuePairAsStruct)
         handleType(Pair::class, ::handlePairValuePairAsStruct)
         handleType(Map::class, ::handleMapAsBlock)
+        handleType(Iterable::class, ::handleIterableAsList)
     }
 }
