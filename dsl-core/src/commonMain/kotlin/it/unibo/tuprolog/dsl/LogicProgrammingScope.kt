@@ -8,7 +8,8 @@ interface LogicProgrammingScope :
     MinimalLogicProgrammingScope<LogicProgrammingScope>,
     LogicProgrammingScopeWithSubstitutions<LogicProgrammingScope>,
     LogicProgrammingScopeWithPrologStandardLibrary<LogicProgrammingScope>,
-    LogicProgrammingScopeWithOperators<LogicProgrammingScope> {
+    LogicProgrammingScopeWithOperators<LogicProgrammingScope>,
+    LogicProgrammingScopeWithVariables<LogicProgrammingScope> {
     companion object {
         @JsName("empty")
         fun empty(): LogicProgrammingScope = of()

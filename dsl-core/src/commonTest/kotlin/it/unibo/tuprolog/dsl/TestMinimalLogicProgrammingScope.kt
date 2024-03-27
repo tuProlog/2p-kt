@@ -18,16 +18,25 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class TestMinimalLogicProgrammingScope {
-    companion object {
-        private fun <R> logicProgramming(function: MinimalLogicProgrammingScope<*>.() -> R): R =
-            it.unibo.tuprolog.dsl.logicProgramming { function() }
+class TestMinimalLogicProgrammingScope : AbstractLogicProgrammingScopeTest<MinimalLogicProgrammingScope<*>>() {
+    override fun createLogicProgrammingScope(): MinimalLogicProgrammingScope<*> = LogicProgrammingScope.empty()
 
-        fun assertDSLCreationIsCorrect(
-            expected: Term,
-            actualCreator: MinimalLogicProgrammingScope<*>.() -> Term,
-        ) {
-            assertEquals(expected, LogicProgrammingScope.empty().actualCreator())
+    @Test
+    fun testSubScope() {
+        val scope = createLogicProgrammingScope()
+        val subScope = scope.newScope()
+        val var1 = scope.varOf("X")
+        val var2 = subScope.varOf("X")
+        assertStructurallyEquals(var1, var2)
+    }
+
+    @Test
+    fun testSubScoping() {
+        val scope = createLogicProgrammingScope()
+        val var1 = scope.varOf("X")
+        scope.scope {
+            val var2 = varOf("X")
+            assertStructurallyEquals(var1, var2)
         }
     }
 
@@ -180,11 +189,7 @@ class TestMinimalLogicProgrammingScope {
         logicProgramming {
             val first = `_`
             val second = `_`
-            for (variable in sequenceOf(first, second)) {
-                assertEquals("_", variable.name)
-                assertTrue(variable.isAnonymous)
-            }
-            assertNotEquals(`_`, `_`)
+            assertAreDifferentUnderscores(first, second)
         }
 
     @Test
