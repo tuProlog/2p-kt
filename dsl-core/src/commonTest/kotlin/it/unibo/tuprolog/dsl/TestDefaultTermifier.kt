@@ -39,25 +39,46 @@ open class TestDefaultTermifier : AbstractTermificatorTest() {
 
     @Test
     fun testArrays() {
-        val input = arrayOf(1, 2)
-        assertTermificationWorks(input, { input.map { intOf(it) }.let(::listOf) })
+        assertTermificationWorks(array, { array.map { intOf(it) }.let(::listOf) })
     }
 
     @Test
     fun testLists() {
-        val input = listOf(1, 2)
-        assertTermificationWorks(input, { input.map { intOf(it) }.let(::listOf) })
+        assertTermificationWorks(list, { list.map { intOf(it) }.let(::listOf) })
     }
 
     @Test
     open fun testSets() {
-        val input = setOf(1, 2)
-        assertTermificationWorks(input, { input.map { intOf(it) }.let(::listOf) })
+        assertTermificationWorks(set, { set.map { intOf(it) }.let(::listOf) })
     }
 
     @Test
     fun testSequences() {
-        val input = sequenceOf(1, 2)
-        assertTermificationWorks(input, { input.map { intOf(it) }.let(::listOf) })
+        assertTermificationWorks(sequence, { sequence.map { intOf(it) }.let(::listOf) })
+    }
+
+    @Test
+    open fun testMaps() {
+        assertTermificationFails(map)
+    }
+
+    @Test
+    open fun testPairs() {
+        assertTermificationFails(pair)
+    }
+
+    @Test
+    open fun testTriples() {
+        assertTermificationFails(triple)
+    }
+
+    @Test
+    open fun testKeyValues() {
+        assertTermificationFails(keyValue)
+    }
+
+    @Test
+    open fun testNonConvertibleObject() {
+        assertTermificationFails(unconvertible)
     }
 }
