@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.Numeric
