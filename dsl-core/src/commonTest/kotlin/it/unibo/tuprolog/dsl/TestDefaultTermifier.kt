@@ -1,12 +1,19 @@
 package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Var
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.test.Test
 
 open class TestDefaultTermifier : AbstractTermificatorTest() {
     override fun createTermificator(scope: Scope): Termificator = Termificator.default(scope)
+
+    @Test
+    fun testTerm() {
+        val someTerm = Var.of("X")
+        assertTermificationWorks(someTerm, someTerm)
+    }
 
     @Test
     fun testBooleans() {
