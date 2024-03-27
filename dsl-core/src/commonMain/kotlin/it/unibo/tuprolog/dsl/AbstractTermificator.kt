@@ -109,7 +109,6 @@ abstract class AbstractTermificator(override val scope: Scope) : Termificator {
         handleType(Pair::class, ::handlePairAsTuple)
         handleType(Triple::class, ::handleTripletAsTuple)
         handleType(Map.Entry::class, ::handleKeyValuePairAsStruct)
-        handleType(Pair::class, ::handlePairValuePairAsStruct)
         handleType(Map::class, ::handleMapAsBlock)
         handleType(Iterable::class, ::handleIterableAsList)
     }
