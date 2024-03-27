@@ -37,6 +37,12 @@ abstract class AbstractTermificatorTest {
         actual: Termificator.(T) -> Term = Termificator::termify,
     ) = assertEquals(scope.expected(input), termificator.actual(input))
 
+    protected fun <T> assertTermificationWorks(
+        input: T,
+        expected: Term,
+        actual: Termificator.(T) -> Term = Termificator::termify,
+    ) = assertEquals(expected, termificator.actual(input))
+
     protected fun <T> assertTermificationFails(
         input: T,
         actual: Termificator.(T) -> Term = Termificator::termify,

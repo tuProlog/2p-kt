@@ -35,6 +35,10 @@ open class TestDefaultTermifier : AbstractTermificatorTest() {
         assertTermificationWorks(1.5, Scope::realOf)
         assertTermificationWorks(BigDecimal.ONE + BigDecimal.ONE_HALF, Scope::realOf)
         assertTermificationWorks(1.5f, Scope::realOf)
+        assertTermificationWorks(3.1, { realOf(it.toString()) })
+        assertTermificationWorks(3.1f, { realOf(it.toString()) })
+        assertTermificationWorks(1.0, PlatformSpecificValues.ONE_POINT_ZERO)
+        assertTermificationWorks(-3, PlatformSpecificValues.MINUS_THREE)
     }
 
     @Test
