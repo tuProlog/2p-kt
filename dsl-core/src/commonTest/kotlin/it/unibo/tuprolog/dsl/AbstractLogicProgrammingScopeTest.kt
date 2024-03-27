@@ -11,11 +11,18 @@ abstract class AbstractLogicProgrammingScopeTest<S : BaseLogicProgrammingScope<*
 
     protected fun <R> logicProgramming(function: S.() -> R): R = createLogicProgrammingScope().function()
 
-    protected fun assertDSLCreationIsCorrect(
-        expected: Term,
-        actualCreator: S.() -> Term,
+    protected fun <T> assertLogicProgrammingExpressionIsCorrect(
+        expected: T,
+        actualCreator: S.() -> T,
     ) {
         assertEquals(expected, createLogicProgrammingScope().actualCreator())
+    }
+
+    protected fun <T> S.assertExpressionIsCorrect(
+        expected: T,
+        actualCreator: S.() -> T,
+    ) {
+        assertEquals(expected, actualCreator())
     }
 
     protected fun assertStructurallyEquals(

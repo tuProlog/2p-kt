@@ -126,62 +126,62 @@ class TestMinimalLogicProgrammingScope : AbstractLogicProgrammingScopeTest<Minim
 
     @Test
     fun testNumOfInteger() {
-        assertDSLCreationIsCorrect(Integer.of(1)) { numOf(1) }
+        assertLogicProgrammingExpressionIsCorrect(Integer.of(1)) { numOf(1) }
     }
 
     @Test
     fun testNumOfNegativeInteger() {
-        assertDSLCreationIsCorrect(Integer.of(-3)) { numOf(-3) }
+        assertLogicProgrammingExpressionIsCorrect(Integer.of(-3)) { numOf(-3) }
     }
 
     @Test
     fun testNumOfLong() {
-        assertDSLCreationIsCorrect(Integer.of(1)) { numOf(1L) }
+        assertLogicProgrammingExpressionIsCorrect(Integer.of(1)) { numOf(1L) }
     }
 
     @Test
     fun testNumOfShort() {
-        assertDSLCreationIsCorrect(Integer.of(1)) { numOf(1.toShort()) }
+        assertLogicProgrammingExpressionIsCorrect(Integer.of(1)) { numOf(1.toShort()) }
     }
 
     @Test
     fun testNumOfByte() {
-        assertDSLCreationIsCorrect(Integer.of(1)) { numOf(1.toByte()) }
+        assertLogicProgrammingExpressionIsCorrect(Integer.of(1)) { numOf(1.toByte()) }
     }
 
     @Test
     fun testNumOfStringInteger() {
-        assertDSLCreationIsCorrect(Integer.of(1)) { numOf("1") }
+        assertLogicProgrammingExpressionIsCorrect(Integer.of(1)) { numOf("1") }
     }
 
     @Test
     fun testNumOfDouble() {
-        assertDSLCreationIsCorrect(Real.of("1.0")) { numOf(1.0) }
+        assertLogicProgrammingExpressionIsCorrect(Real.of("1.0")) { numOf(1.0) }
     }
 
     @Test
     fun testNumOfFloat() {
-        assertDSLCreationIsCorrect(Real.of("1.0")) { numOf(1.0f) }
+        assertLogicProgrammingExpressionIsCorrect(Real.of("1.0")) { numOf(1.0f) }
     }
 
     @Test
     fun testNumOfStringDouble() {
-        assertDSLCreationIsCorrect(Real.of("1.0")) { numOf("1.0") }
+        assertLogicProgrammingExpressionIsCorrect(Real.of("1.0")) { numOf("1.0") }
     }
 
     @Test
     fun testNumOfDoubleValue() {
-        assertDSLCreationIsCorrect(THREE_POINT_ONE_DOUBLE) { numOf(3.1) }
+        assertLogicProgrammingExpressionIsCorrect(THREE_POINT_ONE_DOUBLE) { numOf(3.1) }
     }
 
     @Test
     fun testNumOfFloatValue() {
-        assertDSLCreationIsCorrect(THREE_POINT_ONE_FLOAT) { numOf(3.1f) }
+        assertLogicProgrammingExpressionIsCorrect(THREE_POINT_ONE_FLOAT) { numOf(3.1f) }
     }
 
     @Test
     fun testNumOfStringFloatValue() {
-        assertDSLCreationIsCorrect(Real.of("3.1")) { numOf("3.1") }
+        assertLogicProgrammingExpressionIsCorrect(Real.of("3.1")) { numOf("3.1") }
     }
 
     @Test
@@ -206,35 +206,35 @@ class TestMinimalLogicProgrammingScope : AbstractLogicProgrammingScopeTest<Minim
 
     @Test
     fun testToTermInteger() {
-        assertDSLCreationIsCorrect(Integer.of(1)) {
+        assertLogicProgrammingExpressionIsCorrect(Integer.of(1)) {
             1.toTerm()
         }
     }
 
     @Test
     fun testToTermNegativeInteger() {
-        assertDSLCreationIsCorrect(MINUS_THREE) {
+        assertLogicProgrammingExpressionIsCorrect(MINUS_THREE) {
             (-3).toTerm()
         }
     }
 
     @Test
     fun testToTermDouble() {
-        assertDSLCreationIsCorrect(ONE_POINT_ZERO) {
+        assertLogicProgrammingExpressionIsCorrect(ONE_POINT_ZERO) {
             1.0.toTerm()
         }
     }
 
     @Test
     fun testToTermDoubleValue() {
-        assertDSLCreationIsCorrect(Real.of("3.1")) {
+        assertLogicProgrammingExpressionIsCorrect(Real.of("3.1")) {
             3.1.toTerm()
         }
     }
 
     @Test
     fun testToTermStringAtom() {
-        assertDSLCreationIsCorrect(Atom.of("a")) {
+        assertLogicProgrammingExpressionIsCorrect(Atom.of("a")) {
             "a".toTerm()
         }
     }
@@ -257,42 +257,42 @@ class TestMinimalLogicProgrammingScope : AbstractLogicProgrammingScopeTest<Minim
 
     @Test
     fun testToTermList() {
-        assertDSLCreationIsCorrect(Cons.singleton(Atom.of("a"))) {
+        assertLogicProgrammingExpressionIsCorrect(Cons.singleton(Atom.of("a"))) {
             kotlin.collections.listOf("a").toTerm()
         }
     }
 
     @Test
     fun testToTermSet() {
-        assertDSLCreationIsCorrect(List.of(Atom.of("a"))) {
+        assertLogicProgrammingExpressionIsCorrect(List.of(Atom.of("a"))) {
             kotlin.collections.setOf("a").toTerm()
         }
     }
 
     @Test
     fun testToTermArray() {
-        assertDSLCreationIsCorrect(List.of(Atom.of("a"))) {
+        assertLogicProgrammingExpressionIsCorrect(List.of(Atom.of("a"))) {
             arrayOf("a").toTerm()
         }
     }
 
     @Test
     fun testToTermSequence() {
-        assertDSLCreationIsCorrect(List.of(Atom.of("a"))) {
+        assertLogicProgrammingExpressionIsCorrect(List.of(Atom.of("a"))) {
             sequenceOf("a").toTerm()
         }
     }
 
     @Test
     fun testToTermBlock() {
-        assertDSLCreationIsCorrect(Block.of(Atom.of("a"))) {
+        assertLogicProgrammingExpressionIsCorrect(Block.of(Atom.of("a"))) {
             blockOf("a")
         }
     }
 
     @Test
     fun testToTermTuple() {
-        assertDSLCreationIsCorrect(Tuple.of(Atom.of("a"), Atom.of("b"))) {
+        assertLogicProgrammingExpressionIsCorrect(Tuple.of(Atom.of("a"), Atom.of("b"))) {
             tupleOf("a", "b")
         }
     }
