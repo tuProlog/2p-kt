@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Tuple
 import kotlin.js.JsName
+import kotlin.collections.plus as append
 
 interface LogicProgrammingScopeWithOperators<S : LogicProgrammingScopeWithOperators<S>> : BaseLogicProgrammingScope<S> {
     @JsName("anyPlus")
@@ -48,10 +49,18 @@ interface LogicProgrammingScopeWithOperators<S : LogicProgrammingScopeWithOperat
     infix fun Any.intDiv(other: Any): Struct = structOf("//", this.toTerm(), other.toTerm())
 
     @JsName("anyRem")
-    operator fun Any.rem(other: Any): Struct = structOf("rem", this.toTerm(), other.toTerm())
+    infix operator fun Any.rem(other: Any): Struct = structOf("rem", this.toTerm(), other.toTerm())
 
     @JsName("anyAnd")
-    infix fun Any.and(other: Any): Struct = tupleOf(this.toTerm(), other.toTerm())
+    infix fun Any.and(other: Any): Struct =
+        toTerm().let {
+            val otherTerm = other.toTerm()
+            if (it is Tuple) {
+                tupleOf(it.items.append(otherTerm))
+            } else {
+                tupleOf(this.toTerm(), otherTerm)
+            }
+        }
 
     @JsName("anyOr")
     infix fun Any.or(other: Any): Struct = structOf(";", this.toTerm(), other.toTerm())
