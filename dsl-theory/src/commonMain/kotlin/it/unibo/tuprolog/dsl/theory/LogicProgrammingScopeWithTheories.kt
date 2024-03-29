@@ -3,13 +3,13 @@ package it.unibo.tuprolog.dsl.theory
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.dsl.LogicProgrammingScope
-import it.unibo.tuprolog.dsl.unify.LogicProgrammingScopeWithUnification
+import it.unibo.tuprolog.dsl.unify.LogicProgrammingScope
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
-interface LogicProgrammingScopeWithTheories : LogicProgrammingScopeWithUnification {
+interface LogicProgrammingScopeWithTheories : it.unibo.tuprolog.dsl.unify.LogicProgrammingScope {
     @JsName("emptyTheory")
     fun emptyTheory(): Theory {
         return Theory.emptyIndexed(unificator)
