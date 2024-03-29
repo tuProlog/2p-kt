@@ -5,7 +5,6 @@ import kotlin.js.JsName
 
 interface LogicProgrammingScopeWithVariables<S : LogicProgrammingScopeWithVariables<S>> :
     BaseLogicProgrammingScope<S>, VariablesProvider {
-
     @JsName("variablesProvider")
     val variablesProvider: VariablesProvider
 }

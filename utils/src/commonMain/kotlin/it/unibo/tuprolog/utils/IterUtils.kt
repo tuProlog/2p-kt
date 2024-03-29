@@ -342,11 +342,10 @@ fun <T> List<T?>.assertItemsAreNotNull(): List<T> {
 
 fun <T> Sequence<T?>.assertItemsAreNotNull(): Sequence<T> =
     indexed().map {
-        when (val value = it.value ) {
+        when (val value = it.value) {
             null -> throw IllegalArgumentException("Item at index ${it.index} is null")
             else -> value
         }
     }
 
-fun <T> Iterable<T?>.assertItemsAreNotNull(): Iterable<T> =
-    asSequence().assertItemsAreNotNull().asIterable()
+fun <T> Iterable<T?>.assertItemsAreNotNull(): Iterable<T> = asSequence().assertItemsAreNotNull().asIterable()

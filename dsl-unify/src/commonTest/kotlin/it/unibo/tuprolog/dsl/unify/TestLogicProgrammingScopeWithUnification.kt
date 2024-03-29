@@ -16,8 +16,7 @@ import kotlin.test.assertTrue
 @Suppress("LocalVariableName", "ktlint:standard:property-naming")
 class TestLogicProgrammingScopeWithUnification :
     AbstractLogicProgrammingScopeTest<LogicProgrammingScopeWithUnification<*>>() {
-    override fun createLogicProgrammingScope(): LogicProgrammingScopeWithUnification<*> =
-        LogicProgrammingScope.empty()
+    override fun createLogicProgrammingScope(): LogicProgrammingScopeWithUnification<*> = LogicProgrammingScope.empty()
 
     private lateinit var term1: Term // [1, X,    a, Y,   f(A, fail, B, 2.3)]
     private lateinit var term2: Term // [A, fail, B, 2.3, f(1, X   , a, Y  )]
@@ -48,42 +47,49 @@ class TestLogicProgrammingScopeWithUnification :
             term1 = listOf(one, X, a, Y, f1)
             term2 = listOf(A, fail, B, twoPointThree, f2)
             unified = listOf(one, fail, a, twoPointThree, structOf("f", one, fail, a, twoPointThree))
-            substitution = Substitution.unifier(
-                A to one,
-                B to a,
-                X to fail,
-                Y to twoPointThree
-            )
+            substitution =
+                Substitution.unifier(
+                    A to one,
+                    B to a,
+                    X to fail,
+                    Y to twoPointThree,
+                )
         }
     }
 
     @Test
-    fun testMatches() = logicProgramming {
-        assertTrue(term1 matches term2)
-    }
+    fun testMatches() =
+        logicProgramming {
+            assertTrue(term1 matches term2)
+        }
 
     @Test
-    fun testMatch() = logicProgramming {
-        assertTrue(match(term1, term2))
-    }
+    fun testMatch() =
+        logicProgramming {
+            assertTrue(match(term1, term2))
+        }
 
     @Test
-    fun testUnify() = logicProgramming {
-        assertEquals(unified, unify(term1, term2))
-    }
+    fun testUnify() =
+        logicProgramming {
+            assertEquals(unified, unify(term1, term2))
+        }
 
     @Test
-    fun testUnifyWith() = logicProgramming {
-        assertEquals(unified, term1 unifyWith term2)
-    }
+    fun testUnifyWith() =
+        logicProgramming {
+            assertEquals(unified, term1 unifyWith term2)
+        }
 
     @Test
-    fun testMgu() = logicProgramming {
-        assertEquals(substitution, mgu(term1, term2))
-    }
+    fun testMgu() =
+        logicProgramming {
+            assertEquals(substitution, mgu(term1, term2))
+        }
 
     @Test
-    fun testMguWith() = logicProgramming {
-        assertEquals(substitution, term1 mguWith term2)
-    }
+    fun testMguWith() =
+        logicProgramming {
+            assertEquals(substitution, term1 mguWith term2)
+        }
 }

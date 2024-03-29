@@ -2,7 +2,6 @@
 
 package it.unibo.tuprolog.dsl.theory
 
-import it.unibo.tuprolog.dsl.unify.LogicProgrammingScope
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
@@ -10,10 +9,8 @@ import kotlin.jvm.JvmName
 @JsName("logicProgramming")
 fun <R> logicProgramming(
     unificator: Unificator = Unificator.default,
-    function: LogicProgrammingScopeWithTheories.() -> R,
-): R {
-    return LogicProgrammingScopeWithTheories.of(unificator).function()
-}
+    function: LogicProgrammingScope.() -> R,
+): R = LogicProgrammingScope.of(unificator).function()
 
 @JsName("lp")
 fun <R> lp(

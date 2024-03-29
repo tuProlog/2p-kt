@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 
+@Suppress("MagicNumber")
 actual object PlatformSpecificValues {
     actual val THREE_POINT_ONE_FLOAT: Numeric = Real.of("3.099999904632568359375")
 

@@ -8,7 +8,6 @@ import kotlin.reflect.KProperty
 
 @Suppress("PropertyName")
 interface VariablesProvider : Scope {
-
     @JsName("scope")
     val scope: Scope
 

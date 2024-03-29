@@ -2,15 +2,11 @@ package it.unibo.tuprolog.dsl.unify
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.dsl.BaseLogicProgrammingScope
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface LogicProgrammingScopeWithUnification<S : LogicProgrammingScopeWithUnification<S>> :
-    BaseLogicProgrammingScope<S>, Unificator {
-    @JsName("unificator")
-    val unificator: Unificator
-
+    LogicProgrammingScopeWithUnificator<S>, Unificator {
     @JsName("anyMguWith")
     infix fun Any.mguWith(other: Any): Substitution =
         this@LogicProgrammingScopeWithUnification.mgu(this.toTerm(), other.toTerm())

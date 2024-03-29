@@ -68,31 +68,12 @@ interface MinimalLogicProgrammingScope<S : MinimalLogicProgrammingScope<S>> : Ba
     fun rule(function: S.() -> Any): Rule = newScope().function().toTerm() as Rule
 
     fun clause(function: S.() -> Any): Clause =
-        newScope().function().let {
-            when (val t = it.toTerm()) {
-                is Clause -> t
-                is Struct -> factOf(t)
-                else -> it.raiseErrorConvertingTo(Clause::class)
-            }
-        }
+        newScope().function().toSpecificSubTypeOfTerm(Clause::class, this::factOf)
 
     @JsName("directive")
     fun directive(function: S.() -> Any): Directive =
-        newScope().function().let {
-            when (val t = it.toTerm()) {
-                is Directive -> t
-                is Struct -> directiveOf(t)
-                else -> it.raiseErrorConvertingTo(Directive::class)
-            }
-        }
+        newScope().function().toSpecificSubTypeOfTerm(Directive::class, this::directiveOf)
 
     @JsName("fact")
-    fun fact(function: S.() -> Any): Fact =
-        newScope().function().let {
-            when (val t = it.toTerm()) {
-                is Fact -> t
-                is Struct -> factOf(t)
-                else -> it.raiseErrorConvertingTo(Fact::class)
-            }
-        }
+    fun fact(function: S.() -> Any): Fact = newScope().function().toSpecificSubTypeOfTerm(Fact::class, this::factOf)
 }

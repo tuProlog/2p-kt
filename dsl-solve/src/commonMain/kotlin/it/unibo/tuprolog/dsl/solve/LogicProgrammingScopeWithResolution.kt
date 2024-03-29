@@ -2,7 +2,7 @@ package it.unibo.tuprolog.dsl.solve
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.dsl.theory.LogicProgrammingScopeWithTheories
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
@@ -14,7 +14,7 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
-interface LogicProgrammingScopeWithResolution : LogicProgrammingScopeWithTheories, MutableSolver {
+interface LogicProgrammingScopeWithResolution : LogicProgrammingScope, MutableSolver {
     @JsName("solverFactory")
     val solverFactory: SolverFactory
 
