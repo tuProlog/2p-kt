@@ -9,7 +9,14 @@ import org.gciatto.kt.math.toKotlin
 import java.math.BigDecimal as JavaBigDecimal
 import java.math.BigInteger as JavaBigInteger
 
-internal actual class DefaultTermificator actual constructor(scope: Scope) : AbstractTermificator(scope) {
+internal actual class DefaultTermificator actual constructor(
+    scope: Scope,
+    private val novel: Boolean,
+) : AbstractTermificator(scope) {
+    init {
+        defaultConfiguration(novel)
+    }
+
     override fun handleNumberAsNumeric(value: Number): Term =
         when (value) {
             is Int -> scope.numOf(value)
@@ -22,4 +29,6 @@ internal actual class DefaultTermificator actual constructor(scope: Scope) : Abs
             is JavaBigDecimal -> scope.realOf(value.toKotlin())
             else -> Numeric.of(value.toString())
         }
+
+    override fun copy(scope: Scope): Termificator = DefaultTermificator(scope, novel)
 }

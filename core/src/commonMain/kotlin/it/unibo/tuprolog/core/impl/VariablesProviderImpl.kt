@@ -6,6 +6,8 @@ import it.unibo.tuprolog.core.VariablesProvider
 import kotlin.reflect.KProperty
 
 internal class VariablesProviderImpl(override val scope: Scope) : VariablesProvider, Scope by scope {
+    override fun copy(scope: Scope): VariablesProvider = VariablesProviderImpl(scope)
+
     override fun getValue(
         thisRef: Any?,
         property: KProperty<*>,

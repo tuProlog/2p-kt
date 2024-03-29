@@ -111,7 +111,10 @@ class TestMinimalLogicProgrammingScope : AbstractLogicProgrammingScopeTest<Minim
     fun testFactAsClause() =
         logicProgramming {
             val expected = factOf(structOf("parent", varOf("X"), varOf("Y")))
-            val actual = clause { "parent"("X", "Y") }
+            val actual =
+                clause {
+                    "parent"("X", "Y")
+                }
             assertTrue(expected.structurallyEquals(actual))
             assertNotEquals(expected, actual)
         }

@@ -27,18 +27,23 @@ interface LogicProgrammingScope :
         @JsName("of")
         fun of(
             scope: Scope = Scope.empty(),
-            termificatorFactory: (Scope) -> Termificator = { Termificator.default(it) },
-            variablesProviderFactory: (Scope) -> VariablesProvider = { VariablesProvider.of(it) },
+            termificator: Termificator = Termificator.default(scope),
+            variablesProvider: VariablesProvider = VariablesProvider.of(scope),
             unificator: Unificator = defaultUnificator,
         ): LogicProgrammingScope =
-            LogicProgrammingScopeImpl(scope, termificatorFactory, variablesProviderFactory, unificator)
+            LogicProgrammingScopeImpl(
+                scope,
+                if (termificator.scope === scope) termificator else termificator.copy(scope),
+                if (variablesProvider.scope === scope) variablesProvider else variablesProvider.copy(scope),
+                unificator,
+            )
 
         @JsName("ofUnificator")
         fun of(
             unificator: Unificator,
             scope: Scope = Scope.empty(),
-            termificatorFactory: (Scope) -> Termificator = { Termificator.default(it) },
-            variablesProviderFactory: (Scope) -> VariablesProvider = { VariablesProvider.of(it) },
-        ): LogicProgrammingScope = of(scope, termificatorFactory, variablesProviderFactory, unificator)
+            termificator: Termificator = Termificator.default(scope),
+            variablesProvider: VariablesProvider = VariablesProvider.of(scope),
+        ): LogicProgrammingScope = of(scope, termificator, variablesProvider, unificator)
     }
 }

@@ -6,6 +6,8 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface TheoryFactory : UnificationAware {
+    fun copy(unificator: Unificator): TheoryFactory
+
     @JsName("emptyTheoryWithUnificator")
     fun emptyTheory(unificator: Unificator): Theory
 

@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.VariablesProvider
 import it.unibo.tuprolog.dsl.Termificator
 import it.unibo.tuprolog.unify.Unificator
 
-class LogicProgrammingScopeImpl private constructor(
+internal class LogicProgrammingScopeImpl(
     override val scope: Scope,
     override val termificator: Termificator,
     override val variablesProvider: VariablesProvider,
@@ -17,21 +17,21 @@ class LogicProgrammingScopeImpl private constructor(
         }
     }
 
-    private lateinit var termificatorFactory: (Scope) -> Termificator
-    private lateinit var variablesProviderFactory: (Scope) -> VariablesProvider
+    override fun copy(scope: Scope): LogicProgrammingScope =
+        LogicProgrammingScopeImpl(
+            scope,
+            termificator.copy(scope),
+            variablesProvider.copy(scope),
+            unificator,
+        )
 
-    constructor(
-        scope: Scope,
-        termificatorFactory: (Scope) -> Termificator,
-        variablesProviderFactory: (Scope) -> VariablesProvider,
-        unificator: Unificator,
-    ) : this(scope, termificatorFactory(scope), variablesProviderFactory(scope), unificator) {
-        this.termificatorFactory = termificatorFactory
-        this.variablesProviderFactory = variablesProviderFactory
-    }
+    override fun copy(unificator: Unificator): LogicProgrammingScope =
+        LogicProgrammingScopeImpl(
+            scope,
+            termificator,
+            variablesProvider,
+            unificator,
+        )
 
-    override fun newScope(): LogicProgrammingScope =
-        Scope.empty().let {
-            LogicProgrammingScopeImpl(it, termificatorFactory(it), variablesProviderFactory(it), unificator)
-        }
+    override fun newScope(): LogicProgrammingScope = copy(Scope.empty())
 }

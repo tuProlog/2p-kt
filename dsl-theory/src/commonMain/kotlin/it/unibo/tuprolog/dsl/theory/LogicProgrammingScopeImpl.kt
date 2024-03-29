@@ -6,7 +6,7 @@ import it.unibo.tuprolog.dsl.Termificator
 import it.unibo.tuprolog.theory.TheoryFactory
 import it.unibo.tuprolog.unify.Unificator
 
-class LogicProgrammingScopeImpl private constructor(
+class LogicProgrammingScopeImpl(
     override val scope: Scope,
     override val termificator: Termificator,
     override val variablesProvider: VariablesProvider,
@@ -25,36 +25,23 @@ class LogicProgrammingScopeImpl private constructor(
         }
     }
 
-    private lateinit var termificatorFactory: (Scope) -> Termificator
-    private lateinit var variablesProviderFactory: (Scope) -> VariablesProvider
-    private lateinit var theoryFactoryFactory: (Unificator) -> TheoryFactory
+    override fun copy(scope: Scope): LogicProgrammingScope =
+        LogicProgrammingScopeImpl(
+            scope,
+            termificator.copy(scope),
+            variablesProvider.copy(scope),
+            unificator,
+            theoryFactory,
+        )
 
-    constructor(
-        scope: Scope,
-        termificatorFactory: (Scope) -> Termificator,
-        variablesProviderFactory: (Scope) -> VariablesProvider,
-        unificator: Unificator,
-        theoryFactoryFactory: (Unificator) -> TheoryFactory,
-    ) : this(
-        scope,
-        termificatorFactory(scope),
-        variablesProviderFactory(scope),
-        unificator,
-        theoryFactoryFactory(unificator),
-    ) {
-        this.termificatorFactory = termificatorFactory
-        this.variablesProviderFactory = variablesProviderFactory
-        this.theoryFactoryFactory = theoryFactoryFactory
-    }
+    override fun copy(unificator: Unificator): LogicProgrammingScope =
+        LogicProgrammingScopeImpl(
+            scope,
+            termificator,
+            variablesProvider,
+            unificator,
+            theoryFactory.copy(unificator),
+        )
 
-    override fun newScope(): LogicProgrammingScope =
-        Scope.empty().let {
-            LogicProgrammingScopeImpl(
-                it,
-                termificatorFactory(it),
-                variablesProviderFactory(it),
-                unificator,
-                theoryFactoryFactory(unificator),
-            )
-        }
+    override fun newScope(): LogicProgrammingScope = copy(Scope.empty())
 }

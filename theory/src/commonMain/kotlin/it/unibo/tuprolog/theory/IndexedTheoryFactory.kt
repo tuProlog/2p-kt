@@ -6,6 +6,8 @@ import it.unibo.tuprolog.theory.impl.MutableIndexedTheory
 import it.unibo.tuprolog.unify.Unificator
 
 class IndexedTheoryFactory(override val unificator: Unificator) : TheoryFactory {
+    override fun copy(unificator: Unificator): TheoryFactory = IndexedTheoryFactory(unificator)
+
     override fun emptyTheory(unificator: Unificator): Theory = IndexedTheory(unificator, emptyList())
 
     override fun theoryOf(

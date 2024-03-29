@@ -5,6 +5,7 @@ package it.unibo.tuprolog.dsl.unify
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
+import it.unibo.tuprolog.dsl.LogicProgrammingScope as CoreLogicProgrammingScope
 
 @JsName("logicProgramming")
 fun <R> logicProgramming(
@@ -24,3 +25,6 @@ fun <R> prolog(
     unificator: Unificator = LogicProgrammingScope.defaultUnificator,
     function: LogicProgrammingScope.() -> R,
 ): R = logicProgramming(unificator, function)
+
+fun CoreLogicProgrammingScope.withUnification(unificator: Unificator = LogicProgrammingScope.defaultUnificator) =
+    LogicProgrammingScope.of(unificator, scope, termificator, variablesProvider)

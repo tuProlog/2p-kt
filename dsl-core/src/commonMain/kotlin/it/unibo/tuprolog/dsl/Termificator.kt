@@ -12,26 +12,16 @@ interface Termificator {
     @JsName("toTerm")
     fun termify(value: Any?): Term
 
+    @JsName("copy")
+    fun copy(scope: Scope = this.scope): Termificator
+
     companion object {
         @JvmStatic
         @JsName("default")
-        fun default(scope: Scope): Termificator =
-            custom(scope) {
-                legacyConfiguration()
-            }
+        fun default(scope: Scope): Termificator = DefaultTermificator(scope, false)
 
         @JvmStatic
         @JsName("novel")
-        fun novel(scope: Scope): Termificator =
-            custom(scope) {
-                novelConfiguration()
-            }
-
-        @JvmStatic
-        @JsName("custom")
-        fun custom(
-            scope: Scope,
-            builder: AbstractTermificator.() -> Unit,
-        ): Termificator = DefaultTermificator(scope).also(builder)
+        fun novel(scope: Scope): Termificator = DefaultTermificator(scope, true)
     }
 }

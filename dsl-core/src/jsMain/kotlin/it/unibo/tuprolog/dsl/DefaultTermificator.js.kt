@@ -6,7 +6,14 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.NumberTypeTester
 
-internal actual class DefaultTermificator actual constructor(scope: Scope) : AbstractTermificator(scope) {
+internal actual class DefaultTermificator actual constructor(
+    scope: Scope,
+    private val novel: Boolean,
+) : AbstractTermificator(scope) {
+    init {
+        defaultConfiguration(novel)
+    }
+
     private val tester = NumberTypeTester()
 
     override fun handleNumberAsNumeric(value: Number): Term =
@@ -15,4 +22,6 @@ internal actual class DefaultTermificator actual constructor(scope: Scope) : Abs
         } else {
             scope.realOf(tester.numberToDecimal(value))
         }
+
+    override fun copy(scope: Scope): Termificator = DefaultTermificator(scope, novel)
 }

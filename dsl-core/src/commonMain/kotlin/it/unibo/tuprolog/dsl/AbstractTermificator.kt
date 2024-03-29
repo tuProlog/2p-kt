@@ -11,10 +11,12 @@ import kotlin.reflect.KClass
 import kotlin.collections.List as KtList
 
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class AbstractTermificator(override val scope: Scope) : Termificator {
-    private val converters: MutableMap<KClass<*>, (Any) -> Term> = linkedMapOf()
+abstract class AbstractTermificator(
+    override val scope: Scope,
+) : Termificator {
+    protected val converters: MutableMap<KClass<*>, (Any) -> Term> = linkedMapOf()
 
-    fun <T : Any> handleType(
+    protected fun <T : Any> handleType(
         type: KClass<T>,
         conversion: (T) -> Term,
     ) {
@@ -45,71 +47,90 @@ abstract class AbstractTermificator(override val scope: Scope) : Termificator {
         value.raiseErrorConvertingTo(Term::class)
     }
 
-    fun handleBooleanAsTruth(value: Boolean) = scope.truthOf(value)
+    protected fun handleBooleanAsTruth(value: Boolean) = scope.truthOf(value)
 
-    fun handleStringAsAtomOrVariable(value: String) =
+    protected fun handleStringAsAtomOrVariable(value: String) =
         if (value matches Var.NAME_PATTERN) {
             scope.varOf(value)
         } else {
             scope.atomOf(value)
         }
 
-    abstract fun handleNumberAsNumeric(value: Number): Term
+    protected abstract fun handleNumberAsNumeric(value: Number): Term
 
-    fun handleBigIntegerAsInteger(value: BigInteger) = scope.intOf(value)
+    protected fun handleBigIntegerAsInteger(value: BigInteger) = scope.intOf(value)
 
-    fun handleBigDecimalAsReal(value: BigDecimal) = scope.realOf(value)
+    protected fun handleBigDecimalAsReal(value: BigDecimal) = scope.realOf(value)
 
-    fun handleArrayAsList(value: Array<*>) =
+    protected fun handleArrayAsList(value: Array<*>) =
         scope.listOf(value.asIterable().assertItemsAreNotNull().map { termify(it) })
 
-    fun handleSequenceAsList(value: Sequence<*>) = scope.listOf(value.assertItemsAreNotNull().map { termify(it) })
+    protected fun handleSequenceAsList(value: Sequence<*>) =
+        scope.listOf(
+            value.assertItemsAreNotNull().map { termify(it) },
+        )
 
-    fun handleIterableAsList(value: Iterable<*>) = scope.listOf(value.assertItemsAreNotNull().map { termify(it) })
+    protected fun handleIterableAsList(value: Iterable<*>) =
+        scope.listOf(
+            value.assertItemsAreNotNull().map { termify(it) },
+        )
 
-    fun handleKotlinListAsLogicList(value: KtList<*>) = scope.listOf(value.assertItemsAreNotNull().map { termify(it) })
+    protected fun handleKotlinListAsLogicList(value: KtList<*>) =
+        scope.listOf(
+            value.assertItemsAreNotNull().map {
+                termify(it)
+            },
+        )
 
-    fun handleSetAsBlock(value: Set<*>) = scope.blockOf(value.assertItemsAreNotNull().map { termify(it) })
+    protected fun handleSetAsBlock(value: Set<*>) = scope.blockOf(value.assertItemsAreNotNull().map { termify(it) })
 
-    fun handlePairAsTuple(value: Pair<*, *>) = scope.tupleOf(termify(value.first), termify(value.second))
+    protected fun handlePairAsTuple(value: Pair<*, *>) = scope.tupleOf(termify(value.first), termify(value.second))
 
-    fun handleTripletAsTuple(value: Triple<*, *, *>) =
+    protected fun handleTripletAsTuple(value: Triple<*, *, *>) =
         scope.tupleOf(termify(value.first), termify(value.second), termify(value.third))
 
-    fun handlePairValuePairAsStruct(value: Pair<*, *>) =
+    protected fun handlePairValuePairAsStruct(value: Pair<*, *>) =
         scope.structOf(":", termify(value.first), termify(value.second))
 
-    fun handleKeyValuePairAsStruct(value: Map.Entry<*, *>) =
+    protected fun handleKeyValuePairAsStruct(value: Map.Entry<*, *>) =
         scope.structOf(":", termify(value.key), termify(value.value))
 
-    fun handleMapAsBlock(value: Map<*, *>) =
+    protected fun handleMapAsBlock(value: Map<*, *>) =
         scope.blockOf(value.entries.assertItemsAreNotNull().map { handleKeyValuePairAsStruct(it) })
 
-    fun legacyConfiguration() {
-        handleType(Boolean::class, ::handleBooleanAsTruth)
-        handleType(String::class, ::handleStringAsAtomOrVariable)
-        handleType(BigInteger::class, ::handleBigIntegerAsInteger)
-        handleType(BigDecimal::class, ::handleBigDecimalAsReal)
-        handleType(Number::class, ::handleNumberAsNumeric)
-        handleType(Array::class, ::handleArrayAsList)
-        handleType(Sequence::class, ::handleSequenceAsList)
-        handleType(Iterable::class, ::handleIterableAsList)
+    protected fun legacyConfiguration() {
+        handleType(Boolean::class) { handleBooleanAsTruth(it) }
+        handleType(String::class) { handleStringAsAtomOrVariable(it) }
+        handleType(BigInteger::class) { handleBigIntegerAsInteger(it) }
+        handleType(BigDecimal::class) { handleBigDecimalAsReal(it) }
+        handleType(Number::class) { handleNumberAsNumeric(it) }
+        handleType(Array::class) { handleArrayAsList(it) }
+        handleType(Sequence::class) { handleSequenceAsList(it) }
+        handleType(Iterable::class) { handleIterableAsList(it) }
     }
 
-    fun novelConfiguration() {
-        handleType(Boolean::class, ::handleBooleanAsTruth)
-        handleType(String::class, ::handleStringAsAtomOrVariable)
-        handleType(BigInteger::class, ::handleBigIntegerAsInteger)
-        handleType(BigDecimal::class, ::handleBigDecimalAsReal)
-        handleType(Number::class, ::handleNumberAsNumeric)
-        handleType(Array::class, ::handleArrayAsList)
-        handleType(Sequence::class, ::handleSequenceAsList)
-        handleType(KtList::class, ::handleKotlinListAsLogicList)
-        handleType(Set::class, ::handleSetAsBlock)
-        handleType(Pair::class, ::handlePairAsTuple)
-        handleType(Triple::class, ::handleTripletAsTuple)
-        handleType(Map.Entry::class, ::handleKeyValuePairAsStruct)
-        handleType(Map::class, ::handleMapAsBlock)
-        handleType(Iterable::class, ::handleIterableAsList)
+    protected fun novelConfiguration() {
+        handleType(Boolean::class) { handleBooleanAsTruth(it) }
+        handleType(String::class) { handleStringAsAtomOrVariable(it) }
+        handleType(BigInteger::class) { handleBigIntegerAsInteger(it) }
+        handleType(BigDecimal::class) { handleBigDecimalAsReal(it) }
+        handleType(Number::class) { handleNumberAsNumeric(it) }
+        handleType(Array::class) { handleArrayAsList(it) }
+        handleType(Sequence::class) { handleSequenceAsList(it) }
+        handleType(KtList::class) { handleKotlinListAsLogicList(it) }
+        handleType(Set::class) { handleSetAsBlock(it) }
+        handleType(Pair::class) { handlePairAsTuple(it) }
+        handleType(Triple::class) { handleTripletAsTuple(it) }
+        handleType(Map.Entry::class) { handleKeyValuePairAsStruct(it) }
+        handleType(Map::class) { handleMapAsBlock(it) }
+        handleType(Iterable::class) { handleIterableAsList(it) }
+    }
+
+    protected fun defaultConfiguration(novel: Boolean = false) {
+        if (novel) {
+            novelConfiguration()
+        } else {
+            legacyConfiguration()
+        }
     }
 }

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.dsl.theory
+package it.unibo.tuprolog.dsl.solve
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.VariablesProvider
@@ -8,7 +8,10 @@ import it.unibo.tuprolog.dsl.LogicProgrammingScopeWithSubstitutions
 import it.unibo.tuprolog.dsl.LogicProgrammingScopeWithVariables
 import it.unibo.tuprolog.dsl.MinimalLogicProgrammingScope
 import it.unibo.tuprolog.dsl.Termificator
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScopeImpl
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScopeWithTheories
 import it.unibo.tuprolog.dsl.unify.LogicProgrammingScopeWithUnification
+import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.theory.IndexedTheoryFactory
 import it.unibo.tuprolog.theory.TheoryFactory
 import it.unibo.tuprolog.unify.Unificator
@@ -21,20 +24,20 @@ interface LogicProgrammingScope :
     LogicProgrammingScopeWithOperators<LogicProgrammingScope>,
     LogicProgrammingScopeWithVariables<LogicProgrammingScope>,
     LogicProgrammingScopeWithUnification<LogicProgrammingScope>,
-    LogicProgrammingScopeWithTheories<LogicProgrammingScope> {
+    LogicProgrammingScopeWithTheories<LogicProgrammingScope>,
+    LogicProgrammingScopeWithResolution<LogicProgrammingScope> {
     companion object {
-        internal val defaultUnificator = Unificator.default
-
-        @JsName("empty")
-        fun empty(): LogicProgrammingScope = of()
+        internal fun SolverFactory.changeUnificatorIfNecessary(unificator: Unificator): SolverFactory =
+            if (defaultUnificator === unificator) this else newBuilder().unificator(unificator).toFactory()
 
         @JsName("of")
         fun of(
             scope: Scope = Scope.empty(),
             termificator: Termificator = Termificator.default(scope),
             variablesProvider: VariablesProvider = VariablesProvider.of(scope),
-            unificator: Unificator = defaultUnificator,
+            unificator: Unificator = Unificator.default,
             theoryFactory: TheoryFactory = IndexedTheoryFactory(unificator),
+            solverFactory: SolverFactory,
         ): LogicProgrammingScope =
             LogicProgrammingScopeImpl(
                 scope,
@@ -42,15 +45,17 @@ interface LogicProgrammingScope :
                 if (variablesProvider.scope === scope) variablesProvider else variablesProvider.copy(scope),
                 unificator,
                 if (theoryFactory.unificator === unificator) theoryFactory else theoryFactory.copy(unificator),
+                solverFactory.changeUnificatorIfNecessary(unificator),
             )
 
-        @JsName("ofUnificator")
+        @JsName("ofSolverFactory")
         fun of(
-            unificator: Unificator,
-            theoryFactory: TheoryFactory = IndexedTheoryFactory(unificator),
+            solverFactory: SolverFactory,
+            unificator: Unificator = solverFactory.defaultUnificator,
             scope: Scope = Scope.empty(),
             termificator: Termificator = Termificator.default(scope),
             variablesProvider: VariablesProvider = VariablesProvider.of(scope),
-        ): LogicProgrammingScope = of(scope, termificator, variablesProvider, unificator, theoryFactory)
+            theoryFactory: TheoryFactory = IndexedTheoryFactory(unificator),
+        ) = of(scope, termificator, variablesProvider, unificator, theoryFactory, solverFactory)
     }
 }

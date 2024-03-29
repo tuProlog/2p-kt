@@ -5,11 +5,10 @@ import it.unibo.tuprolog.dsl.unify.LogicProgrammingScopeWithUnificator
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.TheoryFactory
-import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface LogicProgrammingScopeWithTheories<S : LogicProgrammingScopeWithTheories<S>> :
-    LogicProgrammingScopeWithUnificator<S>, TheoryFactory, Unificator {
+    LogicProgrammingScopeWithUnificator<S>, TheoryFactory {
     @JsName("theoryFactory")
     val theoryFactory: TheoryFactory
 
@@ -21,22 +20,30 @@ interface LogicProgrammingScopeWithTheories<S : LogicProgrammingScopeWithTheorie
         theoryOf(clauseFunctions.map { newScope().it().toClause() })
 
     @JsName("theoryOfConcatenatedSequences")
-    fun theoryOf(clauses: Sequence<Clause>, vararg otherClauses: Sequence<Clause>): Theory =
-        theoryOf(clauses + otherClauses.flatMap { it })
+    fun theoryOf(
+        clauses: Sequence<Clause>,
+        vararg otherClauses: Sequence<Clause>,
+    ): Theory = theoryOf(clauses + otherClauses.flatMap { it })
 
     @JsName("theoryOfConcatenatedIterables")
-    fun theoryOf(clauses: Iterable<Clause>, vararg otherClauses: Iterable<Clause>): Theory =
-        theoryOf(kotlin.collections.listOf(clauses, *otherClauses).flatten())
+    fun theoryOf(
+        clauses: Iterable<Clause>,
+        vararg otherClauses: Iterable<Clause>,
+    ): Theory = theoryOf(kotlin.collections.listOf(clauses, *otherClauses).flatten())
 
     @JsName("mutableTheory")
     fun mutableTheory(vararg clauseFunctions: S.() -> Any): MutableTheory =
         mutableTheoryOf(clauseFunctions.map { newScope().it().toClause() })
 
     @JsName("mutableTheoryOfConcatenatedSequences")
-    fun mutableTheoryOf(clauses: Sequence<Clause>, vararg otherClauses: Sequence<Clause>): MutableTheory =
-        mutableTheoryOf(clauses + otherClauses.flatMap { it })
+    fun mutableTheoryOf(
+        clauses: Sequence<Clause>,
+        vararg otherClauses: Sequence<Clause>,
+    ): MutableTheory = mutableTheoryOf(clauses + otherClauses.flatMap { it })
 
     @JsName("mutableTheoryOfConcatenatedIterables")
-    fun mutableTheoryOf(clauses: Iterable<Clause>, vararg otherClauses: Iterable<Clause>): MutableTheory =
-        mutableTheoryOf(kotlin.collections.listOf(clauses, *otherClauses).flatten())
+    fun mutableTheoryOf(
+        clauses: Iterable<Clause>,
+        vararg otherClauses: Iterable<Clause>,
+    ): MutableTheory = mutableTheoryOf(kotlin.collections.listOf(clauses, *otherClauses).flatten())
 }
