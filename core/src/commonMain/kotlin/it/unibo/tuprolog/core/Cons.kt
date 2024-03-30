@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.Terms.CONS_FUNCTOR
-import it.unibo.tuprolog.core.impl.ConsImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
@@ -39,10 +38,10 @@ interface Cons : LogicList {
         fun of(
             head: Term,
             tail: Term,
-        ): Cons = ConsImpl(head, tail)
+        ): Cons = TermFactory.default.consOf(head, tail)
 
         @JvmStatic
         @JsName("singleton")
-        fun singleton(head: Term): Cons = of(head, Empty.list())
+        fun singleton(head: Term): Cons = TermFactory.default.consOf(head)
     }
 }

@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.DirectiveImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -26,27 +25,21 @@ interface Directive : Clause {
     companion object {
         @JvmStatic
         @JsName("ofSequence")
-        fun of(bodies: Sequence<Term>): Directive = of(bodies.asIterable())
+        fun of(body: Sequence<Term>): Directive = TermFactory.default.directiveOf(body)
 
         @JvmStatic
         @JsName("ofIterable")
-        fun of(bodies: Iterable<Term>): Directive {
-            require(bodies.any()) { "Directive requires at least one body element" }
-            return DirectiveImpl(Tuple.wrapIfNeeded(bodies))
-        }
+        fun of(body: Iterable<Term>): Directive = TermFactory.default.directiveOf(body)
 
         @JvmStatic
         @JsName("of")
         fun of(
-            body1: Term,
-            vararg body: Term,
-        ): Directive = of(listOf(body1, *body))
+            firstGoal: Term,
+            vararg otherGoals: Term,
+        ): Directive = TermFactory.default.directiveOf(firstGoal, *otherGoals)
 
         @JvmStatic
         @JsName("template")
-        fun template(length: Int = 1): Directive {
-            require(length > 0)
-            return of((0 until length).map { Var.anonymous() })
-        }
+        fun template(length: Int = 1): Directive = TermFactory.default.directiveTemplate(length)
     }
 }

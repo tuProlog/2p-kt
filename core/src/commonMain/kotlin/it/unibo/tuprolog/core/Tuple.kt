@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
-import it.unibo.tuprolog.core.impl.TupleImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -44,7 +43,7 @@ interface Tuple : Recursive {
         fun wrapIfNeeded(
             vararg terms: Term,
             ifEmpty: () -> Term = { Truth.TRUE },
-        ): Term = wrapIfNeeded(terms.asIterable(), ifEmpty)
+        ): Term = TermFactory.default.wrapAsTupleIfNeeded(terms = terms, ifEmpty)
 
         @JvmStatic
         @JsName("wrapIterableIfNeeded")
@@ -52,17 +51,7 @@ interface Tuple : Recursive {
         fun wrapIfNeeded(
             terms: Iterable<Term>,
             ifEmpty: () -> Term = { Truth.TRUE },
-        ): Term {
-            val i = terms.iterator()
-            if (!i.hasNext()) return ifEmpty()
-            val first = i.next()
-            if (!i.hasNext()) return first
-            val items = mutableListOf(first)
-            while (i.hasNext()) {
-                items.add(i.next())
-            }
-            return of(items)
-        }
+        ): Term = TermFactory.default.wrapAsTupleIfNeeded(terms, ifEmpty)
 
         @JvmStatic
         @JsName("wrapSequenceIfNeeded")
@@ -70,14 +59,14 @@ interface Tuple : Recursive {
         fun wrapIfNeeded(
             terms: Sequence<Term>,
             ifEmpty: () -> Term = { Truth.TRUE },
-        ): Term = wrapIfNeeded(terms.asIterable(), ifEmpty)
+        ): Term = TermFactory.default.wrapAsTupleIfNeeded(terms, ifEmpty)
 
         @JvmStatic
         @JsName("of")
         fun of(
-            left: Term,
-            right: Term,
-        ): Tuple = TupleImpl(left, right)
+            first: Term,
+            second: Term,
+        ): Tuple = TermFactory.default.tupleOf(first, second)
 
         @JvmStatic
         @JsName("ofMany")
@@ -85,21 +74,14 @@ interface Tuple : Recursive {
             first: Term,
             second: Term,
             vararg others: Term,
-        ): Tuple = of(listOf(first, second, *others))
+        ): Tuple = TermFactory.default.tupleOf(first, second, *others)
 
         @JvmStatic
         @JsName("ofIterable")
-        fun of(terms: Iterable<Term>): Tuple = of(terms.toList())
+        fun of(terms: Iterable<Term>): Tuple = TermFactory.default.tupleOf(terms)
 
         @JvmStatic
         @JsName("ofList")
-        fun of(terms: KtList<Term>): Tuple {
-            require(terms.size >= 2) {
-                "Tuples require at least 2 terms"
-            }
-            return terms.slice(0 until terms.lastIndex).foldRight(terms.last()) { l, r ->
-                TupleImpl(l, r)
-            }.castToTuple()
-        }
+        fun of(terms: KtList<Term>): Tuple = TermFactory.default.tupleOf(terms)
     }
 }

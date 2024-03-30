@@ -142,8 +142,8 @@ internal object EquationUtils {
     internal val deepContradictionEquations by lazy {
         listOf(
             LogicList.of(Atom.of("b"), Var.of("V")) to LogicList.of(Atom.of("a"), Var.of("V")),
-            LogicList.from(listOf(Atom.of("a")), last = Var.of("V")) to
-                LogicList.from(listOf(Atom.of("b")), last = Var.of("V")),
+            LogicList.from(listOf(Atom.of("a")), tail = Var.of("V")) to
+                LogicList.from(listOf(Atom.of("b")), tail = Var.of("V")),
             Block.of(Real.of(1.5), Var.anonymous()) to Block.of(Integer.of(1), Var.anonymous()),
             Struct.of("f", Atom.of("A")) to Struct.of("f", Atom.of("B")),
             Fact.of(Struct.of("aa", Atom.of("A"))) to Fact.of(Struct.of("aa", Var.of("A"), Var.of("A"))),

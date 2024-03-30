@@ -55,6 +55,9 @@ object Terms {
 
     const val INDICATOR_FUNCTOR = "/"
 
+    @JvmField
+    val NOTABLE_FUNCTORS_FOR_CLAUSES = listOf(TUPLE_FUNCTOR, ";", "->")
+
     fun escapeChar(
         char: Char,
         singleQuotes: Boolean = true,

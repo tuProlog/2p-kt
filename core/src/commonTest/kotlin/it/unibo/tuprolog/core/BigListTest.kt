@@ -22,7 +22,7 @@ class BigListTest {
     }
 
     private val list2 by lazy {
-        List.from((nums).map { Integer.of(it) }, last = X)
+        List.from((nums).map { Integer.of(it) }, tail = X)
     }
 
     private val IntRange.size: Int get() = last - first + 1

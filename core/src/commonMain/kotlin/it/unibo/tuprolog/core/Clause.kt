@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.Terms.CLAUSE_FUNCTOR
+import it.unibo.tuprolog.core.impl.ClauseBodyWellFormedVisitor
+import it.unibo.tuprolog.core.impl.PrepareClauseForExecutionVisitor
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -125,73 +127,35 @@ interface Clause : Struct {
         fun of(
             head: Struct? = null,
             vararg body: Term,
-        ): Clause = of(head, body.asIterable())
+        ): Clause = TermFactory.default.clauseOf(head, *body)
 
         @JvmStatic
         @JsName("ofIterable")
         fun of(
             head: Struct? = null,
             body: Iterable<Term>,
-        ): Clause =
-            when (head) {
-                null -> {
-                    require(body.any()) { "If Clause head is null, at least one body element, is required" }
-                    Directive.of(body.asIterable())
-                }
-                else -> Rule.of(head, body)
-            }
+        ): Clause = TermFactory.default.clauseOf(head, body)
 
         @JvmStatic
         @JsName("ofSequence")
         fun of(
             head: Struct? = null,
             body: Sequence<Term>,
-        ): Clause = of(head, body.asIterable())
+        ): Clause = TermFactory.default.clauseOf(head, body)
 
         /** Contains notable functor in determining if a Clause [isWellFormed] */
         @JvmStatic
         @JsName("notableFunctors")
-        val notableFunctors = listOf(",", ";", "->")
+        val notableFunctors = Terms.NOTABLE_FUNCTORS_FOR_CLAUSES
 
         /** A visitor that checks whether [isWellFormed] (body constraints part) is respected */
         @JvmStatic
         @JsName("bodyWellFormedVisitor")
-        val bodyWellFormedVisitor: TermVisitor<Boolean> =
-            object : TermVisitor<Boolean> {
-                override fun defaultValue(term: Term): Boolean = true
-
-                override fun visitNumeric(term: Numeric): Boolean = false
-
-                override fun visitStruct(term: Struct): Boolean =
-                    when {
-                        term.functor in notableFunctors && term.arity == 2 ->
-                            term.argsSequence
-                                .map { arg -> arg.accept(this) }
-                                .reduce(Boolean::and)
-                        else -> true
-                    }
-            }
+        val bodyWellFormedVisitor: TermVisitor<Boolean> = ClauseBodyWellFormedVisitor()
 
         // TODO: 16/01/2020 test this method
         internal fun preparationForExecutionVisitor(unifier: Substitution.Unifier = Substitution.empty()) =
-            object : TermVisitor<Term> {
-                override fun defaultValue(term: Term) = term
-
-                override fun visitStruct(term: Struct): Term =
-                    when {
-                        term.functor in notableFunctors && term.arity == 2 ->
-                            Struct.of(term.functor, term.argsSequence.map { arg -> arg.accept(this) })
-                        else -> term
-                    }
-
-                override fun visitClause(term: Clause): Term = of(term.head, term.body.accept(this))
-
-                override fun visitVar(term: Var): Term =
-                    when (term) {
-                        in unifier -> unifier[term]!!.accept(this)
-                        else -> Struct.of("call", term)
-                    }
-            }
+            PrepareClauseForExecutionVisitor(unifier, TermFactory.default)
 
         /**
          * A visitor to prepare Clauses for execution

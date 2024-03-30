@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.Terms.INDICATOR_FUNCTOR
-import it.unibo.tuprolog.core.impl.IndicatorImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -74,7 +73,7 @@ interface Indicator : Struct {
         fun of(
             name: Term,
             arity: Term,
-        ): Indicator = IndicatorImpl(name, arity)
+        ): Indicator = TermFactory.default.indicatorOf(name, arity)
 
         /** Creates an indicator denoting functor named [name] with [arity] */
         @JvmStatic
@@ -82,6 +81,6 @@ interface Indicator : Struct {
         fun of(
             name: String,
             arity: Int,
-        ): Indicator = of(Atom.of(name), Integer.of(arity))
+        ): Indicator = TermFactory.default.indicatorOf(name, arity)
     }
 }

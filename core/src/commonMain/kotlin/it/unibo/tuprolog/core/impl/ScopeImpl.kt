@@ -90,7 +90,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun logicListFrom(
         vararg terms: Term,
         last: Term?,
-    ): LogicList = LogicList.from(*terms, last = last)
+    ): LogicList = LogicList.from(*terms, tail = last)
 
     override fun logicListFrom(
         terms: Sequence<Term>,

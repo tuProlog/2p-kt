@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.RuleImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -79,36 +78,28 @@ interface Rule : Clause {
         @JsName("of")
         fun of(
             head: Struct,
-            vararg body: Term,
-        ): Rule = of(head, body.asIterable())
+            vararg goals: Term,
+        ): Rule = TermFactory.default.ruleOf(head, *goals)
 
         @JvmStatic
         @JsName("ofIterable")
         fun of(
             head: Struct,
             body: Iterable<Term>,
-        ): Rule {
-            val i = body.iterator()
-            if (!i.hasNext()) return Fact.of(head)
-            val first = i.next()
-            if (!i.hasNext() && first.isTrue) return Fact.of(head)
-            return RuleImpl(head, Tuple.wrapIfNeeded(body))
-        }
+        ): Rule = TermFactory.default.ruleOf(head, body)
 
         @JvmStatic
         @JsName("ofSequence")
         fun of(
             head: Struct,
             body: Sequence<Term>,
-        ): Rule = of(head, body.asIterable())
+        ): Rule = TermFactory.default.ruleOf(head, body)
 
         @JvmStatic
         @JsName("template")
         fun template(
             functor: String,
             arity: Int,
-        ): Rule {
-            return of(Struct.template(functor, arity), Var.anonymous())
-        }
+        ): Rule = TermFactory.default.ruleTemplateOf(functor, arity)
     }
 }

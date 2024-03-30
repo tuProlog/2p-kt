@@ -6,12 +6,11 @@ import it.unibo.tuprolog.core.Terms.CONS_FUNCTOR
 import it.unibo.tuprolog.core.Terms.EMPTY_BLOCK_FUNCTOR
 import it.unibo.tuprolog.core.Terms.EMPTY_LIST_FUNCTOR
 import it.unibo.tuprolog.core.Terms.FAIL_FUNCTOR
-import it.unibo.tuprolog.core.Terms.INDICATOR_FUNCTOR
 import it.unibo.tuprolog.core.Terms.TRUE_FUNCTOR
 import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
-import it.unibo.tuprolog.core.impl.StructImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -345,18 +344,7 @@ interface Struct : Term {
         fun of(
             functor: String,
             args: KtList<Term>,
-        ): Struct =
-            when {
-                args.size == 2 && CONS_FUNCTOR == functor -> Cons.of(args.first(), args.last())
-                args.size == 2 && CLAUSE_FUNCTOR == functor && args.first().isStruct ->
-                    Rule.of(args.first().castToStruct(), args.last())
-                args.size == 2 && TUPLE_FUNCTOR == functor -> Tuple.of(args)
-                args.size == 2 && INDICATOR_FUNCTOR == functor -> Indicator.of(args.first(), args.last())
-                args.size == 1 && BLOCK_FUNCTOR == functor -> Block.of(args)
-                args.size == 1 && CLAUSE_FUNCTOR == functor -> Directive.of(args.first())
-                args.isEmpty() -> Atom.of(functor)
-                else -> StructImpl(functor, args, emptyMap())
-            }
+        ): Struct = TermFactory.default.structOf(functor, args)
 
         /**
          * Creates a new [Struct] from the given [Term]s.
@@ -379,7 +367,7 @@ interface Struct : Term {
         fun of(
             functor: String,
             vararg args: Term,
-        ): Struct = of(functor, args.toList())
+        ): Struct = TermFactory.default.structOf(functor, *args)
 
         /**
          * Creates a new [Struct] from the given [Sequence] of [Term]s.
@@ -402,7 +390,7 @@ interface Struct : Term {
         fun of(
             functor: String,
             args: Sequence<Term>,
-        ): Struct = of(functor, args.toList())
+        ): Struct = TermFactory.default.structOf(functor, args)
 
         /**
          * Creates a new [Struct] from the given [Iterable] of [Term]s.
@@ -425,27 +413,7 @@ interface Struct : Term {
         fun of(
             functor: String,
             args: Iterable<Term>,
-        ): Struct = of(functor, args.toList())
-
-        /**
-         * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
-         * Let `f` be the value of [operator], and let `t_i` be the `i`-th term in [terms].
-         * Then, this method constructs the [Struct]ure
-         * ```
-         * f(t_1, f(t_2, ... f(t_n-1, t_n) ...))
-         * ```
-         * Of course, this method will return an instance of either [Tuple] in case the argument [operator] is adequate.
-         * @param operator the functor of the [Struct]ures used to fold the [terms]
-         * @param terms the [KtList] of [Terms] to be folded
-         * @throws IllegalArgumentException if [terms] has less than 2 items
-         * @return a new [Struct] (or of some particular sub-type of [Struct])
-         */
-        @JvmStatic
-        @JsName("foldListNullTerminated")
-        fun fold(
-            operator: String,
-            terms: KtList<Term>,
-        ): Struct = fold(operator, terms, null)
+        ): Struct = TermFactory.default.structOf(functor, args)
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -468,32 +436,14 @@ interface Struct : Term {
          * @throws IllegalArgumentException if [terms] has less than 2 items
          * @return a new [Struct] (or of some particular sub-type of [Struct])
          */
+        @JvmOverloads
         @JvmStatic
         @JsName("foldList")
         fun fold(
             operator: String,
             terms: KtList<Term>,
-            terminal: Term?,
-        ): Struct =
-            when {
-                operator == CONS_FUNCTOR && terminal == EmptyList() -> List.of(terms)
-                operator == CONS_FUNCTOR && terminal == null -> List.from(terms)
-                operator == TUPLE_FUNCTOR -> Tuple.of(terms + listOfNotNull(terminal))
-                terminal == null -> {
-                    require(terms.size >= 2) { "Struct requires at least two terms to fold" }
-                    terms.slice(0 until terms.lastIndex - 1)
-                        .foldRight(of(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
-                            of(operator, a, b)
-                        }
-                }
-                else -> {
-                    require(terms.isNotEmpty()) { "Struct requires at least two terms to fold" }
-                    terms.slice(0 until terms.lastIndex)
-                        .foldRight(of(operator, terms[terms.lastIndex], terminal)) { a, b ->
-                            of(operator, a, b)
-                        }
-                }
-            }
+            terminal: Term? = null,
+        ): Struct = TermFactory.default.foldedStructOf(operator, terms, terminal)
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -516,33 +466,14 @@ interface Struct : Term {
          * @throws IllegalArgumentException if [terms] has less than 2 items
          * @return a new [Struct] (or of some particular sub-type of [Struct])
          */
+        @JvmOverloads
         @JvmStatic
         @JsName("foldSequence")
         fun fold(
             operator: String,
             terms: Sequence<Term>,
-            terminal: Term?,
-        ): Struct = fold(operator, terms.toList(), terminal)
-
-        /**
-         * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
-         * Let `f` be the value of [operator], and let `t_i` be the `i`-th term in [terms].
-         * Then, this method constructs the [Struct]ure
-         * ```
-         * f(t_1, f(t_2, ... f(t_n-1, t_n) ...))
-         * ```
-         * Of course, this method will return an instance of either [Tuple] in case the argument [operator] is adequate.
-         * @param operator the functor of the [Struct]ures used to fold the [terms]
-         * @param terms the [Sequence] of [Terms] to be folded
-         * @throws IllegalArgumentException if [terms] has less than 2 items
-         * @return a new [Struct] (or of some particular sub-type of [Struct])
-         */
-        @JvmStatic
-        @JsName("foldSequenceNullTerminated")
-        fun fold(
-            operator: String,
-            terms: Sequence<Term>,
-        ): Struct = fold(operator, terms, null)
+            terminal: Term? = null,
+        ): Struct = TermFactory.default.foldedStructOf(operator, terms, terminal)
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -565,33 +496,14 @@ interface Struct : Term {
          * @throws IllegalArgumentException if [terms] has less than 2 items
          * @return a new [Struct] (or of some particular sub-type of [Struct])
          */
+        @JvmOverloads
         @JvmStatic
         @JsName("foldIterable")
         fun fold(
             operator: String,
             terms: Iterable<Term>,
-            terminal: Term?,
-        ): Struct = fold(operator, terms.toList(), terminal)
-
-        /**
-         * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
-         * Let `f` be the value of [operator], and let `t_i` be the `i`-th term in [terms].
-         * Then, this method constructs the [Struct]ure
-         * ```
-         * f(t_1, f(t_2, ... f(t_n-1, t_n) ...))
-         * ```
-         * Of course, this method will return an instance of either [Tuple] in case the argument [operator] is adequate.
-         * @param operator the functor of the [Struct]ures used to fold the [terms]
-         * @param terms the [Iterable] of [Terms] to be folded
-         * @throws IllegalArgumentException if [terms] has less than 2 items
-         * @return a new [Struct] (or of some particular sub-type of [Struct])
-         */
-        @JvmStatic
-        @JsName("foldIterableNullTerminated")
-        fun fold(
-            operator: String,
-            terms: Iterable<Term>,
-        ): Struct = fold(operator, terms, null)
+            terminal: Term? = null,
+        ): Struct = TermFactory.default.foldedStructOf(operator, terms, terminal)
 
         /**
          * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
@@ -614,32 +526,13 @@ interface Struct : Term {
          * @throws IllegalArgumentException if [terms] has less than 2 items
          * @return a new [Struct] (or of some particular sub-type of [Struct])
          */
+        @JvmOverloads
         @JvmStatic
         @JsName("fold")
         fun fold(
             operator: String,
             vararg terms: Term,
-            terminal: Term?,
-        ): Struct = fold(operator, terms.toList(), terminal)
-
-        /**
-         * Folds the [Term]s in [terms] from left to right, creating binary structures having [operator] as functor.
-         * Let `f` be the value of [operator], and let `t_i` be the `i`-th term in [terms].
-         * Then, this method constructs the [Struct]ure
-         * ```
-         * f(t_1, f(t_2, ... f(t_n-1, t_n) ...))
-         * ```
-         * Of course, this method will return an instance of either [Tuple] in case the argument [operator] is adequate.
-         * @param operator the functor of the [Struct]ures used to fold the [terms]
-         * @param terms the `vararg` array of [Terms] to be folded
-         * @throws IllegalArgumentException if [terms] has less than 2 items
-         * @return a new [Struct] (or of some particular sub-type of [Struct])
-         */
-        @JvmStatic
-        @JsName("foldNullTerminated")
-        fun fold(
-            operator: String,
-            vararg terms: Term,
-        ): Struct = fold(operator, listOf(*terms))
+            terminal: Term? = null,
+        ): Struct = TermFactory.default.foldedStructOf(operator, terms = terms, terminal)
     }
 }

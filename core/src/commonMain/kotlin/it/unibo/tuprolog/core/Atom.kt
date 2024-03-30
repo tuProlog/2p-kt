@@ -3,9 +3,7 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.Terms.EMPTY_BLOCK_FUNCTOR
 import it.unibo.tuprolog.core.Terms.EMPTY_LIST_FUNCTOR
 import it.unibo.tuprolog.core.Terms.FAIL_FUNCTOR
-import it.unibo.tuprolog.core.Terms.FALSE_FUNCTOR
 import it.unibo.tuprolog.core.Terms.TRUE_FUNCTOR
-import it.unibo.tuprolog.core.impl.AtomImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
@@ -64,14 +62,10 @@ interface Atom : Struct, Constant {
 
         @JvmStatic
         @JsName("of")
-        fun of(value: String): Atom =
-            when (value) {
-                EMPTY_LIST_FUNCTOR -> Empty.list()
-                EMPTY_BLOCK_FUNCTOR -> Empty.block()
-                TRUE_FUNCTOR -> Truth.TRUE
-                FAIL_FUNCTOR -> Truth.FAIL
-                FALSE_FUNCTOR -> Truth.FALSE
-                else -> AtomImpl(value)
-            }
+        fun of(value: String): Atom = TermFactory.default.atomOf(value)
+
+        @JvmStatic
+        @JsName("ofChar")
+        fun of(value: Char): Atom = TermFactory.default.atomOf(value)
     }
 }

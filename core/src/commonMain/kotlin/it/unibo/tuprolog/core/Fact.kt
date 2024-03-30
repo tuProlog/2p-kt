@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.FactImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -40,16 +39,35 @@ interface Fact : Rule {
         const val FUNCTOR = Terms.CLAUSE_FUNCTOR
 
         @JvmStatic
+        @JsName("ofStruct")
+        fun of(head: Struct): Fact = TermFactory.default.factOf(head)
+
         @JsName("of")
-        fun of(head: Struct): Fact = FactImpl(head)
+        @JvmStatic
+        fun of(
+            functor: String,
+            vararg args: Term,
+        ): Fact = TermFactory.default.factOf(functor, *args)
+
+        @JsName("ofIterable")
+        @JvmStatic
+        fun of(
+            functor: String,
+            args: Iterable<Term>,
+        ): Fact = TermFactory.default.factOf(functor, args)
+
+        @JsName("ofSequence")
+        @JvmStatic
+        fun of(
+            functor: String,
+            args: Sequence<Term>,
+        ): Fact = TermFactory.default.factOf(functor, args)
 
         @JvmStatic
         @JsName("template")
         fun template(
             functor: String,
             arity: Int,
-        ): Fact {
-            return of(Struct.template(functor, arity))
-        }
+        ): Fact = TermFactory.default.factTemplateOf(functor, arity)
     }
 }
