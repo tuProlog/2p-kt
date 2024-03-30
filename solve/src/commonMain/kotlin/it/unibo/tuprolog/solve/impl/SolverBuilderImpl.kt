@@ -270,6 +270,7 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
 
     override fun toString(): String =
         "SolverBuilderImpl(" +
+            "unificator=$unificator, " +
             "runtime=$runtime, " +
             "builtins=$builtins, " +
             "flags=$flags, " +
@@ -280,31 +281,15 @@ internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBui
 
     override fun toFactory(): SolverFactory =
         object : SolverFactory by factory {
-            override val defaultBuiltins: Library
-                get() = builtins ?: factory.defaultBuiltins
-
-            override val defaultRuntime: Runtime
-                get() = runtime
-
-            override val defaultFlags: FlagStore
-                get() = flags
-
-            override val defaultStaticKb: Theory
-                get() = staticKb
-
-            override val defaultDynamicKb: Theory
-                get() = dynamicKb
-
-            override val defaultInputChannel: InputChannel<String>
-                get() = inputs.stdIn
-
-            override val defaultOutputChannel: OutputChannel<String>
-                get() = outputs.stdOut
-
-            override val defaultErrorChannel: OutputChannel<String>
-                get() = outputs.stdErr
-
-            override val defaultWarningsChannel: OutputChannel<Warning>
-                get() = outputs.warnings
+            override val defaultUnificator: Unificator = unificator
+            override val defaultBuiltins: Library = builtins ?: factory.defaultBuiltins
+            override val defaultRuntime: Runtime = runtime
+            override val defaultFlags: FlagStore = flags
+            override val defaultStaticKb: Theory = staticKb
+            override val defaultDynamicKb: Theory = dynamicKb
+            override val defaultInputChannel: InputChannel<String> = inputs.stdIn
+            override val defaultOutputChannel: OutputChannel<String> = outputs.stdOut
+            override val defaultErrorChannel: OutputChannel<String> = outputs.stdErr
+            override val defaultWarningsChannel: OutputChannel<Warning> = outputs.warnings
         }
 }

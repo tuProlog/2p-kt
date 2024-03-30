@@ -47,7 +47,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
         logicProgramming {
             val query1 = Alias.FUNCTOR(alias, T)
             assertSolutionEquals(
-                ktListOf(query1.yes(T to TypeRef.of(type))),
+                listOf(query1.yes(T to TypeRef.of(type))),
                 solver.solveList(query1),
             )
             val query2 = Alias.FUNCTOR(A, TypeRef.of(type))
@@ -66,7 +66,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
         logicProgramming {
             val query1 = Alias.FUNCTOR(alias, T)
             assertSolutionEquals(
-                ktListOf(query1.yes(T to ObjectRef.of(obj))),
+                listOf(query1.yes(T to ObjectRef.of(obj))),
                 solver.solveList(query1),
             )
             val query2 = Alias.FUNCTOR(A, ObjectRef.of(obj))
@@ -113,7 +113,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
             val query = Alias.FUNCTOR(A, T)
             val solutions = solver.solveList(query)
             val expected =
-                ktListOf(
+                listOf(
                     query.yes(A to "string", T to TypeRef.of(String::class)),
                     query.yes(A to "array", T to TypeRef.of(Array::class)),
                     query.yes(A to "list", T to TypeRef.of(List::class)),
@@ -156,7 +156,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
 
             val registerQuery1 = Register.functor(bInstanceAlias.ref, bInstanceAlias.alias)
             assertSolutionEquals(
-                ktListOf(registerQuery1.yes()),
+                listOf(registerQuery1.yes()),
                 solver.solveList(registerQuery1),
             )
             assertTrue { bInstanceAlias.implementation in solver.staticKb }
@@ -164,13 +164,13 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
 
             val aliasQuery1 = bInstanceAlias.implementation.head
             assertSolutionEquals(
-                ktListOf(aliasQuery1.yes()),
+                listOf(aliasQuery1.yes()),
                 solver.solveList(aliasQuery1),
             )
 
             val registerQuery2 = Register.functor(bTypeAlias.ref, bTypeAlias.alias)
             assertSolutionEquals(
-                ktListOf(registerQuery2.yes()),
+                listOf(registerQuery2.yes()),
                 solver.solveList(registerQuery2),
             )
             assertTrue { bTypeAlias.implementation in solver.staticKb }
@@ -178,7 +178,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
 
             val aliasQuery2 = bTypeAlias.implementation.head
             assertSolutionEquals(
-                ktListOf(aliasQuery2.yes()),
+                listOf(aliasQuery2.yes()),
                 solver.solveList(aliasQuery2),
             )
         }

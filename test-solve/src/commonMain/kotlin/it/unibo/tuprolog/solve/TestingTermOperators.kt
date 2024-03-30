@@ -16,7 +16,7 @@ object TestingTermOperators {
      */
     val greaterThanTesting by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "@>"(intOf(1), realOf(1.0)).hasSolutions({ yes() }),
                 "@>"(realOf(1.0), intOf(1)).hasSolutions({ no() }),
                 "@>"("stringTestA", "stringTestZ").hasSolutions({ no() }),
@@ -38,7 +38,7 @@ object TestingTermOperators {
      */
     val greaterThanOrEqualTesting by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "@>="(intOf(1), intOf(1)).hasSolutions({ yes() }),
                 "@>="("stringTest", "stringTest").hasSolutions({ yes() }),
                 "@>="("stringTest", "stringTest1").hasSolutions({ no() }),
@@ -61,7 +61,7 @@ object TestingTermOperators {
      */
     val equalTesting by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "=@="(realOf(1.0), realOf(1.0)).hasSolutions({ yes() }),
                 "=@="("stringTest", "stringTest").hasSolutions({ yes() }),
                 "=@="("stringTest", realOf(1.0)).hasSolutions({ no() }),
@@ -83,7 +83,7 @@ object TestingTermOperators {
 
     val lowerThanTesting by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "@<"(realOf(1.0), intOf(1)).hasSolutions({ yes() }),
                 "@<"(intOf(1), realOf(1.0)).hasSolutions({ no() }),
                 "@<"("stringTestA", "stringTestZ").hasSolutions({ yes() }),
@@ -104,7 +104,7 @@ object TestingTermOperators {
      */
     val lowerThanOrEqualTesting by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "@=<"(intOf(1), realOf(1.0)).hasSolutions({ no() }),
                 "@=<"(realOf(1.0), realOf(1.0)).hasSolutions({ yes() }),
                 "@=<"("stringTest", "stringTest").hasSolutions({ yes() }),
@@ -124,7 +124,7 @@ object TestingTermOperators {
      */
     val notEqualTesting by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "\\=@="(realOf(1.0), realOf(1.0)).hasSolutions({ no() }),
                 "\\=@="("stringTest", "stringTest").hasSolutions({ no() }),
                 "\\=@="("stringTest", realOf(1.0)).hasSolutions({ yes() }),

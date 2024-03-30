@@ -75,7 +75,7 @@ class DoubleChecksOnEqualities {
         assertEquals(
             Cons.singleton(Integer.of(1)),
             logicProgramming {
-                listOf(1)
+                logicListOf(1)
             },
         )
     }
@@ -85,7 +85,7 @@ class DoubleChecksOnEqualities {
         assertEquals(
             Cons.singleton(Integer.of(1)),
             logicProgramming {
-                listOf(numOf(1))
+                logicListOf(numOf(1))
             },
         )
     }
@@ -95,7 +95,7 @@ class DoubleChecksOnEqualities {
         assertEquals(
             Cons.singleton(Integer.of(1)),
             logicProgramming {
-                consOf(1, emptyList)
+                consOf(1, emptyLogicList)
             },
         )
     }
@@ -105,7 +105,7 @@ class DoubleChecksOnEqualities {
         assertEquals(
             Cons.singleton(Integer.of(1)),
             logicProgramming {
-                consOf(numOf(1), emptyList)
+                consOf(numOf(1), emptyLogicList)
             },
         )
     }
@@ -115,7 +115,7 @@ class DoubleChecksOnEqualities {
         assertEquals(
             Cons.singleton(Integer.of(1)),
             logicProgramming {
-                consOf(Integer.of(1), emptyList)
+                consOf(Integer.of(1), emptyLogicList)
             },
         )
     }

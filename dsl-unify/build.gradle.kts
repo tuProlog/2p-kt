@@ -10,5 +10,10 @@ kotlin {
                 api(project(":unify"))
             }
         }
+        commonTest {
+            dependencies {
+                api(project(":test-dsl"))
+            }
+        }
     }
 }

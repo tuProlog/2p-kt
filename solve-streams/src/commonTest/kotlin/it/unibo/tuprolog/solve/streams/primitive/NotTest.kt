@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.streams.primitive
 
 import it.unibo.tuprolog.dsl.logicProgramming
-import it.unibo.tuprolog.dsl.theory.LogicProgrammingScopeWithTheories
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.exception.error.TypeError
@@ -51,7 +51,7 @@ internal class NotTest {
                 createSolveRequest(
                     query,
                     primitives = mapOf(Not.descriptionPair, Call.descriptionPair),
-                    database = LogicProgrammingScopeWithTheories.of().theory({ "a" }, { "a" }),
+                    database = LogicProgrammingScope.of().theory({ "a" }, { "a" }),
                 ),
             ).map { it.solution }.asIterable()
 

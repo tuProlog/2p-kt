@@ -8,7 +8,7 @@ import kotlin.collections.List as KtList
 
 object Catch : RuleWrapper<ClassicExecutionContext>("catch", 3) {
     override val Scope.head: KtList<Term>
-        get() = ktListOf(varOf("G"), varOf("E"), varOf("C"))
+        get() = listOf(varOf("G"), varOf("E"), varOf("C"))
 
     override val Scope.body: Term
         get() = varOf("G")

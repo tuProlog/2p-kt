@@ -233,10 +233,10 @@ internal class SubstitutionTest {
             val identityPairA = varOf("A") to varOf("A")
             val identityPairB = varOf("B") to varOf("B")
             val toBeTested =
-                ktListOf(
+                listOf(
                     Substitution.of(identityPairA.first, identityPairA.second),
                     Substitution.of(identityPairA, identityPairB),
-                    Substitution.of(ktListOf(identityPairA, identityPairB)),
+                    Substitution.of(listOf(identityPairA, identityPairB)),
                     Substitution.of(Substitution.of(identityPairA), Substitution.of(identityPairB)),
                 )
 

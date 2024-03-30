@@ -10,7 +10,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to listOf(97, 98, 99))),
+                listOf(query.yes("X" to logicListOf(97, 98, 99))),
                 solutions,
             )
         }
@@ -23,7 +23,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to listOf(116, 101, 115, 116))),
+                listOf(query.yes("X" to logicListOf(116, 101, 115, 116))),
                 solutions,
             )
         }
@@ -32,11 +32,11 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
     override fun testAtomCodesFirstIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_codes("X", listOf(97, 98, 99))
+            val query = atom_codes("X", logicListOf(97, 98, 99))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to "abc")),
+                listOf(query.yes("X" to "abc")),
                 solutions,
             )
         }
@@ -45,11 +45,11 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
     override fun testAtomCodesNoVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_codes("test", listOf(116, 101, 115, 116))
+            val query = atom_codes("test", logicListOf(116, 101, 115, 116))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -58,11 +58,11 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
     override fun testAtomCodesFail() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_codes("test", listOf(112, 101, 115, 116))
+            val query = atom_codes("test", logicListOf(112, 101, 115, 116))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }

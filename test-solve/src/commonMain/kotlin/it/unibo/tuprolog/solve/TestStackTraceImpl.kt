@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.dsl.LogicProgrammingScope
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.MessageError
@@ -40,7 +40,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
             )
 
             assertEquals(
-                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
@@ -66,7 +66,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
             )
 
             assertEquals(
-                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
@@ -92,7 +92,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
             )
 
             assertEquals(
-                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
@@ -117,7 +117,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
             )
 
             assertEquals(
-                ktListOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
+                listOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }

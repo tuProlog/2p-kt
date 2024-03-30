@@ -12,7 +12,7 @@ interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, So
 
             val query = atom_codes("abc", "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("X" to listOf(97, 98, 99)))
+            val expected = fromSequence(query.yes("X" to logicListOf(97, 98, 99)))
 
             expected.assertingEquals(solutions)
         }
@@ -24,7 +24,7 @@ interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, So
 
             val query = atom_codes("test", "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("X" to listOf(116, 101, 115, 116)))
+            val expected = fromSequence(query.yes("X" to logicListOf(116, 101, 115, 116)))
 
             expected.assertingEquals(solutions)
         }
@@ -34,7 +34,7 @@ interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, So
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = atom_codes("X", listOf(97, 98, 99))
+            val query = atom_codes("X", logicListOf(97, 98, 99))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to "abc"))
 
@@ -46,7 +46,7 @@ interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, So
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = atom_codes("test", listOf(116, 101, 115, 116))
+            val query = atom_codes("test", logicListOf(116, 101, 115, 116))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 
@@ -58,7 +58,7 @@ interface TestConcurrentAtomCodes<T : WithAssertingEquals> : FromSequence<T>, So
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = atom_codes("test", listOf(112, 101, 115, 116))
+            val query = atom_codes("test", logicListOf(112, 101, 115, 116))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.no())
 

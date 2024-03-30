@@ -189,7 +189,12 @@ internal class ScopeImplTest {
     @Test
     fun listOfIterable() {
         val correctInstances = ConsUtils.mixedConsInstancesElementLists.map { LogicList.of(it.asIterable()) }
-        val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { emptyScopeInstance.listOf(it.asIterable()) }
+        val toBeTested =
+            ConsUtils.mixedConsInstancesElementLists.map {
+                emptyScopeInstance.logicListOf(
+                    it.asIterable(),
+                )
+            }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -197,7 +202,12 @@ internal class ScopeImplTest {
     @Test
     fun listOfVarargs() {
         val correctInstances = ConsUtils.mixedConsInstancesElementLists.map { LogicList.of(*it.toTypedArray()) }
-        val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { emptyScopeInstance.listOf(*it.toTypedArray()) }
+        val toBeTested =
+            ConsUtils.mixedConsInstancesElementLists.map {
+                emptyScopeInstance.logicListOf(
+                    *it.toTypedArray(),
+                )
+            }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -205,7 +215,7 @@ internal class ScopeImplTest {
     @Test
     fun listFrom() {
         val correctInstances = ConsUtils.onlyConsPipeTerminatedElementLists.map { LogicList.from(it) }
-        val toBeTested = ConsUtils.onlyConsPipeTerminatedElementLists.map { emptyScopeInstance.listFrom(it) }
+        val toBeTested = ConsUtils.onlyConsPipeTerminatedElementLists.map { emptyScopeInstance.logicListFrom(it) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

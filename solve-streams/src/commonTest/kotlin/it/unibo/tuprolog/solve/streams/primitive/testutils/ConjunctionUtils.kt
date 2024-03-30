@@ -17,7 +17,7 @@ internal object ConjunctionUtils {
     internal val twoMatchesDB = logicProgramming { theory({ "f"("a") }, { "f"("b") }) }
     internal val myRequestToSolutions =
         logicProgramming {
-            ktListOf(
+            listOf(
                 ("f"("A") and "f"("B")).hasSolutions(
                     { yes("A" to "a", "B" to "a") },
                     { yes("A" to "a", "B" to "b") },
@@ -30,7 +30,7 @@ internal object ConjunctionUtils {
     /** Requests that should fail */
     internal val failedRequests =
         logicProgramming {
-            ktListOf(
+            listOf(
                 "true" and "fail",
                 "fail" and "true",
                 "true" and "true" and "fail",

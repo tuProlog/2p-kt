@@ -74,11 +74,11 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
     private fun deobjectifyList(value: Map<*, *>): Term {
         val items = value["list"] as? List<*> ?: throw DeobjectificationException(value)
         val last = value["tail"]
-        return scope.listFrom(
+        return scope.logicListFrom(
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
             },
-            last = last?.let { deobjectify(it) } ?: scope.emptyList,
+            last = last?.let { deobjectify(it) } ?: scope.emptyLogicList,
         )
     }
 

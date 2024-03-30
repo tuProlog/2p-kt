@@ -144,6 +144,7 @@ import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
+import kotlin.collections.plus as append
 
 internal class TestSolverImpl(
     private val solverFactory: SolverFactory,
@@ -181,7 +182,7 @@ internal class TestSolverImpl(
             val query = "ancestor"("abraham", X)
 
             val expectedSolutions =
-                ktListOf(
+                listOf(
                     query.yes(X to "isaac"),
                     query.yes(X to "jacob"),
                     query.yes(X to "joseph"),
@@ -235,7 +236,7 @@ internal class TestSolverImpl(
                 )
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         ExistenceError.forProcedure(
                             DummyInstances.executionContext,
@@ -257,7 +258,7 @@ internal class TestSolverImpl(
                 )
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solver.solve(query).toList(),
             )
             assertEquals(1, observedWarnings.size)
@@ -274,7 +275,7 @@ internal class TestSolverImpl(
                 )
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solver.solve(query).toList(),
             )
             assertTrue { observedWarnings.size == 1 }
@@ -423,7 +424,7 @@ internal class TestSolverImpl(
             solver.standardOutput.addListener { outputs += it!! }
 
             val terms =
-                ktListOf(
+                listOf(
                     atomOf("atom"),
                     atomOf("a string"),
                     varOf("A_Var"),
@@ -437,7 +438,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
@@ -463,14 +464,14 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
             solver.standardOutput.write("e")
 
             assertEquals(
-                ktListOf("a", "b", "c", "d", "\n", "e"),
+                listOf("a", "b", "c", "d", "\n", "e"),
                 outputs,
             )
         }
@@ -492,7 +493,7 @@ internal class TestSolverImpl(
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes(L to listOf(1, 2, 3))),
+                listOf(query.yes(L to logicListOf(1, 2, 3))),
                 solutions,
             )
 
@@ -500,7 +501,7 @@ internal class TestSolverImpl(
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes(L to emptyList)),
+                listOf(query.yes(L to emptyLogicList)),
                 solutions,
             )
 
@@ -508,7 +509,7 @@ internal class TestSolverImpl(
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -552,10 +553,10 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, longDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
-                    query.yes(X to listOf(2, 3), Y to listOf(1)),
-                    query.yes(X to listOf(3), Y to listOf(1, 2)),
-                    query.yes(X to emptyList, Y to listOf(1, 2, 3)),
+                listOf(
+                    query.yes(X to logicListOf(2, 3), Y to logicListOf(1)),
+                    query.yes(X to logicListOf(3), Y to logicListOf(1, 2)),
+                    query.yes(X to emptyLogicList, Y to logicListOf(1, 2, 3)),
                 ),
                 solutions,
             )
@@ -570,7 +571,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -754,7 +755,7 @@ internal class TestSolverImpl(
                 )
                     .mapValues { (_, listOfGoalToSolutions) ->
                         listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                            ktListOf(
+                            listOf(
                                 (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
                                 (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
                                 (goal and false).run {
@@ -848,7 +849,7 @@ internal class TestSolverImpl(
             )
                 .mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                        ktListOf(
+                        listOf(
                             `catch`(goal, `_`, false).run {
                                 when {
                                     expectedSolutions.any {
@@ -902,7 +903,7 @@ internal class TestSolverImpl(
             )
                 .mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                        ktListOf(
+                        listOf(
                             naf(goal).run {
                                 when {
                                     expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
@@ -978,7 +979,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.no(),
                 ),
                 solutions,
@@ -1004,7 +1005,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(N to 2),
                 ),
                 solutions,
@@ -1029,7 +1030,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                with(query) { ktListOf(yes(N to 3), yes(N to 2)) },
+                with(query) { listOf(yes(N to 3), yes(N to 2)) },
                 solutions,
             )
         }
@@ -1052,7 +1053,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(N to 2),
                 ),
                 solutions,
@@ -1077,7 +1078,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(N to 2),
                 ),
                 solutions,
@@ -1100,7 +1101,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(),
                 ),
                 solutions,
@@ -1125,7 +1126,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(),
                 ),
                 solutions,
@@ -1148,7 +1149,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(N to 1),
                 ),
                 solutions,
@@ -1171,7 +1172,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                with(query) { ktListOf(yes(), yes()) },
+                with(query) { listOf(yes(), yes()) },
                 solutions,
             )
         }
@@ -1192,7 +1193,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                with(query) { ktListOf(yes(N to 1), yes(N to 2)) },
+                with(query) { listOf(yes(N to 1), yes(N to 2)) },
                 solutions,
             )
 
@@ -1217,12 +1218,12 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
             assertEquals(
-                ktListOf(
+                listOf(
                     factOf(structOf("f", numOf(1))),
                     ruleOf(structOf("f", numOf(2)), atomOf("false")),
                 ),
@@ -1247,7 +1248,7 @@ internal class TestSolverImpl(
             val solutions = solver.solve(query, longDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(X to 1),
                     query.yes(X to 2),
                 ),
@@ -1255,7 +1256,7 @@ internal class TestSolverImpl(
             )
 
             assertEquals(
-                ktListOf(),
+                listOf(),
                 solver.dynamicKb.toList(),
             )
             assertEquals(0L, solver.dynamicKb.size)
@@ -1287,7 +1288,7 @@ internal class TestSolverImpl(
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes(X to "a", Y to 2)),
+                listOf(query.yes(X to "a", Y to 2)),
                 solutions,
             )
 
@@ -1295,7 +1296,7 @@ internal class TestSolverImpl(
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes(Y to 2)),
+                listOf(query.yes(Y to 2)),
                 solutions,
             )
 
@@ -1303,7 +1304,7 @@ internal class TestSolverImpl(
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes(X to "a")),
+                listOf(query.yes(X to "a")),
                 solutions,
             )
 
@@ -1311,7 +1312,7 @@ internal class TestSolverImpl(
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes(X to structOf("a", anonymous(), anonymous()))),
+                listOf(query.yes(X to structOf("a", anonymous(), anonymous()))),
                 solutions,
             )
 
@@ -1319,7 +1320,7 @@ internal class TestSolverImpl(
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -1336,7 +1337,7 @@ internal class TestSolverImpl(
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -1360,15 +1361,15 @@ internal class TestSolverImpl(
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes(X to listOf("a", "b", "c"))),
+                listOf(query.yes(X to logicListOf("a", "b", "c"))),
                 solutions,
             )
 
-            query = X univ listOf("a", "b", "c")
+            query = X univ logicListOf("a", "b", "c")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes(X to structOf("a", "b", "c"))),
+                listOf(query.yes(X to structOf("a", "b", "c"))),
                 solutions,
             )
 
@@ -1376,7 +1377,7 @@ internal class TestSolverImpl(
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -1393,7 +1394,7 @@ internal class TestSolverImpl(
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -1425,14 +1426,14 @@ internal class TestSolverImpl(
             var solutions = solver.solve(query, longDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(),
                 ),
                 solutions,
             )
 
             assertEquals(
-                ktListOf(),
+                listOf(),
                 solver.dynamicKb.toList(),
             )
             assertEquals(0L, solver.dynamicKb.size)
@@ -1441,7 +1442,7 @@ internal class TestSolverImpl(
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(),
                 ),
                 solutions,
@@ -1453,42 +1454,42 @@ internal class TestSolverImpl(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = append(listOf(1, 2, 3), listOf(4, 5, 6), X)
+            var query = append(logicListOf(1, 2, 3), logicListOf(4, 5, 6), X)
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes(X to listOf(1, 2, 3, 4, 5, 6))),
+                listOf(query.yes(X to logicListOf(1, 2, 3, 4, 5, 6))),
                 solutions,
             )
 
-            query = append(listOf(1, 2, 3), X, listOf(1, 2, 3, 4, 5, 6))
+            query = append(logicListOf(1, 2, 3), X, logicListOf(1, 2, 3, 4, 5, 6))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes(X to listOf(4, 5, 6))),
+                listOf(query.yes(X to logicListOf(4, 5, 6))),
                 solutions,
             )
 
-            query = append(X, X, listOf(1, 2, 3, 4, 5, 6))
+            query = append(X, X, logicListOf(1, 2, 3, 4, 5, 6))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
 
-            query = append(X, Y, listOf(1, 2, 3, 4, 5, 6))
+            query = append(X, Y, logicListOf(1, 2, 3, 4, 5, 6))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
-                    query.yes(X to emptyList, Y to listOf(1, 2, 3, 4, 5, 6)),
-                    query.yes(X to listOf(1), Y to listOf(2, 3, 4, 5, 6)),
-                    query.yes(X to listOf(1, 2), Y to listOf(3, 4, 5, 6)),
-                    query.yes(X to listOf(1, 2, 3), Y to listOf(4, 5, 6)),
-                    query.yes(X to listOf(1, 2, 3, 4), Y to listOf(5, 6)),
-                    query.yes(X to listOf(1, 2, 3, 4, 5), Y to listOf(6)),
-                    query.yes(X to listOf(1, 2, 3, 4, 5, 6), Y to emptyList),
+                listOf(
+                    query.yes(X to emptyLogicList, Y to logicListOf(1, 2, 3, 4, 5, 6)),
+                    query.yes(X to logicListOf(1), Y to logicListOf(2, 3, 4, 5, 6)),
+                    query.yes(X to logicListOf(1, 2), Y to logicListOf(3, 4, 5, 6)),
+                    query.yes(X to logicListOf(1, 2, 3), Y to logicListOf(4, 5, 6)),
+                    query.yes(X to logicListOf(1, 2, 3, 4), Y to logicListOf(5, 6)),
+                    query.yes(X to logicListOf(1, 2, 3, 4, 5), Y to logicListOf(6)),
+                    query.yes(X to logicListOf(1, 2, 3, 4, 5, 6), Y to emptyLogicList),
                 ),
                 solutions,
             )

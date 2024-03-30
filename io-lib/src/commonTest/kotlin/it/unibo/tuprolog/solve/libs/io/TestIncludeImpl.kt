@@ -26,7 +26,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
 
                 val expectedTheory = ExampleTheories.PARENTS + theory
 
-                assertEquals(ktListOf<Any>(), events)
+                assertEquals(listOf<Any>(), events)
                 assertTrue {
                     expectedTheory.equals(solver.staticKb + solver.dynamicKb, useVarCompleteName = false)
                 }
@@ -57,7 +57,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
 
                 val expectedTheory = ExampleTheories.PARENTS + theory
 
-                assertEquals(ktListOf<Any>(), events)
+                assertEquals(listOf<Any>(), events)
                 assertTrue {
                     expectedTheory.equals(solver.staticKb + solver.dynamicKb, useVarCompleteName = false)
                 }

@@ -14,7 +14,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -28,7 +28,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to 1)),
+                listOf(query.yes("X" to 1)),
                 solutions,
             )
         }
@@ -42,7 +42,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -59,7 +59,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         ExistenceError.forProcedure(
                             DummyInstances.executionContext,
@@ -80,7 +80,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to true)),
+                listOf(query.yes("X" to true)),
                 solutions,
             )
         }

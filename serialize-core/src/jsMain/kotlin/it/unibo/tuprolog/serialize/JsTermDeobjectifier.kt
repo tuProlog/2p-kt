@@ -75,11 +75,11 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
     private fun deobjectifyList(value: dynamic): Term {
         val items = value["list"] as? Array<dynamic> ?: throw DeobjectificationException(value)
         val last = value["tail"]
-        return scope.listFrom(
+        return scope.logicListFrom(
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
             },
-            last = if (last != null) deobjectify(last) else scope.emptyList,
+            last = if (last != null) deobjectify(last) else scope.emptyLogicList,
         )
     }
 

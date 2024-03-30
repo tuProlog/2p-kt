@@ -15,7 +15,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
 
             val query = number_chars(33, "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("L" to listOf("3", "3")))
+            val expected = fromSequence(query.yes("L" to logicListOf("3", "3")))
 
             expected.assertingEquals(solutions)
         }
@@ -25,7 +25,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = number_chars(33, listOf("3", "3"))
+            val query = number_chars(33, logicListOf("3", "3"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 
@@ -37,7 +37,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = number_chars("X", listOf("3", "3"))
+            val query = number_chars("X", logicListOf("3", "3"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to 33))
 
@@ -49,7 +49,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = number_chars("X", listOf("-", "2", "5"))
+            val query = number_chars("X", logicListOf("-", "2", "5"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to intOf(-25)))
 
@@ -61,7 +61,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = number_chars("X", listOf("\n", "3"))
+            val query = number_chars("X", logicListOf("\n", "3"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to 3))
 
@@ -73,7 +73,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = number_chars("X", listOf("4", ".", "2"))
+            val query = number_chars("X", logicListOf("4", ".", "2"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to 4.2))
 
@@ -85,7 +85,7 @@ interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, 
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
             // val query = number_chars("X", listOf("3", ".", "3", "E", "+", "0"))
-            val query = number_chars(X, listOf("3", ".", "9"))
+            val query = number_chars(X, logicListOf("3", ".", "9"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to 3.9))
 

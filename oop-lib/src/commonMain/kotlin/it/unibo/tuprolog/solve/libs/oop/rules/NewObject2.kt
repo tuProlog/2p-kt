@@ -11,8 +11,8 @@ object NewObject2 : RuleWrapper<ExecutionContext>(NewObject3.functor, 2) {
     private val Instance by variables
 
     override val Scope.head: List<Term>
-        get() = kotlin.collections.listOf(Type, Instance)
+        get() = listOf(Type, Instance)
 
     override val Scope.body: Term
-        get() = structOf(NewObject3.functor, Type, emptyList, Instance)
+        get() = structOf(NewObject3.functor, Type, emptyLogicList, Instance)
 }

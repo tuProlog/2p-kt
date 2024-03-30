@@ -11,7 +11,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -25,7 +25,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -39,7 +39,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -53,7 +53,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -67,7 +67,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }

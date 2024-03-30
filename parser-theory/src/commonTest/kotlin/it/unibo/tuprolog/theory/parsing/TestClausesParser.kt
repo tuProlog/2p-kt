@@ -3,7 +3,7 @@ package it.unibo.tuprolog.theory.parsing
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.parsing.ParseException
-import it.unibo.tuprolog.dsl.theory.LogicProgrammingScopeWithTheories
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.test.Test
@@ -24,9 +24,9 @@ class TestClausesParser {
 
         fun assertMatch(
             expected: Term,
-            actual: LogicProgrammingScopeWithTheories.() -> Term,
+            actual: LogicProgrammingScope.() -> Term,
         ) {
-            assertMatch(expected, LogicProgrammingScopeWithTheories.of().actual())
+            assertMatch(expected, LogicProgrammingScope.of().actual())
         }
     }
 
@@ -116,7 +116,7 @@ class TestClausesParser {
             }
 
         assertMatch(th.elementAt(0)) {
-            directive { "op"(900, "yfx", listOf("++", "--")) }
+            directive { "op"(900, "yfx", logicListOf("++", "--")) }
         }
 
         assertMatch(th.elementAt(1)) {

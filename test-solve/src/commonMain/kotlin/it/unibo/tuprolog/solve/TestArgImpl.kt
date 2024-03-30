@@ -14,7 +14,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -28,7 +28,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to "a")),
+                listOf(query.yes("X" to "a")),
                 solutions,
             )
         }
@@ -42,7 +42,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to "a")),
+                listOf(query.yes("X" to "a")),
                 solutions,
             )
         }
@@ -57,7 +57,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
             assertSolutionEquals(
                 with(query) {
-                    ktListOf(
+                    listOf(
                         yes("X" to "a", "Y" to "b"),
                     )
                 },
@@ -74,7 +74,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("Y" to "X")),
+                listOf(query.yes("Y" to "X")),
                 solutions,
             )
         }
@@ -88,7 +88,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -102,7 +102,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -116,7 +116,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -130,7 +130,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes("X" to 1),
                 ),
                 solutions,
@@ -146,7 +146,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -169,7 +169,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -193,7 +193,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -217,7 +217,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         DomainError.forArgument(
                             DummyInstances.executionContext,
@@ -241,7 +241,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,

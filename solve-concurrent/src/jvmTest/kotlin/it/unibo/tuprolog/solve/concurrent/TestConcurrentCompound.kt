@@ -82,7 +82,7 @@ interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, Sol
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = compound(listOf("a"))
+            val query = compound(logicListOf("a"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 

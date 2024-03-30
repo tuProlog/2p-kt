@@ -63,7 +63,7 @@ internal object CallUtils {
                 createSolveRequest(
                     query,
                     database = simpleFactTheory,
-                    primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray()),
+                    primitives = listOf(Call, Cut, Conjunction).associate { it.descriptionPair },
                 )
             }
         }
@@ -95,11 +95,7 @@ internal object CallUtils {
             ).mapKeys { (query, _) ->
                 createSolveRequest(
                     query,
-                    primitives =
-                        mapOf(
-                            *ktListOf(Call, Cut, Throw, Conjunction)
-                                .map { it.descriptionPair }.toTypedArray(),
-                        ),
+                    primitives = listOf(Call, Cut, Throw, Conjunction).associate { it.descriptionPair },
                 )
             }
         }
@@ -122,7 +118,7 @@ internal object CallUtils {
                 createSolveRequest(
                     query,
                     database = simpleFactTheory,
-                    primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray()),
+                    primitives = listOf(Call, Cut, Conjunction).associate { it.descriptionPair },
                 )
             }
         }

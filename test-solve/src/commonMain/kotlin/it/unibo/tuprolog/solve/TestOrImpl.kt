@@ -12,7 +12,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
 
             assertSolutionEquals(
                 with(query) {
-                    ktListOf(
+                    listOf(
                         yes(),
                         no(),
                     )
@@ -31,7 +31,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -46,7 +46,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -61,7 +61,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to 1)),
+                listOf(query.yes("X" to 1)),
                 solutions,
             )
         }
@@ -77,7 +77,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
 
             assertSolutionEquals(
                 with(query) {
-                    ktListOf(
+                    listOf(
                         yes("X" to 1),
                         yes("X" to 2),
                     )

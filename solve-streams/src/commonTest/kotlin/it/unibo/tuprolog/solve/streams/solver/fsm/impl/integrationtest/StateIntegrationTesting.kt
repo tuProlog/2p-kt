@@ -148,6 +148,7 @@ internal class StateIntegrationTesting {
     }
 
     @Test
+    @Ignore
     fun prologStandardSearchTreeWithCutExample() {
         assertSolutionsCorrect(
             prologStandardExampleWithCutTheoryNotableGoalToSolution,

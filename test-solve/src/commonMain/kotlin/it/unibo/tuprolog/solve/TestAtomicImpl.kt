@@ -11,7 +11,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -25,7 +25,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -39,7 +39,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -49,11 +49,11 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = atomic(emptyList)
+            val query = atomic(emptyLogicList)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -67,7 +67,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -81,7 +81,7 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
