@@ -3,22 +3,68 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import kotlin.js.JsName
 import kotlin.collections.plus as append
 
 interface LogicProgrammingScopeWithOperators<S : LogicProgrammingScopeWithOperators<S>> : BaseLogicProgrammingScope<S> {
-    @JsName("anyPlus")
-    operator fun Any.plus(other: Any): Struct = structOf("+", this.toTerm(), other.toTerm())
+    @JsName("termPlus")
+    operator fun Term.plus(other: Any): Struct = structOf("+", this.toTerm(), other.toTerm())
 
-    @JsName("anyMinus")
-    operator fun Any.minus(other: Any): Struct = structOf("-", this.toTerm(), other.toTerm())
+    @JsName("number")
+    operator fun Number.plus(other: Any): Struct = toTerm() + other
 
-    @JsName("anyTimes")
-    operator fun Any.times(other: Any): Struct = structOf("*", this.toTerm(), other.toTerm())
+    @JsName("booleanPlus")
+    operator fun Boolean.plus(other: Any): Struct = toTerm() + other
 
-    @JsName("anyDiv")
-    operator fun Any.div(other: Any): Indicator = indicatorOf(this.toTerm(), other.toTerm())
+    @JsName("charPlus")
+    operator fun Char.plus(other: Any): Struct = toTerm() + other
+
+    @JsName("termMinus")
+    operator fun Term.minus(other: Any): Struct = structOf("-", this.toTerm(), other.toTerm())
+
+    @JsName("numberMinus")
+    operator fun Number.minus(other: Any): Struct = toTerm() - other
+
+    @JsName("booleanMinus")
+    operator fun Boolean.minus(other: Any): Struct = toTerm() - other
+
+    @JsName("charMinus")
+    operator fun Char.minus(other: Any): Struct = toTerm() - other
+
+    @JsName("stringMinus")
+    operator fun String.minus(other: Any): Struct = toTerm() - other
+
+    @JsName("termTimes")
+    operator fun Term.times(other: Any): Struct = structOf("*", this.toTerm(), other.toTerm())
+
+    @JsName("numberTimes")
+    operator fun Number.times(other: Any): Struct = toTerm() * other
+
+    @JsName("booleanTimes")
+    operator fun Boolean.times(other: Any): Struct = toTerm() * other
+
+    @JsName("charTimes")
+    operator fun Char.times(other: Any): Struct = toTerm() * other
+
+    @JsName("stringTimes")
+    operator fun String.times(other: Any): Struct = toTerm() * other
+
+    @JsName("termDiv")
+    operator fun Term.div(other: Any): Indicator = indicatorOf(this.toTerm(), other.toTerm())
+
+    @JsName("numberDiv")
+    operator fun Number.div(other: Any): Struct = toTerm() / other
+
+    @JsName("booleanDiv")
+    operator fun Boolean.div(other: Any): Struct = toTerm() / other
+
+    @JsName("charDiv")
+    operator fun Char.div(other: Any): Struct = toTerm() / other
+
+    @JsName("stringDiv")
+    operator fun String.div(other: Any): Struct = toTerm() / other
 
     /** Creates a structure whose functor is `'='/2` (term unification operator) */
     @JsName("anyEqualsTo")
@@ -48,8 +94,20 @@ interface LogicProgrammingScopeWithOperators<S : LogicProgrammingScopeWithOperat
     @JsName("anyIntDiv")
     infix fun Any.intDiv(other: Any): Struct = structOf("//", this.toTerm(), other.toTerm())
 
-    @JsName("anyRem")
-    infix operator fun Any.rem(other: Any): Struct = structOf("rem", this.toTerm(), other.toTerm())
+    @JsName("termRem")
+    infix operator fun Term.rem(other: Any): Struct = structOf("rem", this.toTerm(), other.toTerm())
+
+    @JsName("numberRem")
+    infix operator fun Number.rem(other: Any): Struct = toTerm() % other
+
+    @JsName("booleanRem")
+    infix operator fun Boolean.rem(other: Any): Struct = toTerm() % other
+
+    @JsName("charRem")
+    infix operator fun Char.rem(other: Any): Struct = toTerm() % other
+
+    @JsName("stringRem")
+    infix operator fun String.rem(other: Any): Struct = toTerm() % other
 
     @JsName("anyAnd")
     infix fun Any.and(other: Any): Struct =

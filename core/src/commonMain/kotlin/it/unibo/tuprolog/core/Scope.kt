@@ -43,8 +43,14 @@ interface Scope {
     @JsName("varOf")
     fun varOf(name: String): Var
 
+    @JsName("varOfChar")
+    fun varOf(name: Char): Var
+
     @JsName("atomOf")
     fun atomOf(value: String): Atom
+
+    @JsName("atomOfChar")
+    fun atomOf(value: Char): Atom
 
     @JsName("structOf")
     fun structOf(

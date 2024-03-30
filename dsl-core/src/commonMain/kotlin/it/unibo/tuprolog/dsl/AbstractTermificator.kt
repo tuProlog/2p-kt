@@ -49,6 +49,8 @@ abstract class AbstractTermificator(
 
     protected fun handleBooleanAsTruth(value: Boolean) = scope.truthOf(value)
 
+    protected fun handleCharAsString(value: Char) = termify(value.toString())
+
     protected fun handleStringAsAtomOrVariable(value: String) =
         if (value matches Var.NAME_PATTERN) {
             scope.varOf(value)
@@ -100,31 +102,33 @@ abstract class AbstractTermificator(
         scope.blockOf(value.entries.assertItemsAreNotNull().map { handleKeyValuePairAsStruct(it) })
 
     protected fun legacyConfiguration() {
-        handleType(Boolean::class) { handleBooleanAsTruth(it) }
-        handleType(String::class) { handleStringAsAtomOrVariable(it) }
-        handleType(BigInteger::class) { handleBigIntegerAsInteger(it) }
-        handleType(BigDecimal::class) { handleBigDecimalAsReal(it) }
-        handleType(Number::class) { handleNumberAsNumeric(it) }
-        handleType(Array::class) { handleArrayAsList(it) }
-        handleType(Sequence::class) { handleSequenceAsList(it) }
-        handleType(Iterable::class) { handleIterableAsList(it) }
+        handleType(Char::class, ::handleCharAsString)
+        handleType(Boolean::class, ::handleBooleanAsTruth)
+        handleType(String::class, ::handleStringAsAtomOrVariable)
+        handleType(BigInteger::class, ::handleBigIntegerAsInteger)
+        handleType(BigDecimal::class, ::handleBigDecimalAsReal)
+        handleType(Number::class, ::handleNumberAsNumeric)
+        handleType(Array::class, ::handleArrayAsList)
+        handleType(Sequence::class, ::handleSequenceAsList)
+        handleType(Iterable::class, ::handleIterableAsList)
     }
 
     protected fun novelConfiguration() {
-        handleType(Boolean::class) { handleBooleanAsTruth(it) }
-        handleType(String::class) { handleStringAsAtomOrVariable(it) }
-        handleType(BigInteger::class) { handleBigIntegerAsInteger(it) }
-        handleType(BigDecimal::class) { handleBigDecimalAsReal(it) }
-        handleType(Number::class) { handleNumberAsNumeric(it) }
-        handleType(Array::class) { handleArrayAsList(it) }
-        handleType(Sequence::class) { handleSequenceAsList(it) }
-        handleType(KtList::class) { handleKotlinListAsLogicList(it) }
-        handleType(Set::class) { handleSetAsBlock(it) }
-        handleType(Pair::class) { handlePairAsTuple(it) }
-        handleType(Triple::class) { handleTripletAsTuple(it) }
-        handleType(Map.Entry::class) { handleKeyValuePairAsStruct(it) }
-        handleType(Map::class) { handleMapAsBlock(it) }
-        handleType(Iterable::class) { handleIterableAsList(it) }
+        handleType(Char::class, ::handleCharAsString)
+        handleType(Boolean::class, ::handleBooleanAsTruth)
+        handleType(String::class, ::handleStringAsAtomOrVariable)
+        handleType(BigInteger::class, ::handleBigIntegerAsInteger)
+        handleType(BigDecimal::class, ::handleBigDecimalAsReal)
+        handleType(Number::class, ::handleNumberAsNumeric)
+        handleType(Array::class, ::handleArrayAsList)
+        handleType(Sequence::class, ::handleSequenceAsList)
+        handleType(KtList::class, ::handleKotlinListAsLogicList)
+        handleType(Set::class, ::handleSetAsBlock)
+        handleType(Pair::class, ::handlePairAsTuple)
+        handleType(Triple::class, ::handleTripletAsTuple)
+        handleType(Map.Entry::class, ::handleKeyValuePairAsStruct)
+        handleType(Map::class, ::handleMapAsBlock)
+        handleType(Iterable::class, ::handleIterableAsList)
     }
 
     protected fun defaultConfiguration(novel: Boolean = false) {

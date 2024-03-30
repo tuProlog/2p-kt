@@ -23,9 +23,18 @@ open class TestDefaultTermifier : AbstractTermificatorTest() {
 
     @Test
     fun testStrings() {
-        assertTermificationWorks("X", Scope::varOf)
+        assertTermificationWorks("Xs", Scope::varOf)
         assertTermificationWorks("_", Scope::varOf)
-        assertTermificationWorks("x", Scope::atomOf)
+        assertTermificationWorks("_X", Scope::varOf)
+        assertTermificationWorks("_x", Scope::varOf)
+        assertTermificationWorks("xs", Scope::atomOf)
+    }
+
+    @Test
+    fun testChars() {
+        assertTermificationWorks('X', Scope::varOf)
+        assertTermificationWorks('_', Scope::varOf)
+        assertTermificationWorks('x', Scope::atomOf)
     }
 
     @Test

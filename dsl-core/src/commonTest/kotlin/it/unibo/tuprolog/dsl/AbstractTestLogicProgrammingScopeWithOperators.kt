@@ -1,15 +1,18 @@
 package it.unibo.tuprolog.dsl
 
-import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
-class TestLogicProgrammingScopeWithOperators :
-    AbstractLogicProgrammingScopeTest<LogicProgrammingScopeWithOperators<*>>() {
+abstract class AbstractTestLogicProgrammingScopeWithOperators<T1 : Any, T2 : Any>(
+    private val first: T1,
+    private val second: T2,
+) : AbstractLogicProgrammingScopeTest<LogicProgrammingScopeWithOperators<*>>() {
     override fun createLogicProgrammingScope(): LogicProgrammingScopeWithOperators<*> = LogicProgrammingScope.empty()
 
-    private fun <T1 : Any, T2 : Any> testBinaryExpression(
+    private fun testBinaryExpression(
         left: T1,
         right: T2,
         operator: String,
@@ -20,29 +23,47 @@ class TestLogicProgrammingScopeWithOperators :
         assertEquals(expectedResult, actualResult)
     }
 
-    private val first = Atom.of("a")
-    private val second = "X"
     private val third = 1
 
     @Test
     fun testPlus() {
-        testBinaryExpression(first, second, "+") { a, b -> a + b }
+        testBinaryExpression(first, second, "+") { a, b -> plus(a, b) }
     }
+
+    protected abstract fun LogicProgrammingScopeWithOperators<*>.plus(
+        a: T1,
+        b: T2,
+    ): Term
 
     @Test
     fun testMinus() {
-        testBinaryExpression(first, second, "-") { a, b -> a - b }
+        testBinaryExpression(first, second, "-") { a, b -> minus(a, b) }
     }
+
+    protected abstract fun LogicProgrammingScopeWithOperators<*>.minus(
+        a: T1,
+        b: T2,
+    ): Term
 
     @Test
     fun testMultiply() {
-        testBinaryExpression(first, second, "*") { a, b -> a * b }
+        testBinaryExpression(first, second, "*") { a, b -> times(a, b) }
     }
+
+    protected abstract fun LogicProgrammingScopeWithOperators<*>.times(
+        a: T1,
+        b: T2,
+    ): Term
 
     @Test
     fun testDivide() {
-        testBinaryExpression(first, second, "/") { a, b -> a / b }
+        testBinaryExpression(first, second, "/") { a, b -> div(a, b) }
     }
+
+    protected abstract fun LogicProgrammingScopeWithOperators<*>.div(
+        a: T1,
+        b: T2,
+    ): Term
 
     @Test
     fun testEqualsTo() {
@@ -91,8 +112,13 @@ class TestLogicProgrammingScopeWithOperators :
 
     @Test
     fun testRem() {
-        testBinaryExpression(first, second, "rem") { a, b -> a rem b }
+        testBinaryExpression(first, second, "rem") { a, b -> rem(a, b) }
     }
+
+    protected abstract fun LogicProgrammingScopeWithOperators<*>.rem(
+        a: T1,
+        b: T2,
+    ): Term
 
     @Test
     fun testPow() {
@@ -132,25 +158,51 @@ class TestLogicProgrammingScopeWithOperators :
             assertEquals(expected, actual)
         }
 
-    init {
-        listOf(1).asIterable().plus(1)
-    }
-
     @Test
-    fun testImpliedBy() {
-        testBinaryExpression(first, second, ":-") { a, b -> a impliedBy b }
-    }
-
-    @Test
-    fun testImpliedByMultiple() =
+    fun testImpliedBy(): Unit =
         logicProgramming {
-            val expected = ruleOf(first, second.toTerm(), third.toTerm())
-            val actual = first.impliedBy(second, third)
-            assertEquals(expected, actual)
+            val firstTerm = first.toTerm()
+            if (firstTerm is Struct) {
+                testBinaryExpression(first, second, ":-") { a, b -> a impliedBy b }
+            } else {
+                assertFails {
+                    first impliedBy second
+                }
+            }
         }
 
     @Test
-    fun testIf() {
-        testBinaryExpression(first, second, ":-") { a, b -> a `if` b }
-    }
+    fun testPlusOnListsIsAppend() =
+        logicProgramming {
+            assertEquals(listOf(1, 2, 3), listOf(1, 2) + 3)
+            assertEquals(listOf(1, 2, 3), listOf(1, 2) + listOf(3))
+        }
+
+    @Test
+    fun testImpliedByMultiple(): Unit =
+        logicProgramming {
+            val firstTerm = first.toTerm()
+            if (firstTerm is Struct) {
+                val expected = ruleOf(firstTerm, second.toTerm(), third.toTerm())
+                val actual = firstTerm.impliedBy(second, third)
+                assertEquals(expected, actual)
+            } else {
+                assertFails {
+                    first.impliedBy(second, third)
+                }
+            }
+        }
+
+    @Test
+    fun testIf(): Unit =
+        logicProgramming {
+            val firstTerm = first.toTerm()
+            if (firstTerm is Struct) {
+                testBinaryExpression(first, second, ":-") { a, b -> a `if` b }
+            } else {
+                assertFails {
+                    first `if` second
+                }
+            }
+        }
 }

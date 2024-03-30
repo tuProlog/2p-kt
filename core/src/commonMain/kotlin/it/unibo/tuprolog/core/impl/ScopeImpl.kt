@@ -43,6 +43,8 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
             _variables[name]!!
         }
 
+    override fun varOf(name: Char): Var = varOf(name.toString())
+
     override fun where(lambda: Scope.() -> Unit): Scope = this.also(lambda)
 
     override fun <R> with(lambda: Scope.() -> R): R = with(this, lambda)
@@ -107,6 +109,8 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun tupleOf(vararg terms: Term): Tuple = Tuple.of(terms.toList())
 
     override fun atomOf(value: String): Atom = Atom.of(value)
+
+    override fun atomOf(value: Char): Atom = Atom.of(value.toString())
 
     override fun structOf(
         functor: String,
