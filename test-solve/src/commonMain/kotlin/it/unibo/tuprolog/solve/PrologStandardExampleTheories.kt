@@ -51,7 +51,7 @@ object PrologStandardExampleTheories {
      */
     val prologStandardExampleTheoryNotableGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "p"("U", "V").hasSolutions(
                     { yes("U" to "b", "V" to "b1") },
                     { yes("U" to "c", "V" to "c1") },
@@ -90,7 +90,7 @@ object PrologStandardExampleTheories {
      */
     val prologStandardExampleWithCutTheoryNotableGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "p"("U", "V").hasSolutions({ no() }),
             )
         }
@@ -126,7 +126,7 @@ object PrologStandardExampleTheories {
      */
     val conjunctionStandardExampleTheoryNotableGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 (("insect"("X") or "legs"("X", 6)) and "fly"("X")).hasSolutions(
                     { yes("X" to "bee") },
                     { yes("X" to "bee") },
@@ -170,7 +170,7 @@ object PrologStandardExampleTheories {
      */
     fun callStandardExampleTheoryGoalsToSolution(errorSignature: Signature) =
         logicProgramming {
-            ktListOf(
+            listOf(
                 ("call"("!") or true).hasSolutions({ yes() }, { yes() }),
                 ("="("Z", "!") and "call"("="("Z", "!") and "a"("X") and "Z")).hasSolutions(
                     { yes("X" to 1, "Z" to "!") },
@@ -222,7 +222,7 @@ object PrologStandardExampleTheories {
      */
     val catchAndThrowTheoryExampleNotableGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "catch"("p", "X", true).hasSolutions(
                     { yes("X" to "E") },
                     { yes("X" to "b") },
@@ -295,7 +295,7 @@ object PrologStandardExampleTheories {
         nafErrorSignature: Signature,
         notErrorSignature: Signature,
     ) = logicProgramming {
-        ktListOf(
+        listOf(
             (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
             "\\+"(fail).hasSolutions({ yes() }),
             ("\\+"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
@@ -349,7 +349,7 @@ object PrologStandardExampleTheories {
      */
     val ifThenStandardExampleTheoryNotableGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 ("->"("X" equalsTo 0, true)).hasSolutions({ yes("X" to 0) }),
                 ("->"("legs"("A", 6), true)).hasSolutions({ yes("A" to "bee") }),
                 ("->"("\\="("X", 0), true)).hasSolutions({ no() }),
@@ -370,7 +370,7 @@ object PrologStandardExampleTheories {
      */
     val ifThenElseStandardExampleNotableGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 ("->"("X" equalsTo 0, true) or false).hasSolutions({ yes("X" to 0) }),
                 ("X" equalsTo 1 and ("->"("X" equalsTo 0, false) or true)).hasSolutions({ yes("X" to 1) }),
                 (

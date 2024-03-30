@@ -15,7 +15,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
 
             val query = number_codes(33, "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("L" to listOf(51, 51)))
+            val expected = fromSequence(query.yes("L" to logicListOf(51, 51)))
 
             expected.assertingEquals(solutions)
         }
@@ -27,7 +27,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
 
             val query = number_codes(33.1, "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("L" to listOf(51, 51, 46, 49)))
+            val expected = fromSequence(query.yes("L" to logicListOf(51, 51, 46, 49)))
 
             expected.assertingEquals(solutions)
         }
@@ -39,7 +39,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
 
             val query = number_codes(9921.1, "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("L" to listOf(57, 57, 50, 49, 46, 49)))
+            val expected = fromSequence(query.yes("L" to logicListOf(57, 57, 50, 49, 46, 49)))
 
             expected.assertingEquals(solutions)
         }
@@ -49,7 +49,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = number_codes(33, listOf(51, 51))
+            val query = number_codes(33, logicListOf(51, 51))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 
@@ -61,7 +61,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = number_codes(34, listOf(51, 52))
+            val query = number_codes(34, logicListOf(51, 52))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 
@@ -73,7 +73,7 @@ interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, 
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = number_codes("X", listOf(45, 51, 46, 56))
+            val query = number_codes("X", logicListOf(45, 51, 46, 56))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to -3.8))
 

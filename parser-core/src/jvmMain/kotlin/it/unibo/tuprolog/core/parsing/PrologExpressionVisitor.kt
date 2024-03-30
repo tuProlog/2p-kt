@@ -70,7 +70,7 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
 
     override fun visitStructure(ctx: PrologParser.StructureContext): Term {
         return if (ctx.isList) {
-            scope.listOf()
+            scope.logicListOf()
         } else if (ctx.isBlock) {
             scope.blockOf()
         } else if (ctx.arity == 0) {
@@ -86,9 +86,9 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
     override fun visitList(ctx: PrologParser.ListContext): Term {
         val terms = ctx.items.map(this::visitExpression)
         return if (ctx.hasTail) {
-            scope.listFrom(terms, ctx.tail.accept(this))
+            scope.logicListFrom(terms, ctx.tail.accept(this))
         } else {
-            scope.listOf(terms)
+            scope.logicListOf(terms)
         }
     }
 

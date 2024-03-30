@@ -24,14 +24,14 @@ class TestNQueens {
                             (("Y2" - "Y1") arithNeq ("X1" - "X2"))
                     )
                 },
-                fact { "no_attack_all"(`_`, emptyList) },
+                fact { "no_attack_all"(`_`, emptyLogicList) },
                 rule {
                     "no_attack_all"("C", consOf("H", "Hs")) `if` (
                         "no_attack"("C", "H") and
                             "no_attack_all"("C", "Hs")
                     )
                 },
-                fact { "solution"(`_`, emptyList) },
+                fact { "solution"(`_`, emptyLogicList) },
                 rule {
                     "solution"("N", consOf(("X" and "Y"), "Cs")) `if` (
                         "solution"("N", "Cs") and

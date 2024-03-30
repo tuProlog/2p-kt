@@ -48,7 +48,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
@@ -77,7 +77,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
@@ -106,7 +106,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
@@ -134,7 +134,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
+                listOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }

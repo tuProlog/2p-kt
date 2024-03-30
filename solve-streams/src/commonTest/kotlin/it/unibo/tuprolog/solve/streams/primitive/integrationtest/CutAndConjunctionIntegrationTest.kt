@@ -84,7 +84,7 @@ internal class CutAndConjunctionIntegrationTest {
             val responses = Conjunction.implementation.solve(request).map { it.solution }.asIterable()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes("A" to "a", "B" to "a"),
                     query.yes("A" to "a", "B" to "b"),
                 ),
@@ -123,7 +123,7 @@ internal class CutAndConjunctionIntegrationTest {
             val responses = Conjunction.implementation.solve(request).map { it.solution }.asIterable()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes("A" to "a", "B" to "a"),
                     query.yes("A" to "a", "B" to "cutting"),
                     query.yes("A" to "a", "B" to "cutting"),

@@ -51,10 +51,19 @@ class TestMinimalLogicProgrammingScope : AbstractLogicProgrammingScopeTest<Minim
                     truthOf(false),
                     atomOf("abc"),
                     structOf("f", varOf("X")),
-                    listOf(varOf("X"), varOf("Y")),
+                    logicListOf(varOf("X"), varOf("Y")),
                     blockOf(truthOf(true), atomOf("!")),
                 )
-            val actual = "functor"(1, 2.3, false, "abc", "f"("X"), listOf("X", "Y"), blockOf(true, "!"))
+            val actual =
+                "functor"(
+                    1,
+                    2.3,
+                    false,
+                    "abc",
+                    "f"("X"),
+                    logicListOf("X", "Y"),
+                    blockOf(true, "!"),
+                )
             assertEquals(expected, actual)
         }
 
@@ -122,7 +131,7 @@ class TestMinimalLogicProgrammingScope : AbstractLogicProgrammingScopeTest<Minim
     @Test
     fun testTailedList() =
         logicProgramming {
-            val expected = list("a", "b", tail = "c")
+            val expected = logicList("a", "b", tail = "c")
             val actual = consOf("a", consOf("b", "c"))
             assertEquals(expected, actual)
         }
@@ -261,14 +270,14 @@ class TestMinimalLogicProgrammingScope : AbstractLogicProgrammingScopeTest<Minim
     @Test
     fun testToTermList() {
         assertLogicProgrammingExpressionIsCorrect(Cons.singleton(Atom.of("a"))) {
-            kotlin.collections.listOf("a").toTerm()
+            listOf("a").toTerm()
         }
     }
 
     @Test
     fun testToTermSet() {
         assertLogicProgrammingExpressionIsCorrect(List.of(Atom.of("a"))) {
-            kotlin.collections.setOf("a").toTerm()
+            setOf("a").toTerm()
         }
     }
 

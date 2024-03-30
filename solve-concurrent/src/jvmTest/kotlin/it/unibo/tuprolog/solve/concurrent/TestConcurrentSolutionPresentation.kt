@@ -18,7 +18,7 @@ interface TestConcurrentSolutionPresentation<T : WithAssertingEquals> : FromSequ
             val query = "append"(A, B)
             val sol = solver.solveOnce(query)
             assertTrue { sol is Solution.Yes }
-            assertTrue { ktSetOf(A, B).all { it in sol.substitution.keys } }
+            assertTrue { setOf(A, B).all { it in sol.substitution.keys } }
             assertTrue { sol.substitution[A]!! matches "seq"(`_`) }
             assertEquals("X", (sol.substitution[B] as? Var)?.name)
         }

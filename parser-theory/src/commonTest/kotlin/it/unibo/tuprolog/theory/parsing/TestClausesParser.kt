@@ -116,7 +116,7 @@ class TestClausesParser {
             }
 
         assertMatch(th.elementAt(0)) {
-            directive { "op"(900, "yfx", listOf("++", "--")) }
+            directive { "op"(900, "yfx", logicListOf("++", "--")) }
         }
 
         assertMatch(th.elementAt(1)) {

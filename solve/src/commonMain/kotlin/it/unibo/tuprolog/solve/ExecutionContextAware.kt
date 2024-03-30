@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.UnificationAware
-import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 /** Base type for all entities which must be aware of the current state of a solver */

@@ -11,7 +11,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -25,7 +25,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -39,7 +39,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -53,7 +53,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("Foo" to "foo")),
+                listOf(query.yes("Foo" to "foo")),
                 solutions,
             )
         }
@@ -67,7 +67,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -81,7 +81,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }

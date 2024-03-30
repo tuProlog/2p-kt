@@ -57,6 +57,7 @@ import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.collections.plus as append
 
 @Suppress("LongMethod", "LargeClass", "CyclomaticComplexMethod")
 interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
@@ -340,7 +341,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             solver.standardOutput.addListener { outputs += it!! }
 
             val terms =
-                ktListOf(
+                listOf(
                     atomOf("atom"),
                     atomOf("a string"),
                     varOf("A_Var"),
@@ -383,7 +384,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             solver.standardOutput.write("e")
 
             assertEquals(
-                ktListOf("a", "b", "c", "d", "\n", "e"),
+                listOf("a", "b", "c", "d", "\n", "e"),
                 outputs,
             )
         }
@@ -404,13 +405,13 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             var query = findall(N, "a"(N), L)
 
             var solutions = fromSequence(solver.solve(query, mediumDuration))
-            var expected = fromSequence(query.yes(L to listOf(1, 2, 3)))
+            var expected = fromSequence(query.yes(L to logicListOf(1, 2, 3)))
 
             expected.assertingEquals(solutions)
 
             query = findall(`_`, false, L)
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(query.yes(L to emptyList))
+            expected = fromSequence(query.yes(L to emptyLogicList))
 
             expected.assertingEquals(solutions)
 
@@ -462,9 +463,9 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             val expected =
                 fromSequence(
                     sequenceOf(
-                        query.yes(X to listOf(2, 3), Y to listOf(1)),
-                        query.yes(X to listOf(3), Y to listOf(1, 2)),
-                        query.yes(X to emptyList, Y to listOf(1, 2, 3)),
+                        query.yes(X to logicListOf(2, 3), Y to logicListOf(1)),
+                        query.yes(X to logicListOf(3), Y to logicListOf(1, 2)),
+                        query.yes(X to emptyLogicList, Y to logicListOf(1, 2, 3)),
                     ),
                 )
 
@@ -660,7 +661,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
                 )
                     .mapValues { (_, listOfGoalToSolutions) ->
                         listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                            ktListOf(
+                            listOf(
                                 (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
                                 (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
                                 (goal and false).run {
@@ -756,7 +757,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             )
                 .mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                        ktListOf(
+                        listOf(
                             `catch`(goal, `_`, false).run {
                                 when {
                                     expectedSolutions.any {
@@ -810,7 +811,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             )
                 .mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                        ktListOf(
+                        listOf(
                             naf(goal).run {
                                 when {
                                     expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
@@ -1092,7 +1093,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf(
+                listOf(
                     factOf(structOf("f", numOf(1))),
                     ruleOf(structOf("f", numOf(2)), atomOf("false")),
                 ),
@@ -1120,7 +1121,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf(),
+                listOf(),
                 solver.dynamicKb.toList(),
             )
             assertEquals(0L, solver.dynamicKb.size)
@@ -1218,11 +1219,11 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             var query = "a"("b", "c") univ X
 
             var solutions = fromSequence(solver.solve(query, mediumDuration))
-            var expected = fromSequence(query.yes(X to listOf("a", "b", "c")))
+            var expected = fromSequence(query.yes(X to logicListOf("a", "b", "c")))
 
             expected.assertingEquals(solutions)
 
-            query = X univ listOf("a", "b", "c")
+            query = X univ logicListOf("a", "b", "c")
 
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(query.yes(X to structOf("a", "b", "c")))
@@ -1285,7 +1286,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf(),
+                listOf(),
                 solver.dynamicKb.toList(),
             )
             assertEquals(0L, solver.dynamicKb.size)
@@ -1303,40 +1304,40 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            var query = append(listOf(1, 2, 3), listOf(4, 5, 6), X)
+            var query = append(logicListOf(1, 2, 3), logicListOf(4, 5, 6), X)
 
             var solutions = fromSequence(solver.solve(query, mediumDuration))
-            var expected = fromSequence(query.yes(X to listOf(1, 2, 3, 4, 5, 6)))
+            var expected = fromSequence(query.yes(X to logicListOf(1, 2, 3, 4, 5, 6)))
 
             expected.assertingEquals(solutions)
 
-            query = append(listOf(1, 2, 3), X, listOf(1, 2, 3, 4, 5, 6))
+            query = append(logicListOf(1, 2, 3), X, logicListOf(1, 2, 3, 4, 5, 6))
 
             solutions = fromSequence(solver.solve(query, mediumDuration))
-            expected = fromSequence(query.yes(X to listOf(4, 5, 6)))
+            expected = fromSequence(query.yes(X to logicListOf(4, 5, 6)))
 
             expected.assertingEquals(solutions)
 
-            query = append(X, X, listOf(1, 2, 3, 4, 5, 6))
+            query = append(X, X, logicListOf(1, 2, 3, 4, 5, 6))
 
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected = fromSequence(query.no())
 
             expected.assertingEquals(solutions)
 
-            query = append(X, Y, listOf(1, 2, 3, 4, 5, 6))
+            query = append(X, Y, logicListOf(1, 2, 3, 4, 5, 6))
 
             solutions = fromSequence(solver.solve(query, mediumDuration))
             expected =
                 fromSequence(
                     sequenceOf(
-                        query.yes(X to emptyList, Y to listOf(1, 2, 3, 4, 5, 6)),
-                        query.yes(X to listOf(1), Y to listOf(2, 3, 4, 5, 6)),
-                        query.yes(X to listOf(1, 2), Y to listOf(3, 4, 5, 6)),
-                        query.yes(X to listOf(1, 2, 3), Y to listOf(4, 5, 6)),
-                        query.yes(X to listOf(1, 2, 3, 4), Y to listOf(5, 6)),
-                        query.yes(X to listOf(1, 2, 3, 4, 5), Y to listOf(6)),
-                        query.yes(X to listOf(1, 2, 3, 4, 5, 6), Y to emptyList),
+                        query.yes(X to emptyLogicList, Y to logicListOf(1, 2, 3, 4, 5, 6)),
+                        query.yes(X to logicListOf(1), Y to logicListOf(2, 3, 4, 5, 6)),
+                        query.yes(X to logicListOf(1, 2), Y to logicListOf(3, 4, 5, 6)),
+                        query.yes(X to logicListOf(1, 2, 3), Y to logicListOf(4, 5, 6)),
+                        query.yes(X to logicListOf(1, 2, 3, 4), Y to logicListOf(5, 6)),
+                        query.yes(X to logicListOf(1, 2, 3, 4, 5), Y to logicListOf(6)),
+                        query.yes(X to logicListOf(1, 2, 3, 4, 5, 6), Y to emptyLogicList),
                     ),
                 )
 

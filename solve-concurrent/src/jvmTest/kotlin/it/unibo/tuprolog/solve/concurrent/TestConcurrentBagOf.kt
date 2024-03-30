@@ -17,7 +17,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = bagof("X", ("X" eq 1) or ("X" eq 2), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("S" to listOf(1, 2)))
+            val expected = fromSequence(query.yes("S" to logicListOf(1, 2)))
 
             expected.assertingEquals(solutions)
         }
@@ -29,7 +29,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = bagof("X", ("X" eq 1) or ("X" eq 2), "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("X" to listOf(1, 2)))
+            val expected = fromSequence(query.yes("X" to logicListOf(1, 2)))
 
             expected.assertingEquals(solutions)
         }
@@ -41,7 +41,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = bagof("X", ("X" eq "Y") or ("X" eq "Z"), "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("L" to listOf("Y", "Z")))
+            val expected = fromSequence(query.yes("L" to logicListOf("Y", "Z")))
 
             expected.assertingEquals(solutions)
         }
@@ -65,7 +65,7 @@ interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = bagof("X", "Y" sup (("X" eq 1) or ("Y" eq 2)), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("S" to listOf(1)))
+            val expected = fromSequence(query.yes("S" to logicListOf(1)))
 
             expected.assertingEquals(solutions)
         }

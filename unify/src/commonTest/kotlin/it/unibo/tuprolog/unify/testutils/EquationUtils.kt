@@ -47,10 +47,10 @@ internal object EquationUtils {
     /** A list of equations, that at last should be interpreted as Identities, exploring them in deep */
     internal val deepIdentityEquations by lazy {
         listOf(
-            Scope.empty { listOf(atomOf("a"), varOf("V")) to listOf(atomOf("a"), varOf("V")) },
+            Scope.empty { logicListOf(atomOf("a"), varOf("V")) to logicListOf(atomOf("a"), varOf("V")) },
             Scope.empty {
-                listFrom(arrayListOf(atomOf("a")), last = varOf("V")) to
-                    listFrom(arrayListOf(atomOf("a")), last = varOf("V"))
+                logicListFrom(arrayListOf(atomOf("a")), last = varOf("V")) to
+                    logicListFrom(arrayListOf(atomOf("a")), last = varOf("V"))
             },
             Var.anonymous().let { anonymous ->
                 Block.of(Numeric.of(1.5), anonymous) to Block.of(Numeric.of(1.5), anonymous)

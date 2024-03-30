@@ -50,22 +50,22 @@ open class TestDefaultTermifier : AbstractTermificatorTest() {
 
     @Test
     fun testArrays() {
-        assertTermificationWorks(array, { array.map { intOf(it) }.let(::listOf) })
+        assertTermificationWorks(array, { array.map { intOf(it) }.let(this::logicListOf) })
     }
 
     @Test
     fun testLists() {
-        assertTermificationWorks(list, { list.map { intOf(it) }.let(::listOf) })
+        assertTermificationWorks(list, { list.map { intOf(it) }.let(this::logicListOf) })
     }
 
     @Test
     open fun testSets() {
-        assertTermificationWorks(set, { set.map { intOf(it) }.let(::listOf) })
+        assertTermificationWorks(set, { set.map { intOf(it) }.let(this::logicListOf) })
     }
 
     @Test
     fun testSequences() {
-        assertTermificationWorks(sequence, { sequence.map { intOf(it) }.let(::listOf) })
+        assertTermificationWorks(sequence, { sequence.map { intOf(it) }.let(this::logicListOf) })
     }
 
     @Test

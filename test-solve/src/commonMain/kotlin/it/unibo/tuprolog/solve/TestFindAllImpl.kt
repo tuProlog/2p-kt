@@ -16,7 +16,7 @@ internal class TestFindAllImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("S" to listOf(1, 2))),
+                listOf(query.yes("S" to logicListOf(1, 2))),
                 solutions,
             )
         }
@@ -30,7 +30,7 @@ internal class TestFindAllImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("S" to listOf(1 + "Y"))),
+                listOf(query.yes("S" to logicListOf(1 + "Y"))),
                 solutions,
             )
         }
@@ -44,7 +44,7 @@ internal class TestFindAllImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("L" to emptyList)),
+                listOf(query.yes("L" to emptyLogicList)),
                 solutions,
             )
         }
@@ -58,7 +58,7 @@ internal class TestFindAllImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("S" to listOf(1, 1))),
+                listOf(query.yes("S" to logicListOf(1, 1))),
                 solutions,
             )
         }
@@ -68,11 +68,11 @@ internal class TestFindAllImpl(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", ("X" eq 2) or ("X" eq 1), listOf(1, 2))
+            val query = findall("X", ("X" eq 2) or ("X" eq 1), logicListOf(1, 2))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -82,11 +82,11 @@ internal class TestFindAllImpl(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", ("X" eq 1) or ("X" eq 2), listOf("X", "Y"))
+            val query = findall("X", ("X" eq 1) or ("X" eq 2), logicListOf("X", "Y"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to 1, "Y" to 2)),
+                listOf(query.yes("X" to 1, "Y" to 2)),
                 solutions,
             )
         }
@@ -100,7 +100,7 @@ internal class TestFindAllImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -123,7 +123,7 @@ internal class TestFindAllImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -147,7 +147,7 @@ internal class TestFindAllImpl(
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,

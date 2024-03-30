@@ -63,20 +63,20 @@ abstract class AbstractTermificator(
     protected fun handleBigDecimalAsReal(value: BigDecimal) = scope.realOf(value)
 
     protected fun handleArrayAsList(value: Array<*>) =
-        scope.listOf(value.asIterable().assertItemsAreNotNull().map { termify(it) })
+        scope.logicListOf(value.asIterable().assertItemsAreNotNull().map { termify(it) })
 
     protected fun handleSequenceAsList(value: Sequence<*>) =
-        scope.listOf(
+        scope.logicListOf(
             value.assertItemsAreNotNull().map { termify(it) },
         )
 
     protected fun handleIterableAsList(value: Iterable<*>) =
-        scope.listOf(
+        scope.logicListOf(
             value.assertItemsAreNotNull().map { termify(it) },
         )
 
     protected fun handleKotlinListAsLogicList(value: KtList<*>) =
-        scope.listOf(
+        scope.logicListOf(
             value.assertItemsAreNotNull().map {
                 termify(it)
             },
@@ -89,6 +89,7 @@ abstract class AbstractTermificator(
     protected fun handleTripletAsTuple(value: Triple<*, *, *>) =
         scope.tupleOf(termify(value.first), termify(value.second), termify(value.third))
 
+    @Suppress("unused")
     protected fun handlePairValuePairAsStruct(value: Pair<*, *>) =
         scope.structOf(":", termify(value.first), termify(value.second))
 

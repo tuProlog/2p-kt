@@ -13,7 +13,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@Suppress("LocalVariableName", "ktlint:standard:property-naming")
+@Suppress("ktlint:standard:property-naming")
 class TestLogicProgrammingScopeWithUnification :
     AbstractLogicProgrammingScopeTest<LogicProgrammingScopeWithUnification<*>>() {
     override fun createLogicProgrammingScope(): LogicProgrammingScopeWithUnification<*> = LogicProgrammingScope.empty()
@@ -44,9 +44,10 @@ class TestLogicProgrammingScopeWithUnification :
             B = varOf("B")
             f1 = structOf("f", A, fail, B, twoPointThree)
             f2 = structOf("f", one, X, a, Y)
-            term1 = listOf(one, X, a, Y, f1)
-            term2 = listOf(A, fail, B, twoPointThree, f2)
-            unified = listOf(one, fail, a, twoPointThree, structOf("f", one, fail, a, twoPointThree))
+            term1 = logicListOf(one, X, a, Y, f1)
+            term2 = logicListOf(A, fail, B, twoPointThree, f2)
+            unified =
+                logicListOf(one, fail, a, twoPointThree, structOf("f", one, fail, a, twoPointThree))
             substitution =
                 Substitution.unifier(
                     A to one,

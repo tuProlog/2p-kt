@@ -27,10 +27,10 @@ interface MinimalLogicProgrammingScope<S : MinimalLogicProgrammingScope<S>> : Ba
     @JsName("tupleOfAny")
     fun tupleOf(vararg terms: Any): Tuple = tupleOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    @JsName("listOfAny")
-    fun listOf(vararg terms: Any): LogicList = this.listOf(*terms.map { it.toTerm() }.toTypedArray())
+    @JsName("logicListOfAny")
+    fun logicListOf(vararg terms: Any): LogicList = this.logicListOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    @JsName("blockOf")
+    @JsName("blockOfAny")
     fun blockOf(vararg terms: Any): Block = this.blockOf(*terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("factOfAny")
@@ -51,16 +51,16 @@ interface MinimalLogicProgrammingScope<S : MinimalLogicProgrammingScope<S>> : Ba
     @JsName("withScope")
     fun <R> scope(function: S.() -> R): R = newScope().function()
 
-    @JsName("list")
-    fun list(
+    @JsName("logicList")
+    fun logicList(
         vararg items: Any,
         tail: Any? = null,
     ): LogicList =
-        ktListOf(*items).map { it.toTerm() }.let {
+        listOf(*items).map { it.toTerm() }.let {
             if (tail != null) {
-                listFrom(it, last = tail.toTerm())
+                logicListFrom(it, last = tail.toTerm())
             } else {
-                listOf(it)
+                logicListOf(it)
             }
         }
 

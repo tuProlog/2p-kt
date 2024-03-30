@@ -25,7 +25,6 @@ import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.List as LogicList
 
-@Suppress("RemoveRedundantQualifierName")
 internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scope {
     override fun contains(variable: Var): Boolean = _variables.containsKey(variable.name)
 
@@ -72,46 +71,31 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
 
     override fun blockOf(terms: Sequence<Term>): Block = Block.of(terms)
 
-    override fun <T> ktSetOf(vararg items: T): Set<T> = kotlin.collections.setOf(*items)
-
-    override fun <T> ktEmptySet(): Set<T> = kotlin.collections.emptySet()
-
     override fun blockOf(vararg terms: Term): Block = Block.of(*terms)
 
-    override fun listOf(terms: Iterable<Term>): LogicList = LogicList.of(terms)
+    override fun logicListOf(terms: Iterable<Term>): LogicList = LogicList.of(terms)
 
-    override fun listOf(terms: Sequence<Term>): LogicList = LogicList.of(terms)
+    override fun logicListOf(terms: Sequence<Term>): LogicList = LogicList.of(terms)
 
-    override fun <T> ktListOf(vararg items: T): List<T> = kotlin.collections.listOf(*items)
-
-    override fun <T> ktEmptyList(): List<T> = kotlin.collections.emptyList()
-
-    override fun <T> List<T>.append(
-        item: T,
-        vararg items: T,
-    ): List<T> = concat(ktListOf(item, *items))
-
-    override fun <T> List<T>.concat(other: Iterable<T>): List<T> = plus(other)
-
-    override val emptyList: EmptyList
+    override val emptyLogicList: EmptyList
         get() = EmptyList()
 
     override val emptyBlock: EmptyBlock
         get() = EmptyBlock()
 
-    override fun listOf(vararg terms: Term): LogicList = LogicList.of(*terms)
+    override fun logicListOf(vararg terms: Term): LogicList = LogicList.of(*terms)
 
-    override fun listFrom(
+    override fun logicListFrom(
         vararg terms: Term,
         last: Term?,
     ): LogicList = LogicList.from(*terms, last = last)
 
-    override fun listFrom(
+    override fun logicListFrom(
         terms: Sequence<Term>,
         last: Term?,
     ): LogicList = LogicList.from(terms, last)
 
-    override fun listFrom(
+    override fun logicListFrom(
         terms: Iterable<Term>,
         last: Term?,
     ): LogicList = LogicList.from(terms, last)

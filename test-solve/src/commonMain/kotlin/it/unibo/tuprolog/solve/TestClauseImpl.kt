@@ -14,7 +14,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -28,7 +28,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -51,7 +51,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -75,7 +75,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -99,7 +99,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         PermissionError.of(
                             DummyInstances.executionContext,
@@ -129,7 +129,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(B to "g"(A)),
                 ),
                 solutions,
@@ -139,7 +139,7 @@ internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestCl
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(Z to "g"(1)),
                 ),
                 solutions,

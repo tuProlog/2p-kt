@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions
@@ -61,33 +59,6 @@ object TestingClauseTheories {
 
     internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
 
-    /** Utility function to deeply replace all occurrences of one functor with another in a Struct */
-    internal fun Struct.replaceAllFunctors(
-        oldFunctor: String,
-        withFunctor: String,
-    ): Struct =
-        logicProgramming {
-            val synonymReplacer =
-                object : TermVisitor<Term> {
-                    override fun defaultValue(term: Term): Term = term
-
-                    override fun visitStruct(term: Struct): Term =
-                        when (term.functor) {
-                            oldFunctor -> withFunctor(term.args.single().accept(this))
-                            else ->
-                                term.args.map { it.accept(this) }.let {
-                                    if (it.none()) {
-                                        term
-                                    } else {
-                                        term.functor(it.first(), *it.drop(1).toTypedArray())
-                                    }
-                                }
-                        }
-                }
-
-            this@replaceAllFunctors.accept(synonymReplacer) as Struct
-        }
-
     /**
      * A database containing the following facts:
      * ```prolog
@@ -145,13 +116,13 @@ object TestingClauseTheories {
     ) = logicProgramming {
         val observeOne = "${observe}_one"
         theoryOf(
-            rule { observeOne(X) `if` observe(listOf(X)) },
+            rule { observeOne(X) `if` observe(logicListOf(X)) },
             rule {
                 predicate(A, B, C).`if`(
-                    observe(listOf(A, B, C)),
+                    observe(logicListOf(A, B, C)),
                     observeOne(D),
                     observeOne(E),
-                    observe(listOf("f"(A), "f"(B), "f"(C), "f"(D), "f"(E))),
+                    observe(logicListOf("f"(A), "f"(B), "f"(C), "f"(D), "f"(E))),
                 )
             },
         )
@@ -167,7 +138,7 @@ object TestingClauseTheories {
      */
     val simpleFactTheoryNotableGoalToSolutions by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "f"("A").hasSolutions(
                     { yes("A" to "a") },
                 ),
@@ -229,7 +200,7 @@ object TestingClauseTheories {
      */
     val simpleCutTheoryNotableGoalToSolutions by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "f"("A").hasSolutions(
                     { yes("A" to "only") },
                 ),
@@ -277,7 +248,7 @@ object TestingClauseTheories {
      */
     val simpleCutAndConjunctionTheoryNotableGoalToSolutions by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "f"("A", "B").hasSolutions(
                     { yes("A" to "a", "B" to "a1") },
                     { yes("A" to "a", "B" to "b1") },
@@ -325,7 +296,7 @@ object TestingClauseTheories {
      */
     val cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "a"("X").hasSolutions(
                     { yes("X" to 2) },
                     { yes("X" to 4) },
@@ -358,7 +329,7 @@ object TestingClauseTheories {
      */
     val infiniteComputationTheoryNotableGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 atomOf("a").hasSolutions({ halt(timeOutException) }),
             )
         }
@@ -377,8 +348,8 @@ object TestingClauseTheories {
     val customReverseListTheory by lazy {
         logicProgramming {
             theory(
-                { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", emptyList) },
-                { "my_rev"(emptyList, "L2", "L2") `if` "!" },
+                { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", emptyLogicList) },
+                { "my_rev"(emptyLogicList, "L2", "L2") `if` "!" },
                 {
                     "my_rev"(consOf("X", "Xs"), "L2", "Acc") `if`
                         "my_rev"("Xs", "L2", consOf("X", "Acc"))
@@ -395,9 +366,9 @@ object TestingClauseTheories {
      */
     val customReverseListTheoryNotableGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
-                "my_reverse"(listOf(1, 2, 3, 4), "L").hasSolutions(
-                    { yes("L" to listOf(4, 3, 2, 1)) },
+            listOf(
+                "my_reverse"(logicListOf(1, 2, 3, 4), "L").hasSolutions(
+                    { yes("L" to logicListOf(4, 3, 2, 1)) },
                 ),
             )
         }
@@ -417,7 +388,7 @@ object TestingClauseTheories {
     val customRangeListGeneratorTheory by lazy {
         logicProgramming {
             theory(
-                { "range"("N", "N", listOf("N")) `if` "!" },
+                { "range"("N", "N", logicListOf("N")) `if` "!" },
                 {
                     "range"("M", "N", consOf("M", "Ns")) `if` (
                         "<"("M", "N") and
@@ -445,14 +416,14 @@ object TestingClauseTheories {
     val customRangeListGeneratorTheoryNotableGoalToSolution by lazy {
         val N = customRangeListGeneratorTheory.last().head!![1] as Var
         logicProgramming {
-            ktListOf(
-                "range"(1, 4, listOf(1, 2, 3, 4)).hasSolutions({ yes() }),
-                "range"(1, 4, listOf(1, 2, 3, 4, 5)).hasSolutions({ no() }),
-                "range"(1, 4, "L").hasSolutions({ yes("L" to listOf(1, 2, 3, 4)) }),
-                "range"(1, 1, "L").hasSolutions({ yes("L" to listOf(1)) }),
+            listOf(
+                "range"(1, 4, logicListOf(1, 2, 3, 4)).hasSolutions({ yes() }),
+                "range"(1, 4, logicListOf(1, 2, 3, 4, 5)).hasSolutions({ no() }),
+                "range"(1, 4, "L").hasSolutions({ yes("L" to logicListOf(1, 2, 3, 4)) }),
+                "range"(1, 1, "L").hasSolutions({ yes("L" to logicListOf(1)) }),
                 "range"(2, 1, "L").hasSolutions({ no() }),
-                "range"("A", 4, listOf(2, 3, 4)).hasSolutions({ yes("A" to 2) }),
-                "range"(2, "A", listOf(2, 3, 4)).hasSolutions(
+                "range"("A", 4, logicListOf(2, 3, 4)).hasSolutions({ yes("A" to 2) }),
+                "range"(2, "A", logicListOf(2, 3, 4)).hasSolutions(
                     { halt(instantiationError("<", 2, N, 1)) },
                 ),
             )
@@ -475,7 +446,7 @@ object TestingClauseTheories {
      */
     fun callTestingGoalsToSolutions(errorSignature: Signature) =
         logicProgramming {
-            ktListOf(
+            listOf(
                 call(true).hasSolutions({ yes() }),
                 call(false).hasSolutions({ no() }),
                 call(halt).hasSolutions({ halt(haltException) }),
@@ -500,7 +471,7 @@ object TestingClauseTheories {
      */
     val catchTestingGoalsToSolutions by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 catch(true, `_`, false).hasSolutions({ yes() }),
                 catch(catch(`throw`("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
                     .hasSolutions({ yes("E" to "deepBall") }),
@@ -525,7 +496,7 @@ object TestingClauseTheories {
      */
     val haltTestingGoalsToSolutions by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 halt.hasSolutions({ halt(haltException) }),
                 catch(halt, `_`, true).hasSolutions({ halt(haltException) }),
                 catch(catch(`throw`("something"), `_`, halt), `_`, true).hasSolutions(

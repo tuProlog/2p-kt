@@ -25,7 +25,12 @@ class TestCreationImpl(protected val solverFactory: SolverFactory) : TestCreatio
     ) = logicProgramming {
         val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
         for (case in cases) {
-            val query = NewObject3.functor(TypeRef.of(detectorType), listOf(case2Term(case)), X)
+            val query =
+                NewObject3.functor(
+                    TypeRef.of(detectorType),
+                    logicListOf(case2Term(case)),
+                    X,
+                )
             val solutions = solver.solveList(query)
             assertTrue(solutions.size == 1)
             when (val solution = solutions.single()) {

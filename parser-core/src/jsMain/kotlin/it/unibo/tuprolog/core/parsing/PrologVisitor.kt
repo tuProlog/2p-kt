@@ -94,7 +94,7 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
 
     override fun visitStructure(ctx: StructureContext): Term {
         return if (ctx.isList) {
-            scope.listOf()
+            scope.logicListOf()
         } else if (ctx.isBlock) {
             scope.blockOf()
         } else if (ctx.arity == 0) {
@@ -110,9 +110,9 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
     override fun visitList(ctx: ListContext): Term {
         val terms = ctx.items.map(this::visitExpression)
         return if (ctx.hasTail) {
-            scope.listFrom(terms, ctx.tail?.accept(this))
+            scope.logicListFrom(terms, ctx.tail?.accept(this))
         } else {
-            scope.listOf(terms)
+            scope.logicListOf(terms)
         }
     }
 

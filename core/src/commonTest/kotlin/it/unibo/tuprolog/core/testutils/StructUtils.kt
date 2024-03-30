@@ -74,7 +74,7 @@ internal object StructUtils {
             "." to listOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar")),
             "," to listOf<Term>(EmptyList(), EmptyBlock(), Truth.TRUE),
             "/" to listOf<Term>(Truth.FALSE),
-            "sameVar" to Scope.empty { ktListOf<Term>(varOf("X"), varOf("X")) },
+            "sameVar" to Scope.empty { listOf<Term>(varOf("X"), varOf("X")) },
         )
     }
 

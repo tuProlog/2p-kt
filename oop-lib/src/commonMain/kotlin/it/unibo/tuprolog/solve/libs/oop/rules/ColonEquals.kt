@@ -25,7 +25,7 @@ sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
         private val T by variables
 
         override val Scope.head: List<Term>
-            get() = ktListOf(R, structOf(CAST_OPERATOR, X, T))
+            get() = listOf(R, structOf(CAST_OPERATOR, X, T))
 
         override val Scope.body: Term
             get() =
@@ -42,7 +42,7 @@ sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
         private val M by variables
 
         override val Scope.head: List<Term>
-            get() = kotlin.collections.listOf(R, M)
+            get() = listOf(R, M)
 
         override val Scope.body: Term
             get() =
@@ -60,7 +60,7 @@ sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
         private val V by variables
 
         override val Scope.head: List<Term>
-            get() = kotlin.collections.listOf(C, V)
+            get() = listOf(C, V)
 
         override val Scope.body: Term
             get() =

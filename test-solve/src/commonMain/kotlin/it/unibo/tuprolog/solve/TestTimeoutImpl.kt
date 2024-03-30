@@ -18,7 +18,7 @@ class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
             val solutions = solver.solveList(query, shortDuration)
 
             assertSolutionEquals(
-                ktListOf<Solution>(
+                listOf<Solution>(
                     query.halt(
                         TimeOutException(context = DummyInstances.executionContext, exceededDuration = shortDuration),
                     ),
@@ -45,7 +45,7 @@ class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
             val solutions = solver.solveList(query, shortDuration)
 
             assertSolutionEquals(
-                ktListOf<Solution>(
+                listOf<Solution>(
                     query.halt(
                         TimeOutException(context = DummyInstances.executionContext, exceededDuration = shortDuration),
                     ),

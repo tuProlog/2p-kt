@@ -8,7 +8,7 @@ import kotlin.collections.List as KtList
 
 object Comma : RuleWrapper<ClassicExecutionContext>(",", 2) {
     override val Scope.head: KtList<Term>
-        get() = ktListOf(varOf("A"), varOf("B"))
+        get() = listOf(varOf("A"), varOf("B"))
 
     override val Scope.body: Term
         get() = tupleOf(varOf("A"), varOf("B"))

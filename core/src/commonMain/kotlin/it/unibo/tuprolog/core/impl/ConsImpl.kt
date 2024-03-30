@@ -58,7 +58,7 @@ internal class ConsImpl(
     override fun freshCopy(scope: Scope): Cons =
         when {
             isGround -> this
-            isWellFormed -> scope.listOf(toList().map { it.freshCopy(scope) }).setTags(tags).castToCons()
-            else -> scope.listFrom(unfoldedList.map { it.freshCopy(scope) }).setTags(tags).castToCons()
+            isWellFormed -> scope.logicListOf(toList().map { it.freshCopy(scope) }).setTags(tags).castToCons()
+            else -> scope.logicListFrom(unfoldedList.map { it.freshCopy(scope) }).setTags(tags).castToCons()
         }
 }

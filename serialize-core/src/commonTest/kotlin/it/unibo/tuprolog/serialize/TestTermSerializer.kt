@@ -66,11 +66,11 @@ class TestTermSerializer {
         assertEquals(MimeType.Json, serializer.mimeType)
 
         serializer.assertTermSerializationWorks("{\"list\":[\"hello\",false]}") {
-            listOf(atomOf("hello"), truthOf(false))
+            logicListOf(atomOf("hello"), truthOf(false))
         }
 
         serializer.assertTermSerializationWorks("{\"list\":[\"hello\",1]}") {
-            listOf(atomOf("hello"), numOf(1))
+            logicListOf(atomOf("hello"), numOf(1))
         }
     }
 
@@ -99,7 +99,7 @@ class TestTermSerializer {
                 |- false
             """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
-            listOf(atomOf("hello"), truthOf(false))
+            logicListOf(atomOf("hello"), truthOf(false))
         }
 
         expected =
@@ -109,7 +109,7 @@ class TestTermSerializer {
                 |- 1
             """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
-            listOf(atomOf("hello"), numOf(1))
+            logicListOf(atomOf("hello"), numOf(1))
         }
     }
 
@@ -197,7 +197,7 @@ class TestTermSerializer {
                 |  - ciao
             """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
-            structOf("f", atomOf("hello"), numOf(2), listOf(truthOf(true), atomOf("ciao")))
+            structOf("f", atomOf("hello"), numOf(2), logicListOf(truthOf(true), atomOf("ciao")))
         }
     }
 

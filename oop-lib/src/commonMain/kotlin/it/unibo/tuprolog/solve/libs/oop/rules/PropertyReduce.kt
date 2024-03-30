@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  * property_reduce([A | B], A, B) :- !.                                                              % base
  * ```
  */
-@Suppress("PropertyName", "PrivatePropertyName")
+@Suppress("PropertyName")
 sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
     companion object {
         const val FUNCTOR = "property_reduce"
@@ -32,7 +32,7 @@ sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         private val P by variables
 
         override val Scope.head: List<Term>
-            get() = kotlin.collections.listOf(listFrom(A, B, last = C), O, P)
+            get() = listOf(logicListFrom(A, B, last = C), O, P)
 
         override val Scope.body: Term
             get() =
@@ -45,6 +45,6 @@ sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
 
     object Base : PropertyReduce() {
         override val Scope.head: List<Term>
-            get() = kotlin.collections.listOf(consOf(A, B), A, B)
+            get() = listOf(consOf(A, B), A, B)
     }
 }

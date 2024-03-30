@@ -58,7 +58,7 @@ interface TestConcurrentAtom<T : WithAssertingEquals> : FromSequence<T>, SolverF
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = atom(emptyList)
+            val query = atom(emptyLogicList)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 

@@ -29,17 +29,17 @@ class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomD
             val query = setQuery and (getQuery or getQuery)
 
             assertSolutionEquals(
-                ktListOf(setQuery.yes()),
+                listOf(setQuery.yes()),
                 solver.solve(setQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
-                ktListOf(getQuery.no()),
+                listOf(getQuery.no()),
                 solver.solve(getQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(X to 1),
                     query.no(),
                 ),
@@ -57,17 +57,17 @@ class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomD
             val query = setQuery and (getQuery or getQuery)
 
             assertSolutionEquals(
-                ktListOf(setQuery.yes()),
+                listOf(setQuery.yes()),
                 solver.solve(setQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
-                ktListOf(getQuery.no()),
+                listOf(getQuery.no()),
                 solver.solve(getQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(X to 1),
                     query.yes(X to 1),
                 ),
@@ -85,17 +85,17 @@ class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomD
             val query = setQuery and (getQuery or getQuery)
 
             assertSolutionEquals(
-                ktListOf(setQuery.yes()),
+                listOf(setQuery.yes()),
                 solver.solve(setQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
-                ktListOf(getQuery.yes(X to 1)),
+                listOf(getQuery.yes(X to 1)),
                 solver.solve(getQuery, shortDuration).toList(),
             )
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.yes(X to 1),
                     query.yes(X to 1),
                 ),

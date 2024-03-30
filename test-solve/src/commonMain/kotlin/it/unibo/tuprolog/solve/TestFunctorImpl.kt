@@ -15,7 +15,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -29,7 +29,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to "foo", "Y" to 3)),
+                listOf(query.yes("X" to "foo", "Y" to 3)),
                 solutions,
             )
         }
@@ -43,7 +43,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to "foo")),
+                listOf(query.yes("X" to "foo")),
                 solutions,
             )
         }
@@ -57,7 +57,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("A" to "mats", "B" to 2)),
+                listOf(query.yes("A" to "mats", "B" to 2)),
                 solutions,
             )
         }
@@ -71,7 +71,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -85,7 +85,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -99,7 +99,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to 1, "Y" to 0)),
+                listOf(query.yes("X" to 1, "Y" to 0)),
                 solutions,
             )
         }
@@ -113,7 +113,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to 1.1)),
+                listOf(query.yes("X" to 1.1)),
                 solutions,
             )
         }
@@ -127,7 +127,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -137,11 +137,11 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = functor(emptyList, emptyList, 0)
+            val query = functor(emptyLogicList, emptyLogicList, 0)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -155,7 +155,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -178,7 +178,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -201,7 +201,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -225,7 +225,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -249,7 +249,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -276,7 +276,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         RepresentationError.of(
                             DummyInstances.executionContext,
@@ -298,7 +298,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         DomainError.forArgument(
                             DummyInstances.executionContext,

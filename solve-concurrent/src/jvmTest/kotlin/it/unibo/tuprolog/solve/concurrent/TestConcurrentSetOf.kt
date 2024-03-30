@@ -12,7 +12,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = setof("X", ("X" eq 1) or ("X" eq 2), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("S" to listOf(1, 2)))
+            val expected = fromSequence(query.yes("S" to logicListOf(1, 2)))
 
             expected.assertingEquals(solutions)
         }
@@ -24,7 +24,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = setof("X", ("X" eq 1) or ("X" eq 2), "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("X" to listOf(1, 2)))
+            val expected = fromSequence(query.yes("X" to logicListOf(1, 2)))
 
             expected.assertingEquals(solutions)
         }
@@ -36,7 +36,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = setof("X", ("X" eq 2) or ("X" eq 1), "X")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("X" to listOf(1, 2)))
+            val expected = fromSequence(query.yes("X" to logicListOf(1, 2)))
 
             expected.assertingEquals(solutions)
         }
@@ -48,7 +48,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = setof("X", ("X" eq 2) or ("X" eq 2), "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("X" to listOf(2)))
+            val expected = fromSequence(query.yes("X" to logicListOf(2)))
 
             expected.assertingEquals(solutions)
         }
@@ -72,7 +72,7 @@ interface TestConcurrentSetOf<T : WithAssertingEquals> : FromSequence<T>, Solver
 
             val query = setof("X", "Y" sup ((("X" eq 1) or ("Y" eq 1)) or (("X" eq 2) or ("Y" eq 2))), "S")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("S" to listOf(1, 2)))
+            val expected = fromSequence(query.yes("S" to logicListOf(1, 2)))
 
             expected.assertingEquals(solutions)
         }
