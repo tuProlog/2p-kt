@@ -9,10 +9,10 @@ kotlin {
                 api(project(":core"))
             }
         }
-        commonTest {
-            dependencies {
-                api(project(":test-dsl"))
-            }
-        }
+//        commonTest {
+//            dependencies {
+//                api(project(":test-dsl"))
+//            }
+//        }
     }
 }
