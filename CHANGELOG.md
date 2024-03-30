@@ -1,3 +1,24 @@
+## [1.0.0](https://github.com/tuProlog/2p-kt/compare/0.32.5...1.0.0) (2024-03-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* DSL refactor
+
+### Features
+
+* DSL refactor ([28f585f](https://github.com/tuProlog/2p-kt/commit/28f585f4de7abb39eee471ce18d8c24a6ff4254f))
+
+
+### Dependency updates
+
+* **deps:** update node.js to 20.12 ([f8f693e](https://github.com/tuProlog/2p-kt/commit/f8f693eeb6bf9dc19f5bb8d359b4062efc89751d))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.11 ([bfe4543](https://github.com/tuProlog/2p-kt/commit/bfe4543222ef0d88af8f20baa8c8d3f70f1c62bd))
+
 ## [0.32.5](https://github.com/tuProlog/2p-kt/compare/0.32.4...0.32.5) (2024-03-24)
 
 
