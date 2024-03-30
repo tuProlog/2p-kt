@@ -276,7 +276,7 @@ class TestMinimalLogicProgrammingScope : AbstractLogicProgrammingScopeTest<Minim
 
     @Test
     fun testToTermSet() {
-        assertLogicProgrammingExpressionIsCorrect(List.of(Atom.of("a"))) {
+        assertLogicProgrammingExpressionIsCorrect(Block.of(Atom.of("a"))) {
             setOf("a").toTerm()
         }
     }
