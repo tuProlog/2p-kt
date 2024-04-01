@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.DefaultSubstitutionFactory
 import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 interface SubstitutionFactory {
     @JsName("failedSubstitution")
@@ -13,10 +15,16 @@ interface SubstitutionFactory {
     fun emptySubstitution(): Substitution.Unifier
 
     @JsName("substitutionOf")
-    fun substitutionOf(variable: Var, term: Term): Substitution.Unifier
+    fun substitutionOf(
+        variable: Var,
+        term: Term,
+    ): Substitution.Unifier
 
     @JsName("unifierOf")
-    fun unifierOf(variable: Var, term: Term): Substitution.Unifier
+    fun unifierOf(
+        variable: Var,
+        term: Term,
+    ): Substitution.Unifier
 
     @JsName("substitutionOfMap")
     fun substitutionOf(assignments: Map<Var, Term>): Substitution.Unifier
@@ -25,20 +33,32 @@ interface SubstitutionFactory {
     fun unifierOf(assignments: Map<Var, Term>): Substitution.Unifier
 
     @JsName("substitutionOfPairs")
-    fun substitutionOf(assignment: Pair<Var, Term>, vararg otherAssignments: Pair<Var, Term>): Substitution
+    fun substitutionOf(
+        assignment: Pair<Var, Term>,
+        vararg otherAssignments: Pair<Var, Term>,
+    ): Substitution
 
     @JsName("unifierOfPairs")
-    fun unifierOf(assignment: Pair<Var, Term>, vararg otherAssignments: Pair<Var, Term>): Substitution.Unifier
+    fun unifierOf(
+        assignment: Pair<Var, Term>,
+        vararg otherAssignments: Pair<Var, Term>,
+    ): Substitution.Unifier
 
     @JsName("substitutionOfIterable")
-    fun substitutionOf(assignment: Iterable<Pair<Var, Term>>): Substitution
+    fun substitutionOf(assignments: Iterable<Pair<Var, Term>>): Substitution
 
     @JsName("unifierOfIterable")
     fun unifierOf(assignment: Iterable<Pair<Var, Term>>): Substitution.Unifier
 
     @JsName("substitutionOfSequence")
-    fun substitutionOf(assignment: Sequence<Pair<Var, Term>>): Substitution
+    fun substitutionOf(assignments: Sequence<Pair<Var, Term>>): Substitution
 
     @JsName("unifierOfSequence")
-    fun unifierOf(assignment: Sequence<Pair<Var, Term>>): Substitution.Unifier
+    fun unifierOf(assignments: Sequence<Pair<Var, Term>>): Substitution.Unifier
+
+    companion object {
+        @JsName("default")
+        @JvmStatic
+        val default: SubstitutionFactory = DefaultSubstitutionFactory
+    }
 }

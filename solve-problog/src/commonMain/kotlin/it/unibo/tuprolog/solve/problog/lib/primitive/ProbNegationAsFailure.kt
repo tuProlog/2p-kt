@@ -58,7 +58,7 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
                     )
                 } else {
                     replyWith(
-                        Substitution.of(
+                        Substitution.merge(
                             mgu(first, ProbExplanationTerm(explanationTerm.explanation.not())),
                         ),
                     )

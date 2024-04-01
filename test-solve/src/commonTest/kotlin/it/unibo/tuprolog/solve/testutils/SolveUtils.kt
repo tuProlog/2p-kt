@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
@@ -56,7 +57,7 @@ internal object SolveUtils {
         Theory.of(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aDynamicKB) }
     }
 
-    internal val solutionSubstitution = Substitution.of("A", Truth.TRUE)
+    internal val solutionSubstitution = Substitution.of(Var.of("A"), Truth.TRUE)
     internal val solutionException = ResolutionException(context = DummyInstances.executionContext)
 
     // Response parameters

@@ -61,7 +61,7 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
         if (error != null) throw error.exception
 
         return if (!solutions.any { s -> s is Solution.Yes }) {
-            sequenceOf(Substitution.of(mgu(first, ProbExplanationTerm(ProbExplanation.FALSE))))
+            sequenceOf(Substitution.merge(mgu(first, ProbExplanationTerm(ProbExplanation.FALSE))))
         } else {
             val solutionGroups =
                 solutions
@@ -83,7 +83,7 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
                                 }
                             }
                     val substitution =
-                        Substitution.of(
+                        Substitution.merge(
                             solutionGroup.key,
                             mgu(first, ProbExplanationTerm(explanation)),
                         )

@@ -41,7 +41,7 @@ internal class AbstractUnificatorTest {
 
     @Test
     fun contextPropertyWorksAsExpected() {
-        val mySubstitution = Substitution.of("A", Atom.of("a"))
+        val mySubstitution = Substitution.of(Var.of("A"), Atom.of("a"))
 
         assertEquals(mySubstitution, myStrategyConstructor(mySubstitution).context)
     }

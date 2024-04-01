@@ -66,7 +66,7 @@ sealed class Equation(
     /** An equation stating [Var] = [Term] */
     data class Assignment(override val lhs: Var, override val rhs: Term) : Equation(lhs, rhs) {
         @JsName("toSubstitution")
-        fun toSubstitution(): Substitution.Unifier = Substitution.unifier(lhs, rhs)
+        fun toSubstitution(): Substitution.Unifier = Substitution.unifierOf(lhs, rhs)
 
         override fun toPair(): Pair<Var, Term> = lhs to rhs
 

@@ -215,7 +215,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun realOf(value: String): Real = Real.of(value)
 
     override fun unifierOf(assignments: Iterable<Pair<Var, Term>>): Substitution.Unifier =
-        Substitution.unifier(
+        Substitution.unifierOf(
             assignments,
         )
 

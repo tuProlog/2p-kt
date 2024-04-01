@@ -67,7 +67,7 @@ internal object ProbSolveWithEvidence : TernaryRelation.WithoutSideEffects<Execu
                             goalExplanationTerm.explanation and evidenceExplanationTerm.explanation,
                         )
                     yield(
-                        Substitution.of(
+                        Substitution.merge(
                             mgu(first, explanationWithEvidenceTerm),
                             mgu(second, evidenceExplanationTerm),
                             solution.substitution.filter { v, _ -> v != goalExplanationVar },

@@ -72,7 +72,7 @@ class BigListTest {
         assertTrue {
             itemWiseEquals(
                 (nums.asSequence() + nums.asSequence()).map { Integer.of(it) },
-                list2[Substitution.unifier(X, list1)].castToList().toSequence(),
+                list2[Substitution.unifierOf(X, list1)].castToList().toSequence(),
             )
         }
     }
@@ -86,7 +86,7 @@ class BigListTest {
         assertTrue {
             itemWiseEquals(
                 nums.asSequence().map { Integer.of(it) },
-                list.apply(Substitution.unifier(X, Integer.of(n))).castToList().toSequence(),
+                list.apply(Substitution.unifierOf(X, Integer.of(n))).castToList().toSequence(),
             )
         }
     }

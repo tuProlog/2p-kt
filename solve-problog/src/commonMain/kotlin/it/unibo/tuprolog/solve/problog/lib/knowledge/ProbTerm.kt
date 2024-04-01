@@ -52,7 +52,7 @@ internal class ProbTerm(
         substitution: Substitution,
         vararg substitutions: Substitution,
     ): ProbTerm {
-        return this.apply(Substitution.of(substitution, *substitutions))
+        return this.apply(Substitution.merge(substitution, *substitutions))
     }
 
     override fun apply(substitution: Substitution): ProbTerm {

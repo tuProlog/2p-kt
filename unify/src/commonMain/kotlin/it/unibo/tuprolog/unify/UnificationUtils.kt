@@ -16,7 +16,7 @@ fun Equation.toAssignmentPair(): Pair<Var, Term> =
     }
 
 /** Transforms an [Equation] of a [Var] with a [Term] to the corresponding [Substitution] */
-fun Equation.toSubstitution(): Substitution.Unifier = Substitution.unifier(toAssignmentPair())
+fun Equation.toSubstitution(): Substitution.Unifier = Substitution.unifierOf(toAssignmentPair())
 
 /** Creates a [Substitution] out of a [Iterable] of [Equation]s assigning [Var]s to [Term]s  */
 fun Iterable<Equation>.toSubstitution(): Substitution = Substitution.of(this.asSequence().map { it.toAssignmentPair() })

@@ -12,7 +12,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Test class for [Substitution.unifier] and [Substitution]
+ * Test class for [Substitution.unifierOf] and [Substitution]
  *
  * @author Enrico
  */
@@ -20,11 +20,11 @@ internal class SubstitutionUnifierTest {
     private val aVar = Var.of("A")
     private val bVar = Var.of("B")
     private val xAtom = Atom.of("x")
-    private val aVarToXAtomSubstitution = Substitution.unifier(mapOf(aVar to xAtom))
-    private val bVarToXAtomSubstitution = Substitution.unifier(mapOf(bVar to xAtom))
+    private val aVarToXAtomSubstitution = Substitution.unifierOf(mapOf(aVar to xAtom))
+    private val bVarToXAtomSubstitution = Substitution.unifierOf(mapOf(bVar to xAtom))
 
     private val substitutions by lazy {
-        SubstitutionUtils.mixedSubstitutions.map(Substitution.Companion::unifier) +
+        SubstitutionUtils.mixedSubstitutions.map(Substitution.Companion::unifierOf) +
             listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 
@@ -32,7 +32,7 @@ internal class SubstitutionUnifierTest {
     fun unifierGetByNameRetrievesSomeMatchingVariable() {
         val anotherVar = Var.of("A")
         val unifier =
-            Substitution.unifier(
+            Substitution.unifierOf(
                 aVar to Integer.of(1),
                 anotherVar to Integer.of(2),
                 bVar to xAtom,
@@ -44,18 +44,18 @@ internal class SubstitutionUnifierTest {
 
     @Test
     fun unifierConstructorReturnsEmptyUnifierIfIdentityMappingsDetected() {
-        assertEquals(Substitution.unifier(emptyMap()), Substitution.unifier(mapOf(aVar to aVar)))
+        assertEquals(Substitution.unifierOf(emptyMap()), Substitution.unifierOf(mapOf(aVar to aVar)))
     }
 
     @Test
     fun unifierConstructorReturnsEmptyUnifierIfCircularIdentityMappingsDetected() {
-        assertEquals(Substitution.unifier(emptyMap()), Substitution.unifier(mapOf(aVar to bVar, bVar to aVar)))
+        assertEquals(Substitution.unifierOf(emptyMap()), Substitution.unifierOf(mapOf(aVar to bVar, bVar to aVar)))
     }
 
     @Test
     fun unifierConstructorReturnsTrimmedVariableChain() {
-        val correct = Substitution.unifier(mapOf(aVar to xAtom, bVar to xAtom))
-        val toBeTested = Substitution.unifier(mapOf(aVar to bVar, bVar to xAtom))
+        val correct = Substitution.unifierOf(mapOf(aVar to xAtom, bVar to xAtom))
+        val toBeTested = Substitution.unifierOf(mapOf(aVar to bVar, bVar to xAtom))
         assertEquals(correct, toBeTested)
     }
 
@@ -98,10 +98,10 @@ internal class SubstitutionUnifierTest {
 
     @Test
     fun equalsWorksAsExpected() {
-        assertEquals(Substitution.unifier(mapOf(aVar to xAtom)), Substitution.unifier(mapOf(aVar to xAtom)))
+        assertEquals(Substitution.unifierOf(mapOf(aVar to xAtom)), Substitution.unifierOf(mapOf(aVar to xAtom)))
         assertNotEquals(
-            Substitution.unifier(mapOf(Var.of("A") to xAtom)),
-            Substitution.unifier(mapOf(Var.of("A") to xAtom)),
+            Substitution.unifierOf(mapOf(Var.of("A") to xAtom)),
+            Substitution.unifierOf(mapOf(Var.of("A") to xAtom)),
         )
         assertNotEquals(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
@@ -153,11 +153,11 @@ internal class SubstitutionUnifierTest {
 
     @Test
     fun plusComplianceWithCompositionDefinedInStandardProlog() {
-        val first = Substitution.unifier(mapOf(bVar to Struct.of("f", aVar)))
-        val second = Substitution.unifier(mapOf(aVar to xAtom))
+        val first = Substitution.unifierOf(mapOf(bVar to Struct.of("f", aVar)))
+        val second = Substitution.unifierOf(mapOf(aVar to xAtom))
 
         val firstComposedSecondExpected =
-            Substitution.unifier(
+            Substitution.unifierOf(
                 mapOf(
                     bVar to Struct.of("f", xAtom),
                     aVar to xAtom,
@@ -165,7 +165,7 @@ internal class SubstitutionUnifierTest {
             )
 
         val secondComposedFirstExpected =
-            Substitution.unifier(
+            Substitution.unifierOf(
                 mapOf(
                     aVar to xAtom,
                     bVar to Struct.of("f", aVar),

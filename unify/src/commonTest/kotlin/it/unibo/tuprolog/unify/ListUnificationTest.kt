@@ -23,7 +23,7 @@ class ListUnificationTest {
         assertEquals(mgu1, mgu2)
         scope.with {
             assertEquals(
-                Substitution.unifier(
+                Substitution.unifierOf(
                     varOf("H") to atomOf("a"),
                     varOf("T") to logicListOf(arrayOf("b", "c").map { atomOf(it) }),
                 ),
@@ -42,7 +42,7 @@ class ListUnificationTest {
         assertEquals(mgu1, mgu2)
         scope.with {
             assertEquals(
-                Substitution.unifier(
+                Substitution.unifierOf(
                     varOf("H") to atomOf("a"),
                     varOf("T") to logicListOf(arrayOf("b", "c").map { atomOf(it) }),
                 ),

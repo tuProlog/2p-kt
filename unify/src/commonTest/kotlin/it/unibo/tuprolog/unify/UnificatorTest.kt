@@ -22,7 +22,7 @@ import kotlin.test.assertEquals
  */
 internal class UnificatorTest {
     private val aVar = Var.of("A")
-    private val myExampleContext = Substitution.of("A", Atom.of("a"))
+    private val myExampleContext = Substitution.of(Var.of("A"), Atom.of("a"))
 
     @Test
     fun naiveWithoutArgsCreateUnificationStrategyWithEmptyContext() {

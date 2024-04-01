@@ -53,7 +53,7 @@ interface Applicable<T : Applicable<T>> {
      * the provided substitutions.
      *
      * This method behaves like `apply(Substitution)`, assuming that the provided substitutions have been merged
-     * by means of [Substitution.of].
+     * by means of [Substitution.merge].
      *
      * @param substitution is the first [Substitution] to be applied to the current object
      * @param substitutions is the vararg argument representing the 2nd, 3rd, etc., [Substitution]s to be applied
@@ -61,13 +61,13 @@ interface Applicable<T : Applicable<T>> {
      * @throws [SubstitutionApplicationException] if the composition of the provided substitutions is of type [Substitution.Fail]
      *
      * @see apply
-     * @see Substitution.of
+     * @see Substitution.merge
      */
     @JsName("apply")
     fun apply(
         substitution: Substitution,
         vararg substitutions: Substitution,
-    ): T = apply(Substitution.of(substitution, *substitutions))
+    ): T = apply(Substitution.merge(substitution, *substitutions))
 
     /**
      * This is an alias for [apply] aimed at supporting a square-brackets syntax for substitutions applications in
@@ -77,7 +77,7 @@ interface Applicable<T : Applicable<T>> {
      * one because variables are replaced by their values, according to the binding carried by the provided substitutions.
      *
      * This method behaves like [apply], assuming that the provided substitutions have been merged
-     * by means of [Substitution.of].
+     * by means of [Substitution.merge].
      *
      * @param substitution is the first [Substitution] to be applied to the current object
      * @param substitutions is the vararg argument representing the 2nd, 3rd, etc., [Substitution]s to be applied
@@ -85,7 +85,7 @@ interface Applicable<T : Applicable<T>> {
      * @throws [SubstitutionApplicationException] if the composition of the provided substitutions is of type [Substitution.Fail]
      *
      * @see apply
-     * @see Substitution.of
+     * @see Substitution.merge
      */
     @JsName("getSubstituted")
     operator fun get(

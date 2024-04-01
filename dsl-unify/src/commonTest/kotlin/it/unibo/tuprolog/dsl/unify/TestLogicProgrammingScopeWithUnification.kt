@@ -49,7 +49,7 @@ class TestLogicProgrammingScopeWithUnification :
             unified =
                 logicListOf(one, fail, a, twoPointThree, structOf("f", one, fail, a, twoPointThree))
             substitution =
-                Substitution.unifier(
+                Substitution.unifierOf(
                     A to one,
                     B to a,
                     X to fail,
