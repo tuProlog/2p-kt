@@ -58,7 +58,7 @@ interface MinimalLogicProgrammingScope<S : MinimalLogicProgrammingScope<S>> : Ba
     ): LogicList =
         listOf(*items).map { it.toTerm() }.let {
             if (tail != null) {
-                logicListFrom(it, last = tail.toTerm())
+                logicListFrom(it, tail = tail.toTerm())
             } else {
                 logicListOf(it)
             }

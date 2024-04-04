@@ -49,8 +49,8 @@ internal object EquationUtils {
         listOf(
             Scope.empty { logicListOf(atomOf("a"), varOf("V")) to logicListOf(atomOf("a"), varOf("V")) },
             Scope.empty {
-                logicListFrom(arrayListOf(atomOf("a")), last = varOf("V")) to
-                    logicListFrom(arrayListOf(atomOf("a")), last = varOf("V"))
+                logicListFrom(arrayListOf(atomOf("a")), tail = varOf("V")) to
+                    logicListFrom(arrayListOf(atomOf("a")), tail = varOf("V"))
             },
             Var.anonymous().let { anonymous ->
                 Block.of(Numeric.of(1.5), anonymous) to Block.of(Numeric.of(1.5), anonymous)

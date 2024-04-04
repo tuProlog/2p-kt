@@ -32,7 +32,7 @@ sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         private val P by variables
 
         override val Scope.head: List<Term>
-            get() = listOf(logicListFrom(A, B, last = C), O, P)
+            get() = listOf(logicListFrom(A, B, tail = C), O, P)
 
         override val Scope.body: Term
             get() =

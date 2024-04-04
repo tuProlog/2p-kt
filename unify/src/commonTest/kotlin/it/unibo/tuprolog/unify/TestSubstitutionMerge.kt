@@ -9,13 +9,13 @@ class TestSubstitutionMerge {
     @Test
     fun substitutionMergeNeverFails() {
         Scope.empty {
-            val base = unifierOf("X" to varOf("Y"), "Y" to varOf("Z"))
+            val base = unifierOf(varOf("X") to varOf("Y"), varOf("Y") to varOf("Z"))
             val a = atomOf("a")
 
-            for (v in arrayOf("X", "Y", "Z")) {
+            for (v in arrayOf("X", "Y", "Z").map { varOf(it) }) {
                 val assignment = unifierOf(v to a)
-                assertEquals(unifierOf("X" to a, "Y" to a, "Z" to a), base.mergeWith(assignment))
-                assertEquals(unifierOf("X" to a, "Y" to a, "Z" to a), assignment.mergeWith(base))
+                assertEquals(unifierOf(varOf("X") to a, varOf("Y") to a, varOf("Z") to a), base.mergeWith(assignment))
+                assertEquals(unifierOf(varOf("X") to a, varOf("Y") to a, varOf("Z") to a), assignment.mergeWith(base))
             }
         }
     }

@@ -33,11 +33,7 @@ sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         private val X by variables
 
         override val Scope.head: List<Term>
-            get() =
-                kotlin.collections.listOf(
-                    logicListFrom(P, M, last = X),
-                    R,
-                )
+            get() = listOf(logicListFrom(P, M, tail = X), R)
 
         override val Scope.body: Term
             get() =
@@ -53,7 +49,7 @@ sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         private val M by variables
 
         override val Scope.head: List<Term>
-            get() = kotlin.collections.listOf(consOf(P, M), R)
+            get() = listOf(consOf(P, M), R)
 
         override val Scope.body: Term
             get() =
@@ -73,6 +69,6 @@ sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
 
     object Trivial : FluentReduce() {
         override val Scope.head: List<Term>
-            get() = kotlin.collections.listOf(R, R)
+            get() = listOf(R, R)
     }
 }
