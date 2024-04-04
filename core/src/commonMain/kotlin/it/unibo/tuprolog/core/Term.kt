@@ -276,6 +276,24 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
     val isIndicator: Boolean get() = false
 
     /**
+     * Checks whether the current term is a reference to an object.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [ObjectRef].
+     * @return `true` if the current term is a reference to an object, or `false`, otherwise
+     */
+    @JsName("isObjectRef")
+    val isObjectRef: Boolean get() = false
+
+    /**
+     * Checks whether the current term is a null reference.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [NullRef].
+     * @return `true` if the current term is a null reference, or `false`, otherwise
+     */
+    @JsName("isNullRef")
+    val isNullRef: Boolean get() = false
+
+    /**
      * Lets the provided [TermVisitor] navigate the current term and build an object of type [T].
      * Such an object is then returned as a result by this method.
      *
@@ -434,6 +452,24 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
     @JsName("castToRecursive")
     fun castToRecursive(): Recursive =
         asRecursive() ?: throw ClassCastException("Cannot cast $this to ${Recursive::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [ObjectRef], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [ObjectRef]
+     * @return the current [Term], casted to [ObjectRef]
+     */
+    @JsName("castToObjectRef")
+    fun castToObjectRef(): ObjectRef =
+        asObjectRef() ?: throw ClassCastException("Cannot cast $this to ${ObjectRef::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [NullRef], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [NullRef]
+     * @return the current [Term], casted to [NullRef]
+     */
+    @JsName("castToNullRef")
+    fun castToNullRef(): NullRef =
+        asNullRef() ?: throw ClassCastException("Cannot cast $this to ${NullRef::class.simpleName}")
 
     /**
      * Casts the current [Term] to [Term]
@@ -612,6 +648,20 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Te
      */
     @JsName("asVar")
     fun asVar(): Var? = null
+
+    /**
+     * Casts the current [Term] to [ObjectRef], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [ObjectRef], or `null`, if the current term is not an instance of [ObjectRef]
+     */
+    @JsName("asObjectRef")
+    fun asObjectRef(): ObjectRef? = null
+
+    /**
+     * Casts the current [Term] to [NullRef], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [NullRef], or `null`, if the current term is not an instance of [NullRef]
+     */
+    @JsName("asNullRef")
+    fun asNullRef(): NullRef? = null
 
     override fun equals(other: Any?): Boolean // Leave this here to allow delegation in `: ... by`
 

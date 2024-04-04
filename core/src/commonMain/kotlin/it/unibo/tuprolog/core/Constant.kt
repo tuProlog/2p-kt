@@ -6,7 +6,7 @@ interface Constant : Term {
     override val isConstant: Boolean get() = true
 
     @JsName("value")
-    val value: Any
+    val value: Any?
 
     override fun freshCopy(): Constant
 
