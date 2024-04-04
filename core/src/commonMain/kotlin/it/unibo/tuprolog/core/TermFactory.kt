@@ -327,7 +327,7 @@ interface TermFactory {
         arity: Int,
     ): Indicator
 
-    @JsName("anonymous")
+    @JsName("anonymousVar")
     fun anonymousVar(): Var
 
     @JsName("numOfBigDecimal")

@@ -231,7 +231,7 @@ internal class ScopeImplTest {
     @Test
     fun tupleOfVarargs() {
         val correctInstances = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it) }
-        val toBeTested = TupleUtils.tupleInstancesElementLists.map { emptyScopeInstance.tupleOf(*it.toTypedArray()) }
+        val toBeTested = TupleUtils.tupleInstancesElementLists.map { emptyScopeInstance.tupleOf(it) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
