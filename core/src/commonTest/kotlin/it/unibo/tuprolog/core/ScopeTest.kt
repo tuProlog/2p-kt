@@ -98,7 +98,10 @@ class ScopeTest {
         }
     }
 
-    private fun scopeCreatesSameNamedVariables(f: Scope.(String) -> Var, name: String) {
+    private fun scopeCreatesSameNamedVariables(
+        f: Scope.(String) -> Var,
+        name: String,
+    ) {
         val scope = Scope.empty()
         val var1 = scope.f(name)
         val var2 = scope.f(name)
