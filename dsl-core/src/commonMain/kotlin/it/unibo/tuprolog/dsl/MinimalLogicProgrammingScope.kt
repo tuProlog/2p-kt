@@ -22,19 +22,19 @@ interface MinimalLogicProgrammingScope<S : MinimalLogicProgrammingScope<S>> : Ba
     fun structOf(
         functor: String,
         vararg args: Any,
-    ): Struct = structOf(functor, *args.map { it.toTerm() }.toTypedArray())
+    ): Struct = structOf(functor, args.map { it.toTerm() })
 
     @JsName("tupleOfAny")
-    fun tupleOf(vararg terms: Any): Tuple = tupleOf(*terms.map { it.toTerm() }.toTypedArray())
+    fun tupleOf(vararg terms: Any): Tuple = tupleOf(terms.map { it.toTerm() })
 
     @JsName("logicListOfAny")
-    fun logicListOf(vararg terms: Any): LogicList = this.logicListOf(*terms.map { it.toTerm() }.toTypedArray())
+    fun logicListOf(vararg terms: Any): LogicList = logicListOf(terms.map { it.toTerm() })
 
     @JsName("blockOfAny")
-    fun blockOf(vararg terms: Any): Block = this.blockOf(*terms.map { it.toTerm() }.toTypedArray())
+    fun blockOf(vararg terms: Any): Block = blockOf(terms.map { it.toTerm() })
 
     @JsName("factOfAny")
-    fun factOf(term: Any): Fact = factOf(term.toTerm() as Struct)
+    fun factOf(term: Any): Fact = factOf(term.toTerm().castToStruct())
 
     @JsName("consOfAny")
     fun consOf(
@@ -46,7 +46,7 @@ interface MinimalLogicProgrammingScope<S : MinimalLogicProgrammingScope<S>> : Ba
     fun directiveOf(
         term: Any,
         vararg terms: Any,
-    ): Directive = directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
+    ): Directive = directiveOf(term.toTerm(), terms.map { it.toTerm() })
 
     @JsName("withScope")
     fun <R> scope(function: S.() -> R): R = newScope().function()
