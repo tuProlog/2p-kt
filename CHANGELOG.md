@@ -1,3 +1,20 @@
+## [1.0.1](https://github.com/tuProlog/2p-kt/compare/1.0.0...1.0.1) (2024-04-06)
+
+
+### Dependency updates
+
+* **deps:** update plugin com.gradle.enterprise to v3.17 ([5964aa5](https://github.com/tuProlog/2p-kt/commit/5964aa57d43e4b6fe4830b58eda4adb29537d5db))
+
+
+### Bug Fixes
+
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2024.4 ([56cab95](https://github.com/tuProlog/2p-kt/commit/56cab95abd42a3c53446b72faa78a0cccf7e5d0f))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.12 ([eace301](https://github.com/tuProlog/2p-kt/commit/eace301ff4b39e20cdbe67f0f9a8939bcb25fdb9))
+
 ## [1.0.0](https://github.com/tuProlog/2p-kt/compare/0.32.5...1.0.0) (2024-03-30)
 
 
