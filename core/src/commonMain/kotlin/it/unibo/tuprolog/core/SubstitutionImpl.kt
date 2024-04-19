@@ -291,10 +291,6 @@ internal sealed class SubstitutionImpl : Substitution {
         }
 
         /** Utility function to filter out identity mappings from a Map<Var, Term> */
-        private fun Map<Var, Term>.withoutIdentityMappings(): Map<Var, Term> =
-            filterNot {
-                    (`var`, term) ->
-                `var` == term
-            }
+        private fun Map<Var, Term>.withoutIdentityMappings(): Map<Var, Term> = filterNot { it.key == it.value }
     }
 }

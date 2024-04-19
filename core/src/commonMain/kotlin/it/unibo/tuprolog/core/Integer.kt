@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.IntegerImpl
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.js.JsName
@@ -31,34 +30,34 @@ interface Integer : Numeric {
 
         @JvmStatic
         @JsName("ofBigInteger")
-        fun of(integer: BigInteger): Integer = IntegerImpl(integer)
+        fun of(value: BigInteger): Integer = TermFactory.default.intOf(value)
 
         @JvmStatic
         @JsName("ofLong")
-        fun of(integer: Long): Integer = of(BigInteger.of(integer))
+        fun of(value: Long): Integer = TermFactory.default.intOf(value)
 
         @JvmStatic
         @JsName("ofInt")
-        fun of(integer: Int): Integer = of(BigInteger.of(integer))
+        fun of(value: Int): Integer = TermFactory.default.intOf(value)
 
         @JvmStatic
         @JsName("ofShort")
-        fun of(integer: Short): Integer = of(BigInteger.of(integer.toLong()))
+        fun of(value: Short): Integer = TermFactory.default.intOf(value)
 
         @JvmStatic
         @JsName("ofByte")
-        fun of(integer: Byte): Integer = of(BigInteger.of(integer.toLong()))
+        fun of(value: Byte): Integer = TermFactory.default.intOf(value)
 
         @JvmStatic
         @JsName("parse")
-        fun of(integer: String): Integer = of(BigInteger.of(integer))
+        fun of(value: String): Integer = TermFactory.default.intOf(value)
 
         @JvmStatic
         @JsName("parseRadix")
         fun of(
-            integer: String,
+            value: String,
             radix: Int,
-        ): Integer = of(BigInteger.of(integer, radix))
+        ): Integer = TermFactory.default.intOf(value, radix)
 
         @JvmField
         val ZERO = Integer.of(BigInteger.ZERO)

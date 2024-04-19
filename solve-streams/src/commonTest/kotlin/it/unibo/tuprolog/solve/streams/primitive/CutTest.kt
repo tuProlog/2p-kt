@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.streams.primitive
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -27,7 +28,7 @@ internal class CutTest {
 
     @Test
     fun cutPrimitiveReturnsAlwaysYesResponseWithRequestSubstitution() {
-        val unchangedSubstitution = Substitution.of("A", Truth.TRUE)
+        val unchangedSubstitution = Substitution.of(Var.of("A"), Truth.TRUE)
         val context = StreamsExecutionContext(substitution = unchangedSubstitution)
         val solutions = Cut.implementation.solve(cutRequest(context))
 

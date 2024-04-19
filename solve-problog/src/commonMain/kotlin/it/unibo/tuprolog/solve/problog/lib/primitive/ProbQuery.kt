@@ -71,7 +71,7 @@ internal object ProbQuery : QuaternaryRelation.WithoutSideEffects<ExecutionConte
                             }
                         val probabilityTerm = Numeric.of(queryWithEvidenceProbability / evidenceProbability)
                         yield(
-                            Substitution.of(
+                            Substitution.merge(
                                 solutionSubstitution,
                                 mgu(first, probabilityTerm),
                                 mgu(fourth, queryWithEvidenceExplanationTerm),

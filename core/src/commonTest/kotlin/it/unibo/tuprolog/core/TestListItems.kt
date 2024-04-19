@@ -23,7 +23,7 @@ class TestListItems {
 
     @Test
     fun testNonWellFormed() {
-        List.from(nums, last = Integer.ZERO).run {
+        List.from(nums, tail = Integer.ZERO).run {
             val expected: KtList<Term> = nums + Integer.ZERO
             assertEquals(expected, unfoldedList)
             assertEquals(expected, unfoldedArray.toList())

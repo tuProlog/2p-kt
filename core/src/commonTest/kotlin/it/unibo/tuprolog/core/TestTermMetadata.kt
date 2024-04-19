@@ -156,11 +156,11 @@ class TestTermMetadata {
 
     @Test
     fun applyPreservesTags() {
-        alterationPreservesTags { apply(Substitution.unifier(X, Integer.ONE)) }
+        alterationPreservesTags { apply(Substitution.unifierOf(X, Integer.ONE)) }
     }
 
     @Test
     fun getPreservesTags() {
-        alterationPreservesTags { apply(Substitution.unifier(X, Real.ONE)) }
+        alterationPreservesTags { apply(Substitution.unifierOf(X, Real.ONE)) }
     }
 }

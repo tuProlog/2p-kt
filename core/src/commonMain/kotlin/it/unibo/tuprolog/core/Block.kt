@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.BlockImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
@@ -34,27 +33,22 @@ interface Block : Recursive {
 
         @JvmStatic
         @JsName("empty")
-        fun empty(): EmptyBlock = EmptyBlock()
+        fun empty(): EmptyBlock = TermFactory.default.emptyBlock()
 
         @JvmStatic
         @JsName("of")
-        fun of(vararg terms: Term): Block = of(terms.toList())
+        fun of(vararg terms: Term): Block = TermFactory.default.blockOf(*terms)
 
         @JvmStatic
         @JsName("ofList")
-        fun of(terms: KtList<Term>): Block =
-            when {
-                terms.isEmpty() -> empty()
-                terms.size == 1 -> BlockImpl(terms.single())
-                else -> BlockImpl(Tuple.of(terms))
-            }
+        fun of(terms: KtList<Term>): Block = TermFactory.default.blockOf(terms)
 
         @JvmStatic
         @JsName("ofIterable")
-        fun of(terms: Iterable<Term>): Block = of(terms.toList())
+        fun of(terms: Iterable<Term>): Block = TermFactory.default.blockOf(terms)
 
         @JvmStatic
         @JsName("ofSequence")
-        fun of(terms: Sequence<Term>): Block = of(terms.toList())
+        fun of(terms: Sequence<Term>): Block = TermFactory.default.blockOf(terms)
     }
 }

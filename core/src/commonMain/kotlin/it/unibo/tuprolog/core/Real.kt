@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.RealImpl
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.js.JsName
@@ -38,19 +37,19 @@ interface Real : Numeric {
 
         @JvmStatic
         @JsName("ofBigDecimal")
-        fun of(real: BigDecimal): Real = RealImpl(real)
+        fun of(value: BigDecimal): Real = TermFactory.default.realOf(value)
 
         @JvmStatic
         @JsName("ofDouble")
-        fun of(real: Double): Real = of(BigDecimal.of(real))
+        fun of(value: Double): Real = TermFactory.default.realOf(value)
 
         @JvmStatic
         @JsName("ofFloat")
-        fun of(real: Float): Real = of(BigDecimal.of(real))
+        fun of(value: Float): Real = TermFactory.default.realOf(value)
 
         @JvmStatic
         @JsName("parse")
-        fun of(real: String): Real = of(BigDecimal.of(real))
+        fun of(value: String): Real = TermFactory.default.realOf(value)
 
         @JvmField
         val ZERO = Real.of(BigDecimal.ZERO)

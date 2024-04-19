@@ -33,7 +33,7 @@ class TestSubstitutionMerging {
                         it.keys.toSet() + it.values.filterIsInstance<Var>().toSet()
                     }
                     for (x in allVariables.sortedBy { it.name }) {
-                        yield(replySuccess(Substitution.unifier(x to Atom.of(x.name))))
+                        yield(replySuccess(Substitution.unifierOf(x to Atom.of(x.name))))
                     }
                 }
         }

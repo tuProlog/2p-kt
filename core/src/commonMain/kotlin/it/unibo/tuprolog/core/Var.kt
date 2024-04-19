@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.VarImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
@@ -44,11 +43,15 @@ interface Var : Term {
 
         @JvmStatic
         @JsName("of")
-        fun of(name: String): Var = VarImpl(name)
+        fun of(name: String): Var = TermFactory.default.varOf(name)
+
+        @JvmStatic
+        @JsName("ofChar")
+        fun of(name: Char): Var = TermFactory.default.varOf(name)
 
         @JvmStatic
         @JsName("anonymous")
-        fun anonymous(): Var = VarImpl(Terms.ANONYMOUS_VAR_NAME)
+        fun anonymous(): Var = TermFactory.default.anonymousVar()
 
         @JvmStatic
         @JsName("escapeName")

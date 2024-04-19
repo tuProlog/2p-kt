@@ -219,34 +219,25 @@ sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable
 
     /** Substitution companion with factory functionality */
     companion object {
-        private inline fun <T> castToUnifierOrThrowException(
-            arg: T,
-            ctor: (T) -> Substitution,
-        ): Unifier = ctor(arg).let { it.asUnifier() ?: throw SubstitutionException(it) }
-
-        private val FAILED: Fail = SubstitutionImpl.FailImpl()
-
-        private val EMPTY: Unifier = SubstitutionImpl.UnifierImpl.of(emptyMap())
-
         /** Returns a failed substitution, i.e. an instance of type [Substitution.Fail] */
         @JvmStatic
         @JsName("failed")
-        fun failed(): Fail = FAILED
+        fun failed(): Fail = SubstitutionFactory.default.failedSubstitution()
 
         /** Returns an empty unifier, i.e. an instance of type [Substitution.Fail] */
         @JvmStatic
         @JsName("empty")
-        fun empty(): Unifier = EMPTY
+        fun empty(): Unifier = SubstitutionFactory.default.emptyUnifier()
 
         /** Creates a [Unifier] of given a map assigning [Var]s to [Term]s */
         @JvmStatic
         @JsName("ofMap")
-        fun of(map: Map<Var, Term>): Unifier = unifier(map)
+        fun of(assignments: Map<Var, Term>): Unifier = SubstitutionFactory.default.unifierOf(assignments)
 
         /** Creates a [Unifier] of given a map assigning [Var]s to [Term]s */
         @JvmStatic
-        @JsName("unifierMap")
-        fun unifier(map: Map<Var, Term>): Unifier = SubstitutionImpl.UnifierImpl.of(map)
+        @JsName("unifierOfMap")
+        fun unifierOf(assignments: Map<Var, Term>): Unifier = SubstitutionFactory.default.unifierOf(assignments)
 
         /** Creates a singleton [Unifier] containing a single [Var]-[Term] assignment */
         @JvmStatic
@@ -254,37 +245,15 @@ sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable
         fun of(
             variable: Var,
             term: Term,
-        ): Unifier = of(mapOf(variable to term))
+        ): Unifier = SubstitutionFactory.default.unifierOf(variable, term)
 
         /** Creates a [Unifier] of given a map assigning [Var]s to [Term]s */
         @JvmStatic
-        @JsName("unifier")
-        fun unifier(
+        @JsName("unifierOf")
+        fun unifierOf(
             variable: Var,
             term: Term,
-        ): Unifier = of(mapOf(variable to term))
-
-        /**
-         * Creates a singleton [Unifier] containing a single [Var]-[Term] assignment.
-         * The variable is created on the fly by name, via [Var.of]
-         */
-        @JvmStatic
-        @JsName("ofString")
-        fun of(
-            variable: String,
-            term: Term,
-        ): Unifier = of(mapOf(Var.of(variable) to term))
-
-        /**
-         * Creates a singleton [Unifier] containing a single [Var]-[Term] assignment.
-         * The variable is created on the fly by name, via [Var.of]
-         */
-        @JvmStatic
-        @JsName("unifierString")
-        fun unifier(
-            variable: String,
-            term: Term,
-        ): Unifier = of(mapOf(Var.of(variable) to term))
+        ): Unifier = SubstitutionFactory.default.unifierOf(variable, term)
 
         /**
          * Crates a [Substitution] from the given [Var]-[Term] [Pair]s.
@@ -293,20 +262,20 @@ sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable
         @JvmStatic
         @JsName("ofPair")
         fun of(
-            substitutionPair: Pair<Var, Term>,
-            vararg substitutionPairs: Pair<Var, Term>,
-        ): Substitution = SubstitutionImpl.of(sequenceOf(substitutionPair, *substitutionPairs))
+            assignment: Pair<Var, Term>,
+            vararg otherAssignments: Pair<Var, Term>,
+        ): Substitution = SubstitutionFactory.default.substitutionOf(assignment, *otherAssignments)
 
         /**
          * Crates a [Substitution] from the given [Var]-[Term] [Pair]s.
          * If any contradiction is found, a [SubstitutionException] is thrown
          */
         @JvmStatic
-        @JsName("unifierPairs")
-        fun unifier(
-            substitutionPair: Pair<Var, Term>,
-            vararg substitutionPairs: Pair<Var, Term>,
-        ): Unifier = castToUnifierOrThrowException(sequenceOf(substitutionPair, *substitutionPairs), ::of)
+        @JsName("unifierOfPairs")
+        fun unifierOf(
+            assignment: Pair<Var, Term>,
+            vararg otherAssignments: Pair<Var, Term>,
+        ): Unifier = SubstitutionFactory.default.unifierOf(assignment, *otherAssignments)
 
         /**
          * Crates a [Substitution] from the given [Iterable] of [Var]-[Term] [Pair]s.
@@ -314,16 +283,17 @@ sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable
          */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(substitutionPairs: Iterable<Pair<Var, Term>>): Substitution =
-            SubstitutionImpl.of(substitutionPairs.asSequence())
+        fun of(assignments: Iterable<Pair<Var, Term>>): Substitution =
+            SubstitutionFactory.default.substitutionOf(assignments)
 
         /**
          * Crates a [Unifier] from the given [Iterable] of [Var]-[Term] [Pair]s.
          * If any contradiction is found, a [SubstitutionException] is thrown
          */
         @JvmStatic
-        @JsName("unifierIterable")
-        fun unifier(map: Iterable<Pair<Var, Term>>): Unifier = castToUnifierOrThrowException(map, ::of)
+        @JsName("unifierOfIterable")
+        fun unifierOf(assignments: Iterable<Pair<Var, Term>>): Unifier =
+            SubstitutionFactory.default.unifierOf(assignments)
 
         /**
          * Crates a [Substitution] from the given [Sequence] of [Var]-[Term] [Pair]s.
@@ -331,24 +301,25 @@ sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable
          */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(substitutionPairs: Sequence<Pair<Var, Term>>): Substitution =
-            SubstitutionImpl.of(substitutionPairs.asSequence())
+        fun of(assignments: Sequence<Pair<Var, Term>>): Substitution =
+            SubstitutionFactory.default.substitutionOf(assignments)
 
         /**
          * Crates a [Unifier] from the given [Sequence] of [Var]-[Term] [Pair]s.
          * If any contradiction is found, a [SubstitutionException] is thrown
          */
         @JvmStatic
-        @JsName("unifierSequence")
-        fun unifier(map: Sequence<Pair<Var, Term>>): Unifier = castToUnifierOrThrowException(map, ::of)
+        @JsName("unifierOfSequence")
+        fun unifierOf(assignments: Sequence<Pair<Var, Term>>): Unifier =
+            SubstitutionFactory.default.unifierOf(assignments)
 
         /**
          * Composes the provided [Substitution]s by merging them.
          * If any failure or contradiction is found, the result will be [Substitution.Fail]
          */
         @JvmStatic
-        @JsName("ofSubstitution")
-        fun of(
+        @JsName("merge")
+        fun merge(
             substitution: Substitution,
             vararg substitutions: Substitution,
         ): Substitution = substitutions.fold(substitution, Substitution::plus)

@@ -7,13 +7,15 @@ import it.unibo.tuprolog.core.testutils.ScopeUtils.assertScopeCorrectContents
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotSame
+import kotlin.test.assertSame
 
 /**
  * Test class for [Scope] companion object
  *
  * @author Enrico
  */
-internal class ScopeTest {
+class ScopeTest {
     private val correctEmptyInstance = ScopeImpl(ScopeUtils.emptyScope)
     private val correctNonEmptyScopeInstances = ScopeUtils.nonEmptyScopes.map(::ScopeImpl)
 
@@ -94,5 +96,52 @@ internal class ScopeTest {
                 }
             assertEquals(myResult, toBeTestedResult2)
         }
+    }
+
+    private fun scopeCreatesSameNamedVariables(
+        f: Scope.(String) -> Var,
+        name: String,
+    ) {
+        val scope = Scope.empty()
+        val var1 = scope.f(name)
+        val var2 = scope.f(name)
+        assertSame(var1, var2)
+    }
+
+    @Test
+    fun scopeCreatesSameNamedVariables() {
+        scopeCreatesSameNamedVariables(Scope::varOf, "A")
+    }
+
+    @Test
+    fun scopeCreatesSameUnderscoredVariables() {
+        scopeCreatesSameNamedVariables(Scope::varOf, "_")
+    }
+
+    private fun scopeCreatesDifferentAnonymousVariables(f: Scope.() -> Var) {
+        val scope = Scope.empty()
+        val var1 = scope.f()
+        val var2 = scope.f()
+        assertNotSame(var1, var2)
+    }
+
+    @Test
+    fun scopeCreatesDifferentAnonymousVariables1() {
+        scopeCreatesDifferentAnonymousVariables(Scope::anonymous)
+    }
+
+    @Test
+    fun scopeCreatesDifferentAnonymousVariables2() {
+        scopeCreatesDifferentAnonymousVariables(Scope::anonymousVar)
+    }
+
+    @Test
+    fun scopeCreatesDifferentAnonymousVariables3() {
+        scopeCreatesDifferentAnonymousVariables(Scope::whatever)
+    }
+
+    @Test
+    fun scopeCreatesDifferentAnonymousVariables4() {
+        scopeCreatesDifferentAnonymousVariables(Scope::`_`)
     }
 }

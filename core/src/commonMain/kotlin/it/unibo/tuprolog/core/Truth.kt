@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.TruthImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
@@ -32,26 +31,20 @@ interface Truth : Atom {
         val FAIL_FUNCTOR = Terms.FAIL_FUNCTOR
 
         @JvmField
-        val TRUE: Truth = TruthImpl(Terms.TRUE_FUNCTOR, true)
+        val TRUE: Truth = TermFactory.default.truthOf(true)
 
         @JvmField
-        val FAIL: Truth = TruthImpl(Terms.FAIL_FUNCTOR, false)
+        val FAIL: Truth = TermFactory.default.fail()
 
         @JvmField
-        val FALSE: Truth = TruthImpl(Terms.FALSE_FUNCTOR, false)
+        val FALSE: Truth = TermFactory.default.truthOf(false)
 
         @JvmStatic
         @JsName("of")
-        fun of(truth: Boolean): Truth = if (truth) TRUE else FALSE
+        fun of(value: Boolean): Truth = TermFactory.default.truthOf(value)
 
         @JvmStatic
         @JsName("ofString")
-        fun of(string: String): Truth =
-            when (string) {
-                Terms.TRUE_FUNCTOR -> TRUE
-                Terms.FALSE_FUNCTOR -> FALSE
-                Terms.FAIL_FUNCTOR -> FAIL
-                else -> throw IllegalArgumentException("Cannot parse $string as a Truth value")
-            }
+        fun of(value: String): Truth = TermFactory.default.truthOf(value)
     }
 }

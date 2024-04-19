@@ -147,7 +147,7 @@ internal class SolverUtilsTest {
 
     @Test
     fun newSolveRequestAddsCorrectlySubstitution() {
-        val newSubstitution = Substitution.of("A", Atom.of("a"))
+        val newSubstitution = Substitution.of(Var.of("A"), Atom.of("a"))
 
         val toBeTested = solveRequest.newSolveRequest(solveRequest.query, newSubstitution)
 
@@ -183,7 +183,7 @@ internal class SolverUtilsTest {
 
     @Test
     fun replyWithSelectsCorrectlyTheTypeOfResponseToApply() {
-        val expectedSubstitution = Substitution.of("A", Atom.of("a"))
+        val expectedSubstitution = Substitution.of(Var.of("A"), Atom.of("a"))
         val expectedSideEffectsManager = SideEffectManagerImpl()
         val expectedException = HaltException(context = DummyInstances.executionContext)
 

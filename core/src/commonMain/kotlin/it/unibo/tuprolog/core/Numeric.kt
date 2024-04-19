@@ -37,57 +37,42 @@ interface Numeric : Constant {
 
         @JvmStatic
         @JsName("ofBigDecimal")
-        fun of(decimal: BigDecimal): Real = Real.of(decimal)
+        fun of(value: BigDecimal): Real = TermFactory.default.numOf(value)
 
         @JvmStatic
         @JsName("ofDouble")
-        fun of(decimal: Double): Real = Real.of(decimal)
+        fun of(value: Double): Real = TermFactory.default.numOf(value)
 
         @JvmStatic
         @JsName("ofFloat")
-        fun of(decimal: Float): Real = Real.of(decimal)
+        fun of(value: Float): Real = TermFactory.default.numOf(value)
 
         @JvmStatic
         @JsName("ofBigInteger")
-        fun of(integer: BigInteger): Integer = Integer.of(integer)
+        fun of(value: BigInteger): Integer = TermFactory.default.numOf(value)
 
         @JvmStatic
         @JsName("ofInteger")
-        fun of(integer: Int): Integer = Integer.of(integer)
+        fun of(value: Int): Integer = TermFactory.default.numOf(value)
 
         @JvmStatic
         @JsName("ofLong")
-        fun of(integer: Long): Integer = Integer.of(integer)
+        fun of(value: Long): Integer = TermFactory.default.numOf(value)
 
         @JvmStatic
         @JsName("ofShort")
-        fun of(integer: Short): Integer = Integer.of(integer)
+        fun of(value: Short): Integer = TermFactory.default.numOf(value)
 
         @JvmStatic
         @JsName("ofByte")
-        fun of(integer: Byte): Integer = Integer.of(integer)
+        fun of(value: Byte): Integer = TermFactory.default.numOf(value)
 
         @JvmStatic
         @JsName("of")
-        fun of(value: Number): Numeric =
-            when (value) {
-                // avoiding string format is necessary for "floats", to maintain full precision during conversions
-                is Double -> of(value)
-                is Int -> of(value)
-                is Float -> of(value)
-                is Long -> of(value)
-                is Short -> of(value)
-                is Byte -> of(value)
-                else -> of(value.toString())
-            }
+        fun of(value: Number): Numeric = TermFactory.default.numOf(value)
 
         @JvmStatic
         @JsName("parse")
-        fun of(number: String): Numeric =
-            try {
-                Integer.of(number)
-            } catch (ex: NumberFormatException) {
-                Real.of(number)
-            }
+        fun of(value: String): Numeric = TermFactory.default.numOf(value)
     }
 }

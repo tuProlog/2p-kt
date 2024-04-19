@@ -36,8 +36,8 @@ object TermFormatterUtils {
             List.empty() to EmptyList.FUNCTOR,
             List.of(Var.of("A"), Var.of("A"), Var.of("A")) to "[A, A1, A2]",
             Var.of("A").let { List.of(it, it, it) } to "[A, A, A]",
-            List.from(items = listOf(Var.of("A"), Var.of("A"), Var.of("A")), last = Var.of("A")) to "[A, A1, A2 | A3]",
-            Var.of("A").let { List.from(items = listOf(it, it, it), last = it) } to "[A, A, A | A]",
+            List.from(items = listOf(Var.of("A"), Var.of("A"), Var.of("A")), tail = Var.of("A")) to "[A, A1, A2 | A3]",
+            Var.of("A").let { List.from(items = listOf(it, it, it), tail = it) } to "[A, A, A | A]",
             Block.empty() to EmptyBlock.FUNCTOR,
             Block.of(Var.of("A"), Var.of("A"), Var.of("A")) to "{A, A1, A2}",
             Var.of("A").let { Block.of(it, it, it) } to "{A, A, A}",
@@ -74,11 +74,11 @@ object TermFormatterUtils {
                 List.of(Tuple.of(Var.of("A"), Var.of("B")), Var.of("A"), Var.of("B")) to "[(A, B), A1, B1]",
                 List.from(
                     items = listOf(Tuple.of(Var.of("A"), Var.of("B")), Tuple.of(Var.of("A"), Var.of("B"))),
-                    last = Tuple.of(Var.of("A"), Var.of("B")),
+                    tail = Tuple.of(Var.of("A"), Var.of("B")),
                 ) to "[(A, B), (A1, B1) | (A2, B2)]",
                 List.from(
                     items = listOf(Tuple.of(Var.of("A"), Var.of("B")), Var.of("A"), Var.of("B")),
-                    last = Tuple.of(Var.of("A"), Var.of("B")),
+                    tail = Tuple.of(Var.of("A"), Var.of("B")),
                 ) to "[(A, B), A1, B1 | (A2, B2)]",
                 Struct.of(
                     "+",

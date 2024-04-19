@@ -249,7 +249,7 @@ internal class EquationTest {
     @Test
     fun applyUsesProvidedEqualityCheckerToTestIdentity() {
         val aAtom = Atom.of("a")
-        val toBeTested = (aAtom eq Var.of("A")).apply(Substitution.of("A", aAtom)) { _, _ -> false }
+        val toBeTested = (aAtom eq Var.of("A")).apply(Substitution.of(Var.of("A"), aAtom)) { _, _ -> false }
 
         assertFalse(toBeTested is Equation.Identity)
     }

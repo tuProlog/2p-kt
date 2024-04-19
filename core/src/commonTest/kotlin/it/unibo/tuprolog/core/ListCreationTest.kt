@@ -10,7 +10,7 @@ class ListCreationTest {
 
     @Test
     fun listFromWithListAsLastIsLikeAppend() {
-        val list = List.from((1..5).toTerms(), last = List.of((6..10).toTerms()))
+        val list = List.from((1..5).toTerms(), tail = List.of((6..10).toTerms()))
         assertTrue { list.last == EmptyList() }
         assertTrue { list.isWellFormed }
         assertEquals(10, list.size)

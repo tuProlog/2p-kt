@@ -59,16 +59,16 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
     private fun deobjectifyClause(value: dynamic): Term {
         var head = value["head"]
         if (head != null) {
-            head = deobjectify(head) as? Struct ?: throw DeobjectificationException(value)
+            head = deobjectify(head).asStruct() ?: throw DeobjectificationException(value)
         }
         var body = value["body"]
         if (body != null) {
             body = deobjectify(body)
         }
         return if (body == null) {
-            scope.factOf(head)
+            scope.factOf(head as Struct)
         } else {
-            scope.clauseOf(head, body)
+            scope.clauseOf(head as Struct, listOf<Term>(body))
         }
     }
 
@@ -79,7 +79,7 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
             },
-            last = if (last != null) deobjectify(last) else scope.emptyLogicList,
+            tail = if (last != null) deobjectify(last) else scope.emptyLogicList,
         )
     }
 

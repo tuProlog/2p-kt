@@ -76,7 +76,7 @@ class TermTest {
     @Suppress("ktlint:standard:property-naming", "PrivatePropertyName")
     private val X = Var.of("X")
 
-    private val sub = Substitution.unifier(X, Integer.ONE)
+    private val sub = Substitution.unifierOf(X, Integer.ONE)
 
     private val compounds =
         listOf(

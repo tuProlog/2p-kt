@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.EmptyBlockImpl
 import kotlin.js.JsName
+import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
 interface EmptyBlock : Empty, Block {
@@ -19,10 +19,12 @@ interface EmptyBlock : Empty, Block {
 
         @JvmStatic
         @JsName("invoke")
-        operator fun invoke(): EmptyBlock = EmptyBlockImpl()
+        operator fun invoke(): EmptyBlock = TermFactory.default.emptyBlock()
 
         @JvmStatic
         @JsName("instance")
-        val instance: EmptyBlock = EmptyBlockImpl()
+        @get:JvmName("instance")
+        val instance: EmptyBlock
+            get() = TermFactory.default.emptyBlock()
     }
 }
