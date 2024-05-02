@@ -4,7 +4,7 @@ import it.unibo.tuprolog.solve.SolverFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.test.Test
 
-class TestConcurrentTermImpl :
+class TestConcurrentAbstractTerm :
     TestConcurrentTerm<MultiSet>,
     SolverFactory by ConcurrentSolverFactory,
     FromSequence<MultiSet> by ConcurrentFromSequence {

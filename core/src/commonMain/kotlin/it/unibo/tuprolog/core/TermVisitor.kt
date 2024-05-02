@@ -71,4 +71,10 @@ interface TermVisitor<T> {
 
     @JsName("visitDirective")
     fun visitDirective(term: Directive): T = visitClause(term)
+
+    @JsName("visitObjectRef")
+    fun visitObjectRef(term: ObjectRef): T = visitConstant(term)
+
+    @JsName("visitNullRef")
+    fun visitNullRef(term: NullRef): T = visitObjectRef(term)
 }

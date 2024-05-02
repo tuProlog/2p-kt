@@ -11,4 +11,3 @@ interface ObjectRef : Constant {
 
     override fun asObjectRef(): ObjectRef = this
 }
-

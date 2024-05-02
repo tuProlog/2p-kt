@@ -13,7 +13,7 @@ internal abstract class AbstractStruct(
     override val functor: String,
     override val args: List<Term>,
     tags: Map<String, Any> = emptyMap(),
-) : TermImpl(tags), Struct {
+) : AbstractTerm(tags), Struct {
     override val isGround: Boolean
         get() = checkGroundness()
 
