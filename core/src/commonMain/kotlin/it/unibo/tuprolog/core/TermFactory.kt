@@ -402,6 +402,12 @@ interface TermFactory {
     @JsName("parseTruth")
     fun truthOf(value: String): Truth
 
+    @JsName("objectRef")
+    fun objectRef(value: Any?): ObjectRef
+
+    @JsName("nullRef")
+    fun nullRef(): NullRef
+
     companion object {
         @JsName("default")
         @get:JvmName("default")

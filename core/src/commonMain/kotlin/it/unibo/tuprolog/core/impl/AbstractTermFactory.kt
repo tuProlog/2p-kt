@@ -11,7 +11,9 @@ import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.NullRef
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -487,4 +489,11 @@ internal abstract class AbstractTermFactory : TermFactory {
             Terms.FAIL_FUNCTOR -> failedTruth
             else -> throw IllegalArgumentException("Cannot parse $value as a Truth value")
         }
+
+    override fun objectRef(value: Any?): ObjectRef = when {
+        value === null -> nullRef()
+        else -> ObjectRefImpl(value)
+    }
+
+    override fun nullRef(): NullRef = NullRefImpl()
 }
