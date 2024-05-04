@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.libs.oop.exceptions.RuntimePermissionException
 import it.unibo.tuprolog.solve.libs.oop.impl.OverloadSelectorImpl
 import it.unibo.tuprolog.utils.Cache
 import it.unibo.tuprolog.utils.Optional
+import it.unibo.tuprolog.utils.fullName
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
@@ -85,10 +86,6 @@ private val classNamePattern = "^$ID(\\.$ID(\\$$ID)*)*$".toRegex()
 actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern
 
-@Suppress("MagicNumber")
-actual val Any.identifier: String
-    get() = System.identityHashCode(this).toString(16)
-
 internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
     instance: Any?,
     action: () -> T,
@@ -116,12 +113,6 @@ actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
         parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
             it.type.classifier as? KClass<*> ?: Any::class
         }
-
-actual val KClass<*>.fullName: String
-    get() = qualifiedName ?: error("Reflection issue: cannot get qualified name of $this")
-
-actual val KClass<*>.name: String
-    get() = simpleName ?: error("Reflection issue: cannot get name of $this")
 
 actual fun KCallable<*>.pretty(): String = "$name(${parameters.map { it.pretty() }}): ${returnType.classifier.pretty()}"
 

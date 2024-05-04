@@ -5,6 +5,7 @@ package it.unibo.tuprolog.solve.libs.oop
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Optional
 import it.unibo.tuprolog.utils.indexed
+import it.unibo.tuprolog.utils.name
 import kotlin.jvm.JvmName
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
@@ -24,8 +25,6 @@ private val PRIMITIVE_TYPES =
 
 internal const val ID = "[a-zA-Z_][a-zA-Z0-9_]*"
 
-expect val Any.identifier: String
-
 expect val CLASS_NAME_PATTERN: Regex
 
 expect val KClass<*>.companionObjectRef: Optional<out Any>
@@ -42,10 +41,6 @@ internal expect fun <T> KCallable<*>.catchingPlatformSpecificException(
 expect fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>>
 
 expect val KCallable<*>.formalParameterTypes: List<KClass<*>>
-
-expect val KClass<*>.fullName: String
-
-expect val KClass<*>.name: String
 
 expect fun KCallable<*>.pretty(): String
 

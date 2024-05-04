@@ -2,6 +2,8 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.solve.libs.oop.impl.NullRefImpl
 import it.unibo.tuprolog.solve.libs.oop.impl.ObjectRefImpl
+import it.unibo.tuprolog.utils.fullName
+import it.unibo.tuprolog.utils.identifier
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
