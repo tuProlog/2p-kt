@@ -233,7 +233,7 @@ sealed class Equation(
             equalityChecker: (Term, Term) -> Boolean = Term::equals,
         ): Sequence<Equation> =
             when {
-                lhs.isAtom && rhs.isAtom -> {
+                lhs.isConstant && rhs.isConstant -> {
                     sequenceOf(of(lhs, rhs, equalityChecker))
                 }
                 lhs.isList && rhs.isList -> {
