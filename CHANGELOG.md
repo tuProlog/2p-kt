@@ -1,3 +1,29 @@
+## [1.0.2](https://github.com/tuProlog/2p-kt/compare/1.0.1...1.0.2) (2024-05-05)
+
+
+### Dependency updates
+
+* **deps:** update plugin com.gradle.enterprise to v3.17.1 ([542121e](https://github.com/tuProlog/2p-kt/commit/542121e3381441396b2e782b3d017185925c64ef))
+* **deps:** update plugin com.gradle.enterprise to v3.17.2 ([00265fd](https://github.com/tuProlog/2p-kt/commit/00265fdbaf6491be303504de193e4178ff08f84a))
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.fasterxml.jackson.dataformat:jackson-dataformat-yaml to v2.17.1 ([2480220](https://github.com/tuProlog/2p-kt/commit/248022014c1b7fa3abc8658f89adb9253d7a660d))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v4.1.3 ([f1e85ce](https://github.com/tuProlog/2p-kt/commit/f1e85ce7c81fc0a681fa34b868a96a85dd4a64cf))
+* **deps:** update actions/checkout action to v4.1.4 ([1923311](https://github.com/tuProlog/2p-kt/commit/192331102ddd39b6e0cface32579c8f7b535de2b))
+* **deps:** update danysk/action-checkout action to v0.2.15 ([12a3d1a](https://github.com/tuProlog/2p-kt/commit/12a3d1a1f1770fb2832c9d34a6e4c7edf7093a88))
+* **deps:** update danysk/action-checkout action to v0.2.16 ([3511510](https://github.com/tuProlog/2p-kt/commit/351151017ac4fb5c389a0884ecbfa0a51faec35b))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.14 ([9f45d88](https://github.com/tuProlog/2p-kt/commit/9f45d889e4220b5ec05c3adb63899cad0631ee7e))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.15 ([7fed60b](https://github.com/tuProlog/2p-kt/commit/7fed60be0d68ff30d91ae76ebd2c84a57bfda650))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.16 ([8db2162](https://github.com/tuProlog/2p-kt/commit/8db2162757f4abac85ef2c76d15230820c65f971))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.17 ([5c696bd](https://github.com/tuProlog/2p-kt/commit/5c696bd57ce2ebe3f76bec99fc55f569eecaa5ef))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.18 ([ac1ffb6](https://github.com/tuProlog/2p-kt/commit/ac1ffb63e766cb3bf77a468d0e7b7bbd5d04c179))
+
 ## [1.0.1](https://github.com/tuProlog/2p-kt/compare/1.0.0...1.0.1) (2024-04-06)
 
 
