@@ -3,6 +3,6 @@
     "semantic-release-preconfigured-conventional-commits": "1.1.85"
   },
   "engines": {
-    "node": "20.12"
+    "node": "20.13"
   }
 }
