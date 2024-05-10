@@ -254,7 +254,7 @@ internal class TuPrologIDEModelImpl(
         content: FileContent?,
         onlyIfChanged: Boolean,
     ) {
-        if (onlyIfChanged && content?.changed == true) {
+        if (onlyIfChanged && content?.changed == false) {
             return
         }
         try {
