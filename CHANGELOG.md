@@ -1,3 +1,24 @@
+## [1.0.3](https://github.com/tuProlog/2p-kt/compare/1.0.2...1.0.3) (2024-05-10)
+
+
+### Dependency updates
+
+* **deps:** update kotlin monorepo to v1.9.24 ([e554fbe](https://github.com/tuProlog/2p-kt/commit/e554fbe5bbf082bfa05e383a9d8ef58baaa5810e))
+* **deps:** update node.js to 20.13 ([aaefb09](https://github.com/tuProlog/2p-kt/commit/aaefb09e56e8275b4dd0b05b43f32831c02c76ae))
+* **deps:** update plugin gitsemver to v3.1.5 ([fc4f378](https://github.com/tuProlog/2p-kt/commit/fc4f378b04d74917320d03aab8a1afef4b6632e0))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.5 ([1075fcb](https://github.com/tuProlog/2p-kt/commit/1075fcb11c658c576fc01dc9c09d0ae37cb56253))
+
+
+### Bug Fixes
+
+* **ide:** bug preventing loading of theories in :ide ([3ddae3f](https://github.com/tuProlog/2p-kt/commit/3ddae3fe19070e3b3471c311357744d239e62c2c))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v4.1.5 ([717e447](https://github.com/tuProlog/2p-kt/commit/717e4475313e2a4355f7d9f4c6dd6234d0246179))
+* **deps:** update danysk/action-checkout action to v0.2.17 ([f3372b3](https://github.com/tuProlog/2p-kt/commit/f3372b36229344c6961da08571a615c896aa9985))
+
 ## [1.0.2](https://github.com/tuProlog/2p-kt/compare/1.0.1...1.0.2) (2024-05-05)
 
 
