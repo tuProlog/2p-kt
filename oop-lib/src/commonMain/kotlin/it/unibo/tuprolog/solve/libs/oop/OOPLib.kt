@@ -56,7 +56,7 @@ object OOPLib : AbstractLibrary() {
                 SetItems,
                 TypeRef,
                 Unregister,
-            ).map { it.descriptionPair }.toMap()
+            ).associate { it.descriptionPair }
 
     override val clauses: List<Clause>
         get() =
@@ -71,27 +71,7 @@ object OOPLib : AbstractLibrary() {
                 NewObject2,
                 PropertyReduce.Recursive,
                 PropertyReduce.Base,
-                Alias.forType("string", String::class),
-                Alias.forType("array", Array::class),
-                Alias.forType("list", List::class),
-                Alias.forType("arraylist", ArrayList::class),
-                Alias.forType("map", Map::class),
-                Alias.forType("hashmap", LinkedHashMap::class),
-                Alias.forType("int", Int::class),
-                Alias.forType("integer", Int::class),
-                Alias.forType("double", Double::class),
-                Alias.forType("float", Float::class),
-                Alias.forType("long", Long::class),
-                Alias.forType("short", Short::class),
-                Alias.forType("byte", Byte::class),
-                Alias.forType("char", Char::class),
-                Alias.forType("bool", Boolean::class),
-                Alias.forType("boolean", Boolean::class),
-                Alias.forType("any", Any::class),
-                Alias.forType("nothing", Nothing::class),
-                Alias.forType("big_integer", BigInteger::class),
-                Alias.forType("big_decimal", BigDecimal::class),
-                *platformSpecificAliases,
+                *defaultAliases,
             ).map { it.implementation }
 
     override val operators: OperatorSet

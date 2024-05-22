@@ -17,3 +17,6 @@ actual val KClass<*>.fullName: String
 
 actual val KClass<*>.name: String
     get() = simpleName ?: java.simpleName
+
+actual val KClass<*>.safeName: String
+    get() = fullName

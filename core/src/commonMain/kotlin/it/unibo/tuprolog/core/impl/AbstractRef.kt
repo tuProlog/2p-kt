@@ -9,6 +9,7 @@ import it.unibo.tuprolog.utils.box
 import it.unibo.tuprolog.utils.fullName
 import it.unibo.tuprolog.utils.identifier
 import it.unibo.tuprolog.utils.name
+import it.unibo.tuprolog.utils.safeName
 
 @Suppress("EqualsOrHashCode")
 internal abstract class AbstractRef(value: Any?, tags: Map<String, Any>) : AbstractTerm(tags), ObjectRef {
@@ -39,12 +40,7 @@ internal abstract class AbstractRef(value: Any?, tags: Map<String, Any>) : Abstr
 
     override fun structurallyEquals(other: Term): Boolean = equals(other)
 
-    private val Any.typeName: String
-        get() = this::class.let {
-            if (Info.PLATFORM.isJava) it.fullName else it.name
-        }
-
-    override fun toString(): String = _value?.let { "<${it.typeName}#${it.identifier}#$it>" } ?: "<null>"
+    override fun toString(): String = _value?.let { "<${it::class.safeName}#${it.identifier}#$it>" } ?: "<null>"
 
     override val variables: Sequence<Var> = emptySequence()
 }

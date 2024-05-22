@@ -16,3 +16,6 @@ expect val Any.identifier: String
 expect val KClass<*>.fullName: String
 
 expect val KClass<*>.name: String
+
+expect val KClass<*>.safeName: String
+

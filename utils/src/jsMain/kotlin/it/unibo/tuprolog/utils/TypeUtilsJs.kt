@@ -32,3 +32,6 @@ actual val KClass<*>.fullName: String
 
 actual val KClass<*>.name: String
     get() = simpleName ?: toString().split(' ')[1]
+
+actual val KClass<*>.safeName: String
+    get() = name
