@@ -2,15 +2,14 @@ package it.unibo.tuprolog.solve.libs.oop.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.NullRef
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.libs.oop.NullRef
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
-import it.unibo.tuprolog.solve.libs.oop.Ref
-import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
+import it.unibo.tuprolog.solve.libs.oop.Objectifier
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
@@ -25,10 +24,10 @@ import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
 
-internal class TermToObjectConverterImpl(
+internal class ObjectifierImpl(
     private val typeFactory: TypeFactory,
-    private val dealiaser: (Struct) -> Ref?,
-) : TermToObjectConverter {
+    private val dealiaser: (Struct) -> ObjectRef?,
+) : Objectifier {
     override fun convertInto(
         type: KClass<*>,
         term: Term,
@@ -42,8 +41,8 @@ internal class TermToObjectConverterImpl(
                 }
             }
             is ObjectRef -> {
-                if (term.`object`::class isSubtypeOf type) {
-                    term.`object`
+                if (term.value::class isSubtypeOf type) {
+                    term.value
                 } else {
                     throw TermToObjectConversionException(term, type)
                 }
@@ -123,7 +122,7 @@ internal class TermToObjectConverterImpl(
         typeTerm: Term,
     ): KClass<*> =
         when (typeTerm) {
-            is TypeRef -> typeTerm.type
+            is TypeRef -> typeTerm.value
             is Atom -> {
                 typeFactory.typeFromName(typeTerm.value) ?: throw TermToObjectConversionException(castExpression)
             }
@@ -131,7 +130,7 @@ internal class TermToObjectConverterImpl(
                 when {
                     typeTerm matches DEALIASING_TEMPLATE ->
                         when (val ref = dealiaser(typeTerm)) {
-                            is TypeRef -> ref.type
+                            is TypeRef -> ref.value
                             else -> throw TermToObjectConversionException(castExpression)
                         }
                     else -> throw TermToObjectConversionException(castExpression)
@@ -160,7 +159,7 @@ internal class TermToObjectConverterImpl(
     private fun admissibleTypesByPriority(term: Term): Sequence<KClass<*>> {
         return when (term) {
             is NullRef, is Var -> sequenceOf(Nothing::class)
-            is ObjectRef -> sequenceOf(term.`object`::class)
+            is ObjectRef -> sequenceOf(term.value::class)
             is Truth -> sequenceOf(Boolean::class, String::class)
             is Atom -> {
                 var admissible = sequenceOf<KClass<*>>(String::class)

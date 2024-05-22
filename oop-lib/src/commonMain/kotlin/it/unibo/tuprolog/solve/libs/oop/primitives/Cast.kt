@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.allSupertypes
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
@@ -32,7 +31,7 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
                     }
                 }
                 is Var -> {
-                    termToObjectConverter.admissibleTypes(first)
+                    objectifier.admissibleTypes(first)
                         .asSequence()
                         .flatMap { it.allSupertypes(false) }
                         .distinct()
@@ -54,7 +53,7 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
         if (type == null) {
             Substitution.failed()
         } else {
-            val casted = termToObjectConverter.convertInto(type, term)
+            val casted = objectifier.convertInto(type, term)
             mgu(result, ObjectRef.of(casted))
         }
 }

@@ -12,9 +12,7 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR
 import it.unibo.tuprolog.solve.libs.oop.OOP.DEALIASING_OPERATOR
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
-import it.unibo.tuprolog.solve.libs.oop.Ref
-import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
+import it.unibo.tuprolog.solve.libs.oop.Objectifier
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.exceptions.MalformedAliasException
@@ -132,5 +130,5 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
     }
 }
 
-val <C : ExecutionContext> Solve.Request<C>.termToObjectConverter: TermToObjectConverter
-    get() = TermToObjectConverter.of { findRefFromAliasOrNull(it) }
+val <C : ExecutionContext> Solve.Request<C>.objectifier: Objectifier
+    get() = Objectifier.of { findRefFromAliasOrNull(it) }

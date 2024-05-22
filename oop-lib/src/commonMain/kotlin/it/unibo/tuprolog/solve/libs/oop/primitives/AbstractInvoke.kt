@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.Result
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
@@ -39,7 +38,7 @@ abstract class AbstractInvoke(suffix: String) : TernaryRelation.Functional<Execu
         method: Struct,
         resultTerm: Term,
     ): Substitution {
-        return when (val result = ref.invoke(termToObjectConverter, method.functor, method.args)) {
+        return when (val result = ref.invoke(objectifier, method.functor, method.args)) {
             is Result.Value -> mgu(resultTerm, result.getInvocationResult())
             else -> Substitution.failed()
         }

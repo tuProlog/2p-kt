@@ -7,7 +7,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.libs.oop.Result
-import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
+import it.unibo.tuprolog.solve.libs.oop.Objectifier
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.assign
 import it.unibo.tuprolog.solve.libs.oop.companionObjectRef
@@ -24,14 +24,14 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
     }
 
     override fun create(
-        objectConverter: TermToObjectConverter,
+        objectConverter: Objectifier,
         arguments: List<Term>,
     ): Result {
         return type.create(objectConverter, arguments)
     }
 
     override fun invoke(
-        objectConverter: TermToObjectConverter,
+        objectConverter: Objectifier,
         methodName: String,
         arguments: List<Term>,
     ): Result =
@@ -68,7 +68,7 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitAtom(this)
 
     override fun assign(
-        objectConverter: TermToObjectConverter,
+        objectConverter: Objectifier,
         propertyName: String,
         value: Term,
     ): Boolean {

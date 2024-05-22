@@ -1,26 +1,29 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.core.NullRef
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermConvertible
+import it.unibo.tuprolog.core.Termificator
 
-sealed class Result {
+sealed class Result(open val termificator: Termificator?) {
     abstract fun toTerm(): Term?
 
     abstract fun asObjectRef(): ObjectRef?
 
-    object None : Result() {
+    data object None : Result(null) {
         override fun toTerm(): Term? = null
 
-        override fun asObjectRef(): ObjectRef? = null
+        override fun asObjectRef(): NullRef = NullRef.instance
 
         override fun isNone(): Boolean = true
 
         override fun asNone(): None = this
     }
 
-    data class Value(val value: Any?) : Result(), TermConvertible {
+    data class Value(val value: Any?, override val termificator: Termificator) : Result(termificator), TermConvertible {
         private val termValue by lazy {
-            ObjectToTermConverter.default.convert(value)
+            termificator.termify(value)
         }
 
         private val objectRef: ObjectRef by lazy {

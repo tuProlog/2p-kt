@@ -25,13 +25,9 @@ private val PRIMITIVE_TYPES =
 
 internal const val ID = "[a-zA-Z_][a-zA-Z0-9_]*"
 
-expect val CLASS_NAME_PATTERN: Regex
-
 expect val KClass<*>.companionObjectRef: Optional<out Any>
 
 expect val KClass<*>.companionObjectType: Optional<out KClass<*>>
-
-expect fun kClassFromName(qualifiedName: String): Optional<out KClass<*>>
 
 internal expect fun <T> KCallable<*>.catchingPlatformSpecificException(
     instance: Any?,
@@ -53,7 +49,7 @@ expect val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
 
 internal expect fun overloadSelector(
     type: KClass<*>,
-    termToObjectConverter: TermToObjectConverter,
+    objectifier: Objectifier,
 ): OverloadSelector
 
 val KClass<*>.isPrimitiveType: Boolean get() = this in PRIMITIVE_TYPES
@@ -80,7 +76,7 @@ fun KClass<*>.isSubtypeOf(
 fun KClass<*>.subTypeDistance(other: KClass<*>): Int? = other.superTypeDistance(this)
 
 internal fun Any.invoke(
-    objectConverter: TermToObjectConverter,
+    objectConverter: Objectifier,
     methodName: String,
     arguments: List<Term>,
 ): Result = this::class.invoke(objectConverter, methodName, arguments, this)
@@ -101,7 +97,7 @@ private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>
 }
 
 internal fun KClass<*>.invoke(
-    objectConverter: TermToObjectConverter,
+    objectConverter: Objectifier,
     methodName: String,
     arguments: List<Term>,
     instance: Any?,
@@ -111,7 +107,7 @@ internal fun KClass<*>.invoke(
 }
 
 private fun KCallable<*>.callWithPrologArguments(
-    converter: TermToObjectConverter,
+    converter: Objectifier,
     arguments: List<Term>,
     instance: Any? = null,
 ): Result {
@@ -127,13 +123,13 @@ private fun KCallable<*>.callWithPrologArguments(
 }
 
 internal fun Any.assign(
-    objectConverter: TermToObjectConverter,
+    objectConverter: Objectifier,
     propertyName: String,
     value: Term,
 ): Result = this::class.assign(objectConverter, propertyName, value, this)
 
 internal fun KClass<*>.assign(
-    objectConverter: TermToObjectConverter,
+    objectConverter: Objectifier,
     propertyName: String,
     value: Term,
     instance: Any?,
@@ -143,7 +139,7 @@ internal fun KClass<*>.assign(
 }
 
 internal fun KClass<*>.create(
-    objectConverter: TermToObjectConverter,
+    objectConverter: Objectifier,
     arguments: List<Term>,
 ): Result {
     val constructorRef = OverloadSelector.of(this, objectConverter).findConstructor(arguments)

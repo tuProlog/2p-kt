@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.libs.oop.impl
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.libs.oop.OverloadSelector
-import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
+import it.unibo.tuprolog.solve.libs.oop.Objectifier
 import it.unibo.tuprolog.solve.libs.oop.allSupertypes
 import it.unibo.tuprolog.solve.libs.oop.exceptions.ConstructorInvocationException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.MethodInvocationException
@@ -16,7 +16,7 @@ import kotlin.reflect.KVisibility
 
 internal class OverloadSelectorImpl(
     override val type: KClass<*>,
-    override val termToObjectConverter: TermToObjectConverter,
+    override val objectifier: Objectifier,
 ) : OverloadSelector {
     @Suppress("SwallowedException")
     override fun findMethod(
@@ -34,18 +34,18 @@ internal class OverloadSelectorImpl(
                 ?: throw MethodInvocationException(
                     type, name,
                     arguments.map {
-                        termToObjectConverter.admissibleTypes(it)
+                        objectifier.admissibleTypes(it)
                     },
                 )
         } catch (e: IllegalStateException) {
             type.allSupertypes(strict = true)
                 .firstOrNull()
-                ?.let { OverloadSelector.of(it, termToObjectConverter) }
+                ?.let { OverloadSelector.of(it, objectifier) }
                 ?.findMethod(name, arguments)
                 ?: throw MethodInvocationException(
                     type, name,
                     arguments.map {
-                        termToObjectConverter.admissibleTypes(it)
+                        objectifier.admissibleTypes(it)
                     },
                 )
         }
@@ -62,7 +62,7 @@ internal class OverloadSelectorImpl(
             .map { it to it.instanceParameters.score(listOf(value)) }
             .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
             ?.first
-            ?: throw PropertyAssignmentException(type, name, termToObjectConverter.admissibleTypes(value))
+            ?: throw PropertyAssignmentException(type, name, objectifier.admissibleTypes(value))
     }
 
     private val KCallable<*>.instanceParameters
@@ -74,7 +74,7 @@ internal class OverloadSelectorImpl(
             .map { it to it.instanceParameters.score(arguments) }
             .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
             ?.first
-            ?: throw ConstructorInvocationException(type, arguments.map { termToObjectConverter.admissibleTypes(it) })
+            ?: throw ConstructorInvocationException(type, arguments.map { objectifier.admissibleTypes(it) })
     }
 
     @Suppress("ReturnCount")
@@ -84,10 +84,10 @@ internal class OverloadSelectorImpl(
         for (i in this.indices) {
             when (val formal = this[i].type.classifier) {
                 is KClass<*> -> {
-                    score += termToObjectConverter.priorityOfConversion(formal, arguments[i]) ?: return null
+                    score += objectifier.priorityOfConversion(formal, arguments[i]) ?: return null
                 }
                 is KTypeParameter -> {
-                    score += termToObjectConverter.admissibleTypes(arguments[i]).count()
+                    score += objectifier.admissibleTypes(arguments[i]).count()
                 }
                 else -> return null
             }

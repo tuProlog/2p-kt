@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 
@@ -31,7 +30,7 @@ object Assign : TernaryRelation.Predicative<ExecutionContext>("assign") {
                     third
                 }
 
-            ref.assign(termToObjectConverter, (second as Atom).value, value)
+            ref.assign(objectifier, (second as Atom).value, value)
         }
     }
 }

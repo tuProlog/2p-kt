@@ -1,43 +1,27 @@
 package it.unibo.tuprolog.solve.libs.oop
 
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.libs.oop.impl.TypeRefImpl
+import it.unibo.tuprolog.core.ObjectRef
+import it.unibo.tuprolog.core.Scope
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
-interface TypeRef : Ref {
-    val type: KClass<*>
+interface TypeRef : ObjectRef {
+    val isTypeRef: Boolean get() = true
 
-    fun create(
-        objectConverter: TermToObjectConverter,
-        vararg arguments: Term,
-    ): Result = create(objectConverter, listOf(*arguments))
+    override val value: KClass<*>
 
-    fun create(
-        objectConverter: TermToObjectConverter,
-        arguments: List<Term>,
-    ): Result
+    override fun freshCopy(): TypeRef
 
-    fun create(
-        objectConverter: TermToObjectConverter,
-        arguments: Iterable<Term>,
-    ): Result = create(objectConverter, arguments.toList())
+    override fun freshCopy(scope: Scope): TypeRef
 
-    fun create(
-        objectConverter: TermToObjectConverter,
-        arguments: Sequence<Term>,
-    ): Result = create(objectConverter, arguments.toList())
+    fun asTypeRef(): TypeRef = this
 
-    fun create(vararg arguments: Term): Result = create(TermToObjectConverter.default, listOf(*arguments))
-
-    fun create(arguments: List<Term>): Result = create(TermToObjectConverter.default, arguments)
-
-    fun create(arguments: Iterable<Term>): Result = create(TermToObjectConverter.default, arguments.toList())
-
-    fun create(arguments: Sequence<Term>): Result = create(TermToObjectConverter.default, arguments.toList())
+    fun castToTypeRef(): TypeRef = this
 
     companion object {
         @JvmStatic
-        fun of(type: KClass<*>): TypeRef = TypeRefImpl(type)
+        @JsName("of")
+        fun of(value: KClass<*>): TypeRef = TODO()
     }
 }

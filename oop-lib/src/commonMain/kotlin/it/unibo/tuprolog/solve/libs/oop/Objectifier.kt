@@ -1,12 +1,13 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.libs.oop.impl.TermToObjectConverterImpl
+import it.unibo.tuprolog.solve.libs.oop.impl.ObjectifierImpl
 import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
-interface TermToObjectConverter {
+interface Objectifier {
     fun convertInto(
         type: KClass<*>,
         term: Term,
@@ -29,10 +30,10 @@ interface TermToObjectConverter {
         @JvmStatic
         fun of(
             typeFactory: TypeFactory = TypeFactory.default,
-            dealiaser: (Struct) -> Ref? = { null },
-        ): TermToObjectConverter = TermToObjectConverterImpl(typeFactory, dealiaser)
+            dealiaser: (Struct) -> ObjectRef? = { null },
+        ): Objectifier = ObjectifierImpl(typeFactory, dealiaser)
 
         @JvmStatic
-        val default: TermToObjectConverter = of()
+        val default: Objectifier = of()
     }
 }

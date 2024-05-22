@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.solve.libs.oop.impl.TypeFactoryImpl
 import it.unibo.tuprolog.utils.Optional
+import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 

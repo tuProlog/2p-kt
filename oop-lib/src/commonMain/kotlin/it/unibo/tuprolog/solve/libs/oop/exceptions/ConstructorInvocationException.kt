@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
-import it.unibo.tuprolog.solve.libs.oop.fullName
+import it.unibo.tuprolog.utils.fullName
 import kotlin.reflect.KClass
 
 @Suppress("MemberVisibilityCanBePrivate")

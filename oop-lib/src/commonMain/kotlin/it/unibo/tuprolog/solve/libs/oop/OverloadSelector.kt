@@ -9,7 +9,7 @@ import kotlin.reflect.KMutableProperty
 interface OverloadSelector {
     val type: KClass<*>
 
-    val termToObjectConverter: TermToObjectConverter
+    val objectifier: Objectifier
 
     fun findMethod(
         name: String,
@@ -27,7 +27,7 @@ interface OverloadSelector {
         @JvmStatic
         fun of(
             type: KClass<*>,
-            termToObjectConverter: TermToObjectConverter = TermToObjectConverter.default,
-        ): OverloadSelector = overloadSelector(type, termToObjectConverter)
+            objectifier: Objectifier = Objectifier.default,
+        ): OverloadSelector = overloadSelector(type, objectifier)
     }
 }
