@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Termificator.Companion.raiseErrorConvertingTo
 import it.unibo.tuprolog.core.Tuple
 import kotlin.js.JsName
 import kotlin.collections.plus as append

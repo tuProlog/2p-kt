@@ -1,9 +1,9 @@
-package it.unibo.tuprolog.dsl
+package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.impl.DefaultTermificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
+import kotlin.reflect.KClass
 
 interface Termificator {
     @JsName("scope")
@@ -23,5 +23,10 @@ interface Termificator {
         @JvmStatic
         @JsName("legacy")
         fun legacy(scope: Scope): Termificator = DefaultTermificator(scope, false)
+
+        @JvmStatic
+        @JsName("empty")
+        fun Any.raiseErrorConvertingTo(`class`: KClass<*>): Nothing =
+            throw IllegalArgumentException("Cannot convert ${this::class} into $`class`")
     }
 }

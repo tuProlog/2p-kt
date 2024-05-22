@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Termificator
 import kotlin.test.Test
 
 class TestDefaultTermifier : TestLegacyTermifier() {

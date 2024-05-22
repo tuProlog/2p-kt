@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.dsl.theory
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Termificator
 import it.unibo.tuprolog.core.VariablesProvider
-import it.unibo.tuprolog.dsl.Termificator
 import it.unibo.tuprolog.theory.TheoryFactory
 import it.unibo.tuprolog.unify.Unificator
 

@@ -3,6 +3,8 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Termificator
+import it.unibo.tuprolog.core.Termificator.Companion.raiseErrorConvertingTo
 import kotlin.js.JsName
 import kotlin.reflect.KClass
 

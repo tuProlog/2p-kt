@@ -1,10 +1,12 @@
 @file:Suppress("MatchingDeclarationName")
 
-package it.unibo.tuprolog.dsl
+package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.AbstractTermificator
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Termificator
 import org.gciatto.kt.math.toKotlin
 import java.math.BigDecimal as JavaBigDecimal
 import java.math.BigInteger as JavaBigInteger

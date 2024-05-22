@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Termificator
 import it.unibo.tuprolog.core.VariablesProvider
 
 internal class LogicProgrammingScopeImpl(

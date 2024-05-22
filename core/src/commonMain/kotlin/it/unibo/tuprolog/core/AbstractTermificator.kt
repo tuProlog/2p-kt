@@ -1,9 +1,6 @@
-package it.unibo.tuprolog.dsl
+package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.TermConvertible
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.Termificator.Companion.raiseErrorConvertingTo
 import it.unibo.tuprolog.utils.assertItemsAreNotNull
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger

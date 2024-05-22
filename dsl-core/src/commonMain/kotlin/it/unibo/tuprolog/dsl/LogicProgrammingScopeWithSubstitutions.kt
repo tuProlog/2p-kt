@@ -2,6 +2,7 @@ package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Termificator.Companion.raiseErrorConvertingTo
 import it.unibo.tuprolog.core.Var
 import kotlin.js.JsName
 

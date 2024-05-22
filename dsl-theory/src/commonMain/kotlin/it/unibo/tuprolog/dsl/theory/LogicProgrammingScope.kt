@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.dsl.theory
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Termificator
 import it.unibo.tuprolog.core.VariablesProvider
 import it.unibo.tuprolog.dsl.LogicProgrammingScopeWithOperators
 import it.unibo.tuprolog.dsl.LogicProgrammingScopeWithPrologStandardLibrary
 import it.unibo.tuprolog.dsl.LogicProgrammingScopeWithSubstitutions
 import it.unibo.tuprolog.dsl.LogicProgrammingScopeWithVariables
 import it.unibo.tuprolog.dsl.MinimalLogicProgrammingScope
-import it.unibo.tuprolog.dsl.Termificator
 import it.unibo.tuprolog.dsl.unify.LogicProgrammingScopeWithUnification
 import it.unibo.tuprolog.theory.IndexedTheoryFactory
 import it.unibo.tuprolog.theory.TheoryFactory

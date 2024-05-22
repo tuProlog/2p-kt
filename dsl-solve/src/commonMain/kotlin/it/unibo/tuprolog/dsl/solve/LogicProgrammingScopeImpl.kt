@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.dsl.solve
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Termificator
 import it.unibo.tuprolog.core.VariablesProvider
-import it.unibo.tuprolog.dsl.Termificator
 import it.unibo.tuprolog.dsl.solve.LogicProgrammingScope.Companion.changeUnificatorIfNecessary
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.SolverFactory

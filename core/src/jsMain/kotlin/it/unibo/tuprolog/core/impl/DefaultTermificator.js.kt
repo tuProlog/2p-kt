@@ -1,9 +1,11 @@
 @file:Suppress("MatchingDeclarationName")
 
-package it.unibo.tuprolog.dsl
+package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.AbstractTermificator
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Termificator
 import it.unibo.tuprolog.utils.NumberTypeTester
 
 internal actual class DefaultTermificator actual constructor(
