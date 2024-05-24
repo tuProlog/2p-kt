@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
-import it.unibo.tuprolog.solve.libs.oop.fullName
+import it.unibo.tuprolog.utils.safeName
 import kotlin.reflect.KClass
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -15,7 +15,7 @@ class PropertyAssignmentException(
     val missingPropertyName: String,
     val admissibleTypes: Set<KClass<*>>,
 ) : OopException(
-        "There is no property on type ${type.fullName} which is named `$missingPropertyName` and can be " +
+        "There is no property on type ${type.safeName} which is named `$missingPropertyName` and can be " +
             "assigned to a value of type ${admissibleTypes.pretty()}",
     ) {
     override fun toLogicError(
@@ -31,5 +31,5 @@ class PropertyAssignmentException(
     }
 
     override val culprit: Term
-        get() = Atom.of("${type.fullName}::$missingPropertyName: ${admissibleTypes.pretty()}")
+        get() = Atom.of("${type.safeName}::$missingPropertyName: ${admissibleTypes.pretty()}")
 }

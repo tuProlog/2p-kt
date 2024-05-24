@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
-import it.unibo.tuprolog.solve.libs.oop.CLASS_NAME_PATTERN
 import it.unibo.tuprolog.solve.libs.oop.ID
 import it.unibo.tuprolog.solve.libs.oop.KotlinToJavaTypeMap
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
@@ -8,7 +7,7 @@ import it.unibo.tuprolog.utils.Cache
 import it.unibo.tuprolog.utils.Optional
 import kotlin.reflect.KClass
 
-internal actual class TypeFactoryImpl : TypeFactory {
+internal actual class DefaultTypeFactory : TypeFactory {
     companion object {
         private const val DEFAULT_CACHE_SIZE = 32
         private val CLASS_NAME_PATTERN: Regex = "^$ID(\\.$ID(\\$$ID)*)*$".toRegex()

@@ -2,6 +2,7 @@
 
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Optional
 import it.unibo.tuprolog.utils.indexed
@@ -25,6 +26,10 @@ private val PRIMITIVE_TYPES =
 
 internal const val ID = "[a-zA-Z_][a-zA-Z0-9_]*"
 
+context(OOPContext)
+val ObjectRef.oop: ObjectDecorator
+    get() = ObjectDecorator.of(this, termificator, objectifier, typeFactory)
+
 expect val KClass<*>.companionObjectRef: Optional<out Any>
 
 expect val KClass<*>.companionObjectType: Optional<out KClass<*>>
@@ -41,8 +46,8 @@ expect val KCallable<*>.formalParameterTypes: List<KClass<*>>
 expect fun KCallable<*>.pretty(): String
 
 expect fun <T> KCallable<T>.invoke(
-    instance: Any?,
-    vararg args: Any?,
+    objectifier: Any?,
+    vararg method: Any?,
 ): T
 
 expect val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
@@ -75,11 +80,11 @@ fun KClass<*>.isSubtypeOf(
 
 fun KClass<*>.subTypeDistance(other: KClass<*>): Int? = other.superTypeDistance(this)
 
+context(OOPContext)
 internal fun Any.invoke(
-    objectConverter: Objectifier,
-    methodName: String,
+    method: String,
     arguments: List<Term>,
-): Result = this::class.invoke(objectConverter, methodName, arguments, this)
+): Result = this::class.invoke(method, arguments, this)
 
 private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>): List<KClass<*>> {
     return formalParameterTypes.also { formalArgumentsTypes ->
@@ -96,52 +101,53 @@ private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>
     }
 }
 
+context(OOPContext)
 internal fun KClass<*>.invoke(
-    objectConverter: Objectifier,
-    methodName: String,
+    method: String,
     arguments: List<Term>,
     instance: Any?,
 ): Result {
-    val methodRef = OverloadSelector.of(this, objectConverter).findMethod(methodName, arguments)
-    return methodRef.callWithPrologArguments(objectConverter, arguments, instance)
+    val methodRef = OverloadSelector.of(this, objectifier).findMethod(method, arguments)
+    return methodRef.callWithPrologArguments(arguments, instance)
 }
 
+context(OOPContext)
 private fun KCallable<*>.callWithPrologArguments(
-    converter: Objectifier,
     arguments: List<Term>,
     instance: Any? = null,
 ): Result {
     val formalArgumentsTypes = ensureArgumentsListIsOfSize(arguments)
     val args =
         arguments.mapIndexed { i, it ->
-            converter.convertInto(formalArgumentsTypes[i], it)
+            objectifier.convertInto(formalArgumentsTypes[i], it)
         }.toTypedArray()
     return catchingPlatformSpecificException(instance) {
         val result = invoke(instance, *args)
-        Result.Value(result)
+        Result.Value(result, termificator)
     }
 }
 
+context(OOPContext)
 internal fun Any.assign(
-    objectConverter: Objectifier,
-    propertyName: String,
+    property: String,
     value: Term,
-): Result = this::class.assign(objectConverter, propertyName, value, this)
+): Result = this::class.assign(property, value, this)
 
+context(OOPContext)
 internal fun KClass<*>.assign(
-    objectConverter: Objectifier,
-    propertyName: String,
+    property: String,
     value: Term,
     instance: Any?,
 ): Result {
-    val setterRef = OverloadSelector.of(this, objectConverter).findProperty(propertyName, value).setterMethod
-    return setterRef.callWithPrologArguments(objectConverter, listOf(value), instance)
+    val setterRef = OverloadSelector.of(this, objectifier).findProperty(property, value).setterMethod
+    return setterRef.callWithPrologArguments(listOf(value), instance)
 }
 
+context(OOPContext)
 internal fun KClass<*>.create(
     objectConverter: Objectifier,
     arguments: List<Term>,
 ): Result {
     val constructorRef = OverloadSelector.of(this, objectConverter).findConstructor(arguments)
-    return constructorRef.callWithPrologArguments(objectConverter, arguments)
+    return constructorRef.callWithPrologArguments(arguments)
 }

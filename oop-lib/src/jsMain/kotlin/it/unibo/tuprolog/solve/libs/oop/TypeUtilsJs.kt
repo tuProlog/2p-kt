@@ -27,8 +27,8 @@ actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
 actual fun KCallable<*>.pretty(): String = throw TODO_EXCEPTION
 
 actual fun <T> KCallable<T>.invoke(
-    instance: Any?,
-    vararg args: Any?,
+    objectifier: Any?,
+    vararg method: Any?,
 ): T = throw TODO_EXCEPTION
 
 actual val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>

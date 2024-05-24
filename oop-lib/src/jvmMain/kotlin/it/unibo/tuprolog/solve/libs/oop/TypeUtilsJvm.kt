@@ -5,7 +5,6 @@ package it.unibo.tuprolog.solve.libs.oop
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.RuntimePermissionException
 import it.unibo.tuprolog.solve.libs.oop.impl.OverloadSelectorImpl
-import it.unibo.tuprolog.utils.Cache
 import it.unibo.tuprolog.utils.Optional
 import it.unibo.tuprolog.utils.fullName
 import java.lang.reflect.InvocationTargetException
@@ -86,24 +85,24 @@ private fun KParameter.pretty(): String =
 
 @Suppress("UNCHECKED_CAST")
 actual fun <T> KCallable<T>.invoke(
-    instance: Any?,
-    vararg args: Any?,
+    objectifier: Any?,
+    vararg method: Any?,
 ): T =
     when (this) {
         is KProperty0<T> -> get()
         is KProperty1<*, T> -> {
             val property = this as KProperty1<Any?, T>
-            property.get(instance)
+            property.get(objectifier)
         }
         is KProperty2<*, *, T> -> {
             val property = this as KProperty2<Any?, Any?, T>
-            property.get(instance, args[0])
+            property.get(objectifier, method[0])
         }
         else -> {
-            if (instance == null) {
-                call(*args)
+            if (objectifier == null) {
+                call(*method)
             } else {
-                call(instance, *args)
+                call(objectifier, *method)
             }
         }
     }

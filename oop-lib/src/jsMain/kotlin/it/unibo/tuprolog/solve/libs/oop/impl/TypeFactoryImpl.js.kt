@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.utils.Optional
 import kotlin.reflect.KClass
 
-internal actual class TypeFactoryImpl : TypeFactory {
+internal actual class DefaultTypeFactory : TypeFactory {
     companion object {
         val CLASS_NAME_PATTERN: Regex = "^($ID):($ID(\\.$ID)*)$".toRegex()
     }

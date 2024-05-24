@@ -18,11 +18,11 @@ interface Termificator {
     companion object {
         @JvmStatic
         @JsName("default")
-        fun default(scope: Scope): Termificator = DefaultTermificator(scope, true)
+        fun default(scope: Scope = Scope.empty()): Termificator = DefaultTermificator(scope, true)
 
         @JvmStatic
         @JsName("legacy")
-        fun legacy(scope: Scope): Termificator = DefaultTermificator(scope, false)
+        fun legacy(scope: Scope = Scope.empty()): Termificator = DefaultTermificator(scope, false)
 
         @JvmStatic
         @JsName("empty")
