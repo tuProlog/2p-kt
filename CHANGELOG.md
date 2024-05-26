@@ -1,3 +1,26 @@
+## [1.0.4](https://github.com/tuProlog/2p-kt/compare/1.0.3...1.0.4) (2024-05-26)
+
+
+### Dependency updates
+
+* **deps:** update plugin com.gradle.enterprise to v3.17.3 ([c2ababc](https://github.com/tuProlog/2p-kt/commit/c2ababc09d6f97cbd01e63522ce1b8dee72c17c8))
+* **deps:** update plugin com.gradle.enterprise to v3.17.4 ([94faa3d](https://github.com/tuProlog/2p-kt/commit/94faa3dbc0d2ae127f690103f62827679cd77135))
+* **deps:** update plugin gitsemver to v3.1.6 ([327902a](https://github.com/tuProlog/2p-kt/commit/327902ab5ab1178007079ddd1700704856c8063f))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.6 ([a24d5a2](https://github.com/tuProlog/2p-kt/commit/a24d5a224c16326ffefab85bc63477b3f36690f6))
+
+
+### Bug Fixes
+
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2024.5 ([02e6494](https://github.com/tuProlog/2p-kt/commit/02e6494a4a9bae83eae784041fe9f3286f4d44cc))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v4.1.6 ([7971b94](https://github.com/tuProlog/2p-kt/commit/7971b94024ee4c2e59aa47571b1340dd80dd3f8d))
+* **deps:** update danysk/action-checkout action to v0.2.18 ([d4b561b](https://github.com/tuProlog/2p-kt/commit/d4b561ba3da68eb04797e021cc71e30d9f02fdbe))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.19 ([f3cd3ee](https://github.com/tuProlog/2p-kt/commit/f3cd3ee7ba0e22784699a66eeb25e0cbda22a0da))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.20 ([221355e](https://github.com/tuProlog/2p-kt/commit/221355ef896bf660445cbec1dd098913d5539202))
+
 ## [1.0.3](https://github.com/tuProlog/2p-kt/compare/1.0.2...1.0.3) (2024-05-10)
 
 
