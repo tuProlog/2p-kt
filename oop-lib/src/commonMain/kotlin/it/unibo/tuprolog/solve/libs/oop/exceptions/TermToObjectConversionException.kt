@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
-import it.unibo.tuprolog.solve.libs.oop.fullName
+import it.unibo.tuprolog.utils.safeName
 import kotlin.reflect.KClass
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -14,7 +14,7 @@ class TermToObjectConversionException(
     val targetType: KClass<*>? = null,
 ) : OopException(
         targetType?.let {
-            "Term `$term` cannot be converted into an object of type ${targetType.fullName}"
+            "Term `$term` cannot be converted into an object of type ${targetType.safeName}"
         } ?: "Term `$term` cannot be converted into an object",
     ) {
     constructor(term: Term) : this(term, null)

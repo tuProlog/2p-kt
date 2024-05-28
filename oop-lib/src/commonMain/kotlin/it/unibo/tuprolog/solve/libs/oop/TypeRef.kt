@@ -22,6 +22,6 @@ interface TypeRef : ObjectRef {
     companion object {
         @JvmStatic
         @JsName("of")
-        fun of(value: KClass<*>): TypeRef = TODO()
+        fun of(value: KClass<*>): TypeRef = OopTermFactory.default.typeRef(value)
     }
 }

@@ -44,6 +44,6 @@ interface ObjectDecorator : OOPContext, ObjectRef {
         fun of(
             value: ObjectRef,
             oopContext: OOPContext,
-        ) = of(value, oopContext.termificator, oopContext.objectifier, oopContext.typeFactory)
+        ): ObjectDecorator = of(value, oopContext.termificator, oopContext.objectifier, oopContext.typeFactory)
     }
 }

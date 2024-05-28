@@ -410,7 +410,6 @@ interface TermFactory {
 
     companion object {
         @JsName("default")
-        @get:JvmName("default")
         @JvmStatic
         val default: TermFactory = DefaultTermFactory
     }

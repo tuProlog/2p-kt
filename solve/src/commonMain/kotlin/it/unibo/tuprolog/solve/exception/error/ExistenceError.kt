@@ -165,6 +165,7 @@ class ExistenceError(
         SOURCE_SINK,
         RESOURCE,
         STREAM,
+        OOP_TYPE,
         OOP_ALIAS,
         OOP_METHOD,
         OOP_CONSTRUCTOR,

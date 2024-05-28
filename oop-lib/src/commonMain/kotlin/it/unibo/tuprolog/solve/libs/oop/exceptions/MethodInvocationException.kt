@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
-import it.unibo.tuprolog.utils.fullName
+import it.unibo.tuprolog.utils.safeName
 import kotlin.reflect.KClass
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -15,7 +15,7 @@ class MethodInvocationException(
     val missingMethodName: String,
     val admissibleTypes: List<Set<KClass<*>>>,
 ) : OopException(
-        "There is no method on type ${type.fullName} which is named `$missingMethodName` and accepts " +
+        "There is no method on type ${type.safeName} which is named `$missingMethodName` and accepts " +
             "[${admissibleTypes.pretty()}] as formal arguments",
     ) {
     override fun toLogicError(
@@ -31,5 +31,5 @@ class MethodInvocationException(
     }
 
     override val culprit: Term
-        get() = Atom.of("${type.fullName}::$missingMethodName(${admissibleTypes.pretty()})")
+        get() = Atom.of("${type.safeName}::$missingMethodName(${admissibleTypes.pretty()})")
 }

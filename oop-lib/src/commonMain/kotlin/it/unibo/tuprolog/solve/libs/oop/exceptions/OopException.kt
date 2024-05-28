@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
-import it.unibo.tuprolog.solve.libs.oop.name
+import it.unibo.tuprolog.utils.safeName
 import kotlin.jvm.JvmOverloads
 import kotlin.reflect.KClass
 
@@ -28,7 +28,7 @@ abstract class OopException : TuPrologException {
         }
 
         internal fun Set<KClass<*>>.pretty(): String {
-            return joinToString("|") { it.name }
+            return joinToString("|") { it.safeName }
         }
     }
 }

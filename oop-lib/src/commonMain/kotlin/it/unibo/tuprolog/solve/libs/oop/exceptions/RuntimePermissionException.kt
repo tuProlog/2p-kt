@@ -6,8 +6,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
-import it.unibo.tuprolog.solve.libs.oop.fullName
 import it.unibo.tuprolog.solve.libs.oop.pretty
+import it.unibo.tuprolog.utils.safeName
 import kotlin.reflect.KCallable
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -18,7 +18,7 @@ class RuntimePermissionException(
 ) : OopException(
         "Invoking method ${callable.pretty()}" +
             if (receiver != null) {
-                " on object `$receiver` of type `${receiver::class.fullName} "
+                " on object `$receiver` of type `${receiver::class.safeName} "
             } else {
                 " "
             } + "is not permitted",
@@ -43,7 +43,7 @@ class RuntimePermissionException(
                 if (receiver == null) {
                     callable.pretty()
                 } else {
-                    "${receiver::class.fullName}::${callable.pretty()}"
+                    "${receiver::class.safeName}::${callable.pretty()}"
                 },
             )
 }

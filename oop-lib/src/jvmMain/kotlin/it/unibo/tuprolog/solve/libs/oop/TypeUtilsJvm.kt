@@ -36,9 +36,6 @@ actual val KClass<*>.companionObjectType: Optional<out KClass<*>>
 
 private val classNamePattern = "^$ID(\\.$ID(\\$$ID)*)*$".toRegex()
 
-actual val CLASS_NAME_PATTERN: Regex
-    get() = classNamePattern
-
 internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
     instance: Any?,
     action: () -> T,
@@ -85,24 +82,24 @@ private fun KParameter.pretty(): String =
 
 @Suppress("UNCHECKED_CAST")
 actual fun <T> KCallable<T>.invoke(
-    objectifier: Any?,
+    obj: Any?,
     vararg method: Any?,
 ): T =
     when (this) {
         is KProperty0<T> -> get()
         is KProperty1<*, T> -> {
             val property = this as KProperty1<Any?, T>
-            property.get(objectifier)
+            property.get(obj)
         }
         is KProperty2<*, *, T> -> {
             val property = this as KProperty2<Any?, Any?, T>
-            property.get(objectifier, method[0])
+            property.get(obj, method[0])
         }
         else -> {
-            if (objectifier == null) {
+            if (obj == null) {
                 call(*method)
             } else {
-                call(objectifier, *method)
+                call(obj, *method)
             }
         }
     }

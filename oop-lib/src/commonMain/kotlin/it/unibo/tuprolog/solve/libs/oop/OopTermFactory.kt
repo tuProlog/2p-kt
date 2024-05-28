@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.TermFactory
+import it.unibo.tuprolog.solve.libs.oop.impl.OopTermFactoryImpl
 import kotlin.reflect.KClass
 
 interface OopTermFactory : TermFactory {
@@ -11,7 +12,11 @@ interface OopTermFactory : TermFactory {
     fun typeRef(value: KClass<*>): TypeRef
 
     companion object {
-        fun of(typeFactory: TypeFactory): OopTermFactory = TODO()
+        fun of(
+            typeFactory: TypeFactory,
+            termFactory: TermFactory = TermFactory.default,
+        ): OopTermFactory = OopTermFactoryImpl(typeFactory, termFactory)
+
         val default: OopTermFactory = of(TypeFactory.default)
     }
 }
