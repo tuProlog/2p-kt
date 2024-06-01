@@ -10,7 +10,7 @@ javafx = "19.0.2.1"
 npm-yaml = "1.10.0" # yaml
 npm-tuprolog-parserUtils = "0.4.1" # @tuprolog/parser-utils
 npm-syncRequest = "6.1.0" # sync-request
-ktMpp = "4.1.3"
+ktMpp = "4.1.4"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
