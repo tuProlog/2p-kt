@@ -16,9 +16,9 @@ import kotlin.reflect.KClass
 
 internal abstract class AbstractDecoratorImpl(
     protected open val ref: Any,
-    override val termificator: Termificator,
-    override val objectifier: Objectifier,
-    override val typeFactory: TypeFactory,
+    termificator: Termificator,
+    objectifier: Objectifier,
+    typeFactory: TypeFactory,
 ) : BaseOOPContext(termificator, objectifier, typeFactory) {
     private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>): List<KClass<*>> {
         return formalParameterTypes.also { formalArgumentsTypes ->
@@ -30,7 +30,7 @@ internal abstract class AbstractDecoratorImpl(
             |are not as many as the as the actual parameters (${formalArgumentsTypes.size} vs. ${actualArguments.size}):
             |   $actualArguments
             |
-            """.trimMargin()
+                """.trimMargin()
             }
         }
     }
@@ -78,9 +78,7 @@ internal abstract class AbstractDecoratorImpl(
         return setterRef.callWithPrologArguments(listOf(value), instance)
     }
 
-    protected fun KClass<*>.create(
-        arguments: List<Term>,
-    ): Result {
+    protected fun KClass<*>.create(arguments: List<Term>): Result {
         val constructorRef = OverloadSelector.of(this, objectifier).findConstructor(arguments)
         return constructorRef.callWithPrologArguments(arguments)
     }

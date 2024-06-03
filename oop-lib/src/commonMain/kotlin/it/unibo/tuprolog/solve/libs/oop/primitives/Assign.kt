@@ -1,36 +1,32 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.libs.oop.OOPContext
+import it.unibo.tuprolog.solve.libs.oop.oop
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 
-object Assign : TernaryRelation.Predicative<ExecutionContext>("assign") {
+class Assign(oopContext: OOPContext) :
+    TernaryRelation.Predicative<ExecutionContext>(FUNCTOR), OOPContext by oopContext {
     override fun Solve.Request<ExecutionContext>.compute(
         first: Term,
         second: Term,
         third: Term,
-    ): Boolean {
-        ensuringArgumentIsAtom(0)
-        ensuringArgumentIsAtom(1)
-
-        return catchingOopExceptions {
-            val ref =
-                when (first) {
-                    is Ref -> first
-                    else -> findRefFromAlias(first as Atom)
-                }
-
-            val value =
-                if (match(third, DEALIASING_TEMPLATE)) {
-                    findRefFromAlias(third as Struct)
-                } else {
-                    third
-                }
-
-            ref.assign(objectifier, (second as Atom).value, value)
+    ): Boolean =
+        catchingOopExceptions {
+            val ref = getArgumentAsObjectRef(0)
+            val value = dealiasIfNecessary(third)
+            ref.oop.assign((second as Atom).value, value)
         }
+
+    init {
+        require(signature.arity == ARITY)
+    }
+
+    companion object {
+        const val FUNCTOR = "assign"
+        const val ARITY = 3
     }
 }

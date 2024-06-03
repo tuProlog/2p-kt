@@ -4,7 +4,6 @@ package it.unibo.tuprolog.dsl
 
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
-import kotlin.reflect.KClass
 
 @JsName("logicProgramming")
 fun <R> logicProgramming(function: LogicProgrammingScope.() -> R): R = LogicProgrammingScope.empty().function()

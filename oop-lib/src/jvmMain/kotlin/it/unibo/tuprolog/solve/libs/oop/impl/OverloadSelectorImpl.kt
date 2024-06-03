@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.libs.oop.OverloadSelector
 import it.unibo.tuprolog.solve.libs.oop.Objectifier
+import it.unibo.tuprolog.solve.libs.oop.OverloadSelector
 import it.unibo.tuprolog.solve.libs.oop.allSupertypes
 import it.unibo.tuprolog.solve.libs.oop.exceptions.ConstructorInvocationException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.MethodInvocationException

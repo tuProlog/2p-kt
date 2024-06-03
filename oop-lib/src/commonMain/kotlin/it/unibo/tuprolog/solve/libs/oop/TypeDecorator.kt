@@ -1,9 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop
 
-import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Termificator
-import it.unibo.tuprolog.solve.libs.oop.impl.ObjectDecoratorImpl
 import it.unibo.tuprolog.solve.libs.oop.impl.TypeDecoratorImpl
 
 interface TypeDecorator : OOPContext, TypeRef {

@@ -7,7 +7,6 @@ import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
 internal class TypeRefImpl(override val value: KClass<*>) : TypeRef, ObjectRef by ObjectRef.of(value) {
-
     override fun freshCopy(): TypeRef = this
 
     override fun freshCopy(scope: Scope): TypeRef = this

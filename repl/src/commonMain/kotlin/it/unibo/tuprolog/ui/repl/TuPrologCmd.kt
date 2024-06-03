@@ -122,7 +122,7 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
             }
         val libraries =
             if (oop) {
-                Runtime.of(IOLib, OOPLib, *additionalLibraries)
+                Runtime.of(IOLib, OOPLib(), *additionalLibraries)
             } else {
                 Runtime.of(IOLib, *additionalLibraries)
             }

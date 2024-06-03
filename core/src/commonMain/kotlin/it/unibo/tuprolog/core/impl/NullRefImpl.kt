@@ -17,6 +17,5 @@ internal class NullRefImpl(tags: Map<String, Any> = emptyMap()) : AbstractRef(nu
 
     override fun freshCopy(scope: Scope): NullRef = this
 
-    override fun equals(other: Any?): Boolean =
-        asTerm(other)?.asNullRef()?.isNullRef ?: false
+    override fun equals(other: Any?): Boolean = asTerm(other)?.asNullRef()?.isNullRef ?: false
 }

@@ -278,7 +278,7 @@ class ExamplePrologSolver {
     fun usingLibraries() {
         val solver =
             Solver.prolog.solverOf(
-                libraries = Runtime.of(DefaultBuiltins, IOLib, OOPLib),
+                libraries = Runtime.of(DefaultBuiltins, IOLib, OOPLib()),
             )
 
         println(solver.libraries.keys) // [prolog.lang, prolog.io, prolog.oop]

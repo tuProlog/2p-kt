@@ -73,7 +73,7 @@ class PLPIDEApplication : Application() {
         // Create a solver with PLP support
         model.customizeSolver {
             Solver.problog.mutableSolverWithDefaultBuiltins(
-                otherLibraries = Runtime.of(OOPLib, IOLib),
+                otherLibraries = Runtime.of(OOPLib(), IOLib),
                 stdIn = it.standardInput,
                 stdOut = it.standardOutput,
                 stdErr = it.standardError,

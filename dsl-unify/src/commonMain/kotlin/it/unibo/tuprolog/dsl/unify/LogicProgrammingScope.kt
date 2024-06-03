@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.dsl.unify
 
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.VariablesProvider
 import it.unibo.tuprolog.core.Termificator
+import it.unibo.tuprolog.core.VariablesProvider
 import it.unibo.tuprolog.dsl.LogicProgrammingScopeWithOperators
 import it.unibo.tuprolog.dsl.LogicProgrammingScopeWithPrologStandardLibrary
 import it.unibo.tuprolog.dsl.LogicProgrammingScopeWithSubstitutions

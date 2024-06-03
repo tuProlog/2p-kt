@@ -33,7 +33,7 @@ sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
                     structOf(Var.functor, R),
                     atomOf("!"),
                     structOf(FluentReduce.FUNCTOR, X, Y),
-                    structOf(CastPrimitive.functor, Y, T, R),
+                    structOf(CastPrimitive.FUNCTOR, Y, T, R),
                 )
     }
 
@@ -66,7 +66,7 @@ sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
             get() =
                 tupleOf(
                     structOf(PropertyReduce.FUNCTOR, C, R, P),
-                    structOf(Assign.functor, R, P, V),
+                    structOf(Assign.FUNCTOR, R, P, V),
                 )
     }
 }

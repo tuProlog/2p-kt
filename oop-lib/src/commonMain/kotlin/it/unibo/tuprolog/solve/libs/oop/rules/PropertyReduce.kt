@@ -38,7 +38,7 @@ sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
             get() =
                 tupleOf(
                     atomOf("!"),
-                    structOf(InvokeMethod.functor, A, B, B1),
+                    structOf(InvokeMethod.FUNCTOR, A, B, B1),
                     structOf(FUNCTOR, consOf(B1, C), O, P),
                 )
     }

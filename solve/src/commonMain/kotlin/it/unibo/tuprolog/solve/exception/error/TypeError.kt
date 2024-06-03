@@ -165,7 +165,6 @@ class TypeError(
         OBJECT_REFERENCE,
         PAIR,
         PREDICATE_INDICATOR,
-        REFERENCE,
         TYPE_REFERENCE,
         URL,
         VARIABLE,

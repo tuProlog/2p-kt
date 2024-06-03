@@ -8,13 +8,21 @@ import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
 interface Objectifier {
-    fun convertInto(type: KClass<*>, term: Term): Any?
+    val typeFactory: TypeFactory
+
+    fun convertInto(
+        type: KClass<*>,
+        term: Term,
+    ): Any?
 
     fun possibleConversions(term: Term): Sequence<Any?>
 
     fun admissibleTypes(term: Term): Set<KClass<*>>
 
-    fun priorityOfConversion(type: KClass<*>, term: Term): Int?
+    fun priorityOfConversion(
+        type: KClass<*>,
+        term: Term,
+    ): Int?
 
     fun mostAdequateType(term: Term): KClass<*>
 

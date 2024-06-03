@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.libs.oop.primitives.NewObject3
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 
-object NewObject2 : RuleWrapper<ExecutionContext>(NewObject3.functor, 2) {
+object NewObject2 : RuleWrapper<ExecutionContext>(NewObject3.FUNCTOR, 2) {
     private val Type by variables
     private val Instance by variables
 
@@ -14,5 +14,5 @@ object NewObject2 : RuleWrapper<ExecutionContext>(NewObject3.functor, 2) {
         get() = listOf(Type, Instance)
 
     override val Scope.body: Term
-        get() = structOf(NewObject3.functor, Type, emptyLogicList, Instance)
+        get() = structOf(NewObject3.FUNCTOR, Type, emptyLogicList, Instance)
 }

@@ -18,7 +18,7 @@ object Dot : RuleWrapper<ExecutionContext>(ACCESS_OPERATOR, 2) {
 
     override val Scope.head: List<Term>
         get() =
-            kotlin.collections.listOf(
+            listOf(
                 Ref,
                 Method,
             )

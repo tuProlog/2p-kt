@@ -1,14 +1,11 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.Info
 import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.box
-import it.unibo.tuprolog.utils.fullName
 import it.unibo.tuprolog.utils.identifier
-import it.unibo.tuprolog.utils.name
 import it.unibo.tuprolog.utils.safeName
 
 @Suppress("EqualsOrHashCode")
@@ -32,11 +29,12 @@ internal abstract class AbstractRef(value: Any?, tags: Map<String, Any>) : Abstr
             this
         }
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        this == other
+    override fun equals(
+        other: Term,
+        useVarCompleteName: Boolean,
+    ): Boolean = this == other
 
-    override fun equals(other: Any?): Boolean =
-        asTerm(other)?.asObjectRef()?.let { value === it.value } ?: false
+    override fun equals(other: Any?): Boolean = asTerm(other)?.asObjectRef()?.let { value === it.value } ?: false
 
     override fun structurallyEquals(other: Term): Boolean = equals(other)
 

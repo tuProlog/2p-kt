@@ -5,7 +5,6 @@ import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.collections.List
 import kotlin.js.JsName
-import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 

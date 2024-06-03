@@ -5,15 +5,14 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.libs.oop.TypeFactory
+import it.unibo.tuprolog.solve.libs.oop.OOPContext
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
-import it.unibo.tuprolog.solve.libs.oop.name
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.utils.safeName
 
-object Type : BinaryRelation.Functional<ExecutionContext>("type") {
-    private val typeFactory = TypeFactory.default
-
+class Type(oopContext: OOPContext) :
+    BinaryRelation.Functional<ExecutionContext>("type"), OOPContext by oopContext {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
@@ -26,12 +25,12 @@ object Type : BinaryRelation.Functional<ExecutionContext>("type") {
                 }
                 first is Var -> {
                     ensuringArgumentIsAtom(1)
-                    ensuringArgumentIsTypeRef(1)
-                    mgu(first, Atom.of((second as TypeRef).type.name))
+                    ensuringArgumentIsTypeRefOrAlias(1)
+                    mgu(first, Atom.of((second as TypeRef).value.safeName))
                 }
                 second is Var -> {
                     ensuringArgumentIsAtom(0)
-                    typeFactory.typeRefFromName((first as Atom).value)?.let { mgu(it, second) } ?: Substitution.failed()
+                    mgu(termFactory.typeRef((first as Atom).value), second)
                 }
                 else -> {
                     ensuringArgumentIsAtom(0)

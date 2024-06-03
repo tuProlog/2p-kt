@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
-object SetItems : AbstractIterableItems<Set<*>>("set", Set::class) {
+import it.unibo.tuprolog.solve.libs.oop.OOPContext
+
+class SetItems(oopContext: OOPContext) : AbstractIterableItems<Set<*>>("set", Set::class, oopContext) {
     override fun Sequence<Any?>.toIterable(): Set<*> = toSet()
 
     override val Any?.isIterable: Boolean

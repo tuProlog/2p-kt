@@ -33,17 +33,20 @@ class TestUnificationWithRefs {
     }
 
     @Test
-    fun testUnificationWithRefs() = with(variables) {
-        val expected = Substitution.of(
-            X to ref,
-            Y to nullRef,
-        )
-        val actual = unificator.mgu(
-            f(X, nullRef),
-            f(ref, Y),
-        )
-        assertEquals(expected, actual)
-    }
+    fun testUnificationWithRefs() =
+        with(variables) {
+            val expected =
+                Substitution.of(
+                    X to ref,
+                    Y to nullRef,
+                )
+            val actual =
+                unificator.mgu(
+                    f(X, nullRef),
+                    f(ref, Y),
+                )
+            assertEquals(expected, actual)
+        }
 
     @Test
     fun testMatchAmongNullRefs() {

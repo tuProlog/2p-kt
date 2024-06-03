@@ -10,11 +10,17 @@ class TestNameReflection {
     private val innerClassFullName = "it.unibo.tuprolog.utils.MyClass.InnerClass"
     private val innerClassName = innerClassFullName.substringAfterLast('.')
 
-    private fun assertNameEquals(expected: String, klass: KClass<*>) {
+    private fun assertNameEquals(
+        expected: String,
+        klass: KClass<*>,
+    ) {
         assertEquals(expected, klass.name)
     }
 
-    private fun assertFullNameEquals(expected: String, klass: KClass<*>) {
+    private fun assertFullNameEquals(
+        expected: String,
+        klass: KClass<*>,
+    ) {
         try {
             assertEquals(expected, klass.fullName)
         } catch (e: IllegalStateException) {

@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
-import it.unibo.tuprolog.solve.libs.oop.fullName
+import it.unibo.tuprolog.utils.safeName
 import java.util.TreeMap
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 
 internal object KotlinTypesHacks {
     private data class CallableId(val type: KClass<*>, val name: String) : Comparable<CallableId> {
-        private val stringRepresentation = "${type.fullName}::$name"
+        private val stringRepresentation = "${type.safeName}::$name"
 
         override fun compareTo(other: CallableId): Int = stringRepresentation.compareTo(other.stringRepresentation)
 

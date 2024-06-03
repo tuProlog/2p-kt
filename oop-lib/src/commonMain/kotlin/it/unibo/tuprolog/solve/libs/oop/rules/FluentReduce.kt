@@ -39,7 +39,7 @@ sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
             get() =
                 tupleOf(
                     atomOf("!"),
-                    structOf(InvokeMethod.functor, P, M, P1),
+                    structOf(InvokeMethod.FUNCTOR, P, M, P1),
                     structOf(FUNCTOR, consOf(P1, X), R),
                 )
     }
@@ -55,7 +55,7 @@ sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
             get() =
                 tupleOf(
                     atomOf("!"),
-                    structOf(InvokeMethod.functor, P, M, R),
+                    structOf(InvokeMethod.FUNCTOR, P, M, R),
                 )
     }
 

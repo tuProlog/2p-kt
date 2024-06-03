@@ -1,18 +1,17 @@
 package it.unibo.tuprolog.solve.libs.oop.rules
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.libs.oop.OOP
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
-import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.reflect.KClass
 
-class Alias private constructor(val alias: Struct, val ref: Ref) : RuleWrapper<ExecutionContext>(FUNCTOR, 2) {
+class Alias private constructor(val alias: Struct, val ref: ObjectRef) : RuleWrapper<ExecutionContext>(FUNCTOR, 2) {
     companion object {
         fun forObject(
             alias: String,
@@ -26,7 +25,7 @@ class Alias private constructor(val alias: Struct, val ref: Ref) : RuleWrapper<E
 
         fun of(
             alias: Struct,
-            ref: Ref,
+            ref: ObjectRef,
         ) = Alias(alias, ref)
 
         const val FUNCTOR = OOP.ALIAS_FUNCTOR

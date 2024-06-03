@@ -20,7 +20,10 @@ class TestIdentifier {
         testIdentityHash({ 1 }, { "1".toInt() })
     }
 
-    private fun <T : Any> testIdentityHash(provider1: () -> T, provider2: () -> T) {
+    private fun <T : Any> testIdentityHash(
+        provider1: () -> T,
+        provider2: () -> T,
+    ) {
         val obj1 = box(provider1())
         val id1 = obj1.identifier
         val obj2 = box(provider2())

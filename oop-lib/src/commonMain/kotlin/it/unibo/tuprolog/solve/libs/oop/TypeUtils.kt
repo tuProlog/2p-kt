@@ -3,7 +3,6 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.ObjectRef
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Optional
 import it.unibo.tuprolog.utils.indexed
 import kotlin.jvm.JvmName

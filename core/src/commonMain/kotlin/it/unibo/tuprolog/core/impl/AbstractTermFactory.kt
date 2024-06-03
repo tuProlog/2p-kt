@@ -490,10 +490,11 @@ internal abstract class AbstractTermFactory : TermFactory {
             else -> throw IllegalArgumentException("Cannot parse $value as a Truth value")
         }
 
-    override fun objectRef(value: Any?): ObjectRef = when {
-        value === null -> nullRef()
-        else -> ObjectRefImpl(value)
-    }
+    override fun objectRef(value: Any?): ObjectRef =
+        when {
+            value === null -> nullRef()
+            else -> ObjectRefImpl(value)
+        }
 
     override fun nullRef(): NullRef = NullRefImpl()
 }

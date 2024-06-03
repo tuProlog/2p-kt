@@ -25,14 +25,21 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOM
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOMIC
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.CALLABLE
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.CHARACTER
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.COMPOUND
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.INTEGER
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.LIST
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.NUMBER
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.OBJECT_REFERENCE
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.PREDICATE_INDICATOR
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.TYPE_REFERENCE
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.VARIABLE
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.MaxArity
 import org.gciatto.kt.math.BigInteger
 import kotlin.jvm.JvmStatic
+import kotlin.reflect.KClass
 
 /**
  * Wrapper class for [Primitive] implementation
@@ -131,6 +138,25 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 override fun visitNumeric(term: Numeric): TypeError =
                     TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
             }
+
+        @JvmStatic
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsOfType(
+            index: Int,
+            expectedType: TypeError.Expected,
+            check: Term.() -> Boolean,
+        ): Solve.Request<C> {
+            val arg = arguments[index]
+            return when {
+                !arg.check() -> throw TypeError.forArgument(
+                    context,
+                    signature,
+                    expectedType,
+                    arg,
+                    index,
+                )
+                else -> this
+            }
+        }
 
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.checkTermIsRecursivelyCallable(term: Term): TypeError? =
@@ -257,80 +283,40 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             ensureIsInstantiated(arguments[index], index)
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNumeric(index: Int): Solve.Request<C> {
-            val arg = arguments[index]
-            return when {
-                !arg.isNumber -> throw TypeError.forArgument(context, signature, TypeError.Expected.NUMBER, arg, index)
-                else -> this
-            }
-        }
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNumeric(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, NUMBER) { isNumber }
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStruct(index: Int): Solve.Request<C> {
-            val arg = arguments[index]
-            return when {
-                !arg.isStruct -> throw TypeError.forArgument(
-                    context,
-                    signature,
-                    TypeError.Expected.CALLABLE,
-                    arg,
-                    index,
-                )
-                else -> this
-            }
-        }
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStruct(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, CALLABLE) { isStruct }
+
+        @JvmStatic
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsObjectRef(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, OBJECT_REFERENCE) { isObjectRef }
+
+        @JvmStatic
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsTypeRef(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, TYPE_REFERENCE) { asObjectRef()?.value?.let { it is KClass<*> } ?: false }
 
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCallable(index: Int): Solve.Request<C> =
             ensuringArgumentIsStruct(index)
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVariable(index: Int): Solve.Request<C> {
-            val arg = arguments[index]
-            return when {
-                !arg.isVar -> throw TypeError.forArgument(
-                    context,
-                    signature,
-                    TypeError.Expected.VARIABLE,
-                    arg,
-                    index,
-                )
-                else -> this
-            }
-        }
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVariable(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, VARIABLE) { isVar }
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCompound(index: Int): Solve.Request<C> {
-            val arg = arguments[index]
-            return when {
-                !arg.isStruct || arg.isAtom -> throw TypeError.forArgument(
-                    context,
-                    signature,
-                    TypeError.Expected.COMPOUND,
-                    arg,
-                    index,
-                )
-                else -> this
-            }
-        }
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCompound(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, COMPOUND) { asStruct()?.arity?.let { it > 0 } ?: false }
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsAtom(index: Int): Solve.Request<C> {
-            val arg = arguments[index]
-            return when {
-                !arg.isAtom -> throw TypeError.forArgument(context, signature, ATOM, arg, index)
-                else -> this
-            }
-        }
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsAtom(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, ATOM) { isAtom }
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsConstant(index: Int): Solve.Request<C> {
-            val arg = arguments[index]
-            return when {
-                !arg.isConstant -> throw TypeError.forArgument(context, signature, ATOMIC, arg, index)
-                else -> this
-            }
-        }
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsConstant(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, ATOMIC) { isConstant }
 
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsGround(index: Int): Solve.Request<C> =
@@ -344,21 +330,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsChar(index: Int): Solve.Request<C> {
-            val arg = arguments[index]
-            return when {
-                arg.isAtom -> {
-                    val string = arg.castToAtom().value
-                    when (string.length) {
-                        1 -> this
-                        else -> throw TypeError.forArgument(context, signature, CHARACTER, arg, index)
-                    }
-                }
-                else -> {
-                    throw TypeError.forArgument(context, signature, CHARACTER, arg, index)
-                }
-            }
-        }
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsChar(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, CHARACTER) { asAtom()?.value?.length == 1 }
 
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsSpecifier(index: Int): Solve.Request<C> =
@@ -377,22 +350,12 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInteger(index: Int): Solve.Request<C> {
-            val arg = arguments[index]
-            when {
-                !arg.isInteger -> throw TypeError.forArgument(context, signature, INTEGER, arg, index)
-                else -> return this
-            }
-        }
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInteger(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, INTEGER) { isInteger }
 
         @JvmStatic
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsList(index: Int): Solve.Request<C> {
-            val arg = arguments[index]
-            return when {
-                !arg.isList -> throw TypeError.forArgument(context, signature, LIST, arg, index)
-                else -> this
-            }
-        }
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsList(index: Int): Solve.Request<C> =
+            ensuringArgumentIsOfType(index, LIST) { isList }
 
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsArity(index: Int): Solve.Request<C> =

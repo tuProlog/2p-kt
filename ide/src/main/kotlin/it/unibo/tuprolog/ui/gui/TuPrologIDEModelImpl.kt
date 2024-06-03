@@ -162,7 +162,7 @@ internal class TuPrologIDEModelImpl(
         Cached.of {
             var newSolver =
                 Solver.prolog.newBuilder()
-                    .runtime(Runtime.of(OOPLib, IOLib))
+                    .runtime(Runtime.of(OOPLib(), IOLib))
                     .flag(TrackVariables) { ON }
                     .standardInput(InputChannel.of(stdin))
                     .standardOutput(OutputChannel.of { onStdoutPrinted.push(it) })

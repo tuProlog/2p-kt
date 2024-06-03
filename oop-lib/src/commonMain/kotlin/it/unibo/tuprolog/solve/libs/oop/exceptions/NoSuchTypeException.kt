@@ -24,7 +24,10 @@ class NoSuchTypeException : OopException {
         private fun message(typeName: String) = "Missing type $typeName on platform ${Info.PLATFORM.name}"
     }
 
-    override fun toLogicError(context: ExecutionContext, signature: Signature): LogicError {
+    override fun toLogicError(
+        context: ExecutionContext,
+        signature: Signature,
+    ): LogicError {
         return ExistenceError.of(
             context,
             ExistenceError.ObjectType.OOP_TYPE,

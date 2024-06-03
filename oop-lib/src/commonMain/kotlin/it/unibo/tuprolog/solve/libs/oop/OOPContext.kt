@@ -8,4 +8,6 @@ interface OOPContext {
     val objectifier: Objectifier
 
     val typeFactory: TypeFactory
+
+    val termFactory: OopTermFactory
 }

@@ -25,7 +25,7 @@ import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
 
 internal class ObjectifierImpl(
-    private val typeFactory: TypeFactory,
+    override val typeFactory: TypeFactory,
     private val dealiaser: (Struct) -> ObjectRef?,
 ) : Objectifier {
     override fun convertInto(
