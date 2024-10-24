@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>it.unibo.tuprolog.ide</id>
+  
+  <name>tuProlog IDE</name>
+  <summary>An IDE for using Prolog via 2p-kt</summary>
+
+  <url type="homepage">https://apice.unibo.it/xwiki/bin/view/Tuprolog/</url>
+  
+  <metadata_license>CC-BY-SA-4.0</metadata_license>
+  <project_license>Apache-2.0</project_license>
+  
+  <description>
+    <p>
+      tuProlog (2P henceforth) is a multi-paradigm logic programming framework written in Java.
+    </p>
+    <p>
+      2P-Kt is a Kotlin-based and multi-platform reboot of 2P. It consists of an open ecosystem for Symbolic Artificial Intelligence (AI). For this reason, 2P-Kt consists of a number of incrementally inter-dependent modules aimed at supporting symbolic manipulation and reasoning in an extensible and flexible way.
+    </p>
+  </description>
+  
+  <launchable type="desktop-id">it.unibo.tuprolog.ide.desktop</launchable>
+</component>
