@@ -2,7 +2,7 @@
 kotlin = "1.9.24"
 jvm = "11"
 node = "16-latest"
-jackson = "2.17.1"
+jackson = "2.20.0"
 orchid = "0.21.1"
 antlr = "4.13.1"
 kotlinx-coroutines = "1.6.4"
