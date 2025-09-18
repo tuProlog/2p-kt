@@ -30,7 +30,9 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
         sequence {
             val subGoals =
                 with(request) {
-                    query.castToTuple().toSequence()
+                    query
+                        .castToTuple()
+                        .toSequence()
                         .orderWithStrategy(context, context.solverStrategies::predicationChoiceStrategy)
                         .toList()
                 }

@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.library.Runtime
 import kotlin.test.Test
 
-class TestClassicInclude : TestInclude, SolverFactory by ClassicSolverFactory {
+class TestClassicInclude :
+    TestInclude,
+    SolverFactory by ClassicSolverFactory {
     private val prototype = TestInclude.prototype(this)
 
     override val defaultRuntime: Runtime

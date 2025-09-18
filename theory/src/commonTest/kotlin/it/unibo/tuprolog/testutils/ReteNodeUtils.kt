@@ -238,13 +238,14 @@ internal object ReteNodeUtils {
     /** Creates a Map containing for each structurallyEquals Clause.head the clauses ordered (according to [clauses] iteration order),
      * constructing the overall partial ordering */
     private fun partialOrderingHeadClauseMap(clauses: Iterable<Clause>): Map<Struct?, Iterable<Clause>> =
-        mutableMapOf<Struct?, Iterable<Clause>>().also { resultMap ->
-            clauses.forEachStructurallyEqualsHead(
-                resultMap,
-                onPresentEntry = { clause, entry -> entry.setValue(entry.value + clause) },
-                onMissingEntry = { clause, map -> map[clause.head] = mutableListOf(clause) },
-            )
-        }.toMap()
+        mutableMapOf<Struct?, Iterable<Clause>>()
+            .also { resultMap ->
+                clauses.forEachStructurallyEqualsHead(
+                    resultMap,
+                    onPresentEntry = { clause, entry -> entry.setValue(entry.value + clause) },
+                    onMissingEntry = { clause, map -> map[clause.head] = mutableListOf(clause) },
+                )
+            }.toMap()
 
     /** Utility function to iterate over clauses with partial ordering map, doing actions on found or missing entry */
     private inline fun Iterable<Clause>.forEachStructurallyEqualsHead(
@@ -253,10 +254,11 @@ internal object ReteNodeUtils {
         onMissingEntry: (Clause, MutableMap<Struct?, Iterable<Clause>>) -> Unit,
     ) {
         forEach { clause ->
-            partialOrderingMap.entries.find { (clauseHead, _) ->
-                clauseHead?.let { clause is Rule && it structurallyEquals clause.head }
-                    ?: clause.isDirective
-            }?.also { onPresentEntry(clause, it) } ?: onMissingEntry(clause, partialOrderingMap)
+            partialOrderingMap.entries
+                .find { (clauseHead, _) ->
+                    clauseHead?.let { clause is Rule && it structurallyEquals clause.head }
+                        ?: clause.isDirective
+                }?.also { onPresentEntry(clause, it) } ?: onMissingEntry(clause, partialOrderingMap)
         }
     }
 }

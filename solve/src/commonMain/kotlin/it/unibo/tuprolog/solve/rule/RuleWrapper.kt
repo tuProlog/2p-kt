@@ -11,7 +11,9 @@ import it.unibo.tuprolog.solve.Signature
 import kotlin.collections.List as KtList
 
 // TODO: 16/01/2020 document and test this class
-abstract class RuleWrapper<C : ExecutionContext>(signature: Signature) : AbstractWrapper<Rule>(signature) {
+abstract class RuleWrapper<C : ExecutionContext>(
+    signature: Signature,
+) : AbstractWrapper<Rule>(signature) {
     constructor(functor: String, arity: Int, vararg: Boolean = false) :
         this(Signature(functor, arity, vararg))
 
@@ -30,7 +32,5 @@ abstract class RuleWrapper<C : ExecutionContext>(signature: Signature) : Abstrac
 
     open val Scope.body: Term get() = truthOf(true)
 
-    final override fun toString(): String {
-        return "RuleWrapper(signature=${signature.toIndicator()}, rule=$implementation)"
-    }
+    final override fun toString(): String = "RuleWrapper(signature=${signature.toIndicator()}, rule=$implementation)"
 }

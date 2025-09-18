@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIfThen {
+internal class TestIfThenImpl(
+    private val solverFactory: SolverFactory,
+) : TestIfThen {
     override fun testIfThenTrue() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

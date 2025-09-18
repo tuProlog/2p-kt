@@ -5,7 +5,11 @@ import it.unibo.tuprolog.solve.libs.oop.exceptions.OopException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
 import kotlin.reflect.KClass
 
-internal data class TestDatum(val term: Term, val type: KClass<*>, val converted: Any?) {
+internal data class TestDatum(
+    val term: Term,
+    val type: KClass<*>,
+    val converted: Any?,
+) {
     val string: String get() = type.name
 
     constructor(obj: Any?, type: KClass<*>) :
@@ -20,8 +24,6 @@ internal data class TestDatum(val term: Term, val type: KClass<*>, val converted
         fun failed(
             term: Term,
             type: KClass<*>,
-        ): TestDatum {
-            return TestDatum(term, type, TermToObjectConversionException(term, type))
-        }
+        ): TestDatum = TestDatum(term, type, TermToObjectConversionException(term, type))
     }
 }

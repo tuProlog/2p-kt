@@ -10,7 +10,9 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentNotProvable<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentNotProvable<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     val errorSignature: Signature
 
     fun testNPTrue() {

@@ -4,7 +4,9 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 
-internal class TestRetractImpl(private val solverFactory: SolverFactory) : TestRetract {
+internal class TestRetractImpl(
+    private val solverFactory: SolverFactory,
+) : TestRetract {
     override fun testRetractNumIfX() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

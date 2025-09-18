@@ -20,7 +20,9 @@ import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
-internal class MutableConcurrentSolver : ConcurrentSolverImpl, MutableSolver {
+internal class MutableConcurrentSolver :
+    ConcurrentSolverImpl,
+    MutableSolver {
     constructor(
         unificator: Unificator = Unificator.default,
         libraries: Runtime = Runtime.empty(),

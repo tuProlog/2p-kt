@@ -15,7 +15,8 @@ import it.unibo.tuprolog.unify.Unificator
 internal class MutableIndexedTheory private constructor(
     override val queue: MutableClauseQueue,
     tags: Map<String, Any>,
-) : AbstractIndexedTheory(queue, tags), MutableTheory {
+) : AbstractIndexedTheory(queue, tags),
+    MutableTheory {
     override fun setUnificator(unificator: Unificator): MutableTheory =
         super<AbstractIndexedTheory>.setUnificator(unificator).toMutableTheory()
 
@@ -57,7 +58,8 @@ internal class MutableIndexedTheory private constructor(
 
     override fun retract(clauses: Iterable<Clause>): RetractResult<MutableIndexedTheory> {
         val retracted =
-            clauses.asSequence()
+            clauses
+                .asSequence()
                 .map { queue.retrieve(it) }
                 .filter { it.isSuccess }
                 .flatMap { it.clauses!!.asSequence() }
@@ -70,19 +72,19 @@ internal class MutableIndexedTheory private constructor(
     }
 
     override fun retractAll(clause: Clause): RetractResult<MutableIndexedTheory> =
-        queue.retrieveAll(
-            clause,
-        ).toRetractResult()
+        queue
+            .retrieveAll(
+                clause,
+            ).toRetractResult()
 
     override fun plus(clause: Clause): MutableIndexedTheory = assertZ(checkClauseCorrect(clause))
 
-    override fun plus(theory: Theory): MutableIndexedTheory {
-        return if (theory === this) {
+    override fun plus(theory: Theory): MutableIndexedTheory =
+        if (theory === this) {
             assertZ(theory.toList())
         } else {
             assertZ(theory)
         }
-    }
 
     override fun assertA(clause: Clause): MutableIndexedTheory =
         this.also {
@@ -91,13 +93,12 @@ internal class MutableIndexedTheory private constructor(
             )
         }
 
-    override fun assertA(clauses: Iterable<Clause>): MutableIndexedTheory {
-        return this.also {
+    override fun assertA(clauses: Iterable<Clause>): MutableIndexedTheory =
+        this.also {
             for (clause in checkClausesCorrect(clauses).toList().asReversed()) {
                 it.queue.addFirst(clause)
             }
         }
-    }
 
     override fun assertA(clauses: Sequence<Clause>): MutableIndexedTheory = assertA(clauses.asIterable())
 

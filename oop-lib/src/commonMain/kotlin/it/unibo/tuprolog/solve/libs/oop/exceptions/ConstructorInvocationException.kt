@@ -20,14 +20,13 @@ class ConstructorInvocationException(
     override fun toLogicError(
         context: ExecutionContext,
         signature: Signature,
-    ): LogicError {
-        return ExistenceError.of(
+    ): LogicError =
+        ExistenceError.of(
             context,
             ExistenceError.ObjectType.OOP_CONSTRUCTOR,
             culprit,
             message ?: "",
         )
-    }
 
     override val culprit: Term
         get() = Atom.of("${type.fullName}::(${admissibleTypes.pretty()})")

@@ -9,7 +9,8 @@ internal class FamilyArityIndexingNode(
     unificator: Unificator,
     private val ordered: Boolean,
     nestingLevel: Int,
-) : FamilyArityReteNode(unificator, ordered, nestingLevel), ArityIndexing {
+) : FamilyArityReteNode(unificator, ordered, nestingLevel),
+    ArityIndexing {
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
         if (ordered) {
             orderedLookahead(clause)
@@ -31,8 +32,8 @@ internal class FamilyArityIndexingNode(
             retractAllUnorderedIndexed(clause)
         }
 
-    override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (ordered) {
+    override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
+        if (ordered) {
             Utils.merge(
                 atomicIndex.extractGlobalIndexedSequence(clause),
                 numericIndex.extractGlobalIndexedSequence(clause),
@@ -47,5 +48,4 @@ internal class FamilyArityIndexingNode(
                 compoundIndex.extractGlobalIndexedSequence(clause),
             )
         }
-    }
 }

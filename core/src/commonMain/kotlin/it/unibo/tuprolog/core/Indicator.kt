@@ -52,7 +52,12 @@ interface Indicator : Struct {
     /** The indicated functor arity, if well-formed */
     @JsName("indicatedArity")
     val indicatedArity: Int?
-        get() = arityTerm.asInteger()?.intValue?.toInt()?.takeIf { it >= 0 }
+        get() =
+            arityTerm
+                .asInteger()
+                ?.intValue
+                ?.toInt()
+                ?.takeIf { it >= 0 }
 
     override fun asIndicator(): Indicator = this
 

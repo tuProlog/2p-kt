@@ -10,7 +10,9 @@ import it.unibo.tuprolog.solve.ExecutionContext
  *
  * @author Enrico
  */
-abstract class NullaryMathFunction(name: String) : MathFunction(name, 0) {
+abstract class NullaryMathFunction(
+    name: String,
+) : MathFunction(name, 0) {
     override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response =
         with(request) { replyWith(mathFunction(context)) }
 

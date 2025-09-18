@@ -56,7 +56,8 @@ interface Pluggable {
     @JsName("ruleSignatures")
     val rulesSignatures: Sequence<Signature>
         get() =
-            clauses.asSequence()
+            clauses
+                .asSequence()
                 .filterIsInstance<Rule>()
                 .map { it.head.indicator }
                 .map { Signature.fromIndicator(it) }

@@ -4,7 +4,9 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 
-abstract class QuinaryRelation<E : ExecutionContext>(operator: String) : PrimitiveWrapper<E>(operator, 5) {
+abstract class QuinaryRelation<E : ExecutionContext>(
+    operator: String,
+) : PrimitiveWrapper<E>(operator, 5) {
     /** Template method aimed at computing the application of this relation to three [Term]s */
     protected abstract fun Solve.Request<E>.computeAll(
         first: Term,
@@ -14,17 +16,18 @@ abstract class QuinaryRelation<E : ExecutionContext>(operator: String) : Primiti
         fifth: Term,
     ): Sequence<Solve.Response>
 
-    final override fun uncheckedImplementation(request: Solve.Request<E>): Sequence<Solve.Response> {
-        return request.computeAll(
+    final override fun uncheckedImplementation(request: Solve.Request<E>): Sequence<Solve.Response> =
+        request.computeAll(
             request.arguments[0],
             request.arguments[1],
             request.arguments[2],
             request.arguments[3],
             request.arguments[4],
         )
-    }
 
-    abstract class WithoutSideEffects<E : ExecutionContext>(operator: String) : QuinaryRelation<E>(operator) {
+    abstract class WithoutSideEffects<E : ExecutionContext>(
+        operator: String,
+    ) : QuinaryRelation<E>(operator) {
         protected abstract fun Solve.Request<E>.computeAllSubstitutions(
             first: Term,
             second: Term,
@@ -39,12 +42,12 @@ abstract class QuinaryRelation<E : ExecutionContext>(operator: String) : Primiti
             third: Term,
             fourth: Term,
             fifth: Term,
-        ): Sequence<Solve.Response> {
-            return computeAllSubstitutions(first, second, third, fourth, fifth).map { replyWith(it) }
-        }
+        ): Sequence<Solve.Response> = computeAllSubstitutions(first, second, third, fourth, fifth).map { replyWith(it) }
     }
 
-    abstract class NonBacktrackable<E : ExecutionContext>(operator: String) : QuinaryRelation<E>(operator) {
+    abstract class NonBacktrackable<E : ExecutionContext>(
+        operator: String,
+    ) : QuinaryRelation<E>(operator) {
         protected abstract fun Solve.Request<E>.computeOne(
             first: Term,
             second: Term,
@@ -59,12 +62,12 @@ abstract class QuinaryRelation<E : ExecutionContext>(operator: String) : Primiti
             third: Term,
             fourth: Term,
             fifth: Term,
-        ): Sequence<Solve.Response> {
-            return sequenceOf(computeOne(first, second, third, fourth, fifth))
-        }
+        ): Sequence<Solve.Response> = sequenceOf(computeOne(first, second, third, fourth, fifth))
     }
 
-    abstract class Functional<E : ExecutionContext>(operator: String) : NonBacktrackable<E>(operator) {
+    abstract class Functional<E : ExecutionContext>(
+        operator: String,
+    ) : NonBacktrackable<E>(operator) {
         protected abstract fun Solve.Request<E>.computeOneSubstitution(
             first: Term,
             second: Term,
@@ -79,12 +82,12 @@ abstract class QuinaryRelation<E : ExecutionContext>(operator: String) : Primiti
             third: Term,
             fourth: Term,
             fifth: Term,
-        ): Solve.Response {
-            return replyWith(computeOneSubstitution(first, second, third, fourth, fifth))
-        }
+        ): Solve.Response = replyWith(computeOneSubstitution(first, second, third, fourth, fifth))
     }
 
-    abstract class Predicative<E : ExecutionContext>(operator: String) : NonBacktrackable<E>(operator) {
+    abstract class Predicative<E : ExecutionContext>(
+        operator: String,
+    ) : NonBacktrackable<E>(operator) {
         protected abstract fun Solve.Request<E>.compute(
             first: Term,
             second: Term,
@@ -99,8 +102,6 @@ abstract class QuinaryRelation<E : ExecutionContext>(operator: String) : Primiti
             third: Term,
             fourth: Term,
             fifth: Term,
-        ): Solve.Response {
-            return if (compute(first, second, third, fourth, fifth)) replySuccess() else replyFail()
-        }
+        ): Solve.Response = if (compute(first, second, third, fourth, fifth)) replySuccess() else replyFail()
     }
 }

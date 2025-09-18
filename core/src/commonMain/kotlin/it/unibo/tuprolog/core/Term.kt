@@ -8,7 +8,12 @@ import kotlin.js.JsName
  * Base type for all logic terms.
  * [Term]s are immutable tree-like data structures.
  */
-interface Term : Comparable<Term>, Taggable<Term>, Castable<Term>, Applicable<Term>, Variabled {
+interface Term :
+    Comparable<Term>,
+    Taggable<Term>,
+    Castable<Term>,
+    Applicable<Term>,
+    Variabled {
     /**
      * Empty companion aimed at letting extensions be injected through extension methods
      */

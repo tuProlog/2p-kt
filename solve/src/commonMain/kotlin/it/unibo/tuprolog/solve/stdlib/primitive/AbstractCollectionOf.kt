@@ -11,7 +11,9 @@ import kotlin.collections.Set
 import it.unibo.tuprolog.core.List as LogicList
 
 @Suppress("PrivatePropertyName", "ktlint:standard:property-naming")
-abstract class AbstractCollectionOf(val name: String) : AbstractCollectingPrimitive(name) {
+abstract class AbstractCollectionOf(
+    val name: String,
+) : AbstractCollectingPrimitive(name) {
     private val VARS = Var.of("VARS")
     private val GOAL = Var.of("GOAL")
     private val APEX_TEMPLATE = Struct.of("^", VARS, GOAL)
@@ -42,7 +44,8 @@ abstract class AbstractCollectionOf(val name: String) : AbstractCollectingPrimit
         val nonPresentable = first.variables.toSet()
         return groups.asSequence().map { (sub, sols) ->
             val solValues =
-                sols.map { first[it.substitution] }
+                sols
+                    .map { first[it.substitution] }
                     .filterNot { it in nonPresentable }
                     .map { it.freshCopy() }
             sub + mgu(third, LogicList.of(processSolutions(solValues)))

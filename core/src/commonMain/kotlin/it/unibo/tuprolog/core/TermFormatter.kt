@@ -19,7 +19,9 @@ import kotlin.jvm.JvmStatic
 /**
  * A particular sort of [Formatter]s aimed at representing terms
  */
-interface TermFormatter : Formatter<Term>, TermVisitor<String> {
+interface TermFormatter :
+    Formatter<Term>,
+    TermVisitor<String> {
     enum class VarFormat {
         COMPLETE_NAME,
         UNDERSCORE,

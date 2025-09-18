@@ -443,7 +443,8 @@ class UnorderedReteTreeTest {
     @Test
     fun anUnorderedTreeFiltersClausesByBodyAsWell() {
         val groundTerms =
-            defaultClauses.asSequence()
+            defaultClauses
+                .asSequence()
                 .filterIsInstance<Rule>()
                 .flatMap { sequenceOf(it.head) + it.head.argsSequence }
                 .filter { it.isGround }
@@ -513,13 +514,15 @@ class UnorderedReteTreeTest {
     @Test
     fun nonGroundClausesAreMatchedByGroundQueries() {
         val groundTerms =
-            defaultClauses.asSequence()
+            defaultClauses
+                .asSequence()
                 .filterIsInstance<Rule>()
                 .flatMap { sequenceOf(it.head) + it.head.argsSequence }
                 .filter { it.isGround }
                 .toSet()
         val families =
-            defaultClauses.filterIsInstance<Rule>()
+            defaultClauses
+                .filterIsInstance<Rule>()
                 .map { it.head.functor to it.head.arity }
                 .filter { (_, arity) -> arity > 0 }
                 .toSet()

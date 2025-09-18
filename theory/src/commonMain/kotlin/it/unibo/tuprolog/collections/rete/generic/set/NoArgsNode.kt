@@ -5,8 +5,9 @@ import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.core.Rule
 
 /** An intermediate node indexing Rules with no-args' heads */
-internal data class NoArgsNode(override val children: MutableMap<Nothing?, ReteNode<*, Rule>> = mutableMapOf()) :
-    AbstractIntermediateReteNode<Nothing?, Rule>(children) {
+internal data class NoArgsNode(
+    override val children: MutableMap<Nothing?, ReteNode<*, Rule>> = mutableMapOf(),
+) : AbstractIntermediateReteNode<Nothing?, Rule>(children) {
     override val isNoArgsNode: Boolean
         get() = true
 
@@ -17,7 +18,8 @@ internal data class NoArgsNode(override val children: MutableMap<Nothing?, ReteN
     override fun put(
         element: Rule,
         beforeOthers: Boolean,
-    ) = children.getOrPut(null) { RuleNode() }
+    ) = children
+        .getOrPut(null) { RuleNode() }
         .put(element, beforeOthers)
 
     override fun selectChildren(element: Rule): Sequence<ReteNode<*, Rule>?> = sequenceOf(children[null])

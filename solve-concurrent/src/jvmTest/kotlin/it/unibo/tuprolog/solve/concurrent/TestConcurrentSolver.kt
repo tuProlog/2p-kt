@@ -60,7 +60,9 @@ import kotlin.test.assertTrue
 import kotlin.collections.plus as append
 
 @Suppress("LongMethod", "LargeClass", "CyclomaticComplexMethod")
-interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentSolver<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     val callErrorSignature: Signature
     val nafErrorSignature: Signature
     val notErrorSignature: Signature
@@ -654,12 +656,12 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     fun testConjunctionProperties() {
         logicProgramming {
             val allDatabasesWithGoalsAndSolutions by lazy {
-                TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
-                    callErrorSignature,
-                    nafErrorSignature,
-                    notErrorSignature,
-                )
-                    .mapValues { (_, listOfGoalToSolutions) ->
+                TestingClauseTheories
+                    .allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
+                        callErrorSignature,
+                        nafErrorSignature,
+                        notErrorSignature,
+                    ).mapValues { (_, listOfGoalToSolutions) ->
                         listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                             listOf(
                                 (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
@@ -705,12 +707,12 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     /** A test in which all testing goals are called through the Call primitive */
     fun testCallPrimitiveTransparency() {
         logicProgramming {
-            TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
-                callErrorSignature,
-                nafErrorSignature,
-                notErrorSignature,
-            )
-                .mapValues { (_, listOfGoalToSolutions) ->
+            TestingClauseTheories
+                .allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
+                    callErrorSignature,
+                    nafErrorSignature,
+                    notErrorSignature,
+                ).mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.map { (goal, expectedSolutions) ->
                         call(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
                     }
@@ -750,12 +752,12 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
                     else -> argsSequence.filterIsInstance<Struct>().any { it.containsHaltPrimitive() }
                 }
 
-            TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
-                callErrorSignature,
-                nafErrorSignature,
-                notErrorSignature,
-            )
-                .mapValues { (_, listOfGoalToSolutions) ->
+            TestingClauseTheories
+                .allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
+                    callErrorSignature,
+                    nafErrorSignature,
+                    notErrorSignature,
+                ).mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                         listOf(
                             `catch`(goal, `_`, false).run {
@@ -804,12 +806,12 @@ interface TestConcurrentSolver<T : WithAssertingEquals> : FromSequence<T>, Solve
     /** A test in which all testing goals are called through the Not rule */
     fun testNotModularity() {
         logicProgramming {
-            TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
-                callErrorSignature,
-                nafErrorSignature,
-                notErrorSignature,
-            )
-                .mapValues { (_, listOfGoalToSolutions) ->
+            TestingClauseTheories
+                .allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
+                    callErrorSignature,
+                    nafErrorSignature,
+                    notErrorSignature,
+                ).mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                         listOf(
                             naf(goal).run {

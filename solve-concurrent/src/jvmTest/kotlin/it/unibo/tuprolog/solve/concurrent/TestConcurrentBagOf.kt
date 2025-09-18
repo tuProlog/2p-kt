@@ -10,7 +10,9 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentBagOf<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentBagOf<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testBagXInDifferentValues() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

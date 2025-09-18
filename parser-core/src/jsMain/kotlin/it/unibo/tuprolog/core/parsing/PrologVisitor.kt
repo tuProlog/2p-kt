@@ -31,7 +31,9 @@ import it.unibo.tuprolog.parser.VariableContext
 import org.gciatto.kt.math.BigInteger
 
 @Suppress("TooManyFunctions")
-class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisitor<Term>() {
+class PrologVisitor(
+    private val scope: Scope = Scope.empty(),
+) : PrologParserVisitor<Term>() {
     override fun visitSingletonTerm(ctx: SingletonTermContext): Term = visitTerm(ctx.term())
 
     override fun visitSingletonExpression(ctx: SingletonExpressionContext): Term = visitExpression(ctx.expression())
@@ -39,8 +41,8 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
     override fun visitClause(ctx: ClauseContext): Term =
         ctx.expression().accept<Term>(this).toClause(null, ctx.start!!.line, ctx.start!!.column)
 
-    override fun visitExpression(ctx: ExpressionContext): Term {
-        return handleOuters(
+    override fun visitExpression(ctx: ExpressionContext): Term =
+        handleOuters(
             when {
                 ctx.isTerm -> visitTerm(ctx.left!!)
                 INFIX.contains(ctx.associativity) -> visitInfixExpression(ctx)
@@ -52,7 +54,6 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
             },
             flatten(ctx.outers.asList()),
         )
-    }
 
     override fun visitTerm(ctx: TermContext): Term =
         if (ctx.isExpr) {
@@ -66,9 +67,7 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
         return Integer.of(value)
     }
 
-    override fun visitNumber(ctx: NumberContext): Term {
-        return ctx.children[0].accept(this) as Term
-    }
+    override fun visitNumber(ctx: NumberContext): Term = ctx.children[0].accept(this) as Term
 
     override fun visitReal(ctx: RealContext): Term {
         var raw = ctx.value.text
@@ -92,8 +91,8 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
             scope.varOf(ctx.value.text)
         }
 
-    override fun visitStructure(ctx: StructureContext): Term {
-        return if (ctx.isList) {
+    override fun visitStructure(ctx: StructureContext): Term =
+        if (ctx.isList) {
             scope.logicListOf()
         } else if (ctx.isBlock) {
             scope.blockOf()
@@ -105,7 +104,6 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
                 ctx.args.asSequence().map(this::visitExpression),
             )
         }
-    }
 
     override fun visitList(ctx: ListContext): Term {
         val terms = ctx.items.map(this::visitExpression)
@@ -116,13 +114,12 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
         }
     }
 
-    override fun visitBlock(ctx: BlockContext): Term {
-        return if (ctx.length == 1) {
+    override fun visitBlock(ctx: BlockContext): Term =
+        if (ctx.length == 1) {
             scope.blockOf(ctx.items[0].accept<Term>(this))
         } else {
             scope.blockOf(ctx.items.map(this::visitExpression))
         }
-    }
 
     @Suppress("MagicNumber")
     private fun parseInteger(ctx: IntegerContext): BigInteger {
@@ -210,14 +207,13 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
         return result
     }
 
-    private fun visitInfixExpression(ctx: ExpressionContext): Term {
-        return when (ctx.associativity) {
+    private fun visitInfixExpression(ctx: ExpressionContext): Term =
+        when (ctx.associativity) {
             XFY -> visitInfixRightAssociativeExpression(ctx)
             YFX -> visitInfixLeftAssociativeExpression(ctx)
             XFX -> visitInfixNonAssociativeExpression(ctx)
             else -> error("Non-infix associativity ${ctx.associativity} in infix expression")
         }
-    }
 
     private fun visitInfixNonAssociativeExpression(ctx: ExpressionContext): Term {
         val operands: List<Term> = (listOf(ctx.left!!) + ctx.right.asList()).map { it.accept<Term>(this) }
@@ -228,9 +224,7 @@ class PrologVisitor(private val scope: Scope = Scope.empty()) : PrologParserVisi
     private fun infixNonAssociative(
         terms: List<Term>,
         ops: List<String>,
-    ): Term {
-        return scope.structOf(ops[0], terms[0], terms[1])
-    }
+    ): Term = scope.structOf(ops[0], terms[0], terms[1])
 
     private fun handleOuters(
         expression: Term,

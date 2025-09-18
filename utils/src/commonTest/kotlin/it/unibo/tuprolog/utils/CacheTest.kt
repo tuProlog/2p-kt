@@ -6,13 +6,12 @@ interface CacheTest {
     companion object {
         fun prototype(cacheConstructor: (Int) -> Cache<String, Int>): CacheTest =
             object : CacheTest {
-                override fun cacheFactory(capacity: Int): Cache<String, Int> {
-                    return cacheConstructor(capacity)
-                }
+                override fun cacheFactory(capacity: Int): Cache<String, Int> = cacheConstructor(capacity)
             }
 
         private val ITEMS: List<Pair<String, Int>> =
-            (0 until 26).asSequence()
+            (0 until 26)
+                .asSequence()
                 .map { charArrayOf('a' + it).concatToString() to it }
                 .toList()
 

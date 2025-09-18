@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-interface TestConcurrentSolutionPresentation<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentSolutionPresentation<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testSolutionWithDandlingVars() {
         logicProgramming {
             val theory =

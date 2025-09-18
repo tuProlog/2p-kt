@@ -6,7 +6,9 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Tuple
 
-internal class BlockUnfolder(block: Block) : Iterator<Term> {
+internal class BlockUnfolder(
+    block: Block,
+) : Iterator<Term> {
     private var current: Term? = block
 
     private var setUnfolded = false

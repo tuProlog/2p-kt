@@ -146,7 +146,8 @@ internal class StreamsSolver constructor(
     internal companion object {
         /** Internal version of other [solve] method, that accepts raw requests and returns raw statemachine final states */
         internal fun solveToFinalStates(goalRequest: Solve.Request<StreamsExecutionContext>): Sequence<FinalState> =
-            StateMachineExecutor.execute(StateInit(goalRequest))
+            StateMachineExecutor
+                .execute(StateInit(goalRequest))
                 .filterIsInstance<FinalState>()
                 .filter { it.solve.solution.query == goalRequest.query }
 

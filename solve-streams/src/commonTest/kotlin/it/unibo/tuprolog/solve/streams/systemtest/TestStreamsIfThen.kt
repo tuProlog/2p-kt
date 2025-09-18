@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.TestIfThen
 import it.unibo.tuprolog.solve.streams.StreamsSolverFactory
 import kotlin.test.Test
 
-class TestStreamsIfThen : TestIfThen, SolverFactory by StreamsSolverFactory {
+class TestStreamsIfThen :
+    TestIfThen,
+    SolverFactory by StreamsSolverFactory {
     private val prototype = TestIfThen.prototype(this)
 
     @Test

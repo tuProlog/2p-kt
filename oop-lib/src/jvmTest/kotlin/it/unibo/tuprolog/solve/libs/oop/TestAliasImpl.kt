@@ -22,7 +22,9 @@ import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
 import kotlin.test.assertTrue
 
-class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
+class TestAliasImpl(
+    private val solverFactory: SolverFactory,
+) : TestAlias {
     private fun aliasesByObject(obj: Any?): List<String> {
         val ref =
             when (obj) {
@@ -30,7 +32,8 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
                 null -> ObjectRef.NULL
                 else -> ObjectRef.of(obj)
             }
-        return OOPLib.clauses.asSequence()
+        return OOPLib.clauses
+            .asSequence()
             .filterIsInstance<Rule>()
             .filter { it.head matches Struct.of(Alias.FUNCTOR, Var.anonymous(), ref) }
             .map { it.head[0] as? Atom }

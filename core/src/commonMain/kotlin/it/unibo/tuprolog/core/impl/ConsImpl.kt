@@ -11,7 +11,8 @@ internal class ConsImpl(
     override val head: Term,
     override val tail: Term,
     tags: Map<String, Any> = emptyMap(),
-) : AbstractCons(listOf(head, tail), tags), Cons {
+) : AbstractCons(listOf(head, tail), tags),
+    Cons {
     override val isGround: Boolean = checkGroundness()
 
     override val last: Term =

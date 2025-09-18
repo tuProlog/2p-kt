@@ -14,7 +14,10 @@ import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-interface Theory : Iterable<Clause>, Taggable<Theory>, UnificationAware {
+interface Theory :
+    Iterable<Clause>,
+    Taggable<Theory>,
+    UnificationAware {
     @JsName("isMutable")
     val isMutable: Boolean
         get() = false
@@ -35,12 +38,22 @@ interface Theory : Iterable<Clause>, Taggable<Theory>, UnificationAware {
     /** Only [clauses] that are [Rule]s */
     @JsName("rules")
     val rules: Iterable<Rule>
-        get() = clauses.asSequence().map { it.asRule() }.filterNotNull().asIterable()
+        get() =
+            clauses
+                .asSequence()
+                .map { it.asRule() }
+                .filterNotNull()
+                .asIterable()
 
     /** Only [clauses] that are [Directive]s */
     @JsName("directives")
     val directives: Iterable<Directive>
-        get() = clauses.asSequence().map { it.asDirective() }.filterNotNull().asIterable()
+        get() =
+            clauses
+                .asSequence()
+                .map { it.asDirective() }
+                .filterNotNull()
+                .asIterable()
 
     /** The amount of clauses in this [Theory] */
     @JsName("size")

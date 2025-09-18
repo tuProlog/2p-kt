@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.TestAtomChars
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Test
 
-class TestProblogAtomChars : TestAtomChars, SolverFactory by ProblogSolverFactory {
+class TestProblogAtomChars :
+    TestAtomChars,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestAtomChars.prototype(this)
 
     @Test

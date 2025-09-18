@@ -69,9 +69,7 @@ class JsUrl : Url {
         return true
     }
 
-    override fun hashCode(): Int {
-        return url.hashCode()
-    }
+    override fun hashCode(): Int = url.hashCode()
 
     override fun toString(): String = url
 }

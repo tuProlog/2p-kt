@@ -12,7 +12,10 @@ import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.reflect.KClass
 
-class Alias private constructor(val alias: Struct, val ref: Ref) : RuleWrapper<ExecutionContext>(FUNCTOR, 2) {
+class Alias private constructor(
+    val alias: Struct,
+    val ref: Ref,
+) : RuleWrapper<ExecutionContext>(FUNCTOR, 2) {
     companion object {
         fun forObject(
             alias: String,

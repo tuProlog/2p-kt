@@ -1,5 +1,9 @@
 plugins {
-    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
 }
 
 kotlin {
@@ -21,7 +25,13 @@ kotlin {
 
         getByName("jsMain") {
             dependencies {
-                api(npm("yaml", libs.versions.npm.yaml.get()))
+                api(
+                    npm(
+                        "yaml",
+                        libs.versions.npm.yaml
+                            .get(),
+                    ),
+                )
             }
         }
     }

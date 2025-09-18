@@ -49,8 +49,8 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
     falseTerminal: E,
     trueTerminal: E,
     operator: (node: T, low: E, high: E) -> E,
-): E {
-    return runOperationAndCatchErrors {
+): E =
+    runOperationAndCatchErrors {
         this.accept(
             ExpansionVisitor(
                 operator,
@@ -59,28 +59,25 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
             ),
         )
     }
-}
 
 /**
  * Returns true if the [BinaryDecisionDiagram] has at least one variable
  * element matching the given predicate.
  */
 @JsName("anyWhere")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(predicate: (T) -> Boolean): Boolean {
-    return runOperationAndCatchErrors {
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(predicate: (T) -> Boolean): Boolean =
+    runOperationAndCatchErrors {
         this.accept(AnyVisitor(predicate))
     }
-}
 
 /**
  * Returns true if the [BinaryDecisionDiagram] has at least one variable element.
  */
 @JsName("any")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(): Boolean {
-    return runOperationAndCatchErrors {
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(): Boolean =
+    runOperationAndCatchErrors {
         this.any { true }
     }
-}
 
 /**
  * Returns a [BinaryDecisionDiagram] containing nodes of applying the given
@@ -104,8 +101,8 @@ fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(mapper: 
  * to visualize the contents of a BDD.
  */
 @JsName("toDotString")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toDotString(): String {
-    return runOperationAndCatchErrors {
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toDotString(): String =
+    runOperationAndCatchErrors {
         val checkSet = mutableSetOf<Int>()
         val labelBuilder = StringBuilder()
         val graphBuilder = StringBuilder()
@@ -128,17 +125,14 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toDotString(): String {
         }
         "digraph  {\n$labelBuilder$graphBuilder}"
     }
-}
 
 /**
  * Returns the number of variable nodes contained in a [BinaryDecisionDiagram].
  */
 @JsName("countVariableNodes")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.countVariableNodes(): Int {
-    return runOperationAndCatchErrors {
-        this.expansion(0, 0) {
-                _, low, high ->
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.countVariableNodes(): Int =
+    runOperationAndCatchErrors {
+        this.expansion(0, 0) { _, low, high ->
             1 + low + high
         }
     }
-}

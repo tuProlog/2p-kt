@@ -15,7 +15,9 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
  *
  * @author Enrico
  */
-abstract class BinaryMathFunction(name: String) : MathFunction(name, 2) {
+abstract class BinaryMathFunction(
+    name: String,
+) : MathFunction(name, 2) {
     override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response =
         with(request) {
             val term1 = arguments.first()

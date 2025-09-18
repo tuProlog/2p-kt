@@ -23,9 +23,10 @@ internal class RuleNode(
     override fun assertA(clause: IndexedClause) {
         clause.nestedFunctor().let {
             if (ordered) {
-                functors.getOrPut(it) {
-                    TopLevelFunctorReteNode(unificator, ordered, 0)
-                }.assertA(clause + this)
+                functors
+                    .getOrPut(it) {
+                        TopLevelFunctorReteNode(unificator, ordered, 0)
+                    }.assertA(clause + this)
             } else {
                 assertZ(clause)
             }
@@ -34,9 +35,10 @@ internal class RuleNode(
 
     override fun assertZ(clause: IndexedClause) {
         clause.nestedFunctor().let {
-            functors.getOrPut(it) {
-                TopLevelFunctorReteNode(unificator, ordered, 0)
-            }.assertZ(clause + this)
+            functors
+                .getOrPut(it) {
+                    TopLevelFunctorReteNode(unificator, ordered, 0)
+                }.assertZ(clause + this)
         }
     }
 
@@ -45,7 +47,11 @@ internal class RuleNode(
             ?: emptySequence()
 
     override val size: Int
-        get() = functors.values.asSequence().map { it.size }.sum()
+        get() =
+            functors.values
+                .asSequence()
+                .map { it.size }
+                .sum()
 
     override val isEmpty: Boolean
         get() = functors.isEmpty() || functors.values.all { it.isEmpty }

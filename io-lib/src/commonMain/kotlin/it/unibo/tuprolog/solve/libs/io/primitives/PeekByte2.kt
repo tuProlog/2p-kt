@@ -9,7 +9,5 @@ object PeekByte2 : BinaryRelation.NonBacktrackable<ExecutionContext>("peek_byte"
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,
-    ): Solve.Response {
-        return notSupported()
-    }
+    ): Solve.Response = notSupported()
 }

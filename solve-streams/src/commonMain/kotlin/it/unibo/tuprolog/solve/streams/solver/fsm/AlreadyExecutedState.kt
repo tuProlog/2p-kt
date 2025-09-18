@@ -5,7 +5,9 @@ package it.unibo.tuprolog.solve.streams.solver.fsm
  *
  * @author Enrico
  */
-internal class AlreadyExecutedState(internal val wrappedState: State) : State by wrappedState {
+internal class AlreadyExecutedState(
+    internal val wrappedState: State,
+) : State by wrappedState {
     override val hasBehaved: Boolean = true
 
     override fun toString(): String = "AlreadyExecutedState of: $wrappedState"

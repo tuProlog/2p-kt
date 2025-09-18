@@ -30,7 +30,5 @@ internal data class SimpleBinaryDecisionDiagramVariable<T : Comparable<T>>(
         return true
     }
 
-    override fun hashCode(): Int {
-        return hashCodeCache
-    }
+    override fun hashCode(): Int = hashCodeCache
 }

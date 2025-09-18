@@ -8,12 +8,11 @@ class ParsingException(
     message: String?,
     throwable: Throwable?,
 ) : RuntimeException(message, throwable) {
-    override fun toString(): String {
-        return "ParsingException{" +
+    override fun toString(): String =
+        "ParsingException{" +
             "message='" + message?.replace("\\n", "\\\\n") + '\'' +
             ", line=" + line +
             ", column=" + column +
             ", offendingSymbol='" + offendingSymbol + '\'' +
             '}'
-    }
 }

@@ -27,9 +27,7 @@ import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
  * @author Jason Dellaluce
  */
 internal object AnnotatedDisjunctionClauseMapper : ClauseMapper {
-    override fun isCompatible(clause: Clause): Boolean {
-        return clause is Rule && clause.head.functor == Semicolon.FUNCTOR
-    }
+    override fun isCompatible(clause: Clause): Boolean = clause is Rule && clause.head.functor == Semicolon.FUNCTOR
 
     /** We split the disjoint heads in many sub-rules with a single head. This is not optimal
      * in regards of goal resolution (that will require a deeper exploration), however this
@@ -47,22 +45,23 @@ internal object AnnotatedDisjunctionClauseMapper : ClauseMapper {
 
         var probSum = 0.0
         val mappedRules =
-            disjointHeads.map { cur ->
-                val curProb = (cur[0] as Numeric).decimalValue.toDouble()
-                val curRuleHead = if (cur[1] is Struct) cur[1] as Struct else Struct.of(cur[1].toString())
+            disjointHeads
+                .map { cur ->
+                    val curProb = (cur[0] as Numeric).decimalValue.toDouble()
+                    val curRuleHead = if (cur[1] is Struct) cur[1] as Struct else Struct.of(cur[1].toString())
 
-                probSum += curProb
-                ProbabilisticClauseMapper.mapRuleInternal(
-                    Rule.of(
-                        Struct.of(
-                            ANNOTATION_FUNCTOR,
-                            Numeric.of(curProb / (1.0 - (probSum - curProb))),
-                            curRuleHead,
+                    probSum += curProb
+                    ProbabilisticClauseMapper.mapRuleInternal(
+                        Rule.of(
+                            Struct.of(
+                                ANNOTATION_FUNCTOR,
+                                Numeric.of(curProb / (1.0 - (probSum - curProb))),
+                                curRuleHead,
+                            ),
+                            body,
                         ),
-                        body,
-                    ),
-                )
-            }.toList()
+                    )
+                }.toList()
 
         var explanation: ProbExplanation = ProbExplanation.TRUE
         return mappedRules.map {

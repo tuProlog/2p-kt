@@ -14,9 +14,7 @@ enum class Associativity {
 
     companion object {
         @JvmStatic
-        fun values(i: Int): Associativity {
-            return values()[i]
-        }
+        fun values(i: Int): Associativity = values()[i]
 
         @JvmField
         val X_FIRST: EnumSet<Associativity> = EnumSet.of(XF, XFX, XFY, FX)

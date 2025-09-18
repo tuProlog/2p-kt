@@ -56,8 +56,7 @@ fun Deserializer<Theory>.assertTermDeserializationWorks(
 private fun representationsAreEqual(
     t1: Theory,
     t2: Theory,
-): Boolean {
-    return itemWiseEquals(t1, t2) { x, y ->
+): Boolean =
+    itemWiseEquals(t1, t2) { x, y ->
         x.equals(y, false)
     }
-}

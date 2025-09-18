@@ -62,7 +62,10 @@ internal data class StreamsExecutionContext(
         get() = sideEffectManager.logicalParentRequests.map { it.query }.firstOrNull()
 
     override val logicStackTrace: List<Struct> by lazy {
-        sideEffectManager.logicalParentRequests.asSequence().map { it.query }.toList()
+        sideEffectManager.logicalParentRequests
+            .asSequence()
+            .map { it.query }
+            .toList()
     }
 
     override fun createSolver(
@@ -85,17 +88,14 @@ internal data class StreamsExecutionContext(
         outputChannels: OutputStore,
     ) = TODO("Not yet implemented")
 
-    override fun apply(sideEffect: SideEffect): StreamsExecutionContext {
-        return super.apply(sideEffect) as StreamsExecutionContext
-    }
+    override fun apply(sideEffect: SideEffect): StreamsExecutionContext =
+        super.apply(sideEffect) as StreamsExecutionContext
 
-    override fun apply(sideEffects: Iterable<SideEffect>): StreamsExecutionContext {
-        return super.apply(sideEffects) as StreamsExecutionContext
-    }
+    override fun apply(sideEffects: Iterable<SideEffect>): StreamsExecutionContext =
+        super.apply(sideEffects) as StreamsExecutionContext
 
-    override fun apply(sideEffects: Sequence<SideEffect>): StreamsExecutionContext {
-        return super.apply(sideEffects) as StreamsExecutionContext
-    }
+    override fun apply(sideEffects: Sequence<SideEffect>): StreamsExecutionContext =
+        super.apply(sideEffects) as StreamsExecutionContext
 
     override fun update(
         unificator: Unificator,
@@ -107,8 +107,8 @@ internal data class StreamsExecutionContext(
         inputChannels: InputStore,
         outputChannels: OutputStore,
         customData: CustomDataStore,
-    ): StreamsExecutionContext {
-        return copy(
+    ): StreamsExecutionContext =
+        copy(
             unificator = unificator,
             libraries = libraries,
             flags = flags,
@@ -119,7 +119,6 @@ internal data class StreamsExecutionContext(
             outputChannels = outputChannels,
             customData = customData,
         )
-    }
 }
 
 /** Extension method to get [SideEffectManagerImpl], if this context is of right type*/

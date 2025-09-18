@@ -4,7 +4,9 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmField
 
 /** Class representing a [Set] of [Operator]s */
-class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.toHashSet() {
+class OperatorSet(
+    operators: Sequence<Operator>,
+) : Set<Operator> by operators.toHashSet() {
     /** Needed to support equals and hashCode */
     private val operators by lazy { operators.toSet() }
 

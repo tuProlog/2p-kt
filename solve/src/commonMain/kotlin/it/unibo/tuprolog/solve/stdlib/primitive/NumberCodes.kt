@@ -16,8 +16,8 @@ object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes")
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
-    ): Substitution {
-        return when (first) {
+    ): Substitution =
+        when (first) {
             is Var -> {
                 ensuringArgumentIsInstantiated(1)
                 ensuringArgumentIsList(1)
@@ -51,5 +51,4 @@ object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes")
                 mgu(second, result)
             }
         }
-    }
 }

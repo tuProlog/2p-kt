@@ -14,7 +14,8 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class DirectiveIndex(
     unificator: Unificator,
     private val ordered: Boolean,
-) : TopLevelReteNode, AbstractReteNode(unificator) {
+) : AbstractReteNode(unificator),
+    TopLevelReteNode {
     private val directives: MutableList<IndexedClause> = dequeOf()
 
     override val size: Int
@@ -45,9 +46,10 @@ internal class DirectiveIndex(
         removeAllLazily(directives, clause).map { it.innerClause }.take(1).buffered()
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
-        removeAllLazily(directives, clause).map {
-            it.innerClause
-        }.buffered()
+        removeAllLazily(directives, clause)
+            .map {
+                it.innerClause
+            }.buffered()
 
     override fun getCache(): Sequence<SituatedIndexedClause> =
         directives.asSequence().map {

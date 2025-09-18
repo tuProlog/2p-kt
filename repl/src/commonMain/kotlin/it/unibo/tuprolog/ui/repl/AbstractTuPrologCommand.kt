@@ -1,8 +1,10 @@
 package it.unibo.tuprolog.ui.repl
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.ProgramResult
-import com.github.ajalt.clikt.output.defaultCliktConsole
+import com.github.ajalt.clikt.core.terminal
+import com.github.ajalt.mordant.terminal.prompt
 import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.parsing.ParseException
@@ -11,28 +13,21 @@ import it.unibo.tuprolog.solve.SolutionFormatter
 import it.unibo.tuprolog.solve.exception.HaltException
 
 abstract class AbstractTuPrologCommand(
-    help: String = "",
-    epilog: String = "",
+    private val help: String = "",
+    private val epilog: String = "",
     name: String? = null,
-    invokeWithoutSubcommand: Boolean = false,
-    printHelpOnEmptyArgs: Boolean = false,
-    helpTags: Map<String, String> = emptyMap(),
-    autoCompleteEnvvar: String? = "",
-    allowMultipleSubcommands: Boolean = false,
-    treatUnknownOptionsAsArgs: Boolean = false,
-    hidden: Boolean = false,
-) : CliktCommand(
-        help,
-        epilog,
-        name,
-        invokeWithoutSubcommand,
-        printHelpOnEmptyArgs,
-        helpTags,
-        autoCompleteEnvvar,
-        allowMultipleSubcommands,
-        treatUnknownOptionsAsArgs,
-        hidden,
-    ) {
+    override val invokeWithoutSubcommand: Boolean = false,
+    override val printHelpOnEmptyArgs: Boolean = false,
+    override val helpTags: Map<String, String> = emptyMap(),
+    override val autoCompleteEnvvar: String? = "",
+    override val allowMultipleSubcommands: Boolean = false,
+    override val treatUnknownOptionsAsArgs: Boolean = false,
+    override val hiddenFromHelp: Boolean = false,
+) : CliktCommand(name) {
+    override fun help(context: Context) = this.help
+
+    override fun helpEpilog(context: Context) = this.epilog
+
     private fun printSolution(
         sol: Solution,
         operatorSet: OperatorSet,
@@ -79,7 +74,7 @@ abstract class AbstractTuPrologCommand(
     }
 
     protected fun readQuery(): String {
-        val query: String? = prompt("?-", promptSuffix = " ")
+        val query: String? = terminal.prompt("?-", promptSuffix = " ")
         return when {
             query == null -> {
                 throw NullInputException("The standard input has been close unexpectedly")
@@ -97,7 +92,7 @@ abstract class AbstractTuPrologCommand(
         val longQuery = StringBuilder(query)
         var lastRead = query
         while (!lastRead.trim().endsWith('.')) {
-            lastRead = prompt(">", promptSuffix = " ")
+            lastRead = terminal.prompt(">", promptSuffix = " ")
                 ?: throw NullInputException("The standard input has been closed unexpectedly")
             longQuery.append(lastRead)
         }
@@ -119,7 +114,7 @@ abstract class AbstractTuPrologCommand(
         var first = true
         while (solutions.hasNext()) {
             if (!first) {
-                val cmd = defaultCliktConsole().promptForLine("", false)?.trim()
+                val cmd = terminal.prompt("", hideInput = false)?.trim()
                 if (cmd != ";") break
             } else {
                 first = false

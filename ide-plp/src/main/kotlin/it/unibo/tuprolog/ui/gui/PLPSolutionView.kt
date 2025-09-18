@@ -23,7 +23,9 @@ import javafx.scene.paint.Paint
 import javafx.scene.shape.Circle
 import java.io.IOException
 
-sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() {
+sealed class PLPSolutionView<T, S : Solution>(
+    private val solution: S,
+) : VBox() {
     companion object {
         private const val FXML = "PLPSolutionView.fxml"
 
@@ -75,7 +77,9 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
     lateinit var btnShowBinaryDecisionDiagram: Button
 
     @Suppress("MagicNumber")
-    class YesViewPLP(solution: Solution.Yes) : PLPSolutionView<Pair<Var, Term>, Solution.Yes>(solution) {
+    class YesViewPLP(
+        solution: Solution.Yes,
+    ) : PLPSolutionView<Pair<Var, Term>, Solution.Yes>(solution) {
         init {
             status.text = "yes:"
             led.fill = COLOR_YES
@@ -99,7 +103,9 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
         }
     }
 
-    class NoViewPLP(solution: Solution.No) : PLPSolutionView<String, Solution.No>(solution) {
+    class NoViewPLP(
+        solution: Solution.No,
+    ) : PLPSolutionView<String, Solution.No>(solution) {
         init {
             led.fill = COLOR_NO
             status.text = "no."
@@ -109,7 +115,9 @@ sealed class PLPSolutionView<T, S : Solution>(private val solution: S) : VBox() 
         }
     }
 
-    class HaltViewPLP(solution: Solution.Halt) : PLPSolutionView<String, Solution.Halt>(solution) {
+    class HaltViewPLP(
+        solution: Solution.Halt,
+    ) : PLPSolutionView<String, Solution.Halt>(solution) {
         init {
             probability.text = ""
             btnShowBinaryDecisionDiagram.isVisible = false

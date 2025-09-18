@@ -12,7 +12,8 @@ import it.unibo.tuprolog.core.ListIterator as LogicListIterator
 internal abstract class AbstractCons(
     args: List<Term>,
     tags: Map<String, Any> = emptyMap(),
-) : RecursiveImpl(CONS_FUNCTOR, args, tags), Cons {
+) : RecursiveImpl(CONS_FUNCTOR, args, tags),
+    Cons {
     companion object {
         const val SWITCH_TO_LAZY_THRESHOLD = 100
     }

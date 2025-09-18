@@ -44,7 +44,9 @@ class ThermostatAgentKt(
         }
 
     private fun agentProgram(): String =
-        this::class.java.getResource("thermostat.pl")!!.readText()
+        this::class.java
+            .getResource("thermostat.pl")!!
+            .readText()
             .replace("__COLD_THRESHOLD__", coldThreshold.toString())
             .replace("__HOT_THRESHOLD__", hotThreshold.toString())
 
@@ -53,7 +55,8 @@ class ThermostatAgentKt(
     override fun run() {
         val theory = prologParser.parseTheory(agentProgram())
         val solver =
-            Solver.prolog.newBuilder()
+            Solver.prolog
+                .newBuilder()
                 .staticKb(theory)
                 .flag(TrackVariables) { ON }
                 .library("libs.agency.thermostat", getTemp, push)

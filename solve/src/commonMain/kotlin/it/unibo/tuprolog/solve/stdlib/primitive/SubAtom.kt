@@ -21,8 +21,8 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
         fourth: Term,
         // sub
         fifth: Term,
-    ): Sequence<Substitution> {
-        return if (fifth is Var) {
+    ): Sequence<Substitution> =
+        if (fifth is Var) {
             ensuringArgumentIsInstantiated(0)
             ensuringArgumentIsAtom(0)
             if (second is Var) {
@@ -127,5 +127,4 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
                 }
             }
         }
-    }
 }

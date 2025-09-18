@@ -39,13 +39,14 @@ abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
         casting {
             val functionSignature = term.extractSignature()
             loadedFunctions[functionSignature]?.let { function ->
-                function.compute(
-                    Compute.Request(
-                        functionSignature,
-                        term.argsSequence.map { it.accept(this).apply { dynamicCheck(term) } }.toList(),
-                        request.context,
-                    ),
-                ).result
+                function
+                    .compute(
+                        Compute.Request(
+                            functionSignature,
+                            term.argsSequence.map { it.accept(this).apply { dynamicCheck(term) } }.toList(),
+                            request.context,
+                        ),
+                    ).result
             } ?: unevaluable(term)
         }
 

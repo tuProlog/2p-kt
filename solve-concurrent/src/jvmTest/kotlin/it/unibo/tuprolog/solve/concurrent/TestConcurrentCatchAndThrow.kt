@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 
-interface TestConcurrentCatchAndThrow<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentCatchAndThrow<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testCatchThrow() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

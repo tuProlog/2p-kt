@@ -8,7 +8,9 @@ import kotlin.test.Test
 
 // NOTE: Ignored because the heavier stack usage of this implementation makes this not meaningful.
 @Ignore
-class TestProblogRecursion : TestRecursion, SolverFactory by ProblogSolverFactory {
+class TestProblogRecursion :
+    TestRecursion,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestRecursion.prototype(this)
 
     @Test

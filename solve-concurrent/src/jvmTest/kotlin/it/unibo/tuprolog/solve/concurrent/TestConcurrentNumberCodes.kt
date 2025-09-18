@@ -8,7 +8,9 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentNumberCodes<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentNumberCodes<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testNumberCodesListIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

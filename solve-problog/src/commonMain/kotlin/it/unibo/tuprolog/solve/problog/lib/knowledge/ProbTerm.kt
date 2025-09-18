@@ -44,19 +44,15 @@ internal class ProbTerm(
     override fun get(
         substitution: Substitution,
         vararg substitutions: Substitution,
-    ): ProbTerm {
-        return this.apply(substitution, *substitutions)
-    }
+    ): ProbTerm = this.apply(substitution, *substitutions)
 
     override fun apply(
         substitution: Substitution,
         vararg substitutions: Substitution,
-    ): ProbTerm {
-        return this.apply(Substitution.of(substitution, *substitutions))
-    }
+    ): ProbTerm = this.apply(Substitution.of(substitution, *substitutions))
 
-    override fun apply(substitution: Substitution): ProbTerm {
-        return if (substitution.isEmpty() || this.isGround) {
+    override fun apply(substitution: Substitution): ProbTerm =
+        if (substitution.isEmpty() || this.isGround) {
             this
         } else {
             val newExtraVars =
@@ -69,7 +65,6 @@ internal class ProbTerm(
                 }
             ProbTerm(id, probability, term.apply(substitution), newExtraVars)
         }
-    }
 
     override val isGround: Boolean by lazy {
         term.isGround && !extraVariables.any { it.isVar }
@@ -100,15 +95,9 @@ internal class ProbTerm(
         return res
     }
 
-    override fun equals(other: Any?): Boolean {
-        return if (other is ProbTerm) compareTo(other) == 0 else false
-    }
+    override fun equals(other: Any?): Boolean = if (other is ProbTerm) compareTo(other) == 0 else false
 
-    override fun hashCode(): Int {
-        return cachedHashCode
-    }
+    override fun hashCode(): Int = cachedHashCode
 
-    override fun toString(): String {
-        return "${round(probability * 100) / 100.0}::$term"
-    }
+    override fun toString(): String = "${round(probability * 100) / 100.0}::$term"
 }

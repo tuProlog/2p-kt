@@ -12,9 +12,7 @@ import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
  *
  * @author Jason Dellaluce */
 internal object DirectiveClauseMapper : ClauseMapper {
-    override fun isCompatible(clause: Clause): Boolean {
-        return clause.isDirective
-    }
+    override fun isCompatible(clause: Clause): Boolean = clause.isDirective
 
     override fun apply(clause: Clause): List<Clause> {
         val body = clause.body

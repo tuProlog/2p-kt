@@ -30,7 +30,9 @@ sealed class RetrieveResult<C : ClauseCollection> {
             get() = clauses.first()
     }
 
-    data class Failure<C : ClauseCollection>(override val collection: C) : RetrieveResult<C>() {
+    data class Failure<C : ClauseCollection>(
+        override val collection: C,
+    ) : RetrieveResult<C>() {
         override val isFailure: Boolean
             get() = true
 

@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve.concurrent
 
 import java.util.concurrent.atomic.AtomicInteger
 
-class AtomicIntJvm private constructor(private val atomicValue: AtomicInteger) : AtomicInt {
+class AtomicIntJvm private constructor(
+    private val atomicValue: AtomicInteger,
+) : AtomicInt {
     constructor(value: Int) : this(AtomicInteger(value))
 
     override var value: Int

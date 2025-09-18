@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.TimeOutException
 
-internal class SolutionFormatterImpl(private val termFormatter: TermFormatter) : SolutionFormatter {
+internal class SolutionFormatterImpl(
+    private val termFormatter: TermFormatter,
+) : SolutionFormatter {
     override fun format(value: Solution): String =
         when (value) {
             is Solution.Yes -> formatYes(value)

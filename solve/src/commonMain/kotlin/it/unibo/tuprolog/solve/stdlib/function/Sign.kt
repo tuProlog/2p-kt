@@ -20,5 +20,10 @@ object Sign : UnaryMathFunction("sign") {
     override fun mathFunction(
         real: Real,
         context: ExecutionContext,
-    ): Numeric = Real.of(real.value.signum.takeIf { it != 0 }?.toDouble() ?: 1.0)
+    ): Numeric =
+        Real.of(
+            real.value.signum
+                .takeIf { it != 0 }
+                ?.toDouble() ?: 1.0,
+        )
 }

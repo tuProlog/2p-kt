@@ -2,7 +2,10 @@ package it.unibo.tuprolog.solve
 
 import kotlin.reflect.KClass
 
-data class JsClassName(val module: String, val qualifiedName: String) {
+data class JsClassName(
+    val module: String,
+    val qualifiedName: String,
+) {
     companion object {
         fun parse(fullName: String): JsClassName {
             val splitted = fullName.split(":")

@@ -30,9 +30,7 @@ interface ReteTree {
     fun get(clause: Clause): Sequence<Clause>
 
     /**Tells if the given [Clause] is stored in this [ReteTree]*/
-    operator fun contains(clause: Clause): Boolean {
-        return get(clause).any()
-    }
+    operator fun contains(clause: Clause): Boolean = get(clause).any()
 
     /**Tries to insert the given [Clause] as the first occurrence of its own family*/
     fun assertA(clause: Clause)

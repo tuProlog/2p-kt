@@ -40,7 +40,7 @@ internal open class ConcurrentSolverImpl(
     inputChannels: InputStore = InputStore.fromStandard(),
     outputChannels: OutputStore = OutputStore.fromStandard(),
     trustKb: Boolean = false,
-) : ConcurrentSolver, AbstractSolver<ConcurrentExecutionContext>(
+) : AbstractSolver<ConcurrentExecutionContext>(
         unificator,
         libraries,
         flags,
@@ -49,7 +49,8 @@ internal open class ConcurrentSolverImpl(
         inputChannels,
         outputChannels,
         trustKb,
-    ) {
+    ),
+    ConcurrentSolver {
     constructor(
         unificator: Unificator,
         libraries: Runtime = Runtime.empty(),
@@ -155,9 +156,7 @@ internal open class ConcurrentSolverImpl(
     override fun solveImpl(
         goal: Struct,
         options: SolveOptions,
-    ): Sequence<Solution> {
-        return solveConcurrently(goal, options).toSequence().ensureAtMostOneNegative()
-    }
+    ): Sequence<Solution> = solveConcurrently(goal, options).toSequence().ensureAtMostOneNegative()
 
     override fun copy(
         unificator: Unificator,

@@ -8,7 +8,9 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentNumberChars<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentNumberChars<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testNumberCharsListIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

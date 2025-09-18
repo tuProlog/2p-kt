@@ -13,7 +13,8 @@ internal abstract class AbstractListedTheory protected constructor(
     override var unificator: Unificator = unificator
 
     final override fun get(clause: Clause): Sequence<Clause> =
-        clauses.filter {
-            unificator.match(it, clause)
-        }.asSequence()
+        clauses
+            .filter {
+                unificator.match(it, clause)
+            }.asSequence()
 }

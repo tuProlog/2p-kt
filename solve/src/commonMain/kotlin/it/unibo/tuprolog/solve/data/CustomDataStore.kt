@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.data
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-data class CustomDataStore private constructor(
+data class CustomDataStore(
     @JsName("persistent")
     val persistent: CustomData = emptyMap(),
     @JsName("durable")

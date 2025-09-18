@@ -26,7 +26,8 @@ class TestKotlinReflectionWorkaroundsAreStillNecessary {
 
     private val KClass<*>.instanceMembersWithNoArg
         get() =
-            members.asSequence()
+            members
+                .asSequence()
                 .filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }
                 .filterNot { it.name in setOf("hashCode", "toString") }
 

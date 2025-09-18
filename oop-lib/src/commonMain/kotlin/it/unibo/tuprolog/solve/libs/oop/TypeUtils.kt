@@ -71,9 +71,12 @@ fun KClass<*>.isSupertypeOf(
 ): Boolean = other.allSupertypes(strict).any { it == this }
 
 fun KClass<*>.superTypeDistance(other: KClass<*>): Int? =
-    other.allSupertypes(
-        false,
-    ).indexed().firstOrNull { (_, it) -> it == this }?.index
+    other
+        .allSupertypes(
+            false,
+        ).indexed()
+        .firstOrNull { (_, it) -> it == this }
+        ?.index
 
 infix fun KClass<*>.isSubtypeOf(other: KClass<*>): Boolean = isSubtypeOf(other, false)
 
@@ -90,8 +93,8 @@ internal fun Any.invoke(
     arguments: List<Term>,
 ): Result = this::class.invoke(objectConverter, methodName, arguments, this)
 
-private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>): List<KClass<*>> {
-    return formalParameterTypes.also { formalArgumentsTypes ->
+private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>): List<KClass<*>> =
+    formalParameterTypes.also { formalArgumentsTypes ->
         require(formalParameterTypes.size == actualArguments.size) {
             """
             |
@@ -103,7 +106,6 @@ private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>
             """.trimMargin()
         }
     }
-}
 
 internal fun KClass<*>.invoke(
     objectConverter: TermToObjectConverter,
@@ -122,9 +124,10 @@ private fun KCallable<*>.callWithPrologArguments(
 ): Result {
     val formalArgumentsTypes = ensureArgumentsListIsOfSize(arguments)
     val args =
-        arguments.mapIndexed { i, it ->
-            converter.convertInto(formalArgumentsTypes[i], it)
-        }.toTypedArray()
+        arguments
+            .mapIndexed { i, it ->
+                converter.convertInto(formalArgumentsTypes[i], it)
+            }.toTypedArray()
     return catchingPlatformSpecificException(instance) {
         val result = invoke(instance, *args)
         Result.Value(result)

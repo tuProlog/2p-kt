@@ -9,14 +9,13 @@ import kotlin.test.assertTrue
 import kotlin.collections.List as KtList
 
 class TermTest {
-    private data class MyStruct(override val functor: String, override val args: KtList<Term>) : Struct {
-        override fun freshCopy(): Struct {
-            return freshCopy(Scope.empty())
-        }
+    private data class MyStruct(
+        override val functor: String,
+        override val args: KtList<Term>,
+    ) : Struct {
+        override fun freshCopy(): Struct = freshCopy(Scope.empty())
 
-        override fun freshCopy(scope: Scope): Struct {
-            return MyStruct(functor, args.map { it.freshCopy(scope) })
-        }
+        override fun freshCopy(scope: Scope): Struct = MyStruct(functor, args.map { it.freshCopy(scope) })
 
         override fun addLast(argument: Term): Struct = throw NotImplementedError()
 
@@ -38,37 +37,34 @@ class TermTest {
 
         override fun setArgs(args: Sequence<Term>): Struct = throw NotImplementedError()
 
-        override fun equals(other: Any?): Boolean {
-            return if (other is Term) equals(other, true) else false
-        }
+        override fun equals(other: Any?): Boolean = if (other is Term) equals(other, true) else false
 
         override fun equals(
             other: Term,
             useVarCompleteName: Boolean,
-        ): Boolean {
-            return other is MyStruct && other.arity == arity && other.functor == functor &&
+        ): Boolean =
+            other is MyStruct &&
+                other.arity == arity &&
+                other.functor == functor &&
                 other.args.mapIndexed { i, term -> term.equals(args[i], useVarCompleteName) }.all { it }
-        }
 
-        override fun structurallyEquals(other: Term): Boolean {
-            return other is MyStruct && other.arity == arity && other.functor == functor &&
+        override fun structurallyEquals(other: Term): Boolean =
+            other is MyStruct &&
+                other.arity == arity &&
+                other.functor == functor &&
                 other.args.mapIndexed { i, term -> term.structurallyEquals(args[i]) }.all { it }
-        }
 
         override val tags: Map<String, Any>
             get() = emptyMap()
 
-        override fun replaceTags(tags: Map<String, Any>): Term {
-            return this
-        }
+        override fun replaceTags(tags: Map<String, Any>): Term = this
 
-        override fun apply(substitution: Substitution): Term {
-            return if (substitution.isFailed) {
+        override fun apply(substitution: Substitution): Term =
+            if (substitution.isFailed) {
                 throw SubstitutionApplicationException(this, substitution)
             } else {
                 MyStruct(functor, args.map { it[substitution] })
             }
-        }
 
         override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitStruct(this)
     }

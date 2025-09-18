@@ -75,9 +75,10 @@ internal object UnificatorUtils {
     /** Contains a mapping between equations that should have success unifying and a `Triple(mgu, isMatching, unifiedTerm)` */
     internal val successfulUnifications by lazy {
         mapOf(
-            *EquationUtils.allIdentityEquations.map { (lhs, rhs) ->
-                (lhs eq rhs) to Triple(Substitution.empty(), true, lhs)
-            }.toTypedArray(),
+            *EquationUtils.allIdentityEquations
+                .map { (lhs, rhs) ->
+                    (lhs eq rhs) to Triple(Substitution.empty(), true, lhs)
+                }.toTypedArray(),
             (aAtom eq aAtom) to Triple(Substitution.empty(), true, aAtom),
             (xVar eq xVar) to Triple(Substitution.empty(), true, xVar),
             (aAtom eq xVar) to Triple(Substitution.of(xVar, aAtom), true, aAtom),
@@ -127,9 +128,10 @@ internal object UnificatorUtils {
     /** Contains a mapping between faulty equations and their failed result Triple(mgu, isMatching, unifiedTerm) */
     internal val failedUnifications by lazy {
         mapOf(
-            *EquationUtils.allContradictionEquations.map { (lhs, rhs) ->
-                (lhs eq rhs) to failedResultsTriple
-            }.toTypedArray(),
+            *EquationUtils.allContradictionEquations
+                .map { (lhs, rhs) ->
+                    (lhs eq rhs) to failedResultsTriple
+                }.toTypedArray(),
             (aAtom eq bAtom) to failedResultsTriple,
             (Struct.of("f", aAtom) eq Struct.of("g", aAtom)) to failedResultsTriple,
             (Struct.of("f", xVar) eq Struct.of("g", yVar)) to failedResultsTriple,

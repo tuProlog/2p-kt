@@ -26,7 +26,10 @@ internal class TermFormatterWithPrettyExpressions private constructor(
     ignoreOps: Boolean = false,
 ) : AbstractTermFormatter(quoted, numberVars, ignoreOps) {
     companion object {
-        private data class OperatorDecorations(val prefix: String, val suffix: String)
+        private data class OperatorDecorations(
+            val prefix: String,
+            val suffix: String,
+        )
 
         private val defaultDecorations = OperatorDecorations(" ", " ")
 
@@ -152,7 +155,8 @@ internal class TermFormatterWithPrettyExpressions private constructor(
         priorityPredicate: (Int) -> Boolean,
         specifierPredicate: Specifier.() -> Boolean,
     ): Pair<Specifier, Int>? =
-        this[functor]?.asSequence()
+        this[functor]
+            ?.asSequence()
             ?.filter { it.key.specifierPredicate() && priorityPredicate(it.value) }
             ?.filter { it.key.name !in forceParentheses }
             ?.map { it.toPair() }

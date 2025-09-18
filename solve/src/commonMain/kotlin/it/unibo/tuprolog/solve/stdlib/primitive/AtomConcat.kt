@@ -17,8 +17,8 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
         first: Term,
         second: Term,
         third: Term,
-    ): Substitution {
-        return when {
+    ): Substitution =
+        when {
             third is Var -> {
                 ensuringArgumentIsInstantiated(0)
                 ensuringArgumentIsAtom(0)
@@ -56,5 +56,4 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
                 mgu(third, Atom.of(thirdString))
             }
         }
-    }
 }

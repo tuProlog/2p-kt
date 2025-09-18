@@ -18,7 +18,9 @@ import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.buffered
 
-data class StateRuleSelection(override val context: ConcurrentExecutionContext) : AbstractState(context) {
+data class StateRuleSelection(
+    override val context: ConcurrentExecutionContext,
+) : AbstractState(context) {
     companion object {
         private val catchSignature = Catch.signature
     }
@@ -98,13 +100,14 @@ data class StateRuleSelection(override val context: ConcurrentExecutionContext) 
                         }
                         ruleSources.any { currentGoalStruct in it } -> {
                             val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }
-                            rules.map {
-                                if (context.isTailRecursive) {
-                                    StateRuleExecution(context.replaceWithChildAppendingRules(it))
-                                } else {
-                                    StateRuleExecution(context.createChildAppendingRules(it))
-                                }
-                            }.asIterable()
+                            rules
+                                .map {
+                                    if (context.isTailRecursive) {
+                                        StateRuleExecution(context.replaceWithChildAppendingRules(it))
+                                    } else {
+                                        StateRuleExecution(context.createChildAppendingRules(it))
+                                    }
+                                }.asIterable()
                         }
                         else -> listOf(missingProcedure(ruleSources, currentGoalStruct.extractSignature()))
                     }
@@ -125,7 +128,8 @@ data class StateRuleSelection(override val context: ConcurrentExecutionContext) 
 
     private val ConcurrentExecutionContext.isTailRecursive: Boolean
         get() =
-            goals.next.isOver && flags[LastCallOptimization] == ON &&
+            goals.next.isOver &&
+                flags[LastCallOptimization] == ON &&
                 goals.current!!.let { currentGoal ->
                     currentGoal.asStruct()?.extractSignature()?.let {
                         it == procedure?.extractSignature() && it != catchSignature

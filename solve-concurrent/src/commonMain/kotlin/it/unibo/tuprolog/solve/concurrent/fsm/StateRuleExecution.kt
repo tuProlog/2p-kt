@@ -4,7 +4,9 @@ import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 
-data class StateRuleExecution(override val context: ConcurrentExecutionContext) : AbstractState(context) {
+data class StateRuleExecution(
+    override val context: ConcurrentExecutionContext,
+) : AbstractState(context) {
     private val failureState: EndState
         get() =
             StateEnd(

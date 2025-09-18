@@ -6,7 +6,8 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface LogicProgrammingScopeWithUnification<S : LogicProgrammingScopeWithUnification<S>> :
-    LogicProgrammingScopeWithUnificator<S>, Unificator {
+    LogicProgrammingScopeWithUnificator<S>,
+    Unificator {
     @JsName("anyMguWith")
     infix fun Any.mguWith(other: Any): Substitution =
         this@LogicProgrammingScopeWithUnification.mgu(this.toTerm(), other.toTerm())

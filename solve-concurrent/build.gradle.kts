@@ -1,7 +1,11 @@
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
 plugins {
-    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
 }
 
 val jvmStackSize: String by project
@@ -29,7 +33,7 @@ kotlin {
     }
 }
 
-tasks.withType<KotlinJvmTest> {
+tasks.withType<KotlinJvmTest>().configureEach {
     maxHeapSize = jvmMaxHeapSize
     jvmArgs("-Xss$jvmStackSize")
 }

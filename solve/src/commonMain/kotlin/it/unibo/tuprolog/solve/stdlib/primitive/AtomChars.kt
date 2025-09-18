@@ -25,13 +25,21 @@ object AtomChars : BinaryRelation.Functional<ExecutionContext>("atom_chars") {
                 val chars = second as LogicList
                 val atom: Atom =
                     Atom.of(
-                        chars.toSequence().map {
-                            if (it is Atom) {
-                                it.value[0]
-                            } else {
-                                throw TypeError.forArgumentList(context, signature, TypeError.Expected.CHARACTER, it, 1)
-                            }
-                        }.joinToString(""),
+                        chars
+                            .toSequence()
+                            .map {
+                                if (it is Atom) {
+                                    it.value[0]
+                                } else {
+                                    throw TypeError.forArgumentList(
+                                        context,
+                                        signature,
+                                        TypeError.Expected.CHARACTER,
+                                        it,
+                                        1,
+                                    )
+                                }
+                            }.joinToString(""),
                     )
                 Substitution.of(first, atom)
             }

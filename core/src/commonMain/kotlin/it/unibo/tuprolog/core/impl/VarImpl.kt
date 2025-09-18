@@ -14,7 +14,8 @@ internal class VarImpl(
     override val name: String,
     private val identifier: Long = instanceId(name),
     tags: Map<String, Any> = emptyMap(),
-) : TermImpl(tags), Var {
+) : TermImpl(tags),
+    Var {
     companion object {
         private val nameToInstanceCount = mutableMapOf<String, Long>()
 

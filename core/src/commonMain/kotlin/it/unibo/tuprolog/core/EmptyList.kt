@@ -5,7 +5,9 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 
-interface EmptyList : Empty, LogicList {
+interface EmptyList :
+    Empty,
+    LogicList {
     override val isCons: Boolean
         get() = false
 

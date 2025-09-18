@@ -41,10 +41,11 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
         } else {
             val explanationTermVar = Var.of("Explanation")
             val solution =
-                subSolver().solve(
-                    Struct.of(ProbSolve.functor, explanationTermVar, second),
-                    SolveOptions.DEFAULT.setProbabilistic(false),
-                ).firstOrNull()
+                subSolver()
+                    .solve(
+                        Struct.of(ProbSolve.functor, explanationTermVar, second),
+                        SolveOptions.DEFAULT.setProbabilistic(false),
+                    ).firstOrNull()
             if (solution == null) {
                 replyFail()
             } else {

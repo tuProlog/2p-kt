@@ -36,7 +36,8 @@ sealed class Solve {
         override val startTime: TimeInstant = currentTimeInstant(),
         /** The execution max duration after which the computation should end, because no more useful */
         override val maxDuration: TimeDuration = context.endTime - startTime,
-    ) : Durable, Solve() {
+    ) : Solve(),
+        Durable {
         init {
             when {
                 signature.vararg ->
@@ -209,17 +210,13 @@ sealed class Solve {
         )
 
         @JsName("subSolver")
-        fun subSolver(): Solver {
-            return context.createSolver()
-        }
+        fun subSolver(): Solver = context.createSolver()
 
         @JsName("solve")
         fun solve(
             goal: Struct,
             maxDuration: TimeDuration = this.maxDuration,
-        ): Sequence<Solution> {
-            return subSolver().solve(goal, maxDuration)
-        }
+        ): Sequence<Solution> = subSolver().solve(goal, maxDuration)
     }
 
     /** Class representing a Response, from the Solver, to a [Solve.Request] */

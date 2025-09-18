@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
-class BlockIterator(block: Block) : Iterator<Term> {
+class BlockIterator(
+    block: Block,
+) : Iterator<Term> {
     private open inner class BlockIteratorVisitor : TermVisitor<Term> {
         override fun visitTuple(term: Tuple): Term {
             current = term.right

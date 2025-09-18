@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCodes {
+class TestAtomCodesImpl(
+    private val solverFactory: SolverFactory,
+) : TestAtomCodes {
     override fun testAtomCodesSecondIsVar1() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

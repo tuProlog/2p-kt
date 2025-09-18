@@ -9,7 +9,9 @@ import kotlin.jvm.JvmOverloads
 
 abstract class AbstractUnificator
     @JvmOverloads
-    constructor(override val context: Substitution = empty()) : Unificator {
+    constructor(
+        override val context: Substitution = empty(),
+    ) : Unificator {
         /** The context converted to equivalent equations */
         private val contextEquations: Iterable<Equation> by lazy { context.toEquations() }
 

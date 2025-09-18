@@ -4,7 +4,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestAtomConcat
 import kotlin.test.Test
 
-class TestClassicAtomConcat : TestAtomConcat, SolverFactory by ClassicSolverFactory {
+class TestClassicAtomConcat :
+    TestAtomConcat,
+    SolverFactory by ClassicSolverFactory {
     private val prototype = TestAtomConcat.prototype(this)
 
     @Test

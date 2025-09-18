@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.utils.graphs
 
-class BreadthFirst<T, W>(private val maxDepth: Int = -1) : AbstractSearchStrategy<T, W, Int>(0) {
+class BreadthFirst<T, W>(
+    private val maxDepth: Int = -1,
+) : AbstractSearchStrategy<T, W, Int>(0) {
     override fun selectNextVisit(
         graph: Graph<T, W>,
         lastTraversal: Traversal<T, W, Int>,

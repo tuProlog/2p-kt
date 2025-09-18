@@ -107,8 +107,6 @@ interface Rule : Clause {
         fun template(
             functor: String,
             arity: Int,
-        ): Rule {
-            return of(Struct.template(functor, arity), Var.anonymous())
-        }
+        ): Rule = of(Struct.template(functor, arity), Var.anonymous())
     }
 }

@@ -3,7 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 
-class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumberChars {
+class TestNumberCharsImpl(
+    private val solverFactory: SolverFactory,
+) : TestNumberChars {
     override fun testNumberCharsListIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

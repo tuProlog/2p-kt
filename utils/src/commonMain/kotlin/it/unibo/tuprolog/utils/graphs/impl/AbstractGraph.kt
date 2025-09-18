@@ -129,7 +129,8 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
     override fun toMutable(): MutableGraph<T, W> = MutableGraphImpl(connections)
 
     override fun ingoingEdges(to: Node<T>): Iterable<Edge<T, W>> =
-        connections.asSequence()
+        connections
+            .asSequence()
             .filter { (_, destinations) -> to in destinations }
             .map { (source, destinations) -> edge(source, to, destinations[to]!!) }
             .asIterable()

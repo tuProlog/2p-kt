@@ -9,7 +9,5 @@ object CurrentCharConversion : BinaryRelation.NonBacktrackable<ExecutionContext>
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,
-    ): Solve.Response {
-        return notSupported()
-    }
+    ): Solve.Response = notSupported()
 }

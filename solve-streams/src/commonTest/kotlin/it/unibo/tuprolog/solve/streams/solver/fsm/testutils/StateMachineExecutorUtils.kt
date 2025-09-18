@@ -129,5 +129,10 @@ internal object StateMachineExecutorUtils {
         )
 
     /** Utility function to print meaningful names in object toString */
-    private fun KClass<*>.className() = this.toString().substringAfter("$").substringBefore("(").trim()
+    private fun KClass<*>.className() =
+        this
+            .toString()
+            .substringAfter("$")
+            .substringBefore("(")
+            .trim()
 }

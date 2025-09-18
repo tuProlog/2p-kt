@@ -10,7 +10,9 @@ import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 
-interface TestConcurrentFail<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentFail<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testFail() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

@@ -20,7 +20,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @Suppress("DEPRECATION")
-class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirectives {
+class TestDirectivesImpl(
+    private val solverFactory: SolverFactory,
+) : TestDirectives {
     override fun testDynamic1() {
         logicProgramming {
             val initialStaticKb =

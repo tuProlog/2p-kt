@@ -111,7 +111,12 @@ class SyntaxError constructor(
             column: Int,
             message: String? = null,
         ): String {
-            val lines = text.lineSequence().drop(line - 1).take(1).toList()
+            val lines =
+                text
+                    .lineSequence()
+                    .drop(line - 1)
+                    .take(1)
+                    .toList()
             if (lines.isEmpty()) return text
             val padding = kotlin.math.max(line.log10(), (line - 1).log10())
             val prefix =

@@ -1,6 +1,8 @@
 package it.unibo.tuprolog
 
-enum class Os(val isPosix: Boolean) {
+enum class Os(
+    val isPosix: Boolean,
+) {
     WINDOWS(false),
     LINUX(true),
     MAC(true),

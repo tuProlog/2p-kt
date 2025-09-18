@@ -9,7 +9,8 @@ import it.unibo.tuprolog.core.TermVisitor
 internal class DirectiveImpl(
     override val body: Term,
     tags: Map<String, Any> = emptyMap(),
-) : ClauseImpl(null, body, tags), Directive {
+) : ClauseImpl(null, body, tags),
+    Directive {
     override val head: Struct? = super<Directive>.head
 
     override fun copyWithTags(tags: Map<String, Any>): Directive = DirectiveImpl(body, tags)

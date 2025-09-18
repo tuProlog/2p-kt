@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestSolver
 import kotlin.test.Test
 
-class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
+class TestClassicSolver :
+    TestSolver,
+    SolverFactory by ClassicSolverFactory {
     private val prototype =
         Signature("ensure_executable", 1).let {
             TestSolver.prototype(this, it, it, it)

@@ -3,7 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestBigList {
+internal class TestBigListImpl(
+    private val solverFactory: SolverFactory,
+) : TestBigList {
     override val shortDuration: TimeDuration
         get() = 6000
 

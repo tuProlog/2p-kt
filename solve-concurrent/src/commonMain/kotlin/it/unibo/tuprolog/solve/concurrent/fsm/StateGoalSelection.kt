@@ -3,10 +3,12 @@ package it.unibo.tuprolog.solve.concurrent.fsm
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 
-data class StateGoalSelection(override val context: ConcurrentExecutionContext) : AbstractState(context) {
+data class StateGoalSelection(
+    override val context: ConcurrentExecutionContext,
+) : AbstractState(context) {
     @Suppress("ktlint:standard:discouraged-comment-location")
-    override fun computeNext(): Iterable<State> {
-        return listOf(
+    override fun computeNext(): Iterable<State> =
+        listOf(
             if (context.goals.isOver) {
                 if (context.isRoot) {
                     StateEnd(
@@ -39,7 +41,6 @@ data class StateGoalSelection(override val context: ConcurrentExecutionContext) 
                 StatePrimitiveSelection(context.copy(goals = goalsWithSubstitution, step = nextStep()))
             },
         )
-    }
 
     override fun clone(context: ConcurrentExecutionContext): StateGoalSelection = copy(context = context)
 }

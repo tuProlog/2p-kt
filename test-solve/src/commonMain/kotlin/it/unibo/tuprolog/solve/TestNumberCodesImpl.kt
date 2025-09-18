@@ -3,7 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumberCodes {
+class TestNumberCodesImpl(
+    private val solverFactory: SolverFactory,
+) : TestNumberCodes {
     override fun testNumberCodesListIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

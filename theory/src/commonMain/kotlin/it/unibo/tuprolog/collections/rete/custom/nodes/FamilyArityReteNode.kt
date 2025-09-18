@@ -19,7 +19,8 @@ internal open class FamilyArityReteNode(
     unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int,
-) : ArityNode(unificator), ArityRete {
+) : ArityNode(unificator),
+    ArityRete {
     protected val numericIndex: IndexingLeaf =
         NumericIndex(unificator, ordered, nestingLevel)
 
@@ -58,22 +59,24 @@ internal open class FamilyArityReteNode(
     override val isEmpty: Boolean
         get() = sequenceOf(numericIndex, atomicIndex, variableIndex, compoundIndex).all { it.isEmpty }
 
-    override fun get(clause: Clause): Sequence<Clause> {
-        return if (clause.isGlobal()) {
+    override fun get(clause: Clause): Sequence<Clause> =
+        if (clause.isGlobal()) {
             if (ordered) {
-                Utils.merge(
-                    atomicIndex.extractGlobalIndexedSequence(clause),
-                    variableIndex.extractGlobalIndexedSequence(clause),
-                    numericIndex.extractGlobalIndexedSequence(clause),
-                    compoundIndex.extractGlobalIndexedSequence(clause),
-                ).map { it.innerClause }
+                Utils
+                    .merge(
+                        atomicIndex.extractGlobalIndexedSequence(clause),
+                        variableIndex.extractGlobalIndexedSequence(clause),
+                        numericIndex.extractGlobalIndexedSequence(clause),
+                        compoundIndex.extractGlobalIndexedSequence(clause),
+                    ).map { it.innerClause }
             } else {
-                Utils.flattenIndexed(
-                    atomicIndex.extractGlobalIndexedSequence(clause),
-                    variableIndex.extractGlobalIndexedSequence(clause),
-                    numericIndex.extractGlobalIndexedSequence(clause),
-                    compoundIndex.extractGlobalIndexedSequence(clause),
-                ).map { it.innerClause }
+                Utils
+                    .flattenIndexed(
+                        atomicIndex.extractGlobalIndexedSequence(clause),
+                        variableIndex.extractGlobalIndexedSequence(clause),
+                        numericIndex.extractGlobalIndexedSequence(clause),
+                        compoundIndex.extractGlobalIndexedSequence(clause),
+                    ).map { it.innerClause }
             }
         } else {
             if (ordered) {
@@ -82,7 +85,6 @@ internal open class FamilyArityReteNode(
                 getUnordered(clause)
             }
         }
-    }
 
     override fun assertA(clause: IndexedClause) = assertByFirstParameter(clause).assertA(clause + this)
 

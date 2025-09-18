@@ -8,8 +8,6 @@ interface TermDeserializer : Deserializer<Term> {
     companion object {
         @JvmStatic
         @JsName("of")
-        fun of(mimeType: MimeType): TermDeserializer {
-            return termDeserializer(mimeType)
-        }
+        fun of(mimeType: MimeType): TermDeserializer = termDeserializer(mimeType)
     }
 }

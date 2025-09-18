@@ -10,7 +10,5 @@ object TermNotSame : BinaryRelation.Predicative<ExecutionContext>("\\=@=") {
     override fun Solve.Request<ExecutionContext>.compute(
         first: Term,
         second: Term,
-    ): Boolean {
-        return first.compareTo(second) != 0
-    }
+    ): Boolean = first.compareTo(second) != 0
 }

@@ -11,7 +11,9 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentClause<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentClause<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testClauseXBody() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

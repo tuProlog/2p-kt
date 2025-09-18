@@ -6,7 +6,9 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestAssertA {
+internal class TestAssertAImpl(
+    private val solverFactory: SolverFactory,
+) : TestAssertA {
     override fun testAssertAClause() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

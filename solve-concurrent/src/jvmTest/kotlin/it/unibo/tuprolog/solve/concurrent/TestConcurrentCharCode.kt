@@ -9,7 +9,9 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentCharCode<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentCharCode<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testCharCodeSecondIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

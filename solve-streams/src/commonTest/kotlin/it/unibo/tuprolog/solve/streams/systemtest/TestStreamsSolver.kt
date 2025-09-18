@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.streams.StreamsSolverFactory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestStreamsSolver : TestSolver, SolverFactory by StreamsSolverFactory {
+class TestStreamsSolver :
+    TestSolver,
+    SolverFactory by StreamsSolverFactory {
     private val prototype = TestSolver.prototype(this)
 
     override val callErrorSignature: Signature

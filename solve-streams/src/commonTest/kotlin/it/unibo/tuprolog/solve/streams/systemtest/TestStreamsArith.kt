@@ -7,7 +7,9 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Ignore
-class TestStreamsArith : TestArith, SolverFactory by StreamsSolverFactory {
+class TestStreamsArith :
+    TestArith,
+    SolverFactory by StreamsSolverFactory {
     private val prototype = TestArith.prototype(this)
 
     @Test

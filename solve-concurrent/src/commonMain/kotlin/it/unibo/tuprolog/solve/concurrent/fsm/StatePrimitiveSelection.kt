@@ -7,18 +7,19 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
 
-data class StatePrimitiveSelection(override val context: ConcurrentExecutionContext) : AbstractState(context) {
-    private fun exceptionalState(exception: ResolutionException): Iterable<StateException> {
-        return listOf(
+data class StatePrimitiveSelection(
+    override val context: ConcurrentExecutionContext,
+) : AbstractState(context) {
+    private fun exceptionalState(exception: ResolutionException): Iterable<StateException> =
+        listOf(
             StateException(
                 exception,
                 context.copy(step = nextStep()),
             ),
         )
-    }
 
-    override fun computeNext(): Iterable<State> {
-        return with(context) {
+    override fun computeNext(): Iterable<State> =
+        with(context) {
             val goal = currentGoal!!
             when {
                 goal.isVar -> {
@@ -41,7 +42,8 @@ data class StatePrimitiveSelection(override val context: ConcurrentExecutionCont
                             val primitive =
                                 libraries.primitives[signature]
                                     ?: error("Inconsistent behaviour of Library.contains and Library.get")
-                            primitive.solve(request)
+                            primitive
+                                .solve(request)
                                 .map { StatePrimitiveExecution(childContext.copy(primitive = it)) }
                                 .asIterable()
                         } catch (exception: ResolutionException) {
@@ -63,7 +65,6 @@ data class StatePrimitiveSelection(override val context: ConcurrentExecutionCont
                 }
             }
         }
-    }
 
     override fun clone(context: ConcurrentExecutionContext): StatePrimitiveSelection = copy(context = context)
 }

@@ -32,18 +32,21 @@ internal class OverloadSelectorImpl(
                 .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
                 ?.first
                 ?: throw MethodInvocationException(
-                    type, name,
+                    type,
+                    name,
                     arguments.map {
                         termToObjectConverter.admissibleTypes(it)
                     },
                 )
         } catch (e: IllegalStateException) {
-            type.allSupertypes(strict = true)
+            type
+                .allSupertypes(strict = true)
                 .firstOrNull()
                 ?.let { OverloadSelector.of(it, termToObjectConverter) }
                 ?.findMethod(name, arguments)
                 ?: throw MethodInvocationException(
-                    type, name,
+                    type,
+                    name,
                     arguments.map {
                         termToObjectConverter.admissibleTypes(it)
                     },
@@ -54,8 +57,8 @@ internal class OverloadSelectorImpl(
     override fun findProperty(
         name: String,
         value: Term,
-    ): KMutableProperty<*> {
-        return type.members
+    ): KMutableProperty<*> =
+        type.members
             .filter { it.name == name }
             .filter { it.visibility == KVisibility.PUBLIC }
             .filterIsInstance<KMutableProperty<*>>()
@@ -63,19 +66,17 @@ internal class OverloadSelectorImpl(
             .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
             ?.first
             ?: throw PropertyAssignmentException(type, name, termToObjectConverter.admissibleTypes(value))
-    }
 
     private val KCallable<*>.instanceParameters
         get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }
 
-    override fun findConstructor(arguments: List<Term>): KCallable<*> {
-        return type.constructors
+    override fun findConstructor(arguments: List<Term>): KCallable<*> =
+        type.constructors
             .filter { it.visibility == KVisibility.PUBLIC }
             .map { it to it.instanceParameters.score(arguments) }
             .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
             ?.first
             ?: throw ConstructorInvocationException(type, arguments.map { termToObjectConverter.admissibleTypes(it) })
-    }
 
     @Suppress("ReturnCount")
     private fun List<KParameter>.score(arguments: List<Term>): Int? {

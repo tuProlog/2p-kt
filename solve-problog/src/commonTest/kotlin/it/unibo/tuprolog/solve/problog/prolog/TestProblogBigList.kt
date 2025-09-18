@@ -8,7 +8,9 @@ import kotlin.test.Test
 
 // NOTE: Ignored because the heavier stack usage of this implementation makes this not meaningful.
 @Ignore
-class TestProblogBigList : TestBigList, SolverFactory by ProblogSolverFactory {
+class TestProblogBigList :
+    TestBigList,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestBigList.prototype(this)
 
     @Test

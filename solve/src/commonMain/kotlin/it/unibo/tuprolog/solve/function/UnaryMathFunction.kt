@@ -12,7 +12,9 @@ import it.unibo.tuprolog.solve.ExecutionContext
  *
  * @author Enrico
  */
-abstract class UnaryMathFunction(name: String) : MathFunction(name, 1) {
+abstract class UnaryMathFunction(
+    name: String,
+) : MathFunction(name, 1) {
     override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response =
         with(request) {
             val term = arguments.single()

@@ -11,7 +11,9 @@ import it.unibo.tuprolog.solve.libs.io.primitives.Consult
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
+class TestConsultImpl(
+    private val solverFactory: SolverFactory,
+) : TestConsult {
     private fun testConsultCorrectTheory(url: Url) {
         logicProgramming {
             val canaryTheory = theoryOf(factOf("canary"))

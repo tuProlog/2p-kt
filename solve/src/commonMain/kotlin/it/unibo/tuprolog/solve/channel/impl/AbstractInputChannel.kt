@@ -6,7 +6,9 @@ import it.unibo.tuprolog.utils.dequeOf
 import it.unibo.tuprolog.utils.synchronizedOnSelf
 import it.unibo.tuprolog.utils.takeFirst
 
-abstract class AbstractInputChannel<T : Any> : AbstractChannel<T>(), InputChannel<T> {
+abstract class AbstractInputChannel<T : Any> :
+    AbstractChannel<T>(),
+    InputChannel<T> {
     private val queue: MutableList<T?> = dequeOf()
 
     override val available: Boolean

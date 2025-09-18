@@ -19,19 +19,20 @@ internal object Not : PrimitiveWrapper<StreamsExecutionContext>("\\+", 1) {
         sequence {
             val goalArgument = request.arguments.single()
 
-            StreamsSolver.solveToResponses(
-                request.newSolveRequest(Struct.of(Call.functor, goalArgument)),
-            ).forEach { goalResponse ->
-                when (goalResponse.solution) {
-                    is Solution.Yes -> {
-                        yield(request.replyFail())
-                        return@sequence
+            StreamsSolver
+                .solveToResponses(
+                    request.newSolveRequest(Struct.of(Call.functor, goalArgument)),
+                ).forEach { goalResponse ->
+                    when (goalResponse.solution) {
+                        is Solution.Yes -> {
+                            yield(request.replyFail())
+                            return@sequence
+                        }
+
+                        is Solution.No -> yield(request.replySuccess(request.context.substitution))
+
+                        else -> yield(request.replyWith(goalResponse))
                     }
-
-                    is Solution.No -> yield(request.replySuccess(request.context.substitution))
-
-                    else -> yield(request.replyWith(goalResponse))
                 }
-            }
         }
 }

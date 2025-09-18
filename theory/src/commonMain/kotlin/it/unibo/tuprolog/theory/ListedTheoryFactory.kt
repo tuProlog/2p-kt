@@ -5,7 +5,9 @@ import it.unibo.tuprolog.theory.impl.ListedTheory
 import it.unibo.tuprolog.theory.impl.MutableListedTheory
 import it.unibo.tuprolog.unify.Unificator
 
-class ListedTheoryFactory(override val unificator: Unificator) : TheoryFactory {
+class ListedTheoryFactory(
+    override val unificator: Unificator,
+) : TheoryFactory {
     override fun copy(unificator: Unificator): TheoryFactory = ListedTheoryFactory(unificator)
 
     override fun emptyTheory(unificator: Unificator): Theory = ListedTheory(unificator, emptyList())

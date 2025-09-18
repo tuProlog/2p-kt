@@ -15,7 +15,9 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 
 @Suppress("LocalVariableName", "ktlint:standard:property-naming", "VariableNaming")
-interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentStackTrace<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     private fun threeLayersTheory(errorExpression: LogicProgrammingScope.() -> Struct): Theory =
         logicProgramming {
             theoryOf(

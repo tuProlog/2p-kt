@@ -66,9 +66,7 @@ sealed class ChoicePointContext(
         override val parent: ChoicePointContext?,
         override val depth: Int,
     ) : ChoicePointContext(alternatives, executionContext, parent, depth) {
-        override fun toString(): String {
-            return super.toString()
-        }
+        override fun toString(): String = super.toString()
 
         override val typeName: String
             get() = "Primitives"
@@ -105,9 +103,7 @@ sealed class ChoicePointContext(
         override val parent: ChoicePointContext?,
         override val depth: Int,
     ) : ChoicePointContext(alternatives, executionContext, parent, depth) {
-        override fun toString(): String {
-            return super.toString()
-        }
+        override fun toString(): String = super.toString()
 
         override val typeName: String
             get() = "Rules"

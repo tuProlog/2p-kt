@@ -16,15 +16,15 @@ import it.unibo.tuprolog.utils.plus
 data class StateException(
     override val exception: ResolutionException,
     override val context: ClassicExecutionContext,
-) : ExceptionalState, AbstractState(context) {
+) : AbstractState(context),
+    ExceptionalState {
     private fun Struct.isCatch(): Boolean = arity == 3 && functor == Catch.functor
 
-    private fun LogicError.getExceptionContent(): Term {
-        return when (this) {
+    private fun LogicError.getExceptionContent(): Term =
+        when (this) {
             is MessageError -> content
             else -> errorStruct
         }
-    }
 
     private fun ResolutionException.toPublicException(): ResolutionException =
         when (this) {
@@ -86,8 +86,8 @@ data class StateException(
         else -> handleExceptionInParentContext
     }
 
-    override fun computeNext(): State {
-        return when (exception) {
+    override fun computeNext(): State =
+        when (exception) {
             is LogicError -> {
                 val catchGoal = context.currentGoal!!
                 when {
@@ -98,7 +98,6 @@ data class StateException(
             }
             else -> finalState
         }
-    }
 
     override fun clone(context: ClassicExecutionContext): StateException =
         copy(

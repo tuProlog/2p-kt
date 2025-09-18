@@ -73,7 +73,9 @@ internal class SubstitutionTest {
     fun ofVariableAndTerm() {
         val correct = correctInstances.filter { it.size == 1 }
         val toBeTested =
-            SubstitutionUtils.mixedSubstitutionsAsPairs.filter { it.size == 1 }.map { it.first() }
+            SubstitutionUtils.mixedSubstitutionsAsPairs
+                .filter { it.size == 1 }
+                .map { it.first() }
                 .map { (variable, withTerm) -> Substitution.of(variable, withTerm) }
 
         onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
@@ -83,7 +85,9 @@ internal class SubstitutionTest {
     fun ofStringVariableAndTerm() {
         val correct = correctInstances.filter { it.size == 1 }
         val toBeTested =
-            SubstitutionUtils.mixedSubstitutionsAsPairs.filter { it.size == 1 }.map { it.first() }
+            SubstitutionUtils.mixedSubstitutionsAsPairs
+                .filter { it.size == 1 }
+                .map { it.first() }
                 .map { (variable, withTerm) -> Substitution.of(variable.name, withTerm) }
 
         onCorrespondingItems(correct, toBeTested) { expectedMap, actualMap ->

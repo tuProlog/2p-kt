@@ -275,7 +275,8 @@ interface Struct : Term {
             escapeSingleQuotes: Boolean = true,
             escapeDoubleQuotes: Boolean = !escapeSingleQuotes,
         ): String =
-            string.toCharArray()
+            string
+                .toCharArray()
                 .asSequence()
                 .map { Terms.escapeChar(it, escapeSingleQuotes, escapeDoubleQuotes) }
                 .reduceOrNull(String::plus)
@@ -481,14 +482,16 @@ interface Struct : Term {
                 operator == TUPLE_FUNCTOR -> Tuple.of(terms + listOfNotNull(terminal))
                 terminal == null -> {
                     require(terms.size >= 2) { "Struct requires at least two terms to fold" }
-                    terms.slice(0 until terms.lastIndex - 1)
+                    terms
+                        .slice(0 until terms.lastIndex - 1)
                         .foldRight(of(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
                             of(operator, a, b)
                         }
                 }
                 else -> {
                     require(terms.isNotEmpty()) { "Struct requires at least two terms to fold" }
-                    terms.slice(0 until terms.lastIndex)
+                    terms
+                        .slice(0 until terms.lastIndex)
                         .foldRight(of(operator, terms[terms.lastIndex], terminal)) { a, b ->
                             of(operator, a, b)
                         }

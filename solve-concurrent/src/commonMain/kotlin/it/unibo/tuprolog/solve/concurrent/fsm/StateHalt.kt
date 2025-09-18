@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.exception.ResolutionException
 data class StateHalt(
     override val exception: ResolutionException,
     override val context: ConcurrentExecutionContext,
-) : AbstractState(context), ExceptionalState, EndState {
+) : AbstractState(context),
+    ExceptionalState,
+    EndState {
     override val solution: Solution = Solution.halt(context.query, exception)
 
     override fun next(): Iterable<State> = super<AbstractState>.next()

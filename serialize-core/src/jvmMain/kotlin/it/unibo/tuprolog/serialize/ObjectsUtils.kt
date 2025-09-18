@@ -4,15 +4,13 @@ actual object ObjectsUtils {
     actual fun parseAsObject(
         string: String,
         mimeType: MimeType,
-    ): Any {
-        return mimeType.objectMapper.readValue(string, java.lang.Object::class.java)
-    }
+    ): Any = mimeType.objectMapper.readValue(string, java.lang.Object::class.java)
 
     actual fun deeplyEqual(
         obj1: Any?,
         obj2: Any?,
-    ): Boolean {
-        return when {
+    ): Boolean =
+        when {
             obj1 is Number && obj2 is Number -> obj1.toString() == obj2.toString()
             obj1 is List<*> && obj2 is List<*> ->
                 when {
@@ -30,5 +28,4 @@ actual object ObjectsUtils {
                 }
             else -> obj1 == obj2
         }
-    }
 }

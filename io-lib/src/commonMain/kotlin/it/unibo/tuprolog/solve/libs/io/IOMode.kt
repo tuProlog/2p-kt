@@ -9,6 +9,11 @@ enum class IOMode {
     ;
 
     companion object {
-        val atomValues = values().asSequence().map { it.name.lowercase() }.map(Atom.Companion::of).toSet()
+        val atomValues =
+            values()
+                .asSequence()
+                .map { it.name.lowercase() }
+                .map(Atom.Companion::of)
+                .toSet()
     }
 }

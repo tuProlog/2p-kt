@@ -18,7 +18,8 @@ internal class RootNode(
     override val unificator: Unificator,
     clauses: Iterable<Clause>,
     override val isOrdered: Boolean,
-) : ReteTree, Cacheable<Clause> {
+) : ReteTree,
+    Cacheable<Clause> {
     private val theoryCache: Cached<MutableList<Clause>> = Cached.of(this::regenerateCache)
 
     private val ruleIndex: RuleNode = RuleNode(unificator, isOrdered)
@@ -111,13 +112,14 @@ internal class RootNode(
 
     private fun assignLowerIndex(clause: Clause): IndexedClause = IndexedClause.of(--lowestIndex, clause, this)
 
-    private fun regenerateCache(): MutableList<Clause> {
-        return dequeOf(
+    private fun regenerateCache(): MutableList<Clause> =
+        dequeOf(
             if (isOrdered) {
-                Utils.merge(
-                    directiveIndex.getCache(),
-                    ruleIndex.getCache(),
-                ).map { it.innerClause }
+                Utils
+                    .merge(
+                        directiveIndex.getCache(),
+                        ruleIndex.getCache(),
+                    ).map { it.innerClause }
             } else {
                 Utils.flatten(
                     directiveIndex.getCache().map { it.innerClause },
@@ -125,11 +127,8 @@ internal class RootNode(
                 )
             },
         )
-    }
 
-    override fun getCache(): Sequence<Clause> {
-        return theoryCache.value.asSequence()
-    }
+    override fun getCache(): Sequence<Clause> = theoryCache.value.asSequence()
 
     override fun invalidateCache() {
         theoryCache.invalidate()

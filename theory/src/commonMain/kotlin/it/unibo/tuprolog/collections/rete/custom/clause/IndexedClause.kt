@@ -19,8 +19,8 @@ internal interface IndexedClause : LongIndexed<Clause> {
         fun wrap(
             indexedClause: LongIndexed<Clause>,
             vararg traversed: Cacheable<*>,
-        ): IndexedClause {
-            return object : IndexedClause {
+        ): IndexedClause =
+            object : IndexedClause {
                 override val index: Long
                     get() = indexedClause.index
 
@@ -35,28 +35,25 @@ internal interface IndexedClause : LongIndexed<Clause> {
 
                 override fun <R> map(mapper: (Clause) -> R) = indexedClause.map(mapper)
             }
-        }
 
         fun of(
             index: Long,
             clause: Clause,
             vararg traversed: Cacheable<*>,
-        ): IndexedClause {
-            return wrap(
+        ): IndexedClause =
+            wrap(
                 LongIndexed.of(index, clause),
                 *traversed,
             )
-        }
 
         fun of(
             index: Long,
             clause: Clause,
             traversed: List<Cacheable<*>>,
-        ): IndexedClause {
-            return wrap(
+        ): IndexedClause =
+            wrap(
                 LongIndexed.of(index, clause),
                 *traversed.toTypedArray(),
             )
-        }
     }
 }

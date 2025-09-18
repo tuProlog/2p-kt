@@ -35,7 +35,9 @@ sealed class RetractResult<out T : Theory> {
     }
 
     /** A failed "retract" operation result, carrying the unchanged [theory] */
-    data class Failure<T : Theory>(override val theory: T) : RetractResult<T>() {
+    data class Failure<T : Theory>(
+        override val theory: T,
+    ) : RetractResult<T>() {
         override val isFailure: Boolean
             get() = true
 

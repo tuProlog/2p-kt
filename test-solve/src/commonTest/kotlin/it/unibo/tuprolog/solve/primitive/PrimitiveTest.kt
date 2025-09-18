@@ -41,11 +41,10 @@ internal class PrimitiveTest {
             Primitive.Companion::enforcingSignature,
             primitive,
             ::createPrimitiveRequest,
-        )
-            .forEach { (checkedPrimitive, badRequests) ->
-                badRequests.forEach {
-                    assertFailsWith<IllegalArgumentException> { checkedPrimitive.solve(it) }
-                }
+        ).forEach { (checkedPrimitive, badRequests) ->
+            badRequests.forEach {
+                assertFailsWith<IllegalArgumentException> { checkedPrimitive.solve(it) }
             }
+        }
     }
 }

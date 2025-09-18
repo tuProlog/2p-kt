@@ -46,21 +46,19 @@ internal class BinaryApplyExpansionVisitor<T : Comparable<T>, E>(
 
     private val castVisitor = CastVisitor<T, ApplyExpansionResult<T, E>>()
 
-    override fun visit(node: BinaryDecisionDiagram.Terminal<T>): ApplyExpansionResult<T, E> {
-        return visitWithTable(node, thatNode) {
+    override fun visit(node: BinaryDecisionDiagram.Terminal<T>): ApplyExpansionResult<T, E> =
+        visitWithTable(node, thatNode) {
             castVisitor.onTerminal = { that -> this.apply(node, that) }
             castVisitor.onVariable = { that -> this.apply(node, that) }
             thatNode.accept(castVisitor)
         }
-    }
 
-    override fun visit(node: BinaryDecisionDiagram.Variable<T>): ApplyExpansionResult<T, E> {
-        return visitWithTable(node, thatNode) {
+    override fun visit(node: BinaryDecisionDiagram.Variable<T>): ApplyExpansionResult<T, E> =
+        visitWithTable(node, thatNode) {
             castVisitor.onTerminal = { that -> this.apply(node, that) }
             castVisitor.onVariable = { that -> this.apply(node, that) }
             thatNode.accept(castVisitor)
         }
-    }
 
     private fun visitWithTable(
         first: BinaryDecisionDiagram<T>,

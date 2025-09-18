@@ -17,7 +17,8 @@ object Sleep : UnaryPredicate<ExecutionContext>("sleep") {
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> =
         sequence {
             ensuringAllArgumentsAreInstantiated()
-                .ensuringArgumentIsInteger(0).let {
+                .ensuringArgumentIsInteger(0)
+                .let {
                     val initialTime = currentTimeInstant()
                     val threshold = arguments[0].castTo<Integer>().intValue.toLongExact()
                     while (currentTimeInstant() - initialTime < threshold) {

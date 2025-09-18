@@ -11,7 +11,8 @@ import it.unibo.tuprolog.unify.Unificator
 
 internal class ReteClauseQueue private constructor(
     rete: ReteTree,
-) : ClauseQueue, AbstractReteClauseCollection<ReteClauseQueue>(rete) {
+) : AbstractReteClauseCollection<ReteClauseQueue>(rete),
+    ClauseQueue {
     private val hashCodeCache by lazy {
         ClauseQueue.hashCode(this)
     }
@@ -60,17 +61,14 @@ internal class ReteClauseQueue private constructor(
 
     override fun newCollectionBuilder(rete: ReteTree): ReteClauseQueue = ReteClauseQueue(rete)
 
-    override fun equals(other: Any?): Boolean {
-        return if (other is ClauseQueue && other !is MutableClauseQueue) {
+    override fun equals(other: Any?): Boolean =
+        if (other is ClauseQueue && other !is MutableClauseQueue) {
             ClauseQueue.equals(this, other)
         } else {
             false
         }
-    }
 
-    override fun hashCode(): Int {
-        return hashCodeCache
-    }
+    override fun hashCode(): Int = hashCodeCache
 
     override val self: ReteClauseQueue
         get() = this

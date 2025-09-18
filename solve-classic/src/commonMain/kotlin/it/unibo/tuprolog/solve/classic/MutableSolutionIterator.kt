@@ -22,8 +22,7 @@ interface MutableSolutionIterator : SolutionIterator {
             initialState: State,
             hijackStateTransitionCallback: (State, State, Long) -> State = { _, dest, _ -> dest },
             onStateTransitionCallback: (State, State, Long) -> Unit = { _, _, _ -> },
-        ): SolutionIterator {
-            return HijackableSolutionIterator(initialState, hijackStateTransitionCallback, onStateTransitionCallback)
-        }
+        ): SolutionIterator =
+            HijackableSolutionIterator(initialState, hijackStateTransitionCallback, onStateTransitionCallback)
     }
 }

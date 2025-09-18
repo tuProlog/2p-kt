@@ -6,8 +6,9 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.utils.forceCast
 
 /** The root node, of the Rete Tree indexing [Clause]s */
-internal data class RootNode(override val children: MutableMap<String?, ReteNode<*, Clause>> = mutableMapOf()) :
-    AbstractIntermediateReteNode<String?, Clause>(children) {
+internal data class RootNode(
+    override val children: MutableMap<String?, ReteNode<*, Clause>> = mutableMapOf(),
+) : AbstractIntermediateReteNode<String?, Clause>(children) {
     override val isRootNode: Boolean
         get() = true
 

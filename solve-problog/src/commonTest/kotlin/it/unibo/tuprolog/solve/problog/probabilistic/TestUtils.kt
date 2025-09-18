@@ -21,9 +21,7 @@ internal object TestUtils {
         first: Double,
         second: Double,
         precision: Double = DEFAULT_DOUBLE_PRECISION,
-    ): Boolean {
-        return abs(first / second - 1) < precision
-    }
+    ): Boolean = abs(first / second - 1) < precision
 
     fun assertQueryWithSolutions(
         theory: Theory,

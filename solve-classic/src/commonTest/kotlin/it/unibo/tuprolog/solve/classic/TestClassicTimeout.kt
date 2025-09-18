@@ -4,7 +4,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestTimeout
 import kotlin.test.Test
 
-class TestClassicTimeout : TestTimeout, SolverFactory by ClassicSolverFactory {
+class TestClassicTimeout :
+    TestTimeout,
+    SolverFactory by ClassicSolverFactory {
     private val prototype = TestTimeout.prototype(this)
 
     @Test

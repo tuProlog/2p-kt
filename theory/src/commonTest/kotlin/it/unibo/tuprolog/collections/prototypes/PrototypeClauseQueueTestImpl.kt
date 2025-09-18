@@ -19,8 +19,8 @@ import kotlin.test.assertNotEquals
 internal class PrototypeClauseQueueTestImpl(
     private val emptyGenerator: () -> ClauseQueue,
     private val collectionGenerator: (Iterable<Clause>) -> ClauseQueue,
-) : PrototypeClauseQueueTest,
-    PrototypeClauseCollectionTestImpl(emptyGenerator, collectionGenerator) {
+) : PrototypeClauseCollectionTestImpl(emptyGenerator, collectionGenerator),
+    PrototypeClauseQueueTest {
     private val fFamilySelector =
         Fact.of(Struct.of("f", Var.anonymous()))
 
@@ -69,19 +69,16 @@ internal class PrototypeClauseQueueTestImpl(
     override fun getClauses(
         collection: ClauseCollection,
         query: Clause,
-    ): Sequence<Clause> {
-        return (collection as ClauseQueue).get(query)
-    }
+    ): Sequence<Clause> = (collection as ClauseQueue).get(query)
 
     override fun retractClauses(
         collection: ClauseCollection,
         query: Clause,
-    ): Sequence<Clause> {
-        return when (val res = (collection as ClauseQueue).retrieve(query)) {
+    ): Sequence<Clause> =
+        when (val res = (collection as ClauseQueue).retrieve(query)) {
             is RetrieveResult.Success -> res.clauses.asSequence()
             else -> emptySequence()
         }
-    }
 
     override fun getWithPresentClauseReturnsTheCorrectSequence() {
         val sequence = collectionGenerator(clauses + presentClause)[presentClause]

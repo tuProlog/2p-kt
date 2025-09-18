@@ -8,7 +8,9 @@ import it.unibo.tuprolog.solve.stdlib.primitive.SetDurable
 import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
 import it.unibo.tuprolog.solve.stdlib.primitive.SetPersistent
 
-class TestCustomDataImpl(private val solverFactory: SolverFactory) : TestCustomData {
+class TestCustomDataImpl(
+    private val solverFactory: SolverFactory,
+) : TestCustomData {
     override fun testApi() {
         val solver = solverFactory.solverWithDefaultBuiltins()
 

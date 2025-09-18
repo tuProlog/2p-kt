@@ -8,7 +8,9 @@ import it.unibo.tuprolog.solve.libs.io.primitives.Consult
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
+class TestIncludeImpl(
+    private val solverFactory: SolverFactory,
+) : TestInclude {
     private fun theoryWithLocalInclude(loadGoal: String) =
         logicProgramming {
             val parentsPath = findResource("Parents.pl")

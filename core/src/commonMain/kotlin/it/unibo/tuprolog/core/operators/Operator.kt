@@ -12,8 +12,12 @@ import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 /** Class representing a logic operator */
-class Operator(val functor: String, val specifier: Specifier, val priority: Int) :
-    Comparable<Operator>, TermConvertible {
+class Operator(
+    val functor: String,
+    val specifier: Specifier,
+    val priority: Int,
+) : Comparable<Operator>,
+    TermConvertible {
     override fun compareTo(other: Operator): Int =
         when {
             priority > other.priority -> 1
@@ -71,8 +75,11 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
         fun fromTerm(struct: Struct): Operator? =
             with(struct) {
                 when {
-                    functor == FUNCTOR && arity == 3 &&
-                        getArgAt(0).isInteger && getArgAt(1).isAtom && getArgAt(2).isAtom -> {
+                    functor == FUNCTOR &&
+                        arity == 3 &&
+                        getArgAt(0).isInteger &&
+                        getArgAt(1).isAtom &&
+                        getArgAt(2).isAtom -> {
                         try {
                             Operator(
                                 getArgAt(2).castToAtom().value,

@@ -36,8 +36,8 @@ object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
-    ): Substitution {
-        return when (first) {
+    ): Substitution =
+        when (first) {
             is Struct -> {
                 when (second) {
                     is LogicList -> decompose(first, second)
@@ -62,5 +62,4 @@ object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
                 throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, second, 0)
             }
         }
-    }
 }

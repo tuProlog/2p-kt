@@ -3,7 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLength {
+class TestAtomLengthImpl(
+    private val solverFactory: SolverFactory,
+) : TestAtomLength {
     override fun testAtomLengthNoVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

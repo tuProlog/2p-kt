@@ -9,7 +9,8 @@ import it.unibo.tuprolog.unify.Unificator
 
 internal class MutableReteClauseMultiSet private constructor(
     rete: ReteTree,
-) : MutableClauseMultiSet, AbstractMutableReteClauseCollection<MutableReteClauseMultiSet>(rete) {
+) : AbstractMutableReteClauseCollection<MutableReteClauseMultiSet>(rete),
+    MutableClauseMultiSet {
     init {
         require(!rete.isOrdered)
     }
@@ -23,17 +24,14 @@ internal class MutableReteClauseMultiSet private constructor(
 
     override fun get(clause: Clause): Sequence<Clause> = rete.get(clause)
 
-    override fun equals(other: Any?): Boolean {
-        return if (other is MutableClauseMultiSet) {
+    override fun equals(other: Any?): Boolean =
+        if (other is MutableClauseMultiSet) {
             MutableClauseMultiSet.equals(this, other)
         } else {
             false
         }
-    }
 
-    override fun hashCode(): Int {
-        return MutableClauseMultiSet.hashCode(this)
-    }
+    override fun hashCode(): Int = MutableClauseMultiSet.hashCode(this)
 
     override val self: MutableReteClauseMultiSet
         get() = this

@@ -60,7 +60,9 @@ class TestSolutionMetadata {
             )
         }
 
-    private data class Metadata<T>(val value: T)
+    private data class Metadata<T>(
+        val value: T,
+    )
 
     @Test
     fun tagsStickToSolutions() {

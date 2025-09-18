@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : TestNotUnify {
+internal class TestNotUnifyImpl(
+    private val solverFactory: SolverFactory,
+) : TestNotUnify {
     override fun testNumberNotUnify() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

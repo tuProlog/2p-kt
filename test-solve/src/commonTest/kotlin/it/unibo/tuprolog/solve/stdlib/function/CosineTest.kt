@@ -21,7 +21,12 @@ internal class CosineTest {
 
     @Test
     fun computationCorrect() {
-        val toBeTested = Cosine.computeOf(Real.of(PI / 2.0)).castToNumeric().decimalValue.toDouble()
+        val toBeTested =
+            Cosine
+                .computeOf(Real.of(PI / 2.0))
+                .castToNumeric()
+                .decimalValue
+                .toDouble()
         assertTrue("Cosine of \"PI/2\" should be closer to Zero") {
             toBeTested < 6.123233995736767E-17 && toBeTested > 6.123233995736765E-17
         }

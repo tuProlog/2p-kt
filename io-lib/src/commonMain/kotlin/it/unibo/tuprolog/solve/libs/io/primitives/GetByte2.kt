@@ -9,7 +9,5 @@ object GetByte2 : BinaryRelation.NonBacktrackable<ExecutionContext>("get_byte") 
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,
-    ): Solve.Response {
-        return notSupported()
-    }
+    ): Solve.Response = notSupported()
 }

@@ -49,7 +49,9 @@ object ConcurrentFromSequence : FromSequence<MultiSet> {
     override fun fromSequence(sequence: Sequence<Solution>): MultiSet = MultiSet(sequence)
 }
 
-class KeySolution(val solution: Solution) {
+class KeySolution(
+    val solution: Solution,
+) {
     @Suppress("ReturnCount")
     private fun ResolutionException.similar(other: Any?): Boolean {
         if (this === other) return true
@@ -189,7 +191,9 @@ class KeySolution(val solution: Solution) {
 
 fun Solution.key(): KeySolution = KeySolution(this)
 
-class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf()) : WithAssertingEquals {
+class MultiSet(
+    private val solutionOccurrences: Map<KeySolution, Int> = mapOf(),
+) : WithAssertingEquals {
     constructor(solutions: Iterable<Solution>) : this(solutions.asSequence())
 
     constructor(solutions: Sequence<Solution>) : this(
@@ -248,9 +252,7 @@ class MultiSet(private val solutionOccurrences: Map<KeySolution, Int> = mapOf())
             (other.solutionOccurrences.all { (key, value) -> solutionOccurrences[key]?.equals(value) ?: false })
     }
 
-    override fun hashCode(): Int {
-        return 31 * solutionOccurrences.hashCode()
-    }
+    override fun hashCode(): Int = 31 * solutionOccurrences.hashCode()
 
     override fun toString(): String = printSolutions()
 }

@@ -15,8 +15,8 @@ object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars")
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
-    ): Substitution {
-        return when {
+    ): Substitution =
+        when {
             first is Var && second is Var -> {
                 ensuringAllArgumentsAreInstantiated()
                 Substitution.failed()
@@ -25,7 +25,12 @@ object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars")
             first is Var -> {
                 ensuringArgumentIsList(1)
                 val chars = second as LogicList
-                val numberString = chars.toSequence().map { (it as Atom).value[0] }.joinToString("").trim()
+                val numberString =
+                    chars
+                        .toSequence()
+                        .map { (it as Atom).value[0] }
+                        .joinToString("")
+                        .trim()
                 Substitution.of(first, Numeric.of(numberString))
             }
             second is Var -> {
@@ -39,10 +44,13 @@ object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars")
                 ensuringArgumentIsList(1)
                 val chars =
                     LogicList.of(
-                        (first).toString().toAtom().value.map { Atom.of("" + it) },
+                        (first)
+                            .toString()
+                            .toAtom()
+                            .value
+                            .map { Atom.of("" + it) },
                     )
                 mgu(chars, second)
             }
         }
-    }
 }

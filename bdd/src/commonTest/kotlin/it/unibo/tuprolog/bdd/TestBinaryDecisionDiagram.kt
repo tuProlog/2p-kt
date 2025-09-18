@@ -6,7 +6,11 @@ import kotlin.test.assertTrue
 class TestBinaryDecisionDiagram {
     private val doubleEpsilon = 0.0001
 
-    private class ComparablePair(val id: Long, val first: String, val second: Double) : Comparable<ComparablePair> {
+    private class ComparablePair(
+        val id: Long,
+        val first: String,
+        val second: Double,
+    ) : Comparable<ComparablePair> {
         override fun compareTo(other: ComparablePair): Int {
             var res = this.id.compareTo(other.id)
             if (res == 0) {
@@ -15,13 +19,9 @@ class TestBinaryDecisionDiagram {
             return res
         }
 
-        override fun equals(other: Any?): Boolean {
-            return if (other is ComparablePair) this.compareTo(other) == 0 else false
-        }
+        override fun equals(other: Any?): Boolean = if (other is ComparablePair) this.compareTo(other) == 0 else false
 
-        override fun toString(): String {
-            return "[$id] $second::$first"
-        }
+        override fun toString(): String = "[$id] $second::$first"
 
         override fun hashCode(): Int {
             var result = id.hashCode()
@@ -37,12 +37,10 @@ class TestBinaryDecisionDiagram {
      * is what we are really interested in. On the other hand, this also effectively verifies
      * the correctness of the data structure itself, as the probability computation would
      * give bad results on badly constructed BDDs. */
-    private fun BinaryDecisionDiagram<ComparablePair>.probability(): Double {
-        return this.expansion(0.0, 1.0) {
-                node, low, high ->
+    private fun BinaryDecisionDiagram<ComparablePair>.probability(): Double =
+        this.expansion(0.0, 1.0) { node, low, high ->
             node.second * high + (1.0 - node.second) * low
         }
-    }
 
     /** Test adapted from: https://dtai.cs.kuleuven.be/problog/tutorial/basic/01_coins.html#noisy-or-multiple-rules-for-the-same-head
      * Probabilities to base-level "someHeads" predicates have been added to simulate "Probabilistic Clauses". */
