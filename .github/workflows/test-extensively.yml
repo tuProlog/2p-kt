@@ -9,9 +9,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [ windows-latest, macos-latest, ubuntu-latest ]
-        java-version: [25]
+        java-version: [25-ea]
         jdk-dist:
-          - adopt-hotspot
+#          - adopt-hotspot
           - temurin
 #          - adopt-openj9
 #          - zulu
