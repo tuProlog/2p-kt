@@ -12,7 +12,8 @@ import it.unibo.tuprolog.utils.setTags
 internal class LazyConsWithImplicitLast(
     private val cursor: Cursor<out Term>,
     tags: Map<String, Any> = emptyMap(),
-) : AbstractCons(emptyList(), tags), Cons {
+) : AbstractCons(emptyList(), tags),
+    Cons {
     override val head: Term by lazy { cursor.current!! }
 
     override val tail: Term by lazy {

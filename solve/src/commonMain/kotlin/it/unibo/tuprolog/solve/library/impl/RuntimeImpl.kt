@@ -14,9 +14,10 @@ import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cache
 
 /** A class representing an agglomerate of libraries with an alias */
-internal class RuntimeImpl(private val delegate: Map<String, Library>) :
+internal class RuntimeImpl(
+    private val delegate: Map<String, Library>,
+) : AbstractPluggable(),
     Runtime,
-    AbstractPluggable(),
     Map<String, Library> by delegate {
     constructor(libraries: Sequence<Library>) : this(libraries.map { it.alias to it }.toMap())
 
@@ -42,35 +43,38 @@ internal class RuntimeImpl(private val delegate: Map<String, Library>) :
         get() = libraries.flatMap { it.clauses }
 
     override val primitives: Map<Signature, Primitive> by lazy {
-        libraries.flatMap { lib ->
-            lib.primitives.entries.asSequence().flatMap {
-                sequenceOf(
-                    it.toPair(),
-                    it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value,
-                )
-            }
-        }.toMap()
+        libraries
+            .flatMap { lib ->
+                lib.primitives.entries.asSequence().flatMap {
+                    sequenceOf(
+                        it.toPair(),
+                        it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value,
+                    )
+                }
+            }.toMap()
     }
 
     override val functions: Map<Signature, LogicFunction> by lazy {
-        libraries.flatMap { lib ->
-            lib.functions.entries.asSequence().flatMap {
-                sequenceOf(
-                    it.toPair(),
-                    it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value,
-                )
-            }
-        }.toMap()
+        libraries
+            .flatMap { lib ->
+                lib.functions.entries.asSequence().flatMap {
+                    sequenceOf(
+                        it.toPair(),
+                        it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value,
+                    )
+                }
+            }.toMap()
     }
 
-    override fun plus(other: Library): Runtime {
-        return aliases.find { other.alias in aliases }
+    override fun plus(other: Library): Runtime =
+        aliases
+            .find { other.alias in aliases }
             ?.let { alreadyLoadedError(other) }
             ?: RuntimeImpl(libraries.asSequence() + sequenceOf(other))
-    }
 
     override fun plus(runtime: Runtime): RuntimeImpl =
-        runtime.libraries.find { it.alias in aliases }
+        runtime.libraries
+            .find { it.alias in aliases }
             ?.let { alreadyLoadedError(it) }
             ?: RuntimeImpl(libraries.asSequence() + runtime.libraries.asSequence())
 
@@ -90,17 +94,19 @@ internal class RuntimeImpl(private val delegate: Map<String, Library>) :
 
     override operator fun minus(aliases: Iterable<String>): RuntimeImpl {
         val toBeRemoved =
-            aliases.map {
-                if (it in this.aliases) {
-                    noSuchALibraryError(it)
-                }
-                it
-            }.toSet()
+            aliases
+                .map {
+                    if (it in this.aliases) {
+                        noSuchALibraryError(it)
+                    }
+                    it
+                }.toSet()
         return RuntimeImpl(libraries.asSequence().filterNot { it.alias in toBeRemoved })
     }
 
     override fun update(library: Library): RuntimeImpl =
-        aliases.find { library.alias in aliases }
+        aliases
+            .find { library.alias in aliases }
             ?.let { RuntimeImpl(libraries.asSequence() + sequenceOf(library)) }
             ?: throw IllegalArgumentException("A library aliased as `${library.alias}` has never been loaded")
 

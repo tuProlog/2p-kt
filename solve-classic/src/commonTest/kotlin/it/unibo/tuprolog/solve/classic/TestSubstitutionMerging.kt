@@ -42,7 +42,8 @@ class TestSubstitutionMerging {
     fun testSubstitutionsAreCorrectlyMergedAfterPrimitives() {
         logicProgramming {
             val solver =
-                ClassicSolverFactory.newBuilder()
+                ClassicSolverFactory
+                    .newBuilder()
                     .staticKb(theory)
                     .noBuiltins()
                     .runtime(libraryOf("test", primitive).toRuntime())

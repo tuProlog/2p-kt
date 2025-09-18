@@ -230,7 +230,16 @@ object ParsingExamples {
             "in_map(X, Y) :- X >= 0, Y >= 0, map_size(XSize, YSize), X < XSize, Y < YSize" to
                 logicProgramming {
                     "in_map"("X", "Y") impliedBy
-                        (("X" greaterThanOrEqualsTo 0) and (("Y" greaterThanOrEqualsTo 0) and ("map_size"("XSize", "YSize") and (("X" lowerThan ("XSize")) and ("Y" lowerThan "YSize")))))
+                        (
+                            ("X" greaterThanOrEqualsTo 0) and
+                                (
+                                    ("Y" greaterThanOrEqualsTo 0) and
+                                        (
+                                            "map_size"("XSize", "YSize") and
+                                                (("X" lowerThan ("XSize")) and ("Y" lowerThan "YSize"))
+                                        )
+                                )
+                        )
                 },
             "tile(wall, X, Y) :- \\+ in_map(X, Y)" to
                 logicProgramming {
@@ -240,7 +249,13 @@ object ParsingExamples {
             "draw_char(X, Y) :- tty_size(_, XSize), X >= XSize, NY is Y + 1, draw_char(0, NY)" to
                 logicProgramming {
                     "draw_char"("X", "Y") impliedBy
-                        ("tty_size"(`_`, "XSize") and (("X" greaterThanOrEqualsTo "XSize") and (("NY" `is` ("Y".toTerm() + 1)) and ("draw_char"(0, "NY")))))
+                        (
+                            "tty_size"(`_`, "XSize") and
+                                (
+                                    ("X" greaterThanOrEqualsTo "XSize") and
+                                        (("NY" `is` ("Y".toTerm() + 1)) and ("draw_char"(0, "NY")))
+                                )
+                        )
                 },
             "Y < YMsgs -> write(' ') ; display_offset(XOff, YOff), XMap is X + XOff, YMap is Y + YOff, get_character(XMap, YMap, C), format('~s', [C])" to
                 logicProgramming {
@@ -266,9 +281,10 @@ object ParsingExamples {
                     "display_offset"("X", "Y") impliedBy
                         (
                             "player"("XPos", "YPos") and (
-                                "tty_size"("YSize", "XSize")and (
+                                "tty_size"("YSize", "XSize") and (
                                     "message_lines"("YMsgs") and (
-                                        ("X" `is` ("XPos" - "floor"("XSize" / 2))) and (("Y" `is` ("YPos" - "floor"(("YSize" - "YMsgs") / 2))))
+                                        ("X" `is` ("XPos" - "floor"("XSize" / 2))) and
+                                            (("Y" `is` ("YPos" - "floor"(("YSize" - "YMsgs") / 2))))
                                     )
                                 )
                             )

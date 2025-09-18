@@ -14,7 +14,9 @@ sealed class Optional<T> {
         fun <T> none(): Optional<out T> = None
     }
 
-    data class Some<T>(override val value: T) : Optional<T>() {
+    data class Some<T>(
+        override val value: T,
+    ) : Optional<T>() {
         override val isPresent: Boolean
             get() = true
 

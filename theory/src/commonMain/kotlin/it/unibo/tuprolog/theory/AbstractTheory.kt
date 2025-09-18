@@ -9,7 +9,9 @@ import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator
 
-internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Theory {
+internal abstract class AbstractTheory(
+    override val tags: Map<String, Any>,
+) : Theory {
     abstract override var unificator: Unificator
         protected set
 

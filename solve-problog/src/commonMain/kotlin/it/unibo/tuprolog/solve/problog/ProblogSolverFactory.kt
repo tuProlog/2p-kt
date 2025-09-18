@@ -52,13 +52,12 @@ object ProblogSolverFactory : SolverFactory {
             ),
         )
 
-    private fun fixLibraries(libraries: Runtime): Runtime {
-        return if (ProblogLib.alias !in libraries) {
+    private fun fixLibraries(libraries: Runtime): Runtime =
+        if (ProblogLib.alias !in libraries) {
             libraries.plus(ProblogLib.MinimalBuiltins)
         } else {
             libraries
         }
-    }
 
     override fun solverOf(
         unificator: Unificator,

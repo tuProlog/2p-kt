@@ -7,7 +7,8 @@ internal class LogicProgrammingScopeImpl(
     override val scope: Scope,
     override val termificator: Termificator,
     override val variablesProvider: VariablesProvider,
-) : LogicProgrammingScope, VariablesProvider by variablesProvider {
+) : LogicProgrammingScope,
+    VariablesProvider by variablesProvider {
     init {
         require(scope === variablesProvider.scope && scope === termificator.scope) {
             "The provided Scope should be the same object for both Termificator and VariablesProvider"

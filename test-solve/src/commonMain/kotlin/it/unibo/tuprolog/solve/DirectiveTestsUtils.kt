@@ -91,13 +91,15 @@ object DirectiveTestsUtils {
             },
             stdOut { event, out, warn ->
                 { t: Theory ->
-                    solverFactory.mutableSolverWithDefaultBuiltins(stdOut = out, stdErr = out, warnings = warn)
+                    solverFactory
+                        .mutableSolverWithDefaultBuiltins(stdOut = out, stdErr = out, warnings = warn)
                         .also { it.loadStaticKb(t) }
                 } to event
             },
             stdOut { event, out, warn ->
                 { t: Theory ->
-                    solverFactory.mutableSolverWithDefaultBuiltins(stdOut = out, stdErr = out, warnings = warn)
+                    solverFactory
+                        .mutableSolverWithDefaultBuiltins(stdOut = out, stdErr = out, warnings = warn)
                         .also { it.loadDynamicKb(t.toMutableTheory()) }
                 } to event
             },

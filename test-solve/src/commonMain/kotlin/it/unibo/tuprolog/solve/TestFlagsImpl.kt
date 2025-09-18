@@ -16,7 +16,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
+class TestFlagsImpl(
+    private val solverFactory: SolverFactory,
+) : TestFlags {
     override fun defaultLastCallOptimizationIsOn() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -152,7 +154,8 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
             val query = current_flag(F, X)
 
             val selectedFlags =
-                solver.solve(query, shortDuration)
+                solver
+                    .solve(query, shortDuration)
                     .filterIsInstance<Solution.Yes>()
                     .map { it.substitution[F]!! to it.substitution[X]!! }
                     .toMap()

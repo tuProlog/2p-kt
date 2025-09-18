@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 
-abstract class AbstractCollectingPrimitive(name: String) : TernaryRelation.WithoutSideEffects<ExecutionContext>(name) {
+abstract class AbstractCollectingPrimitive(
+    name: String,
+) : TernaryRelation.WithoutSideEffects<ExecutionContext>(name) {
     protected fun Solve.Request<ExecutionContext>.computeIntermediateSolutions(goal: Struct): List<Solution.Yes> =
         buildList {
             for (solution in solve(goal, context.remainingTime)) {

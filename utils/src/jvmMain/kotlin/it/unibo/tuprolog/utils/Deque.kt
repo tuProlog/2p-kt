@@ -2,21 +2,16 @@ package it.unibo.tuprolog.utils
 
 import java.util.LinkedList
 
-actual fun <T> dequeOf(vararg items: T): MutableList<T> {
-    return dequeOf(items.asIterable())
-}
+actual fun <T> dequeOf(vararg items: T): MutableList<T> = dequeOf(items.asIterable())
 
-actual fun <T> dequeOf(items: Iterable<T>): MutableList<T> {
-    return LinkedList<T>().also {
+actual fun <T> dequeOf(items: Iterable<T>): MutableList<T> =
+    LinkedList<T>().also {
         for (item in items) {
             it.add(item)
         }
     }
-}
 
-actual fun <T> dequeOf(items: Sequence<T>): MutableList<T> {
-    return items.toCollection(LinkedList())
-}
+actual fun <T> dequeOf(items: Sequence<T>): MutableList<T> = items.toCollection(LinkedList())
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 actual fun <T> MutableList<T>.addFirst(item: T) {

@@ -7,7 +7,9 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /** Represents a group of [Library] objects constituting the runtime a logic solver may leverage upon */
-interface Runtime : Pluggable, Map<String, Library> {
+interface Runtime :
+    Pluggable,
+    Map<String, Library> {
     @JsName("aliases")
     val aliases: Set<String>
 

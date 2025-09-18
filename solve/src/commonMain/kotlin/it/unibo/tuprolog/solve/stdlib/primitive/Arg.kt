@@ -22,13 +22,14 @@ object Arg : TernaryRelation.WithoutSideEffects<ExecutionContext>("arg") {
                 val compound = second as Struct
                 return when (first) {
                     is Var -> {
-                        compound.argsSequence.mapIndexed { i, arg ->
-                            (i + 1) to mgu(arg, third)
-                        }.filter { (_, sub) ->
-                            sub is Substitution.Unifier
-                        }.map { (i, sub) ->
-                            sub + Substitution.of(first to Integer.of(i))
-                        }
+                        compound.argsSequence
+                            .mapIndexed { i, arg ->
+                                (i + 1) to mgu(arg, third)
+                            }.filter { (_, sub) ->
+                                sub is Substitution.Unifier
+                            }.map { (i, sub) ->
+                                sub + Substitution.of(first to Integer.of(i))
+                            }
                     }
                     is Integer -> {
                         ensuringArgumentIsNonNegativeInteger(0)

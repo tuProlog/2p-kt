@@ -27,15 +27,14 @@ class RuntimePermissionException(
     override fun toLogicError(
         context: ExecutionContext,
         signature: Signature,
-    ): LogicError {
-        return PermissionError.of(
+    ): LogicError =
+        PermissionError.of(
             context,
             signature,
             PermissionError.Operation.INVOKE,
             PermissionError.Permission.OOP_METHOD,
             culprit,
         )
-    }
 
     override val culprit: Term
         get() =

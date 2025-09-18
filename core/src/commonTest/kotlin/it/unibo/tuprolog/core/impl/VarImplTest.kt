@@ -57,7 +57,13 @@ internal class VarImplTest {
 
     @Test
     fun completeNamesContainsDifferentGeneratedNumbersIfSimpleNameIsTheSame() {
-        assertTrue { mixedVarInstances.groupingBy { it.name }.eachCount().values.all { it == 1 } }
+        assertTrue {
+            mixedVarInstances
+                .groupingBy { it.name }
+                .eachCount()
+                .values
+                .all { it == 1 }
+        }
     }
 
     @Test

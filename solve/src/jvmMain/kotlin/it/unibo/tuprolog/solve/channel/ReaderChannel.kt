@@ -6,10 +6,17 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.Reader
 
-class ReaderChannel(val reader: Reader) : AbstractInputChannel<String>() {
+class ReaderChannel(
+    val reader: Reader,
+) : AbstractInputChannel<String>() {
     constructor(inputStream: InputStream) : this(InputStreamReader(inputStream))
 
-    override fun readActually(): String? = reader.read().takeIf { it >= 0 }?.toChar()?.toString()
+    override fun readActually(): String? =
+        reader
+            .read()
+            .takeIf { it >= 0 }
+            ?.toChar()
+            ?.toString()
 
     override val available: Boolean
         @Synchronized

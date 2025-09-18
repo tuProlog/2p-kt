@@ -6,7 +6,9 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestFunctor {
+internal class TestFunctorImpl(
+    private val solverFactory: SolverFactory,
+) : TestFunctor {
     override fun testFunArity() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

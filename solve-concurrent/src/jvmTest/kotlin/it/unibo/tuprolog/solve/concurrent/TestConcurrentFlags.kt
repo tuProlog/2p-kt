@@ -22,7 +22,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentFlags<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun defaultLastCallOptimizationIsOn() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -159,7 +161,8 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
             val query = current_flag(F, X)
 
             val selectedFlags =
-                solver.solve(query, shortDuration)
+                solver
+                    .solve(query, shortDuration)
                     .filterIsInstance<Solution.Yes>()
                     .map { it.substitution[F]!! to it.substitution[X]!! }
                     .toMap()

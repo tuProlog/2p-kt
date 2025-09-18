@@ -21,17 +21,18 @@ internal object Call : PrimitiveWrapper<StreamsExecutionContext>("call", 1) {
         request.ensuringAllArgumentsAreInstantiated().arguments.single().let { toBeCalledGoal ->
             when {
                 toBeCalledGoal.isWellFormed() ->
-                    StreamsSolver.solveToResponses(
-                        request.newSolveRequest(toBeCalledGoal.prepareForExecutionAsGoal()),
-                    ).map {
-                        request.replyWith(
-                            it.copy(
-                                sideEffectManager =
-                                    it.sideEffectManager
-                                        .resetCutWorkChanges(request.context.sideEffectManager),
-                            ),
-                        )
-                    }
+                    StreamsSolver
+                        .solveToResponses(
+                            request.newSolveRequest(toBeCalledGoal.prepareForExecutionAsGoal()),
+                        ).map {
+                            request.replyWith(
+                                it.copy(
+                                    sideEffectManager =
+                                        it.sideEffectManager
+                                            .resetCutWorkChanges(request.context.sideEffectManager),
+                                ),
+                            )
+                        }
 
                 else -> throw TypeError(
                     message = "call/1 argument is neither a Variable nor a well-formed goal",

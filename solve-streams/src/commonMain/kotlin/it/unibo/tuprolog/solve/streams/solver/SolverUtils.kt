@@ -31,7 +31,12 @@ fun Term.isWellFormed(): Boolean = accept(Clause.bodyWellFormedVisitor)
  */
 fun Term.prepareForExecutionAsGoal(): Struct =
     // exploits "Clause" implementation of prepareForExecution() to do that
-    Directive.of(this).prepareForExecution().args.single().castTo()
+    Directive
+        .of(this)
+        .prepareForExecution()
+        .args
+        .single()
+        .castTo()
 
 /** Computes the ordered selection of elements, lazily, according to provided selection strategy */
 fun <E> Sequence<E>.orderWithStrategy(

@@ -69,7 +69,10 @@ class TestPrologParser {
             val s = tc.structure()
             assertTrue(
                 s.arity == s.args.count() &&
-                    s.arity == 0 && s.isString && !s.isList && !s.isTruth &&
+                    s.arity == 0 &&
+                    s.isString &&
+                    !s.isList &&
+                    !s.isTruth &&
                     s.functor.text == "a" &&
                     (s.functor.type == PrologLexer.DQ_STRING || s.functor.type == PrologLexer.SQ_STRING),
             )
@@ -84,7 +87,9 @@ class TestPrologParser {
         val s = tc.structure()
         assertTrue(
             s.arity == s.args.count() &&
-                s.isTruth && !s.isList && !s.isString &&
+                s.isTruth &&
+                !s.isList &&
+                !s.isString &&
                 s.functor.text == "true" &&
                 s.functor.type == PrologLexer.BOOL,
         )
@@ -98,7 +103,9 @@ class TestPrologParser {
         val s = tc.structure()
         assertTrue(
             s.arity == s.args.count() &&
-                s.isTruth && !s.isList && !s.isString &&
+                s.isTruth &&
+                !s.isList &&
+                !s.isString &&
                 s.functor.text == "fail" &&
                 s.functor.type == PrologLexer.BOOL,
         )
@@ -114,7 +121,9 @@ class TestPrologParser {
             assertTrue(
                 s.arity == s.args.count() &&
                     s.arity == 0 &&
-                    s.isList && !s.isTruth && !s.isString &&
+                    s.isList &&
+                    !s.isTruth &&
+                    !s.isString &&
                     s.functor.type == PrologLexer.EMPTY_LIST,
             )
         }
@@ -146,7 +155,8 @@ class TestPrologParser {
             assertTrue(
                 l.length == l.items.count() &&
                     l.length == 1 &&
-                    !l.hasTail && l.tail == null,
+                    !l.hasTail &&
+                    l.tail == null,
             )
             val expr = l.items[0]
             assertTrue(expr.isTerm && expr.left != null && expr.operators.count() == 0 && expr.right.count() == 0)

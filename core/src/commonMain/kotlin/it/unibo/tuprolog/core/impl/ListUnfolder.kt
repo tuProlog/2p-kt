@@ -6,14 +6,14 @@ import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 
-internal class ListUnfolder(list: List) : Iterator<Term> {
+internal class ListUnfolder(
+    list: List,
+) : Iterator<Term> {
     private var current: Term? = list
 
     override fun hasNext(): Boolean = current != null
 
-    override fun next(): Term {
-        return current?.accept(listUnfolderVisitor) ?: throw NoSuchElementException()
-    }
+    override fun next(): Term = current?.accept(listUnfolderVisitor) ?: throw NoSuchElementException()
 
     private val listUnfolderVisitor =
         object : TermVisitor<Term> {

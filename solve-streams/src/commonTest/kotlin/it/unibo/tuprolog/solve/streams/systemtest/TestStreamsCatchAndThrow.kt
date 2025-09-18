@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.TestCatchAndThrow
 import it.unibo.tuprolog.solve.streams.StreamsSolverFactory
 import kotlin.test.Test
 
-class TestStreamsCatchAndThrow : TestCatchAndThrow, SolverFactory by StreamsSolverFactory {
+class TestStreamsCatchAndThrow :
+    TestCatchAndThrow,
+    SolverFactory by StreamsSolverFactory {
     private val prototype = TestCatchAndThrow.prototype(this)
 
     @Test

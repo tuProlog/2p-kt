@@ -7,7 +7,9 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Ignore
-class TestStreamsInclude : TestInclude, SolverFactory by StreamsSolverFactory {
+class TestStreamsInclude :
+    TestInclude,
+    SolverFactory by StreamsSolverFactory {
     private val prototype = TestInclude.prototype(this)
 
     override val defaultRuntime: Runtime

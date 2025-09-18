@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
-class TupleIterator(tuple: Tuple) : Iterator<Term> {
+class TupleIterator(
+    tuple: Tuple,
+) : Iterator<Term> {
     private val tupleIteratorVisitor =
         object : TermVisitor<Term> {
             override fun visitTuple(term: Tuple): Term {

@@ -34,26 +34,27 @@ internal open class ProblogSolver(
         options: SolveOptions,
     ): Sequence<Solution> {
         val anonVar = Var.anonymous()
-        return solver.solve(
-            Tuple.of(
-                Struct.of(
-                    ProbSetConfig.functor,
-                    options.toProbConfigTerm(),
+        return solver
+            .solve(
+                Tuple.of(
+                    Struct.of(
+                        ProbSetConfig.functor,
+                        options.toProbConfigTerm(),
+                    ),
+                    Struct.of(Prob.functor, anonVar, goal),
                 ),
-                Struct.of(Prob.functor, anonVar, goal),
-            ),
-            options,
-        ).map {
-            when (it) {
-                is Solution.Yes ->
-                    Solution.yes(
-                        goal,
-                        it.substitution.filter { key, _ -> key != anonVar },
-                    )
-                is Solution.Halt -> Solution.halt(goal, it.exception)
-                else -> Solution.no(goal)
+                options,
+            ).map {
+                when (it) {
+                    is Solution.Yes ->
+                        Solution.yes(
+                            goal,
+                            it.substitution.filter { key, _ -> key != anonVar },
+                        )
+                    is Solution.Halt -> Solution.halt(goal, it.exception)
+                    else -> Solution.no(goal)
+                }
             }
-        }
     }
 
     private fun solveProbabilistically(
@@ -62,57 +63,57 @@ internal open class ProblogSolver(
     ): Sequence<Solution> {
         val probabilityVar = Var.of("Prob")
         val bddVar = Var.of("BDD")
-        return solver.solve(
-            Struct.of(
-                ProbQuery.functor,
-                probabilityVar,
-                goal,
-                options.toProbConfigTerm(),
-                bddVar,
-            ),
-            options,
-        ).map {
-            val probabilityTerm = it.substitution[probabilityVar]
-            val bddTerm = it.substitution[bddVar]
-            var newSolution =
-                when (it) {
-                    is Solution.Yes ->
-                        Solution.yes(
-                            goal,
-                            it.substitution.filter {
-                                    key, _ ->
-                                key != probabilityVar && key != bddVar
-                            },
-                        )
-                    is Solution.Halt -> Solution.halt(goal, it.exception)
-                    else -> Solution.no(goal)
-                }
-            if (!options.isProbabilistic) {
-                newSolution
-            } else {
-                // Set the probability property
-                newSolution =
-                    when (probabilityTerm) {
-                        is Numeric ->
-                            newSolution.setProbability(
-                                probabilityTerm.decimalValue.toDouble(),
+        return solver
+            .solve(
+                Struct.of(
+                    ProbQuery.functor,
+                    probabilityVar,
+                    goal,
+                    options.toProbConfigTerm(),
+                    bddVar,
+                ),
+                options,
+            ).map {
+                val probabilityTerm = it.substitution[probabilityVar]
+                val bddTerm = it.substitution[bddVar]
+                var newSolution =
+                    when (it) {
+                        is Solution.Yes ->
+                            Solution.yes(
+                                goal,
+                                it.substitution.filter { key, _ ->
+                                    key != probabilityVar && key != bddVar
+                                },
                             )
-                        else -> newSolution.setProbability(Double.NaN)
+                        is Solution.Halt -> Solution.halt(goal, it.exception)
+                        else -> Solution.no(goal)
                     }
+                if (!options.isProbabilistic) {
+                    newSolution
+                } else {
+                    // Set the probability property
+                    newSolution =
+                        when (probabilityTerm) {
+                            is Numeric ->
+                                newSolution.setProbability(
+                                    probabilityTerm.decimalValue.toDouble(),
+                                )
+                            else -> newSolution.setProbability(Double.NaN)
+                        }
 
-                // Set the Binary Decision Diagram property
-                if (bddTerm != null && bddTerm is ProbExplanationTerm) {
-                    val explanation = bddTerm.explanation
-                    if (explanation is BinaryDecisionDiagramExplanation) {
-                        newSolution =
-                            newSolution.setBinaryDecisionDiagram(
-                                explanation.diagram,
-                            )
+                    // Set the Binary Decision Diagram property
+                    if (bddTerm != null && bddTerm is ProbExplanationTerm) {
+                        val explanation = bddTerm.explanation
+                        if (explanation is BinaryDecisionDiagramExplanation) {
+                            newSolution =
+                                newSolution.setBinaryDecisionDiagram(
+                                    explanation.diagram,
+                                )
+                        }
                     }
+                    newSolution
                 }
-                newSolution
             }
-        }
     }
 
     override fun solve(
@@ -166,8 +167,8 @@ internal open class ProblogSolver(
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>,
-    ): Solver {
-        return ProblogSolver(
+    ): Solver =
+        ProblogSolver(
             solver.copy(
                 unificator,
                 libraries,
@@ -180,9 +181,6 @@ internal open class ProblogSolver(
                 warnings,
             ),
         )
-    }
 
-    override fun clone(): Solver {
-        return ProblogSolver(solver.clone())
-    }
+    override fun clone(): Solver = ProblogSolver(solver.clone())
 }

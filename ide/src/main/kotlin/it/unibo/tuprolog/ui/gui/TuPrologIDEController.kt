@@ -491,9 +491,10 @@ class TuPrologIDEController : Initializable {
                 else -> {
                     dialog.headerText = "Error"
                     dialog.dialogPane.content =
-                        exception.message?.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-                        }?.toMonospacedText()
+                        exception.message
+                            ?.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                            }?.toMonospacedText()
                 }
             }
             dialog.dialogPane.minHeight = Region.USE_PREF_SIZE

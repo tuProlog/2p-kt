@@ -3,10 +3,11 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 
-class TestLogicProgrammingScopeWithOperatorsAtomString : AbstractTestLogicProgrammingScopeWithOperators<Atom, String>(
-    first = Atom.of("a"),
-    second = "X",
-) {
+class TestLogicProgrammingScopeWithOperatorsAtomString :
+    AbstractTestLogicProgrammingScopeWithOperators<Atom, String>(
+        first = Atom.of("a"),
+        second = "X",
+    ) {
     override fun LogicProgrammingScopeWithOperators<*>.plus(
         a: Atom,
         b: String,

@@ -4,21 +4,19 @@ package it.unibo.tuprolog.solve
 internal actual fun solverFactory(
     className: String,
     vararg classNames: String,
-): SolverFactory {
-    return sequenceOf(className, *classNames)
+): SolverFactory =
+    sequenceOf(className, *classNames)
         .map {
             try {
                 Class.forName(it).kotlin
             } catch (e: ClassNotFoundException) {
                 null
             }
-        }
-        .filterNotNull()
+        }.filterNotNull()
         .map { it.objectInstance }
         .filterIsInstance<SolverFactory>()
         .firstOrNull()
         ?: error("No viable implementation for ${SolverFactory::class.simpleName}")
-}
 
 actual fun classicSolverFactory(): SolverFactory = solverFactory(FactoryClassNames.CLASSIC)
 

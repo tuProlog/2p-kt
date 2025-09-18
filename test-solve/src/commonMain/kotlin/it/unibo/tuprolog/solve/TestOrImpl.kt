@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
+internal class TestOrImpl(
+    private val solverFactory: SolverFactory,
+) : TestOr {
     override fun testTrueOrFalse() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

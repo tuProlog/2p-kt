@@ -22,14 +22,13 @@ class TermToObjectConversionException(
     override fun toLogicError(
         context: ExecutionContext,
         signature: Signature,
-    ): LogicError {
-        return RepresentationError.of(
+    ): LogicError =
+        RepresentationError.of(
             context,
             signature,
             RepresentationError.Limit.OOP_OBJECT,
             this,
         )
-    }
 
     override val culprit: Term
         get() = term

@@ -6,7 +6,9 @@ import it.unibo.tuprolog.solve.TestCall
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Test
 
-class TestProblogCall : TestCall, SolverFactory by ProblogSolverFactory {
+class TestProblogCall :
+    TestCall,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestCall.prototype(this, Signature("ensure_executable", 1))
 
     override val errorSignature: Signature

@@ -11,9 +11,7 @@ internal object ClauseAssertionUtils {
     fun assertClausesHaveSameLengthAndContent(
         a: Sequence<Clause>,
         b: Sequence<Clause>,
-    ) {
-        return assertClausesHaveSameLengthAndContent(a.asIterable(), b.asIterable())
-    }
+    ) = assertClausesHaveSameLengthAndContent(a.asIterable(), b.asIterable())
 
     fun assertClausesHaveSameLengthAndContent(
         a: Iterable<Clause>,

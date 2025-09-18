@@ -40,20 +40,18 @@ internal class BinaryDecisionDiagramExplanation(
         value: ProbTerm,
         low: ComputedValue,
         high: ComputedValue,
-    ): ComputedValue {
-        return ComputedValue(
+    ): ComputedValue =
+        ComputedValue(
             if (low.probability != null && high.probability != null) {
                 value.probability * high.probability + (1.0 - value.probability) * low.probability
             } else {
                 null
             },
         )
-    }
 
     private val cachedNot: ProbExplanation by lazy {
         val result =
-            diagram.notThenExpansion(FALSE_COMPUTED_VALUE, TRUE_COMPUTED_VALUE) {
-                    node, low, high ->
+            diagram.notThenExpansion(FALSE_COMPUTED_VALUE, TRUE_COMPUTED_VALUE) { node, low, high ->
                 computeExpansion(node, low, high)
             }
         BinaryDecisionDiagramExplanation(result.first, result.second)
@@ -64,7 +62,10 @@ internal class BinaryDecisionDiagramExplanation(
     override fun and(that: ProbExplanation): ProbExplanation {
         val result =
             diagram.andThenExpansion(getAsInternal(that).diagram, FALSE_COMPUTED_VALUE, TRUE_COMPUTED_VALUE) {
-                    node, low, high ->
+                node,
+                low,
+                high,
+                ->
                 computeExpansion(node, low, high)
             }
         return BinaryDecisionDiagramExplanation(result.first, result.second)
@@ -73,7 +74,10 @@ internal class BinaryDecisionDiagramExplanation(
     override fun or(that: ProbExplanation): ProbExplanation {
         val result =
             diagram.orThenExpansion(getAsInternal(that).diagram, FALSE_COMPUTED_VALUE, TRUE_COMPUTED_VALUE) {
-                    node, low, high ->
+                node,
+                low,
+                high,
+                ->
                 computeExpansion(node, low, high)
             }
         return BinaryDecisionDiagramExplanation(result.first, result.second)
@@ -90,15 +94,12 @@ internal class BinaryDecisionDiagramExplanation(
         diagram.any { !it.isGround }
     }
 
-    override fun toString(): String {
-        return "bdd:${diagram.hashCode()}"
-    }
+    override fun toString(): String = "bdd:${diagram.hashCode()}"
 
-    override fun apply(transformation: (ProbTerm) -> ProbTerm): ProbExplanation {
-        return BinaryDecisionDiagramExplanation(
+    override fun apply(transformation: (ProbTerm) -> ProbTerm): ProbExplanation =
+        BinaryDecisionDiagramExplanation(
             diagram.map {
                 transformation(it)
             },
         )
-    }
 }

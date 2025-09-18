@@ -4,9 +4,7 @@ import it.unibo.tuprolog.utils.impl.CachedImpl
 
 interface Cached<T> {
     companion object {
-        fun <T> of(generator: () -> T): Cached<T> {
-            return CachedImpl(generator)
-        }
+        fun <T> of(generator: () -> T): Cached<T> = CachedImpl(generator)
     }
 
     val isValid: Boolean
@@ -24,11 +22,10 @@ interface Cached<T> {
 
     fun invalidate()
 
-    fun <R> ifValid(consumer: (T) -> R): Optional<out R> {
-        return if (isValid) {
+    fun <R> ifValid(consumer: (T) -> R): Optional<out R> =
+        if (isValid) {
             Optional.of(value.let(consumer))
         } else {
             Optional.none()
         }
-    }
 }

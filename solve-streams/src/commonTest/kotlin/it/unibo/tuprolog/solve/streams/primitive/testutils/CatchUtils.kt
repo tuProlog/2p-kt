@@ -36,33 +36,36 @@ internal object CatchUtils {
      */
     internal val requestSolutionMap by lazy {
         mapOf(
-            *catchTestingGoalsToSolutions.map { (goal, solutionList) ->
-                createSolveRequest(
-                    goal,
-                    primitives = sequenceOf(Call, Catch, Conjunction, Throw).associate { it.descriptionPair },
-                ) to solutionList
-            }.toTypedArray(),
-            *CallUtils.requestSolutionMap.flatMap { (callRequest, solutions) ->
-                ktListOf(
-                    logicProgramming { Catch.functor(callRequest.query, `_`, false) },
-                    logicProgramming { Catch.functor(callRequest.arguments.single(), `_`, false) },
-                ).map {
-                    with(callRequest.context.libraries) {
-                        createSolveRequest(it, clauses, primitives + Catch.descriptionPair)
-                    } to solutions.changeQueriesTo(it)
-                }
-            }.toTypedArray(),
-            *CallUtils.requestToErrorSolutionMap.map { (callRequest, solutions) ->
-                val updatedPrimitives = callRequest.context.libraries.primitives + Catch.descriptionPair
-                logicProgramming {
-                    Catch.functor(callRequest.arguments.single(), "X", true).run {
-                        createSolveRequest(this, callRequest.context.libraries.clauses, updatedPrimitives) to
-                            solutions.map {
-                                yes("X" to (it.exception as LogicError).errorStruct)
-                            }
+            *catchTestingGoalsToSolutions
+                .map { (goal, solutionList) ->
+                    createSolveRequest(
+                        goal,
+                        primitives = sequenceOf(Call, Catch, Conjunction, Throw).associate { it.descriptionPair },
+                    ) to solutionList
+                }.toTypedArray(),
+            *CallUtils.requestSolutionMap
+                .flatMap { (callRequest, solutions) ->
+                    ktListOf(
+                        logicProgramming { Catch.functor(callRequest.query, `_`, false) },
+                        logicProgramming { Catch.functor(callRequest.arguments.single(), `_`, false) },
+                    ).map {
+                        with(callRequest.context.libraries) {
+                            createSolveRequest(it, clauses, primitives + Catch.descriptionPair)
+                        } to solutions.changeQueriesTo(it)
                     }
-                }
-            }.toTypedArray(),
+                }.toTypedArray(),
+            *CallUtils.requestToErrorSolutionMap
+                .map { (callRequest, solutions) ->
+                    val updatedPrimitives = callRequest.context.libraries.primitives + Catch.descriptionPair
+                    logicProgramming {
+                        Catch.functor(callRequest.arguments.single(), "X", true).run {
+                            createSolveRequest(this, callRequest.context.libraries.clauses, updatedPrimitives) to
+                                solutions.map {
+                                    yes("X" to (it.exception as LogicError).errorStruct)
+                                }
+                        }
+                    }
+                }.toTypedArray(),
         )
     }
 

@@ -25,7 +25,9 @@ import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.List as LogicList
 
-internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scope {
+internal class ScopeImpl(
+    private val _variables: MutableMap<String, Var>,
+) : Scope {
     override fun contains(variable: Var): Boolean = _variables.containsKey(variable.name)
 
     override fun contains(variable: String): Boolean = _variables.containsKey(variable)

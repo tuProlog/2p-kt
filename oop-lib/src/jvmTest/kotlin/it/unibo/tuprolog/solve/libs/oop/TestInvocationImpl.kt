@@ -19,7 +19,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : TestInvocation {
+abstract class TestInvocationImpl(
+    protected val solverFactory: SolverFactory,
+) : TestInvocation {
     internal abstract fun caseToResult(case: TestDatum): Term
 
     protected abstract val invoke: String
@@ -67,7 +69,13 @@ abstract class TestInvocationImpl(protected val solverFactory: SolverFactory) : 
         query = InvokeMethod.functor(ref, "toList", R)
         assertEquals(
             obj.toList(),
-            solver.solveOnce(query).asYes()?.substitution?.get(R)?.let { it as ObjectRef }?.`object`,
+            solver
+                .solveOnce(query)
+                .asYes()
+                ?.substitution
+                ?.get(R)
+                ?.let { it as ObjectRef }
+                ?.`object`,
         )
         assertEquals(cases.filterNot { it.isFailed }.map { it.converted!! }, obj.toList())
         assertEquals(cases.filterNot { it.isFailed }.map { it.converted!! to it.type }, obj.recordings)

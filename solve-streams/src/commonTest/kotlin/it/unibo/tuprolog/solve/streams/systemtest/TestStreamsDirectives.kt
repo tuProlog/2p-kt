@@ -7,7 +7,9 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Ignore
-class TestStreamsDirectives : TestDirectives, SolverFactory by StreamsSolverFactory {
+class TestStreamsDirectives :
+    TestDirectives,
+    SolverFactory by StreamsSolverFactory {
     private val prototype = TestDirectives.prototype(this)
 
     @Test

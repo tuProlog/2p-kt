@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.classic.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.TimeOutException
 
-abstract class AbstractState(override val context: ClassicExecutionContext) : State {
+abstract class AbstractState(
+    override val context: ClassicExecutionContext,
+) : State {
     protected val executionTime: TimeInstant by lazy {
         currentTime()
     }
@@ -15,8 +17,8 @@ abstract class AbstractState(override val context: ClassicExecutionContext) : St
     protected open val isTimeout: Boolean
         get() = executionTime - context.startTime > context.maxDuration
 
-    override fun next(): State {
-        return if (isTimeout) {
+    override fun next(): State =
+        if (isTimeout) {
             StateHalt(
                 TimeOutException(
                     exceededDuration = context.maxDuration,
@@ -27,7 +29,6 @@ abstract class AbstractState(override val context: ClassicExecutionContext) : St
         } else {
             computeNext()
         }
-    }
 
     protected abstract fun computeNext(): State
 

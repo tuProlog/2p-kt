@@ -40,8 +40,7 @@ internal object SubstitutionUtils {
     /** Contains [mixedSubstitutions] represented as list of pairs */
     internal val mixedSubstitutionsAsPairs by lazy {
         mixedSubstitutions.map {
-            it.entries.map {
-                    entry ->
+            it.entries.map { entry ->
                 entry.toPair()
             }
         }

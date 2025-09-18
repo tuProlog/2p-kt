@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentCompound<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testCompoundDec() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

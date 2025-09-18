@@ -41,7 +41,10 @@ internal class AbstractWrapperTest {
 
     private companion object {
         /** A testing class for AbstractWrapper functionality */
-        private class WrapperOfConstant<out T>(signature: Signature, value: T) : AbstractWrapper<T>(signature) {
+        private class WrapperOfConstant<out T>(
+            signature: Signature,
+            value: T,
+        ) : AbstractWrapper<T>(signature) {
             // this class was added since Kotlin/JS won't pass tests using "object literals"
             // maybe in future releases of Kotlin the problem will be solved
 

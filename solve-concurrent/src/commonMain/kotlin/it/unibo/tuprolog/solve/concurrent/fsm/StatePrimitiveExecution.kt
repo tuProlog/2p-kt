@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.utils.Cursor
 
-data class StatePrimitiveExecution(override val context: ConcurrentExecutionContext) : AbstractState(context) {
+data class StatePrimitiveExecution(
+    override val context: ConcurrentExecutionContext,
+) : AbstractState(context) {
     private fun failureState(context: ConcurrentExecutionContext = this.context): EndState =
         StateEnd(
             solution = Solution.no(context.query),

@@ -97,13 +97,12 @@ internal interface ProbExplanation {
             )
 
         /** Creates a new [ProbExplanation] representing the single probabilistic logic term [term]. */
-        fun of(term: ProbTerm): ProbExplanation {
-            return BinaryDecisionDiagramExplanation(
+        fun of(term: ProbTerm): ProbExplanation =
+            BinaryDecisionDiagramExplanation(
                 bddOf(term),
                 BinaryDecisionDiagramExplanation.ComputedValue(
                     term.probability,
                 ),
             )
-        }
     }
 }

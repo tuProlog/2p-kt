@@ -104,7 +104,9 @@ internal object AssertionUtils {
             }
         val repeatedSequenceOfElements =
             generateSequence { toBeTested }
-                .take(toTestItems).flatten().asIterable()
+                .take(toTestItems)
+                .flatten()
+                .asIterable()
 
         onCorrespondingItems(repeatedElementsSequence, repeatedSequenceOfElements, assertion)
     }

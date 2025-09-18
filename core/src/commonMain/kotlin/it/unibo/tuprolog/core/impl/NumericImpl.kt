@@ -8,7 +8,10 @@ import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
 @Suppress("EqualsOrHashCode")
-internal abstract class NumericImpl(tags: Map<String, Any>) : TermImpl(tags), Numeric {
+internal abstract class NumericImpl(
+    tags: Map<String, Any>,
+) : TermImpl(tags),
+    Numeric {
     override fun structurallyEquals(other: Term): Boolean =
         other.isNumber && decimalValue.compareTo(other.castToNumeric().decimalValue) == 0
 

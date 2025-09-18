@@ -32,7 +32,8 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
                     }
                 }
                 is Var -> {
-                    termToObjectConverter.admissibleTypes(first)
+                    termToObjectConverter
+                        .admissibleTypes(first)
                         .asSequence()
                         .flatMap { it.allSupertypes(false) }
                         .distinct()

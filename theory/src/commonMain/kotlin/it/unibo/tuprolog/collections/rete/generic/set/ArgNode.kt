@@ -32,11 +32,12 @@ internal data class ArgNode(
 
             val child =
                 children.getOrElse(nextArg) {
-                    children.retrieve(
-                        keyFilter = { head -> head != null && head structurallyEquals nextArg },
-                        typeChecker = { it.isArgNode },
-                        caster = { it.castToArgNode() },
-                    ).singleOrNull()
+                    children
+                        .retrieve(
+                            keyFilter = { head -> head != null && head structurallyEquals nextArg },
+                            typeChecker = { it.isArgNode },
+                            caster = { it.castToArgNode() },
+                        ).singleOrNull()
                 }
 
             child ?: ArgNode(index + 1, nextArg)

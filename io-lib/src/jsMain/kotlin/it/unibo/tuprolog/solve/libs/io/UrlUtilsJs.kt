@@ -18,6 +18,5 @@ actual fun remoteUrl(
 
 actual fun Url.openInputChannel(): InputChannel<String> = InputChannel.of(readAsText())
 
-actual fun Url.openOutputChannel(append: Boolean): OutputChannel<String> {
+actual fun Url.openOutputChannel(append: Boolean): OutputChannel<String> =
     throw IOException("Writing not supported for ${toString()}")
-}

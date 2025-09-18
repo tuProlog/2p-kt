@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.stdlib.primitive.FindAll
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
 
-class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
+class TestTimeoutImpl(
+    private val solverFactory: SolverFactory,
+) : TestTimeout {
     override fun testSleep() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

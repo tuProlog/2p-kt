@@ -7,7 +7,8 @@ internal class HijackableSolutionIterator(
     state: State,
     private val hijackStateTransitionCallback: (State, State, Long) -> State,
     private val onStateTransitionCallback: (State, State, Long) -> Unit,
-) : AbstractSolutionIterator(state), MutableSolutionIterator {
+) : AbstractSolutionIterator(state),
+    MutableSolutionIterator {
     override fun computeNextState(
         state: State,
         step: Long,

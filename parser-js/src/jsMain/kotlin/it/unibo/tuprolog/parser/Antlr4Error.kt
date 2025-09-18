@@ -65,7 +65,9 @@ external class DiagnosticErrorListener : ErrorListener {
     )
 }
 
-open external class RecognitionException(params: dynamic) : Throwable {
+open external class RecognitionException(
+    params: dynamic,
+) : Throwable {
     val recognizer: dynamic
     val input: dynamic
     val ctx: dynamic

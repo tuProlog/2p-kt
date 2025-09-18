@@ -21,7 +21,9 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.cursor
 
-data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
+data class StateRuleSelection(
+    override val context: ClassicExecutionContext,
+) : AbstractState(context) {
     companion object {
         private val catchSignature = Catch.signature
 
@@ -47,7 +49,10 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
                     get() = true
             }
 
-            class Actual(override val depthToCut: Int, override val procedure: Struct?) : CutLimit()
+            class Actual(
+                override val depthToCut: Int,
+                override val procedure: Struct?,
+            ) : CutLimit()
         }
     }
 
@@ -135,9 +140,10 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
                         it.executionContext!!.procedure == cutLimit.procedure
                     }
                 if (cutCandidates.any()) {
-                    cutCandidates.firstOrNull {
-                        it.executionContext!!.depth <= cutLimit.depthToCut
-                    }?.parent
+                    cutCandidates
+                        .firstOrNull {
+                            it.executionContext!!.depth <= cutLimit.depthToCut
+                        }?.parent
                 } else {
                     this
                 }
@@ -146,7 +152,8 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
 
     private val ClassicExecutionContext.isTailRecursive: Boolean
         get() =
-            goals.next.isOver && flags[LastCallOptimization] == ON &&
+            goals.next.isOver &&
+                flags[LastCallOptimization] == ON &&
                 currentGoal!!.let { currentGoal ->
                     currentGoal.asStruct()?.extractSignature()?.let {
                         it == procedure?.extractSignature() && it != catchSignature

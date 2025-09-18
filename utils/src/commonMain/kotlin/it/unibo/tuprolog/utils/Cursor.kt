@@ -35,20 +35,14 @@ interface Cursor<T> {
     companion object {
         @JvmStatic
         @JsName("of")
-        fun <T> of(iterator: Iterator<T>): Cursor<out T> {
-            return iterator.toCursor()
-        }
+        fun <T> of(iterator: Iterator<T>): Cursor<out T> = iterator.toCursor()
 
         @JvmStatic
         @JsName("ofSequence")
-        fun <T> of(sequence: Sequence<T>): Cursor<out T> {
-            return sequence.cursor()
-        }
+        fun <T> of(sequence: Sequence<T>): Cursor<out T> = sequence.cursor()
 
         @JvmStatic
         @JsName("empty")
-        fun <T> empty(): Cursor<out T> {
-            return EmptyCursor
-        }
+        fun <T> empty(): Cursor<out T> = EmptyCursor
     }
 }

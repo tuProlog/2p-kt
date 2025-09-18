@@ -46,13 +46,11 @@ internal object ReteTreeAssertionUtils {
         expected: Iterable<T>,
         actual: Iterable<T>,
         message: (() -> String)? = null,
-    ) {
-        return assertItemsAreEquals(
-            expected.toList(),
-            actual.toList(),
-            message,
-        )
-    }
+    ) = assertItemsAreEquals(
+        expected.toList(),
+        actual.toList(),
+        message,
+    )
 
     fun <T> assertItemMultisetsAreEqual(
         expected: Iterable<T>,
@@ -71,13 +69,11 @@ internal object ReteTreeAssertionUtils {
         expected: Sequence<T>,
         actual: Sequence<T>,
         message: (() -> String)? = null,
-    ) {
-        return assertItemsAreEquals(
-            expected.toList(),
-            actual.toList(),
-            message,
-        )
-    }
+    ) = assertItemsAreEquals(
+        expected.toList(),
+        actual.toList(),
+        message,
+    )
 
     fun <T> assertItemMultisetsAreEqual(
         expected: Sequence<T>,
@@ -113,25 +109,21 @@ internal object ReteTreeAssertionUtils {
         expected: Iterable<T>,
         actual: Iterable<T>,
         message: ((T) -> String)? = null,
-    ) {
-        return assertPartialOrderIsTheSame(
-            expected.iterator(),
-            actual.iterator(),
-            message,
-        )
-    }
+    ) = assertPartialOrderIsTheSame(
+        expected.iterator(),
+        actual.iterator(),
+        message,
+    )
 
     fun <T> assertPartialOrderIsTheSame(
         expected: Sequence<T>,
         actual: Sequence<T>,
         message: ((T) -> String)? = null,
-    ) {
-        return assertPartialOrderIsTheSame(
-            expected.iterator(),
-            actual.iterator(),
-            message,
-        )
-    }
+    ) = assertPartialOrderIsTheSame(
+        expected.iterator(),
+        actual.iterator(),
+        message,
+    )
 
     fun <T> assertSubMultisetOf(
         expected: MutableList<T>,
@@ -160,25 +152,21 @@ internal object ReteTreeAssertionUtils {
         expected: Sequence<T>,
         actual: Sequence<T>,
         message: ((T) -> String)? = null,
-    ) {
-        return assertSubMultisetOf(
-            expected.toMutableList(),
-            actual.toMutableList(),
-            message,
-        )
-    }
+    ) = assertSubMultisetOf(
+        expected.toMutableList(),
+        actual.toMutableList(),
+        message,
+    )
 
     fun <T> assertSubMultisetOf(
         expected: Iterable<T>,
         actual: Iterable<T>,
         message: ((T) -> String)? = null,
-    ) {
-        return assertSubMultisetOf(
-            expected.toMutableList(),
-            actual.toMutableList(),
-            message,
-        )
-    }
+    ) = assertSubMultisetOf(
+        expected.toMutableList(),
+        actual.toMutableList(),
+        message,
+    )
 
     fun <T> assertNotContainedIn(
         contained: KtList<T>,
@@ -196,25 +184,21 @@ internal object ReteTreeAssertionUtils {
         contained: Sequence<T>,
         container: Sequence<T>,
         message: ((T) -> String)? = null,
-    ) {
-        return assertNotContainedIn(
-            contained.toList(),
-            container.toList(),
-            message,
-        )
-    }
+    ) = assertNotContainedIn(
+        contained.toList(),
+        container.toList(),
+        message,
+    )
 
     fun <T> assertNotContainedIn(
         contained: Iterable<T>,
         container: Iterable<T>,
         message: ((T) -> String)? = null,
-    ) {
-        return assertNotContainedIn(
-            contained.toList(),
-            container.toList(),
-            message,
-        )
-    }
+    ) = assertNotContainedIn(
+        contained.toList(),
+        container.toList(),
+        message,
+    )
 
     fun assertIsEmptyAndOrdered(tree: ReteTree) {
         assertTrue(tree.isOrdered)
@@ -274,23 +258,21 @@ internal object ReteTreeAssertionUtils {
 
     private fun Fact.addBody(term: Term): Rule = Rule.of(head, term)
 
-    private fun KtList<Fact>.addArgumentsRandomlyFrom(args: KtList<Term>): KtList<Fact> {
-        return zip(args.shuffled()).map { (f, a) -> f.addArguments(a) }
-    }
+    private fun KtList<Fact>.addArgumentsRandomlyFrom(args: KtList<Term>): KtList<Fact> =
+        zip(args.shuffled()).map { (f, a) -> f.addArguments(a) }
 
-    private fun KtList<Fact>.addBodyFrom(bodies: KtList<Term>): KtList<Rule> {
-        return asSequence().flatMap { f ->
-            bodies.asSequence().map { b -> f.addBody(b) }
-        }.toList()
-    }
+    private fun KtList<Fact>.addBodyFrom(bodies: KtList<Term>): KtList<Rule> =
+        asSequence()
+            .flatMap { f ->
+                bodies.asSequence().map { b -> f.addBody(b) }
+            }.toList()
 
-    fun <T> Iterable<T>.allChunksOfSize(size: Int): KtList<KtList<T>> {
-        return if (size == 0) {
+    fun <T> Iterable<T>.allChunksOfSize(size: Int): KtList<KtList<T>> =
+        if (size == 0) {
             listOf(emptyList())
         } else {
             chunked(size).filter { it.size == size }
         }
-    }
 
     private val moreArguments =
         listOf(

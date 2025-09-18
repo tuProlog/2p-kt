@@ -80,7 +80,8 @@ data class ConcurrentExecutionContext(
     }
 
     override val logicStackTrace: KtList<Struct> by lazy {
-        pathToRoot.filter { it.isActivationRecord }
+        pathToRoot
+            .filter { it.isActivationRecord }
             .map { it.procedure ?: Struct.of("?-", query) }
             .toList()
     }
@@ -134,8 +135,8 @@ data class ConcurrentExecutionContext(
         inputChannels: InputStore,
         outputChannels: OutputStore,
         customData: CustomDataStore,
-    ): ConcurrentExecutionContext {
-        return copy(
+    ): ConcurrentExecutionContext =
+        copy(
             unificator = unificator,
             libraries = libraries,
             flags = flags,
@@ -146,22 +147,18 @@ data class ConcurrentExecutionContext(
             outputChannels = outputChannels,
             customData = customData,
         )
-    }
 
-    override fun apply(sideEffect: SideEffect): ConcurrentExecutionContext {
-        return super.apply(sideEffect) as ConcurrentExecutionContext
-    }
+    override fun apply(sideEffect: SideEffect): ConcurrentExecutionContext =
+        super.apply(sideEffect) as ConcurrentExecutionContext
 
-    override fun apply(sideEffects: Iterable<SideEffect>): ConcurrentExecutionContext {
-        return super.apply(sideEffects) as ConcurrentExecutionContext
-    }
+    override fun apply(sideEffects: Iterable<SideEffect>): ConcurrentExecutionContext =
+        super.apply(sideEffects) as ConcurrentExecutionContext
 
-    override fun apply(sideEffects: Sequence<SideEffect>): ConcurrentExecutionContext {
-        return super.apply(sideEffects) as ConcurrentExecutionContext
-    }
+    override fun apply(sideEffects: Sequence<SideEffect>): ConcurrentExecutionContext =
+        super.apply(sideEffects) as ConcurrentExecutionContext
 
-    override fun toString(): String {
-        return "ConcurrentExecutionContext(" +
+    override fun toString(): String =
+        "ConcurrentExecutionContext(" +
             "query=$query, " +
             "procedure=$procedure, " +
             "substitution=$substitution, " +
@@ -176,5 +173,4 @@ data class ConcurrentExecutionContext(
             "depth=$depth, " +
             "step=$step" +
             ")"
-    }
 }

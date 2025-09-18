@@ -18,15 +18,14 @@ import it.unibo.tuprolog.parser.isRecognitionException
 
 @Suppress("TooManyFunctions")
 object PrologParserFactory {
-    private fun newErrorListener(whileParsing: Any): dynamic {
-        return object {
-            private fun symbolToString(obj: dynamic): String {
-                return if (obj is Token) {
+    private fun newErrorListener(whileParsing: Any): dynamic =
+        object {
+            private fun symbolToString(obj: dynamic): String =
+                if (obj is Token) {
                     obj.text
                 } else {
                     obj.toString()
                 }
-            }
 
             @JsName("syntaxError")
             fun syntaxError(
@@ -50,7 +49,6 @@ object PrologParserFactory {
                 )
             }
         }
-    }
 
     fun parseExpression(string: String): SingletonExpressionContext = parseExpression(string, OperatorSet.EMPTY)
 
@@ -176,8 +174,8 @@ object PrologParserFactory {
     private fun parseClauses(
         parser: Pair<PrologParser, ErrorStrategy>,
         source: Any,
-    ): Sequence<ClauseContext> {
-        return generateSequence(0) { it + 1 }
+    ): Sequence<ClauseContext> =
+        generateSequence(0) { it + 1 }
             .map {
                 try {
                     parseClause(parser, source)
@@ -187,5 +185,4 @@ object PrologParserFactory {
                 }
             }.takeWhile { !it.isOver }
             .map { it.clause() }
-    }
 }

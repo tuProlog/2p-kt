@@ -3,8 +3,12 @@ package it.unibo.tuprolog.datalog.exception
 import it.unibo.tuprolog.core.exception.TuPrologException
 
 @Suppress("MemberVisibilityCanBePrivate")
-class DatalogViolationException(prefix: String = "", val culprit: Any, suffix: String = "", cause: Throwable? = null) :
-    TuPrologException(
+class DatalogViolationException(
+    prefix: String = "",
+    val culprit: Any,
+    suffix: String = "",
+    cause: Throwable? = null,
+) : TuPrologException(
         message = "Datalog restriction violation: $prefix$culprit$suffix",
         cause = cause,
     ) {

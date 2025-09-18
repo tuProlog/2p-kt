@@ -91,9 +91,7 @@ internal class ListedTheory private constructor(
         super.hashCode()
     }
 
-    override fun hashCode(): Int {
-        return hashCodeCache
-    }
+    override fun hashCode(): Int = hashCodeCache
 
     private val sizeCache: Long by lazy {
         super.size

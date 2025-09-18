@@ -4,7 +4,9 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
+class TestBagOfImpl(
+    private val solverFactory: SolverFactory,
+) : TestBagOf {
     override fun testBagXInDifferentValues() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

@@ -22,9 +22,7 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplAnd
  * @author Jason Dellaluce
  */
 internal object ProbabilisticClauseMapper : ClauseMapper {
-    override fun isCompatible(clause: Clause): Boolean {
-        return clause is Rule && clause.head.functor == ANNOTATION_FUNCTOR
-    }
+    override fun isCompatible(clause: Clause): Boolean = clause is Rule && clause.head.functor == ANNOTATION_FUNCTOR
 
     override fun apply(clause: Clause): List<Clause> {
         if (clause !is Rule) {

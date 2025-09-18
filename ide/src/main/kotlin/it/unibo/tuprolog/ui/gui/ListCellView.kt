@@ -3,7 +3,9 @@ package it.unibo.tuprolog.ui.gui
 import javafx.scene.Node
 import javafx.scene.control.ListCell
 
-class ListCellView<T : Any>(private val viewGenerator: (T) -> Node) : ListCell<T>() {
+class ListCellView<T : Any>(
+    private val viewGenerator: (T) -> Node,
+) : ListCell<T>() {
     override fun updateItem(
         item: T?,
         empty: Boolean,

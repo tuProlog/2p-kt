@@ -29,7 +29,9 @@ class TestTheoryMetadata {
             MutableTheory.listedOf(Unificator.default, TheoryUtils.wellFormedClauses),
         )
 
-    private data class Metadata<T>(val value: T)
+    private data class Metadata<T>(
+        val value: T,
+    )
 
     private val someKey = "some_key1"
     private val someOtherKey = "some_key2"

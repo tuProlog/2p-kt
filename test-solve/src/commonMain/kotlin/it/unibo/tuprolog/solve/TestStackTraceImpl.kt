@@ -10,7 +10,9 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 
 @Suppress("LocalVariableName", "ktlint:standard:property-naming")
-class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTrace {
+class TestStackTraceImpl(
+    private val solverFactory: SolverFactory,
+) : TestStackTrace {
     private fun threeLayersTheory(errorExpression: LogicProgrammingScope.() -> Struct): Theory =
         logicProgramming {
             theoryOf(

@@ -124,7 +124,8 @@ val Theory.isDatalog: Boolean
             it.hasNoCompound &&
                 it.allHeadVariablesInNonNegatedLiterals &&
                 it.allNegatedLiteralsVariablesInNonNegatedLiteralsToo
-        } && isNonRecursive
+        } &&
+            isNonRecursive
 
 fun Theory.ensureIsDatalog() {
     for (rule in rules) {

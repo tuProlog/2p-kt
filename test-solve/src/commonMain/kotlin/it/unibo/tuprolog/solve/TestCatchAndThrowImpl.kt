@@ -3,7 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.SystemError
 
-internal class TestCatchAndThrowImpl(private val solverFactory: SolverFactory) : TestCatchAndThrow {
+internal class TestCatchAndThrowImpl(
+    private val solverFactory: SolverFactory,
+) : TestCatchAndThrow {
     override fun testCatchThrow() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

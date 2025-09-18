@@ -14,7 +14,9 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 /** An interface representing the Solver execution context, containing important information that determines its behaviour */
-interface ExecutionContext : ExecutionContextAware, Durable {
+interface ExecutionContext :
+    ExecutionContextAware,
+    Durable {
     /** The current procedure being executed */
     @JsName("procedure")
     val procedure: Struct?
@@ -53,9 +55,7 @@ interface ExecutionContext : ExecutionContextAware, Durable {
     ): MutableSolver
 
     @JsName("apply")
-    fun apply(sideEffect: SideEffect): ExecutionContext {
-        return apply(listOf(sideEffect))
-    }
+    fun apply(sideEffect: SideEffect): ExecutionContext = apply(listOf(sideEffect))
 
     @JsName("applyIterable")
     fun apply(sideEffects: Iterable<SideEffect>): ExecutionContext {

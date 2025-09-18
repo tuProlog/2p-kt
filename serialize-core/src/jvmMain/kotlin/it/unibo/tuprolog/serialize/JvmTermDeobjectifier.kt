@@ -13,25 +13,23 @@ import it.unibo.tuprolog.core.Integer as LogicInteger
 internal class JvmTermDeobjectifier : TermDeobjectifier {
     private val scope: Scope = Scope.empty()
 
-    override fun deobjectify(`object`: Any): Term {
-        return when (`object`) {
+    override fun deobjectify(`object`: Any): Term =
+        when (`object`) {
             is Boolean -> deobjectifyBoolean(`object`)
             is Number -> deobjectifyNumber(`object`)
             is String -> deobjectifyString(`object`)
             is Map<*, *> -> deobjectifyMap(`object`)
             else -> throw DeobjectificationException(`object`)
         }
-    }
 
-    override fun deobjectifyMany(`object`: Any): Iterable<Term> {
-        return when (`object`) {
+    override fun deobjectifyMany(`object`: Any): Iterable<Term> =
+        when (`object`) {
             is List<*> -> `object`.map { deobjectify(it ?: throw DeobjectificationException(`object`)) }
             else -> throw DeobjectificationException(`object`)
         }
-    }
 
-    private fun deobjectifyMap(value: Map<*, *>): Term {
-        return when {
+    private fun deobjectifyMap(value: Map<*, *>): Term =
+        when {
             value.containsKey("var") -> deobjectifyVariable(value)
             value.containsKey("fun") && value.containsKey("args") -> deobjectifyStructure(value)
             value.containsKey("list") -> deobjectifyList(value)
@@ -43,23 +41,20 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
             value.containsKey("set") -> deobjectifyBlock(value, "set")
             else -> throw DeobjectificationException(value)
         }
-    }
 
-    private fun deobjectifyReal(value: Map<*, *>): Term {
-        return when (val actualValue = value["real"]) {
+    private fun deobjectifyReal(value: Map<*, *>): Term =
+        when (val actualValue = value["real"]) {
             is String -> scope.realOf(actualValue)
             is Number -> deobjectifyNumber(actualValue) as? Real ?: throw DeobjectificationException(value)
             else -> throw DeobjectificationException(value)
         }
-    }
 
-    private fun deobjectifyInteger(value: Map<*, *>): Term {
-        return when (val actualValue = value["integer"]) {
+    private fun deobjectifyInteger(value: Map<*, *>): Term =
+        when (val actualValue = value["integer"]) {
             is String -> scope.intOf(actualValue)
             is Number -> deobjectifyNumber(actualValue) as? LogicInteger ?: throw DeobjectificationException(value)
             else -> throw DeobjectificationException(value)
         }
-    }
 
     private fun deobjectifyClause(value: Map<*, *>): Term {
         val head = value["head"]?.let { deobjectify(it) as? Struct } ?: throw DeobjectificationException(value)
@@ -124,12 +119,10 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
         }
     }
 
-    private fun deobjectifyString(value: String): Term {
-        return scope.atomOf(value)
-    }
+    private fun deobjectifyString(value: String): Term = scope.atomOf(value)
 
-    private fun deobjectifyNumber(value: Number): Term {
-        return when (value) {
+    private fun deobjectifyNumber(value: Number): Term =
+        when (value) {
             is Int -> scope.intOf(value)
             is Long -> scope.intOf(value)
             is Double -> scope.realOf(value.toString())
@@ -140,9 +133,6 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
             is BigDecimal -> scope.realOf(value.toString())
             else -> throw DeobjectificationException(value)
         }
-    }
 
-    private fun deobjectifyBoolean(value: Boolean): Term {
-        return scope.truthOf(value)
-    }
+    private fun deobjectifyBoolean(value: Boolean): Term = scope.truthOf(value)
 }

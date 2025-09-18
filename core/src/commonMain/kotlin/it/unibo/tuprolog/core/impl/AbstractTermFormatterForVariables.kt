@@ -15,8 +15,8 @@ internal abstract class AbstractTermFormatterForVariables(
         suffix: String,
     ): String
 
-    override fun visitVar(term: Var): String {
-        return if (term.isAnonymous) {
+    override fun visitVar(term: Var): String =
+        if (term.isAnonymous) {
             ANONYMOUS_VAR_NAME
         } else if (variables.containsKey(term.name)) {
             val homonymous = variables[term.name]!!
@@ -32,5 +32,4 @@ internal abstract class AbstractTermFormatterForVariables(
             variables[term.name] = mutableMapOf(term to "")
             formatVar(term, "")
         }
-    }
 }

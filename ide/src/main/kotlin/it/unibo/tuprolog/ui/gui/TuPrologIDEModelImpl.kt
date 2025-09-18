@@ -34,7 +34,10 @@ internal class TuPrologIDEModelImpl(
         const val DEFAULT_TIMEOUT: Long = 5000
     }
 
-    private data class FileContent(var text: String, var changed: Boolean = true) {
+    private data class FileContent(
+        var text: String,
+        var changed: Boolean = true,
+    ) {
         fun text(text: String) {
             if (text != this.text) changed = true
             this.text = text
@@ -96,9 +99,7 @@ internal class TuPrologIDEModelImpl(
         onFileSelected.push(file)
     }
 
-    override fun getFile(file: File): String {
-        return files[file]!!.text
-    }
+    override fun getFile(file: File): String = files[file]!!.text
 
     override fun setFile(
         file: File,
@@ -161,7 +162,8 @@ internal class TuPrologIDEModelImpl(
     private val solver =
         Cached.of {
             var newSolver =
-                Solver.prolog.newBuilder()
+                Solver.prolog
+                    .newBuilder()
                     .runtime(Runtime.of(OOPLib, IOLib))
                     .flag(TrackVariables) { ON }
                     .standardInput(InputChannel.of(stdin))

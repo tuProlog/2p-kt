@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -8,7 +9,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TestChannelToSequence {
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     @Test
     fun testEmptyChannel() =
         multiRunConcurrentTest {
@@ -20,7 +21,7 @@ class TestChannelToSequence {
             assertTrue(channel.isClosedForSend)
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     @Test
     fun testEarlyClose() =
         multiRunConcurrentTest {
@@ -32,7 +33,7 @@ class TestChannelToSequence {
             assertTrue(channel.isClosedForSend)
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     @Test
     fun testConcurrentSend() =
         multiRunConcurrentTest {
@@ -55,8 +56,9 @@ class TestChannelToSequence {
             val times = 100
             val channel: Channel<String> = Channel(Channel.UNLIMITED)
             launch {
-                for (c in 0 until times)
+                for (c in 0 until times) {
                     channel.send("$c")
+                }
                 channel.close()
             }
             val seq = channel.toSequence(this)

@@ -53,12 +53,14 @@ internal object CallUtils {
                 Call.functor(true).hasSolutions({ yes() }),
                 Call.functor("true" and "true").hasSolutions({ yes() }),
                 Call.functor("!").hasSolutions({ yes() }),
-                *simpleFactTheoryNotableGoalToSolutions.map { (goal, solutionList) ->
-                    Call.functor(goal).run { to(solutionList.changeQueriesTo(this)) }
-                }.toTypedArray(),
-                *simpleFactTheoryNotableGoalToSolutions.map { (goal, solutionList) ->
-                    Call.functor(goal and "!").run { to(solutionList.subList(0, 1).changeQueriesTo(this)) }
-                }.toTypedArray(),
+                *simpleFactTheoryNotableGoalToSolutions
+                    .map { (goal, solutionList) ->
+                        Call.functor(goal).run { to(solutionList.changeQueriesTo(this)) }
+                    }.toTypedArray(),
+                *simpleFactTheoryNotableGoalToSolutions
+                    .map { (goal, solutionList) ->
+                        Call.functor(goal and "!").run { to(solutionList.subList(0, 1).changeQueriesTo(this)) }
+                    }.toTypedArray(),
             ).mapKeys { (query, _) ->
                 createSolveRequest(
                     query,
@@ -109,11 +111,12 @@ internal object CallUtils {
     internal val requestToSolutionOfCallWithCut by lazy {
         logicProgramming {
             mapOf(
-                *simpleFactTheoryNotableGoalToSolutions.map { (goal, solutionList) ->
-                    Call.functor(goal and Call.functor("!")).run {
-                        to(solutionList.changeQueriesTo(this))
-                    }
-                }.toTypedArray(),
+                *simpleFactTheoryNotableGoalToSolutions
+                    .map { (goal, solutionList) ->
+                        Call.functor(goal and Call.functor("!")).run {
+                            to(solutionList.changeQueriesTo(this))
+                        }
+                    }.toTypedArray(),
             ).mapKeys { (query, _) ->
                 createSolveRequest(
                     query,

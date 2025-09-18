@@ -24,24 +24,6 @@ internal sealed class SolutionImpl(
     override val exception: ResolutionException?
         get() = null
 
-    override fun <T> whenIs(
-        yes: ((Solution.Yes) -> T)?,
-        no: ((Solution.No) -> T)?,
-        halt: ((Solution.Halt) -> T)?,
-        otherwise: ((Solution) -> T),
-    ): T {
-        if (this is Solution.Yes && yes != null) {
-            return yes(this)
-        }
-        if (this is Solution.No && no != null) {
-            return no(this)
-        }
-        if (this is Solution.Halt && halt != null) {
-            return halt(this)
-        }
-        return otherwise(this)
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
@@ -70,7 +52,8 @@ internal sealed class SolutionImpl(
         /** The successful substitution applied finding the solution */
         override val substitution: Substitution.Unifier = Substitution.empty(),
         tags: Map<String, Any> = emptyMap(),
-    ) : SolutionImpl(query, tags), Solution.Yes {
+    ) : SolutionImpl(query, tags),
+        Solution.Yes {
         constructor(
             signature: Signature,
             arguments: List<Term>,
@@ -108,16 +91,16 @@ internal sealed class SolutionImpl(
         override fun cleanUp(): Solution.Yes =
             copy(substitution = substitution.cleanUp(query.variables.filterNot { it.isAnonymous }.toSet()))
 
-        private fun Substitution.Unifier.cleanUp(toRetain: Set<Var>): Substitution.Unifier {
-            return filter { v, t -> (v in toRetain) || (t is Var && t in toRetain) }
-        }
+        private fun Substitution.Unifier.cleanUp(toRetain: Set<Var>): Substitution.Unifier =
+            filter { v, t -> (v in toRetain) || (t is Var && t in toRetain) }
     }
 
     /** A class representing a failed solution */
     class NoImpl(
         query: Struct,
         tags: Map<String, Any> = emptyMap(),
-    ) : SolutionImpl(query, tags), Solution.No {
+    ) : SolutionImpl(query, tags),
+        Solution.No {
         constructor(
             signature: Signature,
             arguments: List<Term>,
@@ -150,7 +133,8 @@ internal sealed class SolutionImpl(
         /** The exception that made the resolution to halt */
         override val exception: ResolutionException,
         tags: Map<String, Any> = emptyMap(),
-    ) : SolutionImpl(query, tags), Solution.Halt {
+    ) : SolutionImpl(query, tags),
+        Solution.Halt {
         constructor(
             signature: Signature,
             arguments: List<Term>,

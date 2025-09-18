@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.utils.impl
 
-internal data class LazyCursor<T>(val delegate: Iterator<T>) : AbstractCursor<T>() {
+internal data class LazyCursor<T>(
+    val delegate: Iterator<T>,
+) : AbstractCursor<T>() {
     private val wrapped: AbstractCursor<T> by lazy {
         NonLastCursor(delegate)
     }

@@ -20,35 +20,31 @@ internal class ProbExplanationTerm(
 
     override fun asConstant(): Constant = this
 
-    override fun freshCopy(): ProbExplanationTerm {
-        return ProbExplanationTerm(explanation.apply { it.freshCopy() })
-    }
+    override fun freshCopy(): ProbExplanationTerm = ProbExplanationTerm(explanation.apply { it.freshCopy() })
 
-    override fun freshCopy(scope: Scope): ProbExplanationTerm {
-        return ProbExplanationTerm(explanation.apply { it.freshCopy(scope) })
-    }
+    override fun freshCopy(scope: Scope): ProbExplanationTerm =
+        ProbExplanationTerm(
+            explanation.apply {
+                it.freshCopy(scope)
+            },
+        )
 
     override fun get(
         substitution: Substitution,
         vararg substitutions: Substitution,
-    ): ProbExplanationTerm {
-        return this.apply(substitution, *substitutions)
-    }
+    ): ProbExplanationTerm = this.apply(substitution, *substitutions)
 
     override fun apply(
         substitution: Substitution,
         vararg substitutions: Substitution,
-    ): ProbExplanationTerm {
-        return this.apply(Substitution.of(substitution, *substitutions))
-    }
+    ): ProbExplanationTerm = this.apply(Substitution.of(substitution, *substitutions))
 
-    override fun apply(substitution: Substitution): ProbExplanationTerm {
-        return if (substitution.isEmpty() || isGround) {
+    override fun apply(substitution: Substitution): ProbExplanationTerm =
+        if (substitution.isEmpty() || isGround) {
             this
         } else {
             ProbExplanationTerm(explanation.apply { it.apply(substitution) })
         }
-    }
 
     override val isGround: Boolean
         get() = !explanation.containsAnyNotGroundTerm

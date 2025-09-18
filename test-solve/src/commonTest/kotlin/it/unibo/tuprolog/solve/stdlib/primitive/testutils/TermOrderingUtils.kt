@@ -26,11 +26,17 @@ internal object TermOrderingUtils {
     ) = when (expectedResult) {
         true ->
             assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-                standardOrderRelation.implementation.solve(input).single().solution is Solution.Yes
+                standardOrderRelation.implementation
+                    .solve(input)
+                    .single()
+                    .solution is Solution.Yes
             }
         false ->
             assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-                standardOrderRelation.implementation.solve(input).single().solution is Solution.No
+                standardOrderRelation.implementation
+                    .solve(input)
+                    .single()
+                    .solution is Solution.No
             }
         else ->
             @Suppress("UNCHECKED_CAST")

@@ -16,7 +16,9 @@ import kotlin.collections.List as KtList
  * An [Atom] is at the same time a [String]-valued [Constant] and a 0-argument [Struct], whose [functor] is equal
  * to [value].
  */
-interface Atom : Struct, Constant {
+interface Atom :
+    Struct,
+    Constant {
     override val arity: Int
         get() = 0
 

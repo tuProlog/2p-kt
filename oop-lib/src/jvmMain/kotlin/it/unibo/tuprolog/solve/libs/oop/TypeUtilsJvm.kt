@@ -104,7 +104,8 @@ internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
     }
 
 actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
-    supertypes.asSequence()
+    supertypes
+        .asSequence()
         .map { it.classifier }
         .filterIsInstance<KClass<*>>()
         .flatMap { sequenceOf(it) + it.allSupertypes(true) }

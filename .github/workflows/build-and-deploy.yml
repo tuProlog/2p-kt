@@ -4,199 +4,67 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-secrets:
-    runs-on: ubuntu-22.04
-    outputs:
-      run-with-secrets: ${{ steps.require-secrets.outputs.run-with-secrets }}
-    steps:
-      - name: Find if secrets are available
-        id: detect-secrets
-        uses: DanySK/are-secrets-available@1.0.0
-        with:
-          secrets: ${{ toJson(secrets) }}
-      - name: Set condition
-        id: require-secrets
-        run: |
-          echo "run-with-secrets=${{ steps.detect-secrets.outputs.has-secrets == 'true' && !github.event.repository.fork }}" >> $GITHUB_OUTPUT
-
-  staging-repo:
-    runs-on: ubuntu-22.04
-    needs:
-      - check-secrets
-    concurrency:
-      group: staging-repo-${{ github.workflow }}-${{ github.event.number || github.ref }}
-    if: needs.check-secrets.outputs.run-with-secrets == 'true'
-    outputs:
-      maven-central-repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
-      next-version: ${{ steps.compute-next-version.outputs.next-version }}
-      will-release: ${{ steps.compute-next-version.outputs.will-release }}
-    steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v4.1.7
-        with:
-          fetch-depth: 0
-      - name: Compute next release version
-        id: compute-next-version
-        uses: nicolasfara/precompute-semantic-release-version-action@1.0.2
-        with:
-          github-token: ${{ github.token }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.22
-        with:
-          maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
-          maven-central-username: gciatto
-          should-run-codecov: false
-          should-deploy: true
-          build-command: true
-          check-command: true
-          deploy-command: |
-            if [[ "${{ steps.compute-next-version.outputs.will-release }}" == "true" ]]; then
-              ./gradlew -PforceVersion="${{ steps.compute-next-version.outputs.next-version }}" createStagingRepositoryOnMavenCentral --parallel
-            else
-              ./gradlew createStagingRepositoryOnMavenCentral --parallel
-            fi
-      - name: Save staging repository ID
-        id: staging-repo
-        run: |
-          [[ -f build/staging-repo-ids.properties ]] || (
-            echo "Staging repositories ID file not found" &&
-            exit 1
-          )
-          REPO_IDS=$(cat build/staging-repo-ids.properties)
-          echo "Staging repositories IDs:\n$REPO_IDS"
-          echo $REPO_IDS >> $GITHUB_OUTPUT
-
   build:
-    needs:
-      - check-secrets
-      - staging-repo
-    if: always() && !contains(needs.staging-repo.result, 'failure')
-    # Uncomment if cross-compilation is needed
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        os: [ windows-2022, macos-12, ubuntu-22.04 ]
-#    runs-on: ${{ matrix.os }}
-    # Comment if cross-compilation is needed
-    runs-on: ubuntu-22.04
-    concurrency:
-      group: build-${{ github.workflow }}-${{ matrix.os }}-${{ github.event.number || github.ref }}
-      cancel-in-progress: true
-    env:
-      GRADLE_OPTS: -Dorg.gradle.daemon=false
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: DanySK/action-checkout@0.2.19
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.22
-        timeout-minutes: 120
+        uses: DanySK/action-checkout@0.2.24
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.7
         with:
           # Dry-deployment
-          deploy-command: |
-            ./gradlew assemble --continue || ./gradlew assemble --continue
-            NEXT_VERSION="${{ needs.staging-repo.outputs.next-version }}"
-            OVERRIDE_VERSION=$([[ "$NEXT_VERSION" != "" ]] && echo "-PforceVersion=$(echo $NEXT_VERSION)" || echo "")
-            ./gradlew $OVERRIDE_VERSION -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }} uploadProject --parallel
-          should-run-codecov: ${{ runner.os == 'Linux' }}
-          should-deploy: ${{ contains(needs.staging-repo.result, 'success') }}
+          deploy-command: >-
+            ./gradlew
+            publishAllPublicationsToProjectLocalRepository
+            zipMavenCentralPortalPublication 
+            releaseMavenCentralPortalPublication
+            --dry-run
+          should-deploy: true
+          should-run-codecov: false
+          maven-central-username: ${{ secrets.MAVEN_USERNAME }}
           maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
-          maven-central-username: gciatto
-          build-command: |
-            SKIP_DOC="-x dokkaHtml -x javadoc -x dokkaJavadoc -x dokkaGfm -x dokkaJekyll"
-            ./gradlew assemble $SKIP_DOC --parallel || ./gradlew assemble $SKIP_DOC --parallel
-          check-command: |
-            ./gradlew check --parallel --continue || ./gradlew check --parallel --continue
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
-
   test-extensively:
     needs:
       - build
     if: github.ref_name != 'master' || github.event.commits[0].author.name != 'renovate[bot]'
     uses: ./.github/workflows/test-extensively.yml
-#    secrets: inherit
-
-  close-staging-repos:
-    needs:
-      - staging-repo
-      - test-extensively
-      - build
-    runs-on: ubuntu-22.04
-    if: |
-      always() &&
-      needs.check-secrets.outputs.run-with-secrets == 'true' &&
-      needs.build.result == 'success' &&
-      (needs.test-extensively.result == 'success' || needs.test-extensively.result == 'skipped')
-    steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v4.1.7
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.22
-        with:
-          maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
-          maven-central-username: gciatto
-          should-run-codecov: false
-          should-deploy: true
-          build-command: true
-          check-command: true
-          deploy-command: |
-            ./gradlew -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }} close --parallel
-            if [[ "${{ needs.staging-repo.outputs.will-release }}" == "false" ]]; then
-              ./gradlew -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }} drop
-            fi
-
   release:
-    concurrency:
-      # Only one release job at a time per branch, as only master releases.
-      # Strictly sequential.
-      group: release-${{ github.event.number || github.ref }}
+    permissions:
+      contents: write
+      packages: write
     needs:
-      - check-secrets
-      - staging-repo
       - build
-      - close-staging-repos
-    runs-on: ubuntu-22.04
-    if: |
-      always() &&
-      needs.check-secrets.outputs.run-with-secrets == 'true' &&
-      needs.close-staging-repos.result == 'success'
+      - test-extensively
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v5.0.0
         with:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      - name: Find the version of Node from package.json
-        id: node-version
-        run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
       - name: Install Node
-        uses: actions/setup-node@v4.0.2
+        uses: actions/setup-node@v5.0.0
         with:
-          node-version: ${{ steps.node-version.outputs.version }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.22
-        env:
-          STAGING_REPO_ID: ${{ needs.staging-repo.outputs.maven-central-repo-id }}
-          ENFORCE_VERSION: "${{ needs.staging-repo.outputs.next-version }}"
+          node-version-file: package.json
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.7
         with:
-          build-command: |
-            NEXT_VERSION="${{ needs.staging-repo.outputs.next-version }}"
-            OVERRIDE_VERSION=$([[ "$NEXT_VERSION" != "" ]] && echo "-PforceVersion=$(echo $NEXT_VERSION)" || echo "")
-            ./gradlew $OVERRIDE_VERSION allShadowJars
-            ./gradlew $OVERRIDE_VERSION dokkaHtmlMultiModuleZip
+          retries-on-failure: '1'
+          build-command: true
           check-command: true
           deploy-command: |
             npm install
             npx semantic-release
           should-run-codecov: false
           should-deploy: true
-          github-token: ${{ github.token }}
-          maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
-          maven-central-username: gciatto
           npm-token: ${{ secrets.NPM_TOKEN }}
+          github-token: ${{ github.token }}
+          maven-central-username: ${{ secrets.MAVEN_USERNAME }}
+          maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
   success:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
-      - check-secrets
-      - staging-repo
-      - close-staging-repos
       - release
       - build
       - test-extensively

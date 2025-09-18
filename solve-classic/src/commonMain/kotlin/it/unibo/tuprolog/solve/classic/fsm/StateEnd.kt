@@ -10,13 +10,12 @@ data class StateEnd(
     override val isTimeout: Boolean
         get() = false
 
-    override fun computeNext(): State {
-        return if (context.hasOpenAlternatives) {
+    override fun computeNext(): State =
+        if (context.hasOpenAlternatives) {
             StateBacktracking(context.copy(step = nextStep(), startTime = currentTime()))
         } else {
             super.computeNext()
         }
-    }
 
     override fun clone(context: ClassicExecutionContext): StateEnd = copy(solution = solution, context = context)
 }

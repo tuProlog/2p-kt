@@ -6,7 +6,9 @@ import it.unibo.tuprolog.utils.graphs.MutableGraph
 import it.unibo.tuprolog.utils.graphs.Node
 
 @Suppress("RedundantVisibilityModifier")
-internal class MutableGraphImpl<T, W> : MutableGraph<T, W>, AbstractGraph<T, W, MutableGraphImpl<T, W>> {
+internal class MutableGraphImpl<T, W> :
+    MutableGraph<T, W>,
+    AbstractGraph<T, W, MutableGraphImpl<T, W>> {
     constructor(edges: Iterable<Edge<T, W>> = emptyList()) : super(edges)
 
     internal constructor(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>) : super(connections)

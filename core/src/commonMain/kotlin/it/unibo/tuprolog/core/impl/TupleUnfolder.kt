@@ -4,7 +4,9 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Tuple
 
-internal class TupleUnfolder(tuple: Tuple) : Iterator<Term> {
+internal class TupleUnfolder(
+    tuple: Tuple,
+) : Iterator<Term> {
     private var current: Term? = tuple
 
     override fun hasNext(): Boolean = current != null

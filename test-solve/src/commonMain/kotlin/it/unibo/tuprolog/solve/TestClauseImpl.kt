@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-internal class TestClauseImpl(private val solverFactory: SolverFactory) : TestClause {
+internal class TestClauseImpl(
+    private val solverFactory: SolverFactory,
+) : TestClause {
     override fun testClauseXBody() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

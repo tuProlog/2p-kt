@@ -3,7 +3,9 @@ package it.unibo.tuprolog.utils.graphs
 import it.unibo.tuprolog.utils.dequeOf
 import it.unibo.tuprolog.utils.takeFirst
 
-abstract class AbstractSearchStrategy<T, W, S>(override val initialState: S) : SearchStrategy<T, W, S> {
+abstract class AbstractSearchStrategy<T, W, S>(
+    override val initialState: S,
+) : SearchStrategy<T, W, S> {
     private class InitialNode<T> : Node<T> {
         override val value: T
             get() = throw NoSuchElementException()

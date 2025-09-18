@@ -16,6 +16,12 @@ abstract class AbstractLogicProgrammingScopeTestWithTheories<S : BaseLogicProgra
         val rules = theory.rules.toList()
         assertEquals(2, rules.size)
         assertStructurallyEquals(rules[0].head, rules[1].head)
-        assertStructurallyEquals(rules[0].head, theory.directives.single().bodyItems.single())
+        assertStructurallyEquals(
+            rules[0].head,
+            theory.directives
+                .single()
+                .bodyItems
+                .single(),
+        )
     }
 }

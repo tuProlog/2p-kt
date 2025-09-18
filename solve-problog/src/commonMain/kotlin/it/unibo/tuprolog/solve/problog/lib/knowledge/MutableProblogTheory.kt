@@ -22,7 +22,9 @@ import kotlin.jvm.JvmStatic
  *
  * @author Jason Dellaluce
  * */
-interface MutableProblogTheory : ProblogTheory, MutableTheory {
+interface MutableProblogTheory :
+    ProblogTheory,
+    MutableTheory {
     override val isMutable: Boolean get() = true
 
     override fun toMutableTheory(): MutableProblogTheory = this

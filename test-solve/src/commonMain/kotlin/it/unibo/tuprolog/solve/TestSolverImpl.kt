@@ -752,23 +752,22 @@ internal class TestSolverImpl(
                     callErrorSignature,
                     nafErrorSignature,
                     notErrorSignature,
-                )
-                    .mapValues { (_, listOfGoalToSolutions) ->
-                        listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                            listOf(
-                                (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
-                                (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
-                                (goal and false).run {
-                                    when {
-                                        expectedSolutions.any { it is Solution.Halt } ->
-                                            to(expectedSolutions.changeQueriesTo(this))
-                                        else -> hasSolutions({ no() })
-                                    }
-                                },
-                                (false and goal).hasSolutions({ no() }),
-                            )
-                        }
+                ).mapValues { (_, listOfGoalToSolutions) ->
+                    listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
+                        listOf(
+                            (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
+                            (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
+                            (goal and false).run {
+                                when {
+                                    expectedSolutions.any { it is Solution.Halt } ->
+                                        to(expectedSolutions.changeQueriesTo(this))
+                                    else -> hasSolutions({ no() })
+                                }
+                            },
+                            (false and goal).hasSolutions({ no() }),
+                        )
                     }
+                }
             }
 
             allDatabasesWithGoalsAndSolutions.forEach { (database, goalToSolutions) ->
@@ -803,18 +802,17 @@ internal class TestSolverImpl(
                 callErrorSignature,
                 nafErrorSignature,
                 notErrorSignature,
-            )
-                .mapValues { (_, listOfGoalToSolutions) ->
-                    listOfGoalToSolutions.map { (goal, expectedSolutions) ->
-                        call(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
-                    }
-                }.forEach { (database, goalToSolutions) ->
-                    assertSolverSolutionsCorrect(
-                        solverFactory.solverWithDefaultBuiltins(staticKb = database),
-                        goalToSolutions,
-                        mediumDuration,
-                    )
+            ).mapValues { (_, listOfGoalToSolutions) ->
+                listOfGoalToSolutions.map { (goal, expectedSolutions) ->
+                    call(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
                 }
+            }.forEach { (database, goalToSolutions) ->
+                assertSolverSolutionsCorrect(
+                    solverFactory.solverWithDefaultBuiltins(staticKb = database),
+                    goalToSolutions,
+                    mediumDuration,
+                )
+            }
         }
     }
 
@@ -846,32 +844,31 @@ internal class TestSolverImpl(
                 callErrorSignature,
                 nafErrorSignature,
                 notErrorSignature,
-            )
-                .mapValues { (_, listOfGoalToSolutions) ->
-                    listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                        listOf(
-                            `catch`(goal, `_`, false).run {
-                                when {
-                                    expectedSolutions.any {
-                                        it is Solution.Halt &&
-                                            !it.query.containsHaltPrimitive() &&
-                                            it.exception !is TimeOutException
-                                    } -> hasSolutions({ no() })
-                                    else -> to(expectedSolutions.changeQueriesTo(this))
-                                }
-                            },
-                            `catch`(goal, "notUnifyingCatcher", false).run {
-                                to(expectedSolutions.changeQueriesTo(this))
-                            },
-                        )
-                    }
-                }.forEach { (database, goalToSolutions) ->
-                    assertSolverSolutionsCorrect(
-                        solverFactory.solverWithDefaultBuiltins(staticKb = database),
-                        goalToSolutions,
-                        mediumDuration,
+            ).mapValues { (_, listOfGoalToSolutions) ->
+                listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
+                    listOf(
+                        `catch`(goal, `_`, false).run {
+                            when {
+                                expectedSolutions.any {
+                                    it is Solution.Halt &&
+                                        !it.query.containsHaltPrimitive() &&
+                                        it.exception !is TimeOutException
+                                } -> hasSolutions({ no() })
+                                else -> to(expectedSolutions.changeQueriesTo(this))
+                            }
+                        },
+                        `catch`(goal, "notUnifyingCatcher", false).run {
+                            to(expectedSolutions.changeQueriesTo(this))
+                        },
                     )
                 }
+            }.forEach { (database, goalToSolutions) ->
+                assertSolverSolutionsCorrect(
+                    solverFactory.solverWithDefaultBuiltins(staticKb = database),
+                    goalToSolutions,
+                    mediumDuration,
+                )
+            }
         }
     }
 
@@ -900,47 +897,46 @@ internal class TestSolverImpl(
                 callErrorSignature,
                 nafErrorSignature,
                 notErrorSignature,
-            )
-                .mapValues { (_, listOfGoalToSolutions) ->
-                    listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                        listOf(
-                            naf(goal).run {
-                                when {
-                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
-                                    expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
-                                    else -> to(expectedSolutions.changeQueriesTo(this))
-                                }
-                            },
-                            not(goal).run {
-                                when {
-                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
-                                    expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
-                                    else -> to(expectedSolutions.changeQueriesTo(this))
-                                }
-                            },
-                            naf(naf(goal)).run {
-                                when {
-                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
-                                    expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
-                                    else -> to(expectedSolutions.changeQueriesTo(this))
-                                }
-                            },
-                            not(not(goal)).run {
-                                when {
-                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
-                                    expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
-                                    else -> to(expectedSolutions.changeQueriesTo(this))
-                                }
-                            },
-                        )
-                    }
-                }.forEach { (database, goalToSolutions) ->
-                    assertSolverSolutionsCorrect(
-                        solverFactory.solverWithDefaultBuiltins(staticKb = database),
-                        goalToSolutions,
-                        mediumDuration,
+            ).mapValues { (_, listOfGoalToSolutions) ->
+                listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
+                    listOf(
+                        naf(goal).run {
+                            when {
+                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
+                                expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
+                                else -> to(expectedSolutions.changeQueriesTo(this))
+                            }
+                        },
+                        not(goal).run {
+                            when {
+                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
+                                expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
+                                else -> to(expectedSolutions.changeQueriesTo(this))
+                            }
+                        },
+                        naf(naf(goal)).run {
+                            when {
+                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
+                                expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
+                                else -> to(expectedSolutions.changeQueriesTo(this))
+                            }
+                        },
+                        not(not(goal)).run {
+                            when {
+                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
+                                expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
+                                else -> to(expectedSolutions.changeQueriesTo(this))
+                            }
+                        },
                     )
                 }
+            }.forEach { (database, goalToSolutions) ->
+                assertSolverSolutionsCorrect(
+                    solverFactory.solverWithDefaultBuiltins(staticKb = database),
+                    goalToSolutions,
+                    mediumDuration,
+                )
+            }
         }
     }
 

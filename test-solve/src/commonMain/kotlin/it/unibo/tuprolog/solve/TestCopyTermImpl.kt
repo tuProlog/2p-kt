@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm {
+class TestCopyTermImpl(
+    private val solverFactory: SolverFactory,
+) : TestCopyTerm {
     override fun testCopyXNum() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

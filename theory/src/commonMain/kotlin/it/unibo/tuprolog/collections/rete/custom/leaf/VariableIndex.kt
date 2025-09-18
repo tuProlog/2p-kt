@@ -12,7 +12,8 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class VariableIndex(
     unificator: Unificator,
     private val ordered: Boolean,
-) : AbstractIndexingLeaf(unificator), Retractable {
+) : AbstractIndexingLeaf(unificator),
+    Retractable {
     private val variables: MutableList<SituatedIndexedClause> = dequeOf()
 
     override val size: Int
@@ -38,9 +39,7 @@ internal class VariableIndex(
 
     override fun getCache(): Sequence<SituatedIndexedClause> = variables.asSequence()
 
-    override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? {
-        return extractFirst(clause, variables)
-    }
+    override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? = extractFirst(clause, variables)
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> = extractGlobalIndexedSequence(clause)
 

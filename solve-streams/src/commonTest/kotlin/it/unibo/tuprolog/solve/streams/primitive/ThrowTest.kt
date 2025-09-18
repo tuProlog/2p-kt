@@ -14,7 +14,13 @@ internal class ThrowTest {
     @Test
     fun throwPrimitiveThrowCorrectErrors() {
         ThrowUtils.errorThrowingBehaviourRequest.forEach { (request, errorType) ->
-            assertPrologError(errorType, Throw.implementation.solve(request).single().solution)
+            assertPrologError(
+                errorType,
+                Throw.implementation
+                    .solve(request)
+                    .single()
+                    .solution,
+            )
         }
     }
 }

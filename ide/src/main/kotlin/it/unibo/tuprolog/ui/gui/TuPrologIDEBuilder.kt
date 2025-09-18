@@ -38,11 +38,14 @@ data class TuPrologIDEBuilder(
             header: String,
             content: String,
         ): Boolean =
-            Alert(Alert.AlertType.CONFIRMATION).also {
-                it.title = title
-                it.headerText = header
-                it.contentText = content
-            }.showAndWait().map { it == ButtonType.OK }.get()
+            Alert(Alert.AlertType.CONFIRMATION)
+                .also {
+                    it.title = title
+                    it.headerText = header
+                    it.contentText = content
+                }.showAndWait()
+                .map { it == ButtonType.OK }
+                .get()
 
         @JvmStatic
         fun showExitConfirmationDialog(what: String): Boolean =
@@ -60,22 +63,23 @@ data class TuPrologIDEBuilder(
             width: Double = TUPROLOG_LOGO.width * DEFAULT_ICON_SCALE_RATIO,
             height: Double = TUPROLOG_LOGO.height * DEFAULT_ICON_SCALE_RATIO,
         ): Optional<ButtonType> =
-            Alert(Alert.AlertType.INFORMATION).also {
-                it.title = "About"
-                it.headerText = "$what v$version"
-                it.dialogPane.graphic =
-                    ImageView(image).also { img ->
-                        img.fitWidth = width
-                        img.fitHeight = height
-                    }
-                it.contentText =
-                    """
+            Alert(Alert.AlertType.INFORMATION)
+                .also {
+                    it.title = "About"
+                    it.headerText = "$what v$version"
+                    it.dialogPane.graphic =
+                        ImageView(image).also { img ->
+                            img.fitWidth = width
+                            img.fitHeight = height
+                        }
+                    it.contentText =
+                        """
                 |Running on:
                 |  - 2P-Kt v${Info.VERSION}
                 |  - JVM v${System.getProperty("java.version")}
                 |  - JavaFX v${System.getProperty("javafx.runtime.version")}
-                    """.trimMargin()
-            }.showAndWait()
+                        """.trimMargin()
+                }.showAndWait()
     }
 
     fun title(title: String) = apply { this.title = title }

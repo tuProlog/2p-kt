@@ -1,10 +1,18 @@
 @file:JsModule("@tuprolog/parser-utils")
 @file:JsNonModule
-@file:Suppress("VariableNaming", "TooManyFunctions", "UnusedPrivateProperty", "ktlint:standard:property-naming")
+@file:Suppress(
+    "VariableNaming",
+    "TooManyFunctions",
+    "UnusedPrivateProperty",
+    "ktlint:standard:property-naming",
+    "ktlint:standard:backing-property-naming",
+)
 
 package it.unibo.tuprolog.parser
 
-external class PrologParser(input: TokenStream) {
+external class PrologParser(
+    input: TokenStream,
+) {
     companion object {
         val EOF: Int
         val VARIABLE: Int

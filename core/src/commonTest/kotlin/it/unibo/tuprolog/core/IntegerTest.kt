@@ -72,7 +72,8 @@ internal class IntegerTest {
     @Test
     fun integersRespectItsRegexPattern() {
         IntegerUtils.stringNumbers.forEach { it matches Integer.PATTERN }
-        IntegerUtils.stringNumbers.map { Integer.of(it) }
+        IntegerUtils.stringNumbers
+            .map { Integer.of(it) }
             .forEach { it.toString() matches Integer.PATTERN }
     }
 }

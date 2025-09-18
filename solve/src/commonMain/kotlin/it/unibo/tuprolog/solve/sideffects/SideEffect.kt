@@ -19,33 +19,40 @@ import it.unibo.tuprolog.theory.Theory
 abstract class SideEffect {
     abstract fun applyTo(context: ExecutionContext): ExecutionContext
 
-    abstract class SetClausesOfKb(open val clauses: Iterable<Clause>) : SideEffect() {
-        fun theory(context: ExecutionContext): Theory {
-            return clauses.let {
+    abstract class SetClausesOfKb(
+        open val clauses: Iterable<Clause>,
+    ) : SideEffect() {
+        fun theory(context: ExecutionContext): Theory =
+            clauses.let {
                 if (it is Theory) {
                     it
                 } else {
                     Theory.indexedOf(context.unificator, it)
                 }
             }
-        }
 
-        fun mutableTheory(context: ExecutionContext): Theory {
-            return clauses.let {
+        fun mutableTheory(context: ExecutionContext): Theory =
+            clauses.let {
                 when (it) {
                     is MutableTheory -> it
                     is Theory -> it.toMutableTheory()
                     else -> MutableTheory.indexedOf(context.unificator, it)
                 }
             }
-        }
     }
 
-    abstract class AddClausesToKb(clauses: Iterable<Clause>, open val onTop: Boolean) : SetClausesOfKb(clauses)
+    abstract class AddClausesToKb(
+        clauses: Iterable<Clause>,
+        open val onTop: Boolean,
+    ) : SetClausesOfKb(clauses)
 
-    abstract class RemoveClausesFromKb(clauses: Iterable<Clause>) : SetClausesOfKb(clauses)
+    abstract class RemoveClausesFromKb(
+        clauses: Iterable<Clause>,
+    ) : SetClausesOfKb(clauses)
 
-    data class ResetStaticKb(override val clauses: Iterable<Clause>) : SetClausesOfKb(clauses) {
+    data class ResetStaticKb(
+        override val clauses: Iterable<Clause>,
+    ) : SetClausesOfKb(clauses) {
         constructor(vararg clauses: Clause) : this(listOf(*clauses))
 
         constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
@@ -65,7 +72,9 @@ abstract class SideEffect {
             context.update(staticKb = context.staticKb.let { if (onTop) it.assertA(clauses) else it.assertZ(clauses) })
     }
 
-    data class RemoveStaticClauses(override val clauses: Iterable<Clause>) : RemoveClausesFromKb(clauses) {
+    data class RemoveStaticClauses(
+        override val clauses: Iterable<Clause>,
+    ) : RemoveClausesFromKb(clauses) {
         constructor(vararg clauses: Clause) : this(listOf(*clauses))
 
         constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
@@ -74,7 +83,9 @@ abstract class SideEffect {
             context.update(staticKb = context.staticKb.retract(clauses).theory)
     }
 
-    data class ResetDynamicKb(override val clauses: Iterable<Clause>) : SetClausesOfKb(clauses) {
+    data class ResetDynamicKb(
+        override val clauses: Iterable<Clause>,
+    ) : SetClausesOfKb(clauses) {
         constructor(vararg clauses: Clause) : this(listOf(*clauses))
 
         constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
@@ -96,24 +107,35 @@ abstract class SideEffect {
         override fun applyTo(context: ExecutionContext): ExecutionContext =
             context.update(
                 dynamicKb =
-                    context.dynamicKb.let {
-                        if (onTop) it.assertA(clauses) else it.assertZ(clauses)
-                    }.toMutableTheory(),
+                    context.dynamicKb
+                        .let {
+                            if (onTop) it.assertA(clauses) else it.assertZ(clauses)
+                        }.toMutableTheory(),
             )
     }
 
-    data class RemoveDynamicClauses(override val clauses: Iterable<Clause>) : RemoveClausesFromKb(clauses) {
+    data class RemoveDynamicClauses(
+        override val clauses: Iterable<Clause>,
+    ) : RemoveClausesFromKb(clauses) {
         constructor(vararg clauses: Clause) : this(listOf(*clauses))
 
         constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
 
         override fun applyTo(context: ExecutionContext): ExecutionContext =
-            context.update(dynamicKb = context.dynamicKb.retract(clauses).theory.toMutableTheory())
+            context.update(
+                dynamicKb =
+                    context.dynamicKb
+                        .retract(clauses)
+                        .theory
+                        .toMutableTheory(),
+            )
     }
 
     abstract class AlterFlags : SideEffect()
 
-    abstract class AlterFlagsByEntries(open val flags: Map<String, Term>) : AlterFlags() {
+    abstract class AlterFlagsByEntries(
+        open val flags: Map<String, Term>,
+    ) : AlterFlags() {
         val flagStore: FlagStore by lazy {
             flags.let {
                 if (it is FlagStore) {
@@ -125,9 +147,13 @@ abstract class SideEffect {
         }
     }
 
-    abstract class AlterFlagsByName(open val names: Iterable<String>) : AlterFlags()
+    abstract class AlterFlagsByName(
+        open val names: Iterable<String>,
+    ) : AlterFlags()
 
-    data class SetFlags(override val flags: Map<String, Term>) : AlterFlagsByEntries(flags) {
+    data class SetFlags(
+        override val flags: Map<String, Term>,
+    ) : AlterFlagsByEntries(flags) {
         constructor(vararg flags: Pair<String, Term>) : this(listOf(*flags))
 
         constructor(flags: Iterable<Pair<String, Term>>) : this(flags.toMap())
@@ -140,7 +166,9 @@ abstract class SideEffect {
             )
     }
 
-    data class ResetFlags(override val flags: Map<String, Term>) : AlterFlagsByEntries(flags) {
+    data class ResetFlags(
+        override val flags: Map<String, Term>,
+    ) : AlterFlagsByEntries(flags) {
         constructor(vararg flags: Pair<String, Term>) : this(listOf(*flags))
 
         constructor(flags: Iterable<Pair<String, Term>>) : this(flags.toMap())
@@ -150,7 +178,9 @@ abstract class SideEffect {
         override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(flags = flagStore)
     }
 
-    data class ClearFlags(override val names: Iterable<String>) : AlterFlagsByName(names) {
+    data class ClearFlags(
+        override val names: Iterable<String>,
+    ) : AlterFlagsByName(names) {
         constructor(vararg names: String) : this(listOf(*names))
 
         constructor(names: Sequence<String>) : this(names.toList())
@@ -167,18 +197,26 @@ abstract class SideEffect {
         abstract val libraries: Runtime
     }
 
-    abstract class AlterLibrary(open val library: Library) : AlterAliasedRuntime() {
+    abstract class AlterLibrary(
+        open val library: Library,
+    ) : AlterAliasedRuntime() {
         override val libraries: Runtime by lazy { Runtime.of(library) }
     }
 
-    abstract class AlterLibrariesByName(open val aliases: Iterable<String>) : AlterRuntime()
+    abstract class AlterLibrariesByName(
+        open val aliases: Iterable<String>,
+    ) : AlterRuntime()
 
-    data class LoadLibrary(override val library: Library) : AlterLibrary(library) {
+    data class LoadLibrary(
+        override val library: Library,
+    ) : AlterLibrary(library) {
         override fun applyTo(context: ExecutionContext): ExecutionContext =
             context.update(libraries = context.libraries + library)
     }
 
-    data class UnloadLibraries(override val aliases: Iterable<String>) : AlterLibrariesByName(aliases) {
+    data class UnloadLibraries(
+        override val aliases: Iterable<String>,
+    ) : AlterLibrariesByName(aliases) {
         constructor(aliases: List<String>) : this(aliases.asIterable())
 
         constructor(aliases: Sequence<String>) : this(aliases.asIterable())
@@ -191,12 +229,16 @@ abstract class SideEffect {
             )
     }
 
-    data class UpdateLibrary(override val library: Library) : AlterLibrary(library) {
+    data class UpdateLibrary(
+        override val library: Library,
+    ) : AlterLibrary(library) {
         override fun applyTo(context: ExecutionContext): ExecutionContext =
             context.update(libraries = context.libraries.update(library))
     }
 
-    data class AddLibraries(override val libraries: Runtime) : AlterAliasedRuntime() {
+    data class AddLibraries(
+        override val libraries: Runtime,
+    ) : AlterAliasedRuntime() {
         constructor(libraries: Iterable<Library>) : this(Runtime.of(libraries))
 
         constructor(libraries: Sequence<Library>) : this(Runtime.of(libraries))
@@ -209,7 +251,9 @@ abstract class SideEffect {
             )
     }
 
-    data class ResetRuntime(override val libraries: Runtime) : AlterAliasedRuntime() {
+    data class ResetRuntime(
+        override val libraries: Runtime,
+    ) : AlterAliasedRuntime() {
         constructor(libraries: Iterable<Library>) : this(Runtime.of(libraries))
 
         constructor(libraries: Sequence<Library>) : this(Runtime.of(libraries))
@@ -219,7 +263,9 @@ abstract class SideEffect {
         override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(libraries = libraries)
     }
 
-    abstract class AlterOperators(open val operators: Iterable<Operator>) : SideEffect() {
+    abstract class AlterOperators(
+        open val operators: Iterable<Operator>,
+    ) : SideEffect() {
         val operatorSet: OperatorSet by lazy {
             operators.let {
                 if (it is OperatorSet) {
@@ -231,7 +277,9 @@ abstract class SideEffect {
         }
     }
 
-    data class SetOperators(override val operators: Iterable<Operator>) : AlterOperators(operators) {
+    data class SetOperators(
+        override val operators: Iterable<Operator>,
+    ) : AlterOperators(operators) {
         constructor(vararg operators: Operator) : this(listOf(*operators))
 
         constructor(operators: Sequence<Operator>) : this(operators.toOperatorSet())
@@ -242,7 +290,9 @@ abstract class SideEffect {
             )
     }
 
-    data class ResetOperators(override val operators: Iterable<Operator>) : AlterOperators(operators) {
+    data class ResetOperators(
+        override val operators: Iterable<Operator>,
+    ) : AlterOperators(operators) {
         constructor(vararg operators: Operator) : this(listOf(*operators))
 
         constructor(operators: Sequence<Operator>) : this(operators.toOperatorSet())
@@ -253,7 +303,9 @@ abstract class SideEffect {
             )
     }
 
-    data class RemoveOperators(override val operators: Iterable<Operator>) : AlterOperators(operators) {
+    data class RemoveOperators(
+        override val operators: Iterable<Operator>,
+    ) : AlterOperators(operators) {
         constructor(vararg operators: Operator) : this(listOf(*operators))
 
         constructor(operators: Sequence<Operator>) : this(operators.toOperatorSet())
@@ -266,11 +318,17 @@ abstract class SideEffect {
 
     abstract class AlterChannels : SideEffect()
 
-    abstract class AlterChannelsByName(open val names: Iterable<String>) : AlterChannels()
+    abstract class AlterChannelsByName(
+        open val names: Iterable<String>,
+    ) : AlterChannels()
 
-    abstract class AlterInputChannels(open val inputChannels: Map<String, InputChannel<String>>) : AlterChannels()
+    abstract class AlterInputChannels(
+        open val inputChannels: Map<String, InputChannel<String>>,
+    ) : AlterChannels()
 
-    abstract class AlterOutputChannels(open val outputChannels: Map<String, OutputChannel<String>>) : AlterChannels()
+    abstract class AlterOutputChannels(
+        open val outputChannels: Map<String, OutputChannel<String>>,
+    ) : AlterChannels()
 
     data class OpenInputChannels(
         override val inputChannels: Map<String, InputChannel<String>>,
@@ -300,7 +358,9 @@ abstract class SideEffect {
             )
     }
 
-    data class CloseInputChannels(override val names: Iterable<String>) : AlterChannelsByName(names) {
+    data class CloseInputChannels(
+        override val names: Iterable<String>,
+    ) : AlterChannelsByName(names) {
         constructor(vararg names: String) : this(listOf(*names))
 
         constructor(names: Sequence<String>) : this(names.toList())
@@ -339,7 +399,9 @@ abstract class SideEffect {
             )
     }
 
-    data class CloseOutputChannels(override val names: Iterable<String>) : AlterChannelsByName(names) {
+    data class CloseOutputChannels(
+        override val names: Iterable<String>,
+    ) : AlterChannelsByName(names) {
         constructor(vararg names: String) : this(listOf(*names))
 
         constructor(names: Sequence<String>) : this(names.toList())
@@ -350,7 +412,10 @@ abstract class SideEffect {
             )
     }
 
-    abstract class AlterCustomData(open val data: Map<String, Any>, open val reset: Boolean = false) : SideEffect()
+    abstract class AlterCustomData(
+        open val data: Map<String, Any>,
+        open val reset: Boolean = false,
+    ) : SideEffect()
 
     data class SetPersistentData(
         override val data: Map<String, Any>,

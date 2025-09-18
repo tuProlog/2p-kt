@@ -11,8 +11,7 @@ plugins {
 group = "it.unibo.tuprolog"
 
 gitSemVer {
-    excludeLightweightTags()
-    assignGitSemanticVersion()
+    buildMetadataSeparator.set("-")
 }
 
 log("version: $version", LogLevel.LIFECYCLE)
@@ -22,7 +21,7 @@ multiProjectHelper {
 
     jvmProjects(":examples", ":ide", ":ide-plp", ":parser-jvm")
     jsProjects(":parser-js")
-    otherProjects(":documentation")
+    // otherProjects(":documentation")
 
     val baseProjectTemplate =
         buildSet {

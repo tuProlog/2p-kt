@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.TestNotUnify
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Test
 
-class TestProblogNotUnify : TestNotUnify, SolverFactory by ProblogSolverFactory {
+class TestProblogNotUnify :
+    TestNotUnify,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestNotUnify.prototype(this)
 
     @Test

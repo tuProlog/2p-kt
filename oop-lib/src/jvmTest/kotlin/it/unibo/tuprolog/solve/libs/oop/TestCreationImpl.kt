@@ -17,7 +17,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-class TestCreationImpl(protected val solverFactory: SolverFactory) : TestCreation {
+class TestCreationImpl(
+    protected val solverFactory: SolverFactory,
+) : TestCreation {
     private fun testConstructorInvocation(
         cases: List<TestDatum>,
         detectorType: KClass<*> = ConstructorOverloadDetector::class,

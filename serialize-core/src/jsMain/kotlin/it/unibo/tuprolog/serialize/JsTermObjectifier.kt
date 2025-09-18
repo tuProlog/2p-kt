@@ -24,9 +24,7 @@ internal class JsTermObjectifier : TermObjectifier {
         error("Cannot convert to object: $term")
     }
 
-    override fun objectifyMany(values: Iterable<Term>): Any {
-        return values.map { objectify(it) }.toTypedArray()
-    }
+    override fun objectifyMany(values: Iterable<Term>): Any = values.map { objectify(it) }.toTypedArray()
 
     override fun visitVar(term: Var): dynamic =
         jsObject(

@@ -151,8 +151,8 @@ interface List : Recursive {
         fun from(
             items: Cursor<out Term>,
             last: Term?,
-        ): List {
-            return when {
+        ): List =
+            when {
                 items.isOver ->
                     (last ?: empty()).asList()
                         ?: throw IllegalArgumentException(
@@ -161,7 +161,6 @@ interface List : Recursive {
                 last == null -> LazyConsWithImplicitLast(items)
                 else -> LazyConsWithExplicitLast(items, last)
             }
-        }
 
         @JvmStatic
         @JsName("fromCursorNullTerminated")

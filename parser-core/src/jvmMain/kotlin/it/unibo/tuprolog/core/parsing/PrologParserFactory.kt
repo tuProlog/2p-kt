@@ -22,15 +22,14 @@ import java.io.Reader
 
 @Suppress("TooManyFunctions")
 object PrologParserFactory {
-    private fun newErrorListener(whileParsing: Any): ANTLRErrorListener {
-        return object : BaseErrorListener() {
-            private fun symbolToString(obj: Any): String {
-                return if (obj is Token) {
+    private fun newErrorListener(whileParsing: Any): ANTLRErrorListener =
+        object : BaseErrorListener() {
+            private fun symbolToString(obj: Any): String =
+                if (obj is Token) {
                     obj.text
                 } else {
                     obj.toString()
                 }
-            }
 
             override fun syntaxError(
                 recognizer: Recognizer<*, *>?,
@@ -53,7 +52,6 @@ object PrologParserFactory {
                 )
             }
         }
-    }
 
     fun parseSingletonExpr(
         string: String,
@@ -106,9 +104,7 @@ object PrologParserFactory {
     private fun parseSingletonExpr(
         parser: PrologParser,
         source: Any,
-    ): PrologParser.SingletonExpressionContext {
-        return parseSingle(parser, source) { singletonExpression() }
-    }
+    ): PrologParser.SingletonExpressionContext = parseSingle(parser, source) { singletonExpression() }
 
     fun parseClauses(
         source: String,
@@ -210,8 +206,8 @@ object PrologParserFactory {
         parser: PrologParser,
         source: Any,
         rule: PrologParser.() -> T,
-    ): T {
-        return try {
+    ): T =
+        try {
             parser.rule()
         } catch (ex: ParseCancellationException) {
             when {
@@ -230,14 +226,11 @@ object PrologParserFactory {
                 }
             }
         }
-    }
 
     private fun parseSingletonTerm(
         parser: PrologParser,
         source: Any,
-    ): PrologParser.SingletonTermContext {
-        return parseSingle(parser, source) { singletonTerm() }
-    }
+    ): PrologParser.SingletonTermContext = parseSingle(parser, source) { singletonTerm() }
 
     @Suppress("SwallowedException", "ThrowsCount")
     private fun <T : ParserRuleContext> parseNext(
@@ -279,15 +272,13 @@ object PrologParserFactory {
     private fun parseNextClause(
         parser: PrologParser,
         input: Any,
-    ): PrologParser.OptClauseContext {
-        return parseNext(parser, input) { optClause() }
-    }
+    ): PrologParser.OptClauseContext = parseNext(parser, input) { optClause() }
 
     private fun parseClauses(
         parser: PrologParser,
         source: Any,
-    ): Sequence<PrologParser.ClauseContext> {
-        return generateSequence(0) { it + 1 }
+    ): Sequence<PrologParser.ClauseContext> =
+        generateSequence(0) { it + 1 }
             .map {
                 try {
                     parseNextClause(parser, source)
@@ -298,20 +289,17 @@ object PrologParserFactory {
             }.takeWhile { !it.isOver }
             .map { it.clause() }
             .filterNotNull()
-    }
 
     private fun parseNextExpression(
         parser: PrologParser,
         input: Any,
-    ): PrologParser.OptExpressionContext {
-        return parseNext(parser, input) { optExpression() }
-    }
+    ): PrologParser.OptExpressionContext = parseNext(parser, input) { optExpression() }
 
     private fun parseExpressions(
         parser: PrologParser,
         source: Any,
-    ): Sequence<PrologParser.ExpressionContext> {
-        return generateSequence(0) { it + 1 }
+    ): Sequence<PrologParser.ExpressionContext> =
+        generateSequence(0) { it + 1 }
             .map {
                 try {
                     parseNextExpression(parser, source)
@@ -322,5 +310,4 @@ object PrologParserFactory {
             }.takeWhile { !it.isOver }
             .map { it.expression() }
             .filterNotNull()
-    }
 }

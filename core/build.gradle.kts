@@ -1,11 +1,15 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.danilopianini.gradle.gitsemver.SemanticVersion
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
 
 plugins {
-    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
 }
 
 val tuPrologPackage: String
@@ -34,9 +38,13 @@ kotlin {
                 api(project(":utils"))
             }
 
-            val infoKtFile = kotlin.srcDirs.first().absoluteFile.resolve("$tuPrologPackageDir/Info.kt")
+            val infoKtFile =
+                kotlin.srcDirs
+                    .first()
+                    .absoluteFile
+                    .resolve("$tuPrologPackageDir/Info.kt")
 
-            val createInfoKt by tasks.creating {
+            val createInfoKt by tasks.registering {
                 doFirst {
                     val version = version.toString()
                     val rootVersion = rootProject.version.toString()
@@ -55,12 +63,13 @@ kotlin {
                 outputs.upToDateWhen { infoKtFile.exists() && infoKtFile.readText().contains(version.toString()) }
             }
 
-            tasks.matching { it.name.endsWith("sourcesJar", ignoreCase = true) }
+            tasks
+                .matching { it.name.endsWith("sourcesJar", ignoreCase = true) }
                 .configureEach { dependsOn(createInfoKt) }
-            tasks.withType<Detekt> { dependsOn(createInfoKt) }
+            tasks.withType<Detekt>().configureEach { dependsOn(createInfoKt) }
             tasks.withType<AbstractDokkaTask>().configureEach { dependsOn(createInfoKt) }
-            tasks.withType<BaseKtLintCheckTask> { dependsOn(createInfoKt) }
-            tasks.withType<KotlinCompile<*>> { dependsOn(createInfoKt) }
+            tasks.withType<BaseKtLintCheckTask>().configureEach { dependsOn(createInfoKt) }
+            tasks.withType<KotlinCompilationTask<*>>().configureEach { dependsOn(createInfoKt) }
         }
     }
 }

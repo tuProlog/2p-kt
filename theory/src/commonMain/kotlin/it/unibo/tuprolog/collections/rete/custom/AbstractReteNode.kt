@@ -4,7 +4,9 @@ import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator
 
-internal abstract class AbstractReteNode(override val unificator: Unificator) : ReteNode {
+internal abstract class AbstractReteNode(
+    override val unificator: Unificator,
+) : ReteNode {
     fun <T : IndexedClause> removeAllLazily(
         source: MutableList<T>,
         clause: Clause,

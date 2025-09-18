@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
 
-abstract class AbstractSetData(suffix: String) : BinaryRelation.NonBacktrackable<ExecutionContext>("set_$suffix") {
+abstract class AbstractSetData(
+    suffix: String,
+) : BinaryRelation.NonBacktrackable<ExecutionContext>("set_$suffix") {
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

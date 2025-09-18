@@ -1,5 +1,6 @@
 package it.unibo.tuprolog
 
 actual fun main(args: Array<String>) {
-    it.unibo.tuprolog.ui.repl.main(args)
+    it.unibo.tuprolog.ui.repl
+        .main(args)
 }

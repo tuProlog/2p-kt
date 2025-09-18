@@ -20,7 +20,9 @@ import it.unibo.tuprolog.solve.runtimeOf
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
-internal class SolverBuilderImpl(private val factory: SolverFactory) : SolverBuilder {
+internal class SolverBuilderImpl(
+    private val factory: SolverFactory,
+) : SolverBuilder {
     private inline fun returningThis(action: () -> Unit): SolverBuilder {
         action()
         return this

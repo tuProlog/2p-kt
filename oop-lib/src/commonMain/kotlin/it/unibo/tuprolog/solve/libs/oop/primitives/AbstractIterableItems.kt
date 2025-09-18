@@ -12,8 +12,10 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import kotlin.reflect.KClass
 
-abstract class AbstractIterableItems<T : Any>(iterable: String, private val target: KClass<T>) :
-    BinaryRelation.Functional<ExecutionContext>("${iterable}_items") {
+abstract class AbstractIterableItems<T : Any>(
+    iterable: String,
+    private val target: KClass<T>,
+) : BinaryRelation.Functional<ExecutionContext>("${iterable}_items") {
     protected abstract fun Sequence<Any?>.toIterable(): T
 
     protected abstract val Any?.isIterable: Boolean

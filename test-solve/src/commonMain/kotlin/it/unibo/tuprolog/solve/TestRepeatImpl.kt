@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestRepeatImpl(private val solverFactory: SolverFactory) : TestRepeat {
+internal class TestRepeatImpl(
+    private val solverFactory: SolverFactory,
+) : TestRepeat {
     override fun testRepeat() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

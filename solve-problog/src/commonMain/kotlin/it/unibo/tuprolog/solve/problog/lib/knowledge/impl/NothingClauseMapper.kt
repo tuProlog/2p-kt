@@ -8,11 +8,7 @@ import it.unibo.tuprolog.core.Clause
  * @author Jason Dellaluce
  * */
 internal object NothingClauseMapper : ClauseMapper {
-    override fun isCompatible(clause: Clause): Boolean {
-        return true
-    }
+    override fun isCompatible(clause: Clause): Boolean = true
 
-    override fun apply(clause: Clause): List<Clause> {
-        return listOf(clause)
-    }
+    override fun apply(clause: Clause): List<Clause> = listOf(clause)
 }

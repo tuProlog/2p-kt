@@ -18,7 +18,9 @@ import it.unibo.tuprolog.parser.dynamic.Associativity.YFX
 import org.gciatto.kt.math.BigInteger
 
 @Suppress("TooManyFunctions")
-class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : PrologParserBaseVisitor<Term>() {
+class PrologExpressionVisitor(
+    private val scope: Scope = Scope.empty(),
+) : PrologParserBaseVisitor<Term>() {
     override fun visitSingletonTerm(ctx: PrologParser.SingletonTermContext): Term = visitTerm(ctx.term())
 
     override fun visitSingletonExpression(ctx: PrologParser.SingletonExpressionContext): Term =
@@ -27,8 +29,8 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
     override fun visitClause(ctx: PrologParser.ClauseContext): Term =
         ctx.expression().accept(this).toClause(ctx.text, ctx.start.line, ctx.start.charPositionInLine)
 
-    override fun visitExpression(ctx: PrologParser.ExpressionContext): Term {
-        return handleOuters(
+    override fun visitExpression(ctx: PrologParser.ExpressionContext): Term =
+        handleOuters(
             when {
                 ctx.isTerm -> visitTerm(ctx.left)
                 INFIX.contains(ctx.associativity) -> visitInfixExpression(ctx)
@@ -39,7 +41,6 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
             },
             flatten(ctx.outers),
         )
-    }
 
     override fun visitTerm(ctx: PrologParser.TermContext): Term =
         if (ctx.isExpr) visitExpression(ctx.expression()) else ctx.children[0].accept(this)
@@ -68,8 +69,8 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
             scope.varOf(ctx.value.text)
         }
 
-    override fun visitStructure(ctx: PrologParser.StructureContext): Term {
-        return if (ctx.isList) {
+    override fun visitStructure(ctx: PrologParser.StructureContext): Term =
+        if (ctx.isList) {
             scope.logicListOf()
         } else if (ctx.isBlock) {
             scope.blockOf()
@@ -81,7 +82,6 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
                 ctx.args.asSequence().map(this::visitExpression),
             )
         }
-    }
 
     override fun visitList(ctx: PrologParser.ListContext): Term {
         val terms = ctx.items.map(this::visitExpression)
@@ -92,13 +92,12 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
         }
     }
 
-    override fun visitBlock(ctx: PrologParser.BlockContext): Term {
-        return if (ctx.length == 1) {
+    override fun visitBlock(ctx: PrologParser.BlockContext): Term =
+        if (ctx.length == 1) {
             scope.blockOf(ctx.items[0].accept(this))
         } else {
             scope.blockOf(ctx.items.map(this::visitExpression))
         }
-    }
 
     @Suppress("NullableBooleanElvis", "MagicNumber")
     private fun parseInteger(ctx: PrologParser.IntegerContext): BigInteger {
@@ -190,14 +189,13 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
         return result
     }
 
-    private fun visitInfixExpression(ctx: PrologParser.ExpressionContext): Term {
-        return when (ctx.associativity) {
+    private fun visitInfixExpression(ctx: PrologParser.ExpressionContext): Term =
+        when (ctx.associativity) {
             XFY -> visitInfixRightAssociativeExpression(ctx)
             YFX -> visitInfixLeftAssociativeExpression(ctx)
             XFX -> visitInfixNonAssociativeExpression(ctx)
             else -> error("Expected infix associativity, got ${ctx.associativity} instead")
         }
-    }
 
     private fun visitInfixNonAssociativeExpression(ctx: PrologParser.ExpressionContext): Term {
         val operands = (listOf(ctx.left) + ctx.right).map { it.accept(this) }
@@ -208,9 +206,7 @@ class PrologExpressionVisitor(private val scope: Scope = Scope.empty()) : Prolog
     private fun infixNonAssociative(
         terms: List<Term>,
         ops: List<String>,
-    ): Term {
-        return scope.structOf(ops[0], terms[0], terms[1])
-    }
+    ): Term = scope.structOf(ops[0], terms[0], terms[1])
 
     private fun handleOuters(
         expression: Term,

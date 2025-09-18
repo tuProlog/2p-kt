@@ -6,7 +6,9 @@ import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 /** A storage for flags and their values */
-data class FlagStore(private val flags: Map<String, Term>) : Map<String, Term> by flags {
+data class FlagStore(
+    private val flags: Map<String, Term>,
+) : Map<String, Term> by flags {
     @JsName("get")
     operator fun get(notableFlag: NotableFlag): Term? = this[notableFlag.name]
 

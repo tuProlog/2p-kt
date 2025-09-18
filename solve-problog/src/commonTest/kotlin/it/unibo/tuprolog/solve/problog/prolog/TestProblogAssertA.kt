@@ -6,7 +6,9 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestProblogAssertA : TestAssertA, SolverFactory by ProblogSolverFactory {
+class TestProblogAssertA :
+    TestAssertA,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestAssertA.prototype(this)
 
     // NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here

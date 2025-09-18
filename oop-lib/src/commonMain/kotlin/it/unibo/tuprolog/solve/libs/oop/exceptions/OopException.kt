@@ -23,12 +23,8 @@ abstract class OopException : TuPrologException {
     protected abstract val culprit: Term
 
     companion object {
-        internal fun List<Set<KClass<*>>>.pretty(): String {
-            return joinToString { it.pretty() }
-        }
+        internal fun List<Set<KClass<*>>>.pretty(): String = joinToString { it.pretty() }
 
-        internal fun Set<KClass<*>>.pretty(): String {
-            return joinToString("|") { it.name }
-        }
+        internal fun Set<KClass<*>>.pretty(): String = joinToString("|") { it.name }
     }
 }

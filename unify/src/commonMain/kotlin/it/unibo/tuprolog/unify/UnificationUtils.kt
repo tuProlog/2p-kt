@@ -23,8 +23,7 @@ fun Iterable<Equation>.toSubstitution(): Substitution = Substitution.of(this.asS
 
 /** Transforms a [Substitution] into the list of corresponding [Equation]s */
 fun Substitution.toEquations(): List<Equation> =
-    this.entries.map {
-            (variable, term) ->
+    this.entries.map { (variable, term) ->
         Equation.Assignment(variable, term)
     }
 

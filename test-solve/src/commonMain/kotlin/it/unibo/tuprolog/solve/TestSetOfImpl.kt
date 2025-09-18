@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
+class TestSetOfImpl(
+    private val solverFactory: SolverFactory,
+) : TestSetOf {
     override fun testSetOfBasic() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

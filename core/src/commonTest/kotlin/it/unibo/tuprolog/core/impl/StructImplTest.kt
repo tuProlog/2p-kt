@@ -103,7 +103,8 @@ internal class StructImplTest {
 
     @Test
     fun isFunctorWellFormed() {
-        mixedStructInstances.filter { it.functor matches Struct.WELL_FORMED_FUNCTOR_PATTERN }
+        mixedStructInstances
+            .filter { it.functor matches Struct.WELL_FORMED_FUNCTOR_PATTERN }
             .forEach { assertTrue { it.isFunctorWellFormed } }
     }
 
@@ -196,8 +197,10 @@ internal class StructImplTest {
     fun listDetected() {
         val isList: (Struct) -> Boolean =
             { aStruct ->
-                aStruct.functor == Cons.FUNCTOR && aStruct.arity == 2 ||
-                    aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0
+                aStruct.functor == Cons.FUNCTOR &&
+                    aStruct.arity == 2 ||
+                    aStruct.functor == Empty.EMPTY_LIST_FUNCTOR &&
+                    aStruct.arity == 0
             }
 
         mixedStructInstances.filter(isList).forEach { assertTrue { it.isList } }
@@ -208,8 +211,10 @@ internal class StructImplTest {
     fun blockDetected() {
         val isBlock: (Struct) -> Boolean =
             { aStruct ->
-                aStruct.functor == Block.FUNCTOR && aStruct.arity == 1 ||
-                    aStruct.functor == Empty.EMPTY_BLOCK_FUNCTOR && aStruct.arity == 0
+                aStruct.functor == Block.FUNCTOR &&
+                    aStruct.arity == 1 ||
+                    aStruct.functor == Empty.EMPTY_BLOCK_FUNCTOR &&
+                    aStruct.arity == 0
             }
 
         mixedStructInstances.filter(isBlock).forEach { assertTrue { it.isBlock } }

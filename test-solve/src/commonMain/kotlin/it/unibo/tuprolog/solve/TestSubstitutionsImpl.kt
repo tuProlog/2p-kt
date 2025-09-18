@@ -10,13 +10,16 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-class TestSubstitutionsImpl(private val solverFactory: SolverFactory) : TestSubstitutions {
+class TestSubstitutionsImpl(
+    private val solverFactory: SolverFactory,
+) : TestSubstitutions {
     private class Inspect(
         private val inspections: MutableList<Set<String>>,
     ) : UnaryPredicate.Predicative<ExecutionContext>("inspect") {
         override fun Solve.Request<ExecutionContext>.compute(first: Term): Boolean {
             inspections +=
-                first.variables.distinct()
+                first.variables
+                    .distinct()
                     .map { context.substitution.getOriginal(it) }
                     .filterNotNull()
                     .map { it.name }

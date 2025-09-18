@@ -17,7 +17,7 @@ internal actual class DefaultTermificator actual constructor(
         defaultConfiguration(novel)
     }
 
-    override fun handleNumberAsNumeric(value: Number): Term =
+    actual override fun handleNumberAsNumeric(value: Number): Term =
         when (value) {
             is Int -> scope.numOf(value)
             is Long -> scope.numOf(value)
@@ -30,5 +30,5 @@ internal actual class DefaultTermificator actual constructor(
             else -> Numeric.of(value.toString())
         }
 
-    override fun copy(scope: Scope): Termificator = DefaultTermificator(scope, novel)
+    actual override fun copy(scope: Scope): Termificator = DefaultTermificator(scope, novel)
 }

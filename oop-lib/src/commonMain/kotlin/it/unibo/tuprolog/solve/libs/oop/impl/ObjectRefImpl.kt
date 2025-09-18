@@ -14,7 +14,10 @@ import it.unibo.tuprolog.solve.libs.oop.assign
 import it.unibo.tuprolog.solve.libs.oop.invoke
 
 @Suppress("UNCHECKED_CAST")
-internal class ObjectRefImpl(override val `object`: Any) : ObjectRef, Atom by Atom.of(nameOf(`object`)) {
+internal class ObjectRefImpl(
+    override val `object`: Any,
+) : ObjectRef,
+    Atom by Atom.of(nameOf(`object`)) {
     override val isConstant: Boolean
         get() = true
 

@@ -49,7 +49,8 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
         val subQuery = Struct.of(EVIDENCE_PREDICATE, evidenceTermVar, evidenceTruthVar)
         val subOptions = context.getSolverOptions().setLimit(SolveOptions.ALL_SOLUTIONS).setLazy(false)
         val result =
-            subSolver().solve(subQuery, subOptions)
+            subSolver()
+                .solve(subQuery, subOptions)
                 .filterIsInstance<Solution.Yes>()
                 .toList()
                 .map {
@@ -74,8 +75,7 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
                                 }
                         if (truth.isTrue) totalExplanation else totalExplanation.not()
                     }
-                }
-                .filter { it != ProbExplanation.FALSE }
+                }.filter { it != ProbExplanation.FALSE }
 
         val resultExplanation = if (result.isEmpty()) ProbExplanation.TRUE else result.reduce { acc, t -> t and acc }
         return replyWith(mgu(first, ProbExplanationTerm(resultExplanation)))

@@ -9,7 +9,5 @@ object Close2 : BinaryRelation.NonBacktrackable<ExecutionContext>("close") {
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,
-    ): Solve.Response {
-        return notSupported()
-    }
+    ): Solve.Response = notSupported()
 }

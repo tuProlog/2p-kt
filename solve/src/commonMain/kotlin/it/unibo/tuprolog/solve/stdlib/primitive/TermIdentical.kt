@@ -10,7 +10,5 @@ object TermIdentical : BinaryRelation.Predicative<ExecutionContext>("==") {
     override fun Solve.Request<ExecutionContext>.compute(
         first: Term,
         second: Term,
-    ): Boolean {
-        return first == second
-    }
+    ): Boolean = first == second
 }

@@ -8,7 +8,8 @@ import it.unibo.tuprolog.theory.TheoryFactory
 import kotlin.js.JsName
 
 interface LogicProgrammingScopeWithTheories<S : LogicProgrammingScopeWithTheories<S>> :
-    LogicProgrammingScopeWithUnificator<S>, TheoryFactory {
+    LogicProgrammingScopeWithUnificator<S>,
+    TheoryFactory {
     @JsName("theoryFactory")
     val theoryFactory: TheoryFactory
 

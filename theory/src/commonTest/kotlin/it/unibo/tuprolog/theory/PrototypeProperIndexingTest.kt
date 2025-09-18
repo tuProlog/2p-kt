@@ -37,7 +37,9 @@ class PrototypeProperIndexingTest(
             Fact.of(Struct.of("g", Numeric.of(1))),
         )
 
-    private data class FreshTheoryScope(val theory: Theory)
+    private data class FreshTheoryScope(
+        val theory: Theory,
+    )
 
     private fun <R> withFreshTheory(
         theory: Theory = theoryGenerator(mixedClausesTheory),
@@ -216,7 +218,8 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterOneArityAtomClauseAssertionA() {
         withFreshTheory {
             val generatedIndexingAfterAssertionA =
-                theory.assertA(newF1AtomClause)
+                theory
+                    .assertA(newF1AtomClause)
                     .clauses
                     .toList()
                     .filter { it matches anonymousF1Clause }
@@ -232,7 +235,8 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterOneArityVariableClauseAssertionA() {
         withFreshTheory {
             val generatedIndexingAfterAssertionA =
-                theory.assertA(newF1VarClause)
+                theory
+                    .assertA(newF1VarClause)
                     .clauses
                     .toList()
                     .filter { it matches anonymousF1Clause }
@@ -248,7 +252,8 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterTwoArityAtomClauseAssertionA() {
         withFreshTheory {
             val generatedIndexingAfterAssertionA =
-                theory.assertA(newF2AtomClause)
+                theory
+                    .assertA(newF2AtomClause)
                     .clauses
                     .toList()
                     .filter { it matches anonymousF2Clause }
@@ -264,7 +269,8 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterTwoArityVarClauseAssertionA() {
         withFreshTheory {
             val generatedIndexingAfterAssertionA =
-                theory.assertA(newF2VarClause)
+                theory
+                    .assertA(newF2VarClause)
                     .clauses
                     .toList()
                     .filter { it matches anonymousF2Clause }
@@ -280,7 +286,8 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterTwoArityMixedClauseAssertionA() {
         withFreshTheory {
             val generatedIndexingAfterAssertionA =
-                theory.assertA(newF2MixedClause)
+                theory
+                    .assertA(newF2MixedClause)
                     .clauses
                     .toList()
                     .filter { it matches anonymousF2Clause }
@@ -296,7 +303,8 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterOneArityAtomClauseAssertionZ() {
         withFreshTheory {
             val generatedIndexingAfterAssertionA =
-                theory.assertZ(newF1AtomClause)
+                theory
+                    .assertZ(newF1AtomClause)
                     .clauses
                     .toList()
                     .filter { it matches anonymousF1Clause }
@@ -312,7 +320,8 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterOneArityVariableClauseAssertionZ() {
         withFreshTheory {
             val generatedIndexingAfterAssertionA =
-                theory.assertZ(newF1VarClause)
+                theory
+                    .assertZ(newF1VarClause)
                     .clauses
                     .toList()
                     .filter { it matches anonymousF1Clause }
@@ -328,7 +337,8 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterTwoArityAtomClauseAssertionZ() {
         withFreshTheory {
             val generatedIndexingAfterAssertionA =
-                theory.assertZ(newF2AtomClause)
+                theory
+                    .assertZ(newF2AtomClause)
                     .clauses
                     .toList()
                     .filter { it matches anonymousF2Clause }
@@ -344,7 +354,8 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterTwoArityVariableClauseAssertionZ() {
         withFreshTheory {
             val generatedIndexingAfterAssertionA =
-                theory.assertZ(newF2VarClause)
+                theory
+                    .assertZ(newF2VarClause)
                     .clauses
                     .toList()
                     .filter { it matches anonymousF2Clause }
@@ -360,7 +371,8 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterTwoArityMixedClauseAssertionZ() {
         withFreshTheory {
             val generatedIndexingAfterAssertionA =
-                theory.assertZ(newF2MixedClause)
+                theory
+                    .assertZ(newF2MixedClause)
                     .clauses
                     .toList()
                     .filter { it matches anonymousF2Clause }

@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.Unknown
 
-internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
+internal class TestAndImpl(
+    private val solverFactory: SolverFactory,
+) : TestAnd {
     override fun testTermIsFreeVariable() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

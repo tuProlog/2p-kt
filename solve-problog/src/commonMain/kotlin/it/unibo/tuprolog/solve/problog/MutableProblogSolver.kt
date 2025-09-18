@@ -19,7 +19,8 @@ import it.unibo.tuprolog.unify.Unificator
 
 internal class MutableProblogSolver(
     private val solver: MutableSolver,
-) : ProblogSolver(solver), MutableSolver {
+) : ProblogSolver(solver),
+    MutableSolver {
     override fun loadLibrary(library: Library) {
         solver.loadLibrary(library)
     }
@@ -72,21 +73,17 @@ internal class MutableProblogSolver(
         solver.assertA(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
     }
 
-    override fun retract(clause: Clause): RetractResult<Theory> {
-        return solver.retract(ProblogTheory.of(solver.unificator, clause).clauses.first())
-    }
+    override fun retract(clause: Clause): RetractResult<Theory> =
+        solver.retract(ProblogTheory.of(solver.unificator, clause).clauses.first())
 
-    override fun retract(fact: Struct): RetractResult<Theory> {
-        return solver.retract(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
-    }
+    override fun retract(fact: Struct): RetractResult<Theory> =
+        solver.retract(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
 
-    override fun retractAll(clause: Clause): RetractResult<Theory> {
-        return solver.retractAll(ProblogTheory.of(solver.unificator, clause).clauses.first())
-    }
+    override fun retractAll(clause: Clause): RetractResult<Theory> =
+        solver.retractAll(ProblogTheory.of(solver.unificator, clause).clauses.first())
 
-    override fun retractAll(fact: Struct): RetractResult<Theory> {
-        return solver.retractAll(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
-    }
+    override fun retractAll(fact: Struct): RetractResult<Theory> =
+        solver.retractAll(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
 
     override fun setFlag(
         name: String,
@@ -129,13 +126,10 @@ internal class MutableProblogSolver(
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>,
-    ): MutableSolver {
-        return MutableProblogSolver(
+    ): MutableSolver =
+        MutableProblogSolver(
             solver.copy(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings),
         )
-    }
 
-    override fun clone(): MutableSolver {
-        return MutableProblogSolver(solver.clone())
-    }
+    override fun clone(): MutableSolver = MutableProblogSolver(solver.clone())
 }

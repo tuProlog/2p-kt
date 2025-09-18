@@ -73,7 +73,11 @@ internal fun readText(path: String): String =
 
 @Suppress("UNUSED_PARAMETER")
 private fun browserReadBin(path: String): ByteArray =
-    js("window").localStorage.getItem(path).unsafeCast<ArrayBuffer?>()?.toByteArray()
+    js("window")
+        .localStorage
+        .getItem(path)
+        .unsafeCast<ArrayBuffer?>()
+        ?.toByteArray()
         ?: throw IOException("No such entry in window.localStorage: $path")
 
 private fun nodeReadBin(path: String): ByteArray =

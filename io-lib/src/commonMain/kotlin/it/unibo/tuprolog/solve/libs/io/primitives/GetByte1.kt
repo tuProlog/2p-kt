@@ -6,7 +6,5 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
 object GetByte1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("get_byte") {
-    override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
-        return notSupported()
-    }
+    override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response = notSupported()
 }

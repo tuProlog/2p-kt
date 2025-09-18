@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.TestCopyTerm
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Test
 
-class TestProblogCopyTerm : TestCopyTerm, SolverFactory by ProblogSolverFactory {
+class TestProblogCopyTerm :
+    TestCopyTerm,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestCopyTerm.prototype(this)
 
     @Test

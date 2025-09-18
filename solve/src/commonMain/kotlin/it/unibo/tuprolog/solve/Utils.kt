@@ -33,34 +33,25 @@ inline fun <T> Iterable<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) = 
 /** Performs the given [action] on each element, giving a lookahead hint (i.e. if there's another element to process after). */
 inline fun <T> Sequence<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) = iterator().forEachWithLookahead(action)
 
-fun Iterable<Clause>.getAllOperators(): Sequence<Operator> {
-    return asSequence()
+fun Iterable<Clause>.getAllOperators(): Sequence<Operator> =
+    asSequence()
         .filterIsInstance<Directive>()
         .map { it.body }
         .filterIsInstance<Struct>()
         .filter { it.arity == 3 && it.functor == "op" }
         .map { Operator.fromTerm(it) }
         .filterNotNull()
-}
 
-fun Library.getAllOperators(): Sequence<Operator> {
-    return operators.asSequence()
-}
+fun Library.getAllOperators(): Sequence<Operator> = operators.asSequence()
 
-fun Runtime.getAllOperators(): Sequence<Operator> {
-    return operators.asSequence()
-}
+fun Runtime.getAllOperators(): Sequence<Operator> = operators.asSequence()
 
 fun getAllOperators(
     libraries: Runtime,
     vararg theories: Theory,
-): Sequence<Operator> {
-    return libraries.getAllOperators() + sequenceOf(*theories).flatMap { it.getAllOperators() }
-}
+): Sequence<Operator> = libraries.getAllOperators() + sequenceOf(*theories).flatMap { it.getAllOperators() }
 
-fun Sequence<Operator>.toOperatorSet(): OperatorSet {
-    return OperatorSet(this)
-}
+fun Sequence<Operator>.toOperatorSet(): OperatorSet = OperatorSet(this)
 
 @JvmOverloads
 @JsName("libraryOf")
@@ -90,6 +81,4 @@ fun runtimeOf(
     alias: String? = null,
     item1: AbstractWrapper<*>,
     vararg items: AbstractWrapper<*>,
-): Runtime {
-    return libraryOf(alias, item1, *items).toRuntime()
-}
+): Runtime = libraryOf(alias, item1, *items).toRuntime()

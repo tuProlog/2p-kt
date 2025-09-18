@@ -46,7 +46,8 @@ class TestNQueens {
                 .map { it.solvedQuery[1].castToRecursive() }
                 .map { it.toList() }
                 .map { list ->
-                    list.map { it as Tuple }
+                    list
+                        .map { it as Tuple }
                         .map {
                             (it.left as Integer).value.toIntExact() to (it.right as Integer).value.toIntExact()
                         }

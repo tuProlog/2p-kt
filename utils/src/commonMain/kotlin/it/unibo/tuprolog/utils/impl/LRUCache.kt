@@ -5,7 +5,9 @@ import it.unibo.tuprolog.utils.Optional
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.synchronizedOnSelf
 
-internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
+internal class LRUCache<K, V>(
+    override val capacity: Int,
+) : Cache<K, V> {
     init {
         require(capacity > 0)
     }
@@ -82,14 +84,14 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
                 } else {
                     (0 until capacity).asSequence().map { (it + nextFreeIndex) % capacity }
                 }
-            indexes.map { insertionOrder[it] }
+            indexes
+                .map { insertionOrder[it] }
                 .filter { it.isPresent }
                 .map { it.value!! }
                 .map { it to cache[it]!! }
                 .buffered()
         }
 
-    override fun toString(): String {
-        return "LRUCache(${toSequence().map { "${it.first} = ${it.second}" }.joinToString(", ")})"
-    }
+    override fun toString(): String =
+        "LRUCache(${toSequence().map { "${it.first} = ${it.second}" }.joinToString(", ")})"
 }

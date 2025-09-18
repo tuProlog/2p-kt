@@ -11,23 +11,20 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramBuilder
  *
  * @author Jason Dellaluce
  * */
-internal class SimpleBinaryDecisionDiagramBuilder<T : Comparable<T>> :
-    BinaryDecisionDiagramBuilder<T> {
+internal class SimpleBinaryDecisionDiagramBuilder<T : Comparable<T>> : BinaryDecisionDiagramBuilder<T> {
     override fun buildVariable(
         value: T,
         low: BinaryDecisionDiagram<T>,
         high: BinaryDecisionDiagram<T>,
-    ): BinaryDecisionDiagram<T> {
-        return SimpleBinaryDecisionDiagramVariable(
+    ): BinaryDecisionDiagram<T> =
+        SimpleBinaryDecisionDiagramVariable(
             value,
             low,
             high,
         )
-    }
 
-    override fun buildTerminal(truth: Boolean): BinaryDecisionDiagram<T> {
-        return SimpleBinaryDecisionDiagramTerminal(
+    override fun buildTerminal(truth: Boolean): BinaryDecisionDiagram<T> =
+        SimpleBinaryDecisionDiagramTerminal(
             truth,
         )
-    }
 }

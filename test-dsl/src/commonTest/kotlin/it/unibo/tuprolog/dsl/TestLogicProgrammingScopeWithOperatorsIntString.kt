@@ -2,10 +2,11 @@ package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.Term
 
-class TestLogicProgrammingScopeWithOperatorsIntString : AbstractTestLogicProgrammingScopeWithOperators<Int, String>(
-    first = 3,
-    second = "X",
-) {
+class TestLogicProgrammingScopeWithOperatorsIntString :
+    AbstractTestLogicProgrammingScopeWithOperators<Int, String>(
+        first = 3,
+        second = "X",
+    ) {
     override fun LogicProgrammingScopeWithOperators<*>.plus(
         a: Int,
         b: String,

@@ -4,7 +4,9 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
+internal class TestIsImpl(
+    private val solverFactory: SolverFactory,
+) : TestIs {
     override fun testIsResult() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

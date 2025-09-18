@@ -14,7 +14,8 @@ internal class LazyConsWithExplicitLast(
     private val cursor: Cursor<out Term>,
     private val termination: Term = EmptyList.instance,
     tags: Map<String, Any> = emptyMap(),
-) : AbstractCons(emptyList(), tags), Cons {
+) : AbstractCons(emptyList(), tags),
+    Cons {
     override val head: Term
         get() = cursor.current!!
 

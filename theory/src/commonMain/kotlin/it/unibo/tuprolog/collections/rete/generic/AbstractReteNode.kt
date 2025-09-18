@@ -102,9 +102,7 @@ internal abstract class AbstractReteNode<K, E : Clause>(
             }}"
         }
 
-    override fun toString(): String {
-        return toString(false)
-    }
+    override fun toString(): String = toString(false)
 
     companion object {
         /** Utility function to deeply copy a MutableMap */

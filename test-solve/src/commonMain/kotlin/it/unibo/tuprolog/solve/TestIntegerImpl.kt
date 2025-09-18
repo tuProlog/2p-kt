@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestInteger {
+internal class TestIntegerImpl(
+    private val solverFactory: SolverFactory,
+) : TestInteger {
     override fun testIntPositiveNum() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

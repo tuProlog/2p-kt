@@ -6,7 +6,9 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
+class TestSubAtomImpl(
+    private val solverFactory: SolverFactory,
+) : TestSubAtom {
     override fun testSubAtomSubIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

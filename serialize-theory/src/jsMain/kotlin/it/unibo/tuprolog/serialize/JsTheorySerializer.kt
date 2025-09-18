@@ -2,7 +2,9 @@ package it.unibo.tuprolog.serialize
 
 import it.unibo.tuprolog.theory.Theory
 
-internal class JsTheorySerializer(override val mimeType: MimeType) : TheorySerializer {
+internal class JsTheorySerializer(
+    override val mimeType: MimeType,
+) : TheorySerializer {
     private val objectifier = JsTheoryObjectifier()
 
     override fun serialize(value: Theory): String = stringify(objectifier.objectify(value))

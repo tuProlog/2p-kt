@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.SendChannel
@@ -13,7 +14,7 @@ data class ConcurrentResolutionHandle(
     val solutionChannel: SendChannel<Solution>,
     val solutionCounter: AtomicInt = AtomicInt.zero(),
 ) {
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     fun terminateResolution(resolutionScope: CoroutineScope) {
         if (!solutionChannel.isClosedForSend) {
             solutionChannel.close()
@@ -22,7 +23,7 @@ data class ConcurrentResolutionHandle(
         closeExecution()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     suspend fun publishSolutionAndTerminateResolutionIfNeed(
         solution: Solution,
         resolutionScope: CoroutineScope,
@@ -35,7 +36,7 @@ data class ConcurrentResolutionHandle(
         return true
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     val isSolutionChannelClosed: Boolean
         get() = solutionChannel.isClosedForSend
 

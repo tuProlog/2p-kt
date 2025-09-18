@@ -10,7 +10,9 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentIs<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentIs<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testIsResult() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

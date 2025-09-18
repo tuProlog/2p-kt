@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.EVALUABLE
 
-internal class TestArithImpl(private val solverFactory: SolverFactory) : TestArith {
+internal class TestArithImpl(
+    private val solverFactory: SolverFactory,
+) : TestArith {
     override fun testArithDiff() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

@@ -135,7 +135,8 @@ object IOPrimitiveUtils {
         vNames: KtList<Pair<Atom, Var>>? = null,
     ) = Struct.of(
         functor,
-        vNames?.map { (a, v) -> Struct.of("=", a, v) }
+        vNames
+            ?.map { (a, v) -> Struct.of("=", a, v) }
             ?.let { List.of(it) }
             ?: Var.anonymous(),
     )
@@ -249,7 +250,8 @@ object IOPrimitiveUtils {
         pattern: Term,
         value: Term,
     ): Substitution =
-        asSequence().filterIsInstance<Struct>()
+        asSequence()
+            .filterIsInstance<Struct>()
             .firstOrNull { unificator.match(it, pattern) }
             ?.let { unificator.mgu(it, value) }
             ?: Substitution.empty()
@@ -320,12 +322,14 @@ object IOPrimitiveUtils {
             is Struct ->
                 when {
                     match(term, OUTPUT_STREAM_TERM_PATTERN) -> {
-                        return context.outputChannels.findByTerm(term)
+                        return context.outputChannels
+                            .findByTerm(term)
                             .firstOrNull()
                             ?: throw ExistenceError.forStream(context, term)
                     }
                     match(term, INPUT_STREAM_TERM_PATTERN) -> {
-                        return context.inputChannels.findByTerm(term)
+                        return context.inputChannels
+                            .findByTerm(term)
                             .firstOrNull()
                             ?: throw ExistenceError.forStream(context, term)
                     }
@@ -334,8 +338,8 @@ object IOPrimitiveUtils {
         throw DomainError.forArgument(context, signature, STREAM_OR_ALIAS, term, index)
     }
 
-    fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVarOrChar(index: Int): Solve.Request<C> {
-        return when (val arg = arguments[index]) {
+    fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVarOrChar(index: Int): Solve.Request<C> =
+        when (val arg = arguments[index]) {
             is Var -> this
             is Atom ->
                 when {
@@ -345,7 +349,6 @@ object IOPrimitiveUtils {
                 }
             else -> throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
         }
-    }
 
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVarOrCharCode(index: Int): Solve.Request<C> {
         val term = arguments[index]
@@ -370,12 +373,14 @@ object IOPrimitiveUtils {
                     ?: throw ExistenceError.forSourceSink(context, term)
             }
             match(term, OUTPUT_STREAM_TERM_PATTERN) -> {
-                context.outputChannels.findByTerm(term)
+                context.outputChannels
+                    .findByTerm(term)
                     .firstOrNull()
                     ?: throw ExistenceError.forStream(context, term)
             }
             match(term, INPUT_STREAM_TERM_PATTERN) -> {
-                context.inputChannels.findByTerm(term)
+                context.inputChannels
+                    .findByTerm(term)
                     .firstOrNull()
                     ?: throw ExistenceError.forStream(context, term)
             }
@@ -401,90 +406,84 @@ object IOPrimitiveUtils {
         channel: OutputChannel<String>,
         term: Term,
         formatter: TermFormatter,
-    ): Solve.Response {
-        return try {
+    ): Solve.Response =
+        try {
             channel.write(term.format(formatter))
             replySuccess()
         } catch (_: IllegalStateException) {
             replyFail()
         }
-    }
 
     fun Solve.Request<ExecutionContext>.writeCodeAndReply(
         channel: OutputChannel<String>,
         arg: Integer,
-    ): Solve.Response {
-        return try {
+    ): Solve.Response =
+        try {
             channel.write("${arg.intValue.toChar()}")
             replySuccess()
         } catch (_: IllegalStateException) {
             replyFail()
         }
-    }
 
     fun Solve.Request<ExecutionContext>.writeCharAndReply(
         channel: OutputChannel<String>,
         arg: Atom,
-    ): Solve.Response {
-        return try {
+    ): Solve.Response =
+        try {
             channel.write(arg.value)
             replySuccess()
         } catch (_: IllegalStateException) {
             replyFail()
         }
-    }
 
     fun Solve.Request<ExecutionContext>.peekCodeAndReply(
         channel: InputChannel<String>,
         arg: Term,
-    ): Solve.Response {
-        return try {
+    ): Solve.Response =
+        try {
             val code = channel.peek()?.get(0)?.code ?: -1
             replyWith(mgu(arg, Integer.of(code)))
         } catch (_: IllegalStateException) {
             replyFail()
         }
-    }
 
     fun Solve.Request<ExecutionContext>.peekCharAndReply(
         channel: InputChannel<String>,
         arg: Term,
-    ): Solve.Response {
-        return try {
+    ): Solve.Response =
+        try {
             val char = channel.peek() ?: "end_of_file"
             replyWith(mgu(arg, Atom.of(char)))
         } catch (_: IllegalStateException) {
             replyFail()
         }
-    }
 
     fun Solve.Request<ExecutionContext>.readCodeAndReply(
         channel: InputChannel<String>,
         arg: Term,
-    ): Solve.Response {
-        return try {
+    ): Solve.Response =
+        try {
             val code = channel.read()?.get(0)?.code ?: -1
             replyWith(mgu(arg, Integer.of(code)))
         } catch (_: IllegalStateException) {
             replyFail()
         }
-    }
 
     fun Solve.Request<ExecutionContext>.readCharAndReply(
         channel: InputChannel<String>,
         arg: Term,
-    ): Solve.Response {
-        return try {
+    ): Solve.Response =
+        try {
             val char = channel.read() ?: "end_of_file"
             replyWith(mgu(arg, Atom.of(char)))
         } catch (_: IllegalStateException) {
             replyFail()
         }
-    }
 
     private val Term.singletons: Set<Var>
         get() =
-            variables.groupBy { it }
+            variables
+                .groupBy { it }
                 .asSequence()
                 .filter { it.value.size == 1 }
                 .map { it.key }
@@ -550,7 +549,8 @@ object IOPrimitiveUtils {
         val options =
             if (arguments.size >= 4) {
                 ensuringArgumentIsList(3)
-                (arguments[3] as List).toSequence()
+                (arguments[3] as List)
+                    .toSequence()
                     .map { ensureTermIsValidProperty(it) }
                     .map { ensureTermIsSupportedProperty(it) }
                     .toSet()

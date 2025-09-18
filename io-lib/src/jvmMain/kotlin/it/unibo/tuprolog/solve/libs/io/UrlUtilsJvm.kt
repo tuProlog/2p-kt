@@ -35,7 +35,8 @@ fun Url.toURL(): URL =
 
 internal fun String.toUrl(): URL =
     try {
-        URI(this).takeIf { it.isAbsolute }
+        URI(this)
+            .takeIf { it.isAbsolute }
             ?.toURL()
             ?: throw InvalidUrlException(message = "Invalid URL: $this")
     } catch (e: MalformedURLException) {

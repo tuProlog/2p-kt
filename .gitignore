@@ -1,5 +1,7 @@
 kotlin-js-store/
 
+*.klib
+
 core/src/commonMain/kotlin/it/unibo/tuprolog/Info.kt
 
 bin/

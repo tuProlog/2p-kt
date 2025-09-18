@@ -11,7 +11,8 @@ import org.gciatto.kt.math.BigInteger
 internal class RealImpl(
     override val value: BigDecimal,
     tags: Map<String, Any> = emptyMap(),
-) : NumericImpl(tags), Real {
+) : NumericImpl(tags),
+    Real {
     override val decimalValue: BigDecimal
         get() = value
 

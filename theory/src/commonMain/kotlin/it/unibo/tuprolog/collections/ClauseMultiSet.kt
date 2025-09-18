@@ -81,20 +81,18 @@ interface ClauseMultiSet : ClauseCollection {
         fun equals(
             multiSet1: ClauseMultiSet,
             multiSet2: ClauseMultiSet,
-        ): Boolean {
-            return itemWiseEquals(
+        ): Boolean =
+            itemWiseEquals(
                 multiSet1.sortedWith(TermComparator.DefaultComparator),
                 multiSet2.sortedWith(TermComparator.DefaultComparator),
             )
-        }
 
         @JvmStatic
         @JsName("computeHashCode")
-        fun hashCode(multiSet: ClauseMultiSet): Int {
-            return itemWiseHashCode(
+        fun hashCode(multiSet: ClauseMultiSet): Int =
+            itemWiseHashCode(
                 ClauseMultiSet::class,
                 multiSet.sortedWith(TermComparator.DefaultComparator),
             )
-        }
     }
 }

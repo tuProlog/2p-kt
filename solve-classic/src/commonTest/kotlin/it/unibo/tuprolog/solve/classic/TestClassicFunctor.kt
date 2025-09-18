@@ -4,7 +4,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestFunctor
 import kotlin.test.Test
 
-class TestClassicFunctor : TestFunctor, SolverFactory by ClassicSolverFactory {
+class TestClassicFunctor :
+    TestFunctor,
+    SolverFactory by ClassicSolverFactory {
     private val prototype = TestFunctor.prototype(this)
 
     @Test

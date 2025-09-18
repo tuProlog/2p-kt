@@ -42,7 +42,8 @@ internal abstract class AbstractTermFormatter(
     }
 
     private fun isNumberedVar(term: Struct): Boolean =
-        term.functor == "\$VAR" && term.arity == 1 &&
+        term.functor == "\$VAR" &&
+            term.arity == 1 &&
             term[0].let {
                 it.isInteger && it.castToInteger().value >= BigInteger.ZERO
             }
@@ -53,15 +54,14 @@ internal abstract class AbstractTermFormatter(
         return "${letterIndex.toChar()}$varNumber"
     }
 
-    private fun formatFunctor(term: Struct): String {
-        return if (quoted) {
+    private fun formatFunctor(term: Struct): String =
+        if (quoted) {
             Struct.enquoteFunctorIfNecessary(
                 Struct.escapeFunctorIfNecessary(term.functor),
             )
         } else {
             term.functor
         }
-    }
 
     private fun <T : Struct> visitStructImpl(
         term: T,

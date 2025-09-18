@@ -16,12 +16,12 @@ internal actual class DefaultTermificator actual constructor(
 
     private val tester = NumberTypeTester()
 
-    override fun handleNumberAsNumeric(value: Number): Term =
+    actual override fun handleNumberAsNumeric(value: Number): Term =
         if (tester.numberIsInteger(value)) {
             scope.intOf(tester.numberToInteger(value))
         } else {
             scope.realOf(tester.numberToDecimal(value))
         }
 
-    override fun copy(scope: Scope): Termificator = DefaultTermificator(scope, novel)
+    actual override fun copy(scope: Scope): Termificator = DefaultTermificator(scope, novel)
 }

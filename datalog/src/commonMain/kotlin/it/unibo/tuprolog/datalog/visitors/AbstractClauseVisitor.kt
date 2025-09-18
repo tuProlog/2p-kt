@@ -7,11 +7,14 @@ import it.unibo.tuprolog.datalog.ClauseVisitor
 import it.unibo.tuprolog.datalog.asLiteral
 import it.unibo.tuprolog.datalog.isNegated
 
-abstract class AbstractClauseVisitor<T> : ClauseVisitor<T>, ExhaustiveTermVisitor<T>() {
+abstract class AbstractClauseVisitor<T> :
+    ExhaustiveTermVisitor<T>(),
+    ClauseVisitor<T> {
     override fun visitLiteral(literal: Struct): T =
-        literal.argsSequence.map {
-            if (it.isClause) visitStruct(it.castToStruct()) else it.accept(this)
-        }.let { reduce(it) }
+        literal.argsSequence
+            .map {
+                if (it.isClause) visitStruct(it.castToStruct()) else it.accept(this)
+            }.let { reduce(it) }
 
     private fun dispatchHead(head: Struct): T = visitHead(head)
 

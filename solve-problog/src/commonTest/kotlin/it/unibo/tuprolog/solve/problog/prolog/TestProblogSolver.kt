@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestProblogSolver : TestSolver, SolverFactory by ProblogSolverFactory {
+class TestProblogSolver :
+    TestSolver,
+    SolverFactory by ProblogSolverFactory {
     private val prototype =
         Signature("ensure_executable", 1).let {
             TestSolver.prototype(this, it, it, it)

@@ -5,7 +5,9 @@ import it.unibo.tuprolog.utils.Optional
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.synchronizedOnSelf
 
-internal class SimpleLRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
+internal class SimpleLRUCache<K, V>(
+    override val capacity: Int,
+) : Cache<K, V> {
     init {
         require(capacity > 0)
     }
@@ -28,13 +30,12 @@ internal class SimpleLRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
         return Optional.some(key to value)
     }
 
-    private fun removeLeastRecentIfNecessary(): Optional<out Pair<K, V>> {
-        return if (cache.size >= capacity) {
+    private fun removeLeastRecentIfNecessary(): Optional<out Pair<K, V>> =
+        if (cache.size >= capacity) {
             removeLeastRecent()
         } else {
             Optional.none()
         }
-    }
 
     override fun get(key: K): Optional<out V> =
         synchronizedOnSelf {
@@ -70,12 +71,14 @@ internal class SimpleLRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
 
     override fun toSequence(): Sequence<Pair<K, V>> =
         synchronizedOnSelf {
-            cache.entries.asSequence().map { it.toPair() }.buffered()
+            cache.entries
+                .asSequence()
+                .map { it.toPair() }
+                .buffered()
         }
 
-    override fun toString(): String {
-        return "SimpleLRUCache(${toSequence().map { "${it.first} = ${it.second}" }.joinToString(", ")})"
-    }
+    override fun toString(): String =
+        "SimpleLRUCache(${toSequence().map { "${it.first} = ${it.second}" }.joinToString(", ")})"
 
     override val size: Int
         get() = synchronizedOnSelf { cache.size }

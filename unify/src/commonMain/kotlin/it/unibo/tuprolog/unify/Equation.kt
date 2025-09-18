@@ -22,7 +22,8 @@ sealed class Equation(
     @JsName("lhs") open val lhs: Term,
     /** The right-hand side of the equation */
     @JsName("rhs") open val rhs: Term,
-) : TermConvertible, Castable<Equation> {
+) : TermConvertible,
+    Castable<Equation> {
     open val isIdentity: Boolean
         get() = false
 
@@ -56,7 +57,10 @@ sealed class Equation(
         asContradiction() ?: throw ClassCastException("Cannot cast $this to ${Contradiction::class.simpleName}")
 
     /** An equation of identical [Term]s */
-    data class Identity(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs) {
+    data class Identity(
+        override val lhs: Term,
+        override val rhs: Term,
+    ) : Equation(lhs, rhs) {
         override val isIdentity: Boolean
             get() = true
 
@@ -64,7 +68,10 @@ sealed class Equation(
     }
 
     /** An equation stating [Var] = [Term] */
-    data class Assignment(override val lhs: Var, override val rhs: Term) : Equation(lhs, rhs) {
+    data class Assignment(
+        override val lhs: Var,
+        override val rhs: Term,
+    ) : Equation(lhs, rhs) {
         @JsName("toSubstitution")
         fun toSubstitution(): Substitution.Unifier = Substitution.unifier(lhs, rhs)
 
@@ -77,7 +84,10 @@ sealed class Equation(
     }
 
     /** An equation comparing [Term]s, possibly different */
-    data class Comparison(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs) {
+    data class Comparison(
+        override val lhs: Term,
+        override val rhs: Term,
+    ) : Equation(lhs, rhs) {
         override val isComparison: Boolean
             get() = true
 
@@ -85,7 +95,10 @@ sealed class Equation(
     }
 
     /** A contradicting equation, trying to equate non equal [Term]s */
-    data class Contradiction(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs) {
+    data class Contradiction(
+        override val lhs: Term,
+        override val rhs: Term,
+    ) : Equation(lhs, rhs) {
         override val isContradiction: Boolean
             get() = true
 

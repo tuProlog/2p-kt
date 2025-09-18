@@ -38,7 +38,13 @@ open external class Token {
 /**
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/Token.js
  */
-external class CommonToken(source: dynamic, type: Int, channel: Int, start: Int, stop: Int) : Token {
+external class CommonToken(
+    source: dynamic,
+    type: Int,
+    channel: Int,
+    start: Int,
+    stop: Int,
+) : Token {
     fun clone(): CommonToken
 
     override fun toString(): String
@@ -51,7 +57,10 @@ external class CommonToken(source: dynamic, type: Int, channel: Int, start: Int,
 /**
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/InputStream.js
  */
-external class InputStream(input: dynamic, decodeToUnicodeCodePoints: Boolean) {
+external class InputStream(
+    input: dynamic,
+    decodeToUnicodeCodePoints: Boolean,
+) {
     constructor(input: dynamic)
 
     val name: String
@@ -88,7 +97,9 @@ open external class TokenStream
 /**
  * https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/BufferedTokenStream.js
  */
-open external class BufferedTokenStream(tokenSource: dynamic) : TokenStream {
+open external class BufferedTokenStream(
+    tokenSource: dynamic,
+) : TokenStream {
     val tokenSource: dynamic
     val tokens: Array<Token>
     val index: Int
@@ -127,7 +138,10 @@ open external class BufferedTokenStream(tokenSource: dynamic) : TokenStream {
 /**
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/CommonTokenStream.js
  */
-external class CommonTokenStream(lexer: dynamic, channel: Int) : BufferedTokenStream {
+external class CommonTokenStream(
+    lexer: dynamic,
+    channel: Int,
+) : BufferedTokenStream {
     constructor(lexer: dynamic)
 
     override fun LB(offset: Int): Int
@@ -142,14 +156,20 @@ external class CommonTokenStream(lexer: dynamic, channel: Int) : BufferedTokenSt
 /**
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/RuleContext.js
  * */
-open external class RuleContext(parent: dynamic, invokingStateNumber: Int) {
+open external class RuleContext(
+    parent: dynamic,
+    invokingStateNumber: Int,
+) {
     fun <T> accept(visitor: dynamic): T
 }
 
 /**
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/ParserRuleContext.js
  * */
-open external class ParserRuleContext(parent: dynamic, invokingStateNumber: Int) : RuleContext {
+open external class ParserRuleContext(
+    parent: dynamic,
+    invokingStateNumber: Int,
+) : RuleContext {
     val children: Array<dynamic>
 
     val start: Token?

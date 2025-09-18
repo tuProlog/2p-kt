@@ -20,7 +20,9 @@ import it.unibo.tuprolog.solve.streams.solver.fsm.TimedState
 internal abstract class AbstractTimedState(
     /** The [Solve.Request] that guides the State behaviour towards [Response]s */
     override val solve: Solve.Request<ExecutionContext>,
-) : AbstractState(solve), IntermediateState, TimedState {
+) : AbstractState(solve),
+    IntermediateState,
+    TimedState {
     /** Internal cached currentTime at first behave() call, enabling identical re-execution of that state */
     private val stateCurrentTime by lazy { currentTimeInstant() }
 

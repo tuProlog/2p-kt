@@ -23,12 +23,14 @@ import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
 
-class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand(
-    invokeWithoutSubcommand = true,
-    allowMultipleSubcommands = true,
-    name = "java -jar 2p-repl.jar",
-    help = "Start a Prolog Read-Eval-Print loop",
-) {
+class TuPrologCmd(
+    vararg additionalLibraries: Library,
+) : AbstractTuPrologCommand(
+        invokeWithoutSubcommand = true,
+        allowMultipleSubcommands = true,
+        name = "java -jar 2p-repl.jar",
+        help = "Start a Prolog Read-Eval-Print loop",
+    ) {
     companion object {
         const val DEFAULT_TIMEOUT: Int = 1000 // 1 s
     }
@@ -105,9 +107,7 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
         }
     }
 
-    fun getTimeout(): TimeDuration {
-        return timeout.toLong()
-    }
+    fun getTimeout(): TimeDuration = timeout.toLong()
 
     fun getSolver(): Solver {
         echo("# 2P-Kt version ${Info.VERSION}")
@@ -126,12 +126,14 @@ class TuPrologCmd(vararg additionalLibraries: Library) : AbstractTuPrologCommand
             } else {
                 Runtime.of(IOLib, *additionalLibraries)
             }
-        return Solver.prolog.newBuilder()
+        return Solver.prolog
+            .newBuilder()
             .runtime(libraries)
             .staticKb(theory)
             .flag(TrackVariables) { ON }
             .warnings(outputChannel)
-            .build().also {
+            .build()
+            .also {
                 for ((_, library) in it.libraries) {
                     echo("# Successfully loaded library `${library.alias}`")
                 }

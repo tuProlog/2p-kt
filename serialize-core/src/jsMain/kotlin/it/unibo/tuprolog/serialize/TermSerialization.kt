@@ -1,17 +1,9 @@
 package it.unibo.tuprolog.serialize
 
-actual fun termSerializer(mimeType: MimeType): TermSerializer {
-    return JsTermSerializer(mimeType)
-}
+actual fun termSerializer(mimeType: MimeType): TermSerializer = JsTermSerializer(mimeType)
 
-actual fun termDeserializer(mimeType: MimeType): TermDeserializer {
-    return JsTermDeserializer(mimeType)
-}
+actual fun termDeserializer(mimeType: MimeType): TermDeserializer = JsTermDeserializer(mimeType)
 
-actual fun termObjectifier(): TermObjectifier {
-    return JsTermObjectifier()
-}
+actual fun termObjectifier(): TermObjectifier = JsTermObjectifier()
 
-actual fun termDeobjectifier(): TermDeobjectifier {
-    return JsTermDeobjectifier()
-}
+actual fun termDeobjectifier(): TermDeobjectifier = JsTermDeobjectifier()

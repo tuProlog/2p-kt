@@ -43,9 +43,7 @@ class SyntaxColoring(
     private fun computeHighlightingAsync(): Task<StyleSpans<Collection<String>>> {
         val task: Task<StyleSpans<Collection<String>>> =
             object : Task<StyleSpans<Collection<String>>>() {
-                override fun call(): StyleSpans<Collection<String>> {
-                    return computeHighlighting(codeArea.text)
-                }
+                override fun call(): StyleSpans<Collection<String>> = computeHighlighting(codeArea.text)
             }
         executor.execute(task)
         return task
@@ -71,7 +69,8 @@ class SyntaxColoring(
     fun activate() {
         if (subscription == null) {
             subscription =
-                codeArea.multiPlainChanges()
+                codeArea
+                    .multiPlainChanges()
                     .successionEnds(delay)
                     .supplyTask { computeHighlightingAsync() }
                     .awaitLatest(codeArea.multiPlainChanges())
@@ -132,15 +131,15 @@ class SyntaxColoring(
         private val DEFAULT_UPDATE_DELAY = Duration.ofMillis(100)
 
         private fun keywords(operators: OperatorSet): Regex =
-            operators.map { it.functor }
+            operators
+                .map { it.functor }
                 .map {
                     if (it.matches(BASIC_ATOM_PATTERN)) {
                         wordify(it)
                     } else {
                         Regex.escape(it)
                     }
-                }
-                .joinToString("|") { "($it)" }
+                }.joinToString("|") { "($it)" }
                 .toRegex()
 
 //        private val FOLLOWED_BY_NONWORD = "(?=[^_A-Za-z0-9])"

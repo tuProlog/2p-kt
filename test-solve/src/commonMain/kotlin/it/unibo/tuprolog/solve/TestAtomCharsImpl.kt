@@ -4,7 +4,9 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChars {
+class TestAtomCharsImpl(
+    private val solverFactory: SolverFactory,
+) : TestAtomChars {
     override fun atomCharsTestFirstIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

@@ -6,7 +6,9 @@ import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.utils.Cursor
 
-data class StatePrimitiveExecution(override val context: ClassicExecutionContext) : AbstractState(context) {
+data class StatePrimitiveExecution(
+    override val context: ClassicExecutionContext,
+) : AbstractState(context) {
     private fun ClassicExecutionContext.copyFromCurrentPrimitive(
         goals: Cursor<out Term>? = null,
         procedureFromAncestor: Int = 0,

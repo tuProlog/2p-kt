@@ -14,7 +14,8 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 interface LogicProgrammingScopeWithResolution<S : LogicProgrammingScopeWithResolution<S>> :
-    LogicProgrammingScopeWithUnificator<S>, MutableSolver {
+    LogicProgrammingScopeWithUnificator<S>,
+    MutableSolver {
     @JsName("solverFactory")
     val solverFactory: SolverFactory
 

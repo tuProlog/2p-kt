@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentBigList<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentBigList<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     override val shortDuration: TimeDuration
         get() = 4000
 

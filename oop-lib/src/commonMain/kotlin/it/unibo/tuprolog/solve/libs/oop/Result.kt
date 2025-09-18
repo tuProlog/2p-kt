@@ -18,7 +18,10 @@ sealed class Result {
         override fun asNone(): None = this
     }
 
-    data class Value(val value: Any?) : Result(), TermConvertible {
+    data class Value(
+        val value: Any?,
+    ) : Result(),
+        TermConvertible {
         private val termValue by lazy {
             ObjectToTermConverter.default.convert(value)
         }

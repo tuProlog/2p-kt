@@ -92,17 +92,28 @@ data class Signature(
                                 args.last().isInteger -> {
                                     Signature(
                                         args.first().castToAtom().value,
-                                        args.last().castToInteger().intValue.toInt(),
+                                        args
+                                            .last()
+                                            .castToInteger()
+                                            .intValue
+                                            .toInt(),
                                     )
                                 }
                                 args.last().let {
-                                    it is Struct && it.functor == VARARG_FUNCTOR && it.arity == 2 &&
+                                    it is Struct &&
+                                        it.functor == VARARG_FUNCTOR &&
+                                        it.arity == 2 &&
                                         it.args.first().isInteger &&
                                         it.args.last() == varargAtom
                                 } -> {
                                     Signature(
                                         args.first().castToAtom().value,
-                                        args.last().castToStruct()[0].castToInteger().intValue.toInt(),
+                                        args
+                                            .last()
+                                            .castToStruct()[0]
+                                            .castToInteger()
+                                            .intValue
+                                            .toInt(),
                                         true,
                                     )
                                 }

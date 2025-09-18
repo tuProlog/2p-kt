@@ -42,8 +42,8 @@ object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
     private fun Solve.Request<ConcurrentExecutionContext>.mapSolution(
         solution: Solution,
         conditionSubstitution: Substitution = Substitution.empty(),
-    ): Solve.Response {
-        return when (solution) {
+    ): Solve.Response =
+        when (solution) {
             is Solution.Yes -> {
                 val actualSubstitution = solution.substitution + conditionSubstitution
                 if (actualSubstitution is Substitution.Unifier) {
@@ -55,5 +55,4 @@ object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
             is Solution.No -> replyFail()
             is Solution.Halt -> replyException(solution.exception.pushContext(context))
         }
-    }
 }

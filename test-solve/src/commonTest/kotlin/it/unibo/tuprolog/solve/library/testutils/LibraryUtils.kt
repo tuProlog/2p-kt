@@ -161,7 +161,8 @@ internal object LibraryUtils {
     internal fun aliasLibraryMap(
         libAlias: String,
         toAliasMap: Map<Signature, *>,
-    ) = toAliasMap.flatMap {
-        listOf(it.toPair(), aliasPrimitiveOrFunction(libAlias, it))
-    }.toMap()
+    ) = toAliasMap
+        .flatMap {
+            listOf(it.toPair(), aliasPrimitiveOrFunction(libAlias, it))
+        }.toMap()
 }

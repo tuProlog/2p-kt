@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.TestIfThenElse
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Test
 
-class TestProblogIfThenElse : TestIfThenElse, SolverFactory by ProblogSolverFactory {
+class TestProblogIfThenElse :
+    TestIfThenElse,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestIfThenElse.prototype(this)
 
     @Test

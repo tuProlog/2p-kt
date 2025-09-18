@@ -29,11 +29,8 @@ internal object ProbSetConfig : UnaryPredicate.NonBacktrackable<ExecutionContext
 
     fun SolveOptions.toProbConfigTerm(): Term = Atom.of(CONFIG_TERM_NAME).setTag(CONFIG_TERM_TAG, this)
 
-    fun ExecutionContext.getSolverOptions(): SolveOptions {
-        return this.flags[CONFIG_FLAG]?.toSolveOptions() ?: SolveOptions.DEFAULT
-    }
+    fun ExecutionContext.getSolverOptions(): SolveOptions =
+        this.flags[CONFIG_FLAG]?.toSolveOptions() ?: SolveOptions.DEFAULT
 
-    fun ExecutionContext.isPrologMode(): Boolean {
-        return !this.getSolverOptions().isProbabilistic
-    }
+    fun ExecutionContext.isPrologMode(): Boolean = !this.getSolverOptions().isProbabilistic
 }

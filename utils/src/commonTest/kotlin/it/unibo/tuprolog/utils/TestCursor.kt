@@ -113,10 +113,13 @@ class TestCursor {
     fun testCursorDoNotRepeatSequence() {
         var x: Int = 0
         val cursor =
-            items.asSequence().map {
-                x++
-                x
-            }.cursor().map { it * 2 }
+            items
+                .asSequence()
+                .map {
+                    x++
+                    x
+                }.cursor()
+                .map { it * 2 }
         testCursor(cursor)
         assertCursorContains(cursor, items.map { it * 2 })
         assertEquals(items.count(), x)

@@ -12,7 +12,9 @@ import it.unibo.tuprolog.solve.ExecutionContext
  *
  * @author Enrico
  */
-abstract class IntegersBinaryMathFunction(name: String) : BinaryMathFunction(name) {
+abstract class IntegersBinaryMathFunction(
+    name: String,
+) : BinaryMathFunction(name) {
     override fun mathFunction(
         real: Real,
         integer: Integer,

@@ -9,7 +9,9 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentAtomLength<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentAtomLength<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testAtomLengthNoVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

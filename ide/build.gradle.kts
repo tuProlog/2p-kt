@@ -1,8 +1,16 @@
 import io.github.gciatto.kt.mpp.jar.javaFxFatJars
 
 plugins {
-    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
-    id(libs.plugins.ktMpp.fatJar.get().pluginId)
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
+    id(
+        libs.plugins.ktMpp.fatJar
+            .get()
+            .pluginId,
+    )
 }
 
 multiPlatformHelper {
@@ -28,10 +36,10 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
-tasks.create<JavaExec>("run") {
+tasks.register<JavaExec>("run") {
     group = "application"
     mainClass.set(multiPlatformHelper.fatJarEntryPoint)
-    dependsOn("jvmMainClasses")
+    dependsOn(tasks.named("jvmMainClasses"))
     sourceSets.getByName("main") {
         classpath = runtimeClasspath
     }

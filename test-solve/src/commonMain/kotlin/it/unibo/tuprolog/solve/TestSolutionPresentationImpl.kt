@@ -5,7 +5,9 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TestSolutionPresentationImpl(private val solverFactory: SolverFactory) : TestSolutionPresentation {
+class TestSolutionPresentationImpl(
+    private val solverFactory: SolverFactory,
+) : TestSolutionPresentation {
     override fun testSolutionWithDandlingVars() {
         logicProgramming {
             val theory =

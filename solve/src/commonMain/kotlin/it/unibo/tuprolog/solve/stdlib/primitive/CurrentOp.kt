@@ -14,13 +14,15 @@ object CurrentOp : TernaryRelation.WithoutSideEffects<ExecutionContext>("current
         second: Term,
         third: Term,
     ): Sequence<Substitution> =
-        context.operators.asSequence().map {
-            listOf(
-                mgu(first, Integer.of(it.priority)),
-                mgu(second, it.specifier.toTerm()),
-                mgu(third, Atom.of(it.functor)),
-            )
-        }.filter {
-            it.all { sub -> sub is Substitution.Unifier }
-        }.map { it.reduce(Substitution::plus) }
+        context.operators
+            .asSequence()
+            .map {
+                listOf(
+                    mgu(first, Integer.of(it.priority)),
+                    mgu(second, it.specifier.toTerm()),
+                    mgu(third, Atom.of(it.functor)),
+                )
+            }.filter {
+                it.all { sub -> sub is Substitution.Unifier }
+            }.map { it.reduce(Substitution::plus) }
 }

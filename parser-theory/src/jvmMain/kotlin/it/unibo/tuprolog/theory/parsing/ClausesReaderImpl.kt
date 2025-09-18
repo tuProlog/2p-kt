@@ -7,12 +7,15 @@ import it.unibo.tuprolog.theory.parsing.ClausesReader
 import java.io.InputStream
 import java.io.Reader
 
-internal class ClausesReaderImpl(override val defaultOperatorSet: OperatorSet) : ClausesReader {
+internal class ClausesReaderImpl(
+    override val defaultOperatorSet: OperatorSet,
+) : ClausesReader {
     override fun readClausesLazily(
         inputStream: InputStream,
         operators: OperatorSet,
     ): Sequence<Clause> =
-        PrologParserFactory.parseClauses(inputStream, operators)
+        PrologParserFactory
+            .parseClauses(inputStream, operators)
             .asSequence()
             .map { it.accept(PrologExpressionVisitor()) }
             .map { it.toClause() }
@@ -21,7 +24,8 @@ internal class ClausesReaderImpl(override val defaultOperatorSet: OperatorSet) :
         reader: Reader,
         operators: OperatorSet,
     ): Sequence<Clause> =
-        PrologParserFactory.parseClauses(reader, operators)
+        PrologParserFactory
+            .parseClauses(reader, operators)
             .asSequence()
             .map { it.accept(PrologExpressionVisitor()) }
             .map { it.toClause() }

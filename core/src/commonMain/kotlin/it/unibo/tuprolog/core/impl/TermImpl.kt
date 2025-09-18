@@ -7,7 +7,9 @@ import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import kotlin.js.JsName
 
 @Suppress("EqualsOrHashCode")
-internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap()) : Term {
+internal abstract class TermImpl(
+    override val tags: Map<String, Any> = emptyMap(),
+) : Term {
     @JsName("termMark")
     val termMark: Int
         get() = MARK

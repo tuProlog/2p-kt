@@ -4,7 +4,9 @@
 package it.unibo.tuprolog.parser
 
 @Suppress("UnusedPrivateProperty")
-external class PrologLexer(input: dynamic) {
+external class PrologLexer(
+    input: dynamic,
+) {
     fun addOperators(vararg operators: String)
 
     fun getOperators(): Array<String>

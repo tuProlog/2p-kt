@@ -2,7 +2,7 @@ package it.unibo.tuprolog
 
 import kotlinx.browser.window
 
-@Suppress("TooGenericExceptionCaught", "SwallowedException")
+@Suppress("TooGenericExceptionCaught", "SwallowedException", "SENSELESS_COMPARISON")
 internal actual fun currentPlatform(): Platform =
     try {
         if (window === undefined) {
