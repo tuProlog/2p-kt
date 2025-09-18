@@ -24,6 +24,7 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
+          java-version: '25'
   test-extensively:
     needs:
       - build
@@ -62,6 +63,7 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
+          java-version: '25'
   success:
     runs-on: ubuntu-24.04
     needs:
