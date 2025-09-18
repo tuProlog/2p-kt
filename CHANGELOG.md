@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/tuProlog/2p-kt/compare/1.1.0...1.1.1) (2025-09-18)
+
+### Bug Fixes
+
+* deprecation ([b67ce29](https://github.com/tuProlog/2p-kt/commit/b67ce297e6f277fa88936347dbfb534ac2c6cf13))
+
 ## [1.1.0](https://github.com/tuProlog/2p-kt/compare/1.0.4...1.1.0) (2025-09-18)
 
 ### Features
