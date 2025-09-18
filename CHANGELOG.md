@@ -1,3 +1,30 @@
+## [1.1.0](https://github.com/tuProlog/2p-kt/compare/1.0.4...1.1.0) (2025-09-18)
+
+### Features
+
+* add desktop and appstream files ([#725](https://github.com/tuProlog/2p-kt/issues/725)) ([7a1b127](https://github.com/tuProlog/2p-kt/commit/7a1b127a10a084793da74e275d598f3c482be9c0))
+* update dependencies, there including kotlin, kt-mpp, etc ([a356f75](https://github.com/tuProlog/2p-kt/commit/a356f75e7485c441bd40fa29c8d38ae6c7160c10))
+
+### Dependency updates
+
+* **deps:** update dependency gradle to v8.8 ([db4dc95](https://github.com/tuProlog/2p-kt/commit/db4dc95eaff589e16064e3edc17640881145fc70))
+* **deps:** update ktmpp to v4.1.4 ([0a0c6b5](https://github.com/tuProlog/2p-kt/commit/0a0c6b5ac73254e243591f5b08f229b6ab966c88))
+* **deps:** update node.js to 20.14 ([ea845de](https://github.com/tuProlog/2p-kt/commit/ea845de7cbebe3635d27f2b68cd521981830d7d6))
+* **deps:** update plugin com.gradle.enterprise to v3.17.5 ([adee08a](https://github.com/tuProlog/2p-kt/commit/adee08aaf327e75cb42cb4df19545d6529886814))
+* **deps:** update plugin gitsemver to v3.1.7 ([b905a4c](https://github.com/tuProlog/2p-kt/commit/b905a4c21209721d597c899c153457011afb8932))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.7 ([2d6b9ae](https://github.com/tuProlog/2p-kt/commit/2d6b9aed0a1a32ef486d871e575caff6645aa3e5))
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v4.1.7 ([aafb917](https://github.com/tuProlog/2p-kt/commit/aafb917389d9b56c50b0ebb20099d374c1d81f92))
+* **deps:** update danysk/action-checkout action to v0.2.19 ([dc07bb0](https://github.com/tuProlog/2p-kt/commit/dc07bb006dfa264240ec35cbca148a1543d54ff6))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.21 ([79c4427](https://github.com/tuProlog/2p-kt/commit/79c44272233ef805815dd53d4a09137f03954673))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.22 ([3223ffc](https://github.com/tuProlog/2p-kt/commit/3223ffc302e5da0efe2b254045fa1b6a1a122519))
+
+### General maintenance
+
+* fix metainfo file for flathub publication ([#726](https://github.com/tuProlog/2p-kt/issues/726)) ([037ff66](https://github.com/tuProlog/2p-kt/commit/037ff662e752118fd831304c9ed8fd77d8e9e87b))
+
 ## [1.0.4](https://github.com/tuProlog/2p-kt/compare/1.0.3...1.0.4) (2024-05-26)
 
 
