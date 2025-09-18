@@ -1,3 +1,9 @@
+## [1.1.2](https://github.com/tuProlog/2p-kt/compare/1.1.1...1.1.2) (2025-09-18)
+
+### Bug Fixes
+
+* remove javadoc upload ([66ba108](https://github.com/tuProlog/2p-kt/commit/66ba1087ce37dfa643d8b538a5ec0c89de7dff15))
+
 ## [1.1.1](https://github.com/tuProlog/2p-kt/compare/1.1.0...1.1.1) (2025-09-18)
 
 ### Bug Fixes
