@@ -1,16 +1,13 @@
 package it.unibo.tuprolog.dsl.unify
 
-import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.dsl.LogicProgrammingScope
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
-interface LogicProgrammingScopeWithUnification : LogicProgrammingScope, Unificator {
-    @JsName("unificator")
-    val unificator: Unificator
-
+interface LogicProgrammingScopeWithUnification<S : LogicProgrammingScopeWithUnification<S>> :
+    LogicProgrammingScopeWithUnificator<S>,
+    Unificator {
     @JsName("anyMguWith")
     infix fun Any.mguWith(other: Any): Substitution =
         this@LogicProgrammingScopeWithUnification.mgu(this.toTerm(), other.toTerm())
@@ -43,12 +40,4 @@ interface LogicProgrammingScopeWithUnification : LogicProgrammingScope, Unificat
         term2: Any,
         occurCheckEnabled: Boolean = true,
     ): Term? = unify(term1.toTerm(), term2.toTerm(), occurCheckEnabled)
-
-    companion object {
-        @JsName("of")
-        fun of(
-            unificator: Unificator = Unificator.default,
-            scope: Scope = Scope.empty(),
-        ): LogicProgrammingScopeWithUnification = LogicProgrammingScopeWithUnificationImpl(unificator, scope)
-    }
 }

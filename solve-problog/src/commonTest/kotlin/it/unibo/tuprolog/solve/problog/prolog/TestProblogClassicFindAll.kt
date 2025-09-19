@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestProblogClassicFindAll : TestFindAll, SolverFactory by ProblogSolverFactory {
+class TestProblogClassicFindAll :
+    TestFindAll,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestFindAll.prototype(this, Signature("ensure_executable", 1))
 
     override val errorSignature: Signature

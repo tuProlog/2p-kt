@@ -36,7 +36,10 @@ class PrototypeTheoryTest(
     private val emptyTheoryGenerator: () -> Theory,
     private val theoryGenerator: (Iterable<Clause>) -> Theory,
 ) {
-    private data class FreshTheoriesScope(var emptyTheory: Theory, var filledTheory: Theory)
+    private data class FreshTheoriesScope(
+        var emptyTheory: Theory,
+        var filledTheory: Theory,
+    )
 
     private fun <R> withFreshTheories(
         emptyTheory: Theory = emptyTheoryGenerator(),
@@ -186,7 +189,9 @@ class PrototypeTheoryTest(
                 assertTrue { it.head.indicator in filledTheory }
             }
 
-            clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
+            clausesQueryResultsMap
+                .filterKeys { it is Rule }
+                .mapKeys { it.key as Rule }
                 .forEach { (query, result) ->
                     if (result.isNotEmpty()) assertTrue { query.head.indicator in filledTheory }
                 }
@@ -197,7 +202,9 @@ class PrototypeTheoryTest(
         withFreshTheories {
             assertFalse(filledTheory.contains(anIndependentFact.head.indicator))
 
-            clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
+            clausesQueryResultsMap
+                .filterKeys { it is Rule }
+                .mapKeys { it.key as Rule }
                 .forEach { (query, result) ->
                     if (result.isEmpty()) assertFalse { query.head.indicator in filledTheory }
                 }
@@ -268,7 +275,8 @@ class PrototypeTheoryTest(
     fun assertAStruct() {
         withFreshTheories {
             val correctPartiallyOrderedClauses =
-                wellFormedClauses.toMutableList()
+                wellFormedClauses
+                    .toMutableList()
                     .apply { add(0, Fact.of(aRule.head)) }
             val toBeTested = filledTheory.assertA(aRule.head)
 

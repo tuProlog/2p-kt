@@ -4,15 +4,17 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChars {
+class TestAtomCharsImpl(
+    private val solverFactory: SolverFactory,
+) : TestAtomChars {
     override fun atomCharsTestFirstIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_chars("X", listOf("t", "e", "s", "t"))
+            val query = atom_chars("X", logicListOf("t", "e", "s", "t"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to "test")),
+                listOf(query.yes("X" to "test")),
                 solutions,
             )
         }
@@ -21,11 +23,11 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     override fun atomCharsTestYes() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_chars("test", listOf("t", "e", "s", "t"))
+            val query = atom_chars("test", logicListOf("t", "e", "s", "t"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -34,11 +36,11 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     override fun atomCharsTestOneCharIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_chars("test", listOf("t", "e", "s", "T"))
+            val query = atom_chars("test", logicListOf("t", "e", "s", "T"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes(("T" to "t"))),
+                listOf(query.yes(("T" to "t"))),
                 solutions,
             )
         }
@@ -47,11 +49,11 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     override fun atomCharsTestFailure() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_chars("test1", listOf("t", "e", "s", "T"))
+            val query = atom_chars("test1", logicListOf("t", "e", "s", "T"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -64,7 +66,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("L" to emptyList)),
+                listOf(query.yes("L" to emptyLogicList)),
                 solutions,
             )
         }
@@ -73,11 +75,11 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
     override fun atomCharsTestListHead() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_chars("ac", listOf("a", "C"))
+            val query = atom_chars("ac", logicListOf("a", "C"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("C" to "c")),
+                listOf(query.yes("C" to "c")),
                 solutions,
             )
         }
@@ -90,7 +92,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -112,7 +114,7 @@ class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChar
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,

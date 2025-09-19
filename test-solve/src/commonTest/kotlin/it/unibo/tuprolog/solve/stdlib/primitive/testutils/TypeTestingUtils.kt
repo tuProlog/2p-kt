@@ -72,28 +72,30 @@ object TypeTestingUtils {
         }
 
     private val commonArgs: List<Term> =
-        LogicProgrammingScope.empty().let {
-            baseArgs +
-                baseArgs.squared { x, y -> it.tupleOf(x, y) } +
-                baseArgs.squared { x, y -> it.structOf(";", x, y) } +
-                baseArgs.squared { x, y -> it.structOf("->", x, y) }
-        }.toList()
+        LogicProgrammingScope
+            .empty()
+            .let {
+                baseArgs +
+                    baseArgs.squared { x, y -> it.tupleOf(x, y) } +
+                    baseArgs.squared { x, y -> it.structOf(";", x, y) } +
+                    baseArgs.squared { x, y -> it.structOf("->", x, y) }
+            }.toList()
 
     private inline fun typeTest(
         functor: String,
         terms: List<Term> = commonArgs,
         crossinline predicate: (Term) -> Boolean,
-    ): Map<Solve.Request<*>, Boolean> {
-        return logicProgramming {
-            terms.asSequence()
+    ): Map<Solve.Request<*>, Boolean> =
+        logicProgramming {
+            terms
+                .asSequence()
                 .map { functor(it) to predicate(it) }
                 .toMap()
                 .mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
         }
-    }
 
-    private fun isExecutable(term: Term): Boolean {
-        return when (term) {
+    private fun isExecutable(term: Term): Boolean =
+        when (term) {
             is Numeric -> false
             is Struct ->
                 when {
@@ -104,7 +106,6 @@ object TypeTestingUtils {
                 }
             else -> true
         }
-    }
 
     val atomQueryToResult by lazy {
         typeTest(AtomPrimitive.functor) { it is Atom }
@@ -167,11 +168,17 @@ object TypeTestingUtils {
     ) = when (expectedResult) {
         true ->
             assertTrue("Requesting ${input.query} should result in positive response!") {
-                unaryPredicate.implementation.solve(input).single().solution is Solution.Yes
+                unaryPredicate.implementation
+                    .solve(input)
+                    .single()
+                    .solution is Solution.Yes
             }
         false ->
             assertTrue("Requesting ${input.query} should result in negative response!") {
-                unaryPredicate.implementation.solve(input).single().solution is Solution.No
+                unaryPredicate.implementation
+                    .solve(input)
+                    .single()
+                    .solution is Solution.No
             }
         else ->
             @Suppress("UNCHECKED_CAST")

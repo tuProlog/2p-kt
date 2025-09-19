@@ -4,7 +4,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import org.junit.Test
 
-class TestClassicAlias : TestAlias, SolverFactory by ClassicSolverFactory {
+class TestClassicAlias :
+    TestAlias,
+    SolverFactory by ClassicSolverFactory {
     private val prototype = TestAlias.prototype(this)
 
     @Test

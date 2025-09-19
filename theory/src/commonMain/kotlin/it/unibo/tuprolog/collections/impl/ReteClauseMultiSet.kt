@@ -10,7 +10,8 @@ import it.unibo.tuprolog.unify.Unificator
 
 internal class ReteClauseMultiSet private constructor(
     rete: ReteTree,
-) : ClauseMultiSet, AbstractReteClauseCollection<ReteClauseMultiSet>(rete) {
+) : AbstractReteClauseCollection<ReteClauseMultiSet>(rete),
+    ClauseMultiSet {
     private val hashCodeCache by lazy {
         ClauseMultiSet.hashCode(this)
     }
@@ -28,17 +29,14 @@ internal class ReteClauseMultiSet private constructor(
 
     override fun get(clause: Clause): Sequence<Clause> = rete.get(clause)
 
-    override fun newCollectionBuilder(rete: ReteTree): ReteClauseMultiSet {
-        return ReteClauseMultiSet(rete)
-    }
+    override fun newCollectionBuilder(rete: ReteTree): ReteClauseMultiSet = ReteClauseMultiSet(rete)
 
-    override fun equals(other: Any?): Boolean {
-        return if (other is ClauseMultiSet && other !is MutableClauseMultiSet) {
+    override fun equals(other: Any?): Boolean =
+        if (other is ClauseMultiSet && other !is MutableClauseMultiSet) {
             ClauseMultiSet.equals(this, other)
         } else {
             false
         }
-    }
 
     override fun hashCode(): Int = hashCodeCache
 

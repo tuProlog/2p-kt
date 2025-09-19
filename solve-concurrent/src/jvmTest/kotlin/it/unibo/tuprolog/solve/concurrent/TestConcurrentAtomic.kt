@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentAtomic<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentAtomic<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testAtomicAtom() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -46,7 +48,7 @@ interface TestConcurrentAtomic<T : WithAssertingEquals> : FromSequence<T>, Solve
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = atomic(emptyList)
+            val query = atomic(emptyLogicList)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 

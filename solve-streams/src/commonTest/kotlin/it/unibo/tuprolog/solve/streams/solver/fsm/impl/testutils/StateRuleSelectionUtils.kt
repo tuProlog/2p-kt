@@ -34,7 +34,7 @@ internal object StateRuleSelectionUtils {
     /** Test data in the form (query struct, a database with one fact that matches, the resulting Substitution) */
     internal val queryToOneMatchFactTheoryAndSubstitution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 Triple(atomOf("a"), theory({ "a" }), emptyUnifier),
                 Triple(atomOf("a"), theory({ "a" }, { "b" }), emptyUnifier),
                 Triple("f"("Var"), theory({ "f"("a") }), "Var" to "a"),
@@ -53,7 +53,7 @@ internal object StateRuleSelectionUtils {
     /** Test data in the form (query struct, a database with one rule that matches, the resulting Substitution) */
     internal val queryToOneMatchRuleTheoryAndSubstitution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 Triple(atomOf("a"), theory({ "a" impliedBy "b" }), Substitution.failed()),
                 Triple(atomOf("a"), theory({ "a" impliedBy "b" }, { "b" }), emptyUnifier),
                 Triple(
@@ -71,14 +71,14 @@ internal object StateRuleSelectionUtils {
     /** Test data in the form (query struct, a database with multiple matches, the result Substitutions in order) */
     internal val queryToMultipleMatchesTheoryAndSubstitution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 Triple(
                     atomOf("a"),
                     theory(
                         { "a" },
                         { "a" impliedBy "b" },
                     ),
-                    ktListOf(emptyUnifier, Substitution.failed()),
+                    listOf(emptyUnifier, Substitution.failed()),
                 ),
                 Triple(
                     atomOf("a"),
@@ -86,7 +86,7 @@ internal object StateRuleSelectionUtils {
                         { "a" impliedBy "b" },
                         { "a" },
                     ),
-                    ktListOf(emptyUnifier),
+                    listOf(emptyUnifier),
                 ),
                 Triple(
                     "f"("Var"),
@@ -95,7 +95,7 @@ internal object StateRuleSelectionUtils {
                         { "g"("a") },
                         { "g"("b") },
                     ),
-                    ktListOf(
+                    listOf(
                         "Var" to "a",
                         "Var" to "b",
                     ),
@@ -110,7 +110,7 @@ internal object StateRuleSelectionUtils {
                         { "h"("d1") },
                         { "h"("d2") },
                     ),
-                    ktListOf(
+                    listOf(
                         "V" to "c1",
                         "V" to "c2",
                         "V" to "d1",

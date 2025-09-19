@@ -7,7 +7,9 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Ignore
-class TestStreamsStackTrace : TestStackTrace, SolverFactory by StreamsSolverFactory {
+class TestStreamsStackTrace :
+    TestStackTrace,
+    SolverFactory by StreamsSolverFactory {
     val prototype = TestStackTrace.prototype(this)
 
     @Test

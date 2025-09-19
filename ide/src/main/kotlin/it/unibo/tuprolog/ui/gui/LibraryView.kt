@@ -4,7 +4,9 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.solve.library.Library
 import javafx.scene.control.TreeItem
 
-class LibraryView(library: Library) : TreeItem<String>(library.alias) {
+class LibraryView(
+    library: Library,
+) : TreeItem<String>(library.alias) {
     init {
         isExpanded = false
 
@@ -14,13 +16,24 @@ class LibraryView(library: Library) : TreeItem<String>(library.alias) {
 
         children.addAll(functionsChild, predicatesChild, operatorsChild)
 
-        val rules = library.clauses.asSequence().filterIsInstance<Rule>().map { it.head.indicator }
-        val primitives = library.primitives.keys.asSequence().map { it.toIndicator() }
+        val rules =
+            library.clauses
+                .asSequence()
+                .filterIsInstance<Rule>()
+                .map { it.head.indicator }
+        val primitives =
+            library.primitives.keys
+                .asSequence()
+                .map { it.toIndicator() }
         val predicates = (rules + primitives).distinct().map { it.toString() }.sorted()
 
         predicatesChild.children.addAll(predicates.map { TreeItem(it) })
 
-        val functions = library.functions.keys.asSequence().map { it.toIndicator() }.map { it.toString() }
+        val functions =
+            library.functions.keys
+                .asSequence()
+                .map { it.toIndicator() }
+                .map { it.toString() }
 
         functionsChild.children.addAll(functions.map { TreeItem(it) })
 

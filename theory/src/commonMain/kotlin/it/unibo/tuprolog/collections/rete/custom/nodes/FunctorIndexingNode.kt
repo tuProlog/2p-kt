@@ -14,13 +14,18 @@ internal class FunctorIndexingNode(
     unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int,
-) : FunctorNode(unificator), FunctorIndexing {
+) : FunctorNode(unificator),
+    FunctorIndexing {
     private val arities: MutableMap<Int, ArityIndexing> = mutableMapOf()
 
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
     override val size: Int
-        get() = arities.values.asSequence().map { it.size }.sum()
+        get() =
+            arities.values
+                .asSequence()
+                .map { it.size }
+                .sum()
 
     override val isEmpty: Boolean
         get() = arities.isEmpty() || arities.values.all { it.isEmpty }
@@ -28,15 +33,17 @@ internal class FunctorIndexingNode(
     override fun get(clause: Clause): Sequence<Clause> = arities[clause.nestedArity()]?.get(clause) ?: emptySequence()
 
     override fun assertA(clause: IndexedClause) {
-        arities.getOrPut(clause.nestedArity()) {
-            FamilyArityIndexingNode(unificator, ordered, nestingLevel)
-        }.assertA(clause + this)
+        arities
+            .getOrPut(clause.nestedArity()) {
+                FamilyArityIndexingNode(unificator, ordered, nestingLevel)
+            }.assertA(clause + this)
     }
 
     override fun assertZ(clause: IndexedClause) {
-        arities.getOrPut(clause.nestedArity()) {
-            FamilyArityIndexingNode(unificator, ordered, nestingLevel)
-        }.assertZ(clause + this)
+        arities
+            .getOrPut(clause.nestedArity()) {
+                FamilyArityIndexingNode(unificator, ordered, nestingLevel)
+            }.assertZ(clause + this)
     }
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
@@ -47,17 +54,18 @@ internal class FunctorIndexingNode(
 
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
         if (clause.isGlobal()) {
-            Utils.merge(
-                arities.values.map {
-                    it.extractGlobalIndexedSequence(clause)
-                },
-            ).firstOrNull { unificator.match(it.innerClause, clause) }
+            Utils
+                .merge(
+                    arities.values.map {
+                        it.extractGlobalIndexedSequence(clause)
+                    },
+                ).firstOrNull { unificator.match(it.innerClause, clause) }
         } else {
             arities[clause.nestedArity()]?.getFirstIndexed(clause)
         }
 
-    override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (clause.isGlobal()) {
+    override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
+        if (clause.isGlobal()) {
             Utils.merge(
                 arities.values.map {
                     it.extractGlobalIndexedSequence(clause)
@@ -66,17 +74,16 @@ internal class FunctorIndexingNode(
         } else {
             arities[clause.nestedArity()]?.getIndexed(clause) ?: emptySequence()
         }
-    }
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
         if (clause.isGlobal()) {
             val partialResult =
-                Utils.merge(
-                    arities.values.map {
-                        it.extractGlobalIndexedSequence(clause)
-                    },
-                )
-                    .filter { unificator.match(it.innerClause, clause) }
+                Utils
+                    .merge(
+                        arities.values.map {
+                            it.extractGlobalIndexedSequence(clause)
+                        },
+                    ).filter { unificator.match(it.innerClause, clause) }
                     .toList()
             if (partialResult.isNotEmpty()) {
                 invalidateCache()
@@ -88,8 +95,8 @@ internal class FunctorIndexingNode(
                 ?: emptySequence()
         }
 
-    override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (ordered) {
+    override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
+        if (ordered) {
             Utils.merge(
                 arities.values.map {
                     it.extractGlobalIndexedSequence(clause)
@@ -102,10 +109,14 @@ internal class FunctorIndexingNode(
                 },
             )
         }
-    }
 
     private fun Clause.isGlobal(): Boolean =
-        this.isRule && this.castToRule().head.nestedFirstArgument(nestingLevel).isVar
+        this.isRule &&
+            this
+                .castToRule()
+                .head
+                .nestedFirstArgument(nestingLevel)
+                .isVar
 
     private fun Clause.nestedArity(): Int =
         asRule()?.head?.arityOfNestedFirstArgument(nestingLevel)

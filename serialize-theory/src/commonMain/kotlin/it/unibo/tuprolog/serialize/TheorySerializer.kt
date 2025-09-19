@@ -8,8 +8,6 @@ interface TheorySerializer : Serializer<Theory> {
     companion object {
         @JvmStatic
         @JsName("of")
-        fun of(mimeType: MimeType): TheorySerializer {
-            return theorySerializer(mimeType)
-        }
+        fun of(mimeType: MimeType): TheorySerializer = theorySerializer(mimeType)
     }
 }

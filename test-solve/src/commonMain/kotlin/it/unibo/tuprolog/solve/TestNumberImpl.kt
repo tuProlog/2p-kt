@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestNumberImpl(private val solverFactory: SolverFactory) : TestNumber {
+internal class TestNumberImpl(
+    private val solverFactory: SolverFactory,
+) : TestNumber {
     override fun testBasicNum() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

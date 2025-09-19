@@ -10,10 +10,7 @@ import kotlin.collections.List as KtList
 
 sealed class NegationAsFailure : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
     override val Scope.head: KtList<Term>
-        get() =
-            ktListOf(
-                varOf("X"),
-            )
+        get() = listOf(varOf("X"))
 
     abstract override val Scope.body: Term
 

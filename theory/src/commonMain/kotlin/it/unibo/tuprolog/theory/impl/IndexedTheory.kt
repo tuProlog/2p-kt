@@ -92,9 +92,7 @@ internal class IndexedTheory private constructor(
 
     private val hashCodeCache: Int by lazy { super.hashCode() }
 
-    override fun hashCode(): Int {
-        return hashCodeCache
-    }
+    override fun hashCode(): Int = hashCodeCache
 
     private val sizeCache: Long by lazy { super.size }
 

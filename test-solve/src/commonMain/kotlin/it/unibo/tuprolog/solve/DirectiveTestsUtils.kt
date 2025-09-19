@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
-import it.unibo.tuprolog.dsl.LogicProgrammingScope
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
@@ -91,13 +91,15 @@ object DirectiveTestsUtils {
             },
             stdOut { event, out, warn ->
                 { t: Theory ->
-                    solverFactory.mutableSolverWithDefaultBuiltins(stdOut = out, stdErr = out, warnings = warn)
+                    solverFactory
+                        .mutableSolverWithDefaultBuiltins(stdOut = out, stdErr = out, warnings = warn)
                         .also { it.loadStaticKb(t) }
                 } to event
             },
             stdOut { event, out, warn ->
                 { t: Theory ->
-                    solverFactory.mutableSolverWithDefaultBuiltins(stdOut = out, stdErr = out, warnings = warn)
+                    solverFactory
+                        .mutableSolverWithDefaultBuiltins(stdOut = out, stdErr = out, warnings = warn)
                         .also { it.loadDynamicKb(t.toMutableTheory()) }
                 } to event
             },

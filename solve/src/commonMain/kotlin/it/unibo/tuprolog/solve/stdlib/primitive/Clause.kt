@@ -28,10 +28,11 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
             throw PermissionError.of(context, signature, ACCESS, PRIVATE_PROCEDURE, headSignature.toIndicator())
         }
         val template = Rule.of(head, second)
-        return (context.staticKb[head] + context.dynamicKb[head].buffered()).map {
-            mgu(it, template)
-        }.filter {
-            it.isSuccess
-        }
+        return (context.staticKb[head] + context.dynamicKb[head].buffered())
+            .map {
+                mgu(it, template)
+            }.filter {
+                it.isSuccess
+            }
     }
 }

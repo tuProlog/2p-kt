@@ -19,7 +19,5 @@ internal data class SimpleBinaryDecisionDiagramTerminal<T : Comparable<T>>(
         return true
     }
 
-    override fun hashCode(): Int {
-        return truth.hashCode()
-    }
+    override fun hashCode(): Int = truth.hashCode()
 }

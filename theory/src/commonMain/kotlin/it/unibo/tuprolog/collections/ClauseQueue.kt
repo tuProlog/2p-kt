@@ -99,17 +99,14 @@ interface ClauseQueue : ClauseCollection {
         fun equals(
             queue1: ClauseQueue,
             queue2: ClauseQueue,
-        ): Boolean {
-            return itemWiseEquals(queue1, queue2)
-        }
+        ): Boolean = itemWiseEquals(queue1, queue2)
 
         @JvmStatic
         @JsName("computeHashCode")
-        fun hashCode(queue: ClauseQueue): Int {
-            return itemWiseHashCode(
+        fun hashCode(queue: ClauseQueue): Int =
+            itemWiseHashCode(
                 ClauseQueue::class,
                 itemWiseHashCode(queue),
             )
-        }
     }
 }

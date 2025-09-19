@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestCompoundImpl(private val solverFactory: SolverFactory) : TestCompound {
+internal class TestCompoundImpl(
+    private val solverFactory: SolverFactory,
+) : TestCompound {
     override fun testCompoundDec() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -11,7 +13,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -25,7 +27,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -39,7 +41,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -53,7 +55,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -67,7 +69,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -81,7 +83,7 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -91,11 +93,11 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = compound(listOf("a"))
+            val query = compound(logicListOf("a"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }

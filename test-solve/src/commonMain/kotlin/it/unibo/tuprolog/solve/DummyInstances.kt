@@ -45,9 +45,7 @@ object DummyInstances {
                 dynamicKb: Theory,
                 inputChannels: InputStore,
                 outputChannels: OutputStore,
-            ): Solver {
-                throw NotImplementedError()
-            }
+            ): Solver = throw NotImplementedError()
 
             override fun createMutableSolver(
                 unificator: Unificator,
@@ -57,9 +55,7 @@ object DummyInstances {
                 dynamicKb: Theory,
                 inputChannels: InputStore,
                 outputChannels: OutputStore,
-            ): MutableSolver {
-                throw NotImplementedError()
-            }
+            ): MutableSolver = throw NotImplementedError()
 
             override fun update(
                 unificator: Unificator,
@@ -71,8 +67,6 @@ object DummyInstances {
                 inputChannels: InputStore,
                 outputChannels: OutputStore,
                 customData: CustomDataStore,
-            ): ExecutionContext {
-                throw NotImplementedError()
-            }
+            ): ExecutionContext = throw NotImplementedError()
         }
 }

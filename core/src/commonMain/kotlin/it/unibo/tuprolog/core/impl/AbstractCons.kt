@@ -12,7 +12,8 @@ import it.unibo.tuprolog.core.ListIterator as LogicListIterator
 internal abstract class AbstractCons(
     args: List<Term>,
     tags: Map<String, Any> = emptyMap(),
-) : RecursiveImpl(CONS_FUNCTOR, args, tags), Cons {
+) : RecursiveImpl(CONS_FUNCTOR, args, tags),
+    Cons {
     companion object {
         const val SWITCH_TO_LAZY_THRESHOLD = 100
     }
@@ -62,7 +63,7 @@ internal abstract class AbstractCons(
 
     override fun freshCopy(): Cons = super.freshCopy().castToCons()
 
-    override fun freshCopy(scope: Scope): Cons = scope.listFrom(unfoldedSequence).setTags(tags).castToCons()
+    override fun freshCopy(scope: Scope): Cons = scope.logicListFrom(unfoldedSequence).setTags(tags).castToCons()
 
     final override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCons(this)
 }

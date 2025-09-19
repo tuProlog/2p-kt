@@ -10,12 +10,14 @@ import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 
-class TuPrologSolveQuery : AbstractTuPrologCommand(
-    help = "Compute a particular query and then terminate",
-    name = "solve",
-) {
+class TuPrologSolveQuery :
+    AbstractTuPrologCommand(
+        help = "Compute a particular query and then terminate",
+        name = "solve",
+    ) {
     private val query: String by argument()
-    private val maxSolutions: Int by option("-n", "--numberOfSolutions", help = "Number of solution to calculate").int()
+    private val maxSolutions: Int by option("-n", "--numberOfSolutions", help = "Number of solution to calculate")
+        .int()
         .default(0)
 
     private val parentCommand: TuPrologCmd

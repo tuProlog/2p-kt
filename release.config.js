@@ -1,9 +1,6 @@
-var staging = "-PstagingRepositoryId=${process.env.STAGING_REPO_ID}"
-var version = "-PforceVersion=${process.env.ENFORCE_VERSION}"
-
 var publishCmd = `
-./gradlew ${version} ${staging} releaseStagingRepositoryOnMavenCentral || exit 3
-./gradlew ${version} ${staging} publishJsPackageToNpmjsRegistry || exit 4
+./gradlew publishAllPublicationsToProjectLocalRepository zipMavenCentralPortalPublication releaseMavenCentralPortalPublication || exit 3
+./gradlew publishJsPackageToNpmjsRegistry || true
 `
 
 var config = require('semantic-release-preconfigured-conventional-commits');
@@ -18,10 +15,7 @@ config.plugins.push(
         "@semantic-release/github",
         {
             "assets": [
-                { "path": "**/build/**/*redist*.jar" },
-                { "path": "**/build/**/*full*.jar" },
-                { "path": "**/build/**/*javadoc*.jar" },
-                { "path": "build/**/*javadoc*.zip" }
+                { "path": "**/build/**/*redist*.jar" }
             ]
         }
     ],

@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
 
 object Catch : RuleWrapper<ConcurrentExecutionContext>("catch", 3) {
     override val Scope.head: List<Term>
-        get() = ktListOf(varOf("G"), varOf("E"), varOf("C"))
+        get() = listOf(varOf("G"), varOf("E"), varOf("C"))
 
     override val Scope.body: Term
         get() = varOf("G")

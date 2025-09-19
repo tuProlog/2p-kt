@@ -42,19 +42,22 @@ internal object FunctionWrapperUtils {
 
     /** All under test requests */
     private val allRequests by lazy {
-        (WrapperUtils.allMatchingRawStruct + WrapperUtils.allNotMatchingStruct).flatten()
+        (WrapperUtils.allMatchingRawStruct + WrapperUtils.allNotMatchingStruct)
+            .flatten()
             .map { createFunctionRequest(it.extractSignature(), it.args) }
     }
 
     /** All ground requests */
     internal val allGroundRequests by lazy {
-        allRequests.filter { it.query.isGround }
+        allRequests
+            .filter { it.query.isGround }
             .also { assertTrue("Test data empty") { it.isNotEmpty() } }
     }
 
     /** All non-ground requests */
     internal val nonAllGroundRequests by lazy {
-        allRequests.filterNot { it.query.isGround }
+        allRequests
+            .filterNot { it.query.isGround }
             .also { assertTrue("Test data empty") { it.isNotEmpty() } }
     }
 }

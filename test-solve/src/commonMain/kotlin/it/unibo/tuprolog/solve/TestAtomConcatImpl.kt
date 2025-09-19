@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomConcat {
+class TestAtomConcatImpl(
+    private val solverFactory: SolverFactory,
+) : TestAtomConcat {
     override fun testAtomConcatThirdIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

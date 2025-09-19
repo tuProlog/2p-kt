@@ -4,7 +4,9 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.classic.SolutionIterator
 import it.unibo.tuprolog.solve.classic.fsm.State
 
-internal abstract class AbstractSolutionIterator(state: State) : SolutionIterator {
+internal abstract class AbstractSolutionIterator(
+    state: State,
+) : SolutionIterator {
     final override var state: State = state
         private set
 

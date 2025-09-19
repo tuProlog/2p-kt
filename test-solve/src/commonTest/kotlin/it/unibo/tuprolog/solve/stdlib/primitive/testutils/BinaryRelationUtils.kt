@@ -20,11 +20,17 @@ object BinaryRelationUtils {
     ) = when (expectedResult) {
         true ->
             assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-                termRelation.implementation.solve(input).single().solution is Solution.Yes
+                termRelation.implementation
+                    .solve(input)
+                    .single()
+                    .solution is Solution.Yes
             }
         false ->
             assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-                termRelation.implementation.solve(input).single().solution is Solution.No
+                termRelation.implementation
+                    .solve(input)
+                    .single()
+                    .solution is Solution.No
             }
         else ->
             @Suppress("UNCHECKED_CAST")

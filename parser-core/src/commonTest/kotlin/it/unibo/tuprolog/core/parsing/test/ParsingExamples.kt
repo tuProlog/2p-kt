@@ -12,12 +12,12 @@ object ParsingExamples {
             "f(X)" to logicProgramming { "f"("X") },
             "f(X, y)" to logicProgramming { "f"("X", "y") },
             "g(X, y, 3)" to logicProgramming { "g"("X", "y", 3) },
-            "[]" to logicProgramming { emptyList },
-            "[ ]" to logicProgramming { emptyList },
-            "[1]" to logicProgramming { listOf(1) },
+            "[]" to logicProgramming { emptyLogicList },
+            "[ ]" to logicProgramming { emptyLogicList },
+            "[1]" to logicProgramming { logicListOf(1) },
             "[1 | X]" to logicProgramming { consOf(1, "X") },
             "[1, a | X]" to logicProgramming { consOf(1, consOf("a", "X")) },
-            "[a, 2, X]" to logicProgramming { listOf("a", 2, "X") },
+            "[a, 2, X]" to logicProgramming { logicListOf("a", 2, "X") },
             "{}" to logicProgramming { emptyBlock },
             "{ }" to logicProgramming { emptyBlock },
             "{ 1 }" to logicProgramming { blockOf(1) },
@@ -124,7 +124,7 @@ object ParsingExamples {
                 },
             "a, c(D); B, e(_f, [g]) :- 1; '2', 3.1" to
                 logicProgramming {
-                    ("a" and "c"("D") or ("B" and "e"("_f", listOf("g")))) impliedBy
+                    ("a" and "c"("D") or ("B" and "e"("_f", logicListOf("g")))) impliedBy
                         (1 or ("2" and 3.1))
                 },
             "a, 3 -> 5; 5.3, 1 -> 6 :- a; b, c" to
@@ -134,7 +134,7 @@ object ParsingExamples {
                 },
             "first_step(X, [X])" to
                 logicProgramming {
-                    "first_step"("X", listOf("X"))
+                    "first_step"("X", logicListOf("X"))
                 },
             "sec_step(X,[_|L]) :- first_step(X,L)" to
                 logicProgramming {
@@ -143,7 +143,7 @@ object ParsingExamples {
                 },
             "last_but_one(X,[X,_])" to
                 logicProgramming {
-                    "last_but_one"("X", listOf("X", `_`))
+                    "last_but_one"("X", logicListOf("X", `_`))
                 },
             "last_but_one(X,[_,Y|Ys]) :- last_but_one(X,[Y|Ys])" to
                 logicProgramming {
@@ -157,7 +157,7 @@ object ParsingExamples {
                 },
             "my_length([],0)" to
                 logicProgramming {
-                    "my_length"(emptyList, 0)
+                    "my_length"(emptyLogicList, 0)
                 },
             "my_length([_|L],N) :- my_length(L,N1), N is N1 + 1" to
                 logicProgramming {
@@ -167,11 +167,11 @@ object ParsingExamples {
             "my_reverse(L1,L2) :- my_rev(L1,L2,[])" to
                 logicProgramming {
                     "my_reverse"("L1", "L2") impliedBy
-                        "my_rev"("L1", "L2", emptyList)
+                        "my_rev"("L1", "L2", emptyLogicList)
                 },
             "my_rev([],L2,L2) :- !" to
                 logicProgramming {
-                    "my_rev"(emptyList, "L2", "L2") impliedBy "!"
+                    "my_rev"(emptyLogicList, "L2", "L2") impliedBy "!"
                 },
             "my_rev([X|Xs],L2,Acc) :- my_rev(Xs,L2,[X|Acc])" to
                 logicProgramming {
@@ -185,12 +185,12 @@ object ParsingExamples {
                 },
             "my_flatten(X,[X]) :- \\+ is_list(X)" to
                 logicProgramming {
-                    "my_flatten"("X", listOf("X")) impliedBy
+                    "my_flatten"("X", logicListOf("X")) impliedBy
                         "\\+"("is_list"("X"))
                 },
             "my_flatten([],[])" to
                 logicProgramming {
-                    "my_flatten"(emptyList, emptyList)
+                    "my_flatten"(emptyLogicList, emptyLogicList)
                 },
             "my_flatten([X|Xs],Zs) :- my_flatten(X,Y), my_flatten(Xs,Ys), append(Y,Ys,Zs)" to
                 logicProgramming {
@@ -204,7 +204,7 @@ object ParsingExamples {
                 },
             "count(X,[],[],N,[N,X]) :- N > 1" to
                 logicProgramming {
-                    "count"("X", emptyList, emptyList, "N", consOf("N", "X")) impliedBy
+                    "count"("X", emptyLogicList, emptyLogicList, "N", consOf("N", "X")) impliedBy
                         ("N" greaterThan 1)
                 },
             "count(X,[Y|Ys],[Y|Ys],1,X) :- X \\= Y" to
@@ -230,7 +230,16 @@ object ParsingExamples {
             "in_map(X, Y) :- X >= 0, Y >= 0, map_size(XSize, YSize), X < XSize, Y < YSize" to
                 logicProgramming {
                     "in_map"("X", "Y") impliedBy
-                        (("X" greaterThanOrEqualsTo 0) and (("Y" greaterThanOrEqualsTo 0) and ("map_size"("XSize", "YSize") and (("X" lowerThan ("XSize")) and ("Y" lowerThan "YSize")))))
+                        (
+                            ("X" greaterThanOrEqualsTo 0) and
+                                (
+                                    ("Y" greaterThanOrEqualsTo 0) and
+                                        (
+                                            "map_size"("XSize", "YSize") and
+                                                (("X" lowerThan ("XSize")) and ("Y" lowerThan "YSize"))
+                                        )
+                                )
+                        )
                 },
             "tile(wall, X, Y) :- \\+ in_map(X, Y)" to
                 logicProgramming {
@@ -240,7 +249,13 @@ object ParsingExamples {
             "draw_char(X, Y) :- tty_size(_, XSize), X >= XSize, NY is Y + 1, draw_char(0, NY)" to
                 logicProgramming {
                     "draw_char"("X", "Y") impliedBy
-                        ("tty_size"(`_`, "XSize") and (("X" greaterThanOrEqualsTo "XSize") and (("NY" `is` ("Y".toTerm() + 1)) and ("draw_char"(0, "NY")))))
+                        (
+                            "tty_size"(`_`, "XSize") and
+                                (
+                                    ("X" greaterThanOrEqualsTo "XSize") and
+                                        (("NY" `is` ("Y".toTerm() + 1)) and ("draw_char"(0, "NY")))
+                                )
+                        )
                 },
             "Y < YMsgs -> write(' ') ; display_offset(XOff, YOff), XMap is X + XOff, YMap is Y + YOff, get_character(XMap, YMap, C), format('~s', [C])" to
                 logicProgramming {
@@ -249,7 +264,14 @@ object ParsingExamples {
                             "display_offset"("XOff", "YOff") and (
                                 ("XMap" `is` ("X".toTerm() + "XOff")) and (
                                     ("YMap" `is` ("Y".toTerm() + "YOff")) and
-                                        ("get_character"("XMap", "YMap", "C") and ("format"("~s", listOf("C"))))
+                                        (
+                                            "get_character"("XMap", "YMap", "C") and (
+                                                "format"(
+                                                    "~s",
+                                                    logicListOf("C"),
+                                                )
+                                            )
+                                        )
                                 )
                             )
                         )
@@ -259,9 +281,10 @@ object ParsingExamples {
                     "display_offset"("X", "Y") impliedBy
                         (
                             "player"("XPos", "YPos") and (
-                                "tty_size"("YSize", "XSize")and (
+                                "tty_size"("YSize", "XSize") and (
                                     "message_lines"("YMsgs") and (
-                                        ("X" `is` ("XPos" - "floor"("XSize" / 2))) and (("Y" `is` ("YPos" - "floor"(("YSize" - "YMsgs") / 2))))
+                                        ("X" `is` ("XPos" - "floor"("XSize" / 2))) and
+                                            (("Y" `is` ("YPos" - "floor"(("YSize" - "YMsgs") / 2))))
                                     )
                                 )
                             )
@@ -269,5 +292,6 @@ object ParsingExamples {
                 },
         )
 
+    @Suppress("unused")
     val all = canonicalTerms + expressions
 }

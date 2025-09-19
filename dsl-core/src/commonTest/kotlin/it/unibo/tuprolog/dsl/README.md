@@ -1,0 +1,13 @@
+The following files have been moved to `test-dsl` module to avoid issue [KT-51110](https://youtrack.jetbrains.com/issue/KT-51110/):
+- `TestLogicProgrammingScopeWithSubstitutions.kt`
+- `TestLogicProgrammingScopeWithOperatorsIntString.kt`
+- `TestLogicProgrammingScopeWithPrologStandardLibrary.kt`
+- `TestLogicProgrammingScopeWithVariables.kt`
+- `TestMinimalLogicProgrammingScope.kt`
+- `AbstractTestLogicProgrammingScopeWithOperators.kt`
+- `TestDefaultTermifier.kt`
+- `TestLogicProgrammingScopeWithOperatorsCharString.kt`
+- `TestNovelTermifier.kt`
+- `TestLogicProgrammingScopeWithOperatorsAtomString.kt`
+- `TestLogicProgrammingScopeWithOperatorsBooleanString.kt`
+- `TestLogicProgrammingScopeWithOperatorsDoubleString.kt`

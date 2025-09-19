@@ -17,15 +17,14 @@ import kotlin.jvm.JvmName
  * Decision Diagram (ROBDD).
  * */
 @JsName("applyUnary")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(unaryOp: (Boolean) -> Boolean): BinaryDecisionDiagram<T> {
-    return runOperationAndCatchErrors {
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(unaryOp: (Boolean) -> Boolean): BinaryDecisionDiagram<T> =
+    runOperationAndCatchErrors {
         this.applyThenExpansion(
             unaryOp,
             0,
             0,
         ) { _, _, _ -> 0 }
     }.first
-}
 
 /**
  * Applies the "Apply" construction algorithm over two [BinaryDecisionDiagram]s
@@ -36,8 +35,8 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(unaryOp: (Boolean) -> Boo
 fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
     that: BinaryDecisionDiagram<T>,
     binaryOp: (Boolean, Boolean) -> Boolean,
-): BinaryDecisionDiagram<T> {
-    return runOperationAndCatchErrors {
+): BinaryDecisionDiagram<T> =
+    runOperationAndCatchErrors {
         this.applyThenExpansion(
             that,
             binaryOp,
@@ -45,7 +44,6 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
             0,
         ) { _, _, _ -> 0 }
     }.first
-}
 
 /**
  * Applies the "Apply" construction algorithm over [BinaryDecisionDiagram]s
@@ -64,8 +62,8 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.applyThenExpansion(
     expansionFalseTerminal: E,
     expansionTrueTerminal: E,
     expansionOperator: (node: T, low: E, high: E) -> E,
-): Pair<BinaryDecisionDiagram<T>, E> {
-    return runOperationAndCatchErrors {
+): Pair<BinaryDecisionDiagram<T>, E> =
+    runOperationAndCatchErrors {
         this.accept(
             UnaryApplyExpansionVisitor(
                 BinaryDecisionDiagramBuilder.reducedOf(),
@@ -76,7 +74,6 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.applyThenExpansion(
             ),
         )
     }
-}
 
 /**
  * Applies the "Apply" construction algorithm over two [BinaryDecisionDiagram]s
@@ -96,8 +93,8 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.applyThenExpansion(
     expansionFalseTerminal: E,
     expansionTrueTerminal: E,
     expansionOperator: (node: T, low: E, high: E) -> E,
-): Pair<BinaryDecisionDiagram<T>, E> {
-    return runOperationAndCatchErrors {
+): Pair<BinaryDecisionDiagram<T>, E> =
+    runOperationAndCatchErrors {
         this.accept(
             BinaryApplyExpansionVisitor(
                 BinaryDecisionDiagramBuilder.reducedOf(),
@@ -109,18 +106,16 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.applyThenExpansion(
             ),
         )
     }
-}
 
 /**
  * Performs the "Not" unary boolean operation over a [BinaryDecisionDiagram].
  * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
  */
 @JsName("not")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.not(): BinaryDecisionDiagram<T> {
-    return runOperationAndCatchErrors {
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.not(): BinaryDecisionDiagram<T> =
+    runOperationAndCatchErrors {
         this.apply { a -> !a }
     }
-}
 
 /**
  * Performs the "Not" unary boolean operation over a [BinaryDecisionDiagram]
@@ -138,8 +133,8 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.notThenExpansion(
     expansionFalseTerminal: E,
     expansionTrueTerminal: E,
     expansionOperator: (node: T, low: E, high: E) -> E,
-): Pair<BinaryDecisionDiagram<T>, E> {
-    return runOperationAndCatchErrors {
+): Pair<BinaryDecisionDiagram<T>, E> =
+    runOperationAndCatchErrors {
         this.applyThenExpansion(
             { a -> !a },
             expansionFalseTerminal,
@@ -147,7 +142,6 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.notThenExpansion(
             expansionOperator,
         )
     }
-}
 
 /**
  * Performs the "And" unary boolean operation over two
@@ -155,11 +149,10 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.notThenExpansion(
  * Decision Diagram (ROBDD).
  */
 @JsName("and")
-infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.and(that: BinaryDecisionDiagram<T>): BinaryDecisionDiagram<T> {
-    return runOperationAndCatchErrors {
+infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.and(that: BinaryDecisionDiagram<T>): BinaryDecisionDiagram<T> =
+    runOperationAndCatchErrors {
         this.apply(that) { a, b -> a && b }
     }
-}
 
 /**
  * Performs the "And" unary boolean operation over two [BinaryDecisionDiagram]s
@@ -178,8 +171,8 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.andThenExpansion(
     expansionFalseTerminal: E,
     expansionTrueTerminal: E,
     expansionOperator: (node: T, low: E, high: E) -> E,
-): Pair<BinaryDecisionDiagram<T>, E> {
-    return runOperationAndCatchErrors {
+): Pair<BinaryDecisionDiagram<T>, E> =
+    runOperationAndCatchErrors {
         this.applyThenExpansion(
             that,
             { a, b -> a && b },
@@ -188,18 +181,16 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.andThenExpansion(
             expansionOperator,
         )
     }
-}
 
 /**
  * Performs the "Or" unary boolean operation over two [BinaryDecisionDiagram]s.
  * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
  */
 @JsName("or")
-infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.or(that: BinaryDecisionDiagram<T>): BinaryDecisionDiagram<T> {
-    return runOperationAndCatchErrors {
+infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.or(that: BinaryDecisionDiagram<T>): BinaryDecisionDiagram<T> =
+    runOperationAndCatchErrors {
         this.apply(that) { a, b -> a || b }
     }
-}
 
 /**
  * Performs the "Or" unary boolean operation over two [BinaryDecisionDiagram]s
@@ -218,8 +209,8 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.orThenExpansion(
     expansionFalseTerminal: E,
     expansionTrueTerminal: E,
     expansionOperator: (node: T, low: E, high: E) -> E,
-): Pair<BinaryDecisionDiagram<T>, E> {
-    return runOperationAndCatchErrors {
+): Pair<BinaryDecisionDiagram<T>, E> =
+    runOperationAndCatchErrors {
         this.applyThenExpansion(
             that,
             { a, b -> a || b },
@@ -228,4 +219,3 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.orThenExpansion(
             expansionOperator,
         )
     }
-}

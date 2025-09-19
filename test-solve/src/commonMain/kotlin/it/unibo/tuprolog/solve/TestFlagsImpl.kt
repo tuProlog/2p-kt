@@ -16,7 +16,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
+class TestFlagsImpl(
+    private val solverFactory: SolverFactory,
+) : TestFlags {
     override fun defaultLastCallOptimizationIsOn() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -26,7 +28,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
             val query = current_flag(LastCallOptimization.name, LastCallOptimization.ON)
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solver.solve(query, shortDuration).toList(),
             )
         }
@@ -41,7 +43,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
             val query = current_flag(Unknown.name, Unknown.WARNING)
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solver.solve(query, shortDuration).toList(),
             )
         }
@@ -55,7 +57,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
                 val query = set_flag(Unknown.name, value) and current_flag(Unknown.name, V)
 
                 assertSolutionEquals(
-                    ktListOf(query.yes(V to value)),
+                    listOf(query.yes(V to value)),
                     solver.solve(query, shortDuration).toList(),
                 )
             }
@@ -74,7 +76,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
                 assertTrue { sol.substitution[F] is Atom }
             }
 
-            for (term in ktListOf(5, "f"("x"), 2.3).map { it.toTerm() }) {
+            for (term in listOf(5, "f"("x"), 2.3).map { it.toTerm() }) {
                 var query = current_flag(term, `_`)
                 assertSolutionEquals(
                     query.halt(
@@ -108,7 +110,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
     override fun gettingMissingFlagsFails() {
         logicProgramming {
-            for (flag in ktListOf("a", "b", "c")) {
+            for (flag in listOf("a", "b", "c")) {
                 val solver = solverFactory.solverWithDefaultBuiltins()
 
                 assertFalse { solver.flags.containsKey(flag) }
@@ -125,7 +127,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
 
     override fun settingMissingFlagsSucceeds() {
         logicProgramming {
-            for ((value, flag) in ktListOf("a", "b", "c").asSequence().indexed()) {
+            for ((value, flag) in listOf("a", "b", "c").asSequence().indexed()) {
                 val solver = solverFactory.solverWithDefaultBuiltins()
 
                 assertFalse { solver.flags.containsKey(flag) }
@@ -152,7 +154,8 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
             val query = current_flag(F, X)
 
             val selectedFlags =
-                solver.solve(query, shortDuration)
+                solver
+                    .solve(query, shortDuration)
                     .filterIsInstance<Solution.Yes>()
                     .map { it.substitution[F]!! to it.substitution[X]!! }
                     .toMap()
@@ -168,7 +171,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
             val query = set_flag(F, "value")
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -192,7 +195,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
             assertFalse { LastCallOptimization.admissibleValues.contains(truthOf(true)) }
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         DomainError.forFlagValues(
                             DummyInstances.executionContext,
@@ -215,7 +218,7 @@ class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
             val query = set_flag(MaxArity.name, 10)
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         PermissionError.of(
                             DummyInstances.executionContext,

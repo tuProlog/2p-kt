@@ -15,13 +15,18 @@ internal class TopLevelFunctorReteNode(
     unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int,
-) : FunctorNode(unificator), FunctorRete {
+) : FunctorNode(unificator),
+    FunctorRete {
     private val arities: MutableMap<Int, TopLevelReteNode> = mutableMapOf()
 
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
     override val size: Int
-        get() = arities.values.asSequence().map { it.size }.sum()
+        get() =
+            arities.values
+                .asSequence()
+                .map { it.size }
+                .sum()
 
     override val isEmpty: Boolean
         get() = arities.isEmpty() || arities.values.all { it.isEmpty }
@@ -52,18 +57,20 @@ internal class TopLevelFunctorReteNode(
         clause: IndexedClause,
         op: ReteNode.(IndexedClause) -> Unit,
     ) {
-        clause.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel).let {
-            when (it) {
-                0 ->
-                    arities.getOrPut(it) {
-                        ZeroArityReteNode(unificator, ordered)
-                    }
-                else ->
-                    arities.getOrPut(it) {
-                        FamilyArityReteNode(unificator, ordered, nestingLevel)
-                    }
-            }
-        }.op(clause)
+        clause.innerClause.head!!
+            .arityOfNestedFirstArgument(nestingLevel)
+            .let {
+                when (it) {
+                    0 ->
+                        arities.getOrPut(it) {
+                            ZeroArityReteNode(unificator, ordered)
+                        }
+                    else ->
+                        arities.getOrPut(it) {
+                            FamilyArityReteNode(unificator, ordered, nestingLevel)
+                        }
+                }
+            }.op(clause)
     }
 
     override fun invalidateCache() {

@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  * fluent_reduce(R, R) :- !.                                                               % trivial
  * ```
  */
-@Suppress("PropertyName", "PrivatePropertyName")
+@Suppress("PropertyName")
 sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
     companion object {
         const val FUNCTOR = "fluent_reduce"
@@ -35,7 +35,7 @@ sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         override val Scope.head: List<Term>
             get() =
                 kotlin.collections.listOf(
-                    listFrom(P, M, last = X),
+                    logicListFrom(P, M, last = X),
                     R,
                 )
 

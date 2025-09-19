@@ -7,9 +7,14 @@ import kotlin.jvm.JvmName
 fun <T> merge(
     comparator: Comparator<T>,
     iterables: Iterable<Iterable<T>>,
-): Sequence<T> {
-    return sequence {
-        val pipeline = iterables.asSequence().map { it.cursor() }.filterNot { it.isOver }.toMutableList()
+): Sequence<T> =
+    sequence {
+        val pipeline =
+            iterables
+                .asSequence()
+                .map { it.cursor() }
+                .filterNot { it.isOver }
+                .toMutableList()
         while (pipeline.isNotEmpty()) {
             val (minIndex, minValue) =
                 pipeline.asSequence().map { it.current!! }.indexed().minWithOrNull(
@@ -25,84 +30,61 @@ fun <T> merge(
             }
         }
     }
-}
 
 fun <T> merge(
     iterables: Iterable<Iterable<T>>,
     comparator: (T, T) -> Int,
-): Sequence<T> {
-    return merge(Comparator(comparator), iterables)
-}
+): Sequence<T> = merge(Comparator(comparator), iterables)
 
 fun <T> merge(
     vararg iterables: Iterable<T>,
     comparator: (T, T) -> Int,
-): Sequence<T> {
-    return merge(Comparator(comparator), *iterables)
-}
+): Sequence<T> = merge(Comparator(comparator), *iterables)
 
 fun <T> merge(
     comparator: Comparator<T>,
     vararg iterables: Iterable<T>,
-): Sequence<T> {
-    return merge(comparator, listOf(*iterables))
-}
+): Sequence<T> = merge(comparator, listOf(*iterables))
 
 fun <T> merge(
     iterables: Sequence<Iterable<T>>,
     comparator: (T, T) -> Int,
-): Sequence<T> {
-    return merge(Comparator(comparator), iterables)
-}
+): Sequence<T> = merge(Comparator(comparator), iterables)
 
 fun <T> merge(
     comparator: Comparator<T>,
     iterables: Sequence<Iterable<T>>,
-): Sequence<T> {
-    return merge(comparator, iterables.asIterable())
-}
+): Sequence<T> = merge(comparator, iterables.asIterable())
 
 fun <T> mergeSequences(
     iterables: Iterable<Sequence<T>>,
     comparator: (T, T) -> Int,
-): Sequence<T> {
-    return merge(Comparator(comparator), iterables.map { it.asIterable() })
-}
+): Sequence<T> = merge(Comparator(comparator), iterables.map { it.asIterable() })
 
 fun <T> mergeSequences(
     comparator: Comparator<T>,
     iterables: Iterable<Sequence<T>>,
-): Sequence<T> {
-    return merge(comparator, iterables.map { it.asIterable() })
-}
+): Sequence<T> = merge(comparator, iterables.map { it.asIterable() })
 
 fun <T> mergeSequences(
     iterables: Sequence<Sequence<T>>,
     comparator: (T, T) -> Int,
-): Sequence<T> {
-    return merge(Comparator(comparator), iterables.map { it.asIterable() }.asIterable())
-}
+): Sequence<T> = merge(Comparator(comparator), iterables.map { it.asIterable() }.asIterable())
 
 fun <T> mergeSequences(
     comparator: Comparator<T>,
     iterables: Sequence<Sequence<T>>,
-): Sequence<T> {
-    return merge(comparator, iterables.map { it.asIterable() }.asIterable())
-}
+): Sequence<T> = merge(comparator, iterables.map { it.asIterable() }.asIterable())
 
 fun <T> mergeSequences(
     vararg iterables: Sequence<T>,
     comparator: (T, T) -> Int,
-): Sequence<T> {
-    return merge(Comparator(comparator), iterables.map { it.asIterable() })
-}
+): Sequence<T> = merge(Comparator(comparator), iterables.map { it.asIterable() })
 
 fun <T> mergeSequences(
     comparator: Comparator<T>,
     vararg iterables: Sequence<T>,
-): Sequence<T> {
-    return merge(comparator, iterables.map { it.asIterable() })
-}
+): Sequence<T> = merge(comparator, iterables.map { it.asIterable() })
 
 fun <T, U, R> Sequence<T>.product(
     other: Sequence<U>,
@@ -131,7 +113,8 @@ fun <T> Sequence<T>.indexed(): Sequence<IntIndexed<T>> =
 fun <T> interleave(iterables: Iterable<Iterable<T>>): Sequence<T> =
     sequence {
         val pipeline =
-            iterables.asSequence()
+            iterables
+                .asSequence()
                 .map { it.iterator() }
                 .filter { it.hasNext() }
                 .toList()
@@ -156,9 +139,10 @@ fun <T> interleaveSequences(vararg iterables: Sequence<T>): Sequence<T> =
 
 fun <T> interleaveSequences(iterables: Sequence<Sequence<T>>): Sequence<T> =
     interleave(
-        iterables.map {
-            it.asIterable()
-        }.asIterable(),
+        iterables
+            .map {
+                it.asIterable()
+            }.asIterable(),
     )
 
 fun <T> interleaveSequences(iterables: Iterable<Sequence<T>>): Sequence<T> =
@@ -168,8 +152,8 @@ fun <T> interleaveSequences(iterables: Iterable<Sequence<T>>): Sequence<T> =
         },
     )
 
-fun <T> Sequence<T>.subsequences(): Sequence<Sequence<T>> {
-    return sequence {
+fun <T> Sequence<T>.subsequences(): Sequence<Sequence<T>> =
+    sequence {
         var maxSize = 1
         var actualSize = 0
         while (true) {
@@ -182,7 +166,6 @@ fun <T> Sequence<T>.subsequences(): Sequence<Sequence<T>> {
             actualSize = sublist.size
         }
     }
-}
 
 fun <T> itemWiseEquals(
     iterable1: Iterable<T>,
@@ -213,20 +196,14 @@ fun <T> itemWiseEquals(
     sequence1: Sequence<T>,
     sequence2: Sequence<T>,
     comparator: (T, T) -> Boolean,
-): Boolean {
-    return itemWiseEquals(sequence1.asIterable(), sequence2.asIterable(), comparator)
-}
+): Boolean = itemWiseEquals(sequence1.asIterable(), sequence2.asIterable(), comparator)
 
 fun <T> itemWiseEquals(
     sequence1: Sequence<T>,
     sequence2: Sequence<T>,
-): Boolean {
-    return itemWiseEquals(sequence1.asIterable(), sequence2.asIterable())
-}
+): Boolean = itemWiseEquals(sequence1.asIterable(), sequence2.asIterable())
 
-fun <T> itemWiseHashCode(vararg items: T): Int {
-    return itemWiseHashCode(items.asIterable())
-}
+fun <T> itemWiseHashCode(vararg items: T): Int = itemWiseHashCode(items.asIterable())
 
 fun <T> itemWiseHashCode(iterable: Iterable<T>): Int {
     var hash = 13
@@ -237,25 +214,15 @@ fun <T> itemWiseHashCode(iterable: Iterable<T>): Int {
     return hash
 }
 
-fun <T> itemWiseHashCode(sequence: Sequence<T>): Int {
-    return itemWiseHashCode(sequence.asIterable())
-}
+fun <T> itemWiseHashCode(sequence: Sequence<T>): Int = itemWiseHashCode(sequence.asIterable())
 
-fun <T> Iterable<T>.subsequences(): Sequence<Sequence<T>> {
-    return asSequence().subsequences()
-}
+fun <T> Iterable<T>.subsequences(): Sequence<Sequence<T>> = asSequence().subsequences()
 
-fun <T> subsequences(vararg items: T): Sequence<Sequence<T>> {
-    return sequenceOf(*items).subsequences()
-}
+fun <T> subsequences(vararg items: T): Sequence<Sequence<T>> = sequenceOf(*items).subsequences()
 
-fun <T> Sequence<T>.buffered(): Sequence<T> {
-    return this.toList().asSequence()
-}
+fun <T> Sequence<T>.buffered(): Sequence<T> = this.toList().asSequence()
 
-fun <T> Sequence<T>.cached(): Sequence<T> {
-    return this.cursor().asSequence()
-}
+fun <T> Sequence<T>.cached(): Sequence<T> = this.cursor().asSequence()
 
 fun <T> Sequence<T>.skipIndex(index: Int): Sequence<T> {
     require(index >= 0)
@@ -285,7 +252,8 @@ fun <T> List<T>.permutations(): Sequence<List<T>> =
         2 -> sequenceOf(this, asReversed())
         else -> {
             asSequence().indexed().flatMap { (i, head) ->
-                this@permutations.asSequence()
+                this@permutations
+                    .asSequence()
                     .skipIndex(i)
                     .toList()
                     .permutations()
@@ -319,3 +287,33 @@ fun <T> Sequence<T>.dropLast(): Sequence<T> =
             }
         }
     }
+
+fun <T> Array<T?>.assertItemsAreNotNull(): Array<T> {
+    for ((index, value) in this.withIndex()) {
+        if (value == null) {
+            throw IllegalArgumentException("Item at index $index is null")
+        }
+    }
+    @Suppress("UNCHECKED_CAST")
+    return this as Array<T>
+}
+
+fun <T> List<T?>.assertItemsAreNotNull(): List<T> {
+    for ((index, value) in this.withIndex()) {
+        if (value == null) {
+            throw IllegalArgumentException("Item at index $index is null")
+        }
+    }
+    @Suppress("UNCHECKED_CAST")
+    return this as List<T>
+}
+
+fun <T> Sequence<T?>.assertItemsAreNotNull(): Sequence<T> =
+    indexed().map {
+        when (val value = it.value) {
+            null -> throw IllegalArgumentException("Item at index ${it.index} is null")
+            else -> value
+        }
+    }
+
+fun <T> Iterable<T?>.assertItemsAreNotNull(): Iterable<T> = asSequence().assertItemsAreNotNull().asIterable()

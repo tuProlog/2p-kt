@@ -5,8 +5,13 @@ import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.solve.exception.error.SyntaxError
 import java.io.File
 
-internal sealed class SyntaxException(override val cause: ParseException) : TuPrologException(cause = cause) {
-    class InTheorySyntaxError(val file: File, cause: ParseException) : SyntaxException(cause) {
+internal sealed class SyntaxException(
+    override val cause: ParseException,
+) : TuPrologException(cause = cause) {
+    class InTheorySyntaxError(
+        val file: File,
+        cause: ParseException,
+    ) : SyntaxException(cause) {
         override val message: String
             get() {
                 val errorDetector =
@@ -24,7 +29,10 @@ internal sealed class SyntaxException(override val cause: ParseException) : TuPr
             }
     }
 
-    class InQuerySyntaxError(val query: String, cause: ParseException) : SyntaxException(cause) {
+    class InQuerySyntaxError(
+        val query: String,
+        cause: ParseException,
+    ) : SyntaxException(cause) {
         override val message: String
             get() {
                 if (query.isEmpty()) {

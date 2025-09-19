@@ -16,7 +16,9 @@ import javafx.scene.paint.Paint
 import javafx.scene.shape.Circle
 import java.io.IOException
 
-sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
+sealed class SolutionView<T, S : Solution>(
+    protected val solution: S,
+) : VBox() {
     companion object {
         private const val FXML = "SolutionView.fxml"
 
@@ -58,7 +60,9 @@ sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
     @FXML
     lateinit var query: Label
 
-    class YesView(solution: Solution.Yes) : SolutionView<Pair<Var, Term>, Solution.Yes>(solution) {
+    class YesView(
+        solution: Solution.Yes,
+    ) : SolutionView<Pair<Var, Term>, Solution.Yes>(solution) {
         init {
             status.text = "yes:"
             led.fill = COLOR_YES
@@ -71,7 +75,9 @@ sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
         }
     }
 
-    class NoView(solution: Solution.No) : SolutionView<String, Solution.No>(solution) {
+    class NoView(
+        solution: Solution.No,
+    ) : SolutionView<String, Solution.No>(solution) {
         init {
             led.fill = COLOR_NO
             status.text = "no."
@@ -79,7 +85,9 @@ sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
         }
     }
 
-    class HaltView(solution: Solution.Halt) : SolutionView<String, Solution.Halt>(solution) {
+    class HaltView(
+        solution: Solution.Halt,
+    ) : SolutionView<String, Solution.Halt>(solution) {
         init {
             if (solution.exception is TimeOutException) {
                 led.fill = COLOR_TIMEOUT

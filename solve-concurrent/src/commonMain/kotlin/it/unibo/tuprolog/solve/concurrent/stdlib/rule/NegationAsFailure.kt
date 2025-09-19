@@ -9,10 +9,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 
 sealed class NegationAsFailure : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
     override val Scope.head: List<Term>
-        get() =
-            ktListOf(
-                varOf("X"),
-            )
+        get() = listOf(varOf("X"))
 
     abstract override val Scope.body: Term
 

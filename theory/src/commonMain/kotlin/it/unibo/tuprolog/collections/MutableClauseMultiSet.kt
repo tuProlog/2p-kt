@@ -71,17 +71,14 @@ interface MutableClauseMultiSet : ClauseMultiSet {
         fun equals(
             multiSet1: MutableClauseMultiSet,
             multiSet2: MutableClauseMultiSet,
-        ): Boolean {
-            return ClauseMultiSet.equals(multiSet1, multiSet2)
-        }
+        ): Boolean = ClauseMultiSet.equals(multiSet1, multiSet2)
 
         @JvmStatic
         @JsName("computeHashCode")
-        fun hashCode(multiSet: MutableClauseMultiSet): Int {
-            return itemWiseHashCode(
+        fun hashCode(multiSet: MutableClauseMultiSet): Int =
+            itemWiseHashCode(
                 MutableClauseMultiSet::class,
                 multiSet.sortedWith(TermComparator.DefaultComparator),
             )
-        }
     }
 }

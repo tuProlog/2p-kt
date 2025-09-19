@@ -10,11 +10,13 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentAtomChars<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun atomCharsTestFirstIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
-            val query = atom_chars("X", listOf("t", "e", "s", "t"))
+            val query = atom_chars("X", logicListOf("t", "e", "s", "t"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("X" to "test"))
 
@@ -25,7 +27,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     fun atomCharsTestYes() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
-            val query = atom_chars("test", listOf("t", "e", "s", "t"))
+            val query = atom_chars("test", logicListOf("t", "e", "s", "t"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 
@@ -36,7 +38,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     fun atomCharsTestOneCharIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
-            val query = atom_chars("test", listOf("t", "e", "s", "T"))
+            val query = atom_chars("test", logicListOf("t", "e", "s", "T"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes(("T" to "t")))
 
@@ -47,7 +49,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     fun atomCharsTestFailure() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
-            val query = atom_chars("test1", listOf("t", "e", "s", "T"))
+            val query = atom_chars("test1", logicListOf("t", "e", "s", "T"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.no())
 
@@ -60,7 +62,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
             val solver = solverWithDefaultBuiltins()
             val query = atom_chars("", "L")
             val solutions = fromSequence(solver.solve(query, mediumDuration))
-            val expected = fromSequence(query.yes("L" to emptyList))
+            val expected = fromSequence(query.yes("L" to emptyLogicList))
 
             expected.assertingEquals(solutions)
         }
@@ -69,7 +71,7 @@ interface TestConcurrentAtomChars<T : WithAssertingEquals> : FromSequence<T>, So
     fun atomCharsTestListHead() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
-            val query = atom_chars("ac", listOf("a", "C"))
+            val query = atom_chars("ac", logicListOf("a", "C"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes("C" to "c"))
 

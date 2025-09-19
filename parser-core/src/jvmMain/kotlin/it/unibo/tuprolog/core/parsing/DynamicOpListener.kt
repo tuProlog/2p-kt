@@ -61,15 +61,11 @@ class DynamicOpListener private constructor(
     }
 
     companion object {
-        fun of(parser: PrologParser): DynamicOpListener {
-            return DynamicOpListener(parser) { }
-        }
+        fun of(parser: PrologParser): DynamicOpListener = DynamicOpListener(parser) { }
 
         fun of(
             parser: PrologParser,
             operatorDefinedCallback: PrologParser?.(Operator) -> Unit,
-        ): DynamicOpListener {
-            return DynamicOpListener(parser, operatorDefinedCallback)
-        }
+        ): DynamicOpListener = DynamicOpListener(parser, operatorDefinedCallback)
     }
 }

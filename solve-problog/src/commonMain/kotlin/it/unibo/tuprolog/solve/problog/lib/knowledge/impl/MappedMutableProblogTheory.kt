@@ -31,7 +31,8 @@ internal class MappedMutableProblogTheory(
                 ClauseMappingUtils.map(it)
             } ?: emptyList(),
         ),
-) : MutableTheory by theory, MutableProblogTheory {
+) : MutableTheory by theory,
+    MutableProblogTheory {
     override val isMutable: Boolean
         get() = false
 
@@ -39,16 +40,14 @@ internal class MappedMutableProblogTheory(
 
     override fun toImmutableTheory(): ProblogTheory = this
 
-    override fun plus(theory: ProblogTheory): MutableProblogTheory {
-        return MappedMutableProblogTheory(null, unificator, this.theory.plus(theory))
-    }
+    override fun plus(theory: ProblogTheory): MutableProblogTheory =
+        MappedMutableProblogTheory(null, unificator, this.theory.plus(theory))
 
-    override fun plus(theory: Theory): MutableProblogTheory {
-        return when (theory) {
+    override fun plus(theory: Theory): MutableProblogTheory =
+        when (theory) {
             is ProblogTheory -> plus(theory)
             else -> plus(MappedMutableProblogTheory(theory, unificator))
         }
-    }
 
     override fun plus(clause: Clause): MutableProblogTheory {
         val mapped = ClauseMappingUtils.map(clause)
@@ -103,39 +102,26 @@ internal class MappedMutableProblogTheory(
         }
     }
 
-    override fun abolish(indicator: Indicator): MutableProblogTheory {
-        return MappedMutableProblogTheory(null, unificator, this.theory.abolish(ClauseMappingUtils.map(indicator)))
-    }
+    override fun abolish(indicator: Indicator): MutableProblogTheory =
+        MappedMutableProblogTheory(null, unificator, this.theory.abolish(ClauseMappingUtils.map(indicator)))
 
     override fun assertA(struct: Struct): MutableProblogTheory = assertA(Fact.of(struct))
 
     override fun assertZ(struct: Struct): MutableProblogTheory = assertZ(Fact.of(struct))
 
-    override fun assertA(clause: Clause): MutableProblogTheory {
-        return assertA(listOf(clause))
-    }
+    override fun assertA(clause: Clause): MutableProblogTheory = assertA(listOf(clause))
 
-    override fun assertA(clauses: Sequence<Clause>): MutableProblogTheory {
-        return assertA(clauses.asIterable())
-    }
+    override fun assertA(clauses: Sequence<Clause>): MutableProblogTheory = assertA(clauses.asIterable())
 
-    override fun assertZ(clause: Clause): MutableProblogTheory {
-        return assertZ(listOf(clause))
-    }
+    override fun assertZ(clause: Clause): MutableProblogTheory = assertZ(listOf(clause))
 
-    override fun assertZ(clauses: Sequence<Clause>): MutableProblogTheory {
-        return assertZ(clauses.asIterable())
-    }
+    override fun assertZ(clauses: Sequence<Clause>): MutableProblogTheory = assertZ(clauses.asIterable())
 
     override fun retract(head: Struct): RetractResult<MutableProblogTheory> = retract(Rule.of(head, Var.anonymous()))
 
-    override fun retract(clause: Clause): RetractResult<MutableProblogTheory> {
-        return retract(listOf(clause))
-    }
+    override fun retract(clause: Clause): RetractResult<MutableProblogTheory> = retract(listOf(clause))
 
-    override fun retract(clauses: Sequence<Clause>): RetractResult<MutableProblogTheory> {
-        return retract(clauses.asIterable())
-    }
+    override fun retract(clauses: Sequence<Clause>): RetractResult<MutableProblogTheory> = retract(clauses.asIterable())
 
     override fun retractAll(head: Struct): RetractResult<MutableProblogTheory> =
         retractAll(

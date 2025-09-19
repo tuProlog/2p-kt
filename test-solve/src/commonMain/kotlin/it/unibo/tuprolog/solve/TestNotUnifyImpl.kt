@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : TestNotUnify {
+internal class TestNotUnifyImpl(
+    private val solverFactory: SolverFactory,
+) : TestNotUnify {
     override fun testNumberNotUnify() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -11,7 +13,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -25,7 +27,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -39,7 +41,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -53,7 +55,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -67,7 +69,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -81,7 +83,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -95,7 +97,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -109,7 +111,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -123,7 +125,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -137,7 +139,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }

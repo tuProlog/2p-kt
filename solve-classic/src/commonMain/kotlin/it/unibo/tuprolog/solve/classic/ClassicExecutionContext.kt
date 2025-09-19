@@ -94,7 +94,8 @@ data class ClassicExecutionContext(
     fun isVariableInteresting(variable: Var) = variable in interestingVariables
 
     override val logicStackTrace: KtList<Struct> by lazy {
-        pathToRoot.filter { it.isActivationRecord }
+        pathToRoot
+            .filter { it.isActivationRecord }
             .map { it.procedure ?: Struct.of("?-", query) }
             .toList()
     }
@@ -149,8 +150,8 @@ data class ClassicExecutionContext(
         inputChannels: InputStore,
         outputChannels: OutputStore,
         customData: CustomDataStore,
-    ): ClassicExecutionContext {
-        return copy(
+    ): ClassicExecutionContext =
+        copy(
             unificator = unificator,
             libraries = libraries,
             flags = flags,
@@ -161,22 +162,18 @@ data class ClassicExecutionContext(
             outputChannels = outputChannels,
             customData = customData,
         )
-    }
 
-    override fun apply(sideEffect: SideEffect): ClassicExecutionContext {
-        return super.apply(sideEffect) as ClassicExecutionContext
-    }
+    override fun apply(sideEffect: SideEffect): ClassicExecutionContext =
+        super.apply(sideEffect) as ClassicExecutionContext
 
-    override fun apply(sideEffects: Iterable<SideEffect>): ClassicExecutionContext {
-        return super.apply(sideEffects) as ClassicExecutionContext
-    }
+    override fun apply(sideEffects: Iterable<SideEffect>): ClassicExecutionContext =
+        super.apply(sideEffects) as ClassicExecutionContext
 
-    override fun apply(sideEffects: Sequence<SideEffect>): ClassicExecutionContext {
-        return super.apply(sideEffects) as ClassicExecutionContext
-    }
+    override fun apply(sideEffects: Sequence<SideEffect>): ClassicExecutionContext =
+        super.apply(sideEffects) as ClassicExecutionContext
 
-    override fun toString(): String {
-        return "ClassicExecutionContext(" +
+    override fun toString(): String =
+        "ClassicExecutionContext(" +
             "step=$step, " +
             "depth=$depth, " +
             "substitution=$substitution, " +
@@ -190,5 +187,4 @@ data class ClassicExecutionContext(
             "unificator=$unificator, " +
             "choicePoints=$choicePoints" +
             ")"
-    }
 }

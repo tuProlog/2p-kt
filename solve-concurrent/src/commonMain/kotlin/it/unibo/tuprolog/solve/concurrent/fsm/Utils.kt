@@ -27,12 +27,13 @@ fun Term.unfoldGoals(): Sequence<Term> =
     }
 
 fun Term.toGoals(): Cursor<out Term> =
-    unfoldGoals().map {
-        when {
-            it.isVar -> Struct.of("call", it)
-            else -> it
-        }
-    }.cursor()
+    unfoldGoals()
+        .map {
+            when {
+                it.isVar -> Struct.of("call", it)
+                else -> it
+            }
+        }.cursor()
 
 fun ConcurrentExecutionContext.createChild(inferProcedureFromGoals: Boolean = true): ConcurrentExecutionContext {
     val currentGoal = this.currentGoal!!.castToStruct()

@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUnify {
+internal class TestUnifyImpl(
+    private val solverFactory: SolverFactory,
+) : TestUnify {
     override fun testNumberUnify() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -11,7 +13,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -25,7 +27,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to 1)),
+                listOf(query.yes("X" to 1)),
                 solutions,
             )
         }
@@ -39,7 +41,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to "Y")),
+                listOf(query.yes("X" to "Y")),
                 solutions,
             )
         }
@@ -53,7 +55,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to "abc", "Y" to "abc")),
+                listOf(query.yes("X" to "abc", "Y" to "abc")),
                 solutions,
             )
         }
@@ -67,7 +69,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to "def", "Y" to "def")),
+                listOf(query.yes("X" to "def", "Y" to "def")),
                 solutions,
             )
         }
@@ -81,7 +83,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -95,7 +97,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -109,7 +111,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -123,7 +125,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -137,7 +139,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -151,7 +153,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.yes(
                         "A" to "g"("g"("g"("D", "D"), "g"("D", "D")), "g"("g"("D", "D"), "g"("D", "D"))),
                         "B" to "g"("g"("D", "D"), "g"("D", "D")),

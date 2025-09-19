@@ -21,14 +21,13 @@ class PropertyAssignmentException(
     override fun toLogicError(
         context: ExecutionContext,
         signature: Signature,
-    ): LogicError {
-        return ExistenceError.of(
+    ): LogicError =
+        ExistenceError.of(
             context,
             ExistenceError.ObjectType.OOP_PROPERTY,
             culprit,
             message ?: "",
         )
-    }
 
     override val culprit: Term
         get() = Atom.of("${type.fullName}::$missingPropertyName: ${admissibleTypes.pretty()}")

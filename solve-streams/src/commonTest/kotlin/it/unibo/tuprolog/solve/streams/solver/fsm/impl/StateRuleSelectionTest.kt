@@ -107,7 +107,7 @@ internal class StateRuleSelectionTest {
             with(threeDBSolveRequest) { copy(context = context.copy(libraries = Runtime.empty())) }
         val correctSubstitutions =
             logicProgramming {
-                ktListOf(
+                listOf(
                     theQueryVariable to "b",
                     theQueryVariable to "c",
                 )

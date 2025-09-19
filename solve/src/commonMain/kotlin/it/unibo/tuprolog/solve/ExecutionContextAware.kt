@@ -9,14 +9,11 @@ import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
-import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.unify.UnificationAware
 import kotlin.js.JsName
 
 /** Base type for all entities which must be aware of the current state of a solver */
-interface ExecutionContextAware {
-    @JsName("unificator")
-    val unificator: Unificator
-
+interface ExecutionContextAware : UnificationAware {
     /** Loaded libraries */
     @JsName("libraries")
     val libraries: Runtime

@@ -22,7 +22,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentFlags<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun defaultLastCallOptimizationIsOn() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -77,7 +79,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
                 assertTrue { sol.substitution[F] is Atom }
             }
 
-            for (term in ktListOf(5, "f"("x"), 2.3).map { it.toTerm() }) {
+            for (term in listOf(5, "f"("x"), 2.3).map { it.toTerm() }) {
                 var query = current_flag(term, `_`)
                 var solutions2 = fromSequence(solver.solveOnce(query, shortDuration))
                 var expected =
@@ -117,7 +119,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
 
     fun gettingMissingFlagsFails() {
         logicProgramming {
-            for (flag in ktListOf("a", "b", "c")) {
+            for (flag in listOf("a", "b", "c")) {
                 val solver = solverWithDefaultBuiltins()
 
                 assertFalse { solver.flags.containsKey(flag) }
@@ -133,7 +135,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
 
     fun settingMissingFlagsSucceeds() {
         logicProgramming {
-            for ((value, flag) in ktListOf("a", "b", "c").asSequence().indexed()) {
+            for ((value, flag) in listOf("a", "b", "c").asSequence().indexed()) {
                 val solver = solverWithDefaultBuiltins()
 
                 assertFalse { solver.flags.containsKey(flag) }
@@ -159,7 +161,8 @@ interface TestConcurrentFlags<T : WithAssertingEquals> : FromSequence<T>, Solver
             val query = current_flag(F, X)
 
             val selectedFlags =
-                solver.solve(query, shortDuration)
+                solver
+                    .solve(query, shortDuration)
                     .filterIsInstance<Solution.Yes>()
                     .map { it.substitution[F]!! to it.substitution[X]!! }
                     .toMap()

@@ -13,8 +13,8 @@ object CharCode : BinaryRelation.Functional<ExecutionContext>("char_code") {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
-    ): Substitution {
-        return when {
+    ): Substitution =
+        when {
             first is Var -> {
                 ensuringArgumentIsInstantiated(1)
                 ensuringArgumentIsCharCode(1)
@@ -31,5 +31,4 @@ object CharCode : BinaryRelation.Functional<ExecutionContext>("char_code") {
                 mgu(second, Integer.of(result))
             }
         }
-    }
 }

@@ -16,7 +16,8 @@ internal abstract class RecursiveImpl(
     functor: String,
     args: KtList<Term>,
     tags: Map<String, Any>,
-) : AbstractStruct(functor, args, tags), Recursive {
+) : AbstractStruct(functor, args, tags),
+    Recursive {
     override val unfoldedList: KtList<Term> by lazy { dequeOf(unfoldedSequence) }
 
     override val unfoldedArray: Array<Term>
@@ -60,7 +61,10 @@ internal abstract class RecursiveImpl(
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCollection(this)
 
-    protected class LazyTwoItemsList<T>(firstGenerator: () -> T, secondGenerator: () -> T) : KtList<T> {
+    protected class LazyTwoItemsList<T>(
+        firstGenerator: () -> T,
+        secondGenerator: () -> T,
+    ) : KtList<T> {
         private val fst: T by lazy(firstGenerator)
 
         private val snd: T by lazy(secondGenerator)

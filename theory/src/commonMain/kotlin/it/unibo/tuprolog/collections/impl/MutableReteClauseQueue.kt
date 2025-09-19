@@ -10,7 +10,8 @@ import it.unibo.tuprolog.unify.Unificator
 
 internal class MutableReteClauseQueue private constructor(
     rete: ReteTree,
-) : MutableClauseQueue, AbstractMutableReteClauseCollection<MutableReteClauseQueue>(rete) {
+) : AbstractMutableReteClauseCollection<MutableReteClauseQueue>(rete),
+    MutableClauseQueue {
     init {
         require(rete.isOrdered)
     }
@@ -51,17 +52,14 @@ internal class MutableReteClauseQueue private constructor(
         }
     }
 
-    override fun equals(other: Any?): Boolean {
-        return if (other is MutableClauseQueue) {
+    override fun equals(other: Any?): Boolean =
+        if (other is MutableClauseQueue) {
             MutableClauseQueue.equals(this, other)
         } else {
             false
         }
-    }
 
-    override fun hashCode(): Int {
-        return MutableClauseQueue.hashCode(this)
-    }
+    override fun hashCode(): Int = MutableClauseQueue.hashCode(this)
 
     override val self: MutableReteClauseQueue
         get() = this

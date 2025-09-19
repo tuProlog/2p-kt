@@ -22,7 +22,11 @@ internal class ArcTangentTest {
     fun computationCorrect() {
         assertEquals(
             PI,
-            ArcTangent.computeOf(Integer.of(1)).castToReal().value.toDouble() * 4,
+            ArcTangent
+                .computeOf(Integer.of(1))
+                .castToReal()
+                .value
+                .toDouble() * 4,
         )
     }
 }

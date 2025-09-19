@@ -15,8 +15,8 @@ import kotlin.test.assertEquals
 internal class PrototypeClauseMultiSetTestImpl(
     private val emptyGenerator: () -> ClauseMultiSet,
     private val collectionGenerator: (Iterable<Clause>) -> ClauseMultiSet,
-) : PrototypeClauseMultiSetTest,
-    PrototypeClauseCollectionTestImpl(emptyGenerator, collectionGenerator) {
+) : PrototypeClauseCollectionTestImpl(emptyGenerator, collectionGenerator),
+    PrototypeClauseMultiSetTest {
     private val presentClause =
         Fact.of(Struct.of("f", Atom.of("a")))
 
@@ -35,19 +35,16 @@ internal class PrototypeClauseMultiSetTestImpl(
     override fun getClauses(
         collection: ClauseCollection,
         query: Clause,
-    ): Sequence<Clause> {
-        return (collection as ClauseMultiSet).get(query)
-    }
+    ): Sequence<Clause> = (collection as ClauseMultiSet).get(query)
 
     override fun retractClauses(
         collection: ClauseCollection,
         query: Clause,
-    ): Sequence<Clause> {
-        return when (val res = (collection as ClauseMultiSet).retrieve(query)) {
+    ): Sequence<Clause> =
+        when (val res = (collection as ClauseMultiSet).retrieve(query)) {
             is RetrieveResult.Success -> res.clauses.asSequence()
             else -> emptySequence()
         }
-    }
 
     override fun countingOnPresentClauseAnswerTheRightNumber() {
         val count = collectionGenerator(clauses).count(presentClause)

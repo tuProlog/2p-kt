@@ -44,11 +44,10 @@ internal class LogicFunctionTest {
             LogicFunction.Companion::enforcingSignature,
             function,
             ::createFunctionRequest,
-        )
-            .forEach { (checkedFunction, badRequests) ->
-                badRequests.forEach {
-                    assertFailsWith<IllegalArgumentException> { checkedFunction.compute(it) }
-                }
+        ).forEach { (checkedFunction, badRequests) ->
+            badRequests.forEach {
+                assertFailsWith<IllegalArgumentException> { checkedFunction.compute(it) }
             }
+        }
     }
 }

@@ -39,18 +39,15 @@ internal object ClauseMappingUtils {
     /** Generates a new clause identifier.
      * Identifying clauses is necessary to distinguish them
      * during probabilistic logic query resolutions. */
-    fun newClauseId(): Long {
-        return clauseIndex++
-    }
+    fun newClauseId(): Long = clauseIndex++
 
     /** Entrypoint function for internal theory mapping of single [Clause]s */
-    fun map(clause: Clause): List<Clause> {
-        return if (clause.isMappedAsProblog) {
+    fun map(clause: Clause): List<Clause> =
+        if (clause.isMappedAsProblog) {
             listOf(clause)
         } else {
             cascadeMappers.first { it.isCompatible(clause) }.apply(clause).map { it.setMappedAsProblog(true) }
         }
-    }
 
     /** Entrypoint function for internal mapping of an [Indicator] */
     fun map(indicator: Indicator): Indicator {
@@ -76,19 +73,18 @@ private val nonWrappableFunctors = setOf("!", "true", "false")
 
 internal val Term.isWrappableWithExplanation: Boolean get() = this.safeToStruct().functor !in nonWrappableFunctors
 
-internal fun Term.withExplanationNonWrappable(explanation: Term): Struct {
-    return Tuple.of(
+internal fun Term.withExplanationNonWrappable(explanation: Term): Struct =
+    Tuple.of(
         this,
         Struct.of("=", explanation, ProbExplanation.TRUE.toTerm()),
     )
-}
 
 /** This has to be used on head terms of [Clause]s and with goal [Term]s.
  * Adds [explanation] to [this] term by making it the last argument of the predicate.
  * Implicitly, the arity is increased by 1.
  * */
-internal fun Term.withExplanation(explanation: Term): Struct {
-    return if (!this.isWrappableWithExplanation) {
+internal fun Term.withExplanation(explanation: Term): Struct =
+    if (!this.isWrappableWithExplanation) {
         this.withExplanationNonWrappable(explanation)
     } else {
         when (this) {
@@ -96,14 +92,11 @@ internal fun Term.withExplanation(explanation: Term): Struct {
             else -> Struct.of(this.toString(), explanation)
         }
     }
-}
 
 /** This has to be used on body terms of [Clause]s. Adds [explanation] to [this]
  * term by wrapping it in an higher-level meta-predicate.
  * */
-internal fun Term.withBodyExplanation(explanation: Term): Struct {
-    return wrapInPredicateRecursive(Prob.functor, explanation)
-}
+internal fun Term.withBodyExplanation(explanation: Term): Struct = wrapInPredicateRecursive(Prob.functor, explanation)
 
 /** Wraps the [this] term with the provided in a new predicate that has [functor] as its
  * functor, and [this] and [explanation] as argument terms. In this use case, [explanation]
@@ -116,13 +109,12 @@ internal fun Term.withBodyExplanation(explanation: Term): Struct {
 internal fun Term.wrapInPredicate(
     functor: String,
     explanation: Term,
-): Struct {
-    return if (!this.isWrappableWithExplanation) {
+): Struct =
+    if (!this.isWrappableWithExplanation) {
         this.withExplanationNonWrappable(explanation)
     } else {
         Struct.of(functor, explanation, this)
     }
-}
 
 /** Wraps the [this] term with the provided in a new predicate that has [functor] as its
  * functor, and [this] and [explanation] as argument terms. In this use case, [explanation]
@@ -141,8 +133,8 @@ internal fun Term.wrapInPredicateRecursive(
     functor: String,
     explanation: Term,
     depth: Int = 1,
-): Struct {
-    return when (this) {
+): Struct =
+    when (this) {
         is Struct -> {
             when (this.functor) {
                 "," -> {
@@ -177,7 +169,6 @@ internal fun Term.wrapInPredicateRecursive(
             this.wrapInPredicate(functor, explanation)
         }
     }
-}
 
 /** In Prolog, it's legit to have rules with a body containing more variables than the head.
  * This function computes a difference between the set of variables from the body and from the head,
@@ -196,25 +187,24 @@ internal val Rule.extraVariables: Set<Var>
 /** Applies a simple casting from a [Term] instance to a [Struct] one.
  * In case [this] is already an instance of [Struct], this function does
  * nothing if not regular casting. */
-internal fun Term.safeToStruct(): Struct {
-    return if (this is Struct) {
+internal fun Term.safeToStruct(): Struct =
+    if (this is Struct) {
         this
     } else {
         Struct.of(this.toString())
     }
-}
 
 /** Given a [this], removes all anonymous [Var] variables contained
  * in head and body, substituting them with non-anonymous variables. */
 internal fun Rule.withoutAnonymousVars(): Rule {
     val anonVarSubstitution =
         Substitution.of(
-            this.head.variables.toSet()
+            this.head.variables
+                .toSet()
                 .plus(this.body.variables.toSet())
                 .filter {
                     it.isAnonymous
-                }
-                .mapIndexed { index, it ->
+                }.mapIndexed { index, it ->
                     Pair(it, Var.of("ANON_$index"))
                 },
         )
@@ -231,9 +221,7 @@ internal fun Rule.withoutAnonymousVars(): Rule {
 }
 
 /** Encapsulates a [ProbExplanation] object inside a Prolog [Term] */
-internal fun ProbExplanation.toTerm(): Term {
-    return ProbExplanationTerm(this)
-}
+internal fun ProbExplanation.toTerm(): Term = ProbExplanationTerm(this)
 
 /** If the given term represents an arithmetic expression, this function returns
  * a [Double] containing the numeric solution of the expression. Otherwise,
@@ -259,10 +247,9 @@ internal fun Term.solveArithmeticExpression(): Double {
 /** If the given term represents an arithmetic expression, this function returns
  * a [Double] containing the numeric solution of the expression. Otherwise,
  * this returns null. */
-internal fun Term.solveArithmeticExpressionOrNull(): Double? {
-    return try {
+internal fun Term.solveArithmeticExpressionOrNull(): Double? =
+    try {
         this.solveArithmeticExpression()
     } catch (e: Throwable) {
         null
     }
-}

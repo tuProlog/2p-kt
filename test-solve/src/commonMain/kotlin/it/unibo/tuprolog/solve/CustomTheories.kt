@@ -28,7 +28,7 @@ object CustomTheories {
 
     val ifThen1ToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 ("a"("X") then "b"("X")).hasSolutions(
                     { yes("X" to 1) },
                 ),
@@ -71,7 +71,7 @@ object CustomTheories {
 
     val ifThen2ToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 ("a"("X") then "b"("X")).hasSolutions(
                     { no() },
                 ),
@@ -114,7 +114,7 @@ object CustomTheories {
 
     val ifThenElse1ToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 ("a"("X") then "b"("X") or "c"("X")).hasSolutions(
                     { yes("X" to 1) },
                 ),
@@ -157,7 +157,7 @@ object CustomTheories {
 
     val ifThenElse2ToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 ("a"("X") then "b"("X") or "c"("X")).hasSolutions(
                     { no() },
                 ),
@@ -200,14 +200,14 @@ object CustomTheories {
 
     val memberGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
-                "member"("X", listOf("a", "b", "c")).hasSolutions(
+            listOf(
+                "member"("X", logicListOf("a", "b", "c")).hasSolutions(
                     { yes("X" to "a") },
                     { yes("X" to "b") },
                     { yes("X" to "c") },
                     { no() },
                 ),
-                "member"("f"("X"), listOf("a"(1), "b"(2), "c"(3))).hasSolutions(
+                "member"("f"("X"), logicListOf("a"(1), "b"(2), "c"(3))).hasSolutions(
                     { no() },
                 ),
             )

@@ -3,7 +3,9 @@ package it.unibo.tuprolog.serialize
 import it.unibo.tuprolog.theory.Theory
 import java.io.Writer
 
-internal class JvmTheorySerializer(override val mimeType: MimeType) : WritingTheorySerializer {
+internal class JvmTheorySerializer(
+    override val mimeType: MimeType,
+) : WritingTheorySerializer {
     private val mapper = mimeType.objectMapper
     private val objectifier = JvmTheoryObjectifier()
 

@@ -16,7 +16,8 @@ internal abstract class ClauseImpl(
     override val head: Struct?,
     override val body: Term,
     tags: Map<String, Any>,
-) : AbstractStruct(CLAUSE_FUNCTOR, (if (head === null) listOf(body) else listOf(head, body)), tags), Clause {
+) : AbstractStruct(CLAUSE_FUNCTOR, (if (head === null) listOf(body) else listOf(head, body)), tags),
+    Clause {
     override val isWellFormed: Boolean by lazy { body.accept(bodyWellFormedVisitor) }
 
     override val functor: String = super<Clause>.functor

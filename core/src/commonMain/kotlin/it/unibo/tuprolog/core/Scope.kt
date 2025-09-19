@@ -14,8 +14,8 @@ interface Scope {
     @JsName("fail")
     val fail: Truth
 
-    @JsName("emptyList")
-    val emptyList: EmptyList
+    @JsName("emptyLogicList")
+    val emptyLogicList: EmptyList
 
     @JsName("emptyBlock")
     val emptyBlock: EmptyBlock
@@ -43,8 +43,14 @@ interface Scope {
     @JsName("varOf")
     fun varOf(name: String): Var
 
+    @JsName("varOfChar")
+    fun varOf(name: Char): Var
+
     @JsName("atomOf")
     fun atomOf(value: String): Atom
+
+    @JsName("atomOfChar")
+    fun atomOf(value: Char): Atom
 
     @JsName("structOf")
     fun structOf(
@@ -79,62 +85,41 @@ interface Scope {
     @JsName("tupleOfSequence")
     fun tupleOf(terms: Sequence<Term>): Tuple
 
-    @JsName("listOf")
-    fun listOf(vararg terms: Term): LogicList
+    @JsName("logicListOf")
+    fun logicListOf(vararg terms: Term): LogicList
 
-    @JsName("ktListOf")
-    fun <T> ktListOf(vararg items: T): List<T>
+    @JsName("logicListOfIterable")
+    fun logicListOf(terms: Iterable<Term>): LogicList
 
-    @JsName("append")
-    fun <T> List<T>.append(
-        item: T,
-        vararg items: T,
-    ): List<T>
+    @JsName("logicListOfSequence")
+    fun logicListOf(terms: Sequence<Term>): LogicList
 
-    @JsName("concat")
-    fun <T> List<T>.concat(other: Iterable<T>): List<T>
-
-    @JsName("ktEmptyList")
-    fun <T> ktEmptyList(): List<T>
-
-    @JsName("listOfIterable")
-    fun listOf(terms: Iterable<Term>): LogicList
-
-    @JsName("listOfSequence")
-    fun listOf(terms: Sequence<Term>): LogicList
-
-    @JsName("listFrom")
-    fun listFrom(
+    @JsName("logicListFromFrom")
+    fun logicListFrom(
         vararg terms: Term,
         last: Term? = null,
     ): LogicList
 
-    @JsName("listFromIterable")
-    fun listFrom(
+    @JsName("logicListFromIterable")
+    fun logicListFrom(
         terms: Iterable<Term>,
         last: Term? = null,
     ): LogicList
 
-    @JsName("listFromSequence")
-    fun listFrom(
+    @JsName("logicListFromSequence")
+    fun logicListFrom(
         terms: Sequence<Term>,
         last: Term? = null,
     ): LogicList
 
-    @JsName("setOf")
+    @JsName("blockOf")
     fun blockOf(vararg terms: Term): Block
 
-    @JsName("setOfIterable")
+    @JsName("blockOfIterable")
     fun blockOf(terms: Iterable<Term>): Block
 
-    @JsName("setOfSequence")
+    @JsName("blockOfSequence")
     fun blockOf(terms: Sequence<Term>): Block
-
-    @JsName("ktSetOf")
-    fun <T> ktSetOf(vararg items: T): Set<T>
-
-    @JsName("ktEmptySet")
-    fun <T> ktEmptySet(): Set<T>
 
     @JsName("factOf")
     fun factOf(head: Struct): Fact

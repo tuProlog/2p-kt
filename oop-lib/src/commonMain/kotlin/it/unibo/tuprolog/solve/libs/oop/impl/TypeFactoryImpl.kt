@@ -5,7 +5,5 @@ import it.unibo.tuprolog.solve.libs.oop.kClassFromName
 import kotlin.reflect.KClass
 
 internal class TypeFactoryImpl : TypeFactory {
-    override fun typeFromName(typeName: String): KClass<*>? {
-        return kClassFromName(typeName).value
-    }
+    override fun typeFromName(typeName: String): KClass<*>? = kClassFromName(typeName).value
 }

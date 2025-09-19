@@ -10,7 +10,8 @@ import it.unibo.tuprolog.core.Truth
 internal class FactImpl(
     override val head: Struct,
     tags: Map<String, Any> = emptyMap(),
-) : RuleImpl(head, Truth.TRUE, tags), Fact {
+) : RuleImpl(head, Truth.TRUE, tags),
+    Fact {
     override val isWellFormed: Boolean = true
 
     override val body: Term = super<RuleImpl>.body

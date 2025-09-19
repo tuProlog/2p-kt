@@ -20,7 +20,7 @@ class PrototypeTheoryUnificator(
 
     private val clauses: KtList<Clause> =
         logicProgramming {
-            ktListOf(
+            listOf(
                 fact { "f"("a") },
                 fact { "f"(intOf(1)) },
                 fact { "f"(realOf(1.0)) },

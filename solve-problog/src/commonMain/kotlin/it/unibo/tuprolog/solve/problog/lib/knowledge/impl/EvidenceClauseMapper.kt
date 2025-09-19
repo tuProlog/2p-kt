@@ -22,9 +22,8 @@ import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
  * @author Jason Dellaluce
  */
 internal object EvidenceClauseMapper : ClauseMapper {
-    override fun isCompatible(clause: Clause): Boolean {
-        return clause is Rule && clause.head.functor == ProblogLib.EVIDENCE_PREDICATE
-    }
+    override fun isCompatible(clause: Clause): Boolean =
+        clause is Rule && clause.head.functor == ProblogLib.EVIDENCE_PREDICATE
 
     override fun apply(clause: Clause): List<Clause> {
         if (clause !is Rule) {

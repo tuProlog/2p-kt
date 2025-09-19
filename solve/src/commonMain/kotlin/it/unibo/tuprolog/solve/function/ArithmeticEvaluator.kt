@@ -29,8 +29,10 @@ import it.unibo.tuprolog.solve.stdlib.function.BitwiseRightShift
  * @param request the request of the primitive in which the evaluation should happen
  * @param index the index of the argument being evalued in the aforementioned primitive
  */
-class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, index: Int?) :
-    AbstractEvaluator<E, Numeric>(request, index) {
+class ArithmeticEvaluator<E : ExecutionContext>(
+    request: Solve.Request<E>,
+    index: Int?,
+) : AbstractEvaluator<E, Numeric>(request, index) {
     constructor(request: Solve.Request<E>) : this(request, null)
 
     /** This method implements all the check required by the Prolog Standard for expressions to be considered valid (statically) */

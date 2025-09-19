@@ -25,7 +25,8 @@ class ClausePartitioner(
     override val unificator: Unificator,
     private val source: Iterable<Clause>,
     private val staticByDefault: Boolean = true,
-) : ClausePartition, DirectiveSelector {
+) : ClausePartition,
+    DirectiveSelector {
     private val _staticClauses: MutableTheory = MutableTheory.emptyIndexed(unificator)
     private val _dynamicClauses: MutableTheory = MutableTheory.emptyIndexed(unificator)
     private val _operators: MutableList<Operator> = dequeOf()

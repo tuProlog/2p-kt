@@ -149,7 +149,8 @@ internal class EquationTest {
 
     @Test
     fun equationAllOfShouldNeverReturnComparisonAsItAlwaysInspectsTermsInDeep() {
-        EquationUtils.mixedShuffledAllEquations.map { (lhs, rhs) -> Equation.allOf(lhs, rhs) }
+        EquationUtils.mixedShuffledAllEquations
+            .map { (lhs, rhs) -> Equation.allOf(lhs, rhs) }
             .forEach(::assertNoComparisons)
         EquationUtils.mixedShuffledAllEquations.map { Equation.allOf(it) }.forEach(::assertNoComparisons)
     }
@@ -195,36 +196,40 @@ internal class EquationTest {
     @Test
     fun equationOfLhsAndRhsUsesProvidedEqualityCheckerToTestIdentity() {
         assertNoIdentities(
-            EquationUtils.mixedAllEquations.map { (lhs, rhs) ->
-                Equation.of(lhs, rhs, { _, _ -> false })
-            }.asSequence(),
+            EquationUtils.mixedAllEquations
+                .map { (lhs, rhs) ->
+                    Equation.of(lhs, rhs, { _, _ -> false })
+                }.asSequence(),
         )
     }
 
     @Test
     fun equationOfPairUsesProvidedEqualityCheckerToTestIdentity() {
         assertNoIdentities(
-            EquationUtils.mixedAllEquations.map {
-                Equation.of(it) { _, _ -> false }
-            }.asSequence(),
+            EquationUtils.mixedAllEquations
+                .map {
+                    Equation.of(it) { _, _ -> false }
+                }.asSequence(),
         )
     }
 
     @Test
     fun equationAllOfLhsAndRhsUsesProvidedEqualityCheckerToTestIdentity() {
         assertNoIdentities(
-            EquationUtils.mixedAllEquations.flatMap { (lhs, rhs) ->
-                Equation.allOf(lhs, rhs, { _, _ -> false }).asIterable()
-            }.asSequence(),
+            EquationUtils.mixedAllEquations
+                .flatMap { (lhs, rhs) ->
+                    Equation.allOf(lhs, rhs, { _, _ -> false }).asIterable()
+                }.asSequence(),
         )
     }
 
     @Test
     fun equationAllOfPairUsesProvidedEqualityCheckerToTestIdentity() {
         assertNoIdentities(
-            EquationUtils.mixedAllEquations.flatMap {
-                Equation.allOf(it) { _, _ -> false }.asIterable()
-            }.asSequence(),
+            EquationUtils.mixedAllEquations
+                .flatMap {
+                    Equation.allOf(it) { _, _ -> false }.asIterable()
+                }.asSequence(),
         )
     }
 

@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
+class TestSetOfImpl(
+    private val solverFactory: SolverFactory,
+) : TestSetOf {
     override fun testSetOfBasic() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -11,7 +13,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("S" to listOf(1, 2))),
+                listOf(query.yes("S" to logicListOf(1, 2))),
                 solutions,
             )
         }
@@ -25,7 +27,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to listOf(1, 2))),
+                listOf(query.yes("X" to logicListOf(1, 2))),
                 solutions,
             )
         }
@@ -39,7 +41,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to listOf(2, 1))),
+                listOf(query.yes("X" to logicListOf(2, 1))),
                 solutions,
             )
         }
@@ -53,7 +55,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("L" to listOf(2))),
+                listOf(query.yes("L" to logicListOf(2))),
                 solutions,
             )
         }
@@ -67,7 +69,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -81,7 +83,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("S" to listOf(1, 2))),
+                listOf(query.yes("S" to logicListOf(1, 2))),
                 solutions,
             )
         }

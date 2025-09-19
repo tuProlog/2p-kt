@@ -3,7 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumberCodes {
+class TestNumberCodesImpl(
+    private val solverFactory: SolverFactory,
+) : TestNumberCodes {
     override fun testNumberCodesListIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -12,7 +14,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("L" to listOf(51, 51))),
+                listOf(query.yes("L" to logicListOf(51, 51))),
                 solutions,
             )
         }
@@ -26,7 +28,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("L" to listOf(51, 51, 46, 49))),
+                listOf(query.yes("L" to logicListOf(51, 51, 46, 49))),
                 solutions,
             )
         }
@@ -40,7 +42,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("L" to listOf(57, 57, 50, 49, 46, 49))),
+                listOf(query.yes("L" to logicListOf(57, 57, 50, 49, 46, 49))),
                 solutions,
             )
         }
@@ -50,11 +52,11 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_codes(33, listOf(51, 51))
+            val query = number_codes(33, logicListOf(51, 51))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -64,11 +66,11 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_codes(34, listOf(51, 52))
+            val query = number_codes(34, logicListOf(51, 52))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -78,11 +80,11 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_codes("X", listOf(45, 51, 46, 56))
+            val query = number_codes("X", logicListOf(45, 51, 46, 56))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to numOf("-3.8"))),
+                listOf(query.yes("X" to numOf("-3.8"))),
                 solutions,
             )
         }
@@ -96,7 +98,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,

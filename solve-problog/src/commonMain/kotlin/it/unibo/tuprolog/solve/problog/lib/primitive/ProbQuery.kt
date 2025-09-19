@@ -65,8 +65,7 @@ internal object ProbQuery : QuaternaryRelation.WithoutSideEffects<ExecutionConte
                         yield(Substitution.failed())
                     } else {
                         val solutionSubstitution =
-                            solution.substitution.filter {
-                                    v, _ ->
+                            solution.substitution.filter { v, _ ->
                                 v != evidenceExplanation && v != queryWithEvidenceExplanation
                             }
                         val probabilityTerm = Numeric.of(queryWithEvidenceProbability / evidenceProbability)

@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.EVALUABLE
 
-internal class TestArithImpl(private val solverFactory: SolverFactory) : TestArith {
+internal class TestArithImpl(
+    private val solverFactory: SolverFactory,
+) : TestArith {
     override fun testArithDiff() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -14,7 +16,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
@@ -22,7 +24,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
 
@@ -30,7 +32,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
 
@@ -38,7 +40,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -55,7 +57,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -79,7 +81,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
 
@@ -87,7 +89,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
@@ -95,7 +97,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
@@ -103,7 +105,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -120,7 +122,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -138,7 +140,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -152,7 +154,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
 
@@ -160,7 +162,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
 
@@ -168,7 +170,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
 
@@ -176,7 +178,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -193,7 +195,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -217,7 +219,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
 
@@ -225,7 +227,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
@@ -233,7 +235,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
@@ -241,7 +243,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -258,7 +260,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -282,7 +284,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
@@ -290,7 +292,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
 
@@ -298,7 +300,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
 
@@ -306,7 +308,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -323,7 +325,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -347,7 +349,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
@@ -355,7 +357,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
@@ -363,7 +365,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
 
@@ -371,7 +373,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -388,7 +390,7 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,

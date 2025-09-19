@@ -5,7 +5,9 @@ import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.io.Writer
 
-class WriterChannel(private val writer: Writer) : AbstractOutputChannel<String>() {
+class WriterChannel(
+    private val writer: Writer,
+) : AbstractOutputChannel<String>() {
     constructor(outputStream: OutputStream) : this(OutputStreamWriter(outputStream))
 
     override fun writeActually(value: String) = writer.write(value)

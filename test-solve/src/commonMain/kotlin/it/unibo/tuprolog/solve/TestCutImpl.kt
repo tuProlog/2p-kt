@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestCutImpl(private val solverFactory: SolverFactory) : TestCut {
+internal class TestCutImpl(
+    private val solverFactory: SolverFactory,
+) : TestCut {
     override fun testCut() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

@@ -198,9 +198,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
         return true
     }
 
-    override fun hashCode(): Int {
-        return currentContext.hashCode()
-    }
+    override fun hashCode(): Int = currentContext.hashCode()
 
     abstract override fun copy(
         unificator: Unificator,

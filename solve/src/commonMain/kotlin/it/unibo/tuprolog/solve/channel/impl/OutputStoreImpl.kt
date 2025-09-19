@@ -71,11 +71,11 @@ internal class OutputStoreImpl(
             stdOut: OutputChannel<String>,
             stdErr: OutputChannel<String>,
             channels: Map<String, OutputChannel<String>>,
-        ): Map<String, OutputChannel<String>> {
-            return channels.toMutableMap()
+        ): Map<String, OutputChannel<String>> =
+            channels
+                .toMutableMap()
                 .ensureAliasRefersToChannel(STDOUT, stdOut)
                 .ensureAliasRefersToChannel(STDERR, stdErr)
                 .setCurrent(STDOUT, stdOut)
-        }
     }
 }

@@ -4,7 +4,9 @@ import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.utils.Cursor
 
-data class StateRuleExecution(override val context: ClassicExecutionContext) : AbstractState(context) {
+data class StateRuleExecution(
+    override val context: ClassicExecutionContext,
+) : AbstractState(context) {
     private val failureState: StateBacktracking
         get() = StateBacktracking(context.copy(rules = Cursor.empty(), step = nextStep()))
 
@@ -13,7 +15,10 @@ data class StateRuleExecution(override val context: ClassicExecutionContext) : A
         return when {
             substitution.isSuccess -> {
                 val newSubstitution = (context.substitution + substitution).castToUnifier()
-                val subGoals = context.rules.current!!.prepareForExecution(newSubstitution).body[newSubstitution]
+                val subGoals =
+                    context.rules.current!!
+                        .prepareForExecution(newSubstitution)
+                        .body[newSubstitution]
 
                 StateGoalSelection(
                     context.copy(

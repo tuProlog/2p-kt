@@ -123,7 +123,10 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 override fun visitStruct(term: Struct) =
                     when {
                         Clause.notableFunctors.contains(term.functor) && term.arity == 2 -> {
-                            term.argsSequence.map { it.accept(this) }.filterNotNull().firstOrNull()
+                            term.argsSequence
+                                .map { it.accept(this) }
+                                .filterNotNull()
+                                .firstOrNull()
                         }
                         else -> defaultValue(term)
                     }

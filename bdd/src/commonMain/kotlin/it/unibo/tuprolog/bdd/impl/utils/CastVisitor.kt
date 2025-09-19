@@ -18,8 +18,7 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
  *
  * @author Jason Dellaluce
  * */
-internal class CastVisitor<T : Comparable<T>, E> :
-    BinaryDecisionDiagramVisitor<T, E> {
+internal class CastVisitor<T : Comparable<T>, E> : BinaryDecisionDiagramVisitor<T, E> {
     var onTerminal: ((o: BinaryDecisionDiagram.Terminal<T>) -> E)? = null
     var onVariable: ((o: BinaryDecisionDiagram.Variable<T>) -> E)? = null
 

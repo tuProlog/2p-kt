@@ -18,13 +18,9 @@ class NumberTypeTester {
     private val Number.stringRepresentation
         get() = numberCache.getOrSet(this) { toString() }
 
-    fun Number.toInteger(): BigInteger {
-        return BigInteger.of(stringRepresentation)
-    }
+    fun Number.toInteger(): BigInteger = BigInteger.of(stringRepresentation)
 
-    fun Number.toDecimal(): BigDecimal {
-        return BigDecimal.of(stringRepresentation)
-    }
+    fun Number.toDecimal(): BigDecimal = BigDecimal.of(stringRepresentation)
 
     fun numberIsInteger(number: Number): Boolean = number.isInteger
 

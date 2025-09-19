@@ -85,10 +85,11 @@ internal object ExpressionEvaluatorUtils {
     ): ExecutionContext =
         object : ExecutionContext by DummyInstances.executionContext {
             override val libraries: Runtime =
-                Library.of(
-                    alias = "test.expression.evaluator",
-                    functions = mapOf(signature to function),
-                ).toRuntime()
+                Library
+                    .of(
+                        alias = "test.expression.evaluator",
+                        functions = mapOf(signature to function),
+                    ).toRuntime()
         }
 
     internal fun createRequestWithFunctionBy(

@@ -6,7 +6,9 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestAssertA {
+internal class TestAssertAImpl(
+    private val solverFactory: SolverFactory,
+) : TestAssertA {
     override fun testAssertAClause() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -15,7 +17,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("B" to call("X"))),
+                listOf(query.yes("B" to call("X"))),
                 solutions,
             )
         }
@@ -29,7 +31,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -52,7 +54,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -76,7 +78,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         DomainError.forArgument(
                             DummyInstances.executionContext,
@@ -100,7 +102,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         PermissionError.of(
                             DummyInstances.executionContext,

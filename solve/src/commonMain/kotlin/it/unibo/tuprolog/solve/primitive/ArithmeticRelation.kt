@@ -6,7 +6,9 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.evalAsArithmeticExpression
 
 /** Base class for implementing arithmetic relation between [Numeric] terms */
-abstract class ArithmeticRelation<E : ExecutionContext>(operator: String) : BinaryRelation.Predicative<E>(operator) {
+abstract class ArithmeticRelation<E : ExecutionContext>(
+    operator: String,
+) : BinaryRelation.Predicative<E>(operator) {
     final override fun Solve.Request<E>.compute(
         first: Term,
         second: Term,

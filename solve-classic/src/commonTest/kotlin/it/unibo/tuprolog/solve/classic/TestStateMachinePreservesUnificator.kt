@@ -20,11 +20,13 @@ import kotlin.test.assertSame
 class TestStateMachinePreservesUnificator {
     private object CustomUnificator : Unificator by Unificator.default
 
-    private class DebuggableClassicSolver(staticKb: Theory) : AbstractClassicSolver(
-        unificator = CustomUnificator,
-        staticKb = staticKb,
-        libraries = Runtime.of(DefaultBuiltins),
-    ) {
+    private class DebuggableClassicSolver(
+        staticKb: Theory,
+    ) : AbstractClassicSolver(
+            unificator = CustomUnificator,
+            staticKb = staticKb,
+            libraries = Runtime.of(DefaultBuiltins),
+        ) {
         override fun solutionIterator(
             initialState: State,
             onStateTransition: (State, State, Long) -> Unit,

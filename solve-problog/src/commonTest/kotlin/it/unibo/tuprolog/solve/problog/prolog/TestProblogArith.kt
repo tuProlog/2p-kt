@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.TestArith
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Test
 
-class TestProblogArith : TestArith, SolverFactory by ProblogSolverFactory {
+class TestProblogArith :
+    TestArith,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestArith.prototype(this)
 
     @Test

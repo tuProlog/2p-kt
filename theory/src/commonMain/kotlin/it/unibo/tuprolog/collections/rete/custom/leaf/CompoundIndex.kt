@@ -18,12 +18,17 @@ internal class CompoundIndex(
     unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int,
-) : IndexingNode, AbstractReteNode(unificator) {
+) : AbstractReteNode(unificator),
+    IndexingNode {
     private val functors: MutableMap<String, FunctorIndexing> = mutableMapOf()
     private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
     override val size: Int
-        get() = functors.values.asSequence().map { it.size }.sum()
+        get() =
+            functors.values
+                .asSequence()
+                .map { it.size }
+                .sum()
 
     override val isEmpty: Boolean
         get() = functors.isEmpty() || functors.values.all { it.isEmpty }
@@ -31,11 +36,12 @@ internal class CompoundIndex(
     override fun get(clause: Clause): Sequence<Clause> =
         if (clause.isGlobal()) {
             if (ordered) {
-                Utils.merge(
-                    functors.values.asSequence().flatMap {
-                        it.getIndexed(clause)
-                    },
-                ).map { it.innerClause }
+                Utils
+                    .merge(
+                        functors.values.asSequence().flatMap {
+                            it.getIndexed(clause)
+                        },
+                    ).map { it.innerClause }
             } else {
                 Utils.flatten(
                     functors.values.asSequence().flatMap {
@@ -50,9 +56,10 @@ internal class CompoundIndex(
     override fun assertA(clause: IndexedClause) =
         clause.nestedFunctor().let {
             if (ordered) {
-                functors.getOrPut(it) {
-                    FunctorIndexingNode(unificator, ordered, nestingLevel)
-                }.assertA(clause + this)
+                functors
+                    .getOrPut(it) {
+                        FunctorIndexingNode(unificator, ordered, nestingLevel)
+                    }.assertA(clause + this)
             } else {
                 assertZ(clause)
             }
@@ -60,9 +67,10 @@ internal class CompoundIndex(
 
     override fun assertZ(clause: IndexedClause) =
         clause.nestedFunctor().let {
-            functors.getOrPut(it) {
-                FunctorIndexingNode(unificator, ordered, nestingLevel)
-            }.assertZ(clause + this)
+            functors
+                .getOrPut(it) {
+                    FunctorIndexingNode(unificator, ordered, nestingLevel)
+                }.assertZ(clause + this)
         }
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
@@ -76,11 +84,12 @@ internal class CompoundIndex(
 
     private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
         if (clause.isGlobal()) {
-            Utils.merge(
-                functors.values.map {
-                    it.retractAllIndexed(clause)
-                },
-            ).map { it.innerClause }
+            Utils
+                .merge(
+                    functors.values.map {
+                        it.retractAllIndexed(clause)
+                    },
+                ).map { it.innerClause }
         } else {
             functors[clause.nestedFunctor()]
                 ?.retractAll(clause)
@@ -102,13 +111,15 @@ internal class CompoundIndex(
 
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
         if (clause.isGlobal()) {
-            Utils.merge(
-                sequenceOf(
-                    functors.values.mapNotNull {
-                        it.getFirstIndexed(clause)
-                    }.asSequence(),
-                ),
-            ).firstOrNull()
+            Utils
+                .merge(
+                    sequenceOf(
+                        functors.values
+                            .mapNotNull {
+                                it.getFirstIndexed(clause)
+                            }.asSequence(),
+                    ),
+                ).firstOrNull()
         } else {
             functors[clause.nestedFunctor()]
                 ?.getFirstIndexed(clause)
@@ -140,8 +151,8 @@ internal class CompoundIndex(
                 ?: emptySequence()
         }
 
-    override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (ordered) {
+    override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
+        if (ordered) {
             Utils.merge(
                 functors.values.map {
                     it.extractGlobalIndexedSequence(clause)
@@ -154,7 +165,6 @@ internal class CompoundIndex(
                 },
             )
         }
-    }
 
     private fun Clause.nestedFunctor(): String = this.head!!.functorOfNestedFirstArgument(nestingLevel)
 

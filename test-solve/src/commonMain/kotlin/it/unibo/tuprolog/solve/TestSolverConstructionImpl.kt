@@ -90,16 +90,17 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
     }
 
     override fun testCreatingCustomSolver() {
-        factory.solverOf(
-            libraries = Dummy.runtime,
-            flags = Dummy.flags,
-            staticKb = Dummy.theory1,
-            dynamicKb = Dummy.theory2,
-            stdIn = Dummy.input,
-            stdOut = Dummy.output,
-            stdErr = Dummy.error,
-            warnings = Dummy.warning,
-        ).asserHasCustomProperties(mutable = false)
+        factory
+            .solverOf(
+                libraries = Dummy.runtime,
+                flags = Dummy.flags,
+                staticKb = Dummy.theory1,
+                dynamicKb = Dummy.theory2,
+                stdIn = Dummy.input,
+                stdOut = Dummy.output,
+                stdErr = Dummy.error,
+                warnings = Dummy.warning,
+            ).asserHasCustomProperties(mutable = false)
     }
 
     private fun Solver.asserHasDefaultBultinsAndProperties(mutable: Boolean) {
@@ -131,16 +132,17 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
     }
 
     override fun testCreatingCustomSolverWithDefaultBuiltins() {
-        factory.solverWithDefaultBuiltins(
-            otherLibraries = Dummy.runtime,
-            flags = Dummy.flags,
-            staticKb = Dummy.theory1,
-            dynamicKb = Dummy.theory2,
-            stdIn = Dummy.input,
-            stdOut = Dummy.output,
-            stdErr = Dummy.error,
-            warnings = Dummy.warning,
-        ).asserHasDefaultBultinsAndCustomProperties(mutable = false)
+        factory
+            .solverWithDefaultBuiltins(
+                otherLibraries = Dummy.runtime,
+                flags = Dummy.flags,
+                staticKb = Dummy.theory1,
+                dynamicKb = Dummy.theory2,
+                stdIn = Dummy.input,
+                stdOut = Dummy.output,
+                stdErr = Dummy.error,
+                warnings = Dummy.warning,
+            ).asserHasDefaultBultinsAndCustomProperties(mutable = false)
     }
 
     override fun testCreatingEmptyMutableSolver() {
@@ -148,16 +150,17 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
     }
 
     override fun testCreatingCustomMutableSolver() {
-        factory.mutableSolverOf(
-            libraries = Dummy.runtime,
-            flags = Dummy.flags,
-            staticKb = Dummy.theory1,
-            dynamicKb = Dummy.theory2,
-            stdIn = Dummy.input,
-            stdOut = Dummy.output,
-            stdErr = Dummy.error,
-            warnings = Dummy.warning,
-        ).asserHasCustomProperties(mutable = true)
+        factory
+            .mutableSolverOf(
+                libraries = Dummy.runtime,
+                flags = Dummy.flags,
+                staticKb = Dummy.theory1,
+                dynamicKb = Dummy.theory2,
+                stdIn = Dummy.input,
+                stdOut = Dummy.output,
+                stdErr = Dummy.error,
+                warnings = Dummy.warning,
+            ).asserHasCustomProperties(mutable = true)
     }
 
     override fun testCreatingMutableSolverWithDefaultBuiltins() {
@@ -165,27 +168,30 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
     }
 
     override fun testCreatingCustomMutableSolverWithDefaultBuiltins() {
-        factory.mutableSolverWithDefaultBuiltins(
-            otherLibraries = Dummy.runtime,
-            flags = Dummy.flags,
-            staticKb = Dummy.theory1,
-            dynamicKb = Dummy.theory2,
-            stdIn = Dummy.input,
-            stdOut = Dummy.output,
-            stdErr = Dummy.error,
-            warnings = Dummy.warning,
-        ).asserHasDefaultBultinsAndCustomProperties(mutable = true)
+        factory
+            .mutableSolverWithDefaultBuiltins(
+                otherLibraries = Dummy.runtime,
+                flags = Dummy.flags,
+                staticKb = Dummy.theory1,
+                dynamicKb = Dummy.theory2,
+                stdIn = Dummy.input,
+                stdOut = Dummy.output,
+                stdErr = Dummy.error,
+                warnings = Dummy.warning,
+            ).asserHasDefaultBultinsAndCustomProperties(mutable = true)
     }
 
     override fun testBuildingEmptySolver() {
-        factory.newBuilder()
+        factory
+            .newBuilder()
             .noBuiltins()
             .build()
             .asserHasDefaultProperties(mutable = false)
     }
 
     override fun testBuildingCustomSolver() {
-        factory.newBuilder()
+        factory
+            .newBuilder()
             .noBuiltins()
             .runtime(Dummy.runtime)
             .flags(Dummy.flags)
@@ -198,13 +204,15 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
     }
 
     override fun testBuildingSolverWithDefaultBuiltins() {
-        factory.newBuilder()
+        factory
+            .newBuilder()
             .build()
             .asserHasDefaultBultinsAndProperties(mutable = false)
     }
 
     override fun testBuildingCustomSolverWithDefaultBuiltins() {
-        factory.newBuilder()
+        factory
+            .newBuilder()
             .runtime(Dummy.runtime)
             .flags(Dummy.flags)
             .staticKb(Dummy.theory1)
@@ -216,14 +224,16 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
     }
 
     override fun testBuildingEmptyMutableSolver() {
-        factory.newBuilder()
+        factory
+            .newBuilder()
             .noBuiltins()
             .buildMutable()
             .asserHasDefaultProperties(mutable = true)
     }
 
     override fun testBuildingCustomMutableSolver() {
-        factory.newBuilder()
+        factory
+            .newBuilder()
             .noBuiltins()
             .runtime(Dummy.runtime)
             .flags(Dummy.flags)
@@ -236,13 +246,15 @@ class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
     }
 
     override fun testBuildingMutableSolverWithDefaultBuiltins() {
-        factory.newBuilder()
+        factory
+            .newBuilder()
             .buildMutable()
             .asserHasDefaultBultinsAndProperties(mutable = true)
     }
 
     override fun testBuildingCustomMutableSolverWithDefaultBuiltins() {
-        factory.newBuilder()
+        factory
+            .newBuilder()
             .runtime(Dummy.runtime)
             .flags(Dummy.flags)
             .staticKb(Dummy.theory1)

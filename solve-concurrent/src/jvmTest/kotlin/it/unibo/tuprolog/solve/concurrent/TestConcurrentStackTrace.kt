@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.dsl.LogicProgrammingScope
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
@@ -15,7 +15,9 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 
 @Suppress("LocalVariableName", "ktlint:standard:property-naming", "VariableNaming")
-interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentStackTrace<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     private fun threeLayersTheory(errorExpression: LogicProgrammingScope.() -> Struct): Theory =
         logicProgramming {
             theoryOf(
@@ -48,7 +50,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
@@ -77,7 +79,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
@@ -106,7 +108,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }
@@ -134,7 +136,7 @@ interface TestConcurrentStackTrace<T : WithAssertingEquals> : FromSequence<T>, S
             expected.assertingEquals(solutions)
 
             assertEquals(
-                ktListOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
+                listOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
                 (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
             )
         }

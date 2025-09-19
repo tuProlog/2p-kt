@@ -11,7 +11,9 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentSubAtom<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentSubAtom<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testSubAtomSubIsVar() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

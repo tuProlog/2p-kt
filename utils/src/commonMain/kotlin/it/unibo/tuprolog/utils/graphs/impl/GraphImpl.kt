@@ -4,7 +4,9 @@ import it.unibo.tuprolog.utils.graphs.Edge
 import it.unibo.tuprolog.utils.graphs.Graph
 import it.unibo.tuprolog.utils.graphs.Node
 
-internal class GraphImpl<T, W> : Graph<T, W>, AbstractGraph<T, W, GraphImpl<T, W>> {
+internal class GraphImpl<T, W> :
+    Graph<T, W>,
+    AbstractGraph<T, W, GraphImpl<T, W>> {
     constructor(edges: Iterable<Edge<T, W>>) : super(edges)
 
     internal constructor(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>) : super(connections)

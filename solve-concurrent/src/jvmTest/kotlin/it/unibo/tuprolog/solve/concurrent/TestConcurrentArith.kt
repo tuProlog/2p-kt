@@ -10,7 +10,9 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentArith<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentArith<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testArithDiff() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

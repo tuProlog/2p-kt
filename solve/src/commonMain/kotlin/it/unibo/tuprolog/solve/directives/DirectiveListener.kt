@@ -23,7 +23,8 @@ interface DirectiveListener : ClauseListener {
 
     @JsName("listenDirective")
     fun listenDirective(directive: Directive) {
-        patterns.asSequence()
+        patterns
+            .asSequence()
             .map { it to (unificator.mgu(directive.body, it)) }
             .filter { (_, substitution) -> substitution.isSuccess }
             .firstOrNull()

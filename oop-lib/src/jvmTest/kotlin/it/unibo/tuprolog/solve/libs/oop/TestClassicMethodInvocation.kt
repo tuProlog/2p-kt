@@ -4,7 +4,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import org.junit.Test
 
-class TestClassicMethodInvocation : TestMethodInvocation, SolverFactory by ClassicSolverFactory {
+class TestClassicMethodInvocation :
+    TestMethodInvocation,
+    SolverFactory by ClassicSolverFactory {
     private val prototype = TestMethodInvocation.prototype(this)
 
     @Test

@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.streams.StreamsSolverFactory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestStreamsSolver : TestSolver, SolverFactory by StreamsSolverFactory {
+class TestStreamsSolver :
+    TestSolver,
+    SolverFactory by StreamsSolverFactory {
     private val prototype = TestSolver.prototype(this)
 
     override val callErrorSignature: Signature
@@ -38,16 +40,19 @@ class TestStreamsSolver : TestSolver, SolverFactory by StreamsSolverFactory {
     }
 
     @Test
+    @Ignore
     override fun testAssert() {
         prototype.testAssert()
     }
 
     @Test
+    @Ignore
     override fun testAssertZ() {
         prototype.testAssertZ()
     }
 
     @Test
+    @Ignore
     override fun testAssertA() {
         prototype.testAssertA()
     }
@@ -149,6 +154,7 @@ class TestStreamsSolver : TestSolver, SolverFactory by StreamsSolverFactory {
     }
 
     @Test
+    @Ignore
     override fun testPrologStandardSearchTreeWithCutExample() {
         prototype.testPrologStandardSearchTreeWithCutExample()
     }

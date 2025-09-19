@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
 
-abstract class AbstractLibrary : Library, AbstractPluggable() {
+abstract class AbstractLibrary :
+    AbstractPluggable(),
+    Library {
     override val operators: OperatorSet
         get() = OperatorSet.EMPTY
 
@@ -20,8 +22,8 @@ abstract class AbstractLibrary : Library, AbstractPluggable() {
     override val functions: Map<Signature, LogicFunction>
         get() = emptyMap()
 
-    override fun toString(): String {
-        return "${super.toString()}(" +
+    override fun toString(): String =
+        "${super.toString()}(" +
             "alias=" + alias +
             ", primitives=" +
             primitives.keys.joinToString(", ", "{", "}") {
@@ -34,7 +36,6 @@ abstract class AbstractLibrary : Library, AbstractPluggable() {
             operators.joinToString(", ", "{", "}") {
                 "'${it.functor}':${it.priority}:${it.specifier}"
             } + ")"
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

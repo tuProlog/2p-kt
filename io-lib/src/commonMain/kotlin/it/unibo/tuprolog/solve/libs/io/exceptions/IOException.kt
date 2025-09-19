@@ -10,7 +10,5 @@ class IOException : TuPrologException {
     constructor(message: String?, cause: Throwable?) : super(message, cause)
     constructor(cause: Throwable?) : super(cause)
 
-    fun toLogicError(context: ExecutionContext): LogicError {
-        return SystemError.forUncaughtException(context, this)
-    }
+    fun toLogicError(context: ExecutionContext): LogicError = SystemError.forUncaughtException(context, this)
 }

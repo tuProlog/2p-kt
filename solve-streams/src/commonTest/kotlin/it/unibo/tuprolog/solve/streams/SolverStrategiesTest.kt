@@ -20,7 +20,7 @@ internal class SolverStrategiesTest {
     private val aContext = DummyInstances.executionContext
 
     private val predication = logicProgramming { "a" and "b" and "c" }.argsSequence
-    private val clauses = logicProgramming { ktListOf(fact { "a" }, fact { "b" }, fact { "c" }) }.asSequence()
+    private val clauses = logicProgramming { listOf(fact { "a" }, fact { "b" }, fact { "c" }) }.asSequence()
 
     @Test
     fun prologStandardPredicationChoiceStrategy() {

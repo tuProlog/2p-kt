@@ -9,7 +9,7 @@ import kotlin.collections.List as KtList
 
 object CurrentPrologFlag : RuleWrapper<ExecutionContext>("current_prolog_flag", 2) {
     override val Scope.head: KtList<Term>
-        get() = ktListOf(varOf("Key"), varOf("Value"))
+        get() = listOf(varOf("Key"), varOf("Value"))
 
     override val Scope.body: Term get() = structOf(CurrentFlag.functor, varOf("Key"), varOf("Value"))
 }

@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestInteger {
+internal class TestIntegerImpl(
+    private val solverFactory: SolverFactory,
+) : TestInteger {
     override fun testIntPositiveNum() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -11,7 +13,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -25,7 +27,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -39,7 +41,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -53,7 +55,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -67,7 +69,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }

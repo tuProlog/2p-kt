@@ -17,7 +17,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-class TestCreationImpl(protected val solverFactory: SolverFactory) : TestCreation {
+class TestCreationImpl(
+    protected val solverFactory: SolverFactory,
+) : TestCreation {
     private fun testConstructorInvocation(
         cases: List<TestDatum>,
         detectorType: KClass<*> = ConstructorOverloadDetector::class,
@@ -25,7 +27,12 @@ class TestCreationImpl(protected val solverFactory: SolverFactory) : TestCreatio
     ) = logicProgramming {
         val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
         for (case in cases) {
-            val query = NewObject3.functor(TypeRef.of(detectorType), listOf(case2Term(case)), X)
+            val query =
+                NewObject3.functor(
+                    TypeRef.of(detectorType),
+                    logicListOf(case2Term(case)),
+                    X,
+                )
             val solutions = solver.solveList(query)
             assertTrue(solutions.size == 1)
             when (val solution = solutions.single()) {

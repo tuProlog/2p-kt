@@ -12,8 +12,8 @@ object Reverse : BinaryRelation.Functional<ExecutionContext>("reverse") {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
-    ): Substitution {
-        return when {
+    ): Substitution =
+        when {
             first is Var -> {
                 ensuringArgumentIsWellFormedList(1)
                 reverse(second as List, first)
@@ -39,7 +39,6 @@ object Reverse : BinaryRelation.Functional<ExecutionContext>("reverse") {
                 }
             }
         }
-    }
 
     private fun Solve.Request<ExecutionContext>.reverse(
         list: List,

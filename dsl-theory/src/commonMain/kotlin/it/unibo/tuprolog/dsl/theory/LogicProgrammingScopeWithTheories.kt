@@ -1,88 +1,50 @@
 package it.unibo.tuprolog.dsl.theory
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.dsl.LogicProgrammingScope
-import it.unibo.tuprolog.dsl.unify.LogicProgrammingScopeWithUnification
+import it.unibo.tuprolog.dsl.unify.LogicProgrammingScopeWithUnificator
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
-import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.theory.TheoryFactory
 import kotlin.js.JsName
 
-interface LogicProgrammingScopeWithTheories : LogicProgrammingScopeWithUnification {
-    @JsName("emptyTheory")
-    fun emptyTheory(): Theory {
-        return Theory.emptyIndexed(unificator)
-    }
+interface LogicProgrammingScopeWithTheories<S : LogicProgrammingScopeWithTheories<S>> :
+    LogicProgrammingScopeWithUnificator<S>,
+    TheoryFactory {
+    @JsName("theoryFactory")
+    val theoryFactory: TheoryFactory
 
-    @JsName("theoryOf")
-    fun theoryOf(vararg clause: Clause): Theory {
-        return Theory.indexedOf(unificator, *clause)
-    }
-
-    @JsName("theoryOfIterable")
-    fun theoryOf(
-        clauses: Iterable<Clause>,
-        vararg otherClauses: Iterable<Clause>,
-    ): Theory {
-        return Theory.indexedOf(unificator, sequenceOf(clauses, *otherClauses).flatMap { it.asSequence() })
-    }
-
-    @JsName("theoryOfSequence")
-    fun theoryOf(
-        clauses: Sequence<Clause>,
-        vararg otherClauses: Sequence<Clause>,
-    ): Theory {
-        return Theory.indexedOf(unificator, sequenceOf(clauses, *otherClauses).flatten())
-    }
+    @JsName("convertToClause")
+    fun Any.toClause(): Clause = toSpecificSubTypeOfTerm(Clause::class, ::clauseOf)
 
     @JsName("theory")
-    fun theory(vararg clauseFunctions: LogicProgrammingScope.() -> Any): Theory =
-        theoryOf(
-            *clauseFunctions.map { function ->
-                LogicProgrammingScope.empty().function().let { clause { it } }
-            }.toTypedArray(),
-        )
+    fun theory(vararg clauseFunctions: S.() -> Any): Theory =
+        theoryOf(clauseFunctions.map { newScope().it().toClause() })
 
-    @JsName("emptyMutableTheory")
-    fun emptyMutableTheory(): MutableTheory {
-        return MutableTheory.emptyIndexed(unificator)
-    }
+    @JsName("theoryOfConcatenatedSequences")
+    fun theoryOf(
+        clauses: Sequence<Clause>,
+        vararg otherClauses: Sequence<Clause>,
+    ): Theory = theoryOf(clauses + otherClauses.flatMap { it })
 
-    @JsName("mutableTheoryOf")
-    fun mutableTheoryOf(vararg clause: Clause): MutableTheory {
-        return MutableTheory.indexedOf(unificator, *clause)
-    }
-
-    @JsName("mutableTheoryOfIterable")
-    fun mutableTheoryOf(
+    @JsName("theoryOfConcatenatedIterables")
+    fun theoryOf(
         clauses: Iterable<Clause>,
         vararg otherClauses: Iterable<Clause>,
-    ): MutableTheory {
-        return MutableTheory.indexedOf(unificator, sequenceOf(clauses, *otherClauses).flatMap { it.asSequence() })
-    }
+    ): Theory = theoryOf(kotlin.collections.listOf(clauses, *otherClauses).flatten())
 
-    @JsName("mutableTheoryOfSequence")
+    @JsName("mutableTheory")
+    fun mutableTheory(vararg clauseFunctions: S.() -> Any): MutableTheory =
+        mutableTheoryOf(clauseFunctions.map { newScope().it().toClause() })
+
+    @JsName("mutableTheoryOfConcatenatedSequences")
     fun mutableTheoryOf(
         clauses: Sequence<Clause>,
         vararg otherClauses: Sequence<Clause>,
-    ): MutableTheory {
-        return MutableTheory.indexedOf(unificator, sequenceOf(clauses, *otherClauses).flatten())
-    }
+    ): MutableTheory = mutableTheoryOf(clauses + otherClauses.flatMap { it })
 
-    @JsName("mutableTheory")
-    fun mutableTheory(vararg clauseFunctions: LogicProgrammingScope.() -> Any): MutableTheory =
-        mutableTheoryOf(
-            *clauseFunctions.map { function ->
-                LogicProgrammingScope.empty().function().let { clause { it } }
-            }.toTypedArray(),
-        )
-
-    companion object {
-        @JsName("of")
-        fun of(
-            unificator: Unificator = Unificator.default,
-            scope: Scope = Scope.empty(),
-        ): LogicProgrammingScopeWithTheories = LogicProgrammingScopeWithTheoriesImpl(unificator, scope)
-    }
+    @JsName("mutableTheoryOfConcatenatedIterables")
+    fun mutableTheoryOf(
+        clauses: Iterable<Clause>,
+        vararg otherClauses: Iterable<Clause>,
+    ): MutableTheory = mutableTheoryOf(kotlin.collections.listOf(clauses, *otherClauses).flatten())
 }

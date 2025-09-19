@@ -17,11 +17,16 @@ internal class AtomIndex(
     unificator: Unificator,
     private val ordered: Boolean,
     private val nestingLevel: Int,
-) : AbstractIndexingLeaf(unificator), Retractable {
+) : AbstractIndexingLeaf(unificator),
+    Retractable {
     private val index: MutableMap<Atom, MutableList<SituatedIndexedClause>> = mutableMapOf()
 
     override val size: Int
-        get() = index.values.asSequence().map { it.size }.sum()
+        get() =
+            index.values
+                .asSequence()
+                .map { it.size }
+                .sum()
 
     override val isEmpty: Boolean
         get() = index.isEmpty() || index.values.all { it.isEmpty() }
@@ -67,9 +72,10 @@ internal class AtomIndex(
         }
 
     private fun extractFirst(clause: Clause): SituatedIndexedClause? =
-        index.values.mapNotNull {
-            extractFirst(clause, it)
-        }.minOrNull()
+        index.values
+            .mapNotNull {
+                extractFirst(clause, it)
+            }.minOrNull()
 
     private fun extractFirst(
         clause: Clause,
@@ -84,8 +90,8 @@ internal class AtomIndex(
         }
     }
 
-    override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (clause.nestedFirstArgument().isAtom) {
+    override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
+        if (clause.nestedFirstArgument().isAtom) {
             index[clause.asInnerAtom()]
                 ?.asSequence()
                 ?.filter { unificator.match(it.innerClause, clause) }
@@ -93,14 +99,13 @@ internal class AtomIndex(
         } else {
             extractGlobalIndexedSequence(clause)
         }
-    }
 
     override fun retractIndexed(indexed: SituatedIndexedClause) {
         index[indexed.asInnerAtom()]!!.remove(indexed)
     }
 
-    override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (clause.nestedFirstArgument().isAtom) {
+    override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
+        if (clause.nestedFirstArgument().isAtom) {
             when (val partialIndex = index[clause.asInnerAtom()]) {
                 null -> emptySequence()
                 else -> removeAllLazily(partialIndex, clause)
@@ -112,7 +117,6 @@ internal class AtomIndex(
                 },
             )
         }.buffered()
-    }
 
     override fun retractAll(clause: Clause): Sequence<Clause> = retractAllIndexed(clause).map { it.innerClause }
 

@@ -7,7 +7,8 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 abstract class AbstractChannelStore<T : Any, C : Channel<T>, Self : ChannelStore<T, C, Self>>(
     protected val channels: Map<String, C>,
-) : ChannelStore<T, C, Self>, Map<String, C> by channels {
+) : ChannelStore<T, C, Self>,
+    Map<String, C> by channels {
     override fun toString(): String =
         channels.entries.joinToString(
             separator = ", ",
@@ -28,13 +29,15 @@ abstract class AbstractChannelStore<T : Any, C : Channel<T>, Self : ChannelStore
         return true
     }
 
-    override fun hashCode(): Int {
-        return channels.hashCode()
-    }
+    override fun hashCode(): Int = channels.hashCode()
 
     override fun findByTerm(streamTerm: Term): Sequence<C> =
         values.asSequence().filter { it.streamTerm matches streamTerm }
 
     override fun aliasesOf(channel: C): Sequence<String> =
-        entries.asSequence().filter { (_, v) -> v == channel }.map { it.key }.filterNot { it == ChannelStore.CURRENT }
+        entries
+            .asSequence()
+            .filter { (_, v) -> v == channel }
+            .map { it.key }
+            .filterNot { it == ChannelStore.CURRENT }
 }

@@ -11,7 +11,9 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /** A type representing a solution to a goal */
-sealed interface Solution : Taggable<Solution>, Castable<Solution> {
+sealed interface Solution :
+    Taggable<Solution>,
+    Castable<Solution> {
     /** The query to which the solution refers */
     @JsName("query")
     val query: Struct
@@ -87,7 +89,18 @@ sealed interface Solution : Taggable<Solution>, Castable<Solution> {
         no: ((No) -> T)? = null,
         halt: ((Halt) -> T)? = null,
         otherwise: ((Solution) -> T) = { throw IllegalStateException("Cannot handle solution $it") },
-    ): T
+    ): T {
+        if (this is Solution.Yes && yes != null) {
+            return yes(this)
+        }
+        if (this is Solution.No && no != null) {
+            return no(this)
+        }
+        if (this is Solution.Halt && halt != null) {
+            return halt(this)
+        }
+        return otherwise(this)
+    }
 
     @JsName("cleanUp")
     fun cleanUp(): Solution

@@ -70,9 +70,7 @@ class OverloadDetectorImpl : OverloadDetector {
         return BigDecimal::class.name
     }
 
-    override fun toList(): List<Any> {
-        return _recordings.map { it.first }
-    }
+    override fun toList(): List<Any> = _recordings.map { it.first }
 
     override fun reset() = _recordings.clear()
 

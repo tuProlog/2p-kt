@@ -9,7 +9,7 @@ import kotlin.collections.List as KtList
 
 object Call : RuleWrapper<ClassicExecutionContext>("call", 1) {
     override val Scope.head: KtList<Term>
-        get() = ktListOf(varOf("G"))
+        get() = listOf(varOf("G"))
 
     override val Scope.body: Term
         get() =

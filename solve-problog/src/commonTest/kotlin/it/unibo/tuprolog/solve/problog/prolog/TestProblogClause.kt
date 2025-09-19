@@ -6,7 +6,9 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestProblogClause : TestClause, SolverFactory by ProblogSolverFactory {
+class TestProblogClause :
+    TestClause,
+    SolverFactory by ProblogSolverFactory {
     private val prototype = TestClause.prototype(this)
 
     @Test

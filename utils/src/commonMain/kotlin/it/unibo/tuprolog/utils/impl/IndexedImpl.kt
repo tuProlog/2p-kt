@@ -6,7 +6,5 @@ internal data class IndexedImpl<T>(
     override val index: Long,
     override val value: T,
 ) : LongIndexed<T> {
-    override fun <R> map(mapper: (T) -> R): LongIndexed<R> {
-        return IndexedImpl(index, mapper(value))
-    }
+    override fun <R> map(mapper: (T) -> R): LongIndexed<R> = IndexedImpl(index, mapper(value))
 }

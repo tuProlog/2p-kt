@@ -4,7 +4,9 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.utils.synchronizedOnSelf
 
-abstract class AbstractOutputChannel<T : Any> : AbstractChannel<T>(), OutputChannel<T> {
+abstract class AbstractOutputChannel<T : Any> :
+    AbstractChannel<T>(),
+    OutputChannel<T> {
     final override fun write(value: T) =
         synchronizedOnSelf {
             if (isClosed) throw IllegalStateException("Output channel is closed")

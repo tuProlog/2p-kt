@@ -135,7 +135,10 @@ fun assertSolutionEquals(
             }
         }
 
-        expected.substitution.values.asSequence().flatMap { it.variables }.any() -> {
+        expected.substitution.values
+            .asSequence()
+            .flatMap { it.variables }
+            .any() -> {
             assertSameClass(expected, actual)
             assertSameQuery(expected, actual)
             assertEquals(expected.substitution.count(), actual.substitution.count(), reportMsg(expected, actual))

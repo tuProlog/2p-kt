@@ -3,7 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestBigList {
+internal class TestBigListImpl(
+    private val solverFactory: SolverFactory,
+) : TestBigList {
     override val shortDuration: TimeDuration
         get() = 6000
 
@@ -11,7 +13,7 @@ internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestB
         logicProgramming {
             val theory =
                 theoryOf(
-                    fact { "biglist"(0, listOf(0)) },
+                    fact { "biglist"(0, logicListOf(0)) },
                     rule {
                         "biglist"(N, consOf(N, X)).impliedBy(
                             N greaterThan 0,
@@ -27,9 +29,9 @@ internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestB
             val solutions = solver.solve(query, longDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.yes(
-                        L to listOf((0..BigListOptions.SIZE).reversed().map { Integer.of(it) }),
+                        L to logicListOf((0..BigListOptions.SIZE).reversed().map { Integer.of(it) }),
                     ),
                     query.no(),
                 ),

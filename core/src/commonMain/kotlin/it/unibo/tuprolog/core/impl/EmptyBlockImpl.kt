@@ -8,7 +8,8 @@ import it.unibo.tuprolog.core.Var
 
 internal class EmptyBlockImpl(
     tags: Map<String, Any> = emptyMap(),
-) : BlockImpl(null, tags), EmptyBlock {
+) : BlockImpl(null, tags),
+    EmptyBlock {
     override val args: List<Term> get() = emptyList()
 
     override val functor: String = super<EmptyBlock>.functor

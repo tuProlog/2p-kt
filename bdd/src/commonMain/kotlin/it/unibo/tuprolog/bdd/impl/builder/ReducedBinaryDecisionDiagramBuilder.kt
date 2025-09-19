@@ -41,7 +41,5 @@ internal class ReducedBinaryDecisionDiagramBuilder<T : Comparable<T>>(
         }
     }
 
-    override fun buildTerminal(truth: Boolean): BinaryDecisionDiagram<T> {
-        return delegate.buildTerminal(truth)
-    }
+    override fun buildTerminal(truth: Boolean): BinaryDecisionDiagram<T> = delegate.buildTerminal(truth)
 }

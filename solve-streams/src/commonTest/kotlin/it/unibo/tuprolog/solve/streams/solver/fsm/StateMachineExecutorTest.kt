@@ -80,7 +80,9 @@ internal class StateMachineExecutorTest {
         val toBeTested = StateMachineExecutor.execute(thirdStateHasAlreadyBehaved)
 
         assertEquals(3, toBeTested.count())
-        toBeTested.toList().getOrNull(2)
+        toBeTested
+            .toList()
+            .getOrNull(2)
             ?.run { assertTrue(hasBehaved) }
             ?: fail("No state at that index")
     }

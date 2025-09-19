@@ -12,7 +12,9 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentFunctor<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testFunArity() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -125,7 +127,7 @@ interface TestConcurrentFunctor<T : WithAssertingEquals> : FromSequence<T>, Solv
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = functor(emptyList, emptyList, 0)
+            val query = functor(emptyLogicList, emptyLogicList, 0)
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 

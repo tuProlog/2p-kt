@@ -12,8 +12,8 @@ import it.unibo.tuprolog.utils.NumberTypeTester
 internal class ObjectToTermConverterImpl : ObjectToTermConverter {
     private val numberTypeTester = NumberTypeTester()
 
-    override fun convert(source: Any?): Term {
-        return with(numberTypeTester) {
+    override fun convert(source: Any?): Term =
+        with(numberTypeTester) {
             when (source) {
                 null -> ObjectRef.NULL
                 is String -> Atom.of(source)
@@ -27,5 +27,4 @@ internal class ObjectToTermConverterImpl : ObjectToTermConverter {
                 else -> ObjectRef.of(source)
             }
         }
-    }
 }

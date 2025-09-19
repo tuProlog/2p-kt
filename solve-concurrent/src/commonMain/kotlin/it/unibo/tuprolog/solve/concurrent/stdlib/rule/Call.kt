@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 
 object Call : RuleWrapper<ConcurrentExecutionContext>("call", 1) {
     override val Scope.head: List<Term>
-        get() = ktListOf(varOf("G"))
+        get() = listOf(varOf("G"))
 
     override val Scope.body: Term
         get() =

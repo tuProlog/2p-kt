@@ -15,9 +15,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
  *
  * @author Jason Dellaluce */
 internal object PrologClauseMapper : ClauseMapper {
-    override fun isCompatible(clause: Clause): Boolean {
-        return clause is Rule
-    }
+    override fun isCompatible(clause: Clause): Boolean = clause is Rule
 
     override fun apply(clause: Clause): List<Clause> {
         if (clause !is Rule) {

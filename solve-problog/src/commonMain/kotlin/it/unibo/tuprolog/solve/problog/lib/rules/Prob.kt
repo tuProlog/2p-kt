@@ -30,7 +30,7 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  */
 internal object Prob : RuleWrapper<ClassicExecutionContext>(ProblogLib.PREDICATE_PREFIX, 2) {
     override val Scope.head: List<Term>
-        get() = ktListOf(varOf("EXPL"), varOf("GOAL"))
+        get() = listOf(varOf("EXPL"), varOf("GOAL"))
 
     override val Scope.body: Term
         get() {

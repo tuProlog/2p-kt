@@ -24,14 +24,13 @@ class MalformedAliasException(
     override fun toLogicError(
         context: ExecutionContext,
         signature: Signature,
-    ): LogicError {
-        return TypeError.of(
+    ): LogicError =
+        TypeError.of(
             context,
             DEALIASING_EXPRESSION,
             culprit,
             "Error in ${signature.toIndicator()}: ${message?.replaceFirstChar { it.lowercase() }}",
         )
-    }
 
     override val culprit: Term get() = dealiasingExpression
 }

@@ -1,16 +1,26 @@
 plugins {
-    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
 }
 
 kotlin {
     sourceSets {
-        main {
+        jsMain {
             dependencies {
                 api(kotlin("stdlib-js"))
-                api(npm("@tuprolog/parser-utils", libs.versions.npm.tuprolog.parserUtils.get()))
+                api(
+                    npm(
+                        "@tuprolog/parser-utils",
+                        libs.versions.npm.tuprolog.parserUtils
+                            .get(),
+                    ),
+                )
             }
         }
-        test {
+        jsTest {
             dependencies {
                 implementation(kotlin("test-js"))
             }

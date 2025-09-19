@@ -42,7 +42,8 @@ class TestSubstitutionMerging {
     fun testSubstitutionsAreCorrectlyMergedAfterPrimitives() {
         logicProgramming {
             val solver =
-                ClassicSolverFactory.newBuilder()
+                ClassicSolverFactory
+                    .newBuilder()
                     .staticKb(theory)
                     .noBuiltins()
                     .runtime(libraryOf("test", primitive).toRuntime())
@@ -52,7 +53,7 @@ class TestSubstitutionMerging {
 
             val solutions = solver.solveList(goal)
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     goal.yes(A to atomOf("A")),
                     goal.yes(A to atomOf("X")),
                     goal.yes(A to atomOf("Y")),

@@ -20,7 +20,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @Suppress("DEPRECATION")
-class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirectives {
+class TestDirectivesImpl(
+    private val solverFactory: SolverFactory,
+) : TestDirectives {
     override fun testDynamic1() {
         logicProgramming {
             val initialStaticKb =
@@ -107,13 +109,13 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
                 val solver = solverOf(theory)
 
                 assertEquals(
-                    ktListOf<Any>("a", "f(1)", "f(2)", "b"),
+                    listOf<Any>("a", "f(1)", "f(2)", "b"),
                     writeEvents,
                 )
 
                 val query = "f"(X)
                 val expectedSolutions =
-                    ktListOf(
+                    listOf(
                         query.yes(X to 1),
                         query.yes(X to 2),
                     )
@@ -212,7 +214,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
                 val solver = solverOf(theory)
 
                 assertEquals(
-                    ktListOf<Any>(),
+                    listOf<Any>(),
                     events,
                 )
 

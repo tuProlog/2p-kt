@@ -1,5 +1,9 @@
 plugins {
-    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
 }
 
 kotlin {
@@ -9,5 +13,10 @@ kotlin {
                 api(project(":core"))
             }
         }
+//        commonTest {
+//            dependencies {
+//                api(project(":test-dsl"))
+//            }
+//        }
     }
 }

@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentCompound<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testCompoundDec() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
@@ -82,7 +84,7 @@ interface TestConcurrentCompound<T : WithAssertingEquals> : FromSequence<T>, Sol
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
 
-            val query = compound(listOf("a"))
+            val query = compound(logicListOf("a"))
             val solutions = fromSequence(solver.solve(query, mediumDuration))
             val expected = fromSequence(query.yes())
 

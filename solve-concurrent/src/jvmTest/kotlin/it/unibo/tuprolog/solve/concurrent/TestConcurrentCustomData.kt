@@ -12,7 +12,9 @@ import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
 import it.unibo.tuprolog.solve.stdlib.primitive.SetPersistent
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentCustomData<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentCustomData<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testApi() {
         val solver = solverWithDefaultBuiltins()
 

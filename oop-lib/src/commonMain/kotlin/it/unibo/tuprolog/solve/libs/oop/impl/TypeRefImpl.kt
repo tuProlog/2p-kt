@@ -18,7 +18,10 @@ import it.unibo.tuprolog.utils.Optional
 import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
-internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom.of(nameOf(type)) {
+internal class TypeRefImpl(
+    override val type: KClass<*>,
+) : TypeRef,
+    Atom by Atom.of(nameOf(type)) {
     companion object {
         private fun nameOf(type: KClass<*>): String = "<type:${type.fullName}>"
     }
@@ -26,9 +29,7 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
     override fun create(
         objectConverter: TermToObjectConverter,
         arguments: List<Term>,
-    ): Result {
-        return type.create(objectConverter, arguments)
-    }
+    ): Result = type.create(objectConverter, arguments)
 
     override fun invoke(
         objectConverter: TermToObjectConverter,

@@ -4,7 +4,9 @@ import it.unibo.tuprolog.core.impl.EmptyBlockImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-interface EmptyBlock : Empty, Block {
+interface EmptyBlock :
+    Empty,
+    Block {
     override val isEmptyBlock: Boolean
         get() = true
 

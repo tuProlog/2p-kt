@@ -35,7 +35,7 @@ object TimeRelatedTheories {
      */
     val lessThan500MsGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "a"("X").hasSolutions(
                     { halt(timeOutException) },
                 ),
@@ -51,7 +51,7 @@ object TimeRelatedTheories {
      */
     val slightlyMoreThan500MsGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "a"("X").hasSolutions(
                     { yes("X" to 500) },
                     { halt(timeOutException) },
@@ -68,7 +68,7 @@ object TimeRelatedTheories {
      */
     val slightlyMoreThan600MsGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "a"("X").hasSolutions(
                     { yes("X" to 500) },
                     { yes("X" to 600) },
@@ -85,7 +85,7 @@ object TimeRelatedTheories {
      */
     val slightlyMoreThan700MsGoalToSolution by lazy {
         logicProgramming {
-            ktListOf(
+            listOf(
                 "a"("X").hasSolutions(
                     { yes("X" to 500) },
                     { yes("X" to 600) },

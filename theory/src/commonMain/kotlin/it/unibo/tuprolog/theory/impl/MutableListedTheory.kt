@@ -14,7 +14,8 @@ internal class MutableListedTheory private constructor(
     unificator: Unificator,
     override val clauses: MutableList<Clause>,
     tags: Map<String, Any>,
-) : AbstractListedTheory(unificator, clauses, tags), MutableTheory {
+) : AbstractListedTheory(unificator, clauses, tags),
+    MutableTheory {
     override fun setUnificator(unificator: Unificator): MutableTheory {
         this.unificator = unificator
         return this
@@ -94,13 +95,12 @@ internal class MutableListedTheory private constructor(
 
     override fun plus(clause: Clause): MutableListedTheory = assertZ(clause)
 
-    override fun plus(theory: Theory): MutableListedTheory {
-        return if (theory === this) {
+    override fun plus(theory: Theory): MutableListedTheory =
+        if (theory === this) {
             assertZ(theory.toList())
         } else {
             assertZ(theory)
         }
-    }
 
     override fun assertA(clause: Clause): MutableListedTheory =
         this.also {

@@ -1,6 +1,6 @@
 {
   "extends": [
-    "config:base",
+    "config:recommended",
     ":rebaseStalePrs",
     ":semanticCommits"
   ],
@@ -12,23 +12,27 @@
   "git-submodules": {
     "enabled": true
   },
-  "includeForks": true,
+  "forkProcessing": "enabled",
   "packageRules": [
     {
       "description": "Updates to GitHub Actions should be tagged as 'ci'",
-      "matchPaths": [
+      "matchFileNames": [
         ".github/workflows/*.yml",
         ".github/workflows/*.yaml"
       ],
       "semanticCommitType": "ci"
     },
     {
-      "matchPackageNames": ["net.sourceforge.plantuml:plantuml"],
+      "matchPackageNames": [
+        "net.sourceforge.plantuml:plantuml"
+      ],
       "allowedVersions": "/^1\\./"
     },
     {
-      "matchPackagePatterns": ["^org\\.openjfx:javafx-"],
-      "allowedVersions": "/^1\\./"
+      "allowedVersions": "/^1\\./",
+      "matchPackageNames": [
+        "/^org\\.openjfx:javafx-/"
+      ]
     }
   ],
   "prConcurrentLimit": 25,

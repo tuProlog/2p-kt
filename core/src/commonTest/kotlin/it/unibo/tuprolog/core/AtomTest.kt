@@ -59,7 +59,8 @@ internal class AtomTest {
         val correctAtoms = AtomUtils.mixedAtoms
         val correctAtomInstances = correctAtoms.map { Atom.of(it) }
 
-        correctAtoms.zip(correctAtomInstances)
+        correctAtoms
+            .zip(correctAtomInstances)
             .filter { (atomString, _) -> atomString matches Atom.ATOM_PATTERN }
             .forEach { (_, atomInstance) ->
                 assertTrue { atomInstance.isFunctorWellFormed }

@@ -2,7 +2,6 @@ import io.github.gciatto.kt.mpp.Plugins
 import io.github.gciatto.kt.mpp.helpers.ProjectType
 import io.github.gciatto.kt.mpp.utils.log
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.ktMpp.multiProjectHelper)
@@ -11,8 +10,7 @@ plugins {
 group = "it.unibo.tuprolog"
 
 gitSemVer {
-    excludeLightweightTags()
-    assignGitSemanticVersion()
+    buildMetadataSeparator.set("-")
 }
 
 log("version: $version", LogLevel.LIFECYCLE)
@@ -22,7 +20,7 @@ multiProjectHelper {
 
     jvmProjects(":examples", ":ide", ":ide-plp", ":parser-jvm")
     jsProjects(":parser-js")
-    otherProjects(":documentation")
+    // otherProjects(":documentation")
 
     val baseProjectTemplate =
         buildSet {

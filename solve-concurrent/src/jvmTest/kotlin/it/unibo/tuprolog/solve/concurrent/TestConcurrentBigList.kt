@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentBigList<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentBigList<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     override val shortDuration: TimeDuration
         get() = 4000
 
@@ -15,7 +17,7 @@ interface TestConcurrentBigList<T : WithAssertingEquals> : FromSequence<T>, Solv
         logicProgramming {
             val theory =
                 theoryOf(
-                    fact { "biglist"(0, listOf(0)) },
+                    fact { "biglist"(0, logicListOf(0)) },
                     rule {
                         "biglist"(N, consOf(N, X)).impliedBy(
                             N greaterThan 0,
@@ -33,7 +35,7 @@ interface TestConcurrentBigList<T : WithAssertingEquals> : FromSequence<T>, Solv
                 fromSequence(
                     sequenceOf(
                         query.yes(
-                            L to listOf((0..BigListOptions.SIZE).reversed().map { Integer.of(it) }),
+                            L to logicListOf((0..BigListOptions.SIZE).reversed().map { Integer.of(it) }),
                         ),
                         query.no(),
                     ),

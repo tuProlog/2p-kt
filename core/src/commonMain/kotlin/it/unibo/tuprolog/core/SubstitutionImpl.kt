@@ -66,25 +66,13 @@ internal sealed class SubstitutionImpl : Substitution {
             )
         }
 
-    override fun <T> whenIs(
-        unifier: ((Unifier) -> T)?,
-        fail: ((Substitution.Fail) -> T)?,
-        otherwise: (Substitution) -> T,
-    ): T {
-        if (isSuccess && unifier != null) {
-            return unifier(castToUnifier())
-        }
-        if (isFailed && fail != null) {
-            return fail(castToFail())
-        }
-        return otherwise(this)
-    }
-
     /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
     class UnifierImpl private constructor(
         private val assignments: Map<Var, Term>,
         override val tags: Map<String, Any>,
-    ) : SubstitutionImpl(), Unifier, Map<Var, Term> by (assignments) {
+    ) : SubstitutionImpl(),
+        Unifier,
+        Map<Var, Term> by (assignments) {
         companion object {
             fun of(
                 mappings: Map<Var, Term>,
@@ -96,12 +84,11 @@ internal sealed class SubstitutionImpl : Substitution {
         // because a map cannot have a mapping from same key to more than one
         // different value, by definition of map type
 
-        private fun reverseLookUp(variable: Var): Var? {
-            return entries
+        private fun reverseLookUp(variable: Var): Var? =
+            entries
                 .filter { it.value == variable }
                 .map { it.key }
                 .firstOrNull()
-        }
 
         override fun getOriginal(variable: Var): Var? =
             sequence<Var> {
@@ -127,14 +114,16 @@ internal sealed class SubstitutionImpl : Substitution {
         ): Unifier = super.minus(variable, *otherVariables).castToUnifier()
 
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier =
-            super.filter(
-                predicate,
-            ).castToUnifier()
+            super
+                .filter(
+                    predicate,
+                ).castToUnifier()
 
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Unifier =
-            super.filter(
-                predicate,
-            ).castToUnifier()
+            super
+                .filter(
+                    predicate,
+                ).castToUnifier()
 
         override fun filter(variables: KtCollection<Var>): Unifier = super.filter(variables).castToUnifier()
 
@@ -170,7 +159,9 @@ internal sealed class SubstitutionImpl : Substitution {
     /** The Failed Substitution instance */
     class FailImpl constructor(
         override val tags: Map<String, Any> = emptyMap(),
-    ) : SubstitutionImpl(), Substitution.Fail, Map<Var, Term> by emptyMap() {
+    ) : SubstitutionImpl(),
+        Substitution.Fail,
+        Map<Var, Term> by emptyMap() {
         override val isFailed: Boolean
             get() = true
 
@@ -292,8 +283,7 @@ internal sealed class SubstitutionImpl : Substitution {
 
         /** Utility function to filter out identity mappings from a Map<Var, Term> */
         private fun Map<Var, Term>.withoutIdentityMappings(): Map<Var, Term> =
-            filterNot {
-                    (`var`, term) ->
+            filterNot { (`var`, term) ->
                 `var` == term
             }
     }

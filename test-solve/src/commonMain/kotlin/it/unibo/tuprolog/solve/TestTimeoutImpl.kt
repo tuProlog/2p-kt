@@ -1,13 +1,15 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.dsl.theory.LogicProgrammingScopeWithTheories
+import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.stdlib.primitive.FindAll
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
 
-class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
+class TestTimeoutImpl(
+    private val solverFactory: SolverFactory,
+) : TestTimeout {
     override fun testSleep() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -18,7 +20,7 @@ class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
             val solutions = solver.solveList(query, shortDuration)
 
             assertSolutionEquals(
-                ktListOf<Solution>(
+                listOf<Solution>(
                     query.halt(
                         TimeOutException(context = DummyInstances.executionContext, exceededDuration = shortDuration),
                     ),
@@ -28,7 +30,7 @@ class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
         }
     }
 
-    private fun testInfiniteCollectingGoal(goalProvider: LogicProgrammingScopeWithTheories.() -> Struct) {
+    private fun testInfiniteCollectingGoal(goalProvider: LogicProgrammingScope.() -> Struct) {
         logicProgramming {
             val solver =
                 solverFactory.solverWithDefaultBuiltins(
@@ -45,7 +47,7 @@ class TestTimeoutImpl(private val solverFactory: SolverFactory) : TestTimeout {
             val solutions = solver.solveList(query, shortDuration)
 
             assertSolutionEquals(
-                ktListOf<Solution>(
+                listOf<Solution>(
                     query.halt(
                         TimeOutException(context = DummyInstances.executionContext, exceededDuration = shortDuration),
                     ),

@@ -8,7 +8,9 @@ import it.unibo.tuprolog.solve.libs.io.primitives.Consult
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
+class TestIncludeImpl(
+    private val solverFactory: SolverFactory,
+) : TestInclude {
     private fun theoryWithLocalInclude(loadGoal: String) =
         logicProgramming {
             val parentsPath = findResource("Parents.pl")
@@ -26,7 +28,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
 
                 val expectedTheory = ExampleTheories.PARENTS + theory
 
-                assertEquals(ktListOf<Any>(), events)
+                assertEquals(listOf<Any>(), events)
                 assertTrue {
                     expectedTheory.equals(solver.staticKb + solver.dynamicKb, useVarCompleteName = false)
                 }
@@ -57,7 +59,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
 
                 val expectedTheory = ExampleTheories.PARENTS + theory
 
-                assertEquals(ktListOf<Any>(), events)
+                assertEquals(listOf<Any>(), events)
                 assertTrue {
                     expectedTheory.equals(solver.staticKb + solver.dynamicKb, useVarCompleteName = false)
                 }

@@ -8,16 +8,17 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.utils.cursor
 
-data class StatePrimitiveSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
-    private fun exceptionalState(exception: ResolutionException): StateException {
-        return StateException(
+data class StatePrimitiveSelection(
+    override val context: ClassicExecutionContext,
+) : AbstractState(context) {
+    private fun exceptionalState(exception: ResolutionException): StateException =
+        StateException(
             exception,
             context.copy(step = nextStep()),
         )
-    }
 
-    override fun computeNext(): State {
-        return with(context) {
+    override fun computeNext(): State =
+        with(context) {
             val goal = currentGoal!!
             when {
                 goal.isVar -> {
@@ -61,7 +62,6 @@ data class StatePrimitiveSelection(override val context: ClassicExecutionContext
                 }
             }
         }
-    }
 
     override fun clone(context: ClassicExecutionContext): StatePrimitiveSelection = copy(context = context)
 }

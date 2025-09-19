@@ -4,7 +4,11 @@ import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
 
 plugins {
     antlr
-    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
 }
 
 dependencies {
@@ -21,30 +25,33 @@ configurations {
     }
 }
 
-tasks.generateGrammarSource {
-    maxHeapSize = "64m"
-    arguments = arguments + listOf("-visitor", "-long-messages")
-    val buildDir = project.layout.buildDirectory.get().asFile
-    outputDirectory = buildDir.resolve("generated-src/antlr/main/it/unibo/tuprolog/parser")
-    tasks.compileKotlin.orNull?.dependsOn(this)
-    tasks.findByName("sourcesJar")?.dependsOn(this)
-}
+val generateGrammarSource =
+    tasks.named<AntlrTask>("generateGrammarSource") {
+        maxHeapSize = "64m"
+        arguments = arguments + listOf("-visitor", "-long-messages")
+        val buildDir =
+            project.layout.buildDirectory
+                .get()
+                .asFile
+        outputDirectory = buildDir.resolve("generated-src/antlr/main/it/unibo/tuprolog/parser")
+    }
 
-tasks.generateTestGrammarSource {
-    tasks.compileTestKotlin.orNull?.dependsOn(this)
-}
+val generateTestGrammarSource = tasks.named<AntlrTask>("generateTestGrammarSource")
+
+tasks.named("compileKotlin") { dependsOn(generateGrammarSource) }
+tasks.named("compileTestKotlin") { dependsOn(generateTestGrammarSource) }
 
 fun dependOnGrammarGeneration(task: Task) {
     if ("Test" in task.name) {
-        task.dependsOn(tasks.generateTestGrammarSource)
+        task.dependsOn(generateTestGrammarSource)
     } else {
-        task.dependsOn(tasks.generateGrammarSource)
+        task.dependsOn(generateGrammarSource)
     }
 }
 
-tasks.withType<AbstractDokkaTask>(::dependOnGrammarGeneration)
-tasks.withType<Detekt>(::dependOnGrammarGeneration)
-tasks.withType<BaseKtLintCheckTask>(::dependOnGrammarGeneration)
+tasks.withType<AbstractDokkaTask>().configureEach { dependOnGrammarGeneration(this) }
+tasks.withType<Detekt>().configureEach { dependOnGrammarGeneration(this) }
+tasks.withType<BaseKtLintCheckTask>().configureEach { dependOnGrammarGeneration(this) }
 
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     filter {
@@ -52,11 +59,11 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     }
 }
 
-tasks.withType<AbstractDokkaTask> {
-    dependsOn(tasks.generateGrammarSource)
+tasks.withType<AbstractDokkaTask>().configureEach {
+    dependsOn(generateGrammarSource)
 }
 
-tasks.getByName<Jar>("sourcesJar") {
+tasks.named<Jar>("sourcesJar").configure {
     project.sourceSets.forEach { sourceSet ->
         sourceSet.allSource.sourceDirectories.forEach {
             from(it)
@@ -66,4 +73,6 @@ tasks.getByName<Jar>("sourcesJar") {
         }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
+    dependsOn(generateGrammarSource)
+    dependsOn(generateTestGrammarSource)
 }

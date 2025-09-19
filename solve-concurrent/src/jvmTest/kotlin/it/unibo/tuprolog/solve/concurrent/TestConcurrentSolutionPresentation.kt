@@ -7,7 +7,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-interface TestConcurrentSolutionPresentation<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentSolutionPresentation<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testSolutionWithDandlingVars() {
         logicProgramming {
             val theory =
@@ -18,7 +20,7 @@ interface TestConcurrentSolutionPresentation<T : WithAssertingEquals> : FromSequ
             val query = "append"(A, B)
             val sol = solver.solveOnce(query)
             assertTrue { sol is Solution.Yes }
-            assertTrue { ktSetOf(A, B).all { it in sol.substitution.keys } }
+            assertTrue { setOf(A, B).all { it in sol.substitution.keys } }
             assertTrue { sol.substitution[A]!! matches "seq"(`_`) }
             assertEquals("X", (sol.substitution[B] as? Var)?.name)
         }

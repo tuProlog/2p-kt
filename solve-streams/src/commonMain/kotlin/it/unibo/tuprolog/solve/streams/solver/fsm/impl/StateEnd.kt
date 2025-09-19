@@ -25,7 +25,8 @@ import it.unibo.tuprolog.solve.streams.solver.getSideEffectManager
 internal sealed class StateEnd(
     private val sourceContext: ExecutionContext,
     override val solve: Solve.Response,
-) : AbstractState(solve), FinalState {
+) : AbstractState(solve),
+    FinalState {
     override fun behave(): Sequence<State> = emptySequence()
 
     override val context: StreamsExecutionContext by lazy {
@@ -39,7 +40,8 @@ internal sealed class StateEnd(
     internal data class True(
         private val sourceContext: ExecutionContext,
         override val solve: Solve.Response,
-    ) : StateEnd(sourceContext, solve), FinalState {
+    ) : StateEnd(sourceContext, solve),
+        FinalState {
         init {
             require(solve.solution is Solution.Yes) {
                 "True end state can be created only with Solution.Yes. Current: `${solve.solution}`"
@@ -51,7 +53,8 @@ internal sealed class StateEnd(
     internal data class False(
         private val sourceContext: ExecutionContext,
         override val solve: Solve.Response,
-    ) : StateEnd(sourceContext, solve), FinalState {
+    ) : StateEnd(sourceContext, solve),
+        FinalState {
         init {
             require(solve.solution is Solution.No) {
                 "False end state can be created only with Solution.No. Current: `${solve.solution}`"
@@ -63,7 +66,8 @@ internal sealed class StateEnd(
     internal data class Halt(
         private val sourceContext: ExecutionContext,
         override val solve: Solve.Response,
-    ) : StateEnd(sourceContext, solve), FinalState {
+    ) : StateEnd(sourceContext, solve),
+        FinalState {
         init {
             require(
                 solve.solution is Solution.Halt,

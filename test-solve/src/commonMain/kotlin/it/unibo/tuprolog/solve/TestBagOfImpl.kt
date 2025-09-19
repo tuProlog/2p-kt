@@ -4,7 +4,9 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
+class TestBagOfImpl(
+    private val solverFactory: SolverFactory,
+) : TestBagOf {
     override fun testBagXInDifferentValues() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -12,7 +14,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("S" to listOf(1, 2))),
+                listOf(query.yes("S" to logicListOf(1, 2))),
                 solutions,
             )
         }
@@ -26,7 +28,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to listOf(1, 2))),
+                listOf(query.yes("X" to logicListOf(1, 2))),
                 solutions,
             )
         }
@@ -40,7 +42,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("L" to listOf("Y", "Z"))),
+                listOf(query.yes("L" to logicListOf("Y", "Z"))),
                 solutions,
             )
         }
@@ -54,7 +56,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -68,7 +70,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("S" to listOf(1))),
+                listOf(query.yes("S" to logicListOf(1))),
                 solutions,
             )
         }
@@ -82,7 +84,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -105,7 +107,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,

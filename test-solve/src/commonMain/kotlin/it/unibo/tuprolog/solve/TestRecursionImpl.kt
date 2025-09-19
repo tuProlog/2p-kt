@@ -10,7 +10,9 @@ import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class TestRecursionImpl(private val solverFactory: SolverFactory) : TestRecursion {
+internal class TestRecursionImpl(
+    private val solverFactory: SolverFactory,
+) : TestRecursion {
     override val shortDuration: TimeDuration
         get() = 1000
 

@@ -1,5 +1,9 @@
 plugins {
-    id(libs.plugins.ktMpp.mavenPublish.get().pluginId)
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
     alias(libs.plugins.gradleMockService)
 }
 
@@ -20,9 +24,15 @@ kotlin {
             }
         }
 
-        getByName("jsMain") {
+        named("jsMain") {
             dependencies {
-                implementation(npm("sync-request", libs.versions.npm.syncRequest.get()))
+                implementation(
+                    npm(
+                        "sync-request",
+                        libs.versions.npm.syncRequest
+                            .get(),
+                    ),
+                )
             }
         }
     }

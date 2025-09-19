@@ -4,7 +4,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestRecursion
 import kotlin.test.Test
 
-class TestClassicRecursion : TestRecursion, SolverFactory by ClassicSolverFactory {
+class TestClassicRecursion :
+    TestRecursion,
+    SolverFactory by ClassicSolverFactory {
     private val prototype = TestRecursion.prototype(this)
 
     @Test

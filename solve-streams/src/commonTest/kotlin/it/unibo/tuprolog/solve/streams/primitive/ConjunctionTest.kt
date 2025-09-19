@@ -79,10 +79,11 @@ internal class ConjunctionTest {
                                 Library.of(
                                     alias = "conjunction.test",
                                     primitives =
-                                        mapOf(
-                                            *ktListOf(Conjunction, leftPrimitive, rightPrimitive)
-                                                .map { it.descriptionPair }.toTypedArray(),
-                                        ),
+                                        listOf(
+                                            Conjunction,
+                                            leftPrimitive,
+                                            rightPrimitive,
+                                        ).associate { it.descriptionPair },
                                 ),
                             ),
                     ),

@@ -8,7 +8,8 @@ import it.unibo.tuprolog.core.Terms.EMPTY_LIST_FUNCTOR
 
 internal class EmptyListImpl(
     tags: Map<String, Any> = emptyMap(),
-) : AtomImpl(EMPTY_LIST_FUNCTOR, tags), EmptyList {
+) : AtomImpl(EMPTY_LIST_FUNCTOR, tags),
+    EmptyList {
     override val unfoldedList: List<Term> = listOf(this)
 
     override val unfoldedSequence: Sequence<Term> = sequenceOf(this)

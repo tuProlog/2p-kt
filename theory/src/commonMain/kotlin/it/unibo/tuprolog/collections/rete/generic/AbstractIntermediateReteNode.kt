@@ -15,9 +15,11 @@ internal abstract class AbstractIntermediateReteNode<K, E : Clause>(
     override fun get(element: E): Sequence<E> = selectChildren(element).flatMap { it?.get(element) ?: emptySequence() }
 
     override fun removeAll(element: E): Sequence<E> =
-        selectChildren(element).toList().flatMap {
-            it?.removeAll(element)?.toList() ?: emptyList()
-        }.asSequence()
+        selectChildren(element)
+            .toList()
+            .flatMap {
+                it?.removeAll(element)?.toList() ?: emptyList()
+            }.asSequence()
 
     /** Retrieves from receiver map those values of [ChildNodeType] that have a key respecting [keyFilter] */
     protected fun <ChildNodeType> MutableMap<K, ReteNode<*, E>>.retrieve(

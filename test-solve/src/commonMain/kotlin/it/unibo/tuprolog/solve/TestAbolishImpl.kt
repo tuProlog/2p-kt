@@ -6,7 +6,9 @@ import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestAbolish {
+internal class TestAbolishImpl(
+    private val solverFactory: SolverFactory,
+) : TestAbolish {
     override fun testDoubleAbolish() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

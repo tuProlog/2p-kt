@@ -14,7 +14,10 @@ import kotlin.collections.Collection as KtCollection
  * - [Substitution.Unifier], which represent one possible assignment for a possibly empty set of [Var]s
  * - [Substitution.Fail], which represent the lack of possible assignments for any set of [Var]s
  */
-sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable<Substitution> {
+sealed interface Substitution :
+    Map<Var, Term>,
+    Taggable<Substitution>,
+    Castable<Substitution> {
     /** Whether this [Substitution] is a successful one (i.e., a [Unifier]) */
     @JsName("isSuccess")
     val isSuccess: Boolean
@@ -63,7 +66,15 @@ sealed interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable
         unifier: ((Unifier) -> T)? = null,
         fail: ((Fail) -> T)? = null,
         otherwise: ((Substitution) -> T) = { throw IllegalStateException("Cannot handle solution $it") },
-    ): T
+    ): T {
+        if (isSuccess && unifier != null) {
+            return unifier(castToUnifier())
+        }
+        if (isFailed && fail != null) {
+            return fail(castToFail())
+        }
+        return otherwise(this)
+    }
 
     /** Retrieves the original variable name of the provided [variable], if any, or `null` otherwise
      *

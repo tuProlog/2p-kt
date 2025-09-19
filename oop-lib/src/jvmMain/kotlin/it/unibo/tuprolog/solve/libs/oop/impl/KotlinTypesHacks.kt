@@ -6,7 +6,10 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 
 internal object KotlinTypesHacks {
-    private data class CallableId(val type: KClass<*>, val name: String) : Comparable<CallableId> {
+    private data class CallableId(
+        val type: KClass<*>,
+        val name: String,
+    ) : Comparable<CallableId> {
         private val stringRepresentation = "${type.fullName}::$name"
 
         override fun compareTo(other: CallableId): Int = stringRepresentation.compareTo(other.stringRepresentation)

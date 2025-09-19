@@ -24,9 +24,7 @@ internal class JvmTermObjectifier : TermObjectifier {
         error("Cannot objectify term: $term")
     }
 
-    override fun objectifyMany(values: Iterable<Term>): Any {
-        return values.map { objectify(it) }
-    }
+    override fun objectifyMany(values: Iterable<Term>): Any = values.map { objectify(it) }
 
     override fun visitVar(term: Var): Map<String, Any> =
         mapOf(

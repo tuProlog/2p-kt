@@ -42,9 +42,8 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
          * must be applied by the returned instance.
          * */
         @JsName("defaultOf")
-        fun <E : Comparable<E>> defaultOf(): BinaryDecisionDiagramBuilder<E> {
-            return createDefaultBinaryDecisionDiagramBuilder()
-        }
+        fun <E : Comparable<E>> defaultOf(): BinaryDecisionDiagramBuilder<E> =
+            createDefaultBinaryDecisionDiagramBuilder()
 
         /**
          * Returns a simple [BinaryDecisionDiagramBuilder] instance that does
@@ -53,9 +52,7 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
          * data structure in memory in the form of a directed graph.
          * */
         @JsName("simpleOf")
-        fun <E : Comparable<E>> simpleOf(): BinaryDecisionDiagramBuilder<E> {
-            return SimpleBinaryDecisionDiagramBuilder()
-        }
+        fun <E : Comparable<E>> simpleOf(): BinaryDecisionDiagramBuilder<E> = SimpleBinaryDecisionDiagramBuilder()
 
         /**
          * Returns a [BinaryDecisionDiagramBuilder] instance that applies
@@ -72,9 +69,7 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
         @JsName("reducedOf")
         fun <E : Comparable<E>> reducedOf(
             delegate: BinaryDecisionDiagramBuilder<E> = defaultOf(),
-        ): BinaryDecisionDiagramBuilder<E> {
-            return ReducedBinaryDecisionDiagramBuilder(delegate)
-        }
+        ): BinaryDecisionDiagramBuilder<E> = ReducedBinaryDecisionDiagramBuilder(delegate)
     }
 }
 

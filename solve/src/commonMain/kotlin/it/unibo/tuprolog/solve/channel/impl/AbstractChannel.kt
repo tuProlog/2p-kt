@@ -13,7 +13,7 @@ abstract class AbstractChannel<T : Any> : Channel<T> {
         private fun nextId(): String = (instanceCount++).toString(16).padStart(16, '0')
     }
 
-    @Suppress("ktlint:standard:property-naming")
+    @Suppress("ktlint:standard:property-naming", "ktlint:standard:backing-property-naming")
     private val _listeners: MutableList<Listener<T?>> = mutableListOf()
 
     protected val id = nextId()

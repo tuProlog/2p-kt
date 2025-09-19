@@ -307,14 +307,20 @@ class TestClauseManipulation {
 
         for (i in 0 until directive.bodySize) {
             assertEquals(
-                directive.bodyAsTuple?.unfoldedSequence?.drop(i)?.first(),
+                directive.bodyAsTuple
+                    ?.unfoldedSequence
+                    ?.drop(i)
+                    ?.first(),
                 directive.getBodyItem(i),
             )
         }
 
         for (i in 0 until rule.bodySize) {
             assertEquals(
-                rule.bodyAsTuple?.unfoldedSequence?.drop(i)?.first(),
+                rule.bodyAsTuple
+                    ?.unfoldedSequence
+                    ?.drop(i)
+                    ?.first(),
                 rule.getBodyItem(i),
             )
         }

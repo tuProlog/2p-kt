@@ -32,8 +32,8 @@ internal class TermToObjectConverterImpl(
     override fun convertInto(
         type: KClass<*>,
         term: Term,
-    ): Any? {
-        return when (term) {
+    ): Any? =
+        when (term) {
             is NullRef, is Var -> {
                 if (type.isPrimitiveType) {
                     throw TermToObjectConversionException(term, type)
@@ -101,7 +101,6 @@ internal class TermToObjectConverterImpl(
                 }
             else -> throw TermToObjectConversionException(term)
         }
-    }
 
     private fun explicitConversion(
         castExpression: Struct,
@@ -150,15 +149,16 @@ internal class TermToObjectConverterImpl(
         type: KClass<*>,
         term: Term,
     ): Int? =
-        admissibleTypes(term).asSequence()
+        admissibleTypes(term)
+            .asSequence()
             .map { type.subTypeDistance(it) }
             .indexed()
             .map { (index, dist) -> dist?.let { (index + 1) * (it + 1) } }
             .filterNotNull()
             .minByOrNull { it }
 
-    private fun admissibleTypesByPriority(term: Term): Sequence<KClass<*>> {
-        return when (term) {
+    private fun admissibleTypesByPriority(term: Term): Sequence<KClass<*>> =
+        when (term) {
             is NullRef, is Var -> sequenceOf(Nothing::class)
             is ObjectRef -> sequenceOf(term.`object`::class)
             is Truth -> sequenceOf(Boolean::class, String::class)
@@ -205,7 +205,6 @@ internal class TermToObjectConverterImpl(
                 }
             else -> throw TermToObjectConversionException(term)
         }
-    }
 
     override fun admissibleTypes(term: Term): Set<KClass<*>> = admissibleTypesByPriority(term).toSet()
 }

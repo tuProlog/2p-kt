@@ -25,11 +25,12 @@ internal data class ArityNode(
             val headFirstArg = element.head[0]
             val child =
                 children.getOrElse(headFirstArg) {
-                    children.retrieve(
-                        keyFilter = { head -> head != null && head structurallyEquals headFirstArg },
-                        typeChecker = { it.isArgNode },
-                        caster = { it.castToArgNode() },
-                    ).singleOrNull()
+                    children
+                        .retrieve(
+                            keyFilter = { head -> head != null && head structurallyEquals headFirstArg },
+                            typeChecker = { it.isArgNode },
+                            caster = { it.castToArgNode() },
+                        ).singleOrNull()
                 }
 
             child ?: ArgNode(0, headFirstArg)

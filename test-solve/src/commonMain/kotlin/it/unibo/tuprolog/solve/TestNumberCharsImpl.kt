@@ -3,7 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 
-class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumberChars {
+class TestNumberCharsImpl(
+    private val solverFactory: SolverFactory,
+) : TestNumberChars {
     override fun testNumberCharsListIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -12,7 +14,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("L" to listOf("3", "3"))),
+                listOf(query.yes("L" to logicListOf("3", "3"))),
                 solutions,
             )
         }
@@ -22,11 +24,11 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_chars(33, listOf("3", "3"))
+            val query = number_chars(33, logicListOf("3", "3"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                listOf(query.yes()),
                 solutions,
             )
         }
@@ -36,11 +38,11 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_chars("X", listOf("3", "3"))
+            val query = number_chars("X", logicListOf("3", "3"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to 33)),
+                listOf(query.yes("X" to 33)),
                 solutions,
             )
         }
@@ -50,11 +52,11 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_chars("X", listOf("-", "2", "5"))
+            val query = number_chars("X", logicListOf("-", "2", "5"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to intOf(-25))),
+                listOf(query.yes("X" to intOf(-25))),
                 solutions,
             )
         }
@@ -64,11 +66,11 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_chars("X", listOf("\n", "3"))
+            val query = number_chars("X", logicListOf("\n", "3"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to 3)),
+                listOf(query.yes("X" to 3)),
                 solutions,
             )
         }
@@ -78,11 +80,11 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_chars("X", listOf("4", ".", "2"))
+            val query = number_chars("X", logicListOf("4", ".", "2"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to 4.2)),
+                listOf(query.yes("X" to 4.2)),
                 solutions,
             )
         }
@@ -92,11 +94,11 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             // val query = number_chars("X", listOf("3", ".", "3", "E", "+", "0"))
-            val query = number_chars(X, listOf("3", ".", "9"))
+            val query = number_chars(X, logicListOf("3", ".", "9"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to 3.9)),
+                listOf(query.yes("X" to 3.9)),
                 solutions,
             )
         }
@@ -110,7 +112,7 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                listOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,

@@ -91,7 +91,8 @@ internal data class SideEffectManagerImpl(
     /** A method to retrieve the first ancestor catch request that has its second argument that unifies with [toUnifyArgument] */
     internal fun retrieveAncestorCatchRequest(toUnifyArgument: Term): Solve.Request<StreamsExecutionContext>? {
         val ancestorCatchesRequests =
-            logicalParentRequests.filter { it.signature == Catch.signature }
+            logicalParentRequests
+                .filter { it.signature == Catch.signature }
                 .filterNot { it.context in throwNonSelectableParentContexts } // exclude already used catch requests
 
         return ancestorCatchesRequests.find { it.arguments[1].matches(toUnifyArgument) }

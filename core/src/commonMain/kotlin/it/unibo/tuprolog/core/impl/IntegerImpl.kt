@@ -12,7 +12,8 @@ import org.gciatto.kt.math.BigInteger
 internal class IntegerImpl(
     override val value: BigInteger,
     tags: Map<String, Any> = emptyMap(),
-) : NumericImpl(tags), Integer {
+) : NumericImpl(tags),
+    Integer {
     override val decimalValue: BigDecimal by lazy { BigDecimal.of(intValue) }
 
     override val intValue: BigInteger = value

@@ -11,7 +11,5 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * @author Enrico
  */
 object Halt : PredicateWithoutArguments.NonBacktrackable<ExecutionContext>("halt") {
-    override fun Solve.Request<ExecutionContext>.computeOne(): Solve.Response {
-        throw HaltException(context = context)
-    }
+    override fun Solve.Request<ExecutionContext>.computeOne(): Solve.Response = throw HaltException(context = context)
 }

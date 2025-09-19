@@ -79,17 +79,14 @@ interface MutableClauseQueue : ClauseQueue {
         fun equals(
             queue1: MutableClauseQueue,
             queue2: MutableClauseQueue,
-        ): Boolean {
-            return ClauseQueue.equals(queue1, queue2)
-        }
+        ): Boolean = ClauseQueue.equals(queue1, queue2)
 
         @JvmStatic
         @JsName("computeHashCode")
-        fun hashCode(queue: MutableClauseQueue): Int {
-            return itemWiseHashCode(
+        fun hashCode(queue: MutableClauseQueue): Int =
+            itemWiseHashCode(
                 MutableClauseQueue::class,
                 itemWiseHashCode(queue),
             )
-        }
     }
 }

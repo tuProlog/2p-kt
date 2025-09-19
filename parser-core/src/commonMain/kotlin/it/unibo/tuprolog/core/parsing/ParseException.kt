@@ -14,12 +14,11 @@ open class ParseException(
     @JsName("clauseIndex")
     var clauseIndex = -1
 
-    override fun toString(): String {
-        return "ParseException{" +
+    override fun toString(): String =
+        "ParseException{" +
             "message='" + message!!.replace("\\n", "\\\\n") + '\'' +
             ", line=" + line +
             ", column=" + column +
             ", offendingSymbol='" + offendingSymbol + '\'' +
             '}'
-    }
 }

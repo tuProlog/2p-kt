@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
-internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFloat {
+internal class TestFloatImpl(
+    private val solverFactory: SolverFactory,
+) : TestFloat {
     override fun testFloatDec() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()

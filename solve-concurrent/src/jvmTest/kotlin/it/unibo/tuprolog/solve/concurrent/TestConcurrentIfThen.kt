@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 
-interface TestConcurrentIfThen<T : WithAssertingEquals> : FromSequence<T>, SolverFactory {
+interface TestConcurrentIfThen<T : WithAssertingEquals> :
+    FromSequence<T>,
+    SolverFactory {
     fun testIfThenTrue() {
         logicProgramming {
             val solver = solverWithDefaultBuiltins()

@@ -67,8 +67,9 @@ internal class AbstractTimedStateTest {
         val currentTime = currentTimeInstant()
 
         val toBeTested = createTimeState(createTimedRequest(currentTimeInstant(), maxDuration))
-        while (currentTime + maxDuration * 1.5 > currentTimeInstant())
+        while (currentTime + maxDuration * 1.5 > currentTimeInstant()) {
             assertEquals(behaviourResponse.toList(), toBeTested.behave().toList())
+        }
     }
 
     @Test

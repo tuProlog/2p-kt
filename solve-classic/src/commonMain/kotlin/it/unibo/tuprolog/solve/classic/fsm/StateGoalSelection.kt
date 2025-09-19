@@ -4,10 +4,12 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.flags.TrackVariables
 
-data class StateGoalSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
+data class StateGoalSelection(
+    override val context: ClassicExecutionContext,
+) : AbstractState(context) {
     @Suppress("ktlint:standard:discouraged-comment-location")
-    override fun computeNext(): State {
-        return if (context.goals.isOver) {
+    override fun computeNext(): State =
+        if (context.goals.isOver) {
             if (context.isRoot) {
                 StateEnd(
                     Solution.yes(context.query, context.substitution),
@@ -39,7 +41,11 @@ data class StateGoalSelection(override val context: ClassicExecutionContext) : A
             StatePrimitiveSelection(
                 context.copy(
                     step = nextStep(),
-                    relevantVariables = context.relevantVariables + context.goals.current!!.variables.toSet(),
+                    relevantVariables =
+                        context.relevantVariables +
+                            context.goals.current!!
+                                .variables
+                                .toSet(),
                 ),
             )
         } else {
@@ -47,7 +53,6 @@ data class StateGoalSelection(override val context: ClassicExecutionContext) : A
                 context.copy(step = nextStep()),
             )
         }
-    }
 
     override fun clone(context: ClassicExecutionContext): StateGoalSelection = copy(context = context)
 }

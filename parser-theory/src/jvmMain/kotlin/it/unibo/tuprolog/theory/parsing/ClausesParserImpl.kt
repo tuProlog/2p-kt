@@ -6,14 +6,16 @@ import it.unibo.tuprolog.core.parsing.PrologExpressionVisitor
 import it.unibo.tuprolog.core.parsing.PrologParserFactory
 import it.unibo.tuprolog.core.parsing.toClause
 
-internal class ClausesParserImpl(override val defaultOperatorSet: OperatorSet) : ClausesParser {
+internal class ClausesParserImpl(
+    override val defaultOperatorSet: OperatorSet,
+) : ClausesParser {
     override fun parseClausesLazily(
         input: String,
         operators: OperatorSet,
-    ): Sequence<Clause> {
-        return PrologParserFactory.parseClauses(input, operators)
+    ): Sequence<Clause> =
+        PrologParserFactory
+            .parseClauses(input, operators)
             .asSequence()
             .map { it.accept(PrologExpressionVisitor()) }
             .map { it.toClause() }
-    }
 }

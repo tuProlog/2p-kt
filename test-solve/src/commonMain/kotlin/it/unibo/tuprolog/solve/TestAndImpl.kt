@@ -5,7 +5,9 @@ import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.Unknown
 
-internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
+internal class TestAndImpl(
+    private val solverFactory: SolverFactory,
+) : TestAnd {
     override fun testTermIsFreeVariable() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -14,7 +16,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -28,7 +30,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to 1)),
+                listOf(query.yes("X" to 1)),
                 solutions,
             )
         }
@@ -42,7 +44,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                listOf(query.no()),
                 solutions,
             )
         }
@@ -59,7 +61,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(
+                listOf(
                     query.halt(
                         ExistenceError.forProcedure(
                             DummyInstances.executionContext,
@@ -80,7 +82,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to true)),
+                listOf(query.yes("X" to true)),
                 solutions,
             )
         }

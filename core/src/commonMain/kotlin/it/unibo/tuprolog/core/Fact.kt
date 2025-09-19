@@ -48,8 +48,6 @@ interface Fact : Rule {
         fun template(
             functor: String,
             arity: Int,
-        ): Fact {
-            return of(Struct.template(functor, arity))
-        }
+        ): Fact = of(Struct.template(functor, arity))
     }
 }
