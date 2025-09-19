@@ -15,8 +15,7 @@ config.plugins.push(
         "@semantic-release/github",
         {
             "assets": [
-                { "path": "**/build/**/*redist*.jar" },
-                { "path": "**/build/**/*full*.jar" }
+                { "path": "**/build/**/*redist*.jar" }
             ]
         }
     ],
