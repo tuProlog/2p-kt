@@ -1,3 +1,13 @@
+## [1.1.3](https://github.com/tuProlog/2p-kt/compare/1.1.2...1.1.3) (2025-09-19)
+
+### Dependency updates
+
+* **deps:** update ktmpp to v5.1.5 ([#734](https://github.com/tuProlog/2p-kt/issues/734)) ([0ae0be3](https://github.com/tuProlog/2p-kt/commit/0ae0be3dbc6988bf540c4e0b9709334b09d5e412))
+
+### Bug Fixes
+
+* remove full upload ([90f2743](https://github.com/tuProlog/2p-kt/commit/90f2743970513acc5b77a5a5cd76ec3e6f7ce552))
+
 ## [1.1.2](https://github.com/tuProlog/2p-kt/compare/1.1.1...1.1.2) (2025-09-18)
 
 ### Bug Fixes
