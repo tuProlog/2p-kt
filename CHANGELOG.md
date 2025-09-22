@@ -1,3 +1,24 @@
+## [1.1.4](https://github.com/tuProlog/2p-kt/compare/1.1.3...1.1.4) (2025-09-22)
+
+### Dependency updates
+
+* **deps:** update gradle to v9.1.0 ([#733](https://github.com/tuProlog/2p-kt/issues/733)) ([597ed30](https://github.com/tuProlog/2p-kt/commit/597ed308f8e617e7ba6e9f0a116afbf02333f025))
+* **deps:** update plugin gitsemver to v7.0.4 ([#732](https://github.com/tuProlog/2p-kt/issues/732)) ([4166f24](https://github.com/tuProlog/2p-kt/commit/4166f24ed102b06d500f67b397b11aa3e6a7b074))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.2 ([#735](https://github.com/tuProlog/2p-kt/issues/735)) ([896a6ae](https://github.com/tuProlog/2p-kt/commit/896a6ae084e362d5ec5c3200c0845e64ee241067))
+
+### Bug Fixes
+
+* ide views ([54c8676](https://github.com/tuProlog/2p-kt/commit/54c867619e07e5cc5f8ac460e84f2e5281b642de))
+* style ([fcc82c8](https://github.com/tuProlog/2p-kt/commit/fcc82c80c9907d5e42016f8ff221b80563a4b984))
+
+### Build and continuous integration
+
+* **deps:** update dependency ubuntu to v24 ([debfac7](https://github.com/tuProlog/2p-kt/commit/debfac733872405b5301d9e84de8b373053b4fc3))
+
+### General maintenance
+
+* **config:** migrate config renovate.json ([b211839](https://github.com/tuProlog/2p-kt/commit/b211839c6f8c91bea60c0484e9748e673848f39d))
+
 ## [1.1.3](https://github.com/tuProlog/2p-kt/compare/1.1.2...1.1.3) (2025-09-19)
 
 ### Dependency updates
