@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.control.Tab
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.BorderPane
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
 import java.io.File
