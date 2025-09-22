@@ -41,7 +41,7 @@ class FileTabView(
         loader.setRoot(this)
 
         try {
-            loader.load<BorderPane>()
+            loader.load<Tab>()
         } catch (e: IOException) {
             throw IllegalStateException(e)
         }

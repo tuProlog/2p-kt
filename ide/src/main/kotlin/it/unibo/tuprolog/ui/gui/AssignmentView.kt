@@ -26,7 +26,7 @@ class AssignmentView(
         loader.setRoot(this)
 
         try {
-            loader.load<BorderPane>()
+            loader.load<HBox>()
         } catch (e: IOException) {
             throw IllegalStateException(e)
         }

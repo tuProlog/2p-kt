@@ -33,7 +33,7 @@ class GraphRenderView(
         loader.setRoot(this)
 
         try {
-            loader.load<BorderPane>()
+            loader.load<VBox>()
         } catch (e: IOException) {
             throw IllegalStateException(e)
         }

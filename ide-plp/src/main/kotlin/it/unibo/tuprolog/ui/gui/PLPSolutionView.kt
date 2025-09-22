@@ -52,7 +52,7 @@ sealed class PLPSolutionView<T, S : Solution>(
         loader.setRoot(this)
 
         try {
-            loader.load<BorderPane>()
+            loader.load<VBox>()
         } catch (e: IOException) {
             throw IllegalStateException(e)
         }
