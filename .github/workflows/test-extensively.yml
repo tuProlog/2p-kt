@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.24
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.8
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.9
         with:
           java-distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
@@ -49,7 +49,7 @@ jobs:
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.24
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.8
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.9
         with:
           build-command: |
             ./gradlew jsMainClasses jsTestClasses --parallel || ./gradlew jsMainClasses jsTestClasses --parallel
