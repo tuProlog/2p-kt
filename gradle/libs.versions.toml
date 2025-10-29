@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 jvm = "17"
 node = "22-latest"
 jackson = "2.20.0"
