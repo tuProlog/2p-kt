@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 jvm = "17"
 node = "22-latest"
 jackson = "2.20.0"
@@ -10,7 +10,7 @@ javafx = "21.0.8"
 npm-yaml = "2.8.1" # yaml
 npm-tuprolog-parserUtils = "0.4.1" # @tuprolog/parser-utils
 npm-syncRequest = "6.1.0" # sync-request
-ktMpp = "5.1.5"
+ktMpp = "5.1.6"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
