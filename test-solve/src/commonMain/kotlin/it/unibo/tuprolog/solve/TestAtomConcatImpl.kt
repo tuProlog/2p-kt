@@ -31,6 +31,32 @@ class TestAtomConcatImpl(
         }
     }
 
+    override fun testAtomConcatFailsNotPrefix() {
+        logicProgramming {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+            val query = atom_concat("concat", "X", "testconcat")
+            val solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                kotlin.collections.listOf(query.no()),
+                solutions,
+            )
+        }
+    }
+
+    override fun testAtomConcatFailsNotSuffix() {
+        logicProgramming {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+            val query = atom_concat("X", "test", "testconcat")
+            val solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                kotlin.collections.listOf(query.no()),
+                solutions,
+            )
+        }
+    }
+
     override fun testAtomConcatSecondIsVar() {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
