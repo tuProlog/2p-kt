@@ -30,6 +30,28 @@ interface TestAtomConcat : SolverTest {
     /**
      * Tests the queries
      * ```prolog
+     * ?- atom_concat(concat,X,testconcat).
+     * ```
+     * fails.
+     *
+     */
+
+    fun testAtomConcatFailsNotPrefix()
+
+    /**
+     * Tests the queries
+     * ```prolog
+     * ?- atom_concat(X,test,testconcat).
+     * ```
+     * fails.
+     *
+     */
+
+    fun testAtomConcatFailsNotSuffix()
+
+    /**
+     * Tests the queries
+     * ```prolog
      * ?- atom_concat(test,X,testTest).
      * ```
      * succeeds.
