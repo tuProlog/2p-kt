@@ -21,6 +21,16 @@ class TestProblogAtomConcat :
     }
 
     @Test
+    override fun testAtomConcatFailsNotPrefix() {
+        prototype.testAtomConcatFailsNotPrefix()
+    }
+
+    @Test
+    override fun testAtomConcatFailsNotSuffix() {
+        prototype.testAtomConcatFailsNotSuffix()
+    }
+
+    @Test
     override fun testAtomConcatSecondIsVar() {
         prototype.testAtomConcatSecondIsVar()
     }
