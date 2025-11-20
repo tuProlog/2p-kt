@@ -1,3 +1,56 @@
+## [1.1.5](https://github.com/tuProlog/2p-kt/compare/1.1.4...1.1.5) (2025-11-20)
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.146 ([#728](https://github.com/tuProlog/2p-kt/issues/728)) ([a710d59](https://github.com/tuProlog/2p-kt/commit/a710d598011f05da0dccacacb120aa8c7f416012))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.147 ([#739](https://github.com/tuProlog/2p-kt/issues/739)) ([f5a54ad](https://github.com/tuProlog/2p-kt/commit/f5a54adcfc8a360f2925c04c10af5b26c9aba9c5))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.148 ([#746](https://github.com/tuProlog/2p-kt/issues/746)) ([0ffd014](https://github.com/tuProlog/2p-kt/commit/0ffd01451bb9088b3c1d8a1c4ec7a1559b6a7fee))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.149 ([#748](https://github.com/tuProlog/2p-kt/issues/748)) ([3394b92](https://github.com/tuProlog/2p-kt/commit/3394b92f306fc19d25e765cccf25b95046409289))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.151 ([#750](https://github.com/tuProlog/2p-kt/issues/750)) ([036b84c](https://github.com/tuProlog/2p-kt/commit/036b84c6f5dc3c7cfb9bed0a3d9201c3728f3e51))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.152 ([#751](https://github.com/tuProlog/2p-kt/issues/751)) ([d5c21c6](https://github.com/tuProlog/2p-kt/commit/d5c21c6cef84494d30dbfbb62cf5534ef872ba98))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.153 ([#761](https://github.com/tuProlog/2p-kt/issues/761)) ([ba9263d](https://github.com/tuProlog/2p-kt/commit/ba9263dfbb036545d52712afd649d73091954fc7))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.154 ([#766](https://github.com/tuProlog/2p-kt/issues/766)) ([36a8d47](https://github.com/tuProlog/2p-kt/commit/36a8d4707cd252d42a6104179b9255ea9503f2c9))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.155 ([#768](https://github.com/tuProlog/2p-kt/issues/768)) ([54beb7e](https://github.com/tuProlog/2p-kt/commit/54beb7e76c0b5dc0ad0bd069fdb361fe8997bbef))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.156 ([#769](https://github.com/tuProlog/2p-kt/issues/769)) ([4de1b5f](https://github.com/tuProlog/2p-kt/commit/4de1b5fdd5ace9fe48d1057bf43ec1db5b93f15c))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.157 ([#772](https://github.com/tuProlog/2p-kt/issues/772)) ([0ec04ed](https://github.com/tuProlog/2p-kt/commit/0ec04ed40cf2806965edc8ad6298d354f0f42adc))
+* **deps:** update gradle to v9.2.0 ([#757](https://github.com/tuProlog/2p-kt/issues/757)) ([85a5978](https://github.com/tuProlog/2p-kt/commit/85a5978f1cf8fc7e11e74ee3224545a608cd95fb))
+* **deps:** update gradle to v9.2.1 ([#773](https://github.com/tuProlog/2p-kt/issues/773)) ([82042b4](https://github.com/tuProlog/2p-kt/commit/82042b4994542650110e6a8d135cb22c2aee890d))
+* **deps:** update ktmpp to v5.1.6 ([4ae4b5d](https://github.com/tuProlog/2p-kt/commit/4ae4b5d0e68baa1d20bb882011591085254b61b3))
+* **deps:** update ktmpp to v5.1.6 (patch) ([53566dd](https://github.com/tuProlog/2p-kt/commit/53566dd25521f4e760ea67952d07ba06d3378dd2))
+* **deps:** update ktmpp to v5.1.7 ([#758](https://github.com/tuProlog/2p-kt/issues/758)) ([22e0244](https://github.com/tuProlog/2p-kt/commit/22e02441fd13018607c05ebbe6712632a2d42522))
+* **deps:** update ktmpp to v5.1.8 ([#774](https://github.com/tuProlog/2p-kt/issues/774)) ([507c68a](https://github.com/tuProlog/2p-kt/commit/507c68a30a22a89bfac369e2838138adf7d237d8))
+* **deps:** update node.js to 22.20 ([#737](https://github.com/tuProlog/2p-kt/issues/737)) ([8759a21](https://github.com/tuProlog/2p-kt/commit/8759a211f46162691c63e78af66882d576aee6b3))
+* **deps:** update node.js to 22.21 ([#749](https://github.com/tuProlog/2p-kt/issues/749)) ([f503296](https://github.com/tuProlog/2p-kt/commit/f503296aa3690014ea3c22a94d1f10707ddd7f1f))
+* **deps:** update node.js to v24 ([#756](https://github.com/tuProlog/2p-kt/issues/756)) ([1ab1db8](https://github.com/tuProlog/2p-kt/commit/1ab1db8c90df9082df5410b318e5ffb2a9232d1e))
+* **deps:** update plugin com.gradle.develocity to v4.2.1 ([#742](https://github.com/tuProlog/2p-kt/issues/742)) ([cb7bc4c](https://github.com/tuProlog/2p-kt/commit/cb7bc4c11d2cdb7ff5fd72e4de31d2043db29008))
+* **deps:** update plugin com.gradle.develocity to v4.2.2 ([#744](https://github.com/tuProlog/2p-kt/issues/744)) ([cab6f0a](https://github.com/tuProlog/2p-kt/commit/cab6f0a0e1aaa1b221c03ce05e0fbff0f58d8ddd))
+* **deps:** update plugin gitsemver to v7.0.5 ([#754](https://github.com/tuProlog/2p-kt/issues/754)) ([07877f2](https://github.com/tuProlog/2p-kt/commit/07877f2815f57a4b291a364e4e3437472a521e75))
+* **deps:** update plugin gitsemver to v7.0.6 ([#759](https://github.com/tuProlog/2p-kt/issues/759)) ([06e442f](https://github.com/tuProlog/2p-kt/commit/06e442f29222f5f2f7b0da8cf70453c12b8caec2))
+* **deps:** update plugin gitsemver to v7.0.7 ([#777](https://github.com/tuProlog/2p-kt/issues/777)) ([7a46848](https://github.com/tuProlog/2p-kt/commit/7a468480059c19522f11e14bb52cccbe93e78d5f))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.3 ([#752](https://github.com/tuProlog/2p-kt/issues/752)) ([d2ddb18](https://github.com/tuProlog/2p-kt/commit/d2ddb18231d2533a757cf320b937d6d9f9b2ff25))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.4 ([#760](https://github.com/tuProlog/2p-kt/issues/760)) ([74830c6](https://github.com/tuProlog/2p-kt/commit/74830c6b5824c444ffc8596174453172d1321df1))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.5 ([#775](https://github.com/tuProlog/2p-kt/issues/775)) ([0b01710](https://github.com/tuProlog/2p-kt/commit/0b017107ba2831708e6902861944c897ce5bb5be))
+
+### Bug Fixes
+
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2025.10 ([#767](https://github.com/tuProlog/2p-kt/issues/767)) ([39e44b8](https://github.com/tuProlog/2p-kt/commit/39e44b8232ca9e70ba21f5dd03a32329d1f9f2f7))
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2025.8 ([#743](https://github.com/tuProlog/2p-kt/issues/743)) ([c3085ea](https://github.com/tuProlog/2p-kt/commit/c3085ea0058a3faba5d8af83fe22dafabb65c3da))
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2025.9 ([#747](https://github.com/tuProlog/2p-kt/issues/747)) ([ee36e2e](https://github.com/tuProlog/2p-kt/commit/ee36e2ee8c643a7d33883227455269cf9d2aa58f))
+* **deps:** update jackson monorepo to v2.20.1 ([#762](https://github.com/tuProlog/2p-kt/issues/762)) ([4a7d1e9](https://github.com/tuProlog/2p-kt/commit/4a7d1e9d378ca7eb9b938ecaf357da202b189535))
+* **lint:** tuned; ([1de35c1](https://github.com/tuProlog/2p-kt/commit/1de35c1ee2b51ec3ff62d807107e69214313de58))
+* **solve/stdlib:** atom_concat searching for prefix/suffix properly ([c4e2eb7](https://github.com/tuProlog/2p-kt/commit/c4e2eb7ff2629546c150672a6590d5959c9b8dde))
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v5.0.1 ([#776](https://github.com/tuProlog/2p-kt/issues/776)) ([f19742f](https://github.com/tuProlog/2p-kt/commit/f19742f2739c2fc82fd6f07c445442fcb8e0cfd5))
+* **deps:** update actions/setup-node action to v6 ([#745](https://github.com/tuProlog/2p-kt/issues/745)) ([e0e3ea5](https://github.com/tuProlog/2p-kt/commit/e0e3ea528bfa1f678d7772f3f0f9b853b03a2020))
+* **deps:** update danysk/action-checkout action to v0.2.25 ([#778](https://github.com/tuProlog/2p-kt/issues/778)) ([47fccd5](https://github.com/tuProlog/2p-kt/commit/47fccd52e5c62c456852e47616aaba8f853bf37a))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.10 ([#741](https://github.com/tuProlog/2p-kt/issues/741)) ([ff4138f](https://github.com/tuProlog/2p-kt/commit/ff4138ffa180eeaa4a518b6611a3da8d74f06bc5))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.11 ([#764](https://github.com/tuProlog/2p-kt/issues/764)) ([5c5dd99](https://github.com/tuProlog/2p-kt/commit/5c5dd99394c605c149065170aaaa933e376c7ea3))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.12 ([#765](https://github.com/tuProlog/2p-kt/issues/765)) ([dbbb3c0](https://github.com/tuProlog/2p-kt/commit/dbbb3c0ffbc8dd8d8a68810a8ef24a7c6ccaa371))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.8 ([#738](https://github.com/tuProlog/2p-kt/issues/738)) ([e3d0ace](https://github.com/tuProlog/2p-kt/commit/e3d0aceef0dec14a3d4534e928ed3d65a397924e))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.9 ([#740](https://github.com/tuProlog/2p-kt/issues/740)) ([79b65cf](https://github.com/tuProlog/2p-kt/commit/79b65cf0f02f4f662e530197c2405116eb6d49e5))
+
 ## [1.1.4](https://github.com/tuProlog/2p-kt/compare/1.1.3...1.1.4) (2025-09-22)
 
 ### Dependency updates
