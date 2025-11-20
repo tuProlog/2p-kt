@@ -35,9 +35,11 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
                 ensuringArgumentIsAtom(2)
                 val secondValue = (second as Atom).value
                 val thirdValue = (third as Atom).value
-                if (thirdValue.endsWith(secondValue))
+                if (thirdValue.endsWith(secondValue)) {
                     Substitution.of(first, Atom.of(thirdValue.removeSuffix(secondValue)))
-                else Substitution.failed()
+                } else {
+                    Substitution.failed()
+                }
             }
 
             second is Var -> {
@@ -47,9 +49,11 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
                 ensuringArgumentIsAtom(2)
                 val firstValue = (first as Atom).value
                 val thirdValue = (third as Atom).value
-                if (thirdValue.startsWith(firstValue))
+                if (thirdValue.startsWith(firstValue)) {
                     Substitution.of(second, Atom.of(thirdValue.removePrefix(firstValue)))
-                else Substitution.failed()
+                } else {
+                    Substitution.failed()
+                }
             }
 
             else -> {
