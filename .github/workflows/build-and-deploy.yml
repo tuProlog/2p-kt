@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: DanySK/action-checkout@0.2.26
+        uses: DanySK/action-checkout@0.2.27
       - uses: DanySK/build-check-deploy-gradle-action@4.0.12
         with:
           # Dry-deployment
