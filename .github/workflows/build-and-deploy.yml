@@ -43,7 +43,7 @@ jobs:
         with:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Install Node
-        uses: actions/setup-node@v6.1.0
+        uses: actions/setup-node@v6.2.0
         with:
           node-version-file: package.json
       - uses: DanySK/build-check-deploy-gradle-action@4.0.18
