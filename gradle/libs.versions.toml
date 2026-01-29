@@ -14,7 +14,7 @@ ktMpp = "5.1.8"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:7.0.10"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:7.0.11"
 ktMpp-bugFinder = { id = "io.github.gciatto.kt-mpp.bug-finder", version.ref = "ktMpp" }
 ktMpp-documentation = { id = "io.github.gciatto.kt-mpp.documentation", version.ref = "ktMpp" }
 ktMpp-linter = { id = "io.github.gciatto.kt-mpp.linter", version.ref = "ktMpp" }
