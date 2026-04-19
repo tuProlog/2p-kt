@@ -14,7 +14,7 @@ pluginManagement {
 
 plugins {
     id("com.gradle.develocity") version "4.4.0"
-    id("org.danilopianini.gradle-pre-commit-git-hooks") version "2.1.12"
+    id("org.danilopianini.gradle-pre-commit-git-hooks") version "2.1.14"
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
