@@ -49,7 +49,8 @@ jobs:
       - uses: DanySK/build-check-deploy-gradle-action@4.0.41
         with:
           retries-on-failure: '1'
-          build-command: true
+          # `allShadowJars` also builds the per-platform redist jars, released as assets
+          build-command: ./gradlew allShadowJars
           check-command: true
           deploy-command: |
             npm install
