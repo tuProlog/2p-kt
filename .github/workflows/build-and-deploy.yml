@@ -41,7 +41,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7.0.1
         with:
-          token: ${{ secrets.DEPLOYMENT_TOKEN }}
+          token: ${{ secrets.DEPLOYMENT_TOKEN || github.token }}
       - name: Install Node
         uses: actions/setup-node@v7.0.0
         with:
