@@ -160,7 +160,7 @@ class TestPrologParser {
             )
             val expr = l.items[0]
             assertTrue(expr.isTerm && expr.left != null && expr.operators.count() == 0 && expr.right.count() == 0)
-            val t = expr.left!!
+            val t = expr.left
             assertTrue(t.isNum && !t.isVar && !t.isList && !t.isStruct && !t.isExpr)
             val n = t.number()
             assertTrue(n.isInt && !n.isReal)

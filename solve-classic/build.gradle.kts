@@ -8,8 +8,8 @@ plugins {
     )
 }
 
-val jvmStackSize: String by project
-val jvmMaxHeapSize: String by project
+val jvmStackSize: String = findProperty("jvmStackSize")?.toString() ?: "256m"
+val jvmMaxHeapSize: String = findProperty("jvmMaxHeapSize")?.toString() ?: "512m"
 
 kotlin {
     sourceSets {

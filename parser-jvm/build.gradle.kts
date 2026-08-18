@@ -1,5 +1,5 @@
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.dokka.gradle.AbstractDokkaTask
+import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
 import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
 
 plugins {
@@ -49,7 +49,7 @@ fun dependOnGrammarGeneration(task: Task) {
     }
 }
 
-tasks.withType<AbstractDokkaTask>().configureEach { dependOnGrammarGeneration(this) }
+tasks.withType<DokkaBaseTask>().configureEach { dependOnGrammarGeneration(this) }
 tasks.withType<Detekt>().configureEach { dependOnGrammarGeneration(this) }
 tasks.withType<BaseKtLintCheckTask>().configureEach { dependOnGrammarGeneration(this) }
 
@@ -59,7 +59,7 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     }
 }
 
-tasks.withType<AbstractDokkaTask>().configureEach {
+tasks.withType<DokkaBaseTask>().configureEach {
     dependsOn(generateGrammarSource)
 }
 

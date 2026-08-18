@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.serialize
 
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 actual object ObjectsUtils {
     actual fun parseAsObject(
         string: String,

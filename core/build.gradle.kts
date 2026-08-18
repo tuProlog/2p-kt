@@ -1,6 +1,6 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.danilopianini.gradle.gitsemver.SemanticVersion
-import org.jetbrains.dokka.gradle.AbstractDokkaTask
+import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
 
@@ -44,30 +44,31 @@ kotlin {
                     .absoluteFile
                     .resolve("$tuPrologPackageDir/Info.kt")
 
-            val createInfoKt by tasks.registering {
-                doFirst {
-                    val version = version.toString()
-                    val rootVersion = rootProject.version.toString()
-                    require(version matches SemanticVersion.semVerRegex) {
-                        "Invalid version of project ${project.name}: $version"
+            val createInfoKt =
+                tasks.register("createInfoKt") {
+                    doFirst {
+                        val version = version.toString()
+                        val rootVersion = rootProject.version.toString()
+                        require(version matches SemanticVersion.semVerRegex) {
+                            "Invalid version of project ${project.name}: $version"
+                        }
+                        require(version == rootVersion) {
+                            "Version of project ${project.name} ($version) does not match " +
+                                "root project's one ($rootVersion)"
+                        }
                     }
-                    require(version == rootVersion) {
-                        "Version of project ${project.name} ($version) does not match " +
-                            "root project's one ($rootVersion)"
+                    doLast {
+                        infoKtFile.writeText(infoKtFileContent)
                     }
+                    outputs.file(infoKtFile)
+                    outputs.upToDateWhen { infoKtFile.exists() && infoKtFile.readText().contains(version.toString()) }
                 }
-                doLast {
-                    infoKtFile.writeText(infoKtFileContent)
-                }
-                outputs.file(infoKtFile)
-                outputs.upToDateWhen { infoKtFile.exists() && infoKtFile.readText().contains(version.toString()) }
-            }
 
             tasks
                 .matching { it.name.endsWith("sourcesJar", ignoreCase = true) }
                 .configureEach { dependsOn(createInfoKt) }
             tasks.withType<Detekt>().configureEach { dependsOn(createInfoKt) }
-            tasks.withType<AbstractDokkaTask>().configureEach { dependsOn(createInfoKt) }
+            tasks.withType<DokkaBaseTask>().configureEach { dependsOn(createInfoKt) }
             tasks.withType<BaseKtLintCheckTask>().configureEach { dependsOn(createInfoKt) }
             tasks.withType<KotlinCompilationTask<*>>().configureEach { dependsOn(createInfoKt) }
         }
