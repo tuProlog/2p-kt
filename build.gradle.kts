@@ -61,4 +61,8 @@ allprojects {
         google()
         mavenCentral()
     }
+    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+        jvmTarget = libs.versions.jvm.get()
+        parallel = true
+    }
 }

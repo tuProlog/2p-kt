@@ -122,6 +122,7 @@ class KeySolution(
         return args.similar(other.args)
     }
 
+    @Suppress("UnusedPrivateMember")
     private fun Term.similar(other: Term): Boolean =
         when {
             isTuple -> {

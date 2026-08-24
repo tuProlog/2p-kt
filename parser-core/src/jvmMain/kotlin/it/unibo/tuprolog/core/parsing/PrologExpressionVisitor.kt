@@ -17,7 +17,7 @@ import it.unibo.tuprolog.parser.dynamic.Associativity.YF
 import it.unibo.tuprolog.parser.dynamic.Associativity.YFX
 import org.gciatto.kt.math.BigInteger
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "UnusedPrivateMember")
 class PrologExpressionVisitor(
     private val scope: Scope = Scope.empty(),
 ) : PrologParserBaseVisitor<Term>() {

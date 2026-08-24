@@ -42,14 +42,16 @@ internal abstract class AbstractIntermediateReteNode<K, E : Clause>(
         initial: R,
         limit: Int,
         operation: (acc: R, T) -> R,
-    ) = if (limit < 0) {
-        fold(initial, operation)
-    } else {
-        fold(initial) { accumulator, element ->
-            if (accumulator.count() < limit) {
-                operation(accumulator, element)
-            } else {
-                return@foldWithLimit accumulator
+    ): R {
+        return if (limit < 0) {
+            fold(initial, operation)
+        } else {
+            fold(initial) { accumulator, element ->
+                if (accumulator.count() < limit) {
+                    operation(accumulator, element)
+                } else {
+                    return@foldWithLimit accumulator
+                }
             }
         }
     }

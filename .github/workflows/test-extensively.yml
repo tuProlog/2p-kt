@@ -22,7 +22,18 @@ jobs:
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.31
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.43
+      - name: Restore Gradle test cache
+        id: cache-test-result
+        uses: actions/cache/restore@v4.2.4
+        with:
+          path: |
+            ~/.gradle/caches/build-cache-1
+            .github/.cache/test-extensively-jvm
+          key: ${{ format('test-extensively-jvm-{0}-java-{1}-{2}-{3}', runner.os, matrix.java-version, matrix.jdk-dist, hashFiles('**/src/**', '**/*.gradle', '**/*.gradle.kts', '**/settings.gradle', '**/settings.gradle.kts', '**/gradle.properties', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'buildSrc/**/*.kt', '*.kts')) }}
+      - name: Run tests
+        id: run-tests
+        if: steps.cache-test-result.outputs.cache-hit != 'true'
+        uses: DanySK/build-check-deploy-gradle-action@4.0.43
         with:
           java-distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
@@ -31,6 +42,22 @@ jobs:
           check-command: |
             ./gradlew jvmTest --parallel --continue || ./gradlew jvmTest --parallel --continue
           should-run-codecov: false
+      - name: Mark successful test cache
+        if: steps.cache-test-result.outputs.cache-hit != 'true' && steps.run-tests.conclusion == 'success'
+        run: |
+          mkdir -p .github/.cache/test-extensively-jvm
+          echo "ok" > .github/.cache/test-extensively-jvm/success
+      - name: Save Gradle test cache
+        if: steps.cache-test-result.outputs.cache-hit != 'true' && steps.run-tests.conclusion == 'success'
+        uses: actions/cache/save@v4.2.4
+        with:
+          path: |
+            ~/.gradle/caches/build-cache-1
+            .github/.cache/test-extensively-jvm
+          key: ${{ steps.cache-test-result.outputs.cache-primary-key }}
+      - name: Skip tests on cache hit
+        if: steps.cache-test-result.outputs.cache-hit == 'true'
+        run: echo "Inputs unchanged since last successful run, skipping tests."
 
   test-js:
     strategy:
@@ -49,7 +76,18 @@ jobs:
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.31
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.43
+      - name: Restore Gradle test cache
+        id: cache-test-result
+        uses: actions/cache/restore@v4.2.4
+        with:
+          path: |
+            ~/.gradle/caches/build-cache-1
+            .github/.cache/test-extensively-js
+          key: ${{ format('test-extensively-js-{0}-node-{1}-{2}', runner.os, matrix.node-version, hashFiles('**/src/**', '**/*.gradle', '**/*.gradle.kts', '**/settings.gradle', '**/settings.gradle.kts', '**/gradle.properties', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'buildSrc/**/*.kt', '*.kts', 'package.json')) }}
+      - name: Run tests
+        id: run-tests
+        if: steps.cache-test-result.outputs.cache-hit != 'true'
+        uses: DanySK/build-check-deploy-gradle-action@4.0.43
         with:
           build-command: |
             ./gradlew jsMainClasses jsTestClasses --parallel || ./gradlew jsMainClasses jsTestClasses --parallel
@@ -57,3 +95,19 @@ jobs:
             ./gradlew jsTest --parallel --continue || ./gradlew jsTest --parallel --continue
           clean-command: ./gradlew cleanTest
           should-run-codecov: false
+      - name: Mark successful test cache
+        if: steps.cache-test-result.outputs.cache-hit != 'true' && steps.run-tests.conclusion == 'success'
+        run: |
+          mkdir -p .github/.cache/test-extensively-js
+          echo "ok" > .github/.cache/test-extensively-js/success
+      - name: Save Gradle test cache
+        if: steps.cache-test-result.outputs.cache-hit != 'true' && steps.run-tests.conclusion == 'success'
+        uses: actions/cache/save@v4.2.4
+        with:
+          path: |
+            ~/.gradle/caches/build-cache-1
+            .github/.cache/test-extensively-js
+          key: ${{ steps.cache-test-result.outputs.cache-primary-key }}
+      - name: Skip tests on cache hit
+        if: steps.cache-test-result.outputs.cache-hit == 'true'
+        run: echo "Inputs unchanged since last successful run, skipping tests."

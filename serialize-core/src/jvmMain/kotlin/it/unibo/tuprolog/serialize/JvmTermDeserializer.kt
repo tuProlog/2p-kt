@@ -3,6 +3,7 @@ package it.unibo.tuprolog.serialize
 import it.unibo.tuprolog.core.Term
 import java.io.Reader
 
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 internal class JvmTermDeserializer(
     override val mimeType: MimeType,
 ) : ReadingTermDeserializer {

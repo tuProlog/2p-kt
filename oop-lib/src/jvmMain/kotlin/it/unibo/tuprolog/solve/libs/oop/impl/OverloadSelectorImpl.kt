@@ -18,7 +18,7 @@ internal class OverloadSelectorImpl(
     override val type: KClass<*>,
     override val termToObjectConverter: TermToObjectConverter,
 ) : OverloadSelector {
-    @Suppress("SwallowedException")
+    @Suppress("SwallowedException", "UnreachableCode")
     override fun findMethod(
         name: String,
         arguments: List<Term>,

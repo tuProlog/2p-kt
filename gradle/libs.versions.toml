@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.21"
+kotlin = "2.4.10"
 jvm = "17"
 node = "22-latest"
 jackson = "2.22.1"
@@ -10,7 +10,7 @@ javafx = "21.0.8"
 npm-yaml = "2.8.1" # yaml
 npm-tuprolog-parserUtils = "0.4.1" # @tuprolog/parser-utils
 npm-syncRequest = "6.1.0" # sync-request
-ktMpp = "5.1.8"
+ktMpp = "5.2.3"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -26,7 +26,7 @@ ktMpp-jvmOnly = { id = "io.github.gciatto.kt-mpp.jvm-only", version.ref = "ktMpp
 ktMpp-multiplatform = { id = "io.github.gciatto.kt-mpp.multiplatform", version.ref = "ktMpp" }
 ktMpp-multiProjectHelper = { id = "io.github.gciatto.kt-mpp.multi-project-helper", version.ref = "ktMpp" }
 ktMpp-fatJar = { id = "io.github.gciatto.kt-mpp.fat-jar", version.ref = "ktMpp" }
-gradleMockService = "io.github.gciatto.gradle-mock-service:1.0.8"
+gradleMockService = "io.github.gciatto.gradle-mock-service:1.2.0"
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 
 [libraries]

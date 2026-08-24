@@ -101,7 +101,19 @@ There, the one named:
 is the self-contained, executable Jar containing the 2P-Kt-based Prolog interpreter (`VERSION` may vary depending on the
 actual release version).
 
-After you download the `2p-ide-VERSION-redist.jar`, you can simply launch it by running:
+Platform-specific variants of that Jar are published as well:
+```
+2p-ide-VERSION-redist-win.jar
+2p-ide-VERSION-redist-linux.jar
+2p-ide-VERSION-redist-mac.jar
+2p-ide-VERSION-redist-mac-aarch64.jar
+```
+Users of macOS on Apple Silicon must rely on the `mac-aarch64` variant.
+The all-in-one `2p-ide-VERSION-redist.jar` cannot carry the native libraries of both macOS architectures, as they share
+the very same file names, hence it ships the Intel ones: running it on an ARM JVM fails with an `UnsatisfiedLinkError`
+reporting an incompatible architecture.
+
+After you download the Jar, you can simply launch it by running:
 ```bash
 java -jar 2p-ide-VERSION-redist.jar
 ```
