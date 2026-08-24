@@ -15,6 +15,7 @@ interface WritingSerializer<T> : Serializer<T> {
             it.toString()
         }
 
+    @Suppress("SpreadOperator")
     fun serializeMany(
         writer: Writer,
         vararg values: T,

@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
+@Suppress("UnreachableCode")
 internal class JvmTheoryDeobjectifier : TheoryDeobjectifier {
     override fun deobjectify(`object`: Any): Theory =
         Theory.of(

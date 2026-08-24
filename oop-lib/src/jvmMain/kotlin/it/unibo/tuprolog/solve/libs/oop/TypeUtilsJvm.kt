@@ -133,6 +133,7 @@ private fun KClassifier?.pretty(): String =
         "$this"
     }
 
+@Suppress("UnusedPrivateMember")
 private fun KParameter.pretty(): String =
     when (kind) {
         KParameter.Kind.INSTANCE -> "<this>"
