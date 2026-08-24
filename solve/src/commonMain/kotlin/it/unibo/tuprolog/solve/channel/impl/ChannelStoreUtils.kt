@@ -4,7 +4,7 @@ import it.unibo.tuprolog.solve.channel.Channel
 import it.unibo.tuprolog.solve.channel.ChannelStore
 
 internal object ChannelStoreUtils {
-    fun <T, C : Channel<T>> MutableMap<String, C>.ensureAliasRefersToChannel(
+    fun <T : Any, C : Channel<T>> MutableMap<String, C>.ensureAliasRefersToChannel(
         key: String,
         channel: C,
     ): MutableMap<String, C> {
@@ -12,7 +12,7 @@ internal object ChannelStoreUtils {
         return this
     }
 
-    fun <T, C : Channel<T>> MutableMap<String, C>.setCurrent(
+    fun <T : Any, C : Channel<T>> MutableMap<String, C>.setCurrent(
         key: String,
         defaultChannel: C,
     ): MutableMap<String, C> {

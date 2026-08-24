@@ -157,7 +157,7 @@ internal object CallUtils {
             }
 
             expectedCause = expectedCause.cause
-            actualCause = actualCause?.cause
+            actualCause = actualCause.cause
         }
     }
 }
