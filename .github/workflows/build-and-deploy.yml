@@ -27,7 +27,7 @@ jobs:
   test-extensively:
     needs:
       - build
-    if: github.ref_name != 'master' || github.event.commits[0].author.name != 'renovate[bot]'
+    # if: github.ref_name != 'master' || github.event.commits[0].author.name != 'renovate[bot]'
     uses: ./.github/workflows/test-extensively.yml
   release:
     permissions:
