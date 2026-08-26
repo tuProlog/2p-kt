@@ -1,3 +1,20 @@
+## [1.2.1](https://github.com/tuProlog/2p-kt/compare/1.2.0...1.2.1) (2026-08-26)
+
+### Dependency updates
+
+* **deps:** update plugin gradlemockservice to v1.4.0 ([1a2826e](https://github.com/tuProlog/2p-kt/commit/1a2826e3ce9d7f18126eb5860fb4a7d62ab9cf8d))
+
+### Bug Fixes
+
+* **ci:** avoid extensive CI tests skipping ([08da309](https://github.com/tuProlog/2p-kt/commit/08da309ea74d5c3390bcfa409e36b76ef9d4cc5c))
+* **ci:** use DanySK/action-checkout for release so to allow correct version number computation in release ([42b6ae2](https://github.com/tuProlog/2p-kt/commit/42b6ae2161f6b03e09ad58b809592d1618f99096))
+* **deps:** update dependency com.github.ajalt.clikt:clikt to v5.1.0 ([4bdaa83](https://github.com/tuProlog/2p-kt/commit/4bdaa83fa97da0647baa3369a7c8441c59a4ff40))
+* **deps:** update jackson monorepo to v2.22.2 ([60dbe8d](https://github.com/tuProlog/2p-kt/commit/60dbe8de55e6d1e51972a718b076f592b0507a8d))
+
+### Build and continuous integration
+
+* **deps:** update actions/cache action to v6 ([485156f](https://github.com/tuProlog/2p-kt/commit/485156f79a1bc8e2bc4d59bd239f040267ab1065))
+
 ## [1.2.0](https://github.com/tuProlog/2p-kt/compare/1.1.5...1.2.0) (2026-08-24)
 
 ### Features
