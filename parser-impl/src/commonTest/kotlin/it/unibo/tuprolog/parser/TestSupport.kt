@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.parser
 
 import it.unibo.tuprolog.parser.operators.OperatorDefinition
-import it.unibo.tuprolog.parser.operators.OperatorSpecifier
+import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTable
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.sources.LexedSource
@@ -27,7 +27,7 @@ internal fun parseExpression(
 
 internal fun op(
     name: String,
-    specifier: OperatorSpecifier,
+    specifier: Associativity,
     priority: Int,
 ): OperatorDefinition = OperatorDefinition(name, specifier, priority)
 

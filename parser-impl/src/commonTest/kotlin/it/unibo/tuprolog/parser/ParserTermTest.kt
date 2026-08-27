@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.parser
 
 import it.unibo.tuprolog.parser.exceptions.PrologParsingException
-import it.unibo.tuprolog.parser.operators.OperatorSpecifier
+import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.tokens.TokenKind
 import kotlin.test.Test
@@ -91,7 +91,7 @@ class ParserTermTest {
 
     @Test
     fun parenthesizedExpressionsAreAtomicToTheirSurroundings() {
-        val operators = OperatorTables.of(op("=", OperatorSpecifier.XFX, 700))
+        val operators = OperatorTables.of(op("=", Associativity.XFX, 700))
         val node = assertIs<ParenthesizedExpressionNode>(parseTerm("(a = b)", operators))
         assertEquals(0, node.priority)
         assertEquals(700, node.expression.priority)
@@ -99,7 +99,7 @@ class ParserTermTest {
 
     @Test
     fun operatorsCanBeUsedAsExplicitZeroArityFunctors() {
-        val operators = OperatorTables.of(op("+", OperatorSpecifier.YFX, 500))
+        val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
         val node = assertIs<StructureNode>(parseTerm("(+)", operators))
         assertEquals(StructureKind.EXPLICIT_OPERATOR, node.structureKind)
         assertEquals("+", node.functor)
@@ -107,7 +107,7 @@ class ParserTermTest {
 
     @Test
     fun nonPrefixOperatorsCanBeUsedAsFunctorApplications() {
-        val operators = OperatorTables.of(op("rel", OperatorSpecifier.XFX, 700))
+        val operators = OperatorTables.of(op("rel", Associativity.XFX, 700))
         val node = assertIs<StructureNode>(parseTerm("rel(a, b)", operators))
         assertEquals("rel", node.functor)
         assertEquals(2, node.arguments.size)
@@ -115,7 +115,7 @@ class ParserTermTest {
 
     @Test
     fun aPrefixOperatorFollowedByParenthesesIsParsedAsPrefixSyntax() {
-        val operators = OperatorTables.of(op("not", OperatorSpecifier.FY, 900))
+        val operators = OperatorTables.of(op("not", Associativity.FY, 900))
         val node = operatorNode(parseExpression("not(a)", operators))
         assertEquals(OperatorRole.PREFIX, node.operator.role)
         assertIs<ParenthesizedExpressionNode>(node.rightOperand)
@@ -123,7 +123,7 @@ class ParserTermTest {
 
     @Test
     fun argumentCommasRemainDelimitersWhenCommaIsAnOperator() {
-        val operators = OperatorTables.of(op(",", OperatorSpecifier.XFY, 1000))
+        val operators = OperatorTables.of(op(",", Associativity.XFY, 1000))
         val node = assertIs<StructureNode>(parseTerm("f(a, b)", operators))
         assertEquals(2, node.arguments.size)
         assertTrue(node.arguments.none { it is OperatorExpressionNode })
@@ -131,7 +131,7 @@ class ParserTermTest {
 
     @Test
     fun parenthesizedCommaExpressionsRemainAvailableInsideArguments() {
-        val operators = OperatorTables.of(op(",", OperatorSpecifier.XFY, 1000))
+        val operators = OperatorTables.of(op(",", Associativity.XFY, 1000))
         val node = assertIs<StructureNode>(parseTerm("f((a, b))", operators))
         assertEquals(1, node.arguments.size)
         val parenthesized = assertIs<ParenthesizedExpressionNode>(node.arguments.single())

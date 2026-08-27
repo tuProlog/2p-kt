@@ -5,7 +5,7 @@ import it.unibo.tuprolog.parser.exceptions.MissingOperatorOperandException
 import it.unibo.tuprolog.parser.exceptions.NestingLimitExceededException
 import it.unibo.tuprolog.parser.exceptions.SyntaxErrorCode
 import it.unibo.tuprolog.parser.exceptions.UnexpectedTokenException
-import it.unibo.tuprolog.parser.operators.OperatorSpecifier
+import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.tokens.Token
 import kotlin.test.Test
@@ -32,7 +32,7 @@ class ErrorAndSessionTest {
 
     @Test
     fun nonPrefixOperatorsAtExpressionStartReportAMissingLeftOperand() {
-        val operators = OperatorTables.of(op("+", OperatorSpecifier.YFX, 500))
+        val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
         val error =
             assertFailsWith<MissingOperatorOperandException> {
                 parseExpression("+ a", operators)
@@ -42,13 +42,13 @@ class ErrorAndSessionTest {
 
     @Test
     fun missingOperatorOperandsHaveTheirOwnException() {
-        val operators = OperatorTables.of(op("+", OperatorSpecifier.YFX, 500))
+        val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
         val error =
             assertFailsWith<MissingOperatorOperandException> {
                 parseExpression("a +", operators)
             }
         assertEquals("right", error.side)
-        assertEquals(OperatorSpecifier.YFX, error.definition.specifier)
+        assertEquals(Associativity.YFX, error.definition.specifier)
         assertEquals(SyntaxErrorCode.MISSING_OPERATOR_OPERAND, error.code)
     }
 
@@ -64,7 +64,7 @@ class ErrorAndSessionTest {
 
     @Test
     fun diagnosticsRetainLineAndColumnAfterTrivia() {
-        val operators = OperatorTables.of(op("+", OperatorSpecifier.YFX, 500))
+        val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
         val error =
             assertFailsWith<MissingOperatorOperandException> {
                 parseExpression("a\n  + % no rhs\n", operators)
@@ -85,7 +85,7 @@ class ErrorAndSessionTest {
 
     @Test
     fun theoryParsingUsesOneFixedOperatorTable() {
-        val operators = OperatorTables.of(op("+", OperatorSpecifier.YFX, 500))
+        val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
         val theory = testParser.parseTheory(lex("a + b.\nc + d."), operators).root
         assertEquals(2, theory.clauses.size)
         assertTrue(theory.clauses.all { it.expression is OperatorExpressionNode })
@@ -97,7 +97,7 @@ class ErrorAndSessionTest {
         val session =
             testParser.openSession(
                 input,
-                OperatorTables.of(op(":-", OperatorSpecifier.FX, 1200)),
+                OperatorTables.of(op(":-", Associativity.FX, 1200)),
             )
 
         val directive = session.parseNextClause()!!.root.expression
@@ -108,7 +108,7 @@ class ErrorAndSessionTest {
         assertEquals(3, declaration.arguments.size)
         assertEquals("++", assertIs<StructureNode>(declaration.arguments[2]).functor)
 
-        session.operators.define("++", OperatorSpecifier.YFX, 500)
+        session.operators.define("++", Associativity.YFX, 500)
         val following = session.parseNextClause()!!.root.expression
         assertEquals("++", assertIs<OperatorExpressionNode>(following).operator.definition.name)
         assertTrue(session.isAtEnd)
@@ -123,7 +123,7 @@ class ErrorAndSessionTest {
         val first = assertNotNull(session.parseNextClause())
         assertEquals("first", structureNode(first.root.expression).functor)
 
-        session.operators.define("++", OperatorSpecifier.YFX, 500)
+        session.operators.define("++", Associativity.YFX, 500)
         assertIs<OperatorExpressionNode>(session.parseNextClause()!!.root.expression)
 
         session.operators.removeAll("++")
@@ -136,7 +136,7 @@ class ErrorAndSessionTest {
 
     @Test
     fun failedSessionParsingRestoresTheCursor() {
-        val session = testParser.openSession(lex("a + ."), OperatorTables.of(op("+", OperatorSpecifier.YFX, 500)))
+        val session = testParser.openSession(lex("a + ."), OperatorTables.of(op("+", Associativity.YFX, 500)))
         val before = session.currentPosition
         assertFailsWith<MissingOperatorOperandException> { session.parseNextClause() }
         assertEquals(before, session.currentPosition)
@@ -157,8 +157,8 @@ class ErrorAndSessionTest {
     fun nodeSpansEncloseAllChildren() {
         val operators =
             OperatorTables.of(
-                op("+", OperatorSpecifier.YFX, 500),
-                op("*", OperatorSpecifier.YFX, 400),
+                op("+", Associativity.YFX, 500),
+                op("*", Associativity.YFX, 400),
             )
         val root = testParser.parseExpression(lex("a + f(b * c)"), operators).root
 
@@ -174,7 +174,7 @@ class ErrorAndSessionTest {
 
     @Test
     fun sourceSpansExcludeTrailingTriviaAndOptionalFullStops() {
-        val tree = testParser.parseExpression(lex("a + b.   "), OperatorTables.of(op("+", OperatorSpecifier.YFX, 500)))
+        val tree = testParser.parseExpression(lex("a + b.   "), OperatorTables.of(op("+", Associativity.YFX, 500)))
         assertEquals(5, tree.root.span.endExclusive.offset)
         assertEquals(
             "a + b",

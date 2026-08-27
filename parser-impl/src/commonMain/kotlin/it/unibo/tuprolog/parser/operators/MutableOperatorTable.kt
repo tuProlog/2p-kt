@@ -5,13 +5,13 @@ interface MutableOperatorTable : OperatorTable {
 
     fun define(
         name: String,
-        specifier: OperatorSpecifier,
+        specifier: Associativity,
         priority: Int,
     ): Unit = define(OperatorDefinition(name, specifier, priority))
 
     fun remove(
         name: String,
-        specifier: OperatorSpecifier,
+        specifier: Associativity,
     )
 
     fun removeAll(name: String)

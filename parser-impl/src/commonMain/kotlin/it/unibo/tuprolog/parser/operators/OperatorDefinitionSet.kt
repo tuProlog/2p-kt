@@ -1,18 +1,18 @@
 package it.unibo.tuprolog.parser.operators
 
 internal class OperatorDefinitionSet {
-    private val priorities: IntArray = IntArray(OperatorSpecifier.entries.size)
+    private val priorities: IntArray = IntArray(Associativity.entries.size)
 
-    fun get(specifier: OperatorSpecifier): Int? = priorities[specifier.ordinal].takeIf { it != 0 }
+    fun get(specifier: Associativity): Int? = priorities[specifier.ordinal].takeIf { it != 0 }
 
     fun set(
-        specifier: OperatorSpecifier,
+        specifier: Associativity,
         priority: Int,
     ) {
         priorities[specifier.ordinal] = priority
     }
 
-    fun remove(specifier: OperatorSpecifier) {
+    fun remove(specifier: Associativity) {
         priorities[specifier.ordinal] = 0
     }
 
@@ -20,7 +20,7 @@ internal class OperatorDefinitionSet {
 
     fun definitions(name: String): List<OperatorDefinition> =
         buildList {
-            for (specifier in OperatorSpecifier.entries) {
+            for (specifier in Associativity.entries) {
                 val priority = priorities[specifier.ordinal]
                 if (priority != 0) {
                     add(OperatorDefinition(name, specifier, priority))

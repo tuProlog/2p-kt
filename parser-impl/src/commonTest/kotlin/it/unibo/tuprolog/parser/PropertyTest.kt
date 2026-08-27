@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.parser
 
-import it.unibo.tuprolog.parser.operators.OperatorSpecifier
+import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.tokens.TokenKind
 import kotlin.random.Random
@@ -62,7 +62,7 @@ class PropertyTest {
 
     @Test
     fun generatedYfxChainsAlwaysAssociateLeft() {
-        val operators = OperatorTables.of(op("+", OperatorSpecifier.YFX, 500))
+        val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
         for (length in 2..40) {
             val source = (0 until length).joinToString(" + ") { "a$it" }
             var node = operatorNode(parseExpression(source, operators))
@@ -78,7 +78,7 @@ class PropertyTest {
 
     @Test
     fun generatedXfyChainsAlwaysAssociateRight() {
-        val operators = OperatorTables.of(op("^", OperatorSpecifier.XFY, 200))
+        val operators = OperatorTables.of(op("^", Associativity.XFY, 200))
         for (length in 2..40) {
             val source = (0 until length).joinToString(" ^ ") { "a$it" }
             var node = operatorNode(parseExpression(source, operators))
@@ -96,10 +96,10 @@ class PropertyTest {
     fun parsingIsDeterministicForAFixedOperatorEnvironment() {
         val operators =
             OperatorTables.of(
-                op("+", OperatorSpecifier.YFX, 500),
-                op("*", OperatorSpecifier.YFX, 400),
-                op("^", OperatorSpecifier.XFY, 200),
-                op("not", OperatorSpecifier.FY, 900),
+                op("+", Associativity.YFX, 500),
+                op("*", Associativity.YFX, 400),
+                op("^", Associativity.XFY, 200),
+                op("not", Associativity.FY, 900),
             )
         val samples =
             listOf(
@@ -121,8 +121,8 @@ class PropertyTest {
     fun everyGeneratedNodeSpanEnclosesItsTokenRange() {
         val operators =
             OperatorTables.of(
-                op("+", OperatorSpecifier.YFX, 500),
-                op("*", OperatorSpecifier.YFX, 400),
+                op("+", Associativity.YFX, 500),
+                op("*", Associativity.YFX, 400),
             )
         val tree = testParser.parseClause(lex("f([a + b, c * d | T], {x, y})."), operators)
 

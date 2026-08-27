@@ -4,7 +4,7 @@ import it.unibo.tuprolog.parser.exceptions.InvalidOperatorDefinitionException
 
 data class OperatorDefinition(
     val name: String,
-    val specifier: OperatorSpecifier,
+    val specifier: Associativity,
     val priority: Int,
 ) {
     init {

@@ -30,7 +30,7 @@ import it.unibo.tuprolog.parser.impl.tree.TheoryNodeImpl
 import it.unibo.tuprolog.parser.impl.tree.VariableNodeImpl
 import it.unibo.tuprolog.parser.operators.Fixity
 import it.unibo.tuprolog.parser.operators.OperatorDefinition
-import it.unibo.tuprolog.parser.operators.OperatorSpecifier
+import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTable
 import it.unibo.tuprolog.parser.sources.LexedSource
 import it.unibo.tuprolog.parser.sources.TokenRange
@@ -772,15 +772,15 @@ internal class PrologGrammar(
         return candidates.minWithOrNull(compareBy({ legacyRank(it.specifier) }, { it.priority }))!!
     }
 
-    private fun legacyRank(specifier: OperatorSpecifier): Int =
+    private fun legacyRank(specifier: Associativity): Int =
         when (specifier) {
-            OperatorSpecifier.YFX -> 0
-            OperatorSpecifier.XFY -> 1
-            OperatorSpecifier.XFX -> 2
-            OperatorSpecifier.YF -> 3
-            OperatorSpecifier.XF -> 4
-            OperatorSpecifier.FX -> 0
-            OperatorSpecifier.FY -> 1
+            Associativity.YFX -> 0
+            Associativity.XFY -> 1
+            Associativity.XFX -> 2
+            Associativity.YF -> 3
+            Associativity.XF -> 4
+            Associativity.FX -> 0
+            Associativity.FY -> 1
         }
 
     private fun canStartExpressionAt(

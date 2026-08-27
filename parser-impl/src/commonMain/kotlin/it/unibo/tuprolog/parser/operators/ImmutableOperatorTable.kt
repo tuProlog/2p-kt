@@ -13,7 +13,7 @@ internal class ImmutableOperatorTable(
 
     override fun definition(
         name: String,
-        specifier: OperatorSpecifier,
+        specifier: Associativity,
     ): OperatorDefinition? = entries[name]?.get(specifier)?.let { OperatorDefinition(name, specifier, it) }
 
     override fun definitions(name: String): List<OperatorDefinition> = entries[name]?.definitions(name).orEmpty()

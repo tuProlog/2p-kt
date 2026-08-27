@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.parser.operators
 
-enum class OperatorSpecifier(
+enum class Associativity(
     val fixity: Fixity,
     val left: OperandConstraint?,
     val right: OperandConstraint?,

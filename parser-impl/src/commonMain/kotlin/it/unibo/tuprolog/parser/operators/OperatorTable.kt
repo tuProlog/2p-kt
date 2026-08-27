@@ -3,7 +3,7 @@ package it.unibo.tuprolog.parser.operators
 interface OperatorTable {
     fun definition(
         name: String,
-        specifier: OperatorSpecifier,
+        specifier: Associativity,
     ): OperatorDefinition?
 
     fun definitions(name: String): List<OperatorDefinition>
