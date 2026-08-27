@@ -11,6 +11,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(project(":core"))
+                implementation(project(":parser-impl"))
             }
         }
 
@@ -20,16 +21,16 @@ kotlin {
             }
         }
 
-        getByName("jvmMain") {
-            dependencies {
-                api(project(":parser-jvm"))
-            }
-        }
-
-        getByName("jsMain") {
-            dependencies {
-                api(project(":parser-js"))
-            }
-        }
+//        getByName("jvmMain") {
+//            dependencies {
+//                api(project(":parser-jvm"))
+//            }
+//        }
+//
+//        getByName("jsMain") {
+//            dependencies {
+//                api(project(":parser-js"))
+//            }
+//        }
     }
 }
