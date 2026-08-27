@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.parser.impl.parser
 
-import it.unibo.tuprolog.parser.ClauseNode
-import it.unibo.tuprolog.parser.ExpressionNode
+import it.unibo.tuprolog.parser.tree.ClauseNode
+import it.unibo.tuprolog.parser.tree.ExpressionNode
 import it.unibo.tuprolog.parser.ParserOptions
 import it.unibo.tuprolog.parser.PrologParseSession
 import it.unibo.tuprolog.parser.PrologParser
-import it.unibo.tuprolog.parser.SyntaxTree
-import it.unibo.tuprolog.parser.TermNode
-import it.unibo.tuprolog.parser.TheoryNode
+import it.unibo.tuprolog.parser.tree.SyntaxTree
+import it.unibo.tuprolog.parser.tree.TermNode
+import it.unibo.tuprolog.parser.tree.TheoryNode
 import it.unibo.tuprolog.parser.operators.MutableOperatorTable
 import it.unibo.tuprolog.parser.operators.OperatorTable
 import it.unibo.tuprolog.parser.operators.OperatorTables

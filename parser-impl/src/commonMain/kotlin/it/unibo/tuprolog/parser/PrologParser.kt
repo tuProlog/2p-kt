@@ -4,6 +4,11 @@ import it.unibo.tuprolog.parser.impl.parser.PrattPrologParser
 import it.unibo.tuprolog.parser.operators.OperatorTable
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.sources.LexedSource
+import it.unibo.tuprolog.parser.tree.ClauseNode
+import it.unibo.tuprolog.parser.tree.ExpressionNode
+import it.unibo.tuprolog.parser.tree.SyntaxTree
+import it.unibo.tuprolog.parser.tree.TermNode
+import it.unibo.tuprolog.parser.tree.TheoryNode
 
 interface PrologParser {
     fun parseTerm(

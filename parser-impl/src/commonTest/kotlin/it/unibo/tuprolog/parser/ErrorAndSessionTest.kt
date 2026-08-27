@@ -8,6 +8,9 @@ import it.unibo.tuprolog.parser.exceptions.UnexpectedTokenException
 import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.tokens.Token
+import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
+import it.unibo.tuprolog.parser.tree.StructureNode
+import it.unibo.tuprolog.parser.tree.SyntaxNode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

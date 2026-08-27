@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.parser.impl.parser
 
 import it.unibo.tuprolog.parser.ParserOptions
-import it.unibo.tuprolog.parser.SemanticRole
-import it.unibo.tuprolog.parser.SemanticToken
-import it.unibo.tuprolog.parser.SyntaxKind
+import it.unibo.tuprolog.parser.tree.SemanticRole
+import it.unibo.tuprolog.parser.tree.SemanticToken
+import it.unibo.tuprolog.parser.tree.SyntaxKind
 import it.unibo.tuprolog.parser.exceptions.MissingClauseTerminatorException
 import it.unibo.tuprolog.parser.exceptions.NestingLimitExceededException
 import it.unibo.tuprolog.parser.exceptions.SyntaxExpectation

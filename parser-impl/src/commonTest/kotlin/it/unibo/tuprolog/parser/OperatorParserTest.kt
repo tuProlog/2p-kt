@@ -5,6 +5,12 @@ import it.unibo.tuprolog.parser.exceptions.OperatorPriorityException
 import it.unibo.tuprolog.parser.exceptions.PrologParsingException
 import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
+import it.unibo.tuprolog.parser.tree.NumberNode
+import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
+import it.unibo.tuprolog.parser.tree.OperatorRole
+import it.unibo.tuprolog.parser.tree.ParenthesizedExpressionNode
+import it.unibo.tuprolog.parser.tree.SemanticRole
+import it.unibo.tuprolog.parser.tree.StructureNode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

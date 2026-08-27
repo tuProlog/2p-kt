@@ -6,6 +6,10 @@ import it.unibo.tuprolog.parser.operators.OperatorTable
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.sources.LexedSource
 import it.unibo.tuprolog.parser.sources.SourceText
+import it.unibo.tuprolog.parser.tree.ExpressionNode
+import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
+import it.unibo.tuprolog.parser.tree.StructureNode
+import it.unibo.tuprolog.parser.tree.TermNode
 
 internal val testLexer: PrologLexer = PrologLexer.default()
 internal val testParser: PrologParser = PrologParser.default()

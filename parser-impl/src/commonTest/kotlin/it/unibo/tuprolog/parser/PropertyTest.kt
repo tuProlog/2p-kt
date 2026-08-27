@@ -3,6 +3,16 @@ package it.unibo.tuprolog.parser
 import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.tokens.TokenKind
+import it.unibo.tuprolog.parser.tree.BlockNode
+import it.unibo.tuprolog.parser.tree.ClauseNode
+import it.unibo.tuprolog.parser.tree.ListNode
+import it.unibo.tuprolog.parser.tree.NumberNode
+import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
+import it.unibo.tuprolog.parser.tree.ParenthesizedExpressionNode
+import it.unibo.tuprolog.parser.tree.StructureNode
+import it.unibo.tuprolog.parser.tree.SyntaxNode
+import it.unibo.tuprolog.parser.tree.TheoryNode
+import it.unibo.tuprolog.parser.tree.VariableNode
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals

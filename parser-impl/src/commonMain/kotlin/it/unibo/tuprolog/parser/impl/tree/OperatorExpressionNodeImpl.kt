@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.parser.impl.tree
 
-import it.unibo.tuprolog.parser.ExpressionNode
-import it.unibo.tuprolog.parser.OperatorExpressionNode
-import it.unibo.tuprolog.parser.OperatorUse
-import it.unibo.tuprolog.parser.SyntaxKind
-import it.unibo.tuprolog.parser.SyntaxNode
+import it.unibo.tuprolog.parser.tree.ExpressionNode
+import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
+import it.unibo.tuprolog.parser.tree.OperatorUse
+import it.unibo.tuprolog.parser.tree.SyntaxKind
+import it.unibo.tuprolog.parser.tree.SyntaxNode
 import it.unibo.tuprolog.parser.sources.SourceSpan
 import it.unibo.tuprolog.parser.sources.TokenRange
 

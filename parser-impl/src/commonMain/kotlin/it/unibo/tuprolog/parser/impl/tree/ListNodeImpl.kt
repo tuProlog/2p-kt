@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.parser.impl.tree
 
-import it.unibo.tuprolog.parser.ExpressionNode
-import it.unibo.tuprolog.parser.ListNode
-import it.unibo.tuprolog.parser.SyntaxKind
-import it.unibo.tuprolog.parser.SyntaxNode
+import it.unibo.tuprolog.parser.tree.ExpressionNode
+import it.unibo.tuprolog.parser.tree.ListNode
+import it.unibo.tuprolog.parser.tree.SyntaxKind
+import it.unibo.tuprolog.parser.tree.SyntaxNode
 import it.unibo.tuprolog.parser.sources.SourceSpan
 import it.unibo.tuprolog.parser.sources.TokenRange
 
