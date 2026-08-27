@@ -8,4 +8,6 @@ interface NumberNode : TermNode {
     val radix: Int?
     val digits: String
     val characterCode: Int?
+    override fun <T> accept(visitor: SyntaxNodeVisitor<T>): T =
+        visitor.visitNumber(this)
 }
