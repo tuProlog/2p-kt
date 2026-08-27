@@ -19,11 +19,6 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
-internal expect fun termParserWithOperators(
-    operators: OperatorSet,
-    scope: Scope = Scope.empty(),
-): TermParser
-
 private val defaultParser: TermParser
     get() = TermParser.withDefaultOperators()
 

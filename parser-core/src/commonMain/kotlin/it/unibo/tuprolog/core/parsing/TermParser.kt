@@ -156,7 +156,7 @@ interface TermParser {
         fun withOperators(
             operators: OperatorSet,
             scope: Scope = Scope.empty(),
-        ) = termParserWithOperators(operators, scope)
+        ) = TermParserImpl(scope, operators)
 
         @JvmStatic
         @JsName("withOperators")
