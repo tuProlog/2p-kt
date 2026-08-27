@@ -1,0 +1,40 @@
+package it.unibo.tuprolog.parser
+
+import it.unibo.tuprolog.parser.operators.OperatorDefinition
+import it.unibo.tuprolog.parser.operators.OperatorSpecifier
+import it.unibo.tuprolog.parser.operators.OperatorTable
+import it.unibo.tuprolog.parser.operators.OperatorTables
+import it.unibo.tuprolog.parser.sources.LexedSource
+import it.unibo.tuprolog.parser.sources.SourceText
+
+internal val testLexer: PrologLexer = PrologLexer.default()
+internal val testParser: PrologParser = PrologParser.default()
+
+internal fun lex(
+    text: String,
+    id: String? = "test",
+): LexedSource = testLexer.lex(SourceText(text, id))
+
+internal fun parseTerm(
+    text: String,
+    operators: OperatorTable = OperatorTables.empty(),
+): TermNode = testParser.parseTerm(lex(text), operators).root
+
+internal fun parseExpression(
+    text: String,
+    operators: OperatorTable = OperatorTables.empty(),
+): ExpressionNode = testParser.parseExpression(lex(text), operators).root
+
+internal fun op(
+    name: String,
+    specifier: OperatorSpecifier,
+    priority: Int,
+): OperatorDefinition = OperatorDefinition(name, specifier, priority)
+
+internal fun operatorNode(node: ExpressionNode): OperatorExpressionNode =
+    node as? OperatorExpressionNode
+        ?: error("Expected operator expression, found ${node.kind}")
+
+internal fun structureNode(node: ExpressionNode): StructureNode =
+    node as? StructureNode
+        ?: error("Expected structure, found ${node.kind}")

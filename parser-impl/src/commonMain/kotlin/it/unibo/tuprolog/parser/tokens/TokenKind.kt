@@ -1,0 +1,36 @@
+package it.unibo.tuprolog.parser.tokens
+
+enum class TokenKind {
+    WORD_ATOM,
+    GRAPHIC_ATOM,
+    VARIABLE,
+
+    DECIMAL_INTEGER,
+    HEX_INTEGER,
+    OCTAL_INTEGER,
+    BINARY_INTEGER,
+    FLOAT,
+    CHARACTER_CODE,
+
+    SINGLE_QUOTED_ATOM,
+    DOUBLE_QUOTED_TEXT,
+
+    LEFT_PARENTHESIS,
+    RIGHT_PARENTHESIS,
+    LEFT_BRACKET,
+    RIGHT_BRACKET,
+    LEFT_BRACE,
+    RIGHT_BRACE,
+
+    COMMA,
+    PIPE,
+    CUT,
+    SIGN,
+    FULL_STOP,
+
+    WHITESPACE,
+    LINE_COMMENT,
+    BLOCK_COMMENT,
+
+    END_OF_INPUT,
+}
