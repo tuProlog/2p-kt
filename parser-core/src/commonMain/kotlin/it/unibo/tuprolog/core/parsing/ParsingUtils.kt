@@ -1,9 +1,5 @@
 package it.unibo.tuprolog.core.parsing
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
@@ -11,16 +7,6 @@ import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorDefinition
 import it.unibo.tuprolog.parser.operators.OperatorTable
 import it.unibo.tuprolog.parser.operators.OperatorTables
-
-internal val Term.isOpDirective: Boolean
-    get() {
-        return this is Struct &&
-            arity == 3 &&
-            functor == "op" &&
-            this.isGround &&
-            this[0] is Numeric &&
-            this[1] is Atom
-    }
 
 fun Associativity.toSpecifier(): Specifier =
     when (this) {
@@ -44,11 +30,8 @@ fun Specifier.toAssociativity(): Associativity =
         Specifier.XFY -> Associativity.XFY
     }
 
-fun Operator.toDefinition(): OperatorDefinition =
-    OperatorDefinition(functor, specifier.toAssociativity(), priority)
+fun Operator.toDefinition(): OperatorDefinition = OperatorDefinition(functor, specifier.toAssociativity(), priority)
 
-fun OperatorDefinition.toOperator(): Operator =
-    Operator(name, specifier.toSpecifier(), priority)
+fun OperatorDefinition.toOperator(): Operator = Operator(name, specifier.toSpecifier(), priority)
 
-fun OperatorSet.toOperatorTable(): OperatorTable =
-    OperatorTables.of(map { it.toDefinition() })
+fun OperatorSet.toOperatorTable(): OperatorTable = OperatorTables.of(map { it.toDefinition() })

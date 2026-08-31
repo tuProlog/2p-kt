@@ -1,11 +1,8 @@
 package it.unibo.tuprolog.core.parsing
 
-import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.parser.tree.BlockNode
-import it.unibo.tuprolog.parser.tree.ClauseNode
 import it.unibo.tuprolog.parser.tree.ListNode
 import it.unibo.tuprolog.parser.tree.NumberKind
 import it.unibo.tuprolog.parser.tree.NumberNode
@@ -15,11 +12,11 @@ import it.unibo.tuprolog.parser.tree.SyntaxNodeVisitor
 import it.unibo.tuprolog.parser.tree.TheoryNode
 import it.unibo.tuprolog.parser.tree.VariableNode
 
-class ParserVisitor(
+class PrologTermParserVisitor(
     val scope: Scope,
-): SyntaxNodeVisitor<Term> {
+) : SyntaxNodeVisitor<Term> {
     override fun visitTheory(node: TheoryNode): Term =
-        error("[BUG] ${node::class.simpleName} should not be visited by ${ParserVisitor::class.simpleName}")
+        error("[BUG] ${node::class.simpleName} should not be visited by ${PrologTermParserVisitor::class.simpleName}")
 
     override fun visitOperator(node: OperatorExpressionNode): Term =
         scope.structOf(
@@ -34,8 +31,7 @@ class ParserVisitor(
             else -> scope.intOf(node.digits, node.radix!!)
         }
 
-    override fun visitVariable(node: VariableNode): Term =
-        scope.varOf(node.name)
+    override fun visitVariable(node: VariableNode): Term = scope.varOf(node.name)
 
     override fun visitStructure(node: StructureNode): Term =
         scope.structOf(node.functor, node.children.map { it.accept(this) })
@@ -46,6 +42,5 @@ class ParserVisitor(
             last = node.tail?.accept(this),
         )
 
-    override fun visitBlock(node: BlockNode): Term =
-        scope.blockOf(node.items.map { it.accept(this) })
+    override fun visitBlock(node: BlockNode): Term = scope.blockOf(node.items.map { it.accept(this) })
 }
