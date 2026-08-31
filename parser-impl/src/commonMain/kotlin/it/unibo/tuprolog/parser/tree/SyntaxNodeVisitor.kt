@@ -16,8 +16,7 @@ interface SyntaxNodeVisitor<T> {
             else -> error("Unhandled node type: ${node::class.simpleName}")
         }
 
-    fun visitClause(node: ClauseNode): T =
-        visitExpression(node.expression)
+    fun visitClause(node: ClauseNode): T = visitExpression(node.expression)
 
     fun visitTheory(node: TheoryNode): T
 
@@ -44,6 +43,5 @@ interface SyntaxNodeVisitor<T> {
 
     fun visitBlock(node: BlockNode): T
 
-    fun visitParenthesizedExpression(node: ParenthesizedExpressionNode): T =
-        visitExpression(node.expression)
+    fun visitParenthesizedExpression(node: ParenthesizedExpressionNode): T = visitExpression(node.expression)
 }

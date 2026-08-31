@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.parser.impl.tree
 
+import it.unibo.tuprolog.parser.sources.SourceSpan
+import it.unibo.tuprolog.parser.sources.TokenRange
 import it.unibo.tuprolog.parser.tree.ExpressionNode
 import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
 import it.unibo.tuprolog.parser.tree.OperatorUse
 import it.unibo.tuprolog.parser.tree.SyntaxKind
 import it.unibo.tuprolog.parser.tree.SyntaxNode
-import it.unibo.tuprolog.parser.sources.SourceSpan
-import it.unibo.tuprolog.parser.sources.TokenRange
 
 internal data class OperatorExpressionNodeImpl(
     override val kind: SyntaxKind,

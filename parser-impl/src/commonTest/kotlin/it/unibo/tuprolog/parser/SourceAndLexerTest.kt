@@ -29,12 +29,13 @@ class SourceAndLexerTest {
 
     @Test
     fun tokenSlicesReconstructTheOriginalSource() {
-        val source = lex("foo(X) /* block */ :- X = 1.\n% tail\n")
+        val text = "foo(X) /* block */ :- X = 1.\n% tail\n"
+        val source = lex(text)
         val reconstructed =
             source.tokens
                 .filter { it.kind != TokenKind.END_OF_INPUT }
                 .joinToString(separator = "") { source.textOf(it) }
-        assertEquals(source.source.text, reconstructed)
+        assertEquals(text, reconstructed)
     }
 
     @Test
@@ -141,7 +142,7 @@ class SourceAndLexerTest {
 
     @Test
     fun unterminatedQuoteReportsItsOpeningCoordinate() {
-        val error = assertFailsWith<UnterminatedQuotedLiteralException> { lex("a\n'bad") }
+        val error = assertFailsWith<UnterminatedQuotedLiteralException> { lex("a\n'bad").materialize() }
         assertEquals(SyntaxErrorCode.UNTERMINATED_QUOTED_LITERAL, error.code)
         assertEquals(1, error.span.start.line)
         assertEquals(0, error.span.start.column)
@@ -149,26 +150,26 @@ class SourceAndLexerTest {
 
     @Test
     fun unterminatedBlockCommentIsTyped() {
-        val error = assertFailsWith<UnterminatedBlockCommentException> { lex("a /* bad") }
+        val error = assertFailsWith<UnterminatedBlockCommentException> { lex("a /* bad").materialize() }
         assertEquals(SyntaxErrorCode.UNTERMINATED_BLOCK_COMMENT, error.code)
         assertEquals("/* bad", error.offendingText)
     }
 
     @Test
     fun malformedBasePrefixIsRejected() {
-        val error = assertFailsWith<MalformedNumericLiteralException> { lex("0x") }
+        val error = assertFailsWith<MalformedNumericLiteralException> { lex("0x").materialize() }
         assertEquals(SyntaxErrorCode.MALFORMED_NUMERIC_LITERAL, error.code)
     }
 
     @Test
     fun aLoneCarriageReturnEscapeIsRejected() {
-        val error = assertFailsWith<InvalidEscapeException> { lex("'\\\rstill quoted'") }
+        val error = assertFailsWith<InvalidEscapeException> { lex("'\\\rstill quoted'").materialize() }
         assertEquals(SyntaxErrorCode.INVALID_ESCAPE, error.code)
     }
 
     @Test
     fun unsupportedEscapesAreRejected() {
-        val error = assertFailsWith<InvalidEscapeException> { lex("'\\q'") }
+        val error = assertFailsWith<InvalidEscapeException> { lex("'\\q'").materialize() }
         assertEquals(SyntaxErrorCode.INVALID_ESCAPE, error.code)
         assertEquals("\\q", error.offendingText)
     }

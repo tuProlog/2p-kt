@@ -1,6 +1,7 @@
 # Prolog Parser for Kotlin Multiplatform
 
-A common-Kotlin lexer and parser for Prolog syntax with runtime-configurable operators.
+A lazy, streaming-capable Kotlin Multiplatform lexer and parser for Prolog syntax with
+runtime-configurable operators.
 
 The implementation has no runtime dependency beyond the Kotlin standard library. The test suite uses `kotlin-test`.
 
@@ -11,7 +12,7 @@ The parser is split into two public service interfaces:
 - `PrologLexer`, implemented internally by `RegexPrologLexer`
 - `PrologParser`, implemented internally by `PrattPrologParser`
 
-Lexing is deliberately independent of the operator table. A word or graphic token is classified by lexical form, while the parser decides whether its occurrence is an atom, functor, prefix operator, infix operator, or postfix operator. This allows an entire source to be lexed once and then parsed clause by clause while the operator table changes.
+Lexing is deliberately independent of the operator table. A word or graphic token is classified by lexical form, while the parser decides whether its occurrence is an atom, functor, prefix operator, infix operator, or postfix operator. `PrologLexer.lex` returns immediately and produces tokens only when they are requested.
 
 The parser combines:
 
@@ -35,20 +36,66 @@ Whitespace and comments are retained as trivia tokens. Concatenating every non-E
 ## Basic usage
 
 ```kotlin
-import it.unibo.tuprolog.parser.*
+import it.unibo.tuprolog.parser.PrologLexer
+import it.unibo.tuprolog.parser.PrologParser
+import it.unibo.tuprolog.parser.operators.Associativity
+import it.unibo.tuprolog.parser.operators.OperatorDefinition
+import it.unibo.tuprolog.parser.operators.OperatorTables
+import it.unibo.tuprolog.parser.sources.SourceText
 
-val lexer = PrologLexers.default()
-val parser = PrologParsers.default()
+val lexer = PrologLexer.default()
+val parser = PrologParser.default()
 
 val source = lexer.lex(SourceText("a + b * c."))
 val operators = OperatorTables.of(
-    OperatorDefinition("+", OperatorSpecifier.YFX, 500),
-    OperatorDefinition("*", OperatorSpecifier.YFX, 400),
+    OperatorDefinition("+", Associativity.YFX, 500),
+    OperatorDefinition("*", Associativity.YFX, 400),
 )
 
 val clause = parser.parseClause(source, operators)
 println(clause.root.expression)
 ```
+
+Calling `tokens.lastTokenId`, `tokens.toList()`, `significantTokens()`, or `materialize()` forces
+lexing through EOF. Indexed token access lexes only through the requested token.
+
+## JVM readers
+
+The JVM source set provides `Reader` overloads. Supplied readers remain caller-owned:
+
+```kotlin
+Files.newBufferedReader(path).use { reader ->
+    val session = PrologParser.default().openSession(reader, sourceId = path.toString())
+    while (!session.isAtEnd) {
+        val clause = session.parseNextClause() ?: break
+        consume(clause)
+    }
+}
+```
+
+The reader session uses `RELEASE_COMMITTED` retention. Each returned tree owns a stable source and
+token snapshot, so consuming clauses without retaining every tree bounds memory by the input chunk,
+the largest token, and the current clause.
+
+## Kotlin/JS files and streams
+
+Browser files are asynchronous. The JS source set therefore exposes a suspending session rather
+than pretending that browser I/O is synchronous:
+
+```kotlin
+val session = PrologParser.default().openFileSession(file)
+try {
+    while (true) {
+        val clause = session.parseNextClause() ?: break
+        consume(clause)
+    }
+} finally {
+    session.close()
+}
+```
+
+`openReadableStreamSession` accepts a JavaScript `ReadableStream<Uint8Array>`. Both adapters decode
+UTF-8 incrementally and preserve multi-byte sequences split across chunks.
 
 ## Dynamic operators between clauses
 
@@ -67,7 +114,7 @@ val session = parser.openSession(input)
 val first = session.parseNextClause()
 
 // A future directive processor may derive this update from an op/3 directive.
-session.operators.define("++", OperatorSpecifier.YFX, 500)
+session.operators.define("++", Associativity.YFX, 500)
 
 val second = session.parseNextClause()
 ```
@@ -79,7 +126,7 @@ The low-level parser does not execute `op/3` directives. The source reader or Pr
 The default policy rejects multiple applicable definitions for the same occurrence:
 
 ```kotlin
-val parser = PrologParsers.default(
+val parser = PrologParser.default(
     ParserOptions(ambiguityPolicy = OperatorAmbiguityPolicy.REJECT),
 )
 ```
@@ -88,7 +135,7 @@ val parser = PrologParsers.default(
 
 ## Concrete syntax tree
 
-The result is a typed, immutable CST. It preserves source syntax rather than immediately converting terms to a domain model. Relevant interfaces include:
+The result is a typed, immutable CST. It preserves source syntax rather than immediately converting terms to a domain model. A syntax tree always contains a materialized snapshot, even when its parser input is a releasing stream. Relevant interfaces include:
 
 - `NumberNode`
 - `VariableNode`
@@ -100,7 +147,7 @@ The result is a typed, immutable CST. It preserves source syntax rather than imm
 - `ClauseNode`
 - `TheoryNode`
 
-`SyntaxTree.semanticTokens` assigns context-sensitive roles such as `FUNCTOR`, `INFIX_OPERATOR`, `ARGUMENT_DELIMITER`, and `LIST_TAIL_DELIMITER`. This is intended as the basis for semantic syntax coloring.
+`SyntaxTree.semanticTokens` assigns context-sensitive roles such as `FUNCTOR`, `INFIX_OPERATOR`, `ARGUMENT_DELIMITER`, and `LIST_TAIL_DELIMITER`. This is intended as the basis for semantic syntax coloring. Token IDs are absolute and are resolved through the ID-addressable `TokenStore`; its first retained ID need not be zero.
 
 ## Error handling
 

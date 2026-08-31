@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.parser.impl.parser
 
 import it.unibo.tuprolog.parser.ParserOptions
-import it.unibo.tuprolog.parser.tree.SemanticRole
-import it.unibo.tuprolog.parser.tree.SemanticToken
-import it.unibo.tuprolog.parser.tree.SyntaxKind
 import it.unibo.tuprolog.parser.exceptions.MissingClauseTerminatorException
 import it.unibo.tuprolog.parser.exceptions.NestingLimitExceededException
 import it.unibo.tuprolog.parser.exceptions.SyntaxExpectation
@@ -15,6 +12,9 @@ import it.unibo.tuprolog.parser.sources.SourceSpan
 import it.unibo.tuprolog.parser.sources.TokenRange
 import it.unibo.tuprolog.parser.tokens.Token
 import it.unibo.tuprolog.parser.tokens.TokenKind
+import it.unibo.tuprolog.parser.tree.SemanticRole
+import it.unibo.tuprolog.parser.tree.SemanticToken
+import it.unibo.tuprolog.parser.tree.SyntaxKind
 
 internal abstract class GrammarDsl(
     protected val input: LexedSource,

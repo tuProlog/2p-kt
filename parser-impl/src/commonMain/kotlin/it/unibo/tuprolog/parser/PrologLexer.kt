@@ -6,11 +6,21 @@ import it.unibo.tuprolog.parser.sources.SourceText
 
 interface PrologLexer {
     /**
-     * Lexes the complete input without consulting an operator table.
+     * Creates a lazy token source without consulting an operator table.
      *
-     * @throws PrologLexingException on the first malformed lexical construct
+     * Lexical failures are reported when the malformed construct is requested.
      */
-    fun lex(source: SourceText): LexedSource
+    fun lex(
+        source: SourceText,
+        options: LexerOptions = LexerOptions(),
+    ): LexedSource
+
+    /** Creates a lazy token source backed by synchronous text chunks. */
+    fun lex(
+        source: TextChunkSource,
+        sourceId: String? = null,
+        options: LexerOptions = LexerOptions(),
+    ): LexedSource
 
     companion object {
         fun default(): PrologLexer = RegexPrologLexer()

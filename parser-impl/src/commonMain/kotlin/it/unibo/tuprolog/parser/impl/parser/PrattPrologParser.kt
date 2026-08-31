@@ -1,18 +1,21 @@
 package it.unibo.tuprolog.parser.impl.parser
 
-import it.unibo.tuprolog.parser.tree.ClauseNode
-import it.unibo.tuprolog.parser.tree.ExpressionNode
 import it.unibo.tuprolog.parser.ParserOptions
 import it.unibo.tuprolog.parser.PrologParseSession
 import it.unibo.tuprolog.parser.PrologParser
-import it.unibo.tuprolog.parser.tree.SyntaxTree
-import it.unibo.tuprolog.parser.tree.TermNode
-import it.unibo.tuprolog.parser.tree.TheoryNode
+import it.unibo.tuprolog.parser.SuspendingPrologParseSession
+import it.unibo.tuprolog.parser.SuspendingTextChunkSource
+import it.unibo.tuprolog.parser.impl.lexer.ManagedLexedSource
 import it.unibo.tuprolog.parser.operators.MutableOperatorTable
 import it.unibo.tuprolog.parser.operators.OperatorTable
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.sources.LexedSource
 import it.unibo.tuprolog.parser.sources.SourcePosition
+import it.unibo.tuprolog.parser.tree.ClauseNode
+import it.unibo.tuprolog.parser.tree.ExpressionNode
+import it.unibo.tuprolog.parser.tree.SyntaxTree
+import it.unibo.tuprolog.parser.tree.TermNode
+import it.unibo.tuprolog.parser.tree.TheoryNode
 
 internal class PrattPrologParser(
     private val options: ParserOptions,
@@ -24,7 +27,7 @@ internal class PrattPrologParser(
         val cursor = TokenCursor(input)
         val grammar = PrologGrammar(input, cursor, operators, options)
         val root = grammar.parseSingletonTerm()
-        return SyntaxTree(input, root, grammar.semanticTokens)
+        return SyntaxTree(input.materialize(), root, grammar.semanticTokens)
     }
 
     override fun parseExpression(
@@ -34,7 +37,7 @@ internal class PrattPrologParser(
         val cursor = TokenCursor(input)
         val grammar = PrologGrammar(input, cursor, operators, options)
         val root = grammar.parseSingletonExpression()
-        return SyntaxTree(input, root, grammar.semanticTokens)
+        return SyntaxTree(input.materialize(), root, grammar.semanticTokens)
     }
 
     override fun parseClause(
@@ -44,7 +47,7 @@ internal class PrattPrologParser(
         val cursor = TokenCursor(input)
         val grammar = PrologGrammar(input, cursor, operators, options)
         val root = grammar.parseCompleteClause()
-        return SyntaxTree(input, root, grammar.semanticTokens)
+        return SyntaxTree(input.materialize(), root, grammar.semanticTokens)
     }
 
     override fun parseTheory(
@@ -54,13 +57,21 @@ internal class PrattPrologParser(
         val cursor = TokenCursor(input)
         val grammar = PrologGrammar(input, cursor, operators, options)
         val root = grammar.parseTheory()
-        return SyntaxTree(input, root, grammar.semanticTokens)
+        return SyntaxTree(input.materialize(), root, grammar.semanticTokens)
     }
 
     override fun openSession(
         input: LexedSource,
         initialOperators: OperatorTable,
     ): PrologParseSession = ParseSessionImpl(input, initialOperators, options)
+
+    override fun openSession(
+        input: SuspendingTextChunkSource,
+        sourceId: String?,
+        initialOperators: OperatorTable,
+        maximumRetainedTokens: Int?,
+    ): SuspendingPrologParseSession =
+        SuspendingParseSessionImpl(this, input, sourceId, initialOperators, maximumRetainedTokens)
 }
 
 private class ParseSessionImpl(
@@ -69,6 +80,7 @@ private class ParseSessionImpl(
     private val options: ParserOptions,
 ) : PrologParseSession {
     private val cursor = TokenCursor(input)
+    private var clauseStartTokenId: Int? = null
 
     override val operators: MutableOperatorTable =
         OperatorTables.mutableOf(*initialOperators.allDefinitions().toTypedArray())
@@ -84,10 +96,17 @@ private class ParseSessionImpl(
             return null
         }
         val mark = cursor.mark()
+        val firstTokenId = clauseStartTokenId ?: input.tokens.firstTokenId
         return try {
             val grammar = PrologGrammar(input, cursor, operators, options)
             val root = grammar.parseClauseNode()
-            SyntaxTree(input, root, grammar.semanticTokens)
+            val endExclusiveTokenId = root.terminatorTokenId + 1
+            val stableInput =
+                (input as? ManagedLexedSource)?.snapshot(firstTokenId, endExclusiveTokenId)
+                    ?: input.materialize()
+            clauseStartTokenId = endExclusiveTokenId
+            (input as? ManagedLexedSource)?.releaseBefore(endExclusiveTokenId)
+            SyntaxTree(stableInput, root, grammar.semanticTokens)
         } catch (error: Throwable) {
             cursor.restore(mark)
             throw error

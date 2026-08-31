@@ -181,7 +181,7 @@ class ErrorAndSessionTest {
         assertEquals(5, tree.root.span.endExclusive.offset)
         assertEquals(
             "a + b",
-            tree.source.text.substring(tree.root.span.start.offset, tree.root.span.endExclusive.offset),
+            tree.source.text(tree.root.span),
         )
     }
 }

@@ -10,4 +10,5 @@ sealed class PrologSyntaxException(
     val expected: Set<SyntaxExpectation>,
     val rulePath: List<String>,
     message: String,
-) : RuntimeException(message)
+    cause: Throwable? = null,
+) : RuntimeException(message, cause)

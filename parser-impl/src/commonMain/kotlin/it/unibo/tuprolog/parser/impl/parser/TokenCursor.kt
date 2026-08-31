@@ -7,9 +7,9 @@ import it.unibo.tuprolog.parser.tokens.TokenKind
 
 internal class TokenCursor(
     private val input: LexedSource,
-    startSignificantIndex: Int = 0,
+    startSignificantIndex: Int? = null,
 ) {
-    private var significantIndex: Int = startSignificantIndex
+    private var significantIndex: Int? = startSignificantIndex
 
     val isAtEnd: Boolean
         get() = peek().kind == TokenKind.END_OF_INPUT
@@ -18,24 +18,25 @@ internal class TokenCursor(
         get() = peek().span.start
 
     fun peek(relative: Int = 0): Token {
-        val requested =
-            (significantIndex + relative)
-                .coerceAtMost(input.significantTokenIndices.lastIndex)
-        return input.tokens[input.significantTokenIndices[requested]]
+        require(relative >= 0) { "Cannot look behind the token cursor" }
+        return input.significantToken(currentIndex() + relative)
     }
 
     fun consume(): Token {
         val token = peek()
         if (token.kind != TokenKind.END_OF_INPUT) {
-            significantIndex += 1
+            significantIndex = currentIndex() + 1
         }
         return token
     }
 
-    fun mark(): Int = significantIndex
+    fun mark(): Int = currentIndex()
 
     fun restore(mark: Int) {
-        require(mark in 0..input.significantTokenIndices.lastIndex)
+        require(mark >= input.firstSignificantTokenIndex)
         significantIndex = mark
     }
+
+    private fun currentIndex(): Int =
+        significantIndex ?: input.firstSignificantTokenIndex.also { significantIndex = it }
 }

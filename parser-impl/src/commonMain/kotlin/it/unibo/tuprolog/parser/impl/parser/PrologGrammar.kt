@@ -1,21 +1,7 @@
 package it.unibo.tuprolog.parser.impl.parser
 
-import it.unibo.tuprolog.parser.tree.ClauseNode
-import it.unibo.tuprolog.parser.tree.ExpressionNode
-import it.unibo.tuprolog.parser.tree.NumberKind
-import it.unibo.tuprolog.parser.tree.NumberNode
 import it.unibo.tuprolog.parser.OperatorAmbiguityPolicy
-import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
-import it.unibo.tuprolog.parser.tree.OperatorRole
-import it.unibo.tuprolog.parser.tree.OperatorUse
 import it.unibo.tuprolog.parser.ParserOptions
-import it.unibo.tuprolog.parser.tree.SemanticRole
-import it.unibo.tuprolog.parser.tree.StructureKind
-import it.unibo.tuprolog.parser.tree.StructureNode
-import it.unibo.tuprolog.parser.tree.SyntaxKind
-import it.unibo.tuprolog.parser.tree.TermNode
-import it.unibo.tuprolog.parser.tree.TheoryNode
-import it.unibo.tuprolog.parser.tree.VariableNode
 import it.unibo.tuprolog.parser.exceptions.AmbiguousOperatorUseException
 import it.unibo.tuprolog.parser.exceptions.MissingOperatorOperandException
 import it.unibo.tuprolog.parser.exceptions.OperatorPriorityException
@@ -28,15 +14,29 @@ import it.unibo.tuprolog.parser.impl.tree.ParenthesizedExpressionNodeImpl
 import it.unibo.tuprolog.parser.impl.tree.StructureNodeImpl
 import it.unibo.tuprolog.parser.impl.tree.TheoryNodeImpl
 import it.unibo.tuprolog.parser.impl.tree.VariableNodeImpl
+import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.Fixity
 import it.unibo.tuprolog.parser.operators.OperatorDefinition
-import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTable
 import it.unibo.tuprolog.parser.sources.LexedSource
 import it.unibo.tuprolog.parser.sources.TokenRange
 import it.unibo.tuprolog.parser.tokens.Token
 import it.unibo.tuprolog.parser.tokens.TokenKind
 import it.unibo.tuprolog.parser.tokens.TokenPayload
+import it.unibo.tuprolog.parser.tree.ClauseNode
+import it.unibo.tuprolog.parser.tree.ExpressionNode
+import it.unibo.tuprolog.parser.tree.NumberKind
+import it.unibo.tuprolog.parser.tree.NumberNode
+import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
+import it.unibo.tuprolog.parser.tree.OperatorRole
+import it.unibo.tuprolog.parser.tree.OperatorUse
+import it.unibo.tuprolog.parser.tree.SemanticRole
+import it.unibo.tuprolog.parser.tree.StructureKind
+import it.unibo.tuprolog.parser.tree.StructureNode
+import it.unibo.tuprolog.parser.tree.SyntaxKind
+import it.unibo.tuprolog.parser.tree.TermNode
+import it.unibo.tuprolog.parser.tree.TheoryNode
+import it.unibo.tuprolog.parser.tree.VariableNode
 
 internal class PrologGrammar(
     input: LexedSource,

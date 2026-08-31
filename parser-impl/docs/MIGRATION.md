@@ -4,8 +4,11 @@
 
 | Legacy operation | Multiplatform equivalent |
 |---|---|
-| construct `PrologLexer(CharStream)` | `PrologLexers.default().lex(SourceText(text))` |
-| construct generated `PrologParser` | `PrologParsers.default()` |
+| construct `PrologLexer(CharStream)` | `PrologLexer.default().lex(SourceText(text))` |
+| lex a JVM `Reader` | `PrologLexer.default().lex(reader)` |
+| parse a JVM file incrementally | `PrologParser.default().openSession(reader)` |
+| parse a browser `File` incrementally | `PrologParser.default().openFileSession(file)` |
+| construct generated `PrologParser` | `PrologParser.default()` |
 | `addOperator(name, assoc, priority)` | `MutableOperatorTable.define(name, specifier, priority)` |
 | `removeOperator(name)` | `MutableOperatorTable.removeAll(name)` |
 | `singletonTerm()` | `parseTerm(lexedSource, operators)` |
@@ -15,6 +18,10 @@
 | parse clauses while mutating operators | `openSession(...).parseNextClause()` |
 | ANTLR token line/column | `Token.span.start.line` and `.column` |
 | ANTLR context flags | typed CST interfaces and enum metadata |
+
+Code that treated `LexedSource.tokens` as a zero-based `List` should use `TokenStore` iteration or
+absolute-ID lookup. Code slicing `SyntaxTree.source.text` with absolute offsets should use
+`SyntaxTree.source.text(span)`.
 
 ## Suggested integration sequence
 

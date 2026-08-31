@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.parser
 
 import it.unibo.tuprolog.parser.exceptions.InvalidOperatorDefinitionException
-import it.unibo.tuprolog.parser.operators.OperatorDefinition
 import it.unibo.tuprolog.parser.operators.Associativity
+import it.unibo.tuprolog.parser.operators.OperatorDefinition
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import kotlin.test.Test
 import kotlin.test.assertEquals

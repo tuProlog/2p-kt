@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.parser.exceptions
 
 import it.unibo.tuprolog.parser.operators.OperatorDefinition
+import it.unibo.tuprolog.parser.sources.Source
 import it.unibo.tuprolog.parser.sources.SourceSpan
-import it.unibo.tuprolog.parser.sources.SourceText
 import it.unibo.tuprolog.parser.tokens.Token
 
 sealed class PrologParsingException(
     code: SyntaxErrorCode,
-    source: SourceText,
+    source: Source,
     span: SourceSpan,
     offendingText: String?,
     expected: Set<SyntaxExpectation>,
@@ -24,7 +24,7 @@ sealed class PrologParsingException(
     )
 
 class UnexpectedTokenException(
-    source: SourceText,
+    source: Source,
     token: Token,
     offendingText: String,
     expected: Set<SyntaxExpectation>,
@@ -41,7 +41,7 @@ class UnexpectedTokenException(
     )
 
 class UnexpectedEndOfInputException(
-    source: SourceText,
+    source: Source,
     token: Token,
     expected: Set<SyntaxExpectation>,
     rulePath: List<String>,
@@ -57,7 +57,7 @@ class UnexpectedEndOfInputException(
     )
 
 class MissingOperatorOperandException(
-    source: SourceText,
+    source: Source,
     operatorToken: Token,
     operatorText: String,
     val definition: OperatorDefinition,
@@ -75,7 +75,7 @@ class MissingOperatorOperandException(
     )
 
 class OperatorPriorityException(
-    source: SourceText,
+    source: Source,
     operatorToken: Token,
     operatorText: String,
     val definition: OperatorDefinition,
@@ -94,7 +94,7 @@ class OperatorPriorityException(
     )
 
 class AmbiguousOperatorUseException(
-    source: SourceText,
+    source: Source,
     operatorToken: Token,
     operatorText: String,
     val candidates: List<OperatorDefinition>,
@@ -113,7 +113,7 @@ class AmbiguousOperatorUseException(
     )
 
 class MissingClauseTerminatorException(
-    source: SourceText,
+    source: Source,
     token: Token,
     offendingText: String?,
     rulePath: List<String>,
@@ -128,7 +128,7 @@ class MissingClauseTerminatorException(
     )
 
 class NestingLimitExceededException(
-    source: SourceText,
+    source: Source,
     token: Token,
     val maximumDepth: Int,
     rulePath: List<String>,

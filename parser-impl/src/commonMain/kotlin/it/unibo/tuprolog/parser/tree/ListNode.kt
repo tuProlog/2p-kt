@@ -4,6 +4,6 @@ package it.unibo.tuprolog.parser.tree
 interface ListNode : TermNode {
     val items: List<ExpressionNode>
     val tail: ExpressionNode?
-    override fun <T> accept(visitor: SyntaxNodeVisitor<T>): T =
-        visitor.visitList(this)
+
+    override fun <T> accept(visitor: SyntaxNodeVisitor<T>): T = visitor.visitList(this)
 }

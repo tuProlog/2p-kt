@@ -38,6 +38,14 @@ interface PrologParser {
         initialOperators: OperatorTable = OperatorTables.empty(),
     ): PrologParseSession
 
+    /** Opens a clause-by-clause session over asynchronously supplied text chunks. */
+    fun openSession(
+        input: SuspendingTextChunkSource,
+        sourceId: String? = null,
+        initialOperators: OperatorTable = OperatorTables.empty(),
+        maximumRetainedTokens: Int? = null,
+    ): SuspendingPrologParseSession
+
     companion object {
         fun default(options: ParserOptions = ParserOptions()): PrologParser = PrattPrologParser(options)
     }

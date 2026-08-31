@@ -38,6 +38,17 @@ Whitespace and comments are retained as tokens instead of being skipped. Full-st
 
 Coordinates are zero-based and spans are end-exclusive. Offsets use Kotlin `String` indexing, hence UTF-16 code units.
 
+Streamed fragments retain absolute coordinates. Their `SourceText.text` contains only the retained
+fragment, so source extraction should use `Source.text(span)` or `LexedSource.textOf(token)` rather
+than applying an absolute offset directly to the fragment string.
+
+### Lazy collection model
+
+`LexedSource` is now an interface and its `tokens` property is an ID-addressable `TokenStore`, not a
+`List`. Iteration order is lexical, but `tokens[id]` uses an absolute token ID and remains valid for
+snapshots whose first ID is greater than zero. Operations requiring the final token force lexing
+through EOF.
+
 ### Ambiguity policy
 
 Multiple applicable operator definitions are rejected by default. The old grammar implicitly chose according to alternative order. `OperatorAmbiguityPolicy.LEGACY_ORDER` is available for migration.
