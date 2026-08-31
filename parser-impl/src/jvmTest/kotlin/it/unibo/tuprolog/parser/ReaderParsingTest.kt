@@ -5,7 +5,6 @@ import java.io.Reader
 import java.io.StringReader
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -13,7 +12,7 @@ class ReaderParsingTest {
     @Test
     fun readerLexingIsLazy() {
         val reader = CountingReader("first. second.")
-        val input = PrologLexer.default().lex(reader, chunkSize = 1)
+        val input = PrologLexer.default().lex(reader.toSource(chunkSize = 1))
 
         assertEquals(0, reader.charactersRead)
         assertEquals("first", input.textOf(input.significantToken(0)))
@@ -22,24 +21,33 @@ class ReaderParsingTest {
 
     @Test
     fun readerSessionsDoNotLoadTheWholeFile() {
-        val reader = CountingReader("first.\nsecond.\nthird.")
-        val session = PrologParser.default().openSession(reader, chunkSize = 1)
+        for (autoClose in listOf(false, true)) {
+            val reader = CountingReader("first.\nsecond.\nthird.")
+            val session =
+                buildParserFor(reader, chunkSize = 1, autoClose = autoClose) { parser, lexedSource ->
+                    parser.openSession(lexedSource)
+                }
 
-        assertEquals(0, reader.charactersRead)
-        val first = assertNotNull(session.parseNextClause())
-        assertTrue(reader.charactersRead < reader.textLength)
-        assertEquals("first", (first.root.expression as StructureNode).functor)
+            assertEquals(0, reader.charactersRead)
+            val first = assertNotNull(session.parseNextClause())
+            assertTrue(reader.charactersRead < reader.textLength)
+            assertEquals("first", (first.root.expression as StructureNode).functor)
 
-        assertNotNull(session.parseNextClause())
-        assertNotNull(session.parseNextClause())
-        assertTrue(session.isAtEnd)
-        assertEquals(reader.textLength, reader.charactersRead)
-        assertFalse(reader.closed)
+            assertNotNull(session.parseNextClause())
+            assertNotNull(session.parseNextClause())
+            assertTrue(session.isAtEnd)
+            assertEquals(reader.textLength, reader.charactersRead)
+            assertEquals(autoClose, reader.closed)
+        }
     }
 
     @Test
     fun parserConvenienceFunctionsAcceptReaders() {
-        val tree = PrologParser.default().parseTheory(StringReader("a.\nb."), chunkSize = 2)
+        val reader = StringReader("a.\nb.")
+        val tree =
+            buildParserFor(reader) { parser, lexedSource ->
+                parser.parseTheory(lexedSource)
+            }
         assertEquals(2, tree.root.clauses.size)
         assertEquals("a.\nb.", tree.source.text(tree.source.start.offset, tree.source.endExclusive.offset))
     }

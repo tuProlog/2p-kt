@@ -5,29 +5,32 @@ import it.unibo.tuprolog.parser.sources.SourceText
 
 fun <T> buildParserFor(
     source: SourceText,
-    options: ParserOptions = ParserOptions(),
+    lexerOptions: LexerOptions = LexerOptions(),
+    parserOptions: ParserOptions = ParserOptions(),
     continuation: (PrologParser, LexedSource) -> T,
 ): T {
     val lexer = PrologLexer.default()
-    val lexedSource = lexer.lex(source)
-    val parser = PrologParser.default(options)
+    val lexedSource = lexer.lex(source, lexerOptions)
+    val parser = PrologParser.default(parserOptions)
     return continuation(parser, lexedSource)
 }
 
 fun <T> buildParserFor(
     source: TextChunkSource,
-    options: ParserOptions = ParserOptions(),
+    lexerOptions: LexerOptions = LexerOptions(),
+    parserOptions: ParserOptions = ParserOptions(),
     continuation: (PrologParser, LexedSource) -> T,
 ): T {
     val lexer = PrologLexer.default()
-    val lexedSource = lexer.lex(source)
-    val parser = PrologParser.default(options)
+    val lexedSource = lexer.lex(source, options = lexerOptions)
+    val parser = PrologParser.default(parserOptions)
     return continuation(parser, lexedSource)
 }
 
 fun <T> buildParserFor(
     input: String,
     id: String? = null,
-    options: ParserOptions = ParserOptions(),
+    lexerOptions: LexerOptions = LexerOptions(),
+    parserOptions: ParserOptions = ParserOptions(),
     continuation: (PrologParser, LexedSource) -> T,
-): T = buildParserFor(SourceText(input, id), options, continuation)
+): T = buildParserFor(SourceText(input, id), lexerOptions, parserOptions, continuation)

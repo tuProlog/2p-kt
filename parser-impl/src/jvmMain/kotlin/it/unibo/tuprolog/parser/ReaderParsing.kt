@@ -7,6 +7,14 @@ const val DEFAULT_READER_CHUNK_SIZE: Int = 8 * 1024
 
 fun <T> buildParserFor(
     input: Reader,
-    options: ParserOptions = ParserOptions(),
+    chunkSize: Int = DEFAULT_READER_CHUNK_SIZE,
+    autoClose: Boolean = true,
+    lexerOptions: LexerOptions = LexerOptions(),
+    parserOptions: ParserOptions = ParserOptions(),
     continuation: (PrologParser, LexedSource) -> T,
-): T = buildParserFor(ReaderToTextChunkSourceAdapter(input), options, continuation)
+): T = buildParserFor(input.toSource(chunkSize, autoClose), lexerOptions, parserOptions, continuation)
+
+fun Reader.toSource(
+    chunkSize: Int = DEFAULT_READER_CHUNK_SIZE,
+    autoClose: Boolean = true,
+): TextChunkSource = ReaderToTextChunkSourceAdapter(this, chunkSize, autoClose)

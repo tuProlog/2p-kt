@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.parser.LexerOptions
 import it.unibo.tuprolog.parser.ParserOptions
 import it.unibo.tuprolog.parser.buildParserFor
 import java.io.InputStream
@@ -12,7 +13,8 @@ import java.io.Reader
 class TermReaderImpl(
     override val scope: Scope,
     override val defaultOperatorSet: OperatorSet,
-    private val options: ParserOptions = ParserOptions(),
+    private val lexerOptions: LexerOptions = LexerOptions(),
+    private val parserOptions: ParserOptions = ParserOptions(),
 ) : TermReader {
     override fun readTerm(
         reader: Reader,
@@ -28,7 +30,7 @@ class TermReaderImpl(
         reader: Reader,
         operators: OperatorSet,
     ): Sequence<Term> =
-        buildParserFor(reader, options) { parser, lexedSource ->
+        buildParserFor(reader, lexerOptions, parserOptions) { parser, lexedSource ->
             val session = parser.openSession(lexedSource)
             val visitor = PrologTermParserVisitor(scope)
             var term = session.parseNextTerm()

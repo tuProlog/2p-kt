@@ -41,11 +41,9 @@ internal class SuspendingParseSessionImpl(
     override suspend fun parseNextClause(): SyntaxTree<ClauseNode>? {
         val candidate = clauses.nextClause() ?: return null
         return try {
-            val x = parser.parseClause(candidate, operators).also { clauses.commit() }
-            x
+            parser.parseClause(candidate, operators).also { clauses.commit() }
         } catch (error: Throwable) {
             clauses.rollback()
-            error.printStackTrace()
             throw error
         }
     }

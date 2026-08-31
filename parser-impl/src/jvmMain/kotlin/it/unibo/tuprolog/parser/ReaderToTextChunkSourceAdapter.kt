@@ -4,8 +4,8 @@ import java.io.Reader
 
 internal class ReaderToTextChunkSourceAdapter(
     private val reader: Reader,
-    private val autoClose: Boolean = true,
     chunkSize: Int = DEFAULT_READER_CHUNK_SIZE,
+    private val autoClose: Boolean = true,
 ) : TextChunkSource {
     private val buffer by lazy {
         CharArray(chunkSize)
