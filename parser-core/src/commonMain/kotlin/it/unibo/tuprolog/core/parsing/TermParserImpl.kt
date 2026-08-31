@@ -18,7 +18,7 @@ class TermParserImpl(
         operators: OperatorSet,
     ): Term =
         buildParserFor(input, null, lexerOptions, parserOptions) { parser, lexedSource ->
-            val syntaxTree = parser.parseTerm(lexedSource, operators.toOperatorTable())
+            val syntaxTree = parser.parseExpression(lexedSource, operators.toOperatorTable())
             val visitor = PrologTermParserVisitor(scope)
             syntaxTree.root.accept(visitor)
         }
