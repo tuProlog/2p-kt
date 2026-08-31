@@ -30,7 +30,11 @@ class TermReaderImpl(
         reader: Reader,
         operators: OperatorSet,
     ): Sequence<Term> =
-        buildParserFor(reader, lexerOptions, parserOptions) { parser, lexedSource ->
+        buildParserFor(
+            input = reader,
+            lexerOptions = lexerOptions,
+            parserOptions = parserOptions,
+        ) { parser, lexedSource ->
             val session = parser.openSession(lexedSource)
             val visitor = PrologTermParserVisitor(scope)
             var term = session.parseNextTerm()

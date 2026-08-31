@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.parser.operators
 
 internal class MutableOperatorTableImpl(
-    definitions: Collection<OperatorDefinition>,
+    definitions: Iterable<OperatorDefinition>,
 ) : MutableOperatorTable {
     private val entries: MutableMap<String, OperatorDefinitionSet> = mutableMapOf()
 
