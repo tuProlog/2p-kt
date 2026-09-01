@@ -164,9 +164,9 @@ internal class PrologGrammar(
             }
 
             val token = cursor.peek()
+            val definitions = operatorDefinitions(token, delimiters)
             val prefixCandidates =
-                operatorDefinitions(token, delimiters)
-                    .filter { it.specifier.fixity == Fixity.PREFIX && it.priority <= maximumPriority }
+                definitions.filter { it.specifier.fixity == Fixity.PREFIX && it.priority <= maximumPriority }
 
             if (prefixCandidates.isNotEmpty()) {
                 val definition = select(prefixCandidates, token)
@@ -192,14 +192,15 @@ internal class PrologGrammar(
                 val operand = parseExpression(rightLimit, delimiters)
                 buildPrefix(operatorToken, operatorName, definition, operand)
             } else {
+                val hasPrefixDefinition = definitions.any { it.specifier.fixity == Fixity.PREFIX }
                 val nonPrefixCandidates =
-                    operatorDefinitions(token, delimiters)
-                        .filter { it.specifier.fixity != Fixity.PREFIX }
+                    if (hasPrefixDefinition) {
+                        definitions.filter { it.specifier.fixity != Fixity.PREFIX }
+                    } else {
+                        definitions
+                    }
                 val canBeFunctorApplication =
-                    cursor.peek(1).kind == TokenKind.LEFT_PARENTHESIS &&
-                        operatorDefinitions(token, delimiters).none {
-                            it.specifier.fixity == Fixity.PREFIX
-                        }
+                    cursor.peek(1).kind == TokenKind.LEFT_PARENTHESIS && !hasPrefixDefinition
                 if (nonPrefixCandidates.isNotEmpty() && !canBeFunctorApplication) {
                     val definition = select(nonPrefixCandidates, token)
                     throw MissingOperatorOperandException(
@@ -221,20 +222,22 @@ internal class PrologGrammar(
         delimiters: DelimiterPolicy,
     ): OperatorDefinition? {
         val token = cursor.peek()
-        val candidates =
-            operatorDefinitions(token, delimiters)
-                .filter {
-                    it.specifier.fixity != Fixity.PREFIX &&
-                        it.priority <= maximumPriority
-                }
+        val candidates = mutableListOf<OperatorDefinition>()
+        for (definition in operatorDefinitions(token, delimiters)) {
+            if (definition.specifier.fixity != Fixity.PREFIX && definition.priority <= maximumPriority) {
+                candidates += definition
+            }
+        }
         if (candidates.isEmpty()) {
             return null
         }
 
-        val leftAccepted =
-            candidates.filter { definition ->
-                definition.specifier.left!!.accepts(left.priority, definition.priority)
+        val leftAccepted = mutableListOf<OperatorDefinition>()
+        for (definition in candidates) {
+            if (definition.specifier.left!!.accepts(left.priority, definition.priority)) {
+                leftAccepted += definition
             }
+        }
 
         if (leftAccepted.isEmpty()) {
             val definition = select(candidates, token)
@@ -249,29 +252,40 @@ internal class PrologGrammar(
             )
         }
 
-        val viableInfix =
-            leftAccepted.filter { definition ->
-                definition.specifier.fixity == Fixity.INFIX &&
-                    canStartExpressionAt(
-                        relative = 1,
-                        maximumPriority =
-                            definition.specifier.right!!
-                                .maximumOperandPriority(definition.priority),
-                        delimiters = delimiters,
-                    )
+        val viableInfix = mutableListOf<OperatorDefinition>()
+        val infixWithoutRightOperand = mutableListOf<OperatorDefinition>()
+        val postfix = mutableListOf<OperatorDefinition>()
+        for (definition in leftAccepted) {
+            when (definition.specifier.fixity) {
+                Fixity.INFIX -> {
+                    val hasRightOperand =
+                        canStartExpressionAt(
+                            relative = 1,
+                            maximumPriority =
+                                definition.specifier.right!!
+                                    .maximumOperandPriority(definition.priority),
+                            delimiters = delimiters,
+                        )
+                    if (hasRightOperand) {
+                        viableInfix += definition
+                    } else {
+                        infixWithoutRightOperand += definition
+                    }
+                }
+                Fixity.POSTFIX -> postfix += definition
+                Fixity.PREFIX -> Unit
             }
+        }
         if (viableInfix.isNotEmpty()) {
             return select(viableInfix, token)
         }
 
-        val postfix = leftAccepted.filter { it.specifier.fixity == Fixity.POSTFIX }
         if (postfix.isNotEmpty()) {
             return select(postfix, token)
         }
 
-        val infix = leftAccepted.filter { it.specifier.fixity == Fixity.INFIX }
-        if (infix.isNotEmpty()) {
-            val definition = select(infix, token)
+        if (infixWithoutRightOperand.isNotEmpty()) {
+            val definition = select(infixWithoutRightOperand, token)
             throw MissingOperatorOperandException(
                 input.source,
                 token,

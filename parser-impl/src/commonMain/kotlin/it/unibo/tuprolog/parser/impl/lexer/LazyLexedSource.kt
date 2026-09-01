@@ -58,7 +58,9 @@ internal class LazyLexedSource(
 
     override fun significantTokens(): List<Token> {
         ensureEndOfInput()
-        return significantTokenIds.map(::token)
+        return buildList(significantTokenIds.size) {
+            significantTokenIds.forEach { add(token(it)) }
+        }
     }
 
     override fun materialize(): MaterializedLexedSource {
@@ -80,29 +82,31 @@ internal class LazyLexedSource(
         require(until <= records.size) {
             "Token range $firstTokenId until $endExclusiveTokenId is not available"
         }
-        val selected = records.subList(from, until).toList()
-        val stableRecords =
-            if (selected.last().token.kind == TokenKind.END_OF_INPUT) {
-                selected
-            } else {
-                val eofPosition =
-                    selected
-                        .last()
-                        .token.span.endExclusive
-                val eofSignificantIndex =
-                    selected.asReversed().firstNotNullOf(TokenRecord::significantIndex) + 1
-                selected +
-                    TokenRecord(
-                        Token(
-                            id = endExclusiveTokenId,
-                            kind = TokenKind.END_OF_INPUT,
-                            channel = TokenChannel.SIGNIFICANT,
-                            span = SourceSpan(eofPosition, eofPosition),
-                        ),
-                        "",
-                        eofSignificantIndex,
-                    )
+        val selected = records.subList(from, until)
+        val stableRecords = ArrayList<TokenRecord>(selected.size + 1)
+        stableRecords.addAll(selected)
+        if (stableRecords.last().token.kind != TokenKind.END_OF_INPUT) {
+            val eofPosition = stableRecords.last().token.span.endExclusive
+            var eofSignificantIndex: Int? = null
+            for (index in stableRecords.lastIndex downTo 0) {
+                val candidate = stableRecords[index].significantIndex
+                if (candidate != null) {
+                    eofSignificantIndex = candidate + 1
+                    break
+                }
             }
+            stableRecords +=
+                TokenRecord(
+                    Token(
+                        id = endExclusiveTokenId,
+                        kind = TokenKind.END_OF_INPUT,
+                        channel = TokenChannel.SIGNIFICANT,
+                        span = SourceSpan(eofPosition, eofPosition),
+                    ),
+                    "",
+                    eofSignificantIndex ?: baseSignificantIndex,
+                )
+        }
         return MaterializedLexedSourceImpl(stableRecords, source.id)
     }
 
@@ -114,11 +118,15 @@ internal class LazyLexedSource(
         if (removeCount == 0) {
             return
         }
-        val removed = records.subList(0, removeCount).toList()
+        var removedSignificant = 0
+        for (index in 0 until removeCount) {
+            if (records[index].significantIndex != null) {
+                removedSignificant += 1
+            }
+        }
         records.subList(0, removeCount).clear()
         baseTokenId += removeCount
 
-        val removedSignificant = removed.count { it.significantIndex != null }
         if (removedSignificant > 0) {
             significantTokenIds.subList(0, removedSignificant).clear()
             baseSignificantIndex += removedSignificant

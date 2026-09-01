@@ -10,6 +10,7 @@ import it.unibo.tuprolog.parser.sources.LexedSource
 import it.unibo.tuprolog.parser.sources.SourcePosition
 import it.unibo.tuprolog.parser.tree.ClauseNode
 import it.unibo.tuprolog.parser.tree.ExpressionNode
+import it.unibo.tuprolog.parser.tree.SyntaxNode
 import it.unibo.tuprolog.parser.tree.SyntaxTree
 
 internal class ParseSessionImpl(
@@ -30,28 +31,19 @@ internal class ParseSessionImpl(
         get() = cursor.isAtEnd
 
     override fun parseNextClause(): SyntaxTree<ClauseNode>? {
-        if (cursor.isAtEnd) {
-            return null
-        }
-        val mark = cursor.mark()
-        val firstTokenId = startTokenId ?: input.tokens.firstTokenId
-        return try {
-            val grammar = PrologGrammar(input, cursor, operators, options)
+        return parseNext { grammar ->
             val root = grammar.parseClauseNode()
-            val endExclusiveTokenId = root.terminatorTokenId + 1
-            val stableInput =
-                (input as? ManagedLexedSource)?.snapshot(firstTokenId, endExclusiveTokenId)
-                    ?: input.materialize()
-            startTokenId = endExclusiveTokenId
-            (input as? ManagedLexedSource)?.releaseBefore(endExclusiveTokenId)
-            SyntaxTree(stableInput, root, grammar.semanticTokens)
-        } catch (error: Throwable) {
-            cursor.restore(mark)
-            throw error
+            root to (root.terminatorTokenId + 1)
         }
     }
 
     override fun parseNextTerm(): SyntaxTree<ExpressionNode>? {
+        return parseNext(PrologGrammar::parseSessionExpression)
+    }
+
+    private inline fun <T : SyntaxNode> parseNext(
+        producer: (PrologGrammar) -> Pair<T, Int>,
+    ): SyntaxTree<T>? {
         if (cursor.isAtEnd) {
             return null
         }
@@ -59,7 +51,7 @@ internal class ParseSessionImpl(
         val firstTokenId = startTokenId ?: input.tokens.firstTokenId
         return try {
             val grammar = PrologGrammar(input, cursor, operators, options)
-            val (root, endExclusiveTokenId) = grammar.parseSessionExpression()
+            val (root, endExclusiveTokenId) = producer(grammar)
             val stableInput =
                 (input as? ManagedLexedSource)?.snapshot(firstTokenId, endExclusiveTokenId)
                     ?: input.materialize()

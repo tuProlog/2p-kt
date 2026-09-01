@@ -17,22 +17,45 @@ internal class MaterializedLexedSourceImpl(
         }
     }
 
-    private val materializedTokens: List<Token> = records.map(TokenRecord::token)
-    private val bySignificantIndex: Map<Int, Token> =
-        records.mapNotNull { record -> record.significantIndex?.let { it to record.token } }.toMap()
-    private val eofToken: Token? = materializedTokens.firstOrNull { it.kind == TokenKind.END_OF_INPUT }
-    private val eofSignificantIndex: Int? =
-        records.firstOrNull { it.token.kind == TokenKind.END_OF_INPUT }?.significantIndex
-    private val materializedSignificantTokens: List<Token> =
-        records
-            .asSequence()
-            .filter { it.significantIndex != null }
-            .map(TokenRecord::token)
-            .toList()
+    private val materializedTokens: List<Token>
+    private val materializedSignificantTokens: List<Token>
+    private val firstSignificantIndex: Int
+    private val eofToken: Token?
+    private val eofSignificantIndex: Int?
+
+    init {
+        val tokens = ArrayList<Token>(records.size)
+        val significant = ArrayList<Token>(records.size)
+        var firstSignificant: Int? = null
+        var eof: Token? = null
+        var eofSignificant: Int? = null
+        for (record in records) {
+            val token = record.token
+            tokens += token
+            val significantIndex = record.significantIndex
+            if (significantIndex != null) {
+                if (firstSignificant == null) {
+                    firstSignificant = significantIndex
+                }
+                significant += token
+            }
+            if (token.kind == TokenKind.END_OF_INPUT) {
+                eof = token
+                eofSignificant = significantIndex
+            }
+        }
+        materializedTokens = tokens
+        materializedSignificantTokens = significant
+        firstSignificantIndex = firstSignificant ?: 0
+        eofToken = eof
+        eofSignificantIndex = eofSignificant
+    }
 
     override val source: SourceText =
         SourceText(
-            records.joinToString(separator = "") { it.rawText },
+            buildString(records.sumOf { it.rawText.length }) {
+                records.forEach { append(it.rawText) }
+            },
             sourceId,
             records
                 .first()
@@ -41,12 +64,12 @@ internal class MaterializedLexedSourceImpl(
 
     override val tokens: TokenStore = MaterializedTokenStore()
 
-    override val firstSignificantTokenIndex: Int =
-        records.firstNotNullOfOrNull(TokenRecord::significantIndex) ?: 0
+    override val firstSignificantTokenIndex: Int = firstSignificantIndex
 
     override fun significantToken(index: Int): Token =
-        bySignificantIndex[index]
-            ?: eofToken?.takeIf { index >= eofSignificantIndex!! }
+        materializedSignificantTokens
+            .getOrNull(index - firstSignificantTokenIndex)
+            ?: eofToken?.takeIf { eofSignificantIndex != null && index >= eofSignificantIndex }
             ?: throw IndexOutOfBoundsException("No significant token with index $index")
 
     override fun textOf(token: Token): String = source.text(token.span)
