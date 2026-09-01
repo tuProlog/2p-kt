@@ -20,17 +20,5 @@ kotlin {
                 implementation(project(":test-solve"))
             }
         }
-
-//        getByName("jvmMain") {
-//            dependencies {
-//                api(project(":parser-jvm"))
-//            }
-//        }
-//
-//        getByName("jsMain") {
-//            dependencies {
-//                api(project(":parser-js"))
-//            }
-//        }
     }
 }

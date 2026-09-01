@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.theory.parsing
 
-import ClausesReaderImpl
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet

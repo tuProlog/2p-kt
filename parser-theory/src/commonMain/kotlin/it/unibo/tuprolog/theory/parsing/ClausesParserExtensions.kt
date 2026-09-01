@@ -8,8 +8,6 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
-internal expect fun clausesParserWithOperators(operators: OperatorSet): ClausesParser
-
 private val defaultParser = ClausesParser.withDefaultOperators()
 
 @JsName("parseTheoryWithOperators")

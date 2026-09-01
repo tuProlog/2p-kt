@@ -12,7 +12,7 @@ import it.unibo.tuprolog.parser.tree.SyntaxNodeVisitor
 import it.unibo.tuprolog.parser.tree.TheoryNode
 import it.unibo.tuprolog.parser.tree.VariableNode
 
-class PrologTermParserVisitor(
+open class PrologTermParserVisitor(
     val scope: Scope,
 ) : SyntaxNodeVisitor<Term> {
     override fun visitTheory(node: TheoryNode): Term =

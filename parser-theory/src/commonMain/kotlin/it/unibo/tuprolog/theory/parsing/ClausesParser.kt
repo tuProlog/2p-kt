@@ -67,7 +67,7 @@ interface ClausesParser {
 
         @JvmStatic
         @JsName("withOperatorSet")
-        fun withOperators(operators: OperatorSet) = clausesParserWithOperators(operators)
+        fun withOperators(operators: OperatorSet): ClausesParser = ClausesParserImpl(operators)
 
         @JvmStatic
         @JsName("withOperators")
