@@ -36,6 +36,14 @@ class SourceText(
             }
         }
         val relativeLine = high.coerceAtLeast(0)
+        if (
+            relativeOffset > 0 &&
+            relativeOffset < text.length &&
+            text[relativeOffset - 1] == '\r' &&
+            text[relativeOffset] == '\n'
+        ) {
+            return SourcePosition(offset, origin.line + relativeLine + 1, 0)
+        }
         val absoluteLine = origin.line + relativeLine
         val column =
             if (relativeLine == 0) {

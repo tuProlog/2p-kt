@@ -5,10 +5,11 @@ import it.unibo.tuprolog.parser.sources.SourcePosition
 
 internal class BufferedSource(
     override val id: String?,
+    origin: SourcePosition = SourcePosition(0, 0, 0),
 ) : Source {
     internal val content: StringBuilder = StringBuilder()
 
-    private var basePosition: SourcePosition = SourcePosition(0, 0, 0)
+    private var basePosition: SourcePosition = origin
 
     var isFinished: Boolean = false
         private set

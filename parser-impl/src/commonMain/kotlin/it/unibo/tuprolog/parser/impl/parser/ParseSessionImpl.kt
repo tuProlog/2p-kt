@@ -59,8 +59,7 @@ internal class ParseSessionImpl(
         val firstTokenId = startTokenId ?: input.tokens.firstTokenId
         return try {
             val grammar = PrologGrammar(input, cursor, operators, options)
-            val root = grammar.parseSingletonExpression()
-            val endExclusiveTokenId = root.tokenRange.endExclusive
+            val (root, endExclusiveTokenId) = grammar.parseSessionExpression()
             val stableInput =
                 (input as? ManagedLexedSource)?.snapshot(firstTokenId, endExclusiveTokenId)
                     ?: input.materialize()

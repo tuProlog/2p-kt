@@ -35,12 +35,12 @@ class TermReaderImpl(
             lexerOptions = lexerOptions,
             parserOptions = parserOptions,
         ) { parser, lexedSource ->
-            val session = parser.openSession(lexedSource)
+            val session = parser.openSession(lexedSource, operators.toOperatorTable())
             val visitor = PrologTermParserVisitor(scope)
-            var term = session.parseNextTerm()
             sequence {
+                var term = session.parseNextTerm()
                 while (term != null) {
-                    yield(term!!.root.accept(visitor))
+                    yield(term.root.accept(visitor))
                     term = session.parseNextTerm()
                 }
             }

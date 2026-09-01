@@ -7,6 +7,10 @@ internal class ReaderToTextChunkSourceAdapter(
     chunkSize: Int = DEFAULT_READER_CHUNK_SIZE,
     private val autoClose: Boolean = true,
 ) : TextChunkSource {
+    init {
+        require(chunkSize > 0) { "chunkSize must be positive" }
+    }
+
     private val buffer by lazy {
         CharArray(chunkSize)
     }

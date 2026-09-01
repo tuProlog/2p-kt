@@ -12,7 +12,8 @@ internal class RegexPrologLexer : PrologLexer {
         options: LexerOptions,
     ): LexedSource {
         var emitted = false
-        return lex(
+        return LazyLexedSource(
+            source.id,
             TextChunkSource {
                 if (emitted) {
                     null
@@ -21,8 +22,8 @@ internal class RegexPrologLexer : PrologLexer {
                     source.text
                 }
             },
-            source.id,
             options,
+            source.origin,
         )
     }
 

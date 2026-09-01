@@ -17,14 +17,15 @@ import it.unibo.tuprolog.parser.tokens.TokenPayload
 internal class IncrementalTokenScanner(
     sourceId: String?,
     startTokenId: Int = 0,
+    origin: SourcePosition = SourcePosition(0, 0, 0),
 ) {
     @Suppress("ObjectInheritsException")
     private object NeedMoreInput : Throwable()
 
-    val source: BufferedSource = BufferedSource(sourceId)
+    val source: BufferedSource = BufferedSource(sourceId, origin)
 
-    private var offset: Int = 0
-    private var position: SourcePosition = SourcePosition(0, 0, 0)
+    private var offset: Int = origin.offset
+    private var position: SourcePosition = origin
     private var nextTokenId: Int = startTokenId
     private var eofToken: ScannedToken? = null
 

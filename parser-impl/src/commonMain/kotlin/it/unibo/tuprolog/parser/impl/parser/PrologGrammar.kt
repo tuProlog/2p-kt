@@ -66,6 +66,18 @@ internal class PrologGrammar(
             expression
         }
 
+    fun parseSessionExpression(): Pair<ExpressionNode, Int> =
+        rule("sessionExpression") {
+            val expression = parseExpression(TOP_PRIORITY, DelimiterPolicy.ALLOW_ALL)
+            val terminator = accept(TokenKind.FULL_STOP)
+            if (terminator != null) {
+                annotate(terminator, SemanticRole.CLAUSE_TERMINATOR, expression.kind)
+            } else {
+                expect(TokenKind.END_OF_INPUT)
+            }
+            expression to (terminator?.id?.plus(1) ?: expression.tokenRange.endExclusive)
+        }
+
     fun parseCompleteClause(): ClauseNode =
         rule("completeClause") {
             val clause = parseClauseNode()

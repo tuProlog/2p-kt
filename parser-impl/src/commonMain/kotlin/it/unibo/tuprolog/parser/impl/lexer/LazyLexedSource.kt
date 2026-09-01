@@ -7,6 +7,7 @@ import it.unibo.tuprolog.parser.exceptions.SourceReadException
 import it.unibo.tuprolog.parser.exceptions.TokenBufferLimitExceededException
 import it.unibo.tuprolog.parser.sources.MaterializedLexedSource
 import it.unibo.tuprolog.parser.sources.Source
+import it.unibo.tuprolog.parser.sources.SourcePosition
 import it.unibo.tuprolog.parser.sources.SourceSpan
 import it.unibo.tuprolog.parser.sources.TokenStore
 import it.unibo.tuprolog.parser.tokens.Token
@@ -17,8 +18,9 @@ internal class LazyLexedSource(
     sourceId: String?,
     private val chunks: TextChunkSource,
     private val options: LexerOptions,
+    origin: SourcePosition = SourcePosition(0, 0, 0),
 ) : ManagedLexedSource {
-    private val scanner = IncrementalTokenScanner(sourceId)
+    private val scanner = IncrementalTokenScanner(sourceId, origin = origin)
     private val records: MutableList<TokenRecord> = mutableListOf()
     private val significantTokenIds: MutableList<Int> = mutableListOf()
 
