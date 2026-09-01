@@ -110,26 +110,26 @@ object ParsingExamples {
             "a; B :- 1, 3.1; '2'" to
                 logicProgramming {
                     "a" or "B" impliedBy
-                        (1 and 3.1 or "2")
+                        (1 and numOf("3.1") or "2")
                 },
             "a, c(D); B :- 1, 3.1; '2'" to
                 logicProgramming {
                     "a" and "c"("D") or "B" impliedBy
-                        (1 and 3.1 or "2")
+                        (1 and numOf("3.1") or "2")
                 },
             "a; B, c(D) :- 1, \"4\"; '2', 3.1" to
                 logicProgramming {
                     "a" or ("B" and "c"("D")) impliedBy
-                        (1 and "4" or ("2" and 3.1))
+                        (1 and "4" or ("2" and numOf("3.1")))
                 },
             "a, c(D); B, e(_f, [g]) :- 1; '2', 3.1" to
                 logicProgramming {
                     ("a" and "c"("D") or ("B" and "e"("_f", logicListOf("g")))) impliedBy
-                        (1 or ("2" and 3.1))
+                        (1 or ("2" and numOf("3.1")))
                 },
             "a, 3 -> 5; 5.3, 1 -> 6 :- a; b, c" to
                 logicProgramming {
-                    (("a" and 3) then 5) or ((5.3 and 1) then 6) impliedBy
+                    (("a" and 3) then 5) or ((numOf("5.3") and 1) then 6) impliedBy
                         ("a" or ("b" and "c"))
                 },
             "first_step(X, [X])" to

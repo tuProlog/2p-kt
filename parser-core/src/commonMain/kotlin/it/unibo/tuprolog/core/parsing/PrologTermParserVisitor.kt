@@ -24,12 +24,14 @@ class PrologTermParserVisitor(
             node.children.map { it.accept(this) },
         )
 
-    override fun visitNumber(node: NumberNode): Term =
-        when (node.numberKind) {
-            NumberKind.REAL -> scope.realOf(node.digits)
-            NumberKind.CHARACTER_CODE -> scope.intOf(node.characterCode!!)
-            else -> scope.intOf(node.digits, node.radix!!)
+    override fun visitNumber(node: NumberNode): Term {
+        val signedDigits = if (node.sign < 0) "-${node.digits}" else node.digits
+        return when (node.numberKind) {
+            NumberKind.REAL -> scope.realOf(signedDigits)
+            NumberKind.CHARACTER_CODE -> scope.intOf(node.sign * node.characterCode!!)
+            else -> scope.intOf(signedDigits, node.radix!!)
         }
+    }
 
     override fun visitVariable(node: VariableNode): Term = scope.varOf(node.name)
 
@@ -39,7 +41,7 @@ class PrologTermParserVisitor(
     override fun visitList(node: ListNode): Term =
         scope.logicListFrom(
             terms = node.items.map { it.accept(this) },
-            last = node.tail?.accept(this),
+            last = node.tail?.accept(this) ?: scope.emptyLogicList,
         )
 
     override fun visitBlock(node: BlockNode): Term = scope.blockOf(node.items.map { it.accept(this) })
