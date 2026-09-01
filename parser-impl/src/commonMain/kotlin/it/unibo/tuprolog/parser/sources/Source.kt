@@ -16,8 +16,8 @@ interface Source {
     fun positionAt(offset: Int): SourcePosition
 
     fun text(
-        startOffset: Int,
-        endExclusiveOffset: Int,
+        startOffset: Int = start.offset,
+        endExclusiveOffset: Int = endExclusive.offset,
     ): String
 
     fun text(span: SourceSpan): String = text(span.start.offset, span.endExclusive.offset)

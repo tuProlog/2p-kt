@@ -5,7 +5,7 @@ import kotlin.js.JsName
 
 open class ParseException(
     @JsName("input") var input: Any?,
-    @JsName("offendingSymbol") var offendingSymbol: String,
+    @JsName("offendingSymbol") var offendingSymbol: String?,
     @JsName("line") var line: Int,
     @JsName("column") var column: Int,
     message: String?,
@@ -14,11 +14,18 @@ open class ParseException(
     @JsName("clauseIndex")
     var clauseIndex = -1
 
-    override fun toString(): String =
-        "ParseException{" +
-            "message='" + message!!.replace("\\n", "\\\\n") + '\'' +
-            ", line=" + line +
-            ", column=" + column +
-            ", offendingSymbol='" + offendingSymbol + '\'' +
-            '}'
+    override fun toString(): String {
+        var message =
+            "ParseException{" +
+                "message='" + message!!.replace("\\n", "\\\\n") + '\'' +
+                ", line=" + line +
+                ", column=" + column
+        if (clauseIndex >= 0) {
+            message += ", clause=Index" + clauseIndex
+        }
+        if (offendingSymbol != null) {
+            message += ", offendingSymbol='" + offendingSymbol + "'"
+        }
+        return message + "}"
+    }
 }

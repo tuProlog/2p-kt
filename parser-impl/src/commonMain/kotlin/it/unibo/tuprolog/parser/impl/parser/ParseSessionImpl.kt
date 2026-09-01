@@ -14,7 +14,7 @@ import it.unibo.tuprolog.parser.tree.SyntaxNode
 import it.unibo.tuprolog.parser.tree.SyntaxTree
 
 internal class ParseSessionImpl(
-    private val input: LexedSource,
+    override val input: LexedSource,
     initialOperators: OperatorTable,
     private val options: ParserOptions,
 ) : PrologParseSession {

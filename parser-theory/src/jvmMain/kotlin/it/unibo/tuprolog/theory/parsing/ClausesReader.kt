@@ -50,7 +50,7 @@ interface ClausesReader {
     fun readClauses(
         reader: Reader,
         operators: OperatorSet,
-    ): List<Clause> = readClausesLazily(reader).toList()
+    ): List<Clause> = readClausesLazily(reader, operators).toList()
 
     fun readClauses(inputStream: InputStream): List<Clause> = readClauses(inputStream, defaultOperatorSet)
 

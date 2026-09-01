@@ -72,29 +72,33 @@ class Operator(
         /** Creates an Operator instance from a well-formed Struct, or returns `null` if it cannot be interpreted as Operator */
         @JvmStatic
         @JsName("fromTerm")
-        fun fromTerm(struct: Struct): Operator? =
+        fun fromTerm(struct: Struct): Operator? = manyFromTerm(struct).singleOrNull()
+
+        /** Creates an Operator instance from a well-formed Struct, or returns `null` if it cannot be interpreted as Operator */
+        @JvmStatic
+        @JsName("manyFromTerm")
+        fun manyFromTerm(struct: Struct): Iterable<Operator> =
             with(struct) {
-                when {
-                    functor == FUNCTOR &&
-                        arity == 3 &&
-                        getArgAt(0).isInteger &&
-                        getArgAt(1).isAtom &&
-                        getArgAt(2).isAtom -> {
-                        try {
-                            Operator(
-                                getArgAt(2).castToAtom().value,
-                                Specifier.fromTerm(getArgAt(1)),
-                                getArgAt(0).castToNumeric().intValue.toInt(),
-                            )
-                        } catch (ex: IllegalArgumentException) {
-                            null
-                        } catch (ex: IllegalStateException) {
-                            // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
-                            null
+                if (functor == FUNCTOR && arity == 3) {
+                    val arg1 = getArgAt(0)
+                    val arg2 = getArgAt(1)
+                    val arg3 = getArgAt(2)
+                    if (arg1.isInteger && arg2.isAtom) {
+                        val priority = arg1.castToNumeric().intValue.toInt()
+                        val specifier = runCatching { Specifier.fromTerm(arg2) }.getOrNull()
+                        if (specifier == null) {
+                            return emptyList()
+                        }
+                        if (arg3.isAtom) {
+                            return listOf(Operator(arg3.castToAtom().value, specifier, priority))
+                        }
+                        if (arg3.isList) {
+                            val functors = arg3.castToList().items
+                            return functors.map { Operator(it.castToAtom().value, specifier, priority) }
                         }
                     }
-                    else -> null
                 }
+                return emptyList()
             }
     }
 }
