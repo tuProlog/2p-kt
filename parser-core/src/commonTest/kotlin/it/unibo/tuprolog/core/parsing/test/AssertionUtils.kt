@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.parsing.TermParser
-import it.unibo.tuprolog.dsl.unify.LogicProgrammingScope
 import kotlin.test.assertEquals
 
 /** Asserts terms are equal taking into account differences in complete variables names */
@@ -13,30 +12,33 @@ fun assertTermsAreEqual(
     expected: Term,
     actual: Term,
 ) {
+    fun message(mistake: String) =
+        """Comparing:
+        |   actual: $actual
+        |     type: ${actual::class}
+        | expected: $expected
+        |     type: ${expected::class}
+        | Problem: $mistake
+        """.trimMargin()
+
     assertEquals(expected.isGround, actual.isGround)
     if (expected.isGround) {
         assertEquals(
             expected,
             actual,
-            message =
-                """Comparing:
-            |   actual: $actual
-            |     type: ${actual::class}
-            | expected: $expected
-            |     type: ${expected::class}
-                """.trimMargin(),
+            message("one is ground the other is not"),
         )
     } else {
         when {
             expected is Var && actual is Var -> {
-                assertEquals(expected.name, actual.name)
+                assertEquals(expected.name, actual.name, message("different var name"))
             }
             expected is Constant && actual is Constant -> {
-                assertEquals(expected, actual)
+                assertEquals(expected, actual, message("different constant name"))
             }
             expected is Struct && actual is Struct -> {
-                assertEquals(expected.functor, actual.functor)
-                assertEquals(expected.arity, actual.arity)
+                assertEquals(expected.functor, actual.functor, message("different functor"))
+                assertEquals(expected.arity, actual.arity, message("different arity"))
                 for (i in 0 until expected.arity) {
                     assertTermsAreEqual(expected[i], actual[i])
                 }
@@ -45,15 +47,9 @@ fun assertTermsAreEqual(
         assertEquals(
             expected.variables.toSet().size,
             actual.variables.toSet().size,
+            message("different amount of variables"),
         )
     }
-}
-
-fun TermParser.assertTermIsCorrectlyParsed(
-    stringToBeParsed: String,
-    expectedGenerator: LogicProgrammingScope.() -> Term,
-) {
-    assertTermIsCorrectlyParsed(stringToBeParsed, LogicProgrammingScope.of().expectedGenerator())
 }
 
 fun TermParser.assertTermIsCorrectlyParsed(
@@ -63,12 +59,15 @@ fun TermParser.assertTermIsCorrectlyParsed(
 ) {
     if (loggingOn) println("Parsing:\n\t$stringToBeParsed")
 
-    val actual = parseTerm(stringToBeParsed)
+    try {
+        val actual = parseTerm(stringToBeParsed)
+        if (loggingOn) println("Result:\n\t$actual")
+        if (loggingOn) println("Expected:\n\t$expected")
 
-    if (loggingOn) println("Result:\n\t$actual")
-    if (loggingOn) println("Expected:\n\t$expected")
+        assertTermsAreEqual(actual, expected)
 
-    assertTermsAreEqual(actual, expected)
-
-    if (loggingOn) println("".padEnd(80, '-'))
+        if (loggingOn) println("".padEnd(80, '-'))
+    } catch (e: Exception) {
+        throw Exception("Parsing failed for term:\n\t$stringToBeParsed\n", e)
+    }
 }

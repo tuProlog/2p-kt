@@ -1,0 +1,26 @@
+package it.unibo.tuprolog.parser.tree
+
+/** Context-sensitive role assigned to a significant token by the parser. */
+enum class SemanticRole {
+    ATOM,
+    FUNCTOR,
+    QUOTED_ATOM,
+    DOUBLE_QUOTED_TEXT,
+    TRUTH_VALUE,
+    VARIABLE,
+    ANONYMOUS_VARIABLE,
+    INTEGER_LITERAL,
+    REAL_LITERAL,
+    CHARACTER_LITERAL,
+    NUMBER_SIGN,
+    PREFIX_OPERATOR,
+    INFIX_OPERATOR,
+    POSTFIX_OPERATOR,
+    ARGUMENT_DELIMITER,
+    LIST_DELIMITER,
+    LIST_TAIL_DELIMITER,
+    BLOCK_DELIMITER,
+    PARENTHESIS,
+    CLAUSE_TERMINATOR,
+    CUT,
+}

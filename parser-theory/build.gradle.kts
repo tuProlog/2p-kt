@@ -14,24 +14,13 @@ kotlin {
                 api(project(":unify"))
                 api(project(":theory"))
                 api(project(":parser-core"))
+                implementation(project(":parser-impl"))
             }
         }
 
         commonTest {
             dependencies {
                 api(project(":dsl-theory"))
-            }
-        }
-
-        getByName("jvmMain") {
-            dependencies {
-                api(project(":parser-jvm"))
-            }
-        }
-
-        getByName("jsMain") {
-            dependencies {
-                api(project(":parser-js"))
             }
         }
     }

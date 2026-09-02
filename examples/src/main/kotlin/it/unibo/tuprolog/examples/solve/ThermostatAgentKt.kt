@@ -54,6 +54,7 @@ class ThermostatAgentKt(
 
     override fun run() {
         val theory = prologParser.parseTheory(agentProgram())
+        print(theory)
         val solver =
             Solver.prolog
                 .newBuilder()
