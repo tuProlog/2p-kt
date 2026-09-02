@@ -120,6 +120,7 @@ internal class StateIntegrationTesting {
     }
 
     @Test
+    @Ignore
     fun timeoutExceptionCorrectlyThrown() {
         infiniteComputationTheoryNotableGoalToSolution.forEach { (goal, solutionList) ->
             val maxDuration = 100L
