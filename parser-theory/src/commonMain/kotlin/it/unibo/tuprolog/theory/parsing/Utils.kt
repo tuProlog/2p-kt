@@ -44,9 +44,9 @@ internal fun parseClausesLazily(session: PrologParseSession): Sequence<Clause> =
                         }
                     }
                 }
-                clauseAST = session.parseNextClause()
                 scope = Scope.empty()
                 clauseIndex++
+                clauseAST = session.parseNextClause()
             }
         } catch (e: PrologSyntaxException) {
             throw ParseException(

@@ -38,6 +38,24 @@ class TermReaderContractTest {
         assertEquals(true, reader.charactersRead > 0)
     }
 
+    @Test
+    fun readsAVeryLongLazilyGeneratedInput() {
+        val termCount = 50_000
+        val reader = GeneratedTermReader(termCount)
+        val terms = TermReader.withNoOperator().readTerms(reader)
+
+        var parsed = 0
+        for (term in terms) {
+            val structure = assertIs<Struct>(term)
+            assertEquals("item", structure.functor)
+            assertEquals(parsed.toString(), structure[0].toString())
+            parsed++
+        }
+
+        assertEquals(termCount, parsed)
+        assertEquals(termCount, reader.generatedTerms)
+    }
+
     private class CountingReader(
         private val input: String,
     ) : Reader() {
@@ -53,6 +71,37 @@ class TermReaderContractTest {
             val count = length.coerceAtMost(input.length - charactersRead)
             input.toCharArray(target, offset, charactersRead, charactersRead + count)
             charactersRead += count
+            return count
+        }
+
+        override fun close() = Unit
+    }
+
+    private class GeneratedTermReader(
+        private val termCount: Int,
+    ) : Reader() {
+        private var nextTerm = 0
+        private var pending = ""
+        private var pendingOffset = 0
+
+        var generatedTerms = 0
+            private set
+
+        override fun read(
+            target: CharArray,
+            offset: Int,
+            length: Int,
+        ): Int {
+            if (length == 0) return 0
+            if (pendingOffset == pending.length) {
+                if (nextTerm == termCount) return -1
+                pending = "item(${nextTerm++}).\n"
+                pendingOffset = 0
+                generatedTerms++
+            }
+            val count = length.coerceAtMost(pending.length - pendingOffset)
+            pending.toCharArray(target, offset, pendingOffset, pendingOffset + count)
+            pendingOffset += count
             return count
         }
 

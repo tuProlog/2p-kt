@@ -4,6 +4,7 @@ import it.unibo.tuprolog.parser.exceptions.MissingClauseTerminatorException
 import it.unibo.tuprolog.parser.exceptions.MissingOperatorOperandException
 import it.unibo.tuprolog.parser.exceptions.NestingLimitExceededException
 import it.unibo.tuprolog.parser.exceptions.SyntaxErrorCode
+import it.unibo.tuprolog.parser.exceptions.UnexpectedEndOfInputException
 import it.unibo.tuprolog.parser.exceptions.UnexpectedTokenException
 import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
@@ -22,6 +23,14 @@ import kotlin.test.assertTrue
 
 class ErrorAndSessionTest {
     @Test
+    fun optionSafetyLimitsMustBePositive() {
+        assertFailsWith<IllegalArgumentException> { LexerOptions(maximumRetainedTokens = 0) }
+        assertFailsWith<IllegalArgumentException> { LexerOptions(maximumRetainedTokens = -1) }
+        assertFailsWith<IllegalArgumentException> { ParserOptions(maximumNestingDepth = 0) }
+        assertFailsWith<IllegalArgumentException> { ParserOptions(maximumNestingDepth = -1) }
+    }
+
+    @Test
     fun unexpectedTokensExposeStructuredDiagnosticData() {
         val error =
             assertFailsWith<UnexpectedTokenException> {
@@ -30,6 +39,15 @@ class ErrorAndSessionTest {
         assertEquals(SyntaxErrorCode.UNEXPECTED_TOKEN, error.code)
         assertEquals(")", error.offendingText)
         assertTrue(error.expected.any { "argument" in it.description })
+        assertTrue(error.rulePath.contains("arguments"))
+    }
+
+    @Test
+    fun incompleteStructuresReportUnexpectedEndOfInput() {
+        val error = assertFailsWith<UnexpectedEndOfInputException> { parseTerm("f(a") }
+        assertEquals(SyntaxErrorCode.UNEXPECTED_END_OF_INPUT, error.code)
+        assertEquals(null, error.offendingText)
+        assertTrue(error.expected.any { "parenthesis" in it.description })
         assertTrue(error.rulePath.contains("arguments"))
     }
 

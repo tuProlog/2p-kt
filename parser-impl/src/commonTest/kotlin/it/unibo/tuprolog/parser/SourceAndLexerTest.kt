@@ -3,6 +3,7 @@ package it.unibo.tuprolog.parser
 import it.unibo.tuprolog.parser.exceptions.InvalidEscapeException
 import it.unibo.tuprolog.parser.exceptions.MalformedNumericLiteralException
 import it.unibo.tuprolog.parser.exceptions.SyntaxErrorCode
+import it.unibo.tuprolog.parser.exceptions.UnexpectedCharacterException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedBlockCommentException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedQuotedLiteralException
 import it.unibo.tuprolog.parser.sources.SourcePosition
@@ -18,6 +19,15 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SourceAndLexerTest {
+    @Test
+    fun unsupportedCharactersHaveATypedErrorAndExactCoordinates() {
+        val error = assertFailsWith<UnexpectedCharacterException> { lex("a\né").materialize() }
+        assertEquals(SyntaxErrorCode.UNEXPECTED_CHARACTER, error.code)
+        assertEquals("é", error.offendingText)
+        assertEquals(1, error.span.start.line)
+        assertEquals(0, error.span.start.column)
+    }
+
     @Test
     fun positionsTreatCrLfAsOneLineBreak() {
         val source = SourceText("a\r\nb\rc\nd")

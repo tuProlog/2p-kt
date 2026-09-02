@@ -71,6 +71,13 @@ class OperatorTableTest {
     }
 
     @Test
+    fun emptyOperatorNamesAreRejected() {
+        assertFailsWith<InvalidOperatorDefinitionException> {
+            op("", Associativity.YFX, 500)
+        }
+    }
+
+    @Test
     fun allDefinitionsAreStableAndSortedByName() {
         val table =
             OperatorTables.of(
