@@ -3,6 +3,7 @@ package it.unibo.tuprolog.theory.parsing
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
@@ -10,6 +11,7 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
@@ -77,6 +79,41 @@ class ClausesParserContractTest {
             assertTrue(parser.parseClauses(input).isEmpty(), input)
             assertTrue(parser.parseTheory(input).isEmpty, input)
         }
+    }
+
+    @Test
+    fun anonymousVariablesInTheSameParsedClauseAreDistinct() {
+        val variables =
+            ClausesParser
+                .withDefaultOperators()
+                .parseClauses("f(_, _).")
+                .single()
+                .variables
+                .toList()
+
+        assertEquals(2, variables.size)
+        assertTrue(variables.all(Var::isAnonymous))
+        assertNotEquals(variables[0], variables[1])
+    }
+
+    @Test
+    fun variablesInRepeatedNonGroundTheoryClausesAreDistinct() {
+        val clauses =
+            ClausesParser
+                .withDefaultOperators()
+                .parseTheory("f(X, Y).\nf(X, Y).")
+                .toList()
+
+        assertEquals(2, clauses.size)
+        assertEquals(2, clauses[0].variables.toSet().size)
+        assertEquals(2, clauses[1].variables.toSet().size)
+        assertTrue(
+            clauses[0]
+                .variables
+                .toSet()
+                .intersect(clauses[1].variables.toSet())
+                .isEmpty(),
+        )
     }
 
     private fun Iterable<Clause>.functors(): List<String> = map { (it as Fact).head.functor }

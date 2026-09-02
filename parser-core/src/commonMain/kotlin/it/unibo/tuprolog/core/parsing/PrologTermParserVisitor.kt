@@ -33,7 +33,12 @@ open class PrologTermParserVisitor(
         }
     }
 
-    override fun visitVariable(node: VariableNode): Term = scope.varOf(node.name)
+    override fun visitVariable(node: VariableNode): Term =
+        if (node.isAnonymous) {
+            scope.anonymous()
+        } else {
+            scope.varOf(node.name)
+        }
 
     override fun visitStructure(node: StructureNode): Term =
         scope.structOf(node.functor, node.children.map { it.accept(this) })

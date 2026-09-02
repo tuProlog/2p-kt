@@ -12,6 +12,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class PublicTermParserContractTest {
     private val parser = TermParser.withNoOperator()
@@ -38,5 +40,28 @@ class PublicTermParserContractTest {
         assertEquals(OperatorSet.EMPTY, TermParser.withNoOperator().defaultOperatorSet)
         assertEquals(OperatorSet.STANDARD, TermParser.withStandardOperators().defaultOperatorSet)
         assertEquals(OperatorSet.DEFAULT, TermParser.withDefaultOperators().defaultOperatorSet)
+    }
+
+    @Test
+    fun anonymousVariablesInTheSameTermAreDistinct() {
+        val variables = parser.parseTerm("f(_, _)").variables.toList()
+
+        assertEquals(2, variables.size)
+        assertTrue(variables.all(Var::isAnonymous))
+        assertNotEquals(variables[0], variables[1])
+    }
+
+    @Test
+    fun anonymousVariablesInTheSameClauseAreDistinct() {
+        val variables =
+            TermParser
+                .withStandardOperators()
+                .parseClause("f(_, _) :- true")
+                .variables
+                .toList()
+
+        assertEquals(2, variables.size)
+        assertTrue(variables.all(Var::isAnonymous))
+        assertNotEquals(variables[0], variables[1])
     }
 }
