@@ -56,7 +56,11 @@ class TermReaderParseExceptionWrappingTest {
         val failure = IllegalStateException("reader failed")
         val reader =
             object : Reader() {
-                override fun read(target: CharArray, offset: Int, length: Int): Int = throw failure
+                override fun read(
+                    target: CharArray,
+                    offset: Int,
+                    length: Int,
+                ): Int = throw failure
 
                 override fun close() = Unit
             }

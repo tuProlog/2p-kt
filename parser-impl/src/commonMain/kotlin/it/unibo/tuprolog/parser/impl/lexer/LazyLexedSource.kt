@@ -86,7 +86,10 @@ internal class LazyLexedSource(
         val stableRecords = ArrayList<TokenRecord>(selected.size + 1)
         stableRecords.addAll(selected)
         if (stableRecords.last().token.kind != TokenKind.END_OF_INPUT) {
-            val eofPosition = stableRecords.last().token.span.endExclusive
+            val eofPosition =
+                stableRecords
+                    .last()
+                    .token.span.endExclusive
             var eofSignificantIndex: Int? = null
             for (index in stableRecords.lastIndex downTo 0) {
                 val candidate = stableRecords[index].significantIndex

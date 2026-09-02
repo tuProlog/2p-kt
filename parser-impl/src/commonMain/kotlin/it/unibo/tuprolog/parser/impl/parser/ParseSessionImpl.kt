@@ -30,20 +30,15 @@ internal class ParseSessionImpl(
     override val isAtEnd: Boolean
         get() = cursor.isAtEnd
 
-    override fun parseNextClause(): SyntaxTree<ClauseNode>? {
-        return parseNext { grammar ->
+    override fun parseNextClause(): SyntaxTree<ClauseNode>? =
+        parseNext { grammar ->
             val root = grammar.parseClauseNode()
             root to (root.terminatorTokenId + 1)
         }
-    }
 
-    override fun parseNextTerm(): SyntaxTree<ExpressionNode>? {
-        return parseNext(PrologGrammar::parseSessionExpression)
-    }
+    override fun parseNextTerm(): SyntaxTree<ExpressionNode>? = parseNext(PrologGrammar::parseSessionExpression)
 
-    private inline fun <T : SyntaxNode> parseNext(
-        producer: (PrologGrammar) -> Pair<T, Int>,
-    ): SyntaxTree<T>? {
+    private inline fun <T : SyntaxNode> parseNext(producer: (PrologGrammar) -> Pair<T, Int>): SyntaxTree<T>? {
         if (cursor.isAtEnd) {
             return null
         }
