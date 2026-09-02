@@ -19,7 +19,6 @@ multiProjectHelper {
     defaultProjectType = ProjectType.KOTLIN
 
     jvmProjects(":examples", ":ide", ":ide-plp")
-//    jsProjects(":parser-js")
     // otherProjects(":documentation")
 
     val baseProjectTemplate =
@@ -64,5 +63,13 @@ allprojects {
     tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
         jvmTarget = libs.versions.jvm.get()
         parallel = true
+    }
+    if (project.findProperty("showTestsInConsole")?.toString()?.toBoolean() == true) {
+        tasks.withType<Test>().configureEach {
+            testLogging {
+                events("passed", "skipped", "failed", "standardOut", "standardError")
+                showStandardStreams = true
+            }
+        }
     }
 }
