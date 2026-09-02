@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.parser.LexerOptions
+import it.unibo.tuprolog.parser.ParserOptions
 import it.unibo.tuprolog.parser.TokenRetention
 import it.unibo.tuprolog.parser.exceptions.AmbiguousOperatorUseException
 import it.unibo.tuprolog.parser.exceptions.InvalidEscapeException
@@ -57,7 +58,8 @@ class ClausesParserErrorTest {
 
     @Test
     fun parserSafetyAndAmbiguityErrorsAreTranslated() {
-        val nested = "(".repeat(1_025) + "a" + ")".repeat(1_025) + "."
+        val depth = ParserOptions.DEFAULT_MAX_NESTING_DEPTH + 1
+        val nested = "(".repeat(depth) + "a" + ")".repeat(depth) + "."
         val nestingError = assertFailsWith<ParseException> { parser.parseClauses(nested) }
         assertIs<NestingLimitExceededException>(nestingError.cause)
         assertWrapperMirrorsCause(nestingError)
