@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.parser.LexerOptions
 import it.unibo.tuprolog.parser.ParserOptions
 import it.unibo.tuprolog.parser.buildParserFor
+import it.unibo.tuprolog.parser.exceptions.PrologSyntaxException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.Reader
@@ -38,10 +39,15 @@ class TermReaderImpl(
             val session = parser.openSession(lexedSource, operators.toOperatorTable())
             val visitor = PrologTermParserVisitor(scope)
             sequence {
-                var term = session.parseNextTerm()
-                while (term != null) {
-                    yield(term.root.accept(visitor))
-                    term = session.parseNextTerm()
+                try {
+                    var term = session.parseNextTerm()
+                    while (term != null) {
+                        yield(term.root.accept(visitor))
+                        term = session.parseNextTerm()
+                    }
+                } catch (e: PrologSyntaxException) {
+                    val input = lexedSource.source.let { it.id ?: it.text() }
+                    throw e.toParseException(input)
                 }
             }
         }

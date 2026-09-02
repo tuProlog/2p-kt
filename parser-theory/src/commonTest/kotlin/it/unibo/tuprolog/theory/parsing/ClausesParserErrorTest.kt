@@ -2,8 +2,11 @@ package it.unibo.tuprolog.theory.parsing
 
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.operators.Operator
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.parsing.ParseException
+import it.unibo.tuprolog.parser.LexerOptions
+import it.unibo.tuprolog.parser.TokenRetention
 import it.unibo.tuprolog.parser.exceptions.AmbiguousOperatorUseException
 import it.unibo.tuprolog.parser.exceptions.InvalidEscapeException
 import it.unibo.tuprolog.parser.exceptions.InvalidOperatorDefinitionException
@@ -13,6 +16,7 @@ import it.unibo.tuprolog.parser.exceptions.MissingOperatorOperandException
 import it.unibo.tuprolog.parser.exceptions.NestingLimitExceededException
 import it.unibo.tuprolog.parser.exceptions.OperatorPriorityException
 import it.unibo.tuprolog.parser.exceptions.PrologSyntaxException
+import it.unibo.tuprolog.parser.exceptions.TokenBufferLimitExceededException
 import it.unibo.tuprolog.parser.exceptions.UnexpectedCharacterException
 import it.unibo.tuprolog.parser.exceptions.UnexpectedEndOfInputException
 import it.unibo.tuprolog.parser.exceptions.UnexpectedTokenException
@@ -56,6 +60,7 @@ class ClausesParserErrorTest {
         val nested = "(".repeat(1_025) + "a" + ")".repeat(1_025) + "."
         val nestingError = assertFailsWith<ParseException> { parser.parseClauses(nested) }
         assertIs<NestingLimitExceededException>(nestingError.cause)
+        assertWrapperMirrorsCause(nestingError)
         assertEquals(0, nestingError.clauseIndex)
 
         val ambiguousParser =
@@ -65,7 +70,22 @@ class ClausesParserErrorTest {
             )
         val ambiguityError = assertFailsWith<ParseException> { ambiguousParser.parseClauses("~ a.") }
         assertIs<AmbiguousOperatorUseException>(ambiguityError.cause)
+        assertWrapperMirrorsCause(ambiguityError)
         assertEquals(0, ambiguityError.clauseIndex)
+
+        val boundedParser =
+            ClausesParserImpl(
+                defaultOperatorSet = OperatorSet.DEFAULT,
+                lexerOptions =
+                    LexerOptions(
+                        retention = TokenRetention.RELEASE_COMMITTED,
+                        maximumRetainedTokens = 3,
+                    ),
+            )
+        val bufferError = assertFailsWith<ParseException> { boundedParser.parseClauses("f(a, b, c).") }
+        assertIs<TokenBufferLimitExceededException>(bufferError.cause)
+        assertWrapperMirrorsCause(bufferError)
+        assertEquals(0, bufferError.clauseIndex)
     }
 
     @Test
@@ -104,6 +124,16 @@ class ClausesParserErrorTest {
         assertEquals(clauseIndex, error.clauseIndex)
         assertEquals(line, error.line)
         assertEquals(column, error.column)
-        assertIs<T>(error.cause)
+        val cause = assertIs<T>(error.cause)
+        assertEquals(cause.offendingText, error.offendingSymbol)
+        assertEquals(cause.message, error.message)
+    }
+
+    private fun assertWrapperMirrorsCause(error: ParseException) {
+        val cause = assertIs<PrologSyntaxException>(error.cause)
+        assertEquals(cause.span.start.line + 1, error.line)
+        assertEquals(cause.span.start.column + 1, error.column)
+        assertEquals(cause.offendingText, error.offendingSymbol)
+        assertEquals(cause.message, error.message)
     }
 }

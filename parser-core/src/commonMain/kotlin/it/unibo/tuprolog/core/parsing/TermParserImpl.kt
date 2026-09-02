@@ -24,14 +24,7 @@ class TermParserImpl(
                 val visitor = PrologTermParserVisitor(scope)
                 syntaxTree.root.accept(visitor)
             } catch (e: PrologSyntaxException) {
-                throw ParseException(
-                    input = input,
-                    offendingSymbol = e.offendingText,
-                    line = e.span.start.line + 1,
-                    column = e.span.start.column + 1,
-                    message = e.message,
-                    throwable = e,
-                )
+                throw e.toParseException(input)
             }
         }
 }

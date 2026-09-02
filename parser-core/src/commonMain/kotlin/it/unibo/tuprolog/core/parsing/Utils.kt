@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
+import it.unibo.tuprolog.parser.exceptions.PrologSyntaxException
 import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorDefinition
 import it.unibo.tuprolog.parser.operators.OperatorTable
@@ -35,3 +36,13 @@ fun Operator.toDefinition(): OperatorDefinition = OperatorDefinition(functor, sp
 fun OperatorDefinition.toOperator(): Operator = Operator(name, specifier.toSpecifier(), priority)
 
 fun OperatorSet.toOperatorTable(): OperatorTable = OperatorTables.of(map { it.toDefinition() })
+
+internal fun PrologSyntaxException.toParseException(input: Any?): ParseException =
+    ParseException(
+        input = input,
+        offendingSymbol = offendingText,
+        line = span.start.line + 1,
+        column = span.start.column + 1,
+        message = message,
+        throwable = this,
+    )

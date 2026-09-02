@@ -76,6 +76,10 @@ class ClausesReaderContractTest {
         val sourceError = assertIs<SourceReadException>(error.cause)
         assertSame(failure, sourceError.cause)
         assertEquals(0, error.clauseIndex)
+        assertEquals(sourceError.span.start.line + 1, error.line)
+        assertEquals(sourceError.span.start.column + 1, error.column)
+        assertEquals(sourceError.offendingText, error.offendingSymbol)
+        assertEquals(sourceError.message, error.message)
     }
 
     @Test
