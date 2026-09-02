@@ -35,17 +35,15 @@ open class ParseException(
 
     /** Returns a compact representation of the available diagnostic fields. */
     override fun toString(): String {
-        var message =
-            "ParseException{" +
-                "message='" + message!!.replace("\\n", "\\\\n") + '\'' +
-                ", line=" + line +
-                ", column=" + column
+        val message = this.message?.replace("\\n", "\\\\n")?.let { "\"$it\"" } ?: "null"
+        var result =
+            "ParseException{message=$message, line=$line, column=$column"
         if (clauseIndex >= 0) {
-            message += ", clause=Index" + clauseIndex
+            result += ", clauseIndex$clauseIndex"
         }
         if (offendingSymbol != null) {
-            message += ", offendingSymbol='" + offendingSymbol + "'"
+            result += ", offendingSymbol=\"$offendingSymbol\""
         }
-        return message + "}"
+        return "$result}"
     }
 }

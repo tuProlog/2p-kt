@@ -93,7 +93,10 @@ class Operator(
                             return listOf(Operator(arg3.castToAtom().value, specifier, priority))
                         }
                         if (arg3.isList) {
-                            val functors = arg3.castToList().items
+                            val functors = arg3.castToList().items.toList()
+                            if (functors.any { !it.isAtom }) {
+                                return emptyList()
+                            }
                             return functors.map { Operator(it.castToAtom().value, specifier, priority) }
                         }
                     }

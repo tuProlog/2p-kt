@@ -32,7 +32,7 @@ internal fun parseClausesLazily(session: PrologParseSession): Sequence<Clause> =
                             try {
                                 session.operators.define(operator.toDefinition())
                             } catch (e: InvalidOperatorDefinitionException) {
-                                throw throw ParseException(
+                                throw ParseException(
                                     input = session.input.source.let { it.id ?: it.text() },
                                     offendingSymbol = clauseAST.toRepresentation(),
                                     line = clauseAST.root.span.start.line + 1,
