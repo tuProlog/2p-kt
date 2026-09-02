@@ -118,6 +118,7 @@ class ClausesReaderContractTest {
         var generatedClauses = 0
             private set
 
+        @Suppress("ReturnCount")
         override fun read(
             target: CharArray,
             offset: Int,

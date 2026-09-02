@@ -43,6 +43,7 @@ class LongInputStressTest {
         var closed = false
             private set
 
+        @Suppress("ReturnCount")
         override fun read(
             target: CharArray,
             offset: Int,

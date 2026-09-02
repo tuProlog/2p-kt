@@ -5,6 +5,7 @@ import java.io.Reader
 
 const val DEFAULT_READER_CHUNK_SIZE: Int = 8 * 1024
 
+@Suppress("LongParameterList")
 fun <T> buildParserFor(
     input: Reader,
     chunkSize: Int = DEFAULT_READER_CHUNK_SIZE,

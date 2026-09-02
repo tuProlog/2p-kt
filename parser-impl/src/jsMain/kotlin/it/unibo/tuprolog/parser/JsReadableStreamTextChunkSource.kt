@@ -10,6 +10,7 @@ internal class JsReadableStreamTextChunkSource(
     private var finished: Boolean = false
     private var closed: Boolean = false
 
+    @Suppress("ReturnCount")
     override suspend fun readChunk(): String? {
         if (finished) {
             return null

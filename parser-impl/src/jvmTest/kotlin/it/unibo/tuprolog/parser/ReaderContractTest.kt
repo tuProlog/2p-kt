@@ -62,6 +62,7 @@ class ReaderContractTest {
         private var first = true
         private var offset = 0
 
+        @Suppress("ReturnCount")
         override fun read(
             target: CharArray,
             offset: Int,
