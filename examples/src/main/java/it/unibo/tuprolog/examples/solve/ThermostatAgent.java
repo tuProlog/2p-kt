@@ -73,6 +73,7 @@ public class ThermostatAgent extends Thread {
     public void run() {
         try {
             Theory theory = prologParser.parseTheory(agentProgram());
+            System.out.println(theory);
             Solver solver = Solver.prolog().newBuilder()
                     .staticKb(theory)
                     .flag(TrackVariables.INSTANCE, TrackVariables.ON)
@@ -80,7 +81,7 @@ public class ThermostatAgent extends Thread {
                     .build();
             Solution solution = solver.solveOnce(Atom.of("start"));
             if (solution.isYes()) {
-                System.out.println("Reached target temperature: $temperature");
+                System.out.println("Reached target temperature: " + temperature);
             } else if (solution.isNo()) {
                 System.out.println("Failure in logic program");
             } else {
