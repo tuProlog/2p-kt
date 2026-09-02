@@ -1,11 +1,13 @@
 # Parsing
 
+> Outdated! Parser has been re-implemented by generating a custom parser out of the old ANTLR-based implementation. The new parser is natively multi-platform and simplifies the maintenance of the codebase. API and functioning are unaffected.
+
 ## Introduction
 
 Parsing Prolog terms and theories is the purpose of the `parser-core` and `parser-theory` modules, respectively.
 Both modules leverage on ANTLR for parsing strings, behind the scenes, but they only expose an ANTLR-agnostic public API.
 Users of 2P-Kt will only rely on types and methods from these modules to parse their Prolog strings.
-In principle, if the ANTLR technology is replaced in the future, the public API of the `parser-core` and `parser-theory` 
+In principle, if the ANTLR technology is replaced in the future, the public API of the `parser-core` and `parser-theory`
 modules should not change at all.
 
 ANTLR is a parser generator capable of producing Java or JavaScript (JS) code, i.e., platform-specific sources.
@@ -24,21 +26,21 @@ Accordingly, they must NOT depend on any other module in 2P-Kt.
 
 ### ANTLR Grammar for Prolog
 
-The main ANTLR grammar feature is the `expression` rule. 
-The purpose is to parse an expression, like `3 + 4 * 5`, with right operators' associativity and priorities: how to do that? 
-Prolog has an internal representation of priority, that is a number in the range between 0 and 1200 
-(**0 identifies the highest priority**). 
+The main ANTLR grammar feature is the `expression` rule.
+The purpose is to parse an expression, like `3 + 4 * 5`, with right operators' associativity and priorities: how to do that?
+Prolog has an internal representation of priority, that is a number in the range between 0 and 1200
+(**0 identifies the highest priority**).
 
-When we have an expression, we have to understand which of the following situations we are facing: `XFY`, `YFX`, `YF`, `XF`, `XFX`, `FX`, `FY`. 
+When we have an expression, we have to understand which of the following situations we are facing: `XFY`, `YFX`, `YF`, `XF`, `XFX`, `FX`, `FY`.
 The action we have to do is different depending on these situations.
-If we have the `YFX`, we need to memorize the left term, then parse the operator, making sure it's not part of disabled operators (for example, 
+If we have the `YFX`, we need to memorize the left term, then parse the operator, making sure it's not part of disabled operators (for example,
 if we have a List with elements separated by ',', than ',' must be a disabled operator, because in this context identifies the separation between elements),
 and memorize right expressions (can be more than one). In this case, right expressions have higher priority, so we have to parse the expression
 with a lower priority level, as aforementioned. Below a parser expression extract of grammar.
 
 
     expression[int priority, String[] disabled] -> local utilities variables
-        : (left=term 
+        : (left=term
                ( operators+=op[YFX] right+=expression[$op.priority - 1, $disabled]
                    (operators+=op[YFX] right+=expression[$op.priority - 1, $disabled])*
                | operators+=op[XFY] right+=expression[$op.priority, $disabled]
@@ -51,8 +53,8 @@ with a lower priority level, as aforementioned. Below a parser expression extrac
        | operators+=op[FY] (operators+=op[FY])* right+=expression[$op.priority, $disabled]
        ) (outers+=outer[$priority, $bottom, disabled])*
        ;
-   
-Looking at the last instruction, we can see an "outers" accumulator and an "outer" rule. To understand why we introduce this rule, 
+
+Looking at the last instruction, we can see an "outers" accumulator and an "outer" rule. To understand why we introduce this rule,
 the better way is to do an example. All above cases consider the right expression as a high priority term (excluded XFY and FY that consider it as the same priority).
 So in all these cases, the priority level decreases (we invoke the expression rule with priority-1). But, what happen when we have an expression like `3 + 4 * 5 - 1`?
 We have left expression with high priority level (so low priority) `3 + expression`, then we have a lower priority level expression (so higher priority) ` left * expression`.
@@ -71,11 +73,11 @@ we memorize expression that go back in priority level. So the parse tree of this
             +-- outer
                 | +-- "-"
                 | +-- "1"
-       
+
 
 We can see how the go-back expression is transformed into an "outer" branch, which
-contains all the original information. Nevertheless this tree is not the right parse tree, in fact the `?` operation must be the first 
-appearing. The right tree corresponding is `'-'('+'(3, '*'(4, 5)), 1)`. 
+contains all the original information. Nevertheless this tree is not the right parse tree, in fact the `?` operation must be the first
+appearing. The right tree corresponding is `'-'('+'(3, '*'(4, 5)), 1)`.
 To do this, all outer branches are rotated in the order in which they appear.
 The steps are:
 - We build the tree until outer branch `('+'(3, '*'(4, 5))`
@@ -86,7 +88,7 @@ Same steps for more than one outer.
 
 ### `parser-jvm`
 
-JVM specific module that aim to generate a jvm specific parser with ANTLR. It depends only on antlr4 features and jdk libraries. 
+JVM specific module that aim to generate a jvm specific parser with ANTLR. It depends only on antlr4 features and jdk libraries.
 
 When ANTLR generates the grammar in jvm specific target, it also generates:
 - `PrologLexer.java`: it contains all lexer support methods, token recognition and other minor features
@@ -105,9 +107,9 @@ every cases. For example, with `option { superClass = DynamicParser}` into Prolo
 
 ### `parser-js`
 
-JS specific module that aim to generate a js specific parser with ANTLR. It depends only on antlr4 and js features. 
+JS specific module that aim to generate a js specific parser with ANTLR. It depends only on antlr4 and js features.
 
-To create dynamic behavior to PrologLexer, in `parser-jvm`, as mentioned above, it was created a `DynamicLexer.java`, extended by `PrologLexer.java` 
+To create dynamic behavior to PrologLexer, in `parser-jvm`, as mentioned above, it was created a `DynamicLexer.java`, extended by `PrologLexer.java`
 (thanks to superClass ANTLR option). Unfortunately, in js class concept does not exist.
 JavaScript is a prototype-based language, meaning object properties and methods can be shared through generalized objects that have the ability to be cloned and extended.
 This is known as prototype inheritance and differs from class inheritance. So, to affront this problem, the solution is:
@@ -129,8 +131,8 @@ Now this class can be used in Kotlin common modules. It was necessarily to creat
 
 Bridge-like module that aim to link platform specific world to common world. **See "Rationale and Architecture/parsing.md"**
 
-It was necessary to define common methods in `commonMain`: implemented interface `TermParser` (with parse method extension in 
-main project classes, and also in String/Integer Kotlin classes, to simplify parsing). This interface had to be implemented in both platform specific 
+It was necessary to define common methods in `commonMain`: implemented interface `TermParser` (with parse method extension in
+main project classes, and also in String/Integer Kotlin classes, to simplify parsing). This interface had to be implemented in both platform specific
 submodules (jvm and js). So, expect methods have been defined (that needed an actual match in both jvm and js submodules) to simplify TermParser
 creation. After that, common tests have been prepared, with aim to run in both jvm and js submodules. To prepare those, as `parser-core/common`
 does not depend on any platform, there have benn complications: JUnit cannot be used. To resolve this inconvenience, two support classes
