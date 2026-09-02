@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.parser.tree
 
+/** Syntactic spelling used to produce a [StructureNode]. */
 enum class StructureKind {
     ORDINARY,
     TRUTH,

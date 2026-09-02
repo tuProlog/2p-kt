@@ -11,22 +11,41 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.Reader
 
+/**
+ * Configurable JVM implementation of [TermReader].
+ *
+ * Prefer a [TermReader] factory unless custom lexer or parser limits are required.
+ *
+ * @property scope scope used to construct terms
+ * @property defaultOperatorSet default operators for overloads that omit them
+ * @param lexerOptions lazy-lexer and retained-token configuration
+ * @param parserOptions nesting and ambiguity configuration
+ */
 class TermReaderImpl(
     override val scope: Scope,
     override val defaultOperatorSet: OperatorSet,
     private val lexerOptions: LexerOptions = LexerOptions(),
     private val parserOptions: ParserOptions = ParserOptions(),
 ) : TermReader {
+    /**
+     * @throws ParseException if the next term cannot be read or parsed
+     */
     override fun readTerm(
         reader: Reader,
         operators: OperatorSet,
     ): Term? = readTerms(reader, operators).firstOrNull()
 
+    /**
+     * @throws ParseException if the next term cannot be read or parsed
+     */
     override fun readTerm(
         inputStream: InputStream,
         operators: OperatorSet,
     ): Term? = readTerms(inputStream, operators).firstOrNull()
 
+    /**
+     * @throws ParseException during iteration if a term cannot be read or parsed
+     */
     override fun readTerms(
         reader: Reader,
         operators: OperatorSet,
@@ -52,6 +71,9 @@ class TermReaderImpl(
             }
         }
 
+    /**
+     * @throws ParseException during iteration if a term cannot be read or parsed
+     */
     override fun readTerms(
         inputStream: InputStream,
         operators: OperatorSet,

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.parser.exceptions
 
+/** Stable programmatic categories for [PrologSyntaxException] diagnostics. */
 enum class SyntaxErrorCode {
     UNEXPECTED_CHARACTER,
     UNTERMINATED_QUOTED_LITERAL,

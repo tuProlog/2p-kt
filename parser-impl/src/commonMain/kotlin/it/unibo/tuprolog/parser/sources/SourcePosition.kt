@@ -1,6 +1,15 @@
 package it.unibo.tuprolog.parser.sources
 
-/** A zero-based position in the complete input, measured in UTF-16 code units. */
+/**
+ * A position in the complete input.
+ *
+ * [offset], [line], and [column] are zero-based. Offsets and columns count UTF-16 code units, as
+ * used by Kotlin [String] indexing.
+ *
+ * @property offset absolute UTF-16 offset
+ * @property line absolute zero-based line
+ * @property column zero-based UTF-16 column within [line]
+ */
 data class SourcePosition(
     val offset: Int,
     val line: Int,

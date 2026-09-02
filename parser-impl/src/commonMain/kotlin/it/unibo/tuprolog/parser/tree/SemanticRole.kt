@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.parser.tree
 
+/** Context-sensitive role assigned to a significant token by the parser. */
 enum class SemanticRole {
     ATOM,
     FUNCTOR,

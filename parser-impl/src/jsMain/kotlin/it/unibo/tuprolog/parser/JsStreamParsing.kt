@@ -7,7 +7,14 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.js.asDynamic
 
-/** Opens a suspending parse session over a browser `File` or `Blob`. */
+/**
+ * Opens a UTF-8 suspending parse session over a browser `File` or `Blob`.
+ *
+ * The object must provide `stream()`; a file name is used as [sourceId] when available. Closing the
+ * returned session cancels unfinished reads and releases the stream reader lock.
+ *
+ * @throws IllegalArgumentException if [maximumRetainedTokens] is not positive
+ */
 fun PrologParser.openFileSession(
     file: Any,
     initialOperators: OperatorTable = OperatorTables.empty(),
@@ -21,7 +28,14 @@ fun PrologParser.openFileSession(
         maximumRetainedTokens,
     )
 
-/** Opens a suspending parse session over a JavaScript `ReadableStream<Uint8Array>`. */
+/**
+ * Opens a UTF-8 suspending parse session over a JavaScript `ReadableStream<Uint8Array>`.
+ *
+ * Multi-byte sequences split across stream chunks are decoded incrementally. Closing the returned
+ * session cancels unfinished reads and releases the stream reader lock.
+ *
+ * @throws IllegalArgumentException if [maximumRetainedTokens] is not positive
+ */
 fun PrologParser.openReadableStreamSession(
     stream: Any,
     initialOperators: OperatorTable = OperatorTables.empty(),

@@ -9,6 +9,7 @@ import it.unibo.tuprolog.parser.operators.OperatorDefinition
 import it.unibo.tuprolog.parser.operators.OperatorTable
 import it.unibo.tuprolog.parser.operators.OperatorTables
 
+/** Converts a parser-level Prolog associativity specifier to its core equivalent. */
 fun Associativity.toSpecifier(): Specifier =
     when (this) {
         Associativity.FX -> Specifier.FX
@@ -20,6 +21,7 @@ fun Associativity.toSpecifier(): Specifier =
         Associativity.XFY -> Specifier.XFY
     }
 
+/** Converts a core Prolog operator specifier to its parser-level equivalent. */
 fun Specifier.toAssociativity(): Associativity =
     when (this) {
         Specifier.FX -> Associativity.FX
@@ -31,10 +33,23 @@ fun Specifier.toAssociativity(): Associativity =
         Specifier.XFY -> Associativity.XFY
     }
 
+/**
+ * Converts a core operator to the representation consumed by `parser-impl`.
+ *
+ * @throws it.unibo.tuprolog.parser.exceptions.InvalidOperatorDefinitionException if the name is
+ * empty or the priority is outside `1..1200`
+ */
 fun Operator.toDefinition(): OperatorDefinition = OperatorDefinition(functor, specifier.toAssociativity(), priority)
 
+/** Converts a parser-level operator definition to its core equivalent. */
 fun OperatorDefinition.toOperator(): Operator = Operator(name, specifier.toSpecifier(), priority)
 
+/**
+ * Creates an immutable parser-level table containing all operators in this set.
+ *
+ * @throws it.unibo.tuprolog.parser.exceptions.InvalidOperatorDefinitionException if any converted
+ * definition is invalid
+ */
 fun OperatorSet.toOperatorTable(): OperatorTable = OperatorTables.of(map { it.toDefinition() })
 
 internal fun PrologSyntaxException.toParseException(input: Any?): ParseException =

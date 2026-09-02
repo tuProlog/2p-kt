@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.parser.tree
 
+/** Stable structural category of a [SyntaxNode]. */
 enum class SyntaxKind {
     INTEGER,
     REAL,

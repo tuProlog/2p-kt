@@ -1,5 +1,13 @@
 package it.unibo.tuprolog.parser.tokens
 
+/**
+ * Lexical category assigned without consulting an operator table.
+ *
+ * [constant] is the normalized representation of punctuation and fixed-spelling tokens. Kinds
+ * whose spelling or decoded value varies carry a [TokenPayload] instead.
+ *
+ * @property constant fixed normalized spelling, or `null` for payload-bearing kinds
+ */
 enum class TokenKind(
     val constant: String? = null,
 ) {
