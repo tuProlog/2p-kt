@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/tuProlog/2p-kt/compare/1.2.1...1.3.0) (2026-09-02)
+
+### Features
+
+* custom parser replacing hard-to-maintain ANTLR one ([#919](https://github.com/tuProlog/2p-kt/issues/919)) ([4b0c91a](https://github.com/tuProlog/2p-kt/commit/4b0c91a567f302d9d25c4a4b641fdf9c82682604))
+
 ## [1.2.1](https://github.com/tuProlog/2p-kt/compare/1.2.0...1.2.1) (2026-08-26)
 
 ### Dependency updates
