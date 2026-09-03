@@ -8,7 +8,7 @@ internal abstract class AbstractTermFormatterForVariables(
     quoted: Boolean = true,
     numberVars: Boolean = false,
     ignoreOps: Boolean = false,
-    tagsOptions: TermFormatter.TagsFormattingOptions = TermFormatter.TagsFormattingOptions()
+    tagsOptions: TermFormatter.TagsFormattingOptions = TermFormatter.TagsFormattingOptions(),
 ) : AbstractTermFormatter(quoted, numberVars, ignoreOps, tagsOptions) {
     private val variables: MutableMap<String, MutableMap<Var, String>> = mutableMapOf()
 

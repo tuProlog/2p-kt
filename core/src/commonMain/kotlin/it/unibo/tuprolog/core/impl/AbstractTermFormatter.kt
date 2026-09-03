@@ -22,7 +22,7 @@ internal abstract class AbstractTermFormatter(
     protected val quoted: Boolean = true,
     protected val numberVars: Boolean = false,
     protected val ignoreOps: Boolean = false,
-    protected val tagsOptions: TermFormatter.TagsFormattingOptions = TermFormatter.TagsFormattingOptions()
+    protected val tagsOptions: TermFormatter.TagsFormattingOptions = TermFormatter.TagsFormattingOptions(),
 ) : TermFormatter {
     companion object {
         private val TWENTY_SIX = BigInteger.of(26)
@@ -42,17 +42,20 @@ internal abstract class AbstractTermFormatter(
 
     override fun visitAtom(term: Atom): String = formatFunctor(term).plusTagsOf(term)
 
-    override fun visitStruct(term: Struct): String = term.let {
-        if (numberVars && isNumberedVar(it)) {
-            numberedVar(it[0].castToInteger())
-        } else {
-            val functor = formatFunctor(it)
-            val args = it.argsSequence.joinToString(", ", "(", ")") {
-                it.accept(childFormatter())
-            }
-            "$functor$args"
-        }
-    }.plusTagsOf(term)
+    override fun visitStruct(term: Struct): String =
+        term
+            .let {
+                if (numberVars && isNumberedVar(it)) {
+                    numberedVar(it[0].castToInteger())
+                } else {
+                    val functor = formatFunctor(it)
+                    val args =
+                        it.argsSequence.joinToString(", ", "(", ")") {
+                            it.accept(childFormatter())
+                        }
+                    "$functor$args"
+                }
+            }.plusTagsOf(term)
 
     private fun isNumberedVar(term: Struct): Boolean =
         term.functor == "\$VAR" &&
@@ -86,8 +89,7 @@ internal abstract class AbstractTermFormatter(
             actualVisit(term)
         }
 
-    override fun visitCollection(term: Recursive): String =
-        visitStructImpl(term) { defaultValue(term) }
+    override fun visitCollection(term: Recursive): String = visitStructImpl(term) { defaultValue(term) }
 
     override fun visitList(term: List): String = visitCollection(term)
 
@@ -113,13 +115,15 @@ internal abstract class AbstractTermFormatter(
 
     override fun visitBlock(term: Block): String =
         visitStructImpl(term) {
-            term.unfoldedSequence.joinToString(", ", "{", "}") { it.accept(childFormatter()) }
+            term.unfoldedSequence
+                .joinToString(", ", "{", "}") { it.accept(childFormatter()) }
                 .plusTagsOf(term)
         }
 
     override fun visitTuple(term: Tuple): String =
         visitStructImpl(term) {
-            term.unfoldedSequence.joinToString(", ", "(", ")") { it.accept(childFormatter()) }
+            term.unfoldedSequence
+                .joinToString(", ", "(", ")") { it.accept(childFormatter()) }
                 .plusTagsOf(term)
         }
 
