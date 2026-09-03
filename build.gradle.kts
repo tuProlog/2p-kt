@@ -18,7 +18,7 @@ log("version: $version", LogLevel.LIFECYCLE)
 multiProjectHelper {
     defaultProjectType = ProjectType.KOTLIN
 
-    jvmProjects(":examples", ":ide", ":ide-plp")
+    jvmProjects(":examples", ":ide-swing", ":ide-plp-swing")
     // otherProjects(":documentation")
 
     val baseProjectTemplate =
