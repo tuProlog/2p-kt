@@ -81,7 +81,12 @@ include(":serialize-theory")
 include(":repl")
 include(":oop-lib")
 include(":io-lib")
-include(":ide-plp")
-include(":ide")
 include(":examples")
 include(":full")
+
+// BEGIN 2P-KT GUI REFACTOR MODULES
+include(":gui")
+include(":gui-plp")
+include(":ide-swing")
+include(":ide-plp-swing")
+// END 2P-KT GUI REFACTOR MODULES
