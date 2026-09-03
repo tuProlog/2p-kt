@@ -22,9 +22,10 @@ class TestTagsPreservationDuringResolutionImpl(
             theoryOf(
                 sequence {
                     for (i in 0..2) {
+                        yield(fact { "f"("g"("x")) }.setTags(i))
                         yield(fact { "f"("g"("x")).setTags(i) })
                         yield(fact { "f"("g"("x").setTags(i)) })
-                        yield(fact { "f"("g"(atom("x").setTags(i))) })
+                        yield(fact { "f"("g"(atomOf("x").setTags(i))) })
                     }
                 },
             )
@@ -37,20 +38,20 @@ class TestTagsPreservationDuringResolutionImpl(
             logicProgramming {
                 "f"("g"(X)).setTags(1)
             }
-        val solutions1 = solver.solveList(goal1, shortDuration).filter { it.isYes }
-        assertEquals(2, solutions1.size)
+        val solutions1 = solver.solveList(goal1).filter { it.isYes }
+        assertEquals(5, solutions1.size)
         val goal2 =
             logicProgramming {
                 "f"("g"(X).setTags(1))
             }
-        val solutions2 = solver.solveList(goal2, shortDuration).filter { it.isYes }
-        assertEquals(2, solutions2.size)
+        val solutions2 = solver.solveList(goal2).filter { it.isYes }
+        assertEquals(5, solutions2.size)
         val goal3 =
             logicProgramming {
                 "f"("g"(X.setTags(1)))
             }
-        val solutions3 = solver.solveList(goal3, shortDuration).filter { it.isYes }
-        assertEquals(2, solutions3.size)
+        val solutions3 = solver.solveList(goal3).filter { it.isYes }
+        assertEquals(5, solutions3.size)
     }
 
     override fun testRight() {
@@ -60,20 +61,20 @@ class TestTagsPreservationDuringResolutionImpl(
             logicProgramming {
                 "f"("g"(X)).setTags(0)
             }
-        val solutions1 = solver.solveList(goal1, shortDuration).filter { it.isYes }
-        assertEquals(9, solutions1.size)
+        val solutions1 = solver.solveList(goal1).filter { it.isYes }
+        assertEquals(12, solutions1.size)
         val goal2 =
             logicProgramming {
                 "f"("g"(X).setTags(0))
             }
-        val solutions2 = solver.solveList(goal2, shortDuration).filter { it.isYes }
-        assertEquals(9, solutions2.size)
+        val solutions2 = solver.solveList(goal2).filter { it.isYes }
+        assertEquals(12, solutions2.size)
         val goal3 =
             logicProgramming {
                 "f"("g"(X.setTags(0)))
             }
-        val solutions3 = solver.solveList(goal3, shortDuration).filter { it.isYes }
-        assertEquals(9, solutions3.size)
+        val solutions3 = solver.solveList(goal3).filter { it.isYes }
+        assertEquals(12, solutions3.size)
     }
 
     override fun testSymmetric() {
@@ -83,19 +84,19 @@ class TestTagsPreservationDuringResolutionImpl(
             logicProgramming {
                 "f"("g"(X)).setTags(2)
             }
-        val solutions1 = solver.solveList(goal1, shortDuration).filter { it.isYes }
+        val solutions1 = solver.solveList(goal1).filter { it.isYes }
         assertEquals(1, solutions1.size)
         val goal2 =
             logicProgramming {
                 "f"("g"(X).setTags(2))
             }
-        val solutions2 = solver.solveList(goal2, shortDuration).filter { it.isYes }
+        val solutions2 = solver.solveList(goal2).filter { it.isYes }
         assertEquals(1, solutions2.size)
         val goal3 =
             logicProgramming {
                 "f"("g"(X.setTags(2)))
             }
-        val solutions3 = solver.solveList(goal3, shortDuration).filter { it.isYes }
+        val solutions3 = solver.solveList(goal3).filter { it.isYes }
         assertEquals(1, solutions3.size)
     }
 
@@ -106,20 +107,20 @@ class TestTagsPreservationDuringResolutionImpl(
             logicProgramming {
                 "f"("g"(X)).setTags(3)
             }
-        val solutions1 = solver.solveList(goal1, shortDuration).filter { it.isYes }
-        assertEquals(9, solutions1.size)
+        val solutions1 = solver.solveList(goal1).filter { it.isYes }
+        assertEquals(12, solutions1.size)
         val goal2 =
             logicProgramming {
                 "f"("g"(X).setTags(4))
             }
-        val solutions2 = solver.solveList(goal2, shortDuration).filter { it.isYes }
-        assertEquals(9, solutions2.size)
+        val solutions2 = solver.solveList(goal2).filter { it.isYes }
+        assertEquals(12, solutions2.size)
         val goal3 =
             logicProgramming {
                 "f"("g"(X.setTags(5)))
             }
-        val solutions3 = solver.solveList(goal3, shortDuration).filter { it.isYes }
-        assertEquals(9, solutions3.size)
+        val solutions3 = solver.solveList(goal3).filter { it.isYes }
+        assertEquals(12, solutions3.size)
     }
 
     enum class TagComparisonVerse {
