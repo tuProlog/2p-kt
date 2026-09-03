@@ -183,24 +183,6 @@ sealed class Equation(
             lhs: Term,
             rhs: Term,
         ): Comparison = copy(lhs = lhs, rhs = rhs)
-
-        /**
-         * Decomposes this comparison of two structurally-compatible [Struct]s into one [Equation] per pair of
-         * corresponding arguments, without recursing any further down. This is meant to be used one level at a
-         * time, so that each intermediate [Equation] (e.g. one per nested [Struct]) gets the chance to be
-         * inspected (and possibly overridden) via [AbstractUnificator.handleEquation], instead of eagerly
-         * decomposing the whole term tree in one shot.
-         */
-        @JsName("decompose")
-        fun decompose(equalityChecker: (Term, Term) -> Boolean = Term::equals): Sequence<Equation> {
-            val lhsStruct = lhs.asStruct()
-            val rhsStruct = rhs.asStruct()
-            return if (lhsStruct != null && rhsStruct != null) {
-                lhsStruct.argsSequence.zip(rhsStruct.argsSequence).map { (l, r) -> of(l, r, equalityChecker) }
-            } else {
-                allOf(lhs, rhs, equalityChecker)
-            }
-        }
     }
 
     /** A contradicting equation, trying to equate non equal [Term]s */
@@ -368,6 +350,15 @@ sealed class Equation(
                 }
                 lhs.isTuple && rhs.isTuple -> {
                     allOfTuples(lhs.castToTuple(), rhs.castToTuple(), equalityChecker)
+                }
+                lhs.isStruct && rhs.isStruct -> {
+                    val lhsStruct = lhs.castToStruct()
+                    val rhsStruct = rhs.castToStruct()
+                    if (lhsStruct.arity == rhsStruct.arity && lhsStruct.functor == rhsStruct.functor) {
+                        lhsStruct.argsSequence.zip(rhsStruct.argsSequence).flatMap { allOf(it, equalityChecker) }
+                    } else {
+                        sequenceOf(of(lhs, rhs, equalityChecker))
+                    }
                 }
                 else -> {
                     sequenceOf(of(lhs, rhs, equalityChecker))
