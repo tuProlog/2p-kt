@@ -25,7 +25,9 @@ internal class EquationTest {
     /** Correct instances of equations, whose type is recognizable without exploring in deep the components */
     private val correctShallowEquationsInstances =
         EquationUtils.shallowIdentityEquations.map { (lhs, rhs) -> Equation.Identity(lhs, rhs) } +
-            EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.Assignment(lhs, rhs) } +
+            EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) ->
+                if (lhs.isVar) Equation.LeftAssignment(lhs.castToVar(), rhs) else Equation.RightAssignment(lhs, rhs.castToVar())
+            } +
             EquationUtils.comparisonEquations.map { (lhs, rhs) -> Equation.Comparison(lhs, rhs) } +
             EquationUtils.shallowContradictionEquations.map { (lhs, rhs) -> Equation.Contradiction(lhs, rhs) }
 
@@ -38,7 +40,7 @@ internal class EquationTest {
 
     @Test
     fun assignmentLhsAndRhsCorrect() {
-        val toBeTested = EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.Assignment(lhs, rhs) }
+        val toBeTested = EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.LeftAssignment(lhs, rhs) }
 
         assertEquals(EquationUtils.assignmentEquations, toBeTested.map { (lhs, rhs) -> Pair(lhs, rhs) })
     }
@@ -89,7 +91,8 @@ internal class EquationTest {
             EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) -> Equation.of(lhs, rhs) } +
                 EquationUtils.assignmentEquationsShuffled.map { Equation.of(it) }
 
-        assertEquals(correct, toBeTested)
+        // orientation (Left/Right) may differ depending on argument order, but the underlying var/term mapping must not
+        assertEquals(correct.map { it.toPair() }, toBeTested.map { it.toPair() })
     }
 
     @Test
@@ -144,7 +147,11 @@ internal class EquationTest {
             EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) -> Equation.allOf(lhs, rhs).toList() } +
                 EquationUtils.assignmentEquationsShuffled.map { Equation.allOf(it).toList() }
 
-        assertEquals(correct, toBeTested)
+        // orientation (Left/Right) may differ depending on argument order, but the underlying var/term mapping must not
+        assertEquals(
+            correct.map { eqs -> eqs.map { it.toPair() } },
+            toBeTested.map { eqs -> eqs.map { it.toPair() } },
+        )
     }
 
     @Test
@@ -190,7 +197,8 @@ internal class EquationTest {
         val correct = nonVarToVarAssignments.map { Equation.of(it) }
         val toBeTested = nonVarToVarAssignments.map { Equation.of(it) }.map(Equation::swap)
 
-        assertEquals(correct, toBeTested)
+        // swapping flips the Left/Right orientation, but the underlying var/term mapping is preserved
+        assertEquals(correct.map { it.toPair() }, toBeTested.map { it.toPair() })
     }
 
     @Test

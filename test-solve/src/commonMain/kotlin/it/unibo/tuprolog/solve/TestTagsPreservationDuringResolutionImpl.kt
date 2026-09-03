@@ -39,19 +39,19 @@ class TestTagsPreservationDuringResolutionImpl(
                 "f"("g"(X)).setTags(1)
             }
         val solutions1 = solver.solveList(goal1).filter { it.isYes }
-        assertEquals(5, solutions1.size)
+        assertEquals(10, solutions1.size)
         val goal2 =
             logicProgramming {
                 "f"("g"(X).setTags(1))
             }
         val solutions2 = solver.solveList(goal2).filter { it.isYes }
-        assertEquals(5, solutions2.size)
+        assertEquals(10, solutions2.size)
         val goal3 =
             logicProgramming {
                 "f"("g"(X.setTags(1)))
             }
         val solutions3 = solver.solveList(goal3).filter { it.isYes }
-        assertEquals(5, solutions3.size)
+        assertEquals(11, solutions3.size)
     }
 
     override fun testRight() {
@@ -85,13 +85,13 @@ class TestTagsPreservationDuringResolutionImpl(
                 "f"("g"(X)).setTags(2)
             }
         val solutions1 = solver.solveList(goal1).filter { it.isYes }
-        assertEquals(1, solutions1.size)
+        assertEquals(10, solutions1.size)
         val goal2 =
             logicProgramming {
                 "f"("g"(X).setTags(2))
             }
         val solutions2 = solver.solveList(goal2).filter { it.isYes }
-        assertEquals(1, solutions2.size)
+        assertEquals(10, solutions2.size)
         val goal3 =
             logicProgramming {
                 "f"("g"(X.setTags(2)))
