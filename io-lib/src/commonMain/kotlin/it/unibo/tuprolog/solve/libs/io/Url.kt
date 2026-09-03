@@ -53,12 +53,11 @@ interface Url {
                 this
             }
 
-        internal enum class UrlField { PROTOCOL, UNIT, HOST, PORT, PATH, QUERY, ANCHOR }
+        internal enum class UrlField { PROTOCOL, HOST, PORT, PATH, QUERY, ANCHOR }
 
         @Suppress("ktlint:standard:max-line-length")
         private fun urlRegex(
             protocol: String? = null,
-            unit: String? = null,
             host: String? = null,
             port: String? = null,
             path: String? = null,
@@ -67,19 +66,28 @@ interface Url {
         ): Regex {
             val protocolGroup =
                 """(${protocol.str { "?<$it>" }}[\w]+)"""
-            val unitGroup =
-                """(\/?${unit.str { "?$it" }}[a-z]:)"""
+            // Excludes backslash too: a native Windows path (which never contains a `/`) must not
+            // be mistaken for a host merely because its last segment looks like `name.ext`.
             val hostGroup =
-                """(${host.str { "?<$it>" }}[^\s\/]+[.][a-z]{2,})"""
+                """(${host.str { "?<$it>" }}[^\s\/\\]+[.][a-z]{2,})"""
             val portGroup =
                 """(${port.str { "?<$it>" }}\d+)"""
+            // A path may start with a Windows drive letter (e.g. `D:`), and, since native Windows
+            // paths smuggled into a `file:` URL string use `\` rather than `/`, its segments may be
+            // separated by either.
             val pathGroup =
-                """(${path.str { "?<$it>" }}(?:\/[^\s?#\/]+)*\/?)"""
+                """(${path.str { "?<$it>" }}(?:[a-z]:)?(?:[\\\/][^\s?#\\\/]+)*[\\\/]?)"""
             val queryGroup =
                 """(${query.str { "?<$it>" }}[^\s\/?#]+)"""
             val anchorGroup =
                 """(${anchor.str { "?<$it>" }}.*)"""
-            val pattern = """$protocolGroup:\/+(?:$unitGroup|$hostGroup(?::$portGroup)?)?$pathGroup(?:\?$queryGroup?)?(?:#$anchorGroup)?"""
+            // Strips the extra slash that conventional `file:///D:/...` URIs put before the drive
+            // letter (only when one is actually there, so a plain root path like `http://host:80/`
+            // isn't robbed of its own `/`), so the captured path is always the canonical
+            // `D:\...`/`D:/...` form, with no spurious leading slash.
+            val driveLetterSlash = """(?:\/(?=[a-z]:))?"""
+            val pattern =
+                """$protocolGroup:\/+(?:$hostGroup(?::$portGroup)?)?$driveLetterSlash$pathGroup(?:\?$queryGroup?)?(?:#$anchorGroup)?"""
             return Regex(pattern, RegexOption.IGNORE_CASE)
         }
 
