@@ -33,6 +33,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write  # Required for OIDC on npmjs
     needs:
       - build
       - test-extensively
