@@ -376,7 +376,7 @@ class SwingIdeFrame(
         stdinBoundPageId = page?.id
         val enabled = page != null
         queryField.isEnabled = enabled
-        stdinArea.isEnabled = enabled && page?.resolution?.status != ResolutionStatus.RUNNING
+        stdinArea.isEnabled = enabled && page.resolution.status != ResolutionStatus.RUNNING
 
         if (page == null) {
             queryField.text = ""
