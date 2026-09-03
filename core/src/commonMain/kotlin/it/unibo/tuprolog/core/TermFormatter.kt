@@ -39,6 +39,29 @@ interface TermFormatter :
         LITERAL,
     }
 
+    data class TagsFormattingOptions(
+        val showTags: Boolean = false,
+        val delimiters: Pair<String, String> = "<" to ">",
+        val separator: String = ", ",
+        val showKeys: Boolean = true,
+        val showDelimitersIfEmpty: Boolean = false,
+        val keyFilter: (String) -> Boolean = { true },
+        val tagFormatter: Formatter<Any>? = null
+    ) {
+        fun formatTags(tags: Map<String, Any>): String {
+            if (!showTags) return ""
+            val filteredTags = tags.filterKeys(keyFilter)
+            if (filteredTags.isEmpty()) {
+                return if (showDelimitersIfEmpty) "${delimiters.first}${delimiters.second}" else ""
+            }
+            val formattedTags = filteredTags.entries.joinToString(separator) { (key, value) ->
+                val formattedValue = tagFormatter?.format(value) ?: value.toString()
+                if (showKeys) "$key=$formattedValue" else formattedValue
+            }
+            return "${delimiters.first}$formattedTags${delimiters.second}"
+        }
+    }
+
     /**
      * Converts a [Term] into a [String]
      * @param value is the [Term] to be converted in [String]
@@ -55,25 +78,26 @@ interface TermFormatter :
             funcFormat: FuncFormat = QUOTED_IF_NECESSARY,
             numberVars: Boolean = false,
             operators: OperatorSet = OperatorSet.DEFAULT,
+            tagsOptions: TagsFormattingOptions = TagsFormattingOptions()
         ): TermFormatter {
             val quoted = funcFormat == QUOTED_IF_NECESSARY
             val ignoreOps = opFormat == IGNORE_OPERATORS
             val inner =
                 when (varFormat) {
-                    COMPLETE_NAME -> SimpleTermFormatter(quoted, numberVars, ignoreOps)
-                    UNDERSCORE -> TermFormatterWithAnonymousVariables(quoted, numberVars, ignoreOps)
-                    PRETTY -> TermFormatterWithPrettyVariables(quoted, numberVars, ignoreOps)
+                    COMPLETE_NAME -> SimpleTermFormatter(quoted, numberVars, ignoreOps, tagsOptions)
+                    UNDERSCORE -> TermFormatterWithAnonymousVariables(quoted, numberVars, ignoreOps, tagsOptions)
+                    PRETTY -> TermFormatterWithPrettyVariables(quoted, numberVars, ignoreOps, tagsOptions)
                 }
             return when (opFormat) {
-                EXPRESSIONS -> TermFormatterWithPrettyExpressions(inner, operators, quoted, numberVars, ignoreOps)
+                EXPRESSIONS -> TermFormatterWithPrettyExpressions(inner, operators, quoted, numberVars, ignoreOps, tagsOptions)
                 else -> inner
             }
         }
 
         @JvmStatic
         @JsName("default")
-        fun default(operators: OperatorSet = OperatorSet.DEFAULT): TermFormatter =
-            of(UNDERSCORE, EXPRESSIONS, LITERAL, true, operators)
+        fun default(operators: OperatorSet = OperatorSet.DEFAULT, tagsOptions: TagsFormattingOptions = TagsFormattingOptions(showTags = true)): TermFormatter =
+            of(UNDERSCORE, EXPRESSIONS, LITERAL, true, operators, tagsOptions)
 
         @JvmStatic
         @JsName("canonical")
@@ -81,8 +105,8 @@ interface TermFormatter :
 
         @JvmStatic
         @JsName("readable")
-        fun readable(operators: OperatorSet = OperatorSet.DEFAULT): TermFormatter =
-            of(PRETTY, EXPRESSIONS, QUOTED_IF_NECESSARY, numberVars = true, operators)
+        fun readable(operators: OperatorSet = OperatorSet.DEFAULT, tagsOptions: TagsFormattingOptions = TagsFormattingOptions()): TermFormatter =
+            of(PRETTY, EXPRESSIONS, QUOTED_IF_NECESSARY, numberVars = true, operators, tagsOptions)
 
         /**
          * A [TermFormatter] representing terms in _canonical_ form, except for [Var]iables which are represented
@@ -94,7 +118,7 @@ interface TermFormatter :
          */
         @JvmStatic
         @JsName("prettyVariables")
-        fun prettyVariables(): TermFormatter = of(PRETTY, COLLECTIONS)
+        fun prettyVariables(tagsOptions: TagsFormattingOptions = TagsFormattingOptions()): TermFormatter = of(PRETTY, COLLECTIONS, tagsOptions = tagsOptions)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions
@@ -109,7 +133,8 @@ interface TermFormatter :
         fun prettyExpressions(
             prettyVariables: Boolean,
             operatorSet: OperatorSet,
-        ): TermFormatter = of(if (prettyVariables) PRETTY else COMPLETE_NAME, EXPRESSIONS, operators = operatorSet)
+            tagsOptions: TagsFormattingOptions = TagsFormattingOptions()
+        ): TermFormatter = of(if (prettyVariables) PRETTY else COMPLETE_NAME, EXPRESSIONS, operators = operatorSet, tagsOptions = tagsOptions)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions
@@ -121,7 +146,7 @@ interface TermFormatter :
          */
         @JvmStatic
         @JsName("prettyExpressionsPrettyVariables")
-        fun prettyExpressions(operatorSet: OperatorSet): TermFormatter = prettyExpressions(true, operatorSet)
+        fun prettyExpressions(operatorSet: OperatorSet, tagsOptions: TagsFormattingOptions = TagsFormattingOptions()): TermFormatter = prettyExpressions(true, operatorSet, tagsOptions)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions
@@ -133,8 +158,8 @@ interface TermFormatter :
          */
         @JvmStatic
         @JsName("prettyExpressionsDefaultOperators")
-        fun prettyExpressions(prettyVariables: Boolean): TermFormatter =
-            prettyExpressions(prettyVariables, OperatorSet.DEFAULT)
+        fun prettyExpressions(prettyVariables: Boolean, tagsOptions: TagsFormattingOptions = TagsFormattingOptions()): TermFormatter =
+            prettyExpressions(prettyVariables, OperatorSet.DEFAULT, tagsOptions)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions
@@ -145,6 +170,6 @@ interface TermFormatter :
          */
         @JvmStatic
         @JsName("prettyExpressionsPrettyVariablesDefaultOperators")
-        fun prettyExpressions(): TermFormatter = prettyExpressions(true, OperatorSet.DEFAULT)
+        fun prettyExpressions(tagsOptions: TagsFormattingOptions = TagsFormattingOptions()): TermFormatter = prettyExpressions(true, OperatorSet.DEFAULT, tagsOptions)
     }
 }
