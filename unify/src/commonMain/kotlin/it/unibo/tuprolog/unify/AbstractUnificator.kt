@@ -5,15 +5,9 @@ import it.unibo.tuprolog.core.Substitution.Companion.empty
 import it.unibo.tuprolog.core.Substitution.Companion.failed
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import kotlin.jvm.JvmOverloads
 
-abstract class AbstractUnificator : Unificator {
-    @JvmOverloads
-    constructor(context: Substitution = empty()) {
-        this.context = context
-    }
-
-    override val context: Substitution
+abstract class AbstractUnificator(override val context: Substitution) : Unificator {
+    constructor() : this(empty())
 
     protected sealed interface Request {
         data class Mgu(
