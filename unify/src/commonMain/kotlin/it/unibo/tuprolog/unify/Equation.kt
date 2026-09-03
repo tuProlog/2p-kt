@@ -24,37 +24,80 @@ sealed class Equation(
     @JsName("rhs") open val rhs: Term,
 ) : TermConvertible,
     Castable<Equation> {
+    @JsName("isIdentity")
     open val isIdentity: Boolean
         get() = false
 
+    @JsName("asIdentity")
     open fun asIdentity(): Identity? = null
 
+    @JsName("castToIdentity")
     fun castToIdentity(): Identity =
         asIdentity() ?: throw ClassCastException("Cannot cast $this to ${Identity::class.simpleName}")
 
+    @JsName("isAssignment")
     open val isAssignment: Boolean
         get() = false
 
+    @JsName("asAssignment")
     open fun asAssignment(): Assignment? = null
 
+    @JsName("castToAssignment")
     fun castToAssignment(): Assignment =
         asAssignment() ?: throw ClassCastException("Cannot cast $this to ${Assignment::class.simpleName}")
 
+    @JsName("isLeftAssignment")
+    open val isLeftAssignment: Boolean
+        get() = false
+
+    @JsName("asLeftAssignment")
+    open fun asLeftAssignment(): LeftAssignment? = null
+
+    @JsName("castToLeftAssignment")
+    fun castToLeftAssignment(): LeftAssignment =
+        asLeftAssignment() ?: throw ClassCastException("Cannot cast $this to ${LeftAssignment::class.simpleName}")
+
+    @JsName("isRightAssignment")
+    open val isRightAssignment: Boolean
+        get() = false
+
+    @JsName("asRightAssignment")
+    open fun asRightAssignment(): RightAssignment? = null
+
+    @JsName("castToRightAssignment")
+    fun castToRightAssignment(): RightAssignment =
+        asRightAssignment() ?: throw ClassCastException("Cannot cast $this to ${RightAssignment::class.simpleName}")
+
+    @JsName("isComparison")
     open val isComparison: Boolean
         get() = false
 
+    @JsName("asComparison")
     open fun asComparison(): Comparison? = null
 
+    @JsName("castToComparison")
     fun castToComparison(): Comparison =
         asComparison() ?: throw ClassCastException("Cannot cast $this to ${Comparison::class.simpleName}")
 
+    @JsName("isContradiction")
     open val isContradiction: Boolean
         get() = false
 
+    @JsName("asContradiction")
     open fun asContradiction(): Contradiction? = null
 
+    @JsName("castToContradiction")
     fun castToContradiction(): Contradiction =
         asContradiction() ?: throw ClassCastException("Cannot cast $this to ${Contradiction::class.simpleName}")
+
+    @JsName("clone")
+    abstract fun clone(
+        lhs: Term = this.lhs,
+        rhs: Term = this.rhs,
+    ): Equation
+
+    @JsName("toContradiction")
+    fun toContradiction(): Contradiction = Contradiction(lhs, rhs)
 
     /** An equation of identical [Term]s */
     data class Identity(
@@ -65,22 +108,65 @@ sealed class Equation(
             get() = true
 
         override fun asIdentity(): Identity = this
+
+        override fun clone(
+            lhs: Term,
+            rhs: Term,
+        ): Identity = copy(lhs = lhs, rhs = rhs)
     }
 
-    /** An equation stating [Var] = [Term] */
-    data class Assignment(
-        override val lhs: Var,
+    abstract class Assignment(
+        override val lhs: Term,
         override val rhs: Term,
     ) : Equation(lhs, rhs) {
-        @JsName("toSubstitution")
-        fun toSubstitution(): Substitution.Unifier = Substitution.unifier(lhs, rhs)
+        @JsName("variable")
+        abstract val variable: Var
 
-        override fun toPair(): Pair<Var, Term> = lhs to rhs
+        @JsName("term")
+        abstract val term: Term
 
         override val isAssignment: Boolean
             get() = true
 
         override fun asAssignment(): Assignment = this
+
+        @JsName("toSubstitution")
+        fun toSubstitution(): Substitution.Unifier = Substitution.unifier(variable, term)
+
+        override fun toPair(): Pair<Var, Term> = Pair(variable, term)
+
+        abstract override fun clone(
+            lhs: Term,
+            rhs: Term,
+        ): Assignment
+    }
+
+    /** An equation stating [Var] = [Term] */
+    data class LeftAssignment(
+        override val lhs: Var,
+        override val rhs: Term,
+    ) : Assignment(lhs, rhs) {
+        override val variable: Var = lhs
+        override val term: Term = rhs
+
+        override fun clone(
+            lhs: Term,
+            rhs: Term,
+        ): LeftAssignment = copy(lhs = lhs.castToVar(), rhs = rhs)
+    }
+
+    /** An equation stating [Term] = [Var] */
+    data class RightAssignment(
+        override val lhs: Term,
+        override val rhs: Var,
+    ) : Assignment(lhs, rhs) {
+        override val variable: Var = rhs
+        override val term: Term = lhs
+
+        override fun clone(
+            lhs: Term,
+            rhs: Term,
+        ): RightAssignment = copy(lhs = lhs, rhs = rhs.castToVar())
     }
 
     /** An equation comparing [Term]s, possibly different */
@@ -92,6 +178,11 @@ sealed class Equation(
             get() = true
 
         override fun asComparison(): Comparison = this
+
+        override fun clone(
+            lhs: Term,
+            rhs: Term,
+        ): Comparison = copy(lhs = lhs, rhs = rhs)
     }
 
     /** A contradicting equation, trying to equate non equal [Term]s */
@@ -103,6 +194,11 @@ sealed class Equation(
             get() = true
 
         override fun asContradiction(): Contradiction = this
+
+        override fun clone(
+            lhs: Term,
+            rhs: Term,
+        ): Contradiction = copy(lhs = lhs, rhs = rhs)
     }
 
     override fun toTerm(): Struct = Struct.of("=", lhs, rhs)
@@ -141,11 +237,11 @@ sealed class Equation(
                     if (equalityChecker(lhs, rhs)) {
                         Identity(lhs, rhs)
                     } else {
-                        Assignment(lhs.castToVar(), rhs)
+                        LeftAssignment(lhs.castToVar(), rhs)
                     }
                 }
-                lhs.isVar -> Assignment(lhs.castToVar(), rhs)
-                rhs.isVar -> Assignment(rhs.castToVar(), lhs)
+                lhs.isVar -> LeftAssignment(lhs.castToVar(), rhs)
+                rhs.isVar -> RightAssignment(lhs, rhs.castToVar())
                 lhs.isConstant && rhs.isConstant -> {
                     if (equalityChecker(lhs, rhs)) {
                         Identity(lhs, rhs)
