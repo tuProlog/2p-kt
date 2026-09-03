@@ -6,7 +6,9 @@ import it.unibo.tuprolog.core.Substitution.Companion.failed
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
-abstract class AbstractUnificator(override val context: Substitution) : Unificator {
+abstract class AbstractUnificator(
+    override val context: Substitution,
+) : Unificator {
     constructor() : this(empty())
 
     protected sealed interface Request {
