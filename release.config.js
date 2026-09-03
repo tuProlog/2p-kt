@@ -3,10 +3,8 @@ var publishCmd = `
 ./gradlew publishJsPackageToNpmjsRegistry || true
 `
 var prepareCmd = `
-rm -rf release-assets
-./gradlew clean allShadowJars || exit 4
-mkdir -p release-assets
-find . -type f -path "*/build/*" -name "*redist*.jar" -exec cp "{}" release-assets/ \\;
+./gradlew dokkaHtml || exit 4
+./gradlew allShadowJars || exit 5
 `
 
 var config = require('semantic-release-preconfigured-conventional-commits');
@@ -22,7 +20,7 @@ config.plugins.push(
         "@semantic-release/github",
         {
             "assets": [
-                { "path": "release-assets/*redist*.jar" }
+                { "path": "**/build/**/*redist*.jar" }
             ]
         }
     ],
