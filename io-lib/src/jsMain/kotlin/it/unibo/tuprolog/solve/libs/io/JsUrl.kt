@@ -8,7 +8,10 @@ import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.QUERY
 import it.unibo.tuprolog.solve.libs.io.Url.Companion.ensureValidPort
 import it.unibo.tuprolog.solve.libs.io.Url.Companion.parse
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
+import okio.buffer
+import okio.use
 import org.khronos.webgl.ArrayBuffer
+import it.unibo.tuprolog.solve.libs.io.exceptions.IOException as TuPrologIOException
 
 class JsUrl : Url {
     constructor(url: String) {
@@ -42,21 +45,26 @@ class JsUrl : Url {
 
     override val query: String?
 
-    override fun readAsText(): String {
-        if (isFile) {
-            return readText(path)
-        } else {
-            return fetch(url, "UTF-8")
+    override fun readAsText(): String =
+        when {
+            isFile && isNode -> readLocalFile { it.readUtf8() }
+            isFile -> readText(path)
+            else -> fetch(url, "UTF-8")
         }
-    }
 
-    override fun readAsByteArray(): ByteArray {
-        if (isFile) {
-            return readBin(path)
-        } else {
-            return fetch<ArrayBuffer>(url).toByteArray()
+    override fun readAsByteArray(): ByteArray =
+        when {
+            isFile && isNode -> readLocalFile { it.readByteArray() }
+            isFile -> readBin(path)
+            else -> fetch<ArrayBuffer>(url).toByteArray()
         }
-    }
+
+    private fun <T> readLocalFile(action: (okio.BufferedSource) -> T): T =
+        try {
+            LocalFileSystem.source(toLocalPath()).buffer().use(action)
+        } catch (e: okio.IOException) {
+            throw TuPrologIOException(e.message, e)
+        }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -6,12 +6,17 @@ import it.unibo.tuprolog.solve.channel.ReaderChannel
 import it.unibo.tuprolog.solve.channel.WriterChannel
 import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
+import okio.FileSystem
+import okio.Path
+import okio.Path.Companion.toOkioPath
+import okio.buffer
 import java.io.File
-import java.io.FileOutputStream
 import java.net.MalformedURLException
 import java.net.URI
 import java.net.URISyntaxException
 import java.net.URL
+
+internal actual val platformFileSystem: FileSystem = FileSystem.SYSTEM
 
 actual fun parseUrl(string: String): Url = JvmUrl(string)
 
@@ -45,13 +50,20 @@ internal fun String.toUrl(): URL =
         throw InvalidUrlException(message = "Invalid URL: $this", cause = e)
     }
 
-actual fun Url.openInputChannel(): InputChannel<String> = ReaderChannel(toURL().openStream())
+internal actual fun Url.toLocalPath(): Path = File(toURL().file).toOkioPath()
+
+actual fun Url.openInputChannel(): InputChannel<String> =
+    if (isFile) {
+        ReaderChannel(LocalFileSystem.source(toLocalPath()).buffer().inputStream())
+    } else {
+        ReaderChannel(toURL().openStream())
+    }
 
 actual fun Url.openOutputChannel(append: Boolean): OutputChannel<String> {
     if (!isFile) {
         throw IOException("Writing not supported for ${toString()}")
     }
-    val file = File(toURL().file)
-    val outputStream = FileOutputStream(file, append)
-    return WriterChannel(outputStream)
+    val path = toLocalPath()
+    val sink = if (append) LocalFileSystem.appendingSink(path) else LocalFileSystem.sink(path)
+    return WriterChannel(sink.buffer().outputStream())
 }

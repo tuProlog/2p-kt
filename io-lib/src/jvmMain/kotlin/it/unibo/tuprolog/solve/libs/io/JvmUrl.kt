@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
+import okio.buffer
+import okio.use
 import java.io.BufferedInputStream
 import java.io.BufferedReader
 import java.io.FileNotFoundException
@@ -33,7 +35,11 @@ data class JvmUrl(
 
     override fun readAsText(): String =
         try {
-            BufferedReader(InputStreamReader(url.openStream())).lines().asSequence().joinToString("\n")
+            if (isFile) {
+                LocalFileSystem.source(toLocalPath()).buffer().use { it.readUtf8() }
+            } else {
+                BufferedReader(InputStreamReader(url.openStream())).lines().asSequence().joinToString("\n")
+            }
         } catch (e: FileNotFoundException) {
             throw IOException("Cannot find resource: $url", e)
         } catch (e: java.io.IOException) {
@@ -42,7 +48,11 @@ data class JvmUrl(
 
     override fun readAsByteArray(): ByteArray =
         try {
-            BufferedInputStream(url.openStream()).readAllBytes()
+            if (isFile) {
+                LocalFileSystem.source(toLocalPath()).buffer().use { it.readByteArray() }
+            } else {
+                BufferedInputStream(url.openStream()).readAllBytes()
+            }
         } catch (e: java.io.IOException) {
             throw IOException(e.message, e)
         }
