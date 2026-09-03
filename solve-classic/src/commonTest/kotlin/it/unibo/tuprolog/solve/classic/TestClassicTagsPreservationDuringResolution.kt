@@ -4,7 +4,8 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestTagsPreservationDuringResolution
 import kotlin.test.Test
 
-class TestClassicTagsPreservationDuringResolution : TestTagsPreservationDuringResolution,
+class TestClassicTagsPreservationDuringResolution :
+    TestTagsPreservationDuringResolution,
     SolverFactory by ClassicSolverFactory {
     private val prototype = TestTagsPreservationDuringResolution.prototype(this)
 
