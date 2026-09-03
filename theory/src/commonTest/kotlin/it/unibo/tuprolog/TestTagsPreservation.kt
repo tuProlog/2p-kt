@@ -4,7 +4,6 @@ import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.MutableClauseQueue
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Formatter
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
@@ -38,57 +37,73 @@ class TestTagsPreservation {
      * f(g(x)<k1=v1, k2=v2>) :- true
      * f(g(x<k1=v1, k2=v2>)) :- true
      */
-    fun clauses() = logicProgramming {
-        sequence {
-            for (i in 0..2) {
-                yield(fact { "f"("g"("x")) }.setTags(i))
-                yield(fact { "f"("g"("x")).setTags(i) })
-                yield(fact { "f"("g"("x").setTags(i)) })
-                yield(fact { "f"("g"(atomOf("x").setTags(i))) })
+    fun clauses() =
+        logicProgramming {
+            sequence {
+                for (i in 0..2) {
+                    yield(fact { "f"("g"("x")) }.setTags(i))
+                    yield(fact { "f"("g"("x")).setTags(i) })
+                    yield(fact { "f"("g"("x").setTags(i)) })
+                    yield(fact { "f"("g"(atomOf("x").setTags(i))) })
+                }
             }
         }
-    }
 
     fun assertTagsArePreserved(clauses: Iterable<Clause>) {
         val clauses = clauses as? List<Clause> ?: clauses.toList()
         for (clause in clauses) {
-            val formattedClause = TermFormatter.default(
-                tagsOptions = TermFormatter.TagsFormattingOptions(
-                    showTags = true,
-                    showDelimitersIfEmpty = true
-                )
-            ).format(clause)
+            val formattedClause =
+                TermFormatter
+                    .default(
+                        tagsOptions =
+                            TermFormatter.TagsFormattingOptions(
+                                showTags = true,
+                                showDelimitersIfEmpty = true,
+                            ),
+                    ).format(clause)
             println(formattedClause)
         }
         val pattern = logicProgramming { fact { "f"("g"("x")) } }
         assertEquals(12, clauses.size)
         for (headTagsCount in 1..2) {
-            val clausesWithHeadTagsCount = clauses
-                .filter { it == pattern && it.tags.size == headTagsCount }
+            val clausesWithHeadTagsCount =
+                clauses
+                    .filter { it == pattern && it.tags.size == headTagsCount }
             assertEquals(1, clausesWithHeadTagsCount.size)
         }
         for (externalTagsCount in 1..2) {
             val pattern = pattern.head
-            val clausesWithExternalTagsCount = clauses.map { it.head }
-                .filter { it == pattern && it.tags.size == externalTagsCount }
+            val clausesWithExternalTagsCount =
+                clauses
+                    .map { it.head }
+                    .filter { it == pattern && it.tags.size == externalTagsCount }
             assertEquals(1, clausesWithExternalTagsCount.size)
         }
         for (middleTagsCount in 1..2) {
             val pattern = pattern.head.asStruct().args[0]
-            val clausesWithMiddleTagsCount = clauses.map { it.head }
-                .map { it?.asStruct()?.args[0] }
-                .filterIsInstance<Struct>()
-                .filter { it == pattern && it.tags.size == middleTagsCount }
+            val clausesWithMiddleTagsCount =
+                clauses
+                    .map { it.head }
+                    .map { it?.asStruct()?.args[0] }
+                    .filterIsInstance<Struct>()
+                    .filter { it == pattern && it.tags.size == middleTagsCount }
             assertEquals(1, clausesWithMiddleTagsCount.size)
         }
         for (internalTagsCount in 1..2) {
-            val pattern = pattern.head.asStruct().args[0].castToStruct().args[0]
-            val clausesWithInternalTagsCount = clauses.map { it.head }
-                .map { it?.asStruct()?.args[0] }
-                .filterIsInstance<Struct>()
-                .map { it.args[0] }
-                .filterIsInstance<Atom>()
-                .filter { it == pattern && it.tags.size == internalTagsCount }
+            val pattern =
+                pattern.head
+                    .asStruct()
+                    .args[0]
+                    .castToStruct()
+                    .args[0]
+            val clausesWithInternalTagsCount =
+                clauses
+                    .map { it.head }
+                    .map { it?.asStruct()?.args[0] }
+                    .filterIsInstance<Struct>()
+                    .map { it.args[0] }
+                    .filterIsInstance<Atom>()
+                    .filter { it == pattern && it.tags.size == internalTagsCount }
             assertEquals(1, clausesWithInternalTagsCount.size)
         }
     }
