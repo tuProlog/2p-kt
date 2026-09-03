@@ -2,9 +2,17 @@ package it.unibo.tuprolog.solve.libs.io
 
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.libs.io.channel.SinkOutputChannel
+import it.unibo.tuprolog.solve.libs.io.channel.SourceInputChannel
 import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
+import okio.FileSystem
+import okio.NodeJsFileSystem
+import okio.Path
+import okio.Path.Companion.toPath
+import okio.buffer
 
-/** @throws it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException if [string] is not a well-formed URL. */
+internal actual val platformFileSystem: FileSystem = NodeJsFileSystem
+
 actual fun parseUrl(string: String): Url = JsUrl(string)
 
 actual fun fileUrl(path: String): Url = JsUrl(protocol = "file", path = path)
@@ -17,17 +25,20 @@ actual fun remoteUrl(
     query: String?,
 ): Url = JsUrl(protocol, host, port, path, query)
 
-/**
- * JS implementation of [it.unibo.tuprolog.solve.libs.io.openInputChannel]: eagerly [Url.readAsText]s the whole
- * resource and wraps it into an in-memory [InputChannel],
- * rather than streaming it lazily as the JVM implementation does.
- * @throws IOException if the resource cannot be read.
- */
-actual fun Url.openInputChannel(): InputChannel<String> = InputChannel.of(readAsText())
+internal actual fun Url.toLocalPath(): Path = path.toPath()
 
-/**
- * JS implementation of [it.unibo.tuprolog.solve.libs.io.openOutputChannel]: unsupported on this platform.
- * @throws IOException unconditionally.
- */
-actual fun Url.openOutputChannel(append: Boolean): OutputChannel<String> =
-    throw IOException("Writing not supported for ${toString()}")
+actual fun Url.openInputChannel(): InputChannel<String> =
+    if (isFile && isNode) {
+        SourceInputChannel(LocalFileSystem.source(toLocalPath()).buffer())
+    } else {
+        InputChannel.of(readAsText())
+    }
+
+actual fun Url.openOutputChannel(append: Boolean): OutputChannel<String> {
+    if (!isFile || !isNode) {
+        throw IOException("Writing not supported for ${toString()}")
+    }
+    val path = toLocalPath()
+    val sink = if (append) LocalFileSystem.appendingSink(path) else LocalFileSystem.sink(path)
+    return SinkOutputChannel(sink.buffer())
+}
