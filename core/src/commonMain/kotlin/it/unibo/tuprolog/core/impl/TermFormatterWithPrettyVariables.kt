@@ -7,7 +7,7 @@ internal class TermFormatterWithPrettyVariables(
     quoted: Boolean = true,
     numberVars: Boolean = false,
     ignoreOps: Boolean = false,
-    tagsOptions: TermFormatter.TagsFormattingOptions = TermFormatter.TagsFormattingOptions()
+    tagsOptions: TermFormatter.TagsFormattingOptions = TermFormatter.TagsFormattingOptions(),
 ) : AbstractTermFormatterForVariables(quoted, numberVars, ignoreOps, tagsOptions) {
     override fun formatVar(
         variable: Var,
