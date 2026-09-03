@@ -6,7 +6,9 @@ import it.unibo.tuprolog.core.Substitution.Companion.failed
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
-abstract class AbstractUnificator(override val context: Substitution) : Unificator {
+abstract class AbstractUnificator(
+    override val context: Substitution,
+) : Unificator {
     constructor() : this(empty())
 
     protected sealed interface Request {
@@ -132,11 +134,12 @@ abstract class AbstractUnificator(override val context: Substitution) : Unificat
 
                     eq.isComparison -> {
                         eqIterator.remove()
-                        insertion@ for (it in equationsFor(eq.lhs, eq.rhs)) {
+                        for (it in eq.castToComparison().decompose(this::checkTermsEquality)) {
+                            val subEq = if (it.isContradiction || it.isIdentity) handleEquation(request, it) else it
                             when {
-                                it.isIdentity -> continue@insertion
-                                it.isContradiction -> return failed()
-                                else -> eqIterator.add(it)
+                                subEq.isIdentity -> continue
+                                subEq.isContradiction -> return failed()
+                                else -> eqIterator.add(subEq)
                             }
                         }
                         changed = true
