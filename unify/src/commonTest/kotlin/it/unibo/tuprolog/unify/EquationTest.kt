@@ -26,7 +26,14 @@ internal class EquationTest {
     private val correctShallowEquationsInstances =
         EquationUtils.shallowIdentityEquations.map { (lhs, rhs) -> Equation.Identity(lhs, rhs) } +
             EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) ->
-                if (lhs.isVar) Equation.LeftAssignment(lhs.castToVar(), rhs) else Equation.RightAssignment(lhs, rhs.castToVar())
+                if (lhs.isVar) {
+                    Equation.LeftAssignment(
+                        lhs.castToVar(),
+                        rhs,
+                    )
+                } else {
+                    Equation.RightAssignment(lhs, rhs.castToVar())
+                }
             } +
             EquationUtils.comparisonEquations.map { (lhs, rhs) -> Equation.Comparison(lhs, rhs) } +
             EquationUtils.shallowContradictionEquations.map { (lhs, rhs) -> Equation.Contradiction(lhs, rhs) }
