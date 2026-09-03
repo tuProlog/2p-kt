@@ -44,7 +44,7 @@ internal data class ArityNode(
         when {
             element.head.arity > 0 -> {
                 children.retrieve(
-                    keyFilter = { head -> head != null && head matches element.head[0] },
+                    keyFilter = { head -> head != null && element.head[0] matches head },
                     typeChecker = { it.isArgNode },
                     caster = { it.castToArgNode() },
                 )

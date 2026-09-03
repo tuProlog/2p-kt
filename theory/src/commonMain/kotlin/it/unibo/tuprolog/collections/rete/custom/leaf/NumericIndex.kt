@@ -35,7 +35,7 @@ internal class NumericIndex(
         if (clause.nestedFirstArgument().isNumber) {
             index[clause.asInnerNumeric()]
                 ?.asSequence()
-                ?.filter { unificator.match(it.innerClause, clause) }
+                ?.filter { unificator.match(clause, it.innerClause) }
                 ?.map { it.innerClause }
                 ?: emptySequence()
         } else {
@@ -82,7 +82,7 @@ internal class NumericIndex(
         clause: Clause,
         index: MutableList<SituatedIndexedClause>,
     ): SituatedIndexedClause? {
-        val actualIndex = index.indexOfFirst { unificator.match(it.innerClause, clause) }
+        val actualIndex = index.indexOfFirst { unificator.match(clause, it.innerClause) }
 
         return if (actualIndex == -1) {
             null
@@ -95,7 +95,7 @@ internal class NumericIndex(
         if (clause.nestedFirstArgument().isNumber) {
             index[clause.asInnerNumeric()]
                 ?.asSequence()
-                ?.filter { unificator.match(it.innerClause, clause) }
+                ?.filter { unificator.match(clause, it.innerClause) }
                 ?: emptySequence()
         } else {
             extractGlobalIndexedSequence(clause)
@@ -130,7 +130,7 @@ internal class NumericIndex(
         )
 
     override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
-        getCache().filter { unificator.match(it.innerClause, clause) }
+        getCache().filter { unificator.match(clause, it.innerClause) }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
         extractGlobalIndexedSequence(clause).map {

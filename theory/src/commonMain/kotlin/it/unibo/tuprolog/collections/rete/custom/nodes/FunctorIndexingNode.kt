@@ -59,7 +59,7 @@ internal class FunctorIndexingNode(
                     arities.values.map {
                         it.extractGlobalIndexedSequence(clause)
                     },
-                ).firstOrNull { unificator.match(it.innerClause, clause) }
+                ).firstOrNull { unificator.match(clause, it.innerClause) }
         } else {
             arities[clause.nestedArity()]?.getFirstIndexed(clause)
         }
@@ -83,7 +83,7 @@ internal class FunctorIndexingNode(
                         arities.values.map {
                             it.extractGlobalIndexedSequence(clause)
                         },
-                    ).filter { unificator.match(it.innerClause, clause) }
+                    ).filter { unificator.match(clause, it.innerClause) }
                     .toList()
             if (partialResult.isNotEmpty()) {
                 invalidateCache()

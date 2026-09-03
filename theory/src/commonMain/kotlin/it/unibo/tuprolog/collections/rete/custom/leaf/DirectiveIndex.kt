@@ -26,7 +26,7 @@ internal class DirectiveIndex(
 
     override fun get(clause: Clause): Sequence<Clause> =
         directives
-            .filter { unificator.match(it.innerClause, clause) }
+            .filter { unificator.match(clause, it.innerClause) }
             .map { it.innerClause }
             .asSequence()
 

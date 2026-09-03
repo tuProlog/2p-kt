@@ -49,7 +49,7 @@ internal class MutableListedTheory private constructor(
         val i = clauses.listIterator()
         while (i.hasNext()) {
             val c = i.next()
-            if (unificator.match(c, clause)) {
+            if (unificator.match(clause, c)) {
                 i.remove()
                 return RetractResult.Success(this, listOf(c))
             }
@@ -63,7 +63,7 @@ internal class MutableListedTheory private constructor(
         while (i.hasNext()) {
             val c = i.next()
             for (clause in clauses) {
-                if (unificator.match(c, clause)) {
+                if (unificator.match(clause, c)) {
                     retracted.add(c)
                     i.remove()
                 }
@@ -81,7 +81,7 @@ internal class MutableListedTheory private constructor(
         val retracted = mutableListOf<Clause>()
         while (i.hasNext()) {
             val c = i.next()
-            if (unificator.match(c, clause)) {
+            if (unificator.match(clause, c)) {
                 retracted.add(c)
                 i.remove()
             }

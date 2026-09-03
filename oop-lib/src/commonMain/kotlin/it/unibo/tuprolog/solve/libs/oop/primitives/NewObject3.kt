@@ -19,7 +19,7 @@ object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
             val type = getArgumentAsTypeRef(0)
             val arguments = (second as List).toArray()
             val objectReference = type?.create(termToObjectConverter, *arguments)?.asObjectRef()
-            objectReference?.let { mgu(it, third) } ?: Substitution.failed()
+            objectReference?.let { mgu(third, it) } ?: Substitution.failed()
         }
     }
 }

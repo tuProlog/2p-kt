@@ -31,7 +31,7 @@ object Type : BinaryRelation.Functional<ExecutionContext>("type") {
                 }
                 second is Var -> {
                     ensuringArgumentIsAtom(0)
-                    typeFactory.typeRefFromName((first as Atom).value)?.let { mgu(it, second) } ?: Substitution.failed()
+                    typeFactory.typeRefFromName((first as Atom).value)?.let { mgu(second, it) } ?: Substitution.failed()
                 }
                 else -> {
                     ensuringArgumentIsAtom(0)
