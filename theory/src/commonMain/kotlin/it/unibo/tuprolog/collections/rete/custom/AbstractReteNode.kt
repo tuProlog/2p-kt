@@ -15,7 +15,7 @@ internal abstract class AbstractReteNode(
             val iter = source.iterator()
             while (iter.hasNext()) {
                 val it = iter.next()
-                if (unificator.match(it.innerClause, clause)) {
+                if (unificator.match(clause, it.innerClause)) {
                     it.invalidateAllCaches()
                     iter.remove()
                     yield(it)

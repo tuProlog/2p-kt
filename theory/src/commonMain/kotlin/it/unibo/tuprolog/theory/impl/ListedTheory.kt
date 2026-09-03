@@ -37,7 +37,7 @@ internal class ListedTheory private constructor(
     ) = ListedTheory(unificator, clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<ListedTheory> {
-        val retractability = clauses.filter { unificator.match(it, clause) }
+        val retractability = clauses.filter { unificator.match(clause, it) }
         return when {
             retractability.none() -> RetractResult.Failure(this)
             else -> {
@@ -59,7 +59,7 @@ internal class ListedTheory private constructor(
         val i = residual.iterator()
         while (i.hasNext()) {
             val current = i.next()
-            if (clauses.any { unificator.match(it, current) }) {
+            if (clauses.any { unificator.match(current, it) }) {
                 i.remove()
                 removed.add(current)
             }
@@ -72,11 +72,11 @@ internal class ListedTheory private constructor(
     }
 
     override fun retractAll(clause: Clause): RetractResult<ListedTheory> {
-        val retractability = clauses.filter { unificator.match(it, clause) }
+        val retractability = clauses.filter { unificator.match(clause, it) }
         return when {
             retractability.none() -> RetractResult.Failure(this)
             else -> {
-                val partitionedClauses = clauses.toList().partition { unificator.match(it, clause) }
+                val partitionedClauses = clauses.toList().partition { unificator.match(clause, it) }
                 val newTheory = partitionedClauses.second
                 val toBeActuallyRetracted = partitionedClauses.first
                 RetractResult.Success(

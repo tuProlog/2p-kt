@@ -15,7 +15,7 @@ internal data class RuleNode(
 
     override val header = "Rules"
 
-    override fun get(element: Rule): Sequence<Rule> = indexedElements.filter { it matches element }
+    override fun get(element: Rule): Sequence<Rule> = indexedElements.filter { element matches it }
 
     override fun deepCopy(): RuleNode = RuleNode(leafElements.toMutableList())
 }

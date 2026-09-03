@@ -5,6 +5,16 @@ import it.unibo.tuprolog.core.Term
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/**
+ * Unifies pairs of [Term]s.
+ *
+ * When the operands have distinct semantic roles, the subject term (such as a goal, query, actual value, or sought
+ * item) should be passed first, and the reference term (such as a pattern, rule head, expected value, or stored
+ * candidate) second. Calls whose operands have no such roles may retain their natural or mathematical order.
+ *
+ * Although unifiability is symmetric, the substitutions and unified terms returned by [mgu] and [unify] can retain
+ * operand orientation. Reordering their arguments is therefore a behavioral change and requires appropriate tests.
+ */
 interface Unificator {
     /** The context (in terms of already present bindings) in which the unification is performed */
     @JsName("context")

@@ -15,7 +15,7 @@ internal data class DirectiveNode(
 
     override val header = "Directives"
 
-    override fun get(element: Directive): Sequence<Directive> = indexedElements.filter { it matches element }
+    override fun get(element: Directive): Sequence<Directive> = indexedElements.filter { element matches it }
 
     override fun deepCopy(): DirectiveNode = DirectiveNode(leafElements.toMutableList())
 }

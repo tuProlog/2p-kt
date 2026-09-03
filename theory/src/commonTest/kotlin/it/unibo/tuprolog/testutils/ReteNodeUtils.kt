@@ -64,13 +64,13 @@ internal object ReteNodeUtils {
             Fact.of(Empty.list()) to emptyList(),
             Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous()) to rules.takeLast(5),
             Rule.of(Struct.of("a", Atom.of("other")), Var.anonymous()).run {
-                this to rules.filter { it matches this }
+                this to rules.filter { this matches it }
             },
             Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())).run {
-                this to rules.filter { it matches this }
+                this to rules.filter { this matches it }
             },
             Rule.of(Struct.of("a", Var.anonymous()), Var.anonymous()).run {
-                this to rules.filter { it matches this }
+                this to rules.filter { this matches it }
             },
         )
 
@@ -106,10 +106,10 @@ internal object ReteNodeUtils {
             Directive.of(Empty.list()) to emptyList(),
             Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous()) to directives.takeLast(5),
             Directive.of(Var.anonymous(), Struct.of("a", Atom.of("other"))).run {
-                this to directives.filter { it matches this }
+                this to directives.filter { this matches it }
             },
             Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())).run {
-                this to directives.filter { it matches this }
+                this to directives.filter { this matches it }
             },
         )
 
