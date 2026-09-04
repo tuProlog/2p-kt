@@ -1,3 +1,5 @@
+@file:Suppress("TooGenericExceptionCaught")
+
 package it.unibo.tuprolog.solve.libs.io
 
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
