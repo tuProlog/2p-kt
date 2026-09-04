@@ -33,7 +33,7 @@ jobs:
       - name: Run tests
         id: run-tests
         if: steps.cache-test-result.outputs.cache-hit != 'true'
-        uses: DanySK/build-check-deploy-gradle-action@4.0.43
+        uses: DanySK/build-check-deploy-gradle-action@4.0.44
         with:
           java-distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
@@ -87,7 +87,7 @@ jobs:
       - name: Run tests
         id: run-tests
         if: steps.cache-test-result.outputs.cache-hit != 'true'
-        uses: DanySK/build-check-deploy-gradle-action@4.0.43
+        uses: DanySK/build-check-deploy-gradle-action@4.0.44
         with:
           build-command: |
             ./gradlew jsMainClasses jsTestClasses --parallel || ./gradlew jsMainClasses jsTestClasses --parallel
