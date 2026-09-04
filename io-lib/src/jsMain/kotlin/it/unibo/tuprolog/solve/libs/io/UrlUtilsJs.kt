@@ -13,6 +13,10 @@ import okio.buffer
 
 internal actual val platformFileSystem: FileSystem = NodeJsFileSystem
 
+// Node's own file:-URL <-> native-path conversion: correctly handles Windows drive letters,
+// backslash-vs-forward-slash, and percent-decoding, so `toLocalPath` doesn't have to.
+private val FILE_URL_TO_PATH: dynamic by lazy { js("require('url').fileURLToPath") }
+
 actual fun parseUrl(string: String): Url = JsUrl(string)
 
 actual fun fileUrl(path: String): Url = JsUrl(protocol = "file", path = path)
@@ -25,7 +29,7 @@ actual fun remoteUrl(
     query: String?,
 ): Url = JsUrl(protocol, host, port, path, query)
 
-internal actual fun Url.toLocalPath(): Path = path.toPath()
+internal actual fun Url.toLocalPath(): Path = (FILE_URL_TO_PATH(toString()) as String).toPath()
 
 actual fun Url.openInputChannel(): InputChannel<String> =
     if (isFile && isNode) {
