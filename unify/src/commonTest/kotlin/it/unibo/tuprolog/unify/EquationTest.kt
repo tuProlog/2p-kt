@@ -695,7 +695,9 @@ internal class EquationTest {
     @Test
     fun allOfPreservesAssignmentVariableTermMappingRegardlessOfOrientation() {
         val expected =
-            EquationUtils.assignmentEquations.map { pair -> Equation.allOf(pair).map { it.toAssignmentPair() }.toList() }
+            EquationUtils.assignmentEquations.map { pair ->
+                Equation.allOf(pair).map { it.toAssignmentPair() }.toList()
+            }
         val actual =
             EquationUtils.assignmentEquationsShuffled.map { pair ->
                 Equation.allOf(pair).map { it.toAssignmentPair() }.toList()
@@ -711,7 +713,10 @@ internal class EquationTest {
 
     @Test
     fun swapPreservesAssignmentVariableTermMappingForNonVarToVarAssignments() {
-        val nonVarToVarAssignments = EquationUtils.assignmentEquations.filterNot { (lhs, rhs) -> lhs.isVar && rhs.isVar }
+        val nonVarToVarAssignments =
+            EquationUtils.assignmentEquations.filterNot { (lhs, rhs) ->
+                lhs.isVar && rhs.isVar
+            }
 
         val expected = nonVarToVarAssignments.map { Equation.of(it).toAssignmentPair() }
         val actual = nonVarToVarAssignments.map { Equation.of(it).swap().toAssignmentPair() }
@@ -722,7 +727,8 @@ internal class EquationTest {
     @Test
     fun swapCanInvertIdentityComparisonAndContradictionFixtures() {
         val testableItems =
-            EquationUtils.allIdentityEquations + EquationUtils.allContradictionEquations + EquationUtils.comparisonEquations
+            EquationUtils.allIdentityEquations + EquationUtils.allContradictionEquations +
+                EquationUtils.comparisonEquations
 
         val expected = testableItems.map { (lhs, rhs) -> rhs to lhs }.map { Equation.of(it) }
         val actual = testableItems.map { Equation.of(it) }.map(Equation::swap)
