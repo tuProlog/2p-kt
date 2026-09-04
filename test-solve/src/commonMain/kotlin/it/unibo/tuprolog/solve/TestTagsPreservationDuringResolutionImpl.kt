@@ -1,136 +1,148 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.unify.AbstractUnificator
 import it.unibo.tuprolog.unify.Equation
 import it.unibo.tuprolog.utils.setTags
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class TestTagsPreservationDuringResolutionImpl(
     val solverFactory: SolverFactory,
 ) : TestTagsPreservationDuringResolution {
-    private fun <T : Term> T.setTags(n: Int): T {
-        require(n >= 0)
-        if (n == 0) return this
-        val tags = (1..n).associate { "k$it" to "v$it" }
-        return this.setTags(tags)
-    }
+    /** Where, in the `f(g(x))` clause/query, a tag is attached. */
+    private enum class Depth { CLAUSE, F, G, X }
 
-    val theory =
+    private val verses = listOf(TagComparisonVerse.EQUALS, TagComparisonVerse.IGNORE)
+
+    private val tagA = mapOf("k" to "v")
+    private val tagDifferentValue = mapOf("k" to "other")
+    private val tagDifferentKey = mapOf("other" to "v")
+
+    /** Builds the `f(g(x)) :- true.` fact, tagged at the given [depth]. */
+    private fun taggedClause(
+        depth: Depth,
+        tags: Map<String, Any>,
+    ): Fact =
         logicProgramming {
-            theoryOf(
-                sequence {
-                    for (i in 0..2) {
-                        yield(fact { "f"("g"("x")) }.setTags(i))
-                        yield(fact { "f"("g"("x")).setTags(i) })
-                        yield(fact { "f"("g"("x").setTags(i)) })
-                        yield(fact { "f"("g"(atomOf("x").setTags(i))) })
-                    }
-                },
-            )
+            when (depth) {
+                Depth.CLAUSE -> fact { "f"("g"("x")) }.setTags(tags)
+                Depth.F -> fact { "f"("g"("x")).setTags(tags) }
+                Depth.G -> fact { "f"("g"("x").setTags(tags)) }
+                Depth.X -> fact { "f"("g"(atomOf("x").setTags(tags))) }
+            }
         }
 
-    override fun testLeft() {
-        val unificator = TagAwareUnificator(TagComparisonVerse.SUPERSET)
-        val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = unificator)
-        val goal1 =
-            logicProgramming {
-                "f"("g"(X)).setTags(1)
+    /** Builds the `f(g(x))` query, tagged at the given [depth]; [Depth.CLAUSE] has no query counterpart. */
+    private fun taggedQuery(
+        depth: Depth,
+        tags: Map<String, Any>,
+    ): Struct =
+        logicProgramming {
+            when (depth) {
+                Depth.CLAUSE -> error("clause-level tags have no query counterpart")
+                Depth.F -> "f"("g"("x")).setTags(tags)
+                Depth.G -> "f"("g"("x").setTags(tags))
+                Depth.X -> "f"("g"(atomOf("x").setTags(tags)))
             }
-        val solutions1 = solver.solveList(goal1).filter { it.isYes }
-        assertEquals(10, solutions1.size)
-        val goal2 =
-            logicProgramming {
-                "f"("g"(X).setTags(1))
-            }
-        val solutions2 = solver.solveList(goal2).filter { it.isYes }
-        assertEquals(10, solutions2.size)
-        val goal3 =
-            logicProgramming {
-                "f"("g"(X.setTags(1)))
-            }
-        val solutions3 = solver.solveList(goal3).filter { it.isYes }
-        assertEquals(11, solutions3.size)
+        }
+
+    private fun untaggedQuery(): Struct = logicProgramming { "f"("g"("x")) }
+
+    private fun solverFor(
+        depth: Depth,
+        verse: TagComparisonVerse,
+    ): Solver {
+        val theory = logicProgramming { theoryOf(taggedClause(depth, tagA)) }
+        return solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = TagAwareUnificator(verse))
     }
 
-    override fun testRight() {
-        val unificator = TagAwareUnificator(TagComparisonVerse.SUBSET)
-        val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = unificator)
-        val goal1 =
-            logicProgramming {
-                "f"("g"(X)).setTags(0)
+    private fun countSolutions(
+        solver: Solver,
+        goal: Struct,
+    ): Int = solver.solveList(goal).count { it.isYes }
+
+    override fun testUntaggedQueryAgainstTaggedTheory() {
+        for (depth in Depth.entries) {
+            for (verse in verses) {
+                val solutions = countSolutions(solverFor(depth, verse), untaggedQuery())
+                // Equation.allOf never emits an equation for a *matching* struct-vs-struct pair, it always
+                // decomposes straight into per-argument equations; so tags on an intermediate struct (CLAUSE, F, G)
+                // are invisible to any Unificator, only a leaf's (X) tags are ever visible
+                val expected = if (verse == TagComparisonVerse.IGNORE || depth != Depth.X) 1 else 0
+                assertEquals(expected, solutions, "depth=$depth verse=$verse")
             }
-        val solutions1 = solver.solveList(goal1).filter { it.isYes }
-        assertEquals(12, solutions1.size)
-        val goal2 =
-            logicProgramming {
-                "f"("g"(X).setTags(0))
-            }
-        val solutions2 = solver.solveList(goal2).filter { it.isYes }
-        assertEquals(12, solutions2.size)
-        val goal3 =
-            logicProgramming {
-                "f"("g"(X.setTags(0)))
-            }
-        val solutions3 = solver.solveList(goal3).filter { it.isYes }
-        assertEquals(12, solutions3.size)
+        }
     }
 
-    override fun testSymmetric() {
-        val unificator = TagAwareUnificator(TagComparisonVerse.EQUALS)
-        val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = unificator)
-        val goal1 =
-            logicProgramming {
-                "f"("g"(X)).setTags(2)
+    override fun testQueryTaggedLikeTheory() {
+        for (depth in listOf(Depth.F, Depth.G, Depth.X)) {
+            for (verse in verses) {
+                val solutions = countSolutions(solverFor(depth, verse), taggedQuery(depth, tagA))
+                assertEquals(1, solutions, "depth=$depth verse=$verse")
             }
-        val solutions1 = solver.solveList(goal1).filter { it.isYes }
-        assertEquals(10, solutions1.size)
-        val goal2 =
-            logicProgramming {
-                "f"("g"(X).setTags(2))
-            }
-        val solutions2 = solver.solveList(goal2).filter { it.isYes }
-        assertEquals(10, solutions2.size)
-        val goal3 =
-            logicProgramming {
-                "f"("g"(X.setTags(2)))
-            }
-        val solutions3 = solver.solveList(goal3).filter { it.isYes }
-        assertEquals(1, solutions3.size)
+        }
     }
 
-    override fun testNone() {
-        val unificator = TagAwareUnificator(TagComparisonVerse.IGNORE)
-        val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = unificator)
-        val goal1 =
-            logicProgramming {
-                "f"("g"(X)).setTags(3)
+    override fun testQueryTaggedDifferentlyFromTheory() {
+        for (depth in listOf(Depth.F, Depth.G, Depth.X)) {
+            for (differentTag in listOf(tagDifferentValue, tagDifferentKey)) {
+                for (verse in verses) {
+                    val solutions = countSolutions(solverFor(depth, verse), taggedQuery(depth, differentTag))
+                    // see testUntaggedQueryAgainstTaggedTheory: only leaf-level (X) tags are ever visible
+                    val expected = if (verse == TagComparisonVerse.IGNORE || depth != Depth.X) 1 else 0
+                    assertEquals(expected, solutions, "depth=$depth tag=$differentTag verse=$verse")
+                }
             }
-        val solutions1 = solver.solveList(goal1).filter { it.isYes }
-        assertEquals(12, solutions1.size)
-        val goal2 =
-            logicProgramming {
-                "f"("g"(X).setTags(4))
-            }
-        val solutions2 = solver.solveList(goal2).filter { it.isYes }
-        assertEquals(12, solutions2.size)
-        val goal3 =
-            logicProgramming {
-                "f"("g"(X.setTags(5)))
-            }
-        val solutions3 = solver.solveList(goal3).filter { it.isYes }
-        assertEquals(12, solutions3.size)
+        }
     }
 
-    enum class TagComparisonVerse {
-        SUPERSET,
-        SUBSET,
+    override fun testTagOriginDuringComputation() {
+        val goalTag = mapOf("origin" to "goal")
+        val theoryTag = mapOf("origin" to "theory")
+
+        val theory =
+            logicProgramming {
+                theoryOf(
+                    fact { "count"("e", atomOf("zero").setTags(theoryTag)) },
+                    rule {
+                        "count"("l"(A, B), "succ"(C).setTags(theoryTag)) impliedBy "count"(B, C)
+                    },
+                )
+            }
+        val unificator = TagFlowUnificator()
+        val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = unificator)
+        val goal =
+            logicProgramming {
+                "count"(
+                    "l"(
+                        atomOf("a").setTags(goalTag),
+                        "l"(atomOf("b").setTags(goalTag), "l"(atomOf("c").setTags(goalTag), "e")),
+                    ),
+                    R,
+                )
+            }
+
+        val solutions = solver.solveList(goal).filter { it.isYes }
+
+        assertEquals(1, solutions.size)
+        assertTrue(unificator.violations.isEmpty(), "tags crossed sides: ${unificator.violations}")
+        assertTrue(unificator.sawGoalOriginatedTag, "goal-originated tags were never observed: they may have been lost")
+        assertTrue(
+            unificator.sawTheoryOriginatedTag,
+            "theory-originated tags were never observed: they may have been lost",
+        )
+    }
+
+    private enum class TagComparisonVerse {
         EQUALS,
         IGNORE,
     }
 
-    class TagAwareUnificator(
+    private class TagAwareUnificator(
         val verse: TagComparisonVerse,
     ) : AbstractUnificator() {
         override fun checkTermsEquality(
@@ -151,13 +163,37 @@ class TestTagsPreservationDuringResolutionImpl(
 
         private fun Equation.checkTagVerse(verse: TagComparisonVerse): Boolean =
             when (verse) {
-                TagComparisonVerse.SUPERSET -> lhs.tags.superSet(rhs.tags)
-                TagComparisonVerse.SUBSET -> rhs.tags.superSet(lhs.tags)
                 TagComparisonVerse.EQUALS -> rhs.tags == lhs.tags
                 TagComparisonVerse.IGNORE -> true
             }
+    }
 
-        private fun <K, V> Map<K, V>.superSet(other: Map<K, V>): Boolean =
-            this.size >= other.size && this.keys.containsAll(other.keys) && other.all { this[it.key] == it.value }
+    /**
+     * A [Unificator][it.unibo.tuprolog.unify.Unificator] that lets a developer debug where tags come from,
+     * during resolution: it records every observed cross-contamination between the tags originated on the goal
+     * side and the ones originated on the theory side, of any [Equation] handled while solving.
+     */
+    private class TagFlowUnificator : AbstractUnificator() {
+        val violations = mutableListOf<String>()
+        var sawGoalOriginatedTag = false
+        var sawTheoryOriginatedTag = false
+
+        override fun checkTermsEquality(
+            first: Term,
+            second: Term,
+        ): Boolean = first == second
+
+        override fun handleEquation(
+            request: Request,
+            equation: Equation,
+        ): Equation {
+            val lhsOrigin = equation.lhs.tags["origin"]
+            val rhsOrigin = equation.rhs.tags["origin"]
+            if (lhsOrigin == "theory") violations += "theory-originated tag found in lhs: ${equation.lhs}"
+            if (rhsOrigin == "goal") violations += "goal-originated tag found in rhs: ${equation.rhs}"
+            if (lhsOrigin == "goal") sawGoalOriginatedTag = true
+            if (rhsOrigin == "theory") sawTheoryOriginatedTag = true
+            return equation
+        }
     }
 }

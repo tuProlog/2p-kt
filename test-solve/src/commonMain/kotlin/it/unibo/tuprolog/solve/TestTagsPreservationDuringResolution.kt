@@ -6,11 +6,11 @@ interface TestTagsPreservationDuringResolution : SolverTest {
             TestTagsPreservationDuringResolutionImpl(solverFactory)
     }
 
-    fun testLeft()
+    fun testUntaggedQueryAgainstTaggedTheory()
 
-    fun testRight()
+    fun testQueryTaggedLikeTheory()
 
-    fun testSymmetric()
+    fun testQueryTaggedDifferentlyFromTheory()
 
-    fun testNone()
+    fun testTagOriginDuringComputation()
 }

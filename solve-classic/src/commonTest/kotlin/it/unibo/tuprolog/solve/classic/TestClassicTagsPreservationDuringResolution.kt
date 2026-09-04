@@ -10,22 +10,22 @@ class TestClassicTagsPreservationDuringResolution :
     private val prototype = TestTagsPreservationDuringResolution.prototype(this)
 
     @Test
-    override fun testLeft() {
-        prototype.testLeft()
+    override fun testUntaggedQueryAgainstTaggedTheory() {
+        prototype.testUntaggedQueryAgainstTaggedTheory()
     }
 
     @Test
-    override fun testRight() {
-        prototype.testRight()
+    override fun testQueryTaggedLikeTheory() {
+        prototype.testQueryTaggedLikeTheory()
     }
 
     @Test
-    override fun testSymmetric() {
-        prototype.testSymmetric()
+    override fun testQueryTaggedDifferentlyFromTheory() {
+        prototype.testQueryTaggedDifferentlyFromTheory()
     }
 
     @Test
-    override fun testNone() {
-        prototype.testNone()
+    override fun testTagOriginDuringComputation() {
+        prototype.testTagOriginDuringComputation()
     }
 }
