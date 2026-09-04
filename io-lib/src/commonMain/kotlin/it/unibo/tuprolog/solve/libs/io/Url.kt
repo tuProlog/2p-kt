@@ -53,48 +53,6 @@ interface Url {
                 this
             }
 
-        internal enum class UrlField { PROTOCOL, UNIT, HOST, PORT, PATH, QUERY, ANCHOR }
-
-        @Suppress("ktlint:standard:max-line-length")
-        private fun urlRegex(
-            protocol: String? = null,
-            unit: String? = null,
-            host: String? = null,
-            port: String? = null,
-            path: String? = null,
-            query: String? = null,
-            anchor: String? = null,
-        ): Regex {
-            val protocolGroup =
-                """(${protocol.str { "?<$it>" }}[\w]+)"""
-            val unitGroup =
-                """(\/?${unit.str { "?$it" }}[a-z]:)"""
-            val hostGroup =
-                """(${host.str { "?<$it>" }}[^\s\/]+[.][a-z]{2,})"""
-            val portGroup =
-                """(${port.str { "?<$it>" }}\d+)"""
-            val pathGroup =
-                """(${path.str { "?<$it>" }}(?:\/[^\s?#\/]+)*\/?)"""
-            val queryGroup =
-                """(${query.str { "?<$it>" }}[^\s\/?#]+)"""
-            val anchorGroup =
-                """(${anchor.str { "?<$it>" }}.*)"""
-            val pattern = """$protocolGroup:\/+(?:$unitGroup|$hostGroup(?::$portGroup)?)?$pathGroup(?:\?$queryGroup?)?(?:#$anchorGroup)?"""
-            return Regex(pattern, RegexOption.IGNORE_CASE)
-        }
-
-        @JvmStatic
-        val URL_REGEX = urlRegex()
-
-        internal fun parse(string: String): Map<UrlField, String?>? {
-            val match = URL_REGEX.matchEntire(string)?.groups?.toList()
-            return match
-                // ?.let { it as? MatchNamedGroupCollection }
-                ?.let { groups ->
-                    UrlField.values().associate { it to (groups[it.ordinal + 1]?.value) }
-                }
-        }
-
         @JvmStatic
         @JsName("file")
         fun file(path: String): Url = fileUrl(path)

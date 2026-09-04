@@ -13,4 +13,10 @@ class WriterChannel(
     override fun writeActually(value: String) = writer.write(value)
 
     override fun flushActually() = writer.flush()
+
+    @Synchronized
+    override fun close() {
+        writer.close()
+        super.close()
+    }
 }
