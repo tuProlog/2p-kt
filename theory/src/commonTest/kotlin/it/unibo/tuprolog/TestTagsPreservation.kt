@@ -1,5 +1,6 @@
 package it.unibo.tuprolog
 
+import it.unibo.tuprolog.collections.ClauseMultiSet
 import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.MutableClauseQueue
 import it.unibo.tuprolog.core.Atom
@@ -152,7 +153,7 @@ class TestTagsPreservation {
 
     @Test
     fun inClauseMultiSet() {
-        val multiSet = ClauseQueue.of(Unificator.default, clauses())
+        val multiSet = ClauseMultiSet.of(Unificator.default, clauses())
         assertTagsArePreserved(multiSet)
     }
 
