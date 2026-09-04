@@ -20,7 +20,7 @@ internal actual val platformFileSystem: FileSystem = FileSystem.SYSTEM
 
 actual fun parseUrl(string: String): Url = JvmUrl(string)
 
-actual fun fileUrl(path: String): Url = JvmUrl(protocol = "file", path = path)
+actual fun fileUrl(path: String): Url = JvmUrl(File(path).toURI().toURL())
 
 actual fun remoteUrl(
     protocol: String,
