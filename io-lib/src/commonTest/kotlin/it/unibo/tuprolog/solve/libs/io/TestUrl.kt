@@ -11,11 +11,13 @@ import kotlin.test.fail
 class TestUrl {
     @Test
     fun testCreation1() {
-        val urlString = "http://www.example.com:80/"
+        // A non-default port: standard URL parsers (JS's WHATWG URL included) normalize away a
+        // port matching the scheme's default (e.g. 80 for http), so this wouldn't round-trip.
+        val urlString = "http://www.example.com:1234/"
         val url = Url.of(urlString)
         assertEquals("http", url.protocol)
         assertEquals("www.example.com", url.host)
-        assertEquals(80, url.port)
+        assertEquals(1234, url.port)
         assertEquals("/", url.path)
         assertEquals(urlString, url.toString())
     }
@@ -27,7 +29,9 @@ class TestUrl {
         assertEquals("https", url.protocol)
         assertEquals("www.example.com", url.host)
         assertNull(url.port)
-        assertEquals("", url.path)
+        // For a bare host with no explicit path, java.net.URL (JVM) keeps "" while a WHATWG URL
+        // (JS) normalizes it to "/" - both are valid representations of "no path", so accept either.
+        assertTrue(url.path.isEmpty() || url.path == "/")
         assertEquals(urlString, url.toString())
     }
 

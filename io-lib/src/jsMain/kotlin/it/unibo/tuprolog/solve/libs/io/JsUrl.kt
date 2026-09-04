@@ -1,26 +1,44 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.HOST
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.PATH
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.PORT
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.PROTOCOL
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.QUERY
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.ensureValidPort
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.parse
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 import okio.buffer
 import okio.use
 import org.khronos.webgl.ArrayBuffer
+import kotlin.js.JsName
 import it.unibo.tuprolog.solve.libs.io.exceptions.IOException as TuPrologIOException
+
+/** Binding for the global WHATWG `URL`, available in both Node and browsers. */
+@JsName("URL")
+private external class JsNativeUrl(
+    url: String,
+) {
+    val protocol: String
+    val hostname: String
+    val port: String
+    val pathname: String
+    val search: String
+}
 
 class JsUrl : Url {
     constructor(url: String) {
-        val match = parse(url) ?: throw InvalidUrlException("Invalid URL: $url")
-        protocol = match[PROTOCOL] ?: ""
-        host = match[HOST] ?: ""
-        path = match[PATH] ?: ""
-        port = match[PORT]?.toInt()?.ensureValidPort()
-        query = match[QUERY]
+        val parsed =
+            try {
+                JsNativeUrl(url)
+            } catch (e: Throwable) {
+                throw InvalidUrlException("Invalid URL: $url", e)
+            }
+        // A native Windows path (e.g. `C:\Users\...`) parses "successfully" as a URL with a
+        // single-letter scheme (the drive letter) and an opaque, unprocessed rest, since only
+        // "special" schemes (http, file, ...) get `://`/backslash handling. No real scheme is a
+        // single letter, so treat this as unparseable instead, forcing Url.of's file:// fallback.
+        if (parsed.protocol.removeSuffix(":").length == 1) {
+            throw InvalidUrlException("Invalid URL: $url")
+        }
+        protocol = parsed.protocol.removeSuffix(":")
+        host = parsed.hostname
+        path = parsed.pathname
+        port = parsed.port.toIntOrNull()
+        query = parsed.search.removePrefix("?").ifEmpty { null }
         this.url = url
     }
 
