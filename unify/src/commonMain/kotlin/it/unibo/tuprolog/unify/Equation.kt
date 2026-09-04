@@ -184,7 +184,7 @@ sealed class Equation(
         override val variable: Var = lhs
         override val term: Term = rhs
 
-        override val isAssignment: Boolean
+        override val isLeftAssignment: Boolean
             get() = true
 
         override fun asLeftAssignment(): LeftAssignment = this
