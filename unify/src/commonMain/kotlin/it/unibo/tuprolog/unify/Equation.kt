@@ -99,6 +99,42 @@ sealed class Equation(
     @JsName("toContradiction")
     fun toContradiction(): Contradiction = Contradiction(lhs, rhs)
 
+    @JsName("toAssignmentPair")
+    open fun toAssignmentPair(): Pair<Var, Term> =
+        when {
+            lhs.isVar -> lhs.castToVar() to rhs
+            rhs.isVar -> rhs.castToVar() to lhs
+            else -> throw IllegalArgumentException("Equation contains no variables: $this")
+        }
+
+    @JsName("toSubstitution")
+    open fun toSubstitution(): Substitution =
+        when {
+            lhs.isVar -> Substitution.unifier(lhs.castToVar(), rhs)
+            rhs.isVar -> Substitution.unifier(rhs.castToVar(), lhs)
+            else -> throw IllegalArgumentException("Equation contains no variables: $this")
+        }
+
+    override fun toTerm(): Struct = Struct.of("=", lhs, rhs)
+
+    @JsName("toPair")
+    open fun toPair(): Pair<Term, Term> = Pair(lhs, rhs)
+
+    @JsName("swap")
+    fun swap(): Equation = of(rhs, lhs)
+
+    /**
+     * Applies given [substitution] to the Equation left-hand and right-hand sides, returning the new Equation
+     *
+     * To modify default equality between [Term]s, a custom [equalityChecker] can be provided
+     */
+    @JvmOverloads
+    @JsName("apply")
+    fun apply(
+        substitution: Substitution,
+        equalityChecker: (Term, Term) -> Boolean = Term::equals,
+    ): Equation = of(lhs[substitution], rhs[substitution], equalityChecker)
+
     /** An equation of identical [Term]s */
     data class Identity(
         override val lhs: Term,
@@ -130,8 +166,9 @@ sealed class Equation(
 
         override fun asAssignment(): Assignment = this
 
-        @JsName("toSubstitution")
-        fun toSubstitution(): Substitution.Unifier = Substitution.unifier(variable, term)
+        override fun toAssignmentPair(): Pair<Var, Term> = Pair(variable, term)
+
+        override fun toSubstitution(): Substitution = Substitution.unifier(variable, term)
 
         abstract override fun clone(
             lhs: Term,
@@ -211,27 +248,9 @@ sealed class Equation(
             lhs: Term,
             rhs: Term,
         ): Contradiction = copy(lhs = lhs, rhs = rhs)
+
+        override fun toSubstitution(): Substitution.Fail = Substitution.failed()
     }
-
-    override fun toTerm(): Struct = Struct.of("=", lhs, rhs)
-
-    @JsName("toPair")
-    open fun toPair(): Pair<Term, Term> = Pair(lhs, rhs)
-
-    @JsName("swap")
-    fun swap(): Equation = of(rhs, lhs)
-
-    /**
-     * Applies given [substitution] to the Equation left-hand and right-hand sides, returning the new Equation
-     *
-     * To modify default equality between [Term]s, a custom [equalityChecker] can be provided
-     */
-    @JvmOverloads
-    @JsName("apply")
-    fun apply(
-        substitution: Substitution,
-        equalityChecker: (Term, Term) -> Boolean = Term::equals,
-    ): Equation = of(lhs[substitution], rhs[substitution], equalityChecker)
 
     /** Equation companion object */
     companion object {
