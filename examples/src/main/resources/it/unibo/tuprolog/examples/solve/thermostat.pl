@@ -19,14 +19,17 @@ check_temperature(T) :-
     write("Temperature is "), write(T), write('.'), nl.
 
 handle_temperature(T, Min, _) :- T =< Min, !,
+    write("Handling low temperature by "),
     push(hot),
-    write("Pushing hot air."), nl.
+    write("pushing hot air."), nl.
 
 handle_temperature(T, _, Max) :- T >= Max, !,
+    write("Handling high temperature by "),
     push(cold),
-    write("Pushing cold air."), nl.
+    write("pushing cold air."), nl.
 
 handle_temperature(_, _, _) :-
+    write("Temperature is fine, no action needed."), nl,
     retract(done(_)), !,
     assert(done(yes)),
     write("I'm done."), nl.
