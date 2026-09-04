@@ -134,8 +134,10 @@ abstract class AbstractUnificator(
 
                     eq.isComparison -> {
                         eqIterator.remove()
-                        insertion@ for (it in equationsFor(eq.lhs, eq.rhs)) {
+                        for (it in equationsFor(eq.lhs, eq.rhs)) {
                             val subEq = if (it.isContradiction || it.isIdentity) handleEquation(request, it) else it
+                            // comparisons and assignments are added to the of the list,
+                            // so their handleEquation callback is called in the next iteration of the outer loop
                             when {
                                 subEq.isIdentity -> continue
                                 subEq.isContradiction -> return failed()

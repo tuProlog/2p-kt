@@ -133,8 +133,6 @@ sealed class Equation(
         @JsName("toSubstitution")
         fun toSubstitution(): Substitution.Unifier = Substitution.unifier(variable, term)
 
-        override fun toPair(): Pair<Var, Term> = Pair(variable, term)
-
         abstract override fun clone(
             lhs: Term,
             rhs: Term,
@@ -149,10 +147,17 @@ sealed class Equation(
         override val variable: Var = lhs
         override val term: Term = rhs
 
+        override val isAssignment: Boolean
+            get() = true
+
+        override fun asLeftAssignment(): LeftAssignment = this
+
         override fun clone(
             lhs: Term,
             rhs: Term,
         ): LeftAssignment = copy(lhs = lhs.castToVar(), rhs = rhs)
+
+        override fun toPair(): Pair<Var, Term> = Pair(lhs, rhs)
     }
 
     /** An equation stating [Term] = [Var] */
@@ -163,10 +168,17 @@ sealed class Equation(
         override val variable: Var = rhs
         override val term: Term = lhs
 
+        override val isRightAssignment: Boolean
+            get() = true
+
+        override fun asRightAssignment(): RightAssignment = this
+
         override fun clone(
             lhs: Term,
             rhs: Term,
         ): RightAssignment = copy(lhs = lhs, rhs = rhs.castToVar())
+
+        override fun toPair(): Pair<Term, Var> = Pair(lhs, rhs)
     }
 
     /** An equation comparing [Term]s, possibly different */
