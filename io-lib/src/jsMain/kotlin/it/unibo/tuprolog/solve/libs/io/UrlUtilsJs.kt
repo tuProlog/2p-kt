@@ -34,7 +34,7 @@ actual fun remoteUrl(
 internal actual fun Url.toLocalPath(): Path =
     try {
         (FILE_URL_TO_PATH(toString()) as String).toPath()
-    } catch (e: Throwable) {
+    } catch (_: Throwable) {
         // fileURLToPath (on Windows) requires either a UNC host or a genuine `<letter>:` drive
         // prefix, and throws for a plain Unix-shaped absolute path (e.g. `/path/to/x.pl`) - even
         // though such a path is exactly what Node's own fs calls happily resolve relative to the
