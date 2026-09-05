@@ -133,7 +133,7 @@ class PrototypeProperIndexingTest(
     fun correctIndexingOverDedicatedTheoryForF1Family() {
         withFreshTheory {
             val generatedIndexingOverF1Family =
-                theory.clauses.toList().filter { it matches anonymousF1Clause }
+                theory.clauses.toList().filter { anonymousF1Clause matches it }
 
             assertClausesHaveSameLengthAndContent(expectedIndexingOverF1, generatedIndexingOverF1Family)
         }
@@ -142,7 +142,7 @@ class PrototypeProperIndexingTest(
     fun correctIndexingOverDedicatedTheoryForF2Family() {
         withFreshTheory {
             val generatedIndexingOverF2Family =
-                theory.clauses.toList().filter { it matches anonymousF2Clause }
+                theory.clauses.toList().filter { anonymousF2Clause matches it }
 
             assertClausesHaveSameLengthAndContent(expectedIndexingOverF2, generatedIndexingOverF2Family)
         }
@@ -151,7 +151,7 @@ class PrototypeProperIndexingTest(
     fun correctIndexingOverDedicatedTheoryG1Family() {
         withFreshTheory {
             val generatedIndexingOverG1Family =
-                theory.clauses.toList().filter { it matches anonymousG1Clause }
+                theory.clauses.toList().filter { anonymousG1Clause matches it }
 
             assertClausesHaveSameLengthAndContent(expectedIndexingOverG1, generatedIndexingOverG1Family)
         }
@@ -160,7 +160,7 @@ class PrototypeProperIndexingTest(
     fun correctIndexingOverDedicatedTheoryG2Family() {
         withFreshTheory {
             val generatedIndexingOverG2Family =
-                theory.clauses.toList().filter { it matches anonymousG2Clause }
+                theory.clauses.toList().filter { anonymousG2Clause matches it }
 
             assertClausesHaveSameLengthAndContent(expectedIndexingOverG2, generatedIndexingOverG2Family)
         }
@@ -170,7 +170,7 @@ class PrototypeProperIndexingTest(
         withFreshTheory {
             val doubledDatabase = (theory + theory)
             val generatedIndexingOverDoubledDatabaseForF1Family =
-                doubledDatabase.clauses.toList().filter { it matches anonymousF1Clause }
+                doubledDatabase.clauses.toList().filter { anonymousF1Clause matches it }
 
             assertClausesHaveSameLengthAndContent(
                 expectedIndexingOverF1 + expectedIndexingOverF1,
@@ -182,7 +182,7 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterTheoriesConcatenationForF2Family() {
         withFreshTheory {
             val generatedIndexingOverDoubledDatabaseForF2Family =
-                (theory + theory).clauses.toList().filter { it matches anonymousF2Clause }
+                (theory + theory).clauses.toList().filter { anonymousF2Clause matches it }
 
             assertClausesHaveSameLengthAndContent(
                 expectedIndexingOverF2 + expectedIndexingOverF2,
@@ -194,7 +194,7 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterTheoriesConcatenationForG1Family() {
         withFreshTheory {
             val generatedIndexingOverDoubledDatabaseForG1Family =
-                (theory + theory).clauses.toList().filter { it matches anonymousG1Clause }
+                (theory + theory).clauses.toList().filter { anonymousG1Clause matches it }
 
             assertClausesHaveSameLengthAndContent(
                 expectedIndexingOverG1 + expectedIndexingOverG1,
@@ -206,7 +206,7 @@ class PrototypeProperIndexingTest(
     fun correctIndexingAfterTheoriesConcatenationForG2Family() {
         withFreshTheory {
             val generatedIndexingOverDoubledDatabaseForG2Family =
-                (theory + theory).clauses.toList().filter { it matches anonymousG2Clause }
+                (theory + theory).clauses.toList().filter { anonymousG2Clause matches it }
 
             assertClausesHaveSameLengthAndContent(
                 expectedIndexingOverG2 + expectedIndexingOverG2,
@@ -222,7 +222,7 @@ class PrototypeProperIndexingTest(
                     .assertA(newF1AtomClause)
                     .clauses
                     .toList()
-                    .filter { it matches anonymousF1Clause }
+                    .filter { anonymousF1Clause matches it }
 
             assertTermsAreEqual(newF1AtomClause, generatedIndexingAfterAssertionA.first())
             assertClausesHaveSameLengthAndContent(
@@ -239,7 +239,7 @@ class PrototypeProperIndexingTest(
                     .assertA(newF1VarClause)
                     .clauses
                     .toList()
-                    .filter { it matches anonymousF1Clause }
+                    .filter { anonymousF1Clause matches it }
 
             assertTermsAreEqual(newF1VarClause, generatedIndexingAfterAssertionA.first())
             assertClausesHaveSameLengthAndContent(
@@ -256,7 +256,7 @@ class PrototypeProperIndexingTest(
                     .assertA(newF2AtomClause)
                     .clauses
                     .toList()
-                    .filter { it matches anonymousF2Clause }
+                    .filter { anonymousF2Clause matches it }
 
             assertTermsAreEqual(newF2AtomClause, generatedIndexingAfterAssertionA.first())
             assertClausesHaveSameLengthAndContent(
@@ -273,7 +273,7 @@ class PrototypeProperIndexingTest(
                     .assertA(newF2VarClause)
                     .clauses
                     .toList()
-                    .filter { it matches anonymousF2Clause }
+                    .filter { anonymousF2Clause matches it }
 
             assertTermsAreEqual(newF2VarClause, generatedIndexingAfterAssertionA.first())
             assertClausesHaveSameLengthAndContent(
@@ -290,7 +290,7 @@ class PrototypeProperIndexingTest(
                     .assertA(newF2MixedClause)
                     .clauses
                     .toList()
-                    .filter { it matches anonymousF2Clause }
+                    .filter { anonymousF2Clause matches it }
 
             assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.first())
             assertClausesHaveSameLengthAndContent(
@@ -307,7 +307,7 @@ class PrototypeProperIndexingTest(
                     .assertZ(newF1AtomClause)
                     .clauses
                     .toList()
-                    .filter { it matches anonymousF1Clause }
+                    .filter { anonymousF1Clause matches it }
 
             assertTermsAreEqual(newF1AtomClause, generatedIndexingAfterAssertionA.asReversed().first())
             assertClausesHaveSameLengthAndContent(
@@ -324,7 +324,7 @@ class PrototypeProperIndexingTest(
                     .assertZ(newF1VarClause)
                     .clauses
                     .toList()
-                    .filter { it matches anonymousF1Clause }
+                    .filter { anonymousF1Clause matches it }
 
             assertTermsAreEqual(newF1VarClause, generatedIndexingAfterAssertionA.asReversed().first())
             assertClausesHaveSameLengthAndContent(
@@ -341,7 +341,7 @@ class PrototypeProperIndexingTest(
                     .assertZ(newF2AtomClause)
                     .clauses
                     .toList()
-                    .filter { it matches anonymousF2Clause }
+                    .filter { anonymousF2Clause matches it }
 
             assertTermsAreEqual(newF2AtomClause, generatedIndexingAfterAssertionA.asReversed().first())
             assertClausesHaveSameLengthAndContent(
@@ -358,7 +358,7 @@ class PrototypeProperIndexingTest(
                     .assertZ(newF2VarClause)
                     .clauses
                     .toList()
-                    .filter { it matches anonymousF2Clause }
+                    .filter { anonymousF2Clause matches it }
 
             assertTermsAreEqual(newF2VarClause, generatedIndexingAfterAssertionA.asReversed().first())
             assertClausesHaveSameLengthAndContent(
@@ -375,7 +375,7 @@ class PrototypeProperIndexingTest(
                     .assertZ(newF2MixedClause)
                     .clauses
                     .toList()
-                    .filter { it matches anonymousF2Clause }
+                    .filter { anonymousF2Clause matches it }
 
             assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.asReversed().first())
             assertClausesHaveSameLengthAndContent(

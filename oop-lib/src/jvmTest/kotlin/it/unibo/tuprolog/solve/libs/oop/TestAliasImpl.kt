@@ -35,7 +35,7 @@ class TestAliasImpl(
         return OOPLib.clauses
             .asSequence()
             .filterIsInstance<Rule>()
-            .filter { it.head matches Struct.of(Alias.FUNCTOR, Var.anonymous(), ref) }
+            .filter { Struct.of(Alias.FUNCTOR, Var.anonymous(), ref) matches it.head }
             .map { it.head[0] as? Atom }
             .filterNotNull()
             .map { it.value }

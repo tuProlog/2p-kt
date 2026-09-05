@@ -35,7 +35,7 @@ internal class AtomIndex(
         if (clause.nestedFirstArgument().isAtom) {
             index[clause.asInnerAtom()]
                 ?.asSequence()
-                ?.filter { unificator.match(it.innerClause, clause) }
+                ?.filter { unificator.match(clause, it.innerClause) }
                 ?.map { it.innerClause }
                 ?: emptySequence()
         } else {
@@ -81,7 +81,7 @@ internal class AtomIndex(
         clause: Clause,
         index: MutableList<SituatedIndexedClause>,
     ): SituatedIndexedClause? {
-        val actualIndex = index.indexOfFirst { unificator.match(it.innerClause, clause) }
+        val actualIndex = index.indexOfFirst { unificator.match(clause, it.innerClause) }
 
         return if (actualIndex == -1) {
             null
@@ -94,7 +94,7 @@ internal class AtomIndex(
         if (clause.nestedFirstArgument().isAtom) {
             index[clause.asInnerAtom()]
                 ?.asSequence()
-                ?.filter { unificator.match(it.innerClause, clause) }
+                ?.filter { unificator.match(clause, it.innerClause) }
                 ?: emptySequence()
         } else {
             extractGlobalIndexedSequence(clause)
@@ -128,7 +128,7 @@ internal class AtomIndex(
         )
 
     override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
-        getCache().filter { unificator.match(it.innerClause, clause) }
+        getCache().filter { unificator.match(clause, it.innerClause) }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
         extractGlobalIndexedSequence(clause).map {

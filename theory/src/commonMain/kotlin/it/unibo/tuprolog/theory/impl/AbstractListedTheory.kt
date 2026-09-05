@@ -15,6 +15,6 @@ internal abstract class AbstractListedTheory protected constructor(
     final override fun get(clause: Clause): Sequence<Clause> =
         clauses
             .filter {
-                unificator.match(it, clause)
+                unificator.match(clause, it)
             }.asSequence()
 }

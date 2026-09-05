@@ -1,0 +1,831 @@
+Search for `matches|match\(`, found 217 results - 66 files
+
+core/build.gradle.kts:
+  51                          val rootVersion = rootProject.version.toString()
+  52:                         require(version matches SemanticVersion.semVerRegex) {
+  53                              "Invalid version of project ${project.name}: $version"
+
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Conversions.kt:
+  40      when {
+  41:         this matches VAR_NAME_PATTERN -> this.toVar()
+  42          else -> this.toAtom()
+
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:
+  141      /**
+  142:      * Returns `true` if and only if [functor] matches [Struct.WELL_FORMED_FUNCTOR_PATTERN].
+  143       */
+
+  218          /**
+  219:          * Checks if a [string] matches [WELL_FORMED_FUNCTOR_PATTERN].
+  220           * @param string the [String] to be checked
+  221:          * @return `true` if [string] matches [WELL_FORMED_FUNCTOR_PATTERN], `false` otherwise
+  222           */
+
+  224          @JsName("isWellFormedFunctor")
+  225:         fun isWellFormedFunctor(string: String): Boolean = Terms.WELL_FORMED_FUNCTOR_PATTERN.matches(string)
+  226  
+
+  251          /**
+  252:          * Checks if a [string] matches [NON_PRINTABLE_CHARACTER_PATTERN].
+  253           * @param string the [String] to be checked
+  254:          * @return `true` if [string] matches [NON_PRINTABLE_CHARACTER_PATTERN], `false` otherwise
+  255           */
+
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Var.kt:
+  59          fun escapeNameIfNecessary(string: String): String =
+  60:             if (Terms.VAR_NAME_PATTERN.matches(string)) {
+  61                  string
+
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/VarImpl.kt:
+  33  
+  34:     override val isNameWellFormed: Boolean by lazy { VAR_NAME_PATTERN.matches(name) }
+  35  
+
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/AtomTest.kt:
+  63              .zip(correctAtomInstances)
+  64:             .filter { (atomString, _) -> atomString matches Atom.ATOM_PATTERN }
+  65              .forEach { (_, atomInstance) ->
+
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/ConversionsTest.kt:
+  115      fun stringToTerm() {
+  116:         val correctAtoms = AtomUtils.mixedAtoms.filterNot { it matches Var.NAME_PATTERN }.map { Atom.of(it) }
+  117:         val toBeTestedAtoms = AtomUtils.mixedAtoms.filterNot { it matches Var.NAME_PATTERN }.map { it.toTerm() }
+  118  
+
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/IntegerTest.kt:
+  73      fun integersRespectItsRegexPattern() {
+  74:         IntegerUtils.stringNumbers.forEach { it matches Integer.PATTERN }
+  75          IntegerUtils.stringNumbers
+  76              .map { Integer.of(it) }
+  77:             .forEach { it.toString() matches Integer.PATTERN }
+  78      }
+
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/RealTest.kt:
+  50      fun realRespectItsRegexPattern() {
+  51:         RealUtils.stringNumbers.forEach { it matches Real.PATTERN }
+  52:         RealUtils.stringNumbers.map { Real.of(it) }.forEach { it.toString() matches Real.PATTERN }
+  53      }
+
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/VarTest.kt:
+  24      fun varRegexCorrect() {
+  25:         assertTrue(VarUtils.correctlyNamedVars.all { it matches Var.NAME_PATTERN })
+  26:         assertFalse(VarUtils.incorrectlyNamedVars.any { it matches Var.NAME_PATTERN })
+  27      }
+
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/impl/StructImplTest.kt:
+  106          mixedStructInstances
+  107:             .filter { it.functor matches Struct.WELL_FORMED_FUNCTOR_PATTERN }
+  108              .forEach { assertTrue { it.isFunctorWellFormed } }
+
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/impl/VarImplTest.kt:
+  144          onCorrespondingItems(correctNamedVarsToString, VarUtils.correctlyNamedVars) { underTestToString, varName ->
+  145:             assertTrue { underTestToString.matches("${varName}_[0-9]*".toRegex()) }
+  146          }
+
+  148          onCorrespondingItems(incorrectNamedVarsToString, VarUtils.incorrectlyNamedVars) { underTestToString, varName ->
+  149:             assertTrue { underTestToString.matches("`${varName}_[0-9]*`".toRegex()) }
+  150          }
+
+documentation/src/orchid/resources/wiki/Rationale and Architecture/substitutions-and-unification.md:
+   6  - `mgu(Term, Term): Substitution` tries to unify two Terms, returning the MGU if it succeds, or the Fail object otherwise;
+   7: - `match(Term, Term): Boolean` tells whether two Terms match each other, that is there's a MGU for them;
+   8  - `unify(Term, Term): Term?` tries to unify two Terms, possibly returning the unified Term in case of success.
+
+  53  
+  54: These variants -- namely `mguWith`, `matches`, `unifyWith` -- allow developers to employ unification features in a more light and intuitive way, by exploting the syntactic tools provided by the Kotlin language.
+  55  
+
+documentation/src/orchid/resources/wiki/Rationale and Architecture/term-hierarchy.md:
+  187  If a variable simple name is `"_"`, then the variable is said to be _anonymous_.
+  188: Furthermore, if a variable simple name matches the `[_A-Z](_A-Za-z0-9)*` regex, then the variable is said to be _well-formed_.
+  189  
+
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AbstractTermificator.kt:
+  54      protected fun handleStringAsAtomOrVariable(value: String) =
+  55:         if (value matches Var.NAME_PATTERN) {
+  56              scope.varOf(value)
+
+dsl-unify/src/commonMain/kotlin/it/unibo/tuprolog/dsl/unify/LogicProgrammingScopeWithUnification.kt:
+  14  
+  15:     @JsName("anyMatches")
+  16:     infix fun Any.matches(other: Any): Boolean =
+  17:         this@LogicProgrammingScopeWithUnification.match(this.toTerm(), other.toTerm())
+  18  
+
+  30      @JsName("matchAny")
+  31:     fun match(
+  32          term1: Any,
+
+  34          occurCheckEnabled: Boolean = true,
+  35:     ): Boolean = match(term1.toTerm(), term2.toTerm(), occurCheckEnabled)
+  36  
+
+dsl-unify/src/commonTest/kotlin/it/unibo/tuprolog/dsl/unify/TestLogicProgrammingScopeWithUnification.kt:
+  61      @Test
+  62:     fun testMatches() =
+  63          logicProgramming {
+  64:             assertTrue(term1 matches term2)
+  65          }
+
+  67      @Test
+  68:     fun testMatch() =
+  69          logicProgramming {
+  70:             assertTrue(match(term1, term2))
+  71          }
+
+examples/src/main/kotlin/it/unibo/tuprolog/examples/unify/Caching.kt:
+  17      val substitution: Substitution = cached.mgu(term, template)
+  18:     val match: Boolean = cached.match(term, template)
+  19      val unified: Term? = cached.unify(term, template)
+
+examples/src/main/kotlin/it/unibo/tuprolog/examples/unify/CustomUnificator.kt:
+  33  
+  34:         val match = unificator.match(term1, term2) // true
+  35  
+
+examples/src/main/kotlin/it/unibo/tuprolog/examples/unify/Failure.kt:
+  15      val substitution: Substitution = unificator.mgu(term, template)
+  16:     val match: Boolean = unificator.match(term, template)
+  17      val unified: Term? = unificator.unify(term, template)
+
+examples/src/main/kotlin/it/unibo/tuprolog/examples/unify/InfixMethods.kt:
+   5  import it.unibo.tuprolog.core.Var
+   6: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   7  import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+
+  14      println(term mguWith template) // {X_0=abraham}
+  15:     println(term matches template) // true
+  16      println(term unifyWith template) // father(abraham, isaac)
+
+examples/src/main/kotlin/it/unibo/tuprolog/examples/unify/Success.kt:
+  16      val substitution: Substitution = unificator.mgu(term, template)
+  17:     val match: Boolean = unificator.match(term, template)
+  18      val unified: Term? = unificator.unify(term, template)
+
+ide/src/main/kotlin/it/unibo/tuprolog/ui/gui/SyntaxColoring.kt:
+  110      private fun computeHighlighting(text: String): StyleSpans<Collection<String>> {
+  111:         val matches = patternCache.value.findAll(text)
+  112          var lastKwEnd = 0
+  113          val spansBuilder = StyleSpansBuilder<Collection<String>>()
+  114:         for (match in matches) {
+  115              val styleClass = match.styleClass
+
+  136                  .map {
+  137:                     if (it.matches(BASIC_ATOM_PATTERN)) {
+  138                          wordify(it)
+
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:
+  181      fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidProperty(term: Term): Term =
+  182:         if (validPropertiesPattern.any { match(it, term) }) {
+  183              term
+
+  189      fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsSupportedProperty(term: Term): Term =
+  190:         if (supportedPropertiesPattern.any { match(it, term) }) {
+  191              term
+
+  197      fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidOption(term: Term): Term =
+  198:         if (validOptionsPattern.any { match(it, term) }) {
+  199              term
+
+  205      fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidInfo(term: Term): Term =
+  206:         if (validInfoPattern.any { match(it, term) }) {
+  207              term
+
+  241              .filterIsInstance<Struct>()
+  242:             .filter { unificator.match(it, pattern) }
+  243              .map { it[0] }
+
+  254              .filterIsInstance<Struct>()
+  255:             .firstOrNull { unificator.match(it, pattern) }
+  256              ?.let { unificator.mgu(it, value) }
+
+  283              is Struct -> {
+  284:                 if (sequenceOf(PROPERTY_INPUT, PROPERTY_OUTPUT, PROPERTY_ALIAS_PATTERN).any { match(it, term) }) {
+  285                      return this
+
+  323                  when {
+  324:                     match(term, OUTPUT_STREAM_TERM_PATTERN) -> {
+  325                          return context.outputChannels
+
+  329                      }
+  330:                     match(term, INPUT_STREAM_TERM_PATTERN) -> {
+  331                          return context.inputChannels
+
+  374              }
+  375:             match(term, OUTPUT_STREAM_TERM_PATTERN) -> {
+  376                  context.outputChannels
+
+  380              }
+  381:             match(term, INPUT_STREAM_TERM_PATTERN) -> {
+  382                  context.inputChannels
+
+  559              }
+  560:         val alias = options.firstOrNull { match(it, PROPERTY_ALIAS_PATTERN) }?.alias
+  561          return when (mode) {
+
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/exceptions/NoSuchAnAliasException.kt:
+   9  import it.unibo.tuprolog.solve.libs.oop.primitives.DEALIASING_TEMPLATE
+  10: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+  11  
+
+  18      init {
+  19:         require(dealiasingExpression matches DEALIASING_TEMPLATE)
+  20          require(dealiasingExpression[0] is Struct)
+
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:
+   21  import it.unibo.tuprolog.solve.libs.oop.subTypeDistance
+   22: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   23  import it.unibo.tuprolog.utils.indexed
+
+   89                  when {
+   90:                     term matches CAST_TEMPLATE -> explicitConversion(term, term[0], term[1])
+   91:                     term matches DEALIASING_TEMPLATE ->
+   92                          when (val ref = dealiaser(term)) {
+
+  130                  when {
+  131:                     typeTerm matches DEALIASING_TEMPLATE ->
+  132                          when (val ref = dealiaser(typeTerm)) {
+
+  197                  when {
+  198:                     term matches CAST_TEMPLATE -> sequenceOf(getType(term, term[1]))
+  199:                     term matches DEALIASING_TEMPLATE ->
+  200                          when (val ref = dealiaser(term)) {
+
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/Assign.kt:
+  27              val value =
+  28:                 if (match(third, DEALIASING_TEMPLATE)) {
+  29                      findRefFromAlias(third as Struct)
+
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:
+  31  internal fun <C : ExecutionContext> Solve.Request<C>.isDealiasingExpression(term: Term): Boolean =
+  32:     term is Struct && match(term, DEALIASING_TEMPLATE) && term.args[0] is Atom
+  33  
+  34: internal fun <C : ExecutionContext> Solve.Request<C>.matchesDealiasingTemplate(term: Term): Boolean =
+  35:     term is Struct && match(term, DEALIASING_TEMPLATE)
+  36  
+
+  41      return when {
+  42:         matchesDealiasingTemplate(arg) && ensureAliasIsRegistered(arg.castToStruct()) -> this
+  43          arg !is Ref -> throw TypeError.forArgument(context, signature, TypeError.Expected.REFERENCE, arg, index)
+
+  50      return when {
+  51:         matchesDealiasingTemplate(arg) && findRefFromAlias(arg.castToStruct()) is ObjectRef -> this
+  52          arg !is ObjectRef -> throw TypeError.forArgument(
+
+  65      return when {
+  66:         matchesDealiasingTemplate(arg) && findRefFromAlias(arg.castToStruct()) is TypeRef -> this
+  67          arg !is TypeRef -> throw TypeError.forArgument(
+
+oop-lib/src/jvmMain/kotlin/it/unibo/tuprolog/solve/libs/oop/TypeUtilsJvm.kt:
+  42  actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
+  43:     require(CLASS_NAME_PATTERN.matches(qualifiedName)) {
+  44          "`$qualifiedName` must match ${CLASS_NAME_PATTERN.pattern} while it doesn't"
+
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestAliasImpl.kt:
+  18  import it.unibo.tuprolog.solve.yes
+  19: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+  20  import org.gciatto.kt.math.BigDecimal
+
+  37              .filterIsInstance<Rule>()
+  38:             .filter { it.head matches Struct.of(Alias.FUNCTOR, Var.anonymous(), ref) }
+  39              .map { it.head[0] as? Atom }
+
+parser-jvm/src/main/java/it/unibo/tuprolog/parser/dynamic/DynamicParser.java:
+  102  
+  103:         if (Stream.of(except).filter(this::isOperator).anyMatch(o -> lookahead.getText().equals(o))) {
+  104              return OptionalInt.empty();
+
+  125  
+  126:         boolean result = Stream.of(except).filter(this::isOperator).noneMatch(o -> lookahead.getText().equals(o))
+  127:                          && associativities.stream().anyMatch(a -> isOperatorAssociativity(lookahead, a));
+  128  
+
+  193  
+  194:         final boolean result = Stream.of(except).filter(this::isOperator).noneMatch(o -> lookahead.getText().equals(o))
+  195:                                && associativities.stream().anyMatch(associativity -> {
+  196                                      if (!isOperatorAssociativity(lookahead, associativity)) {
+
+parser-theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/parsing/TestClausesParser.kt:
+   15      companion object {
+   16:         fun assertMatch(
+   17              expected: Term,
+
+   20              assertTrue("Term `$actual` does not unify with `$expected`") {
+   21:                 Unificator.default.match(expected, actual)
+   22              }
+
+   24  
+   25:         fun assertMatch(
+   26              expected: Term,
+
+   28          ) {
+   29:             assertMatch(expected, LogicProgrammingScope.of().actual())
+   30          }
+
+   46          assertEquals(rules[1], logicProgramming { factOf("f"(2)) })
+   47:         assertMatch(rules[2]) {
+   48              "f"("X") impliedBy "g"("X")
+   49          }
+   50:         assertMatch(directives[0]) {
+   51              directiveOf("f"("X"), "g"("X"))
+
+   84  
+   85:         assertMatch(th.elementAt(0)) {
+   86              directive { "op"(900, "xfy", "::") }
+
+   88  
+   89:         assertMatch(th.elementAt(1)) {
+   90              fact { "nil" }
+
+   92  
+   93:         assertMatch(th.elementAt(2)) {
+   94              fact { "::"(1, "nil") }
+
+   96  
+   97:         assertMatch(th.elementAt(3)) {
+   98              fact { "::"(1, "::"(2, "nil")) }
+
+  117  
+  118:         assertMatch(th.elementAt(0)) {
+  119              directive { "op"(900, "yfx", logicListOf("++", "--")) }
+
+  121  
+  122:         assertMatch(th.elementAt(1)) {
+  123              fact { "++"(1, 2) }
+
+  125  
+  126:         assertMatch(th.elementAt(2)) {
+  127              fact { "--"(1, 2) }
+
+  129  
+  130:         assertMatch(th.elementAt(3)) {
+  131              fact { "++"("--"(1, 2), 3) }
+
+  133  
+  134:         assertMatch(th.elementAt(4)) {
+  135              fact { "++"("--"("++"(1, 2), 3), 4) }
+
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Signature.kt:
+  73      // a method to retrieve matching vararg Signatures should also be added to [Library] interface, and return only one result;
+  74:     // this method should use "includedBy(Signature)" to retrieve matches and the sort them with the rule above
+  75  
+
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/channel/impl/AbstractChannelStore.kt:
+   5  import it.unibo.tuprolog.solve.channel.ChannelStore
+   6: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   7  
+
+  34      override fun findByTerm(streamTerm: Term): Sequence<C> =
+  35:         values.asSequence().filter { it.streamTerm matches streamTerm }
+  36  
+
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/library/Library.kt:
+  71          ): Library {
+  72:             require(ALIAS_PATTERN.matches(alias)) {
+  73                  "Aliases should match the pattern $ALIAS_PATTERN"
+
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:
+  60          @JvmStatic
+  61:         fun <C : ExecutionContext> Solve.Request<C>.match(
+  62              term1: Term,
+  63              term2: Term,
+  64:         ): Boolean = context.unificator.match(term1, term2)
+  65  
+
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/NotUnifiableWith.kt:
+  12          second: Term,
+  13:     ): Boolean = !match(first, second)
+  14  }
+
+solve-concurrent/src/jvmTest/kotlin/it/unibo/tuprolog/solve/concurrent/TestConcurrentSolutionPresentation.kt:
+  23              assertTrue { setOf(A, B).all { it in sol.substitution.keys } }
+  24:             assertTrue { sol.substitution[A]!! matches "seq"(`_`) }
+  25              assertEquals("X", (sol.substitution[B] as? Var)?.name)
+
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/SideEffectManagerImpl.kt:
+   9  import it.unibo.tuprolog.solve.streams.stdlib.primitive.Cut
+  10: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+  11  
+
+  97  
+  98:         return ancestorCatchesRequests.find { it.arguments[1].matches(toUnifyArgument) }
+  99      }
+
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateRuleSelection.kt:
+  110          /**
+  111:          * Retrieves from receiver [ExecutionContext] those rules whose head matches [currentGoal]
+  112           *
+  113:          * 1) It searches for matches inside libraries, if nothing found
+  114           * 2) it looks inside both staticKb and dynamicKb
+
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/primitive/ConjunctionTest.kt:
+  14  import it.unibo.tuprolog.solve.streams.primitive.testutils.ConjunctionUtils.trueAndTrueSolveRequest
+  15: import it.unibo.tuprolog.solve.streams.primitive.testutils.ConjunctionUtils.twoMatchesDB
+  16  import it.unibo.tuprolog.solve.streams.primitive.testutils.PrimitiveUtils.assertOnlyOneSolution
+
+  38          myRequestToSolutions.forEach { (goal, solutions) ->
+  39:             val responses = Conjunction.implementation.solve(createSolveRequest(goal, twoMatchesDB)).asIterable()
+  40  
+
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/primitive/testutils/ConjunctionUtils.kt:
+  16  
+  17:     internal val twoMatchesDB = logicProgramming { theory({ "f"("a") }, { "f"("b") }) }
+  18      internal val myRequestToSolutions =
+
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateRuleSelectionTest.kt:
+   11  import it.unibo.tuprolog.solve.streams.solver.fsm.impl.testutils.StateRuleSelectionUtils.createRequest
+   12: import it.unibo.tuprolog.solve.streams.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToMultipleMatchesTheoryAndSubstitution
+   13: import it.unibo.tuprolog.solve.streams.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToNoMatchesTheoryMap
+   14  import it.unibo.tuprolog.solve.streams.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToOneMatchFactTheoryAndSubstitution
+
+   52      fun noMatchingRulesFoundMakeItGoIntoFalseState() {
+   53:         queryToNoMatchesTheoryMap.forEach { (queryStruct, noMatchesDB) ->
+   54:             val nextStates = StateRuleSelection(createRequest(queryStruct, noMatchesDB)).behave()
+   55  
+
+   83      fun stateRuleSelectionFindsCorrectlyMultipleSolutions() {
+   84:         queryToMultipleMatchesTheoryAndSubstitution.forEach { (queryStruct, oneMatchDB, expectedSubstitution) ->
+   85              val nextStates = StateRuleSelection(createRequest(queryStruct, oneMatchDB)).behave()
+
+   95      @Test
+   96:     fun stateRuleSelectionUsesFirstlyLibraryTheoryIfMatchesFoundAndNotOthers() {
+   97          val nextStates = StateRuleSelection(threeDBSolveRequest).behave().toList()
+
+  104      @Test
+  105:     fun stateRuleSelectionUsesCombinationOfStaticAndDynamicKBWhenLibraryTheoriesDoesntProvideMatches() {
+  106          val dynamicAndStaticKBSolveRequest =
+
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/testutils/StateRuleSelectionUtils.kt:
+  23  
+  24:     /** Test data in the form (query Struct, a database with no query matches) */
+  25:     internal val queryToNoMatchesTheoryMap by lazy {
+  26          logicProgramming {
+
+  33  
+  34:     /** Test data in the form (query struct, a database with one fact that matches, the resulting Substitution) */
+  35      internal val queryToOneMatchFactTheoryAndSubstitution by lazy {
+
+  52  
+  53:     /** Test data in the form (query struct, a database with one rule that matches, the resulting Substitution) */
+  54      internal val queryToOneMatchRuleTheoryAndSubstitution by lazy {
+
+  70  
+  71:     /** Test data in the form (query struct, a database with multiple matches, the result Substitutions in order) */
+  72:     internal val queryToMultipleMatchesTheoryAndSubstitution by lazy {
+  73          logicProgramming {
+
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolutionPresentationImpl.kt:
+  21              assertTrue { setOf(A, B).all { it in sol.substitution.keys } }
+  22:             assertTrue { sol.substitution[A]!! matches "seq"(`_`) }
+  23              assertEquals("X", (sol.substitution[B] as? Var)?.name)
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/AbstractReteNode.kt:
+  17                  val it = iter.next()
+  18:                 if (unificator.match(it.innerClause, clause)) {
+  19                      it.invalidateAllCaches()
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/leaf/AtomIndex.kt:
+   37                  ?.asSequence()
+   38:                 ?.filter { unificator.match(it.innerClause, clause) }
+   39                  ?.map { it.innerClause }
+
+   83      ): SituatedIndexedClause? {
+   84:         val actualIndex = index.indexOfFirst { unificator.match(it.innerClause, clause) }
+   85  
+
+   96                  ?.asSequence()
+   97:                 ?.filter { unificator.match(it.innerClause, clause) }
+   98                  ?: emptySequence()
+
+  130      override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
+  131:         getCache().filter { unificator.match(it.innerClause, clause) }
+  132  
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/leaf/DirectiveIndex.kt:
+  28          directives
+  29:             .filter { unificator.match(it.innerClause, clause) }
+  30              .map { it.innerClause }
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/leaf/NumericIndex.kt:
+   37                  ?.asSequence()
+   38:                 ?.filter { unificator.match(it.innerClause, clause) }
+   39                  ?.map { it.innerClause }
+
+   84      ): SituatedIndexedClause? {
+   85:         val actualIndex = index.indexOfFirst { unificator.match(it.innerClause, clause) }
+   86  
+
+   97                  ?.asSequence()
+   98:                 ?.filter { unificator.match(it.innerClause, clause) }
+   99                  ?: emptySequence()
+
+  132      override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
+  133:         getCache().filter { unificator.match(it.innerClause, clause) }
+  134  
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/leaf/VariableIndex.kt:
+  59      ): SituatedIndexedClause? {
+  60:         val actualIndex = index.indexOfFirst { unificator.match(it.innerClause, clause) }
+  61  
+
+  69      override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
+  70:         variables.asSequence().filter { unificator.match(it.innerClause, clause) }
+  71  
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FunctorIndexingNode.kt:
+  61                      },
+  62:                 ).firstOrNull { unificator.match(it.innerClause, clause) }
+  63          } else {
+
+  85                          },
+  86:                     ).filter { unificator.match(it.innerClause, clause) }
+  87                      .toList()
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/ZeroArityReteNode.kt:
+  34      override fun get(clause: Clause): Sequence<Clause> =
+  35:         atoms.asSequence().filter { unificator.match(it.innerClause, clause) }.map { it.innerClause }
+  36  
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/generic/set/ArgNode.kt:
+   6  import it.unibo.tuprolog.core.Term
+   7: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   8  
+
+  54                  children.retrieve(
+  55:                     keyFilter = { head -> head != null && head matches nextArg },
+  56                      typeChecker = { it.isArgNode },
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/generic/set/ArityNode.kt:
+   6  import it.unibo.tuprolog.core.Term
+   7: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   8  
+
+  46                  children.retrieve(
+  47:                     keyFilter = { head -> head != null && head matches element.head[0] },
+  48                      typeChecker = { it.isArgNode },
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/generic/set/DirectiveNode.kt:
+   4  import it.unibo.tuprolog.core.Directive
+   5: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   6  
+
+  17  
+  18:     override fun get(element: Directive): Sequence<Directive> = indexedElements.filter { it matches element }
+  19  
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/generic/set/RuleNode.kt:
+   4  import it.unibo.tuprolog.core.Rule
+   5: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   6  
+
+  17  
+  18:     override fun get(element: Rule): Sequence<Rule> = indexedElements.filter { it matches element }
+  19  
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/impl/AbstractListedTheory.kt:
+  17              .filter {
+  18:                 unificator.match(it, clause)
+  19              }.asSequence()
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/impl/ListedTheory.kt:
+  39      override fun retract(clause: Clause): RetractResult<ListedTheory> {
+  40:         val retractability = clauses.filter { unificator.match(it, clause) }
+  41          return when {
+
+  61              val current = i.next()
+  62:             if (clauses.any { unificator.match(it, current) }) {
+  63                  i.remove()
+
+  74      override fun retractAll(clause: Clause): RetractResult<ListedTheory> {
+  75:         val retractability = clauses.filter { unificator.match(it, clause) }
+  76          return when {
+
+  78              else -> {
+  79:                 val partitionedClauses = clauses.toList().partition { unificator.match(it, clause) }
+  80                  val newTheory = partitionedClauses.second
+
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/impl/MutableListedTheory.kt:
+  51              val c = i.next()
+  52:             if (unificator.match(c, clause)) {
+  53                  i.remove()
+
+  65              for (clause in clauses) {
+  66:                 if (unificator.match(c, clause)) {
+  67                      retracted.add(c)
+
+  83              val c = i.next()
+  84:             if (unificator.match(c, clause)) {
+  85                  retracted.add(c)
+
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/custom/ReteTreeAssertionUtils.kt:
+   15  import it.unibo.tuprolog.core.Var
+   16: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   17  import it.unibo.tuprolog.utils.interleave
+
+  226  
+  227:     fun assertMatches(
+  228          expected: Term,
+
+  231          assertTrue("$actual should match $expected") {
+  232:             expected matches actual
+  233          }
+
+  235  
+  236:     fun assertDoesNotMatch(
+  237          expected: Term,
+
+  240          assertFalse("$actual should not match $expected") {
+  241:             expected matches actual
+  242          }
+
+theory/src/commonTest/kotlin/it/unibo/tuprolog/testutils/ReteNodeUtils.kt:
+   14  import it.unibo.tuprolog.core.Var
+   15: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   16  import kotlin.math.min
+
+   66              Rule.of(Struct.of("a", Atom.of("other")), Var.anonymous()).run {
+   67:                 this to rules.filter { it matches this }
+   68              },
+   69              Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())).run {
+   70:                 this to rules.filter { it matches this }
+   71              },
+   72              Rule.of(Struct.of("a", Var.anonymous()), Var.anonymous()).run {
+   73:                 this to rules.filter { it matches this }
+   74              },
+
+  108              Directive.of(Var.anonymous(), Struct.of("a", Atom.of("other"))).run {
+  109:                 this to directives.filter { it matches this }
+  110              },
+  111              Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())).run {
+  112:                 this to directives.filter { it matches this }
+  113              },
+
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeProperIndexingTest.kt:
+   11  import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
+   12: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   13  
+
+  135              val generatedIndexingOverF1Family =
+  136:                 theory.clauses.toList().filter { it matches anonymousF1Clause }
+  137  
+
+  144              val generatedIndexingOverF2Family =
+  145:                 theory.clauses.toList().filter { it matches anonymousF2Clause }
+  146  
+
+  153              val generatedIndexingOverG1Family =
+  154:                 theory.clauses.toList().filter { it matches anonymousG1Clause }
+  155  
+
+  162              val generatedIndexingOverG2Family =
+  163:                 theory.clauses.toList().filter { it matches anonymousG2Clause }
+  164  
+
+  172              val generatedIndexingOverDoubledDatabaseForF1Family =
+  173:                 doubledDatabase.clauses.toList().filter { it matches anonymousF1Clause }
+  174  
+
+  184              val generatedIndexingOverDoubledDatabaseForF2Family =
+  185:                 (theory + theory).clauses.toList().filter { it matches anonymousF2Clause }
+  186  
+
+  196              val generatedIndexingOverDoubledDatabaseForG1Family =
+  197:                 (theory + theory).clauses.toList().filter { it matches anonymousG1Clause }
+  198  
+
+  208              val generatedIndexingOverDoubledDatabaseForG2Family =
+  209:                 (theory + theory).clauses.toList().filter { it matches anonymousG2Clause }
+  210  
+
+  224                      .toList()
+  225:                     .filter { it matches anonymousF1Clause }
+  226  
+
+  241                      .toList()
+  242:                     .filter { it matches anonymousF1Clause }
+  243  
+
+  258                      .toList()
+  259:                     .filter { it matches anonymousF2Clause }
+  260  
+
+  275                      .toList()
+  276:                     .filter { it matches anonymousF2Clause }
+  277  
+
+  292                      .toList()
+  293:                     .filter { it matches anonymousF2Clause }
+  294  
+
+  309                      .toList()
+  310:                     .filter { it matches anonymousF1Clause }
+  311  
+
+  326                      .toList()
+  327:                     .filter { it matches anonymousF1Clause }
+  328  
+
+  343                      .toList()
+  344:                     .filter { it matches anonymousF2Clause }
+  345  
+
+  360                      .toList()
+  361:                     .filter { it matches anonymousF2Clause }
+  362  
+
+  377                      .toList()
+  378:                     .filter { it matches anonymousF2Clause }
+  379  
+
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:
+  29      @JsName("matchWithOccurCheck")
+  30:     fun match(
+  31          term1: Term,
+
+  38      @JsName("match")
+  39:     fun match(
+  40          term1: Term,
+  41          term2: Term,
+  42:     ): Boolean = match(term1, term2, true)
+  43  
+
+  92          @JvmStatic
+  93:         @JsName("matches")
+  94:         infix fun Term.matches(other: Term): Boolean = default.match(this, other)
+  95  
+
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/AbstractUnificatorTest.kt:
+   59          assertMatchCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
+   60:             myStrategy.match(term1, term2, true)
+   61          }
+   62          assertMatchCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
+   63:             myStrategy.match(term1, term2, false)
+   64          }
+
+   84      fun matchWorksAsExpectedWithNegativeExamples() {
+   85:         assertMatchCorrect(UnificatorUtils.failedUnifications) { term1, term2 -> myStrategy.match(term1, term2, true) }
+   86          assertMatchCorrect(UnificatorUtils.failedUnifications) { term1, term2 ->
+   87:             myStrategy.match(term1, term2, false)
+   88          }
+
+  110          assertMatchCorrect(UnificatorUtils.occurCheckFailedUnifications) { term1, term2 ->
+  111:             myStrategy.match(term1, term2, true)
+  112          }
+
+  133          assertMguCorrect(correctnessMap) { term1, term2 -> myStrategy.mgu(term1, term2, false) }
+  134:         assertMatchCorrect(correctnessMap) { term1, term2 -> myStrategy.match(term1, term2, false) }
+  135          assertUnifiedTermCorrect(correctnessMap) { term1, term2 -> myStrategy.unify(term1, term2, false) }
+
+  155              myStrategyConstructor,
+  156:         ) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
+  157  
+
+  161              myStrategyConstructor,
+  162:         ) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
+  163  
+
+  181                  assertTrue {
+  182:                     match(pattern, memberClause)
+  183                  }
+
+  192                  assertFalse {
+  193:                     match(pattern, memberClause)
+  194                  }
+
+  216              myStrategyConstructor,
+  217:         ) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
+  218  
+
+  222              myStrategyConstructor,
+  223:         ) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
+  224  
+
+  246          with(myStrategyConstructor(Substitution.empty())) {
+  247:             assertFalse { match(ints, atoms, true) }
+  248:             assertFalse { match(ints, atoms, false) }
+  249:             assertTrue { match(ints, ints, true) }
+  250:             assertTrue { match(ints, ints, false) }
+  251:             assertTrue { match(atoms, atoms, true) }
+  252:             assertTrue { match(atoms, atoms, false) }
+  253:             assertTrue { match(ints, intsAndVars, true) }
+  254:             assertTrue { match(ints, intsAndVars, false) }
+  255:             assertTrue { match(atoms, atomsAndVars, true) }
+  256:             assertTrue { match(atoms, atomsAndVars, false) }
+  257          }
+
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/UnificatorTest.kt:
+   7  import it.unibo.tuprolog.core.Var
+   8: import it.unibo.tuprolog.unify.Unificator.Companion.matches
+   9  import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+
+  72      @Test
+  73:     fun matchesFunctionWorksAsExpected() {
+  74          val toTestUnification = UnificatorUtils.successfulUnifications + UnificatorUtils.failedUnifications
+  75  
+  76:         assertMatchCorrect(toTestUnification) { term1, term2 -> term1 matches term2 }
+  77      }
+
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/NumberTypeTester.kt:
+  14          get() {
+  15:             return INT_REGEX.matches(stringRepresentation)
+  16          }

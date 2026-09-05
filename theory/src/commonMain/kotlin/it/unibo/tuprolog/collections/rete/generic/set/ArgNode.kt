@@ -52,7 +52,7 @@ internal data class ArgNode(
             index < element.head.arity - 1 -> {
                 val nextArg = element.head[index + 1]
                 children.retrieve(
-                    keyFilter = { head -> head != null && head matches nextArg },
+                    keyFilter = { head -> head != null && nextArg matches head },
                     typeChecker = { it.isArgNode },
                     caster = { it.castToArgNode() },
                 )
