@@ -1,3 +1,5 @@
+@file:Suppress("TooGenericExceptionCaught")
+
 package it.unibo.tuprolog.solve.libs.io
 
 import it.unibo.tuprolog.solve.channel.InputChannel
@@ -29,7 +31,16 @@ actual fun remoteUrl(
     query: String?,
 ): Url = JsUrl(protocol, host, port, path, query)
 
-internal actual fun Url.toLocalPath(): Path = (FILE_URL_TO_PATH(toString()) as String).toPath()
+internal actual fun Url.toLocalPath(): Path =
+    try {
+        (FILE_URL_TO_PATH(toString()) as String).toPath()
+    } catch (e: Throwable) {
+        // fileURLToPath (on Windows) requires either a UNC host or a genuine `<letter>:` drive
+        // prefix, and throws for a plain Unix-shaped absolute path (e.g. `/path/to/x.pl`) - even
+        // though such a path is exactly what Node's own fs calls happily resolve relative to the
+        // current drive. Fall back to the URL's plain (already `/`-rooted) path component.
+        path.toPath()
+    }
 
 actual fun Url.openInputChannel(): InputChannel<String> =
     if (isFile && isNode) {

@@ -76,6 +76,19 @@ class TestWindowsPathParsing {
     }
 
     @Test
+    fun testUnixShapedAbsolutePathResolvesLocallyOnWindowsToo() {
+        // On Windows, Node's fileURLToPath requires a UNC host or a genuine drive-letter prefix,
+        // and throws (a TypeError) for a plain Unix-shaped absolute path like this one - even
+        // though real fs calls happily resolve it relative to the current drive. toLocalPath must
+        // fall back gracefully instead of propagating that crash (this is exactly the shape of path
+        // the "missing theory"/"missing include" test fixtures use, on every platform).
+        val url = Url.of("/path/to/missing/resource.pl")
+        assertEquals("file", url.protocol)
+        // Must not throw.
+        url.toLocalPath()
+    }
+
+    @Test
     fun testHttpUrlWithBareRootPathIsUnaffected() {
         // Regression check: the file:-URL/drive-letter handling above must not affect http parsing.
         // Non-default port: standard URL parsers normalize away a port matching the scheme default.
