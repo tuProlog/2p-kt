@@ -1,3 +1,28 @@
+## [1.4.0](https://github.com/tuProlog/2p-kt/compare/1.3.1...1.4.0) (2026-09-06)
+
+### Features
+
+* enforce coherent argument order usages of Unificator + add formatting facilities for tagged terms  ([caa8668](https://github.com/tuProlog/2p-kt/commit/caa86683feb353017ed20d56eb7da68a404e5bc1))
+
+### Dependency updates
+
+* **deps:** remove now useless ANTLR dependencies from libs.versions.toml ([276b329](https://github.com/tuProlog/2p-kt/commit/276b329817765ca4aeaea978003c3278ded5c9c4))
+* **deps:** update ktmpp to v5.2.4 ([#856](https://github.com/tuProlog/2p-kt/issues/856)) ([792ca83](https://github.com/tuProlog/2p-kt/commit/792ca836bedb3703147dfefe58e239f3d7ea357b))
+* **deps:** update node.js to 24.20 ([#917](https://github.com/tuProlog/2p-kt/issues/917)) ([6402842](https://github.com/tuProlog/2p-kt/commit/6402842c5819d40f44b1795212418462a717f29a))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.23 ([#909](https://github.com/tuProlog/2p-kt/issues/909)) ([a8fa5c7](https://github.com/tuProlog/2p-kt/commit/a8fa5c7b2a4a3a86978b53790469c6a4a0311852))
+* **deps:** use kt-mpp 5.3 ([b8b0fb0](https://github.com/tuProlog/2p-kt/commit/b8b0fb0f301031b7769f06d1a59e52d67fb88144))
+
+### Bug Fixes
+
+* add runCatchingStackOverflow to :parser-impl to avoid stack overflow errors while parsing ([1d671ab](https://github.com/tuProlog/2p-kt/commit/1d671aba5092475ce7cf48d38919cd159af1171b))
+* **build:** gradle tasks for running JavaFX apps ([c3bc2c0](https://github.com/tuProlog/2p-kt/commit/c3bc2c017659db22423ce4ebc20e05af1f3d64c1))
+
+### General maintenance
+
+* **ci:** improve CI's caching and extensive testing targets ([fdb7c64](https://github.com/tuProlog/2p-kt/commit/fdb7c64e240d1683714a90bf98eae595ce1e8174))
+* cleanup search-for* files leaked by last PR ([199df56](https://github.com/tuProlog/2p-kt/commit/199df567e71607ec415241115371ca0976fbdf0e))
+* **readme:** remove picture urls pointing to GL, replace with GH ([242be2c](https://github.com/tuProlog/2p-kt/commit/242be2c646222fd81b7ae9435c3f8e97e3234ec6))
+
 ## [1.3.1](https://github.com/tuProlog/2p-kt/compare/1.3.0...1.3.1) (2026-09-03)
 
 ### Dependency updates
