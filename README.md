@@ -25,7 +25,7 @@ manipulation and reasoning in an extensible and flexible way.
 
 A complete overview about modules and their dependencies is provided by the following diagram: 
 
-![2P-Kt project map](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/.img/project-map.png)
+![2P-Kt project map](https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/project-map.png)
 
 As shown in the project map, 2P-Kt currently focuses on supporting knowledge representation and automatic reasoning through logic programming, 
 by featuring:
@@ -121,7 +121,7 @@ However, if you have properly configured the JVM on your system, it may be suffi
 aforementioned JAR to start the IDE.
 In any case, running the JAR should make the following window appear:
 
-![A screenshot of the 2P-Kt IDE](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/.img/2p-kt-ide.png)
+![A screenshot of the 2P-Kt IDE](https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/2p-kt-ide.png)
 
 There, one may query the 2P-Kt Prolog interpreter against the currently opened theory file, which can of course be 
 loaded from the user's file system by pressing <kbd>File</kbd> and then <kbd>Open...</kbd>.
@@ -187,7 +187,7 @@ A normal output should be as follows:
 
 For instance:
 
-![A screenshot of the 2P-Kt CLI](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/.img/2p-kt-repl.png)
+![A screenshot of the 2P-Kt CLI](https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/2p-kt-repl.png)
 
 Other options or modes of execution are supported.
 One can explore them via the program help, which can be displayed by running:
