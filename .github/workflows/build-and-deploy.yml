@@ -11,6 +11,7 @@ jobs:
         uses: DanySK/action-checkout@0.2.31
       - uses: DanySK/build-check-deploy-gradle-action@4.0.43
         with:
+          retries-on-failure: '2'
           # Dry-deployment
           deploy-command: >-
             ./gradlew
@@ -18,6 +19,7 @@ jobs:
             zipMavenCentralPortalPublication 
             releaseMavenCentralPortalPublication
             --dry-run
+          check-command: ./gradlew check --parallel --continue
           should-deploy: true
           should-run-codecov: false
           maven-central-username: ${{ secrets.MAVEN_USERNAME }}
@@ -55,6 +57,7 @@ jobs:
           deploy-command: |
             npm install
             npx semantic-release
+          enable-cache: false
           should-run-codecov: false
           should-deploy: true
           npm-token: ${{ secrets.NPM_TOKEN }}

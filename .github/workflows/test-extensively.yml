@@ -9,12 +9,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ windows-latest, macos-latest, ubuntu-latest ]
-        java-version: [17, 21]
+        java-version: [17, 21, 25]
         jdk-dist:
-          - adopt-hotspot
+          - oracle
           - temurin
-#          - adopt-openj9
-#          - zulu
     runs-on: ${{ matrix.os }}
     concurrency:
       group: build-${{ github.workflow }}-${{ matrix.os }}-${{ matrix.java-version }}-${{ matrix.jdk-dist }}-${{ github.event.number || github.ref }}
@@ -35,13 +33,15 @@ jobs:
         if: steps.cache-test-result.outputs.cache-hit != 'true'
         uses: DanySK/build-check-deploy-gradle-action@4.0.43
         with:
+          retries-on-failure: '2'
           java-distribution: ${{ matrix.jdk-dist }}
           java-version: ${{ matrix.java-version }}
           build-command: |
-            ./gradlew jsMainClasses jsTestClasses --parallel || ./gradlew jsMainClasses jsTestClasses --parallel
+            ./gradlew jvmMainClasses jvmTestClasses --parallel --continue
           check-command: |
-            ./gradlew jvmTest --parallel --continue || ./gradlew jvmTest --parallel --continue
+            ./gradlew jvmTest --parallel --continue
           should-run-codecov: false
+          enable-cache: false
       - name: Mark successful test cache
         if: steps.cache-test-result.outputs.cache-hit != 'true' && steps.run-tests.conclusion == 'success'
         run: |
@@ -89,12 +89,14 @@ jobs:
         if: steps.cache-test-result.outputs.cache-hit != 'true'
         uses: DanySK/build-check-deploy-gradle-action@4.0.43
         with:
+          retries-on-failure: '2'
           build-command: |
-            ./gradlew jsMainClasses jsTestClasses --parallel || ./gradlew jsMainClasses jsTestClasses --parallel
+            ./gradlew jsMainClasses jsTestClasses --parallel --continue
           check-command: |
-            ./gradlew jsTest --parallel --continue || ./gradlew jsTest --parallel --continue
+            ./gradlew jsTest --parallel --continue
           clean-command: ./gradlew cleanTest
           should-run-codecov: false
+          enable-cache: false
       - name: Mark successful test cache
         if: steps.cache-test-result.outputs.cache-hit != 'true' && steps.run-tests.conclusion == 'success'
         run: |
