@@ -32,7 +32,7 @@ internal class ZeroArityReteNode(
         get() = atoms.isEmpty()
 
     override fun get(clause: Clause): Sequence<Clause> =
-        atoms.asSequence().filter { unificator.match(it.innerClause, clause) }.map { it.innerClause }
+        atoms.asSequence().filter { unificator.match(clause, it.innerClause) }.map { it.innerClause }
 
     override fun assertA(clause: IndexedClause) {
         if (ordered) {

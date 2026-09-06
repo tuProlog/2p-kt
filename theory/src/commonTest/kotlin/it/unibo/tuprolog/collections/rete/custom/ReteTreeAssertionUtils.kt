@@ -229,7 +229,7 @@ internal object ReteTreeAssertionUtils {
         actual: Term,
     ) {
         assertTrue("$actual should match $expected") {
-            expected matches actual
+            actual matches expected
         }
     }
 
@@ -238,7 +238,7 @@ internal object ReteTreeAssertionUtils {
         actual: Term,
     ) {
         assertFalse("$actual should not match $expected") {
-            expected matches actual
+            actual matches expected
         }
     }
 

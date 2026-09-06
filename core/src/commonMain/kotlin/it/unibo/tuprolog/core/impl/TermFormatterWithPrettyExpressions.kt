@@ -24,7 +24,8 @@ internal class TermFormatterWithPrettyExpressions private constructor(
     quoted: Boolean = true,
     numberVars: Boolean = false,
     ignoreOps: Boolean = false,
-) : AbstractTermFormatter(quoted, numberVars, ignoreOps) {
+    tagsOptions: TermFormatter.TagsFormattingOptions = TermFormatter.TagsFormattingOptions(),
+) : AbstractTermFormatter(quoted, numberVars, ignoreOps, tagsOptions) {
     companion object {
         private data class OperatorDecorations(
             val prefix: String,
@@ -56,7 +57,17 @@ internal class TermFormatterWithPrettyExpressions private constructor(
         quoted: Boolean = true,
         numberVars: Boolean = false,
         ignoreOps: Boolean = false,
-    ) : this(Int.MAX_VALUE, delegate, operators.toOperatorsIndex(), emptySet(), quoted, numberVars, ignoreOps)
+        tagsOptions: TermFormatter.TagsFormattingOptions = TermFormatter.TagsFormattingOptions(),
+    ) : this(
+        Int.MAX_VALUE,
+        delegate,
+        operators.toOperatorsIndex(),
+        emptySet(),
+        quoted,
+        numberVars,
+        ignoreOps,
+        tagsOptions,
+    )
 
     override fun visitVar(term: Var): String = term.accept(delegate)
 
@@ -83,24 +94,21 @@ internal class TermFormatterWithPrettyExpressions private constructor(
         struct: Struct,
         stringGenerator: Struct.() -> String,
     ): String {
-        val string = struct.stringGenerator()
-        if (struct.functor in forceParentheses) {
-            return string.wrapWithinParentheses()
+        var string = struct.stringGenerator()
+        val tags = tagsOptions.formatTags(struct.tags)
+        if (struct.functor in forceParentheses || tags.isNotEmpty()) {
+            string = string.wrapWithinParentheses()
         }
-        return string
+        return string + tags
     }
 
-    override fun visitTuple(term: Tuple): String {
-        val op = TUPLE_FUNCTOR
-        val string =
-            term.unfoldedSequence
-                .map { it.accept(itemFormatter()) }
-                .joinToString("${op.prefix}$op${op.suffix}")
-        if (op in forceParentheses) {
-            return string.wrapWithinParentheses()
+    override fun visitTuple(term: Tuple): String =
+        addingParenthesesIfForced(term) {
+            val op = TUPLE_FUNCTOR
+            term.unfoldedSequence.joinToString("${op.prefix}$op${op.suffix}") {
+                it.accept(itemFormatter())
+            }
         }
-        return string
-    }
 
     private fun visitExpression(struct: Struct): String {
         val prefix = struct.isPrefix()
@@ -125,7 +133,10 @@ internal class TermFormatterWithPrettyExpressions private constructor(
         }
         val lowerPriority = struct.isLowerPriority()
         if (lowerPriority != null) {
-            return struct.accept(childFormatter(lowerPriority.second)).wrapWithinParentheses()
+            return struct
+                .accept(childFormatter(lowerPriority.second))
+                .wrapWithinParentheses()
+                .plusTagsOf(struct)
         }
         return super.visitStruct(struct)
     }
@@ -146,6 +157,7 @@ internal class TermFormatterWithPrettyExpressions private constructor(
             quoted,
             numberVars,
             ignoreOps,
+            tagsOptions,
         )
 
     private fun String.isOperator() = operators.containsKey(this)

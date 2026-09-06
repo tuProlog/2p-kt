@@ -179,7 +179,7 @@ object IOPrimitiveUtils {
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidProperty(term: Term): Term =
-        if (validPropertiesPattern.any { match(it, term) }) {
+        if (validPropertiesPattern.any { match(term, it) }) {
             term
         } else {
             throw DomainError.forTerm(context, STREAM_PROPERTY, term)
@@ -187,7 +187,7 @@ object IOPrimitiveUtils {
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsSupportedProperty(term: Term): Term =
-        if (supportedPropertiesPattern.any { match(it, term) }) {
+        if (supportedPropertiesPattern.any { match(term, it) }) {
             term
         } else {
             throw SystemError.forUncaughtException(context, IllegalStateException("unsupported option $term"))
@@ -195,7 +195,7 @@ object IOPrimitiveUtils {
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidOption(term: Term): Term =
-        if (validOptionsPattern.any { match(it, term) }) {
+        if (validOptionsPattern.any { match(term, it) }) {
             term
         } else {
             throw DomainError.forTerm(context, WRITE_OPTION, term)
@@ -203,7 +203,7 @@ object IOPrimitiveUtils {
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidInfo(term: Term): Term =
-        if (validInfoPattern.any { match(it, term) }) {
+        if (validInfoPattern.any { match(term, it) }) {
             term
         } else {
             throw DomainError.forTerm(context, READ_OPTION, term)
@@ -239,7 +239,7 @@ object IOPrimitiveUtils {
     ): Boolean =
         asSequence()
             .filterIsInstance<Struct>()
-            .filter { unificator.match(it, pattern) }
+            .filter { unificator.match(pattern, it) }
             .map { it[0] }
             .filterIsInstance<Truth>()
             .map { it.isTrue }
@@ -252,7 +252,7 @@ object IOPrimitiveUtils {
     ): Substitution =
         asSequence()
             .filterIsInstance<Struct>()
-            .firstOrNull { unificator.match(it, pattern) }
+            .firstOrNull { unificator.match(pattern, it) }
             ?.let { unificator.mgu(it, value) }
             ?: Substitution.empty()
 
@@ -281,7 +281,7 @@ object IOPrimitiveUtils {
         when (term) {
             is Var -> return this
             is Struct -> {
-                if (sequenceOf(PROPERTY_INPUT, PROPERTY_OUTPUT, PROPERTY_ALIAS_PATTERN).any { match(it, term) }) {
+                if (sequenceOf(PROPERTY_INPUT, PROPERTY_OUTPUT, PROPERTY_ALIAS_PATTERN).any { match(term, it) }) {
                     return this
                 }
             }
@@ -557,7 +557,7 @@ object IOPrimitiveUtils {
             } else {
                 emptySet()
             }
-        val alias = options.firstOrNull { match(it, PROPERTY_ALIAS_PATTERN) }?.alias
+        val alias = options.firstOrNull { match(PROPERTY_ALIAS_PATTERN, it) }?.alias
         return when (mode) {
             IOMode.READ -> replyOpeningStream(url.openInputChannel(), third, alias)
             IOMode.WRITE -> replyOpeningStream(url.openOutputChannel(false), third, alias)

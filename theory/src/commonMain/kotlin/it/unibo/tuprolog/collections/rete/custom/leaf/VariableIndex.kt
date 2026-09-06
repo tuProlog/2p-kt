@@ -57,7 +57,7 @@ internal class VariableIndex(
         clause: Clause,
         index: MutableList<SituatedIndexedClause>,
     ): SituatedIndexedClause? {
-        val actualIndex = index.indexOfFirst { unificator.match(it.innerClause, clause) }
+        val actualIndex = index.indexOfFirst { unificator.match(clause, it.innerClause) }
 
         return if (actualIndex == -1) {
             null
@@ -67,7 +67,7 @@ internal class VariableIndex(
     }
 
     override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
-        variables.asSequence().filter { unificator.match(it.innerClause, clause) }
+        variables.asSequence().filter { unificator.match(clause, it.innerClause) }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
         extractGlobalIndexedSequence(clause).map {
