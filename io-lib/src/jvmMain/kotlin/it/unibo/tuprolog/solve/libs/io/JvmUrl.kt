@@ -48,7 +48,7 @@ data class JvmUrl(
             if (isFile) {
                 LocalFileSystem.source(toLocalPath()).buffer().use { it.readUtf8() }
             } else {
-                BufferedReader(InputStreamReader(url.openStream())).lines().asSequence().joinToString("\n")
+                BufferedReader(InputStreamReader(url.openStream())).use { it.lines().asSequence().joinToString("\n") }
             }
         } catch (e: FileNotFoundException) {
             throw IOException("Cannot find resource: $url", e)
@@ -62,7 +62,7 @@ data class JvmUrl(
             if (isFile) {
                 LocalFileSystem.source(toLocalPath()).buffer().use { it.readByteArray() }
             } else {
-                BufferedInputStream(url.openStream()).readAllBytes()
+                BufferedInputStream(url.openStream()).use { it.readAllBytes() }
             }
         } catch (e: java.io.IOException) {
             throw IOException(e.message, e)

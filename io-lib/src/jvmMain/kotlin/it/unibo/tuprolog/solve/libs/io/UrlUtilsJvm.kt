@@ -50,7 +50,7 @@ internal fun String.toUrl(): URL =
         throw InvalidUrlException(message = "Invalid URL: $this", cause = e)
     }
 
-internal actual fun Url.toLocalPath(): Path = File(toURL().file).toOkioPath()
+internal actual fun Url.toLocalPath(): Path = File(toURL().toURI()).toOkioPath()
 
 actual fun Url.openInputChannel(): InputChannel<String> =
     if (isFile) {

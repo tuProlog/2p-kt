@@ -42,9 +42,16 @@ internal actual fun Url.toLocalPath(): Path =
         path.toPath()
     }
 
+private fun <T> wrappingIOException(action: () -> T): T =
+    try {
+        action()
+    } catch (e: okio.IOException) {
+        throw IOException(e.message, e)
+    }
+
 actual fun Url.openInputChannel(): InputChannel<String> =
     if (isFile && isNode) {
-        SourceInputChannel(LocalFileSystem.source(toLocalPath()).buffer())
+        wrappingIOException { SourceInputChannel(LocalFileSystem.source(toLocalPath()).buffer()) }
     } else {
         InputChannel.of(readAsText())
     }
@@ -54,6 +61,8 @@ actual fun Url.openOutputChannel(append: Boolean): OutputChannel<String> {
         throw IOException("Writing not supported for ${toString()}")
     }
     val path = toLocalPath()
-    val sink = if (append) LocalFileSystem.appendingSink(path) else LocalFileSystem.sink(path)
-    return SinkOutputChannel(sink.buffer())
+    return wrappingIOException {
+        val sink = if (append) LocalFileSystem.appendingSink(path) else LocalFileSystem.sink(path)
+        SinkOutputChannel(sink.buffer())
+    }
 }
