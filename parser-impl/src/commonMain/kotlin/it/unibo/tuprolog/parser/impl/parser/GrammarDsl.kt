@@ -7,6 +7,7 @@ import it.unibo.tuprolog.parser.exceptions.SyntaxExpectation
 import it.unibo.tuprolog.parser.exceptions.UnexpectedEndOfInputException
 import it.unibo.tuprolog.parser.exceptions.UnexpectedTokenException
 import it.unibo.tuprolog.parser.operators.OperatorTable
+import it.unibo.tuprolog.parser.runCatchingStackOverflow
 import it.unibo.tuprolog.parser.sources.LexedSource
 import it.unibo.tuprolog.parser.sources.SourceSpan
 import it.unibo.tuprolog.parser.sources.TokenRange
@@ -53,7 +54,17 @@ internal abstract class GrammarDsl(
             )
         }
         try {
-            return body()
+            return runCatchingStackOverflow(
+                onOverflow = {
+                    throw NestingLimitExceededException(
+                        input.source,
+                        cursor.peek(),
+                        options.maximumNestingDepth,
+                        rulePath(),
+                    )
+                },
+                body = body,
+            )
         } finally {
             nestingDepth -= 1
         }
