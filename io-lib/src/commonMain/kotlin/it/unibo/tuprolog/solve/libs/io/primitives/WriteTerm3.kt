@@ -29,7 +29,7 @@ object WriteTerm3 : TernaryRelation.NonBacktrackable<ExecutionContext>("write_te
         third: Term,
     ): Solve.Response {
         val channel = ensuringArgumentIsOutputChannel(0)
-        val formatter = ensuringArgumentIsFormatter(1)
-        return writeTermAndReply(channel, first, formatter)
+        val formatter = ensuringArgumentIsFormatter(2)
+        return writeTermAndReply(channel, second, formatter)
     }
 }
