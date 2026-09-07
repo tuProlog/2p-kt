@@ -36,8 +36,15 @@ class TestGetPeekCharCode {
         }
     }
 
-    // testGetChar1AtEndOfFile lives in TestGetPeekCharCodeJvm: InputChannel.of("") on JS/Node
-    // doesn't behave like an exhausted stream (see that file for details), so it's JVM-only.
+    @Test
+    fun testGetChar1AtEndOfFile() {
+        logicProgramming {
+            val solver = ClassicSolverFactory.ioSolver(stdIn = "")
+            val query = "get_char"("Char")
+            val solutions = solver.solve(query).toList()
+            assertSolutionEquals(listOf(query.yes("Char" to "end_of_file")), solutions)
+        }
+    }
 
     @Test
     fun testGetChar1UnificationFails() {
@@ -193,7 +200,11 @@ class TestGetPeekCharCode {
         }
     }
 
-    // testGetCode1AtEndOfFileYieldsMinusOne lives in TestGetPeekCharCodeJvm, for the same reason.
+    // testGetCode1AtEndOfFileYieldsMinusOne lives in TestGetPeekCharCodeJvm: on JS, building the
+    // expected `-1` through the DSL hits an unrelated pre-existing bug in
+    // it.unibo.tuprolog.utils.NumberTypeTester.isInteger ("[0-9]+" doesn't match a leading '-', so
+    // -1 is misclassified as a real number, 'Code' <- -1.0, instead of an integer). Not one of the
+    // two :solve bugs asked for here, so left as a JVM-only regression test rather than fixed.
 
     @Test
     fun testGetCode1NonIntegerIsTypeError() {

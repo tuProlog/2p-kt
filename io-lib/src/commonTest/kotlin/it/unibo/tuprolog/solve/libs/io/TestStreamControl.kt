@@ -52,12 +52,20 @@ class TestStreamControl {
         logicProgramming {
             val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
             // Once mickey becomes the current input, arity-1 predicates read from it, and
-            // current_input/1 reports its stream-term.
+            // current_input/1 reports mickey's own stream-term (found independently via
+            // stream_property/2). The stream-term itself is implementation-dependent, so the
+            // equality is checked inside the query rather than pinned down here.
             val query =
                 "set_input"("mickey") and
                     (
                         "get_char"("C1") and
-                            ("get_char"("C2") and "current_input"("S1"))
+                            (
+                                "get_char"("C2") and
+                                    (
+                                        "current_input"("S1") and
+                                            ("stream_property"("S2", "alias"("mickey")) and ("S1" id "S2"))
+                                    )
+                            )
                     )
             val solution = solver.solve(query).toList().single()
             assertTrue(solution is Solution.Yes)
@@ -67,16 +75,15 @@ class TestStreamControl {
     }
 
     @Test
-    fun testSetInputDropsOtherAliasesFromTheInputStore() {
-        // Known gap (in :solve, not :io-lib): InputStoreImpl.setCurrent(alias) rebuilds the whole
-        // store as just {"$current" -> channel}, discarding every other registered alias - including
-        // the very one just switched to. So once mickey becomes the current input, mickey itself
-        // stops being resolvable by alias, even though it is still reachable as the current stream.
+    fun testSetInputPreservesOtherAliasesInTheInputStore() {
+        // Regression test: InputStoreImpl.setCurrent(alias) used to rebuild the whole store as just
+        // {"$current" -> channel}, discarding every other registered alias - including the very one
+        // just switched to.
         logicProgramming {
             val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
             val query = "set_input"("mickey") and "stream_property"("_", "alias"("mickey"))
             val solutions = solver.solve(query).toList()
-            assertSolutionEquals(listOf(query.no()), solutions)
+            assertTrue(solutions.single().isYes)
         }
     }
 
@@ -148,11 +155,27 @@ class TestStreamControl {
         }
     }
 
-    // testAtEndOfStream0OnEmptyInput and testAtEndOfStream1SucceedsAfterConsumingWholeStream live in
-    // TestStreamControlJvm: InputChannel.of(string) on JS/Node (InputChannelFromString) synthesizes
-    // a trailing '\n' after every line - even an empty one - so it never reports exhaustion the way
-    // the JVM's StringReader-backed channel does. That's a separate, out-of-scope cross-platform bug
-    // in :solve, so these two exact-exhaustion assertions are JVM-only until it's fixed.
+    @Test
+    fun testAtEndOfStream0OnEmptyInput() {
+        logicProgramming {
+            val solver = ClassicSolverFactory.ioSolver(stdIn = "")
+            val query = atomOf("at_end_of_stream")
+            val solutions = solver.solve(query).toList()
+            assertSolutionEquals(listOf(query.yes()), solutions)
+        }
+    }
+
+    @Test
+    fun testAtEndOfStream1SucceedsAfterConsumingWholeStream() {
+        logicProgramming {
+            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "ab")))
+            val query =
+                "get_char"("mickey", "C1") and
+                    ("get_char"("mickey", "C2") and "at_end_of_stream"("mickey"))
+            val solutions = solver.solve(query).toList()
+            assertSolutionEquals(listOf(query.yes("C1" to "a", "C2" to "b")), solutions)
+        }
+    }
 
     @Test
     fun testAtEndOfStream0FailsWhenInputRemains() {

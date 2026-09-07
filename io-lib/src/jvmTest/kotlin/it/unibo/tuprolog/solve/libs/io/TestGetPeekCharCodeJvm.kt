@@ -7,22 +7,14 @@ import it.unibo.tuprolog.solve.yes
 import kotlin.test.Test
 
 /**
- * JVM-only counterpart to [TestGetPeekCharCode]: exercises exact end-of-file detection on an empty
- * standard input. This can't live in `commonTest` because, on JS/Node, `InputChannel.of("")`
- * (`InputChannelFromString`) synthesizes a trailing `'\n'` after every line - even an empty one -
- * so it never actually reports as exhausted, unlike the JVM's `StringReader`-backed channel.
+ * JVM-only counterpart to [TestGetPeekCharCode]. Building the expected `-1` substitution through
+ * the DSL hits an unrelated, pre-existing bug on JS: `it.unibo.tuprolog.utils.NumberTypeTester`
+ * classifies a number as an integer via the regex `"[0-9]+"`, which doesn't match a leading `-`, so
+ * `-1` is misclassified as a real number (`Code` ends up bound to `-1.0`, not `-1`). That's not one
+ * of the two `:solve` channel/store bugs this file's sibling tests exist for, so it's left as a
+ * JVM-only regression test rather than fixed here.
  */
 class TestGetPeekCharCodeJvm {
-    @Test
-    fun testGetChar1AtEndOfFile() {
-        logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "")
-            val query = "get_char"("Char")
-            val solutions = solver.solve(query).toList()
-            assertSolutionEquals(listOf(query.yes("Char" to "end_of_file")), solutions)
-        }
-    }
-
     @Test
     fun testGetCode1AtEndOfFileYieldsMinusOne() {
         logicProgramming {
