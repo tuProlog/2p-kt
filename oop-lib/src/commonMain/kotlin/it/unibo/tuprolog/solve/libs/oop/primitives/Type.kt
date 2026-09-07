@@ -11,6 +11,16 @@ import it.unibo.tuprolog.solve.libs.oop.name
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
+/**
+ * `type(?TypeName, ?TypeRef)`: converts between a type-name [it.unibo.tuprolog.core.Atom]
+ * `TypeName` (the type's simple name, see [it.unibo.tuprolog.solve.libs.oop.name]) and a
+ * [it.unibo.tuprolog.solve.libs.oop.TypeRef] `TypeRef`, in either direction, using
+ * [it.unibo.tuprolog.solve.libs.oop.TypeFactory.default] to resolve names to types.
+ *
+ * Fails (rather than throwing) if `TypeName` names a type that cannot be resolved.
+ *
+ * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if both arguments are unbound.
+ */
 object Type : BinaryRelation.Functional<ExecutionContext>("type") {
     private val typeFactory = TypeFactory.default
 

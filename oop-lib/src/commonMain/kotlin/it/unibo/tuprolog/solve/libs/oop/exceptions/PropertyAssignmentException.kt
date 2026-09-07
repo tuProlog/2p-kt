@@ -9,6 +9,20 @@ import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.libs.oop.fullName
 import kotlin.reflect.KClass
 
+/**
+ * Thrown by [it.unibo.tuprolog.solve.libs.oop.OverloadSelector.findProperty] (and, through it, by
+ * [it.unibo.tuprolog.solve.libs.oop.Ref.assign]) when [type] has no public mutable property named
+ * [missingPropertyName] whose setter accepts a value compatible with [admissibleTypes] -- e.g.
+ * assigning to a read-only `val`, to a non-existent property, or to a property of an incompatible
+ * type.
+ *
+ * Surfaces to Prolog as an [it.unibo.tuprolog.solve.exception.error.ExistenceError] of type
+ * [it.unibo.tuprolog.solve.exception.error.ExistenceError.ObjectType.OOP_PROPERTY].
+ *
+ * @param type the type a property was sought on.
+ * @param missingPropertyName the property name that could not be resolved.
+ * @param admissibleTypes every JVM/Kotlin type the value being assigned could have been converted into.
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 class PropertyAssignmentException(
     val type: KClass<*>,

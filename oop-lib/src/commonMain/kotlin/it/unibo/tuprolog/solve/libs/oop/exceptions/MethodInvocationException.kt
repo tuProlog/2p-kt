@@ -9,6 +9,21 @@ import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.libs.oop.fullName
 import kotlin.reflect.KClass
 
+/**
+ * Thrown by [it.unibo.tuprolog.solve.libs.oop.OverloadSelector.findMethod] (and, through it, by
+ * [it.unibo.tuprolog.solve.libs.oop.Ref.invoke]) when [type] has no public member named
+ * [missingMethodName] accepting arguments whose types are compatible with [admissibleTypes] --
+ * e.g. invoking `foo` on an object whose class declares no such method, or calling an existing
+ * method with the wrong number/kind of arguments.
+ *
+ * Surfaces to Prolog as an [it.unibo.tuprolog.solve.exception.error.ExistenceError] of type
+ * [it.unibo.tuprolog.solve.exception.error.ExistenceError.ObjectType.OOP_METHOD].
+ *
+ * @param type the type a method was sought on.
+ * @param missingMethodName the method name that could not be resolved.
+ * @param admissibleTypes, for each actual argument (in order), every JVM/Kotlin type it could
+ * have been converted into.
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 class MethodInvocationException(
     val type: KClass<*>,

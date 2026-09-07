@@ -14,6 +14,21 @@ import it.unibo.tuprolog.solve.primitive.Solve.Response
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import kotlin.reflect.KClass
 
+/**
+ * `cast(?Term, ?Type, ?ObjectRef)`: converts `Term` into an instance of `Type` (a
+ * [it.unibo.tuprolog.solve.libs.oop.TypeRef], a type-name atom, or a `$Alias` expression
+ * resolving to a [it.unibo.tuprolog.solve.libs.oop.TypeRef]), unifying `ObjectRef` with an
+ * [it.unibo.tuprolog.solve.libs.oop.ObjectRef] wrapping the result. Backs the `as`/2 operator
+ * (`X as 'java.lang.Long'`), used to disambiguate overload resolution when the automatically
+ * inferred type is not the intended one -- e.g. forcing an integer literal to be converted to a
+ * `Long` rather than the default `Int`.
+ *
+ * When `Type` is left unbound, this predicate backtracks over every type `Term` could be
+ * converted into (see [it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter.admissibleTypes])
+ * and all of their supertypes, binding both `Type` and `ObjectRef` on each solution.
+ *
+ * Fails (rather than throwing) if `Term` cannot be converted into an instance of `Type`.
+ */
 object Cast : TernaryRelation<ExecutionContext>("cast") {
     override fun Request<ExecutionContext>.computeAll(
         first: Term,
