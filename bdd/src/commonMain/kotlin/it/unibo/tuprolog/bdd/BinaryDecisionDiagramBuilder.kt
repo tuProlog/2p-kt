@@ -11,7 +11,13 @@ import kotlin.js.JsName
  * implementations of this interface.
  *
  * Business logic related to diagram reduction, or node re-usage,
- * should be handled by this entity.
+ * should be handled by this entity. Most callers do not need to interact
+ * with this interface directly: node creation is normally driven through
+ * [BinaryDecisionDiagram.variableOf]/[BinaryDecisionDiagram.terminalOf] (or
+ * the [bddOf]/[bddTerminalOf] shortcuts), and diagram combination through
+ * the operators in `BinaryDecisionDiagramOperators.kt`, both of which use
+ * a builder under the hood. Implementing this interface directly is only
+ * needed when introducing a new node-creation/reduction strategy.
  *
  * @author Jason Dellaluce
  */
@@ -19,6 +25,11 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
     /**
      * Returns an instance of [BinaryDecisionDiagram.Variable] with
      * the provided input.
+     *
+     * @param value the value of the Boolean variable represented by the node.
+     * @param low the sub-diagram reached when [value] is `false`.
+     * @param high the sub-diagram reached when [value] is `true`.
+     * @return a new [BinaryDecisionDiagram.Variable] node.
      * */
     @JsName("buildVariable")
     fun buildVariable(
@@ -30,6 +41,9 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
     /**
      * Returns an instance of [BinaryDecisionDiagram.Terminal] with
      * the provided input.
+     *
+     * @param truth the boolean value (`true`/`false`) of the terminal.
+     * @return a new [BinaryDecisionDiagram.Terminal] node.
      * */
     @JsName("buildTerminal")
     fun buildTerminal(truth: Boolean): BinaryDecisionDiagram<T>
@@ -40,6 +54,9 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
          * platforms can return different types of instances, to apply
          * platform-specific optimizations. Note, no reduction optimization
          * must be applied by the returned instance.
+         *
+         * @return a new, platform-default [BinaryDecisionDiagramBuilder] with
+         * no reduction optimizations.
          * */
         @JsName("defaultOf")
         fun <E : Comparable<E>> defaultOf(): BinaryDecisionDiagramBuilder<E> =
@@ -50,6 +67,8 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
          * not apply platform-specific or reduction optimizations. This
          * provides basic means to build represent BDDs, and keeps the entire
          * data structure in memory in the form of a directed graph.
+         *
+         * @return a new, unoptimized [BinaryDecisionDiagramBuilder].
          * */
         @JsName("simpleOf")
         fun <E : Comparable<E>> simpleOf(): BinaryDecisionDiagramBuilder<E> = SimpleBinaryDecisionDiagramBuilder()
@@ -65,6 +84,14 @@ interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
          * - Removal of redundant variable nodes, which are
          * [BinaryDecisionDiagram.Variable] nodes where low and high point
          * to the same node
+         *
+         * This is what all the operators in `BinaryDecisionDiagramOperators.kt`
+         * (e.g. [and], [or], [not], [apply]) use internally to keep the result
+         * of each operation a canonical Reduced Ordered BDD (ROBDD).
+         *
+         * @param delegate the builder actually constructing each node, before
+         * reduction is applied on top of it. Defaults to [defaultOf].
+         * @return a new, reduction-applying [BinaryDecisionDiagramBuilder].
          * */
         @JsName("reducedOf")
         fun <E : Comparable<E>> reducedOf(
