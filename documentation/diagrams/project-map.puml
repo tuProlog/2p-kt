@@ -1,44 +1,144 @@
 @startuml
 top to bottom direction
 skinparam shadowing false
+skinparam linetype ortho
 
 skinparam folder {
-  BackgroundColor<<api only>> olive
   BackgroundColor<<root>> yellow
+  BackgroundColor<<api only>> olive
   BackgroundColor<<impl. detail>> white
+  BackgroundColor<<test support>> lightgray
+  BackgroundColor<<tool>> lightblue
 }
 
-folder "core" <<root>>
+folder "utils" <<root>>
+folder "core"
 folder "unify"
 folder "theory"
+folder "datalog"
+folder "bdd"
+
 folder "dsl-core" as DC
 folder "dsl-unify" as DU
 folder "dsl-theory" as DT
+folder "dsl-solve" as DS
+
 folder "solve" <<api only>>
 folder "solve-classic" as SC
 folder "solve-streams" as SS
+folder "solve-concurrent" as SCON
+folder "solve-plp" as SPLP
+folder "solve-problog" as SPL
+
 folder "parser-core" as PC
-folder "parser-jvm" <<impl. detail>> as PJVM
-folder "parser-js" <<impl. detail>> as PJS
+folder "parser-impl" <<impl. detail>> as PI
 folder "parser-theory" as PT
 
-core <|-down- unify : depends\non
+folder "serialize-core" as SRC
+folder "serialize-theory" as SRT
+
+folder "test-solve" <<test support>> as TS
+folder "test-dsl" <<test support>> as TD
+
+folder "oop-lib" as OOP
+folder "io-lib" as IO
+folder "repl" <<tool>>
+folder "ide" <<tool>>
+folder "ide-plp" <<tool>> as IDEPLP
+folder "examples" <<tool>>
+folder "full" <<tool>>
+
+' -- Foundation --
+utils <|-down- core
+
+' -- Unification & theories --
+core <|-down- unify
+core <|-down- theory
 unify <|-down- theory
+theory <|-down- datalog
+
+' -- Kotlin DSL --
+core <|-down- DC
+DC <|-down- DU
+unify <|-down- DU
+DU <|-down- DT
+theory <|-down- DT
+DT <|-down- DS
+
+' -- Resolution (solve) --
+core <|-down- solve
+unify <|-down- solve
 theory <|-down- solve
-solve <|-- SC
-solve <|-- SS
+solve <|-down- SC
+DT <|-down- SC
+solve <|-down- DS
+solve <|-down- SS
+DT <|-down- SS
+solve <|-down- SCON
+DT <|-down- SCON
+solve <|-down- SPLP
+bdd <|-down- SPLP
+bdd <|-down- SPL
+SC <|-down- SPL
+SPLP <|-down- SPL
 
-DC -right-|> core
-DU -right-|> unify
-DU -up-|> DC
-DT -right-|> theory
-DT -up-|> DU
-DT <-- solve
+' -- Parsing --
+core <|-down- PC
+PI <|-down- PC : uses
+core <|-down- PT
+unify <|-down- PT
+theory <|-down- PT
+PC <|-down- PT
+PI <|-down- PT : uses
 
-PC -left-|> core
-PT -left-|> theory
-PT -up-|> PC
+' -- Serialization --
+core <|-down- SRC
+theory <|-down- SRT
+SRC <|-down- SRT
 
-PC --> PJVM : uses
-PC -right-> PJS
+' -- Test-support modules (consumed from `commonTest`, not from `commonMain`) --
+solve <|-down- TS : test dep. of
+DT <|-down- TS : test dep. of
+DC <|-down- TD : test dep. of
+
+' -- Libraries & tools --
+solve <|-down- OOP
+solve <|-down- IO
+PT <|-down- IO
+
+core <|-down- "repl"
+OOP <|-down- "repl"
+IO <|-down- "repl"
+SC <|-down- "repl"
+PT <|-down- "repl"
+
+IO <|-down- "ide"
+OOP <|-down- "ide"
+PT <|-down- "ide"
+SC <|-down- "ide"
+
+"ide" <|-down- IDEPLP
+SPL <|-down- IDEPLP
+
+SC <|-down- "examples"
+SCON <|-down- "examples"
+SPL <|-down- "examples"
+DT <|-down- "examples"
+PT <|-down- "examples"
+IO <|-down- "examples"
+OOP <|-down- "examples"
+
+note bottom of TS
+  **test-solve** and **test-dsl** are reusable
+  test suites, consumed from other modules'
+  ""commonTest"" source set, not from their
+  main/api dependencies (so they never
+  appear as regular runtime dependencies).
+end note
+
+note bottom of "full"
+  **full** aggregates (depends on)
+  every other module, as a
+  batteries-included single artifact.
+end note
 @enduml
