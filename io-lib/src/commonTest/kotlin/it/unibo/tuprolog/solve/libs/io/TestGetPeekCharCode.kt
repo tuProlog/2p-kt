@@ -200,11 +200,15 @@ class TestGetPeekCharCode {
         }
     }
 
-    // testGetCode1AtEndOfFileYieldsMinusOne lives in TestGetPeekCharCodeJvm: on JS, building the
-    // expected `-1` through the DSL hits an unrelated pre-existing bug in
-    // it.unibo.tuprolog.utils.NumberTypeTester.isInteger ("[0-9]+" doesn't match a leading '-', so
-    // -1 is misclassified as a real number, 'Code' <- -1.0, instead of an integer). Not one of the
-    // two :solve bugs asked for here, so left as a JVM-only regression test rather than fixed.
+    @Test
+    fun testGetCode1AtEndOfFileYieldsMinusOne() {
+        logicProgramming {
+            val solver = ClassicSolverFactory.ioSolver(stdIn = "")
+            val query = "get_code"("Code")
+            val solutions = solver.solve(query).toList()
+            assertSolutionEquals(listOf(query.yes("Code" to -1)), solutions)
+        }
+    }
 
     @Test
     fun testGetCode1NonIntegerIsTypeError() {
