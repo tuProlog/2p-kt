@@ -3,6 +3,10 @@ package it.unibo.tuprolog.utils.impl
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.Optional
 
+/**
+ * Default [Cached] implementation returned by [Cached.of], memoizing the result of [generator] in an
+ * [Optional] until [invalidate]d. Not meant to be instantiated directly; use [Cached.of] instead.
+ */
 data class CachedImpl<T>(
     private val generator: () -> T,
 ) : Cached<T> {
