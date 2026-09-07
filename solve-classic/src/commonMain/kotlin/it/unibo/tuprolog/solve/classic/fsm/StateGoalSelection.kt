@@ -4,6 +4,15 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.flags.TrackVariables
 
+/**
+ * "Goal Selection", the entry point of every resolution step: decides what to do with
+ * [ClassicExecutionContext.goals]. Three cases: no goals left and no parent context -> emit the current
+ * substitution as a solution and move to `StateEnd`; no goals left but a parent exists -> pop the stack, carrying
+ * the child's substitution (filtered down to variables the parent still cares about, via
+ * [ClassicExecutionContext.isVariableInteresting]) into the parent, and loop back into `StateGoalSelection` for
+ * the parent's remaining goals; goals remain -> move to `StatePrimitiveSelection` (after recording the current
+ * goal's variables as relevant, if `TrackVariables` is `ON`).
+ */
 data class StateGoalSelection(
     override val context: ClassicExecutionContext,
 ) : AbstractState(context) {
