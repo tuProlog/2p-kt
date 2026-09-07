@@ -25,6 +25,18 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.buffered
 
+/**
+ * Base [Solver] implementation, factoring out the state-management concerns common to every resolution strategy
+ * (initializing and updating the current [ExecutionContext], loading/partitioning the initial static and dynamic
+ * knowledge bases and running their directives, honouring [SolveOptions.limit]/[SolveOptions.isEager]) so that
+ * concrete solver modules (`:solve-classic`, `:solve-streams`, `:solve-concurrent`) only have to implement
+ * [solveImpl] (the actual resolution algorithm), [initializeContext] (to produce their own [E] subtype), and
+ * [copy]/[clone].
+ *
+ * @param E the concrete [ExecutionContext] subtype used by the resolution strategy.
+ * @param trustKb if `true`, [initialStaticKb]/[initialDynamicKb] are assumed to have already been partitioned
+ * and their directives already run, skipping [initializeKb].
+ */
 @Suppress("LeakingThis")
 abstract class AbstractSolver<E : ExecutionContext>(
     unificator: Unificator,

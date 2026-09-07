@@ -7,13 +7,22 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
+/**
+ * A [ClauseListener] refinement that further dispatches [Directive]s (`:- Goal` clauses) depending on which of
+ * [patterns] their body unifies with, rather than treating every directive alike via [ClauseListener.onDirective].
+ *
+ * @see DirectiveSelector for the concrete set of ISO/implementation-defined directive patterns 2P-Kt recognizes.
+ */
 interface DirectiveListener : ClauseListener {
+    /** The [Unificator] used to match a directive's body against [patterns]. */
     @JsName("unificator")
     val unificator: Unificator
 
+    /** The directive-body patterns recognized by this listener, tried in order. */
     @JsName("patterns")
     val patterns: List<Term>
 
+    /** Invoked when a directive's body unifies with one of [patterns], via [unifier]. */
     @JsName("onDirectiveMatchingPattern")
     fun onDirectiveMatchingPattern(
         directive: Directive,
@@ -21,6 +30,10 @@ interface DirectiveListener : ClauseListener {
         unifier: Unifier,
     )
 
+    /**
+     * Tries to unify [directive]'s body against each of [patterns], in order; on the first match, delegates to
+     * [listenDirectiveMatchingPattern], otherwise falls back to [ClauseListener.onDirective].
+     */
     @JsName("listenDirective")
     fun listenDirective(directive: Directive) {
         patterns
@@ -33,6 +46,7 @@ interface DirectiveListener : ClauseListener {
             } ?: onDirective(directive)
     }
 
+    /** Invoked by [listenDirective] on a match; by default just forwards to [onDirectiveMatchingPattern]. */
     @JsName("listenDirectiveMatchingPattern")
     fun listenDirectiveMatchingPattern(
         directive: Directive,

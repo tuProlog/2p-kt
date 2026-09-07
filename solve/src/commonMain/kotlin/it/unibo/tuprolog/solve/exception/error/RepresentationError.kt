@@ -57,6 +57,7 @@ class RepresentationError(
     }
 
     companion object {
+        /** Creates a [RepresentationError] reporting that executing [signature] breached implementation [limit]. */
         @JsName("of")
         @JvmStatic
         fun of(

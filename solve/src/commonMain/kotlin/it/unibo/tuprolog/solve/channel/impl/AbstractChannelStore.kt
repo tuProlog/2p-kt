@@ -5,6 +5,12 @@ import it.unibo.tuprolog.solve.channel.Channel
 import it.unibo.tuprolog.solve.channel.ChannelStore
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
+/**
+ * Base [ChannelStore] implementation, backing the map by an immutable [channels] [Map] and implementing
+ * [ChannelStore.findByTerm]/[ChannelStore.aliasesOf] plus `equals`/`hashCode`/`toString` in terms of it; concrete
+ * stores ([it.unibo.tuprolog.solve.channel.InputStore]/[it.unibo.tuprolog.solve.channel.OutputStore] implementations)
+ * only need to add their well-known channels on top.
+ */
 abstract class AbstractChannelStore<T : Any, C : Channel<T>, Self : ChannelStore<T, C, Self>>(
     protected val channels: Map<String, C>,
 ) : ChannelStore<T, C, Self>,

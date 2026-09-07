@@ -9,6 +9,11 @@ import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.primitive.Primitive
 import kotlin.js.JsName
 
+/**
+ * Base type for anything that can be "plugged into" a solver by contributing operators, clauses, primitives, and
+ * functions -- namely [Library] and [Runtime] (a group of libraries), which both implement this by aggregating
+ * their constituents' contributions.
+ */
 interface Pluggable {
     /** Operators to be loaded by a solver when the library is used */
     @JsName("operators")
@@ -53,6 +58,7 @@ interface Pluggable {
     @JsName("hasRule")
     fun hasRule(signature: Signature): Boolean
 
+    /** The [Signature] of every [Rule] (i.e. non-fact clause) among [clauses], deduplicated. */
     @JsName("ruleSignatures")
     val rulesSignatures: Sequence<Signature>
         get() =

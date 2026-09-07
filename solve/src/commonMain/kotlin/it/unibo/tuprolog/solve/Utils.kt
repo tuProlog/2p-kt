@@ -33,6 +33,7 @@ inline fun <T> Iterable<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) = 
 /** Performs the given [action] on each element, giving a lookahead hint (i.e. if there's another element to process after). */
 inline fun <T> Sequence<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) = iterator().forEachWithLookahead(action)
 
+/** Extracts every `op/3` directive out of this collection of [Clause]s, converting each to an [Operator]. */
 fun Iterable<Clause>.getAllOperators(): Sequence<Operator> =
     asSequence()
         .filterIsInstance<Directive>()
@@ -42,17 +43,28 @@ fun Iterable<Clause>.getAllOperators(): Sequence<Operator> =
         .map { Operator.fromTerm(it) }
         .filterNotNull()
 
+/** Shorthand for this [Library]'s declared [Library.operators], as a [Sequence]. */
 fun Library.getAllOperators(): Sequence<Operator> = operators.asSequence()
 
+/** Shorthand for this [Runtime]'s declared [Runtime.operators], as a [Sequence]. */
 fun Runtime.getAllOperators(): Sequence<Operator> = operators.asSequence()
 
+/** Collects every [Operator] declared by [libraries] and by `op/3` directives within [theories]. */
 fun getAllOperators(
     libraries: Runtime,
     vararg theories: Theory,
 ): Sequence<Operator> = libraries.getAllOperators() + sequenceOf(*theories).flatMap { it.getAllOperators() }
 
+/** Collects this [Sequence] of [Operator]s into an [OperatorSet]. */
 fun Sequence<Operator>.toOperatorSet(): OperatorSet = OperatorSet(this)
 
+/**
+ * Assembles a [Library] out of one or more [AbstractWrapper]s (i.e. [it.unibo.tuprolog.solve.primitive.PrimitiveWrapper]s,
+ * [it.unibo.tuprolog.solve.function.FunctionWrapper]s, or [it.unibo.tuprolog.solve.rule.RuleWrapper]s), optionally
+ * named [alias]. Useful to declare a small, ad-hoc [Library] without hand-writing an implementation.
+ *
+ * @throws NotImplementedError if any of [item1]/[items] is an [AbstractWrapper] subtype other than the three above.
+ */
 @JvmOverloads
 @JsName("libraryOf")
 fun libraryOf(
@@ -75,6 +87,7 @@ fun libraryOf(
     return alias?.let { Library.of(it, library) } ?: library
 }
 
+/** Same as [libraryOf], but wraps the resulting [Library] into a single-library [Runtime]. */
 @JvmOverloads
 @JsName("runtimeOf")
 fun runtimeOf(
