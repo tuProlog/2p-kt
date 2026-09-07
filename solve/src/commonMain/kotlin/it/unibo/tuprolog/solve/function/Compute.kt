@@ -59,7 +59,7 @@ sealed class Compute {
         fun replyWith(result: Term) = Response(result)
     }
 
-    /** Class representing a Response, from the Expression evaluator, to a [Solve.Request] */
+    /** Class representing a Response, from the Expression evaluator, to a [Request] */
     data class Response(
         /** The result of evaluation process */
         @JsName("result")

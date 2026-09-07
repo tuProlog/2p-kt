@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 
 /**
- * Interface representing internal strategies used by the [Solver]
+ * Interface representing internal strategies used by the [it.unibo.tuprolog.solve.Solver]
  *
  * @author Enrico
  */
