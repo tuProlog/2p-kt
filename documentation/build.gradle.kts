@@ -1,11 +1,16 @@
-apply(plugin = "org.jetbrains.dokka")
+import java.io.OutputStream
+import java.io.PrintStream
 
-val plantUml: Configuration by configurations.creating {
+plugins {
+    id("org.jetbrains.dokka")
+}
+
+val plantUml = configurations.create("plantUml") {
     attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, Usage.JAVA_RUNTIME))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named<Usage>(Usage.JAVA_RUNTIME))
         attribute(
             TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-            objects.named(TargetJvmEnvironment::class, TargetJvmEnvironment.STANDARD_JVM),
+            objects.named<TargetJvmEnvironment>(TargetJvmEnvironment.STANDARD_JVM),
         )
     }
 }
@@ -21,7 +26,9 @@ val diagramsDir = file("diagrams")
 val generatedDiagramsDir = file("docs/assets/diagrams")
 val plantUmlFiles = fileTree(diagramsDir) { include("**/*.puml") }
 
-val generateDiagrams by tasks.registering(JavaExec::class) {
+val generateDiagrams = tasks.register<JavaExec>("generateDiagrams") {
+    description = "Generate diagrams from PlantUML files"
+    group = "MkDocs"
     inputs.files(plantUmlFiles)
     outputs.dir(generatedDiagramsDir)
     classpath = plantUml
@@ -36,16 +43,33 @@ val generateDiagrams by tasks.registering(JavaExec::class) {
 
 val mkdocsSiteDir = layout.buildDirectory.dir("site")
 
-val mkdocsBuild by tasks.registering(Exec::class) {
-    dependsOn(generateDiagrams)
+val checkMkdocsCommandExists = tasks.register<Exec>("checkMkdocsCommandExists") {
+    description = "Check if the mkdocs command is available"
+    group = "MkDocs"
+    commandLine("mkdocs", "--version")
+}
+
+fun Exec.configureMkdocs(vararg commands: String) {
+    group = "MkDocs"
+    dependsOn("generateDiagrams")
+    dependsOn("checkMkdocsCommandExists")
     inputs.dir("docs")
     inputs.file("mkdocs.yml")
     outputs.dir(mkdocsSiteDir)
     workingDir = projectDir
-    commandLine("mkdocs", "build", "--site-dir", mkdocsSiteDir.get().asFile.absolutePath)
+    standardOutput = System.out
+    errorOutput = System.out
+    commandLine(*commands)
 }
 
-val assembleSite by tasks.registering(Copy::class) {
+val mkdocsBuild = tasks.register<Exec>("mkdocsBuild") {
+    description = "Build the MkDocs site"
+    configureMkdocs("mkdocs", "build", "--site-dir", mkdocsSiteDir.get().asFile.absolutePath)
+}
+
+val assembleSite = tasks.register<Copy>("assembleSite") {
+    description = "Build the Assemble site"
+    group = "MkDocs"
     dependsOn(mkdocsBuild, "dokkaGenerateHtml")
     from(mkdocsSiteDir)
     from(layout.buildDirectory.dir("dokka/html")) { into("api") }
@@ -54,4 +78,9 @@ val assembleSite by tasks.registering(Copy::class) {
 
 tasks.named("assemble") {
     dependsOn(assembleSite)
+}
+
+val serveMkdocs = tasks.register<Exec>("serveMkdocs") {
+    description = "Serve the MkDocs site locally"
+    configureMkdocs("mkdocs", "serve")
 }
