@@ -5,6 +5,14 @@ import it.unibo.tuprolog.theory.impl.ListedTheory
 import it.unibo.tuprolog.theory.impl.MutableListedTheory
 import it.unibo.tuprolog.unify.Unificator
 
+/**
+ * A [TheoryFactory] that produces [Theory]/[MutableTheory] instances backed by a plain ordered list of clauses:
+ * cheap to build and to keep in insertion order, but every retrieval degenerates to a linear scan with a
+ * per-clause unification check. This is the right choice for knowledge bases that change on (almost) every
+ * resolution step, or are small enough that indexing overhead is not worth paying — e.g. a solver's dynamic
+ * knowledge base.
+ * @see IndexedTheoryFactory
+ */
 class ListedTheoryFactory(
     override val unificator: Unificator,
 ) : TheoryFactory {
@@ -45,5 +53,6 @@ class ListedTheoryFactory(
         unificator: Unificator,
     ): MutableTheory = MutableListedTheory(unificator, clauses)
 
+    /** The default [ListedTheoryFactory], using [Unificator.default]. */
     object Default : TheoryFactory by ListedTheoryFactory(Unificator.default)
 }

@@ -10,6 +10,13 @@ import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/**
+ * A [ClauseCollection] that drops ordering guarantees in exchange for a slightly cheaper [count]/[get] when many
+ * clauses can match a single query shape and their relative order does not matter. Used internally as the
+ * storage for index buckets of the RETE tree that also backs [ClauseQueue]; `Theory` itself always uses
+ * [ClauseQueue], since Prolog's SLD resolution needs clause order preserved.
+ * @see ClauseQueue
+ */
 interface ClauseMultiSet : ClauseCollection {
     /** Gives the number of [Clause] that would unify over the given clause. **/
     @JsName("count")

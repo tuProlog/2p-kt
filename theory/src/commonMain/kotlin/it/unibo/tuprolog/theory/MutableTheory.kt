@@ -13,6 +13,19 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/**
+ * A [Theory] that mutates itself in place: `assertA`/`assertZ`/`retract`/`abolish` (and their `plus` shorthands)
+ * change and return `this`, instead of building a fresh [Theory]. This is cheaper than the persistent-data-
+ * structure behaviour of a plain [Theory] when clauses are asserted/retracted very frequently — e.g. to back a
+ * Prolog `dynamic` knowledge base updated on (almost) every resolution step — at the cost of the usual aliasing
+ * caveat: every reference to a `MutableTheory` observes every mutation performed through any other reference.
+ *
+ * As with [Theory], a `MutableTheory` can be backed by an indexed or a listed data structure (see
+ * [indexedOf]/[listedOf]); [Theory.toMutableTheory] and [Theory.toImmutableTheory] convert between the two
+ * flavours, copying the underlying clauses only when actually needed.
+ *
+ * @see Theory
+ */
 interface MutableTheory : Theory {
     override fun setUnificator(unificator: Unificator): MutableTheory
 
