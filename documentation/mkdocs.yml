@@ -8,6 +8,7 @@ docs_dir: docs
 
 theme:
   name: material
+  favicon: assets/img/favicon.ico
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
