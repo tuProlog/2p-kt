@@ -52,7 +52,7 @@ fun OperatorDefinition.toOperator(): Operator = Operator(name, specifier.toSpeci
  */
 fun OperatorSet.toOperatorTable(): OperatorTable = OperatorTables.of(map { it.toDefinition() })
 
-internal fun PrologSyntaxException.toParseException(input: Any?): ParseException =
+fun PrologSyntaxException.toParseException(input: Any?): ParseException =
     ParseException(
         input = input,
         offendingSymbol = offendingText,

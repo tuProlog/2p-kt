@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 api(project(":parser-theory"))
+                implementation(project(":parser-impl"))
                 implementation(libs.okio)
             }
         }
