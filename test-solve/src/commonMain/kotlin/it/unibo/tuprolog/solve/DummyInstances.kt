@@ -18,7 +18,18 @@ import it.unibo.tuprolog.unify.Unificator
  * @author Enrico
  */
 object DummyInstances {
-    /** An empty context to be used where needed to fill parameters */
+    /**
+     * A placeholder [ExecutionContext], used across this module wherever an `ExecutionContext` is a required
+     * argument (e.g. building an expected [it.unibo.tuprolog.solve.exception.error.TypeError] or other
+     * [it.unibo.tuprolog.solve.exception.ResolutionException] to compare a [Solution.Halt] against) but its actual
+     * content plays no role in the assertion, since [assertSolutionEquals] never compares
+     * [it.unibo.tuprolog.solve.exception.LogicError.context] for equality.
+     *
+     * Every member beyond [ExecutionContext.substitution], [ExecutionContext.startTime] and
+     * [ExecutionContext.maxDuration] throws [NotImplementedError] if actually accessed, so this instance must never
+     * be handed to a real solver or resolution step — only ever constructed and passed where an exception is built,
+     * not resolved.
+     */
     @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER", "IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
     val executionContext =
         object : ExecutionContext {

@@ -4,6 +4,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestIs], instantiated via [TestIs.prototype]. */
 internal class TestIsImpl(
     private val solverFactory: SolverFactory,
 ) : TestIs {

@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `compound/1` type-checking built-in, shared by every `Solver` implementation via
+ * the `TestCompound.prototype(solverFactory)` factory (see `TestClassicCompound` in `:solve-classic` for a concrete
+ * usage).
+ */
 interface TestCompound : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestCompound = TestCompoundImpl(solverFactory)

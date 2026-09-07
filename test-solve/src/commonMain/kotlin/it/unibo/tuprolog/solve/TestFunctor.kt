@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `functor/3` built-in, shared by every `Solver` implementation via the
+ * `TestFunctor.prototype(solverFactory)` factory (see `TestClassicFunctor` in `:solve-classic` for a concrete
+ * usage).
+ */
 interface TestFunctor : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestFunctor = TestFunctorImpl(solverFactory)

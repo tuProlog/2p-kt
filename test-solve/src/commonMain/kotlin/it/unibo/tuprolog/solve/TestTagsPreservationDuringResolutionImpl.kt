@@ -10,6 +10,10 @@ import it.unibo.tuprolog.utils.setTags
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+/**
+ * Concrete implementation of [TestTagsPreservationDuringResolution], instantiated via
+ * [TestTagsPreservationDuringResolution.prototype].
+ */
 class TestTagsPreservationDuringResolutionImpl(
     val solverFactory: SolverFactory,
 ) : TestTagsPreservationDuringResolution {

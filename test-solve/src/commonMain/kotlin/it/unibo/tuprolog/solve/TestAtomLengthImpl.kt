@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestAtomLength], instantiated via [TestAtomLength.prototype]. */
 class TestAtomLengthImpl(
     private val solverFactory: SolverFactory,
 ) : TestAtomLength {

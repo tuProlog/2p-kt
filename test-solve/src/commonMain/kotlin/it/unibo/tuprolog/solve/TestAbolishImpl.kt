@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestAbolish], instantiated via [TestAbolish.prototype]. */
 internal class TestAbolishImpl(
     private val solverFactory: SolverFactory,
 ) : TestAbolish {

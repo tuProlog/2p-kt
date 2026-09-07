@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `clause/2` built-in, shared by every `Solver` implementation via the
+ * `TestClause.prototype(solverFactory)` factory (see `TestClassicClause` in `:solve-classic` for a concrete usage).
+ */
 interface TestClause : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestClause = TestClauseImpl(solverFactory)

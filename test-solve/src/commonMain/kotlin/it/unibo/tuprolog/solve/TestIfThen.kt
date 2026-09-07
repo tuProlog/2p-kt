@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for `->`/2 (if-then, without an else branch), shared by every `Solver` implementation via the
+ * `TestIfThen.prototype(solverFactory)` factory (see `TestClassicIfThen` in `:solve-classic` for a concrete usage).
+ * See also [TestIfThenElse] for the combined `->`/2 `;`/2 (if-then-else) construct.
+ */
 interface TestIfThen : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestIfThen = TestIfThenImpl(solverFactory)

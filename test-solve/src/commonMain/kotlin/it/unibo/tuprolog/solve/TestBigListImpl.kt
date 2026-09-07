@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestBigList], instantiated via [TestBigList.prototype]. */
 internal class TestBigListImpl(
     private val solverFactory: SolverFactory,
 ) : TestBigList {

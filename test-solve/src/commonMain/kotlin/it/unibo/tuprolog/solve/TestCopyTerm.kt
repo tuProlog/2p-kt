@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `copy_term/2` built-in, shared by every `Solver` implementation via the
+ * `TestCopyTerm.prototype(solverFactory)` factory (see `TestClassicCopyTerm` in `:solve-classic` for a concrete
+ * usage).
+ */
 interface TestCopyTerm : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestCopyTerm = TestCopyTermImpl(solverFactory)

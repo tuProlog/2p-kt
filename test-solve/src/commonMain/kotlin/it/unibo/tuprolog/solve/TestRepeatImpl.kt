@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestRepeat], instantiated via [TestRepeat.prototype]. */
 internal class TestRepeatImpl(
     private val solverFactory: SolverFactory,
 ) : TestRepeat {

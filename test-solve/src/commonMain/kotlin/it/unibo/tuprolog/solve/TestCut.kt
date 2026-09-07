@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for `!`/0 (cut), shared by every `Solver` implementation via the
+ * `TestCut.prototype(solverFactory)` factory (see `TestClassicCut` in `:solve-classic` for a concrete usage).
+ */
 interface TestCut : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestCut = TestCutImpl(solverFactory)

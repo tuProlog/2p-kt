@@ -10,6 +10,7 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
+/** Concrete implementation of [TestSubstitutions], instantiated via [TestSubstitutions.prototype]. */
 class TestSubstitutionsImpl(
     private val solverFactory: SolverFactory,
 ) : TestSubstitutions {

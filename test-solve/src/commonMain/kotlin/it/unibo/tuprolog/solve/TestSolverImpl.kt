@@ -146,6 +146,7 @@ import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 import kotlin.collections.plus as append
 
+/** Concrete implementation of [TestSolver], instantiated via [TestSolver.prototype]. */
 internal class TestSolverImpl(
     private val solverFactory: SolverFactory,
     override val callErrorSignature: Signature,

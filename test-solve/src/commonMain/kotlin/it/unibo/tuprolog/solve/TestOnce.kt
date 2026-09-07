@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `once/1` built-in, shared by every `Solver` implementation via the
+ * `TestOnce.prototype(solverFactory)` factory (see `TestClassicOnce` in `:solve-classic` for a concrete usage).
+ */
 interface TestOnce : SolverTest {
     companion object {
         fun prototype(
@@ -8,6 +12,7 @@ interface TestOnce : SolverTest {
         ): TestOnce = TestOnceImpl(solverFactory, errorSignature)
     }
 
+    /** The [Signature] expected in errors raised while resolving the goal passed to `once/1`. */
     val errorSignature: Signature
 
     /**

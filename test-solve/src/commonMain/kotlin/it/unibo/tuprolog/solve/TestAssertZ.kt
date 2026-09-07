@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve
 
 /**
- * Tests of assertz
+ * Conformance tests for the ISO `assertz/1` built-in, shared by every `Solver` implementation via the
+ * `TestAssertZ.prototype(solverFactory)` factory (see `TestClassicAssertZ` in `:solve-classic` for a concrete usage).
  */
 interface TestAssertZ : SolverTest {
     companion object {

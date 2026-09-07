@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.solve
 
 /**
- * Tests of '=\=' (= arith_diff)
+ * Conformance tests for the ISO arithmetic comparison operators `=\=`/2, `=:=`/2, `>`/2, `>=`/2, `<`/2 and `=<`/2
+ * (each comparing the *evaluated* value of its two arithmetic-expression arguments, unlike the term-order operators
+ * in [TestTerm]), shared by every `Solver` implementation via the `TestArith.prototype(solverFactory)` factory
+ * (see `TestClassicArith` in `:solve-classic` for a concrete usage).
  */
 interface TestArith : SolverTest {
     companion object {

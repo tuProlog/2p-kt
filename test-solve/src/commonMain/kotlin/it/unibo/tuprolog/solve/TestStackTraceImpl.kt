@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 
+/** Concrete implementation of [TestStackTrace], instantiated via [TestStackTrace.prototype]. */
 @Suppress("LocalVariableName", "ktlint:standard:property-naming")
 class TestStackTraceImpl(
     private val solverFactory: SolverFactory,

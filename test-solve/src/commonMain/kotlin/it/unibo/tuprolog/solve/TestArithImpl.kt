@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.EVALUABLE
 
+/** Concrete implementation of [TestArith], instantiated via [TestArith.prototype]. */
 internal class TestArithImpl(
     private val solverFactory: SolverFactory,
 ) : TestArith {

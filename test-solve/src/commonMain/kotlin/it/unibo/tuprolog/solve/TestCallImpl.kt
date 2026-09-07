@@ -4,6 +4,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestCall], instantiated via [TestCall.prototype]. */
 internal class TestCallImpl(
     private val solverFactory: SolverFactory,
     override val errorSignature: Signature,
