@@ -54,7 +54,7 @@ gitHooks {
 
 rootProject.name = "2p"
 
-// include(":documentation")
+include(":documentation")
 include(":utils")
 include(":core")
 include(":unify")

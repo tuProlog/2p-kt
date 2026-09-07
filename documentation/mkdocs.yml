@@ -1,0 +1,45 @@
+site_name: 2P-Kt
+site_description: A multi-paradigm logic programming framework for Kotlin, Java, JavaScript, and beyond
+site_url: https://tuprolog.github.io/2p-kt/
+repo_url: https://github.com/tuProlog/2p-kt
+repo_name: tuProlog/2p-kt
+edit_uri: edit/master/documentation/docs/
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - content.action.edit
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.snippets:
+      base_path:
+        - "."
+        - ".."
+      check_paths: true
+  - toc:
+      permalink: true
+
+# No explicit `nav` on purpose: MkDocs auto-builds it from docs/<section>/*.md so
+# the tutorials/how-to/reference/explanation writers never touch this file.

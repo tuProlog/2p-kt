@@ -3,7 +3,6 @@ kotlin = "2.4.10"
 jvm = "17"
 node = "22-latest"
 jackson = "2.22.2"
-orchid = "0.21.1"
 kotlinx-coroutines = "1.11.0"
 javafx = "21.0.8"
 npm-yaml = "2.8.1" # yaml
@@ -25,7 +24,6 @@ ktMpp-multiplatform = { id = "io.github.gciatto.kt-mpp.multiplatform", version.r
 ktMpp-multiProjectHelper = { id = "io.github.gciatto.kt-mpp.multi-project-helper", version.ref = "ktMpp" }
 ktMpp-fatJar = { id = "io.github.gciatto.kt-mpp.fat-jar", version.ref = "ktMpp" }
 gradleMockService = "io.github.gciatto.gradle-mock-service:1.4.0"
-orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 
 [libraries]
 javafx-base = { module = "org.openjfx:javafx-base", version.ref = "javafx" }
@@ -39,9 +37,6 @@ jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr
 clikt = "com.github.ajalt.clikt:clikt:5.1.0"
 graphviz = "guru.nidi:graphviz-java:0.18.1"
 ktMath = "io.github.gciatto:kt-math:0.10.2"
-orchid-docs = { module = "io.github.javaeden.orchid:OrchidDocs", version.ref = "orchid" }
-orchid-kotlinDocs = { module = "io.github.javaeden.orchid:OrchidKotlindoc", version.ref = "orchid" }
-orchid-pluginDocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", version.ref = "orchid" }
 plantuml = "net.sourceforge.plantuml:plantuml:1.2026.6"
 richtextFx = "org.fxmisc.richtext:richtextfx:0.11.7"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }

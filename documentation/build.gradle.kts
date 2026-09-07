@@ -1,65 +1,57 @@
-plugins {
-    alias(libs.plugins.orchid)
-}
+apply(plugin = "org.jetbrains.dokka")
 
-configurations {
-    getByName("orchidRuntimeOnly") {
-        resolutionStrategy {
-            force(libs.plantuml)
-        }
-    }
-    create("plantuml") {
-        isTransitive = true
+val plantUml: Configuration by configurations.creating {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, Usage.JAVA_RUNTIME))
+        attribute(
+            TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+            objects.named(TargetJvmEnvironment::class, TargetJvmEnvironment.STANDARD_JVM),
+        )
     }
 }
 
 dependencies {
-    orchidRuntimeOnly(libs.orchid.docs)
-    orchidRuntimeOnly(libs.orchid.kotlinDocs)
-    orchidRuntimeOnly(libs.orchid.pluginDocs)
-
-    val plantuml by configurations.getting
-
-    plantuml(libs.plantuml)
+    rootProject.subprojects
+        .filter { it.path != project.path }
+        .forEach { add("dokka", project(it.path)) }
+    plantUml(libs.plantuml)
 }
 
-@Suppress("Deprecation")
-repositories {
-    jcenter()
-    mavenCentral()
-    maven("https://kotlin.bintray.com/kotlinx")
+val diagramsDir = file("diagrams")
+val generatedDiagramsDir = file("docs/assets/diagrams")
+val plantUmlFiles = fileTree(diagramsDir) { include("**/*.puml") }
+
+val generateDiagrams by tasks.registering(JavaExec::class) {
+    inputs.files(plantUmlFiles)
+    outputs.dir(generatedDiagramsDir)
+    classpath = plantUml
+    mainClass.set("net.sourceforge.plantuml.Run")
+    doFirst { generatedDiagramsDir.mkdirs() }
+    // ponytail: smetana is PlantUML's pure-Java layout engine, used to avoid a native Graphviz
+    // dependency in CI/dev machines; switch to the (higher-fidelity) `dot`-based layout by installing
+    // Graphviz and dropping this flag if diagram layout quality ever becomes an issue.
+    args("-tsvg", "-Playout=smetana", "-o", generatedDiagramsDir.absolutePath)
+    args(plantUmlFiles.map { it.absolutePath })
 }
 
-// env ORG_GRADLE_PROJECT_orchidBaseUrl
-val orchidBaseUrl: String? by project
+val mkdocsSiteDir = layout.buildDirectory.dir("site")
 
-orchid {
-    theme = "Editorial"
-    baseUrl = orchidBaseUrl
-    version = rootProject.version.toString()
-    args = listOf("--experimentalSourceDoc")
+val mkdocsBuild by tasks.registering(Exec::class) {
+    dependsOn(generateDiagrams)
+    inputs.dir("docs")
+    inputs.file("mkdocs.yml")
+    outputs.dir(mkdocsSiteDir)
+    workingDir = projectDir
+    commandLine("mkdocs", "build", "--site-dir", mkdocsSiteDir.get().asFile.absolutePath)
 }
 
-fun File.changeExtension(ext: String): File {
-    return File(parentFile, "$nameWithoutExtension.$ext")
+val assembleSite by tasks.registering(Copy::class) {
+    dependsOn(mkdocsBuild, "dokkaGenerateHtml")
+    from(mkdocsSiteDir)
+    from(layout.buildDirectory.dir("dokka/html")) { into("api") }
+    into(layout.buildDirectory.dir("assembledSite"))
 }
 
-val plantUmlFiles = fileTree("$projectDir/src/orchid/resources/assets/diagrams")
-    .also { it.include("**/*.puml").include("**/*.uml") }
-
-if (!plantUmlFiles.isEmpty) {
-    val generateUmlDiagramsInSvg by tasks.creating(JavaExec::class) {
-        inputs.files(plantUmlFiles)
-        outputs.files(
-            plantUmlFiles
-                .map { it.changeExtension("svg").absolutePath }
-                .map { it.replace("diagrams", "generated") }
-                .map(::File)
-        )
-        classpath = configurations.getByName("plantuml")
-        mainClass.set("net.sourceforge.plantuml.Run")
-        args("-tsvg", "-o", "$projectDir/src/orchid/resources/assets/generated")
-        args(plantUmlFiles.map { it.absolutePath })
-    }
-    tasks.getByName("orchidClasses").dependsOn(generateUmlDiagramsInSvg)
+tasks.named("assemble") {
+    dependsOn(assembleSite)
 }
