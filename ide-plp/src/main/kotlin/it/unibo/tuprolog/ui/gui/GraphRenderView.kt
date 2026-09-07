@@ -19,6 +19,15 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
+/**
+ * A [VBox] panel that displays Graphviz DOT source (e.g. a [it.unibo.tuprolog.bdd.BinaryDecisionDiagram]
+ * rendered via [it.unibo.tuprolog.bdd.toDotString]) as [dotGraph], with buttons to copy the source to the
+ * clipboard, render it to a PNG image through [GraphvizRenderer] (showing a progress indicator while the
+ * background render runs), and save the resulting image to a file. If [GraphvizRenderer.isReady] is `false`
+ * or [GraphvizRenderer.isAvailable] is `false` when this view is created, the "render" button is disabled
+ * and an explanatory message is shown instead (asking the user to retry once ready, or pointing at the
+ * Graphviz installation docs, respectively).
+ */
 class GraphRenderView(
     private val dotGraph: String,
 ) : VBox() {
