@@ -11,10 +11,17 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
-/** Class representing a logic operator */
+/**
+ * A logic (a.k.a. Prolog) operator declaration, associating a [functor] with a [specifier] (fixity and
+ * associativity) and a [priority] (lower binds tighter). Operators are what let a [TermFormatter] render,
+ * e.g., `+(1, 2)` as `1 + 2`, and what an [OperatorSet] groups together for a parser or formatter to consult.
+ */
 class Operator(
+    /** The operator's functor, e.g. `"+"`. */
     val functor: String,
+    /** The operator's fixity/associativity, e.g. [Specifier.YFX]. */
     val specifier: Specifier,
+    /** The operator's priority: the lower, the tighter it binds. */
     val priority: Int,
 ) : Comparable<Operator>,
     TermConvertible {
@@ -61,6 +68,7 @@ class Operator(
         @JvmField
         val TEMPLATE = Struct.of(FUNCTOR, Var.of("P"), Var.of("A"), Var.of("F"))
 
+        /** Creates an [Operator] out of its [priority], [specifier], and [functor] terms, or `null` if [specifier] is invalid. */
         @JvmStatic
         @JsName("fromTerms")
         fun fromTerms(

@@ -5,8 +5,18 @@ import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 
 /**
- * Base type for all logic terms.
- * [Term]s are immutable tree-like data structures.
+ * Base type for all logic terms: [Var]iables, [Constant]s ([Atom]s and [Numeric]s), and [Struct]ures
+ * (including [Clause]s, [List]s, [Tuple]s, and [Block]s, which are all just structures with a conventional
+ * functor). Every piece of data 2P-Kt's logic engine manipulates is, ultimately, a [Term].
+ *
+ * [Term]s are immutable tree-like data structures: there is no public API mutating a [Term] in place, only
+ * ones (like [freshCopy] and [Applicable.apply]) that return a new [Term]. This is what lets terms be shared
+ * freely between larger terms, knowledge bases, and concurrent computations without any risk of aliasing.
+ *
+ * [Term] also defines three, deliberately distinct, notions of equality — [equals] (identity-like, comparing
+ * [Var]s by [Var.completeName]), [equals] with [Var.name]-only comparison, and [structurallyEquals] (shape
+ * only, treating any two variables as equal) — plus a total order via [Comparable] (variables order before
+ * numbers, before atoms, before structures), which backs [TermComparator.DefaultComparator].
  */
 interface Term :
     Comparable<Term>,

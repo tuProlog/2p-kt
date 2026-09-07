@@ -2,6 +2,12 @@ package it.unibo.tuprolog.core
 
 import kotlin.jvm.JvmField
 
+/**
+ * Internal-use constants and patterns (well-formedness patterns, canonical/reserved functors) shared across
+ * the [Term] hierarchy's interfaces and companions. Most of these are re-exposed as named constants on the
+ * relevant type (e.g. [Var.NAME_PATTERN], [Struct.WELL_FORMED_FUNCTOR_PATTERN], [Cons.FUNCTOR]); prefer those
+ * over referencing [Terms] directly, which exists mainly to avoid duplicating these values across types.
+ */
 object Terms {
     private const val INT =
         """([0-9]+)"""

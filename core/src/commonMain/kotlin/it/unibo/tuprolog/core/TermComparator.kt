@@ -1,6 +1,14 @@
 package it.unibo.tuprolog.core
 
+/**
+ * A [Comparator] for a specific sort of [Term], following the standard logic-term total order: variables
+ * order before numbers, which order before atoms, which order before structures (compared first by [arity],
+ * then [functor], then arguments left-to-right). [DefaultComparator] implements the full order across any
+ * two [Term]s and backs [Term.compareTo]; the other nested objects handle one specific sub-type each, and are
+ * mostly useful when only same-sort terms are ever compared (e.g. sorting a list of [Atom]s).
+ */
 interface TermComparator<T : Term> : Comparator<T> {
+    /** Compares two [Atom]s by their [Atom.value], independently of the current locale. */
     object AtomComparator : TermComparator<Atom> {
         override fun compare(
             a: Atom,
@@ -8,6 +16,7 @@ interface TermComparator<T : Term> : Comparator<T> {
         ): Int = compareStringsLocaleIndependently(a.value, b.value)
     }
 
+    /** Compares two [Var]s by their [Var.completeName], independently of the current locale. */
     object VarComparator : TermComparator<Var> {
         override fun compare(
             a: Var,
@@ -15,6 +24,7 @@ interface TermComparator<T : Term> : Comparator<T> {
         ): Int = compareStringsLocaleIndependently(a.completeName, b.completeName)
     }
 
+    /** Compares two [Real]s by their [Real.value]. */
     object RealComparator : TermComparator<Real> {
         override fun compare(
             a: Real,
@@ -22,6 +32,7 @@ interface TermComparator<T : Term> : Comparator<T> {
         ): Int = a.decimalValue.compareTo(b.decimalValue)
     }
 
+    /** Compares two [Integer]s by their [Integer.value]. */
     object IntegerComparator : TermComparator<Integer> {
         override fun compare(
             a: Integer,
@@ -29,6 +40,10 @@ interface TermComparator<T : Term> : Comparator<T> {
         ): Int = a.intValue.compareTo(b.intValue)
     }
 
+    /**
+     * Implements the standard logic-term total order across any two [Term]s: variables order before numbers,
+     * which order before atoms, which order before structures. This is what backs [Term.compareTo].
+     */
     object DefaultComparator : TermComparator<Term> {
         private fun compareVarAndTerm(
             a: Var,
@@ -92,6 +107,7 @@ interface TermComparator<T : Term> : Comparator<T> {
             }
     }
 
+    /** Compares two [Struct]s first by [Struct.arity], then by [Struct.functor], then argument-wise, left to right. */
     object StructComparator : TermComparator<Struct> {
         override fun compare(
             a: Struct,

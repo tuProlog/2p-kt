@@ -17,28 +17,48 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /**
- * A particular sort of [Formatter]s aimed at representing terms
+ * A [Formatter] specialized in rendering [Term]s as [String]s, implemented as a [TermVisitor] (each `visitX`
+ * method renders the corresponding sub-type). The companion offers ready-made formatters covering the usual
+ * combinations of options ([canonical], [default], [readable], [prettyVariables], [prettyExpressions]); [of]
+ * is the general entry point when a custom combination of [VarFormat]/[OpFormat]/[FuncFormat] is needed.
  */
 interface TermFormatter :
     Formatter<Term>,
     TermVisitor<String> {
+    /** How [Var]iables should be rendered. */
     enum class VarFormat {
+        /** Render a variable through its [Var.completeName] (e.g. `X_1`). */
         COMPLETE_NAME,
+
+        /** Render a variable through its [Var.name], preceded by an underscore (e.g. `_X`). */
         UNDERSCORE,
+
+        /** Render a variable in a human-friendly way, disambiguating same-named variables with small indexes. */
         PRETTY,
     }
 
+    /** Whether/how known [it.unibo.tuprolog.core.operators.Operator]s should affect rendering. */
     enum class OpFormat {
+        /** Ignore operators entirely: always render structures in canonical `functor(arg1, ..., argN)` form. */
         IGNORE_OPERATORS,
+
+        /** Render [it.unibo.tuprolog.core.List]/[it.unibo.tuprolog.core.Tuple]/[Block] using their special syntax, but ignore other operators. */
         COLLECTIONS,
+
+        /** Render known prefix/infix/postfix operators using their symbolic syntax (e.g. `1 + 2` instead of `+(1, 2)`). */
         EXPRESSIONS,
     }
 
+    /** How [Struct.functor]s should be rendered. */
     enum class FuncFormat {
+        /** Wrap a functor in single quotes only if it is not [Struct.isFunctorWellFormed]. */
         QUOTED_IF_NECESSARY,
+
+        /** Render a functor exactly as-is, never quoting it. */
         LITERAL,
     }
 
+    /** Options controlling whether/how a [Term]'s tags (see `it.unibo.tuprolog.utils.Taggable`) are rendered alongside it. */
     data class TagsFormattingOptions(
         val showTags: Boolean = false,
         val delimiters: Pair<String, String> = "<" to ">",
@@ -71,6 +91,11 @@ interface TermFormatter :
     override fun format(value: Term): String = value.accept(this)
 
     companion object {
+        /**
+         * Builds a [TermFormatter] out of an explicit combination of [VarFormat], [OpFormat], and
+         * [FuncFormat]. The other, more specific factories in this companion ([canonical], [default],
+         * [readable], [prettyVariables], [prettyExpressions]) are shorthands for common combinations.
+         */
         @JvmStatic
         @JsName("of")
         fun of(
@@ -103,6 +128,10 @@ interface TermFormatter :
             }
         }
 
+        /**
+         * The default [TermFormatter]: renders operators as expressions, prints variables prefixed by `_`
+         * rather than by [Var.completeName], never quotes functors, and shows term tags.
+         */
         @JvmStatic
         @JsName("default")
         fun default(
@@ -110,10 +139,18 @@ interface TermFormatter :
             tagsOptions: TagsFormattingOptions = TagsFormattingOptions(showTags = true),
         ): TermFormatter = of(UNDERSCORE, EXPRESSIONS, LITERAL, true, operators, tagsOptions)
 
+        /**
+         * A [TermFormatter] rendering terms in fully canonical `functor(arg1, ..., argN)` form, ignoring
+         * operators entirely and quoting functors only when necessary.
+         */
         @JvmStatic
         @JsName("canonical")
         fun canonical(): TermFormatter = of(UNDERSCORE, IGNORE_OPERATORS, QUOTED_IF_NECESSARY, numberVars = false)
 
+        /**
+         * A [TermFormatter] aimed at human-readable output: renders operators as expressions and variables in
+         * a pretty way (see [VarFormat.PRETTY]).
+         */
         @JvmStatic
         @JsName("readable")
         fun readable(

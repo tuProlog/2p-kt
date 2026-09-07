@@ -8,13 +8,26 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
+/**
+ * A logic list, i.e. either an [EmptyList] (the atom `[]`) or a [Cons] cell. Logic lists are, in Prolog
+ * syntax, `[a, b, c]`, which desugars to `.(a, .(b, .(c, [])))` — a chain of [Cons] cells terminated by
+ * [EmptyList]. When the final tail is something other than [EmptyList] (a variable, or another term), the
+ * chain is a *partial* list, and [isWellFormed] is `false`.
+ *
+ * [List.of] builds well-formed lists; [List.from] builds lists terminated by an arbitrary [last] term
+ * (`null` meaning "terminate with the last given item instead of appending [EmptyList]"), which is how
+ * partial lists (e.g. `[H|T]` patterns) are constructed. Lists built from a [Sequence] or [Cursor] are lazily
+ * unfolded, which matters for very long or effectively-infinite generated lists.
+ */
 interface List : Recursive {
     override val isList: Boolean
         get() = true
 
+    /** Whether this list's final tail is [EmptyList], i.e. whether it is a proper (non-partial) list. */
     @JsName("isWellFormed")
     val isWellFormed: Boolean
 
+    /** The last element reachable by following [Cons.tail] repeatedly (the final tail itself, for a partial list). */
     @JsName("last")
     val last: Term
 
@@ -51,18 +64,23 @@ interface List : Recursive {
     override fun asList(): List = this
 
     companion object {
+        /** The canonical list-cell functor: `.` (same as [Cons.FUNCTOR]). */
         const val CONS_FUNCTOR = Terms.CONS_FUNCTOR
 
+        /** The canonical empty-list functor: `[]` (same as [EmptyList.FUNCTOR]). */
         const val EMPTY_LIST_FUNCTOR = Terms.EMPTY_LIST_FUNCTOR
 
+        /** Returns the empty logic list, i.e. the atom `[]`. */
         @JvmStatic
         @JsName("empty")
         fun empty(): List = Empty.list()
 
+        /** Creates a well-formed logic list containing [items], in order, terminated by [EmptyList]. */
         @JvmStatic
         @JsName("of")
         fun of(vararg items: Term): List = from(items.toList(), empty())
 
+        /** @see of */
         @JvmStatic
         @JsName("ofIterable")
         fun of(items: Iterable<Term>): List =
@@ -71,14 +89,21 @@ interface List : Recursive {
                 else -> from(items.cursor(), empty())
             }
 
+        /** @see of */
         @JvmStatic
         @JsName("ofList")
         fun of(items: KtList<Term>): List = from(items, empty())
 
+        /** @see of */
         @JvmStatic
         @JsName("ofSequence")
         fun of(items: Sequence<Term>): List = from(items.cursor(), empty())
 
+        /**
+         * Creates a logic list containing [items], in order, terminated by [last]. Passing `null` as [last]
+         * makes the last of [items] itself the final tail (still yielding a well-formed list only if that
+         * last item is [EmptyList]); passing any other [Term] (including a [Var]) yields a partial list.
+         */
         @JvmStatic
         @JsName("from")
         fun from(
@@ -86,10 +111,12 @@ interface List : Recursive {
             last: Term?,
         ): List = from(items.toList(), last)
 
+        /** Equivalent to [from] with `last = null`. */
         @JvmStatic
         @JsName("fromNullTerminated")
         fun from(vararg items: Term): List = from(items.cursor(), null)
 
+        /** @see from */
         @JvmStatic
         @JsName("fromIterable")
         fun from(
@@ -101,10 +128,16 @@ interface List : Recursive {
                 else -> from(items.cursor(), last)
             }
 
+        /** Equivalent to [from] with `last = null`. */
         @JvmStatic
         @JsName("fromIterableNullTerminated")
         fun from(items: Iterable<Term>): List = from(items, null)
 
+        /**
+         * Creates a logic list containing [items], in order, terminated by [last]. The list is unfolded
+         * lazily as it is consumed, which is useful for large or generated [items] sequences.
+         * @see from
+         */
         @JvmStatic
         @JsName("fromSequence")
         fun from(
@@ -112,10 +145,16 @@ interface List : Recursive {
             last: Term?,
         ): List = from(items.cursor(), last)
 
+        /** Equivalent to [from] with `last = null`. */
         @JvmStatic
         @JsName("fromSequenceNullTerminated")
         fun from(items: Sequence<Term>): List = from(items.cursor(), null)
 
+        /**
+         * Creates a logic list containing [items], in order, terminated by [last].
+         * @throws IllegalArgumentException if [items] is empty and [last] is neither `null` nor a [List]
+         * @see from
+         */
         @JvmStatic
         @JsName("fromList")
         fun from(
@@ -142,10 +181,16 @@ interface List : Recursive {
             return right.castToList()
         }
 
+        /** Equivalent to [from] with `last = null`. */
         @JvmStatic
         @JsName("fromListNullTerminated")
         fun from(items: KtList<Term>): List = from(items, null)
 
+        /**
+         * Creates a logic list lazily unfolding the given [items] [Cursor], terminated by [last].
+         * @throws IllegalArgumentException if [items] is already exhausted and [last] is neither `null` nor a [List]
+         * @see from
+         */
         @JvmStatic
         @JsName("fromCursor")
         fun from(
@@ -162,6 +207,7 @@ interface List : Recursive {
                 else -> LazyConsWithExplicitLast(items, last)
             }
 
+        /** Equivalent to [from] with `last = null`. */
         @JvmStatic
         @JsName("fromCursorNullTerminated")
         fun from(items: Cursor<out Term>): List = from(items, null)

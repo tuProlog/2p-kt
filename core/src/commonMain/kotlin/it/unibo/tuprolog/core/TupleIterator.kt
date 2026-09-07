@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+/** An [Iterator] walking the elements of a [Tuple], from [Tuple.left] to [Tuple.left], following [Tuple.right] chains. */
 class TupleIterator(
     tuple: Tuple,
 ) : Iterator<Term> {

@@ -14,7 +14,13 @@ import kotlin.collections.List as KtList
 /**
  * Base type for constant, alphanumeric [Term]s, a.k.a. strings.
  * An [Atom] is at the same time a [String]-valued [Constant] and a 0-argument [Struct], whose [functor] is equal
- * to [value].
+ * to [value]. Modelling it as both, rather than picking a single parent, is what lets generic code written
+ * against [Struct] (functor/arity/argument-based) keep working on atoms without special-casing, while code
+ * that only cares about "a ground value" can use [Constant] instead.
+ *
+ * [Atom.of] is the standard way to build one; it also recognizes a handful of reserved functors (`[]`, `{}`,
+ * `true`, `false`, `fail`) and transparently returns the corresponding singleton ([EmptyList], [EmptyBlock],
+ * or [Truth]) instead of a plain [Atom] in those cases.
  */
 interface Atom :
     Struct,
@@ -53,17 +59,29 @@ interface Atom :
     override fun asAtom(): Atom = this
 
     companion object {
+        /** Wraps [string] in single quotes, unconditionally. See [Struct.enquoteFunctor]. */
         @JvmStatic
         @JsName("escapeValue")
         fun escapeValue(string: String): String = Struct.enquoteFunctor(string)
 
+        /** Wraps [string] in single quotes, but only if it is not [ATOM_PATTERN]-well-formed. */
         @JvmStatic
         @JsName("escapeValueIfNecessary")
         fun escapeValueIfNecessary(string: String): String = Struct.enquoteFunctorIfNecessary(string)
 
+        /** The pattern a well-formed, quote-free [Atom] value must match. Same as [Struct.WELL_FORMED_FUNCTOR_PATTERN]. */
         @JvmField
         val ATOM_PATTERN = Terms.ATOM_PATTERN
 
+        /**
+         * Creates an [Atom] with the given [value]. Never throws, regardless of whether [value] is well-formed:
+         * ill-formed atoms are simply rendered quoted (see [Struct.enquoteFunctorIfNecessary]) when converted to
+         * [String].
+         *
+         * If [value] matches one of the reserved functors `[]`, `{}`, `true`, `false`, or `fail`, the
+         * corresponding singleton ([EmptyList], [EmptyBlock], or [Truth]) is returned instead of a fresh [Atom].
+         * @return a new [Atom] (or a shared singleton instance, for reserved values)
+         */
         @JvmStatic
         @JsName("of")
         fun of(value: String): Atom =
