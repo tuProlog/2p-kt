@@ -8,6 +8,20 @@ import it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.propertiesOf
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
+/**
+ * Implements ISO's `stream_property/2`: enumerates, backtracking over every open channel (input and output alike),
+ * the pairs of `$stream(...)` term and `stream_property/2` property that hold for it, unifying them respectively
+ * with the first and second argument. Reported properties are `input`/`output`, one `alias(_)` per non-reserved
+ * alias, and always `type(text)` (see [IOPrimitiveUtils.propertiesOf], since only text streams are supported).
+ *
+ * Both arguments act as filters when already bound: binding the first restricts enumeration to that stream, binding
+ * the second (to `input`, `output`, or `alias(_)`) to that property.
+ *
+ * @throws it.unibo.tuprolog.solve.exception.error.DomainError (`stream_or_alias`) if the first argument is bound to
+ * something other than a `$stream(...)` term.
+ * @throws it.unibo.tuprolog.solve.exception.error.DomainError (`stream_property`) if the second argument is bound
+ * to something other than `input`, `output`, or `alias(_)`.
+ */
 object StreamProperty : BinaryRelation<ExecutionContext>("stream_property") {
     override fun Solve.Request<ExecutionContext>.computeAll(
         first: Term,

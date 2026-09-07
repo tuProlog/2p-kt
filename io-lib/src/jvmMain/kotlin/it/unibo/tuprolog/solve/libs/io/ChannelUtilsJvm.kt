@@ -9,6 +9,14 @@ import java.util.WeakHashMap
 
 private val cache = WeakHashMap<InputChannel<String>, InputChannel<Term>>()
 
+/**
+ * JVM implementation of [it.unibo.tuprolog.solve.libs.io.asTermChannel]: requires the receiver to be a
+ * [ReaderChannel] (i.e. backed by a `java.io.Reader`) and parses terms out of it, one at a time, via
+ * [it.unibo.tuprolog.core.parsing.TermReader]. The resulting term channel is cached (weakly, keyed by the receiver),
+ * so repeated calls on the same character channel keep reading forward rather than restarting from its beginning.
+ *
+ * @throws IllegalStateException if the receiver is not a [ReaderChannel].
+ */
 @Suppress("UnsafeCallOnNullableType")
 @Synchronized
 actual fun InputChannel<String>.asTermChannel(operators: OperatorSet): InputChannel<Term> {

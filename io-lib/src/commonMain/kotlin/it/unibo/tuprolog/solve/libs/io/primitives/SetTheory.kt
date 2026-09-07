@@ -11,12 +11,33 @@ import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.ClausesParser
 
+/**
+ * Non-ISO, tuProlog-specific predicate: `set_theory/1` parses the atom argument as Prolog source text (using
+ * [it.unibo.tuprolog.theory.parsing.ClausesParser] with the context's current operators) and *replaces* the
+ * solver's static and dynamic knowledge base, operators and flags with what that text defines. See [setTheory] for
+ * the shared implementation (also used, with `append = true`, by [Consult] to load a theory fetched from a
+ * [it.unibo.tuprolog.solve.libs.io.Url]).
+ *
+ * ```prolog
+ * ?- set_theory('parent(tom, bob). parent(bob, ann).').
+ * ```
+ *
+ * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if the argument is unbound.
+ * @throws it.unibo.tuprolog.solve.exception.error.TypeError if it is bound but not an atom.
+ * @throws it.unibo.tuprolog.solve.exception.error.SyntaxError if it is not well-formed Prolog source text.
+ */
 object SetTheory : UnaryPredicate.NonBacktrackable<ExecutionContext>("set_theory") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsAtom(0)
         return setTheory(first.castTo<Atom>().value, append = false)
     }
 
+    /**
+     * Parses [text] as Prolog source, then either [append]s its clauses/operators/flags to the solver's current
+     * ones (used by [Consult]) or, if not [append], replaces them wholesale (used by [SetTheory] itself, which
+     * always calls this with `append = false`).
+     * @throws it.unibo.tuprolog.solve.exception.error.SyntaxError if [text] is not well-formed Prolog source text.
+     */
     fun Solve.Request<ExecutionContext>.setTheory(
         text: String,
         append: Boolean = true,
