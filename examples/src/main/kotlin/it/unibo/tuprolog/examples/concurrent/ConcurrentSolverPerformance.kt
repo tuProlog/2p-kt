@@ -16,7 +16,8 @@ import it.unibo.tuprolog.theory.parsing.ClausesReader
 
 /**
  * Compares the wall-clock time taken to solve the N-Queens counting problem with
- * `it.unibo.tuprolog.solve.concurrent.ConcurrentSolverFactory` (backed by `it.unibo.tuprolog.solve.concurrent.ConcurrentSolver`,
+ * `it.unibo.tuprolog.solve.concurrent.ConcurrentSolverFactory`
+ * (backed by `it.unibo.tuprolog.solve.concurrent.ConcurrentSolver`,
  * which explores alternative choice points on separate threads/coroutines) against the same
  * query solved with `it.unibo.tuprolog.solve.classic.ClassicSolverFactory` (a single-threaded,
  * depth-first resolution engine).

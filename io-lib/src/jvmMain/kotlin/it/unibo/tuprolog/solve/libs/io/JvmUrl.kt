@@ -39,7 +39,8 @@ data class JvmUrl(
     override val query: String?
         get() = url.query
 
-    /** @throws IOException if [url] cannot be opened (missing file, unreachable host, ...), wrapping the underlying `java.io.IOException`. */
+    /** @throws IOException if [url] cannot be opened (missing file, unreachable host, ...),
+     * wrapping the underlying `java.io.IOException`. */
     override fun readAsText(): String =
         try {
             BufferedReader(InputStreamReader(url.openStream())).lines().asSequence().joinToString("\n")

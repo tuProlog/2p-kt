@@ -19,7 +19,8 @@ actual fun remoteUrl(
 
 /**
  * JS implementation of [it.unibo.tuprolog.solve.libs.io.openInputChannel]: eagerly [Url.readAsText]s the whole
- * resource and wraps it into an in-memory [InputChannel], rather than streaming it lazily as the JVM implementation does.
+ * resource and wraps it into an in-memory [InputChannel],
+ * rather than streaming it lazily as the JVM implementation does.
  * @throws IOException if the resource cannot be read.
  */
 actual fun Url.openInputChannel(): InputChannel<String> = InputChannel.of(readAsText())

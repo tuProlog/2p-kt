@@ -37,7 +37,8 @@ class SyntaxColoring(
     operators: OperatorSet = OperatorSet.DEFAULT,
     private val executor: ExecutorService = ForkJoinPool.commonPool(),
 ) {
-    /** How long to wait, after the user stops editing [codeArea], before recomputing the highlighting; see [activate]. */
+    /** How long to wait, after the user stops editing [codeArea],
+     * before recomputing the highlighting; see [activate]. */
     @Volatile
     var delay: Duration = delay
         @Synchronized get

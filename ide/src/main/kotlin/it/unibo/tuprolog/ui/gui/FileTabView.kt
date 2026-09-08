@@ -66,7 +66,8 @@ class FileTabView(
     @FXML
     lateinit var codeArea: CodeArea
 
-    /** The full text currently in the editor; setting it replaces the editor's content and updates the model's copy of [file]. */
+    /** The full text currently in the editor;
+     * setting it replaces the editor's content and updates the model's copy of [file]. */
     var wholeText: String
         get() = codeArea.text
         set(value) {
@@ -95,7 +96,8 @@ class FileTabView(
         }
     }
 
-    /** The [File] this tab's editor content is associated with in the model; setting it also renames the tab's label. */
+    /** The [File] this tab's editor content is associated with in the model;
+     * setting it also renames the tab's label. */
     var file: File = file
         get
         set(value) {

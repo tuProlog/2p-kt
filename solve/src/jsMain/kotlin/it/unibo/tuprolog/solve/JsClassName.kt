@@ -28,7 +28,8 @@ data class JsClassName(
         qualifiedName.split('.')
     }
 
-    /** Resolves this reference via JS `require`, returning `null` if [module] or any segment of [path] can't be found. */
+    /** Resolves this reference via JS `require`,
+     * returning `null` if [module] or any segment of [path] can't be found. */
     @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun resolve(): dynamic {
         try {

@@ -60,13 +60,15 @@ interface TuPrologIDEModel {
         SOLUTION,
     }
 
-    /** The [SolveOptions] (e.g. timeout, [it.unibo.tuprolog.solve.flags.TrackVariables] flag) used by future resolutions. */
+    /** The [SolveOptions]
+     * (e.g. timeout, [it.unibo.tuprolog.solve.flags.TrackVariables] flag) used by future resolutions. */
     var solveOptions: SolveOptions
 
     /** The current phase of the resolution state machine; see [State]. */
     val state: State
 
-    /** The [ExecutorService] used to run resolution steps ([solve], [solveAll], [next], [nextAll]) off the calling thread. */
+    /** The [ExecutorService] used to run resolution steps
+     * ([solve], [solveAll], [next], [nextAll]) off the calling thread. */
     val executor: ExecutorService
 
     /**
@@ -104,7 +106,8 @@ interface TuPrologIDEModel {
     /** Marks [file] as [currentFile] and fires [onFileSelected]. */
     fun selectFile(file: File)
 
-    /** Forgets the in-memory content associated with [file] (without touching the file on disk) and fires [onFileClosed]. */
+    /** Forgets the in-memory content associated with [file]
+     * (without touching the file on disk) and fires [onFileClosed]. */
     fun closeFile(file: File)
 
     /**
@@ -184,7 +187,8 @@ interface TuPrologIDEModel {
     fun nextAll()
 
     /**
-     * Interrupts an in-progress [State.SOLUTION] resolution, firing [onQueryOver] and bringing [state] back to [State.IDLE].
+     * Interrupts an in-progress [State.SOLUTION] resolution,
+     * firing [onQueryOver] and bringing [state] back to [State.IDLE].
      *
      * @throws IllegalStateException if [state] is not [State.SOLUTION].
      */
@@ -228,19 +232,22 @@ interface TuPrologIDEModel {
     /** Fired every time the solver is rebuilt (by [reset] or [customizeSolver]), carrying a fresh solver snapshot. */
     val onNewSolver: EventStream<SolverEvent<Unit>>
 
-    /** Fired whenever the static knowledge base loaded into the solver changes (by [reset] or before a new resolution). */
+    /** Fired whenever the static knowledge base loaded into the solver changes
+     * (by [reset] or before a new resolution). */
     val onNewStaticKb: EventStream<SolverEvent<Unit>>
 
     /** Fired by [solve]/[solveAll] with the parsed goal, right before the first solution is requested. */
     val onNewQuery: EventStream<SolverEvent<Struct>>
 
-    /** Fired right before a resolution step starts computing, carrying the 1-based index of the solution being sought. */
+    /** Fired right before a resolution step starts computing,
+     * carrying the 1-based index of the solution being sought. */
     val onResolutionStarted: EventStream<SolverEvent<Int>>
 
     /** Fired every time a new [Solution] (yes/no/halt) is produced by [solve], [solveAll], [next], or [nextAll]. */
     val onNewSolution: EventStream<SolverEvent<Solution>>
 
-    /** Fired right after a resolution step finishes computing, carrying the 1-based index of the solution just produced. */
+    /** Fired right after a resolution step finishes computing,
+     * carrying the 1-based index of the solution just produced. */
     val onResolutionOver: EventStream<SolverEvent<Int>>
 
     /** Fired once the whole resolution for a query is over (solutions exhausted, or [stop] was invoked). */

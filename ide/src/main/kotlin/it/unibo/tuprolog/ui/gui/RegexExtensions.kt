@@ -31,7 +31,8 @@ fun Regex.asGroup(name: String? = null): Regex =
         "(?<$name>$pattern)"
     }.toRegex()
 
-/** A regex matching [pattern] only when it occurs as a whole word (bounded by `\b` or string start/end); see [wordify]. */
+/** A regex matching [pattern] only when it occurs as a whole word
+ * (bounded by `\b` or string start/end); see [wordify]. */
 fun wordOf(pattern: String): Regex = wordify(pattern).toRegex()
 
 /** Wraps [pattern] so it only matches at word boundaries, e.g. so `"is"` does not match inside `"this"`. */

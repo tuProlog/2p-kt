@@ -38,7 +38,8 @@ sealed class SolutionView<T, S : Solution>(
         /** Led color used for a [Solution.Halt] not caused by a timeout ([HaltView]). */
         val COLOR_HALT: Paint = Paint.valueOf("RED")
 
-        /** Led color used for a [Solution.Halt] caused by [it.unibo.tuprolog.solve.exception.TimeOutException] ([HaltView]). */
+        /** Led color used for a [Solution.Halt] caused by [it.unibo.tuprolog.solve.exception.TimeOutException]
+         * ([HaltView]). */
         val COLOR_TIMEOUT: Paint = Paint.valueOf("GOLD")
 
         /** Builds the [SolutionView] subclass ([YesView], [NoView], or [HaltView]) matching the kind of [solution]. */

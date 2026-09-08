@@ -44,7 +44,8 @@ sealed class PLPSolutionView<T, S : Solution>(
         /** Led color used for [Solution.No] ([NoViewPLP]); same as [SolutionView.COLOR_NO]. */
         val COLOR_NO: Paint = SolutionView.COLOR_NO
 
-        /** Led color used for a [Solution.Halt] not caused by a timeout ([HaltViewPLP]); same as [SolutionView.COLOR_HALT]. */
+        /** Led color used for a [Solution.Halt] not caused by a timeout ([HaltViewPLP]);
+         * same as [SolutionView.COLOR_HALT]. */
         val COLOR_HALT: Paint = SolutionView.COLOR_HALT
 
         /**
@@ -53,7 +54,8 @@ sealed class PLPSolutionView<T, S : Solution>(
          */
         val COLOR_TIMEOUT: Paint = SolutionView.COLOR_TIMEOUT
 
-        /** Builds the [PLPSolutionView] subclass ([YesViewPLP], [NoViewPLP], or [HaltViewPLP]) matching the kind of [solution]. */
+        /** Builds the [PLPSolutionView] subclass ([YesViewPLP], [NoViewPLP], or [HaltViewPLP])
+         * matching the kind of [solution]. */
         fun of(solution: Solution): PLPSolutionView<*, *> =
             solution.whenIs(
                 yes = { YesViewPLP(it) },

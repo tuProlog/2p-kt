@@ -813,7 +813,8 @@ class TuPrologIDEController : Initializable {
         this.onAbout()
     }
 
-    /** Runs [setup] against this controller's private [TuPrologIDEModel], e.g. to load extra libraries or subscribe to events. */
+    /** Runs [setup] against this controller's private [TuPrologIDEModel],
+     * e.g. to load extra libraries or subscribe to events. */
     fun customizeModel(setup: ModelConfigurator) = setup(model)
 
     /**

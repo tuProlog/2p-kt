@@ -10,7 +10,8 @@ package it.unibo.tuprolog.ui.gui
 
 import javafx.scene.image.Image
 
-/** External-form URL of the light-theme keyword/syntax-highlighting stylesheet (matches [SyntaxColoring]'s style classes). */
+/** External-form URL of the light-theme keyword/syntax-highlighting stylesheet
+ * (matches [SyntaxColoring]'s style classes). */
 val JAVA_KEYWORDS_LIGHT: String by lazy {
     TuPrologIDEApplication::class.java.getResource("java-keywords-light.css").toExternalForm()
 }
