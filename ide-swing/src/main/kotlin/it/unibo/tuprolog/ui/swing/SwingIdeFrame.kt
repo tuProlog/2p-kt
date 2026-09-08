@@ -15,12 +15,10 @@ import it.unibo.tuprolog.ui.gui.model.PageState
 import it.unibo.tuprolog.ui.gui.model.PanelId
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
 import it.unibo.tuprolog.ui.gui.model.resolve
-import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import kotlinx.coroutines.CoroutineScope
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
-import java.awt.Font
 import java.awt.KeyboardFocusManager
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
@@ -75,7 +73,7 @@ class SwingIdeFrame(
     private val statusLabel = JLabel("Idle")
     private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT)
 
-    private val solutionsArea = readOnlyArea()
+    private val solutionsTree = SolutionTree()
     private val stdinArea = editorArea()
     private val stdoutArea = readOnlyArea()
     private val stderrArea = readOnlyArea()
@@ -87,7 +85,7 @@ class SwingIdeFrame(
     private val staticKbArea = readOnlyArea()
     private val dynamicKbArea = readOnlyArea()
 
-    private val pageEditors = linkedMapOf<PageId, JTextArea>()
+    private val pageEditors = linkedMapOf<PageId, PrologEditor>()
     private val pageComponents = linkedMapOf<PageId, JComponent>()
     private val lowerPanelIds = mutableMapOf<Int, PanelId>()
     private val lowerPanelTitles = mutableMapOf<Int, String>()
@@ -157,7 +155,7 @@ class SwingIdeFrame(
                 )
             }
 
-        addLowerTab("Solutions", PanelId.SOLUTIONS, solutionsArea)
+        addLowerTab("Solutions", PanelId.SOLUTIONS, solutionsTree)
         addLowerTab("Stdin", PanelId.STDIN, stdinArea)
         addLowerTab("Stdout", PanelId.STDOUT, stdoutArea)
         addLowerTab("Stderr", PanelId.STDERR, stderrArea)
@@ -185,10 +183,10 @@ class SwingIdeFrame(
     private fun addLowerTab(
         title: String,
         panelId: PanelId,
-        area: JTextArea,
+        component: JComponent,
     ) {
         val index = lowerTabs.tabCount
-        lowerTabs.addTab(title, JScrollPane(area))
+        lowerTabs.addTab(title, JScrollPane(component))
         lowerPanelIds[index] = panelId
         lowerPanelTitles[index] = title
     }
@@ -342,6 +340,7 @@ class SwingIdeFrame(
                 area.text = source
                 area.caretPosition = area.document.length.coerceAtMost(area.caretPosition)
             }
+            area.highlight(page.solverSession.inspection.operators)
         }
 
         val selectedIndex = pages.indexOfFirst { it.id == state.workspace.selectedPageId }
@@ -352,9 +351,7 @@ class SwingIdeFrame(
 
     private fun createEditorComponent(page: PageState): JComponent {
         val area =
-            editorArea().apply {
-                font = Font(Font.MONOSPACED, Font.PLAIN, 14)
-                tabSize = 4
+            PrologEditor().apply {
                 document.addDocumentListener(
                     object : DocumentListener {
                         override fun insertUpdate(event: DocumentEvent) = editorChanged(page.id)
@@ -395,7 +392,7 @@ class SwingIdeFrame(
         val timeoutMs = effective.timeout.inWholeMilliseconds.coerceAtLeast(1)
         if ((timeoutSpinner.value as Number).toLong() != timeoutMs) timeoutSpinner.value = timeoutMs
 
-        solutionsArea.text = formatSolutions(page)
+        solutionsTree.render(page.resolution.solutions)
         stdoutArea.text = page.console.stdout.text
         stderrArea.text = page.console.stderr.text
         warningsArea.text =
@@ -529,27 +526,6 @@ class SwingIdeFrame(
             is PageContent.Scratch -> content.text
         }
 
-    private fun formatSolutions(page: PageState): String =
-        page.resolution.solutions.joinToString("\n\n") { solution ->
-            when (solution) {
-                is SolutionPresentation.Yes ->
-                    if (solution.bindings.isEmpty()) {
-                        "yes."
-                    } else {
-                        solution.bindings.joinToString(",\n") { "${it.variable} = ${it.value}" } + "."
-                    }
-                is SolutionPresentation.No -> "no."
-                is SolutionPresentation.Halt ->
-                    buildString {
-                        append(if (solution.isTimeout) "timeout" else "halt")
-                        append(": ").append(solution.message)
-                        if (solution.logicStackTrace.isNotEmpty()) {
-                            append("\n").append(solution.logicStackTrace.joinToString("\n"))
-                        }
-                    }
-            }
-        }
-
     private fun statusText(page: PageState): String =
         when (page.resolution.status) {
             ResolutionStatus.IDLE -> "Idle"
@@ -561,8 +537,8 @@ class SwingIdeFrame(
         }
 
     private fun clearLowerAreas() {
+        solutionsTree.render(emptyList())
         listOf(
-            solutionsArea,
             stdinArea,
             stdoutArea,
             stderrArea,
