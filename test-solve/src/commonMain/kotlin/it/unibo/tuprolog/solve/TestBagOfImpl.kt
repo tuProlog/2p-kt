@@ -4,6 +4,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestBagOf], instantiated via [TestBagOf.prototype]. */
 class TestBagOfImpl(
     private val solverFactory: SolverFactory,
 ) : TestBagOf {

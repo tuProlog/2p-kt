@@ -10,6 +10,11 @@ import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+/**
+ * Concrete implementation of [TestRecursion], instantiated via [TestRecursion.prototype]. Overrides [shortDuration]
+ * with a fixed value (rather than [SolverTest]'s platform-scaled default), since here it is only used as the base
+ * unit for computing [SolverTest.mediumDuration]/[SolverTest.longDuration], not as a `solve` timeout itself.
+ */
 internal class TestRecursionImpl(
     private val solverFactory: SolverFactory,
 ) : TestRecursion {

@@ -2,6 +2,18 @@ package it.unibo.tuprolog.utils.graphs
 
 import it.unibo.tuprolog.utils.addFirst
 
+/**
+ * A [SearchStrategy] visiting a [Graph] depth-first: from the source, it follows one outgoing edge as deep
+ * as possible before backtracking to explore the next one. Each yielded [Visit.state] is the depth (an
+ * [Int], starting at 0) at which the corresponding node was reached.
+ * ```kotlin
+ * graph.asSequence(DepthFirst(), sourceNode).forEach { (depth, node) -> println("$node at depth $depth") }
+ * ```
+ * @param maxDepth caps the traversal to nodes at depth at most [maxDepth]; a non-positive value (the
+ * default, `-1`) means "unbounded"
+ * @param postOrder if `true` (`false` by default), a node is yielded only after all the nodes reachable
+ * from it have been (post-order traversal), rather than as soon as it is first reached (pre-order traversal)
+ */
 class DepthFirst<T, W>(
     private val maxDepth: Int = -1,
     private val postOrder: Boolean = false,

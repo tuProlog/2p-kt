@@ -8,6 +8,8 @@ import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/** A [ClauseQueue] that mutates itself in place; see [MutableClauseCollection] for why this trades away
+ *  immutability. */
 interface MutableClauseQueue : ClauseQueue {
     /** Adds the given [Clause] as the first element in this [MutableClauseQueue] **/
     override fun addFirst(clause: Clause): MutableClauseQueue
@@ -74,6 +76,7 @@ interface MutableClauseQueue : ClauseQueue {
             clauses: Iterable<Clause>,
         ): MutableClauseQueue = MutableReteClauseQueue(unificator, clauses)
 
+        /** Tells whether [queue1] and [queue2] contain the same clauses, in the same order. */
         @JvmStatic
         @JsName("areEquals")
         fun equals(
@@ -81,6 +84,7 @@ interface MutableClauseQueue : ClauseQueue {
             queue2: MutableClauseQueue,
         ): Boolean = ClauseQueue.equals(queue1, queue2)
 
+        /** Computes a hash code for [queue], consistent with [equals]. */
         @JvmStatic
         @JsName("computeHashCode")
         fun hashCode(queue: MutableClauseQueue): Int =

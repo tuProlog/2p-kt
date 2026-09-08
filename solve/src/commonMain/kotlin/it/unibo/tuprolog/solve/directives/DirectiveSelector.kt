@@ -9,6 +9,17 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Op
 import it.unibo.tuprolog.solve.stdlib.primitive.SetFlag
 import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
 
+/**
+ * The concrete [DirectiveListener] recognizing every directive pattern 2P-Kt gives special treatment to when
+ * loading a knowledge base: `dynamic/1`, `static/1` (declaring a predicate's storage), `initialization/1`/`solve/1`
+ * (a goal to run at load time), `include/1`/`load/1` (another theory to load), `op/3` (operator declaration), and
+ * `set_flag/2`/`set_prolog_flag/2` (flag assignment). Each recognized pattern is routed to the corresponding
+ * `on*` callback ([onDynamic], [onStatic], [onSolve], [onLoad], [onOperator], [onSetFlag]); anything else falls
+ * back to [ClauseListener.onDirective].
+ *
+ * Implemented by [ClausePartitioner], which is what actually collects the callbacks' arguments into a
+ * [ClausePartition].
+ */
 interface DirectiveSelector : DirectiveListener {
     @Suppress("MemberVisibilityCanBePrivate")
     companion object {
@@ -66,12 +77,14 @@ interface DirectiveSelector : DirectiveListener {
         }
     }
 
+    /** Invoked on a `set_flag(name, value)`/`set_prolog_flag(name, value)` directive. */
     fun onSetFlag(
         directive: Directive,
         name: Term,
         value: Term,
     )
 
+    /** Invoked on an `op(priority, specifier, name)` directive. */
     fun onOperator(
         directive: Directive,
         priority: Term,
@@ -79,21 +92,25 @@ interface DirectiveSelector : DirectiveListener {
         name: Term,
     )
 
+    /** Invoked on an `include(goal)`/`load(goal)` directive. */
     fun onLoad(
         directive: Directive,
         goal: Term,
     )
 
+    /** Invoked on an `initialization(goal)`/`solve(goal)` directive. */
     fun onSolve(
         directive: Directive,
         goal: Term,
     )
 
+    /** Invoked on a `static(indicator)` directive. */
     fun onStatic(
         directive: Directive,
         indicator: Indicator,
     )
 
+    /** Invoked on a `dynamic(indicator)` directive. */
     fun onDynamic(
         directive: Directive,
         indicator: Indicator,

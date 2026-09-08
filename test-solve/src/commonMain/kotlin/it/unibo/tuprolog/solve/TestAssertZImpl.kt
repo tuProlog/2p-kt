@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestAssertZ], instantiated via [TestAssertZ.prototype]. */
 internal class TestAssertZImpl(
     private val solverFactory: SolverFactory,
 ) : TestAssertZ {

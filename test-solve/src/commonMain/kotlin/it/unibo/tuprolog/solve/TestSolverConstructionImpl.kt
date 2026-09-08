@@ -19,6 +19,12 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 
+/**
+ * Concrete implementation of [TestSolverConstruction], instantiated via [TestSolverConstruction.prototype]. Holds
+ * [solverType]/[mutableSolverType] (captured reified by `prototype`) to assert the runtime class of solvers it
+ * builds, and two fixture groups: [Dummy] (a non-default library/theory/flags/channels configuration used by every
+ * "custom" test case) and [Default] (the configuration every "empty" test case expects a fresh solver to have).
+ */
 class TestSolverConstructionImpl<T : Solver, MT : MutableSolver>(
     private val factory: SolverFactory,
     private val defaultBuiltIns: Library,

@@ -4,6 +4,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestFindAll], instantiated via [TestFindAll.prototype]. */
 internal class TestFindAllImpl(
     private val solverFactory: SolverFactory,
     override val errorSignature: Signature,

@@ -5,6 +5,7 @@ import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.io.Writer
 
+/** A JVM [AbstractOutputChannel] writing every [String] to [writer] (or to [outputStream], wrapped into one). */
 class WriterChannel(
     private val writer: Writer,
 ) : AbstractOutputChannel<String>() {

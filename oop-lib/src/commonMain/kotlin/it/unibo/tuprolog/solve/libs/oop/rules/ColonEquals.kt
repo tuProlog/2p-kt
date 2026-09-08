@@ -11,11 +11,26 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Var
 import it.unibo.tuprolog.solve.libs.oop.primitives.Cast as CastPrimitive
 
 /**
+ * The three clauses of the `:=`/2 operator, the entry point of `:oop-lib`'s fluent syntax: it
+ * dispatches, based on whether its first argument is unbound and its second a cast expression, to
+ * either invoking a (possibly chained) method/constructor call ([Invocation], [Cast]) or assigning
+ * a property ([Assignment]).
+ *
  * ```prolog
- * ':='(R, as(X, T)) :- var(R), !, fluent_reduce(X, Y), cast(X, T, R).
+ * ':='(R, X as T) :- var(R), !, fluent_reduce(X, Y), cast(Y, T, R).
  * ':='(R, M) :- var(R), !, fluent_reduce(M, R).
  * ':='(C, V) :- property_reduce(C, R, P), assign(R, P, V).
  * ```
+ *
+ * For instance, `R := X.foo(1) as 'java.lang.Long'` first fluently reduces `X.foo(1)` and then
+ * casts the outcome to `Long` before binding `R` ([Cast]); `R := X.foo(1).bar` fluently chains two
+ * invocations into `R` ([Invocation]); and `X.name := joe` reduces `X.name` to a `(Ref, Property)`
+ * pair and assigns `joe` to it ([Assignment]).
+ *
+ * @see it.unibo.tuprolog.solve.libs.oop.primitives.Cast
+ * @see it.unibo.tuprolog.solve.libs.oop.primitives.Assign
+ * @see FluentReduce
+ * @see PropertyReduce
  */
 sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
     object Cast : ColonEquals() {

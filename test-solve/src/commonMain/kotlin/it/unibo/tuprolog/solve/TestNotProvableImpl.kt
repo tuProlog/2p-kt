@@ -4,6 +4,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestNotProvable], instantiated via [TestNotProvable.prototype]. */
 class TestNotProvableImpl(
     private val solverFactory: SolverFactory,
     override val errorSignature: Signature,

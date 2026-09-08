@@ -4,7 +4,12 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import kotlin.jvm.JvmOverloads
 
+/**
+ * Thrown by [it.unibo.tuprolog.core.Applicable.apply] when applying a [Substitution] to [term] fails because
+ * the substitution is (or reduces to) [Substitution.Fail].
+ */
 class SubstitutionApplicationException : SubstitutionException {
+    /** The [Term] the substitution could not be applied to. */
     val term: Term
 
     @JvmOverloads

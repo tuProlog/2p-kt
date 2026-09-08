@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve
 
 /**
- * Tests of Integer
+ * Conformance tests for the ISO `integer/1` type-checking built-in, shared by every `Solver` implementation via the
+ * `TestInteger.prototype(solverFactory)` factory (see `TestClassicInteger` in `:solve-classic` for a concrete usage).
  */
 interface TestInteger : SolverTest {
     companion object {

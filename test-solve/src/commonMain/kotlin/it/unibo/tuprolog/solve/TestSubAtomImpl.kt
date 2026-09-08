@@ -6,6 +6,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestSubAtom], instantiated via [TestSubAtom.prototype]. */
 class TestSubAtomImpl(
     private val solverFactory: SolverFactory,
 ) : TestSubAtom {

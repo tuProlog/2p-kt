@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 
+/** Concrete implementation of [TestCharCode], instantiated via [TestCharCode.prototype]. */
 class TestCharCodeImpl(
     private val solverFactory: SolverFactory,
 ) : TestCharCode {

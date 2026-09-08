@@ -20,6 +20,11 @@ import kotlin.jvm.JvmStatic
  * using Problog's notation, in which the probability is annotated on clauses and facts.
  * Instances of this interface must be mutable.
  *
+ * This is the mutable counterpart of [ProblogTheory]: see that interface's documentation for how ProbLog's
+ * annotated clauses, facts and evidence are represented and rewritten internally. Every `assertA`/`assertZ`/
+ * `retract`/`retractAll`/`abolish` operation here applies the same clause-mapping logic to newly-added or
+ * removed clauses.
+ *
  * @author Jason Dellaluce
  * */
 interface MutableProblogTheory :
@@ -92,7 +97,7 @@ interface MutableProblogTheory :
             clauses: Sequence<Clause>,
         ): MutableTheory = of(unificator, clauses.asIterable())
 
-        /** Let developers easily create a [[MutableProblogTheory], while avoiding variables names clashing by using a
+        /** Let developers easily create a [MutableProblogTheory], while avoiding variables names clashing by using a
          * different [Scope] for each [Clause] */
         @JvmStatic
         @JsName("ofScopes")

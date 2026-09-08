@@ -4,6 +4,11 @@ import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 
+/**
+ * "Rule Execution": unifies [ConcurrentExecutionContext.currentGoal] against the head of the clause selected by
+ * [StateRuleSelection] ([ConcurrentExecutionContext.rule]); on success, moves to [StateGoalSelection] to resolve
+ * the (substituted) clause body prepended to the remaining goals, otherwise this branch ends as a failure.
+ */
 data class StateRuleExecution(
     override val context: ConcurrentExecutionContext,
 ) : AbstractState(context) {

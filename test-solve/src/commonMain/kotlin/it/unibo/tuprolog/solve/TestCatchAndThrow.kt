@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `catch/3` and `throw/1` built-ins, shared by every `Solver` implementation via the
+ * `TestCatchAndThrow.prototype(solverFactory)` factory (see `TestClassicCatchAndThrow` in `:solve-classic` for a
+ * concrete usage).
+ */
 interface TestCatchAndThrow : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestCatchAndThrow = TestCatchAndThrowImpl(solverFactory)

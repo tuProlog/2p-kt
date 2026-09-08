@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.Unknown
 
+/** Concrete implementation of [TestAnd], instantiated via [TestAnd.prototype]. */
 internal class TestAndImpl(
     private val solverFactory: SolverFactory,
 ) : TestAnd {

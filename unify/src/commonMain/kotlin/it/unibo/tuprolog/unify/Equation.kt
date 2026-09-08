@@ -13,9 +13,21 @@ import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 
 /**
- * A class representing an Equation of logic terms, to be unified;
+ * An equation between two logic [Term]s, `lhs = rhs`, as built and progressively simplified while computing a
+ * [Substitution] (see [AbstractUnificator]).
  *
- * LHS stands for Left-Hand side and RHS stands for Right-Hand side, of the Equation
+ * LHS stands for Left-Hand side and RHS stands for Right-Hand side, of the Equation. Every [Equation] falls into
+ * exactly one of five shapes, reflected by this sealed class' subtypes and the corresponding `is`/`as`/`castTo`
+ * member triples ([isIdentity]/[asIdentity]/[castToIdentity] and so on):
+ * - [Identity] — both sides are already equal (a no-op for unification purposes);
+ * - [Assignment] (further split into [LeftAssignment] and [RightAssignment]) — one side is a [Var] that could be
+ *   bound to the other side, turning the equation into a [Substitution] entry;
+ * - [Comparison] — both sides are non-variable, non-equal terms still to be decomposed further (e.g. two structs
+ *   with the same functor/arity, to be compared argument-wise);
+ * - [Contradiction] — both sides are irreconcilably different, signaling unification failure.
+ *
+ * Instances are normally created through the factory functions in the [companion object][Equation.Companion],
+ * which classify a pair of [Term]s into the appropriate subtype rather than requiring callers to pick one manually.
  */
 sealed class Equation(
     /** The left-hand side of the equation */
@@ -24,81 +36,105 @@ sealed class Equation(
     @JsName("rhs") open val rhs: Term,
 ) : TermConvertible,
     Castable<Equation> {
+    /** Whether this [Equation] is an [Identity], i.e. an equation between already-equal terms. */
     @JsName("isIdentity")
     open val isIdentity: Boolean
         get() = false
 
+    /** This [Equation] as an [Identity], or `null` if [isIdentity] is `false`. */
     @JsName("asIdentity")
     open fun asIdentity(): Identity? = null
 
+    /** This [Equation] as an [Identity]. @throws ClassCastException if [isIdentity] is `false`. */
     @JsName("castToIdentity")
     fun castToIdentity(): Identity =
         asIdentity() ?: throw ClassCastException("Cannot cast $this to ${Identity::class.simpleName}")
 
+    /** Whether this [Equation] is an [Assignment] (either [LeftAssignment] or [RightAssignment]). */
     @JsName("isAssignment")
     open val isAssignment: Boolean
         get() = false
 
+    /** This [Equation] as an [Assignment], or `null` if [isAssignment] is `false`. */
     @JsName("asAssignment")
     open fun asAssignment(): Assignment? = null
 
+    /** This [Equation] as an [Assignment]. @throws ClassCastException if [isAssignment] is `false`. */
     @JsName("castToAssignment")
     fun castToAssignment(): Assignment =
         asAssignment() ?: throw ClassCastException("Cannot cast $this to ${Assignment::class.simpleName}")
 
+    /** Whether this [Equation] is a [LeftAssignment], i.e. shaped as `Var = Term`. */
     @JsName("isLeftAssignment")
     open val isLeftAssignment: Boolean
         get() = false
 
+    /** This [Equation] as a [LeftAssignment], or `null` if [isLeftAssignment] is `false`. */
     @JsName("asLeftAssignment")
     open fun asLeftAssignment(): LeftAssignment? = null
 
+    /** This [Equation] as a [LeftAssignment]. @throws ClassCastException if [isLeftAssignment] is `false`. */
     @JsName("castToLeftAssignment")
     fun castToLeftAssignment(): LeftAssignment =
         asLeftAssignment() ?: throw ClassCastException("Cannot cast $this to ${LeftAssignment::class.simpleName}")
 
+    /** Whether this [Equation] is a [RightAssignment], i.e. shaped as `Term = Var`. */
     @JsName("isRightAssignment")
     open val isRightAssignment: Boolean
         get() = false
 
+    /** This [Equation] as a [RightAssignment], or `null` if [isRightAssignment] is `false`. */
     @JsName("asRightAssignment")
     open fun asRightAssignment(): RightAssignment? = null
 
+    /** This [Equation] as a [RightAssignment]. @throws ClassCastException if [isRightAssignment] is `false`. */
     @JsName("castToRightAssignment")
     fun castToRightAssignment(): RightAssignment =
         asRightAssignment() ?: throw ClassCastException("Cannot cast $this to ${RightAssignment::class.simpleName}")
 
+    /** Whether this [Equation] is a [Comparison], i.e. still needs decomposing into sub-equations. */
     @JsName("isComparison")
     open val isComparison: Boolean
         get() = false
 
+    /** This [Equation] as a [Comparison], or `null` if [isComparison] is `false`. */
     @JsName("asComparison")
     open fun asComparison(): Comparison? = null
 
+    /** This [Equation] as a [Comparison]. @throws ClassCastException if [isComparison] is `false`. */
     @JsName("castToComparison")
     fun castToComparison(): Comparison =
         asComparison() ?: throw ClassCastException("Cannot cast $this to ${Comparison::class.simpleName}")
 
+    /** Whether this [Equation] is a [Contradiction], i.e. represents unification failure. */
     @JsName("isContradiction")
     open val isContradiction: Boolean
         get() = false
 
+    /** This [Equation] as a [Contradiction], or `null` if [isContradiction] is `false`. */
     @JsName("asContradiction")
     open fun asContradiction(): Contradiction? = null
 
+    /** This [Equation] as a [Contradiction]. @throws ClassCastException if [isContradiction] is `false`. */
     @JsName("castToContradiction")
     fun castToContradiction(): Contradiction =
         asContradiction() ?: throw ClassCastException("Cannot cast $this to ${Contradiction::class.simpleName}")
 
+    /** Creates a copy of this [Equation], of the same concrete subtype, with [lhs] and/or [rhs] replaced. */
     @JsName("clone")
     abstract fun clone(
         lhs: Term = this.lhs,
         rhs: Term = this.rhs,
     ): Equation
 
+    /** Turns this [Equation] into a [Contradiction] with the same [lhs] and [rhs], regardless of its actual shape. */
     @JsName("toContradiction")
     fun toContradiction(): Contradiction = Contradiction(lhs, rhs)
 
+    /**
+     * The `(variable, term)` pair this [Equation] assigns, i.e. its [Var] side paired with the other side.
+     * @throws IllegalArgumentException if neither [lhs] nor [rhs] is a [Var] (this [Equation] is not an [Assignment]).
+     */
     @JsName("toAssignmentPair")
     open fun toAssignmentPair(): Pair<Var, Term> =
         when {
@@ -107,6 +143,10 @@ sealed class Equation(
             else -> throw IllegalArgumentException("Equation contains no variables: $this")
         }
 
+    /**
+     * The single-binding [Substitution] this [Equation] amounts to, i.e. its [Var] side unified with the other side.
+     * @throws IllegalArgumentException if neither [lhs] nor [rhs] is a [Var] (this [Equation] is not an [Assignment]).
+     */
     @JsName("toSubstitution")
     open fun toSubstitution(): Substitution =
         when {
@@ -115,11 +155,14 @@ sealed class Equation(
             else -> throw IllegalArgumentException("Equation contains no variables: $this")
         }
 
+    /** Converts this [Equation] to its logical representation, the binary [Struct] `lhs = rhs`. */
     override fun toTerm(): Struct = Struct.of("=", lhs, rhs)
 
+    /** This [Equation]'s [lhs] and [rhs], as a [Pair]. */
     @JsName("toPair")
     open fun toPair(): Pair<Term, Term> = Pair(lhs, rhs)
 
+    /** Creates a new [Equation] with [lhs] and [rhs] swapped, reclassifying it accordingly (see [of]). */
     @JsName("swap")
     fun swap(): Equation = of(rhs, lhs)
 
@@ -151,13 +194,16 @@ sealed class Equation(
         ): Identity = copy(lhs = lhs, rhs = rhs)
     }
 
+    /** An equation assigning a [Var] to a [Term], regardless of which side ([lhs] or [rhs]) the [Var] is on. */
     abstract class Assignment(
         override val lhs: Term,
         override val rhs: Term,
     ) : Equation(lhs, rhs) {
+        /** The [Var] being assigned, i.e. whichever of [lhs]/[rhs] is a variable. */
         @JsName("variable")
         abstract val variable: Var
 
+        /** The [Term] being assigned to [variable], i.e. the other side of the equation. */
         @JsName("term")
         abstract val term: Term
 
@@ -254,7 +300,17 @@ sealed class Equation(
 
     /** Equation companion object */
     companion object {
-        /** Creates an [Equation] with provided left-hand and right-hand sides */
+        /**
+         * Classifies [lhs] and [rhs] into the appropriate [Equation] subtype: [Identity] if they are trivially
+         * equal (per [equalityChecker], or structurally for variables), [LeftAssignment]/[RightAssignment] if
+         * exactly one side is a [Var], [Contradiction] if they can be told apart at this level (different constants,
+         * or structs with different functor/arity), or [Comparison] if they need further decomposition (e.g. two
+         * structs with the same functor/arity, whose arguments are not inspected by this shallow classification —
+         * use [allOf] to recursively decompose down to non-decomposable equations).
+         *
+         * @param equalityChecker decides whether two non-variable [Term]s are equal; defaults to [Term.equals] but
+         * can be swapped (e.g. by [AbstractUnificator.checkTermsEquality]) to alter what counts as identical
+         */
         @JvmStatic
         @JvmOverloads
         @JsName("of")
@@ -293,7 +349,7 @@ sealed class Equation(
                 else -> Comparison(lhs, rhs)
             }
 
-        /** Creates an [Equation] from given [Pair] */
+        /** Same as [of], but taking the two [Term]s as a [Pair] (`pair.first` = lhs, `pair.second` = rhs). */
         @JvmStatic
         @JvmOverloads
         @JsName("ofPair")
@@ -302,6 +358,7 @@ sealed class Equation(
             equalityChecker: (Term, Term) -> Boolean = Term::equals,
         ): Equation = of(pair.first, pair.second, equalityChecker)
 
+        /** Applies [allOf] to every [Pair] in [pairs], concatenating the resulting fully-decomposed [Equation]s. */
         @JvmStatic
         @JvmOverloads
         @JsName("fromSequence")
@@ -310,6 +367,7 @@ sealed class Equation(
             equalityChecker: (Term, Term) -> Boolean = Term::equals,
         ): Sequence<Equation> = pairs.flatMap { allOf(it, equalityChecker) }
 
+        /** Same as [from], for an [Iterable] of [Pair]s. */
         @JvmStatic
         @JvmOverloads
         @JsName("fromIterable")
@@ -318,6 +376,7 @@ sealed class Equation(
             equalityChecker: (Term, Term) -> Boolean = Term::equals,
         ): Sequence<Equation> = from(pairs.asSequence(), equalityChecker)
 
+        /** Same as [from], for a `vararg` of [Pair]s. */
         @JvmStatic
         @JvmOverloads
         @JsName("from")
@@ -326,7 +385,7 @@ sealed class Equation(
             equalityChecker: (Term, Term) -> Boolean = Term::equals,
         ): Sequence<Equation> = from(sequenceOf(*pairs), equalityChecker)
 
-        /** Creates all equations resulting from the deep inspection of given [Pair] of [Term]s */
+        /** Same as [allOf], but taking the two [Term]s as a [Pair] (`pair.first` = lhs, `pair.second` = rhs). */
         @JvmStatic
         @JvmOverloads
         @JsName("allOfPair")
@@ -363,7 +422,13 @@ sealed class Equation(
                 }
             }
 
-        /** Creates all equations resulting from the deep inspection of provided left-hand and right-hand sides' [Term] */
+        /**
+         * Recursively decomposes [lhs] and [rhs] into a (possibly empty) sequence of [Equation]s, none of which is
+         * a [Comparison] between structurally-matching compound terms: lists, tuples and structs sharing the same
+         * functor/arity are unfolded and paired element-wise (recursing into each pair), rather than being
+         * classified as a single [Comparison] the way [of] would. This is what [AbstractUnificator] uses to expand
+         * a pair of [Term]s into the equations it then simplifies to compute an MGU.
+         */
         @JvmStatic
         @JvmOverloads
         @JsName("allOf")

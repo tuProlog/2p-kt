@@ -12,6 +12,16 @@ import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 
+/**
+ * Base class for a [Library] that decorates an [extended] one, contributing everything the extended library already
+ * has plus whatever [additionalOperators]/[additionalRules]/[additionalPrimitives]/[additionalFunctions] the
+ * subclass overrides. Keeps [extended]'s [Library.alias].
+ *
+ * @param extended the [Library] this one extends with additional contributions.
+ * @throws IllegalArgumentException (lazily, on first access of [primitives]/[functions]) if an
+ * [additionalPrimitives]/[additionalFunctions] signature clashes with one already in [extended] or among the
+ * additional ones themselves (see [Library.Companion.toMapEnsuringNoDuplicates]).
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class ExtensionLibrary(
     private val extended: Library,
@@ -23,6 +33,7 @@ abstract class ExtensionLibrary(
         extended.operators + OperatorSet(additionalOperators)
     }
 
+    /** Extra [Operator]s to add on top of [extended]'s; empty by default. */
     open val additionalOperators: Iterable<Operator>
         get() = emptyList()
 
@@ -30,6 +41,7 @@ abstract class ExtensionLibrary(
         (extended.clauses.asSequence() + additionalRules.asSequence().map { it.implementation }).toList()
     }
 
+    /** Extra rules to add on top of [extended]'s [Library.clauses]; empty by default. */
     protected open val additionalRules: Iterable<RuleWrapper<*>>
         get() = emptyList()
 
@@ -39,6 +51,7 @@ abstract class ExtensionLibrary(
         (initial + additional).toMapEnsuringNoDuplicates()
     }
 
+    /** Extra [Primitive]s to add on top of [extended]'s; empty by default. */
     protected open val additionalPrimitives: Iterable<PrimitiveWrapper<*>>
         get() = emptyList()
 
@@ -48,6 +61,7 @@ abstract class ExtensionLibrary(
         (initial + additional).toMapEnsuringNoDuplicates()
     }
 
+    /** Extra [LogicFunction]s to add on top of [extended]'s; empty by default. */
     protected open val additionalFunctions: Iterable<FunctionWrapper<*>>
         get() = emptyList()
 

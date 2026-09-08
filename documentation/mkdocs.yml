@@ -1,0 +1,87 @@
+site_name: 2P-Kt
+site_description: A multi-paradigm logic programming framework for Kotlin, Java, JavaScript, and beyond
+site_url: https://tuprolog.github.io/2p-kt/
+repo_url: https://github.com/tuProlog/2p-kt
+repo_name: tuProlog/2p-kt
+edit_uri: edit/master/documentation/docs/
+docs_dir: docs
+
+theme:
+  name: material
+  favicon: assets/img/favicon.ico
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - content.action.edit
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.snippets:
+      base_path:
+        - "."
+        - ".."
+      check_paths: true
+  - toc:
+      permalink: true
+
+# Explicit nav so page order (menus, in-section ToCs, and the previous/next footer links) follows the
+# suggested reading order documented in each section's index.md, rather than alphabetical file order.
+nav:
+  - Home: index.md
+  - Tutorials:
+      - tutorials/index.md
+      - tutorials/getting-started-kotlin.md
+      - tutorials/getting-started-java.md
+      - tutorials/getting-started-js.md
+  - How-to guides:
+      - how-to/index.md
+      - how-to/add-2pkt-as-a-dependency.md
+      - how-to/set-up-intellij.md
+      - how-to/contribute-with-git-flow.md
+      - how-to/reuse-variables-with-scope.md
+      - how-to/implement-a-custom-unificator.md
+  - Reference:
+      - reference/index.md
+      - reference/module-map.md
+      - reference/term-hierarchy.md
+      - reference/unification-api.md
+      - reference/solver-api.md
+      - reference/primitives-and-functions.md
+      - reference/default-predicates.md
+      - reference/libraries.md
+      - reference/prolog-dsl.md
+      - reference/errors-and-exceptions.md
+      - reference/ci-pipeline.md
+      - API reference: https://tuprolog.github.io/2p-kt/api/
+  - Explanation:
+      - explanation/index.md
+      - explanation/project-history.md
+      - explanation/philosophy.md
+      - explanation/term-model.md
+      - explanation/variables-and-scoping.md
+      - explanation/clause-db-and-rete.md
+      - explanation/solver-design.md
+      - explanation/state-machine.md
+      - explanation/parsing-architecture.md
+      - explanation/kotlin-multiplatform.md
+      - explanation/gradle-multi-project-build.md
+      - explanation/kotlin-dsl-background.md

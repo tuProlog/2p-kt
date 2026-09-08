@@ -19,6 +19,18 @@ import kotlin.collections.List as KtList
  * Base type for compound [Term]s, a.k.a. structures.
  * A [Struct] is characterised by a [functor] and a given (non-negative) amount of [args], namely [arity].
  * Each argument can be a [Term] of any sort.
+ *
+ * Most other non-atomic, non-variable terms in this hierarchy ([Clause], [Rule], [Fact], [Directive], [List],
+ * [Cons], [Tuple], [Block], [Indicator], and even 0-arity [Atom]s) are, under the hood, just a [Struct] with
+ * a conventional [functor] and a folding convention for its arguments. This lets code written generically
+ * against [Struct] (e.g. pattern-matching on [functor]/[arity], or walking [args]) work uniformly across all
+ * of them without special-casing.
+ *
+ * [Struct.of] is the general-purpose factory: it inspects [functor] and the number/shape of [args] and
+ * automatically delegates to the most specific applicable sub-type's factory (e.g. `Struct.of(",", a, b)`
+ * returns a [Tuple], `Struct.of(":-", head, body)` returns a [Rule]). Reach for a sub-type's own factory
+ * directly (e.g. [Tuple.of], [Cons.of]) when the sub-type is already known, or for the DSL builders in
+ * `:dsl-core`/[Scope] when building many related terms with shared variables.
  */
 interface Struct : Term {
     override val isStruct: Boolean
@@ -181,12 +193,18 @@ interface Struct : Term {
     @JsName("getArgAt")
     fun getArgAt(index: Int): Term = args[index]
 
+    /**
+     * Creates a novel [Struct] which is a copy of the current one, except that its [args] are replaced by [args].
+     * @return a new [Struct], whose [functor] equals the current one, and whose arguments are [args]
+     */
     @JsName("setArgs")
     fun setArgs(vararg args: Term): Struct
 
+    /** @see setArgs */
     @JsName("setArgsIterable")
     fun setArgs(args: Iterable<Term>): Struct
 
+    /** @see setArgs */
     @JsName("setArgsSequence")
     fun setArgs(args: Sequence<Term>): Struct
 

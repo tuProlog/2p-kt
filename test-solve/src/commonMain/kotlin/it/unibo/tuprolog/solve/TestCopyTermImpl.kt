@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestCopyTerm], instantiated via [TestCopyTerm.prototype]. */
 class TestCopyTermImpl(
     private val solverFactory: SolverFactory,
 ) : TestCopyTerm {

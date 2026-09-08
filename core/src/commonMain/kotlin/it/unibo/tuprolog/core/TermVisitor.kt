@@ -2,10 +2,29 @@ package it.unibo.tuprolog.core
 
 import kotlin.js.JsName
 
+/**
+ * The Visitor-pattern counterpart of the [Term] hierarchy (see [Term.accept]). Each `visitX` method has a
+ * default implementation delegating to the `visitY` method of its immediate supertype `Y` in the hierarchy
+ * (e.g. [visitAtom] delegates to [visitStruct], which delegates to [visitTerm], which delegates to
+ * [defaultValue]), so implementers only need to override the methods for the specific sub-types they care
+ * about, letting everything else fall back sensibly. [defaultValue] is the only method that must be
+ * implemented.
+ *
+ * Overriding [visitTerm] intercepts every kind of term uniformly (unless a more specific override exists);
+ * this is how, e.g., [ListIterator] and [TupleIterator] are implemented, by overriding only the couple of
+ * `visitX` methods relevant to unfolding one step of a list/tuple, and letting [defaultValue] signal "end of
+ * sequence" for everything else.
+ *
+ * @param T the type of the value produced by visiting a [Term]
+ * @see Term.accept
+ * @see it.unibo.tuprolog.core.visitors.AbstractTermVisitor
+ */
 interface TermVisitor<T> {
+    /** The value produced for any [Term] whose specific type has no dedicated, overridden `visitX` method. */
     @JsName("defaultValue")
     fun defaultValue(term: Term): T
 
+    /** Visits a generic [Term], regardless of its specific sub-type. Falls back to [defaultValue]. */
     @JsName("visitTerm")
     fun visitTerm(term: Term): T = defaultValue(term)
 

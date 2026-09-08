@@ -5,6 +5,15 @@ import it.unibo.tuprolog.theory.impl.IndexedTheory
 import it.unibo.tuprolog.theory.impl.MutableIndexedTheory
 import it.unibo.tuprolog.unify.Unificator
 
+/**
+ * A [TheoryFactory] that produces [Theory]/[MutableTheory] instances backed by an indexed data structure
+ * (see [it.unibo.tuprolog.collections.rete.custom.ReteTree]): clauses are discriminated by directive-vs-rule,
+ * functor, arity and first-argument shape, so retrieval only re-checks the (typically small) subset of clauses
+ * that could actually unify with a goal, at the cost of extra bookkeeping on every insertion/removal. This is
+ * the right choice for knowledge bases that are built once (or rarely changed) and queried many times — e.g. a
+ * solver's static knowledge base.
+ * @see ListedTheoryFactory
+ */
 class IndexedTheoryFactory(
     override val unificator: Unificator,
 ) : TheoryFactory {
@@ -45,5 +54,6 @@ class IndexedTheoryFactory(
         unificator: Unificator,
     ): MutableTheory = MutableIndexedTheory(unificator, clauses)
 
+    /** The default [IndexedTheoryFactory], using [Unificator.default]. */
     object Default : TheoryFactory by IndexedTheoryFactory(Unificator.default)
 }

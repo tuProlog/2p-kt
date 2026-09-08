@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.SetDurable
 import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
 import it.unibo.tuprolog.solve.stdlib.primitive.SetPersistent
 
+/** Concrete implementation of [TestCustomData], instantiated via [TestCustomData.prototype]. */
 class TestCustomDataImpl(
     private val solverFactory: SolverFactory,
 ) : TestCustomData {

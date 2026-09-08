@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestClause], instantiated via [TestClause.prototype]. */
 internal class TestClauseImpl(
     private val solverFactory: SolverFactory,
 ) : TestClause {

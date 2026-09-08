@@ -63,6 +63,11 @@ class DomainError(
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedDomain.toTerm(), culprit) }
 
     companion object {
+        /**
+         * Creates a [DomainError] reporting that the (optionally [index]-th) argument of [procedure] should have
+         * been one of [flagValues], but [actualValue] was provided instead. Used when validating a Prolog flag
+         * value against its admissible set (see `it.unibo.tuprolog.solve.flags.NotableFlag`).
+         */
         @JsName("forFlagValues")
         @JvmStatic
         fun forFlagValues(
@@ -87,6 +92,10 @@ class DomainError(
                 )
             }
 
+        /**
+         * Creates a [DomainError] reporting that the (optionally [index]-th) argument of [procedure] should have
+         * belonged to [expectedDomain], but [actualValue] was provided instead.
+         */
         @JsName("forArgument")
         @JvmStatic
         fun forArgument(
@@ -110,6 +119,7 @@ class DomainError(
                 )
             }
 
+        /** Creates a [DomainError] reporting that [actualValue] is not a valid member of [expectedDomain]. */
         @JsName("forTerm")
         @JvmStatic
         fun forTerm(
@@ -129,6 +139,7 @@ class DomainError(
                 )
             }
 
+        /** Creates a [DomainError] reporting that subgoal [actualValue] of [procedure] does not belong to [expectedDomain]. */
         @JsName("forGoal")
         @JvmStatic
         fun forGoal(

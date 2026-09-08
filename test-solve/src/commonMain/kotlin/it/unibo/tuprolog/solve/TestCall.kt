@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `call/1` built-in, shared by every `Solver` implementation via the
+ * `TestCall.prototype(solverFactory)` factory (see `TestClassicCall` in `:solve-classic` for a concrete usage).
+ */
 interface TestCall : SolverTest {
     companion object {
         fun prototype(
@@ -8,6 +12,7 @@ interface TestCall : SolverTest {
         ): TestCall = TestCallImpl(solverFactory, errorSignature)
     }
 
+    /** The [Signature] expected in errors raised while resolving the goal passed to `call/1`. */
     val errorSignature: Signature
 
     /**

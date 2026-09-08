@@ -9,17 +9,21 @@ import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/** A [ClauseMultiSet] that mutates itself in place; see [MutableClauseCollection] for why this trades away
+ *  immutability. */
 interface MutableClauseMultiSet : ClauseMultiSet {
-    /** Adds a [Clause] to this [MutableClauseMultiSet] **/
+    /** Adds the given [Clause] to this [MutableClauseMultiSet], mutating it in place, and returns `this` **/
     override fun add(clause: Clause): MutableClauseMultiSet
 
-    /** Adds all the given [Clause] to this [MutableClauseMultiSet] **/
+    /** Adds all the given [Clause] to this [MutableClauseMultiSet], mutating it in place, and returns `this` **/
     override fun addAll(clauses: Iterable<Clause>): MutableClauseMultiSet
 
-    /** Retrieves the first unifying [Clause] from this [MutableClauseMultiSet] as a [RetrieveResult]**/
+    /** Removes the first [Clause] unifying the given one from this [MutableClauseMultiSet], mutating it in place,
+     *  and returns the outcome as a [RetrieveResult] **/
     override fun retrieve(clause: Clause): RetrieveResult<out MutableClauseMultiSet>
 
-    /** Retrieves all the unifying [Clause] from this [MutableClauseMultiSet] as a [RetrieveResult]**/
+    /** Removes all the [Clause]s unifying the given one from this [MutableClauseMultiSet], mutating it in place,
+     *  and returns the outcome as a [RetrieveResult] **/
     override fun retrieveAll(clause: Clause): RetrieveResult<out MutableClauseMultiSet>
 
     companion object {
@@ -66,6 +70,7 @@ interface MutableClauseMultiSet : ClauseMultiSet {
             clauses: Iterable<Clause>,
         ): MutableClauseMultiSet = MutableReteClauseMultiSet(unificator, clauses)
 
+        /** Tells whether [multiSet1] and [multiSet2] contain the same clauses, regardless of order. */
         @JvmStatic
         @JsName("areEquals")
         fun equals(
@@ -73,6 +78,7 @@ interface MutableClauseMultiSet : ClauseMultiSet {
             multiSet2: MutableClauseMultiSet,
         ): Boolean = ClauseMultiSet.equals(multiSet1, multiSet2)
 
+        /** Computes a hash code for [multiSet], consistent with [equals]. */
         @JvmStatic
         @JsName("computeHashCode")
         fun hashCode(multiSet: MutableClauseMultiSet): Int =

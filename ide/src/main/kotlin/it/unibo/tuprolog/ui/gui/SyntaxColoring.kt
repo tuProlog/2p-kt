@@ -13,12 +13,32 @@ import java.util.Optional
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
 
+/**
+ * Regex-based Prolog syntax highlighter for a RichTextFX [CodeArea], as used by [FileTabView] for the editor pane.
+ *
+ * It recognizes comments, string/quoted-atom literals, numbers (integer, float, hex/octal/binary, character
+ * codes), parentheses/braces/brackets, clause-terminating full stops, variables, functors, plain atoms, and
+ * (via [operators]) the current [OperatorSet]'s functors as keywords, then applies a JavaFX CSS style class
+ * per matched token (see the stylesheets in `Resources`) using RichTextFX's [org.fxmisc.richtext.model.StyleSpans].
+ *
+ * A single regex combining all token patterns is built lazily and cached; it is invalidated and rebuilt whenever
+ * [operators] is reassigned, so that keywords stay in sync with the theory currently loaded into the solver
+ * (see [FileTabView.notifyOperators]).
+ *
+ * Example:
+ * ```kotlin
+ * val coloring = SyntaxColoring(codeArea)
+ * coloring.activate() // highlights on every edit, debounced by `delay`
+ * ```
+ */
 class SyntaxColoring(
     private val codeArea: CodeArea,
     delay: Duration = DEFAULT_UPDATE_DELAY,
     operators: OperatorSet = OperatorSet.DEFAULT,
     private val executor: ExecutorService = ForkJoinPool.commonPool(),
 ) {
+    /** How long to wait, after the user stops editing [codeArea],
+     * before recomputing the highlighting; see [activate]. */
     @Volatile
     var delay: Duration = delay
         @Synchronized get
@@ -31,6 +51,7 @@ class SyntaxColoring(
             }
         }
 
+    /** The [OperatorSet] whose functors are highlighted as keywords; reassigning it invalidates the cached pattern. */
     @Volatile
     var operators: OperatorSet = operators
         @Synchronized get
@@ -53,6 +74,7 @@ class SyntaxColoring(
         codeArea.setStyleSpans(0, highlighting)
     }
 
+    /** Synchronously recomputes and applies highlighting for [codeArea]'s current text, bypassing [delay]. */
     fun applyHighlightingNow() {
         Platform.runLater {
             applyHighlighting(computeHighlighting(codeArea.text))
@@ -62,9 +84,16 @@ class SyntaxColoring(
     @Volatile
     private var subscription: Subscription? = null
 
+    /** Whether [activate] has been called without a matching [deactivate] yet. */
     val isActive: Boolean
         @Synchronized get() = subscription != null
 
+    /**
+     * Starts observing [codeArea] for edits, recomputing and applying highlighting (on [executor],
+     * debounced by [delay]) after each burst of changes settles.
+     *
+     * @throws IllegalStateException if already [isActive].
+     */
     @Synchronized
     fun activate() {
         if (subscription == null) {
@@ -90,6 +119,11 @@ class SyntaxColoring(
         }
     }
 
+    /**
+     * Stops observing [codeArea] for edits (undoing [activate]); does not clear any highlighting already applied.
+     *
+     * @throws IllegalStateException if not currently [isActive].
+     */
     @Synchronized
     fun deactivate() {
         subscription.let {

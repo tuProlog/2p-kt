@@ -10,6 +10,20 @@ import it.unibo.tuprolog.solve.libs.oop.fullName
 import it.unibo.tuprolog.solve.libs.oop.pretty
 import kotlin.reflect.KCallable
 
+/**
+ * Thrown when the platform's reflection facilities deny access to [callable] on [receiver] --
+ * on the JVM, this wraps a `kotlin.reflect.full.IllegalCallableAccessException`, typically raised
+ * when the JVM's own access-control checks (e.g. module boundaries, a `SecurityManager`) reject
+ * an otherwise `public`, reflectively-resolved member.
+ *
+ * Surfaces to Prolog as a [it.unibo.tuprolog.solve.exception.error.PermissionError] with
+ * operation [it.unibo.tuprolog.solve.exception.error.PermissionError.Operation.INVOKE] and
+ * permission [it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.OOP_METHOD].
+ *
+ * @param callable the member reflective access to which was denied.
+ * @param receiver the instance [callable] was being invoked on, or `null` for a constructor,
+ * static member, or companion-object member.
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 class RuntimePermissionException(
     val callable: KCallable<*>,

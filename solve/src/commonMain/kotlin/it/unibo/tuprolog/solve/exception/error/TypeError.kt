@@ -57,6 +57,7 @@ class TypeError(
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toTerm(), culprit) }
 
     companion object {
+        /** Creates a [TypeError] with a caller-provided [message], reporting that [actualValue] is not of [expectedType]. */
         @JsName("of")
         @JvmStatic
         fun of(
@@ -74,6 +75,10 @@ class TypeError(
             )
         }
 
+        /**
+         * Creates a [TypeError] reporting that the (optionally [index]-th) argument of [procedure] should have been
+         * a list of [expectedType] elements, but [culprit] was provided instead.
+         */
         @JsName("forArgumentList")
         @JvmStatic
         fun forArgumentList(
@@ -96,6 +101,11 @@ class TypeError(
             )
         }
 
+        /**
+         * Creates a [TypeError] reporting that the (optionally [index]-th) argument of [procedure] should have been
+         * of [expectedType], but [culprit] was provided instead. This is the most commonly used factory, invoked
+         * throughout `it.unibo.tuprolog.solve.primitive.PrimitiveWrapper`'s `ensuringArgumentIs*` helpers.
+         */
         @JsName("forArgument")
         @JvmStatic
         fun forArgument(
@@ -118,6 +128,7 @@ class TypeError(
             )
         }
 
+        /** Creates a [TypeError] reporting that subgoal [culprit] of [procedure] is not of [expectedType]. */
         @JsName("forGoal")
         @JvmStatic
         fun forGoal(

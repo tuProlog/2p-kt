@@ -73,7 +73,14 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Univ
 import it.unibo.tuprolog.solve.stdlib.primitive.Var
 import it.unibo.tuprolog.solve.stdlib.primitive.Write
 
+/**
+ * Registry of every standard ISO built-in [Primitive] (e.g. `assert/1`, `functor/3`, `write/1`, term-comparison
+ * predicates), each implemented as a [PrimitiveWrapper] under `it.unibo.tuprolog.solve.stdlib.primitive`.
+ *
+ * Consumed by [CommonBuiltins] to populate the `prolog.lang` library's [it.unibo.tuprolog.solve.library.Library.primitives].
+ */
 object CommonPrimitives {
+    /** Every standard [PrimitiveWrapper] instance, in declaration order. */
     val wrappers: Sequence<PrimitiveWrapper<*>> =
         sequenceOf(
             Abolish,
@@ -147,5 +154,6 @@ object CommonPrimitives {
             Write,
         )
 
+    /** [wrappers], keyed by [Signature], as consumed by [it.unibo.tuprolog.solve.library.Library.primitives]. */
     val primitives: Map<Signature, Primitive> = wrappers.map { it.descriptionPair }.toMap()
 }

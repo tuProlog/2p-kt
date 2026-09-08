@@ -21,6 +21,32 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.cursor
 
+/**
+ * "Rule Selection", the clause-resolution counterpart of `StatePrimitiveSelection`, and where several ISO
+ * special cases live: `true`/`!` succeed without touching the knowledge base at all (`!` additionally triggers
+ * cut, see below); `fail`/`false`, and goals that don't exist anywhere, move to `StateBacktracking` or
+ * `StateException` depending on the `Unknown` flag (`error`/`fail`/`warning`); the general case queries the
+ * static/dynamic knowledge bases and the libraries' own theories, `freshCopy()`s the matching clauses to rename
+ * variables apart, and moves to `StateRuleExecution` with the fresh rule stream as a new choice point.
+ *
+ * The formal paper describes cut abstractly as "prune the choice-point queue up to the parent goal's choice
+ * point"; [computeCutLimit]/[performCut] implement something considerably more careful, because ISO cut
+ * semantics are subtler than that:
+ * - Cut is **transparent** through conjunction, disjunction and if-then (the [transparentToCut] signatures) --
+ *   a cut inside a clause body's conjunction cuts choice points belonging to the *clause*, not to some
+ *   imaginary choice point for the comma itself; [computeCutLimit] walks up through these control constructs to
+ *   find the real enclosing procedure.
+ * - Cut interacts with last-call optimization ([isTailRecursive]): a tail call to the same predicate reuses
+ *   the current execution-context frame ([replaceWithChildAppendingRulesAndChoicePoints]) rather than growing
+ *   the stack, an optimisation the formal model does not need to talk about since it treats the stack as
+ *   unbounded.
+ * - A `MagicCut` marker exists for cuts injected by other built-ins (e.g. `once/1`, if-then-else) that must cut
+ *   back to the *caller's* choice point rather than the lexically enclosing clause, since those built-ins are
+ *   themselves implemented as ordinary rules over this same state machine (see `it.unibo.tuprolog.solve.classic.stdlib.rule`).
+ *
+ * None of this changes the shape of the FSM: cut is still handled here, still ends up at `StateGoalSelection`,
+ * still only manipulates the choice-point queue.
+ */
 data class StateRuleSelection(
     override val context: ClassicExecutionContext,
 ) : AbstractState(context) {

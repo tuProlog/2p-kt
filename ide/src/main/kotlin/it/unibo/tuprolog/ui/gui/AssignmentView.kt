@@ -10,6 +10,10 @@ import javafx.scene.control.Label
 import javafx.scene.layout.HBox
 import java.io.IOException
 
+/**
+ * An [HBox] rendering a single variable/value binding (`variable = value`, formatted via [formatter]) as
+ * used by [SolutionView.YesView] to list a [it.unibo.tuprolog.solve.Solution.Yes]'s substitution.
+ */
 class AssignmentView(
     variable: Var,
     value: Term,

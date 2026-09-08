@@ -26,7 +26,7 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /**
- * Base class for errors which may occur during resolution, possibly because of [Primitive]s execution
+ * Base class for errors which may occur during resolution, possibly because of [it.unibo.tuprolog.solve.primitive.Primitive]s execution
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.

@@ -7,10 +7,20 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 
 /**
+ * `property_reduce(+Expression, ?Ref, ?Property)`: splits a fluent chain `Expression` (see
+ * [FluentReduce] for the term shape, built by [Dot]) into the object/type `Ref` its final segment
+ * is a property of, and that final segment's name `Property` -- reducing every access before the
+ * last one exactly like [FluentReduce] does. This is what lets the third clause of `:=`/2
+ * ([it.unibo.tuprolog.solve.libs.oop.rules.ColonEquals.Assignment]) turn `Obj.foo(1).name := V`
+ * into "invoke `foo(1)` on `Obj`, then assign `V` to `name` on the result".
+ *
  * ```prolog
  * property_reduce([A, B | C], O, P) :- !, invoke_method(A, B, B1), property_reduce([B1 | C], O, P). % recursive
  * property_reduce([A | B], A, B) :- !.                                                              % base
  * ```
+ *
+ * @see FluentReduce
+ * @see it.unibo.tuprolog.solve.libs.oop.rules.ColonEquals.Assignment
  */
 @Suppress("PropertyName")
 sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {

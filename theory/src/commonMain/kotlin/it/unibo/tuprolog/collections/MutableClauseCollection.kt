@@ -6,6 +6,12 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/**
+ * A [ClauseCollection] that mutates itself in place: [add]/[addAll]/[retrieve]/[retrieveAll] change and return
+ * `this`, instead of building a fresh collection. Preferred over the immutable [ClauseCollection] when clauses
+ * are inserted/removed very frequently and the cost of copying (or of the underlying RETE tree's
+ * `deepCopy`) would otherwise dominate.
+ */
 interface MutableClauseCollection : ClauseCollection {
     /** Adds the given [Clause] to this [MutableClauseCollection]. **/
     override fun add(clause: Clause): MutableClauseCollection

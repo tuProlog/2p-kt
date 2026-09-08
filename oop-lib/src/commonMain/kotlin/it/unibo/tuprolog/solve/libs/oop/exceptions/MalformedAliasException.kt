@@ -11,6 +11,18 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.DEALIASING_EXPRESSION
 import it.unibo.tuprolog.solve.libs.oop.primitives.DEALIASING_TEMPLATE
 
+/**
+ * Thrown when [dealiasingExpression] -- e.g. an argument or sub-term where a `$Alias` expression
+ * was expected -- is not actually of the shape `$Alias` (a compound with functor
+ * [it.unibo.tuprolog.solve.libs.oop.OOP.DEALIASING_OPERATOR] and one argument), such as `$(a, b)`
+ * or `$1`.
+ *
+ * Surfaces to Prolog as a [it.unibo.tuprolog.solve.exception.error.TypeError] with expected type
+ * [it.unibo.tuprolog.solve.exception.error.TypeError.Expected.DEALIASING_EXPRESSION].
+ *
+ * @param dealiasingExpression the malformed expression.
+ * @see NoSuchAnAliasException
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 class MalformedAliasException(
     val dealiasingExpression: Struct,

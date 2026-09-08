@@ -9,5 +9,10 @@ import kotlin.jvm.JvmName
 @JsName("libraryToRuntime")
 fun Library.toRuntime(): Runtime = Runtime.of(this)
 
+/**
+ * Combines this [Library] and [other] into a two-library [Runtime], via [Runtime.of]. Note that, unlike
+ * [Runtime.plus], this does *not* reject a clashing [Library.alias]: if both share the same alias, [other] silently
+ * wins.
+ */
 @JsName("libraryPlusLibrary")
 operator fun Library.plus(other: Library): Runtime = Runtime.of(this, other)

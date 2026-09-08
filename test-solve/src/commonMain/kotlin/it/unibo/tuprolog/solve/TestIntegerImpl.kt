@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestInteger], instantiated via [TestInteger.prototype]. */
 internal class TestIntegerImpl(
     private val solverFactory: SolverFactory,
 ) : TestInteger {

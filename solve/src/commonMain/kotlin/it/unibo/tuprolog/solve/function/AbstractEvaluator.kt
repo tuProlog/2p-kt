@@ -10,6 +10,19 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.Solve
 
+/**
+ * Base [TermVisitor] for reducing an expression [Term] to a value of type [T], recursively resolving any
+ * [Struct] sub-term whose [Signature][it.unibo.tuprolog.solve.Signature] matches a [LogicFunction] loaded in
+ * [request]'s [it.unibo.tuprolog.solve.library.Runtime] ([loadedFunctions]) into that function's [Compute.Response.result].
+ * A [Struct] matching no loaded function is handled by [unevaluable] (by default, an error).
+ *
+ * Subclasses customize the exact evaluation semantics via [staticCheck] (run once per visited term, before
+ * recursing into sub-terms) and [dynamicCheck] (run on each sub-term's already-evaluated result); see
+ * [ArithmeticEvaluator] for a concrete example enforcing ISO arithmetic-expression validity.
+ *
+ * @param request the request of the primitive in which the evaluation should happen
+ * @param index the index of the argument being evaluated in the aforementioned primitive
+ */
 abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
     protected val request: Solve.Request<E>,
     protected val index: Int?,
@@ -50,6 +63,11 @@ abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
             } ?: unevaluable(term)
         }
 
+    /**
+     * Called when [struct] matches no [LogicFunction] in [loadedFunctions]; by default raises a
+     * [TypeError] (`TypeError.Expected.EVALUABLE`). Overridden by [ExpressionReducer] to leave non-evaluable
+     * sub-terms untouched instead of failing.
+     */
     open fun unevaluable(struct: Struct): Term =
         throw TypeError.forArgument(request.context, request.signature, TypeError.Expected.EVALUABLE, struct, index)
 

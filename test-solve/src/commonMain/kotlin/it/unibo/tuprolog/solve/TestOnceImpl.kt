@@ -4,6 +4,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestOnce], instantiated via [TestOnce.prototype]. */
 internal class TestOnceImpl(
     private val solverFactory: SolverFactory,
     override val errorSignature: Signature,

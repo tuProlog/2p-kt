@@ -7,6 +7,11 @@ import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
 
+/**
+ * Base [Library] implementation defaulting every contribution ([operators], [clauses], [primitives], [functions])
+ * to empty, and providing structural [equals]/[hashCode]/[toString]; subclasses only need to override [Library.alias]
+ * plus whichever contributions they actually provide.
+ */
 abstract class AbstractLibrary :
     AbstractPluggable(),
     Library {

@@ -1,7 +1,19 @@
 package it.unibo.tuprolog.utils
 
 /**
- * A type for all object which can be down-casted via explicit methods
+ * A type for all objects belonging to a hierarchy rooted in [T] which can be down-casted to any subtype of
+ * [T] via explicit methods, rather than via Kotlin's `as`/`as?` operators.
+ *
+ * This is useful for hierarchies (e.g. `it.unibo.tuprolog.core.Term` in the `:core` module) exposing many
+ * mutually exclusive subtypes, where call sites need a concise, fluent way to narrow a value down after a
+ * type check (e.g. `term.castToInteger()`), without repeating verbose `as Integer` casts everywhere. Callers
+ * that want a `null` instead of an exception on a failed cast should use [as] rather than [castTo]:
+ * ```kotlin
+ * sealed interface Term : ... , Castable<Term> {
+ *     fun castToInteger(): Integer = castTo()
+ * }
+ * ```
+ * @param T is the root of the hierarchy of castable types
  */
 @Suppress("UNCHECKED_CAST")
 interface Castable<T : Castable<T>> {

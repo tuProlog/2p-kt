@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestTerm], instantiated via [TestTerm.prototype]. */
 internal class TestTermImpl(
     private val solverFactory: SolverFactory,
 ) : TestTerm {

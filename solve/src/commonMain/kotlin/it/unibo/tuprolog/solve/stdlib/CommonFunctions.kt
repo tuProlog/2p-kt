@@ -33,7 +33,15 @@ import it.unibo.tuprolog.solve.stdlib.function.Subtraction
 import it.unibo.tuprolog.solve.stdlib.function.ToFloat
 import it.unibo.tuprolog.solve.stdlib.function.Truncate
 
+/**
+ * Registry of every standard ISO arithmetic [LogicFunction] (as used by `is/2` and arithmetic comparison
+ * predicates), each implemented as a [FunctionWrapper] under `it.unibo.tuprolog.solve.stdlib.function`
+ * (e.g. [it.unibo.tuprolog.solve.stdlib.function.Addition], [it.unibo.tuprolog.solve.stdlib.function.SquareRoot]).
+ *
+ * Consumed by [CommonBuiltins] to populate the `prolog.lang` library's [it.unibo.tuprolog.solve.library.Library.functions].
+ */
 object CommonFunctions {
+    /** Every standard [FunctionWrapper] instance, in declaration order. */
     val wrappers: Sequence<FunctionWrapper<*>> =
         sequenceOf(
             AbsoluteValue,
@@ -67,5 +75,6 @@ object CommonFunctions {
             Truncate,
         )
 
+    /** [wrappers], keyed by [Signature], as consumed by [it.unibo.tuprolog.solve.library.Library.functions]. */
     val functions: Map<Signature, LogicFunction> = wrappers.map { it.descriptionPair }.toMap()
 }

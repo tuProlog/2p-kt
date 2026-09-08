@@ -6,6 +6,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNotSame
 import kotlin.test.fail
 
+/** Concrete implementation of [TestStaticFactory], instantiated via [TestStaticFactory.prototype]. */
 @Suppress("DEPRECATION", "ConstPropertyName", "ktlint:standard:property-naming")
 class TestStaticFactoryImpl(
     private val expectations: Expectations,

@@ -16,12 +16,30 @@ import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 
+/**
+ * A state change to be applied to an [ExecutionContext] after a
+ * [it.unibo.tuprolog.solve.primitive.Primitive] has run, rather than mutated directly by the primitive itself.
+ * Primitives attach zero or more [SideEffect]s to their [it.unibo.tuprolog.solve.primitive.Solve.Response]
+ * (see [it.unibo.tuprolog.solve.primitive.Solve.Request.replyWith]), and the resolution strategy folds them, in
+ * order, over the context via [ExecutionContext.apply] -- each [applyTo] call producing a new, immutable
+ * [ExecutionContext] rather than mutating the one it receives.
+ *
+ * Every concrete [SideEffect] subtype nested here covers one specific piece of mutable state a solver carries
+ * (clauses in either knowledge base, flags, libraries, operators, I/O channels, custom data), typically in both a
+ * "reset to" and "alter by adding/removing" flavour. [SideEffectFactory]/[SideEffectsBuilder] are the ergonomic way
+ * to construct these without naming each subtype explicitly.
+ *
+ * @see it.unibo.tuprolog.solve.primitive.Solve.Response.sideEffects
+ */
 abstract class SideEffect {
+    /** Produces the [ExecutionContext] resulting from applying this side effect to [context]. */
     abstract fun applyTo(context: ExecutionContext): ExecutionContext
 
+    /** Base class for side effects computing a [Theory] (or [MutableTheory]) out of [clauses], for either knowledge base. */
     abstract class SetClausesOfKb(
         open val clauses: Iterable<Clause>,
     ) : SideEffect() {
+        /** [clauses] as a [Theory], reusing it as-is if it already is one. */
         fun theory(context: ExecutionContext): Theory =
             clauses.let {
                 if (it is Theory) {
@@ -31,6 +49,7 @@ abstract class SideEffect {
                 }
             }
 
+        /** [clauses] as a [MutableTheory], converting it if necessary. */
         fun mutableTheory(context: ExecutionContext): Theory =
             clauses.let {
                 when (it) {
@@ -41,15 +60,18 @@ abstract class SideEffect {
             }
     }
 
+    /** Base class for side effects adding [clauses] to a knowledge base, either at the front ([onTop]) or the back. */
     abstract class AddClausesToKb(
         clauses: Iterable<Clause>,
         open val onTop: Boolean,
     ) : SetClausesOfKb(clauses)
 
+    /** Base class for side effects removing [clauses] from a knowledge base. */
     abstract class RemoveClausesFromKb(
         clauses: Iterable<Clause>,
     ) : SetClausesOfKb(clauses)
 
+    /** Replaces the static knowledge base with a [Theory] built out of [clauses]. */
     data class ResetStaticKb(
         override val clauses: Iterable<Clause>,
     ) : SetClausesOfKb(clauses) {
@@ -60,6 +82,7 @@ abstract class SideEffect {
         override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(staticKb = theory(context))
     }
 
+    /** Adds [clauses] to the static knowledge base, at the front if [onTop], at the back otherwise. */
     data class AddStaticClauses(
         override val clauses: Iterable<Clause>,
         override val onTop: Boolean = false,
@@ -72,6 +95,7 @@ abstract class SideEffect {
             context.update(staticKb = context.staticKb.let { if (onTop) it.assertA(clauses) else it.assertZ(clauses) })
     }
 
+    /** Removes [clauses] from the static knowledge base. */
     data class RemoveStaticClauses(
         override val clauses: Iterable<Clause>,
     ) : RemoveClausesFromKb(clauses) {
@@ -83,6 +107,7 @@ abstract class SideEffect {
             context.update(staticKb = context.staticKb.retract(clauses).theory)
     }
 
+    /** Replaces the dynamic knowledge base with a [MutableTheory] built out of [clauses]. */
     data class ResetDynamicKb(
         override val clauses: Iterable<Clause>,
     ) : SetClausesOfKb(clauses) {
@@ -96,6 +121,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Adds [clauses] to the dynamic knowledge base, at the front if [onTop], at the back otherwise. */
     data class AddDynamicClauses(
         override val clauses: Iterable<Clause>,
         override val onTop: Boolean = false,
@@ -114,6 +140,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Removes [clauses] from the dynamic knowledge base. */
     data class RemoveDynamicClauses(
         override val clauses: Iterable<Clause>,
     ) : RemoveClausesFromKb(clauses) {
@@ -131,11 +158,14 @@ abstract class SideEffect {
             )
     }
 
+    /** Base class for side effects altering the [FlagStore]. */
     abstract class AlterFlags : SideEffect()
 
+    /** Base class for [AlterFlags] side effects carrying explicit name-value [flags] entries. */
     abstract class AlterFlagsByEntries(
         open val flags: Map<String, Term>,
     ) : AlterFlags() {
+        /** [flags], normalized to a [FlagStore]. */
         val flagStore: FlagStore by lazy {
             flags.let {
                 if (it is FlagStore) {
@@ -147,10 +177,12 @@ abstract class SideEffect {
         }
     }
 
+    /** Base class for [AlterFlags] side effects addressing flags by [names] only (e.g. to clear them). */
     abstract class AlterFlagsByName(
         open val names: Iterable<String>,
     ) : AlterFlags()
 
+    /** Merges [flags] into the current [FlagStore], overriding any existing entry with the same name. */
     data class SetFlags(
         override val flags: Map<String, Term>,
     ) : AlterFlagsByEntries(flags) {
@@ -166,6 +198,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Replaces the whole [FlagStore] with one built out of [flags]. */
     data class ResetFlags(
         override val flags: Map<String, Term>,
     ) : AlterFlagsByEntries(flags) {
@@ -178,6 +211,7 @@ abstract class SideEffect {
         override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(flags = flagStore)
     }
 
+    /** Removes the flags named in [names] from the [FlagStore]. */
     data class ClearFlags(
         override val names: Iterable<String>,
     ) : AlterFlagsByName(names) {
@@ -191,22 +225,28 @@ abstract class SideEffect {
             )
     }
 
+    /** Base class for side effects altering the loaded [Runtime] of libraries. */
     abstract class AlterRuntime : SideEffect()
 
+    /** Base class for [AlterRuntime] side effects expressible as a [Runtime] (a set of aliased [Library]s). */
     abstract class AlterAliasedRuntime : AlterRuntime() {
+        /** The [Runtime] this side effect carries. */
         abstract val libraries: Runtime
     }
 
+    /** Base class for [AlterRuntime] side effects concerning a single [library]. */
     abstract class AlterLibrary(
         open val library: Library,
     ) : AlterAliasedRuntime() {
         override val libraries: Runtime by lazy { Runtime.of(library) }
     }
 
+    /** Base class for [AlterRuntime] side effects addressing libraries by [aliases] only. */
     abstract class AlterLibrariesByName(
         open val aliases: Iterable<String>,
     ) : AlterRuntime()
 
+    /** Adds [library] to the loaded [Runtime]. */
     data class LoadLibrary(
         override val library: Library,
     ) : AlterLibrary(library) {
@@ -214,6 +254,7 @@ abstract class SideEffect {
             context.update(libraries = context.libraries + library)
     }
 
+    /** Removes the libraries named in [aliases] from the loaded [Runtime]. */
     data class UnloadLibraries(
         override val aliases: Iterable<String>,
     ) : AlterLibrariesByName(aliases) {
@@ -229,6 +270,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Replaces, within the loaded [Runtime], the library sharing [library]'s alias with [library] itself. */
     data class UpdateLibrary(
         override val library: Library,
     ) : AlterLibrary(library) {
@@ -236,6 +278,7 @@ abstract class SideEffect {
             context.update(libraries = context.libraries.update(library))
     }
 
+    /** Adds every library in [libraries] to the loaded [Runtime]. */
     data class AddLibraries(
         override val libraries: Runtime,
     ) : AlterAliasedRuntime() {
@@ -251,6 +294,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Replaces the whole loaded [Runtime] with [libraries]. */
     data class ResetRuntime(
         override val libraries: Runtime,
     ) : AlterAliasedRuntime() {
@@ -263,9 +307,11 @@ abstract class SideEffect {
         override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(libraries = libraries)
     }
 
+    /** Base class for side effects altering the declared [OperatorSet]. */
     abstract class AlterOperators(
         open val operators: Iterable<Operator>,
     ) : SideEffect() {
+        /** [operators], normalized to an [OperatorSet]. */
         val operatorSet: OperatorSet by lazy {
             operators.let {
                 if (it is OperatorSet) {
@@ -277,6 +323,7 @@ abstract class SideEffect {
         }
     }
 
+    /** Merges [operators] into the current [OperatorSet]. */
     data class SetOperators(
         override val operators: Iterable<Operator>,
     ) : AlterOperators(operators) {
@@ -290,6 +337,13 @@ abstract class SideEffect {
             )
     }
 
+    /**
+     * Nominally replaces the whole [OperatorSet] with [operators].
+     *
+     * @implNote as of this writing, [applyTo] actually merges [operators] into the existing set (same as
+     * [SetOperators]) rather than replacing it outright — likely a bug, since every sibling `Reset*` side effect
+     * in this file does replace the corresponding piece of state.
+     */
     data class ResetOperators(
         override val operators: Iterable<Operator>,
     ) : AlterOperators(operators) {
@@ -303,6 +357,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Removes [operators] from the current [OperatorSet]. */
     data class RemoveOperators(
         override val operators: Iterable<Operator>,
     ) : AlterOperators(operators) {
@@ -316,20 +371,25 @@ abstract class SideEffect {
             )
     }
 
+    /** Base class for side effects altering the I/O channel stores. */
     abstract class AlterChannels : SideEffect()
 
+    /** Base class for [AlterChannels] side effects addressing channels by [names] only (e.g. to close them). */
     abstract class AlterChannelsByName(
         open val names: Iterable<String>,
     ) : AlterChannels()
 
+    /** Base class for [AlterChannels] side effects carrying named [inputChannels] to add/set. */
     abstract class AlterInputChannels(
         open val inputChannels: Map<String, InputChannel<String>>,
     ) : AlterChannels()
 
+    /** Base class for [AlterChannels] side effects carrying named [outputChannels] to add/set. */
     abstract class AlterOutputChannels(
         open val outputChannels: Map<String, OutputChannel<String>>,
     ) : AlterChannels()
 
+    /** Adds [inputChannels] to the input channel store (see [it.unibo.tuprolog.solve.channel.InputStore]). */
     data class OpenInputChannels(
         override val inputChannels: Map<String, InputChannel<String>>,
     ) : AlterInputChannels(inputChannels) {
@@ -343,6 +403,7 @@ abstract class SideEffect {
             context.update(inputChannels = context.inputChannels + inputChannels)
     }
 
+    /** Replaces the whole input channel store with [inputChannels]. */
     data class ResetInputChannels(
         override val inputChannels: Map<String, InputChannel<String>>,
     ) : AlterInputChannels(inputChannels) {
@@ -358,6 +419,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Closes/removes the input channels named in [names]. */
     data class CloseInputChannels(
         override val names: Iterable<String>,
     ) : AlterChannelsByName(names) {
@@ -371,6 +433,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Adds [outputChannels] to the output channel store (see [it.unibo.tuprolog.solve.channel.OutputStore]). */
     data class OpenOutputChannels(
         override val outputChannels: Map<String, OutputChannel<String>>,
     ) : AlterOutputChannels(outputChannels) {
@@ -384,6 +447,7 @@ abstract class SideEffect {
             context.update(outputChannels = context.outputChannels + outputChannels)
     }
 
+    /** Replaces the whole output channel store with [outputChannels]. */
     data class ResetOutputChannels(
         override val outputChannels: Map<String, OutputChannel<String>>,
     ) : AlterOutputChannels(outputChannels) {
@@ -399,6 +463,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Closes/removes the output channels named in [names]. */
     data class CloseOutputChannels(
         override val names: Iterable<String>,
     ) : AlterChannelsByName(names) {
@@ -412,11 +477,16 @@ abstract class SideEffect {
             )
     }
 
+    /**
+     * Base class for side effects altering one [it.unibo.tuprolog.solve.data.CustomDataStore] tier with [data],
+     * either merging it in, or replacing the tier outright if [reset].
+     */
     abstract class AlterCustomData(
         open val data: Map<String, Any>,
         open val reset: Boolean = false,
     ) : SideEffect()
 
+    /** Alters the [it.unibo.tuprolog.solve.data.CustomDataStore.persistent] tier with [data]. */
     data class SetPersistentData(
         override val data: Map<String, Any>,
         override val reset: Boolean = false,
@@ -441,6 +511,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Alters the [it.unibo.tuprolog.solve.data.CustomDataStore.durable] tier with [data]. */
     data class SetDurableData(
         override val data: Map<String, Any>,
         override val reset: Boolean = false,
@@ -465,6 +536,7 @@ abstract class SideEffect {
             )
     }
 
+    /** Alters the [it.unibo.tuprolog.solve.data.CustomDataStore.ephemeral] tier with [data]. */
     data class SetEphemeralData(
         override val data: Map<String, Any>,
         override val reset: Boolean = false,

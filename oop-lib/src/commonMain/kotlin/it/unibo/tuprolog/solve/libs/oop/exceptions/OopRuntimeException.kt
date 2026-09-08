@@ -10,6 +10,21 @@ import it.unibo.tuprolog.solve.libs.oop.fullName
 import it.unibo.tuprolog.solve.libs.oop.pretty
 import kotlin.reflect.KCallable
 
+/**
+ * Wraps whatever [Throwable] [callable] itself threw while being reflectively invoked on
+ * [receiver] -- e.g. a `NullPointerException` from calling a method on a `null`-valued field, or
+ * any other exception the invoked JVM/Kotlin code raises. On the JVM this unwraps the
+ * `java.lang.reflect.InvocationTargetException` reflection wraps such failures in, so [cause] is
+ * the original exception thrown by the invoked code, not the reflection machinery's own wrapper.
+ *
+ * Surfaces to Prolog as a [it.unibo.tuprolog.solve.exception.error.SystemError] for an uncaught
+ * exception (see [it.unibo.tuprolog.solve.exception.error.SystemError.forUncaughtException]).
+ *
+ * @param callable the member whose invocation threw.
+ * @param receiver the instance [callable] was being invoked on, or `null` for a constructor,
+ * static member, or companion-object member.
+ * @param inner the exception thrown by the invoked code.
+ */
 class OopRuntimeException(
     private val callable: KCallable<*>,
     private val receiver: Any?,

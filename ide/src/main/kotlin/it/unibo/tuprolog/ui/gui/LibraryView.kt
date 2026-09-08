@@ -4,6 +4,11 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.solve.library.Library
 import javafx.scene.control.TreeItem
 
+/**
+ * A [TreeItem] rooted at [Library.alias] with three children ("Functions", "Predicates", "Operators") listing
+ * the indicators of [library]'s primitives/rules, functions, and operators, respectively. Used to populate the
+ * IDE's "loaded libraries" tree whenever the solver's [it.unibo.tuprolog.solve.library.Runtime] changes.
+ */
 class LibraryView(
     library: Library,
 ) : TreeItem<String>(library.alias) {

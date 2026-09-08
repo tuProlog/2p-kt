@@ -16,6 +16,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+/** Concrete implementation of [TestFlags], instantiated via [TestFlags.prototype]. */
 class TestFlagsImpl(
     private val solverFactory: SolverFactory,
 ) : TestFlags {

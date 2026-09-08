@@ -61,6 +61,11 @@ sealed interface Substitution :
     @JsName("applyTo")
     fun applyTo(term: Term): Term?
 
+    /**
+     * Dispatches on the concrete type of this [Substitution], invoking [unifier] if it is a [Unifier], [fail]
+     * if it is a [Fail], or [otherwise] if the relevant callback was not provided (`null`).
+     * @throws IllegalStateException if the relevant callback is `null` and [otherwise] was not overridden
+     */
     @JsName("whenIs")
     fun <T> whenIs(
         unifier: ((Unifier) -> T)? = null,
@@ -84,6 +89,7 @@ sealed interface Substitution :
     @JsName("getOriginal")
     fun getOriginal(variable: Var): Var? // TODO test this method
 
+    /** Retrieves the [Term] bound to the (first) [Var] whose [Var.name] equals [name], or `null` if none is found. */
     @JsName("getByName")
     fun getByName(name: String): Term? = keys.find { it.name == name }?.let { get(it) }
 
@@ -128,9 +134,11 @@ sealed interface Substitution :
     @JsName("minusIterable")
     operator fun minus(keys: Iterable<Var>): Substitution
 
+    /** Returns a new substitution without the entry (if any) for [variable]. */
     @JsName("minusVar")
     operator fun minus(variable: Var): Substitution
 
+    /** Returns a new substitution without the entries (if any) for [variable] and [otherVariables]. */
     @JsName("minusVars")
     fun minus(
         variable: Var,

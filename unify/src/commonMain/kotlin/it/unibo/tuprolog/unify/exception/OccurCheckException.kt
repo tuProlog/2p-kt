@@ -3,6 +3,13 @@ package it.unibo.tuprolog.unify.exception
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
+/**
+ * A [NoUnifyException] specifically signaling that unifying [term1] with [term2] failed because [innerVar] occurs
+ * within [innerTerm] (occurs-check violation): binding [innerVar] to [innerTerm] would produce a cyclic/infinite
+ * term. See the `occurCheckEnabled` parameter of [it.unibo.tuprolog.unify.Unificator]'s operations, which
+ * (when `true`) reject such bindings — by returning [it.unibo.tuprolog.core.Substitution.failed] rather than
+ * throwing this exception.
+ */
 class OccurCheckException(
     term1: Term,
     term2: Term,

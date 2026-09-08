@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestFloat], instantiated via [TestFloat.prototype]. */
 internal class TestFloatImpl(
     private val solverFactory: SolverFactory,
 ) : TestFloat {

@@ -1,0 +1,48 @@
+name: Docs
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: DanySK/action-checkout@0.2.31
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install MkDocs Material
+        run: pip install mkdocs-material
+      - name: Build documentation site
+        uses: DanySK/build-check-deploy-gradle-action@4.0.44
+        with:
+          retries-on-failure: '2'
+          build-command: ./gradlew :documentation:assembleSite
+          check-command: true
+          should-deploy: false
+          should-run-codecov: false
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: documentation/build/assembledSite
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

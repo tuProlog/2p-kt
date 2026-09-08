@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestNumberCodes], instantiated via [TestNumberCodes.prototype]. */
 class TestNumberCodesImpl(
     private val solverFactory: SolverFactory,
 ) : TestNumberCodes {

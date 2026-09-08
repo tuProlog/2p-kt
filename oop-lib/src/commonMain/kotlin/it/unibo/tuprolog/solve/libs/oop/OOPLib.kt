@@ -34,6 +34,51 @@ import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
+/**
+ * The `prolog.oop` library, bridging the JVM/Kotlin object world with Prolog terms via reflection.
+ *
+ * Loading this [it.unibo.tuprolog.solve.library.Library] (e.g. via
+ * `Runtime.of(OOPLib)`, see [it.unibo.tuprolog.solve.library.Runtime]) into a
+ * [it.unibo.tuprolog.solve.Solver] lets Prolog clauses create JVM/Kotlin objects, invoke their
+ * (possibly overloaded) methods and constructors, read and write their properties, and convert
+ * values back and forth between the two worlds -- all without writing any custom [Primitive] by
+ * hand. This is what makes it possible, for instance, to script the standard library or any
+ * third-party JVM class directly from Prolog: `new_object('java.util.ArrayList', [], L), L.add(1)`.
+ *
+ * The library contributes:
+ * - **primitives**: [it.unibo.tuprolog.solve.libs.oop.primitives.NewObject3] (`new_object/3`),
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod] (`invoke_method/3`),
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.InvokeStrict] (`invoke_strict/3`),
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.Assign] (`assign/3`),
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.Cast] (`cast/3`),
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.Type] (`type/2`), the `*_items/2` family
+ *   ([it.unibo.tuprolog.solve.libs.oop.primitives.ArrayItems],
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.ListItems],
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.SetItems]), the type testers
+ *   ([it.unibo.tuprolog.solve.libs.oop.primitives.Ref],
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.ObjectRef],
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.TypeRef],
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.NullRef]), and alias management
+ *   ([it.unibo.tuprolog.solve.libs.oop.primitives.Register],
+ *   [it.unibo.tuprolog.solve.libs.oop.primitives.Unregister]);
+ * - **clauses**: the fluent-syntax sugar built on top of the primitives above (`:=/2`, `./2`,
+ *   `new_object/2`, `fluent_reduce/2`, `property_reduce/3`) plus a battery of default
+ *   [it.unibo.tuprolog.solve.libs.oop.rules.Alias] facts for common types (`string`, `array`,
+ *   `list`, `int`, `big_integer`, ... and, on the JVM only, `system`, `math`, `stdout`, `stderr`,
+ *   `stdin`; the JS target contributes no platform-specific alias);
+ * - **operators**: `.`/2 (`xfy`, 800), `:=`/2 (`xfx`, 850), `as`/2 (`xfx`, 200) and `$`/1
+ *   (`fx`, 100), which together enable the fluent Prolog syntax documented on
+ *   [it.unibo.tuprolog.solve.libs.oop.rules.ColonEquals] and
+ *   [it.unibo.tuprolog.solve.libs.oop.rules.Dot].
+ *
+ * Reflection-based method/constructor invocation (everything beyond alias/type-name resolution)
+ * is only implemented on the JVM target: see the platform notes on
+ * [it.unibo.tuprolog.solve.libs.oop.allSupertypes], [it.unibo.tuprolog.solve.libs.oop.fullName]
+ * and the other `expect` declarations in `TypeUtils.kt` for what throws
+ * [kotlin.NotImplementedError] on Kotlin/JS.
+ *
+ * @see it.unibo.tuprolog.solve.library.Runtime
+ */
 object OOPLib : AbstractLibrary() {
     override val alias: String
         get() = "prolog.oop"

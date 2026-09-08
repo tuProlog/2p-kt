@@ -9,6 +9,15 @@ import it.unibo.tuprolog.solve.libs.oop.rules.Alias
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
+/**
+ * `unregister(+Alias)`: removes every [it.unibo.tuprolog.solve.libs.oop.rules.Alias] fact
+ * matching the ground alias term `Alias` from the current solver's static knowledge base,
+ * undoing a previous [Register].
+ *
+ * Fails if `Alias` is not currently registered.
+ *
+ * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if `Alias` is unbound or not ground.
+ */
 object Unregister : UnaryPredicate.NonBacktrackable<ExecutionContext>("unregister") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsStruct(0)

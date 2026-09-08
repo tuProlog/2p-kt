@@ -8,6 +8,14 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.utils.cursor
 
+/**
+ * "Primitive Selection": looks up a `Primitive` for the current goal's `(functor, arity)` signature among the
+ * loaded libraries. If found, builds a child [ClassicExecutionContext], invokes the primitive, and moves to
+ * `StatePrimitiveExecution` with the resulting response cursor already attached as a choice point; if not found,
+ * falls through to `StateRuleSelection`. A malformed goal -- an unbound variable, or a term that isn't callable
+ * (not a [it.unibo.tuprolog.core.Struct]) -- short-circuits straight to `StateException` here, before any lookup
+ * is attempted.
+ */
 data class StatePrimitiveSelection(
     override val context: ClassicExecutionContext,
 ) : AbstractState(context) {

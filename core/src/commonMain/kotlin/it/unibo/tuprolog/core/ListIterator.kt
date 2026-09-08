@@ -1,5 +1,12 @@
 package it.unibo.tuprolog.core
 
+/**
+ * An [Iterator] walking the elements of a [List], from [Cons.head] to [Cons.head], following [Cons.tail]
+ * chains. Iterating a partial (ill-formed) list simply stops when a non-[Cons], non-[EmptyList] tail is
+ * reached, without throwing. The [Substituting] variants additionally apply a [Substitution.Unifier] to each
+ * element (and to the tail being followed) as they go, and the `SkippingLast` variants stop before yielding
+ * the final [EmptyList] marker (useful when only the "real" elements are wanted).
+ */
 sealed class ListIterator(
     list: List,
 ) : Iterator<Term> {

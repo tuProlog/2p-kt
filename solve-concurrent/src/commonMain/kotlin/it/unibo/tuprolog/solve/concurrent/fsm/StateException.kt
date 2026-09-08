@@ -12,6 +12,14 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.plus
 
+/**
+ * The state a branch transitions into whenever resolution raises a [ResolutionException]: for a [LogicError], it
+ * looks for an enclosing `catch/3` goal along [ConcurrentExecutionContext.pathToRoot] that unifies with the error,
+ * and either resumes the branch inside the catcher's recovery goal ([StateGoalSelection]), or propagates the
+ * exception one level up towards the parent context (recursing into another [StateException]); any other
+ * [ResolutionException] (or a [LogicError] that reaches an unhandled [ConcurrentExecutionContext.isRoot]) ends the
+ * branch in a [StateHalt].
+ */
 data class StateException(
     override val exception: ResolutionException,
     override val context: ConcurrentExecutionContext,

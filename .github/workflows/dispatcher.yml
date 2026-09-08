@@ -27,3 +27,13 @@ jobs:
       - dispatcher
     uses: ./.github/workflows/build-and-deploy.yml
     secrets: inherit
+  docs:
+    needs:
+      - ci-cd
+    if: github.ref == 'refs/heads/master'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/docs.yml
+    secrets: inherit

@@ -5,7 +5,14 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.evalAsArithmeticExpression
 
-/** Base class for implementing arithmetic relation between [Numeric] terms */
+/**
+ * Base class for implementing ISO arithmetic comparison predicates (`=:=/2`, `=\=/2`, `</2`, `>/2`, `=</2`, `>=/2`),
+ * i.e. [BinaryRelation.Predicative]s that first evaluate both arguments as arithmetic expressions (via
+ * [it.unibo.tuprolog.solve.function.evalAsArithmeticExpression], raising an
+ * [it.unibo.tuprolog.solve.exception.error.InstantiationError] if unbound, or a
+ * [it.unibo.tuprolog.solve.exception.error.TypeError] if not evaluable/numeric) before comparing the resulting
+ * [Numeric] values via [computeNumeric].
+ */
 abstract class ArithmeticRelation<E : ExecutionContext>(
     operator: String,
 ) : BinaryRelation.Predicative<E>(operator) {
@@ -22,6 +29,7 @@ abstract class ArithmeticRelation<E : ExecutionContext>(
         y: Term,
     ): Boolean = computeNumeric(x.evalAsArithmeticExpression(this, 0), y.evalAsArithmeticExpression(this, 1))
 
+    /** Template method comparing the two already-evaluated [Numeric] operands. */
     abstract fun computeNumeric(
         x: Numeric,
         y: Numeric,

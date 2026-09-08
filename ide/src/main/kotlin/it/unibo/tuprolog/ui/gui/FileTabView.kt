@@ -13,6 +13,13 @@ import java.io.File
 import java.io.IOException
 import kotlin.math.max
 
+/**
+ * A [Tab] hosting a RichTextFX [CodeArea] editor for a single Prolog [file], as added to the IDE's file tab
+ * pane by [TuPrologIDEController] whenever [TuPrologIDEModel.onFileLoaded] fires. It keeps the model's
+ * in-memory copy of the file (see [TuPrologIDEModel.setFile]) in sync with the editor's text on every
+ * keystroke, applies [SyntaxColoring] to the editor, and forwards caret/keyboard events to [ideController]
+ * so the status bar can be updated.
+ */
 @Suppress("UNUSED_PARAMETER")
 class FileTabView(
     file: File,
@@ -59,6 +66,8 @@ class FileTabView(
     @FXML
     lateinit var codeArea: CodeArea
 
+    /** The full text currently in the editor;
+     * setting it replaces the editor's content and updates the model's copy of [file]. */
     var wholeText: String
         get() = codeArea.text
         set(value) {
@@ -66,11 +75,13 @@ class FileTabView(
             model.setFile(file, codeArea.text)
         }
 
+    /** Updates the [SyntaxColoring]'s keyword set to [operators] and re-highlights the editor immediately. */
     fun notifyOperators(operators: OperatorSet) {
         syntaxColoring.operators = operators
         syntaxColoring.applyHighlightingNow()
     }
 
+    /** Forces an immediate re-highlighting of the editor's current text, e.g. right after this tab is selected. */
     fun updateSyntaxColoring() {
         syntaxColoring.applyHighlightingNow()
     }
@@ -85,6 +96,8 @@ class FileTabView(
         }
     }
 
+    /** The [File] this tab's editor content is associated with in the model;
+     * setting it also renames the tab's label. */
     var file: File = file
         get
         set(value) {

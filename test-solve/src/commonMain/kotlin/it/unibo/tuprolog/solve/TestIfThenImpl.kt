@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestIfThen], instantiated via [TestIfThen.prototype]. */
 internal class TestIfThenImpl(
     private val solverFactory: SolverFactory,
 ) : TestIfThen {

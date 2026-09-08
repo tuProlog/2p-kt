@@ -76,6 +76,19 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Univ
 import it.unibo.tuprolog.solve.stdlib.primitive.Var
 import it.unibo.tuprolog.solve.stdlib.primitive.Write
 
+/**
+ * The standard-library [it.unibo.tuprolog.solve.library.Library] of `:solve-concurrent`, backing
+ * [it.unibo.tuprolog.solve.concurrent.ConcurrentSolverFactory.defaultBuiltins]. Extends
+ * [CommonBuiltins] (the predicates/rules shared by every resolution strategy) with a handful of control
+ * predicates whose implementation must know about this module's concurrency model, and therefore cannot be
+ * shared verbatim with `:solve-classic`/`:solve-streams`: [it.unibo.tuprolog.solve.concurrent.stdlib.rule.Call],
+ * [it.unibo.tuprolog.solve.concurrent.stdlib.rule.Catch], [it.unibo.tuprolog.solve.concurrent.stdlib.rule.Comma],
+ * [it.unibo.tuprolog.solve.concurrent.stdlib.rule.Cut],
+ * [it.unibo.tuprolog.solve.concurrent.stdlib.rule.NegationAsFailure],
+ * [it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Naf],
+ * [it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Or] and
+ * [it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Throw].
+ */
 object DefaultBuiltins : ExtensionLibrary(CommonBuiltins) {
     @Suppress("ktlint:standard:discouraged-comment-location")
     override val additionalRules: Iterable<RuleWrapper<*>>

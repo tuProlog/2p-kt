@@ -6,18 +6,52 @@ import it.unibo.tuprolog.core.Substitution.Companion.failed
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
+/**
+ * Skeletal [Unificator] implementation, providing a complete, equation-based unification algorithm (in the style of
+ * Martelli & Montanari's): both [mgu] and [merge] repeatedly decompose their operands into [Equation]s and simplify
+ * them (structurally comparing [Term]s, applying resulting variable assignments to the remaining equations) until
+ * either a contradiction is found (failure) or no equation can be simplified further (success).
+ *
+ * The only decision left to subclasses is [checkTermsEquality], namely *how* two non-variable [Term]s are compared
+ * while building equations — this is exactly what distinguishes [Unificator.strict] from [Unificator.naive].
+ * Subclasses that additionally need to observe or alter the equation-solving process itself (e.g. to reject some
+ * equations based on custom criteria, or to inspect the final result) may also override [handleEquation] and/or
+ * [handleResult]; both default to the identity function and thus have no effect unless overridden.
+ *
+ * ```kotlin
+ * val caseInsensitive =
+ *     object : AbstractUnificator() {
+ *         override fun checkTermsEquality(first: Term, second: Term): Boolean = when {
+ *             first.isAtom && second.isAtom ->
+ *                 first.castToAtom().value.equals(second.castToAtom().value, ignoreCase = true)
+ *             else -> first == second
+ *         }
+ *     }
+ * caseInsensitive.match(Atom.of("Foo"), Atom.of("foo")) // true
+ * ```
+ *
+ * @param context the starting bindings assumed by this [Unificator]; see [Unificator.context]
+ */
 abstract class AbstractUnificator(
     override val context: Substitution,
 ) : Unificator {
+    /** Creates an [AbstractUnificator] with an empty starting [context]. */
     constructor() : this(empty())
 
+    /**
+     * The unification request currently being resolved, passed to [handleEquation] and [handleResult] so that
+     * overrides can tell which top-level [Unificator] operation ([Unificator.mgu] or [Unificator.merge]) — and with
+     * which original arguments — produced the [Equation] or result being handled.
+     */
     protected sealed interface Request {
+        /** A request originated from a [Unificator.mgu] call on [term1] and [term2]. */
         data class Mgu(
             val term1: Term,
             val term2: Term,
             val occurCheckEnabled: Boolean,
         ) : Request
 
+        /** A request originated from a [Unificator.merge] call on [substitution1] and [substitution2]. */
         data class Merge(
             val substitution1: Substitution,
             val substitution2: Substitution,
@@ -28,7 +62,12 @@ abstract class AbstractUnificator(
     /** The context converted to equivalent equations */
     private val contextEquations: Iterable<Equation> by lazy { context.toEquations() }
 
-    /** Checks provided [Term]s for equality */
+    /**
+     * Decides whether [first] and [second] — two [Term]s that are not variables reducible to one another — are to
+     * be considered equal while building unification [Equation]s. This is the single extension point that gives
+     * strategies like [Unificator.strict] (plain [Term.equals]) and [Unificator.naive] (value-based comparison of
+     * numeric terms) their distinct behavior.
+     */
     protected abstract fun checkTermsEquality(
         first: Term,
         second: Term,
@@ -85,11 +124,22 @@ abstract class AbstractUnificator(
         return changed
     }
 
+    /**
+     * Post-processes the [Substitution] computed for [request], right before it is returned by [mgu] or [merge].
+     * The default implementation returns [result] unchanged; override to inspect or transform the final outcome
+     * of a unification/merge (e.g. for logging, or to enforce additional invariants).
+     */
     protected open fun handleResult(
         request: Request,
         result: Substitution,
     ): Substitution = result
 
+    /**
+     * Inspects, and optionally transforms, each [Equation] as it is processed while solving [request]. The default
+     * implementation returns [equation] unchanged. Overriding it allows a subclass to reject an otherwise valid
+     * equation — by returning [Equation.toContradiction] instead — based on criteria other than term structure and
+     * value (e.g. metadata carried by the compared [Term]s), effectively vetoing a would-be successful unification.
+     */
     protected open fun handleEquation(
         request: Request,
         equation: Equation,
@@ -163,6 +213,11 @@ abstract class AbstractUnificator(
         return mgu(Request.Mgu(term1, term2, occurCheckEnabled), equations, occurCheckEnabled)
     }
 
+    /**
+     * When [occurCheckEnabled] is `false`, this first attempts a quick [Substitution.plus]-based union of [context],
+     * [substitution1] and [substitution2]; only if that union is contradictory does it fall back to the full,
+     * equation-based merge (which also re-unifies, rather than merely composes, bindings shared by both operands).
+     */
     override fun merge(
         substitution1: Substitution,
         substitution2: Substitution,

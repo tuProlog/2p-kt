@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve.concurrent
 
+/**
+ * The Kotlin/JS [AtomicInt] implementation: a plain, non-atomic `var`. Safe only because JS coroutines are
+ * cooperatively scheduled on a single thread and never preempted mid-operation, not a general-purpose atomic
+ * counter.
+ */
 class AtomicIntJs(
     override var value: Int,
 ) : AtomicInt {

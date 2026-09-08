@@ -50,6 +50,18 @@ import kotlin.math.pow
 import kotlin.math.round
 import kotlin.system.exitProcess
 
+/**
+ * The FXML controller (`TuPrologIDEView.fxml`) backing the main tuProlog IDE window: it owns a private
+ * [TuPrologIDEModel] (created via [TuPrologIDEModel.of]) and, in [initialize], subscribes to every one of its
+ * `onXxx` event streams to keep the file tabs, solutions list, stdout/stderr panes, operators/flags/libraries
+ * tables, and static/dynamic knowledge base views up to date; conversely, every `@FXML`-annotated method reacts
+ * to a widget event by calling into the model (e.g. [onNextButtonPressed] calls [TuPrologIDEModel.solve]/
+ * [TuPrologIDEModel.next]). It implements the model/view separation described in [TuPrologIDEModel]'s KDoc.
+ *
+ * Instances of this class are normally created by [javafx.fxml.FXMLLoader] (as done by
+ * [TuPrologIDEBuilder.show]), not directly; [customizeModel], [addTab], [setOnClose], and [setOnAbout] are the
+ * hooks a host application uses (through [TuPrologIDEBuilder]) to extend the wired-up controller.
+ */
 @Suppress("UNUSED_PARAMETER", "unused", "VarCouldBeVal", "TooManyFunctions", "LargeClass")
 class TuPrologIDEController : Initializable {
     companion object {
@@ -245,6 +257,11 @@ class TuPrologIDEController : Initializable {
 
     private fun tabForFile(file: File): FileTabView? = fileTabs.firstOrNull { it.file == file }
 
+    /**
+     * Wires every widget declared by `TuPrologIDEView.fxml` to the private [TuPrologIDEModel]'s event streams,
+     * creates the model's first (empty, temporary) file via [TuPrologIDEModel.newFile], and resets the solver
+     * via [TuPrologIDEModel.reset]. Called once by the [javafx.fxml.FXMLLoader] after injecting the `@FXML` fields.
+     */
     @Suppress("NoNameShadowing")
     @FXML
     override fun initialize(
@@ -796,6 +813,8 @@ class TuPrologIDEController : Initializable {
         this.onAbout()
     }
 
+    /** Runs [setup] against this controller's private [TuPrologIDEModel],
+     * e.g. to load extra libraries or subscribe to events. */
     fun customizeModel(setup: ModelConfigurator) = setup(model)
 
     /**
@@ -811,10 +830,12 @@ class TuPrologIDEController : Initializable {
         }
     }
 
+    /** Replaces the handler invoked when the user requests to close the window (wired to the "quit" menu entry). */
     fun setOnClose(onClose: () -> Unit) {
         this.onClose = onClose
     }
 
+    /** Replaces the handler invoked when the user selects the "about" menu entry. */
     fun setOnAbout(onAbout: () -> Unit) {
         this.onAbout = onAbout
     }
