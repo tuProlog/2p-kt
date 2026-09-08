@@ -83,4 +83,5 @@ val assembleSite = tasks.register<Copy>("assembleSite") {
 val serveMkdocs = tasks.register<Exec>("serveMkdocs") {
     description = "Serve the MkDocs site locally"
     configureMkdocs("mkdocs", "serve")
+    outputs.upToDateWhen { false }
 }
