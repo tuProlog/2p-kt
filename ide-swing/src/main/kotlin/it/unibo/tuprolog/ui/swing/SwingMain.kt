@@ -2,6 +2,9 @@ package it.unibo.tuprolog.ui.swing
 
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.parsing.parseAsStruct
+import it.unibo.tuprolog.core.parsing.parseAsTerm
+import it.unibo.tuprolog.solve.MutableSolver
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
@@ -140,27 +143,34 @@ private class SwingSolverSession(
 
     override suspend fun close() = Unit
 
-    private fun newSolver() =
-        factory
-            .newBuilder()
-            .runtime(Runtime.of(OOPLib, IOLib))
-            .flag(TrackVariables) { ON }
-            .standardInput(InputChannel.of(creationRequest.stdin))
-            .standardOutput(OutputChannel.of { signal(SolverSignal.Stdout(it)) })
-            .standardError(OutputChannel.of { signal(SolverSignal.Stderr(it)) })
-            .warnings(
-                OutputChannel.of {
-                    signal(
-                        SolverSignal.Warning(
-                            WarningPresentation(
-                                it.message.orEmpty(),
-                                it.logicStackTrace.map(Any::toString),
+    private fun newSolver(): MutableSolver {
+        var builder =
+            factory
+                .newBuilder()
+                .runtime(Runtime.of(OOPLib, IOLib))
+                .flag(TrackVariables) { ON }
+                .standardInput(InputChannel.of(creationRequest.stdin))
+                .standardOutput(OutputChannel.of { signal(SolverSignal.Stdout(it)) })
+                .standardError(OutputChannel.of { signal(SolverSignal.Stderr(it)) })
+                .warnings(
+                    OutputChannel.of {
+                        signal(
+                            SolverSignal.Warning(
+                                WarningPresentation(
+                                    it.message.orEmpty(),
+                                    it.logicStackTrace.map(Any::toString),
+                                ),
                             ),
-                        ),
-                    )
-                },
-            ).buildMutable()
+                        )
+                    },
+                )
+        for ((name, value) in creationRequest.options) {
+            builder = runCatching { builder.flag(name to value.parseAsTerm()) }.getOrDefault(builder)
+        }
+        return builder
+            .buildMutable()
             .also { it.loadStaticKb(creationRequest.sourceText.parseAsTheory(it.operators)) }
+    }
 
     private fun signal(signal: SolverSignal) {
         synchronized(pendingSignals) { pendingSignals += signal }
@@ -227,9 +237,8 @@ private fun Solver.inspectionSnapshot(): SolverInspectionSnapshot =
                         alias = library.alias,
                         predicates =
                             (library.primitives.keys.asSequence() + library.rulesSignatures)
-                                .map(
-                                    Any::toString,
-                                ).distinct()
+                                .map(Signature::format)
+                                .distinct()
                                 .sorted()
                                 .toList(),
                         operators =
@@ -242,10 +251,12 @@ private fun Solver.inspectionSnapshot(): SolverInspectionSnapshot =
                             },
                         functions =
                             library.functions.keys
-                                .map(Any::toString)
+                                .map(Signature::format)
                                 .sorted(),
                     )
                 }.sortedBy { it.alias },
         staticKnowledgeBase = staticKb.joinToString("\n") { "$it." },
         dynamicKnowledgeBase = dynamicKb.joinToString("\n") { "$it." },
     )
+
+private fun Signature.format(): String = "$name/$arity${if (vararg) "+" else ""}"

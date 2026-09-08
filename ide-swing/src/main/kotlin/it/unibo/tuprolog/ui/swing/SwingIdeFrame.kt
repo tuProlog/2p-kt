@@ -15,6 +15,7 @@ import it.unibo.tuprolog.ui.gui.model.PageState
 import it.unibo.tuprolog.ui.gui.model.PanelId
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
 import it.unibo.tuprolog.ui.gui.model.resolve
+import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
 import kotlinx.coroutines.CoroutineScope
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -40,7 +41,6 @@ import javax.swing.JSpinner
 import javax.swing.JSplitPane
 import javax.swing.JTabbedPane
 import javax.swing.JTextArea
-import javax.swing.JTextField
 import javax.swing.KeyStroke
 import javax.swing.SpinnerNumberModel
 import javax.swing.SwingConstants
@@ -64,7 +64,7 @@ class SwingIdeFrame(
 ) : JFrame() {
     private val editorTabs = JTabbedPane()
     private val lowerTabs = JTabbedPane()
-    private val queryField = JTextField()
+    private val queryField = PrologQueryField()
     private val solveButton = JButton("Solve")
     private val solveAllButton = JButton("Solve all")
     private val stopButton = JButton("Stop")
@@ -78,17 +78,19 @@ class SwingIdeFrame(
     private val stdoutArea = readOnlyArea()
     private val stderrArea = readOnlyArea()
     private val warningsArea = readOnlyArea()
-    private val diagnosticsArea = readOnlyArea()
-    private val operatorsArea = readOnlyArea()
-    private val flagsArea = readOnlyArea()
-    private val librariesArea = readOnlyArea()
-    private val staticKbArea = readOnlyArea()
-    private val dynamicKbArea = readOnlyArea()
+    private val diagnosticsList = DiagnosticsList()
+    private val operatorsTable = OperatorsTable()
+    private val flagsTable = FlagsTable()
+    private val librariesTree = LibrariesTree()
+    private val staticKbArea = PrologEditor().apply { isEditable = false }
+    private val dynamicKbArea = PrologEditor().apply { isEditable = false }
 
     private val pageEditors = linkedMapOf<PageId, PrologEditor>()
     private val pageComponents = linkedMapOf<PageId, JComponent>()
     private val lowerPanelIds = mutableMapOf<Int, PanelId>()
     private val lowerPanelTitles = mutableMapOf<Int, String>()
+    private val lastSeenStaticKb = mutableMapOf<PageId, String>()
+    private val lastSeenDynamicKb = mutableMapOf<PageId, String>()
     private val extensionComponents = mutableMapOf<it.unibo.tuprolog.ui.gui.identity.FeatureId, JComponent>()
     private val extensionTabIndices = mutableMapOf<it.unibo.tuprolog.ui.gui.identity.FeatureId, Int>()
     private val featureContext = SwingFeatureContext(controller, scope)
@@ -119,6 +121,10 @@ class SwingIdeFrame(
         installQueryListeners()
         installStdinListener()
         installWindowListener()
+        solutionsTree.onQuerySelected =
+            { query -> queryBoundPageId?.let { dispatch(PageAction.ChangeQuery(it, query)) } }
+        diagnosticsList.onDiagnosticSelected = { diagnostic -> navigateToDiagnostic(diagnostic) }
+        flagsTable.onFlagChanged = { name, value -> changeFlag(name, value) }
         pack()
         setLocationRelativeTo(null)
     }
@@ -160,10 +166,10 @@ class SwingIdeFrame(
         addLowerTab("Stdout", PanelId.STDOUT, stdoutArea)
         addLowerTab("Stderr", PanelId.STDERR, stderrArea)
         addLowerTab("Warnings", PanelId.WARNINGS, warningsArea)
-        addLowerTab("Diagnostics", PanelId.DIAGNOSTICS, diagnosticsArea)
-        addLowerTab("Operators", PanelId.OPERATORS, operatorsArea)
-        addLowerTab("Flags", PanelId.FLAGS, flagsArea)
-        addLowerTab("Libraries", PanelId.LIBRARIES, librariesArea)
+        addLowerTab("Diagnostics", PanelId.DIAGNOSTICS, diagnosticsList)
+        addLowerTab("Operators", PanelId.OPERATORS, operatorsTable)
+        addLowerTab("Flags", PanelId.FLAGS, flagsTable)
+        addLowerTab("Libraries", PanelId.LIBRARIES, librariesTree)
         addLowerTab("Static KB", PanelId.STATIC_KB, staticKbArea)
         addLowerTab("Dynamic KB", PanelId.DYNAMIC_KB, dynamicKbArea)
 
@@ -266,7 +272,7 @@ class SwingIdeFrame(
                 override fun changedUpdate(event: DocumentEvent) = queryChanged()
             },
         )
-        queryField.addActionListener { solve(ConsumptionMode.ONE) }
+        queryField.onSubmit = { solve(ConsumptionMode.ONE) }
         solveButton.addActionListener {
             val page = selectedPage() ?: return@addActionListener
             if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) {
@@ -321,11 +327,15 @@ class SwingIdeFrame(
         for (removed in existing - wanted) {
             val component = pageComponents.remove(removed)
             pageEditors.remove(removed)
+            lastSeenStaticKb.remove(removed)
+            lastSeenDynamicKb.remove(removed)
             if (component != null) editorTabs.remove(component)
         }
 
         pages.forEachIndexed { index, page ->
             val component = pageComponents.getOrPut(page.id) { createEditorComponent(page) }
+            lastSeenStaticKb.getOrPut(page.id) { "" }
+            lastSeenDynamicKb.getOrPut(page.id) { "" }
             val currentIndex = editorTabs.indexOfComponent(component)
             if (currentIndex < 0) {
                 editorTabs.insertTab(pageTitle(page, state), null, component, null, index)
@@ -387,12 +397,13 @@ class SwingIdeFrame(
         }
 
         if (queryField.text != page.query.text) queryField.text = page.query.text
+        queryField.highlight(page.solverSession.inspection.operators)
         if (stdinArea.text != page.console.stdin) stdinArea.text = page.console.stdin
         val effective = state.workspace.configuration.resolve(page.configuration)
         val timeoutMs = effective.timeout.inWholeMilliseconds.coerceAtLeast(1)
         if ((timeoutSpinner.value as Number).toLong() != timeoutMs) timeoutSpinner.value = timeoutMs
 
-        solutionsTree.render(page.resolution.solutions)
+        solutionsTree.render(solutionEntries(page))
         stdoutArea.text = page.console.stdout.text
         stderrArea.text = page.console.stderr.text
         warningsArea.text =
@@ -406,39 +417,15 @@ class SwingIdeFrame(
                     }
                 }
             }
-        diagnosticsArea.text =
-            page.diagnostics.values.joinToString("\n") { diagnostic ->
-                "${diagnostic.severity}: ${diagnostic.message}"
-            }
-        operatorsArea.text =
-            page.solverSession.inspection.operators
-                .joinToString("\n") { "${it.priority} ${it.specifier} ${it.name}" }
-        flagsArea.text =
-            page.solverSession.inspection.flags
-                .joinToString("\n") { "${it.name} = ${it.value}" }
-        librariesArea.text =
-            page.solverSession.inspection.libraries.joinToString("\n\n") { library ->
-                buildString {
-                    append(library.alias)
-                    if (library.predicates.isNotEmpty()) {
-                        append(
-                            "\n  predicates: ",
-                        ).append(library.predicates.joinToString())
-                    }
-                    if (library.functions.isNotEmpty()) {
-                        append(
-                            "\n  functions: ",
-                        ).append(library.functions.joinToString())
-                    }
-                    if (library.operators.isNotEmpty()) {
-                        append(
-                            "\n  operators: ",
-                        ).append(library.operators.joinToString { it.name })
-                    }
-                }
-            }
+        diagnosticsList.render(pageEditors[page.id]?.diagnostics.orEmpty())
+        operatorsTable.render(page.solverSession.inspection.operators)
+        flagsTable.render(page.solverSession.inspection.flags)
+        flagsTable.isEnabled = page.resolution.status != ResolutionStatus.RUNNING
+        librariesTree.render(page.solverSession.inspection.libraries)
         staticKbArea.text = page.solverSession.inspection.staticKnowledgeBase
+        staticKbArea.highlight(page.solverSession.inspection.operators)
         dynamicKbArea.text = page.solverSession.inspection.dynamicKnowledgeBase
+        dynamicKbArea.highlight(page.solverSession.inspection.operators)
 
         solveButton.text = if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) "Next" else "Solve"
         solveAllButton.text =
@@ -471,6 +458,10 @@ class SwingIdeFrame(
                     PanelId.STDERR -> page.console.stderr.hasUnreadChanges
                     PanelId.WARNINGS -> page.console.warnings.hasUnreadChanges
                     PanelId.DIAGNOSTICS -> page.diagnostics.hasUnreadChanges
+                    PanelId.STATIC_KB -> lastSeenStaticKb[page.id] != page.solverSession.inspection.staticKnowledgeBase
+                    PanelId.DYNAMIC_KB ->
+                        lastSeenDynamicKb[page.id] !=
+                            page.solverSession.inspection.dynamicKnowledgeBase
                     else -> false
                 }
             val title = if (unread) "$baseTitle*" else baseTitle
@@ -480,16 +471,66 @@ class SwingIdeFrame(
 
     private fun acknowledgeVisiblePanel(page: PageState) {
         val panel = lowerPanelIds[lowerTabs.selectedIndex] ?: return
-        val unread =
-            when (panel) {
-                PanelId.SOLUTIONS -> page.resolution.hasUnreadChanges
-                PanelId.STDOUT -> page.console.stdout.hasUnreadChanges
-                PanelId.STDERR -> page.console.stderr.hasUnreadChanges
-                PanelId.WARNINGS -> page.console.warnings.hasUnreadChanges
-                PanelId.DIAGNOSTICS -> page.diagnostics.hasUnreadChanges
-                else -> false
+        when (panel) {
+            PanelId.STATIC_KB -> lastSeenStaticKb[page.id] = page.solverSession.inspection.staticKnowledgeBase
+            PanelId.DYNAMIC_KB -> lastSeenDynamicKb[page.id] = page.solverSession.inspection.dynamicKnowledgeBase
+            else -> {
+                val unread =
+                    when (panel) {
+                        PanelId.SOLUTIONS -> page.resolution.hasUnreadChanges
+                        PanelId.STDOUT -> page.console.stdout.hasUnreadChanges
+                        PanelId.STDERR -> page.console.stderr.hasUnreadChanges
+                        PanelId.WARNINGS -> page.console.warnings.hasUnreadChanges
+                        PanelId.DIAGNOSTICS -> page.diagnostics.hasUnreadChanges
+                        else -> false
+                    }
+                if (unread) dispatch(PageAction.MarkPanelRead(page.id, panel))
             }
-        if (unread) dispatch(PageAction.MarkPanelRead(page.id, panel))
+        }
+    }
+
+    private fun solutionEntries(page: PageState): List<SolutionQueryEntry> {
+        val history =
+            page.history.resolutions.map {
+                SolutionQueryEntry(it.query, it.solutions, hasUnexploredPaths = false)
+            }
+        val current = page.resolution
+        val currentQuery = current.query
+        val live =
+            if (currentQuery != null &&
+                current.status in setOf(ResolutionStatus.RUNNING, ResolutionStatus.AWAITING_CONTINUATION)
+            ) {
+                listOf(SolutionQueryEntry(currentQuery, current.solutions, hasUnexploredPaths = true))
+            } else {
+                emptyList()
+            }
+        return history + live
+    }
+
+    private fun navigateToDiagnostic(diagnostic: Diagnostic) {
+        val page = selectedPage() ?: return
+        val editor = pageEditors[page.id] ?: return
+        val offset =
+            diagnostic.range
+                ?.start
+                ?.offset
+                ?.coerceIn(0, editor.document.length) ?: return
+        editor.caretPosition = offset
+        editor.requestFocusInWindow()
+        runCatching { editor.scrollRectToVisible(editor.modelToView2D(offset).bounds) }
+    }
+
+    private fun changeFlag(
+        name: String,
+        value: String,
+    ) {
+        val page = selectedPage() ?: return
+        dispatch(
+            PageAction.ChangeConfiguration(
+                page.id,
+                page.configuration.copy(optionOverrides = page.configuration.optionOverrides + (name to value)),
+            ),
+        )
     }
 
     private fun pageTitle(
@@ -538,18 +579,11 @@ class SwingIdeFrame(
 
     private fun clearLowerAreas() {
         solutionsTree.render(emptyList())
-        listOf(
-            stdinArea,
-            stdoutArea,
-            stderrArea,
-            warningsArea,
-            diagnosticsArea,
-            operatorsArea,
-            flagsArea,
-            librariesArea,
-            staticKbArea,
-            dynamicKbArea,
-        ).forEach { it.text = "" }
+        diagnosticsList.render(emptyList())
+        operatorsTable.render(emptyList())
+        flagsTable.render(emptyList())
+        librariesTree.render(emptyList())
+        listOf(stdinArea, stdoutArea, stderrArea, warningsArea, staticKbArea, dynamicKbArea).forEach { it.text = "" }
     }
 
     private fun onEditorTabChanged() {

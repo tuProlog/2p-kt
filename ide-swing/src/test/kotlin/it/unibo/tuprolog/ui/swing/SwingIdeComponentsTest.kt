@@ -37,30 +37,36 @@ class SwingIdeComponentsTest {
     }
 
     @Test
-    fun `solutions are presented as expandable nodes`() {
+    fun `solutions are presented as expandable nodes grouped by query`() {
         SwingUtilities.invokeAndWait {
             val tree = SolutionTree()
             tree.render(
                 listOf(
-                    SolutionPresentation.Yes(
+                    SolutionQueryEntry(
                         query = "member(X, [a]).",
-                        bindings = listOf(BindingPresentation("X", "a")),
-                        solvedQuery = "member(a, [a])",
+                        solutions =
+                            listOf(
+                                SolutionPresentation.Yes(
+                                    query = "member(X, [a]).",
+                                    bindings = listOf(BindingPresentation("X", "a")),
+                                    solvedQuery = "member(a, [a])",
+                                ),
+                            ),
+                        hasUnexploredPaths = true,
                     ),
                 ),
             )
 
             val root = tree.model.root as DefaultMutableTreeNode
-            val solution = root.getChildAt(0) as DefaultMutableTreeNode
-            assertEquals("1. yes", solution.userObject)
-            assertEquals(
-                listOf("Query: member(a, [a])", "X = a"),
-                solution
-                    .children()
-                    .asSequence()
-                    .map(Any::toString)
-                    .toList(),
-            )
+            val queryNode = root.getChildAt(0) as DefaultMutableTreeNode
+            val solution = queryNode.getChildAt(0) as DefaultMutableTreeNode
+            val binding = solution.getChildAt(0) as DefaultMutableTreeNode
+            val ellipsis = queryNode.getChildAt(1) as DefaultMutableTreeNode
+
+            assertEquals(2, queryNode.childCount)
+            assertEquals(1, solution.childCount)
+            assertTrue(binding.toString().contains("X = a"))
+            assertTrue(ellipsis.isLeaf)
         }
     }
 
