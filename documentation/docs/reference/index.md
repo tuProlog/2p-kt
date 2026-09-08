@@ -19,3 +19,19 @@ Every piece of logic data in 2P-Kt — atoms, numbers, variables, structures, cl
 [term-src]: https://github.com/tuProlog/2p-kt/blob/master/core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt
 
 See [Module map](module-map.md) for how the ~30 modules relate to each other.
+
+## Suggested reading order
+
+Reference pages are self-contained lookup material, but they build on each other roughly in this order — from
+the big picture down to specific APIs, ending with a couple of project-meta pages:
+
+1. [Module map](module-map.md) — what the ~30 modules are and how they depend on each other.
+2. [Term hierarchy](term-hierarchy.md) — the core logic-data model everything else is built on.
+3. [Unification API](unification-api.md) — unifying and substituting `Term`s.
+4. [Solver API](solver-api.md) — the platform-agnostic goal-resolution API.
+5. [Primitives and functions](primitives-and-functions.md) — the building blocks a `Solver` executes.
+6. [Default predicates](default-predicates.md) — the standard predicates built from those primitives.
+7. [Libraries](libraries.md) — bundling predicates/functions into a pluggable unit.
+8. [Prolog DSL](prolog-dsl.md) — the Kotlin DSL for building terms/theories/queries.
+9. [Errors and exceptions](errors-and-exceptions.md) — the exception hierarchy raised during resolution.
+10. [CI/CD pipeline](ci-pipeline.md) — project-meta: how 2P-Kt itself is built, tested, and released.
