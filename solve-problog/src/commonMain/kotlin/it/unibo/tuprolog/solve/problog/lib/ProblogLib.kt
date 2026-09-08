@@ -45,7 +45,7 @@ object ProblogLib : ExtensionLibrary(Library.of("problog.lang")) {
      * this library, kept here to avoid repeating the literal across declarations. */
     const val PREDICATE_PREFIX = "prob"
 
-    /** Adds [ANNOTATION_OPERATOR] (the `::` probability-annotation operator) on top of the operators already
+    /** Adds `ANNOTATION_OPERATOR` (the `::` probability-annotation operator) on top of the operators already
      * known to the [Library] this is mixed into. */
     override val additionalOperators: Iterable<Operator>
         get() = PROBLOG_SPECIFIC_OPERATORS

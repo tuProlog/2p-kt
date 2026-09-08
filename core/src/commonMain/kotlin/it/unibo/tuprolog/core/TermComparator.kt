@@ -2,8 +2,8 @@ package it.unibo.tuprolog.core
 
 /**
  * A [Comparator] for a specific sort of [Term], following the standard logic-term total order: variables
- * order before numbers, which order before atoms, which order before structures (compared first by [arity],
- * then [functor], then arguments left-to-right). [DefaultComparator] implements the full order across any
+ * order before numbers, which order before atoms, which order before structures (compared first by `arity`,
+ * then `functor`, then arguments left-to-right). [DefaultComparator] implements the full order across any
  * two [Term]s and backs [Term.compareTo]; the other nested objects handle one specific sub-type each, and are
  * mostly useful when only same-sort terms are ever compared (e.g. sorting a list of [Atom]s).
  */

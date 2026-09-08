@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 /**
  * Base class for unary predicates (arity 1) that always succeed if their argument is of the expected type, and
  * throw otherwise, rather than merely testing and failing on mismatch (contrast with [TypeTester]). [ensureType] is
- * expected to throw (typically a [it.unibo.tuprolog.solve.exception.error.TypeError]) on a mismatching [term], and
+ * expected to throw (typically a [it.unibo.tuprolog.solve.exception.error.TypeError]) on a mismatching `term`, and
  * return normally otherwise.
  */
 abstract class TypeEnsurer<E : ExecutionContext>(
@@ -17,7 +17,7 @@ abstract class TypeEnsurer<E : ExecutionContext>(
         return true
     }
 
-    /** Template method expected to throw if [term] does not have the expected type, and return normally otherwise. */
+    /** Template method expected to throw if `term` does not have the expected type, and return normally otherwise. */
     abstract fun Solve.Request<E>.ensureType(
         context: E,
         term: Term,

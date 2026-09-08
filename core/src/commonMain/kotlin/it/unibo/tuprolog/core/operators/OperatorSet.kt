@@ -4,7 +4,7 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmField
 
 /**
- * An immutable [Set] of [Operator]s, used by pretty-printing/parsing code (e.g. [TermFormatter.prettyExpressions])
+ * An immutable [Set] of [Operator]s, used by pretty-printing/parsing code (e.g. `TermFormatter.prettyExpressions`)
  * to know which functors should be rendered/read as prefix, infix, or postfix expressions. [DEFAULT] (same as
  * [STANDARD]) bundles the usual arithmetic, comparison, and control-flow operators; [plus]/[minus] let a
  * program layer its own operators on top of (or remove some from) an existing set without mutating it.

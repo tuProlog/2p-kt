@@ -22,7 +22,7 @@ import kotlin.reflect.KClass
  * [ObjectRef]s and `null` (via [it.unibo.tuprolog.solve.libs.oop.NullRef]) convert straightforwardly
  * to their wrapped object (subject to a subtype check against the requested [convertInto] type);
  * an explicit `X as Type` expression ([it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR]) or a
- * dealiasing expression `$Alias` (resolved via the [dealiaser] passed to [of]) is honored too.
+ * dealiasing expression `$Alias` (resolved via the `dealiaser` passed to [of]) is honored too.
  *
  * @see ObjectToTermConverter
  * @see OverloadSelector
@@ -65,7 +65,7 @@ interface TermToObjectConverter {
         /**
          * Builds a [TermToObjectConverter] that resolves Prolog type names via [typeFactory]
          * (for casts and constructor selection) and resolves `$Alias` dealiasing expressions via
-         * [dealiaser] (which returns `null`, causing dealiasing to fail, by default).
+         * `dealiaser` (which returns `null`, causing dealiasing to fail, by default).
          */
         @JvmStatic
         fun of(

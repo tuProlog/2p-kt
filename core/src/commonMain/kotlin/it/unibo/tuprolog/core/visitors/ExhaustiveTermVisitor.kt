@@ -17,7 +17,7 @@ abstract class ExhaustiveTermVisitor<T> : AbstractTermVisitor<T>() {
     ): T = sequenceOf(f1, *fs).map { it(term) }.last()
 
     companion object {
-        /** Creates an [ExhaustiveTermVisitor] whose [TermVisitor.defaultValue] is computed by [defaultValue]. */
+        /** Creates an [ExhaustiveTermVisitor] whose `TermVisitor.defaultValue` is computed by [defaultValue]. */
         @JvmStatic
         @JsName("of")
         fun <X> of(defaultValue: (Term) -> X): ExhaustiveTermVisitor<X> =

@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.libs.oop.Result
 
 /**
  * `invoke_method(+Ref, +Method(Args...), ?Result)`: invokes `Method` (with `Args`, converted via
- * [it.unibo.tuprolog.solve.libs.oop.termToObjectConverter]) on `Ref` -- an
+ * `termToObjectConverter`) on `Ref` -- an
  * [it.unibo.tuprolog.solve.libs.oop.ObjectRef], [it.unibo.tuprolog.solve.libs.oop.TypeRef], or
  * `$Alias` expression -- unifying `Result` with the invocation's return value converted to a plain
  * [Term] (e.g. a JVM `String` becomes a Prolog atom). Use [InvokeStrict] instead to keep the

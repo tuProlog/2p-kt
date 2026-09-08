@@ -30,7 +30,7 @@ interface SolverFactory {
     @JsName("newBuilder")
     fun newBuilder(): SolverBuilder = SolverBuilderImpl(this)
 
-    /** The default [Runtime] of loaded libraries for solvers created by this factory; empty unless overridden. */
+    /** The default `Runtime` of loaded libraries for solvers created by this factory; empty unless overridden. */
     @JsName("defaultRuntime")
     val defaultRuntime: Runtime
         get() = Runtime.empty()
@@ -178,7 +178,7 @@ interface SolverFactory {
             warnings,
         )
 
-    /** Same as [rawSolverOf], but returns a [MutableSolver]. */
+    /** Same as `rawSolverOf`, but returns a [MutableSolver]. */
     @JsName("rawMutableSolverOf")
     fun mutableSolverOf(
         unificator: Unificator = defaultUnificator,

@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 /**
  * A single `alias(Alias, Ref)` fact, associating the ground term [alias] with the
  * [it.unibo.tuprolog.solve.libs.oop.Ref] [ref] it names -- the mechanism backing `$Alias`
- * dealiasing expressions and the default aliases (`string`, `int`, `system`, ...) [OOPLib]
+ * dealiasing expressions and the default aliases (`string`, `int`, `system`, ...) `OOPLib`
  * registers. New aliases can be added at solve-time via `register/2`
  * ([it.unibo.tuprolog.solve.libs.oop.primitives.Register]) and removed via `unregister/1`
  * ([it.unibo.tuprolog.solve.libs.oop.primitives.Unregister]); [forObject] and [forType] are the

@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * the state machine climbs the execution-context stack in `StateException`.
  *
  * If the argument is an `error(Type, Extra)` (or `error(Type)`) compound, it is wrapped into a [LogicError] of
- * the given [it.unibo.tuprolog.solve.exception.error] `Type`; any other term is wrapped into a generic
+ * the given `it.unibo.tuprolog.solve.exception.error` `Type`; any other term is wrapped into a generic
  * [MessageError] instead.
  *
  * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if the argument is an unbound variable.

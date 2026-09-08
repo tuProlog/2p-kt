@@ -12,7 +12,7 @@ import it.unibo.tuprolog.unify.Unificator
 /**
  * Default [LogicProgrammingScope] implementation: forwards [VariablesProvider], [Unificator], [TheoryFactory] and
  * [MutableSolver] operations to its respective collaborator ([variablesProvider], [unificator], [theoryFactory],
- * [defaultSolver]), and requires ([init]) that they all share the same [Scope]/[Unificator] consistently. Built by
+ * [defaultSolver]), and requires (in its `init` block) that they all share the same [Scope]/[Unificator] consistently. Built by
  * [LogicProgrammingScope.of] (and transitively by [logicProgramming]/[lp]/[prolog]) rather than instantiated
  * directly by client code.
  *

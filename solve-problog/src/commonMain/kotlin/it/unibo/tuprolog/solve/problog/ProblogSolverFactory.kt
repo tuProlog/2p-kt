@@ -37,11 +37,11 @@ import kotlin.js.JsExport
  * [it.unibo.tuprolog.solve.binaryDecisionDiagram]. With probabilistic mode turned off, resolution behaves like
  * plain Prolog and annotations are ignored (every solution is treated as certain, i.e. probability 1.0).
  *
- * Solvers built by this factory always load [ProblogLib] (adding it to [libraries] if not already present) and
+ * Solvers built by this factory always load [ProblogLib] (adding it to `libraries` if not already present) and
  * force the [TrackVariables] flag `ON`, because variable tracking is required to compute explanations correctly.
  *
  * @see it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
- * @see it.unibo.tuprolog.solve.SolveOptions.isProbabilistic
+ * @see it.unibo.tuprolog.solve.isProbabilistic
  */
 @Suppress("NON_EXPORTABLE_TYPE")
 @JsExport
@@ -83,7 +83,7 @@ object ProblogSolverFactory : SolverFactory {
             ),
         )
 
-    /** Adds [ProblogLib] to [libraries] if it isn't already loaded under its alias, so that the `::` operator
+    /** Adds [ProblogLib] to `libraries` if it isn't already loaded under its alias, so that the `::` operator
      * and the probabilistic resolution primitives/rules are always available regardless of what the caller
      * passed in. */
     private fun fixLibraries(libraries: Runtime): Runtime =

@@ -17,7 +17,8 @@ import kotlin.reflect.KMutableProperty
  * explicitly (see `as`/2, [it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR], for when the
  * automatic choice needs to be overridden).
  *
- * @see it.unibo.tuprolog.solve.libs.oop.impl.OverloadSelectorImpl for the JVM reflection-based implementation.
+ *
+ * The default (JVM) implementation selects overloads reflectively.
  */
 interface OverloadSelector {
     /** The type whose members this selector resolves overloads on. */

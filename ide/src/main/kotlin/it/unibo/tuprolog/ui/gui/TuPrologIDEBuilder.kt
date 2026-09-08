@@ -47,7 +47,7 @@ data class TuPrologIDEBuilder(
     var onClose: () -> Boolean = { showExitConfirmationDialog(title) },
     /** Invoked when the user selects the "about" menu entry. Defaults to showing an informational dialog. */
     var onAbout: () -> Unit = { showAboutDialog(title, Info.VERSION) },
-    /** CSS stylesheet URLs (see [Resources]) applied to the IDE's [javafx.scene.Scene]. */
+    /** CSS stylesheet URLs (see `Resources`) applied to the IDE's [javafx.scene.Scene]. */
     var stylesheets: List<String> = listOf(JAVA_KEYWORDS_LIGHT, LIGHT_CODE_AREA),
     /** Extra [Library] instances loaded into the IDE's solver in addition to the built-in ones (see [TuPrologIDEModel.customizeSolver]). */
     var customLibraries: List<Library> = emptyList(),

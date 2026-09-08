@@ -18,7 +18,8 @@ import kotlin.jvm.JvmStatic
  * ```
  *
  * @see TermDeserializer for the inverse operation.
- * @see WritingTermSerializer for a JVM-only variant that writes directly to a `java.io.Writer`.
+ *
+ * A JVM-only `WritingTermSerializer` variant writes directly to a `java.io.Writer`.
  */
 interface TermSerializer : Serializer<Term> {
     companion object {

@@ -23,7 +23,7 @@ import kotlin.jvm.JvmStatic
  *
  * Bundling all four kinds of extension together, rather than exposing four separate registration points on
  * [it.unibo.tuprolog.solve.Solver], is what makes it possible to ship a self-contained feature (e.g. `:io-lib`,
- * `:oop-lib`) as a single pluggable unit. Since more than one [Library] can be loaded into a [Runtime] at once,
+ * `:oop-lib`) as a single pluggable unit. Since more than one [Library] can be loaded into a `Runtime` at once,
  * [alias] is what lets clashing predicate indicators between libraries be resolved without either library needing
  * to know about the other (see [of] and its `alias` parameter).
  *
@@ -66,7 +66,7 @@ interface Library : Pluggable {
             return result
         }
 
-        /** Same as [Sequence.toMapEnsuringNoDuplicates], for an [Iterable]. */
+        /** Same as `Sequence.toMapEnsuringNoDuplicates`, for an [Iterable]. */
         @JvmStatic
         @JsName("iterableToMapEnsuringNoDuplicates")
         fun <T> Iterable<Pair<Signature, T>>.toMapEnsuringNoDuplicates(): Map<Signature, T> =

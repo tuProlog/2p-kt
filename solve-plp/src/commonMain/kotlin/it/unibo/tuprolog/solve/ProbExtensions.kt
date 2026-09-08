@@ -41,7 +41,7 @@ private const val PROBABILISTIC_OPTION_TAG =
 /**
  * The probability assigned to a [Taggable] object (e.g. a [Term] or a [Solution]) that has never
  * had [setProbability] called on it, i.e. one that is treated as certain (probability 1.0). This is
- * also the fallback used by [ProblogSolver][it.unibo.tuprolog.solve.problog.ProblogSolver]-like
+ * also the fallback used by `ProblogSolver`-like
  * solvers when [SolveOptions.isProbabilistic] is `false`.
  */
 const val DEFAULT_PROBABILITY = 1.0

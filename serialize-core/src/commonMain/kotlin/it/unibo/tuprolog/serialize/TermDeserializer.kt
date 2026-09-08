@@ -17,7 +17,8 @@ import kotlin.jvm.JvmStatic
  * ```
  *
  * @see TermSerializer for the inverse operation.
- * @see ReadingTermDeserializer for a JVM-only variant that reads directly from a `java.io.Reader`.
+ *
+ * A JVM-only `ReadingTermDeserializer` variant reads directly from a `java.io.Reader`.
  */
 interface TermDeserializer : Deserializer<Term> {
     companion object {

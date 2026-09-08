@@ -29,15 +29,15 @@ import kotlin.js.JsName
  * [SolverBuilder.buildMutable].
  */
 interface MutableSolver : Solver {
-    /** Loads [library] into this solver's [Runtime], adding it to the currently loaded libraries. */
+    /** Loads [library] into this solver's `Runtime`, adding it to the currently loaded libraries. */
     @JsName("loadLibrary")
     fun loadLibrary(library: Library)
 
-    /** Removes [library] from this solver's [Runtime]. */
+    /** Removes [library] from this solver's `Runtime`. */
     @JsName("unloadLibrary")
     fun unloadLibrary(library: Library)
 
-    /** Replaces this solver's whole [Runtime] of loaded libraries with [libraries]. */
+    /** Replaces this solver's whole `Runtime` of loaded libraries with [libraries]. */
     @JsName("setLibraries")
     fun setRuntime(libraries: Runtime)
 
@@ -132,7 +132,7 @@ interface MutableSolver : Solver {
     @JsName("setFlagPair")
     fun setFlag(flag: Pair<String, Term>)
 
-    /** Sets [flag] to its default term value, as reported by [NotableFlag.defaultTerm]. */
+    /** Sets [flag] to its default term value, as reported by `NotableFlag.defaultTerm`. */
     @JsName("setFlagNotable")
     fun setFlag(flag: NotableFlag)
 

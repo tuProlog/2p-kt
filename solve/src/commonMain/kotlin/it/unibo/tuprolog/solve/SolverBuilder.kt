@@ -55,7 +55,7 @@ interface SolverBuilder {
     @JsName("setUnificator")
     fun unificator(unificator: Unificator): SolverBuilder
 
-    /** The [Runtime] of libraries the built solver will load (in addition to [builtins], if any). */
+    /** The `Runtime` of libraries the built solver will load (in addition to [builtins], if any). */
     @JsName("runtime")
     var runtime: Runtime
 
@@ -112,7 +112,7 @@ interface SolverBuilder {
     @JsName("setFlagByPair")
     fun flag(flag: Pair<String, Term>): SolverBuilder
 
-    /** Sets [flag] within [flags] to its default term value ([NotableFlag.defaultTerm]). */
+    /** Sets [flag] within [flags] to its default term value (`NotableFlag.defaultTerm`). */
     @JsName("setNotableFlag")
     fun flag(flag: NotableFlag): SolverBuilder
 

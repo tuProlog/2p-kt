@@ -14,7 +14,7 @@ interface Durable {
 
     /**
      * The time instant by which this entity's execution should be over, computed as [startTime] `+` [maxDuration]
-     * (saturating to [TimeInstant.MAX_VALUE] on overflow).
+     * (saturating to `TimeInstant.MAX_VALUE` on overflow).
      */
     @JsName("endTime")
     val endTime: TimeInstant

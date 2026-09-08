@@ -17,7 +17,7 @@ import kotlin.collections.List as KtList
  *
  * Conversions are looked up in [converters], a registration-ordered map from [KClass] to converter function: an
  * exact match on `value::class` is tried first, then the map is scanned in registration order for the first
- * registered type [value] is an instance of — so more specific types should be [handleType]-registered before
+ * registered type the converted value is an instance of — so more specific types should be [handleType]-registered before
  * more general ones (see [legacyConfiguration]/[novelConfiguration] for the order this module itself relies on).
  *
  * A subclass only needs to implement [handleNumberAsNumeric] (the concrete `Number`-to-[Term] policy differs

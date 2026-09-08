@@ -19,7 +19,7 @@ import kotlin.jvm.JvmStatic
  * A [Solver] is deliberately strategy-agnostic: this module defines no resolution algorithm at all, only the
  * contract that every implementation (`:solve-classic`'s SLD-NF resolution, `:solve-streams`'s side-effect-free
  * strategy, `:solve-concurrent`, `:solve-problog`) must honour. Everything a resolution strategy needs to read
- * while solving a goal -- loaded [it.unibo.tuprolog.solve.library.Library]/[Runtime], [FlagStore], the two
+ * while solving a goal -- loaded `it.unibo.tuprolog.solve.library.Library`/`Runtime`, [FlagStore], the two
  * [Theory] knowledge bases, I/O [it.unibo.tuprolog.solve.channel.Channel]s -- is exposed through
  * [ExecutionContextAware], which this interface extends.
  *
@@ -40,7 +40,7 @@ import kotlin.jvm.JvmStatic
  * @see SolveOptions
  */
 interface Solver : ExecutionContextAware {
-    /** Shorthand for [solve] with [options] set to [SolveOptions.allLazilyWithTimeout] of [timeout]. */
+    /** Shorthand for [solve] with `options` set to [SolveOptions.allLazilyWithTimeout] of [timeout]. */
     @JsName("solveWithTimeout")
     fun solve(
         goal: Struct,
@@ -52,7 +52,7 @@ interface Solver : ExecutionContextAware {
     fun solve(goal: Struct): Sequence<Solution> = solve(goal, SolveOptions.DEFAULT)
 
     /**
-     * Solves [goal], returning a (possibly infinite) [Sequence] of [Solution]s, computed according to [options].
+     * Solves [goal], returning a (possibly infinite) [Sequence] of [Solution]s, computed according to `options`.
      *
      * Whether solutions are computed as the sequence is consumed, or eagerly ahead of time, depends on
      * [SolveOptions.isLazy]; how many solutions are produced is capped by [SolveOptions.limit], and the overall
@@ -64,7 +64,7 @@ interface Solver : ExecutionContextAware {
         options: SolveOptions,
     ): Sequence<Solution>
 
-    /** Shorthand for [solveList] with [options] set to [SolveOptions.allLazilyWithTimeout] of [timeout]. */
+    /** Shorthand for [solveList] with `options` set to [SolveOptions.allLazilyWithTimeout] of [timeout]. */
     @JsName("solveListWithTimeout")
     fun solveList(
         goal: Struct,
@@ -98,7 +98,7 @@ interface Solver : ExecutionContextAware {
     fun solveOnce(goal: Struct): Solution = solve(goal, SolveOptions.someLazily(1)).first()
 
     /**
-     * Solves [goal] and eagerly returns its first [Solution] only, regardless of [options]' [SolveOptions.limit]
+     * Solves [goal] and eagerly returns its first [Solution] only, regardless of `options`' [SolveOptions.limit]
      * (which is overridden to `1` via [SolveOptions.setLimit]).
      */
     @JsName("solveOnceWithOptions")

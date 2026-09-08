@@ -10,7 +10,7 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 /**
- * The result of splitting a collection of [Clause]s (typically a whole [Theory]) into the pieces of state a
+ * The result of splitting a collection of `Clause`s (typically a whole [Theory]) into the pieces of state a
  * [it.unibo.tuprolog.solve.Solver] must be seeded with when loading it: plain clauses bound for the static/dynamic
  * knowledge bases, plus everything expressed via directives (`:- Goal` facts) -- declared [operators], flags
  * ([flagStore]), goals to run at load time ([initialGoals]), and other theories to load ([includes]).

@@ -24,7 +24,7 @@ import kotlin.js.JsExport
  * JVM, by module lookup on JS -- rather than depending on `:solve-classic` directly, which is why this object
  * must remain a top-level, no-argument-constructible `object` named exactly `ClassicSolverFactory` in this
  * package. Most callers should go through `Solver.prolog`/`Solver.classic` rather than referencing this object
- * directly; it is public mainly so those lookups, and the [it.unibo.tuprolog.solve.problog] and other resolution
+ * directly; it is public mainly so those lookups, and the `it.unibo.tuprolog.solve.problog` and other resolution
  * strategies that build on top of the classic engine, have something to find and construct.
  *
  * Every [Solver]/[MutableSolver] produced here resolves goals with the explicit, inspectable finite-state

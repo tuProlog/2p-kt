@@ -17,7 +17,7 @@ abstract class DefaultTermVisitor<T> : AbstractTermVisitor<T>() {
     ): T = sequenceOf(f1, *fs).map { it(term) }.first()
 
     companion object {
-        /** Creates a [DefaultTermVisitor] whose [TermVisitor.defaultValue] is computed by [defaultValue]. */
+        /** Creates a [DefaultTermVisitor] whose `TermVisitor.defaultValue` is computed by [defaultValue]. */
         @JvmStatic
         @JsName("of")
         fun <X> of(defaultValue: (Term) -> X): DefaultTermVisitor<X> =

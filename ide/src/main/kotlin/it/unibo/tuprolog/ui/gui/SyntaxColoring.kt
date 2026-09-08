@@ -19,7 +19,7 @@ import java.util.concurrent.ForkJoinPool
  * It recognizes comments, string/quoted-atom literals, numbers (integer, float, hex/octal/binary, character
  * codes), parentheses/braces/brackets, clause-terminating full stops, variables, functors, plain atoms, and
  * (via [operators]) the current [OperatorSet]'s functors as keywords, then applies a JavaFX CSS style class
- * per matched token (see the stylesheets in [Resources]) using RichTextFX's [org.fxmisc.richtext.model.StyleSpans].
+ * per matched token (see the stylesheets in `Resources`) using RichTextFX's [org.fxmisc.richtext.model.StyleSpans].
  *
  * A single regex combining all token patterns is built lazily and cached; it is invalidated and rebuilt whenever
  * [operators] is reassigned, so that keywords stay in sync with the theory currently loaded into the solver
