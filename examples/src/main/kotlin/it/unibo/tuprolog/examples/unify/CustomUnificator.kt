@@ -7,7 +7,19 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.AbstractUnificator
 
 /**
+ * Demonstrates defining a custom unification strategy by extending
+ * `it.unibo.tuprolog.unify.AbstractUnificator` and overriding
+ * [AbstractUnificator.checkTermsEquality][it.unibo.tuprolog.unify.AbstractUnificator.checkTermsEquality],
+ * the hook used to decide whether two non-variable, non-compound terms are considered equal.
  *
+ * The custom unificator treats two numeric terms as equal whenever their absolute values match,
+ * falling back to plain equality (`==`) for every other kind of term. As a result,
+ * `f(1)` and `f(-1)` are found to [match][it.unibo.tuprolog.unify.Unificator.match] even though
+ * `1` and `-1` are not structurally equal, showing how `AbstractUnificator` can be extended to
+ * implement domain-specific notions of "sameness" beyond standard Prolog unification.
+ *
+ * Running this example prints `true` (the terms match) and `f(1)` (the unified term, using the
+ * value carried by the first argument).
  *
  * @author Lorenzo
  */
