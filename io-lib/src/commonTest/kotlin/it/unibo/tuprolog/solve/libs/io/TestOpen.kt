@@ -62,7 +62,7 @@ class TestOpen {
 
             val query =
                 "open"(url.toString(), "read", "S", logicListOf("alias"("mickey"))) and
-                    "get_char"("mickey", "C")
+                    ("get_char"("mickey", "C") and "close"("mickey"))
             val solution = solver().solve(query).toList().single()
 
             assertTrue(solution is Solution.Yes)
