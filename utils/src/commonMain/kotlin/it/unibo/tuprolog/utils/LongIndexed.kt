@@ -14,7 +14,7 @@ interface LongIndexed<T> :
     Indexed<Long, T>,
     Comparable<LongIndexed<T>> {
     /** Compares two [LongIndexed] values by their [index], ignoring [value]. */
-    override fun compareTo(other: LongIndexed<T>): Int = (index - other.index).toInt()
+    override fun compareTo(other: LongIndexed<T>): Int = index.compareTo(other.index)
 
     /** Returns a new [LongIndexed] with the same [index], and [value] transformed via [mapper]. */
     override fun <R> map(mapper: (T) -> R): LongIndexed<R>
