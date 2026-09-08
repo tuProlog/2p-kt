@@ -14,7 +14,7 @@ interface IntIndexed<T> :
     Indexed<Int, T>,
     Comparable<IntIndexed<T>> {
     /** Compares two [IntIndexed] values by their [index], ignoring [value]. */
-    override fun compareTo(other: IntIndexed<T>): Int = index - other.index
+    override fun compareTo(other: IntIndexed<T>): Int = index.compareTo(other.index)
 
     /** Returns a new [IntIndexed] with the same [index], and [value] transformed via [mapper]. */
     override fun <R> map(mapper: (T) -> R): IntIndexed<R>
