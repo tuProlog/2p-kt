@@ -76,9 +76,9 @@ val assembleSite = tasks.register<Copy>("assembleSite") {
     into(layout.buildDirectory.dir("assembledSite"))
 }
 
-tasks.named("assemble") {
-    dependsOn(assembleSite)
-}
+//tasks.named("assemble") {
+//    dependsOn(assembleSite)
+//}
 
 val serveMkdocs = tasks.register<Exec>("serveMkdocs") {
     description = "Serve the MkDocs site locally"
