@@ -11,8 +11,8 @@ import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.library.Runtime
-import okio.Path.Companion.toPath
-import okio.fakefilesystem.FakeFileSystem
+import okio.FileSystem
+import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -21,22 +21,35 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 /**
- * Covers `open/3,4` (Stream selection and control), against an in-memory [FakeFileSystem] as done
- * by [TestLocalFileSystem] and [TestOpenLocalFile].
+ * Covers `open/3,4` (Stream selection and control), against real temp files on the host file
+ * system, exactly like [TestOpenLocalFile] does for [Url.openInputChannel]/[Url.openOutputChannel]
+ * directly. A [okio.fakefilesystem.FakeFileSystem] can't be used here: `open/3,4` takes the
+ * source/sink as a URL *string*, and round-tripping a bare path like "/parents.pl" through
+ * [Url.file] and back goes through the JVM's real [java.io.File]/[java.net.URI] machinery
+ * regardless of [LocalFileSystem.fileSystem] - which, on Windows, resolves a driveless absolute
+ * path against the current drive (e.g. "C:\parents.pl"), so it would never match what a fake
+ * filesystem stored under the driveless key.
  */
 class TestOpen {
-    private lateinit var fake: FakeFileSystem
     private val ctx = DummyInstances.executionContext
+    private val createdUrls = mutableListOf<Url>()
 
     @BeforeTest
     fun setUp() {
-        fake = FakeFileSystem()
-        LocalFileSystem.fileSystem = fake
+        LocalFileSystem.fileSystem = platformFileSystem
     }
 
     @AfterTest
     fun tearDown() {
-        LocalFileSystem.fileSystem = platformFileSystem
+        createdUrls.forEach { LocalFileSystem.fileSystem.delete(it.toLocalPath(), mustExist = false) }
+        createdUrls.clear()
+    }
+
+    private fun tempFileUrl(prefix: String): Url {
+        val name = "2p-kt-io-lib-test-open-$prefix-${Random.nextInt()}.tmp"
+        val url = Url.file((FileSystem.SYSTEM_TEMPORARY_DIRECTORY / name).toString())
+        createdUrls += url
+        return url
     }
 
     private fun solver() = ClassicSolverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(IOLib))
@@ -44,11 +57,12 @@ class TestOpen {
     @Test
     fun testOpen3ForReadingThenGetChar() {
         logicProgramming {
-            val path = "/parents.pl".toPath()
-            fake.write(path) { writeUtf8("qwerty") }
-            val url = Url.file(path.toString()).toString()
+            val url = tempFileUrl("read")
+            LocalFileSystem.fileSystem.write(url.toLocalPath()) { writeUtf8("qwerty") }
 
-            val query = "open"(url, "read", "S", logicListOf("alias"("mickey"))) and "get_char"("mickey", "C")
+            val query =
+                "open"(url.toString(), "read", "S", logicListOf("alias"("mickey"))) and
+                    "get_char"("mickey", "C")
             val solution = solver().solve(query).toList().single()
 
             assertTrue(solution is Solution.Yes)
@@ -59,26 +73,23 @@ class TestOpen {
     @Test
     fun testOpen4ForWritingThenPutChar() {
         logicProgramming {
-            val path = "/written.txt".toPath()
-            val url = Url.file(path.toString()).toString()
+            val url = tempFileUrl("write")
 
             val query =
-                "open"(url, "write", "S", logicListOf("alias"("mickey"))) and
+                "open"(url.toString(), "write", "S", logicListOf("alias"("mickey"))) and
                     ("put_char"("mickey", "x") and "close"("mickey"))
             val solution = solver().solve(query).toList().single()
             assertTrue(solution is Solution.Yes)
-            assertEquals("x", fake.read(path) { readUtf8() })
+            assertEquals("x", LocalFileSystem.fileSystem.read(url.toLocalPath()) { readUtf8() })
         }
     }
 
     @Test
     fun testOpen3InvalidModeIsDomainError() {
         logicProgramming {
-            val path = "/parents.pl".toPath()
-            fake.write(path) { writeUtf8("qwerty") }
-            val url = Url.file(path.toString()).toString()
+            val url = tempFileUrl("invalid-mode")
 
-            val query = "open"(url, "bogus_mode", "S")
+            val query = "open"(url.toString(), "bogus_mode", "S")
             val solutions = solver().solve(query).toList()
             assertSolutionEquals(
                 listOf(
@@ -100,27 +111,24 @@ class TestOpen {
     @Test
     fun testOpen3AppendModeAddsToExistingContent() {
         logicProgramming {
-            val path = "/appended.txt".toPath()
-            fake.write(path) { writeUtf8("ab") }
-            val url = Url.file(path.toString()).toString()
+            val url = tempFileUrl("append")
+            LocalFileSystem.fileSystem.write(url.toLocalPath()) { writeUtf8("ab") }
 
             val query =
-                "open"(url, "append", "S", logicListOf("alias"("mickey"))) and
+                "open"(url.toString(), "append", "S", logicListOf("alias"("mickey"))) and
                     ("put_char"("mickey", "c") and "close"("mickey"))
             val solution = solver().solve(query).toList().single()
             assertTrue(solution is Solution.Yes)
-            assertEquals("abc", fake.read(path) { readUtf8() })
+            assertEquals("abc", LocalFileSystem.fileSystem.read(url.toLocalPath()) { readUtf8() })
         }
     }
 
     @Test
     fun testOpen3NonVariableStreamIsTypeError() {
         logicProgramming {
-            val path = "/parents.pl".toPath()
-            fake.write(path) { writeUtf8("qwerty") }
-            val url = Url.file(path.toString()).toString()
+            val url = tempFileUrl("non-var-stream")
 
-            val query = "open"(url, "read", "already_bound")
+            val query = "open"(url.toString(), "read", "already_bound")
             val solutions = solver().solve(query).toList()
             assertSolutionEquals(
                 listOf(
@@ -148,8 +156,8 @@ class TestOpen {
         // current (non-compliant) behavior rather than silently masking it, without pinning the
         // exact (platform-dependent) exception type.
         logicProgramming {
-            val url = Url.file("/does/not/exist.pl").toString()
-            val query = "open"(url, "read", "S")
+            val url = tempFileUrl("missing")
+            val query = "open"(url.toString(), "read", "S")
             assertFailsWith<Throwable> { solver().solve(query).toList() }
         }
     }
