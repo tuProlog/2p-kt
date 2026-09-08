@@ -1,13 +1,6 @@
 name: Docs
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'documentation/**'
-      - '**/src/**/kotlin/**'
-      - 'gradle/libs.versions.toml'
-      - '.github/workflows/docs.yml'
+  workflow_call:
   workflow_dispatch:
 
 permissions:
