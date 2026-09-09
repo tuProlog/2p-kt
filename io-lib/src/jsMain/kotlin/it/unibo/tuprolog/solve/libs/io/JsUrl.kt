@@ -21,7 +21,20 @@ private external class JsNativeUrl(
     val search: String
 }
 
+/**
+ * JS implementation of [Url], hand-parsed via the WHATWG [JsNativeUrl] binding (there being no `java.net.URL`
+ * equivalent to wrap, unlike [it.unibo.tuprolog.solve.libs.io.JvmUrl]).
+ *
+ * Its behavior further forks on [isNode]: [readAsText]/[readAsByteArray] read local ([isFile]) resources straight
+ * off disk (via [LocalFileSystem]) only under Node, fall back to `window.localStorage` for local resources in a
+ * browser, and otherwise eagerly [fetch] the remote resource in full, for both platforms.
+ */
 class JsUrl : Url {
+    /**
+     * Parses [url], e.g. `JsUrl("https://example.com/page")`.
+     * @throws InvalidUrlException if [url] is not well-formed, including native Windows paths (e.g. `C:\Users\...`),
+     * which [JsNativeUrl] would otherwise mis-parse as a URL with a single-letter scheme.
+     */
     constructor(url: String) {
         val parsed =
             try {
@@ -44,6 +57,7 @@ class JsUrl : Url {
         this.url = url
     }
 
+    /** Builds a [JsUrl] from its [protocol]/[host]/[port]/[path]/[query] components, via [Url.toString]. */
     constructor(protocol: String, host: String = "", port: Int? = null, path: String = "", query: String? = null) {
         this.protocol = protocol
         this.host = host
@@ -65,6 +79,9 @@ class JsUrl : Url {
 
     override val query: String?
 
+    /** @throws it.unibo.tuprolog.solve.libs.io.exceptions.IOException if the resource cannot be read: missing
+     * local file or Node error ([isFile] && [isNode]), missing `window.localStorage` entry ([isFile] in a
+     * browser), or unreachable host (remote). */
     override fun readAsText(): String =
         when {
             isFile && isNode -> readLocalFile { it.readUtf8() }
@@ -72,6 +89,8 @@ class JsUrl : Url {
             else -> fetch(url, "UTF-8")
         }
 
+    /** @throws it.unibo.tuprolog.solve.libs.io.exceptions.IOException if the resource cannot be read; see
+     * [readAsText] for the per-case conditions. */
     override fun readAsByteArray(): ByteArray =
         when {
             isFile && isNode -> readLocalFile { it.readByteArray() }

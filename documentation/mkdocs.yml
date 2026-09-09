@@ -59,6 +59,7 @@ nav:
       - how-to/contribute-with-git-flow.md
       - how-to/reuse-variables-with-scope.md
       - how-to/implement-a-custom-unificator.md
+      - how-to/use-io-lib.md
   - Reference:
       - reference/index.md
       - reference/module-map.md
@@ -68,6 +69,7 @@ nav:
       - reference/primitives-and-functions.md
       - reference/default-predicates.md
       - reference/libraries.md
+      - reference/io-lib.md
       - reference/prolog-dsl.md
       - reference/errors-and-exceptions.md
       - reference/ci-pipeline.md
@@ -82,6 +84,7 @@ nav:
       - explanation/solver-design.md
       - explanation/state-machine.md
       - explanation/parsing-architecture.md
+      - explanation/io-lib-design.md
       - explanation/kotlin-multiplatform.md
       - explanation/gradle-multi-project-build.md
       - explanation/kotlin-dsl-background.md

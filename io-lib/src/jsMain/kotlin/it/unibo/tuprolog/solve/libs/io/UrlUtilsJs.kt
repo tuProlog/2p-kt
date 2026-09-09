@@ -31,6 +31,7 @@ actual fun remoteUrl(
     query: String?,
 ): Url = JsUrl(protocol, host, port, path, query)
 
+/** Delegates to Node's own `fileURLToPath`, falling back to the [Url.path] component as-is when that throws. */
 internal actual fun Url.toLocalPath(): Path =
     try {
         (FILE_URL_TO_PATH(toString()) as String).toPath()
@@ -49,6 +50,11 @@ private fun <T> wrappingIOException(action: () -> T): T =
         throw IOException(e.message, e)
     }
 
+/**
+ * Under Node, streams a local file lazily off disk. Everywhere else (browser-local or any remote resource),
+ * eagerly reads the whole resource via [Url.readAsText] into an in-memory [InputChannel] instead, since Okio has
+ * no synchronous file system for browsers and this module has no HTTP streaming client (see [fetch]).
+ */
 actual fun Url.openInputChannel(): InputChannel<String> =
     if (isFile && isNode) {
         wrappingIOException { SourceInputChannel(LocalFileSystem.source(toLocalPath()).buffer()) }
@@ -56,6 +62,11 @@ actual fun Url.openInputChannel(): InputChannel<String> =
         InputChannel.of(readAsText())
     }
 
+/**
+ * Only supported for local files under Node: browsers have no writable local file system, and this module never
+ * supports writing to remote resources (on any platform).
+ * @throws IOException unless [Url.isFile] && [isNode].
+ */
 actual fun Url.openOutputChannel(append: Boolean): OutputChannel<String> {
     if (!isFile || !isNode) {
         throw IOException("Writing not supported for ${toString()}")
