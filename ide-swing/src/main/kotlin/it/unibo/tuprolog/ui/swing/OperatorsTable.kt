@@ -22,6 +22,14 @@ internal class OperatorsTable : JTable(OperatorsTableModel()) {
     init {
         val sorter = TableRowSorter(operatorsModel)
         sorter.sortKeys = listOf(RowSorter.SortKey(1, SortOrder.ASCENDING))
+        sorter.setComparator(
+            1,
+            Comparator<Any> { left, right ->
+                val leftPriority = left.toString().toIntOrNull() ?: Int.MAX_VALUE
+                val rightPriority = right.toString().toIntOrNull() ?: Int.MAX_VALUE
+                leftPriority.compareTo(rightPriority)
+            },
+        )
         rowSorter = sorter
         setDefaultRenderer(
             String::class.java,

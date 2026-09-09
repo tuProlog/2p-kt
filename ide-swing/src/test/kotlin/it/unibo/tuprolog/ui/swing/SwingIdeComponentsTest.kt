@@ -89,10 +89,10 @@ class SwingIdeComponentsTest {
             val operators = OperatorsTable()
             var added: OperatorPresentation? = null
             operators.onOperatorAdded = { added = it }
-            operators.render(emptyList())
-            operators.model.setValueAt("joins", 0, 0)
-            operators.model.setValueAt("500", 0, 1)
-            operators.model.setValueAt("yfx", 0, 2)
+            operators.render(listOf(OperatorPresentation("existing", 1000, "xfx")))
+            operators.model.setValueAt("joins", 1, 0)
+            operators.model.setValueAt("500", 1, 1)
+            operators.model.setValueAt("yfx", 1, 2)
             assertEquals(OperatorPresentation("joins", 500, "yfx"), added)
 
             val flags = FlagsTable()
