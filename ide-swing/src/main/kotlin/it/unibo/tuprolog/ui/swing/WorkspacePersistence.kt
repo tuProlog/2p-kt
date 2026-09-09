@@ -6,31 +6,8 @@ import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.model.DocumentOrigin
 import it.unibo.tuprolog.ui.gui.model.GuiState
 import it.unibo.tuprolog.ui.gui.model.PageContent
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.File
-
-@Serializable
-data class PersistedDocument(
-    val displayName: String,
-    val text: String,
-    val originProviderId: String? = null,
-    val originReference: String? = null,
-    val dirty: Boolean = false,
-    /** Whether this was a page-local scratch buffer rather than a (possibly still-untitled) document. */
-    val isScratch: Boolean = false,
-)
-
-@Serializable
-data class PersistedWorkspace(
-    val fontSize: Int = 14,
-    val windowWidth: Int? = null,
-    val windowHeight: Int? = null,
-    val windowX: Int? = null,
-    val windowY: Int? = null,
-    val selectedIndex: Int = -1,
-    val documents: List<PersistedDocument> = emptyList(),
-)
 
 /**
  * Persists open documents, editor font size, and window bounds to a hidden per-app JSON file under the user's

@@ -6,22 +6,14 @@ import it.unibo.tuprolog.ui.gui.extension.ExtensionActionHandler
 import it.unibo.tuprolog.ui.gui.extension.ExtensionCommandResult
 import it.unibo.tuprolog.ui.gui.extension.GuiContributions
 import it.unibo.tuprolog.ui.gui.extension.GuiExtension
-import it.unibo.tuprolog.ui.gui.identity.CommandId
 import it.unibo.tuprolog.ui.gui.identity.EffectId
 import it.unibo.tuprolog.ui.gui.identity.ExtensionId
-import it.unibo.tuprolog.ui.gui.identity.FeatureId
+import it.unibo.tuprolog.ui.gui.model.FeatureValue
 import it.unibo.tuprolog.ui.gui.presentation.FeatureDescriptor
 import it.unibo.tuprolog.ui.gui.presentation.FeaturePlacement
 import it.unibo.tuprolog.ui.gui.presentation.SemanticRegion
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.gui.solver.SolverProfile
-
-object PlpGuiIds {
-    val EXTENSION: ExtensionId = ExtensionId("plp")
-    val SOLUTION_DETAILS: FeatureId = FeatureId("plp.solution-details")
-    val BDD_INSPECTOR: FeatureId = FeatureId("plp.bdd-inspector")
-    val COPY_BDD_DOT: CommandId = CommandId("plp.copy-bdd-dot")
-}
 
 /**
  * Common PLP contribution. The actual ProbLog [solverProfile] is supplied by a solver-adapter module;
@@ -76,7 +68,7 @@ class PlpGuiExtension(
                                         ?.values
                                         ?.get(
                                             PlpFeatureKeys.BDD_DOT,
-                                        ) as? it.unibo.tuprolog.ui.gui.model.FeatureValue.Text
+                                        ) as? FeatureValue.Text
                                 )?.value
                                 ?: error("No BDD DOT representation is available for page ${context.pageId}")
                         ExtensionCommandResult(

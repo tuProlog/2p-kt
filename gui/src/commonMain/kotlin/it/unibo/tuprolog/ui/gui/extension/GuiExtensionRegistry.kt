@@ -1,53 +1,10 @@
 package it.unibo.tuprolog.ui.gui.extension
 
-import it.unibo.tuprolog.ui.gui.controller.GuiEffect
-import it.unibo.tuprolog.ui.gui.controller.GuiEvent
 import it.unibo.tuprolog.ui.gui.controller.PageAction
-import it.unibo.tuprolog.ui.gui.identity.CommandId
 import it.unibo.tuprolog.ui.gui.identity.ExtensionId
-import it.unibo.tuprolog.ui.gui.identity.FeatureId
-import it.unibo.tuprolog.ui.gui.identity.PageId
-import it.unibo.tuprolog.ui.gui.model.FeatureValue
 import it.unibo.tuprolog.ui.gui.model.PageState
 import it.unibo.tuprolog.ui.gui.presentation.FeatureDescriptor
 import it.unibo.tuprolog.ui.gui.solver.SolverProfile
-
-data class CommandDescriptor(
-    val id: CommandId,
-    val displayName: String,
-    val featureId: FeatureId? = null,
-)
-
-data class ExtensionCommandContext(
-    /** Immutable snapshot of the page that owns the command. */
-    val page: PageState,
-    val commandId: CommandId,
-    val payload: Map<String, String>,
-) {
-    val pageId: PageId get() = page.id
-}
-
-data class ExtensionCommandResult(
-    val featureUpdates: Map<FeatureId, Map<String, FeatureValue>> = emptyMap(),
-    val events: List<GuiEvent> = emptyList(),
-    val effects: List<GuiEffect> = emptyList(),
-)
-
-fun interface ExtensionActionHandler {
-    suspend fun handle(context: ExtensionCommandContext): ExtensionCommandResult
-}
-
-data class GuiContributions(
-    val solverProfiles: List<SolverProfile> = emptyList(),
-    val features: List<FeatureDescriptor> = emptyList(),
-    val commands: List<CommandDescriptor> = emptyList(),
-    val actionHandler: ExtensionActionHandler? = null,
-)
-
-interface GuiExtension {
-    val id: ExtensionId
-    val contributions: GuiContributions
-}
 
 class GuiExtensionRegistry(
     extensions: Iterable<GuiExtension> = emptyList(),
