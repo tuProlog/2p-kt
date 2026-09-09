@@ -1,5 +1,12 @@
 package it.unibo.tuprolog.ui.swing
 
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.main
+import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.multiple
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.types.long
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.core.parsing.parseAsTerm
@@ -18,10 +25,12 @@ import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.ui.gui.application.buildGuiApplication
+import it.unibo.tuprolog.ui.gui.controller.WorkspaceAction
 import it.unibo.tuprolog.ui.gui.extension.GuiExtension
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.identity.SolverSessionId
+import it.unibo.tuprolog.ui.gui.model.DocumentOrigin
 import it.unibo.tuprolog.ui.gui.model.FeatureValue
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
 import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
@@ -45,11 +54,30 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
+import java.io.File
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
-fun main() =
-    runBlocking {
-        launchSwingIde(Solver.prolog)
-    }
+private class SwingIdeCommand : CliktCommand(name = "ide-swing") {
+    private val theories: List<String> by
+        option("-T", "--theory", help = "Path of a theory file to open on startup").multiple()
+    private val timeout: Long by
+        option("-t", "--timeout", help = "Default resolution timeout in milliseconds").long().default(5_000)
+
+    override fun help(context: Context) = "Start the tuProlog Swing IDE"
+
+    override fun run() =
+        runBlocking {
+            launchSwingIde(
+                Solver.prolog,
+                defaultTimeout = timeout.milliseconds,
+                theoryFiles = theories.map(::File),
+            )
+        }
+}
+
+fun main(args: Array<String>) = SwingIdeCommand().main(args)
 
 suspend fun launchSwingIde(
     factory: SolverFactory,
@@ -62,6 +90,8 @@ suspend fun launchSwingIde(
     solutionFeatures: (Solution) -> Map<FeatureId, Map<String, FeatureValue>> = { emptyMap() },
     templates: List<TheoryTemplate> = ClassicTheoryTemplates.ALL,
     persistence: WorkspacePersistence? = WorkspacePersistence("ide-swing"),
+    theoryFiles: List<File> = emptyList(),
+    defaultTimeout: Duration = 5.seconds,
 ) {
     val profile = swingSolverProfile(factory, profileId, profileName, capabilities, solutionFeatures)
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -69,8 +99,16 @@ suspend fun launchSwingIde(
         buildGuiApplication(scope) {
             if (registerProfile) solverProfile(profile, makeDefault = true) else defaultSolverProfile(profile.id)
             extensions.forEach(::extension)
+            defaultTimeout(defaultTimeout)
         }
-    SwingIdeApplication(application, scope, featureRenderers, templates, persistence).show()
+    SwingIdeApplication(application, scope, featureRenderers, templates, persistence).show(theoryFiles.isEmpty())
+    for (file in theoryFiles) {
+        runCatching { file.readText() }
+            .onSuccess { text ->
+                val origin = DocumentOrigin(JVM_PATH_PROVIDER, file.absolutePath, file.name)
+                application.controller.dispatch(WorkspaceAction.OpenDocumentLoaded(origin, text))
+            }.onFailure { System.err.println("Cannot read theory file: ${file.path} (${it.message})") }
+    }
 }
 
 fun swingSolverProfile(

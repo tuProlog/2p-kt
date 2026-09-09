@@ -15,6 +15,7 @@ dependencies {
     implementation(libs.rstaui)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.clikt)
 
     testImplementation(kotlin("test"))
 }

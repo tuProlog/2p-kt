@@ -1,5 +1,12 @@
 package it.unibo.tuprolog.ui.swing.plp
 
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.main
+import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.multiple
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.types.long
 import it.unibo.tuprolog.bdd.toDotString
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
@@ -15,35 +22,50 @@ import it.unibo.tuprolog.ui.swing.WorkspacePersistence
 import it.unibo.tuprolog.ui.swing.launchSwingIde
 import it.unibo.tuprolog.ui.swing.swingSolverProfile
 import kotlinx.coroutines.runBlocking
+import java.io.File
+import kotlin.time.Duration.Companion.milliseconds
 
-fun main() =
-    runBlocking {
-        val capabilities =
-            setOf(
-                SolverCapabilities.CANCELLATION,
-                SolverCapabilities.PROBABILISTIC_SOLUTIONS,
-                SolverCapabilities.BDD_PRESENTATION,
+private class PlpSwingIdeCommand : CliktCommand(name = "ide-plp-swing") {
+    private val theories: List<String> by
+        option("-T", "--theory", help = "Path of a theory file to open on startup").multiple()
+    private val timeout: Long by
+        option("-t", "--timeout", help = "Default resolution timeout in milliseconds").long().default(5_000)
+
+    override fun help(context: Context) = "Start the tuProlog PLP (ProbLog) Swing IDE"
+
+    override fun run() =
+        runBlocking {
+            val capabilities =
+                setOf(
+                    SolverCapabilities.CANCELLATION,
+                    SolverCapabilities.PROBABILISTIC_SOLUTIONS,
+                    SolverCapabilities.BDD_PRESENTATION,
+                )
+            val profile =
+                swingSolverProfile(
+                    Solver.problog,
+                    SolverProfileId("problog"),
+                    "ProbLog",
+                    capabilities,
+                    Solution::plpFeatureState,
+                )
+            launchSwingIde(
+                factory = Solver.problog,
+                profileId = profile.id,
+                profileName = profile.displayName,
+                featureRenderers = plpSwingFeatureRenderers(),
+                extensions = listOf(PlpGuiExtension(profile)),
+                registerProfile = false,
+                capabilities = capabilities,
+                templates = PlpTheoryTemplates.ALL,
+                persistence = WorkspacePersistence("ide-plp-swing"),
+                theoryFiles = theories.map(::File),
+                defaultTimeout = timeout.milliseconds,
             )
-        val profile =
-            swingSolverProfile(
-                Solver.problog,
-                SolverProfileId("problog"),
-                "ProbLog",
-                capabilities,
-                Solution::plpFeatureState,
-            )
-        launchSwingIde(
-            factory = Solver.problog,
-            profileId = profile.id,
-            profileName = profile.displayName,
-            featureRenderers = plpSwingFeatureRenderers(),
-            extensions = listOf(PlpGuiExtension(profile)),
-            registerProfile = false,
-            capabilities = capabilities,
-            templates = PlpTheoryTemplates.ALL,
-            persistence = WorkspacePersistence("ide-plp-swing"),
-        )
-    }
+        }
+}
+
+fun main(args: Array<String>) = PlpSwingIdeCommand().main(args)
 
 internal fun Solution.plpFeatureState() =
     PlpSolutionDetails(

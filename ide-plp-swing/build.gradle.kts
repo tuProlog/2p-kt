@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":gui-plp"))
     implementation(project(":ide-swing"))
     implementation(project(":solve-problog"))
+    implementation(libs.clikt)
 
     testImplementation(kotlin("test"))
 }
