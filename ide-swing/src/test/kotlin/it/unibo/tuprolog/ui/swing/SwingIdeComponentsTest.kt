@@ -5,15 +5,21 @@ import it.unibo.tuprolog.ui.gui.identity.DocumentId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
+import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
+import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
 import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
+import it.unibo.tuprolog.ui.gui.presentation.TextPosition
+import it.unibo.tuprolog.ui.gui.presentation.TextRange
 import it.unibo.tuprolog.ui.gui.solver.ResolutionRequest
 import it.unibo.tuprolog.ui.gui.solver.ResolutionStep
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.gui.solver.SolverSessionCreationRequest
 import it.unibo.tuprolog.ui.gui.solver.SolverSignal
 import kotlinx.coroutines.runBlocking
+import org.fife.ui.rsyntaxtextarea.RSyntaxDocument
+import org.fife.ui.rsyntaxtextarea.parser.ParserNotice
 import org.fife.ui.rtextarea.RTextScrollPane
 import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
@@ -47,6 +53,51 @@ class SwingIdeComponentsTest {
             assertTrue(editor.diagnostics.isNotEmpty())
             assertTrue(editor.parserNotices.isNotEmpty())
         }
+    }
+
+    @Test
+    fun `analyzer handles empty input custom operators and syntax errors`() {
+        assertEquals(PrologAnalysis("", emptyList(), emptyList()), PrologAnalyzer.analyze("", emptyList()))
+        val analysis = PrologAnalyzer.analyze("a ++ b.", listOf(OperatorPresentation("++", 500, "xfx")))
+        assertEquals(PrologCategory.OPERATOR, analysis.tokens.first { it.start == 2 }.category)
+        val invalid = PrologAnalyzer.analyze("a(", emptyList())
+        assertTrue(invalid.tokens.isNotEmpty())
+        assertEquals(DiagnosticSeverity.ERROR, invalid.diagnostics.single().severity)
+    }
+
+    @Test
+    fun `completion suggestions are distinct and preserve reverse source order`() {
+        val source = "foo(X, atom), foo(Y, atom)."
+        val analysis = PrologAnalyzer.analyze(source, emptyList())
+        val suggestions = completionSuggestions(analysis)
+        assertEquals(
+            suggestions.map(PrologCompletion::replacement).distinct(),
+            suggestions.map(PrologCompletion::replacement),
+        )
+        assertEquals(
+            setOf("X", "Y", "foo", "atom"),
+            suggestions.map(PrologCompletion::replacement).toSet(),
+        )
+        assertEquals(
+            setOf("variable", "functor", "atom"),
+            suggestions.map(PrologCompletion::description).toSet(),
+        )
+    }
+
+    @Test
+    fun `syntax parser converts diagnostics into notices`() {
+        val diagnostic =
+            Diagnostic(
+                DiagnosticSeverity.WARNING,
+                "warning",
+                TextRange(TextPosition(1, 0, 1), TextPosition(2, 0, 2)),
+            )
+        val document = RSyntaxDocument(PROLOG_SYNTAX_STYLE)
+        document.insertString(0, "ab", null)
+        val result = PrologSyntaxParser { PrologAnalysis("ab", emptyList(), listOf(diagnostic)) }.parse(document, "")
+        assertEquals(1, result.notices.size)
+        assertEquals(ParserNotice.Level.WARNING, result.notices.single().level)
+        assertEquals(1, result.notices.single().offset)
     }
 
     @Test
@@ -87,6 +138,69 @@ class SwingIdeComponentsTest {
             assertTrue(ellipsis.isLeaf)
             tree.selectionPath = TreePath(solution.path)
             assertEquals("member(X, [a]).", selectedQuery)
+        }
+    }
+
+    @Test
+    fun `solution tree focuses one query and collapses the others`() {
+        SwingUtilities.invokeAndWait {
+            val tree = SolutionTree()
+            tree.render(
+                listOf(
+                    SolutionQueryEntry("first.", listOf(SolutionPresentation.No("first.")), false),
+                    SolutionQueryEntry("second.", listOf(SolutionPresentation.No("second.")), false),
+                ),
+                "second.",
+            )
+            val root = tree.model.root as DefaultMutableTreeNode
+            val first = root.getChildAt(0) as DefaultMutableTreeNode
+            val second = root.getChildAt(1) as DefaultMutableTreeNode
+            assertTrue(!tree.isExpanded(TreePath(first.path)))
+            assertTrue(tree.isExpanded(TreePath(second.path)))
+            assertEquals("?- second.", second.toString())
+        }
+    }
+
+    @Test
+    fun `libraries tree groups available members`() {
+        SwingUtilities.invokeAndWait {
+            val tree = LibrariesTree()
+            tree.render(
+                listOf(
+                    it.unibo.tuprolog.ui.gui.presentation.LibraryPresentation(
+                        alias = "lib",
+                        predicates = listOf("p/1"),
+                        operators = listOf(OperatorPresentation("+", 500, "yfx")),
+                        functions = listOf("f/1"),
+                    ),
+                ),
+            )
+            val root = tree.model.root as DefaultMutableTreeNode
+            val library = root.getChildAt(0) as DefaultMutableTreeNode
+            assertEquals("lib", library.userObject)
+            assertEquals(3, library.childCount)
+            assertTrue((library.getChildAt(0) as DefaultMutableTreeNode).toString() == "Predicates")
+        }
+    }
+
+    @Test
+    fun `diagnostics list renders and reports selected diagnostics`() {
+        SwingUtilities.invokeAndWait {
+            val list = DiagnosticsList()
+            var selected: Diagnostic? = null
+            list.onDiagnosticSelected = { selected = it }
+            val diagnostic =
+                Diagnostic(
+                    DiagnosticSeverity.ERROR,
+                    "bad",
+                    TextRange(TextPosition(0, 0, 0), TextPosition(1, 0, 1)),
+                )
+            list.render(listOf(diagnostic))
+            list.selectedIndex = 0
+            assertEquals(diagnostic, selected)
+            val rendered =
+                list.cellRenderer.getListCellRendererComponent(list, diagnostic, 0, false, false) as javax.swing.JLabel
+            assertTrue(rendered.text.contains("line 1"))
         }
     }
 
