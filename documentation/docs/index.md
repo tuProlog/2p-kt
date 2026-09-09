@@ -11,7 +11,7 @@ that matches what you're trying to do.
 - **[Tutorials](tutorials/index.md)** — learn 2P-Kt from scratch, step by step.
 - **[How-to guides](how-to/index.md)** — recipes for a specific task.
 - **[Reference](reference/index.md)** — technical description of modules and APIs, including the
-  [generated API reference](api/index.html).
+  [generated API reference](https://tuprolog.github.io/2p-kt/api/).
 - **[Explanation](explanation/index.md)** — the rationale and design behind 2P-Kt.
 
 ## Links

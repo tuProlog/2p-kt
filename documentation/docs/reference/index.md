@@ -3,7 +3,7 @@
 Information-oriented technical description of 2P-Kt's modules and APIs.
 
 The full generated API documentation (Dokka, covering every module) is available at
-[`/api/`](../../api/index.html).
+[`/api/`](https://tuprolog.github.io/2p-kt/api/).
 
 ## At a glance: the `Term` hierarchy
 
