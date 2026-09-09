@@ -19,6 +19,7 @@ multiProjectHelper {
     defaultProjectType = ProjectType.KOTLIN
 
     jvmProjects(":examples", ":ide-swing", ":ide-plp-swing")
+    otherProjects(":ide-web")
     // otherProjects(":documentation")
 
     val baseProjectTemplate =

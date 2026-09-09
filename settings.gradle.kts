@@ -90,4 +90,5 @@ include(":gui-solve")
 include(":gui-plp")
 include(":ide-swing")
 include(":ide-plp-swing")
+include(":ide-web")
 // END 2P-KT GUI REFACTOR MODULES
