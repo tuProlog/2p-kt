@@ -37,7 +37,7 @@ jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr
 clikt = "com.github.ajalt.clikt:clikt:5.1.0"
 graphviz = "guru.nidi:graphviz-java:0.18.1"
 ktMath = "io.github.gciatto:kt-math:0.10.2"
-plantuml = "net.sourceforge.plantuml:plantuml:1.2026.6"
+plantuml = "net.sourceforge.plantuml:plantuml:1.2026.8"
 richtextFx = "org.fxmisc.richtext:richtextfx:0.11.7"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
