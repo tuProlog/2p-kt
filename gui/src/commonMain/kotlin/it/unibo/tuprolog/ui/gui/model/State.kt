@@ -7,6 +7,7 @@ import it.unibo.tuprolog.ui.gui.identity.ResolutionSessionId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.identity.SolverSessionId
 import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
+import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSource
 import it.unibo.tuprolog.ui.gui.presentation.SemanticToken
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import it.unibo.tuprolog.ui.gui.presentation.SolverInspectionSnapshot
@@ -136,7 +137,11 @@ data class DiagnosticState(
 ) {
     val hasUnreadChanges: Boolean get() = revision > seenRevision
 
-    fun replace(diagnostics: List<Diagnostic>): DiagnosticState = copy(values = diagnostics, revision = revision + 1)
+    /** Replaces only the diagnostics previously contributed by [source], leaving every other source untouched. */
+    fun replaceSource(
+        source: DiagnosticSource,
+        diagnostics: List<Diagnostic>,
+    ): DiagnosticState = copy(values = values.filterNot { it.source == source } + diagnostics, revision = revision + 1)
 
     fun markRead(): DiagnosticState = copy(seenRevision = revision)
 }

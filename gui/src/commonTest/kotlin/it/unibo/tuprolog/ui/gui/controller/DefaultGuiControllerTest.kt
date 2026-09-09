@@ -6,6 +6,8 @@ import it.unibo.tuprolog.ui.gui.model.PanelId
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
 import it.unibo.tuprolog.ui.gui.model.SolverSessionLifecycle
 import it.unibo.tuprolog.ui.gui.model.WorkspaceConfiguration
+import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
+import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSources
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
@@ -486,6 +488,37 @@ class DefaultGuiControllerTest {
                 assertTrue(state.documents.isEmpty())
                 assertEquals("p(X).", state.page(page)?.query?.text)
                 assertFalse(state.page(page)?.title.isNullOrBlank())
+            } finally {
+                controller.shutdown()
+            }
+        }
+
+    @Test
+    fun documentTextChangesUpdateSyntaxDiagnosticsWithoutClobberingSolverDiagnostics() =
+        runTest {
+            val (controller, _) = fixture(this)
+            try {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl", "p(1)."))
+                val pageId = controller.state.value.workspace.selectedPageId!!
+                val createdPage =
+                    controller.state.value.workspace
+                        .page(pageId)!!
+                val documentId = (createdPage.content as PageContent.DocumentReference).documentId
+
+                controller.dispatch(DocumentAction.ChangeText(documentId, "p(1"))
+                val invalid =
+                    controller.state.value.workspace
+                        .page(pageId)!!
+                assertTrue(invalid.semanticTokens.isNotEmpty())
+                val syntaxDiagnostic = invalid.diagnostics.values.single()
+                assertEquals(DiagnosticSources.SYNTAX, syntaxDiagnostic.source)
+                assertEquals(DiagnosticSeverity.ERROR, syntaxDiagnostic.severity)
+
+                controller.dispatch(DocumentAction.ChangeText(documentId, "p(1)."))
+                val fixed =
+                    controller.state.value.workspace
+                        .page(pageId)!!
+                assertTrue(fixed.diagnostics.values.none { it.source == DiagnosticSources.SYNTAX })
             } finally {
                 controller.shutdown()
             }

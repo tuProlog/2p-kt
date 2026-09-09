@@ -33,6 +33,12 @@ data class DiagnosticSource(
     val value: String,
 )
 
+/** Well-known [DiagnosticSource]s used to keep independently-produced diagnostics from clobbering each other. */
+object DiagnosticSources {
+    val SYNTAX = DiagnosticSource("syntax")
+    val SOLVER = DiagnosticSource("solver")
+}
+
 data class Diagnostic(
     val severity: DiagnosticSeverity,
     val message: String,

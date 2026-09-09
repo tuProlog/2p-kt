@@ -17,6 +17,8 @@ import it.unibo.tuprolog.ui.gui.model.PanelId
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
 import it.unibo.tuprolog.ui.gui.model.resolve
 import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
+import it.unibo.tuprolog.ui.gui.presentation.formatDurationInput
+import it.unibo.tuprolog.ui.gui.presentation.parseDurationInput
 import kotlinx.coroutines.CoroutineScope
 import org.fife.ui.rsyntaxtextarea.ErrorStrip
 import org.fife.ui.rtextarea.RTextScrollPane
@@ -54,7 +56,6 @@ import javax.swing.event.DocumentListener
 import javax.swing.text.DefaultEditorKit
 import javax.swing.text.JTextComponent
 import kotlin.math.max
-import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Swing view/adapter. It never creates or mutates solver objects: all behaviour goes through [GuiController].
@@ -333,7 +334,7 @@ class SwingIdeFrame(
         timeoutField.inputVerifier =
             object : javax.swing.InputVerifier() {
                 override fun verify(input: JComponent): Boolean =
-                    parseTimeoutInput(timeoutField.text)?.let { true } ?: showInvalidTimeout()
+                    parseDurationInput(timeoutField.text)?.let { true } ?: showInvalidTimeout()
             }
         timeoutField.addActionListener { commitTimeout() }
         timeoutField.addFocusListener(
@@ -480,8 +481,7 @@ class SwingIdeFrame(
         queryField.highlight(page.solverSession.inspection.operators)
         if (stdinArea.text != page.console.stdin) stdinArea.text = page.console.stdin
         val effective = state.workspace.configuration.resolve(page.configuration)
-        val timeoutMs = effective.timeout.inWholeMilliseconds
-        if (!timeoutField.isFocusOwner) timeoutField.text = formatTimeoutInput(timeoutMs)
+        if (!timeoutField.isFocusOwner) timeoutField.text = formatDurationInput(effective.timeout)
 
         val solutionEntries = solutionEntries(page)
         val focusedQuery =
@@ -724,12 +724,12 @@ class SwingIdeFrame(
 
     private fun commitTimeout() {
         if (rendering) return
-        val milliseconds =
-            parseTimeoutInput(timeoutField.text) ?: run {
+        val timeout =
+            parseDurationInput(timeoutField.text) ?: run {
                 showInvalidTimeout()
                 return
             }
-        queryBoundPageId?.let { dispatch(PageAction.ChangeTimeout(it, milliseconds.milliseconds)) }
+        queryBoundPageId?.let { dispatch(PageAction.ChangeTimeout(it, timeout)) }
     }
 
     private fun showInvalidTimeout(): Boolean {

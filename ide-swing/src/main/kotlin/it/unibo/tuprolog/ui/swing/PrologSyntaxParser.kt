@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ui.swing
 
 import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
+import it.unibo.tuprolog.ui.gui.presentation.SyntaxAnalysis
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument
 import org.fife.ui.rsyntaxtextarea.parser.AbstractParser
 import org.fife.ui.rsyntaxtextarea.parser.DefaultParseResult
@@ -10,7 +11,7 @@ import org.fife.ui.rsyntaxtextarea.parser.ParserNotice
 
 /** Converts parser-impl diagnostics into RSTA squiggle-underlined notices. */
 internal class PrologSyntaxParser(
-    private val analysis: () -> PrologAnalysis,
+    private val analysis: () -> SyntaxAnalysis,
 ) : AbstractParser() {
     override fun parse(
         document: RSyntaxDocument,

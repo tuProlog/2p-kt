@@ -2,6 +2,8 @@ package it.unibo.tuprolog.ui.swing
 
 import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
+import it.unibo.tuprolog.ui.gui.presentation.SourceSuggestion
+import it.unibo.tuprolog.ui.gui.presentation.sourceIdentifierSuggestions
 import org.fife.ui.autocomplete.AutoCompletion
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
@@ -46,9 +48,9 @@ internal class PrologEditor : RSyntaxTextArea() {
         forceReparsing(syntaxParser)
     }
 
-    internal fun categoryAt(offset: Int): String? = modelToToken(offset)?.type?.toPrologCategory()?.name
+    internal fun categoryAt(offset: Int): String? = modelToToken(offset)?.type?.toSemanticCategory()?.name
 
-    internal fun completionCandidates(): List<PrologCompletion> = completionSuggestions(analysisCache.analysis())
+    internal fun completionCandidates(): List<SourceSuggestion> = sourceIdentifierSuggestions(analysisCache.analysis())
 
     private fun sourceText(): String = text
 

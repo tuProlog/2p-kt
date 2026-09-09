@@ -24,6 +24,8 @@ import it.unibo.tuprolog.ui.gui.model.SolverSessionState
 import it.unibo.tuprolog.ui.gui.model.WorkspaceConfiguration
 import it.unibo.tuprolog.ui.gui.model.WorkspaceState
 import it.unibo.tuprolog.ui.gui.model.resolve
+import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSources
+import it.unibo.tuprolog.ui.gui.presentation.PrologSyntaxAnalyzer
 import it.unibo.tuprolog.ui.gui.solver.ResolutionCursor
 import it.unibo.tuprolog.ui.gui.solver.ResolutionRequest
 import it.unibo.tuprolog.ui.gui.solver.ResolutionSchedulingPolicy
@@ -687,7 +689,7 @@ class DefaultGuiController(
                             if ((page.content as? PageContent.DocumentReference)?.documentId == action.documentId) {
                                 cancellations += detachActiveRuntime(page.id)
                                 detachSession(page.id)?.let(sessionsToClose::add)
-                                invalidatePage(page)
+                                invalidatePage(page, action.text)
                             } else {
                                 page
                             }
@@ -725,7 +727,7 @@ class DefaultGuiController(
                             if ((page.content as? PageContent.DocumentReference)?.documentId == action.documentId) {
                                 cancellations += detachActiveRuntime(page.id)
                                 detachSession(page.id)?.let(sessionsToClose::add)
-                                invalidatePage(page)
+                                invalidatePage(page, action.text)
                             } else {
                                 page
                             }
@@ -767,6 +769,7 @@ class DefaultGuiController(
                                     revision = scratch.revision + 1,
                                 ),
                         ),
+                        action.text,
                     )
                 }
             }
@@ -891,8 +894,11 @@ class DefaultGuiController(
             }
             cancellation = detachActiveRuntime(page.id)
             detachedSession = detachSession(page.id)
-            updateWorkspace {
-                it.updatePage(page.id) { current -> invalidatePage(transform(current)) }
+            updateWorkspace { workspace ->
+                workspace.updatePage(page.id) { current ->
+                    val transformed = transform(current)
+                    invalidatePage(transformed, sourceOf(transformed, workspace).text)
+                }
             }
             event(GuiEvent.SolverSessionInvalidated(page.id))
         }
@@ -943,7 +949,7 @@ class DefaultGuiController(
                                 id = resolutionId,
                                 query = query,
                             ),
-                        diagnostics = current.diagnostics.replace(emptyList()),
+                        diagnostics = current.diagnostics.replaceSource(DiagnosticSources.SOLVER, emptyList()),
                     )
                 }
             }
@@ -1520,13 +1526,17 @@ class DefaultGuiController(
             is PageContent.Scratch -> PageSource(null, content.text, content.revision)
         }
 
-    private fun invalidatePage(page: PageState): PageState {
+    private fun invalidatePage(
+        page: PageState,
+        sourceText: String,
+    ): PageState {
         val lifecycle =
             if (page.solverSession.lifecycle == SolverSessionLifecycle.ABSENT) {
                 SolverSessionLifecycle.ABSENT
             } else {
                 SolverSessionLifecycle.STALE
             }
+        val analysis = PrologSyntaxAnalyzer.analyze(sourceText, page.solverSession.inspection.operators)
         return page.copy(
             solverSession =
                 page.solverSession.copy(
@@ -1539,6 +1549,8 @@ class DefaultGuiController(
                 } else {
                     ResolutionState()
                 },
+            semanticTokens = analysis.tokens,
+            diagnostics = page.diagnostics.replaceSource(DiagnosticSources.SYNTAX, analysis.diagnostics),
         )
     }
 
@@ -1601,7 +1613,13 @@ class DefaultGuiController(
                             console = current.console.copy(warnings = current.console.warnings.append(signal.warning)),
                         )
                     is SolverSignal.Diagnostics ->
-                        current.copy(diagnostics = current.diagnostics.replace(signal.diagnostics))
+                        current.copy(
+                            diagnostics =
+                                current.diagnostics.replaceSource(
+                                    DiagnosticSources.SOLVER,
+                                    signal.diagnostics,
+                                ),
+                        )
                     is SolverSignal.Inspection ->
                         current.copy(
                             solverSession =

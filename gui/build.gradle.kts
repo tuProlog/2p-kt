@@ -3,6 +3,8 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.kotlinx.coroutines.core)
+                implementation(project(":core"))
+                implementation(project(":parser-impl"))
             }
         }
         commonTest {

@@ -9,9 +9,17 @@ import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
 import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
 import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
+import it.unibo.tuprolog.ui.gui.presentation.PrologSyntaxAnalyzer
+import it.unibo.tuprolog.ui.gui.presentation.SemanticCategory
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
+import it.unibo.tuprolog.ui.gui.presentation.SourceSuggestion
+import it.unibo.tuprolog.ui.gui.presentation.SyntaxAnalysis
 import it.unibo.tuprolog.ui.gui.presentation.TextPosition
 import it.unibo.tuprolog.ui.gui.presentation.TextRange
+import it.unibo.tuprolog.ui.gui.presentation.durationLabel
+import it.unibo.tuprolog.ui.gui.presentation.formatDurationInput
+import it.unibo.tuprolog.ui.gui.presentation.parseDurationInput
+import it.unibo.tuprolog.ui.gui.presentation.sourceIdentifierSuggestions
 import it.unibo.tuprolog.ui.gui.solver.ResolutionRequest
 import it.unibo.tuprolog.ui.gui.solver.ResolutionStep
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
@@ -28,6 +36,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class SwingIdeComponentsTest {
@@ -57,10 +67,10 @@ class SwingIdeComponentsTest {
 
     @Test
     fun `analyzer handles empty input custom operators and syntax errors`() {
-        assertEquals(PrologAnalysis("", emptyList(), emptyList()), PrologAnalyzer.analyze("", emptyList()))
-        val analysis = PrologAnalyzer.analyze("a ++ b.", listOf(OperatorPresentation("++", 500, "xfx")))
-        assertEquals(PrologCategory.OPERATOR, analysis.tokens.first { it.start == 2 }.category)
-        val invalid = PrologAnalyzer.analyze("a(", emptyList())
+        assertEquals(SyntaxAnalysis("", emptyList(), emptyList()), PrologSyntaxAnalyzer.analyze("", emptyList()))
+        val analysis = PrologSyntaxAnalyzer.analyze("a ++ b.", listOf(OperatorPresentation("++", 500, "xfx")))
+        assertEquals(SemanticCategory.OPERATOR, analysis.tokens.first { it.range.start.offset == 2 }.category)
+        val invalid = PrologSyntaxAnalyzer.analyze("a(", emptyList())
         assertTrue(invalid.tokens.isNotEmpty())
         assertEquals(DiagnosticSeverity.ERROR, invalid.diagnostics.single().severity)
     }
@@ -68,19 +78,19 @@ class SwingIdeComponentsTest {
     @Test
     fun `completion suggestions are distinct and preserve reverse source order`() {
         val source = "foo(X, atom), foo(Y, atom)."
-        val analysis = PrologAnalyzer.analyze(source, emptyList())
-        val suggestions = completionSuggestions(analysis)
+        val analysis = PrologSyntaxAnalyzer.analyze(source, emptyList())
+        val suggestions = sourceIdentifierSuggestions(analysis)
         assertEquals(
-            suggestions.map(PrologCompletion::replacement).distinct(),
-            suggestions.map(PrologCompletion::replacement),
+            suggestions.map(SourceSuggestion::text).distinct(),
+            suggestions.map(SourceSuggestion::text),
         )
         assertEquals(
             setOf("X", "Y", "foo", "atom"),
-            suggestions.map(PrologCompletion::replacement).toSet(),
+            suggestions.map(SourceSuggestion::text).toSet(),
         )
         assertEquals(
             setOf("variable", "functor", "atom"),
-            suggestions.map(PrologCompletion::description).toSet(),
+            suggestions.map(SourceSuggestion::category).toSet(),
         )
     }
 
@@ -94,7 +104,7 @@ class SwingIdeComponentsTest {
             )
         val document = RSyntaxDocument(PROLOG_SYNTAX_STYLE)
         document.insertString(0, "ab", null)
-        val result = PrologSyntaxParser { PrologAnalysis("ab", emptyList(), listOf(diagnostic)) }.parse(document, "")
+        val result = PrologSyntaxParser { SyntaxAnalysis("ab", emptyList(), listOf(diagnostic)) }.parse(document, "")
         assertEquals(1, result.notices.size)
         assertEquals(ParserNotice.Level.WARNING, result.notices.single().level)
         assertEquals(1, result.notices.single().offset)
@@ -224,13 +234,16 @@ class SwingIdeComponentsTest {
 
     @Test
     fun `timeout labels use the largest meaningful units`() {
-        assertEquals("Timeout: no limit", timeoutLabel(0))
-        assertEquals("Timeout: 1 week 2 days 3 hours 4 minutes 5 seconds 6 ms", timeoutLabel(788_645_006))
-        assertEquals(90_000_000L, parseTimeoutInput("1d 1h"))
-        assertEquals(1_500L, parseTimeoutInput("1s 500ms"))
-        assertEquals("1h 30m", formatTimeoutInput(5_400_000L))
-        assertEquals(null, parseTimeoutInput("1w 1ms"))
-        assertEquals(null, parseTimeoutInput("1s 2s"))
+        assertEquals("Timeout: no limit", durationLabel(Duration.ZERO))
+        assertEquals(
+            "Timeout: 1 week 2 days 3 hours 4 minutes 5 seconds 6 ms",
+            durationLabel(788_645_006.milliseconds),
+        )
+        assertEquals(90_000_000L.milliseconds, parseDurationInput("1d 1h"))
+        assertEquals(1_500L.milliseconds, parseDurationInput("1s 500ms"))
+        assertEquals("1h 30m", formatDurationInput(5_400_000L.milliseconds))
+        assertEquals(null, parseDurationInput("1w 1ms"))
+        assertEquals(null, parseDurationInput("1s 2s"))
     }
 
     @Test

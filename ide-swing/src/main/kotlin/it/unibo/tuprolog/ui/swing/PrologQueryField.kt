@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ui.swing
 
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
+import it.unibo.tuprolog.ui.gui.presentation.sourceIdentifierSuggestions
 import org.fife.ui.autocomplete.AutoCompletion
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
@@ -53,7 +54,7 @@ internal class PrologQueryField : RSyntaxTextArea() {
             analysisCache.invalidate()
             (document as RSyntaxDocument).setSyntaxStyle(PrologTokenMaker(analysisCache::analysis))
         }
-        completionProvider.replace(completionSuggestions(analysisCache.analysis()))
+        completionProvider.replace(sourceIdentifierSuggestions(analysisCache.analysis()))
     }
 
     private fun sourceText(): String = text

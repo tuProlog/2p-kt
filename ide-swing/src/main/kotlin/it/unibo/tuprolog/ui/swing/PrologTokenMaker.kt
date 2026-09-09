@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.swing
 
+import it.unibo.tuprolog.ui.gui.presentation.SyntaxAnalysis
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMaker
 import org.fife.ui.rsyntaxtextarea.Token
 import org.fife.ui.rsyntaxtextarea.TokenMap
@@ -10,7 +11,7 @@ import kotlin.math.min
 
 /** RSTA adapter that slices the whole-source parser analysis into its requested line. */
 internal class PrologTokenMaker(
-    private val analysis: () -> PrologAnalysis,
+    private val analysis: () -> SyntaxAnalysis,
 ) : AbstractTokenMaker() {
     override fun getWordsToHighlight(): TokenMap = TokenMap()
 
@@ -23,8 +24,8 @@ internal class PrologTokenMaker(
         val lineEnd = startOffset + text.count
         var cursor = 0
         for (token in analysis().tokens) {
-            val start = max(token.start, startOffset)
-            val end = min(token.start + token.length, lineEnd)
+            val start = max(token.range.start.offset, startOffset)
+            val end = min(token.range.endExclusive.offset, lineEnd)
             if (start >= end) continue
             addGap(text, cursor, start - startOffset, startOffset)
             addRange(text, start - startOffset, end - startOffset, token.category.tokenType(), startOffset)
