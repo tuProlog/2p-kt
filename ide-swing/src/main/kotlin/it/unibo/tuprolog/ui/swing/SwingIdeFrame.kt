@@ -23,14 +23,18 @@ import kotlinx.coroutines.CoroutineScope
 import org.fife.ui.rsyntaxtextarea.ErrorStrip
 import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
+import java.awt.Desktop
 import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.KeyboardFocusManager
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 import java.awt.event.InputEvent
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
+import java.net.URI
 import javax.swing.AbstractAction
 import javax.swing.BorderFactory
 import javax.swing.JButton
@@ -325,6 +329,7 @@ class SwingIdeFrame(
             add(
                 JMenu("Help").apply {
                     add(menuItem("About", null) { showAbout() })
+                    add(menuItem("Report an issue…", null) { showReportIssueDialog() })
                 },
             )
         }
@@ -867,11 +872,11 @@ class SwingIdeFrame(
     }
 
     internal fun supportReport(
-        thread: Thread,
-        error: Throwable,
+        thread: Thread = Thread.currentThread(),
+        error: Throwable? = null,
     ): String =
         buildString {
-            appendLine("Please describe what you were doing before the error.")
+            if (error != null) appendLine("Please describe what you were doing before the error.")
             appendLine()
             appendLine("tuProlog IDE v${Info.VERSION}")
             appendLine("Issue tracker: https://github.com/tuProlog/2p-kt/issues")
@@ -888,10 +893,68 @@ class SwingIdeFrame(
                     )
                 }
             }
-            appendLine()
-            appendLine("Stack trace:")
-            append(SwingIdeUncaughtExceptionHandler.stackTrace(error))
+            if (error != null) {
+                appendLine()
+                appendLine("Stack trace:")
+                append(SwingIdeUncaughtExceptionHandler.stackTrace(error))
+            }
         }
+
+    private fun showReportIssueDialog() {
+        val report = supportReport()
+        val problemArea =
+            JTextArea(6, 80).apply {
+                lineWrap = true
+                wrapStyleWord = true
+            }
+        val reportArea =
+            JTextArea(report, 12, 80).apply {
+                isEditable = false
+                lineWrap = false
+                caretPosition = 0
+            }
+        val panel =
+            JPanel(BorderLayout(0, 8)).apply {
+                border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
+                add(
+                    JPanel(BorderLayout(0, 4)).apply {
+                        add(JLabel("What problem are you noticing? (optional)"), BorderLayout.NORTH)
+                        add(JScrollPane(problemArea), BorderLayout.CENTER)
+                    },
+                    BorderLayout.NORTH,
+                )
+                add(
+                    JPanel(BorderLayout(0, 4)).apply {
+                        add(JLabel("Status report (included automatically):"), BorderLayout.NORTH)
+                        add(JScrollPane(reportArea), BorderLayout.CENTER)
+                    },
+                    BorderLayout.CENTER,
+                )
+            }
+        val copyAndOpen = "Copy report and open GitHub"
+        val choice =
+            JOptionPane.showOptionDialog(
+                this,
+                panel,
+                "Report an issue",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                arrayOf(copyAndOpen, "Close"),
+                copyAndOpen,
+            )
+        if (choice != 0) return
+        val problem = problemArea.text.trim()
+        val fullReport = if (problem.isEmpty()) report else "Problem description:\n$problem\n\n$report"
+        runCatching {
+            Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(fullReport), null)
+        }
+        runCatching {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(URI("https://github.com/tuProlog/2p-kt/issues/new"))
+            }
+        }
+    }
 
     private fun selectedEditor(): PrologEditor? = selectedPage()?.id?.let(pageEditors::get)
 
