@@ -72,7 +72,7 @@ class SwingIdeFrame(
     private val solveAllButton = JButton("Solve all")
     private val stopButton = JButton("Stop")
     private val resetButton = JButton("Reset")
-    private val timeoutSlider = JSlider(0, MAX_TIMEOUT_MILLISECONDS, 5000)
+    private val timeoutSlider = JSlider(0, TIMEOUT_VALUES.lastIndex, sliderPositionForTimeout(5000))
     private val timeoutLabel = JLabel()
     private val statusLabel = JLabel("Idle")
     private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT)
@@ -354,7 +354,7 @@ class SwingIdeFrame(
         timeoutSlider.addChangeListener {
             if (!rendering) {
                 val pageId = queryBoundPageId ?: return@addChangeListener
-                val milliseconds = timeoutSlider.value.toLong()
+                val milliseconds = timeoutForSliderPosition(timeoutSlider.value)
                 dispatch(PageAction.ChangeTimeout(pageId, milliseconds.milliseconds))
             }
         }
@@ -464,7 +464,7 @@ class SwingIdeFrame(
         if (stdinArea.text != page.console.stdin) stdinArea.text = page.console.stdin
         val effective = state.workspace.configuration.resolve(page.configuration)
         val timeoutMs = effective.timeout.inWholeMilliseconds
-        timeoutSlider.value = timeoutMs.coerceIn(0, MAX_TIMEOUT_MILLISECONDS.toLong()).toInt()
+        timeoutSlider.value = sliderPositionForTimeout(timeoutMs)
         timeoutLabel.text = timeoutLabel(timeoutMs)
 
         val solutionEntries = solutionEntries(page)
@@ -838,8 +838,6 @@ class SwingIdeFrame(
         KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner as? JTextComponent
 
     private companion object {
-        const val MAX_TIMEOUT_MILLISECONDS = 604_800_000
-
         fun editorArea(): JTextArea = JTextArea().apply { lineWrap = false }
 
         fun readOnlyArea(): JTextArea = editorArea().apply { isEditable = false }

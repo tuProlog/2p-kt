@@ -112,6 +112,10 @@ class SwingIdeComponentsTest {
     fun `timeout labels use the largest meaningful units`() {
         assertEquals("Timeout: no limit", timeoutLabel(0))
         assertEquals("Timeout: 1 week 2 days 3 hours 4 minutes 5 seconds 6 ms", timeoutLabel(788_645_006))
+        assertEquals(1_000L, timeoutForSliderPosition(sliderPositionForTimeout(1_000L)))
+        assertEquals(2_000L, timeoutForSliderPosition(sliderPositionForTimeout(1_001L) + 1))
+        assertEquals(3_660_000L, timeoutForSliderPosition(sliderPositionForTimeout(3_660_000L)))
+        assertEquals(90_000_000L, timeoutForSliderPosition(sliderPositionForTimeout(90_000_000L)))
     }
 
     @Test
