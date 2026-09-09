@@ -41,10 +41,10 @@ import javax.swing.JMenuItem
 import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.JScrollPane
-import javax.swing.JSlider
 import javax.swing.JSplitPane
 import javax.swing.JTabbedPane
 import javax.swing.JTextArea
+import javax.swing.JTextField
 import javax.swing.KeyStroke
 import javax.swing.SwingConstants
 import javax.swing.WindowConstants
@@ -72,8 +72,7 @@ class SwingIdeFrame(
     private val solveAllButton = JButton("Solve all")
     private val stopButton = JButton("Stop")
     private val resetButton = JButton("Reset")
-    private val timeoutSlider = JSlider(0, TIMEOUT_VALUES.lastIndex, sliderPositionForTimeout(5000))
-    private val timeoutLabel = JLabel()
+    private val timeoutField = JTextField("5s", 8)
     private val statusLabel = JLabel("Idle")
     private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT)
 
@@ -175,8 +174,8 @@ class SwingIdeFrame(
                         add(solveAllButton)
                         add(stopButton)
                         add(resetButton)
-                        add(timeoutLabel)
-                        add(timeoutSlider)
+                        add(JLabel("Timeout"))
+                        add(timeoutField)
                     },
                     BorderLayout.EAST,
                 )
@@ -321,6 +320,16 @@ class SwingIdeFrame(
             },
         )
         queryField.onSubmit = { solve(ConsumptionMode.ONE) }
+        timeoutField.inputVerifier =
+            object : javax.swing.InputVerifier() {
+                override fun verify(input: JComponent): Boolean = parseTimeoutInput(timeoutField.text) != null
+            }
+        timeoutField.addActionListener { commitTimeout() }
+        timeoutField.addFocusListener(
+            object : java.awt.event.FocusAdapter() {
+                override fun focusLost(event: java.awt.event.FocusEvent?) = commitTimeout()
+            },
+        )
         queryField.addKeyListener(
             object : KeyAdapter() {
                 override fun keyPressed(event: KeyEvent) {
@@ -351,13 +360,6 @@ class SwingIdeFrame(
         }
         stopButton.addActionListener { selectedPage()?.let { dispatch(PageAction.Stop(it.id)) } }
         resetButton.addActionListener { selectedPage()?.let { dispatch(PageAction.Reset(it.id)) } }
-        timeoutSlider.addChangeListener {
-            if (!rendering) {
-                val pageId = queryBoundPageId ?: return@addChangeListener
-                val milliseconds = timeoutForSliderPosition(timeoutSlider.value)
-                dispatch(PageAction.ChangeTimeout(pageId, milliseconds.milliseconds))
-            }
-        }
     }
 
     private fun installStdinListener() {
@@ -464,8 +466,7 @@ class SwingIdeFrame(
         if (stdinArea.text != page.console.stdin) stdinArea.text = page.console.stdin
         val effective = state.workspace.configuration.resolve(page.configuration)
         val timeoutMs = effective.timeout.inWholeMilliseconds
-        timeoutSlider.value = sliderPositionForTimeout(timeoutMs)
-        timeoutLabel.text = timeoutLabel(timeoutMs)
+        if (!timeoutField.isFocusOwner) timeoutField.text = formatTimeoutInput(timeoutMs)
 
         val solutionEntries = solutionEntries(page)
         val focusedQuery =
@@ -503,7 +504,7 @@ class SwingIdeFrame(
         solveAllButton.isEnabled = page.resolution.canSolve || page.resolution.canContinue
         stopButton.isEnabled = page.resolution.canStop
         resetButton.isEnabled = true
-        timeoutSlider.isEnabled = page.resolution.status != ResolutionStatus.RUNNING
+        timeoutField.isEnabled = page.resolution.status != ResolutionStatus.RUNNING
         statusLabel.text = statusText(page)
         updateLowerTabTitles(page)
         acknowledgeVisiblePanel(page)
@@ -698,6 +699,12 @@ class SwingIdeFrame(
         if (rendering) return
         if (!browsingQueryHistory) queryHistoryIndex = null
         queryBoundPageId?.let { dispatch(PageAction.ChangeQuery(it, queryField.text)) }
+    }
+
+    private fun commitTimeout() {
+        if (rendering) return
+        val milliseconds = parseTimeoutInput(timeoutField.text) ?: return
+        queryBoundPageId?.let { dispatch(PageAction.ChangeTimeout(it, milliseconds.milliseconds)) }
     }
 
     private fun navigateQueryHistory(delta: Int) {
