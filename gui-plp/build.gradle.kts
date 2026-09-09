@@ -3,6 +3,8 @@ kotlin {
         commonMain {
             dependencies {
                 api(project(":gui"))
+                implementation(project(":bdd"))
+                implementation(project(":solve-plp"))
             }
         }
         commonTest {

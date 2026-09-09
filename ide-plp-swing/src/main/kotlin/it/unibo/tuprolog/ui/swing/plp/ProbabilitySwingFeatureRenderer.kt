@@ -5,11 +5,11 @@ import it.unibo.tuprolog.ui.gui.model.PageFeatureState
 import it.unibo.tuprolog.ui.gui.model.PageState
 import it.unibo.tuprolog.ui.gui.plp.PlpFeatureKeys
 import it.unibo.tuprolog.ui.gui.plp.PlpGuiIds
+import it.unibo.tuprolog.ui.gui.plp.formatProbabilityPercentage
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.swing.SwingFeatureContext
 import it.unibo.tuprolog.ui.swing.SwingFeatureRenderer
 import java.awt.Font
-import java.util.Locale
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -33,11 +33,7 @@ class ProbabilitySwingFeatureRenderer : SwingFeatureRenderer {
     ) {
         val label = component as JLabel
         val probability = (state.values[PlpFeatureKeys.PROBABILITY] as? FeatureValue.Number)?.value
-        label.text = probability?.let { "Probability: ${formatPercentage(it)}" } ?: "No probabilistic solution"
-    }
-
-    private fun formatPercentage(probability: Double): String {
-        val number = String.format(Locale.ROOT, "%.6f", probability * 100.0).trimEnd('0').trimEnd('.')
-        return "$number%"
+        label.text =
+            probability?.let { "Probability: ${formatProbabilityPercentage(it)}" } ?: "No probabilistic solution"
     }
 }

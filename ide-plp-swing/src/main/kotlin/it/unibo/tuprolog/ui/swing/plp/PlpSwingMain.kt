@@ -7,16 +7,12 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.long
-import it.unibo.tuprolog.bdd.toDotString
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.binaryDecisionDiagram
-import it.unibo.tuprolog.solve.probability
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
-import it.unibo.tuprolog.ui.gui.plp.BddPresentation
 import it.unibo.tuprolog.ui.gui.plp.PlpGuiExtension
-import it.unibo.tuprolog.ui.gui.plp.PlpSolutionDetails
 import it.unibo.tuprolog.ui.gui.plp.PlpTheoryTemplates
+import it.unibo.tuprolog.ui.gui.plp.plpFeatureState
 import it.unibo.tuprolog.ui.gui.solve.solverFactoryProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.swing.WorkspacePersistence
@@ -66,9 +62,3 @@ private class PlpSwingIdeCommand : CliktCommand(name = "ide-plp-swing") {
 }
 
 fun main(args: Array<String>) = PlpSwingIdeCommand().main(args)
-
-internal fun Solution.plpFeatureState() =
-    PlpSolutionDetails(
-        probability = (this as? Solution.Yes)?.probability,
-        bdd = binaryDecisionDiagram?.let { BddPresentation(it.toDotString(), toString()) },
-    ).toFeatureStateReplacements()
