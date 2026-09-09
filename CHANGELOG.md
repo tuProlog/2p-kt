@@ -1,3 +1,23 @@
+## [1.4.1](https://github.com/tuProlog/2p-kt/compare/1.4.0...1.4.1) (2026-09-09)
+
+### Dependency updates
+
+* **deps:** update plugin gitsemver to v7.0.24 ([#928](https://github.com/tuProlog/2p-kt/issues/928)) ([0411401](https://github.com/tuProlog/2p-kt/commit/041140155be668bd915fd6205e4529c1c079e711))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.24 ([#930](https://github.com/tuProlog/2p-kt/issues/930)) ([d59d280](https://github.com/tuProlog/2p-kt/commit/d59d2808122b525de9acab2ad6ccff285149b6bc))
+
+### Bug Fixes
+
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2026.8 ([#916](https://github.com/tuProlog/2p-kt/issues/916)) ([e391723](https://github.com/tuProlog/2p-kt/commit/e3917234e4bea0377c14c29e85ab6dbdfdf519f6))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.44 ([#915](https://github.com/tuProlog/2p-kt/issues/915)) ([d9475dd](https://github.com/tuProlog/2p-kt/commit/d9475ddc0e31628863744455b471aa7ed1b6245c))
+
+### General maintenance
+
+* **doc:** restore and update documentation ([#929](https://github.com/tuProlog/2p-kt/issues/929)) ([5dfb787](https://github.com/tuProlog/2p-kt/commit/5dfb7873ba5611a80fac9bf45c40ab2f7e5cbaf2))
+* **release:** force gradle version in release so that release artifacts are correctly versioned ([729e213](https://github.com/tuProlog/2p-kt/commit/729e2139791f1b64bbf54255251cf245465a7dcd))
+
 ## [1.4.0](https://github.com/tuProlog/2p-kt/compare/1.3.1...1.4.0) (2026-09-06)
 
 ### Features
