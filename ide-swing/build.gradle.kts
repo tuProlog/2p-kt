@@ -5,10 +5,7 @@ plugins {
 
 dependencies {
     api(project(":gui"))
-    implementation(project(":parser-impl"))
-    implementation(project(":parser-theory"))
-    implementation(project(":io-lib"))
-    implementation(project(":oop-lib"))
+    implementation(project(":gui-solve"))
     implementation(project(":solve-classic"))
     implementation(libs.rsyntaxtextarea)
     implementation(libs.autocomplete)

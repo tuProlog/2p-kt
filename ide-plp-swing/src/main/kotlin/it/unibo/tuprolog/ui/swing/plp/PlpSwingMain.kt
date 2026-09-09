@@ -17,10 +17,10 @@ import it.unibo.tuprolog.ui.gui.plp.BddPresentation
 import it.unibo.tuprolog.ui.gui.plp.PlpGuiExtension
 import it.unibo.tuprolog.ui.gui.plp.PlpSolutionDetails
 import it.unibo.tuprolog.ui.gui.plp.PlpTheoryTemplates
+import it.unibo.tuprolog.ui.gui.solve.solverFactoryProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.swing.WorkspacePersistence
 import it.unibo.tuprolog.ui.swing.launchSwingIde
-import it.unibo.tuprolog.ui.swing.swingSolverProfile
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
@@ -42,7 +42,7 @@ private class PlpSwingIdeCommand : CliktCommand(name = "ide-plp-swing") {
                     SolverCapabilities.BDD_PRESENTATION,
                 )
             val profile =
-                swingSolverProfile(
+                solverFactoryProfile(
                     Solver.problog,
                     SolverProfileId("problog"),
                     "ProbLog",

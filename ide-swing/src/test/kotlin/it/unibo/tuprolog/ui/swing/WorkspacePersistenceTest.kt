@@ -5,6 +5,7 @@ import it.unibo.tuprolog.ui.gui.application.buildGuiApplication
 import it.unibo.tuprolog.ui.gui.controller.WorkspaceAction
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.model.PageContent
+import it.unibo.tuprolog.ui.gui.solve.solverFactoryProfile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,7 +24,7 @@ class WorkspacePersistenceTest {
             val application =
                 buildGuiApplication(scope) {
                     solverProfile(
-                        swingSolverProfile(Solver.prolog, SolverProfileId("test"), "Test"),
+                        solverFactoryProfile(Solver.prolog, SolverProfileId("test"), "Test"),
                         makeDefault = true,
                     )
                 }
@@ -49,7 +50,7 @@ class WorkspacePersistenceTest {
                 val application2 =
                     buildGuiApplication(scope2) {
                         solverProfile(
-                            swingSolverProfile(Solver.prolog, SolverProfileId("test2"), "Test2"),
+                            solverFactoryProfile(Solver.prolog, SolverProfileId("test2"), "Test2"),
                             makeDefault = true,
                         )
                     }

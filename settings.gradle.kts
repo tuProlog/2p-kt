@@ -86,6 +86,7 @@ include(":full")
 
 // BEGIN 2P-KT GUI REFACTOR MODULES
 include(":gui")
+include(":gui-solve")
 include(":gui-plp")
 include(":ide-swing")
 include(":ide-plp-swing")
