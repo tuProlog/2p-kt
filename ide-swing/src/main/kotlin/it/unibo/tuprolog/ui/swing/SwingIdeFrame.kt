@@ -467,12 +467,12 @@ class SwingIdeFrame(
         timeoutSlider.value = timeoutMs.coerceIn(0, MAX_TIMEOUT_MILLISECONDS.toLong()).toInt()
         timeoutLabel.text = timeoutLabel(timeoutMs)
 
-        solutionsTree.render(
-            solutionEntries(page),
-            page.resolution.query ?: page.history.resolutions
-                .lastOrNull()
-                ?.query,
-        )
+        val solutionEntries = solutionEntries(page)
+        val focusedQuery =
+            page.resolution.query
+                ?.takeIf { query -> solutionEntries.any { it.query == query } }
+                ?: solutionEntries.lastOrNull()?.query
+        solutionsTree.render(solutionEntries, focusedQuery)
         stdoutArea.text = page.console.stdout.text
         stderrArea.text = page.console.stderr.text
         warningsArea.text =

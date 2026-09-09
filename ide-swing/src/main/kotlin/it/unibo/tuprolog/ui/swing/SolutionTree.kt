@@ -71,13 +71,12 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
             val root = DefaultMutableTreeNode("Solutions")
             entries.forEach { root.add(queryNode(it)) }
             model = DefaultTreeModel(root)
+            for (row in rowCount - 1 downTo 0) collapseRow(row)
             root.children().asSequence().filterIsInstance<DefaultMutableTreeNode>().forEach { node ->
                 val path = TreePath(node.path)
                 if ((node.userObject as? SolutionNodeData.QueryNode)?.query == focusedQuery) {
                     expandRecursively(path)
-                    scrollPathToVisible(path)
-                } else {
-                    collapsePath(path)
+                    scrollPathToVisible(path.lastDescendantPath())
                 }
             }
         } finally {
@@ -91,6 +90,13 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
         node.children().asSequence().filterIsInstance<DefaultMutableTreeNode>().forEach { child ->
             expandRecursively(path.pathByAddingChild(child))
         }
+    }
+
+    private fun TreePath.lastDescendantPath(): TreePath {
+        val node = lastPathComponent as DefaultMutableTreeNode
+        if (node.childCount == 0) return this
+        val lastChild = node.lastChild as? DefaultMutableTreeNode ?: return this
+        return pathByAddingChild(lastChild).lastDescendantPath()
     }
 
     private fun DefaultMutableTreeNode.ancestorQuery(): String? =
