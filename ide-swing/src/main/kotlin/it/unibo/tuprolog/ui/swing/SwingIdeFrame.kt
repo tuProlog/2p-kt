@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.swing
 
+import it.unibo.tuprolog.Info
 import it.unibo.tuprolog.ui.gui.controller.ApplicationAction
 import it.unibo.tuprolog.ui.gui.controller.ConsumptionMode
 import it.unibo.tuprolog.ui.gui.controller.DocumentAction
@@ -24,6 +25,7 @@ import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.KeyboardFocusManager
 import java.awt.event.InputEvent
+import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
@@ -70,7 +72,7 @@ class SwingIdeFrame(
     private val solveAllButton = JButton("Solve all")
     private val stopButton = JButton("Stop")
     private val resetButton = JButton("Reset")
-    private val timeoutSlider = JSlider(1, MAX_TIMEOUT_MILLISECONDS, 5000)
+    private val timeoutSlider = JSlider(0, MAX_TIMEOUT_MILLISECONDS, 5000)
     private val timeoutLabel = JLabel()
     private val statusLabel = JLabel("Idle")
     private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT)
@@ -110,9 +112,16 @@ class SwingIdeFrame(
     private var queryBoundPageId: PageId? = null
     private var stdinBoundPageId: PageId? = null
     private var rendering = false
+    private var queryHistoryIndex: Int? = null
+    private var queryHistoryDraft = ""
+    private var browsingQueryHistory = false
 
     init {
-        title = "2P-Kt IDE — Swing"
+        title = "tuProlog IDE v${Info.VERSION}"
+        iconImage =
+            java.awt.Toolkit
+                .getDefaultToolkit()
+                .getImage(javaClass.getResource("/logo.png"))
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         minimumSize = Dimension(900, 650)
         preferredSize = Dimension(1200, 820)
@@ -148,7 +157,7 @@ class SwingIdeFrame(
             renderedState = state
             syncEditorTabs(state)
             renderSelectedPage(state)
-            title = "${state.application.metadata.productName} ${state.application.metadata.version} — Swing"
+            title = "tuProlog IDE v${Info.VERSION}"
         } finally {
             rendering = false
         }
@@ -312,6 +321,18 @@ class SwingIdeFrame(
             },
         )
         queryField.onSubmit = { solve(ConsumptionMode.ONE) }
+        queryField.addKeyListener(
+            object : KeyAdapter() {
+                override fun keyPressed(event: KeyEvent) {
+                    when (event.keyCode) {
+                        KeyEvent.VK_UP -> navigateQueryHistory(-1)
+                        KeyEvent.VK_DOWN -> navigateQueryHistory(1)
+                        else -> return
+                    }
+                    event.consume()
+                }
+            },
+        )
         solveButton.addActionListener {
             val page = selectedPage() ?: return@addActionListener
             if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) {
@@ -442,11 +463,16 @@ class SwingIdeFrame(
         queryField.highlight(page.solverSession.inspection.operators)
         if (stdinArea.text != page.console.stdin) stdinArea.text = page.console.stdin
         val effective = state.workspace.configuration.resolve(page.configuration)
-        val timeoutMs = effective.timeout.inWholeMilliseconds.coerceAtLeast(1)
-        timeoutSlider.value = timeoutMs.coerceIn(1, MAX_TIMEOUT_MILLISECONDS.toLong()).toInt()
-        timeoutLabel.text = "Timeout $timeoutMs ms"
+        val timeoutMs = effective.timeout.inWholeMilliseconds
+        timeoutSlider.value = timeoutMs.coerceIn(0, MAX_TIMEOUT_MILLISECONDS.toLong()).toInt()
+        timeoutLabel.text = timeoutLabel(timeoutMs)
 
-        solutionsTree.render(solutionEntries(page))
+        solutionsTree.render(
+            solutionEntries(page),
+            page.resolution.query ?: page.history.resolutions
+                .lastOrNull()
+                ?.query,
+        )
         stdoutArea.text = page.console.stdout.text
         stderrArea.text = page.console.stderr.text
         warningsArea.text =
@@ -670,7 +696,32 @@ class SwingIdeFrame(
 
     private fun queryChanged() {
         if (rendering) return
+        if (!browsingQueryHistory) queryHistoryIndex = null
         queryBoundPageId?.let { dispatch(PageAction.ChangeQuery(it, queryField.text)) }
+    }
+
+    private fun navigateQueryHistory(delta: Int) {
+        val history =
+            selectedPage()
+                ?.history
+                ?.resolutions
+                ?.map { it.query }
+                .orEmpty()
+        if (history.isEmpty()) return
+        val next =
+            when (val index = queryHistoryIndex) {
+                null -> if (delta < 0) history.lastIndex else return
+                0 -> if (delta > 0) null else 0
+                else -> (index + delta).coerceIn(0, history.lastIndex)
+            }
+        browsingQueryHistory = true
+        try {
+            if (queryHistoryIndex == null) queryHistoryDraft = queryField.text
+            queryHistoryIndex = next
+            queryField.text = next?.let(history::get) ?: queryHistoryDraft
+        } finally {
+            browsingQueryHistory = false
+        }
     }
 
     private fun stdinChanged() {
@@ -727,11 +778,10 @@ class SwingIdeFrame(
     }
 
     private fun showAbout() {
-        val metadata = renderedState?.application?.metadata ?: return
         JOptionPane.showMessageDialog(
             this,
-            "${metadata.productName} ${metadata.version}\n${metadata.homepage}\nSwing frontend",
-            "About ${metadata.productName}",
+            "tuProlog IDE v${Info.VERSION}\nhttps://github.com/tuProlog/2p-kt\nSwing frontend",
+            "About tuProlog IDE",
             JOptionPane.INFORMATION_MESSAGE,
         )
     }
@@ -751,6 +801,33 @@ class SwingIdeFrame(
         JOptionPane.showMessageDialog(this, message, "File properties", JOptionPane.INFORMATION_MESSAGE)
     }
 
+    internal fun supportReport(
+        thread: Thread,
+        error: Throwable,
+    ): String =
+        buildString {
+            appendLine("Please describe what you were doing before the error.")
+            appendLine()
+            appendLine("tuProlog IDE v${Info.VERSION}")
+            appendLine("Issue tracker: https://github.com/tuProlog/2p-kt/issues")
+            appendLine("Thread: ${thread.name}")
+            appendLine("Java: ${System.getProperty("java.version")}")
+            appendLine("OS: ${System.getProperty("os.name")} ${System.getProperty("os.version")}")
+            renderedState?.workspace?.let { workspace ->
+                appendLine("Selected page: ${workspace.selectedPageId}")
+                workspace.pages.forEach { page ->
+                    appendLine(
+                        "Page ${page.id}: profile=${page.solverSession.profileId}, " +
+                            "solver=${page.solverSession.sessionId}, lifecycle=${page.solverSession.lifecycle}, " +
+                            "resolution=${page.resolution.status}",
+                    )
+                }
+            }
+            appendLine()
+            appendLine("Stack trace:")
+            append(SwingIdeUncaughtExceptionHandler.stackTrace(error))
+        }
+
     private fun selectedEditor(): PrologEditor? = selectedPage()?.id?.let(pageEditors::get)
 
     private fun dispatch(action: it.unibo.tuprolog.ui.gui.controller.GuiAction) {
@@ -761,7 +838,7 @@ class SwingIdeFrame(
         KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner as? JTextComponent
 
     private companion object {
-        const val MAX_TIMEOUT_MILLISECONDS = 3_600_000
+        const val MAX_TIMEOUT_MILLISECONDS = 604_800_000
 
         fun editorArea(): JTextArea = JTextArea().apply { lineWrap = false }
 

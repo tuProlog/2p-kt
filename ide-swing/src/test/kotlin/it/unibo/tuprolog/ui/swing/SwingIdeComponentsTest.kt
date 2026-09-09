@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import org.fife.ui.rtextarea.RTextScrollPane
 import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.TreePath
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -52,6 +53,8 @@ class SwingIdeComponentsTest {
     fun `solutions are presented as expandable nodes grouped by query`() {
         SwingUtilities.invokeAndWait {
             val tree = SolutionTree()
+            var selectedQuery: String? = null
+            tree.onQuerySelected = { selectedQuery = it }
             tree.render(
                 listOf(
                     SolutionQueryEntry(
@@ -67,6 +70,7 @@ class SwingIdeComponentsTest {
                         hasUnexploredPaths = true,
                     ),
                 ),
+                "member(X, [a]).",
             )
 
             val root = tree.model.root as DefaultMutableTreeNode
@@ -77,9 +81,12 @@ class SwingIdeComponentsTest {
 
             assertEquals(2, queryNode.childCount)
             assertEquals(1, solution.childCount)
+            assertTrue(tree.isExpanded(TreePath(queryNode.path)))
             assertEquals("?- member(X, [a]).", queryNode.toString())
             assertTrue(binding.toString().contains("X = a"))
             assertTrue(ellipsis.isLeaf)
+            tree.selectionPath = TreePath(solution.path)
+            assertEquals("member(X, [a]).", selectedQuery)
         }
     }
 
@@ -99,6 +106,12 @@ class SwingIdeComponentsTest {
             flags.render(listOf(FlagPresentation("unknown", "warning")))
             assertIs<javax.swing.DefaultCellEditor>(flags.getCellEditor(0, 1))
         }
+    }
+
+    @Test
+    fun `timeout labels use the largest meaningful units`() {
+        assertEquals("Timeout: no limit", timeoutLabel(0))
+        assertEquals("Timeout: 1 week 2 days 3 hours 4 minutes 5 seconds 6 ms", timeoutLabel(788_645_006))
     }
 
     @Test

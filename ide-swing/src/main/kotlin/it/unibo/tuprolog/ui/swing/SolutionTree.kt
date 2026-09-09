@@ -12,6 +12,7 @@ import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.DefaultTreeModel
+import javax.swing.tree.TreePath
 
 /** One raw query submitted on the current page, alongside the solutions it has produced so far. */
 internal data class SolutionQueryEntry(
@@ -56,22 +57,46 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
         addTreeSelectionListener {
             if (updating) return@addTreeSelectionListener
             val node = lastSelectedPathComponent as? DefaultMutableTreeNode
-            val data = node?.userObject as? SolutionNodeData.QueryNode ?: return@addTreeSelectionListener
-            onQuerySelected?.invoke(data.query)
+            val query = node?.ancestorQuery() ?: return@addTreeSelectionListener
+            onQuerySelected?.invoke(query)
         }
     }
 
-    fun render(entries: List<SolutionQueryEntry>) {
+    fun render(
+        entries: List<SolutionQueryEntry>,
+        focusedQuery: String? = null,
+    ) {
         updating = true
         try {
             val root = DefaultMutableTreeNode("Solutions")
             entries.forEach { root.add(queryNode(it)) }
             model = DefaultTreeModel(root)
-            for (row in 0 until rowCount) expandRow(row)
+            root.children().asSequence().filterIsInstance<DefaultMutableTreeNode>().forEach { node ->
+                val path = TreePath(node.path)
+                if ((node.userObject as? SolutionNodeData.QueryNode)?.query == focusedQuery) {
+                    expandRecursively(path)
+                    scrollPathToVisible(path)
+                } else {
+                    collapsePath(path)
+                }
+            }
         } finally {
             updating = false
         }
     }
+
+    private fun expandRecursively(path: TreePath) {
+        expandPath(path)
+        val node = path.lastPathComponent as DefaultMutableTreeNode
+        node.children().asSequence().filterIsInstance<DefaultMutableTreeNode>().forEach { child ->
+            expandRecursively(path.pathByAddingChild(child))
+        }
+    }
+
+    private fun DefaultMutableTreeNode.ancestorQuery(): String? =
+        generateSequence(this) { it.parent as? DefaultMutableTreeNode }
+            .mapNotNull { (it.userObject as? SolutionNodeData.QueryNode)?.query }
+            .firstOrNull()
 
     private fun queryNode(entry: SolutionQueryEntry): DefaultMutableTreeNode =
         DefaultMutableTreeNode(SolutionNodeData.QueryNode(entry.query)).apply {

@@ -838,8 +838,8 @@ class DefaultGuiController(
     }
 
     private suspend fun changeTimeout(action: PageAction.ChangeTimeout) {
-        if (!action.timeout.isPositive()) {
-            mutex.withLock { reject(action, "Timeout must be positive") }
+        if (action.timeout.isNegative()) {
+            mutex.withLock { reject(action, "Timeout must not be negative") }
             return
         }
         val page = mutex.withLock { _state.value.workspace.page(action.pageId) }
@@ -863,8 +863,8 @@ class DefaultGuiController(
             mutex.withLock { reject(action, "Unknown solver profile: $profileId") }
             return
         }
-        if (action.configuration.timeoutOverride?.isPositive() == false) {
-            mutex.withLock { reject(action, "Timeout must be positive") }
+        if (action.configuration.timeoutOverride?.isNegative() == true) {
+            mutex.withLock { reject(action, "Timeout must not be negative") }
             return
         }
         changePageAndInvalidate(action, "configuration") { page ->

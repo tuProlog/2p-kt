@@ -115,12 +115,13 @@ private class SwingSolverSession(
                 .trim()
                 .removeSuffix(".")
                 .parseAsStruct(solver.operators)
-        val solutions =
-            solver
-                .solve(
-                    query,
-                    SolveOptions.allLazilyWithTimeout(request.timeout.inWholeMilliseconds),
-                ).iterator()
+        val options =
+            if (request.timeout.inWholeMilliseconds == 0L) {
+                SolveOptions.allLazily()
+            } else {
+                SolveOptions.allLazilyWithTimeout(request.timeout.inWholeMilliseconds)
+            }
+        val solutions = solver.solve(query, options).iterator()
         return object : ResolutionCursor {
             override suspend fun next(): ResolutionStep {
                 yield()

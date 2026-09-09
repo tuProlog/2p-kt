@@ -21,12 +21,22 @@ class SwingIdeApplication(
     private val closed = AtomicBoolean(false)
     private lateinit var frame: SwingIdeFrame
     private val collectors = mutableListOf<Job>()
+    private var uncaughtExceptionHandler: Thread.UncaughtExceptionHandler? = null
+    private var previousUncaughtExceptionHandler: Thread.UncaughtExceptionHandler? = null
 
     suspend fun show(createInitialPage: Boolean = true): SwingIdeApplication {
         check(!GraphicsEnvironment.isHeadless()) { "Cannot show the Swing IDE in a headless environment" }
         application.start()
         onEdt {
             frame = SwingIdeFrame(application.controller, frontendScope, featureRenderers)
+            uncaughtExceptionHandler =
+                SwingIdeUncaughtExceptionHandler(
+                    frame = { if (::frame.isInitialized) frame else null },
+                    fallback = Thread.getDefaultUncaughtExceptionHandler(),
+                ).also { handler ->
+                    previousUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
+                    Thread.setDefaultUncaughtExceptionHandler(handler)
+                }
             val effects =
                 SwingIdeEffectHandler(
                     controller = application.controller,
@@ -57,6 +67,11 @@ class SwingIdeApplication(
         if (!closed.compareAndSet(false, true)) return
         onEdt {
             if (::frame.isInitialized) frame.dispose()
+        }
+        uncaughtExceptionHandler?.let { handler ->
+            if (Thread.getDefaultUncaughtExceptionHandler() === handler) {
+                Thread.setDefaultUncaughtExceptionHandler(previousUncaughtExceptionHandler)
+            }
         }
         collectors.forEach(Job::cancel)
         frontendScope.launch {
