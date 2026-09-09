@@ -324,7 +324,7 @@ class DefaultGuiController(
                     displayName = action.origin.displayName,
                     text = action.text,
                     origin = action.origin,
-                    revision = 0,
+                    revision = if (action.pending) 1 else 0,
                     persistedRevision = 0,
                 )
             val page = newPage(pageId, document.displayName, PageContent.DocumentReference(documentId))

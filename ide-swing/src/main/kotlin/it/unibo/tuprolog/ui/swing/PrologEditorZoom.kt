@@ -5,9 +5,11 @@ import java.awt.event.InputEvent
 import javax.swing.AbstractAction
 import javax.swing.KeyStroke
 
-internal fun RSyntaxTextArea.installZoomControls() {
+internal fun RSyntaxTextArea.installZoomControls(onZoomed: (Int) -> Unit = {}) {
     fun zoom(delta: Int) {
-        font = font.deriveFont((font.size + delta).coerceIn(8, 48).toFloat())
+        val newSize = (font.size + delta).coerceIn(8, 48)
+        font = font.deriveFont(newSize.toFloat())
+        onZoomed(newSize)
     }
     actionMap.put(
         "zoom-in",

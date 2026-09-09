@@ -61,6 +61,7 @@ suspend fun launchSwingIde(
     capabilities: Set<String> = setOf(SolverCapabilities.CANCELLATION),
     solutionFeatures: (Solution) -> Map<FeatureId, Map<String, FeatureValue>> = { emptyMap() },
     templates: List<TheoryTemplate> = ClassicTheoryTemplates.ALL,
+    persistence: WorkspacePersistence? = WorkspacePersistence("ide-swing"),
 ) {
     val profile = swingSolverProfile(factory, profileId, profileName, capabilities, solutionFeatures)
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -69,7 +70,7 @@ suspend fun launchSwingIde(
             if (registerProfile) solverProfile(profile, makeDefault = true) else defaultSolverProfile(profile.id)
             extensions.forEach(::extension)
         }
-    SwingIdeApplication(application, scope, featureRenderers, templates).show()
+    SwingIdeApplication(application, scope, featureRenderers, templates, persistence).show()
 }
 
 fun swingSolverProfile(

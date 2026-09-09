@@ -69,6 +69,8 @@ sealed interface WorkspaceAction : GuiAction {
     data class OpenDocumentLoaded(
         val origin: DocumentOrigin,
         val text: String,
+        /** Whether [text] already diverges from what [origin] holds on disk, e.g. when restoring unsaved edits. */
+        val pending: Boolean = false,
     ) : WorkspaceAction
 
     data class RequestClosePage(

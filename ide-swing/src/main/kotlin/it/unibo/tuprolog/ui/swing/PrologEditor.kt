@@ -10,11 +10,16 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import java.awt.Font
 
 /** Editable, parser-backed Prolog source area. */
-internal class PrologEditor : RSyntaxTextArea() {
+internal class PrologEditor(
+    initialFontSize: Int = 14,
+) : RSyntaxTextArea() {
     private var operators: List<OperatorPresentation> = emptyList()
     private val analysisCache = PrologAnalysisCache(::sourceText, ::currentOperators)
     private val completionProvider = PrologCompletionProvider()
     private val syntaxParser = PrologSyntaxParser(analysisCache::analysis)
+
+    /** Invoked whenever the user zooms this editor in or out, with the resulting font size. */
+    var onZoomChanged: ((Int) -> Unit)? = null
 
     val diagnostics: List<Diagnostic>
         get() = analysisCache.analysis().diagnostics
@@ -22,13 +27,13 @@ internal class PrologEditor : RSyntaxTextArea() {
     init {
         document =
             RSyntaxDocument(PrologTokenMakerFactory(PrologTokenMaker(analysisCache::analysis)), PROLOG_SYNTAX_STYLE)
-        font = Font(Font.MONOSPACED, Font.PLAIN, 14)
+        font = Font(Font.MONOSPACED, Font.PLAIN, initialFontSize)
         isCodeFoldingEnabled = false
         isBracketMatchingEnabled = true
         setMarkOccurrences(true)
         setParserDelay(300)
         configurePrologSyntaxScheme()
-        installZoomControls()
+        installZoomControls { size -> onZoomChanged?.invoke(size) }
         addParser(syntaxParser)
         AutoCompletion(completionProvider).apply {
             isAutoActivationEnabled = true

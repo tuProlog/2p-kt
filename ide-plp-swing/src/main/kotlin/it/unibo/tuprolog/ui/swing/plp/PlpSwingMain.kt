@@ -11,6 +11,7 @@ import it.unibo.tuprolog.ui.gui.plp.PlpGuiExtension
 import it.unibo.tuprolog.ui.gui.plp.PlpSolutionDetails
 import it.unibo.tuprolog.ui.gui.plp.PlpTheoryTemplates
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
+import it.unibo.tuprolog.ui.swing.WorkspacePersistence
 import it.unibo.tuprolog.ui.swing.launchSwingIde
 import it.unibo.tuprolog.ui.swing.swingSolverProfile
 import kotlinx.coroutines.runBlocking
@@ -40,6 +41,7 @@ fun main() =
             registerProfile = false,
             capabilities = capabilities,
             templates = PlpTheoryTemplates.ALL,
+            persistence = WorkspacePersistence("ide-plp-swing"),
         )
     }
 

@@ -260,8 +260,7 @@ class SwingIdeEffectHandler(
 
     private fun DocumentOrigin.toPathOrNull(): Path? =
         if (providerId == JVM_PATH_PROVIDER) Paths.get(opaqueReference) else null
-
-    private companion object {
-        const val JVM_PATH_PROVIDER: String = "jvm-path"
-    }
 }
+
+/** Identifies a [DocumentOrigin] backed by a local filesystem [Path]; shared with workspace persistence. */
+internal const val JVM_PATH_PROVIDER: String = "jvm-path"

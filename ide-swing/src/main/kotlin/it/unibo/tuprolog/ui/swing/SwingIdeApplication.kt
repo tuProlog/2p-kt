@@ -17,6 +17,7 @@ class SwingIdeApplication(
     scope: CoroutineScope,
     private val featureRenderers: SwingFeatureRendererRegistry = SwingFeatureRendererRegistry(),
     private val templates: List<TheoryTemplate> = emptyList(),
+    private val persistence: WorkspacePersistence? = null,
 ) {
     private val frontendJob = SupervisorJob(scope.coroutineContext[Job])
     private val frontendScope = CoroutineScope(scope.coroutineContext + frontendJob)
@@ -29,8 +30,16 @@ class SwingIdeApplication(
     suspend fun show(createInitialPage: Boolean = true): SwingIdeApplication {
         check(!GraphicsEnvironment.isHeadless()) { "Cannot show the Swing IDE in a headless environment" }
         application.start()
+        val restored = persistence?.load()
         onEdt {
-            frame = SwingIdeFrame(application.controller, frontendScope, featureRenderers, templates)
+            frame =
+                SwingIdeFrame(
+                    application.controller,
+                    frontendScope,
+                    featureRenderers,
+                    templates,
+                    restored?.fontSize ?: 14,
+                )
             uncaughtExceptionHandler =
                 SwingIdeUncaughtExceptionHandler(
                     frame = { if (::frame.isInitialized) frame else null },
@@ -54,9 +63,19 @@ class SwingIdeApplication(
                 frontendScope.launch {
                     application.controller.effects.collectLatest(effects::handle)
                 }
+            if (restored?.windowWidth != null && restored.windowHeight != null) {
+                frame.setSize(restored.windowWidth, restored.windowHeight)
+                if (restored.windowX != null && restored.windowY != null) {
+                    frame.setLocation(restored.windowX, restored.windowY)
+                } else {
+                    frame.setLocationRelativeTo(null)
+                }
+            }
             frame.isVisible = true
         }
-        if (createInitialPage &&
+        if (restored != null && restored.documents.isNotEmpty()) {
+            restoreWorkspace(restored, application.controller)
+        } else if (createInitialPage &&
             application.controller.state.value.workspace.pages
                 .isEmpty()
         ) {
@@ -68,7 +87,12 @@ class SwingIdeApplication(
     fun close() {
         if (!closed.compareAndSet(false, true)) return
         onEdt {
-            if (::frame.isInitialized) frame.dispose()
+            if (::frame.isInitialized) {
+                persistence?.save(
+                    capturePersistedWorkspace(application.controller.state.value, frame.currentFontSize, frame.bounds),
+                )
+                frame.dispose()
+            }
         }
         uncaughtExceptionHandler?.let { handler ->
             if (Thread.getDefaultUncaughtExceptionHandler() === handler) {

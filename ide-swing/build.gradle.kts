@@ -1,5 +1,6 @@
 plugins {
     application
+    alias(libs.plugins.kotlin.serialization)
 }
 
 dependencies {
@@ -13,6 +14,7 @@ dependencies {
     implementation(libs.autocomplete)
     implementation(libs.rstaui)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(kotlin("test"))
 }

@@ -71,7 +71,11 @@ class SwingIdeFrame(
     private val scope: CoroutineScope,
     private val featureRenderers: SwingFeatureRendererRegistry = SwingFeatureRendererRegistry(),
     private val templates: List<TheoryTemplate> = emptyList(),
+    initialFontSize: Int = 14,
 ) : JFrame() {
+    /** The most recently applied editor font size; read back by the host when persisting the session. */
+    internal var currentFontSize: Int = initialFontSize
+        private set
     private val editorTabs = JTabbedPane()
     private val lowerTabs = JTabbedPane()
     private val queryField = PrologQueryField()
@@ -96,12 +100,12 @@ class SwingIdeFrame(
     private val flagsTable = FlagsTable()
     private val librariesTree = LibrariesTree()
     private val staticKbArea =
-        PrologEditor().apply {
+        PrologEditor(currentFontSize).apply {
             isEditable = false
             setHighlightCurrentLine(false)
         }
     private val dynamicKbArea =
-        PrologEditor().apply {
+        PrologEditor(currentFontSize).apply {
             isEditable = false
             setHighlightCurrentLine(false)
         }
@@ -480,7 +484,7 @@ class SwingIdeFrame(
 
     private fun createEditorComponent(page: PageState): JComponent {
         val area =
-            PrologEditor().apply {
+            PrologEditor(currentFontSize).apply {
                 document.addDocumentListener(
                     object : DocumentListener {
                         override fun insertUpdate(event: DocumentEvent) = editorChanged(page.id)
@@ -491,6 +495,7 @@ class SwingIdeFrame(
                     },
                 )
                 addCaretListener { event -> caretChanged(event) }
+                onZoomChanged = { size -> currentFontSize = size }
             }
         pageEditors[page.id] = area
         return JPanel(BorderLayout()).apply {
