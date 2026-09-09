@@ -322,7 +322,8 @@ class SwingIdeFrame(
         queryField.onSubmit = { solve(ConsumptionMode.ONE) }
         timeoutField.inputVerifier =
             object : javax.swing.InputVerifier() {
-                override fun verify(input: JComponent): Boolean = parseTimeoutInput(timeoutField.text) != null
+                override fun verify(input: JComponent): Boolean =
+                    parseTimeoutInput(timeoutField.text)?.let { true } ?: showInvalidTimeout()
             }
         timeoutField.addActionListener { commitTimeout() }
         timeoutField.addFocusListener(
@@ -703,8 +704,25 @@ class SwingIdeFrame(
 
     private fun commitTimeout() {
         if (rendering) return
-        val milliseconds = parseTimeoutInput(timeoutField.text) ?: return
+        val milliseconds =
+            parseTimeoutInput(timeoutField.text) ?: run {
+                showInvalidTimeout()
+                return
+            }
         queryBoundPageId?.let { dispatch(PageAction.ChangeTimeout(it, milliseconds.milliseconds)) }
+    }
+
+    private fun showInvalidTimeout(): Boolean {
+        JOptionPane.showMessageDialog(
+            this,
+            "Invalid timeout. Expected 0 or none, or a value such as 500ms, 2s 500ms, 1m 30s, 2h, or 1w. " +
+                "Units are ms, s, m, h, d, and w; the maximum is one week.",
+            "Invalid timeout",
+            JOptionPane.ERROR_MESSAGE,
+        )
+        timeoutField.requestFocusInWindow()
+        timeoutField.selectAll()
+        return false
     }
 
     private fun navigateQueryHistory(delta: Int) {
