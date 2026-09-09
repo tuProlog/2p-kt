@@ -24,7 +24,7 @@ object PeekCode2 : BinaryRelation.NonBacktrackable<ExecutionContext>("peek_code"
         second: Term,
     ): Solve.Response {
         val channel = ensuringArgumentIsInputChannel(0)
-        ensuringArgumentIsVarOrCharCode(0)
-        return peekCodeAndReply(channel, first)
+        ensuringArgumentIsVarOrCharCode(1)
+        return peekCodeAndReply(channel, second)
     }
 }

@@ -24,7 +24,7 @@ object GetCode2 : BinaryRelation.NonBacktrackable<ExecutionContext>("get_code") 
         second: Term,
     ): Solve.Response {
         val channel = ensuringArgumentIsInputChannel(0)
-        ensuringArgumentIsVarOrCharCode(0)
-        return readCodeAndReply(channel, first)
+        ensuringArgumentIsVarOrCharCode(1)
+        return readCodeAndReply(channel, second)
     }
 }

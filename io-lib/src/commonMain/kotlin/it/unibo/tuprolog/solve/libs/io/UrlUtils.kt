@@ -4,6 +4,7 @@ package it.unibo.tuprolog.solve.libs.io
 
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import okio.Path
 import kotlin.jvm.JvmName
 
 /** Platform-specific factory backing [Url.Companion.file]: builds a `file://`-scheme [Url] for [path]. */
@@ -45,3 +46,9 @@ expect fun Url.openInputChannel(): InputChannel<String>
  * or unconditionally on JS.
  */
 expect fun Url.openOutputChannel(append: Boolean = false): OutputChannel<String>
+
+/**
+ * Resolves this (local, i.e. [Url.isFile]) [Url] to an [okio.Path] usable with [LocalFileSystem].
+ * Behavior is unspecified for non-local URLs.
+ */
+internal expect fun Url.toLocalPath(): Path

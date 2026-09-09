@@ -2,21 +2,46 @@
 
 package it.unibo.tuprolog.solve.libs.io
 
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.core.parsing.PrologTermParserVisitor
+import it.unibo.tuprolog.core.parsing.toOperatorTable
+import it.unibo.tuprolog.core.parsing.toParseException
+import it.unibo.tuprolog.parser.TextChunkSource
+import it.unibo.tuprolog.parser.buildParserFor
+import it.unibo.tuprolog.parser.exceptions.PrologSyntaxException
 import it.unibo.tuprolog.solve.channel.InputChannel
 import kotlin.jvm.JvmName
 
+// WARN: plain map, not weak — channels opened per Prolog session are few; a long-lived process
+// that opens and abandons (without closing) many streams would leak entries here.
+// TODO: consider using a weak map, or add eviction policy
+private val cache = mutableMapOf<InputChannel<String>, InputChannel<Term>>()
+
 /**
- * Wraps this character-level [InputChannel] into an [InputChannel] of parsed [Term]s, so that `read/1,2` and
- * `read_term/2,3` (see `IOPrimitiveUtils.readTermAndReply`) can pull whole terms out of it instead of characters.
- *
- * Parsing uses [operators] to resolve operator notation, exactly as `it.unibo.tuprolog.theory.parsing.ClausesParser`
- * and `it.unibo.tuprolog.core.parsing.TermParser` do elsewhere in 2P-Kt. Repeated calls on the same receiver return
- * the same term channel (platform-dependent caching), so that reading progresses across calls instead of restarting.
- *
- * @throws IllegalStateException on the JVM, if this channel does not support character-based reading (i.e. is not
- * backed by a `Reader`). On JS, this operation always throws [NotImplementedError], as reading terms is not yet
- * supported there (see the JS `Read1`/`Read2`/`ReadTerm2`/`ReadTerm3` primitives).
+ * Wraps this channel of raw characters into a channel of [Term]s, parsed lazily off it using
+ * [operators]. Repeated calls on the same channel return the same wrapped channel, so parsing
+ * resumes where the previous call left off.
  */
-expect fun InputChannel<String>.asTermChannel(operators: OperatorSet): InputChannel<Term>
+fun InputChannel<String>.asTermChannel(operators: OperatorSet): InputChannel<Term> =
+    cache.getOrPut(this) {
+        val termIterator =
+            buildParserFor(source = TextChunkSource { read() }) { parser, lexedSource ->
+                val session = parser.openSession(lexedSource, operators.toOperatorTable())
+                val visitor = PrologTermParserVisitor(Scope.empty())
+                sequence {
+                    try {
+                        var term = session.parseNextTerm()
+                        while (term != null) {
+                            yield(term.root.accept(visitor))
+                            term = session.parseNextTerm()
+                        }
+                    } catch (e: PrologSyntaxException) {
+                        val input = lexedSource.source.let { it.id ?: it.text() }
+                        throw e.toParseException(input)
+                    }
+                }
+            }.iterator()
+        InputChannel.of({ if (termIterator.hasNext()) termIterator.next() else null }, termIterator::hasNext)
+    }

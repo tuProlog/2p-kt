@@ -31,7 +31,7 @@ import org.gciatto.kt.math.BigInteger
  */
 class NumberTypeTester {
     companion object {
-        private val INT_REGEX = "[0-9]+".toRegex()
+        private val INT_REGEX = "-?[0-9]+".toRegex()
     }
 
     private val numberCache: Cache<Any, String> = Cache.simpleLru(8)

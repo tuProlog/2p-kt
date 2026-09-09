@@ -30,7 +30,6 @@ jobs:
   docs:
     needs:
       - ci-cd
-    if: github.ref == 'refs/heads/master'
     permissions:
       contents: read
       pages: write

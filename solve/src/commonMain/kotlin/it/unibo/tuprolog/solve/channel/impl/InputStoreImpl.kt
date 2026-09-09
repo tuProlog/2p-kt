@@ -29,7 +29,7 @@ internal class InputStoreImpl(
     override fun setCurrent(alias: String): InputStore =
         when (val newCurrentChannel = get(alias)) {
             null -> this
-            else -> InputStoreImpl(stdIn, mapOf(CURRENT to newCurrentChannel))
+            else -> InputStoreImpl(stdIn, channels + (CURRENT to newCurrentChannel))
         }
 
     override fun setCurrent(channel: InputChannel<String>): InputStore {

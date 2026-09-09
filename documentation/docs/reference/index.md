@@ -3,7 +3,7 @@
 Information-oriented technical description of 2P-Kt's modules and APIs.
 
 The full generated API documentation (Dokka, covering every module) is available at
-[`/api/`](../../api/index.html).
+[`/api/`](https://tuprolog.github.io/2p-kt/api/).
 
 ## At a glance: the `Term` hierarchy
 
@@ -32,6 +32,7 @@ the big picture down to specific APIs, ending with a couple of project-meta page
 5. [Primitives and functions](primitives-and-functions.md) — the building blocks a `Solver` executes.
 6. [Default predicates](default-predicates.md) — the standard predicates built from those primitives.
 7. [Libraries](libraries.md) — bundling predicates/functions into a pluggable unit.
-8. [Prolog DSL](prolog-dsl.md) — the Kotlin DSL for building terms/theories/queries.
-9. [Errors and exceptions](errors-and-exceptions.md) — the exception hierarchy raised during resolution.
-10. [CI/CD pipeline](ci-pipeline.md) — project-meta: how 2P-Kt itself is built, tested, and released.
+8. [I/O library](io-lib.md) — the `:io-lib` predicate catalogue and platform caveats, a concrete `Library` example.
+9. [Prolog DSL](prolog-dsl.md) — the Kotlin DSL for building terms/theories/queries.
+10. [Errors and exceptions](errors-and-exceptions.md) — the exception hierarchy raised during resolution.
+11. [CI/CD pipeline](ci-pipeline.md) — project-meta: how 2P-Kt itself is built, tested, and released.

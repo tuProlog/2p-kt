@@ -20,7 +20,7 @@ enum class IOMode {
     companion object {
         /** The Prolog atoms (`read`, `write`, `append`) accepted as the `mode` argument of `open/3,4`. */
         val atomValues =
-            values()
+            entries
                 .asSequence()
                 .map { it.name.lowercase() }
                 .map(Atom.Companion::of)

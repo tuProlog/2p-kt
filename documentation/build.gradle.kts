@@ -64,7 +64,7 @@ fun Exec.configureMkdocs(vararg commands: String) {
 
 val mkdocsBuild = tasks.register<Exec>("mkdocsBuild") {
     description = "Build the MkDocs site"
-    configureMkdocs("mkdocs", "build", "--site-dir", mkdocsSiteDir.get().asFile.absolutePath)
+    configureMkdocs("mkdocs", "build", "--strict", "--site-dir", mkdocsSiteDir.get().asFile.absolutePath)
 }
 
 val assembleSite = tasks.register<Copy>("assembleSite") {

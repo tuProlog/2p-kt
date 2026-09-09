@@ -29,6 +29,6 @@ object PutCode2 : BinaryRelation.NonBacktrackable<ExecutionContext>("put_code") 
     ): Solve.Response {
         val channel = ensuringArgumentIsOutputChannel(0)
         ensuringArgumentIsCharCode(1)
-        return writeCodeAndReply(channel, first as Integer)
+        return writeCodeAndReply(channel, second as Integer)
     }
 }
