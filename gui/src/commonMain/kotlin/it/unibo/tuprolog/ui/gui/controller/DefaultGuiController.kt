@@ -1046,9 +1046,12 @@ class DefaultGuiController(
                 }
 
             var continueConsuming = true
+            var remaining = mode.limit ?: Int.MAX_VALUE
             while (continueConsuming && currentCoroutineContext().isActive) {
                 val step = cursor.next()
-                continueConsuming = applyResolutionStep(pageId, resolutionId, step, mode)
+                val progress = applyResolutionStep(pageId, resolutionId, step, mode, remaining)
+                continueConsuming = progress.first
+                remaining -= progress.second
             }
         } catch (_: CancellationException) {
             // Cancellation state is committed by the action that invalidated/stopped the runtime.
@@ -1238,12 +1241,13 @@ class DefaultGuiController(
         resolutionId: ResolutionSessionId,
         step: ResolutionStep,
         mode: ConsumptionMode,
-    ): Boolean =
+        remaining: Int,
+    ): Pair<Boolean, Int> =
         mutex.withLock {
             val workspace = _state.value.workspace
-            val page = workspace.page(pageId) ?: return@withLock false
+            val page = workspace.page(pageId) ?: return@withLock false to 0
             if (page.resolution.id != resolutionId || page.resolution.status != ResolutionStatus.RUNNING) {
-                return@withLock false
+                return@withLock false to 0
             }
             var updated = applySignals(page, step.signals)
             when (step) {
@@ -1274,9 +1278,9 @@ class DefaultGuiController(
                             runtimes[pageId]?.cursor = null
                             event(GuiEvent.ResolutionCompleted(pageId, resolutionId))
                             updateWorkspace { it.updatePage(pageId) { updated } }
-                            false
+                            false to 1
                         }
-                        mode == ConsumptionMode.ONE -> {
+                        mode.limit != null && remaining <= 1 -> {
                             updated =
                                 updated.copy(
                                     resolution =
@@ -1286,11 +1290,11 @@ class DefaultGuiController(
                                 )
                             event(GuiEvent.ResolutionAwaitingContinuation(pageId, resolutionId))
                             updateWorkspace { it.updatePage(pageId) { updated } }
-                            false
+                            false to 1
                         }
                         else -> {
                             updateWorkspace { it.updatePage(pageId) { updated } }
-                            true
+                            true to 1
                         }
                     }
                 }
@@ -1299,7 +1303,7 @@ class DefaultGuiController(
                     runtimes[pageId]?.cursor = null
                     updateWorkspace { it.updatePage(pageId) { updated } }
                     event(GuiEvent.ResolutionCompleted(pageId, resolutionId))
-                    false
+                    false to 0
                 }
                 is ResolutionStep.Failed -> {
                     updated =
@@ -1316,7 +1320,7 @@ class DefaultGuiController(
                     runtimes[pageId]?.cursor = null
                     updateWorkspace { it.updatePage(pageId) { updated } }
                     event(GuiEvent.ResolutionFailed(pageId, resolutionId, step.message))
-                    false
+                    false to 0
                 }
             }
         }

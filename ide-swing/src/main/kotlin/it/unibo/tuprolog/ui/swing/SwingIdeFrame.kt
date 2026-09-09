@@ -69,6 +69,8 @@ class SwingIdeFrame(
     private val lowerTabs = JTabbedPane()
     private val queryField = PrologQueryField()
     private val solveButton = JButton("Solve")
+    private val solve10Button = JButton("Solve 10")
+    private val solve100Button = JButton("Solve 100")
     private val solveAllButton = JButton("Solve all")
     private val stopButton = JButton("Stop")
     private val resetButton = JButton("Reset")
@@ -163,6 +165,12 @@ class SwingIdeFrame(
     }
 
     private fun createLowerPanel(): JComponent {
+        val controlHeight = maxOf(timeoutField.preferredSize.height, solveButton.preferredSize.height)
+        timeoutField.preferredSize = Dimension(100, controlHeight)
+        queryField.preferredSize = Dimension(queryField.preferredSize.width, controlHeight)
+        listOf(solveButton, solve10Button, solve100Button, solveAllButton, stopButton, resetButton).forEach {
+            it.preferredSize = Dimension(88, controlHeight)
+        }
         val queryRow =
             JPanel(BorderLayout(8, 0)).apply {
                 border = BorderFactory.createEmptyBorder(6, 6, 6, 6)
@@ -171,6 +179,8 @@ class SwingIdeFrame(
                 add(
                     JPanel(FlowLayout(FlowLayout.RIGHT, 5, 0)).apply {
                         add(solveButton)
+                        add(solve10Button)
+                        add(solve100Button)
                         add(solveAllButton)
                         add(stopButton)
                         add(resetButton)
@@ -351,6 +361,8 @@ class SwingIdeFrame(
                 dispatch(PageAction.Solve(page.id, ConsumptionMode.ONE))
             }
         }
+        solve10Button.addActionListener { solve(ConsumptionMode.TEN) }
+        solve100Button.addActionListener { solve(ConsumptionMode.HUNDRED) }
         solveAllButton.addActionListener {
             val page = selectedPage() ?: return@addActionListener
             if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) {
@@ -456,6 +468,8 @@ class SwingIdeFrame(
             clearLowerAreas()
             statusLabel.text = "No page"
             solveButton.isEnabled = false
+            solve10Button.isEnabled = false
+            solve100Button.isEnabled = false
             solveAllButton.isEnabled = false
             stopButton.isEnabled = false
             resetButton.isEnabled = false
@@ -499,9 +513,15 @@ class SwingIdeFrame(
         dynamicKbArea.highlight(page.solverSession.inspection.operators)
 
         solveButton.text = if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) "Next" else "Solve"
+        solve10Button.text =
+            if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) "Next 10" else "Solve 10"
+        solve100Button.text =
+            if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) "Next 100" else "Solve 100"
         solveAllButton.text =
             if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) "All next" else "Solve all"
         solveButton.isEnabled = page.resolution.canSolve || page.resolution.canContinue
+        solve10Button.isEnabled = page.resolution.canSolve || page.resolution.canContinue
+        solve100Button.isEnabled = page.resolution.canSolve || page.resolution.canContinue
         solveAllButton.isEnabled = page.resolution.canSolve || page.resolution.canContinue
         stopButton.isEnabled = page.resolution.canStop
         resetButton.isEnabled = true
