@@ -1,3 +1,13 @@
+## [1.5.0](https://github.com/tuProlog/2p-kt/compare/1.4.1...1.5.0) (2026-09-09)
+
+### Features
+
+* **io-lib:** replace custom physical I/O with Okio Multiplatform ([#925](https://github.com/tuProlog/2p-kt/issues/925)) ([e05f727](https://github.com/tuProlog/2p-kt/commit/e05f727f7fbd14026b909f3782f009f7f34bc87e)), closes [#923](https://github.com/tuProlog/2p-kt/issues/923)
+
+### General maintenance
+
+* **readme:** update links in README.md ([a6ee3ea](https://github.com/tuProlog/2p-kt/commit/a6ee3ea714ae5d3615fa9aa93f9f59427e476107))
+
 ## [1.4.1](https://github.com/tuProlog/2p-kt/compare/1.4.0...1.4.1) (2026-09-09)
 
 ### Dependency updates
