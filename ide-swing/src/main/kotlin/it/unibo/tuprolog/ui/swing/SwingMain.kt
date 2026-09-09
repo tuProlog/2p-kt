@@ -38,6 +38,8 @@ import it.unibo.tuprolog.ui.gui.solver.SolverProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverSession
 import it.unibo.tuprolog.ui.gui.solver.SolverSessionCreationRequest
 import it.unibo.tuprolog.ui.gui.solver.SolverSignal
+import it.unibo.tuprolog.ui.gui.template.ClassicTheoryTemplates
+import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -58,6 +60,7 @@ suspend fun launchSwingIde(
     registerProfile: Boolean = true,
     capabilities: Set<String> = setOf(SolverCapabilities.CANCELLATION),
     solutionFeatures: (Solution) -> Map<FeatureId, Map<String, FeatureValue>> = { emptyMap() },
+    templates: List<TheoryTemplate> = ClassicTheoryTemplates.ALL,
 ) {
     val profile = swingSolverProfile(factory, profileId, profileName, capabilities, solutionFeatures)
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -66,7 +69,7 @@ suspend fun launchSwingIde(
             if (registerProfile) solverProfile(profile, makeDefault = true) else defaultSolverProfile(profile.id)
             extensions.forEach(::extension)
         }
-    SwingIdeApplication(application, scope, featureRenderers).show()
+    SwingIdeApplication(application, scope, featureRenderers, templates).show()
 }
 
 fun swingSolverProfile(

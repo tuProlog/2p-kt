@@ -19,6 +19,7 @@ import it.unibo.tuprolog.ui.gui.model.resolve
 import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
 import it.unibo.tuprolog.ui.gui.presentation.formatDurationInput
 import it.unibo.tuprolog.ui.gui.presentation.parseDurationInput
+import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
 import kotlinx.coroutines.CoroutineScope
 import org.fife.ui.rsyntaxtextarea.ErrorStrip
 import org.fife.ui.rtextarea.RTextScrollPane
@@ -69,6 +70,7 @@ class SwingIdeFrame(
     private val controller: GuiController,
     private val scope: CoroutineScope,
     private val featureRenderers: SwingFeatureRendererRegistry = SwingFeatureRendererRegistry(),
+    private val templates: List<TheoryTemplate> = emptyList(),
 ) : JFrame() {
     private val editorTabs = JTabbedPane()
     private val lowerTabs = JTabbedPane()
@@ -269,6 +271,7 @@ class SwingIdeFrame(
                     mnemonic = KeyEvent.VK_F
                     add(menuItem("New", KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask())) { newDocument() })
                     add(menuItem("New scratch page", null) { newScratchPage() })
+                    if (templates.isNotEmpty()) add(newFromTemplateMenu())
                     add(menuItem("Open…", KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask())) { openDocument() })
                     addSeparator()
                     add(
@@ -332,6 +335,21 @@ class SwingIdeFrame(
                     add(menuItem("Report an issue…", null) { showReportIssueDialog() })
                 },
             )
+        }
+
+    private fun newFromTemplateMenu(): JMenu =
+        JMenu("New from template").apply {
+            for (template in templates) {
+                add(
+                    JMenuItem(
+                        object : AbstractAction(template.displayName) {
+                            override fun actionPerformed(event: java.awt.event.ActionEvent?) {
+                                dispatch(WorkspaceAction.NewDocumentPage("${template.id}.pl", template.source))
+                            }
+                        },
+                    ).apply { toolTipText = template.description.ifBlank { null } },
+                )
+            }
         }
 
     private fun menuItem(

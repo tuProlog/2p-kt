@@ -9,6 +9,7 @@ import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.plp.BddPresentation
 import it.unibo.tuprolog.ui.gui.plp.PlpGuiExtension
 import it.unibo.tuprolog.ui.gui.plp.PlpSolutionDetails
+import it.unibo.tuprolog.ui.gui.plp.PlpTheoryTemplates
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.swing.launchSwingIde
 import it.unibo.tuprolog.ui.swing.swingSolverProfile
@@ -38,6 +39,7 @@ fun main() =
             extensions = listOf(PlpGuiExtension(profile)),
             registerProfile = false,
             capabilities = capabilities,
+            templates = PlpTheoryTemplates.ALL,
         )
     }
 

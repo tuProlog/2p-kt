@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.swing
 
 import it.unibo.tuprolog.ui.gui.application.GuiApplication
 import it.unibo.tuprolog.ui.gui.controller.WorkspaceAction
+import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -15,6 +16,7 @@ class SwingIdeApplication(
     private val application: GuiApplication,
     scope: CoroutineScope,
     private val featureRenderers: SwingFeatureRendererRegistry = SwingFeatureRendererRegistry(),
+    private val templates: List<TheoryTemplate> = emptyList(),
 ) {
     private val frontendJob = SupervisorJob(scope.coroutineContext[Job])
     private val frontendScope = CoroutineScope(scope.coroutineContext + frontendJob)
@@ -28,7 +30,7 @@ class SwingIdeApplication(
         check(!GraphicsEnvironment.isHeadless()) { "Cannot show the Swing IDE in a headless environment" }
         application.start()
         onEdt {
-            frame = SwingIdeFrame(application.controller, frontendScope, featureRenderers)
+            frame = SwingIdeFrame(application.controller, frontendScope, featureRenderers, templates)
             uncaughtExceptionHandler =
                 SwingIdeUncaughtExceptionHandler(
                     frame = { if (::frame.isInitialized) frame else null },
