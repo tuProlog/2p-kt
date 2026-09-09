@@ -9,6 +9,9 @@ dependencies {
     implementation(project(":io-lib"))
     implementation(project(":oop-lib"))
     implementation(project(":solve-classic"))
+    implementation(libs.rsyntaxtextarea)
+    implementation(libs.autocomplete)
+    implementation(libs.rstaui)
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(kotlin("test"))

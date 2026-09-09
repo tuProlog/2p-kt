@@ -44,6 +44,9 @@ orchid-kotlinDocs = { module = "io.github.javaeden.orchid:OrchidKotlindoc", vers
 orchid-pluginDocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", version.ref = "orchid" }
 plantuml = "net.sourceforge.plantuml:plantuml:1.2026.6"
 richtextFx = "org.fxmisc.richtext:richtextfx:0.11.7"
+rsyntaxtextarea = "com.fifesoft:rsyntaxtextarea:3.6.1"
+autocomplete = "com.fifesoft:autocomplete:3.3.3"
+rstaui = "com.fifesoft:rstaui:3.3.2"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }

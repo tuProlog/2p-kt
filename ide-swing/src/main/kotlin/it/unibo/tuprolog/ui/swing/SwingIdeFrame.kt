@@ -17,6 +17,8 @@ import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
 import it.unibo.tuprolog.ui.gui.model.resolve
 import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
 import kotlinx.coroutines.CoroutineScope
+import org.fife.ui.rsyntaxtextarea.ErrorStrip
+import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
@@ -94,6 +96,7 @@ class SwingIdeFrame(
     private val extensionComponents = mutableMapOf<it.unibo.tuprolog.ui.gui.identity.FeatureId, JComponent>()
     private val extensionTabIndices = mutableMapOf<it.unibo.tuprolog.ui.gui.identity.FeatureId, Int>()
     private val featureContext = SwingFeatureContext(controller, scope)
+    private val searchActions by lazy { PrologSearchActions(this, ::selectedEditor) }
 
     private var renderedState: GuiState? = null
     private var queryBoundPageId: PageId? = null
@@ -192,7 +195,10 @@ class SwingIdeFrame(
         component: JComponent,
     ) {
         val index = lowerTabs.tabCount
-        lowerTabs.addTab(title, JScrollPane(component))
+        lowerTabs.addTab(
+            title,
+            if (component is PrologEditor) RTextScrollPane(component, true) else JScrollPane(component),
+        )
         lowerPanelIds[index] = panelId
         lowerPanelTitles[index] = title
     }
@@ -227,6 +233,7 @@ class SwingIdeFrame(
                         ) { saveSelected(true) },
                     )
                     add(menuItem("Reload", null) { reloadSelected() })
+                    add(menuItem("File properties", null) { showFileProperties() })
                     addSeparator()
                     add(menuItem("Quit", KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask())) { requestExit() })
                 },
@@ -241,6 +248,29 @@ class SwingIdeFrame(
                         menuItem("Select all", KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask())) {
                             focusedTextComponent()?.selectAll()
                         },
+                    )
+                },
+            )
+            add(
+                JMenu("Search").apply {
+                    mnemonic = KeyEvent.VK_S
+                    add(
+                        menuItem(
+                            "Find…",
+                            KeyStroke.getKeyStroke(KeyEvent.VK_F, menuMask()),
+                        ) { searchActions.showFind() },
+                    )
+                    add(
+                        menuItem(
+                            "Replace…",
+                            KeyStroke.getKeyStroke(KeyEvent.VK_H, menuMask()),
+                        ) { searchActions.showReplace() },
+                    )
+                    add(
+                        menuItem(
+                            "Go to line…",
+                            KeyStroke.getKeyStroke(KeyEvent.VK_G, menuMask()),
+                        ) { searchActions.showGoToLine() },
                     )
                 },
             )
@@ -374,7 +404,10 @@ class SwingIdeFrame(
                 addCaretListener { event -> caretChanged(event) }
             }
         pageEditors[page.id] = area
-        return JScrollPane(area)
+        return JPanel(BorderLayout()).apply {
+            add(RTextScrollPane(area, true), BorderLayout.CENTER)
+            add(ErrorStrip(area), BorderLayout.EAST)
+        }
     }
 
     private fun renderSelectedPage(state: GuiState) {
@@ -686,6 +719,23 @@ class SwingIdeFrame(
             JOptionPane.INFORMATION_MESSAGE,
         )
     }
+
+    private fun showFileProperties() {
+        val page = selectedPage() ?: return
+        val documentId = (page.content as? PageContent.DocumentReference)?.documentId
+        val document = documentId?.let { renderedState?.workspace?.documents?.get(it) }
+        val message =
+            buildString {
+                append("Name: ").append(document?.displayName ?: page.title)
+                append("\nDirty: ").append(document?.isDirty ?: false)
+                append("\nRevision: ").append(document?.revision ?: 0)
+                document?.origin?.let { append("\nLocation: ").append(it.opaqueReference) }
+                append("\nEncoding: UTF-8")
+            }
+        JOptionPane.showMessageDialog(this, message, "File properties", JOptionPane.INFORMATION_MESSAGE)
+    }
+
+    private fun selectedEditor(): PrologEditor? = selectedPage()?.id?.let(pageEditors::get)
 
     private fun dispatch(action: it.unibo.tuprolog.ui.gui.controller.GuiAction) {
         scope.dispatch { controller.dispatch(action) }

@@ -12,6 +12,7 @@ import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.gui.solver.SolverSessionCreationRequest
 import it.unibo.tuprolog.ui.gui.solver.SolverSignal
 import kotlinx.coroutines.runBlocking
+import org.fife.ui.rtextarea.RTextScrollPane
 import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
 import kotlin.test.Test
@@ -33,6 +34,12 @@ class SwingIdeComponentsTest {
             assertEquals("OPERATOR", editor.categoryAt(editor.text.indexOf(":-")))
             assertEquals("NUMBER", editor.categoryAt(editor.text.indexOf("42")))
             assertEquals("COMMENT", editor.categoryAt(editor.text.indexOf('%')))
+            assertTrue(RTextScrollPane(editor, true).lineNumbersEnabled)
+
+            editor.text = "parent(X"
+            editor.highlight(emptyList())
+            assertTrue(editor.diagnostics.isNotEmpty())
+            assertTrue(editor.parserNotices.isNotEmpty())
         }
     }
 
