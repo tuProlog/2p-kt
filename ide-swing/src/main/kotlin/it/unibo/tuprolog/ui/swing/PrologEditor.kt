@@ -26,6 +26,7 @@ internal class PrologEditor : RSyntaxTextArea() {
         setMarkOccurrences(true)
         setParserDelay(300)
         configurePrologSyntaxScheme()
+        installZoomControls()
         addParser(syntaxParser)
         AutoCompletion(completionProvider).apply {
             isAutoActivationEnabled = true

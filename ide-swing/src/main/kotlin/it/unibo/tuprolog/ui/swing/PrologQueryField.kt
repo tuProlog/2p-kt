@@ -27,7 +27,9 @@ internal class PrologQueryField : RSyntaxTextArea() {
         lineWrap = true
         isCodeFoldingEnabled = false
         isBracketMatchingEnabled = true
+        setHighlightCurrentLine(false)
         configurePrologSyntaxScheme()
+        installZoomControls()
         (document as AbstractDocument).documentFilter = SingleLineFilter()
         inputMap.put(KeyStroke.getKeyStroke("ENTER"), "submit-query")
         actionMap.put(

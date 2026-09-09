@@ -23,18 +23,26 @@ internal data class SolutionQueryEntry(
 private sealed interface SolutionNodeData {
     data class QueryNode(
         val query: String,
-    ) : SolutionNodeData
+    ) : SolutionNodeData {
+        override fun toString() = "?- $query"
+    }
 
     data class ResultNode(
         val label: String,
         val color: Color,
-    ) : SolutionNodeData
+    ) : SolutionNodeData {
+        override fun toString() = label
+    }
 
     data class DetailNode(
         val text: String,
-    ) : SolutionNodeData
+    ) : SolutionNodeData {
+        override fun toString() = text
+    }
 
-    data object EllipsisNode : SolutionNodeData
+    data object EllipsisNode : SolutionNodeData {
+        override fun toString() = "…"
+    }
 }
 
 internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {

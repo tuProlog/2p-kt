@@ -5,6 +5,8 @@ import it.unibo.tuprolog.ui.gui.identity.DocumentId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
+import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
+import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import it.unibo.tuprolog.ui.gui.solver.ResolutionRequest
 import it.unibo.tuprolog.ui.gui.solver.ResolutionStep
@@ -35,6 +37,9 @@ class SwingIdeComponentsTest {
             assertEquals("NUMBER", editor.categoryAt(editor.text.indexOf("42")))
             assertEquals("COMMENT", editor.categoryAt(editor.text.indexOf('%')))
             assertTrue(RTextScrollPane(editor, true).lineNumbersEnabled)
+            val initialFontSize = editor.font.size
+            editor.actionMap.get("zoom-in").actionPerformed(null)
+            assertEquals(initialFontSize + 1, editor.font.size)
 
             editor.text = "parent(X"
             editor.highlight(emptyList())
@@ -72,8 +77,27 @@ class SwingIdeComponentsTest {
 
             assertEquals(2, queryNode.childCount)
             assertEquals(1, solution.childCount)
+            assertEquals("?- member(X, [a]).", queryNode.toString())
             assertTrue(binding.toString().contains("X = a"))
             assertTrue(ellipsis.isLeaf)
+        }
+    }
+
+    @Test
+    fun `operator and notable flag tables expose guided editing`() {
+        SwingUtilities.invokeAndWait {
+            val operators = OperatorsTable()
+            var added: OperatorPresentation? = null
+            operators.onOperatorAdded = { added = it }
+            operators.render(emptyList())
+            operators.model.setValueAt("joins", 0, 0)
+            operators.model.setValueAt("500", 0, 1)
+            operators.model.setValueAt("yfx", 0, 2)
+            assertEquals(OperatorPresentation("joins", 500, "yfx"), added)
+
+            val flags = FlagsTable()
+            flags.render(listOf(FlagPresentation("unknown", "warning")))
+            assertIs<javax.swing.DefaultCellEditor>(flags.getCellEditor(0, 1))
         }
     }
 

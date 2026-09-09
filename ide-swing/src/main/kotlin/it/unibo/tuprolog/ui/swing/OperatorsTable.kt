@@ -4,17 +4,39 @@ import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 import javax.swing.JTable
 import javax.swing.RowSorter
 import javax.swing.SortOrder
+import javax.swing.SwingConstants
 import javax.swing.table.AbstractTableModel
+import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableRowSorter
 
-/** Read-only, sortable table of active operators (name, priority, specifier), sorted by priority by default. */
+/** Sortable table of active operators, with a final row for adding a page-local operator directive. */
 internal class OperatorsTable : JTable(OperatorsTableModel()) {
     private val operatorsModel = model as OperatorsTableModel
+
+    var onOperatorAdded: ((OperatorPresentation) -> Unit)?
+        get() = operatorsModel.onAdded
+        set(value) {
+            operatorsModel.onAdded = value
+        }
 
     init {
         val sorter = TableRowSorter(operatorsModel)
         sorter.sortKeys = listOf(RowSorter.SortKey(1, SortOrder.ASCENDING))
         rowSorter = sorter
+        setDefaultRenderer(
+            String::class.java,
+            DefaultTableCellRenderer().apply {
+                horizontalAlignment =
+                    SwingConstants.CENTER
+            },
+        )
+        setDefaultRenderer(
+            Int::class.javaObjectType,
+            DefaultTableCellRenderer().apply {
+                horizontalAlignment =
+                    SwingConstants.CENTER
+            },
+        )
     }
 
     fun render(operators: List<OperatorPresentation>) {
@@ -29,7 +51,10 @@ private class OperatorsTableModel : AbstractTableModel() {
             fireTableDataChanged()
         }
 
-    override fun getRowCount() = data.size
+    var onAdded: ((OperatorPresentation) -> Unit)? = null
+    private val newOperator = arrayOf("", "", "")
+
+    override fun getRowCount() = data.size + 1
 
     override fun getColumnCount() = 3
 
@@ -40,21 +65,42 @@ private class OperatorsTableModel : AbstractTableModel() {
             else -> "Specifier"
         }
 
-    override fun getColumnClass(columnIndex: Int): Class<*> =
-        if (columnIndex == 1) Int::class.javaObjectType else String::class.java
+    override fun getColumnClass(columnIndex: Int): Class<*> = String::class.java
 
     override fun getValueAt(
         rowIndex: Int,
         columnIndex: Int,
     ): Any =
-        when (columnIndex) {
-            0 -> data[rowIndex].name
-            1 -> data[rowIndex].priority
-            else -> data[rowIndex].specifier
+        if (rowIndex == data.size) {
+            newOperator[columnIndex]
+        } else {
+            when (columnIndex) {
+                0 -> data[rowIndex].name
+                1 -> data[rowIndex].priority
+                else -> data[rowIndex].specifier
+            }
         }
 
     override fun isCellEditable(
         rowIndex: Int,
         columnIndex: Int,
-    ) = false
+    ) = rowIndex == data.size
+
+    override fun setValueAt(
+        value: Any?,
+        rowIndex: Int,
+        columnIndex: Int,
+    ) {
+        if (rowIndex != data.size) return
+        newOperator[columnIndex] = value?.toString().orEmpty().trim()
+        fireTableCellUpdated(rowIndex, columnIndex)
+        val (name, priority, specifier) = newOperator
+        priority.toIntOrNull()?.let {
+            if (name.isNotBlank() && specifier.isNotBlank()) {
+                onAdded?.invoke(OperatorPresentation(name, it, specifier))
+                newOperator.fill("")
+                fireTableRowsUpdated(rowIndex, rowIndex)
+            }
+        }
+    }
 }

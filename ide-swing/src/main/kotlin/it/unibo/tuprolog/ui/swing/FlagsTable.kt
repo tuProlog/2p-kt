@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.ui.swing
 
+import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
+import javax.swing.DefaultCellEditor
+import javax.swing.JComboBox
 import javax.swing.JTable
 import javax.swing.table.AbstractTableModel
 
@@ -17,6 +20,24 @@ internal class FlagsTable : JTable(FlagsTableModel()) {
     fun render(flags: List<FlagPresentation>) {
         flagsModel.data = flags
     }
+
+    override fun getCellEditor(
+        row: Int,
+        column: Int,
+    ) = flagsModel
+        .notableAt(row)
+        ?.takeIf { column == 1 && it.isEditable }
+        ?.let { flag ->
+            DefaultCellEditor(
+                JComboBox(
+                    flag.admissibleValues
+                        .map(Any::toString)
+                        .toList()
+                        .toTypedArray(),
+                ),
+            )
+        }
+        ?: super.getCellEditor(row, column)
 }
 
 private class FlagsTableModel : AbstractTableModel() {
@@ -41,7 +62,9 @@ private class FlagsTableModel : AbstractTableModel() {
     override fun isCellEditable(
         rowIndex: Int,
         columnIndex: Int,
-    ) = columnIndex == 1
+    ) = columnIndex == 1 && (NotableFlag.fromName(data[rowIndex].name)?.isEditable != false)
+
+    fun notableAt(rowIndex: Int): NotableFlag? = NotableFlag.fromName(data[rowIndex].name)
 
     override fun setValueAt(
         value: Any?,

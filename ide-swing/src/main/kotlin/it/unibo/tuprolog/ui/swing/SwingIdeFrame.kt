@@ -39,12 +39,11 @@ import javax.swing.JMenuItem
 import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.JScrollPane
-import javax.swing.JSpinner
+import javax.swing.JSlider
 import javax.swing.JSplitPane
 import javax.swing.JTabbedPane
 import javax.swing.JTextArea
 import javax.swing.KeyStroke
-import javax.swing.SpinnerNumberModel
 import javax.swing.SwingConstants
 import javax.swing.WindowConstants
 import javax.swing.event.CaretEvent
@@ -71,7 +70,8 @@ class SwingIdeFrame(
     private val solveAllButton = JButton("Solve all")
     private val stopButton = JButton("Stop")
     private val resetButton = JButton("Reset")
-    private val timeoutSpinner = JSpinner(SpinnerNumberModel(5000L, 1L, Long.MAX_VALUE, 250L))
+    private val timeoutSlider = JSlider(1, MAX_TIMEOUT_MILLISECONDS, 5000)
+    private val timeoutLabel = JLabel()
     private val statusLabel = JLabel("Idle")
     private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT)
 
@@ -84,8 +84,16 @@ class SwingIdeFrame(
     private val operatorsTable = OperatorsTable()
     private val flagsTable = FlagsTable()
     private val librariesTree = LibrariesTree()
-    private val staticKbArea = PrologEditor().apply { isEditable = false }
-    private val dynamicKbArea = PrologEditor().apply { isEditable = false }
+    private val staticKbArea =
+        PrologEditor().apply {
+            isEditable = false
+            setHighlightCurrentLine(false)
+        }
+    private val dynamicKbArea =
+        PrologEditor().apply {
+            isEditable = false
+            setHighlightCurrentLine(false)
+        }
 
     private val pageEditors = linkedMapOf<PageId, PrologEditor>()
     private val pageComponents = linkedMapOf<PageId, JComponent>()
@@ -128,6 +136,7 @@ class SwingIdeFrame(
             { query -> queryBoundPageId?.let { dispatch(PageAction.ChangeQuery(it, query)) } }
         diagnosticsList.onDiagnosticSelected = { diagnostic -> navigateToDiagnostic(diagnostic) }
         flagsTable.onFlagChanged = { name, value -> changeFlag(name, value) }
+        operatorsTable.onOperatorAdded = ::addOperator
         pack()
         setLocationRelativeTo(null)
     }
@@ -157,8 +166,8 @@ class SwingIdeFrame(
                         add(solveAllButton)
                         add(stopButton)
                         add(resetButton)
-                        add(JLabel("Timeout ms"))
-                        add(timeoutSpinner)
+                        add(timeoutLabel)
+                        add(timeoutSlider)
                     },
                     BorderLayout.EAST,
                 )
@@ -321,10 +330,10 @@ class SwingIdeFrame(
         }
         stopButton.addActionListener { selectedPage()?.let { dispatch(PageAction.Stop(it.id)) } }
         resetButton.addActionListener { selectedPage()?.let { dispatch(PageAction.Reset(it.id)) } }
-        timeoutSpinner.addChangeListener {
+        timeoutSlider.addChangeListener {
             if (!rendering) {
                 val pageId = queryBoundPageId ?: return@addChangeListener
-                val milliseconds = (timeoutSpinner.value as Number).toLong().coerceAtLeast(1)
+                val milliseconds = timeoutSlider.value.toLong()
                 dispatch(PageAction.ChangeTimeout(pageId, milliseconds.milliseconds))
             }
         }
@@ -434,7 +443,8 @@ class SwingIdeFrame(
         if (stdinArea.text != page.console.stdin) stdinArea.text = page.console.stdin
         val effective = state.workspace.configuration.resolve(page.configuration)
         val timeoutMs = effective.timeout.inWholeMilliseconds.coerceAtLeast(1)
-        if ((timeoutSpinner.value as Number).toLong() != timeoutMs) timeoutSpinner.value = timeoutMs
+        timeoutSlider.value = timeoutMs.coerceIn(1, MAX_TIMEOUT_MILLISECONDS.toLong()).toInt()
+        timeoutLabel.text = "Timeout $timeoutMs ms"
 
         solutionsTree.render(solutionEntries(page))
         stdoutArea.text = page.console.stdout.text
@@ -467,7 +477,7 @@ class SwingIdeFrame(
         solveAllButton.isEnabled = page.resolution.canSolve || page.resolution.canContinue
         stopButton.isEnabled = page.resolution.canStop
         resetButton.isEnabled = true
-        timeoutSpinner.isEnabled = page.resolution.status != ResolutionStatus.RUNNING
+        timeoutSlider.isEnabled = page.resolution.status != ResolutionStatus.RUNNING
         statusLabel.text = statusText(page)
         updateLowerTabTitles(page)
         acknowledgeVisiblePanel(page)
@@ -564,6 +574,12 @@ class SwingIdeFrame(
                 page.configuration.copy(optionOverrides = page.configuration.optionOverrides + (name to value)),
             ),
         )
+    }
+
+    private fun addOperator(operator: it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation) {
+        val page = selectedPage() ?: return
+        val editor = pageEditors[page.id] ?: return
+        editor.append("\n:- op(${operator.priority}, ${operator.specifier}, ${operator.name}).\n")
     }
 
     private fun pageTitle(
@@ -745,6 +761,8 @@ class SwingIdeFrame(
         KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner as? JTextComponent
 
     private companion object {
+        const val MAX_TIMEOUT_MILLISECONDS = 3_600_000
+
         fun editorArea(): JTextArea = JTextArea().apply { lineWrap = false }
 
         fun readOnlyArea(): JTextArea = editorArea().apply { isEditable = false }
