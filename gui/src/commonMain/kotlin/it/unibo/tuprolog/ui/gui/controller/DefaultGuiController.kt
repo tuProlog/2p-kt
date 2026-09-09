@@ -186,6 +186,7 @@ class DefaultGuiController(
                     }
                 }
             is PageAction.MarkPanelRead -> markPanelRead(action)
+            is PageAction.ClearHistory -> clearHistory(action)
             is DocumentAction.ChangeText,
             is PageAction.ChangeScratchText,
             is PageAction.ChangeQuery,
@@ -1437,6 +1438,21 @@ class DefaultGuiController(
         }
         cancellation?.let { cancelResources(listOf(it)) }
         runCatching { session?.close() }
+    }
+
+    private suspend fun clearHistory(action: PageAction.ClearHistory) {
+        mutex.withLock {
+            val page = _state.value.workspace.page(action.pageId)
+            if (page == null) {
+                reject(action, "Unknown page: ${action.pageId}")
+                return@withLock
+            }
+            updateWorkspace {
+                it.updatePage(page.id) { current ->
+                    current.copy(history = current.history.copy(resolutions = emptyList()))
+                }
+            }
+        }
     }
 
     private suspend fun markPanelRead(action: PageAction.MarkPanelRead) {

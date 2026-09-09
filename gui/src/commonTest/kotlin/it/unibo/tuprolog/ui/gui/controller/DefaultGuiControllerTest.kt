@@ -523,4 +523,48 @@ class DefaultGuiControllerTest {
                 controller.shutdown()
             }
         }
+
+    @Test
+    fun clearHistoryRemovesConcludedQueriesButProtectsAnOngoingResolution() =
+        runTest {
+            val (controller, _) = fixture(this)
+            try {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl"))
+                val pageId = controller.state.value.workspace.selectedPageId!!
+
+                controller.dispatch(PageAction.ChangeQuery(pageId, "q(Y)."))
+                controller.dispatch(PageAction.Solve(pageId, ConsumptionMode.ALL))
+                controller.awaitResolution(pageId, ResolutionStatus.COMPLETED)
+                assertEquals(
+                    1,
+                    controller.state.value.workspace
+                        .page(pageId)!!
+                        .history.resolutions.size,
+                )
+
+                controller.dispatch(PageAction.ChangeQuery(pageId, "p(X)."))
+                controller.dispatch(PageAction.Solve(pageId))
+                val awaiting = controller.awaitResolution(pageId, ResolutionStatus.AWAITING_CONTINUATION)
+                assertEquals(1, awaiting.resolution.solutions.size)
+
+                controller.dispatch(PageAction.ClearHistory(pageId))
+                val afterClear =
+                    controller.state.value.workspace
+                        .page(pageId)!!
+                assertTrue(afterClear.history.resolutions.isEmpty())
+                assertEquals(ResolutionStatus.AWAITING_CONTINUATION, afterClear.resolution.status)
+                assertEquals(1, afterClear.resolution.solutions.size)
+
+                controller.dispatch(PageAction.Next(pageId, ConsumptionMode.ALL))
+                controller.awaitResolution(pageId, ResolutionStatus.COMPLETED)
+                assertEquals(
+                    1,
+                    controller.state.value.workspace
+                        .page(pageId)!!
+                        .history.resolutions.size,
+                )
+            } finally {
+                controller.shutdown()
+            }
+        }
 }

@@ -210,6 +210,11 @@ sealed interface PageAction : GuiAction {
         override val pageId: PageId,
     ) : PageAction
 
+    /** Discards concluded resolutions from the page's history. Any resolution still in progress is unaffected. */
+    data class ClearHistory(
+        override val pageId: PageId,
+    ) : PageAction
+
     data class MarkPanelRead(
         override val pageId: PageId,
         val panel: PanelId,

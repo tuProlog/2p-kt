@@ -80,6 +80,7 @@ class SwingIdeFrame(
     private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT)
 
     private val solutionsTree = SolutionTree()
+    private val clearSolutionsButton = JButton("Clear solutions")
     private val stdinArea = editorArea()
     private val stdoutArea = readOnlyArea()
     private val stderrArea = readOnlyArea()
@@ -192,7 +193,7 @@ class SwingIdeFrame(
                 )
             }
 
-        addLowerTab("Solutions", PanelId.SOLUTIONS, solutionsTree)
+        addSolutionsTab()
         addLowerTab("Stdin", PanelId.STDIN, stdinArea)
         addLowerTab("Stdout", PanelId.STDOUT, stdoutArea)
         addLowerTab("Stderr", PanelId.STDERR, stderrArea)
@@ -215,6 +216,25 @@ class SwingIdeFrame(
             add(queryRow, BorderLayout.NORTH)
             add(lowerTabs, BorderLayout.CENTER)
         }
+    }
+
+    private fun addSolutionsTab() {
+        val index = lowerTabs.tabCount
+        clearSolutionsButton.toolTipText = "Remove concluded queries from this list; a query still running is kept"
+        clearSolutionsButton.addActionListener {
+            selectedPage()?.let { page -> dispatch(PageAction.ClearHistory(page.id)) }
+        }
+        val panel =
+            JPanel(BorderLayout()).apply {
+                add(
+                    JPanel(FlowLayout(FlowLayout.LEFT, 4, 2)).apply { add(clearSolutionsButton) },
+                    BorderLayout.NORTH,
+                )
+                add(JScrollPane(solutionsTree), BorderLayout.CENTER)
+            }
+        lowerTabs.addTab("Solutions", panel)
+        lowerPanelIds[index] = PanelId.SOLUTIONS
+        lowerPanelTitles[index] = "Solutions"
     }
 
     private fun addLowerTab(
