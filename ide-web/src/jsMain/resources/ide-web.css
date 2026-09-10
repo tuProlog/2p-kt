@@ -118,7 +118,16 @@ html, body {
     flex: 1;
     font-family: "SFMono-Regular", Consolas, Menlo, monospace;
     font-size: 14px;
+}
+.split-handle {
+    flex: 0 0 6px;
+    cursor: col-resize;
+    background: var(--bg-panel);
+    border-left: 1px solid var(--border);
     border-right: 1px solid var(--border);
+}
+.split-handle:hover, .split-handle.dragging {
+    background: var(--accent);
 }
 .side {
     width: 40%;

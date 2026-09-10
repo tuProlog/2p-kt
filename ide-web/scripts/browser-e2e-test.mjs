@@ -415,6 +415,25 @@ const SCENARIOS = [
     },
   },
   {
+    name: "dragging the split handle resizes the side panel",
+    async run({ evalJs }) {
+      const before = await evalJs(`document.getElementById('side').getBoundingClientRect().width`);
+      await evalJs(`
+        (function() {
+          const handle = document.getElementById('split-handle');
+          const rect = handle.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          handle.dispatchEvent(new MouseEvent('mousedown', { clientX: x, bubbles: true }));
+          window.dispatchEvent(new MouseEvent('mousemove', { clientX: x - 100, bubbles: true }));
+          window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+        })()
+      `);
+      const after = await evalJs(`document.getElementById('side').getBoundingClientRect().width`);
+      // Dragging left by 100px should widen the (right-hand) side panel by roughly that much.
+      return after > before + 50 ? [] : [`expected the side panel to widen by ~100px, went ${before} -> ${after}`];
+    },
+  },
+  {
     name: "the UI and the Ace editor follow the OS/browser color scheme",
     async run({ evalJs, send }) {
       const failures = [];

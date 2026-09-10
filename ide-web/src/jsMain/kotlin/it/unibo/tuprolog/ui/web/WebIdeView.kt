@@ -31,6 +31,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
@@ -76,6 +77,7 @@ internal class WebIdeView(
         setUpTemplatesSelect()
         buildSidePanel()
         installListeners()
+        installSplitResizeHandle()
         selectSidePanel(PanelId.SOLUTIONS)
         editor.resize()
         kotlinx.browser.window.addEventListener("resize", { _: Event -> editor.resize() })
@@ -191,6 +193,43 @@ internal class WebIdeView(
             }
             sideContainer.appendChild(content)
         }
+    }
+
+    /** Lets the user drag #split-handle to resize the editor/side-panel split, clamped to keep both usable. */
+    private fun installSplitResizeHandle() {
+        val handle = byId<HTMLElement>("split-handle")
+        val splitContainer = handle.parentElement as HTMLElement
+        var dragging = false
+
+        handle.addEventListener(
+            "mousedown",
+            { event: Event ->
+                event.preventDefault()
+                dragging = true
+                handle.classList.add("dragging")
+            },
+        )
+        kotlinx.browser.window.addEventListener(
+            "mousemove",
+            { event: Event ->
+                if (!dragging) return@addEventListener
+                val clientX = (event as MouseEvent).clientX
+                val splitRect = splitContainer.getBoundingClientRect()
+                val minSideWidth = 200.0
+                val maxSideWidth = (splitRect.width - minSideWidth).coerceAtLeast(minSideWidth)
+                val newSideWidth = (splitRect.right - clientX).coerceIn(minSideWidth, maxSideWidth)
+                sideContainer.style.width = "${newSideWidth}px"
+                editor.resize()
+            },
+        )
+        kotlinx.browser.window.addEventListener(
+            "mouseup",
+            { _: Event ->
+                if (!dragging) return@addEventListener
+                dragging = false
+                handle.classList.remove("dragging")
+            },
+        )
     }
 
     private fun panelTitle(panel: PanelId): String =
