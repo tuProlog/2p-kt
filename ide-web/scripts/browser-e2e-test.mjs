@@ -25,7 +25,7 @@
 
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
-import { readFile, mkdtemp, rm } from "node:fs/promises";
+import { readFile, mkdtemp, rm, readdir } from "node:fs/promises";
 import { existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -171,11 +171,12 @@ async function connectCdp(cdpBase, pageUrl) {
   return { evalJs, navigate, send, consoleMessages, exceptions, close: () => ws.close() };
 }
 
-async function pollUntil(evalJs, expression, predicate, timeoutMs, intervalMs = 100) {
+/** Polls the async `get()` function until `predicate(value)` holds, or `timeoutMs` elapses. */
+async function pollUntil(get, predicate, timeoutMs, intervalMs = 100) {
   const deadline = Date.now() + timeoutMs;
   let last;
   while (Date.now() < deadline) {
-    last = await evalJs(expression);
+    last = await get();
     if (predicate(last)) return last;
     await new Promise((r) => setTimeout(r, intervalMs));
   }
@@ -194,7 +195,7 @@ const SCENARIOS = [
     async run({ evalJs, exceptions }) {
       // The shell itself is static markup and always present immediately; wait for the Ace editor textarea
       // instead, since that only exists once WebIdeView has actually finished constructing and mounting.
-      await pollUntil(evalJs, `!!document.querySelector('textarea.ace_text-input')`, (v) => v, 10_000);
+      await pollUntil(() => evalJs(`!!document.querySelector('textarea.ace_text-input')`), (v) => v, 10_000);
       const result = await evalJs(`
         (function() {
           const missing = ${JSON.stringify(SHELL_IDS)}.filter(id => !document.getElementById(id));
@@ -221,8 +222,7 @@ const SCENARIOS = [
         })()
       `);
       const lines = await pollUntil(
-        evalJs,
-        `Array.from(document.querySelectorAll('.ace_line')).map(e => e.textContent).join('\\n')`,
+        () => evalJs(`Array.from(document.querySelectorAll('.ace_line')).map(e => e.textContent).join('\\n')`),
         (v) => v.length > 0,
         3000,
       );
@@ -248,8 +248,7 @@ const SCENARIOS = [
       await new Promise((r) => setTimeout(r, 500));
       await evalJs(`document.getElementById('solve-all-button').click()`);
       const status = await pollUntil(
-        evalJs,
-        `document.getElementById('status-label').textContent`,
+        () => evalJs(`document.getElementById('status-label').textContent`),
         (v) => /COMPLETED|FAILED|CANCELLED/.test(v),
         5000,
       );
@@ -315,16 +314,20 @@ const SCENARIOS = [
       // option), so the Flags panel only reflects the new value once a fresh session exists after solving.
       await new Promise((r) => setTimeout(r, 300));
       await evalJs(`document.getElementById('solve-all-button').click()`);
-      await pollUntil(evalJs, `document.getElementById('status-label').textContent`, (v) => /COMPLETED|FAILED/.test(v), 5000);
+      await pollUntil(
+        () => evalJs(`document.getElementById('status-label').textContent`),
+        (v) => /COMPLETED|FAILED/.test(v),
+        5000,
+      );
       const after = await pollUntil(
-        evalJs,
-        `
-          (function() {
-            const row = Array.from(document.querySelectorAll('.side-content table tr'))
-              .find(r => r.cells[0]?.textContent === 'unknown');
-            return row?.cells[1].querySelector('select')?.value;
-          })()
-        `,
+        () =>
+          evalJs(`
+            (function() {
+              const row = Array.from(document.querySelectorAll('.side-content table tr'))
+                .find(r => r.cells[0]?.textContent === 'unknown');
+              return row?.cells[1].querySelector('select')?.value;
+            })()
+          `),
         (v) => v === target,
         3000,
       );
@@ -348,6 +351,67 @@ const SCENARIOS = [
         document.querySelectorAll('.ace_line [class^="ace_"]:not([class="ace_line"])').length
       `);
       return coloredSpanCount > 0 ? [] : ["no colored (ace_*) spans found after loading a template"];
+    },
+  },
+  {
+    name: "uploading a real file opens it as a new page",
+    async run({ evalJs }) {
+      const tabCountBefore = await evalJs(`document.getElementById('tab-bar').children.length`);
+      // A real OS file picker can't be scripted; construct a File in-page and inject it into the hidden
+      // <input type=file>, the standard trick for testing file inputs without one.
+      await evalJs(`
+        (function() {
+          const input = document.getElementById('upload-input');
+          const file = new File(["up(1).\\nup(2)."], "uploaded.pl", { type: "text/plain" });
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          input.files = dt.files;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        })()
+      `);
+      const lines = await pollUntil(
+        () => evalJs(`Array.from(document.querySelectorAll('.ace_line')).map(e => e.textContent).join('\\n')`),
+        (v) => v.includes("up(1)"),
+        3000,
+      );
+      const tabCountAfter = await evalJs(`document.getElementById('tab-bar').children.length`);
+      const failures = [];
+      if (!lines.includes("up(1).") || !lines.includes("up(2).")) {
+        failures.push(`expected the uploaded content in the editor, got: ${JSON.stringify(lines)}`);
+      }
+      if (tabCountAfter !== tabCountBefore + 1) {
+        failures.push(`expected a new tab to open for the uploaded file (${tabCountBefore} -> ${tabCountAfter})`);
+      }
+      return failures;
+    },
+  },
+  {
+    name: "downloading the selected page saves its real content to disk",
+    async run({ evalJs, send }) {
+      const downloadDir = await mkdtemp(path.join(tmpdir(), "ide-web-e2e-download-"));
+      try {
+        await send("Browser.setDownloadBehavior", {
+          behavior: "allow",
+          downloadPath: downloadDir,
+          eventsEnabled: true,
+        });
+        const editorText = await evalJs(
+          `Array.from(document.querySelectorAll('.ace_line')).map(e => e.textContent).join('\\n')`,
+        );
+        await evalJs(`document.getElementById('btn-download').click()`);
+        const fileName = await pollUntil(
+          async () => (await readdir(downloadDir)).find((f) => !f.endsWith(".crdownload")),
+          (v) => v !== undefined,
+          3000,
+        );
+        if (!fileName) return ["no file appeared in the download directory"];
+        const downloaded = await readFile(path.join(downloadDir, fileName), "utf8");
+        return downloaded === editorText
+          ? []
+          : [`downloaded content did not match the editor: ${JSON.stringify(downloaded)}`];
+      } finally {
+        await rm(downloadDir, { recursive: true, force: true });
+      }
     },
   },
   {

@@ -24,12 +24,17 @@ import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.url.URL
+import org.w3c.files.Blob
+import org.w3c.files.BlobPropertyBag
+import org.w3c.files.FileReader
 
 /** Builds and refreshes the whole page's DOM from [GuiState]; the sole entry point into the browser document. */
 internal class WebIdeView(
@@ -111,6 +116,43 @@ internal class WebIdeView(
             "click",
             { _: Event -> selectedPage()?.let { dispatch(WorkspaceAction.RequestClosePage(it.id)) } },
         )
+        val uploadInput = byId<HTMLInputElement>("upload-input")
+        byId<HTMLButtonElement>("btn-upload").addEventListener("click", { _: Event -> uploadInput.click() })
+        uploadInput.addEventListener("change", { _: Event -> uploadSelectedFile(uploadInput) })
+        byId<HTMLButtonElement>("btn-download").addEventListener("click", { _: Event -> downloadSelectedPage() })
+    }
+
+    /** Reads a real file from the user's disk (via the OS file picker) and opens it as a new page. */
+    private fun uploadSelectedFile(input: HTMLInputElement) {
+        val file = input.files?.item(0) ?: return
+        val reader = FileReader()
+        reader.onload = { _ ->
+            dispatch(WorkspaceAction.NewDocumentPage(file.name, reader.result as? String ?: ""))
+            Unit
+        }
+        reader.readAsText(file)
+        input.value = "" // otherwise re-selecting the same file name later would not fire "change" again
+    }
+
+    /** Saves the selected page's current text as a real file on the user's disk, via the browser's download UI. */
+    private fun downloadSelectedPage() {
+        val page = selectedPage() ?: return
+        val state = renderedState ?: return
+        val blob = Blob(arrayOf(pageText(page, state)), BlobPropertyBag(type = "text/plain"))
+        val url = URL.createObjectURL(blob)
+        val anchor =
+            (document.createElement("a") as HTMLAnchorElement).apply {
+                href = url
+                download = page.title
+            }
+        // Some browsers only honor a click-triggered download while the anchor is attached to the document.
+        document.body?.appendChild(anchor)
+        try {
+            anchor.click()
+        } finally {
+            anchor.parentNode?.removeChild(anchor)
+            URL.revokeObjectURL(url)
+        }
     }
 
     private fun setUpTemplatesSelect() {
@@ -280,15 +322,7 @@ internal class WebIdeView(
             return
         }
         editor.readOnly = false
-        val text =
-            when (val content = page.content) {
-                is PageContent.DocumentReference ->
-                    state.workspace
-                        .document(content.documentId)
-                        ?.text
-                        .orEmpty()
-                is PageContent.Scratch -> content.text
-            }
+        val text = pageText(page, state)
         if (!editor.isFocused) editor.value = text
         editor.setDiagnostics(page.diagnostics.values)
         editor.setSemanticTokens(page.semanticTokens)
@@ -550,6 +584,19 @@ internal class WebIdeView(
         val state = renderedState ?: return null
         return state.workspace.pages.firstOrNull { it.id == state.workspace.selectedPageId }
     }
+
+    private fun pageText(
+        page: PageState,
+        state: GuiState,
+    ): String =
+        when (val content = page.content) {
+            is PageContent.DocumentReference ->
+                state.workspace
+                    .document(content.documentId)
+                    ?.text
+                    .orEmpty()
+            is PageContent.Scratch -> content.text
+        }
 
     private fun dispatch(action: GuiAction) {
         scope.launch { controller.dispatch(action) }
