@@ -246,7 +246,8 @@ class DefaultGuiController(
                     revision = if (action.initialText.isEmpty()) 0 else 1,
                     persistedRevision = 0,
                 )
-            val page = newPage(pageId, name, PageContent.DocumentReference(documentId))
+            val page =
+                invalidatePage(newPage(pageId, name, PageContent.DocumentReference(documentId)), action.initialText)
             updateWorkspace {
                 it.copy(
                     documents = it.documents + (documentId to document),
@@ -270,10 +271,13 @@ class DefaultGuiController(
             }
             val pageId = ids.nextPage()
             val page =
-                newPage(
-                    pageId,
-                    action.suggestedTitle?.takeIf { it.isNotBlank() } ?: document.displayName,
-                    PageContent.DocumentReference(document.id),
+                invalidatePage(
+                    newPage(
+                        pageId,
+                        action.suggestedTitle?.takeIf { it.isNotBlank() } ?: document.displayName,
+                        PageContent.DocumentReference(document.id),
+                    ),
+                    document.text,
                 )
             updateWorkspace { it.copy(pages = it.pages + page, selectedPageId = pageId) }
             runtimes[pageId] = PageRuntime()
@@ -288,13 +292,16 @@ class DefaultGuiController(
             val title =
                 action.suggestedTitle?.takeIf { it.isNotBlank() } ?: "scratch-${pageId.value.substringAfterLast('-')}"
             val page =
-                newPage(
-                    pageId,
-                    title,
-                    PageContent.Scratch(
-                        text = action.initialText,
-                        revision = if (action.initialText.isEmpty()) 0 else 1,
+                invalidatePage(
+                    newPage(
+                        pageId,
+                        title,
+                        PageContent.Scratch(
+                            text = action.initialText,
+                            revision = if (action.initialText.isEmpty()) 0 else 1,
+                        ),
                     ),
+                    action.initialText,
                 )
             updateWorkspace { it.copy(pages = it.pages + page, selectedPageId = pageId) }
             runtimes[pageId] = PageRuntime()
@@ -327,7 +334,11 @@ class DefaultGuiController(
                     revision = if (action.pending) 1 else 0,
                     persistedRevision = 0,
                 )
-            val page = newPage(pageId, document.displayName, PageContent.DocumentReference(documentId))
+            val page =
+                invalidatePage(
+                    newPage(pageId, document.displayName, PageContent.DocumentReference(documentId)),
+                    action.text,
+                )
             updateWorkspace {
                 it.copy(
                     documents = it.documents + (documentId to document),
