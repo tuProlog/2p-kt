@@ -13,6 +13,8 @@ import it.unibo.tuprolog.ui.web.ace.aceToken
 import kotlinx.browser.window
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.KeyboardEvent
+import org.w3c.dom.events.WheelEvent
 
 /** Thin, Kotlin-friendly adapter around the [Ace] editor, hiding its JS-shaped API from the rest of the view. */
 internal class AceEditorView(
@@ -24,16 +26,49 @@ internal class AceEditorView(
     // of Ace's regex-rule-based highlighting; the mode object itself never changes, only the tokens it reads.
     private var semanticTokens: List<SemanticToken> = emptyList()
     private val mode: dynamic = aceCustomMode(::lineTokens)
+    private var fontSize = DEFAULT_FONT_SIZE
 
     init {
         val darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)")
         applyTheme(darkModeQuery.matches)
         darkModeQuery.addEventListener("change", { _: Event -> applyTheme(darkModeQuery.matches) })
         editor.session.setMode(mode)
+        container.addEventListener("keydown", { event: Event -> handleZoomKeydown(event as KeyboardEvent) })
+        // Wheel listeners default to passive (preventDefault() is a no-op) unless told otherwise, since a
+        // handler that never calls it would otherwise block the browser's scroll-performance optimizations.
+        container.addEventListener(
+            "wheel",
+            { event: Event -> handleZoomWheel(event as WheelEvent) },
+            js("({ passive: false })"),
+        )
     }
 
     private fun applyTheme(dark: Boolean) {
         editor.setTheme(if (dark) "ace/theme/github_dark" else "ace/theme/github")
+    }
+
+    /** Ctrl/Cmd + "+"/"-" zoom the editor's font size; Ctrl/Cmd + "0" resets it, matching browser zoom shortcuts. */
+    private fun handleZoomKeydown(event: KeyboardEvent) {
+        if (!event.ctrlKey && !event.metaKey) return
+        when (event.key) {
+            "+", "=" -> setFontSize(fontSize + 1)
+            "-" -> setFontSize(fontSize - 1)
+            "0" -> setFontSize(DEFAULT_FONT_SIZE)
+            else -> return
+        }
+        event.preventDefault()
+    }
+
+    /** Ctrl/Cmd + mouse wheel zooms the editor instead of the whole page, mirroring native browser zoom. */
+    private fun handleZoomWheel(event: WheelEvent) {
+        if (!event.ctrlKey && !event.metaKey) return
+        event.preventDefault()
+        setFontSize(fontSize + if (event.deltaY < 0) 1 else -1)
+    }
+
+    private fun setFontSize(size: Int) {
+        fontSize = size.coerceIn(MIN_FONT_SIZE, MAX_FONT_SIZE)
+        editor.setFontSize("${fontSize}px")
     }
 
     var value: String
@@ -120,4 +155,10 @@ internal class AceEditorView(
             SemanticCategory.DIRECTIVE -> "keyword"
             SemanticCategory.ERROR -> "invalid"
         }
+
+    private companion object {
+        const val DEFAULT_FONT_SIZE = 14
+        const val MIN_FONT_SIZE = 8
+        const val MAX_FONT_SIZE = 40
+    }
 }

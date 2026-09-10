@@ -449,6 +449,40 @@ const SCENARIOS = [
     },
   },
   {
+    name: "Ctrl+wheel and Ctrl+/- zoom the editor's font size",
+    async run({ evalJs }) {
+      const fontSizeOf = () => evalJs(`parseFloat(getComputedStyle(document.getElementById('editor')).fontSize)`);
+      const initial = await fontSizeOf();
+
+      await evalJs(`
+        document.getElementById('editor').dispatchEvent(
+          new KeyboardEvent('keydown', { key: '+', ctrlKey: true, bubbles: true })
+        )
+      `);
+      const afterKeyZoomIn = await fontSizeOf();
+
+      await evalJs(`
+        document.getElementById('editor').dispatchEvent(
+          new WheelEvent('wheel', { deltaY: -100, ctrlKey: true, bubbles: true, cancelable: true })
+        )
+      `);
+      const afterWheelZoomIn = await fontSizeOf();
+
+      await evalJs(`
+        document.getElementById('editor').dispatchEvent(
+          new KeyboardEvent('keydown', { key: '0', ctrlKey: true, bubbles: true })
+        )
+      `);
+      const afterReset = await fontSizeOf();
+
+      const failures = [];
+      if (!(afterKeyZoomIn > initial)) failures.push(`Ctrl+'+' did not increase font size (${initial} -> ${afterKeyZoomIn})`);
+      if (!(afterWheelZoomIn > afterKeyZoomIn)) failures.push(`Ctrl+wheel-up did not further increase font size (${afterKeyZoomIn} -> ${afterWheelZoomIn})`);
+      if (afterReset !== initial) failures.push(`Ctrl+'0' did not reset font size to ${initial}, got ${afterReset}`);
+      return failures;
+    },
+  },
+  {
     name: "dragging the split handle resizes the side panel",
     async run({ evalJs }) {
       const before = await evalJs(`document.getElementById('side').getBoundingClientRect().width`);

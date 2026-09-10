@@ -23,6 +23,8 @@ external class AceEditor {
 
     fun setTheme(theme: String)
 
+    fun setFontSize(fontSize: String)
+
     fun setReadOnly(readOnly: Boolean)
 
     fun isFocused(): Boolean
