@@ -10,7 +10,9 @@ import it.unibo.tuprolog.ui.web.ace.AceToken
 import it.unibo.tuprolog.ui.web.ace.aceAnnotation
 import it.unibo.tuprolog.ui.web.ace.aceCustomMode
 import it.unibo.tuprolog.ui.web.ace.aceToken
+import kotlinx.browser.window
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.events.Event
 
 /** Thin, Kotlin-friendly adapter around the [Ace] editor, hiding its JS-shaped API from the rest of the view. */
 internal class AceEditorView(
@@ -24,8 +26,14 @@ internal class AceEditorView(
     private val mode: dynamic = aceCustomMode(::lineTokens)
 
     init {
-        editor.setTheme("ace/theme/github")
+        val darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)")
+        applyTheme(darkModeQuery.matches)
+        darkModeQuery.addEventListener("change", { _: Event -> applyTheme(darkModeQuery.matches) })
         editor.session.setMode(mode)
+    }
+
+    private fun applyTheme(dark: Boolean) {
+        editor.setTheme(if (dark) "ace/theme/github_dark" else "ace/theme/github")
     }
 
     var value: String

@@ -168,7 +168,7 @@ async function connectCdp(cdpBase, pageUrl) {
     await send("Page.navigate", { url });
   }
 
-  return { evalJs, navigate, consoleMessages, exceptions, close: () => ws.close() };
+  return { evalJs, navigate, send, consoleMessages, exceptions, close: () => ws.close() };
 }
 
 async function pollUntil(evalJs, expression, predicate, timeoutMs, intervalMs = 100) {
@@ -302,6 +302,37 @@ const SCENARIOS = [
         document.querySelectorAll('.ace_line [class^="ace_"]:not([class="ace_line"])').length
       `);
       return coloredSpanCount > 0 ? [] : ["no colored (ace_*) spans found after loading a template"];
+    },
+  },
+  {
+    name: "the UI and the Ace editor follow the OS/browser color scheme",
+    async run({ evalJs, send }) {
+      const failures = [];
+      const readColors = () =>
+        evalJs(`
+          (function() {
+            return {
+              bodyBg: getComputedStyle(document.body).backgroundColor,
+              aceClass: document.querySelector('.ace_editor').className,
+            };
+          })()
+        `);
+
+      await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
+      await new Promise((r) => setTimeout(r, 200));
+      const light = await readColors();
+      if (!light.aceClass.includes("ace-github") || light.aceClass.includes("dark")) {
+        failures.push(`expected the light Ace theme, got class "${light.aceClass}"`);
+      }
+
+      await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "dark" }] });
+      await new Promise((r) => setTimeout(r, 200));
+      const dark = await readColors();
+      if (!dark.aceClass.includes("dark")) failures.push(`expected the dark Ace theme, got class "${dark.aceClass}"`);
+      if (dark.bodyBg === light.bodyBg) failures.push(`body background did not change between color schemes: ${dark.bodyBg}`);
+
+      await send("Emulation.setEmulatedMedia", { features: [] });
+      return failures;
     },
   },
 ];

@@ -42,7 +42,7 @@ val copyAceEditor =
     tasks.register<Copy>("copyAceEditor") {
         dependsOn(rootProject.tasks.named("kotlinNpmInstall"))
         from(rootProject.layout.buildDirectory.dir("js/node_modules/ace-builds/src-min-noconflict")) {
-            include("ace.js", "theme-github.js")
+            include("ace.js", "theme-github.js", "theme-github_dark.js")
         }
         into(layout.buildDirectory.dir("generated-resources/ace"))
     }

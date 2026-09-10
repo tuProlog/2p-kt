@@ -1,11 +1,35 @@
 :root {
-    color-scheme: light;
-    --border: #ccc;
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #555555;
+    --border: #cccccc;
     --accent: #2b5aa0;
     --bg-panel: #f4f4f4;
+    --bg-tab: #e8e8e8;
+    --bg-surface: #ffffff;
     --error: #c62828;
     --warning: #e68a00;
     --info: #1565c0;
+    --shadow: rgba(0, 0, 0, 0.25);
+    --backdrop: rgba(0, 0, 0, 0.35);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #1e1e1e;
+        --fg: #e0e0e0;
+        --muted: #aaaaaa;
+        --border: #444444;
+        --accent: #6ea8fe;
+        --bg-panel: #2a2a2a;
+        --bg-tab: #333333;
+        --bg-surface: #252525;
+        --error: #ff6b6b;
+        --warning: #ffb84d;
+        --info: #6ea8fe;
+        --shadow: rgba(0, 0, 0, 0.6);
+        --backdrop: rgba(0, 0, 0, 0.55);
+    }
 }
 * { box-sizing: border-box; }
 html, body {
@@ -13,6 +37,8 @@ html, body {
     height: 100%;
     font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     font-size: 14px;
+    background: var(--bg);
+    color: var(--fg);
 }
 #app {
     display: flex;
@@ -32,7 +58,7 @@ html, body {
 }
 .status {
     margin-left: auto;
-    color: #555;
+    color: var(--muted);
     font-size: 12px;
 }
 .tab-bar {
@@ -47,12 +73,13 @@ html, body {
     border: 1px solid var(--border);
     border-bottom: none;
     border-radius: 4px 4px 0 0;
-    background: #e8e8e8;
+    background: var(--bg-tab);
+    color: var(--fg);
     cursor: pointer;
     white-space: nowrap;
 }
 .tab.selected {
-    background: white;
+    background: var(--bg-surface);
     font-weight: bold;
 }
 .tab .dirty::after {
@@ -111,12 +138,13 @@ html, body {
     border: 1px solid var(--border);
     border-bottom: none;
     border-radius: 4px 4px 0 0;
-    background: #e8e8e8;
+    background: var(--bg-tab);
+    color: var(--fg);
     cursor: pointer;
     font-size: 12px;
 }
 .side-tab.selected {
-    background: white;
+    background: var(--bg-surface);
     font-weight: bold;
 }
 .side-tab .unread::after {
@@ -130,6 +158,7 @@ html, body {
     font-family: monospace;
     font-size: 12px;
     white-space: pre-wrap;
+    color: var(--fg);
 }
 .side-content table {
     border-collapse: collapse;
@@ -158,14 +187,15 @@ ul.solutions .query {
 .overlay-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.35);
+    background: var(--backdrop);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
 }
 .dialog {
-    background: white;
+    background: var(--bg-surface);
+    color: var(--fg);
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 12px;
@@ -173,7 +203,7 @@ ul.solutions .query {
     max-width: 80vw;
     max-height: 80vh;
     overflow: auto;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 16px var(--shadow);
 }
 .dialog .row {
     margin-bottom: 8px;
