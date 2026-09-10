@@ -1,0 +1,50 @@
+package it.unibo.tuprolog.ui.web
+
+import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
+import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
+import it.unibo.tuprolog.ui.gui.presentation.TextPosition
+import it.unibo.tuprolog.ui.gui.presentation.TextRange
+import kotlinx.browser.document
+import org.w3c.dom.HTMLElement
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+
+class AceEditorViewTest {
+    private fun withEditor(block: (AceEditorView) -> Unit) {
+        val container = document.createElement("div") as HTMLElement
+        document.body?.appendChild(container)
+        val editor = AceEditorView(container)
+        try {
+            block(editor)
+        } finally {
+            container.parentNode?.removeChild(container)
+        }
+    }
+
+    @Test
+    fun `a real Ace instance mounts and echoes back the text it is given`() {
+        withEditor { editor ->
+            editor.value = "p(1).\np(2)."
+            assertEquals("p(1).\np(2).", editor.value)
+        }
+    }
+
+    @Test
+    fun `a freshly mounted editor is not focused and accepts diagnostics without throwing`() {
+        withEditor { editor ->
+            assertFalse(editor.isFocused)
+            editor.setDiagnostics(
+                listOf(
+                    Diagnostic(
+                        DiagnosticSeverity.ERROR,
+                        "syntax error",
+                        TextRange(TextPosition(0, 0, 0), TextPosition(1, 0, 1)),
+                    ),
+                ),
+            )
+            editor.setDiagnostics(emptyList())
+            editor.resize()
+        }
+    }
+}

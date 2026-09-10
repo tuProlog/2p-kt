@@ -95,13 +95,11 @@
             min-height: 0;
         }
         #editor {
+            position: relative;
             flex: 1;
             font-family: "SFMono-Regular", Consolas, Menlo, monospace;
             font-size: 14px;
-            border: none;
             border-right: 1px solid var(--border);
-            resize: none;
-            padding: 8px;
         }
         .side {
             width: 40%;
@@ -206,6 +204,10 @@
 </head>
 <body>
     <div id="app"></div>
+    <!-- Ace's own module system predates ES modules and expects a plain global script load, not a webpack import
+         (see ace/Ace.kt); these must run, in this order, before ide-web.js. -->
+    <script src="ace.js"></script>
+    <script src="theme-github.js"></script>
     <script src="ide-web.js" defer></script>
 </body>
 </html>

@@ -15,6 +15,7 @@ kotlin {
             implementation(project(":gui-solve"))
             implementation(project(":solve-classic"))
             implementation(libs.kotlinx.coroutines.core)
+            implementation(npm("ace-builds", "1.44.0"))
         }
         jsTest.dependencies {
             implementation(kotlin("test"))
@@ -32,9 +33,24 @@ val copyIdeLogo =
         into(layout.buildDirectory.dir("generated-resources/logo"))
     }
 
+// Ace's own module system predates ES/CommonJS modules and expects to be loaded as a global script rather
+// than bundled by webpack (see Ace.kt); vendor its two prebuilt files as plain assets loaded from index.html
+// instead of importing them through Kotlin/JS, so the packaged distribution stays fully self-contained/offline.
+val copyAceEditor =
+    tasks.register<Copy>("copyAceEditor") {
+        dependsOn(rootProject.tasks.named("kotlinNpmInstall"))
+        from(rootProject.layout.buildDirectory.dir("js/node_modules/ace-builds/src-min-noconflict")) {
+            include("ace.js", "theme-github.js")
+        }
+        into(layout.buildDirectory.dir("generated-resources/ace"))
+    }
+
 tasks.named("jsProcessResources") {
-    dependsOn(copyIdeLogo)
-    (this as Copy).from(layout.buildDirectory.dir("generated-resources/logo"))
+    dependsOn(copyIdeLogo, copyAceEditor)
+    (this as Copy).from(
+        layout.buildDirectory.dir("generated-resources/logo"),
+        layout.buildDirectory.dir("generated-resources/ace"),
+    )
 }
 
 val webDistribution = tasks.named("jsBrowserDistribution")

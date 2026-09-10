@@ -40,7 +40,8 @@ internal class WebIdeView(
 
     private val statusLabel = element("span", "status")
     private val tabBar = element("div", "tab-bar")
-    private val editor = element("textarea", null) as HTMLTextAreaElement
+    private val editorContainer = element("div", "editor").apply { id = "editor" }
+    private val editor = AceEditorView(editorContainer)
     private val queryInput =
         (element("input", null) as HTMLInputElement).apply {
             type = "text"
@@ -76,6 +77,8 @@ internal class WebIdeView(
         root.appendChild(mainArea())
         installListeners()
         selectSidePanel(PanelId.SOLUTIONS)
+        editor.resize()
+        kotlinx.browser.window.addEventListener("resize", { _: Event -> editor.resize() })
     }
 
     fun render(state: GuiState) {
@@ -132,7 +135,7 @@ internal class WebIdeView(
             appendChild(queryBar())
             appendChild(
                 element("div", "split").apply {
-                    appendChild(editor)
+                    appendChild(editorContainer)
                     appendChild(sidePanel())
                 },
             )
@@ -197,23 +200,20 @@ internal class WebIdeView(
     // region listeners
 
     private fun installListeners() {
-        editor.addEventListener(
-            "input",
-            { _: Event ->
-                if (rendering) return@addEventListener
-                val page = selectedPage() ?: return@addEventListener
-                when (page.content) {
-                    is PageContent.DocumentReference ->
-                        dispatch(
-                            DocumentAction.ChangeText(
-                                (page.content as PageContent.DocumentReference).documentId,
-                                editor.value,
-                            ),
-                        )
-                    is PageContent.Scratch -> dispatch(PageAction.ChangeScratchText(page.id, editor.value))
-                }
-            },
-        )
+        editor.onChange {
+            if (rendering) return@onChange
+            val page = selectedPage() ?: return@onChange
+            when (page.content) {
+                is PageContent.DocumentReference ->
+                    dispatch(
+                        DocumentAction.ChangeText(
+                            (page.content as PageContent.DocumentReference).documentId,
+                            editor.value,
+                        ),
+                    )
+                is PageContent.Scratch -> dispatch(PageAction.ChangeScratchText(page.id, editor.value))
+            }
+        }
         queryInput.addEventListener(
             "input",
             { _: Event ->
@@ -297,11 +297,11 @@ internal class WebIdeView(
         val page = selectedPage()
         if (page == null) {
             editor.value = ""
-            editor.disabled = true
+            editor.readOnly = true
             statusLabel.textContent = "No page"
             return
         }
-        editor.disabled = false
+        editor.readOnly = false
         val text =
             when (val content = page.content) {
                 is PageContent.DocumentReference ->
@@ -311,7 +311,8 @@ internal class WebIdeView(
                         .orEmpty()
                 is PageContent.Scratch -> content.text
             }
-        if (document.activeElement != editor) editor.value = text
+        if (!editor.isFocused) editor.value = text
+        editor.setDiagnostics(page.diagnostics.values)
         if (document.activeElement != queryInput) queryInput.value = page.query.text
         if (document.activeElement != stdinArea) stdinArea.value = page.console.stdin
         val effectiveTimeout =
