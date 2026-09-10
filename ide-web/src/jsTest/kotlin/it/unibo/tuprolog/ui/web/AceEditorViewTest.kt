@@ -72,4 +72,12 @@ class AceEditorViewTest {
             assertEquals("% comment", container.item(0)?.textContent)
         }
     }
+
+    @Test
+    fun `typing through Ace's own insert pipeline does not throw`() {
+        withEditor { editor ->
+            editor.testType("p(X) :- q(X).")
+            assertEquals("p(X) :- q(X).", editor.value)
+        }
+    }
 }

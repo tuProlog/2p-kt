@@ -46,6 +46,14 @@ internal class AceEditorView(
 
     fun resize() = editor.resize(true)
 
+    /**
+     * Test-only: goes through Ace's own `Editor.insert`, the exact path a real keystroke takes (auto-pairing
+     * "behaviour" transforms included), unlike [value] which calls `session.setValue` and skips all of that.
+     */
+    internal fun testType(text: String) {
+        editor.asDynamic().insert(text)
+    }
+
     fun setDiagnostics(diagnostics: List<Diagnostic>) {
         val annotations =
             diagnostics.mapNotNull { diagnostic ->
