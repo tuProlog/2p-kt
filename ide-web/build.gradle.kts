@@ -12,6 +12,7 @@ kotlin {
     sourceSets {
         jsMain.dependencies {
             api(project(":gui"))
+            implementation(project(":core"))
             implementation(project(":gui-solve"))
             implementation(project(":solve-classic"))
             implementation(project(":io-lib"))

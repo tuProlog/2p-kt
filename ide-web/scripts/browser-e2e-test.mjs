@@ -211,6 +211,13 @@ const SCENARIOS = [
     },
   },
   {
+    name: "the page title reports the :core version",
+    async run({ evalJs }) {
+      const title = await evalJs(`document.title`);
+      return /\d+\.\d+\.\d+/.test(title) ? [] : [`expected a version number in the page title, got: "${title}"`];
+    },
+  },
+  {
     name: "the redundant 'New scratch' button was removed",
     async run({ evalJs }) {
       const exists = await evalJs(`!!document.getElementById('btn-new-scratch')`);

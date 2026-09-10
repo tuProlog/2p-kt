@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.web
 
+import it.unibo.tuprolog.Info
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.ui.gui.application.buildGuiApplication
@@ -8,11 +9,13 @@ import it.unibo.tuprolog.ui.gui.controller.WorkspaceAction
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.solve.solverFactoryProfile
 import it.unibo.tuprolog.ui.gui.template.ClassicTheoryTemplates
+import kotlinx.browser.document
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 fun main() {
+    document.title = "tuProlog Web IDE ${Info.VERSION}"
     val scope = MainScope()
     // Solver.prolog resolves ClassicSolverFactory via a runtime `require("2p-solve-classic")` by string module
     // name (see solve/src/jsMain/.../SolverExtensionsJs.kt), which only works when Kotlin/JS modules are
