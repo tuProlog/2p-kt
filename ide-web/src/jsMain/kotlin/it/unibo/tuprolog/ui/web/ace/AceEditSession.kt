@@ -5,7 +5,7 @@ package it.unibo.tuprolog.ui.web.ace
  * Obtained only via [AceEditor.session]; never constructed directly from Kotlin.
  */
 external class AceEditSession {
-    fun setMode(mode: String)
+    fun setMode(mode: dynamic)
 
     fun setAnnotations(annotations: Array<AceAnnotation>)
 

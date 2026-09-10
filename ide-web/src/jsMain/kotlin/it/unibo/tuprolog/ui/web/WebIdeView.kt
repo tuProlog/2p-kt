@@ -313,6 +313,7 @@ internal class WebIdeView(
             }
         if (!editor.isFocused) editor.value = text
         editor.setDiagnostics(page.diagnostics.values)
+        editor.setSemanticTokens(page.semanticTokens)
         if (document.activeElement != queryInput) queryInput.value = page.query.text
         if (document.activeElement != stdinArea) stdinArea.value = page.console.stdin
         val effectiveTimeout =
