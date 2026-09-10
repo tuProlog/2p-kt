@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.swing
 
+import it.unibo.tuprolog.ui.gui.presentation.EditorZoom
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import java.awt.event.InputEvent
 import javax.swing.AbstractAction
@@ -7,7 +8,7 @@ import javax.swing.KeyStroke
 
 internal fun RSyntaxTextArea.installZoomControls(onZoomed: (Int) -> Unit = {}) {
     fun zoom(delta: Int) {
-        val newSize = (font.size + delta).coerceIn(8, 48)
+        val newSize = EditorZoom.clamp(font.size + delta)
         font = font.deriveFont(newSize.toFloat())
         onZoomed(newSize)
     }

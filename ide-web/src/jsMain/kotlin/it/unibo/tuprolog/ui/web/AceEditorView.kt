@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.web
 
 import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
 import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
+import it.unibo.tuprolog.ui.gui.presentation.EditorZoom
 import it.unibo.tuprolog.ui.gui.presentation.SemanticCategory
 import it.unibo.tuprolog.ui.gui.presentation.SemanticToken
 import it.unibo.tuprolog.ui.web.ace.Ace
@@ -26,7 +27,7 @@ internal class AceEditorView(
     // of Ace's regex-rule-based highlighting; the mode object itself never changes, only the tokens it reads.
     private var semanticTokens: List<SemanticToken> = emptyList()
     private val mode: dynamic = aceCustomMode(::lineTokens)
-    private var fontSize = DEFAULT_FONT_SIZE
+    private var fontSize = EditorZoom.DEFAULT_FONT_SIZE
 
     init {
         val darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)")
@@ -53,7 +54,7 @@ internal class AceEditorView(
         when (event.key) {
             "+", "=" -> setFontSize(fontSize + 1)
             "-" -> setFontSize(fontSize - 1)
-            "0" -> setFontSize(DEFAULT_FONT_SIZE)
+            "0" -> setFontSize(EditorZoom.DEFAULT_FONT_SIZE)
             else -> return
         }
         event.preventDefault()
@@ -67,7 +68,7 @@ internal class AceEditorView(
     }
 
     private fun setFontSize(size: Int) {
-        fontSize = size.coerceIn(MIN_FONT_SIZE, MAX_FONT_SIZE)
+        fontSize = EditorZoom.clamp(size)
         editor.setFontSize("${fontSize}px")
     }
 
@@ -155,10 +156,4 @@ internal class AceEditorView(
             SemanticCategory.DIRECTIVE -> "keyword"
             SemanticCategory.ERROR -> "invalid"
         }
-
-    private companion object {
-        const val DEFAULT_FONT_SIZE = 14
-        const val MIN_FONT_SIZE = 8
-        const val MAX_FONT_SIZE = 40
-    }
 }
