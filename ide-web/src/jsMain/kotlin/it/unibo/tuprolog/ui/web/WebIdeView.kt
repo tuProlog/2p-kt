@@ -423,14 +423,18 @@ internal class WebIdeView(
 
     private fun renderInspection(page: PageState) {
         val inspection = page.solverSession.inspection
-        panelContents.getValue(PanelId.OPERATORS).replaceWith(operatorsTable(inspection.operators))
-        panelContents.getValue(PanelId.FLAGS).replaceWith(flagsTable(inspection.flags))
-        panelContents.getValue(PanelId.LIBRARIES).replaceWith(librariesList(inspection.libraries))
+        panelContents.getValue(PanelId.OPERATORS).replaceContent(operatorsTable(inspection.operators))
+        panelContents.getValue(PanelId.FLAGS).replaceContent(flagsTable(inspection.flags))
+        panelContents.getValue(PanelId.LIBRARIES).replaceContent(librariesList(inspection.libraries))
         panelContents.getValue(PanelId.STATIC_KB).textContent = inspection.staticKnowledgeBase
         panelContents.getValue(PanelId.DYNAMIC_KB).textContent = inspection.dynamicKnowledgeBase
     }
 
-    private fun HTMLElement.replaceWith(content: HTMLElement) {
+    // Named to avoid HTMLElement's own `replaceWith` (from the DOM's ChildNode interface), which Kotlin's
+    // overload resolution always prefers over a same-named extension: calling `.replaceWith(...)` here would
+    // silently detach the panel-content div itself from the DOM and drop the new content in its place, instead
+    // of replacing that div's children — breaking panel show/hide toggling, which keys off the original div.
+    private fun HTMLElement.replaceContent(content: HTMLElement) {
         innerHTML = ""
         appendChild(content)
     }
