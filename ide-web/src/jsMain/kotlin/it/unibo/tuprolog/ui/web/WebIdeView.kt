@@ -31,6 +31,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
@@ -281,6 +282,12 @@ internal class WebIdeView(
             { _: Event ->
                 if (rendering) return@addEventListener
                 selectedPage()?.let { dispatch(PageAction.ChangeQuery(it.id, queryInput.value)) }
+            },
+        )
+        queryInput.addEventListener(
+            "keydown",
+            { event: Event ->
+                if ((event as KeyboardEvent).key == "Enter") solveOrNext(ConsumptionMode.ONE)
             },
         )
         stdinArea.addEventListener(

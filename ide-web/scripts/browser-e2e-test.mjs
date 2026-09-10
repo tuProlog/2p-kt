@@ -225,6 +225,28 @@ const SCENARIOS = [
     },
   },
   {
+    name: "pressing Enter in the query field triggers solve",
+    async run({ evalJs }) {
+      await evalJs(`
+        (function() {
+          const queryInput = document.getElementById('query-input');
+          queryInput.focus();
+          queryInput.value = 'true';
+          queryInput.dispatchEvent(new Event('input', { bubbles: true }));
+          queryInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        })()
+      `);
+      const status = await pollUntil(
+        () => evalJs(`document.getElementById('status-label').textContent`),
+        (v) => /COMPLETED|FAILED|RUNNING|AWAITING/.test(v),
+        3000,
+      );
+      return /COMPLETED|FAILED|RUNNING|AWAITING/.test(status)
+        ? []
+        : [`expected Enter to trigger a solve, status stayed: "${status}"`];
+    },
+  },
+  {
     name: "typing goes through Ace's real insert pipeline",
     async run({ evalJs }) {
       const text = "p(1).\np(2).\n";
