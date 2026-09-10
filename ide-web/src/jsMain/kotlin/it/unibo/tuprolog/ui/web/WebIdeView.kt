@@ -36,34 +36,28 @@ internal class WebIdeView(
     private val scope: CoroutineScope,
     private val templates: List<TheoryTemplate>,
 ) {
-    private val root = document.getElementById("app") as HTMLElement
-
-    private val statusLabel = element("span", "status")
-    private val tabBar = element("div", "tab-bar")
-    private val editorContainer = element("div", "editor").apply { id = "editor" }
+    // The static shell (menu bar, query bar, #editor, side-tab-bar container, ...) is declared once in
+    // index.html rather than built here; only elements whose shape depends on GuiState (the document tab
+    // list, per-panel side tabs, panel contents, dialogs, ...) are still constructed in Kotlin.
+    private val statusLabel = byId<HTMLElement>("status-label")
+    private val tabBar = byId<HTMLElement>("tab-bar")
+    private val editorContainer = byId<HTMLElement>("editor")
     private val editor = AceEditorView(editorContainer)
-    private val queryInput =
-        (element("input", null) as HTMLInputElement).apply {
-            type = "text"
-            id = "query-input"
-        }
-    private val timeoutInput =
-        (element("input", null) as HTMLInputElement).apply {
-            type = "text"
-            id = "timeout-input"
-        }
+    private val queryInput = byId<HTMLInputElement>("query-input")
+    private val timeoutInput = byId<HTMLInputElement>("timeout-input")
     private val stdinArea = element("textarea", null) as HTMLTextAreaElement
-    private val solveButton = element("button", null) as HTMLButtonElement
-    private val solve10Button = (element("button", null) as HTMLButtonElement).apply { textContent = "Solve 10" }
-    private val solveAllButton = (element("button", null) as HTMLButtonElement).apply { textContent = "Solve all" }
-    private val stopButton = (element("button", null) as HTMLButtonElement).apply { textContent = "Stop" }
-    private val resetButton = (element("button", null) as HTMLButtonElement).apply { textContent = "Reset" }
+    private val solveButton = byId<HTMLButtonElement>("solve-button")
+    private val solve10Button = byId<HTMLButtonElement>("solve10-button")
+    private val solveAllButton = byId<HTMLButtonElement>("solve-all-button")
+    private val stopButton = byId<HTMLButtonElement>("stop-button")
+    private val resetButton = byId<HTMLButtonElement>("reset-button")
     private val clearSolutionsButton =
         (element("button", null) as HTMLButtonElement).apply {
             textContent =
                 "Clear solutions"
         }
-    private val sideTabBar = element("div", "side-tab-bar")
+    private val sideContainer = byId<HTMLElement>("side")
+    private val sideTabBar = byId<HTMLElement>("side-tab-bar")
     private val panelContents = PanelId.entries.associateWith { element("div", "side-content") }
     private val panelTabs = mutableMapOf<PanelId, HTMLElement>()
 
@@ -72,9 +66,9 @@ internal class WebIdeView(
     private var rendering = false
 
     init {
-        root.appendChild(menuBar())
-        root.appendChild(tabBar)
-        root.appendChild(mainArea())
+        installMenuBarListeners()
+        setUpTemplatesSelect()
+        buildSidePanel()
         installListeners()
         selectSidePanel(PanelId.SOLUTIONS)
         editor.resize()
@@ -94,25 +88,34 @@ internal class WebIdeView(
 
     // region shell
 
-    private fun menuBar(): HTMLElement =
-        element("div", "menu-bar").apply {
-            appendChild(button("New") { dispatch(WorkspaceAction.NewDocumentPage()) })
-            appendChild(button("New scratch") { dispatch(WorkspaceAction.NewScratchPage()) })
-            if (templates.isNotEmpty()) appendChild(templatesMenu())
-            appendChild(button("Open…") { pickOpen() })
-            appendChild(button("Save") { selectedPage()?.let { save(it, false) } })
-            appendChild(button("Save as…") { selectedPage()?.let { save(it, true) } })
-            appendChild(
-                button("Close page") { selectedPage()?.let { dispatch(WorkspaceAction.RequestClosePage(it.id)) } },
-            )
-            appendChild(statusLabel)
-        }
-
-    private fun templatesMenu(): HTMLElement {
-        val select = element("select", null) as HTMLSelectElement
-        select.appendChild(
-            (document.createElement("option") as HTMLElement).apply { textContent = "New from template…" },
+    private fun installMenuBarListeners() {
+        byId<HTMLButtonElement>("btn-new").addEventListener(
+            "click",
+            { _: Event -> dispatch(WorkspaceAction.NewDocumentPage()) },
         )
+        byId<HTMLButtonElement>("btn-new-scratch").addEventListener(
+            "click",
+            { _: Event -> dispatch(WorkspaceAction.NewScratchPage()) },
+        )
+        byId<HTMLButtonElement>("btn-open").addEventListener("click", { _: Event -> pickOpen() })
+        byId<HTMLButtonElement>("btn-save").addEventListener(
+            "click",
+            { _: Event -> selectedPage()?.let { save(it, false) } },
+        )
+        byId<HTMLButtonElement>("btn-save-as").addEventListener(
+            "click",
+            { _: Event -> selectedPage()?.let { save(it, true) } },
+        )
+        byId<HTMLButtonElement>("btn-close-page").addEventListener(
+            "click",
+            { _: Event -> selectedPage()?.let { dispatch(WorkspaceAction.RequestClosePage(it.id)) } },
+        )
+    }
+
+    private fun setUpTemplatesSelect() {
+        if (templates.isEmpty()) return
+        val select = byId<HTMLSelectElement>("templates-select")
+        select.removeAttribute("hidden")
         templates.forEach { template ->
             val option = document.createElement("option") as HTMLElement
             option.textContent = template.displayName
@@ -127,51 +130,25 @@ internal class WebIdeView(
                 select.selectedIndex = 0
             },
         )
-        return select
     }
 
-    private fun mainArea(): HTMLElement =
-        element("div", "main").apply {
-            appendChild(queryBar())
-            appendChild(
-                element("div", "split").apply {
-                    appendChild(editorContainer)
-                    appendChild(sidePanel())
-                },
-            )
+    private fun buildSidePanel() {
+        PanelId.entries.forEach { panel ->
+            val tab = element("div", "side-tab").apply { textContent = panelTitle(panel) }
+            tab.addEventListener("click", { _: Event -> selectSidePanel(panel) })
+            panelTabs[panel] = tab
+            sideTabBar.appendChild(tab)
         }
-
-    private fun queryBar(): HTMLElement =
-        element("div", "query-bar").apply {
-            appendChild(queryInput)
-            appendChild(solveButton)
-            appendChild(solve10Button)
-            appendChild(solveAllButton)
-            appendChild(stopButton)
-            appendChild(resetButton)
-            appendChild(element("span", null).apply { textContent = "Timeout" })
-            appendChild(timeoutInput)
-        }
-
-    private fun sidePanel(): HTMLElement =
-        element("div", "side").apply {
-            appendChild(sideTabBar)
-            PanelId.entries.forEach { panel ->
-                val tab = element("div", "side-tab").apply { textContent = panelTitle(panel) }
-                tab.addEventListener("click", { _: Event -> selectSidePanel(panel) })
-                panelTabs[panel] = tab
-                sideTabBar.appendChild(tab)
+        PanelId.entries.forEach { panel ->
+            val content = panelContents.getValue(panel)
+            if (panel == PanelId.SOLUTIONS) content.appendChild(clearSolutionsButton)
+            if (panel == PanelId.STDIN) {
+                content.textContent = ""
+                content.appendChild(stdinArea)
             }
-            PanelId.entries.forEach { panel ->
-                val content = panelContents.getValue(panel)
-                if (panel == PanelId.SOLUTIONS) content.appendChild(clearSolutionsButton)
-                if (panel == PanelId.STDIN) {
-                    content.textContent = ""
-                    content.appendChild(stdinArea)
-                }
-                appendChild(content)
-            }
+            sideContainer.appendChild(content)
         }
+    }
 
     private fun panelTitle(panel: PanelId): String =
         when (panel) {
@@ -516,12 +493,7 @@ internal class WebIdeView(
             if (className != null) this.className = className
         }
 
-    private fun button(
-        label: String,
-        onClick: () -> Unit,
-    ): HTMLElement =
-        (document.createElement("button") as HTMLButtonElement).apply {
-            textContent = label
-            addEventListener("click", { _: Event -> onClick() })
-        }
+    private inline fun <reified T : HTMLElement> byId(id: String): T =
+        document.getElementById(id) as? T
+            ?: error("index.html is missing the expected element #$id")
 }
