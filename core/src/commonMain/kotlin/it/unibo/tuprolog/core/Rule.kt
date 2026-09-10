@@ -4,6 +4,11 @@ import it.unibo.tuprolog.core.impl.RuleImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/**
+ * A [Clause] with a non-`null` [head], i.e. `head :- body`. [Fact] is the special case where [body] is
+ * (equivalent to) the `true` atom; [Rule.of] automatically returns a [Fact] whenever [body] reduces to `true`,
+ * so most code building rules can just call [Rule.of] uniformly and let it decide.
+ */
 interface Rule : Clause {
     override val head: Struct
 
@@ -22,12 +27,18 @@ interface Rule : Clause {
 
     override fun asRule(): Rule = this
 
+    /** The arguments of [head]. Alias for `head.args`. */
     @JsName("headArgs")
     val headArgs: Iterable<Term>
 
+    /** The arity of [head]. Alias for `head.arity`. */
     @JsName("headArity")
     val headArity: Int
 
+    /**
+     * Gets the [index]-th argument of [head].
+     * @throws IndexOutOfBoundsException if [index] is out of [head]'s argument bounds
+     */
     @JsName("getHeadArg")
     fun getHeadArg(index: Int): Term
 
@@ -73,8 +84,14 @@ interface Rule : Clause {
     override fun appendBodyItem(argument: Term): Rule
 
     companion object {
+        /** The canonical clause functor: `:-` (same as [Clause.FUNCTOR]). */
         const val FUNCTOR = Terms.CLAUSE_FUNCTOR
 
+        /**
+         * Creates a [Rule] with the given [head] and [body] goals (folded into a single [Term] via [Tuple]
+         * when there is more than one). If [body] is empty, or reduces to a single `true` goal, a [Fact] is
+         * returned instead of a generic [Rule].
+         */
         @JvmStatic
         @JsName("of")
         fun of(
@@ -82,6 +99,7 @@ interface Rule : Clause {
             vararg body: Term,
         ): Rule = of(head, body.asIterable())
 
+        /** @see of */
         @JvmStatic
         @JsName("ofIterable")
         fun of(
@@ -95,6 +113,7 @@ interface Rule : Clause {
             return RuleImpl(head, Tuple.wrapIfNeeded(body))
         }
 
+        /** @see of */
         @JvmStatic
         @JsName("ofSequence")
         fun of(
@@ -102,6 +121,11 @@ interface Rule : Clause {
             body: Sequence<Term>,
         ): Rule = of(head, body.asIterable())
 
+        /**
+         * Creates a [Rule] template: a head with [functor] and [arity] anonymous-variable arguments, and an
+         * anonymous-variable body (matching anything). See [Struct.template].
+         * @throws IllegalArgumentException if [arity] is negative
+         */
         @JvmStatic
         @JsName("template")
         fun template(

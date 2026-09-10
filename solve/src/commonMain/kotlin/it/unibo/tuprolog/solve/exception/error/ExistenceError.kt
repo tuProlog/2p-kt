@@ -62,6 +62,7 @@ class ExistenceError(
         ExistenceError(message, cause, contexts.addLast(newContext), expectedObject, culprit, extraData)
 
     companion object {
+        /** Creates an [ExistenceError] reporting that no [expectedType] named/identified by [culprit] exists. */
         @JsName("of")
         @JvmStatic
         fun of(
@@ -77,6 +78,7 @@ class ExistenceError(
             extraData = Atom.of(message),
         )
 
+        /** Creates an [ExistenceError] reporting that [procedure] does not exist (i.e. is not defined in the current knowledge bases/libraries). */
         @JsName("forProcedure")
         @JvmStatic
         fun forProcedure(
@@ -94,6 +96,7 @@ class ExistenceError(
             )
         }
 
+        /** Creates an [ExistenceError] reporting that no source/sink (I/O stream) named [alias] exists. */
         @JsName("forSourceSink")
         @JvmStatic
         fun forSourceSink(
@@ -101,6 +104,7 @@ class ExistenceError(
             alias: Atom,
         ) = forSourceSink(context, alias.value)
 
+        /** Same as [forSourceSink], but [alias] is a raw [String] rather than an [Atom]. */
         @JsName("forSourceSinkWithAlias")
         @JvmStatic
         fun forSourceSink(
@@ -118,6 +122,7 @@ class ExistenceError(
             )
         }
 
+        /** Creates an [ExistenceError] reporting that no stream matching [steamTerm] exists. */
         @JsName("forStream")
         @JvmStatic
         fun forStream(
@@ -135,6 +140,7 @@ class ExistenceError(
             )
         }
 
+        /** Creates an [ExistenceError] reporting that no resource named [name] exists. */
         @JsName("forResource")
         @JvmStatic
         fun forResource(

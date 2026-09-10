@@ -36,6 +36,16 @@ internal fun <C : ExecutionContext> Solve.Request<C>.matchesDealiasingTemplate(t
 
 internal val CAST_TEMPLATE = Struct.template(CAST_OPERATOR, 2)
 
+/**
+ * Ensures the argument at [index] is a [Ref] -- resolving it first if it is a `$Alias` dealiasing
+ * expression -- returning this request for chaining, as the other `ensuringArgumentIs*` helpers
+ * in [it.unibo.tuprolog.solve.primitive.PrimitiveWrapper] do.
+ *
+ * @throws it.unibo.tuprolog.solve.exception.error.TypeError with expected type
+ * [it.unibo.tuprolog.solve.exception.error.TypeError.Expected.REFERENCE] if it is neither.
+ * @throws it.unibo.tuprolog.solve.libs.oop.exceptions.NoSuchAnAliasException if it is a
+ * dealiasing expression whose alias is not registered.
+ */
 fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsRef(index: Int): Solve.Request<C> {
     val arg = arguments[index]
     return when {
@@ -45,6 +55,13 @@ fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsRef(index: Int): S
     }
 }
 
+/**
+ * Like [ensuringArgumentIsRef], but requiring the argument to be (or resolve, via `$Alias`, to)
+ * an [ObjectRef].
+ *
+ * @throws it.unibo.tuprolog.solve.exception.error.TypeError with expected type
+ * [it.unibo.tuprolog.solve.exception.error.TypeError.Expected.OBJECT_REFERENCE] otherwise.
+ */
 fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsObjectRef(index: Int): Solve.Request<C> {
     val arg = arguments[index]
     return when {
@@ -60,6 +77,13 @@ fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsObjectRef(index: I
     }
 }
 
+/**
+ * Like [ensuringArgumentIsRef], but requiring the argument to be (or resolve, via `$Alias`, to)
+ * a [TypeRef].
+ *
+ * @throws it.unibo.tuprolog.solve.exception.error.TypeError with expected type
+ * [it.unibo.tuprolog.solve.exception.error.TypeError.Expected.TYPE_REFERENCE] otherwise.
+ */
 fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsTypeRef(index: Int): Solve.Request<C> {
     val arg = arguments[index]
     return when {
@@ -75,6 +99,13 @@ fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsTypeRef(index: Int
     }
 }
 
+/**
+ * Resolves the argument at [index] into a [TypeRef], accepting it directly as a [TypeRef], as an
+ * [it.unibo.tuprolog.core.Atom] naming a type (via [TypeFactory.default]), or as a `$Alias`
+ * dealiasing expression -- returning `null` if resolution fails for one of these forms.
+ *
+ * @throws it.unibo.tuprolog.solve.exception.error.TypeError if the argument is none of the above.
+ */
 fun <C : ExecutionContext> Solve.Request<C>.getArgumentAsTypeRef(index: Int): TypeRef? {
     ensuringArgumentIsStruct(index)
     val arg = arguments[index]
@@ -113,15 +144,42 @@ private fun <C : ExecutionContext> Solve.Request<C>.findRefFromAliasOrNull(alias
         ?.castTo()
 }
 
+/**
+ * Whether [alias] (the `Alias` argument of a well-formed `$Alias` expression) is currently
+ * registered, i.e. whether an [it.unibo.tuprolog.solve.libs.oop.rules.Alias] fact for it can be
+ * found in the current knowledge base.
+ */
 fun <C : ExecutionContext> Solve.Request<C>.isAliasRegistered(alias: Struct): Boolean =
     findRefFromAliasOrNull(alias) != null
 
+/**
+ * Like [isAliasRegistered], but throwing instead of returning `false`.
+ *
+ * @throws it.unibo.tuprolog.solve.libs.oop.exceptions.NoSuchAnAliasException if [alias] is not registered.
+ */
 fun <C : ExecutionContext> Solve.Request<C>.ensureAliasIsRegistered(alias: Struct): Boolean =
     if (isAliasRegistered(alias)) true else throw NoSuchAnAliasException(alias)
 
+/**
+ * Resolves the well-formed `$Alias` dealiasing expression [alias] into the [Ref] it currently
+ * points to.
+ *
+ * @throws it.unibo.tuprolog.solve.libs.oop.exceptions.MalformedAliasException if [alias] is not
+ * of the shape `$Alias`.
+ * @throws it.unibo.tuprolog.solve.libs.oop.exceptions.NoSuchAnAliasException if [alias] is
+ * well-formed but not registered.
+ */
 fun <C : ExecutionContext> Solve.Request<C>.findRefFromAlias(alias: Struct): Ref =
     findRefFromAliasOrNull(alias) ?: throw NoSuchAnAliasException(alias)
 
+/**
+ * Runs [action], converting any [it.unibo.tuprolog.solve.libs.oop.exceptions.OopException] it
+ * throws into the [it.unibo.tuprolog.solve.exception.LogicError] this request's solver actually
+ * expects (via [it.unibo.tuprolog.solve.libs.oop.exceptions.OopException.toLogicError]), and any
+ * other unexpected [Throwable] into an
+ * [it.unibo.tuprolog.solve.exception.error.SystemError.forUncaughtException]. Every primitive in
+ * `:oop-lib` wraps its logic with this to turn reflection failures into well-formed Prolog errors.
+ */
 inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExceptions(action: Req.() -> R): R {
     try {
         return action()
@@ -132,5 +190,10 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
     }
 }
 
+/**
+ * A [TermToObjectConverter] wired to resolve `$Alias` dealiasing expressions against this
+ * request's current knowledge base (via [findRefFromAlias]/[findRefFromAliasOrNull]) -- the
+ * converter every primitive in `:oop-lib` should use in place of [TermToObjectConverter.default].
+ */
 val <C : ExecutionContext> Solve.Request<C>.termToObjectConverter: TermToObjectConverter
     get() = TermToObjectConverter.of { findRefFromAliasOrNull(it) }

@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve
 
 /**
- * Tests of nonvar
+ * Conformance tests for the ISO `nonvar/1` type-checking built-in, shared by every `Solver` implementation via the
+ * `TestNonVar.prototype(solverFactory)` factory (see `TestClassicNonVar` in `:solve-classic` for a concrete usage).
  */
 interface TestNonVar : SolverTest {
     companion object {

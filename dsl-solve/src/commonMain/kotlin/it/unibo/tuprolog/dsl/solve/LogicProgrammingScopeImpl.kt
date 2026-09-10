@@ -9,6 +9,17 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.theory.TheoryFactory
 import it.unibo.tuprolog.unify.Unificator
 
+/**
+ * Default [LogicProgrammingScope] implementation: forwards [VariablesProvider], [Unificator], [TheoryFactory] and
+ * [MutableSolver] operations to its respective collaborator ([variablesProvider], [unificator], [theoryFactory],
+ * [defaultSolver]), and requires (in its `init` block) that they all share the same [Scope]/[Unificator] consistently. Built by
+ * [LogicProgrammingScope.of] (and transitively by [logicProgramming]/[lp]/[prolog]) rather than instantiated
+ * directly by client code.
+ *
+ * @throws IllegalArgumentException if [scope] is not the same object backing both [termificator] and
+ * [variablesProvider], or if [unificator] is not the same object used by [theoryFactory], [solverFactory] and
+ * [defaultSolver].
+ */
 class LogicProgrammingScopeImpl private constructor(
     override val scope: Scope,
     override val termificator: Termificator,
@@ -35,6 +46,7 @@ class LogicProgrammingScopeImpl private constructor(
         }
     }
 
+    /** Builds [defaultSolver] from [solverFactory]/[unificator] via [SolverFactory.mutableSolverOf]. */
     constructor(
         scope: Scope,
         termificator: Termificator,
@@ -52,8 +64,10 @@ class LogicProgrammingScopeImpl private constructor(
         solverFactory.mutableSolverOf(unificator),
     )
 
+    /** Returns a fresh scope sharing this one's [unificator], [theoryFactory] and [solverFactory] but a brand-new, empty [Scope]. */
     override fun newScope(): LogicProgrammingScope = copy(Scope.empty())
 
+    /** Returns a copy of this scope backed by [scope] instead, keeping [unificator], [theoryFactory] and [solverFactory] as-is. */
     override fun copy(scope: Scope): LogicProgrammingScope =
         LogicProgrammingScopeImpl(
             scope,
@@ -64,6 +78,12 @@ class LogicProgrammingScopeImpl private constructor(
             solverFactory,
         )
 
+    /**
+     * Returns a copy of this scope using [unificator] instead of the current one, propagating it to [theoryFactory]
+     * and [solverFactory] (rebuilding [solverFactory] only if its own default [Unificator] differs from
+     * [unificator]) — note this rebuilds [defaultSolver] too, so any static/dynamic KB or configuration already
+     * loaded into it is lost.
+     */
     override fun copy(unificator: Unificator): LogicProgrammingScope =
         LogicProgrammingScopeImpl(
             scope,

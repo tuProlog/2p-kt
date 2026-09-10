@@ -29,6 +29,34 @@ import it.unibo.tuprolog.utils.cached
 import kotlin.collections.List as KtList
 import kotlin.collections.Set as KtSet
 
+/**
+ * One frame of the `:solve-classic` execution-context stack: a substitution, the streams of remaining goals,
+ * candidate [Rule]s and candidate primitive responses, plus a [parent] link. Frames chain into their [parent]
+ * rather than living in a separate stack container, so the [parent] chain (see [pathToRoot]) *is* the call
+ * stack -- ordinary heap-allocated data rather than native JVM/JS stack frames, which is what lets Prolog
+ * resolution of arbitrarily deep recursive programs run as an explicit, non-recursive [it.unibo.tuprolog.solve.classic.fsm.State]
+ * loop instead of unbounded host-language recursion.
+ *
+ * Resolving a sub-goal (a primitive call or a rule body) pushes a new context whose [parent] is the current one
+ * (see `it.unibo.tuprolog.solve.classic.fsm.createChild`); finishing a context's [goals] pops back to its
+ * [parent] in [it.unibo.tuprolog.solve.classic.fsm.StateGoalSelection]. Every instance also threads through
+ * [choicePoints], the sibling data structure (see [ChoicePointContext]) recording still-open backtracking
+ * alternatives.
+ *
+ * Most fields mirror [it.unibo.tuprolog.solve.ExecutionContext]; the ones specific to the classic engine are:
+ * - [query]/[goals]: the original query, and the cursor over the goals still to be proven in this frame.
+ * - [rules]/[primitives]: the still-untried candidate clauses/primitive responses for the current goal, i.e. the
+ *   frame's own view of the [choicePoints] entry recorded for it (if any).
+ * - [choicePoints]: the head of the choice-point queue as seen from this frame -- see [ChoicePointContext].
+ * - [parent]/[depth]: the enclosing frame and this frame's distance from the root (`depth == 0`, [isRoot]).
+ * - [step]: a monotonically increasing counter of state-machine transitions, used to keep [ClassicSolver]'s
+ *   `currentContext` in sync with resolution progress and to detect [it.unibo.tuprolog.solve.exception.TimeOutException]s.
+ * - [relevantVariables]: the [Var]s still of interest to some ancestor frame, used to trim [substitution]s of
+ *   variables local to a finished sub-goal when popping back to [parent] (see [isVariableInteresting]).
+ *
+ * @throws IllegalArgumentException if [depth] and [parent] are inconsistent (`depth == 0` iff `parent == null`),
+ * or if [startTime] or [maxDuration] are negative.
+ */
 data class ClassicExecutionContext(
     override val procedure: Struct? = null,
     override val unificator: Unificator = Unificator.default,
@@ -59,16 +87,20 @@ data class ClassicExecutionContext(
         require(maxDuration >= 0)
     }
 
+    /** Whether this is the outermost frame of a resolution (i.e. it has no [parent]). */
     val isRoot: Boolean
         get() = depth == 0
 
+    /** Whether [choicePoints] (or any of its ancestors) still has an alternative to backtrack into. */
     val hasOpenAlternatives: Boolean
         get() = choicePoints?.hasOpenAlternatives ?: false
 
+    /** Whether this frame corresponds to an actual procedure call, i.e. should appear in [logicStackTrace]. */
     @Suppress("MemberVisibilityCanBePrivate")
     val isActivationRecord: Boolean
         get() = parent == null || depth - parent.depth >= 1
 
+    /** This frame and all its ancestors, from here up to (and including) the root, in that order. */
     val pathToRoot: Sequence<ClassicExecutionContext> =
         sequence {
             var current: ClassicExecutionContext? = this@ClassicExecutionContext
@@ -78,6 +110,7 @@ data class ClassicExecutionContext(
             }
         }
 
+    /** The current [goals] entry with [substitution] already applied, or `null` if there is none left to prove. */
     val currentGoal: Term? by lazy {
         if (goals.isOver) null else goals.current?.apply(substitution)
     }
@@ -91,6 +124,12 @@ data class ClassicExecutionContext(
             .cached()
     }
 
+    /**
+     * Whether [variable] is still relevant to this frame or any of its ancestors (i.e. is in [relevantVariables],
+     * or occurs in this frame's [currentGoal] or [query], or in an ancestor's). Used when popping a finished
+     * frame back to its [parent] (in [it.unibo.tuprolog.solve.classic.fsm.StateGoalSelection]) to filter the
+     * [substitution] handed up, discarding bindings for variables local to the finished sub-goal.
+     */
     fun isVariableInteresting(variable: Var) = variable in interestingVariables
 
     override val logicStackTrace: KtList<Struct> by lazy {

@@ -20,6 +20,15 @@ import kotlin.jvm.JvmStatic
  * using Problog's notation, in which the probability is annotated on clauses and facts.
  * Instances of this interface must be immutable.
  *
+ * Every clause or fact asserted into a [ProblogTheory] -- e.g. `0.3::burglary.` (an annotated fact),
+ * `0.9::alarm :- burglary, earthquake.` (an annotated rule), a plain, un-annotated Prolog clause (implicitly
+ * treated as certain, i.e. probability 1.0), or an `evidence/1`/`evidence/2` clause -- is transparently rewritten
+ * into an equivalent, plain Prolog-compliant clause carrying an extra "explanation" argument, so that a regular
+ * Prolog resolution engine (`:solve-classic`) can be reused to enumerate solutions; explanations are later
+ * compiled and weighted-model-counted to compute each solution's probability.
+ * [it.unibo.tuprolog.solve.problog.ProblogSolverFactory] uses this rewriting internally for every
+ * static/dynamic knowledge base it loads.
+ *
  * @author Jason Dellaluce
  * */
 interface ProblogTheory : Theory {
@@ -87,7 +96,7 @@ interface ProblogTheory : Theory {
             clauses: Sequence<Clause>,
         ): ProblogTheory = of(unificator, clauses.asIterable())
 
-        /** Let developers easily create a [[ProblogTheory], while avoiding variables names clashing by using a
+        /** Let developers easily create a [ProblogTheory], while avoiding variables names clashing by using a
          * different [Scope] for each [Clause] */
         @JvmStatic
         @JsName("ofScopes")

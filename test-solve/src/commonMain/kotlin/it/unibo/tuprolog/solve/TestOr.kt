@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve
 
 /**
- * Tests of ';'/2 (= or, disjunction)
+ * Conformance tests for `;`/2 (disjunction, `or`), shared by every `Solver` implementation via the
+ * `TestOr.prototype(solverFactory)` factory (see `TestClassicOr` in `:solve-classic` for a concrete usage).
  */
 interface TestOr : SolverTest {
     companion object {

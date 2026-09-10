@@ -73,6 +73,10 @@ class PermissionError(
     }
 
     companion object {
+        /**
+         * Creates a [PermissionError] reporting that [operation] on [culprit], attempted while executing
+         * [procedure], is forbidden due to lacking [permission].
+         */
         @JsName("of")
         @JvmStatic
         fun of(

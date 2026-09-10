@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.TypeTester
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef as ObjectRefTerm
 
+/** `object_ref(?Term)`: succeeds iff `Term` is an [it.unibo.tuprolog.solve.libs.oop.ObjectRef]. */
 object ObjectRef : TypeTester<ExecutionContext>("object_ref") {
     override fun testType(term: Term): Boolean = term is ObjectRefTerm
 }

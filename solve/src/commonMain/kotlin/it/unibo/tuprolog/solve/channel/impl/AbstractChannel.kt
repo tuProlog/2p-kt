@@ -5,6 +5,11 @@ import it.unibo.tuprolog.solve.channel.Listener
 import it.unibo.tuprolog.utils.synchronizedOnSelf
 import kotlin.concurrent.Volatile
 
+/**
+ * Base [Channel] implementation, thread-safely handling listener registration/notification, [close]/[isClosed]
+ * bookkeeping, and a unique [id] (used to build [Channel.streamTerm]s), so that concrete channels only have to
+ * implement the actual I/O (see [AbstractInputChannel]/[AbstractOutputChannel]).
+ */
 abstract class AbstractChannel<T : Any> : Channel<T> {
     companion object {
         @Volatile
@@ -16,6 +21,7 @@ abstract class AbstractChannel<T : Any> : Channel<T> {
     @Suppress("ktlint:standard:property-naming", "ktlint:standard:backing-property-naming")
     private val _listeners: MutableList<Listener<T?>> = mutableListOf()
 
+    /** A unique identifier for this channel instance, used to build its [Channel.streamTerm]. */
     protected val id = nextId()
 
     override fun addListener(listener: Listener<T?>): Unit =
@@ -33,10 +39,12 @@ abstract class AbstractChannel<T : Any> : Channel<T> {
             _listeners.clear()
         }
 
+    /** Invokes every registered listener with [value]; to be called by subclasses after reading/writing it. */
     protected fun notify(value: T?) {
         _listeners.forEach { it(value) }
     }
 
+    /** @throws IllegalStateException if this channel [isClosed] already. */
     override fun close() =
         synchronizedOnSelf {
             if (!isClosed) {

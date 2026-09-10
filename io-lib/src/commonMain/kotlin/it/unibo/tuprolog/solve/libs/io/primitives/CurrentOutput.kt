@@ -6,6 +6,16 @@ import it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.ensuringArgum
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
+/**
+ * Implements ISO's `current_output/1`: unifies the argument with the `$stream(...)` term of the current output
+ * stream (the context's current output, or its standard output if none was [SetOutput]) if the argument is unbound;
+ * if it is already bound to a `$stream(...)` term, succeeds iff it already denotes that same channel.
+ *
+ * @throws it.unibo.tuprolog.solve.exception.error.ExistenceError if the argument names a well-formed stream term
+ * for which no channel is currently open.
+ * @throws it.unibo.tuprolog.solve.exception.error.DomainError (`stream_or_alias`) if it is bound to something other
+ * than a `$stream(...)` term.
+ */
 object CurrentOutput : UnaryPredicate.NonBacktrackable<ExecutionContext>("current_output") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         val channel = ensuringArgumentIsVarOrStream(0)

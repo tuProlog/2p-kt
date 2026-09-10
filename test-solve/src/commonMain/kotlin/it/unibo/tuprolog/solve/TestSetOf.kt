@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `setof/3` built-in, shared by every `Solver` implementation via the
+ * `TestSetOf.prototype(solverFactory)` factory (see `TestClassicSetOf` in `:solve-classic` for a concrete usage).
+ * Compare with [TestBagOf], which does not sort or deduplicate results.
+ */
 interface TestSetOf : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestSetOfImpl = TestSetOfImpl(solverFactory)

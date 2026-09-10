@@ -3,6 +3,13 @@ package it.unibo.tuprolog.solve.classic.fsm
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 
+/**
+ * "Backtracking", the central hub of the state machine: if [ClassicExecutionContext.choicePoints] is empty (or
+ * exhausted), moves to `StateEnd` emitting a negative solution; otherwise it walks the choice-point queue's
+ * `pathToRoot` for the nearest choice point that still has an alternative, restores that saved execution-context
+ * lineage (see [it.unibo.tuprolog.solve.classic.ChoicePointContext.backtrack]), and resumes at either
+ * `StatePrimitiveExecution` or `StateRuleExecution`, depending on which kind of alternative was pending.
+ */
 data class StateBacktracking(
     override val context: ClassicExecutionContext,
 ) : AbstractState(context) {

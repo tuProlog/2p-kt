@@ -7,6 +7,15 @@ import it.unibo.tuprolog.solve.exception.LogicError
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/**
+ * The syntax error occurs when a sequence of characters being read does not conform to the grammar of Prolog terms,
+ * e.g. while parsing a source file or a `read_term`-style built-in's input.
+ *
+ * @param message the detail message string.
+ * @param cause the cause of this exception.
+ * @param contexts a stack of contexts localising the exception
+ * @param extraData The possible extra data to be carried with the error
+ */
 class SyntaxError constructor(
     message: String? = null,
     cause: Throwable? = null,
@@ -39,6 +48,7 @@ class SyntaxError constructor(
         @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "syntax_error"
 
+        /** Creates a [SyntaxError] with a plain [message], no source position information attached. */
         @JsName("of")
         @JvmStatic
         fun of(
@@ -53,6 +63,7 @@ class SyntaxError constructor(
                 )
             }
 
+        /** Creates a [SyntaxError] reporting that parsing [input] as a single term failed at [row]:[column], with detail [message]. */
         @JsName("whileParsingTerm")
         @JvmStatic
         fun whileParsingTerm(
@@ -70,6 +81,11 @@ class SyntaxError constructor(
                 )
             }
 
+        /**
+         * Creates a [SyntaxError] reporting that parsing the [index]-th clause of [input] failed at [row]:[column],
+         * with detail [message]; the error message includes a caret (`^`) pointing at the offending column, produced
+         * via [errorDetector].
+         */
         @JsName("whileParsingClauses")
         @JvmStatic
         fun whileParsingClauses(
@@ -103,6 +119,10 @@ class SyntaxError constructor(
             return result
         }
 
+        /**
+         * Renders [text]'s [line] (and, for context, [line] `- 1` if present), followed by a `^` marker under
+         * [column] and the optional [message], for use in a human-readable [SyntaxError] report.
+         */
         @JsName("errorDetector")
         @JvmStatic
         fun errorDetector(

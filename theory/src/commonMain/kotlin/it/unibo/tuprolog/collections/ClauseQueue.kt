@@ -9,6 +9,14 @@ import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/**
+ * A [ClauseCollection] that preserves insertion order and exposes it through [addFirst]/[addLast] and
+ * FIFO/LIFO-ordered retrieval ([getFifoOrdered]/[getLifoOrdered]). This is the shape `Theory` uses to store its
+ * clauses, since Prolog's SLD resolution requires clauses to be tried in the order they were asserted; the
+ * ordering is what the `isOrdered` flag of the underlying
+ * `it.unibo.tuprolog.collections.rete.custom.ReteTree` controls.
+ * @see ClauseMultiSet
+ */
 interface ClauseQueue : ClauseCollection {
     /** Gives a freshly produced [ClauseQueue] including the given [Clause] in the first position and the content
      *  of this one **/
@@ -94,6 +102,7 @@ interface ClauseQueue : ClauseCollection {
             clauses: Iterable<Clause>,
         ): ClauseQueue = ReteClauseQueue(unificator, clauses)
 
+        /** Tells whether [queue1] and [queue2] contain the same clauses, in the same order. */
         @JvmStatic
         @JsName("areEquals")
         fun equals(
@@ -101,6 +110,7 @@ interface ClauseQueue : ClauseCollection {
             queue2: ClauseQueue,
         ): Boolean = itemWiseEquals(queue1, queue2)
 
+        /** Computes a hash code for [queue], consistent with [equals]. */
         @JvmStatic
         @JsName("computeHashCode")
         fun hashCode(queue: ClauseQueue): Int =

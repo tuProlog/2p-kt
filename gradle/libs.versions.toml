@@ -3,9 +3,7 @@ kotlin = "2.4.10"
 jvm = "17"
 node = "22-latest"
 jackson = "2.22.2"
-orchid = "0.21.1"
 kotlinx-coroutines = "1.11.0"
-kotlinx-serialization = "1.9.0"
 javafx = "21.0.8"
 npm-yaml = "2.8.1" # yaml
 npm-syncRequest = "6.1.0" # sync-request
@@ -13,8 +11,8 @@ ktMpp = "5.3.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:7.0.24"
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:7.0.23"
 ktMpp-bugFinder = { id = "io.github.gciatto.kt-mpp.bug-finder", version.ref = "ktMpp" }
 ktMpp-documentation = { id = "io.github.gciatto.kt-mpp.documentation", version.ref = "ktMpp" }
 ktMpp-linter = { id = "io.github.gciatto.kt-mpp.linter", version.ref = "ktMpp" }
@@ -27,7 +25,6 @@ ktMpp-multiplatform = { id = "io.github.gciatto.kt-mpp.multiplatform", version.r
 ktMpp-multiProjectHelper = { id = "io.github.gciatto.kt-mpp.multi-project-helper", version.ref = "ktMpp" }
 ktMpp-fatJar = { id = "io.github.gciatto.kt-mpp.fat-jar", version.ref = "ktMpp" }
 gradleMockService = "io.github.gciatto.gradle-mock-service:1.4.0"
-orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 
 [libraries]
 javafx-base = { module = "org.openjfx:javafx-base", version.ref = "javafx" }
@@ -42,11 +39,7 @@ clikt = "com.github.ajalt.clikt:clikt:5.1.0"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 graphviz = "guru.nidi:graphviz-java:0.18.1"
 ktMath = "io.github.gciatto:kt-math:0.10.2"
-orchid-docs = { module = "io.github.javaeden.orchid:OrchidDocs", version.ref = "orchid" }
-orchid-kotlinDocs = { module = "io.github.javaeden.orchid:OrchidKotlindoc", version.ref = "orchid" }
-orchid-pluginDocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", version.ref = "orchid" }
-plantuml = "net.sourceforge.plantuml:plantuml:1.2026.6"
-richtextFx = "org.fxmisc.richtext:richtextfx:0.11.7"
+plantuml = "net.sourceforge.plantuml:plantuml:1.2026.8"
 rsyntaxtextarea = "com.fifesoft:rsyntaxtextarea:3.6.1"
 autocomplete = "com.fifesoft:autocomplete:3.3.3"
 rstaui = "com.fifesoft:rstaui:3.3.2"
@@ -56,3 +49,6 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "
 kotlin-stdlib-jvm = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlin-stdlib-js = { module = "org.jetbrains.kotlin:kotlin-stdlib-js", version.ref = "kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+okio-nodefilesystem = { module = "com.squareup.okio:okio-nodefilesystem", version.ref = "okio" }
+okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }

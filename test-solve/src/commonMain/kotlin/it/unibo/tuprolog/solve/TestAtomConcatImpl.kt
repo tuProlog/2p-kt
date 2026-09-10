@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestAtomConcat], instantiated via [TestAtomConcat.prototype]. */
 class TestAtomConcatImpl(
     private val solverFactory: SolverFactory,
 ) : TestAtomConcat {

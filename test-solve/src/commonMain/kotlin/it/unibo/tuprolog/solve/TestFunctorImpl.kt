@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestFunctor], instantiated via [TestFunctor.prototype]. */
 internal class TestFunctorImpl(
     private val solverFactory: SolverFactory,
 ) : TestFunctor {

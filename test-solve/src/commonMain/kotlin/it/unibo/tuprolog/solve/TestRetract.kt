@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `retract/1` built-in's error cases, shared by every `Solver` implementation via the
+ * `TestRetract.prototype(solverFactory)` factory (see `TestClassicRetract` in `:solve-classic` for a concrete
+ * usage).
+ */
 interface TestRetract : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestRetract = TestRetractImpl(solverFactory)

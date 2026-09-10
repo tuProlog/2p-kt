@@ -13,6 +13,16 @@ import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.plus
 
+/**
+ * "Exception": reached whenever a primitive's response, or an ISO error raised mid-resolution, carries an
+ * exception rather than a substitution. Climbs the execution-context stack (`context.parent`, one frame at a
+ * time, mirroring the paper's "search for a `catch/3` frame") looking for a currently-executing
+ * `catch(Goal, Catcher, Recovery)` whose `Catcher` unifies with the exception's content. If found, the recovery
+ * goal becomes the new goal stream and the machine resumes at `StateGoalSelection`; if the root context is
+ * reached without a match, it moves to `StateHalt` with the exception attached to the emitted solution (an
+ * internal [it.unibo.tuprolog.solve.exception.error.MessageError] is converted to a public
+ * [it.unibo.tuprolog.solve.exception.error.SystemError] at that point).
+ */
 data class StateException(
     override val exception: ResolutionException,
     override val context: ClassicExecutionContext,

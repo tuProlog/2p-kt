@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestNonVar], instantiated via [TestNonVar.prototype]. */
 internal class TestNonVarImpl(
     private val solverFactory: SolverFactory,
 ) : TestNonVar {

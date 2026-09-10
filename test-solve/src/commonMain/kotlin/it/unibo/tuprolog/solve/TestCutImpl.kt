@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestCut], instantiated via [TestCut.prototype]. */
 internal class TestCutImpl(
     private val solverFactory: SolverFactory,
 ) : TestCut {

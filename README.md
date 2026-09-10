@@ -2,14 +2,15 @@
 
 ### Some quick links:
 
-* [Home Page](http://tuprolog.unibo.it)
+<!--* [Home Page](http://tuprolog.unibo.it/2p-kt)-->
+
 * [GitHub Repository](https://github.com/tuProlog/2p-kt) (public repository)
 * [GitLab Repository](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin) (dismissed)
 * [NPM Repository](https://www.npmjs.com/org/tuprolog) (where JS releases are hosted)
 * [Maven Central Repository](https://search.maven.org/search?q=g:it.unibo.tuprolog) (where all stable releases are hosted)
 * [GitHub Maven Repository](https://github.com/orgs/tuProlog/packages?repo_name=2p-kt) (where all releases are hosted, there including dev releases)
-* [Documentation](http://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/) (work in progress)
-* [Presentation](https://github.com/tuProlog/2p-kt-presentation/releases/latest) (currently describing the main API of 2P-Kt)
+* [Documentation](https://tuprolog.github.io/2p-kt/) (work in progress)
+* [Presentation](https://github.com/tuProlog/2p-kt-presentation/releases/latest) (currently describing the main API of 2P-Kt — outdated)
 
 ## Intro
 

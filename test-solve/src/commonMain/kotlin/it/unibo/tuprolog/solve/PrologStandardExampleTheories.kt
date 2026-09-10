@@ -9,7 +9,11 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.typeError
 import it.unibo.tuprolog.theory.Theory
 
 /**
- * An object containing the collection of Prolog Standard databases and requests, testing ISO functionality
+ * An object containing the collection of Prolog Standard databases and requests, testing ISO functionality.
+ *
+ * These are the theories/goals used as worked examples by the ISO Prolog standard itself (e.g. in its sections on
+ * clause selection, conjunction, call/1, catch/throw, negation-as-failure and if-then(-else)), transcribed here so
+ * [TestSolver] and [TestingClauseTheories] can reuse them instead of re-deriving the same fixtures.
  *
  * @author Enrico
  */

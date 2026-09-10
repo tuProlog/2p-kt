@@ -13,8 +13,8 @@ pluginManagement {
 }
 
 plugins {
-    id("com.gradle.develocity") version "4.5.0"
-    id("org.danilopianini.gradle-pre-commit-git-hooks") version "2.1.23"
+    id("com.gradle.develocity") version "4.5.1"
+    id("org.danilopianini.gradle-pre-commit-git-hooks") version "2.1.24"
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
@@ -54,7 +54,7 @@ gitHooks {
 
 rootProject.name = "2p"
 
-// include(":documentation")
+include(":documentation")
 include(":utils")
 include(":core")
 include(":unify")

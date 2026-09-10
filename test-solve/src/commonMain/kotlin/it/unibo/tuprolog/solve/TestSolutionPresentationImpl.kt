@@ -5,6 +5,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+/** Concrete implementation of [TestSolutionPresentation], instantiated via [TestSolutionPresentation.prototype]. */
 class TestSolutionPresentationImpl(
     private val solverFactory: SolverFactory,
 ) : TestSolutionPresentation {

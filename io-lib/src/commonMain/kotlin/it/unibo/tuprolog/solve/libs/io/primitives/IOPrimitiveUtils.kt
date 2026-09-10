@@ -52,6 +52,15 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.collections.List as KtList
 
+/**
+ * Shared helpers backing every I/O primitive of `:io-lib` (`Open3`, `Close1`, `Read1`, `Write2`, ...): argument
+ * validation (raising the appropriate ISO error on mismatch), and the read/write/peek "compute, then reply"
+ * boilerplate common to most stream predicates.
+ *
+ * These are extension members of [Solve.Request], so every primitive implementation calls them, e.g.
+ * `ensuringArgumentIsOutputChannel(0)`, as if they were request methods; none of this is meant to be used outside
+ * of a primitive's `compute`/`computeOne`/`computeAll` body.
+ */
 object IOPrimitiveUtils {
     private val INPUT_STREAM_TERM_PATTERN by lazy { InputChannel.streamTerm() }
     private val OUTPUT_STREAM_TERM_PATTERN by lazy { OutputChannel.streamTerm() }
@@ -145,6 +154,11 @@ object IOPrimitiveUtils {
 
     private fun singletons(vNames: KtList<Pair<Atom, Var>>? = null) = vn("singletons", vNames)
 
+    /**
+     * The `stream_property/2` properties (`input`/`output`, plus one `alias(_)` per alias other than
+     * [ChannelStore.CURRENT]) that hold for [channel] in this request's context, always terminated by `type(text)`
+     * since only text streams are supported.
+     */
     @Suppress("UNCHECKED_CAST")
     fun <C : ExecutionContext, T : Any> Solve.Request<C>.propertiesOf(channel: Channel<T>): Sequence<Struct> =
         sequence {
@@ -171,12 +185,19 @@ object IOPrimitiveUtils {
             yield(PROPERTY_TYPE_TEXT)
         }
 
+    /** The input channel implicitly targeted by `get_char/1`-like unary predicates: the context's current input, or its standard input. */
     val <C : ExecutionContext> Solve.Request<C>.currentInputChannel: InputChannel<String>
         get() = context.inputChannels.let { it.current ?: it.stdIn }
 
+    /** The output channel implicitly targeted by `put_char/1`-like unary predicates: the context's current output, or its standard output. */
     val <C : ExecutionContext> Solve.Request<C>.currentOutputChannel: OutputChannel<String>
         get() = context.outputChannels.let { it.current ?: it.stdOut }
 
+    /**
+     * Ensures [term] is one of the `stream_property/2` shapes (`input`, `output`, `alias(_)`, `type(_)`,
+     * `eof_action(_)`, `reposition(_)`), whether or not this implementation actually reports it.
+     * @throws DomainError (`stream_property`) if [term] is none of the above.
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidProperty(term: Term): Term =
         if (validPropertiesPattern.any { match(term, it) }) {
@@ -185,6 +206,11 @@ object IOPrimitiveUtils {
             throw DomainError.forTerm(context, STREAM_PROPERTY, term)
         }
 
+    /**
+     * Ensures [term] is one of the `stream_property/2` shapes this implementation actually reports for `open/4`'s
+     * option list (`input`, `output`, `alias(_)`, `type(text)`, `eof_action(eof_code)`, `reposition(false)`).
+     * @throws SystemError if [term] is a valid-but-unsupported property value (e.g. `type(binary)`).
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsSupportedProperty(term: Term): Term =
         if (supportedPropertiesPattern.any { match(term, it) }) {
@@ -193,6 +219,10 @@ object IOPrimitiveUtils {
             throw SystemError.forUncaughtException(context, IllegalStateException("unsupported option $term"))
         }
 
+    /**
+     * Ensures [term] is one of the `write_term/2,3` option shapes (`quoted(_)`, `ignore_ops(_)`, `numbervars(_)`).
+     * @throws DomainError (`write_option`) if [term] is none of the above.
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidOption(term: Term): Term =
         if (validOptionsPattern.any { match(term, it) }) {
@@ -201,6 +231,10 @@ object IOPrimitiveUtils {
             throw DomainError.forTerm(context, WRITE_OPTION, term)
         }
 
+    /**
+     * Ensures [term] is one of the `read_term/2,3` info shapes (`variables(_)`, `variable_names(_)`, `singletons(_)`).
+     * @throws DomainError (`read_option`) if [term] is none of the above.
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidInfo(term: Term): Term =
         if (validInfoPattern.any { match(term, it) }) {
@@ -209,6 +243,13 @@ object IOPrimitiveUtils {
             throw DomainError.forTerm(context, READ_OPTION, term)
         }
 
+    /**
+     * Ensures the argument at [index] is a proper list of `write_term/2,3` options, validating each element via
+     * [ensureTermIsValidOption].
+     * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if it is a partial list or unbound.
+     * @throws TypeError if it is not a list.
+     * @throws DomainError (`write_option`) if any element is not a valid option shape.
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsValidOptionList(index: Int): Solve.Request<C> {
         ensuringArgumentIsList(index)
@@ -219,6 +260,12 @@ object IOPrimitiveUtils {
         return this
     }
 
+    /**
+     * Ensures the argument at [index] is either unbound (returning `null`, meaning "report every info") or a
+     * proper list of `read_term/2,3` info shapes, validating each element via [ensureTermIsValidInfo].
+     * @throws TypeError if it is bound but not a list.
+     * @throws DomainError (`read_option`) if any element is not a valid info shape.
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsValidInfoList(index: Int): KtList<Term>? =
         when (val list = arguments[index]) {
@@ -256,6 +303,12 @@ object IOPrimitiveUtils {
             ?.let { unificator.mgu(it, value) }
             ?: Substitution.empty()
 
+    /**
+     * Reads the `write_term/2,3` option list at [index] (via [ensuringArgumentIsValidOptionList]) and turns it into
+     * the [TermFormatter] it describes: `quoted(true)` selects [QUOTED_IF_NECESSARY] atom/functor quoting,
+     * `ignore_ops(true)` disables operator notation, and `numbervars(true)` renders `'$VAR'(N)` terms as letters.
+     * Options not present in the list default to `false`.
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsFormatter(index: Int): TermFormatter {
         ensuringArgumentIsValidOptionList(index)
@@ -276,6 +329,11 @@ object IOPrimitiveUtils {
         return TermFormatter.of(UNDERSCORE, opFormat, funcFormat, numberVars, context.operators)
     }
 
+    /**
+     * Ensures the argument at [index] of `stream_property/2` is either unbound, or one of `input`, `output`,
+     * `alias(_)` (the only properties this predicate accepts as a query pattern, as opposed to a reported result).
+     * @throws DomainError (`stream_property`) otherwise.
+     */
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStreamProperty(index: Int): Solve.Request<C> {
         val term = arguments[index]
         when (term) {
@@ -289,6 +347,13 @@ object IOPrimitiveUtils {
         throw DomainError.forArgument(context, signature, STREAM_PROPERTY, term, index)
     }
 
+    /**
+     * Ensures the argument at [index] is an atom parsing (via [Url.of]) into a valid source/sink [Url], as required
+     * by `open/3,4` and `consult/1`.
+     * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if it is unbound.
+     * @throws DomainError (`source_sink`) if it is bound but not an atom, or is an atom that does not parse into a
+     * valid [Url] (including as a bare filesystem path, see [Url.Companion.of]).
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsUrl(index: Int): Url {
         ensuringArgumentIsInstantiated(index)
@@ -304,6 +369,13 @@ object IOPrimitiveUtils {
         }
     }
 
+    /**
+     * Ensures the argument at [index] is one of the `read`/`write`/`append` atoms, as required by `open/3,4`'s
+     * `mode` argument, and returns the corresponding [IOMode].
+     * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if it is unbound.
+     * @throws TypeError if it is bound but not an atom.
+     * @throws DomainError (`io_mode`) if it is an atom but not one of [IOMode.atomValues].
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsIOMode(index: Int): IOMode {
         ensuringArgumentIsInstantiated(index)
@@ -315,6 +387,13 @@ object IOPrimitiveUtils {
         return IOMode.valueOf(term.value.uppercase())
     }
 
+    /**
+     * Ensures the argument at [index] is either unbound (returning `null`) or a `$stream(...)` term identifying an
+     * already-open channel (returning it), as required by the single argument of `current_input/1`/`current_output/1`.
+     * @throws it.unibo.tuprolog.solve.exception.error.ExistenceError (`stream`) if it is a well-formed stream term
+     * for which no channel is currently open.
+     * @throws DomainError (`stream_or_alias`) if it is bound to something other than a `$stream(...)` term.
+     */
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVarOrStream(index: Int): Channel<String>? {
         val term = arguments[index]
         when (term) {
@@ -338,6 +417,11 @@ object IOPrimitiveUtils {
         throw DomainError.forArgument(context, signature, STREAM_OR_ALIAS, term, index)
     }
 
+    /**
+     * Ensures the argument at [index] is either unbound, `end_of_file`, or a one-character atom, as required by the
+     * "character" argument of `get_char/1,2`, `peek_char/1,2` and `put_char/1,2`.
+     * @throws TypeError (`in_character`) otherwise.
+     */
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVarOrChar(index: Int): Solve.Request<C> =
         when (val arg = arguments[index]) {
             is Var -> this
@@ -350,6 +434,12 @@ object IOPrimitiveUtils {
             else -> throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
         }
 
+    /**
+     * Ensures the argument at [index] is either unbound, `-1` (end-of-file), or a valid character code, as
+     * required by the "code" argument of `get_code/1,2` and `peek_code/1,2`.
+     * @throws TypeError if it is bound but not an [Integer].
+     * @throws RepresentationError (`character_code`) if it is an [Integer] outside the representable character-code range.
+     */
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVarOrCharCode(index: Int): Solve.Request<C> {
         val term = arguments[index]
         return when {
@@ -361,6 +451,15 @@ object IOPrimitiveUtils {
         }
     }
 
+    /**
+     * Ensures the argument at [index] denotes an already-open [Channel], resolved either by alias (a bound atom
+     * registered in the context's input or output channels) or by `$stream(...)` term, as required by predicates
+     * taking a `Stream_or_alias` argument (e.g. `close/1`, `stream_property/2`'s subject).
+     * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if it is unbound.
+     * @throws it.unibo.tuprolog.solve.exception.error.ExistenceError (`source_sink`/`stream`) if it names an alias
+     * or a stream term for which no channel is currently open.
+     * @throws DomainError (`stream_or_alias`) if it is neither an atom nor a `$stream(...)` term.
+     */
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsChannel(index: Int): Channel<String> {
         ensuringArgumentIsInstantiated(index)
         ensuringArgumentIsStruct(index)
@@ -390,18 +489,30 @@ object IOPrimitiveUtils {
         }
     }
 
+    /**
+     * Same as [ensuringArgumentIsChannel], additionally requiring the resolved channel to be an [InputChannel], as
+     * required by predicates reading from a stream (e.g. `get_char/2`, `read/2`).
+     * @throws DomainError (`stream_type`, i.e. `permission_error(input, stream, _)`-like) if the channel resolves
+     * to an [OutputChannel] instead.
+     */
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInputChannel(index: Int): InputChannel<String> =
         when (val channel = ensuringArgumentIsChannel(index)) {
             is InputChannel<String> -> channel
             else -> throw DomainError.forArgument(context, signature, STREAM_TYPE, arguments[index], index)
         }
 
+    /**
+     * Same as [ensuringArgumentIsChannel], additionally requiring the resolved channel to be an [OutputChannel], as
+     * required by predicates writing to a stream (e.g. `put_char/2`, `write/2`).
+     * @throws DomainError (`stream_type`) if the channel resolves to an [InputChannel] instead.
+     */
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsOutputChannel(index: Int): OutputChannel<String> =
         when (val channel = ensuringArgumentIsChannel(index)) {
             is OutputChannel<String> -> channel
             else -> throw DomainError.forArgument(context, signature, STREAM_TYPE, arguments[index], index)
         }
 
+    /** Formats [term] via [formatter] and writes it to [channel], replying success, or failing on a closed channel. */
     fun Solve.Request<ExecutionContext>.writeTermAndReply(
         channel: OutputChannel<String>,
         term: Term,
@@ -414,6 +525,7 @@ object IOPrimitiveUtils {
             replyFail()
         }
 
+    /** Writes the character coded by [arg] to [channel], replying success, or failing on a closed channel. */
     fun Solve.Request<ExecutionContext>.writeCodeAndReply(
         channel: OutputChannel<String>,
         arg: Integer,
@@ -425,6 +537,7 @@ object IOPrimitiveUtils {
             replyFail()
         }
 
+    /** Writes the character [arg] to [channel], replying success, or failing on a closed channel. */
     fun Solve.Request<ExecutionContext>.writeCharAndReply(
         channel: OutputChannel<String>,
         arg: Atom,
@@ -436,6 +549,7 @@ object IOPrimitiveUtils {
             replyFail()
         }
 
+    /** Peeks the next character code from [channel] (`-1` at end of stream) and unifies [arg] with it, or fails on a closed channel. */
     fun Solve.Request<ExecutionContext>.peekCodeAndReply(
         channel: InputChannel<String>,
         arg: Term,
@@ -447,6 +561,7 @@ object IOPrimitiveUtils {
             replyFail()
         }
 
+    /** Peeks the next character from [channel] (`end_of_file` atom at end of stream) and unifies [arg] with it, or fails on a closed channel. */
     fun Solve.Request<ExecutionContext>.peekCharAndReply(
         channel: InputChannel<String>,
         arg: Term,
@@ -458,6 +573,7 @@ object IOPrimitiveUtils {
             replyFail()
         }
 
+    /** Reads (consuming it) the next character code from [channel] (`-1` at end of stream) and unifies [arg] with it, or fails on a closed channel. */
     fun Solve.Request<ExecutionContext>.readCodeAndReply(
         channel: InputChannel<String>,
         arg: Term,
@@ -469,6 +585,7 @@ object IOPrimitiveUtils {
             replyFail()
         }
 
+    /** Reads (consuming it) the next character from [channel] (`end_of_file` atom at end of stream) and unifies [arg] with it, or fails on a closed channel. */
     fun Solve.Request<ExecutionContext>.readCharAndReply(
         channel: InputChannel<String>,
         arg: Term,
@@ -496,6 +613,19 @@ object IOPrimitiveUtils {
             .flatMap { (n, vs) -> vs.asSequence().map { n to it } }
             .toList()
 
+    /**
+     * Implements `read/1,2` and `read_term/2,3`: parses the next [it.unibo.tuprolog.core.Term] out of [channel]
+     * (via [asTermChannel]) and unifies it with [arg], failing (not erroring) if the channel has no more terms
+     * available.
+     *
+     * When [lastIsInfoList] (i.e. this is a `read_term/2,3` call), the last argument is read as a list of
+     * `variables(_)`/`variable_names(_)`/`singletons(_)` info requests (via [ensuringArgumentIsValidInfoList]) and
+     * unified with the corresponding read-term metadata; for plain `read/1,2`, that metadata is discarded.
+     *
+     * @throws SystemError if the underlying channel does not support reading terms at all (e.g. JS's not-yet-supported
+     * term channels, or a channel closed mid-read).
+     * @throws SyntaxError if the channel's next term is malformed Prolog syntax.
+     */
     fun Solve.Request<ExecutionContext>.readTermAndReply(
         channel: InputChannel<String>,
         arg: Term,
@@ -542,6 +672,22 @@ object IOPrimitiveUtils {
     private val Term?.alias: String?
         get() = ((this as? Struct)?.getArgAt(0) as? Atom)?.value
 
+    /**
+     * Implements `open/3,4`: validates the `SourceSink`/`Mode`/`Stream`/`Options` arguments (`third` is the `Stream`
+     * output argument, shared by both arities), opens the corresponding channel via
+     * [it.unibo.tuprolog.solve.libs.io.openInputChannel]/[it.unibo.tuprolog.solve.libs.io.openOutputChannel], and
+     * registers it (under the `alias(_)` option, if given, or an auto-generated one) before replying with the new
+     * `$stream(...)` term unified with [third].
+     *
+     * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if `SourceSink`, `Mode` or `Options` is unbound.
+     * @throws DomainError (`source_sink`, `io_mode`, `stream_property`) if `SourceSink` is not a valid [Url],
+     * `Mode` is not `read`/`write`/`append`, or an element of `Options` is not a `stream_property/2` shape.
+     * @throws SystemError if an element of `Options` is a stream property this implementation does not report
+     * (e.g. `type(binary)`).
+     * @throws it.unibo.tuprolog.solve.libs.io.exceptions.IOException if the resource cannot actually be opened
+     * (e.g. missing file, writing attempted on a non-file [Url]), converted into a
+     * [it.unibo.tuprolog.solve.exception.error.SystemError].
+     */
     fun Solve.Request<ExecutionContext>.open(third: Term): Solve.Response {
         val url = ensuringArgumentIsUrl(0)
         val mode = ensuringArgumentIsIOMode(1)

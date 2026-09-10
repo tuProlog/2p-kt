@@ -49,6 +49,10 @@ class SystemError constructor(
         @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "system_error"
 
+        /**
+         * Creates a [SystemError] wrapping an uncaught Kotlin [exception] (as opposed to a Prolog [LogicError]),
+         * e.g. one thrown by faulty primitive/library implementation code, setting it as [SystemError.cause].
+         */
         @JsName("forUncaughtKtException")
         @JvmStatic
         fun forUncaughtException(
@@ -64,6 +68,7 @@ class SystemError constructor(
                 )
             }
 
+        /** Creates a [SystemError] wrapping an uncaught Prolog [exception] term, i.e. one not recognized as any known [LogicError] type. */
         @JsName("forUncaughtException")
         @JvmStatic
         fun forUncaughtException(
@@ -84,6 +89,7 @@ class SystemError constructor(
                 else -> errorStruct.pretty()
             }
 
+        /** Creates a [SystemError] wrapping another [LogicError] that was itself left uncaught, reusing its [LogicError.contexts]. */
         @JsName("forUncaughtError")
         @JvmStatic
         fun forUncaughtError(exception: LogicError): SystemError =

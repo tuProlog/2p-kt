@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.concurrent
 
 import java.util.concurrent.atomic.AtomicInteger
 
+/** The JVM [AtomicInt] implementation, delegating every operation to a `java.util.concurrent.atomic.AtomicInteger`. */
 class AtomicIntJvm private constructor(
     private val atomicValue: AtomicInteger,
 ) : AtomicInt {

@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestSetOf], instantiated via [TestSetOf.prototype]. */
 class TestSetOfImpl(
     private val solverFactory: SolverFactory,
 ) : TestSetOf {

@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.solve
 
 /**
- * Tests of findall
+ * Conformance tests for the ISO `findall/3` built-in, shared by every `Solver` implementation via the
+ * `TestFindAll.prototype(solverFactory)` factory (see `TestClassicFindAll` in `:solve-classic` for a concrete
+ * usage). [errorSignature] is the [Signature] reported by errors raised while resolving `findall`'s goal argument.
  */
 interface TestFindAll : SolverTest {
     companion object {

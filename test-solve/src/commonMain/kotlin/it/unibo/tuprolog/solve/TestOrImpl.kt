@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestOr], instantiated via [TestOr.prototype]. */
 internal class TestOrImpl(
     private val solverFactory: SolverFactory,
 ) : TestOr {

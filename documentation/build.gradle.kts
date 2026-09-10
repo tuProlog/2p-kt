@@ -1,65 +1,87 @@
+import java.io.OutputStream
+import java.io.PrintStream
+
 plugins {
-    alias(libs.plugins.orchid)
+    id("org.jetbrains.dokka")
 }
 
-configurations {
-    getByName("orchidRuntimeOnly") {
-        resolutionStrategy {
-            force(libs.plantuml)
-        }
-    }
-    create("plantuml") {
-        isTransitive = true
+val plantUml = configurations.create("plantUml") {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named<Usage>(Usage.JAVA_RUNTIME))
+        attribute(
+            TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+            objects.named<TargetJvmEnvironment>(TargetJvmEnvironment.STANDARD_JVM),
+        )
     }
 }
 
 dependencies {
-    orchidRuntimeOnly(libs.orchid.docs)
-    orchidRuntimeOnly(libs.orchid.kotlinDocs)
-    orchidRuntimeOnly(libs.orchid.pluginDocs)
-
-    val plantuml by configurations.getting
-
-    plantuml(libs.plantuml)
+    rootProject.subprojects
+        .filter { it.path != project.path }
+        .forEach { add("dokka", project(it.path)) }
+    plantUml(libs.plantuml)
 }
 
-@Suppress("Deprecation")
-repositories {
-    jcenter()
-    mavenCentral()
-    maven("https://kotlin.bintray.com/kotlinx")
+val diagramsDir = file("diagrams")
+val generatedDiagramsDir = file("docs/assets/diagrams")
+val plantUmlFiles = fileTree(diagramsDir) { include("**/*.puml") }
+
+val generateDiagrams = tasks.register<JavaExec>("generateDiagrams") {
+    description = "Generate diagrams from PlantUML files"
+    group = "MkDocs"
+    inputs.files(plantUmlFiles)
+    outputs.dir(generatedDiagramsDir)
+    classpath = plantUml
+    mainClass.set("net.sourceforge.plantuml.Run")
+    doFirst { generatedDiagramsDir.mkdirs() }
+    // ponytail: smetana is PlantUML's pure-Java layout engine, used to avoid a native Graphviz
+    // dependency in CI/dev machines; switch to the (higher-fidelity) `dot`-based layout by installing
+    // Graphviz and dropping this flag if diagram layout quality ever becomes an issue.
+    args("-tsvg", "-Playout=smetana", "-o", generatedDiagramsDir.absolutePath)
+    args(plantUmlFiles.map { it.absolutePath })
 }
 
-// env ORG_GRADLE_PROJECT_orchidBaseUrl
-val orchidBaseUrl: String? by project
+val mkdocsSiteDir = layout.buildDirectory.dir("site")
 
-orchid {
-    theme = "Editorial"
-    baseUrl = orchidBaseUrl
-    version = rootProject.version.toString()
-    args = listOf("--experimentalSourceDoc")
+val checkMkdocsCommandExists = tasks.register<Exec>("checkMkdocsCommandExists") {
+    description = "Check if the mkdocs command is available"
+    group = "MkDocs"
+    commandLine("mkdocs", "--version")
 }
 
-fun File.changeExtension(ext: String): File {
-    return File(parentFile, "$nameWithoutExtension.$ext")
+fun Exec.configureMkdocs(vararg commands: String) {
+    group = "MkDocs"
+    dependsOn("generateDiagrams")
+    dependsOn("checkMkdocsCommandExists")
+    inputs.dir("docs")
+    inputs.file("mkdocs.yml")
+    outputs.dir(mkdocsSiteDir)
+    workingDir = projectDir
+    standardOutput = System.out
+    errorOutput = System.out
+    commandLine(*commands)
 }
 
-val plantUmlFiles = fileTree("$projectDir/src/orchid/resources/assets/diagrams")
-    .also { it.include("**/*.puml").include("**/*.uml") }
+val mkdocsBuild = tasks.register<Exec>("mkdocsBuild") {
+    description = "Build the MkDocs site"
+    configureMkdocs("mkdocs", "build", "--strict", "--site-dir", mkdocsSiteDir.get().asFile.absolutePath)
+}
 
-if (!plantUmlFiles.isEmpty) {
-    val generateUmlDiagramsInSvg by tasks.creating(JavaExec::class) {
-        inputs.files(plantUmlFiles)
-        outputs.files(
-            plantUmlFiles
-                .map { it.changeExtension("svg").absolutePath }
-                .map { it.replace("diagrams", "generated") }
-                .map(::File)
-        )
-        classpath = configurations.getByName("plantuml")
-        mainClass.set("net.sourceforge.plantuml.Run")
-        args("-tsvg", "-o", "$projectDir/src/orchid/resources/assets/generated")
-        args(plantUmlFiles.map { it.absolutePath })
-    }
-    tasks.getByName("orchidClasses").dependsOn(generateUmlDiagramsInSvg)
+val assembleSite = tasks.register<Copy>("assembleSite") {
+    description = "Build the Assemble site"
+    group = "MkDocs"
+    dependsOn(mkdocsBuild, "dokkaGenerateHtml")
+    from(mkdocsSiteDir)
+    from(layout.buildDirectory.dir("dokka/html")) { into("api") }
+    into(layout.buildDirectory.dir("assembledSite"))
+}
+
+//tasks.named("assemble") {
+//    dependsOn(assembleSite)
+//}
+
+val serveMkdocs = tasks.register<Exec>("serveMkdocs") {
+    description = "Serve the MkDocs site locally"
+    configureMkdocs("mkdocs", "serve")
+    outputs.upToDateWhen { false }
 }

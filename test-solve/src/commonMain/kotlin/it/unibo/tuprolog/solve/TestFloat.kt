@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `float/1` type-checking built-in, shared by every `Solver` implementation via the
+ * `TestFloat.prototype(solverFactory)` factory (see `TestClassicFloat` in `:solve-classic` for a concrete usage).
+ */
 interface TestFloat : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestFloat = TestFloatImpl(solverFactory)

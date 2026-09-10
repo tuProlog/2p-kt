@@ -7,6 +7,13 @@ import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.utils.Cursor
 
+/**
+ * "Primitive Execution": applies the outcome of one `Solve.Response` produced by a primitive (see
+ * [StatePrimitiveSelection]) to the branch's context -- a successful response's side effects and substitution are
+ * merged in and resolution continues with [StateGoalSelection] on the remaining goals; a failed response
+ * (`Solution.No`) ends this branch as a failure; a halting response, or an uncaught [ResolutionException] thrown
+ * while computing it, moves to [StateException].
+ */
 data class StatePrimitiveExecution(
     override val context: ConcurrentExecutionContext,
 ) : AbstractState(context) {

@@ -3,7 +3,12 @@ package it.unibo.tuprolog.core.exception
 import it.unibo.tuprolog.core.Substitution
 import kotlin.jvm.JvmOverloads
 
+/**
+ * Thrown when a [Substitution] was expected to be (or to produce) a [Substitution.Unifier], but turned out to
+ * be a [Substitution.Fail] instead — e.g. by `Scope.unifierOf` when the given assignments are contradictory.
+ */
 open class SubstitutionException : TuPrologException {
+    /** The offending [Substitution] (typically [Substitution.failed]). */
     val substitution: Substitution
 
     @JvmOverloads

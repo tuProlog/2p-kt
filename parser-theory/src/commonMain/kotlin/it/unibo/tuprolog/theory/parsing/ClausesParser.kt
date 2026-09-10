@@ -13,15 +13,27 @@ import kotlin.jvm.JvmStatic
  *
  * This layer converts the concrete syntax produced by `parser-impl` into tuProlog clauses. Each
  * clause gets a fresh variable scope. Recognized `op/3` goals update the session operator table
- * only after their containing clause has been parsed, so they affect subsequent clauses.
- * Low-level syntax failures and invalid operator declarations are exposed as
- * [it.unibo.tuprolog.core.parsing.ParseException], whose `clauseIndex` identifies the zero-based
- * failing clause.
+ * only after their containing clause has been parsed, so they affect subsequent clauses but never
+ * the directive that declares them. Low-level syntax failures and invalid operator declarations
+ * are exposed as [it.unibo.tuprolog.core.parsing.ParseException], whose `clauseIndex` identifies
+ * the zero-based failing clause:
  *
  * ```kotlin
- * val parser = ClausesParser.withDefaultOperators()
- * val theory = parser.parseTheory("parent(alice, bob). ancestor(X, Y) :- parent(X, Y).")
+ * val parser = ClausesParser.withStandardOperators()
+ * val theory =
+ *     parser.parseTheory(
+ *         """
+ *         :- op(900, xfy, '::').
+ *         parent(alice, bob).
+ *         ancestor(X, Y) :- parent(X, Y).
+ *         1 :: 2 :: nil.
+ *         """.trimIndent(),
+ *     )
  * ```
+ *
+ * Here `::` is only usable as an infix operator starting from the clause that follows the `op/3`
+ * directive. To parse a single term or clause instead of a whole theory, use
+ * [it.unibo.tuprolog.core.parsing.TermParser].
  *
  * @property defaultOperatorSet initial operators used by overloads that omit them
  */

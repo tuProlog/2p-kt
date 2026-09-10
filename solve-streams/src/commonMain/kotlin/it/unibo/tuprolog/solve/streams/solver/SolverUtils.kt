@@ -21,13 +21,14 @@ import it.unibo.tuprolog.solve.sideffects.SideEffect
 import kotlin.jvm.JvmName
 import kotlin.collections.List as KtList
 
-/** Check whether the receiver term is a well-formed predication */
+/** Checks whether the receiver term is a well-formed predication, i.e. an [it.unibo.tuprolog.core.Atom] or [Struct] (see [Clause.bodyWellFormedVisitor]). */
 fun Term.isWellFormed(): Boolean = accept(Clause.bodyWellFormedVisitor)
 
 /**
- * Prepares the receiver Goal for execution
+ * Prepares the receiver goal for execution, wrapping it into a `call/1` when needed so it goes through the
+ * ISO callability check before being solved.
  *
- * For example, the goal `A` is transformed, after preparation for execution, as the Term: `call(A)`
+ * For example, the goal `A` is transformed, after preparation for execution, into the [Struct] `call(A)`.
  */
 fun Term.prepareForExecutionAsGoal(): Struct =
     // exploits "Clause" implementation of prepareForExecution() to do that
@@ -38,7 +39,15 @@ fun Term.prepareForExecutionAsGoal(): Struct =
         .single()
         .castTo()
 
-/** Computes the ordered selection of elements, lazily, according to provided selection strategy */
+/**
+ * Lazily reorders this sequence of candidates according to [selectionStrategy]: repeatedly asks
+ * [selectionStrategy] to pick one element out of what remains, yields it, then recurses on the rest -- so the
+ * first pick drives the order of the whole resulting sequence, one element at a time, without ever fully
+ * consuming the receiver upfront.
+ *
+ * This is how [it.unibo.tuprolog.solve.streams.SolverStrategies]'s `predicationChoiceStrategy`/
+ * `clauseChoiceStrategy` are applied to a sequence of candidate predications/clauses during resolution.
+ */
 fun <E> Sequence<E>.orderWithStrategy(
     context: ExecutionContext,
     selectionStrategy: (Sequence<E>, ExecutionContext) -> E,
@@ -57,7 +66,7 @@ fun <E> Sequence<E>.orderWithStrategy(
         else -> emptySequence()
     }
 
-/** Checks if this sequence of elements holds more than one element, lazily */
+/** Lazily checks whether [elements] holds more than one element, consuming at most two of them. */
 fun moreThanOne(elements: Sequence<*>): Boolean =
     with(elements.iterator()) {
         when {
@@ -103,7 +112,11 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
         startTime = requestIssuingInstant,
     )
 
-/** Responds to this solve request forwarding the provided [otherResponse] data */
+/**
+ * Builds a [Solve.Response] to this request that forwards [otherResponse]'s [Solve.Response.solution] and
+ * [Solve.Response.sideEffects], falling back to this request's own [ExecutionContext]'s side-effect manager
+ * when [otherResponse] carries none.
+ */
 fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): Solve.Response =
     with(otherResponse) {
         replyWith(
@@ -113,7 +126,12 @@ fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): So
         )
     }
 
-/** Utility function to add side effects without duplicating them */
+/**
+ * Appends [toAddSideEffects] to this list of side effects, first dropping from its front as many elements as
+ * this list has that also occur (by reference identity, not equality) somewhere in [toAddSideEffects] -- used
+ * when merging a child request's accumulated side effects back into its parent's, to avoid recording the same
+ * [SideEffect] instance twice when [toAddSideEffects] already carries this list's elements as a prefix.
+ */
 fun KtList<SideEffect>.addWithNoDuplicates(toAddSideEffects: KtList<SideEffect>): KtList<SideEffect> {
     var duplicatedCount = 0
     forEach { sideEffect ->

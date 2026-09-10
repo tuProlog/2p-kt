@@ -8,13 +8,32 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/**
+ * A general-purpose, immutable container of [Clause]s, matched by unification rather than by equality: this is
+ * the low-level storage abstraction that a `it.unibo.tuprolog.theory.Theory` builds its Prolog-flavoured API
+ * (`assertA`/`assertZ`/`retract`) on top of. Every mutating operation ([add], [addAll], [retrieve],
+ * [retrieveAll]) returns a *new* collection, leaving `this` untouched — see [MutableClauseCollection] for the
+ * in-place counterpart.
+ *
+ * The default implementations returned by this interface's factory methods (and by [ClauseQueue]/
+ * [ClauseMultiSet]) are backed by a RETE-style discrimination tree (see
+ * `it.unibo.tuprolog.collections.rete.custom.ReteTree`) indexed by directive-vs-rule, functor, arity and
+ * first-argument shape, so [get]/[retrieve]-like lookups only re-check clauses that could plausibly unify with
+ * the query, rather than scanning the whole collection.
+ *
+ * @see ClauseQueue
+ * @see ClauseMultiSet
+ */
 interface ClauseCollection : Iterable<Clause> {
+    /** The [Unificator] used to match clauses against each other in this collection. */
     @JsName("unificator")
     val unificator: Unificator
 
+    /** Only the clauses in this collection that are [Directive]s. */
     @JsName("directive")
     val directives: Iterable<Directive>
 
+    /** Only the clauses in this collection that are [Rule]s. */
     @JsName("rules")
     val rules: Iterable<Rule>
 
@@ -26,14 +45,15 @@ interface ClauseCollection : Iterable<Clause> {
     @JsName("isEmpty")
     fun isEmpty(): Boolean
 
+    /** Tells if the [ClauseCollection] contains at least one [Clause]; the negation of [isEmpty]. **/
     @JsName("isNonEmpty")
     fun isNonEmpty(): Boolean
 
-    /** Tells if the [ClauseCollection] contains the given [Clause] **/
+    /** Tells if the [ClauseCollection] contains a clause unifying against the given [element] **/
     @JsName("contains")
     operator fun contains(element: Clause): Boolean
 
-    /** Tells if the [ClauseCollection] contains all the given [Clause] **/
+    /** Tells if, for each of the given [elements], the [ClauseCollection] contains a unifying clause **/
     @JsName("containsAll")
     fun containsAll(elements: Iterable<Clause>): Boolean
 
@@ -55,6 +75,8 @@ interface ClauseCollection : Iterable<Clause> {
     @JsName("retrieveAll")
     fun retrieveAll(clause: Clause): RetrieveResult<out ClauseCollection>
 
+    /** Iterates over all the clauses in this collection, in an order that depends on the concrete
+     *  implementation (e.g. insertion order for a [ClauseQueue], unspecified for a [ClauseMultiSet]). */
     override fun iterator(): Iterator<Clause>
 
     companion object {

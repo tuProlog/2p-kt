@@ -4,6 +4,10 @@ import it.unibo.tuprolog.core.impl.DirectiveImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
+/**
+ * A [Clause] with no [head], i.e. `:- body`, such as `:- initialization(main).`. Directives typically carry
+ * instructions executed by the Prolog engine at load time, rather than facts/rules meant to be queried.
+ */
 interface Directive : Clause {
     override val head: Struct?
         get() = null
@@ -24,10 +28,16 @@ interface Directive : Clause {
     override fun asDirective(): Directive = this
 
     companion object {
+        /**
+         * Creates a [Directive] with the given [bodies] goals, folded into a single [Term] via [Tuple] when
+         * there is more than one.
+         * @throws IllegalArgumentException if [bodies] is empty
+         */
         @JvmStatic
         @JsName("ofSequence")
         fun of(bodies: Sequence<Term>): Directive = of(bodies.asIterable())
 
+        /** @see of */
         @JvmStatic
         @JsName("ofIterable")
         fun of(bodies: Iterable<Term>): Directive {
@@ -35,6 +45,7 @@ interface Directive : Clause {
             return DirectiveImpl(Tuple.wrapIfNeeded(bodies))
         }
 
+        /** @see of */
         @JvmStatic
         @JsName("of")
         fun of(
@@ -42,6 +53,10 @@ interface Directive : Clause {
             vararg body: Term,
         ): Directive = of(listOf(body1, *body))
 
+        /**
+         * Creates a [Directive] template with [length] anonymous-variable goals.
+         * @throws IllegalArgumentException if [length] is not positive
+         */
         @JvmStatic
         @JsName("template")
         fun template(length: Int = 1): Directive {

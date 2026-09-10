@@ -7,12 +7,22 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 
 /**
+ * `fluent_reduce(+Expression, ?Result)`: reduces a fluent chain of accesses -- as built by the
+ * `.`/2 operator ([it.unibo.tuprolog.solve.libs.oop.rules.Dot], e.g. `Obj.foo(1).bar` parses into
+ * the list `[Obj, foo(1), bar]`) -- down to a single `Result`, by repeatedly invoking each element
+ * of the list as a method on the result of invoking the previous one:
+ *
  * ```prolog
  * fluent_reduce([P, M | X], R) :- !, invoke_method(P, M, P1), fluent_reduce([P1 | X], R). % recursive
  * fluent_reduce([P | M], R) :- !, invoke_method(P, M, R).                                 % couple
- * fluent_reduce([R], R) :- !.                                                             % base
  * fluent_reduce(R, R) :- !.                                                               % trivial
  * ```
+ *
+ * The trivial clause also covers non-list expressions (e.g. a bare [it.unibo.tuprolog.solve.libs.oop.Ref]
+ * or a `$Alias` expression, with nothing left to invoke), which simply reduce to themselves.
+ *
+ * @see it.unibo.tuprolog.solve.libs.oop.rules.Dot
+ * @see it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod
  */
 @Suppress("PropertyName")
 sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {

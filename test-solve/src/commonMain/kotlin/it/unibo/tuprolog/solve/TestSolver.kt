@@ -27,9 +27,40 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSo
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSolution
 
-/** A prototype class for testing solver implementations */
+/**
+ * The main, comprehensive conformance suite for a [Solver] implementation: control-flow constructs (conjunction,
+ * disjunction, if-then(-else), cut, `call/1`, `catch/3`, `not`/`\+`), timeouts, side effects (`assert`, `write`,
+ * standard output, `findall/3`), and a battery of classic Prolog examples (search trees, backtracking, recursive
+ * list processing, term ordering, etc.) drawn from [PrologStandardExampleTheories] and [TestingClauseTheories].
+ *
+ * Packaging it here lets every `Solver` implementation run the very same test cases without re-authoring or
+ * duplicating them: a concrete `:solve-classic`/`:solve-streams`/`:solve-concurrent` module declares a `commonTest`
+ * class implementing both this interface and its own `SolverFactory`, obtains a `prototype` via [TestSolver.prototype],
+ * and delegates each overridden test method to it, e.g.:
+ * ```kotlin
+ * class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
+ *     private val prototype = TestSolver.prototype(this)
+ *
+ *     @Test
+ *     override fun testTrue() = prototype.testTrue()
+ *     // ... one such override per test method declared here
+ * }
+ * ```
+ * (see `TestClassicSolver` in `:solve-classic` for the full example). Because [callErrorSignature], [nafErrorSignature]
+ * and [notErrorSignature] differ slightly across implementations (e.g. whether `not/1` or `\+/1` is used to report
+ * an error), they are supplied as constructor parameters to [prototype] rather than hard-coded.
+ */
 interface TestSolver : SolverTest {
     companion object {
+        /**
+         * Creates a ready-to-use implementation of this test suite, to be delegated to by a concrete `Solver`
+         * module's own test class.
+         *
+         * @param solverFactory produces the [Solver]/[MutableSolver] instances under test.
+         * @param callErrorSignature the [Signature] reported in errors raised while resolving a goal through `call/1`.
+         * @param nafErrorSignature the [Signature] reported in errors raised while resolving a goal through `\+/1`.
+         * @param notErrorSignature the [Signature] reported in errors raised while resolving a goal through `not/1`.
+         */
         fun prototype(
             solverFactory: SolverFactory,
             callErrorSignature: Signature = Signature("call", 1),
@@ -38,10 +69,13 @@ interface TestSolver : SolverTest {
         ): TestSolver = TestSolverImpl(solverFactory, callErrorSignature, nafErrorSignature, notErrorSignature)
     }
 
+    /** The [Signature] expected in errors raised while resolving a goal through `call/1`. */
     val callErrorSignature: Signature
 
+    /** The [Signature] expected in errors raised while resolving a goal through `\+/1` (negation as failure). */
     val nafErrorSignature: Signature
 
+    /** The [Signature] expected in errors raised while resolving a goal through `not/1`. */
     val notErrorSignature: Signature
 
     fun testUnknownFlag1()

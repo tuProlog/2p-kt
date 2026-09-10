@@ -4,6 +4,12 @@ import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.utils.Cursor
 
+/**
+ * "Rule Execution": pops the first candidate [it.unibo.tuprolog.core.Rule] from [ClassicExecutionContext.rules]
+ * and unifies its head with the current goal. On success, the rule's body (with the goal's substitution already
+ * applied) becomes the new goal stream and the machine moves back to `StateGoalSelection`; on failure, it moves
+ * to `StateBacktracking`.
+ */
 data class StateRuleExecution(
     override val context: ClassicExecutionContext,
 ) : AbstractState(context) {

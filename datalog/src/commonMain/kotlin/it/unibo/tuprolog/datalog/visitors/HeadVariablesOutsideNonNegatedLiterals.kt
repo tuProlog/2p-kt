@@ -5,6 +5,16 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
+/**
+ * A [AbstractClauseVisitor] that collects the [Var]s occurring in a clause's head which do *not* also occur
+ * in one of its non-negated body literals — i.e. the offending variables that would make
+ * [it.unibo.tuprolog.datalog.allHeadVariablesInNonNegatedLiterals] `false`. Variables inside negated body
+ * literals (`ClauseVisitor`'s negated-literal visit path) are deliberately ignored when collecting "positive"
+ * variables, since a negated goal does not bind anything.
+ *
+ * `clause.accept(HeadVariablesOutsideNonNegatedLiterals)` returns the empty set for a well-formed clause,
+ * and the set of unsafe head variables otherwise.
+ */
 object HeadVariablesOutsideNonNegatedLiterals : AbstractClauseVisitor<Set<Var>>() {
     override fun reduce(results: Sequence<Set<Var>>): Set<Var> =
         buildSet {

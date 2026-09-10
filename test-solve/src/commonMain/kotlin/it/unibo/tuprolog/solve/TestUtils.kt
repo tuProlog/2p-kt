@@ -30,6 +30,10 @@ import kotlin.test.fail
 
 private inline val loggingOn get() = false
 
+/**
+ * Concatenates [l1] and [l2], callable from Java (`+` on [List] is a Kotlin-only operator) as
+ * `TestUtils.ktListConcat(l1, l2)`. As of this writing, no test source set in the repository calls it.
+ */
 fun <T> ktListConcat(
     l1: List<T>,
     l2: List<T>,
@@ -193,18 +197,22 @@ fun assertSolverSolutionsCorrect(
     }
 }
 
+/** Asserts that the receiver [Solver]'s API ([Solver.libraries]) exposes [rule] (a rule-based built-in predicate). */
 fun Solver.assertHasPredicateInAPI(rule: RuleWrapper<*>) {
     assertHasPredicateInAPI(rule.signature)
 }
 
+/** Asserts that the receiver [Solver]'s API ([Solver.libraries]) exposes [primitive] (a primitive built-in). */
 fun Solver.assertHasPredicateInAPI(primitive: PrimitiveWrapper<*>) {
     assertHasPredicateInAPI(primitive.signature)
 }
 
+/** Asserts that the receiver [Solver]'s API ([Solver.libraries]) exposes a predicate matching [signature]. */
 fun Solver.assertHasPredicateInAPI(signature: Signature) {
     assertHasPredicateInAPI(signature.name, signature.arity, signature.vararg)
 }
 
+/** Asserts that the receiver [Solver]'s API ([Solver.libraries]) exposes a predicate `functor/arity`. */
 fun Solver.assertHasPredicateInAPI(
     functor: String,
     arity: Int,
@@ -242,15 +250,31 @@ fun logGoalAndSolutions(
     println("".padEnd(80, '-'))
 }
 
+/**
+ * Renders the internal state of the value returned by [x] for diagnostic logging: `toString()` on the JVM,
+ * `JSON.stringify` on JS.
+ */
 expect fun internalsOf(x: () -> Any): String
 
+/** Logs the value returned by [x] to the platform's error/debug console (`System.err` on the JVM, `console.log` on JS). */
 expect fun log(x: () -> Any): Unit
 
+/**
+ * Asserts that [klass]'s runtime name matches the expected [name]. Comparison is platform-specific because Kotlin/JS
+ * does not preserve fully qualified class names: the JVM `actual` compares [klass]'s qualified name against [name]
+ * verbatim, while the JS `actual` compares only the last, dot-separated segment of [name] against [klass]'s simple
+ * name.
+ */
 expect fun <T : Any> assertClassNameIs(
     klass: KClass<T>,
     name: String,
 )
 
+/**
+ * Asserts that the receiver [Solver] was built with exactly the given [libraries], [staticKb], [dynamicKb], [flags],
+ * [inputs] and [outputs], used by [TestSolverConstruction] to check a `Solver`/`MutableSolver` built via either
+ * [SolverFactory.solverOf]-style factory methods or the builder API ends up with the expected configuration.
+ */
 fun Solver.assertHas(
     libraries: Runtime,
     staticKb: Theory,
@@ -267,6 +291,7 @@ fun Solver.assertHas(
     assertChannelStoresAreEquals(outputs, this.outputChannels)
 }
 
+/** Asserts that [expected] and [actual] hold the same libraries, under the same aliases (see [assertLibrariesAreEqual]). */
 internal fun assertRuntimesAreEqual(
     expected: Runtime,
     actual: Runtime,
@@ -279,6 +304,7 @@ internal fun assertRuntimesAreEqual(
     }
 }
 
+/** Asserts that [expected] and [actual] have the same alias, clauses, operators, primitives and functions. */
 internal fun assertLibrariesAreEqual(
     expected: Library,
     actual: Library,
@@ -306,6 +332,7 @@ internal fun assertLibrariesAreEqual(
     }
 }
 
+/** Asserts that [expected] and [actual] are channels of the same runtime type and open/closed state. */
 internal fun <C : Channel<*>> assertChannelAreEquals(
     expected: C,
     actual: C,
@@ -318,6 +345,7 @@ internal fun <C : Channel<*>> assertChannelAreEquals(
     assertEquals(expected.isClosed, actual.isClosed)
 }
 
+/** Asserts that [expected] and [actual] declare the same aliases, each bound to an equal channel (see [assertChannelAreEquals]). */
 internal fun <C : Channel<*>, CS : ChannelStore<*, C, CS>> assertChannelStoresAreEquals(
     expected: CS,
     actual: CS,

@@ -1,3 +1,0 @@
-- [Using 2P-Kt programmatically in Kotlin](./2p-programmatically-kt.md)
-- [Using 2P-Kt programmatically in Java](./2p-programmatically-java.md)
-- [Using 2P-Kt programmatically in JavaScript](./2p-programmatically-js.md)

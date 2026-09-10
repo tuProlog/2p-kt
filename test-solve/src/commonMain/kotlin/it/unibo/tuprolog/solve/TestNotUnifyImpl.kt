@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestNotUnify], instantiated via [TestNotUnify.prototype]. */
 internal class TestNotUnifyImpl(
     private val solverFactory: SolverFactory,
 ) : TestNotUnify {

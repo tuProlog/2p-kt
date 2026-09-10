@@ -53,6 +53,10 @@ class InstantiationError(
         @Suppress("ConstPropertyName", "ktlint:standard:property-naming")
         const val typeFunctor = "instantiation_error"
 
+        /**
+         * Creates an [InstantiationError] reporting that the (optionally [index]-th) argument of [procedure],
+         * [variable], is unexpectedly unbound.
+         */
         @JsName("forArgument")
         @JvmStatic
         fun forArgument(
@@ -72,6 +76,7 @@ class InstantiationError(
             )
         }
 
+        /** Creates an [InstantiationError] reporting that subgoal [variable] of [procedure] is unexpectedly unbound. */
         @JsName("forGoal")
         @JvmStatic
         fun forGoal(

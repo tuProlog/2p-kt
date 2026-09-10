@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.core
 
+/**
+ * An [Iterator] walking the goals wrapped by a [Block], unfolding the [Tuple] its arguments are folded into
+ * (if any), left to right.
+ */
 class BlockIterator(
     block: Block,
 ) : Iterator<Term> {

@@ -10,11 +10,32 @@ import kotlin.js.JsName
  * Each node of the diagram represents a single boolean entry with variable
  * value and part of a Boolean function. [T] is the type with which a variable
  * is represented. In the context of a formula, variables for which the
- * [compareTo] method returns 0 indicate the same Boolean variable.
+ * `compareTo` method (from the [Comparable] bound on [T]) returns 0 indicate
+ * the same Boolean variable.
  *
  * Each BDD node has a directed edge to two sub-BDDs: the "high"
  * BDD that leads to a true Terminal, and the "low" BDD that
  * leads to a false Terminal.
+ *
+ * In 2P-Kt, this data structure backs probabilistic logic programming
+ * (`:solve-plp`, `:solve-problog`): a probabilistic query's *explanation* is
+ * modeled as a Boolean formula over probabilistic clauses/facts (the BDD
+ * variables), combined with [and], [or] and [not]. Since a BDD is a
+ * canonical, compressed encoding of that formula, [expansion] can then be
+ * used to compute the query's probability via Weighted Model Counting,
+ * bottom-up over the diagram, without re-evaluating the original formula.
+ * See `it.unibo.tuprolog.solve.problog.lib.knowledge.impl.BinaryDecisionDiagramExplanation`
+ * for the concrete usage of this API to implement such an explanation.
+ *
+ * Basic usage:
+ * ```kotlin
+ * val burglary = bddOf(ComparablePair(0, "burglary", 0.7))
+ * val earthquake = bddOf(ComparablePair(1, "earthquake", 0.2))
+ * val solution = (bddOf(alarm) and burglary and earthquake) or (bddOf(otherAlarm) and burglary)
+ * val probability = solution.expansion(0.0, 1.0) { node, low, high ->
+ *     node.probabilityValue * high + (1.0 - node.probabilityValue) * low
+ * }
+ * ```
  *
  * @author Jason Dellaluce
  * */
@@ -34,7 +55,13 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
     /**
      * Accepts an instance of [BinaryDecisionDiagramVisitor] as for the
      * visitor pattern. This is the method of preference for exploring
-     * the inner structure of the diagram.
+     * the inner structure of the diagram, since it distinguishes between
+     * [Terminal] and [Variable] nodes without runtime type checks by the
+     * caller.
+     *
+     * @param visitor the visitor whose `visit` overload matching this node's
+     * actual type ([Terminal] or [Variable]) will be invoked.
+     * @return the result of the invoked `visit` method.
      */
     @JsName("accept")
     fun <E> accept(visitor: BinaryDecisionDiagramVisitor<T, E>): E
@@ -63,13 +90,15 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
         @JsName("value")
         val value: T
 
-        /** [low] the a [BinaryDecisionDiagram] that leads to a 0-terminal
-         * (a false terminal) */
+        /** [low] is the [BinaryDecisionDiagram] that leads to a 0-terminal
+         * (a false terminal), i.e. the sub-diagram to follow when [value] is
+         * assigned `false`. */
         @JsName("low")
         val low: BinaryDecisionDiagram<T>
 
-        /** [high] the a [BinaryDecisionDiagram] that leads to a 1-terminal
-         * (a true terminal) */
+        /** [high] is the [BinaryDecisionDiagram] that leads to a 1-terminal
+         * (a true terminal), i.e. the sub-diagram to follow when [value] is
+         * assigned `true`. */
         @JsName("high")
         val high: BinaryDecisionDiagram<T>
 
@@ -81,14 +110,30 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
     }
 
     companion object {
-        /** Creates a new [BinaryDecisionDiagram] [Variable] from the given
-         * value */
+        /**
+         * Creates a new [BinaryDecisionDiagram] [Variable] from the given
+         * [value], whose [Variable.low] is a `false` [Terminal] and whose
+         * [Variable.high] is a `true` [Terminal]. This represents the
+         * simplest possible Boolean formula: a single variable, with no
+         * further sub-structure. See also the [bddOf] shortcut function.
+         *
+         * @param value the value representing the Boolean variable.
+         * @return a new single-variable [BinaryDecisionDiagram].
+         */
         @JsName("variableOf")
         fun <E : Comparable<E>> variableOf(value: E): BinaryDecisionDiagram<E> =
             variableOf(value, terminalOf(false), terminalOf(true))
 
-        /** Creates a new [Variable] node from the given
-         * value and low-high nodes. */
+        /**
+         * Creates a new [Variable] node from the given [value] and
+         * `low`/`high` sub-diagrams, using the [BinaryDecisionDiagramBuilder.defaultOf]
+         * builder (no reduction optimizations are applied).
+         *
+         * @param value the value representing the Boolean variable.
+         * @param low the sub-diagram reached when [value] is `false`.
+         * @param high the sub-diagram reached when [value] is `true`.
+         * @return a new [Variable] node with the given [low]/[high] edges.
+         */
         @JsName("variableOfWithNodes")
         fun <E : Comparable<E>> variableOf(
             value: E,
@@ -96,8 +141,14 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
             high: BinaryDecisionDiagram<E>,
         ): BinaryDecisionDiagram<E> = BinaryDecisionDiagramBuilder.defaultOf<E>().buildVariable(value, low, high)
 
-        /** Creates a new [Terminal] node from
-         * the given boolean value. */
+        /**
+         * Creates a new [Terminal] node from the given boolean value, using
+         * the [BinaryDecisionDiagramBuilder.defaultOf] builder. See also the
+         * [bddTerminalOf] shortcut function.
+         *
+         * @param truth the boolean value (`true`/`false`) of the terminal.
+         * @return a new [Terminal] node.
+         */
         @JsName("terminalOf")
         fun <E : Comparable<E>> terminalOf(truth: Boolean): BinaryDecisionDiagram<E> =
             BinaryDecisionDiagramBuilder.defaultOf<E>().buildTerminal(truth)

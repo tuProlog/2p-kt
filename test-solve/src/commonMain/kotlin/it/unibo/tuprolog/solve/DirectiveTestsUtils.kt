@@ -9,9 +9,19 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.theory.Theory
 
+/**
+ * Shared helpers for [TestDirectives], covering directive-related behavior (`dynamic/1`, `static/1`, `initialization/1`,
+ * `solve/1`, flag/operator-setting directives, and how a `Solver`/`MutableSolver` reacts to loading a theory built
+ * from them) that would otherwise require boilerplate repeated across every test case.
+ */
 object DirectiveTestsUtils {
     private const val BIG_THEORY_SIZE = 40000
 
+    /**
+     * Builds a theory of [size] facts `f1.`, `f2.`, ..., optionally followed by one [last] clause; used by
+     * [TestDirectives.testDirectiveLoadingQuickly] to check that loading a large static knowledge base does not
+     * incur pathological (e.g. quadratic) loading time.
+     */
     fun bigTheory(
         size: Int = BIG_THEORY_SIZE,
         last: (LogicProgrammingScope.() -> Clause)? = null,
@@ -28,6 +38,7 @@ object DirectiveTestsUtils {
         )
     }
 
+    /** A single-clause sequence containing the directive `dynamic(functor/arity).`. */
     fun dynamicDirective(
         functor: String,
         arity: Int,
@@ -38,6 +49,7 @@ object DirectiveTestsUtils {
             )
         }
 
+    /** A single-clause sequence containing the directive `static(functor/arity).`. */
     fun staticDirective(
         functor: String,
         arity: Int,
@@ -48,6 +60,7 @@ object DirectiveTestsUtils {
             )
         }
 
+    /** A sequence of facts `functor(e).`, one for each element `e` of [iterable]. */
     fun facts(
         functor: String,
         iterable: Iterable<Any>,
@@ -56,6 +69,13 @@ object DirectiveTestsUtils {
             iterable.asSequence().map { fact { functor(it) } }
         }
 
+    /**
+     * The four equivalent ways a [given][Theory] can end up as a solver's knowledge base: as the static or dynamic
+     * theory passed to [SolverFactory.solverOf], or loaded after the fact into a fresh [MutableSolver] via
+     * [MutableSolver.loadStaticKb]/[MutableSolver.loadDynamicKb]. [TestDirectives] runs its directive-loading
+     * assertions against every one of these, since a directive (e.g. `dynamic/1`) must behave the same way
+     * regardless of how its enclosing theory was loaded.
+     */
     fun solverInitializers(solverFactory: SolverFactory): List<(Theory) -> Solver> =
         listOf(
             { solverFactory.solverOf(staticKb = it) },
@@ -64,6 +84,12 @@ object DirectiveTestsUtils {
             { solverFactory.mutableSolverOf().also { s -> s.loadDynamicKb(it.toMutableTheory()) } },
         )
 
+    /**
+     * Same four loading strategies as [solverInitializers], but built with default built-ins and each paired with
+     * the mutable event list its solver's `stdOut`/`stdErr`/`warnings` channels append to — so a caller can load a
+     * theory containing `initialization/1`/`solve/1`/writing directives and then assert on what was written or
+     * warned about during loading.
+     */
     fun solverInitializersWithEventsList(
         solverFactory: SolverFactory,
     ): List<Pair<(Theory) -> Solver, MutableList<Any>>> {

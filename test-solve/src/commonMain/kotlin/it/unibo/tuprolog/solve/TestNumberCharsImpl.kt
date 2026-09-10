@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 
+/** Concrete implementation of [TestNumberChars], instantiated via [TestNumberChars.prototype]. */
 class TestNumberCharsImpl(
     private val solverFactory: SolverFactory,
 ) : TestNumberChars {

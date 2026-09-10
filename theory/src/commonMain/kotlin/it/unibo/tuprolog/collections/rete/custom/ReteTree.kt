@@ -7,23 +7,39 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
+/**
+ * A RETE-style discrimination network storing [Clause]s and indexing them for fast retrieval by unification.
+ *
+ * Clauses are first split into [directives] and [rules] (see [Directive]/[Rule]), then, within each of those
+ * two families, indexed by their head's functor, then by arity, then recursively by the shape of their first
+ * argument (variable, atomic, numeric or compound — see the `it.unibo.tuprolog.collections.rete.custom.leaf`
+ * package), narrowing the set of clauses that [get] has to actually attempt to unify against a query. This is
+ * the storage engine backing both `it.unibo.tuprolog.collections.ClauseQueue` (ordered) and
+ * `it.unibo.tuprolog.collections.ClauseMultiSet` (unordered), and therefore, transitively, `Theory` itself.
+ * @see it.unibo.tuprolog.theory.Theory
+ */
 interface ReteTree {
+    /** The [Unificator] used to match [Clause]s stored in this tree against query clauses. */
     @JsName("unificator")
     val unificator: Unificator
 
-    /**Checks if the values this [ReteTree] produces are to be considered as order-sensitive*/
+    /** Whether this [ReteTree] preserves insertion order among clauses of the same family (functor/arity/shape);
+     *  an unordered tree may return matching clauses in any order, but does not support [assertA]. */
     val isOrdered: Boolean
 
     /**Returns all the [Clause] this [ReteTree] is storing*/
     val clauses: Sequence<Clause>
 
+    /** Returns all the [Rule]s this [ReteTree] is storing. */
     val rules: Sequence<Rule>
 
+    /** Returns all the [Directive]s this [ReteTree] is storing. */
     val directives: Sequence<Directive>
 
     /**Returns the number of [Clause] stored in this tree*/
     val size: Int
 
+    /** Whether this [ReteTree] stores no clause at all. */
     val isEmpty: Boolean
 
     /**Reads all the clauses matching the given [Clause]*/
@@ -32,10 +48,15 @@ interface ReteTree {
     /**Tells if the given [Clause] is stored in this [ReteTree]*/
     operator fun contains(clause: Clause): Boolean = get(clause).any()
 
-    /**Tries to insert the given [Clause] as the first occurrence of its own family*/
+    /**
+     * Inserts the given [clause] before all other clauses of its own family (same directive-vs-rule status,
+     * functor and arity) currently stored in this tree, mutating it in place.
+     * @throws UnsupportedOperationException if this [ReteTree] [is not ordered][isOrdered]
+     */
     fun assertA(clause: Clause)
 
-    /**Insert the given [Clause] as the first occurrence of its own family*/
+    /** Inserts the given [clause] after all other clauses of its own family currently stored in this tree,
+     *  mutating it in place. */
     fun assertZ(clause: Clause)
 
     /**Retract the first occurrence of the given [Clause] from this [ReteTree]. The meaning of "first"

@@ -6,6 +6,15 @@ import it.unibo.tuprolog.dsl.Termificator
 import it.unibo.tuprolog.theory.TheoryFactory
 import it.unibo.tuprolog.unify.Unificator
 
+/**
+ * Default, stateless implementation of [LogicProgrammingScope]: forwards [VariablesProvider], [Unificator] and
+ * [TheoryFactory] operations to [variablesProvider], [unificator] and [theoryFactory] respectively (via Kotlin
+ * delegation), and every other scope operation up its supertypes' default implementations. Obtained through
+ * [LogicProgrammingScope.of]/[LogicProgrammingScope.empty] rather than constructed directly in typical usage.
+ *
+ * @throws IllegalArgumentException if [scope] is not the same object as both [termificator]'s and
+ * [variablesProvider]'s scope, or if [unificator] is not equal to [theoryFactory]'s.
+ */
 class LogicProgrammingScopeImpl(
     override val scope: Scope,
     override val termificator: Termificator,
@@ -25,6 +34,7 @@ class LogicProgrammingScopeImpl(
         }
     }
 
+    /** Copies this scope onto [scope], propagating it to [termificator] and [variablesProvider] as well. */
     override fun copy(scope: Scope): LogicProgrammingScope =
         LogicProgrammingScopeImpl(
             scope,
@@ -34,6 +44,7 @@ class LogicProgrammingScopeImpl(
             theoryFactory,
         )
 
+    /** Copies this scope onto [unificator], propagating it to [theoryFactory] as well. */
     override fun copy(unificator: Unificator): LogicProgrammingScope =
         LogicProgrammingScopeImpl(
             scope,
@@ -43,5 +54,6 @@ class LogicProgrammingScopeImpl(
             theoryFactory.copy(unificator),
         )
 
+    /** Creates a fresh [LogicProgrammingScope], backed by a brand-new, empty [Scope]; see [copy]. */
     override fun newScope(): LogicProgrammingScope = copy(Scope.empty())
 }

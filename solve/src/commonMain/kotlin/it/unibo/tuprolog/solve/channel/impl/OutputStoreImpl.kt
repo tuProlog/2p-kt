@@ -45,7 +45,7 @@ internal class OutputStoreImpl(
     override fun setCurrent(alias: String): OutputStore =
         when (val newCurrentChannel = get(alias)) {
             null -> this
-            else -> OutputStoreImpl(stdOut, stdErr, warnings, mapOf(CURRENT to newCurrentChannel))
+            else -> OutputStoreImpl(stdOut, stdErr, warnings, channels + (CURRENT to newCurrentChannel))
         }
 
     override fun setCurrent(channel: OutputChannel<String>): OutputStore {

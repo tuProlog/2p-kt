@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.SystemError
 
+/** Concrete implementation of [TestCatchAndThrow], instantiated via [TestCatchAndThrow.prototype]. */
 internal class TestCatchAndThrowImpl(
     private val solverFactory: SolverFactory,
 ) : TestCatchAndThrow {

@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestTrue], instantiated via [TestTrue.prototype]. */
 internal class TestTrueImpl(
     private val solverFactory: SolverFactory,
 ) : TestTrue {

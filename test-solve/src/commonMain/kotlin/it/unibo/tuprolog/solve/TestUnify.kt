@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for `=`/2 (unification), shared by every `Solver` implementation via the
+ * `TestUnify.prototype(solverFactory)` factory (see `TestClassicUnify` in `:solve-classic` for a concrete usage).
+ * See also [TestNotUnify] for the corresponding `\=`/2 tests.
+ */
 interface TestUnify : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestUnify = TestUnifyImpl(solverFactory)

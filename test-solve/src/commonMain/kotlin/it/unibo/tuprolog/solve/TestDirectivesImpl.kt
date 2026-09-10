@@ -19,6 +19,7 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+/** Concrete implementation of [TestDirectives], instantiated via [TestDirectives.prototype]. */
 @Suppress("DEPRECATION")
 class TestDirectivesImpl(
     private val solverFactory: SolverFactory,

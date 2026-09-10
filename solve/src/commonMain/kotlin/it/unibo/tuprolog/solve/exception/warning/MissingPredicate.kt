@@ -5,6 +5,11 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.Warning
 import kotlin.js.JsName
 
+/**
+ * A [Warning] reported when a goal invokes [signature] and no such predicate exists, but the `unknown` Prolog flag
+ * (see `it.unibo.tuprolog.solve.flags.Unknown`) is set to warn rather than raise an
+ * [it.unibo.tuprolog.solve.exception.error.ExistenceError] or fail silently.
+ */
 class MissingPredicate(
     cause: Throwable?,
     contexts: Array<ExecutionContext>,

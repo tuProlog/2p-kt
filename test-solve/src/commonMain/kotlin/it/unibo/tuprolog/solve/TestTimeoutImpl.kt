@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.stdlib.primitive.FindAll
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
 
+/** Concrete implementation of [TestTimeout], instantiated via [TestTimeout.prototype]. */
 class TestTimeoutImpl(
     private val solverFactory: SolverFactory,
 ) : TestTimeout {

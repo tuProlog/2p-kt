@@ -12,15 +12,23 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.theory.Theory
 
 /**
- * An object containing a collection of notable databases to be used when testing Solver functionality
+ * An object containing a collection of notable databases to be used when testing Solver functionality.
+ *
+ * Alongside [PrologStandardExampleTheories] (the manual's own worked examples), this gathers hand-written theories
+ * exercising cut, conjunction, backtracking, recursion/non-termination and custom list predicates, each paired with
+ * its expected goal-to-[Solution]s mapping; both are consumed by [TestSolver] via
+ * [allPrologTestingTheoriesToRespectiveGoalsAndSolutions].
  *
  * @author Enrico
  */
 object TestingClauseTheories {
+    /** The [DummyInstances.executionContext] placeholder, reused by every `xxxError`/exception builder below. */
     internal val aContext = DummyInstances.executionContext
 
+    /** A [HaltException] built against [aContext], for goals expected to end resolution via `halt/0`. */
     internal val haltException = HaltException(context = aContext)
 
+    /** Shorthand for [instantiationError] that builds the offending [Signature] from a [functor]/[arity] pair. */
     internal fun instantiationError(
         functor: String,
         arity: Int,
@@ -28,6 +36,10 @@ object TestingClauseTheories {
         index: Int? = null,
     ) = instantiationError(Signature(functor, arity), culprit, index)
 
+    /**
+     * The [InstantiationError] expected when [culprit] (an unbound variable) is passed to [signature]: either as
+     * the whole goal ([index] `== null`), or as its argument at position [index].
+     */
     internal fun instantiationError(
         signature: Signature,
         culprit: Var,
@@ -38,6 +50,7 @@ object TestingClauseTheories {
         InstantiationError.forGoal(aContext, signature, culprit)
     }
 
+    /** Shorthand for [typeError] that builds the offending [Signature] from a [functor]/[arity] pair. */
     internal fun typeError(
         functor: String,
         arity: Int,
@@ -45,6 +58,12 @@ object TestingClauseTheories {
         index: Int? = null,
     ) = typeError(Signature(functor, arity), actualValue, index)
 
+    /**
+     * The [TypeError] expected when [actualValue] (not a callable term) is passed to [signature]: either as the
+     * whole goal ([index] `== null`), or as its argument at position [index]. Every caller in this file expects
+     * [TypeError.Expected.CALLABLE], since these theories only ever exercise call-like constructs (`call/1`,
+     * `catch/3`, negation-as-failure, ...).
+     */
     internal fun typeError(
         signature: Signature,
         actualValue: Term,
@@ -55,8 +74,10 @@ object TestingClauseTheories {
         TypeError.forGoal(aContext, signature, TypeError.Expected.CALLABLE, actualValue)
     }
 
+    /** The [SystemError] expected when [uncaught] escapes resolution without being caught by any `catch/3`. */
     internal fun systemError(uncaught: Term) = SystemError.forUncaughtException(aContext, uncaught)
 
+    /** A [TimeOutException] built against [aContext], for goals expected to never terminate within their budget. */
     internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
 
     /**

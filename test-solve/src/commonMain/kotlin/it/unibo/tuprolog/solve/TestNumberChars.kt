@@ -1,63 +1,91 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Conformance tests for the ISO `number_chars/2` built-in, shared by every `Solver` implementation via the
+ * `TestNumberChars.prototype(solverFactory)` factory (see `TestClassicNumberChars` in `:solve-classic` for a
+ * concrete usage). See also [TestNumberCodes] for the analogous built-in working on character codes.
+ */
 interface TestNumberChars : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestNumberCharsImpl = TestNumberCharsImpl(solverFactory)
     }
 
     /**
-     * [number_chars(33,L), [[L <-- ['3','3']]]].
-     *
-     **/
-
+     * Tests the query
+     * ```prolog
+     * ?- number_chars(33,L).
+     * ```
+     * succeeds on a solver initialized with default built-ins and with an empty theory, producing 1 solution which
+     * binds variable `L` to the list `['3','3']`.
+     */
     fun testNumberCharsListIsVar()
 
     /**
-     * [number_chars(33,['3','3']), success].
-     *
-     **/
-
+     * Tests the query
+     * ```prolog
+     * ?- number_chars(33,['3','3']).
+     * ```
+     * succeeds on a solver initialized with default built-ins and with an empty theory.
+     */
     fun testNumberCharsOK()
 
     /**
-     * [number_chars(X,['3','3']), [[X <-- 33]].
-     *
-     **/
-
+     * Tests the query
+     * ```prolog
+     * ?- number_chars(X,['3','3']).
+     * ```
+     * succeeds on a solver initialized with default built-ins and with an empty theory, producing 1 solution which
+     * binds variable `X` to `33`.
+     */
     fun testNumberCharsNumIsVar()
 
     /**
-     * [number_chars(A,['-','2','5']), [[A <-- (-25)]]].
-     *
-     **/
-
+     * Tests the query
+     * ```prolog
+     * ?- number_chars(X,['-','2','5']).
+     * ```
+     * succeeds on a solver initialized with default built-ins and with an empty theory, producing 1 solution which
+     * binds variable `X` to `-25`.
+     */
     fun testNumberCharsNumNegativeIsVar()
 
     /**
-     * [number_chars(A,['\n',' ','3']), [[A <-- 3]]].
-     *
-     **/
-
+     * Tests the query
+     * ```prolog
+     * ?- number_chars(X,['\n','3']).
+     * ```
+     * succeeds on a solver initialized with default built-ins and with an empty theory, producing 1 solution which
+     * binds variable `X` to `3` (leading whitespace is skipped while parsing the character list).
+     */
     fun testNumberCharsSpace()
 
     /**
-     * number_chars(A,['4','.','2']), [[A <-- 4.2]]].
-     *
-     **/
-
+     * Tests the query
+     * ```prolog
+     * ?- number_chars(X,['4','.','2']).
+     * ```
+     * succeeds on a solver initialized with default built-ins and with an empty theory, producing 1 solution which
+     * binds variable `X` to `4.2`.
+     */
     fun testNumberCharsDecimalNumber()
 
     /**
-     * [number_chars(X,['3','.','3','E','+','0']), [[X <-- 3.3]]].
-     *
-     **/
-
+     * Tests the query
+     * ```prolog
+     * ?- number_chars(X,['3','.','9']).
+     * ```
+     * succeeds on a solver initialized with default built-ins and with an empty theory, producing 1 solution which
+     * binds variable `X` to `3.9`.
+     */
     fun testNumberCharsCompleteCase()
 
     /**
-     * [number_chars(A,L), instantiation_error].
-     *
-     **/
-
+     * Tests the query
+     * ```prolog
+     * ?- number_chars(X,L).
+     * ```
+     * fails on a solver initialized with default built-ins and with an empty theory, producing exception
+     * `instantiation_error` (both arguments unbound).
+     */
     fun testNumberCharsInstationErrror()
 }

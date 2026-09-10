@@ -21,6 +21,14 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.dequeOf
 
+/**
+ * The concrete [ClausePartition]/[DirectiveSelector] implementation, lazily partitioning [source]'s clauses on
+ * first access to any of [ClausePartition]'s properties (and caching the result thereafter). Plain [Rule]s/[Fact]s
+ * are routed to [dynamicClauses] or [staticClauses] depending on whether their signature was declared `dynamic/1`
+ * or `static/1` by a directive, falling back to [staticByDefault] when neither was declared.
+ *
+ * @see it.unibo.tuprolog.solve.directives.partition
+ */
 class ClausePartitioner(
     override val unificator: Unificator,
     private val source: Iterable<Clause>,

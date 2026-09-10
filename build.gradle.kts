@@ -20,7 +20,7 @@ multiProjectHelper {
 
     jvmProjects(":examples", ":ide-swing", ":ide-plp-swing")
     otherProjects(":ide-web")
-    // otherProjects(":documentation")
+    otherProjects(":documentation")
 
     val baseProjectTemplate =
         buildSet {

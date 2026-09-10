@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestAtomCodes], instantiated via [TestAtomCodes.prototype]. */
 class TestAtomCodesImpl(
     private val solverFactory: SolverFactory,
 ) : TestAtomCodes {

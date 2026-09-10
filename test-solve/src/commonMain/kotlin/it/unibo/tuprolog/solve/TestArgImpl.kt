@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
+/** Concrete implementation of [TestArg], instantiated via [TestArg.prototype]. */
 internal class TestArgImpl(
     private val solverFactory: SolverFactory,
 ) : TestArg {

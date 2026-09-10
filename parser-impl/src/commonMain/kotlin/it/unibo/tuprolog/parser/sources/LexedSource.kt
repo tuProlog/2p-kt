@@ -10,13 +10,27 @@ interface LexedSource {
     /** ID-addressable token view; requesting tokens may force lazy lexing. */
     val tokens: TokenStore
 
-    /** Absolute index of the first retained significant token. */
+    /**
+     * Absolute index of the first retained significant token.
+     *
+     * A lazily lexed source that has not produced a significant token yet forces production of
+     * one to answer this, so reading it can fail exactly like requesting a token.
+     *
+     * @throws it.unibo.tuprolog.parser.exceptions.PrologLexingException if lexing fails
+     */
     val firstSignificantTokenIndex: Int
 
     /**
      * Returns the token with absolute [id], forcing lexing forward if necessary.
      *
-     * @throws IndexOutOfBoundsException if [id] is unavailable or lies beyond EOF
+     * A lazy source reports a released [id] (already discarded under
+     * [it.unibo.tuprolog.parser.TokenRetention.RELEASE_COMMITTED]) as [IllegalArgumentException]
+     * and an [id] beyond EOF as [IndexOutOfBoundsException]; a materialized source reports every
+     * [id] outside its retained range as [IndexOutOfBoundsException].
+     *
+     * @throws IndexOutOfBoundsException if [id] lies beyond EOF, or outside a materialized
+     * source's retained range
+     * @throws IllegalArgumentException if [id] was already released by a lazy source
      * @throws it.unibo.tuprolog.parser.exceptions.PrologLexingException if lexing fails first
      */
     fun token(id: Int): Token = tokens[id]
@@ -36,7 +50,10 @@ interface LexedSource {
     /**
      * Returns the exact source spelling of the token with [tokenId].
      *
-     * @throws IndexOutOfBoundsException if [tokenId] is not available
+     * @throws IndexOutOfBoundsException if [tokenId] lies beyond EOF, or outside a materialized
+     * source's retained range
+     * @throws IllegalArgumentException if [tokenId] was already released by a lazy source
+     * @throws it.unibo.tuprolog.parser.exceptions.PrologLexingException if lexing fails
      */
     fun textOf(tokenId: Int): String = textOf(token(tokenId))
 

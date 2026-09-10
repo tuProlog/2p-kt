@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 
+/** Concrete implementation of [TestCompound], instantiated via [TestCompound.prototype]. */
 internal class TestCompoundImpl(
     private val solverFactory: SolverFactory,
 ) : TestCompound {

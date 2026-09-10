@@ -6,6 +6,12 @@ import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.utils.Cursor
 
+/**
+ * "Primitive Execution": consumes exactly one response from the current primitive's response stream
+ * ([ClassicExecutionContext.primitives]). A successful response merges its substitution and returns to
+ * `StateGoalSelection`; an empty stream moves to `StateBacktracking`; an exceptional response moves to
+ * `StateException`.
+ */
 data class StatePrimitiveExecution(
     override val context: ClassicExecutionContext,
 ) : AbstractState(context) {
