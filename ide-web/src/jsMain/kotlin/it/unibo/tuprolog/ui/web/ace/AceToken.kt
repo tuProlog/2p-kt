@@ -7,6 +7,7 @@ external interface AceToken {
 }
 
 /** Builds an [AceToken] as a plain JS object literal, matching the shape Ace expects at runtime. */
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 fun aceToken(
     type: String,
     value: String,

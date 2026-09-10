@@ -4,10 +4,12 @@ jvm = "17"
 node = "22-latest"
 jackson = "2.22.2"
 kotlinx-coroutines = "1.11.0"
+kotlinx-serialization = "1.9.0"
 javafx = "21.0.8"
 npm-yaml = "2.8.1" # yaml
 npm-syncRequest = "6.1.0" # sync-request
 ktMpp = "5.3.0"
+okio = "3.18.2"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

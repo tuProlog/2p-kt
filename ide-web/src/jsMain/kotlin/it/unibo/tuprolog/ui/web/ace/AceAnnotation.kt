@@ -9,6 +9,7 @@ external interface AceAnnotation {
 }
 
 /** Builds an [AceAnnotation] as a plain JS object literal, matching the shape Ace expects at runtime. */
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 fun aceAnnotation(
     row: Int,
     column: Int,
