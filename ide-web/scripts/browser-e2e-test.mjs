@@ -285,6 +285,40 @@ const SCENARIOS = [
     },
   },
   {
+    name: "clicking a table header sorts the Operators table by that column",
+    async run({ evalJs }) {
+      const namesFor = (dir) =>
+        evalJs(`
+          (function() {
+            const operatorsTab = Array.from(document.querySelectorAll('.side-tab')).find(t => t.textContent === 'Operators');
+            operatorsTab.click();
+            // Sorting rebuilds the <table> from scratch, so the header/rows must be re-queried AFTER the click,
+            // not read off a reference captured beforehand (which would go stale, still attached to the old,
+            // now-detached table).
+            if (${dir === "click" ? "true" : "false"}) {
+              document.querySelector('.side-content table').querySelectorAll('th')[0].click();
+            }
+            const table = document.querySelector('.side-content table');
+            return Array.from(table.querySelectorAll('tr')).slice(1).map(r => r.cells[0].textContent);
+          })()
+        `);
+
+      const initial = await namesFor("none");
+      const ascending = await namesFor("click"); // first click: sort ascending
+      const descending = await namesFor("click"); // second click: toggle to descending
+      const failures = [];
+      const sortedAsc = [...ascending].sort();
+      if (JSON.stringify(ascending) !== JSON.stringify(sortedAsc)) {
+        failures.push(`expected ascending order after one click, got: ${JSON.stringify(ascending)}`);
+      }
+      if (JSON.stringify(descending) !== JSON.stringify([...sortedAsc].reverse())) {
+        failures.push(`expected descending order after a second click, got: ${JSON.stringify(descending)}`);
+      }
+      if (initial.length < 2) failures.push("need at least 2 operators to prove sorting reordered anything");
+      return failures;
+    },
+  },
+  {
     name: "the unknown flag is editable and its new value survives a re-render",
     async run({ evalJs }) {
       // Flags only exist once a solver session does; the earlier "solving a query" scenario already solved.

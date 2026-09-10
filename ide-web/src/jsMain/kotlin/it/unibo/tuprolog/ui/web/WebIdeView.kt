@@ -71,6 +71,13 @@ internal class WebIdeView(
     private var renderedState: GuiState? = null
     private var selectedSidePanel: PanelId = PanelId.SOLUTIONS
     private var rendering = false
+    private var operatorsSort: ColumnSort? = null
+    private var flagsSort: ColumnSort? = null
+
+    private data class ColumnSort(
+        val column: Int,
+        val ascending: Boolean,
+    )
 
     init {
         installMenuBarListeners()
@@ -518,9 +525,21 @@ internal class WebIdeView(
     }
 
     private fun operatorsTable(operators: List<OperatorPresentation>): HTMLElement {
+        val comparators =
+            listOf<Comparator<OperatorPresentation>>(
+                compareBy { it.name },
+                compareBy { it.priority },
+                compareBy { it.specifier },
+            )
         val table = element("table", null)
-        table.appendChild(tableRow(listOf("Name", "Priority", "Specifier"), header = true))
-        operators.forEach { table.appendChild(tableRow(listOf(it.name, it.priority.toString(), it.specifier))) }
+        table.appendChild(
+            sortableHeaderRow(listOf("Name", "Priority", "Specifier"), operatorsSort) {
+                operatorsSort = nextSort(operatorsSort, it)
+                rerenderInspection()
+            },
+        )
+        sortedBy(operators, comparators, operatorsSort)
+            .forEach { table.appendChild(tableRow(listOf(it.name, it.priority.toString(), it.specifier))) }
         return table
     }
 
@@ -528,15 +547,69 @@ internal class WebIdeView(
         page: PageState,
         flags: List<FlagPresentation>,
     ): HTMLElement {
+        val comparators =
+            listOf<Comparator<FlagPresentation>>(
+                compareBy { it.name },
+                compareBy { it.value },
+            )
         val table = element("table", null)
-        table.appendChild(tableRow(listOf("Name", "Value"), header = true))
-        flags.forEach { flag ->
+        table.appendChild(
+            sortableHeaderRow(listOf("Name", "Value"), flagsSort) {
+                flagsSort = nextSort(flagsSort, it)
+                rerenderInspection()
+            },
+        )
+        sortedBy(flags, comparators, flagsSort).forEach { flag ->
             val row = element("tr", null)
             row.appendChild((document.createElement("td") as HTMLElement).apply { textContent = flag.name })
             row.appendChild(flagValueCell(page, flag))
             table.appendChild(row)
         }
         return table
+    }
+
+    private fun rerenderInspection() {
+        selectedPage()?.let { renderInspection(it) }
+    }
+
+    private fun <T> sortedBy(
+        items: List<T>,
+        comparators: List<Comparator<T>>,
+        sort: ColumnSort?,
+    ): List<T> {
+        if (sort == null) return items
+        val comparator = comparators[sort.column]
+        return items.sortedWith(if (sort.ascending) comparator else comparator.reversed())
+    }
+
+    private fun nextSort(
+        current: ColumnSort?,
+        column: Int,
+    ): ColumnSort = if (current?.column == column) ColumnSort(column, !current.ascending) else ColumnSort(column, true)
+
+    /** A `<tr>` of `<th>`s where clicking one reports its column index via [onSort]; [sort] marks the active one. */
+    private fun sortableHeaderRow(
+        headers: List<String>,
+        sort: ColumnSort?,
+        onSort: (Int) -> Unit,
+    ): HTMLElement {
+        val row = element("tr", null)
+        headers.forEachIndexed { column, title ->
+            val arrow =
+                when {
+                    sort?.column != column -> ""
+                    sort.ascending -> " ▲"
+                    else -> " ▼"
+                }
+            val th =
+                (document.createElement("th") as HTMLElement).apply {
+                    textContent = title + arrow
+                    style.cursor = "pointer"
+                }
+            th.addEventListener("click", { _: Event -> onSort(column) })
+            row.appendChild(th)
+        }
+        return row
     }
 
     /**
