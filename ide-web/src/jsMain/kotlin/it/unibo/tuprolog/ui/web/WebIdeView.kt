@@ -308,7 +308,11 @@ internal class WebIdeView(
         solve10Button.disabled = !canSolve
         solveAllButton.disabled = !canSolve
         stopButton.disabled = !page.resolution.canStop
-        statusLabel.textContent = "Resolution: ${page.resolution.status}"
+        statusLabel.textContent =
+            "Resolution: ${page.resolution.status}" +
+            page.resolution.error
+                ?.let { " ($it)" }
+                .orEmpty()
 
         renderPanelTabBadges(page)
         renderSolutions(page)

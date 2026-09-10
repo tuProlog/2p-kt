@@ -10,9 +10,8 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.solve.flags.TrackVariables.ON
+import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.libs.io.IOLib
-import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.identity.SolverSessionId
@@ -34,6 +33,7 @@ internal class SolverFactorySession(
     private val creationRequest: SolverSessionCreationRequest,
     capabilities: Set<String>,
     private val solutionFeatures: (Solution) -> Map<FeatureId, Map<String, FeatureValue>>,
+    private val runtimeLibraries: List<Library>,
 ) : SolverSession {
     // ponytail: unsynchronized signal buffer. Callbacks fire synchronously within the driving
     // coroutine's own call stack (never a genuinely concurrent thread), so a lock isn't needed here;
@@ -85,7 +85,7 @@ internal class SolverFactorySession(
         var builder =
             factory
                 .newBuilder()
-                .runtime(Runtime.of(OOPLib, IOLib))
+                .runtime(Runtime.of(runtimeLibraries))
                 .flag(TrackVariables) { ON }
                 .standardInput(InputChannel.of(creationRequest.stdin))
                 .standardOutput(OutputChannel.of { signal(SolverSignal.Stdout(it)) })

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ui.web
 
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
+import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.ui.gui.application.buildGuiApplication
 import it.unibo.tuprolog.ui.gui.controller.ApplicationAction
 import it.unibo.tuprolog.ui.gui.controller.WorkspaceAction
@@ -17,7 +18,16 @@ fun main() {
     // name (see solve/src/jsMain/.../SolverExtensionsJs.kt), which only works when Kotlin/JS modules are
     // resolved by Node at runtime. Webpack bundles ide-web ahead of time instead, so that lookup fails at
     // startup; importing the factory directly (ide-web already depends on :solve-classic) sidesteps it.
-    val profile = solverFactoryProfile(ClassicSolverFactory, SolverProfileId("prolog"), "Prolog")
+    val profile =
+        solverFactoryProfile(
+            ClassicSolverFactory,
+            SolverProfileId("prolog"),
+            "Prolog",
+            // OOPLib (gui-solve's default runtime library alongside IOLib) is reflection-based and throws
+            // NotImplementedError on Kotlin/JS as soon as a runtime tries to use it, which previously failed
+            // every single resolution in this app regardless of whether the query needed OOP features at all.
+            runtimeLibraries = listOf(IOLib),
+        )
     val application =
         buildGuiApplication(scope) {
             solverProfile(profile, makeDefault = true)

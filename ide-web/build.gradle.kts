@@ -14,6 +14,7 @@ kotlin {
             api(project(":gui"))
             implementation(project(":gui-solve"))
             implementation(project(":solve-classic"))
+            implementation(project(":io-lib"))
             implementation(libs.kotlinx.coroutines.core)
             implementation(npm("ace-builds", "1.44.0"))
         }
