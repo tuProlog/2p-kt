@@ -19,8 +19,12 @@ multiProjectHelper {
     defaultProjectType = ProjectType.KOTLIN
 
     jvmProjects(":examples", ":ide-swing", ":ide-plp-swing")
-    otherProjects(":ide-web")
-    otherProjects(":documentation")
+    // otherProjects(identifier, vararg other) *replaces* the whole set on every call (it's a setter, not an
+    // accumulator - see kt-mpp's RootMultiProjectExtension), so these must be one call: two separate calls left
+    // only ":documentation" in "otherProjects", silently dropping ":ide-web" back onto the default Kotlin
+    // project template on top of its own explicit plugin block - which built successfully with no error, but
+    // silently produced a broken production webpack bundle (its main() reduced to nothing at runtime).
+    otherProjects(":ide-web", ":documentation")
 
     val baseProjectTemplate =
         buildSet {
