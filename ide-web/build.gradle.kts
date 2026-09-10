@@ -69,3 +69,26 @@ val zipWebDistribution =
 tasks.named("assemble") {
     dependsOn(zipWebDistribution)
 }
+
+// jsBrowserTest only ever mounts individual Kotlin classes in isolation; it never boots index.html, so it
+// cannot catch bugs in how the app is wired together end to end (see scripts/browser-e2e-test.mjs for examples
+// this has actually caught). Not part of `check`/`build`: it needs a local Chrome/Chromium and Node on PATH
+// (set $CHROME_BIN to point at a non-default Chrome install) and is slower than the unit tests.
+val browserE2ETest =
+    tasks.register<Exec>("browserE2ETest") {
+        group = "verification"
+        description = "Runs scripts/browser-e2e-test.mjs against a real headless Chrome loading the packaged " +
+            "ide-web distribution."
+        dependsOn(webDistribution)
+        executable = "node"
+        doFirst {
+            args(
+                layout.projectDirectory
+                    .file("scripts/browser-e2e-test.mjs")
+                    .asFile.absolutePath,
+                webDistribution
+                    .get()
+                    .outputs.files.singleFile.absolutePath,
+            )
+        }
+    }
