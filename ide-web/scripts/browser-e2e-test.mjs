@@ -286,6 +286,52 @@ const SCENARIOS = [
     },
   },
   {
+    name: "the unknown flag is editable and its new value survives a re-render",
+    async run({ evalJs }) {
+      // Flags only exist once a solver session does; the earlier "solving a query" scenario already solved.
+      const before = await evalJs(`
+        (function() {
+          const flagsTab = Array.from(document.querySelectorAll('.side-tab')).find(t => t.textContent === 'Flags');
+          flagsTab.click();
+          const row = Array.from(document.querySelectorAll('.side-content table tr'))
+            .find(r => r.cells[0]?.textContent === 'unknown');
+          return row ? { value: row.cells[1].querySelector('select')?.value, options: row.cells[1].querySelector('select')?.value !== undefined } : null;
+        })()
+      `);
+      if (!before) return ["no 'unknown' flag row found in the Flags table (did the earlier solve scenario run?)"];
+      if (!before.options) return [`expected a <select> for the 'unknown' flag, found none (value read: ${before.value})`];
+
+      const target = before.value === "fail" ? "error" : "fail";
+      await evalJs(`
+        (function() {
+          const row = Array.from(document.querySelectorAll('.side-content table tr'))
+            .find(r => r.cells[0]?.textContent === 'unknown');
+          const select = row.cells[1].querySelector('select');
+          select.value = ${JSON.stringify(target)};
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        })()
+      `);
+      // Changing a flag invalidates the current solver session (it must be rebuilt to pick up the new
+      // option), so the Flags panel only reflects the new value once a fresh session exists after solving.
+      await new Promise((r) => setTimeout(r, 300));
+      await evalJs(`document.getElementById('solve-all-button').click()`);
+      await pollUntil(evalJs, `document.getElementById('status-label').textContent`, (v) => /COMPLETED|FAILED/.test(v), 5000);
+      const after = await pollUntil(
+        evalJs,
+        `
+          (function() {
+            const row = Array.from(document.querySelectorAll('.side-content table tr'))
+              .find(r => r.cells[0]?.textContent === 'unknown');
+            return row?.cells[1].querySelector('select')?.value;
+          })()
+        `,
+        (v) => v === target,
+        3000,
+      );
+      return after === target ? [] : [`expected the 'unknown' flag to re-render as "${target}", got "${after}"`];
+    },
+  },
+  {
     name: "loading a template applies syntax coloring without requiring an edit",
     async run({ evalJs }) {
       const hasTemplates = await evalJs(`!document.getElementById('templates-select').hidden`);

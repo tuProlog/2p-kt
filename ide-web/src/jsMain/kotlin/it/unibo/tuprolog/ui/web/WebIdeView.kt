@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.web
 
+import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.ui.gui.controller.ConsumptionMode
 import it.unibo.tuprolog.ui.gui.controller.DocumentAction
 import it.unibo.tuprolog.ui.gui.controller.GuiAction
@@ -428,7 +429,7 @@ internal class WebIdeView(
     private fun renderInspection(page: PageState) {
         val inspection = page.solverSession.inspection
         panelContents.getValue(PanelId.OPERATORS).replaceContent(operatorsTable(inspection.operators))
-        panelContents.getValue(PanelId.FLAGS).replaceContent(flagsTable(inspection.flags))
+        panelContents.getValue(PanelId.FLAGS).replaceContent(flagsTable(page, inspection.flags))
         panelContents.getValue(PanelId.LIBRARIES).replaceContent(librariesList(inspection.libraries))
         panelContents.getValue(PanelId.STATIC_KB).textContent = inspection.staticKnowledgeBase
         panelContents.getValue(PanelId.DYNAMIC_KB).textContent = inspection.dynamicKnowledgeBase
@@ -450,11 +451,72 @@ internal class WebIdeView(
         return table
     }
 
-    private fun flagsTable(flags: List<FlagPresentation>): HTMLElement {
+    private fun flagsTable(
+        page: PageState,
+        flags: List<FlagPresentation>,
+    ): HTMLElement {
         val table = element("table", null)
         table.appendChild(tableRow(listOf("Name", "Value"), header = true))
-        flags.forEach { table.appendChild(tableRow(listOf(it.name, it.value))) }
+        flags.forEach { flag ->
+            val row = element("tr", null)
+            row.appendChild((document.createElement("td") as HTMLElement).apply { textContent = flag.name })
+            row.appendChild(flagValueCell(page, flag))
+            table.appendChild(row)
+        }
         return table
+    }
+
+    /**
+     * A flag known to [NotableFlag] with a fixed value set gets a `<select>` of those values (mirroring
+     * ide-swing's [FlagsTable][it.unibo.tuprolog.ui.swing]); an unrecognized flag gets a free-text input, since
+     * the solver may define flags this UI has no static knowledge of; a known-but-not-editable flag stays plain
+     * text. Either way, edits dispatch [PageAction.ChangeConfiguration] the same way ide-swing does.
+     */
+    private fun flagValueCell(
+        page: PageState,
+        flag: FlagPresentation,
+    ): HTMLElement {
+        val cell = document.createElement("td") as HTMLElement
+        val notable = NotableFlag.fromName(flag.name)
+        when {
+            notable != null && notable.isEditable -> {
+                val select = element("select", null) as HTMLSelectElement
+                notable.admissibleValues.forEach { admissibleValue ->
+                    val text = admissibleValue.toString()
+                    val option = document.createElement("option") as HTMLElement
+                    option.textContent = text
+                    option.setAttribute("value", text)
+                    select.appendChild(option)
+                }
+                select.value = flag.value
+                select.addEventListener("change", { _: Event -> changeFlag(page, flag.name, select.value) })
+                cell.appendChild(select)
+            }
+            notable == null -> {
+                val input =
+                    (element("input", null) as HTMLInputElement).apply {
+                        type = "text"
+                        value = flag.value
+                    }
+                input.addEventListener("change", { _: Event -> changeFlag(page, flag.name, input.value) })
+                cell.appendChild(input)
+            }
+            else -> cell.textContent = flag.value
+        }
+        return cell
+    }
+
+    private fun changeFlag(
+        page: PageState,
+        name: String,
+        value: String,
+    ) {
+        dispatch(
+            PageAction.ChangeConfiguration(
+                page.id,
+                page.configuration.copy(optionOverrides = page.configuration.optionOverrides + (name to value)),
+            ),
+        )
     }
 
     private fun librariesList(libraries: List<LibraryPresentation>): HTMLElement {
