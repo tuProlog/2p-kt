@@ -9,6 +9,18 @@ jobs:
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.31
+      - name: Ensure a headless-capable Chrome is available (for :ide-web:browserE2ETest)
+        run: |
+          # ubuntu-24.04 GitHub-hosted runners ship Google Chrome preinstalled (see actions/runner-images);
+          # jsBrowserTest's karma-chrome-launcher already relies on that with no setup step of its own. This
+          # only falls back to installing it if that default ever stops holding.
+          if command -v google-chrome-stable >/dev/null || command -v google-chrome >/dev/null \
+              || command -v chromium-browser >/dev/null || command -v chromium >/dev/null; then
+            echo "Chrome already present (default runner image)."
+          else
+            echo "No default Chrome found; installing google-chrome-stable."
+            sudo apt-get update && sudo apt-get install -y google-chrome-stable
+          fi
       - uses: DanySK/build-check-deploy-gradle-action@4.0.44
         with:
           retries-on-failure: '2'
@@ -26,6 +38,12 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
+      - name: Run the ide-web browser end-to-end suite
+        # Deliberately its own `./gradlew` invocation, not part of `check` above: running jsBrowserTest and
+        # browserE2ETest's production webpack build within the SAME Gradle build corrupts state shared between
+        # the two separate webpack executions (verified locally: the production bundle silently drops code that
+        # is present, and passes every time, when this runs as its own build). See ide-web/build.gradle.kts.
+        run: ./gradlew :ide-web:browserE2ETest
   test-extensively:
     needs:
       - build

@@ -76,21 +76,28 @@ tasks.named("assemble") {
 // cannot catch bugs in how the app is wired together end to end (see scripts/browser-e2e-test.mjs for examples
 // this has actually caught). Not part of `check`/`build`: it needs a local Chrome/Chromium and Node on PATH
 // (set $CHROME_BIN to point at a non-default Chrome install) and is slower than the unit tests.
-val browserE2ETest =
-    tasks.register<Exec>("browserE2ETest") {
-        group = "verification"
-        description = "Runs scripts/browser-e2e-test.mjs against a real headless Chrome loading the packaged " +
-            "ide-web distribution."
-        dependsOn(webDistribution)
-        executable = "node"
-        doFirst {
-            args(
-                layout.projectDirectory
-                    .file("scripts/browser-e2e-test.mjs")
-                    .asFile.absolutePath,
-                webDistribution
-                    .get()
-                    .outputs.files.singleFile.absolutePath,
-            )
-        }
+tasks.register<Exec>("browserE2ETest") {
+    group = "verification"
+    description = "Runs scripts/browser-e2e-test.mjs against a real headless Chrome loading the packaged " +
+        "ide-web distribution."
+    dependsOn(webDistribution)
+    executable = "node"
+    doFirst {
+        args(
+            layout.projectDirectory
+                .file("scripts/browser-e2e-test.mjs")
+                .asFile.absolutePath,
+            webDistribution
+                .get()
+                .outputs.files.singleFile.absolutePath,
+        )
     }
+}
+
+// browserE2ETest is deliberately NOT wired into `check`/`jsTest` (via dependsOn OR finalizedBy). Both were tried
+// and both reproduced a real, consistent failure at the time: running jsBrowserTest and browserE2ETest's
+// production webpack build within the same Gradle invocation produced a production bundle with its main()
+// silently reduced to nothing (root cause since found and fixed: a root build.gradle.kts bug duplicated this
+// module's Kotlin JS target configuration - see the `otherProjects` comment there). Left decoupled here since
+// that was never re-verified after the real fix landed, and a separate CI step works regardless. CI therefore
+// runs `./gradlew :ide-web:browserE2ETest` as its own step, after the main check step, not as a dependency of it.
