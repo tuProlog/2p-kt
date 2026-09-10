@@ -19,6 +19,7 @@ kotlin {
         }
         jsTest.dependencies {
             implementation(kotlin("test"))
+            implementation(project(":parser-theory"))
         }
     }
 }
