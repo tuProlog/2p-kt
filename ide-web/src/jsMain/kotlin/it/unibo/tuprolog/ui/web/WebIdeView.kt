@@ -108,10 +108,6 @@ internal class WebIdeView(
             "click",
             { _: Event -> dispatch(WorkspaceAction.NewDocumentPage()) },
         )
-        byId<HTMLButtonElement>("btn-new-scratch").addEventListener(
-            "click",
-            { _: Event -> dispatch(WorkspaceAction.NewScratchPage()) },
-        )
         byId<HTMLButtonElement>("btn-open").addEventListener("click", { _: Event -> pickOpen() })
         byId<HTMLButtonElement>("btn-save").addEventListener(
             "click",

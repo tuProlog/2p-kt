@@ -184,7 +184,7 @@ async function pollUntil(get, predicate, timeoutMs, intervalMs = 100) {
 }
 
 const SHELL_IDS = [
-  "btn-new", "btn-new-scratch", "templates-select", "btn-open", "btn-save", "btn-save-as", "btn-close-page",
+  "btn-new", "templates-select", "btn-open", "btn-save", "btn-save-as", "btn-close-page",
   "status-label", "tab-bar", "query-input", "solve-button", "solve10-button", "solve-all-button", "stop-button",
   "reset-button", "timeout-input", "editor", "side", "side-tab-bar",
 ];
@@ -208,6 +208,13 @@ const SCENARIOS = [
       if (!result.cssLoaded) failures.push("ide-web.css does not appear to be applied");
       if (exceptions.length > 0) failures.push(`uncaught exceptions during boot: ${exceptions.join(" | ")}`);
       return failures;
+    },
+  },
+  {
+    name: "the redundant 'New scratch' button was removed",
+    async run({ evalJs }) {
+      const exists = await evalJs(`!!document.getElementById('btn-new-scratch')`);
+      return exists ? ["#btn-new-scratch is still present; the plain New button should be the only one"] : [];
     },
   },
   {
