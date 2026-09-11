@@ -34,7 +34,7 @@ jobs:
           should-run-codecov: false
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/master'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: documentation/build/assembledSite
   deploy:
