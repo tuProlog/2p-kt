@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ui.gui.prolog
 
 import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.ui.gui.identity.DocumentId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
@@ -19,7 +20,16 @@ class SolverFactoryProfileTest {
     @Test
     fun solverProfileExposesAndRefreshesInspectorState() =
         runTest {
-            val profile = solverFactoryProfile(Solver.prolog, SolverProfileId("test"), "Test")
+            // OOPLib (the default runtime library alongside IOLib) is reflection-based and throws
+            // NotImplementedError on Kotlin/JS as soon as a runtime tries to use it; this test doesn't
+            // exercise OOP features, so it opts out the same way ide-web's WebIdeApp does.
+            val profile =
+                solverFactoryProfile(
+                    Solver.prolog,
+                    SolverProfileId("test"),
+                    "Test",
+                    runtimeLibraries = listOf(IOLib),
+                )
             val pageId = PageId("page")
             val session =
                 profile.factory.create(
