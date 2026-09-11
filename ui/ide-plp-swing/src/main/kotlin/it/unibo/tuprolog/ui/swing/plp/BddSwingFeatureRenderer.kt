@@ -17,6 +17,8 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 
+private const val PANEL_BORDER_INSET = 6
+
 class BddSwingFeatureRenderer(
     private val graphRenderer: SwingBddGraphRenderer = DotTextSwingBddGraphRenderer,
 ) : SwingFeatureRenderer {
@@ -42,14 +44,21 @@ class BddSwingFeatureRenderer(
         private val context: SwingFeatureContext,
         private val graphRenderer: SwingBddGraphRenderer,
     ) : JPanel(BorderLayout()) {
-        private val heading = JLabel("No binary decision diagram")
-        private val graphHost = JPanel(BorderLayout())
-        private val copyButton = JButton("Copy DOT")
+        private val heading = JLabel("No binary decision diagram").apply { name = "bddHeadingLabel" }
+        private val graphHost = JPanel(BorderLayout()).apply { name = "bddGraphHost" }
+        private val copyButton = JButton("Copy DOT").apply { name = "bddCopyDotButton" }
         private var page: PageState? = null
         private var dot: String? = null
 
         init {
-            border = BorderFactory.createEmptyBorder(6, 6, 6, 6)
+            name = "bddPanel"
+            border =
+                BorderFactory.createEmptyBorder(
+                    PANEL_BORDER_INSET,
+                    PANEL_BORDER_INSET,
+                    PANEL_BORDER_INSET,
+                    PANEL_BORDER_INSET,
+                )
             add(
                 JPanel(BorderLayout()).apply {
                     add(heading, BorderLayout.CENTER)

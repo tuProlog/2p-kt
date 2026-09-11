@@ -95,8 +95,9 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
     private fun TreePath.lastDescendantPath(): TreePath {
         val node = lastPathComponent as DefaultMutableTreeNode
         if (node.childCount == 0) return this
-        val lastChild = node.lastChild as? DefaultMutableTreeNode ?: return this
-        return pathByAddingChild(lastChild).lastDescendantPath()
+        // getLastChild() throws NoSuchElementException on a childless node, hence the count check above.
+        val lastChild = node.lastChild as? DefaultMutableTreeNode
+        return if (lastChild == null) this else pathByAddingChild(lastChild).lastDescendantPath()
     }
 
     private fun DefaultMutableTreeNode.ancestorQuery(): String? =

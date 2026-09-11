@@ -65,7 +65,13 @@ import kotlin.math.max
 /**
  * Swing view/adapter. It never creates or mutates solver objects: all behaviour goes through [GuiController].
  * The fixed query row is rebound atomically to the selected page and therefore remains semantically page-specific.
+ *
+ * This is the single Swing binding for the whole IDE window: one menu bar, one query row, and every inspector
+ * tab, each wired to a handful of fields and a handful of listener callbacks. Splitting that wiring across
+ * several classes would trade a class that is large but easy to follow top-to-bottom for several smaller classes
+ * passing the same dozen fields back and forth, which is not a real improvement -- hence the suppression below.
  */
+@Suppress("LargeClass", "TooManyFunctions")
 class SwingIdeFrame(
     private val controller: GuiController,
     private val scope: CoroutineScope,
@@ -76,38 +82,40 @@ class SwingIdeFrame(
     /** The most recently applied editor font size; read back by the host when persisting the session. */
     internal var currentFontSize: Int = initialFontSize
         private set
-    private val editorTabs = JTabbedPane()
-    private val lowerTabs = JTabbedPane()
-    private val queryField = PrologQueryField()
-    private val solveButton = JButton("Solve")
-    private val solve10Button = JButton("Solve 10")
-    private val solve100Button = JButton("Solve 100")
-    private val solveAllButton = JButton("Solve all")
-    private val stopButton = JButton("Stop")
-    private val resetButton = JButton("Reset")
-    private val timeoutField = JTextField("5s", 8)
-    private val statusLabel = JLabel("Idle")
-    private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT)
+    private val editorTabs = JTabbedPane().apply { name = "editorTabs" }
+    private val lowerTabs = JTabbedPane().apply { name = "lowerTabs" }
+    private val queryField = PrologQueryField().apply { name = "queryField" }
+    private val solveButton = JButton("Solve").apply { name = "solveButton" }
+    private val solve10Button = JButton("Solve 10").apply { name = "solve10Button" }
+    private val solve100Button = JButton("Solve 100").apply { name = "solve100Button" }
+    private val solveAllButton = JButton("Solve all").apply { name = "solveAllButton" }
+    private val stopButton = JButton("Stop").apply { name = "stopButton" }
+    private val resetButton = JButton("Reset").apply { name = "resetButton" }
+    private val timeoutField = JTextField("5s", TIMEOUT_FIELD_COLUMNS).apply { name = "timeoutField" }
+    private val statusLabel = JLabel("Idle").apply { name = "statusLabel" }
+    private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT).apply { name = "caretLabel" }
 
-    private val solutionsTree = SolutionTree()
-    private val clearSolutionsButton = JButton("Clear solutions")
-    private val stdinArea = editorArea()
-    private val stdoutArea = readOnlyArea()
-    private val stderrArea = readOnlyArea()
-    private val warningsArea = readOnlyArea()
-    private val diagnosticsList = DiagnosticsList()
-    private val operatorsTable = OperatorsTable()
-    private val flagsTable = FlagsTable()
-    private val librariesTree = LibrariesTree()
+    private val solutionsTree = SolutionTree().apply { name = "solutionsTree" }
+    private val clearSolutionsButton = JButton("Clear solutions").apply { name = "clearSolutionsButton" }
+    private val stdinArea = editorArea().apply { name = "stdinArea" }
+    private val stdoutArea = readOnlyArea().apply { name = "stdoutArea" }
+    private val stderrArea = readOnlyArea().apply { name = "stderrArea" }
+    private val warningsArea = readOnlyArea().apply { name = "warningsArea" }
+    private val diagnosticsList = DiagnosticsList().apply { name = "diagnosticsList" }
+    private val operatorsTable = OperatorsTable().apply { name = "operatorsTable" }
+    private val flagsTable = FlagsTable().apply { name = "flagsTable" }
+    private val librariesTree = LibrariesTree().apply { name = "librariesTree" }
     private val staticKbArea =
         PrologEditor(currentFontSize).apply {
             isEditable = false
             setHighlightCurrentLine(false)
+            name = "staticKbArea"
         }
     private val dynamicKbArea =
         PrologEditor(currentFontSize).apply {
             isEditable = false
             setHighlightCurrentLine(false)
+            name = "dynamicKbArea"
         }
 
     private val pageEditors = linkedMapOf<PageId, PrologEditor>()
@@ -136,15 +144,15 @@ class SwingIdeFrame(
                 .getDefaultToolkit()
                 .getImage(javaClass.getResource("/logo.png"))
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
-        minimumSize = Dimension(900, 650)
-        preferredSize = Dimension(1200, 820)
+        minimumSize = Dimension(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
+        preferredSize = Dimension(PREFERRED_WINDOW_WIDTH, PREFERRED_WINDOW_HEIGHT)
         layout = BorderLayout()
         jMenuBar = createMenuBar()
 
         val vertical =
             JSplitPane(JSplitPane.VERTICAL_SPLIT, editorTabs, createLowerPanel()).apply {
-                resizeWeight = 0.58
-                dividerLocation = 450
+                resizeWeight = WORKSPACE_SPLIT_RESIZE_WEIGHT
+                dividerLocation = WORKSPACE_SPLIT_DIVIDER_LOCATION
             }
         add(vertical, BorderLayout.CENTER)
         add(createStatusBar(), BorderLayout.SOUTH)
@@ -178,18 +186,24 @@ class SwingIdeFrame(
 
     private fun createLowerPanel(): JComponent {
         val controlHeight = maxOf(timeoutField.preferredSize.height, solveButton.preferredSize.height)
-        timeoutField.preferredSize = Dimension(100, controlHeight)
+        timeoutField.preferredSize = Dimension(TIMEOUT_FIELD_WIDTH, controlHeight)
         queryField.preferredSize = Dimension(queryField.preferredSize.width, controlHeight)
         listOf(solveButton, solve10Button, solve100Button, solveAllButton, stopButton, resetButton).forEach {
-            it.preferredSize = Dimension(88, controlHeight)
+            it.preferredSize = Dimension(QUERY_BUTTON_WIDTH, controlHeight)
         }
         val queryRow =
-            JPanel(BorderLayout(8, 0)).apply {
-                border = BorderFactory.createEmptyBorder(6, 6, 6, 6)
+            JPanel(BorderLayout(QUERY_ROW_HGAP, 0)).apply {
+                border =
+                    BorderFactory.createEmptyBorder(
+                        QUERY_ROW_BORDER_INSET,
+                        QUERY_ROW_BORDER_INSET,
+                        QUERY_ROW_BORDER_INSET,
+                        QUERY_ROW_BORDER_INSET,
+                    )
                 add(JLabel("?-"), BorderLayout.WEST)
                 add(queryField, BorderLayout.CENTER)
                 add(
-                    JPanel(FlowLayout(FlowLayout.RIGHT, 5, 0)).apply {
+                    JPanel(FlowLayout(FlowLayout.RIGHT, QUERY_BUTTONS_HGAP, 0)).apply {
                         add(solveButton)
                         add(solve10Button)
                         add(solve100Button)
@@ -237,7 +251,7 @@ class SwingIdeFrame(
         val panel =
             JPanel(BorderLayout()).apply {
                 add(
-                    JPanel(FlowLayout(FlowLayout.LEFT, 4, 2)).apply { add(clearSolutionsButton) },
+                    JPanel(FlowLayout(FlowLayout.LEFT, SOLUTIONS_TOOLBAR_HGAP, 2)).apply { add(clearSolutionsButton) },
                     BorderLayout.NORTH,
                 )
                 add(JScrollPane(solutionsTree), BorderLayout.CENTER)
@@ -263,86 +277,150 @@ class SwingIdeFrame(
 
     private fun createStatusBar(): JComponent =
         JPanel(BorderLayout()).apply {
-            border = BorderFactory.createEmptyBorder(3, 8, 3, 8)
+            border =
+                BorderFactory.createEmptyBorder(
+                    STATUS_BAR_VERTICAL_INSET,
+                    STATUS_BAR_HORIZONTAL_INSET,
+                    STATUS_BAR_VERTICAL_INSET,
+                    STATUS_BAR_HORIZONTAL_INSET,
+                )
             add(statusLabel, BorderLayout.CENTER)
             add(caretLabel, BorderLayout.EAST)
         }
 
     private fun createMenuBar(): JMenuBar =
         JMenuBar().apply {
+            name = "menuBar"
+            add(fileMenu())
+            add(editMenu())
+            add(searchMenu())
+            add(helpMenu())
+        }
+
+    private fun fileMenu(): JMenu =
+        JMenu("File").apply {
+            name = "fileMenu"
+            mnemonic = KeyEvent.VK_F
             add(
-                JMenu("File").apply {
-                    mnemonic = KeyEvent.VK_F
-                    add(menuItem("New", KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask())) { newDocument() })
-                    add(menuItem("New scratch page", null) { newScratchPage() })
-                    if (templates.isNotEmpty()) add(newFromTemplateMenu())
-                    add(menuItem("Open…", KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask())) { openDocument() })
-                    addSeparator()
-                    add(
-                        menuItem(
-                            "Close page",
-                            KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask()),
-                        ) { closeSelectedPage() },
-                    )
-                    add(menuItem("Save", KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask())) { saveSelected(false) })
-                    add(
-                        menuItem(
-                            "Save as…",
-                            KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask() or InputEvent.SHIFT_DOWN_MASK),
-                        ) { saveSelected(true) },
-                    )
-                    add(menuItem("Reload", null) { reloadSelected() })
-                    add(menuItem("File properties", null) { showFileProperties() })
-                    addSeparator()
-                    add(menuItem("Quit", KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask())) { requestExit() })
+                menuItem(
+                    "New",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask()),
+                    "newMenuItem",
+                ) { newDocument() },
+            )
+            add(menuItem("New scratch page", null, "newScratchPageMenuItem") { newScratchPage() })
+            if (templates.isNotEmpty()) add(newFromTemplateMenu())
+            add(
+                menuItem(
+                    "Open…",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask()),
+                    "openMenuItem",
+                ) { openDocument() },
+            )
+            addSeparator()
+            add(
+                menuItem(
+                    "Close page",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask()),
+                    "closePageMenuItem",
+                ) { closeSelectedPage() },
+            )
+            add(
+                menuItem(
+                    "Save",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask()),
+                    "saveMenuItem",
+                ) { saveSelected(false) },
+            )
+            add(
+                menuItem(
+                    "Save as…",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask() or InputEvent.SHIFT_DOWN_MASK),
+                    "saveAsMenuItem",
+                ) { saveSelected(true) },
+            )
+            add(menuItem("Reload", null, "reloadMenuItem") { reloadSelected() })
+            add(menuItem("File properties", null, "filePropertiesMenuItem") { showFileProperties() })
+            addSeparator()
+            add(
+                menuItem(
+                    "Quit",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask()),
+                    "quitMenuItem",
+                ) { requestExit() },
+            )
+        }
+
+    private fun editMenu(): JMenu =
+        JMenu("Edit").apply {
+            name = "editMenu"
+            mnemonic = KeyEvent.VK_E
+            add(
+                JMenuItem(DefaultEditorKit.CutAction()).apply {
+                    text = "Cut"
+                    name = "cutMenuItem"
                 },
             )
             add(
-                JMenu("Edit").apply {
-                    mnemonic = KeyEvent.VK_E
-                    add(JMenuItem(DefaultEditorKit.CutAction()).apply { text = "Cut" })
-                    add(JMenuItem(DefaultEditorKit.CopyAction()).apply { text = "Copy" })
-                    add(JMenuItem(DefaultEditorKit.PasteAction()).apply { text = "Paste" })
-                    add(
-                        menuItem("Select all", KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask())) {
-                            focusedTextComponent()?.selectAll()
-                        },
-                    )
+                JMenuItem(DefaultEditorKit.CopyAction()).apply {
+                    text = "Copy"
+                    name = "copyMenuItem"
                 },
             )
             add(
-                JMenu("Search").apply {
-                    mnemonic = KeyEvent.VK_S
-                    add(
-                        menuItem(
-                            "Find…",
-                            KeyStroke.getKeyStroke(KeyEvent.VK_F, menuMask()),
-                        ) { searchActions.showFind() },
-                    )
-                    add(
-                        menuItem(
-                            "Replace…",
-                            KeyStroke.getKeyStroke(KeyEvent.VK_H, menuMask()),
-                        ) { searchActions.showReplace() },
-                    )
-                    add(
-                        menuItem(
-                            "Go to line…",
-                            KeyStroke.getKeyStroke(KeyEvent.VK_G, menuMask()),
-                        ) { searchActions.showGoToLine() },
-                    )
+                JMenuItem(DefaultEditorKit.PasteAction()).apply {
+                    text = "Paste"
+                    name = "pasteMenuItem"
                 },
             )
             add(
-                JMenu("Help").apply {
-                    add(menuItem("About", null) { showAbout() })
-                    add(menuItem("Report an issue…", null) { showReportIssueDialog() })
+                menuItem(
+                    "Select all",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask()),
+                    "selectAllMenuItem",
+                ) {
+                    focusedTextComponent()?.selectAll()
                 },
             )
         }
 
+    private fun searchMenu(): JMenu =
+        JMenu("Search").apply {
+            name = "searchMenu"
+            mnemonic = KeyEvent.VK_S
+            add(
+                menuItem(
+                    "Find…",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_F, menuMask()),
+                    "findMenuItem",
+                ) { searchActions.showFind() },
+            )
+            add(
+                menuItem(
+                    "Replace…",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_H, menuMask()),
+                    "replaceMenuItem",
+                ) { searchActions.showReplace() },
+            )
+            add(
+                menuItem(
+                    "Go to line…",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_G, menuMask()),
+                    "goToLineMenuItem",
+                ) { searchActions.showGoToLine() },
+            )
+        }
+
+    private fun helpMenu(): JMenu =
+        JMenu("Help").apply {
+            name = "helpMenu"
+            add(menuItem("About", null, "aboutMenuItem") { showAbout() })
+            add(menuItem("Report an issue…", null, "reportIssueMenuItem") { showReportIssueDialog() })
+        }
+
     private fun newFromTemplateMenu(): JMenu =
         JMenu("New from template").apply {
+            name = "newFromTemplateMenu"
             for (template in templates) {
                 add(
                     JMenuItem(
@@ -351,7 +429,10 @@ class SwingIdeFrame(
                                 dispatch(WorkspaceAction.NewDocumentPage("${template.id}.pl", template.source))
                             }
                         },
-                    ).apply { toolTipText = template.description.ifBlank { null } },
+                    ).apply {
+                        name = "newFromTemplateMenuItem.${template.id}"
+                        toolTipText = template.description.ifBlank { null }
+                    },
                 )
             }
         }
@@ -359,13 +440,17 @@ class SwingIdeFrame(
     private fun menuItem(
         label: String,
         accelerator: KeyStroke?,
+        name: String,
         action: () -> Unit,
     ): JMenuItem =
         JMenuItem(
             object : AbstractAction(label) {
                 override fun actionPerformed(event: java.awt.event.ActionEvent?) = action()
             },
-        ).apply { this.accelerator = accelerator }
+        ).apply {
+            this.accelerator = accelerator
+            this.name = name
+        }
 
     private fun installQueryListeners() {
         queryField.document.addDocumentListener(
@@ -485,6 +570,7 @@ class SwingIdeFrame(
     private fun createEditorComponent(page: PageState): JComponent {
         val area =
             PrologEditor(currentFontSize).apply {
+                name = "pageEditor"
                 document.addDocumentListener(
                     object : DocumentListener {
                         override fun insertUpdate(event: DocumentEvent) = editorChanged(page.id)
@@ -508,29 +594,48 @@ class SwingIdeFrame(
         val page = state.workspace.selectedPageId?.let(state.workspace::page)
         queryBoundPageId = page?.id
         stdinBoundPageId = page?.id
-        val enabled = page != null
-        queryField.isEnabled = enabled
-        stdinArea.isEnabled = enabled && page.resolution.status != ResolutionStatus.RUNNING
+        queryField.isEnabled = page != null
+        stdinArea.isEnabled = page != null && page.resolution.status != ResolutionStatus.RUNNING
 
         if (page == null) {
-            queryField.text = ""
-            clearLowerAreas()
-            statusLabel.text = "No page"
-            solveButton.isEnabled = false
-            solve10Button.isEnabled = false
-            solve100Button.isEnabled = false
-            solveAllButton.isEnabled = false
-            stopButton.isEnabled = false
-            resetButton.isEnabled = false
+            renderNoPage()
             return
         }
 
+        renderQueryAndStdin(state, page)
+        renderSolutionsAndConsoles(page)
+        renderInspectors(page)
+        renderSolveControls(page)
+        statusLabel.text = statusText(page)
+        updateLowerTabTitles(page)
+        acknowledgeVisiblePanel(page)
+        renderExtensionFeatures(page)
+    }
+
+    private fun renderNoPage() {
+        queryField.text = ""
+        clearLowerAreas()
+        statusLabel.text = "No page"
+        solveButton.isEnabled = false
+        solve10Button.isEnabled = false
+        solve100Button.isEnabled = false
+        solveAllButton.isEnabled = false
+        stopButton.isEnabled = false
+        resetButton.isEnabled = false
+    }
+
+    private fun renderQueryAndStdin(
+        state: GuiState,
+        page: PageState,
+    ) {
         if (queryField.text != page.query.text) queryField.text = page.query.text
         queryField.highlight(page.solverSession.inspection.operators)
         if (stdinArea.text != page.console.stdin) stdinArea.text = page.console.stdin
         val effective = state.workspace.configuration.resolve(page.configuration)
         if (!timeoutField.isFocusOwner) timeoutField.text = formatDurationInput(effective.timeout)
+    }
 
+    private fun renderSolutionsAndConsoles(page: PageState) {
         val solutionEntries = solutionEntries(page)
         val focusedQuery =
             page.resolution.query
@@ -550,6 +655,9 @@ class SwingIdeFrame(
                     }
                 }
             }
+    }
+
+    private fun renderInspectors(page: PageState) {
         diagnosticsList.render(pageEditors[page.id]?.diagnostics.orEmpty())
         operatorsTable.render(page.solverSession.inspection.operators)
         flagsTable.render(page.solverSession.inspection.flags)
@@ -559,25 +667,25 @@ class SwingIdeFrame(
         staticKbArea.highlight(page.solverSession.inspection.operators)
         dynamicKbArea.text = page.solverSession.inspection.dynamicKnowledgeBase
         dynamicKbArea.highlight(page.solverSession.inspection.operators)
+    }
 
-        solveButton.text = if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) "Next" else "Solve"
-        solve10Button.text =
-            if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) "Next 10" else "Solve 10"
-        solve100Button.text =
-            if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) "Next 100" else "Solve 100"
-        solveAllButton.text =
-            if (page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION) "All next" else "Solve all"
-        solveButton.isEnabled = page.resolution.canSolve || page.resolution.canContinue
-        solve10Button.isEnabled = page.resolution.canSolve || page.resolution.canContinue
-        solve100Button.isEnabled = page.resolution.canSolve || page.resolution.canContinue
-        solveAllButton.isEnabled = page.resolution.canSolve || page.resolution.canContinue
+    private fun renderSolveControls(page: PageState) {
+        val awaitingContinuation = page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION
+        solveButton.text = if (awaitingContinuation) "Next" else "Solve"
+        solve10Button.text = if (awaitingContinuation) "Next 10" else "Solve 10"
+        solve100Button.text = if (awaitingContinuation) "Next 100" else "Solve 100"
+        solveAllButton.text = if (awaitingContinuation) "All next" else "Solve all"
+        val canSolveOrContinue = page.resolution.canSolve || page.resolution.canContinue
+        solveButton.isEnabled = canSolveOrContinue
+        solve10Button.isEnabled = canSolveOrContinue
+        solve100Button.isEnabled = canSolveOrContinue
+        solveAllButton.isEnabled = canSolveOrContinue
         stopButton.isEnabled = page.resolution.canStop
         resetButton.isEnabled = true
         timeoutField.isEnabled = page.resolution.status != ResolutionStatus.RUNNING
-        statusLabel.text = statusText(page)
-        updateLowerTabTitles(page)
-        acknowledgeVisiblePanel(page)
+    }
 
+    private fun renderExtensionFeatures(page: PageState) {
         for ((featureId, component) in extensionComponents) {
             val renderer = featureRenderers.renderer(featureId) ?: continue
             val featureState = page.features[featureId] ?: PageFeatureState()
@@ -609,7 +717,8 @@ class SwingIdeFrame(
     }
 
     private fun acknowledgeVisiblePanel(page: PageState) {
-        val panel = lowerPanelIds[lowerTabs.selectedIndex] ?: return
+        val panel = lowerPanelIds[lowerTabs.selectedIndex]
+        if (panel == null) return
         when (panel) {
             PanelId.STATIC_KB -> lastSeenStaticKb[page.id] = page.solverSession.inspection.staticKnowledgeBase
             PanelId.DYNAMIC_KB -> lastSeenDynamicKb[page.id] = page.solverSession.inspection.dynamicKnowledgeBase
@@ -647,13 +756,15 @@ class SwingIdeFrame(
     }
 
     private fun navigateToDiagnostic(diagnostic: Diagnostic) {
-        val page = selectedPage() ?: return
-        val editor = pageEditors[page.id] ?: return
+        val editor = selectedPage()?.let { pageEditors[it.id] }
         val offset =
-            diagnostic.range
-                ?.start
-                ?.offset
-                ?.coerceIn(0, editor.document.length) ?: return
+            editor?.let {
+                diagnostic.range
+                    ?.start
+                    ?.offset
+                    ?.coerceIn(0, it.document.length)
+            }
+        if (editor == null || offset == null) return
         editor.caretPosition = offset
         editor.requestFocusInWindow()
         runCatching { editor.scrollRectToVisible(editor.modelToView2D(offset).bounds) }
@@ -673,8 +784,8 @@ class SwingIdeFrame(
     }
 
     private fun addOperator(operator: it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation) {
-        val page = selectedPage() ?: return
-        val editor = pageEditors[page.id] ?: return
+        val editor = selectedPage()?.let { pageEditors[it.id] }
+        if (editor == null) return
         editor.append("\n:- op(${operator.priority}, ${operator.specifier}, ${operator.name}).\n")
     }
 
@@ -739,7 +850,8 @@ class SwingIdeFrame(
                 ?.workspace
                 ?.pages
                 ?.getOrNull(index)
-                ?.id ?: return
+                ?.id
+        if (pageId == null) return
         dispatch(WorkspaceAction.SelectPage(pageId))
         lowerPanelIds[lowerTabs.selectedIndex]?.let { panel ->
             dispatch(PageAction.MarkPanelRead(pageId, panel))
@@ -748,16 +860,17 @@ class SwingIdeFrame(
 
     private fun onLowerTabChanged() {
         if (rendering) return
-        val pageId = renderedState?.workspace?.selectedPageId ?: return
-        val panel = lowerPanelIds[lowerTabs.selectedIndex] ?: return
+        val pageId = renderedState?.workspace?.selectedPageId
+        val panel = lowerPanelIds[lowerTabs.selectedIndex]
+        if (pageId == null || panel == null) return
         dispatch(PageAction.MarkPanelRead(pageId, panel))
     }
 
     private fun editorChanged(pageId: PageId) {
         if (rendering) return
-        val state = renderedState ?: return
-        val page = state.workspace.page(pageId) ?: return
-        val text = pageEditors[pageId]?.text ?: return
+        val page = renderedState?.workspace?.page(pageId)
+        val text = pageEditors[pageId]?.text
+        if (page == null || text == null) return
         when (val content = page.content) {
             is PageContent.DocumentReference -> dispatch(DocumentAction.ChangeText(content.documentId, text))
             is PageContent.Scratch -> dispatch(PageAction.ChangeScratchText(page.id, text))
@@ -925,35 +1038,9 @@ class SwingIdeFrame(
 
     private fun showReportIssueDialog() {
         val report = supportReport()
-        val problemArea =
-            JTextArea(6, 80).apply {
-                lineWrap = true
-                wrapStyleWord = true
-            }
-        val reportArea =
-            JTextArea(report, 12, 80).apply {
-                isEditable = false
-                lineWrap = false
-                caretPosition = 0
-            }
-        val panel =
-            JPanel(BorderLayout(0, 8)).apply {
-                border = BorderFactory.createEmptyBorder(8, 8, 8, 8)
-                add(
-                    JPanel(BorderLayout(0, 4)).apply {
-                        add(JLabel("What problem are you noticing? (optional)"), BorderLayout.NORTH)
-                        add(JScrollPane(problemArea), BorderLayout.CENTER)
-                    },
-                    BorderLayout.NORTH,
-                )
-                add(
-                    JPanel(BorderLayout(0, 4)).apply {
-                        add(JLabel("Status report (included automatically):"), BorderLayout.NORTH)
-                        add(JScrollPane(reportArea), BorderLayout.CENTER)
-                    },
-                    BorderLayout.CENTER,
-                )
-            }
+        val problemArea = reportIssueProblemArea()
+        val reportArea = reportIssueReportArea(report)
+        val panel = reportIssuePanel(problemArea, reportArea)
         val copyAndOpen = "Copy report and open GitHub"
         val choice =
             JOptionPane.showOptionDialog(
@@ -966,9 +1053,58 @@ class SwingIdeFrame(
                 arrayOf(copyAndOpen, "Close"),
                 copyAndOpen,
             )
-        if (choice != 0) return
-        val problem = problemArea.text.trim()
-        val fullReport = if (problem.isEmpty()) report else "Problem description:\n$problem\n\n$report"
+        if (choice == 0) copyReportAndOpenIssueTracker(report, problemArea.text)
+    }
+
+    private fun reportIssueProblemArea(): JTextArea =
+        JTextArea(REPORT_PROBLEM_AREA_ROWS, REPORT_DIALOG_COLUMNS).apply {
+            name = "reportIssueProblemArea"
+            lineWrap = true
+            wrapStyleWord = true
+        }
+
+    private fun reportIssueReportArea(report: String): JTextArea =
+        JTextArea(report, REPORT_STATUS_AREA_ROWS, REPORT_DIALOG_COLUMNS).apply {
+            name = "reportIssueReportArea"
+            isEditable = false
+            lineWrap = false
+            caretPosition = 0
+        }
+
+    private fun reportIssuePanel(
+        problemArea: JTextArea,
+        reportArea: JTextArea,
+    ): JComponent =
+        JPanel(BorderLayout(0, REPORT_DIALOG_OUTER_GAP)).apply {
+            border =
+                BorderFactory.createEmptyBorder(
+                    REPORT_DIALOG_OUTER_GAP,
+                    REPORT_DIALOG_OUTER_GAP,
+                    REPORT_DIALOG_OUTER_GAP,
+                    REPORT_DIALOG_OUTER_GAP,
+                )
+            add(
+                JPanel(BorderLayout(0, REPORT_DIALOG_INNER_GAP)).apply {
+                    add(JLabel("What problem are you noticing? (optional)"), BorderLayout.NORTH)
+                    add(JScrollPane(problemArea), BorderLayout.CENTER)
+                },
+                BorderLayout.NORTH,
+            )
+            add(
+                JPanel(BorderLayout(0, REPORT_DIALOG_INNER_GAP)).apply {
+                    add(JLabel("Status report (included automatically):"), BorderLayout.NORTH)
+                    add(JScrollPane(reportArea), BorderLayout.CENTER)
+                },
+                BorderLayout.CENTER,
+            )
+        }
+
+    private fun copyReportAndOpenIssueTracker(
+        report: String,
+        problem: String,
+    ) {
+        val trimmedProblem = problem.trim()
+        val fullReport = if (trimmedProblem.isEmpty()) report else "Problem description:\n$trimmedProblem\n\n$report"
         runCatching {
             Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(fullReport), null)
         }
@@ -989,6 +1125,27 @@ class SwingIdeFrame(
         KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner as? JTextComponent
 
     private companion object {
+        private const val MIN_WINDOW_WIDTH = 900
+        private const val MIN_WINDOW_HEIGHT = 650
+        private const val PREFERRED_WINDOW_WIDTH = 1200
+        private const val PREFERRED_WINDOW_HEIGHT = 820
+        private const val WORKSPACE_SPLIT_RESIZE_WEIGHT = 0.58
+        private const val WORKSPACE_SPLIT_DIVIDER_LOCATION = 450
+        private const val TIMEOUT_FIELD_COLUMNS = 8
+        private const val TIMEOUT_FIELD_WIDTH = 100
+        private const val QUERY_BUTTON_WIDTH = 88
+        private const val QUERY_ROW_HGAP = 8
+        private const val QUERY_ROW_BORDER_INSET = 6
+        private const val QUERY_BUTTONS_HGAP = 5
+        private const val SOLUTIONS_TOOLBAR_HGAP = 4
+        private const val STATUS_BAR_VERTICAL_INSET = 3
+        private const val STATUS_BAR_HORIZONTAL_INSET = 8
+        private const val REPORT_PROBLEM_AREA_ROWS = 6
+        private const val REPORT_DIALOG_COLUMNS = 80
+        private const val REPORT_STATUS_AREA_ROWS = 12
+        private const val REPORT_DIALOG_OUTER_GAP = 8
+        private const val REPORT_DIALOG_INNER_GAP = 4
+
         fun editorArea(): JTextArea = JTextArea().apply { lineWrap = false }
 
         fun readOnlyArea(): JTextArea = editorArea().apply { isEditable = false }

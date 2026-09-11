@@ -51,6 +51,10 @@ private object InertGuiController : GuiController {
 class PlpSwingFeatureRenderersTest {
     private val page =
         PageState(id = PageId("page"), title = "page", content = PageContent.DocumentReference(DocumentId("doc")))
+
+    // Dispatchers.Unconfined keeps this fixture's dispatches synchronous for assertions; there is nothing
+    // downstream to inject a dispatcher into here, unlike the production code this test exercises.
+    @Suppress("InjectDispatcher")
     private val context = SwingFeatureContext(InertGuiController, CoroutineScope(Dispatchers.Unconfined))
 
     @Test

@@ -8,6 +8,7 @@ import it.unibo.tuprolog.ui.gui.controller.GuiEffect
 import it.unibo.tuprolog.ui.gui.controller.ReloadDecision
 import it.unibo.tuprolog.ui.gui.controller.WorkspaceAction
 import it.unibo.tuprolog.ui.gui.model.DocumentOrigin
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,6 +31,7 @@ class SwingIdeEffectHandler(
     private val scope: CoroutineScope,
     private val parent: () -> Component?,
     private val onExit: () -> Unit,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
     fun handle(effect: GuiEffect) {
         when (effect) {
@@ -56,7 +58,7 @@ class SwingIdeEffectHandler(
                         .normalize()
                 scope.launch {
                     runCatching {
-                        withContext(Dispatchers.IO) { Files.readString(path, StandardCharsets.UTF_8) }
+                        withContext(ioDispatcher) { Files.readString(path, StandardCharsets.UTF_8) }
                     }.onSuccess { text ->
                         controller.dispatch(
                             WorkspaceAction.OpenDocumentLoaded(
@@ -106,7 +108,7 @@ class SwingIdeEffectHandler(
                 return@launch
             }
             runCatching {
-                withContext(Dispatchers.IO) {
+                withContext(ioDispatcher) {
                     path.parent?.let(Files::createDirectories)
                     Files.writeString(path, effect.text, StandardCharsets.UTF_8)
                 }
@@ -140,7 +142,7 @@ class SwingIdeEffectHandler(
                 return@launch
             }
             runCatching {
-                withContext(Dispatchers.IO) { Files.readString(path, StandardCharsets.UTF_8) }
+                withContext(ioDispatcher) { Files.readString(path, StandardCharsets.UTF_8) }
             }.onSuccess { text ->
                 controller.dispatch(DocumentAction.ReloadSucceeded(effect.documentId, text))
             }.onFailure { error ->
@@ -242,25 +244,28 @@ class SwingIdeEffectHandler(
             )
         }
     }
-
-    private fun fileChooser(extensions: Set<String>): JFileChooser =
-        JFileChooser().apply {
-            currentDirectory = System.getProperty("user.home")?.let(::File)
-            if (extensions.isNotEmpty()) {
-                fileFilter = FileNameExtensionFilter("Prolog and text files", *extensions.sorted().toTypedArray())
-            }
-        }
-
-    private fun Path.toOrigin(): DocumentOrigin =
-        DocumentOrigin(
-            providerId = JVM_PATH_PROVIDER,
-            opaqueReference = toString(),
-            displayName = fileName?.toString() ?: toString(),
-        )
-
-    private fun DocumentOrigin.toPathOrNull(): Path? =
-        if (providerId == JVM_PATH_PROVIDER) Paths.get(opaqueReference) else null
 }
 
 /** Identifies a [DocumentOrigin] backed by a local filesystem [Path]; shared with workspace persistence. */
 internal const val JVM_PATH_PROVIDER: String = "jvm-path"
+
+// FileNameExtensionFilter has no non-vararg overload, so bridging our List<String> into its `vararg`
+// constructor needs a spread; the array it copies is a handful of file extensions, never worth avoiding.
+@Suppress("SpreadOperator")
+private fun fileChooser(extensions: Set<String>): JFileChooser =
+    JFileChooser().apply {
+        currentDirectory = System.getProperty("user.home")?.let(::File)
+        if (extensions.isNotEmpty()) {
+            fileFilter = FileNameExtensionFilter("Prolog and text files", *extensions.sorted().toTypedArray())
+        }
+    }
+
+private fun Path.toOrigin(): DocumentOrigin =
+    DocumentOrigin(
+        providerId = JVM_PATH_PROVIDER,
+        opaqueReference = toString(),
+        displayName = fileName?.toString() ?: toString(),
+    )
+
+private fun DocumentOrigin.toPathOrNull(): Path? =
+    if (providerId == JVM_PATH_PROVIDER) Paths.get(opaqueReference) else null

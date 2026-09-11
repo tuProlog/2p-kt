@@ -6,6 +6,7 @@ import javax.swing.DefaultCellEditor
 import javax.swing.JComboBox
 import javax.swing.JTable
 import javax.swing.table.AbstractTableModel
+import javax.swing.table.TableCellEditor
 
 /** Table of solver flags whose "Value" column is editable; edits are reported via [onFlagChanged]. */
 internal class FlagsTable : JTable(FlagsTableModel()) {
@@ -24,20 +25,21 @@ internal class FlagsTable : JTable(FlagsTableModel()) {
     override fun getCellEditor(
         row: Int,
         column: Int,
-    ) = flagsModel
-        .notableAt(row)
-        ?.takeIf { column == 1 && it.isEditable }
-        ?.let { flag ->
-            DefaultCellEditor(
-                JComboBox(
-                    flag.admissibleValues
-                        .map(Any::toString)
-                        .toList()
-                        .toTypedArray(),
-                ),
-            )
-        }
-        ?: super.getCellEditor(row, column)
+    ): TableCellEditor =
+        flagsModel
+            .notableAt(row)
+            ?.takeIf { column == 1 && it.isEditable }
+            ?.let { flag ->
+                DefaultCellEditor(
+                    JComboBox(
+                        flag.admissibleValues
+                            .map(Any::toString)
+                            .toList()
+                            .toTypedArray(),
+                    ),
+                )
+            }
+            ?: super.getCellEditor(row, column)
 }
 
 private class FlagsTableModel : AbstractTableModel() {

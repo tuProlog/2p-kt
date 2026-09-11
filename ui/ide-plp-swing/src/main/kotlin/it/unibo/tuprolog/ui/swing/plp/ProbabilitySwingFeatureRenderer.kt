@@ -15,6 +15,9 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.SwingConstants
 
+private const val LABEL_BORDER_INSET = 16
+private const val LABEL_FONT_SIZE = 18f
+
 class ProbabilitySwingFeatureRenderer : SwingFeatureRenderer {
     override val featureId = PlpGuiIds.SOLUTION_DETAILS
     override val displayName: String = "Probability"
@@ -22,8 +25,15 @@ class ProbabilitySwingFeatureRenderer : SwingFeatureRenderer {
 
     override fun createComponent(context: SwingFeatureContext): JComponent =
         JLabel("No probabilistic solution", SwingConstants.CENTER).apply {
-            border = BorderFactory.createEmptyBorder(16, 16, 16, 16)
-            font = font.deriveFont(Font.BOLD, 18f)
+            name = "probabilityLabel"
+            border =
+                BorderFactory.createEmptyBorder(
+                    LABEL_BORDER_INSET,
+                    LABEL_BORDER_INSET,
+                    LABEL_BORDER_INSET,
+                    LABEL_BORDER_INSET,
+                )
+            font = font.deriveFont(Font.BOLD, LABEL_FONT_SIZE)
         }
 
     override fun render(

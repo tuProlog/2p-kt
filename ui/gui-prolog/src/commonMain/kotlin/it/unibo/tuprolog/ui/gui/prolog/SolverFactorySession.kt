@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.solve.flags.TrackVariables.ON
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.setProbabilistic
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.identity.SolverSessionId
@@ -52,11 +53,17 @@ internal class SolverFactorySession(
                 .trim()
                 .removeSuffix(".")
                 .parseAsStruct(solver.operators)
-        val options =
+        val plainOptions =
             if (request.timeout.inWholeMilliseconds == 0L) {
                 SolveOptions.allLazily()
             } else {
                 SolveOptions.allLazilyWithTimeout(request.timeout.inWholeMilliseconds)
+            }
+        val options =
+            if (SolverCapabilities.PROBABILISTIC_SOLUTIONS in capabilities) {
+                plainOptions.setProbabilistic(true)
+            } else {
+                plainOptions
             }
         val solutions = solver.solve(query, options).iterator()
         return object : ResolutionCursor {

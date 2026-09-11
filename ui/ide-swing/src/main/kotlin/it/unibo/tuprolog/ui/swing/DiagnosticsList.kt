@@ -46,11 +46,17 @@ private class DiagnosticCellRenderer : DefaultListCellRenderer() {
         if (!isSelected) {
             label.foreground =
                 when (diagnostic.severity) {
-                    DiagnosticSeverity.ERROR -> Color(0xC6, 0x28, 0x28)
-                    DiagnosticSeverity.WARNING -> Color(0xE6, 0x8A, 0x00)
-                    DiagnosticSeverity.INFO -> Color(0x15, 0x65, 0xC0)
+                    DiagnosticSeverity.ERROR -> ERROR_COLOR
+                    DiagnosticSeverity.WARNING -> WARNING_COLOR
+                    DiagnosticSeverity.INFO -> INFO_COLOR
                 }
         }
         return label
+    }
+
+    private companion object {
+        val ERROR_COLOR = Color(0xC6, 0x28, 0x28)
+        val WARNING_COLOR = Color(0xE6, 0x8A, 0x00)
+        val INFO_COLOR = Color(0x15, 0x65, 0xC0)
     }
 }

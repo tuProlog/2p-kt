@@ -12,6 +12,9 @@ import javax.swing.text.AbstractDocument
 import javax.swing.text.AttributeSet
 import javax.swing.text.DocumentFilter
 
+private const val FONT_SIZE = 14
+private const val AUTO_ACTIVATION_DELAY_MS = 250
+
 /** Single-line, syntax-coloured query editor. */
 internal class PrologQueryField : RSyntaxTextArea() {
     var onSubmit: (() -> Unit)? = null
@@ -23,7 +26,7 @@ internal class PrologQueryField : RSyntaxTextArea() {
     init {
         document =
             RSyntaxDocument(PrologTokenMakerFactory(PrologTokenMaker(analysisCache::analysis)), PROLOG_SYNTAX_STYLE)
-        font = Font(Font.MONOSPACED, Font.PLAIN, 14)
+        font = Font(Font.MONOSPACED, Font.PLAIN, FONT_SIZE)
         rows = 1
         lineWrap = true
         isCodeFoldingEnabled = false
@@ -43,7 +46,7 @@ internal class PrologQueryField : RSyntaxTextArea() {
         )
         AutoCompletion(completionProvider).apply {
             isAutoActivationEnabled = true
-            autoActivationDelay = 250
+            autoActivationDelay = AUTO_ACTIVATION_DELAY_MS
             install(this@PrologQueryField)
         }
     }

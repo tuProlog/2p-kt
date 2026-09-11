@@ -5,6 +5,8 @@ import javax.swing.JComponent
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
 
+private const val DOT_FONT_SIZE = 13
+
 object DotTextSwingBddGraphRenderer : SwingBddGraphRenderer {
     override fun createGraphComponent(
         dot: String,
@@ -13,7 +15,7 @@ object DotTextSwingBddGraphRenderer : SwingBddGraphRenderer {
         JScrollPane(
             JTextArea(dot).apply {
                 isEditable = false
-                font = Font(Font.MONOSPACED, Font.PLAIN, 13)
+                font = Font(Font.MONOSPACED, Font.PLAIN, DOT_FONT_SIZE)
                 lineWrap = false
                 toolTipText = title
             },

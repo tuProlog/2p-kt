@@ -38,6 +38,7 @@ jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xm
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 clikt = "com.github.ajalt.clikt:clikt:5.1.0"
+assertj-swing = "org.assertj:assertj-swing:3.17.1"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 graphviz = "guru.nidi:graphviz-java:0.18.1"
 ktMath = "io.github.gciatto:kt-math:0.10.2"

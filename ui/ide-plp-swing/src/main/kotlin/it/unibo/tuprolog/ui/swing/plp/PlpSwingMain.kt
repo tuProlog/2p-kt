@@ -23,11 +23,15 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
 
+private const val DEFAULT_TIMEOUT_MILLIS = 5_000L
+
 private class PlpSwingIdeCommand : CliktCommand(name = "ide-plp-swing") {
     private val theories: List<String> by
         option("-T", "--theory", help = "Path of a theory file to open on startup").multiple()
     private val timeout: Long by
-        option("-t", "--timeout", help = "Default resolution timeout in milliseconds").long().default(5_000)
+        option("-t", "--timeout", help = "Default resolution timeout in milliseconds")
+            .long()
+            .default(DEFAULT_TIMEOUT_MILLIS)
 
     override fun help(context: Context) = "Start the tuProlog PLP (ProbLog) Swing IDE"
 

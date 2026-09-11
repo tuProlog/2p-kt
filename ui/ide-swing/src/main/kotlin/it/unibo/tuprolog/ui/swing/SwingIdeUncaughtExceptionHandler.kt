@@ -6,6 +6,9 @@ import javax.swing.JOptionPane
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
 
+private const val REPORT_AREA_ROWS = 24
+private const val REPORT_AREA_COLUMNS = 100
+
 internal class SwingIdeUncaughtExceptionHandler(
     private val frame: () -> SwingIdeFrame?,
     private val fallback: Thread.UncaughtExceptionHandler?,
@@ -20,7 +23,7 @@ internal class SwingIdeUncaughtExceptionHandler(
                 fallback?.uncaughtException(thread, error)
             } else {
                 val details = ide.supportReport(thread, error)
-                val area = JTextArea(details, 24, 100).apply { caretPosition = 0 }
+                val area = JTextArea(details, REPORT_AREA_ROWS, REPORT_AREA_COLUMNS).apply { caretPosition = 0 }
                 JOptionPane.showMessageDialog(
                     ide,
                     JScrollPane(area),

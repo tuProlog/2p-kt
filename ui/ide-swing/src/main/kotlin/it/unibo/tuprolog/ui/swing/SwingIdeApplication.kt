@@ -11,6 +11,8 @@ import kotlinx.coroutines.launch
 import java.awt.GraphicsEnvironment
 import java.util.concurrent.atomic.AtomicBoolean
 
+private const val DEFAULT_FONT_SIZE = 14
+
 /** Owns the Swing frame, state/effect subscriptions, and frontend lifecycle. */
 class SwingIdeApplication(
     private val application: GuiApplication,
@@ -38,7 +40,7 @@ class SwingIdeApplication(
                     frontendScope,
                     featureRenderers,
                     templates,
-                    restored?.fontSize ?: 14,
+                    restored?.fontSize ?: DEFAULT_FONT_SIZE,
                 )
             uncaughtExceptionHandler =
                 SwingIdeUncaughtExceptionHandler(

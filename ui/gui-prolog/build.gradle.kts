@@ -4,6 +4,7 @@ kotlin {
             dependencies {
                 api(project(":gui"))
                 implementation(project(":solve"))
+                implementation(project(":solve-plp"))
                 implementation(project(":io-lib"))
                 implementation(project(":oop-lib"))
                 implementation(project(":parser-impl"))

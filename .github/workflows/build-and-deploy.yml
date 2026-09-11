@@ -48,6 +48,13 @@ jobs:
         # the two separate webpack executions (verified locally: the production bundle silently drops code that
         # is present, and passes every time, when this runs as its own build). See ide-web/build.gradle.kts.
         run: ./gradlew :ide-web:browserE2ETest
+      - name: Install Xvfb (for the Swing IDE end-to-end suites)
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+      - name: Run the ide-swing and ide-plp-swing end-to-end suites
+        # Genuinely drives Swing/AWT (java.awt.Robot included) against the real application window, so it
+        # needs a real or virtual display -- never add -Djava.awt.headless=true here. Xvfb provides that
+        # virtual X11 display; see buildSrc/src/main/kotlin/SwingE2eTesting.kt for the task itself.
+        run: xvfb-run -a ./gradlew :ide-swing:swingE2eTest :ide-plp-swing:swingE2eTest
   test-extensively:
     needs:
       - build

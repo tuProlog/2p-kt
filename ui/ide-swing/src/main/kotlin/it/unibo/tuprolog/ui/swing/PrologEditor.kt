@@ -9,9 +9,13 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import java.awt.Font
 
+private const val DEFAULT_FONT_SIZE = 14
+private const val PARSER_DELAY_MS = 300
+private const val AUTO_ACTIVATION_DELAY_MS = 250
+
 /** Editable, parser-backed Prolog source area. */
 internal class PrologEditor(
-    initialFontSize: Int = 14,
+    initialFontSize: Int = DEFAULT_FONT_SIZE,
 ) : RSyntaxTextArea() {
     private var operators: List<OperatorPresentation> = emptyList()
     private val analysisCache = PrologAnalysisCache(::sourceText, ::currentOperators)
@@ -31,13 +35,13 @@ internal class PrologEditor(
         isCodeFoldingEnabled = false
         isBracketMatchingEnabled = true
         setMarkOccurrences(true)
-        setParserDelay(300)
+        setParserDelay(PARSER_DELAY_MS)
         configurePrologSyntaxScheme()
         installZoomControls { size -> onZoomChanged?.invoke(size) }
         addParser(syntaxParser)
         AutoCompletion(completionProvider).apply {
             isAutoActivationEnabled = true
-            autoActivationDelay = 250
+            autoActivationDelay = AUTO_ACTIVATION_DELAY_MS
             isParameterAssistanceEnabled = true
             install(this@PrologEditor)
         }

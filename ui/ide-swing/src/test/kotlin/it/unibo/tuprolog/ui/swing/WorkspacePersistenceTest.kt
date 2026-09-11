@@ -16,6 +16,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
+// Dispatchers.Default drives a throwaway CoroutineScope local to each test case; there is nothing downstream
+// to inject a dispatcher into here, unlike the production code this test exercises.
+@Suppress("InjectDispatcher")
 class WorkspacePersistenceTest {
     @Test
     fun `a saved workspace round-trips through disk and restores as pages`() =
