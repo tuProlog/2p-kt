@@ -14,5 +14,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("it.unibo.tuprolog.ui.swing.plp.PlpSwingMainKt")
+    mainClass.set("it.unibo.tuprolog.ui.swing.plp.Main")
 }

@@ -1,3 +1,5 @@
+@file:JvmName("Main")
+
 package it.unibo.tuprolog.ui.swing.plp
 
 import com.github.ajalt.clikt.core.CliktCommand

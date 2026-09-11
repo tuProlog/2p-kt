@@ -18,7 +18,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("it.unibo.tuprolog.ui.swing.SwingMainKt")
+    mainClass.set("it.unibo.tuprolog.ui.swing.Main")
 }
 
 val copyIdeLogo =

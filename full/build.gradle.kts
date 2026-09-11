@@ -47,6 +47,11 @@ multiProjectHelper {
                     }
                 }
             }
+            getByName("jvmTest") {
+                dependencies {
+                    implementation(kotlin("test"))
+                }
+            }
         }
     }
 }
