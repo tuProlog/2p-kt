@@ -55,3 +55,9 @@ multiProjectHelper {
         }
     }
 }
+
+registerVerifyFatJarTask(
+    entryPoint = "it.unibo.tuprolog.PrologCLI",
+    launchArgs = listOf("solve", "true."),
+    expectedOutputFragment = "yes",
+)

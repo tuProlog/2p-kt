@@ -21,3 +21,9 @@ dependencies {
 application {
     mainClass.set("it.unibo.tuprolog.ui.swing.plp.Main")
 }
+
+registerVerifyFatJarTask(
+    entryPoint = "it.unibo.tuprolog.ui.swing.plp.Main",
+    expectSuccess = false,
+    expectedFailureFragment = "Cannot show the Swing IDE in a headless environment",
+)

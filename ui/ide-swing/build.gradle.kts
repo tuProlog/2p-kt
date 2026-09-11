@@ -26,6 +26,12 @@ application {
     mainClass.set("it.unibo.tuprolog.ui.swing.Main")
 }
 
+registerVerifyFatJarTask(
+    entryPoint = "it.unibo.tuprolog.ui.swing.Main",
+    expectSuccess = false,
+    expectedFailureFragment = "Cannot show the Swing IDE in a headless environment",
+)
+
 val copyIdeLogo =
     tasks.register<Copy>("copyIdeLogo") {
         from(rootProject.layout.projectDirectory.file(".img/logo.png"))

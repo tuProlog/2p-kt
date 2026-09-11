@@ -26,6 +26,12 @@ kotlin {
     }
 }
 
+registerVerifyFatJarTask(
+    entryPoint = "it.unibo.tuprolog.ui.repl.Main",
+    launchArgs = listOf("solve", "true."),
+    expectedOutputFragment = "yes",
+)
+
 tasks.register("run", JavaExec::class.java) {
     group = "application"
     dependsOn(tasks.named("jvmMainClasses"))
