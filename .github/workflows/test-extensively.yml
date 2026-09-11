@@ -39,7 +39,7 @@ jobs:
           build-command: |
             ./gradlew jvmMainClasses jvmTestClasses --parallel --continue
           check-command: |
-            ./gradlew jvmTest --parallel --continue
+            ./gradlew jvmTest verifyFatJars --parallel --continue
           should-run-codecov: false
           enable-cache: false
       - name: Mark successful test cache

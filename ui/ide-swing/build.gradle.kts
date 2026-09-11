@@ -1,6 +1,11 @@
 plugins {
     application
     alias(libs.plugins.kotlin.serialization)
+    id(
+        libs.plugins.ktMpp.fatJar
+            .get()
+            .pluginId,
+    )
 }
 
 dependencies {

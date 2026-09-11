@@ -1,5 +1,10 @@
 plugins {
     application
+    id(
+        libs.plugins.ktMpp.fatJar
+            .get()
+            .pluginId,
+    )
 }
 
 dependencies {
