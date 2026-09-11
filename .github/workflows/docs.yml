@@ -1,6 +1,11 @@
 name: Docs
 on:
   workflow_call:
+    inputs:
+      version:
+        description: "Version to force this build to use (from the release job), if any."
+        required: false
+        type: string
   workflow_dispatch:
 
 permissions:
@@ -15,6 +20,11 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    env:
+      # empty on a workflow_dispatch run, or when the release job didn't actually release anything this run
+      # (e.g. a non-release branch) -- ${LAST_VERSION:+...} below then omits -PforceVersion entirely, falling
+      # back to the normal git-computed version, same as before this was wired up.
+      LAST_VERSION: ${{ inputs.version }}
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.31
@@ -28,7 +38,7 @@ jobs:
         uses: DanySK/build-check-deploy-gradle-action@4.0.44
         with:
           retries-on-failure: '2'
-          build-command: ./gradlew :documentation:assembleSite
+          build-command: ./gradlew ${LAST_VERSION:+-PforceVersion=$LAST_VERSION} :documentation:assembleSite
           check-command: true
           should-deploy: false
           should-run-codecov: false

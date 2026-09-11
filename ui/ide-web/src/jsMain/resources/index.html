@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>tuProlog Web IDE</title>
+    <link rel="icon" href="logo.png" />
+    <link rel="stylesheet" href="ide-web.css" />
+</head>
+<body>
+    <div id="app">
+        <!-- The shell below has a fixed structure regardless of application state, so it's declared here rather
+             than built by WebIdeView.kt; only its dynamic parts (tab list, side-panel contents, dialogs, ...)
+             are still constructed in Kotlin. WebIdeView looks these elements up by id and attaches listeners
+             once, instead of creating and re-creating them on every render. -->
+        <div class="menu-bar">
+            <button id="btn-new">New</button>
+            <select id="templates-select" hidden>
+                <option>New from template…</option>
+            </select>
+            <button id="btn-open">Open…</button>
+            <button id="btn-save">Save</button>
+            <button id="btn-save-as">Save as…</button>
+            <button id="btn-close-page">Close page</button>
+            <button id="btn-upload">Upload…</button>
+            <input id="upload-input" type="file" accept=".pl,.pro,.prolog,text/plain" hidden />
+            <button id="btn-download">Download</button>
+            <span id="status-label" class="status"></span>
+        </div>
+        <div id="tab-bar" class="tab-bar"></div>
+        <div class="main">
+            <div class="query-bar">
+                <input id="query-input" type="text" />
+                <button id="solve-button"></button>
+                <button id="solve10-button">Solve 10</button>
+                <button id="solve-all-button">Solve all</button>
+                <button id="stop-button">Stop</button>
+                <button id="reset-button">Reset</button>
+                <span>Timeout</span>
+                <input id="timeout-input" type="text" />
+            </div>
+            <div class="split">
+                <div id="editor"></div>
+                <div id="split-handle" class="split-handle"></div>
+                <div id="side" class="side">
+                    <div id="side-tab-bar" class="side-tab-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Ace's own module system predates ES modules and expects a plain global script load, not a webpack import
+         (see ace/Ace.kt); these must run, in this order, before ide-web.js. -->
+    <script src="ace.js"></script>
+    <script src="theme-github.js"></script>
+    <script src="theme-github_dark.js"></script>
+    <script src="ide-web.js" defer></script>
+</body>
+</html>

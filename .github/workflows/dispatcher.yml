@@ -35,4 +35,6 @@ jobs:
       pages: write
       id-token: write
     uses: ./.github/workflows/docs.yml
+    with:
+      version: ${{ needs.ci-cd.outputs.version }}
     secrets: inherit

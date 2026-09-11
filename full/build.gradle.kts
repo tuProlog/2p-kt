@@ -47,6 +47,17 @@ multiProjectHelper {
                     }
                 }
             }
+            getByName("jvmTest") {
+                dependencies {
+                    implementation(kotlin("test"))
+                }
+            }
         }
     }
 }
+
+registerVerifyFatJarTask(
+    entryPoint = "it.unibo.tuprolog.PrologCLI",
+    launchArgs = listOf("solve", "true."),
+    expectedOutputFragment = "yes",
+)
