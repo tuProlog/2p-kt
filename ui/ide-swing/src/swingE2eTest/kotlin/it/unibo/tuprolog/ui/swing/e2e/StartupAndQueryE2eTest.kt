@@ -46,7 +46,7 @@ class StartupAndQueryE2eTest {
 
     @Test
     fun `a query can be solved and shows its solution in the Solutions tab`() {
-        window.textBox("queryField").enterText("member(X, [1, 2]).")
+        window.textBox("queryField").setText("member(X, [1, 2]).")
         window.button("solveButton").click()
 
         window.awaitCondition("first solution to appear") {
@@ -57,7 +57,7 @@ class StartupAndQueryE2eTest {
 
     @Test
     fun `solve again requests the next solution of the same query`() {
-        window.textBox("queryField").enterText("member(X, [1, 2]).")
+        window.textBox("queryField").setText("member(X, [1, 2]).")
         window.button("solveButton").click()
         window.awaitCondition("first solution") { tree("solutionsTree").rowTexts().any { it.contains("X = 1") } }
 
@@ -68,7 +68,7 @@ class StartupAndQueryE2eTest {
 
     @Test
     fun `solve all consumes every remaining solution and reports completion`() {
-        window.textBox("queryField").enterText("member(X, [1, 2, 3]).")
+        window.textBox("queryField").setText("member(X, [1, 2, 3]).")
         window.button("solveAllButton").click()
 
         window.awaitCondition("every solution to appear", timeoutSeconds = 15) {
@@ -82,7 +82,7 @@ class StartupAndQueryE2eTest {
 
     @Test
     fun `a failing query is shown as no`() {
-        window.textBox("queryField").enterText("member(99, [1, 2]).")
+        window.textBox("queryField").setText("member(99, [1, 2]).")
         window.button("solveButton").click()
 
         window.awaitCondition("failure to appear") {
@@ -92,7 +92,7 @@ class StartupAndQueryE2eTest {
 
     @Test
     fun `an undefined predicate fails and reports a warning`() {
-        window.textBox("queryField").enterText("this_predicate_does_not_exist(x).")
+        window.textBox("queryField").setText("this_predicate_does_not_exist(x).")
         window.button("solveButton").click()
 
         window.awaitCondition("failure to appear") {
@@ -107,7 +107,7 @@ class StartupAndQueryE2eTest {
 
     @Test
     fun `a runtime error is reported as a halt in the Solutions tab`() {
-        window.textBox("queryField").enterText("X is 1 / 0.")
+        window.textBox("queryField").setText("X is 1 / 0.")
         window.button("solveButton").click()
 
         window.awaitCondition("halt to appear") {
@@ -117,9 +117,9 @@ class StartupAndQueryE2eTest {
 
     @Test
     fun `a query that outruns its timeout is reported as a timeout halt`() {
-        window.textBox("timeoutField").deleteText().enterText("200ms")
+        window.textBox("timeoutField").setText("200ms")
         window.textBox("timeoutField").pressAndReleaseKeys(KeyEvent.VK_ENTER)
-        window.textBox("queryField").enterText("repeat, fail.")
+        window.textBox("queryField").setText("repeat, fail.")
         window.button("solveButton").click()
 
         window.awaitCondition("timeout halt to appear", timeoutSeconds = 15) {
@@ -129,7 +129,7 @@ class StartupAndQueryE2eTest {
 
     @Test
     fun `stop cancels a long-running resolution`() {
-        window.textBox("queryField").enterText("repeat, fail.")
+        window.textBox("queryField").setText("repeat, fail.")
         window.button("solveButton").click()
 
         window.awaitCondition("resolution to start running") { label("statusLabel").text().startsWith("Computing") }
@@ -141,7 +141,7 @@ class StartupAndQueryE2eTest {
 
     @Test
     fun `reset clears the current resolution back to idle`() {
-        window.textBox("queryField").enterText("member(X, [1, 2]).")
+        window.textBox("queryField").setText("member(X, [1, 2]).")
         window.button("solveButton").click()
         window.awaitCondition("first solution") { tree("solutionsTree").rowTexts().any { it.contains("X = 1") } }
 

@@ -27,7 +27,6 @@ import java.awt.BorderLayout
 import java.awt.Desktop
 import java.awt.Dimension
 import java.awt.FlowLayout
-import java.awt.KeyboardFocusManager
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.InputEvent
@@ -59,7 +58,7 @@ import javax.swing.event.CaretEvent
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.text.DefaultEditorKit
-import javax.swing.text.JTextComponent
+import javax.swing.text.TextAction
 import kotlin.math.max
 
 /**
@@ -374,12 +373,10 @@ class SwingIdeFrame(
                 },
             )
             add(
-                menuItem(
-                    "Select all",
-                    KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask()),
-                    "selectAllMenuItem",
-                ) {
-                    focusedTextComponent()?.selectAll()
+                JMenuItem(SelectAllAction()).apply {
+                    text = "Select all"
+                    name = "selectAllMenuItem"
+                    accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask())
                 },
             )
         }
@@ -1121,9 +1118,6 @@ class SwingIdeFrame(
         scope.dispatch { controller.dispatch(action) }
     }
 
-    private fun focusedTextComponent(): JTextComponent? =
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner as? JTextComponent
-
     private companion object {
         private const val MIN_WINDOW_WIDTH = 900
         private const val MIN_WINDOW_HEIGHT = 650
@@ -1154,5 +1148,16 @@ class SwingIdeFrame(
             java.awt.Toolkit
                 .getDefaultToolkit()
                 .menuShortcutKeyMaskEx
+    }
+}
+
+/**
+ * A [TextAction], like [DefaultEditorKit]'s own Cut/Copy/Paste actions, so it resolves its target through
+ * [TextAction.getFocusedComponent] -- the JTextComponent-tracked "last focused" component -- rather than
+ * [java.awt.KeyboardFocusManager], which a menu click can transiently null out before actionPerformed runs.
+ */
+private class SelectAllAction : TextAction("select-all") {
+    override fun actionPerformed(event: java.awt.event.ActionEvent?) {
+        getFocusedComponent()?.selectAll()
     }
 }

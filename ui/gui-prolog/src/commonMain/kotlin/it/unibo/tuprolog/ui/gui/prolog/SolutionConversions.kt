@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.model.FeatureValue
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
@@ -52,6 +53,7 @@ internal fun Solution.toStep(
                     exception.logicStackTrace.map {
                         it.toString()
                     },
+                    isTimeout = exception is TimeOutException,
                 ),
                 hasMorePotentially = false,
                 signals = signals,

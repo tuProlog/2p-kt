@@ -47,12 +47,12 @@ class PageNavigationE2eTest {
 
     @Test
     fun `each page keeps its own query text when switching tabs`() {
-        window.textBox("queryField").enterText("first_page_query.")
+        window.textBox("queryField").setText("first_page_query.")
         window.menuItem("newMenuItem").click()
         window.awaitCondition("second page selected") { tabbedPane("editorTabs").tabTitles().size == 2 }
 
         window.textBox("queryField").requireText("")
-        window.textBox("queryField").enterText("second_page_query.")
+        window.textBox("queryField").setText("second_page_query.")
 
         window.tabbedPane("editorTabs").selectTab(0)
         window.awaitCondition("first page's query to come back") {

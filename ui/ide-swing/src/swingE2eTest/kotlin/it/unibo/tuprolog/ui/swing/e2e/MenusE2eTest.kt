@@ -82,7 +82,10 @@ class MenusE2eTest {
 
     @Test
     fun `Edit Select all selects the focused field's text`() {
-        window.textBox("queryField").enterText("member(X, [1, 2]).")
+        window.textBox("queryField").setText("member(X, [1, 2]).")
+        // "Select all" acts on whatever component currently owns OS keyboard focus, so the field must
+        // actually be focused first -- setText() alone never grants it real focus.
+        window.textBox("queryField").focus()
         window.menuItem("selectAllMenuItem").click()
 
         val queryField = window.textBox("queryField").target()
@@ -109,7 +112,7 @@ class MenusE2eTest {
 
     @Test
     fun `Search Go to line moves the caret to the requested line`() {
-        window.textBox("pageEditor").enterText("a.\nb.\nc.\nd.")
+        window.textBox("pageEditor").setText("a.\nb.\nc.\nd.")
 
         window.menuItem("goToLineMenuItem").click()
         val dialog = window.dialog()

@@ -38,7 +38,8 @@ class LowerTabsE2eTest {
 
     @Test
     fun `Stdin text survives switching to another tab and back`() {
-        window.textBox("stdinArea").enterText("hello from stdin")
+        window.selectLowerTab("Stdin")
+        window.textBox("stdinArea").setText("hello from stdin")
         window.selectLowerTab("Stdout")
         window.selectLowerTab("Stdin")
 
@@ -49,7 +50,7 @@ class LowerTabsE2eTest {
 
     @Test
     fun `a syntax error in the page shows up in the Diagnostics tab`() {
-        window.textBox("pageEditor").enterText("foo(")
+        window.textBox("pageEditor").setText("foo(")
 
         window.selectLowerTab("Diagnostics")
         window.awaitCondition("a diagnostic to be listed", timeoutSeconds = 15) {
@@ -77,6 +78,9 @@ class LowerTabsE2eTest {
 
     @Test
     fun `the Flags tab lists the solver's notable flags`() {
+        // The solver session (and its flag/library/static-KB inspection) is created lazily, on first solve.
+        solveTrivialQuery()
+
         window.selectLowerTab("Flags")
         val table = window.table("flagsTable")
         val flagNames = (0 until table.target().rowCount).map { table.valueAt(TableCell.row(it).column(0)) }
@@ -86,6 +90,8 @@ class LowerTabsE2eTest {
 
     @Test
     fun `the Libraries tab lists the loaded runtime libraries`() {
+        solveTrivialQuery()
+
         window.selectLowerTab("Libraries")
         assertTrue(window.tree("librariesTree").rowTexts().isNotEmpty())
     }
@@ -97,5 +103,13 @@ class LowerTabsE2eTest {
 
         window.selectLowerTab("Dynamic KB")
         assertTrue(!window.textBox("dynamicKbArea").target().isEditable)
+    }
+
+    private fun solveTrivialQuery() {
+        window.textBox("queryField").setText("true.")
+        window.button("solveButton").click()
+        window.awaitCondition("the trivial query to solve") {
+            tree("solutionsTree").rowTexts().isNotEmpty()
+        }
     }
 }
