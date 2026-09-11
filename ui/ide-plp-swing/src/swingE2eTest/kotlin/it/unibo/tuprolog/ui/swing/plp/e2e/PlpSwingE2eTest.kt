@@ -80,11 +80,9 @@ class PlpSwingE2eTest {
             label("probabilityLabel").text() == "Probability: 30%"
         }
 
-        // NOTE: the BDD tab itself becomes reachable (see the enablement test above), but its diagram does
-        // not populate even though the very same solve correctly reports "Probability: 30%" above -- a real
-        // gap between the ProbLog solver (which does tag such solutions with a BDD, see
-        // solve-problog's TestProbabilisticMode.testBinaryDecisionDiagramProbabilisticModeEnabled) and this
-        // session/UI pipeline, not yet root-caused. Tracked rather than asserted as passing.
         window.selectLowerTab("BDD")
+        window.awaitCondition("the BDD tab to render the diagram's DOT source") {
+            textBox("bddDotTextArea").text().contains("heads1")
+        }
     }
 }

@@ -91,7 +91,12 @@ fun FrameFixture.selectLowerTab(baseTitle: String) {
     val pane = tabbedPane("lowerTabs")
     val index = pane.tabTitles().indexOfFirst { it == baseTitle || it == "$baseTitle*" }
     check(index >= 0) { "no lower tab titled '$baseTitle' (got ${pane.tabTitles().toList()})" }
-    pane.selectTab(index)
+    // A single click can occasionally land before the tab is actually enabled/showing (the enclosing page
+    // finished re-rendering a moment later); retrying the click self-heals that race instead of failing outright.
+    awaitCondition("the '$baseTitle' lower tab to become selected") {
+        if (pane.target().selectedIndex != index) runCatching { pane.selectTab(index) }
+        pane.target().selectedIndex == index
+    }
 }
 
 private fun FrameFixture.forceOsFocus() {

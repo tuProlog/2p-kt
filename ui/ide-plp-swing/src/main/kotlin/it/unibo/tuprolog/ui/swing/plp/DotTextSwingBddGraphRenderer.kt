@@ -14,6 +14,7 @@ object DotTextSwingBddGraphRenderer : SwingBddGraphRenderer {
     ): JComponent =
         JScrollPane(
             JTextArea(dot).apply {
+                name = "bddDotTextArea"
                 isEditable = false
                 font = Font(Font.MONOSPACED, Font.PLAIN, DOT_FONT_SIZE)
                 lineWrap = false
