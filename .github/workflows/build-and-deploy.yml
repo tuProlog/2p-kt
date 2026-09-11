@@ -1,6 +1,10 @@
 name: CI/CD Process
 on:
   workflow_call:
+    outputs:
+      version:
+        description: "The version semantic-release released this run, if any (empty if no release happened)."
+        value: ${{ jobs.release.outputs.version }}
   workflow_dispatch:
 
 jobs:
@@ -58,6 +62,8 @@ jobs:
       - build
       - test-extensively
     runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.released-version.outputs.version }}
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.31
@@ -84,6 +90,17 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
+      - name: Record the released version for downstream jobs
+        # semantic-release's own deploy step (above) has no output build-check-deploy-gradle-action exposes,
+        # so release.config.js drops the version into a $RUNNER_TEMP file instead (see its recordVersionCmd);
+        # this step is what turns that file into an actual job output (see docs.yml, which consumes it).
+        id: released-version
+        run: |
+          if [ -f "$RUNNER_TEMP/last-release-version.txt" ]; then
+            echo "version=$(cat "$RUNNER_TEMP/last-release-version.txt")" >> "$GITHUB_OUTPUT"
+          else
+            echo "No release version recorded (no release happened this run)."
+          fi
   success:
     runs-on: ubuntu-24.04
     needs:
