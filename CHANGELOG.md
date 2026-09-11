@@ -1,3 +1,19 @@
+## [1.5.1](https://github.com/tuProlog/2p-kt/compare/1.5.0...1.5.1) (2026-09-11)
+
+### Dependency updates
+
+* **deps:** update ktmpp to v5.3.1 ([40dd0e7](https://github.com/tuProlog/2p-kt/commit/40dd0e7afc4169284166e85241ce15430ba2563c))
+* **deps:** update plugin com.gradle.develocity to v4.5.1 ([#960](https://github.com/tuProlog/2p-kt/issues/960)) ([c0569c3](https://github.com/tuProlog/2p-kt/commit/c0569c38e2645ea668aa578334dffe6809cc72a8))
+
+### Bug Fixes
+
+* **deps:** update okio to v3.18.2 ([#961](https://github.com/tuProlog/2p-kt/issues/961)) ([7cb9e9e](https://github.com/tuProlog/2p-kt/commit/7cb9e9e43d0ceffef5222b4304f93cd79acc0c82))
+
+### Build and continuous integration
+
+* **deps:** update actions/deploy-pages action to v5 ([#931](https://github.com/tuProlog/2p-kt/issues/931)) ([5ffdc17](https://github.com/tuProlog/2p-kt/commit/5ffdc172a9cd32ed456d53486890991cdccec141))
+* **deps:** update actions/upload-pages-artifact action to v5 ([#935](https://github.com/tuProlog/2p-kt/issues/935)) ([91aa33c](https://github.com/tuProlog/2p-kt/commit/91aa33c3ab378569a736c16ce195c019f7a4d267))
+
 ## [1.5.0](https://github.com/tuProlog/2p-kt/compare/1.4.1...1.5.0) (2026-09-09)
 
 ### Features
