@@ -227,6 +227,14 @@ class SwingIdeFrame(
             }
 
         addSolutionsTab()
+        // Extension tabs (e.g. ide-plp-swing's BDD) are registered right after Solutions, since they present
+        // solution-derived content too, ahead of the generic Stdin..Dynamic KB tabs every profile has.
+        for (renderer in featureRenderers.all()) {
+            val component = renderer.createComponent(featureContext)
+            extensionComponents[renderer.featureId] = component
+            extensionTabIndices[renderer.featureId] = lowerTabs.tabCount
+            lowerTabs.addTab(renderer.displayName, component)
+        }
         addLowerTab("Stdin", PanelId.STDIN, stdinArea, Icons.STDIN)
         addLowerTab("Stdout", PanelId.STDOUT, stdoutArea, Icons.STDOUT)
         addLowerTab("Stderr", PanelId.STDERR, stderrArea, Icons.STDERR)
@@ -237,13 +245,6 @@ class SwingIdeFrame(
         addLowerTab("Libraries", PanelId.LIBRARIES, librariesTree, Icons.LIBRARIES)
         addLowerTab("Static KB", PanelId.STATIC_KB, staticKbArea, Icons.STATIC_KB)
         addLowerTab("Dynamic KB", PanelId.DYNAMIC_KB, dynamicKbArea, Icons.DYNAMIC_KB)
-
-        for (renderer in featureRenderers.all()) {
-            val component = renderer.createComponent(featureContext)
-            extensionComponents[renderer.featureId] = component
-            extensionTabIndices[renderer.featureId] = lowerTabs.tabCount
-            lowerTabs.addTab(renderer.displayName, component)
-        }
 
         return JPanel(BorderLayout()).apply {
             add(queryRow, BorderLayout.NORTH)

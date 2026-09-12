@@ -9,6 +9,7 @@ import org.assertj.swing.fixture.FrameFixture
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /** Covers the PLP-specific additions to the shared Swing IDE: its two extra inspector tabs and templates. */
@@ -30,6 +31,13 @@ class PlpSwingE2eTest {
         val titles = window.tabbedPane("lowerTabs").tabTitles().map { it.removeSuffix("*") }
         assertTrue(titles.contains("Probability"))
         assertTrue(titles.contains("BDD"))
+    }
+
+    @Test
+    fun `the BDD tab is registered right next to Solutions, not at the end`() {
+        val titles = window.tabbedPane("lowerTabs").tabTitles().map { it.removeSuffix("*") }
+        assertEquals(0, titles.indexOf("Solutions"))
+        assertTrue(titles.indexOf("BDD") < titles.indexOf("Stdin"))
     }
 
     @Test
