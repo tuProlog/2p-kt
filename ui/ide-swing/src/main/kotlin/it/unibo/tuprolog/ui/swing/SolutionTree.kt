@@ -145,6 +145,13 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
 }
 
 private class SolutionCellRenderer : DefaultTreeCellRenderer() {
+    // Some look-and-feels (observed with Aqua on macOS) paint a JTree's open/closed/leaf icon by calling the
+    // renderer's own getOpenIcon()/getClosedIcon()/getLeafIcon() bean getters instead of (only) using the icon
+    // set on the component getTreeCellRendererComponent() returns, silently substituting their native
+    // folder/document glyphs otherwise (see https://stackoverflow.com/a/38994868). Overriding those getters to
+    // echo back whatever icon was just computed for the current row keeps both painting paths in sync.
+    private var currentIcon: Icon? = null
+
     override fun getTreeCellRendererComponent(
         tree: JTree,
         value: Any?,
@@ -164,16 +171,23 @@ private class SolutionCellRenderer : DefaultTreeCellRenderer() {
                 else -> value.toString()
             }
         super.getTreeCellRendererComponent(tree, label, selected, expanded, leaf, row, hasFocus)
-        icon =
+        currentIcon =
             when (data) {
                 is SolutionNodeData.QueryNode -> Icons.QUERY
                 is SolutionNodeData.ResultNode -> resultIcon(data.kind)
                 is SolutionNodeData.DetailNode -> DotIcon(DETAIL_COLOR)
                 else -> null
             }
+        icon = currentIcon
         font = font.deriveFont(if (data is SolutionNodeData.EllipsisNode) Font.ITALIC else Font.PLAIN)
         return this
     }
+
+    override fun getLeafIcon(): Icon? = currentIcon
+
+    override fun getOpenIcon(): Icon? = currentIcon
+
+    override fun getClosedIcon(): Icon? = currentIcon
 
     private fun resultIcon(kind: ResultKind): Icon =
         when (kind) {
