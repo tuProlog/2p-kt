@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.HTMLTextAreaElement
@@ -55,14 +56,24 @@ internal class WebIdeView(
     private val timeoutInput = byId<HTMLInputElement>("timeout-input")
     private val stdinArea = element("textarea", null) as HTMLTextAreaElement
     private val solveButton = byId<HTMLButtonElement>("solve-button")
+    private val solveButtonLabel = byId<HTMLElement>("solve-button-label")
     private val solve10Button = byId<HTMLButtonElement>("solve10-button")
+    private val solve10ButtonLabel = byId<HTMLElement>("solve10-button-label")
+    private val solve100Button = byId<HTMLButtonElement>("solve100-button")
+    private val solve100ButtonLabel = byId<HTMLElement>("solve100-button-label")
     private val solveAllButton = byId<HTMLButtonElement>("solve-all-button")
+    private val solveAllButtonLabel = byId<HTMLElement>("solve-all-button-label")
     private val stopButton = byId<HTMLButtonElement>("stop-button")
     private val resetButton = byId<HTMLButtonElement>("reset-button")
     private val clearSolutionsButton =
         (element("button", null) as HTMLButtonElement).apply {
-            textContent =
-                "Clear solutions"
+            appendChild(
+                (element("img", "btn-icon") as HTMLImageElement).apply {
+                    src = "icons/clear.png"
+                    alt = ""
+                },
+            )
+            appendChild(document.createTextNode("Clear solutions"))
         }
     private val sideContainer = byId<HTMLElement>("side")
     private val sideTabBar = byId<HTMLElement>("side-tab-bar")
@@ -183,7 +194,16 @@ internal class WebIdeView(
 
     private fun buildSidePanel() {
         PanelId.entries.forEach { panel ->
-            val tab = element("div", "side-tab").apply { textContent = panelTitle(panel) }
+            val tab =
+                element("div", "side-tab").apply {
+                    appendChild(
+                        (element("img", "tab-icon") as HTMLImageElement).apply {
+                            src = "icons/${panelIcon(panel)}.png"
+                            alt = ""
+                        },
+                    )
+                    appendChild(document.createTextNode(panelTitle(panel)))
+                }
             tab.addEventListener("click", { _: Event -> selectSidePanel(panel) })
             panelTabs[panel] = tab
             sideTabBar.appendChild(tab)
@@ -251,6 +271,22 @@ internal class WebIdeView(
             PanelId.DYNAMIC_KB -> "Dynamic KB"
         }
 
+    /** Bundled `.img/ide-icons` file name (without extension) for this panel's tab. */
+    private fun panelIcon(panel: PanelId): String =
+        when (panel) {
+            PanelId.SOLUTIONS -> "solutions"
+            PanelId.STDIN -> "input"
+            PanelId.STDOUT -> "output"
+            PanelId.STDERR -> "errors"
+            PanelId.WARNINGS -> "warnings"
+            PanelId.DIAGNOSTICS -> "diagnostics"
+            PanelId.OPERATORS -> "operators"
+            PanelId.FLAGS -> "flags"
+            PanelId.LIBRARIES -> "libraries"
+            PanelId.STATIC_KB -> "static-kb"
+            PanelId.DYNAMIC_KB -> "dynamic-kb"
+        }
+
     private fun selectSidePanel(panel: PanelId) {
         selectedSidePanel = panel
         panelTabs.forEach { (id, tab) -> tab.className = if (id == panel) "side-tab selected" else "side-tab" }
@@ -313,6 +349,7 @@ internal class WebIdeView(
         )
         solveButton.addEventListener("click", { _: Event -> solveOrNext(ConsumptionMode.ONE) })
         solve10Button.addEventListener("click", { _: Event -> solveOrNext(ConsumptionMode.TEN) })
+        solve100Button.addEventListener("click", { _: Event -> solveOrNext(ConsumptionMode.HUNDRED) })
         solveAllButton.addEventListener("click", { _: Event -> solveOrNext(ConsumptionMode.ALL) })
         stopButton.addEventListener("click", { _: Event -> selectedPage()?.let { dispatch(PageAction.Stop(it.id)) } })
         resetButton.addEventListener("click", { _: Event -> selectedPage()?.let { dispatch(PageAction.Reset(it.id)) } })
@@ -384,12 +421,14 @@ internal class WebIdeView(
         if (document.activeElement != timeoutInput) timeoutInput.value = formatDurationInput(effectiveTimeout)
 
         val awaiting = page.resolution.status == ResolutionStatus.AWAITING_CONTINUATION
-        solveButton.textContent = if (awaiting) "Next" else "Solve"
-        solve10Button.textContent = if (awaiting) "Next 10" else "Solve 10"
-        solveAllButton.textContent = if (awaiting) "All next" else "Solve all"
+        solveButtonLabel.textContent = if (awaiting) "Next" else "Solve"
+        solve10ButtonLabel.textContent = if (awaiting) "Next 10" else "Solve 10"
+        solve100ButtonLabel.textContent = if (awaiting) "Next 100" else "Solve 100"
+        solveAllButtonLabel.textContent = if (awaiting) "All next" else "Solve all"
         val canSolve = page.resolution.canSolve || page.resolution.canContinue
         solveButton.disabled = !canSolve
         solve10Button.disabled = !canSolve
+        solve100Button.disabled = !canSolve
         solveAllButton.disabled = !canSolve
         stopButton.disabled = !page.resolution.canStop
         statusLabel.textContent =
@@ -439,7 +478,13 @@ internal class WebIdeView(
         entries.forEach { entry ->
             val item = element("li", null)
             val header = element("div", "query")
-            header.textContent = "?- ${entry.first}"
+            header.appendChild(
+                (element("img", "tab-icon") as HTMLImageElement).apply {
+                    src = "icons/query.png"
+                    alt = ""
+                },
+            )
+            header.appendChild(document.createTextNode("?- ${entry.first}"))
             header.addEventListener("click", { _: Event -> dispatch(PageAction.ChangeQuery(page.id, entry.first)) })
             item.appendChild(header)
             entry.second.forEach { solution -> item.appendChild(solutionLine(solution)) }
@@ -464,7 +509,13 @@ internal class WebIdeView(
 
     private fun solutionLine(solution: SolutionPresentation): HTMLElement {
         val line = element("div", null)
-        line.textContent =
+        val icon =
+            when (solution) {
+                is SolutionPresentation.Yes -> "yes-solution"
+                is SolutionPresentation.No -> "no-solution"
+                is SolutionPresentation.Halt -> "halt-solution"
+            }
+        val text =
             when (solution) {
                 is SolutionPresentation.Yes ->
                     "yes" +
@@ -473,6 +524,13 @@ internal class WebIdeView(
                 is SolutionPresentation.No -> "no"
                 is SolutionPresentation.Halt -> "error: ${solution.message}"
             }
+        line.appendChild(
+            (element("img", "tab-icon") as HTMLImageElement).apply {
+                src = "icons/$icon.png"
+                alt = ""
+            },
+        )
+        line.appendChild(document.createTextNode(text))
         return line
     }
 

@@ -38,13 +38,5 @@ registerVerifyFatJarTask(
     expectedFailureFragment = "Cannot show the Swing IDE in a headless environment",
 )
 
-val copyIdeLogo =
-    tasks.register<Copy>("copyIdeLogo") {
-        from(rootProject.layout.projectDirectory.file(".img/logo.png"))
-        into(layout.buildDirectory.dir("generated-resources/logo"))
-    }
-
-tasks.processResources {
-    dependsOn(copyIdeLogo)
-    from(layout.buildDirectory.dir("generated-resources/logo"))
-}
+wireDefaultLogoResource("processResources")
+wireIdeIconsResource("processResources")

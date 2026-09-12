@@ -7,6 +7,7 @@ import it.unibo.tuprolog.ui.gui.model.PageState
 import it.unibo.tuprolog.ui.gui.plp.PlpFeatureKeys
 import it.unibo.tuprolog.ui.gui.plp.PlpGuiIds
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
+import it.unibo.tuprolog.ui.swing.Icons
 import it.unibo.tuprolog.ui.swing.SwingFeatureContext
 import it.unibo.tuprolog.ui.swing.SwingFeatureRenderer
 import java.awt.BorderLayout
@@ -46,7 +47,7 @@ class BddSwingFeatureRenderer(
     ) : JPanel(BorderLayout()) {
         private val heading = JLabel("No binary decision diagram").apply { name = "bddHeadingLabel" }
         private val graphHost = JPanel(BorderLayout()).apply { name = "bddGraphHost" }
-        private val copyButton = JButton("Copy DOT").apply { name = "bddCopyDotButton" }
+        private val copyButton = JButton("Copy DOT", Icons.COPY).apply { name = "bddCopyDotButton" }
         private var page: PageState? = null
         private var dot: String? = null
 

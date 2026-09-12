@@ -14,7 +14,7 @@
 
 ## Intro
 
-![The 2P logo](https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/logo.png)
+![The 2P logo](https://raw.githubusercontent.com/tuProlog/2p-kt/master/.img/logos/2p-arcade.svg)
 
 [tuProlog](https://www.cs.nmsu.edu/ALP/2013/10/tuprolog-making-prolog-ubiquitous/) (2P henceforth) is a multi-paradigm 
 logic programming framework written in Java.

@@ -27,6 +27,7 @@ import java.awt.BorderLayout
 import java.awt.Desktop
 import java.awt.Dimension
 import java.awt.FlowLayout
+import java.awt.Taskbar
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.InputEvent
@@ -37,6 +38,7 @@ import java.awt.event.WindowEvent
 import java.net.URI
 import javax.swing.AbstractAction
 import javax.swing.BorderFactory
+import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JFrame
@@ -84,18 +86,18 @@ class SwingIdeFrame(
     private val editorTabs = JTabbedPane().apply { name = "editorTabs" }
     private val lowerTabs = JTabbedPane().apply { name = "lowerTabs" }
     private val queryField = PrologQueryField().apply { name = "queryField" }
-    private val solveButton = JButton("Solve").apply { name = "solveButton" }
-    private val solve10Button = JButton("Solve 10").apply { name = "solve10Button" }
-    private val solve100Button = JButton("Solve 100").apply { name = "solve100Button" }
-    private val solveAllButton = JButton("Solve all").apply { name = "solveAllButton" }
-    private val stopButton = JButton("Stop").apply { name = "stopButton" }
-    private val resetButton = JButton("Reset").apply { name = "resetButton" }
+    private val solveButton = JButton("Solve", Icons.SOLVE).apply { name = "solveButton" }
+    private val solve10Button = JButton("Solve 10", Icons.SOLVE_10).apply { name = "solve10Button" }
+    private val solve100Button = JButton("Solve 100", Icons.SOLVE_100).apply { name = "solve100Button" }
+    private val solveAllButton = JButton("Solve all", Icons.SOLVE_ALL).apply { name = "solveAllButton" }
+    private val stopButton = JButton("Stop", Icons.STOP).apply { name = "stopButton" }
+    private val resetButton = JButton("Reset", Icons.RESET).apply { name = "resetButton" }
     private val timeoutField = JTextField("5s", TIMEOUT_FIELD_COLUMNS).apply { name = "timeoutField" }
     private val statusLabel = JLabel("Idle").apply { name = "statusLabel" }
-    private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT).apply { name = "caretLabel" }
+    private val caretLabel = JLabel("Line 0, column 0", SwingConstants.RIGHT).apply { name = "caretLabel" }
 
     private val solutionsTree = SolutionTree().apply { name = "solutionsTree" }
-    private val clearSolutionsButton = JButton("Clear solutions").apply { name = "clearSolutionsButton" }
+    private val clearSolutionsButton = JButton("Clear solutions", Icons.CLEAR).apply { name = "clearSolutionsButton" }
     private val stdinArea = editorArea().apply { name = "stdinArea" }
     private val stdoutArea = readOnlyArea().apply { name = "stdoutArea" }
     private val stderrArea = readOnlyArea().apply { name = "stderrArea" }
@@ -142,6 +144,12 @@ class SwingIdeFrame(
             java.awt.Toolkit
                 .getDefaultToolkit()
                 .getImage(javaClass.getResource("/logo.png"))
+        // The window icon above only covers the title bar/taskbar entry; the OS-level app icon (macOS Dock,
+        // GNOME/KDE app switcher, ...) is a separate concept that needs the Taskbar API, where supported.
+        if (Taskbar.isTaskbarSupported()) {
+            val taskbar = Taskbar.getTaskbar()
+            if (taskbar.isSupported(Taskbar.Feature.ICON_IMAGE)) taskbar.iconImage = iconImage
+        }
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         minimumSize = Dimension(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
         preferredSize = Dimension(PREFERRED_WINDOW_WIDTH, PREFERRED_WINDOW_HEIGHT)
@@ -188,7 +196,9 @@ class SwingIdeFrame(
         timeoutField.preferredSize = Dimension(TIMEOUT_FIELD_WIDTH, controlHeight)
         queryField.preferredSize = Dimension(queryField.preferredSize.width, controlHeight)
         listOf(solveButton, solve10Button, solve100Button, solveAllButton, stopButton, resetButton).forEach {
-            it.preferredSize = Dimension(QUERY_BUTTON_WIDTH, controlHeight)
+            // Only the height is forced (for row alignment); the width is left to Swing's own icon+caption
+            // measurement, since a fixed width narrower than that would silently clip the button's caption.
+            it.preferredSize = Dimension(it.preferredSize.width, controlHeight)
         }
         val queryRow =
             JPanel(BorderLayout(QUERY_ROW_HGAP, 0)).apply {
@@ -217,16 +227,16 @@ class SwingIdeFrame(
             }
 
         addSolutionsTab()
-        addLowerTab("Stdin", PanelId.STDIN, stdinArea)
-        addLowerTab("Stdout", PanelId.STDOUT, stdoutArea)
-        addLowerTab("Stderr", PanelId.STDERR, stderrArea)
-        addLowerTab("Warnings", PanelId.WARNINGS, warningsArea)
-        addLowerTab("Diagnostics", PanelId.DIAGNOSTICS, diagnosticsList)
-        addLowerTab("Operators", PanelId.OPERATORS, operatorsTable)
-        addLowerTab("Flags", PanelId.FLAGS, flagsTable)
-        addLowerTab("Libraries", PanelId.LIBRARIES, librariesTree)
-        addLowerTab("Static KB", PanelId.STATIC_KB, staticKbArea)
-        addLowerTab("Dynamic KB", PanelId.DYNAMIC_KB, dynamicKbArea)
+        addLowerTab("Stdin", PanelId.STDIN, stdinArea, Icons.STDIN)
+        addLowerTab("Stdout", PanelId.STDOUT, stdoutArea, Icons.STDOUT)
+        addLowerTab("Stderr", PanelId.STDERR, stderrArea, Icons.STDERR)
+        addLowerTab("Warnings", PanelId.WARNINGS, warningsArea, Icons.WARNINGS)
+        addLowerTab("Diagnostics", PanelId.DIAGNOSTICS, diagnosticsList, Icons.DIAGNOSTICS)
+        addLowerTab("Operators", PanelId.OPERATORS, operatorsTable, Icons.OPERATORS)
+        addLowerTab("Flags", PanelId.FLAGS, flagsTable, Icons.FLAGS)
+        addLowerTab("Libraries", PanelId.LIBRARIES, librariesTree, Icons.LIBRARIES)
+        addLowerTab("Static KB", PanelId.STATIC_KB, staticKbArea, Icons.STATIC_KB)
+        addLowerTab("Dynamic KB", PanelId.DYNAMIC_KB, dynamicKbArea, Icons.DYNAMIC_KB)
 
         for (renderer in featureRenderers.all()) {
             val component = renderer.createComponent(featureContext)
@@ -255,7 +265,7 @@ class SwingIdeFrame(
                 )
                 add(JScrollPane(solutionsTree), BorderLayout.CENTER)
             }
-        lowerTabs.addTab("Solutions", panel)
+        lowerTabs.addTab("Solutions", Icons.SOLUTIONS, panel)
         lowerPanelIds[index] = PanelId.SOLUTIONS
         lowerPanelTitles[index] = "Solutions"
     }
@@ -264,10 +274,12 @@ class SwingIdeFrame(
         title: String,
         panelId: PanelId,
         component: JComponent,
+        icon: Icon? = null,
     ) {
         val index = lowerTabs.tabCount
         lowerTabs.addTab(
             title,
+            icon,
             if (component is PrologEditor) RTextScrollPane(component, true) else JScrollPane(component),
         )
         lowerPanelIds[index] = panelId
@@ -300,55 +312,73 @@ class SwingIdeFrame(
         JMenu("File").apply {
             name = "fileMenu"
             mnemonic = KeyEvent.VK_F
-            add(
-                menuItem(
-                    "New",
-                    KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask()),
-                    "newMenuItem",
-                ) { newDocument() },
-            )
-            add(menuItem("New scratch page", null, "newScratchPageMenuItem") { newScratchPage() })
-            if (templates.isNotEmpty()) add(newFromTemplateMenu())
-            add(
-                menuItem(
-                    "Open…",
-                    KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask()),
-                    "openMenuItem",
-                ) { openDocument() },
-            )
+            addNewAndOpenItems(this)
             addSeparator()
+            addSaveAndCloseItems(this)
+            add(menuItem("Reload", null, "reloadMenuItem", Icons.RELOAD) { reloadSelected() })
             add(
-                menuItem(
-                    "Close page",
-                    KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask()),
-                    "closePageMenuItem",
-                ) { closeSelectedPage() },
+                menuItem("File properties", null, "filePropertiesMenuItem", Icons.FILE_PROPERTIES) {
+                    showFileProperties()
+                },
             )
-            add(
-                menuItem(
-                    "Save",
-                    KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask()),
-                    "saveMenuItem",
-                ) { saveSelected(false) },
-            )
-            add(
-                menuItem(
-                    "Save as…",
-                    KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask() or InputEvent.SHIFT_DOWN_MASK),
-                    "saveAsMenuItem",
-                ) { saveSelected(true) },
-            )
-            add(menuItem("Reload", null, "reloadMenuItem") { reloadSelected() })
-            add(menuItem("File properties", null, "filePropertiesMenuItem") { showFileProperties() })
             addSeparator()
             add(
                 menuItem(
                     "Quit",
                     KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask()),
                     "quitMenuItem",
+                    Icons.QUIT,
                 ) { requestExit() },
             )
         }
+
+    private fun addNewAndOpenItems(menu: JMenu) {
+        menu.add(
+            menuItem(
+                "New",
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask()),
+                "newMenuItem",
+                Icons.NEW,
+            ) { newDocument() },
+        )
+        menu.add(menuItem("New scratch page", null, "newScratchPageMenuItem", Icons.NEW) { newScratchPage() })
+        if (templates.isNotEmpty()) menu.add(newFromTemplateMenu())
+        menu.add(
+            menuItem(
+                "Open…",
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask()),
+                "openMenuItem",
+                Icons.OPEN,
+            ) { openDocument() },
+        )
+    }
+
+    private fun addSaveAndCloseItems(menu: JMenu) {
+        menu.add(
+            menuItem(
+                "Close page",
+                KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask()),
+                "closePageMenuItem",
+                Icons.CLOSE_PAGE,
+            ) { closeSelectedPage() },
+        )
+        menu.add(
+            menuItem(
+                "Save",
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask()),
+                "saveMenuItem",
+                Icons.SAVE,
+            ) { saveSelected(false) },
+        )
+        menu.add(
+            menuItem(
+                "Save as…",
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask() or InputEvent.SHIFT_DOWN_MASK),
+                "saveAsMenuItem",
+                Icons.SAVE_AS,
+            ) { saveSelected(true) },
+        )
+    }
 
     private fun editMenu(): JMenu =
         JMenu("Edit").apply {
@@ -358,18 +388,21 @@ class SwingIdeFrame(
                 JMenuItem(DefaultEditorKit.CutAction()).apply {
                     text = "Cut"
                     name = "cutMenuItem"
+                    icon = Icons.CUT
                 },
             )
             add(
                 JMenuItem(DefaultEditorKit.CopyAction()).apply {
                     text = "Copy"
                     name = "copyMenuItem"
+                    icon = Icons.COPY
                 },
             )
             add(
                 JMenuItem(DefaultEditorKit.PasteAction()).apply {
                     text = "Paste"
                     name = "pasteMenuItem"
+                    icon = Icons.PASTE
                 },
             )
             add(
@@ -377,6 +410,7 @@ class SwingIdeFrame(
                     text = "Select all"
                     name = "selectAllMenuItem"
                     accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask())
+                    icon = Icons.SELECT_ALL
                 },
             )
         }
@@ -390,6 +424,7 @@ class SwingIdeFrame(
                     "Find…",
                     KeyStroke.getKeyStroke(KeyEvent.VK_F, menuMask()),
                     "findMenuItem",
+                    Icons.FIND,
                 ) { searchActions.showFind() },
             )
             add(
@@ -397,6 +432,7 @@ class SwingIdeFrame(
                     "Replace…",
                     KeyStroke.getKeyStroke(KeyEvent.VK_H, menuMask()),
                     "replaceMenuItem",
+                    Icons.REPLACE,
                 ) { searchActions.showReplace() },
             )
             add(
@@ -404,6 +440,7 @@ class SwingIdeFrame(
                     "Go to line…",
                     KeyStroke.getKeyStroke(KeyEvent.VK_G, menuMask()),
                     "goToLineMenuItem",
+                    Icons.GO_TO_LINE,
                 ) { searchActions.showGoToLine() },
             )
         }
@@ -411,13 +448,18 @@ class SwingIdeFrame(
     private fun helpMenu(): JMenu =
         JMenu("Help").apply {
             name = "helpMenu"
-            add(menuItem("About", null, "aboutMenuItem") { showAbout() })
-            add(menuItem("Report an issue…", null, "reportIssueMenuItem") { showReportIssueDialog() })
+            add(menuItem("About", null, "aboutMenuItem", Icons.ABOUT) { showAbout() })
+            add(
+                menuItem("Report an issue…", null, "reportIssueMenuItem", Icons.REPORT_ISSUE) {
+                    showReportIssueDialog()
+                },
+            )
         }
 
     private fun newFromTemplateMenu(): JMenu =
         JMenu("New from template").apply {
             name = "newFromTemplateMenu"
+            icon = Icons.NEW_FROM_TEMPLATE
             for (template in templates) {
                 add(
                     JMenuItem(
@@ -438,6 +480,7 @@ class SwingIdeFrame(
         label: String,
         accelerator: KeyStroke?,
         name: String,
+        icon: Icon? = null,
         action: () -> Unit,
     ): JMenuItem =
         JMenuItem(
@@ -447,6 +490,7 @@ class SwingIdeFrame(
         ).apply {
             this.accelerator = accelerator
             this.name = name
+            this.icon = icon
         }
 
     private fun installQueryListeners() {
@@ -937,7 +981,7 @@ class SwingIdeFrame(
         val offset = max(0, event.dot)
         val line = runCatching { area.getLineOfOffset(offset) }.getOrDefault(0)
         val column = runCatching { offset - area.getLineStartOffset(line) }.getOrDefault(0)
-        caretLabel.text = "Line ${line + 1}, column ${column + 1}"
+        caretLabel.text = "Line $line, column $column"
     }
 
     private fun selectedPage(): PageState? {
@@ -1127,7 +1171,6 @@ class SwingIdeFrame(
         private const val WORKSPACE_SPLIT_DIVIDER_LOCATION = 450
         private const val TIMEOUT_FIELD_COLUMNS = 8
         private const val TIMEOUT_FIELD_WIDTH = 100
-        private const val QUERY_BUTTON_WIDTH = 88
         private const val QUERY_ROW_HGAP = 8
         private const val QUERY_ROW_BORDER_INSET = 6
         private const val QUERY_BUTTONS_HGAP = 5

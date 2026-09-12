@@ -37,10 +37,11 @@ private class DiagnosticCellRenderer : DefaultListCellRenderer() {
     ): Component {
         val label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
         val diagnostic = value as? Diagnostic ?: return label
+        // Zero-based, like TextPosition itself and the line:column already embedded in parser error messages.
         val location =
             diagnostic.range
                 ?.start
-                ?.let { " (line ${it.line + 1}, column ${it.column + 1})" }
+                ?.let { " (line ${it.line}, column ${it.column})" }
                 .orEmpty()
         label.text = "${diagnostic.severity}: ${diagnostic.message}$location"
         if (!isSelected) {

@@ -30,7 +30,7 @@ private sealed interface SolutionNodeData {
 
     data class ResultNode(
         val label: String,
-        val color: Color,
+        val kind: ResultKind,
     ) : SolutionNodeData {
         override fun toString() = label
     }
@@ -45,6 +45,8 @@ private sealed interface SolutionNodeData {
         override fun toString() = "…"
     }
 }
+
+private enum class ResultKind { YES, NO, HALT }
 
 internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
     var onQuerySelected: ((String) -> Unit)? = null
@@ -118,19 +120,19 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
         when (solution) {
             is SolutionPresentation.Yes ->
                 DefaultMutableTreeNode(
-                    SolutionNodeData.ResultNode("$number. ${solution.solvedQuery ?: solution.query}", YES_COLOR),
+                    SolutionNodeData.ResultNode("$number. ${solution.solvedQuery ?: solution.query}", ResultKind.YES),
                 ).apply {
                     solution.bindings.forEach {
                         add(DefaultMutableTreeNode(SolutionNodeData.DetailNode("${it.variable} = ${it.value}")))
                     }
                 }
             is SolutionPresentation.No ->
-                DefaultMutableTreeNode(SolutionNodeData.ResultNode("$number. no", NO_COLOR))
+                DefaultMutableTreeNode(SolutionNodeData.ResultNode("$number. no", ResultKind.NO))
             is SolutionPresentation.Halt ->
                 DefaultMutableTreeNode(
                     SolutionNodeData.ResultNode(
                         "$number. ${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}",
-                        HALT_COLOR,
+                        ResultKind.HALT,
                     ),
                 ).apply {
                     solution.logicStackTrace.forEach {
@@ -140,12 +142,6 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
                     }
                 }
         }
-
-    private companion object {
-        val YES_COLOR = Color(0x2E, 0x7D, 0x32)
-        val NO_COLOR = Color(0xC6, 0x28, 0x28)
-        val HALT_COLOR = Color(0xE6, 0x8A, 0x00)
-    }
 }
 
 private class SolutionCellRenderer : DefaultTreeCellRenderer() {
@@ -168,9 +164,26 @@ private class SolutionCellRenderer : DefaultTreeCellRenderer() {
                 else -> value.toString()
             }
         super.getTreeCellRendererComponent(tree, label, selected, expanded, leaf, row, hasFocus)
-        icon = (data as? SolutionNodeData.ResultNode)?.let { DotIcon(it.color) }
+        icon =
+            when (data) {
+                is SolutionNodeData.QueryNode -> Icons.QUERY
+                is SolutionNodeData.ResultNode -> resultIcon(data.kind)
+                is SolutionNodeData.DetailNode -> DotIcon(DETAIL_COLOR)
+                else -> null
+            }
         font = font.deriveFont(if (data is SolutionNodeData.EllipsisNode) Font.ITALIC else Font.PLAIN)
         return this
+    }
+
+    private fun resultIcon(kind: ResultKind): Icon =
+        when (kind) {
+            ResultKind.YES -> Icons.YES_SOLUTION
+            ResultKind.NO -> Icons.NO_SOLUTION
+            ResultKind.HALT -> Icons.HALT_SOLUTION
+        }
+
+    private companion object {
+        val DETAIL_COLOR = Color(0x90, 0x90, 0x90)
     }
 }
 

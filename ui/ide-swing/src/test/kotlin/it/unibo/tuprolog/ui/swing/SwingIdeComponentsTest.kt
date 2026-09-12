@@ -199,7 +199,7 @@ class SwingIdeComponentsTest {
             assertEquals(diagnostic, selected)
             val rendered =
                 list.cellRenderer.getListCellRendererComponent(list, diagnostic, 0, false, false) as javax.swing.JLabel
-            assertTrue(rendered.text.contains("line 1"))
+            assertTrue(rendered.text.contains("line 0"))
         }
     }
 

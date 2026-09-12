@@ -56,6 +56,12 @@ html, body {
 .menu-bar select, .menu-bar button {
     font-size: 13px;
 }
+.btn-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 3px;
+}
 .status {
     margin-left: auto;
     color: var(--muted);
@@ -141,6 +147,12 @@ html, body {
     background: var(--bg-panel);
     padding: 4px 4px 0 4px;
     flex-wrap: wrap;
+}
+.tab-icon {
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    margin-right: 3px;
 }
 .side-tab {
     padding: 3px 8px;

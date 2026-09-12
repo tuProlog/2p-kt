@@ -30,11 +30,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>().c
     mainOutputFileName.set("ide-web.js")
 }
 
-val copyIdeLogo =
-    tasks.register<Copy>("copyIdeLogo") {
-        from(rootProject.layout.projectDirectory.file(".img/logo.png"))
-        into(layout.buildDirectory.dir("generated-resources/logo"))
-    }
+wireDefaultLogoResource("jsProcessResources")
+wireIdeIconsResource("jsProcessResources")
 
 // Ace's own module system predates ES/CommonJS modules and expects to be loaded as a global script rather
 // than bundled by webpack (see Ace.kt); vendor its two prebuilt files as plain assets loaded from index.html
@@ -49,11 +46,8 @@ val copyAceEditor =
     }
 
 tasks.named("jsProcessResources") {
-    dependsOn(copyIdeLogo, copyAceEditor)
-    (this as Copy).from(
-        layout.buildDirectory.dir("generated-resources/logo"),
-        layout.buildDirectory.dir("generated-resources/ace"),
-    )
+    dependsOn(copyAceEditor)
+    (this as Copy).from(layout.buildDirectory.dir("generated-resources/ace"))
 }
 
 val webDistribution = tasks.named("jsBrowserDistribution")
