@@ -40,8 +40,7 @@ jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr
 clikt = "com.github.ajalt.clikt:clikt:5.1.0"
 assertj-swing = "org.assertj:assertj-swing:3.17.1"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
-graphviz = "guru.nidi:graphviz-java:0.18.1"
-graphviz-js-engine = "org.graalvm.js:js:23.0.13"
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 ktMath = "io.github.gciatto:kt-math:0.10.2"
 plantuml = "net.sourceforge.plantuml:plantuml:1.2026.8"
 rsyntaxtextarea = "com.fifesoft:rsyntaxtextarea:3.6.1"

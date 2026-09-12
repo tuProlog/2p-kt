@@ -1,5 +1,3 @@
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-
 plugins {
     application
     id(
@@ -16,9 +14,9 @@ dependencies {
     implementation(project(":ide-swing"))
     implementation(project(":solve-problog"))
     implementation(libs.clikt)
-    implementation(libs.graphviz)
-    // Pure-JVM DOT rendering engine for graphviz-java (no native `dot` binary needed - see GraphvizBddRenderer).
-    runtimeOnly(libs.graphviz.js.engine)
+    // Pure-JVM diagram rendering (Smetana layout engine - see PlantUmlSwingBddGraphRenderer): no native
+    // Graphviz install and no GraalVM needed, unlike the graphviz-java dependency this used to carry.
+    implementation(libs.plantuml)
 
     testImplementation(kotlin("test"))
 }
@@ -38,14 +36,3 @@ registerVerifyFatJarTask(
     expectSuccess = false,
     expectedFailureFragment = "Cannot show the Swing IDE in a headless environment",
 )
-
-// graphviz-java's GraalVM-JS engine (see GraphvizSwingBddGraphRenderer) uses a Truffle version whose
-// `sun.misc.Unsafe.ensureClassInitialized` call breaks on very new JDKs; pin `test` to one it's known to work
-// on, same as registerSwingE2eTestSourceSet already does for the swingE2eTest source set below.
-tasks.withType<Test>().configureEach {
-    javaLauncher.set(
-        javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(21))
-        },
-    )
-}
