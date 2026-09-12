@@ -117,9 +117,17 @@ data class FlagStore(
         @JvmStatic
         fun of(flags: Map<String, Term>) = FlagStore(flags)
 
-        /** Creates a [FlagStore] setting every one of [notableFlagValues] to its [NotableFlag.defaultValue]. */
+        /**
+         * Creates a [FlagStore] setting every one of [notableFlagValues] to its [NotableFlag.defaultValue].
+         *
+         * Uses `map { }.toMap()` rather than `associate { }`: the latter reproducibly lost every entry but the
+         * last one on Kotlin/JS here, collapsing them into a single `{undefined: undefined}` entry - see
+         * `it.unibo.tuprolog.ui.gui.prolog.SolverFactoryProfileTest`, which failed on the JS target only until
+         * this was changed; reproduced down to `Array<NotableFlag>.associate { it.toPair() }` specifically.
+         */
         @JsName("of")
         @JvmStatic
-        fun of(vararg notableFlagValues: NotableFlag) = FlagStore(notableFlagValues.associate { it.toPair() })
+        fun of(vararg notableFlagValues: NotableFlag): FlagStore =
+            FlagStore(notableFlagValues.map { it.toPair() }.toMap())
     }
 }
