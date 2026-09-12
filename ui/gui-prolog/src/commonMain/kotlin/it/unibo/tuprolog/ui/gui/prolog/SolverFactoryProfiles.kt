@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.gui.prolog
 
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.library.Library
@@ -8,6 +9,7 @@ import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.model.FeatureValue
+import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.gui.solver.SolverProfile
 
@@ -50,4 +52,10 @@ fun solverFactoryProfile(
                 runtimeLibraries,
             )
         },
+        // Cheap and pure (no solver instantiated): a dialect's own operators (e.g. ProbLog's `::`) come from
+        // its defaultBuiltins library, same as a freshly built solver would see before any custom `:- op(...)`.
+        defaultOperators =
+            (OperatorSet.DEFAULT + factory.defaultBuiltins.operators).map {
+                OperatorPresentation(it.functor, it.priority, it.specifier.name)
+            },
     )

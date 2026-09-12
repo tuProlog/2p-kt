@@ -8,6 +8,7 @@ import it.unibo.tuprolog.ui.gui.model.SolverSessionLifecycle
 import it.unibo.tuprolog.ui.gui.model.WorkspaceConfiguration
 import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
 import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSources
+import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
@@ -470,6 +471,30 @@ class DefaultGuiControllerTest {
                 assertEquals(2L, saved.persistedRevision)
                 assertEquals(second, saved.origin)
                 assertFalse(saved.isDirty)
+            } finally {
+                controller.shutdown()
+            }
+        }
+
+    @Test
+    fun newPageSeedsSyntaxHighlightingWithProfileDefaultOperatorsBeforeAnyResolution() =
+        runTest {
+            val dialectOperator = OperatorPresentation("::", 200, "XFX")
+            val factory = TestSolverFactory(defaultOperators = listOf(dialectOperator))
+            val controller =
+                DefaultGuiController(
+                    workspaceConfiguration = WorkspaceConfiguration(defaultSolverProfileId = testProfileId),
+                    baseProfiles = listOf(factory.profile),
+                    parentScope = this,
+                )
+            try {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl", "p(1)."))
+                val pageId = controller.state.value.workspace.selectedPageId!!
+                val page =
+                    controller.state.value.workspace
+                        .page(pageId)!!
+                assertEquals(listOf(dialectOperator), page.solverSession.inspection.operators)
+                assertEquals(SolverSessionLifecycle.ABSENT, page.solverSession.lifecycle)
             } finally {
                 controller.shutdown()
             }

@@ -12,6 +12,7 @@ import it.unibo.tuprolog.ui.gui.model.ConsoleState
 import it.unibo.tuprolog.ui.gui.model.DiagnosticState
 import it.unibo.tuprolog.ui.gui.model.DocumentState
 import it.unibo.tuprolog.ui.gui.model.GuiState
+import it.unibo.tuprolog.ui.gui.model.PageConfiguration
 import it.unibo.tuprolog.ui.gui.model.PageContent
 import it.unibo.tuprolog.ui.gui.model.PageFeatureState
 import it.unibo.tuprolog.ui.gui.model.PageState
@@ -26,6 +27,7 @@ import it.unibo.tuprolog.ui.gui.model.WorkspaceState
 import it.unibo.tuprolog.ui.gui.model.resolve
 import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSources
 import it.unibo.tuprolog.ui.gui.presentation.PrologSyntaxAnalyzer
+import it.unibo.tuprolog.ui.gui.presentation.SolverInspectionSnapshot
 import it.unibo.tuprolog.ui.gui.solver.ResolutionCursor
 import it.unibo.tuprolog.ui.gui.solver.ResolutionRequest
 import it.unibo.tuprolog.ui.gui.solver.ResolutionSchedulingPolicy
@@ -1533,13 +1535,23 @@ class DefaultGuiController(
         id: PageId,
         title: String,
         content: PageContent,
-    ): PageState =
-        PageState(
+    ): PageState {
+        // Seeds syntax highlighting with the page's solver profile's own operators (e.g. ProbLog's `::`)
+        // before any solver session exists, so a valid dialect-specific clause isn't flagged as a syntax
+        // error until the first solve happens to build a real solver and refresh this list.
+        val profileId =
+            _state.value.workspace.configuration
+                .resolve(PageConfiguration())
+                .solverProfileId
+        val defaultOperators = profiles.find(profileId)?.defaultOperators.orEmpty()
+        return PageState(
             id = id,
             title = title,
             content = content,
             features = extensions.features.associate { it.id to PageFeatureState() },
+            solverSession = SolverSessionState(inspection = SolverInspectionSnapshot(operators = defaultOperators)),
         )
+    }
 
     private fun sourceOf(
         page: PageState,

@@ -25,7 +25,9 @@ import kotlinx.coroutines.withTimeout
 
 internal val testProfileId = SolverProfileId("test")
 
-internal class TestSolverFactory {
+internal class TestSolverFactory(
+    defaultOperators: List<it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation> = emptyList(),
+) {
     private var counter: Int = 0
     val creationRequests = mutableListOf<it.unibo.tuprolog.ui.gui.solver.SolverSessionCreationRequest>()
 
@@ -40,6 +42,7 @@ internal class TestSolverFactory {
                         SolverCapabilities.FLAGS_INSPECTION,
                     ),
                 ),
+            defaultOperators = defaultOperators,
             factory = { request ->
                 creationRequests += request
                 TestSolverSession(SolverSessionId("test-session-${++counter}"))

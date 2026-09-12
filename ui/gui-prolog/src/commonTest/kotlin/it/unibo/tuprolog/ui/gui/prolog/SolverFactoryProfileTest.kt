@@ -18,6 +18,20 @@ import kotlin.time.Duration.Companion.seconds
 
 class SolverFactoryProfileTest {
     @Test
+    fun profileExposesDefaultOperatorsWithoutBuildingASolver() {
+        val profile =
+            solverFactoryProfile(
+                Solver.prolog,
+                SolverProfileId("test"),
+                "Test",
+                runtimeLibraries = listOf(IOLib),
+            )
+        // No SolverSessionCreationRequest ever handed to profile.factory here: defaultOperators must already
+        // reflect the factory's own operators (OperatorSet.DEFAULT + its defaultBuiltins) eagerly and for free.
+        assertTrue(profile.defaultOperators.isNotEmpty())
+    }
+
+    @Test
     fun solverProfileExposesAndRefreshesInspectorState() =
         runTest {
             // OOPLib (the default runtime library alongside IOLib) is reflection-based and throws
