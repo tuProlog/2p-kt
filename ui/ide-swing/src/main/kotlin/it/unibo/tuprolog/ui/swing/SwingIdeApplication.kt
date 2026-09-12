@@ -2,6 +2,8 @@ package it.unibo.tuprolog.ui.swing
 
 import it.unibo.tuprolog.ui.gui.application.GuiApplication
 import it.unibo.tuprolog.ui.gui.controller.WorkspaceAction
+import it.unibo.tuprolog.ui.gui.persistence.PersistedWorkspace
+import it.unibo.tuprolog.ui.gui.persistence.restoreWorkspace
 import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -99,10 +101,14 @@ class SwingIdeApplication(
     }
 
     private fun applyWindowBounds(restored: PersistedWorkspace) {
-        if (restored.windowWidth != null && restored.windowHeight != null) {
-            frame.setSize(restored.windowWidth, restored.windowHeight)
-            if (restored.windowX != null && restored.windowY != null) {
-                frame.setLocation(restored.windowX, restored.windowY)
+        val width = restored.windowWidth
+        val height = restored.windowHeight
+        if (width != null && height != null) {
+            frame.setSize(width, height)
+            val x = restored.windowX
+            val y = restored.windowY
+            if (x != null && y != null) {
+                frame.setLocation(x, y)
             } else {
                 frame.setLocationRelativeTo(null)
             }

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.ui.swing
+package it.unibo.tuprolog.ui.gui.persistence
 
 import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus

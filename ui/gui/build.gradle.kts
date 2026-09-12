@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.kotlin.serialization)
+}
+
 kotlin {
     sourceSets {
         commonMain {
@@ -5,6 +9,7 @@ kotlin {
                 api(libs.kotlinx.coroutines.core)
                 implementation(project(":core"))
                 implementation(project(":parser-impl"))
+                implementation(libs.kotlinx.serialization.core)
             }
         }
         commonTest {

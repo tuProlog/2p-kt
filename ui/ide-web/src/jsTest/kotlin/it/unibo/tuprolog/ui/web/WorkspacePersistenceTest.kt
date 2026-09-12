@@ -9,6 +9,9 @@ import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.model.PageContent
 import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
+import it.unibo.tuprolog.ui.gui.persistence.PersistedWorkspace
+import it.unibo.tuprolog.ui.gui.persistence.capturePersistedWorkspace
+import it.unibo.tuprolog.ui.gui.persistence.restoreWorkspace
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
 import kotlinx.coroutines.CoroutineScope

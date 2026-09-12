@@ -8,6 +8,8 @@ import it.unibo.tuprolog.ui.gui.application.buildGuiApplication
 import it.unibo.tuprolog.ui.gui.controller.ApplicationAction
 import it.unibo.tuprolog.ui.gui.controller.WorkspaceAction
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
+import it.unibo.tuprolog.ui.gui.persistence.capturePersistedWorkspace
+import it.unibo.tuprolog.ui.gui.persistence.restoreWorkspace
 import it.unibo.tuprolog.ui.gui.presentation.EditorZoom
 import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
 import it.unibo.tuprolog.ui.gui.template.ClassicTheoryTemplates

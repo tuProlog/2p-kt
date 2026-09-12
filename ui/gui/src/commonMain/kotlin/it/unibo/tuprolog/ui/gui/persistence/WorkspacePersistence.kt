@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.ui.web
+package it.unibo.tuprolog.ui.gui.persistence
 
 import it.unibo.tuprolog.ui.gui.controller.GuiController
 import it.unibo.tuprolog.ui.gui.controller.PageAction
@@ -7,43 +7,23 @@ import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.model.DocumentOrigin
 import it.unibo.tuprolog.ui.gui.model.GuiState
 import it.unibo.tuprolog.ui.gui.model.PageContent
-import kotlinx.browser.localStorage
-import kotlinx.serialization.json.Json
-
-private const val STORAGE_KEY = "tuprolog-workspace"
 
 /**
- * Persists open documents (each with its own query, query history, and resolution/Solutions-tree history) and
- * the shared editor's zoom level to the browser's `localStorage`, so ide-web can restore as much of its last
- * session as possible on reload - the same idea as ide-swing's `WorkspacePersistence`, just backed by
- * `localStorage` instead of a file, and without a per-page zoom level or window bounds (ide-web has one shared
- * editor and no window to speak of).
+ * Captures the pages currently open in [state] as a [PersistedWorkspace], ready to save - shared by every
+ * frontend (ide-swing, ide-web, ...) regardless of how it actually stores the result (a file, `localStorage`,
+ * ...). [pageFontSizes] is consulted for each page's own zoom level, where the frontend supports one, falling
+ * back to the workspace-wide [fontSize] when a page never had its own; [windowWidth]/[windowHeight]/[windowX]/
+ * [windowY]/[lookAndFeel] are left to `null` by frontends with no window or look-and-feel concept (e.g. ide-web).
  */
-object WebWorkspacePersistence {
-    private val json = Json { ignoreUnknownKeys = true }
-
-    fun load(): PersistedWorkspace? =
-        runCatching {
-            localStorage.getItem(STORAGE_KEY)?.let { json.decodeFromString(PersistedWorkspace.serializer(), it) }
-        }.getOrNull()
-
-    fun save(workspace: PersistedWorkspace) {
-        val encoded = json.encodeToString(PersistedWorkspace.serializer(), workspace)
-        runCatching { localStorage.setItem(STORAGE_KEY, encoded) }
-    }
-
-    /** Removes the persisted workspace, if any. Returns whether one was actually there to remove. */
-    fun delete(): Boolean {
-        val had = localStorage.getItem(STORAGE_KEY) != null
-        localStorage.removeItem(STORAGE_KEY)
-        return had
-    }
-}
-
-/** Captures the pages currently open in [state] as a [PersistedWorkspace], ready to save. */
 fun capturePersistedWorkspace(
     state: GuiState,
     fontSize: Int,
+    pageFontSizes: Map<PageId, Int> = emptyMap(),
+    windowWidth: Int? = null,
+    windowHeight: Int? = null,
+    windowX: Int? = null,
+    windowY: Int? = null,
+    lookAndFeel: String? = null,
 ): PersistedWorkspace {
     val workspace = state.workspace
     val documents =
@@ -51,6 +31,7 @@ fun capturePersistedWorkspace(
             val resolutions = page.history.resolutions.map { it.toPersisted() }
             val queryHistory = page.query.history.entries
             val query = page.query.text
+            val pageFontSize = pageFontSizes[page.id]
             when (val content = page.content) {
                 is PageContent.DocumentReference -> {
                     val document = workspace.document(content.documentId)
@@ -62,6 +43,7 @@ fun capturePersistedWorkspace(
                         dirty = document?.isDirty ?: false,
                         query = query,
                         queryHistory = queryHistory,
+                        fontSize = pageFontSize,
                         resolutions = resolutions,
                     )
                 }
@@ -72,18 +54,29 @@ fun capturePersistedWorkspace(
                         isScratch = true,
                         query = query,
                         queryHistory = queryHistory,
+                        fontSize = pageFontSize,
                         resolutions = resolutions,
                     )
             }
         }
     return PersistedWorkspace(
         fontSize = fontSize,
+        windowWidth = windowWidth,
+        windowHeight = windowHeight,
+        windowX = windowX,
+        windowY = windowY,
         selectedIndex = workspace.pages.indexOfFirst { it.id == workspace.selectedPageId },
         documents = documents,
+        lookAndFeel = lookAndFeel,
     )
 }
 
-/** Replays a previously-captured [PersistedWorkspace] as workspace/page actions against [controller]. */
+/**
+ * Replays a previously-captured [PersistedWorkspace] as workspace/page actions against [controller] - every
+ * document, each with its query, query history, and resolution/Solutions-tree history. Applying the workspace's
+ * look-and-feel, window bounds, and each page's own editor zoom level (where the frontend has any of those) is
+ * frontend-specific and left to the caller; this function only touches the toolkit-neutral [GuiController] state.
+ */
 suspend fun restoreWorkspace(
     persisted: PersistedWorkspace,
     controller: GuiController,
