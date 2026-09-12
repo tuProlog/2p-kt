@@ -8,6 +8,7 @@ kotlinx-serialization = "1.9.0"
 javafx = "21.0.8"
 npm-yaml = "2.8.1" # yaml
 npm-syncRequest = "6.1.0" # sync-request
+npm-aceBuilds = "1.44.0" # ace-builds
 ktMpp = "5.3.1"
 okio = "3.18.2"
 
@@ -38,6 +39,8 @@ jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xm
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 clikt = "com.github.ajalt.clikt:clikt:5.1.0"
+batik-transcoder = "org.apache.xmlgraphics:batik-transcoder:1.19"
+batik-codec = "org.apache.xmlgraphics:batik-codec:1.19"
 assertj-swing = "org.assertj:assertj-swing:3.17.1"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
