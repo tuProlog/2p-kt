@@ -11,4 +11,6 @@ data class PersistedWorkspace(
     val windowY: Int? = null,
     val selectedIndex: Int = -1,
     val documents: List<PersistedDocument> = emptyList(),
+    /** Display name of the look-and-feel active when last saved, e.g. "Nimbus"; `null` keeps the JVM default. */
+    val lookAndFeel: String? = null,
 )

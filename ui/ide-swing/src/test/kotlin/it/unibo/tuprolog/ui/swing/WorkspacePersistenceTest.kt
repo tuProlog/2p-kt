@@ -2,9 +2,15 @@ package it.unibo.tuprolog.ui.swing
 
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.ui.gui.application.buildGuiApplication
+import it.unibo.tuprolog.ui.gui.controller.PageAction
 import it.unibo.tuprolog.ui.gui.controller.WorkspaceAction
+import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
+import it.unibo.tuprolog.ui.gui.model.GuiState
 import it.unibo.tuprolog.ui.gui.model.PageContent
+import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
+import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
+import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,17 +26,18 @@ import kotlin.test.assertTrue
 // to inject a dispatcher into here, unlike the production code this test exercises.
 @Suppress("InjectDispatcher")
 class WorkspacePersistenceTest {
+    private fun testApplication(profileId: String) =
+        buildGuiApplication(CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
+            solverProfile(
+                solverFactoryProfile(Solver.prolog, SolverProfileId(profileId), profileId),
+                makeDefault = true,
+            )
+        }
+
     @Test
     fun `a saved workspace round-trips through disk and restores as pages`() =
         runBlocking {
-            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-            val application =
-                buildGuiApplication(scope) {
-                    solverProfile(
-                        solverFactoryProfile(Solver.prolog, SolverProfileId("test"), "Test"),
-                        makeDefault = true,
-                    )
-                }
+            val application = testApplication("test")
             application.start()
             val controller = application.controller
             try {
@@ -49,14 +56,7 @@ class WorkspacePersistenceTest {
                 assertNotNull(loaded)
                 assertEquals(snapshot, loaded)
 
-                val scope2 = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-                val application2 =
-                    buildGuiApplication(scope2) {
-                        solverProfile(
-                            solverFactoryProfile(Solver.prolog, SolverProfileId("test2"), "Test2"),
-                            makeDefault = true,
-                        )
-                    }
+                val application2 = testApplication("test2")
                 application2.start()
                 try {
                     restoreWorkspace(loaded, application2.controller)
@@ -82,4 +82,79 @@ class WorkspacePersistenceTest {
                 application.close()
             }
         }
+
+    @Test
+    fun `restoring a workspace also restores each page's query, query history, solutions history, and zoom`() =
+        runBlocking {
+            val application = testApplication("test")
+            application.start()
+            val controller = application.controller
+            try {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl", "p(1)."))
+                val pageId = controller.state.value.workspace.selectedPageId!!
+                controller.dispatch(PageAction.ChangeQuery(pageId, "p(X)."))
+                val restoredEntry =
+                    ResolutionHistoryEntry(
+                        query = "p(1).",
+                        solutions = listOf(SolutionPresentation.Yes(query = "p(1).", solvedQuery = "p(1).")),
+                        terminalStatus = ResolutionStatus.COMPLETED,
+                    )
+                controller.dispatch(
+                    PageAction.RestoreHistory(
+                        pageId,
+                        queryHistory = listOf("p(1)."),
+                        resolutions = listOf(restoredEntry),
+                    ),
+                )
+
+                val snapshot = captureSnapshotAndAssert(controller.state.value, pageId)
+
+                val application2 = testApplication("test2")
+                application2.start()
+                try {
+                    restoreWorkspace(snapshot, application2.controller)
+                    val restoredPage =
+                        application2.controller.state.value.workspace.pages
+                            .single()
+                    assertEquals("p(X).", restoredPage.query.text)
+                    assertEquals(listOf("p(1)."), restoredPage.query.history.entries)
+                    assertEquals(listOf(restoredEntry), restoredPage.history.resolutions)
+                } finally {
+                    application2.close()
+                }
+            } finally {
+                application.close()
+            }
+        }
+
+    private fun captureSnapshotAndAssert(
+        state: GuiState,
+        pageId: PageId,
+    ): PersistedWorkspace {
+        val snapshot =
+            capturePersistedWorkspace(state, fontSize = 14, windowBounds = null, pageFontSizes = mapOf(pageId to 22))
+        assertEquals("p(X).", snapshot.documents.single().query)
+        assertEquals(listOf("p(1)."), snapshot.documents.single().queryHistory)
+        assertEquals(22, snapshot.documents.single().fontSize)
+        assertEquals(
+            1,
+            snapshot.documents
+                .single()
+                .resolutions.size,
+        )
+        return snapshot
+    }
+
+    @Test
+    fun `delete removes the persisted file and load then reports nothing saved`() {
+        val persistence = WorkspacePersistence("delete-test-app", createTempDirectory().toFile())
+        persistence.save(PersistedWorkspace(fontSize = 18))
+        assertNotNull(persistence.load())
+
+        assertTrue(persistence.delete())
+
+        assertEquals(null, persistence.load())
+        // Deleting again (nothing left to delete) is reported, not thrown, so callers don't need to guard it.
+        assertEquals(false, persistence.delete())
+    }
 }

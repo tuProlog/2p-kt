@@ -17,6 +17,7 @@ import it.unibo.tuprolog.ui.gui.model.PageContent
 import it.unibo.tuprolog.ui.gui.model.PageFeatureState
 import it.unibo.tuprolog.ui.gui.model.PageState
 import it.unibo.tuprolog.ui.gui.model.PanelId
+import it.unibo.tuprolog.ui.gui.model.QueryHistoryState
 import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
 import it.unibo.tuprolog.ui.gui.model.ResolutionState
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
@@ -189,6 +190,7 @@ class DefaultGuiController(
                 }
             is PageAction.MarkPanelRead -> markPanelRead(action)
             is PageAction.ClearHistory -> clearHistory(action)
+            is PageAction.RestoreHistory -> restoreHistory(action)
             is DocumentAction.ChangeText,
             is PageAction.ChangeScratchText,
             is PageAction.ChangeQuery,
@@ -1463,6 +1465,24 @@ class DefaultGuiController(
             updateWorkspace {
                 it.updatePage(page.id) { current ->
                     current.copy(history = current.history.copy(resolutions = emptyList()))
+                }
+            }
+        }
+    }
+
+    private suspend fun restoreHistory(action: PageAction.RestoreHistory) {
+        mutex.withLock {
+            val page = _state.value.workspace.page(action.pageId)
+            if (page == null) {
+                reject(action, "Unknown page: ${action.pageId}")
+                return@withLock
+            }
+            updateWorkspace {
+                it.updatePage(page.id) { current ->
+                    current.copy(
+                        query = current.query.copy(history = QueryHistoryState(entries = action.queryHistory)),
+                        history = current.history.copy(resolutions = action.resolutions),
+                    )
                 }
             }
         }

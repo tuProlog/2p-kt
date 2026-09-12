@@ -6,6 +6,7 @@ import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.model.PageConfiguration
 import it.unibo.tuprolog.ui.gui.model.PanelId
+import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
 import kotlin.time.Duration
 
 sealed interface PageAction : GuiAction {
@@ -62,6 +63,17 @@ sealed interface PageAction : GuiAction {
     /** Discards concluded resolutions from the page's history. Any resolution still in progress is unaffected. */
     data class ClearHistory(
         override val pageId: PageId,
+    ) : PageAction
+
+    /**
+     * Replaces the page's query history and resolution/solutions history wholesale, e.g. right after creating
+     * a page from previously-persisted state - restoring what a frontend's Solutions tree and query-history
+     * navigation show, without re-running anything.
+     */
+    data class RestoreHistory(
+        override val pageId: PageId,
+        val queryHistory: List<String> = emptyList(),
+        val resolutions: List<ResolutionHistoryEntry> = emptyList(),
     ) : PageAction
 
     data class MarkPanelRead(

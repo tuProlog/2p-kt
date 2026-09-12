@@ -75,17 +75,29 @@ import kotlin.math.max
  * several classes would trade a class that is large but easy to follow top-to-bottom for several smaller classes
  * passing the same dozen fields back and forth, which is not a real improvement -- hence the suppression below.
  */
-@Suppress("LargeClass", "TooManyFunctions")
+@Suppress("LargeClass", "TooManyFunctions", "LongParameterList")
 class SwingIdeFrame(
     private val controller: GuiController,
     private val scope: CoroutineScope,
     private val featureRenderers: SwingFeatureRendererRegistry = SwingFeatureRendererRegistry(),
     private val templates: List<TheoryTemplate> = emptyList(),
     initialFontSize: Int = 14,
+    /**
+     * Per-page editor zoom levels to restore, positional (matching the order pages are (re-)created in, e.g.
+     * by [restoreWorkspace] from persisted state) rather than keyed by [PageId] - which doesn't exist yet for
+     * a page still to be created. Consulted once, the first time each page's editor is built.
+     */
+    private val initialPageFontSizes: List<Int> = emptyList(),
+    /** Deletes the persisted workspace file and suppresses the next normal-shutdown autosave (see "Delete
+     * Persisted State" in the Settings menu); a no-op host (e.g. a test) can safely leave this at its default. */
+    private val onDeletePersistedState: () -> Unit = {},
 ) : JFrame() {
     /** The most recently applied editor font size; read back by the host when persisting the session. */
     internal var currentFontSize: Int = initialFontSize
         private set
+
+    /** Each page's own current editor zoom level, for [it.unibo.tuprolog.ui.swing.capturePersistedWorkspace]. */
+    internal val pageFontSizes = mutableMapOf<PageId, Int>()
     private val editorTabs = JTabbedPane().apply { name = "editorTabs" }
     private val lowerTabs = JTabbedPane().apply { name = "lowerTabs" }
     private val queryField = PrologQueryField().apply { name = "queryField" }
@@ -310,6 +322,7 @@ class SwingIdeFrame(
             add(editMenu())
             add(searchMenu())
             add(lookAndFeelMenu())
+            add(settingsMenu())
             add(helpMenu())
         }
 
@@ -466,6 +479,44 @@ class SwingIdeFrame(
             }
         }
 
+    private fun settingsMenu(): JMenu =
+        JMenu("Settings").apply {
+            name = "settingsMenu"
+            add(
+                menuItem("Restore default settings", null, "restoreDefaultSettingsMenuItem") {
+                    resetToDefaultSettings()
+                },
+            )
+            add(
+                menuItem("Delete persisted state…", null, "deletePersistedStateMenuItem") {
+                    confirmAndDeletePersistedState()
+                },
+            )
+        }
+
+    /** Resets editor zoom (every open page) and the look-and-feel to their hard-coded defaults. */
+    private fun resetToDefaultSettings() {
+        currentFontSize = DEFAULT_FONT_SIZE
+        pageEditors.forEach { (pageId, editor) ->
+            editor.font = editor.font.deriveFont(DEFAULT_FONT_SIZE.toFloat())
+            pageFontSizes[pageId] = DEFAULT_FONT_SIZE
+        }
+        applyLookAndFeel(DEFAULT_LOOK_AND_FEEL, listOf(this))
+    }
+
+    private fun confirmAndDeletePersistedState() {
+        val selected =
+            JOptionPane.showConfirmDialog(
+                this,
+                "Delete the saved workspace? Nothing will be restored the next time the app starts; " +
+                    "documents currently open are not affected.",
+                "Delete persisted state",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+            )
+        if (selected == JOptionPane.OK_OPTION) onDeletePersistedState()
+    }
+
     private fun helpMenu(): JMenu =
         JMenu("Help").apply {
             name = "helpMenu"
@@ -603,7 +654,7 @@ class SwingIdeFrame(
         }
 
         pages.forEachIndexed { index, page ->
-            val component = pageComponents.getOrPut(page.id) { createEditorComponent(page) }
+            val component = pageComponents.getOrPut(page.id) { createEditorComponent(page, index) }
             lastSeenStaticKb.getOrPut(page.id) { "" }
             lastSeenDynamicKb.getOrPut(page.id) { "" }
             val currentIndex = editorTabs.indexOfComponent(component)
@@ -629,9 +680,13 @@ class SwingIdeFrame(
         }
     }
 
-    private fun createEditorComponent(page: PageState): JComponent {
+    private fun createEditorComponent(
+        page: PageState,
+        index: Int,
+    ): JComponent {
+        val initialSize = initialPageFontSizes.getOrNull(index) ?: currentFontSize
         val area =
-            PrologEditor(currentFontSize).apply {
+            PrologEditor(initialSize).apply {
                 name = "pageEditor"
                 document.addDocumentListener(
                     object : DocumentListener {
@@ -643,8 +698,12 @@ class SwingIdeFrame(
                     },
                 )
                 addCaretListener { event -> caretChanged(event) }
-                onZoomChanged = { size -> currentFontSize = size }
+                onZoomChanged = { size ->
+                    currentFontSize = size
+                    pageFontSizes[page.id] = size
+                }
             }
+        pageFontSizes[page.id] = initialSize
         pageEditors[page.id] = area
         return JPanel(BorderLayout()).apply {
             add(RTextScrollPane(area, true), BorderLayout.CENTER)
@@ -1184,6 +1243,11 @@ class SwingIdeFrame(
     }
 
     private companion object {
+        private const val DEFAULT_FONT_SIZE = 14
+
+        // Metal is the one look-and-feel guaranteed to exist on every JVM, making it the only deterministic
+        // "default" to restore to - unlike "System", which varies by OS and may not even be installed here.
+        private const val DEFAULT_LOOK_AND_FEEL = "Metal"
         private const val MIN_WINDOW_WIDTH = 900
         private const val MIN_WINDOW_HEIGHT = 650
         private const val PREFERRED_WINDOW_WIDTH = 1200

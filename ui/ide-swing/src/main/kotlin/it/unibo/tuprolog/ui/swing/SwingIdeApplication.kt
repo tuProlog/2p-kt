@@ -29,50 +29,19 @@ class SwingIdeApplication(
     private var uncaughtExceptionHandler: Thread.UncaughtExceptionHandler? = null
     private var previousUncaughtExceptionHandler: Thread.UncaughtExceptionHandler? = null
 
+    /** Set once the user deletes the persisted workspace, so a subsequent normal [close] doesn't recreate it. */
+    private var suppressAutosave = false
+
     suspend fun show(createInitialPage: Boolean = true): SwingIdeApplication {
         check(!GraphicsEnvironment.isHeadless()) { "Cannot show the Swing IDE in a headless environment" }
         application.start()
         val restored = persistence?.load()
         onEdt {
-            frame =
-                SwingIdeFrame(
-                    application.controller,
-                    frontendScope,
-                    featureRenderers,
-                    templates,
-                    restored?.fontSize ?: DEFAULT_FONT_SIZE,
-                )
-            uncaughtExceptionHandler =
-                SwingIdeUncaughtExceptionHandler(
-                    frame = { if (::frame.isInitialized) frame else null },
-                    fallback = Thread.getDefaultUncaughtExceptionHandler(),
-                ).also { handler ->
-                    previousUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
-                    Thread.setDefaultUncaughtExceptionHandler(handler)
-                }
-            val effects =
-                SwingIdeEffectHandler(
-                    controller = application.controller,
-                    scope = frontendScope,
-                    parent = { frame },
-                    onExit = ::close,
-                )
-            collectors +=
-                frontendScope.launch {
-                    application.controller.state.collectLatest { state -> onEdt { frame.render(state) } }
-                }
-            collectors +=
-                frontendScope.launch {
-                    application.controller.effects.collectLatest(effects::handle)
-                }
-            if (restored?.windowWidth != null && restored.windowHeight != null) {
-                frame.setSize(restored.windowWidth, restored.windowHeight)
-                if (restored.windowX != null && restored.windowY != null) {
-                    frame.setLocation(restored.windowX, restored.windowY)
-                } else {
-                    frame.setLocationRelativeTo(null)
-                }
-            }
+            restored?.lookAndFeel?.let { applyLookAndFeel(it) }
+            frame = createFrame(restored)
+            installUncaughtExceptionHandler()
+            installCollectors()
+            restored?.let(::applyWindowBounds)
             frame.isVisible = true
         }
         if (restored != null && restored.documents.isNotEmpty()) {
@@ -86,13 +55,74 @@ class SwingIdeApplication(
         return this
     }
 
+    private fun createFrame(restored: PersistedWorkspace?): SwingIdeFrame =
+        SwingIdeFrame(
+            application.controller,
+            frontendScope,
+            featureRenderers,
+            templates,
+            restored?.fontSize ?: DEFAULT_FONT_SIZE,
+            restored?.documents?.map { it.fontSize ?: restored.fontSize } ?: emptyList(),
+            onDeletePersistedState = {
+                persistence?.delete()
+                suppressAutosave = true
+            },
+        )
+
+    private fun installUncaughtExceptionHandler() {
+        uncaughtExceptionHandler =
+            SwingIdeUncaughtExceptionHandler(
+                frame = { if (::frame.isInitialized) frame else null },
+                fallback = Thread.getDefaultUncaughtExceptionHandler(),
+            ).also { handler ->
+                previousUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
+                Thread.setDefaultUncaughtExceptionHandler(handler)
+            }
+    }
+
+    private fun installCollectors() {
+        val effects =
+            SwingIdeEffectHandler(
+                controller = application.controller,
+                scope = frontendScope,
+                parent = { frame },
+                onExit = ::close,
+            )
+        collectors +=
+            frontendScope.launch {
+                application.controller.state.collectLatest { state -> onEdt { frame.render(state) } }
+            }
+        collectors +=
+            frontendScope.launch {
+                application.controller.effects.collectLatest(effects::handle)
+            }
+    }
+
+    private fun applyWindowBounds(restored: PersistedWorkspace) {
+        if (restored.windowWidth != null && restored.windowHeight != null) {
+            frame.setSize(restored.windowWidth, restored.windowHeight)
+            if (restored.windowX != null && restored.windowY != null) {
+                frame.setLocation(restored.windowX, restored.windowY)
+            } else {
+                frame.setLocationRelativeTo(null)
+            }
+        }
+    }
+
     fun close() {
         if (!closed.compareAndSet(false, true)) return
         onEdt {
             if (::frame.isInitialized) {
-                persistence?.save(
-                    capturePersistedWorkspace(application.controller.state.value, frame.currentFontSize, frame.bounds),
-                )
+                if (!suppressAutosave) {
+                    persistence?.save(
+                        capturePersistedWorkspace(
+                            application.controller.state.value,
+                            frame.currentFontSize,
+                            frame.bounds,
+                            frame.pageFontSizes,
+                        ),
+                    )
+                }
                 frame.dispose()
             }
         }

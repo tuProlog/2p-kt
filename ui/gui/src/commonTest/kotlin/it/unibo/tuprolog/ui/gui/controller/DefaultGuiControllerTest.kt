@@ -3,12 +3,14 @@ package it.unibo.tuprolog.ui.gui.controller
 import it.unibo.tuprolog.ui.gui.model.DocumentOrigin
 import it.unibo.tuprolog.ui.gui.model.PageContent
 import it.unibo.tuprolog.ui.gui.model.PanelId
+import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
 import it.unibo.tuprolog.ui.gui.model.SolverSessionLifecycle
 import it.unibo.tuprolog.ui.gui.model.WorkspaceConfiguration
 import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
 import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSources
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
+import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
@@ -588,6 +590,41 @@ class DefaultGuiControllerTest {
                         .page(pageId)!!
                         .history.resolutions.size,
                 )
+            } finally {
+                controller.shutdown()
+            }
+        }
+
+    @Test
+    fun restoreHistoryReplacesQueryAndResolutionHistoryWithoutTouchingLiveResolution() =
+        runTest {
+            val (controller, _) = fixture(this)
+            try {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl"))
+                val pageId = controller.state.value.workspace.selectedPageId!!
+                controller.dispatch(PageAction.ChangeQuery(pageId, "live query."))
+
+                val restoredEntry =
+                    ResolutionHistoryEntry(
+                        query = "p(X).",
+                        solutions = listOf(SolutionPresentation.Yes(query = "p(X).", solvedQuery = "p(1).")),
+                        terminalStatus = ResolutionStatus.COMPLETED,
+                    )
+                controller.dispatch(
+                    PageAction.RestoreHistory(
+                        pageId,
+                        queryHistory = listOf("p(X).", "q(Y)."),
+                        resolutions = listOf(restoredEntry),
+                    ),
+                )
+
+                val page =
+                    controller.state.value.workspace
+                        .page(pageId)!!
+                assertEquals(listOf("p(X).", "q(Y)."), page.query.history.entries)
+                assertEquals(listOf(restoredEntry), page.history.resolutions)
+                // The live, still-being-edited query text is untouched by restoring history.
+                assertEquals("live query.", page.query.text)
             } finally {
                 controller.shutdown()
             }
