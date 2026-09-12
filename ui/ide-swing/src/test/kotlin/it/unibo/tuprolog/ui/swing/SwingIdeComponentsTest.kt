@@ -21,10 +21,13 @@ import org.fife.ui.rsyntaxtextarea.parser.ParserNotice
 import org.fife.ui.rtextarea.RTextScrollPane
 import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.TreePath
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -157,6 +160,55 @@ class SwingIdeComponentsTest {
             assertTrue(!tree.isExpanded(TreePath(first.path)))
             assertTrue(tree.isExpanded(TreePath(second.path)))
             assertEquals("?- second.", second.toString())
+        }
+    }
+
+    @Test
+    fun `solution tree cell renderer never exposes a null icon, even before any row has been rendered`() {
+        SwingUtilities.invokeAndWait {
+            // Some look-and-feels probe getLeafIcon()/getOpenIcon()/getClosedIcon() once at UI-install time,
+            // before any row has ever gone through getTreeCellRendererComponent(); a null read there is
+            // remembered as "this tree has no icons" for the tree's entire lifetime on some of them.
+            val renderer = SolutionTree().cellRenderer as DefaultTreeCellRenderer
+            assertNotNull(renderer.leafIcon)
+            assertNotNull(renderer.openIcon)
+            assertNotNull(renderer.closedIcon)
+        }
+    }
+
+    @Test
+    fun `each kind of solution tree row gets its own distinct, non-null icon`() {
+        SwingUtilities.invokeAndWait {
+            val tree = SolutionTree()
+            tree.render(
+                listOf(
+                    SolutionQueryEntry(
+                        query = "p(1).",
+                        solutions = listOf(SolutionPresentation.Yes(query = "p(1).", solvedQuery = "p(1).")),
+                        hasUnexploredPaths = true,
+                    ),
+                ),
+            )
+            val renderer = tree.cellRenderer as DefaultTreeCellRenderer
+            val root = tree.model.root as DefaultMutableTreeNode
+            val queryNode = root.getChildAt(0) as DefaultMutableTreeNode
+            val resultNode = queryNode.getChildAt(0) as DefaultMutableTreeNode
+            val ellipsisNode = queryNode.getChildAt(1) as DefaultMutableTreeNode
+
+            fun iconFor(node: DefaultMutableTreeNode): Any? {
+                renderer.getTreeCellRendererComponent(tree, node, false, false, node.isLeaf, 0, false)
+                return renderer.leafIcon
+            }
+
+            val queryIcon = iconFor(queryNode)
+            val resultIcon = iconFor(resultNode)
+            val ellipsisIcon = iconFor(ellipsisNode)
+
+            assertNotNull(queryIcon)
+            assertNotNull(resultIcon)
+            assertNotNull(ellipsisIcon)
+            assertNotEquals(queryIcon, resultIcon)
+            assertNotEquals(resultIcon, ellipsisIcon)
         }
     }
 

@@ -63,7 +63,6 @@ import javax.swing.event.CaretEvent
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.text.DefaultEditorKit
-import javax.swing.text.TextAction
 import kotlin.math.max
 
 /**
@@ -1276,16 +1275,5 @@ class SwingIdeFrame(
             java.awt.Toolkit
                 .getDefaultToolkit()
                 .menuShortcutKeyMaskEx
-    }
-}
-
-/**
- * A [TextAction], like [DefaultEditorKit]'s own Cut/Copy/Paste actions, so it resolves its target through
- * [TextAction.getFocusedComponent] -- the JTextComponent-tracked "last focused" component -- rather than
- * [java.awt.KeyboardFocusManager], which a menu click can transiently null out before actionPerformed runs.
- */
-private class SelectAllAction : TextAction("select-all") {
-    override fun actionPerformed(event: java.awt.event.ActionEvent?) {
-        getFocusedComponent()?.selectAll()
     }
 }
