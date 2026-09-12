@@ -120,7 +120,10 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
         when (solution) {
             is SolutionPresentation.Yes ->
                 DefaultMutableTreeNode(
-                    SolutionNodeData.ResultNode("$number. ${solution.solvedQuery ?: solution.query}", ResultKind.YES),
+                    SolutionNodeData.ResultNode(
+                        "$number. ${solution.solvedQuery ?: solution.query}${probabilityAnnotation(solution)}",
+                        ResultKind.YES,
+                    ),
                 ).apply {
                     solution.bindings.forEach {
                         add(DefaultMutableTreeNode(SolutionNodeData.DetailNode("${it.variable} = ${it.value}")))
@@ -142,6 +145,22 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
                     }
                 }
         }
+
+    /**
+     * A trailing " (p=42%)"-style annotation when the solution carries a numeric `"probability"` entry in its
+     * [SolutionPresentation.Yes.metadata] (populated by profiles like PLP's, see `Solution.toStep` in
+     * gui-prolog) - so a probabilistic solver's per-solution probability shows up right next to each solution
+     * in this shared tree, without ide-swing needing any PLP-specific dependency to read it.
+     */
+    private fun probabilityAnnotation(solution: SolutionPresentation.Yes): String =
+        solution.metadata["probability"]
+            ?.toDoubleOrNull()
+            ?.let { " (p=%.1f%%)".format(it * PERCENT) }
+            .orEmpty()
+
+    private companion object {
+        const val PERCENT = 100.0
+    }
 }
 
 private class SolutionCellRenderer : DefaultTreeCellRenderer() {

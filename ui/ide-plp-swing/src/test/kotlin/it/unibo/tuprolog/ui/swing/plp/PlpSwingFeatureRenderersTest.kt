@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.swing.JLabel
 import javax.swing.SwingUtilities
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 private object InertGuiController : GuiController {
@@ -56,31 +55,6 @@ class PlpSwingFeatureRenderersTest {
     // downstream to inject a dispatcher into here, unlike the production code this test exercises.
     @Suppress("InjectDispatcher")
     private val context = SwingFeatureContext(InertGuiController, CoroutineScope(Dispatchers.Unconfined))
-
-    @Test
-    fun `probability renderer formats percentages and falls back when absent`() {
-        SwingUtilities.invokeAndWait {
-            val renderer = ProbabilitySwingFeatureRenderer()
-            val label = renderer.createComponent(context) as JLabel
-
-            renderer.render(label, page, PageFeatureState())
-            assertEquals("No probabilistic solution", label.text)
-
-            renderer.render(
-                label,
-                page,
-                PageFeatureState(mapOf(PlpFeatureKeys.PROBABILITY to FeatureValue.Number(0.25))),
-            )
-            assertEquals("Probability: 25%", label.text)
-
-            renderer.render(
-                label,
-                page,
-                PageFeatureState(mapOf(PlpFeatureKeys.PROBABILITY to FeatureValue.Number(1.0 / 3.0))),
-            )
-            assertEquals("Probability: 33.333333%", label.text)
-        }
-    }
 
     @Test
     fun `bdd renderer only shows a graph once a diagram becomes available`() {

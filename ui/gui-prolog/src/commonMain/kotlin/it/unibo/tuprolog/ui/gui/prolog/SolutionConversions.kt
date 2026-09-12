@@ -33,6 +33,7 @@ internal fun Solution.toStep(
                                 valueOf(variable)?.let { BindingPresentation(variable.name, it.toString()) }
                             }.toList(),
                     solvedQuery = solvedQuery.toString(),
+                    metadata = features.toSolutionMetadata(),
                 ),
                 hasMorePotentially = true,
                 signals = signals,
@@ -60,6 +61,21 @@ internal fun Solution.toStep(
                 featureStateReplacements = features,
             )
     }
+
+/**
+ * Flattens numeric extension feature values (e.g. PLP's per-solution probability) into a solution-scoped,
+ * toolkit-neutral `Map<String, String>` that survives into history (unlike [FeatureId]-keyed page feature
+ * state, which only ever holds the *latest* solution's values) - so a frontend's solution list/tree can show
+ * it next to every past solution, not just the current one. Only [FeatureValue.Number] is flattened: other
+ * kinds (e.g. a BDD's DOT text) are already shown via their own dedicated feature tab and would otherwise be
+ * needlessly duplicated into every historical solution's metadata.
+ */
+private fun Map<FeatureId, Map<String, FeatureValue>>.toSolutionMetadata(): Map<String, String> =
+    values
+        .asSequence()
+        .flatMap { it.entries.asSequence() }
+        .mapNotNull { (key, value) -> (value as? FeatureValue.Number)?.let { key to it.value.toString() } }
+        .toMap()
 
 internal fun Solver.inspectionSnapshot(): SolverInspectionSnapshot =
     SolverInspectionSnapshot(

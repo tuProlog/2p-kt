@@ -7,7 +7,6 @@ fun plpSwingFeatureRenderers(
 ): SwingFeatureRendererRegistry =
     SwingFeatureRendererRegistry(
         listOf(
-            ProbabilitySwingFeatureRenderer(),
             BddSwingFeatureRenderer(bddGraphRenderer),
         ),
     )

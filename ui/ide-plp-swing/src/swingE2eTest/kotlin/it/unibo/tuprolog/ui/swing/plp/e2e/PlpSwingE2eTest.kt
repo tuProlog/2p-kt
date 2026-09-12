@@ -12,7 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/** Covers the PLP-specific additions to the shared Swing IDE: its two extra inspector tabs and templates. */
+/** Covers the PLP-specific additions to the shared Swing IDE: its extra BDD inspector tab and templates. */
 class PlpSwingE2eTest {
     private lateinit var window: FrameFixture
 
@@ -27,9 +27,8 @@ class PlpSwingE2eTest {
     }
 
     @Test
-    fun `the Probability and BDD tabs are registered alongside the standard ones`() {
+    fun `the BDD tab is registered alongside the standard ones`() {
         val titles = window.tabbedPane("lowerTabs").tabTitles().map { it.removeSuffix("*") }
-        assertTrue(titles.contains("Probability"))
         assertTrue(titles.contains("BDD"))
     }
 
@@ -41,12 +40,11 @@ class PlpSwingE2eTest {
     }
 
     @Test
-    fun `Probability and BDD tabs are disabled until the page's first solve`() {
+    fun `the BDD tab is disabled until the page's first solve`() {
         // The solver session (and the capability set that drives feature-tab enablement) is only built as
         // part of starting a resolution -- a freshly-created, never-solved page legitimately has neither yet.
         val pane = window.tabbedPane("lowerTabs")
         val titles = pane.tabTitles().map { it.removeSuffix("*") }
-        assertTrue(!pane.target().isEnabledAt(titles.indexOf("Probability")))
         assertTrue(!pane.target().isEnabledAt(titles.indexOf("BDD")))
 
         window.textBox("queryField").setText("true.")
@@ -55,7 +53,6 @@ class PlpSwingE2eTest {
             tree("solutionsTree").rowTexts().isNotEmpty()
         }
 
-        assertTrue(pane.target().isEnabledAt(titles.indexOf("Probability")))
         assertTrue(pane.target().isEnabledAt(titles.indexOf("BDD")))
     }
 
@@ -72,25 +69,21 @@ class PlpSwingE2eTest {
     }
 
     @Test
-    fun `solving a probabilistic query populates the Probability and BDD tabs`() {
+    fun `solving a probabilistic query shows the probability next to the solution and renders the BDD`() {
         window.textBox("pageEditor").setText(
             "0.5::heads1.\n0.6::heads2.\ntwoHeads :- heads1, heads2.",
         )
         window.textBox("queryField").setText("twoHeads.")
         window.button("solveButton").click()
 
-        window.awaitCondition("the probabilistic solution to appear", timeoutSeconds = 15) {
-            tree("solutionsTree").rowTexts().any { it.contains("twoHeads") }
-        }
-
-        window.selectLowerTab("Probability")
-        window.awaitCondition("the Probability tab to show the computed probability") {
-            label("probabilityLabel").text() == "Probability: 30%"
+        // No more separate Probability tab: the probability is an annotation right on the solution row.
+        window.awaitCondition("the probabilistic solution and its probability to appear", timeoutSeconds = 15) {
+            tree("solutionsTree").rowTexts().any { it.contains("twoHeads") && it.contains("p=30.0%") }
         }
 
         window.selectLowerTab("BDD")
-        window.awaitCondition("the BDD tab to render the diagram's DOT source") {
-            textBox("bddDotTextArea").text().contains("heads1")
+        window.awaitCondition("the BDD tab to render an actual graph picture") {
+            label("bddGraphImageLabel").target().icon != null
         }
     }
 }
