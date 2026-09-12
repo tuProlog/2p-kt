@@ -38,6 +38,7 @@ import java.awt.event.WindowEvent
 import java.net.URI
 import javax.swing.AbstractAction
 import javax.swing.BorderFactory
+import javax.swing.ButtonGroup
 import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -48,6 +49,7 @@ import javax.swing.JMenuBar
 import javax.swing.JMenuItem
 import javax.swing.JOptionPane
 import javax.swing.JPanel
+import javax.swing.JRadioButtonMenuItem
 import javax.swing.JScrollPane
 import javax.swing.JSplitPane
 import javax.swing.JTabbedPane
@@ -55,6 +57,7 @@ import javax.swing.JTextArea
 import javax.swing.JTextField
 import javax.swing.KeyStroke
 import javax.swing.SwingConstants
+import javax.swing.UIManager
 import javax.swing.WindowConstants
 import javax.swing.event.CaretEvent
 import javax.swing.event.DocumentEvent
@@ -306,6 +309,7 @@ class SwingIdeFrame(
             add(fileMenu())
             add(editMenu())
             add(searchMenu())
+            add(lookAndFeelMenu())
             add(helpMenu())
         }
 
@@ -444,6 +448,22 @@ class SwingIdeFrame(
                     Icons.GO_TO_LINE,
                 ) { searchActions.showGoToLine() },
             )
+        }
+
+    private fun lookAndFeelMenu(): JMenu =
+        JMenu("Look and Feel").apply {
+            name = "lookAndFeelMenu"
+            val group = ButtonGroup()
+            val currentName = UIManager.getLookAndFeel()?.name
+            for (info in installedLookAndFeels()) {
+                val item =
+                    JRadioButtonMenuItem(info.name, info.name == currentName).apply {
+                        name = "lookAndFeelMenuItem.${info.name}"
+                        addActionListener { applyLookAndFeel(info.name, listOf(this@SwingIdeFrame)) }
+                    }
+                group.add(item)
+                add(item)
+            }
         }
 
     private fun helpMenu(): JMenu =

@@ -6,6 +6,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.long
@@ -18,6 +19,7 @@ import it.unibo.tuprolog.ui.gui.plp.plpFeatureState
 import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.swing.WorkspacePersistence
+import it.unibo.tuprolog.ui.swing.installedLookAndFeels
 import it.unibo.tuprolog.ui.swing.launchSwingIde
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -32,11 +34,20 @@ private class PlpSwingIdeCommand : CliktCommand(name = "ide-plp-swing") {
         option("-t", "--timeout", help = "Default resolution timeout in milliseconds")
             .long()
             .default(DEFAULT_TIMEOUT_MILLIS)
+    private val lookAndFeel: String? by
+        option("-l", "--look-and-feel", help = "Name of an installed Swing look-and-feel to start with")
+    private val listLookAndFeels: Boolean by
+        option("--list-look-and-feels", help = "List the look-and-feel names installed on this JVM and exit")
+            .flag()
 
     override fun help(context: Context) = "Start the tuProlog PLP (ProbLog) Swing IDE"
 
     override fun run() =
         runBlocking {
+            if (listLookAndFeels) {
+                installedLookAndFeels().forEach { println(it.name) }
+                return@runBlocking
+            }
             val capabilities =
                 setOf(
                     SolverCapabilities.CANCELLATION,
@@ -63,6 +74,7 @@ private class PlpSwingIdeCommand : CliktCommand(name = "ide-plp-swing") {
                 persistence = WorkspacePersistence("ide-plp-swing"),
                 theoryFiles = theories.map(::File),
                 defaultTimeout = timeout.milliseconds,
+                lookAndFeel = lookAndFeel,
             )
         }
 }

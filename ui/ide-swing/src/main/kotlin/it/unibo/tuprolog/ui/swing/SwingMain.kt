@@ -6,6 +6,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.long
@@ -42,15 +43,25 @@ private class SwingIdeCommand : CliktCommand(name = "ide-swing") {
         option("-t", "--timeout", help = "Default resolution timeout in milliseconds")
             .long()
             .default(DEFAULT_TIMEOUT_MILLIS)
+    private val lookAndFeel: String? by
+        option("-l", "--look-and-feel", help = "Name of an installed Swing look-and-feel to start with")
+    private val listLookAndFeels: Boolean by
+        option("--list-look-and-feels", help = "List the look-and-feel names installed on this JVM and exit")
+            .flag()
 
     override fun help(context: Context) = "Start the tuProlog Swing IDE"
 
     override fun run() =
         runBlocking {
+            if (listLookAndFeels) {
+                installedLookAndFeels().forEach { println(it.name) }
+                return@runBlocking
+            }
             launchSwingIde(
                 Solver.prolog,
                 defaultTimeout = timeout.milliseconds,
                 theoryFiles = theories.map(::File),
+                lookAndFeel = lookAndFeel,
             )
         }
 }
@@ -79,7 +90,14 @@ suspend fun launchSwingIde(
     theoryFiles: List<File> = emptyList(),
     defaultTimeout: Duration = 5.seconds,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    lookAndFeel: String? = null,
 ) {
+    if (lookAndFeel != null && !applyLookAndFeel(lookAndFeel)) {
+        System.err.println(
+            "Unknown look-and-feel '$lookAndFeel'; installed ones are: " +
+                installedLookAndFeels().joinToString(", ") { it.name },
+        )
+    }
     val profile = solverFactoryProfile(factory, profileId, profileName, capabilities, solutionFeatures)
     val scope = CoroutineScope(SupervisorJob() + dispatcher)
     val application =
