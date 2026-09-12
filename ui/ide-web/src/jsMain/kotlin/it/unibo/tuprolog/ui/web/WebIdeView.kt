@@ -52,6 +52,13 @@ internal class WebIdeView(
     private val tabBar = byId<HTMLElement>("tab-bar")
     private val editorContainer = byId<HTMLElement>("editor")
     private val editor = AceEditorView(editorContainer)
+
+    /** The shared editor's current zoom level, for [it.unibo.tuprolog.ui.web.capturePersistedWorkspace]. */
+    var editorFontSizePx: Int
+        get() = editor.fontSizePx
+        set(value) {
+            editor.fontSizePx = value
+        }
     private val queryInput = byId<HTMLInputElement>("query-input")
     private val timeoutInput = byId<HTMLInputElement>("timeout-input")
     private val stdinArea = element("textarea", null) as HTMLTextAreaElement

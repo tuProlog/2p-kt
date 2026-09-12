@@ -72,6 +72,11 @@ internal class AceEditorView(
         editor.setFontSize("${fontSize}px")
     }
 
+    /** The current zoom level in px, readable/settable so it can be persisted and restored across sessions. */
+    var fontSizePx: Int
+        get() = fontSize
+        set(value) = setFontSize(value)
+
     var value: String
         get() = editor.getValue()
         set(text) {

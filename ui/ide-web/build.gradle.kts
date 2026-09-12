@@ -1,5 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
+    alias(libs.plugins.kotlin.serialization)
     id("io.github.gciatto.kt-mpp.linter")
 }
 
@@ -17,11 +18,13 @@ kotlin {
             implementation(project(":solve-classic"))
             implementation(project(":io-lib"))
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
             implementation(npm("ace-builds", "1.44.0"))
         }
         jsTest.dependencies {
             implementation(kotlin("test"))
             implementation(project(":parser-theory"))
+            implementation(libs.kotlinx.coroutines.test)
         }
     }
 }
