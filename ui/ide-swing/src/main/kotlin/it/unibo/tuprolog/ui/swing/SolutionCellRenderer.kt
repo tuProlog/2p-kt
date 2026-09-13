@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.ui.swing
 
-import java.awt.Color
 import java.awt.Component
 import java.awt.Font
 import javax.swing.Icon
@@ -48,7 +47,8 @@ internal class SolutionCellRenderer : DefaultTreeCellRenderer() {
             when (data) {
                 is SolutionNodeData.QueryNode -> Icons.QUERY
                 is SolutionNodeData.ResultNode -> resultIcon(data.kind)
-                is SolutionNodeData.DetailNode -> DotIcon(DETAIL_COLOR)
+                // Detail rows (a binding, a stack trace line) and the ellipsis are indented plain text with
+                // no icon of their own.
                 else -> BLANK_TREE_ICON
             }
         super.getTreeCellRendererComponent(tree, label, selected, expanded, leaf, row, hasFocus)
@@ -74,7 +74,6 @@ internal class SolutionCellRenderer : DefaultTreeCellRenderer() {
         }
 
     private companion object {
-        val DETAIL_COLOR = Color(0x90, 0x90, 0x90)
         val BLANK_TREE_ICON: Icon = BlankIcon(Icons.QUERY.iconWidth, Icons.QUERY.iconHeight)
     }
 }

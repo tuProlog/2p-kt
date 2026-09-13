@@ -136,6 +136,7 @@ class SwingIdeComponentsTest {
             assertEquals(1, solution.childCount)
             assertTrue(tree.isExpanded(TreePath(queryNode.path)))
             assertEquals("?- member(X, [a]).", queryNode.toString())
+            assertEquals("1. yes: member(a, [a])", solution.toString())
             assertTrue(binding.toString().contains("X = a"))
             assertTrue(ellipsis.isLeaf)
             tree.selectionPath = TreePath(solution.path)
@@ -209,6 +210,41 @@ class SwingIdeComponentsTest {
             assertNotNull(ellipsisIcon)
             assertNotEquals(queryIcon, resultIcon)
             assertNotEquals(resultIcon, ellipsisIcon)
+        }
+    }
+
+    @Test
+    fun `detail rows (bindings, stack trace lines) show no icon of their own`() {
+        SwingUtilities.invokeAndWait {
+            val tree = SolutionTree()
+            tree.render(
+                listOf(
+                    SolutionQueryEntry(
+                        query = "p(X).",
+                        solutions =
+                            listOf(
+                                SolutionPresentation.Yes(
+                                    query = "p(X).",
+                                    bindings = listOf(BindingPresentation("X", "1")),
+                                    solvedQuery = "p(1)",
+                                ),
+                            ),
+                        hasUnexploredPaths = false,
+                    ),
+                ),
+            )
+            val renderer = tree.cellRenderer as DefaultTreeCellRenderer
+            val root = tree.model.root as DefaultMutableTreeNode
+            val resultNode = root.getChildAt(0).getChildAt(0) as DefaultMutableTreeNode
+            val detailNode = resultNode.getChildAt(0) as DefaultMutableTreeNode
+
+            renderer.getTreeCellRendererComponent(tree, resultNode, false, false, false, 0, false)
+            val resultIcon = renderer.leafIcon
+            renderer.getTreeCellRendererComponent(tree, detailNode, false, false, true, 1, false)
+            val detailIcon = renderer.leafIcon
+
+            assertIs<BlankIcon>(detailIcon)
+            assertNotEquals(resultIcon, detailIcon)
         }
     }
 
