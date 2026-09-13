@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.ui.swing
 
+import it.unibo.tuprolog.ui.swing.app.applyLookAndFeel
+import it.unibo.tuprolog.ui.swing.app.installedLookAndFeels
 import javax.swing.UIManager
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest

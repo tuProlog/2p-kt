@@ -24,6 +24,12 @@ import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.gui.template.ClassicTheoryTemplates
 import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
+import it.unibo.tuprolog.ui.swing.app.JVM_PATH_PROVIDER
+import it.unibo.tuprolog.ui.swing.app.SwingIdeApplication
+import it.unibo.tuprolog.ui.swing.app.WorkspacePersistence
+import it.unibo.tuprolog.ui.swing.app.applyLookAndFeel
+import it.unibo.tuprolog.ui.swing.app.installedLookAndFeels
+import it.unibo.tuprolog.ui.swing.feature.SwingFeatureRendererRegistry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

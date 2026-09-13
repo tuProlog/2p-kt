@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.ui.swing.e2e
 
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.ui.swing.SwingIdeFrame
+import it.unibo.tuprolog.ui.swing.app.SwingIdeFrame
 import it.unibo.tuprolog.ui.swing.launchSwingIde
 import kotlinx.coroutines.runBlocking
 import org.assertj.swing.core.BasicRobot

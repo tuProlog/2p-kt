@@ -8,8 +8,8 @@ import it.unibo.tuprolog.ui.gui.plp.PlpFeatureKeys
 import it.unibo.tuprolog.ui.gui.plp.PlpGuiIds
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.swing.Icons
-import it.unibo.tuprolog.ui.swing.SwingFeatureContext
-import it.unibo.tuprolog.ui.swing.SwingFeatureRenderer
+import it.unibo.tuprolog.ui.swing.feature.SwingFeatureContext
+import it.unibo.tuprolog.ui.swing.feature.SwingFeatureRenderer
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JButton

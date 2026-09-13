@@ -14,6 +14,8 @@ import it.unibo.tuprolog.ui.gui.persistence.PersistedWorkspace
 import it.unibo.tuprolog.ui.gui.persistence.restoreWorkspace
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
+import it.unibo.tuprolog.ui.swing.app.WorkspacePersistence
+import it.unibo.tuprolog.ui.swing.app.capturePersistedWorkspace
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

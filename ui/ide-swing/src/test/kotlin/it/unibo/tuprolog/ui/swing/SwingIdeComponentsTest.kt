@@ -16,6 +16,16 @@ import it.unibo.tuprolog.ui.gui.presentation.durationLabel
 import it.unibo.tuprolog.ui.gui.presentation.formatDurationInput
 import it.unibo.tuprolog.ui.gui.presentation.parseDurationInput
 import it.unibo.tuprolog.ui.gui.presentation.sourceIdentifierSuggestions
+import it.unibo.tuprolog.ui.swing.editor.PROLOG_SYNTAX_STYLE
+import it.unibo.tuprolog.ui.swing.editor.PrologEditor
+import it.unibo.tuprolog.ui.swing.editor.PrologSyntaxParser
+import it.unibo.tuprolog.ui.swing.inspector.DiagnosticsList
+import it.unibo.tuprolog.ui.swing.inspector.FlagsTable
+import it.unibo.tuprolog.ui.swing.inspector.LibrariesTree
+import it.unibo.tuprolog.ui.swing.inspector.OperatorsTable
+import it.unibo.tuprolog.ui.swing.solutions.BlankIcon
+import it.unibo.tuprolog.ui.swing.solutions.SolutionQueryEntry
+import it.unibo.tuprolog.ui.swing.solutions.SolutionTree
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument
 import org.fife.ui.rsyntaxtextarea.parser.ParserNotice
 import org.fife.ui.rtextarea.RTextScrollPane

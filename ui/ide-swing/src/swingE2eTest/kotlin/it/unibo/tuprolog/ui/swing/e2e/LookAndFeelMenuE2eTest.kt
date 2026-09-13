@@ -5,7 +5,7 @@
 
 package it.unibo.tuprolog.ui.swing.e2e
 
-import it.unibo.tuprolog.ui.swing.installedLookAndFeels
+import it.unibo.tuprolog.ui.swing.app.installedLookAndFeels
 import org.assertj.swing.fixture.FrameFixture
 import javax.swing.JRadioButtonMenuItem
 import javax.swing.UIManager

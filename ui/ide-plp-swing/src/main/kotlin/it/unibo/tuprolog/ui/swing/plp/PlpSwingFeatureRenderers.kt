@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.ui.swing.plp
 
-import it.unibo.tuprolog.ui.swing.SwingFeatureRendererRegistry
+import it.unibo.tuprolog.ui.swing.feature.SwingFeatureRendererRegistry
 
 fun plpSwingFeatureRenderers(
     bddGraphRenderer: SwingBddGraphRenderer = PlantUmlSwingBddGraphRenderer,

@@ -7,7 +7,7 @@ import it.unibo.tuprolog.ui.gui.model.PageContent
 import it.unibo.tuprolog.ui.gui.model.PageFeatureState
 import it.unibo.tuprolog.ui.gui.model.PageState
 import it.unibo.tuprolog.ui.gui.plp.PlpFeatureKeys
-import it.unibo.tuprolog.ui.swing.SwingFeatureContext
+import it.unibo.tuprolog.ui.swing.feature.SwingFeatureContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import javax.swing.JLabel

@@ -8,7 +8,7 @@ import it.unibo.tuprolog.ui.gui.plp.PlpTheoryTemplates
 import it.unibo.tuprolog.ui.gui.plp.plpFeatureState
 import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
-import it.unibo.tuprolog.ui.swing.SwingIdeFrame
+import it.unibo.tuprolog.ui.swing.app.SwingIdeFrame
 import it.unibo.tuprolog.ui.swing.launchSwingIde
 import it.unibo.tuprolog.ui.swing.plp.plpSwingFeatureRenderers
 import kotlinx.coroutines.runBlocking
