@@ -52,6 +52,9 @@ internal class SolutionCellRenderer : DefaultTreeCellRenderer() {
                 else -> BLANK_TREE_ICON
             }
         super.getTreeCellRendererComponent(tree, label, selected, expanded, leaf, row, hasFocus)
+        leafIcon = currentIcon
+        openIcon = currentIcon
+        closedIcon = currentIcon
         icon = currentIcon
         font = font.deriveFont(if (data is SolutionNodeData.EllipsisNode) Font.ITALIC else Font.PLAIN)
         return this

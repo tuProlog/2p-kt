@@ -13,7 +13,8 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
     init {
         isRootVisible = false
         showsRootHandles = true
-        cellRenderer = SolutionCellRenderer()
+        // setting protected method directly would not work, must use setter
+        setCellRenderer(SolutionCellRenderer())
         addTreeSelectionListener {
             if (updating) return@addTreeSelectionListener
             val node = lastSelectedPathComponent as? DefaultMutableTreeNode
