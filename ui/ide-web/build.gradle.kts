@@ -1,7 +1,11 @@
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     alias(libs.plugins.kotlin.serialization)
-    id("io.github.gciatto.kt-mpp.linter")
+    alias(libs.plugins.ktMpp.versions)
+    alias(libs.plugins.ktMpp.documentation)
+    alias(libs.plugins.ktMpp.linter)
+    alias(libs.plugins.ktMpp.bugFinder)
+    alias(libs.plugins.ktMpp.mavenPublish)
 }
 
 kotlin {

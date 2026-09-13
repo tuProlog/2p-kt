@@ -1,10 +1,7 @@
 plugins {
     application
-    id(
-        libs.plugins.ktMpp.fatJar
-            .get()
-            .pluginId,
-    )
+    alias(libs.plugins.ktMpp.fatJar)
+    alias(libs.plugins.ktMpp.mavenPublish)
 }
 
 dependencies {

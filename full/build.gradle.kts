@@ -1,26 +1,8 @@
-
-
 plugins {
-    id(
-        libs.plugins.ktMpp.mavenPublish
-            .get()
-            .pluginId,
-    )
-    id(
-        libs.plugins.ktMpp.npmPublish
-            .get()
-            .pluginId,
-    )
-    id(
-        libs.plugins.ktMpp.multiProjectHelper
-            .get()
-            .pluginId,
-    )
-    id(
-        libs.plugins.ktMpp.fatJar
-            .get()
-            .pluginId,
-    )
+    alias(libs.plugins.ktMpp.mavenPublish)
+    alias(libs.plugins.ktMpp.npmPublish)
+    alias(libs.plugins.ktMpp.multiProjectHelper)
+    alias(libs.plugins.ktMpp.fatJar)
 }
 
 val thisProject = project.name
@@ -50,6 +32,12 @@ multiProjectHelper {
             getByName("jvmTest") {
                 dependencies {
                     implementation(kotlin("test"))
+                }
+            }
+            getByName("jsMain") {
+                dependencies {
+                    api(":ide-web")
+                    logger.lifecycle("${project.path} depends on :ide-web")
                 }
             }
         }

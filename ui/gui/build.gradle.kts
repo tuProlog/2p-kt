@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ktMpp.mavenPublish)
 }
 
 kotlin {

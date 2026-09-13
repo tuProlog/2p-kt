@@ -1,14 +1,6 @@
 plugins {
-    id(
-        libs.plugins.ktMpp.mavenPublish
-            .get()
-            .pluginId,
-    )
-    id(
-        libs.plugins.ktMpp.fatJar
-            .get()
-            .pluginId,
-    )
+    alias(libs.plugins.ktMpp.mavenPublish)
+    alias(libs.plugins.ktMpp.fatJar)
 }
 
 kotlin {

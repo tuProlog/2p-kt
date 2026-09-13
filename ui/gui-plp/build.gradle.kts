@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.ktMpp.mavenPublish)
+}
+
 kotlin {
     sourceSets {
         commonMain {
