@@ -29,13 +29,13 @@ jobs:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.31
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.x'
       - name: Install MkDocs Material
         run: pip install mkdocs-material
       - name: Build documentation site
-        uses: DanySK/build-check-deploy-gradle-action@4.0.44
+        uses: DanySK/build-check-deploy-gradle-action@4.0.45
         with:
           retries-on-failure: '2'
           build-command: ./gradlew ${LAST_VERSION:+-PforceVersion=$LAST_VERSION} :documentation:assembleSite
