@@ -26,6 +26,7 @@ internal class OperatorsTableModel : AbstractTableModel() {
     /** Always three: "Name", "Priority", "Specifier". */
     override fun getColumnCount() = 3
 
+    /** "Name" for column 0, "Priority" for column 1, "Specifier" for column 2. */
     override fun getColumnName(column: Int) =
         when (column) {
             0 -> "Name"
@@ -36,6 +37,7 @@ internal class OperatorsTableModel : AbstractTableModel() {
     /** Every column renders/edits as plain text, even "Priority" (parsed on commit, see [setValueAt]). */
     override fun getColumnClass(columnIndex: Int): Class<*> = String::class.java
 
+    /** The trailing "add" row's buffered cell when [rowIndex] `== data.size`, else the operator's own cell value. */
     override fun getValueAt(
         rowIndex: Int,
         columnIndex: Int,

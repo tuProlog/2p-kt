@@ -25,6 +25,7 @@ internal class FlagsTableModel : AbstractTableModel() {
     /** "Flag" for column 0, "Value" for column 1. */
     override fun getColumnName(column: Int) = if (column == 0) "Flag" else "Value"
 
+    /** The flag's name for column 0, its current value for column 1. */
     override fun getValueAt(
         rowIndex: Int,
         columnIndex: Int,
