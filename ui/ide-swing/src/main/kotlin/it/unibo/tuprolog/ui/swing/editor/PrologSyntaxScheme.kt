@@ -6,6 +6,7 @@ import org.fife.ui.rsyntaxtextarea.TokenTypes
 import java.awt.Color
 import java.awt.Font
 
+/** Assigns a color/weight to each Prolog token type this area's [PrologTokenMaker] can produce. */
 internal fun RSyntaxTextArea.configurePrologSyntaxScheme() {
     val plain = Font(Font.MONOSPACED, Font.PLAIN, PrologSyntaxColors.FONT_SIZE)
     val bold = plain.deriveFont(Font.BOLD)

@@ -8,6 +8,10 @@ import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
 
+/**
+ * Renders each [SolutionNodeData] kind in the Solutions tree with its own icon and, for the ellipsis row, an
+ * italic font.
+ */
 internal class SolutionCellRenderer : DefaultTreeCellRenderer() {
     // Some look-and-feels (observed with Aqua on macOS) paint a JTree's open/closed/leaf icon by calling the
     // renderer's own getOpenIcon()/getClosedIcon()/getLeafIcon() bean getters instead of (only) using the icon
@@ -23,6 +27,7 @@ internal class SolutionCellRenderer : DefaultTreeCellRenderer() {
     // consistent - and icons visible - regardless of which row a given look-and-feel happens to measure first.
     private var currentIcon: Icon = BLANK_TREE_ICON
 
+    /** Picks this row's label, icon, and font from the [SolutionNodeData] its node wraps. */
     override fun getTreeCellRendererComponent(
         tree: JTree,
         value: Any?,
@@ -61,10 +66,13 @@ internal class SolutionCellRenderer : DefaultTreeCellRenderer() {
         return this
     }
 
+    /** Echoes back [currentIcon] regardless of leaf/open/closed state - see the field's own comment for why. */
     override fun getLeafIcon(): Icon = currentIcon
 
+    /** @see getLeafIcon */
     override fun getOpenIcon(): Icon = currentIcon
 
+    /** @see getLeafIcon */
     override fun getClosedIcon(): Icon = currentIcon
 
     private fun resultIcon(kind: ResultKind): Icon =

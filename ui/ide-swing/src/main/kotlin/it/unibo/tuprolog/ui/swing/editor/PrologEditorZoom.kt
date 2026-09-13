@@ -6,6 +6,10 @@ import java.awt.event.InputEvent
 import javax.swing.AbstractAction
 import javax.swing.KeyStroke
 
+/**
+ * Wires Ctrl/Cmd `+`/`-`/mouse-wheel to change this area's font size within [EditorZoom]'s bounds, invoking
+ * [onZoomed] with the resulting size after each change.
+ */
 internal fun RSyntaxTextArea.installZoomControls(onZoomed: (Int) -> Unit = {}) {
     fun zoom(delta: Int) {
         val newSize = EditorZoom.clamp(font.size + delta)

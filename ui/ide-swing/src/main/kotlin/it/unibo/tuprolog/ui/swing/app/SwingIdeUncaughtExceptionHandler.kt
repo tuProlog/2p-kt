@@ -10,6 +10,11 @@ import javax.swing.JTextArea
 private const val REPORT_AREA_ROWS = 24
 private const val REPORT_AREA_COLUMNS = 100
 
+/**
+ * Catches any exception that would otherwise silently kill a thread (e.g. an EDT callback), showing it in a
+ * dialog with a copyable stack trace instead - falling back to [fallback] (the JVM's previous handler) once the
+ * IDE window itself is gone (e.g. during shutdown).
+ */
 internal class SwingIdeUncaughtExceptionHandler(
     private val frame: () -> SwingIdeFrame?,
     private val fallback: Thread.UncaughtExceptionHandler?,

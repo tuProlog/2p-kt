@@ -12,6 +12,7 @@ internal class LibrariesTree : JTree(DefaultMutableTreeNode("Libraries")) {
         showsRootHandles = true
     }
 
+    /** Rebuilds the tree, fully expanded, with one top-level node per library in [libraries]. */
     fun render(libraries: List<LibraryPresentation>) {
         val root = DefaultMutableTreeNode("Libraries")
         libraries.forEach { root.add(libraryNode(it)) }

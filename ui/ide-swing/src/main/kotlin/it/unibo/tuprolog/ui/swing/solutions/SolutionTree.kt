@@ -6,7 +6,9 @@ import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
 
+/** Shows every submitted query, grouped with its solutions and their bindings/stack traces, as a tree. */
 internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
+    /** Invoked with a query's text when the user selects (any row under) that query. */
     var onQuerySelected: ((String) -> Unit)? = null
     private var updating = false
 
@@ -23,6 +25,7 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
         }
     }
 
+    /** Rebuilds the tree from [entries], expanding and scrolling to [focusedQuery]'s node if given. */
     fun render(
         entries: List<SolutionQueryEntry>,
         focusedQuery: String? = null,

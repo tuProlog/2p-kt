@@ -3,6 +3,7 @@ package it.unibo.tuprolog.ui.swing.editor
 import it.unibo.tuprolog.ui.gui.presentation.SemanticCategory
 import org.fife.ui.rsyntaxtextarea.TokenTypes
 
+/** Maps this codebase's own [SemanticCategory] to the closest RSTA [TokenTypes] constant, for coloring/styling. */
 internal fun SemanticCategory.tokenType(): Int =
     when (this) {
         SemanticCategory.COMMENT -> TokenTypes.COMMENT_EOL
@@ -21,6 +22,7 @@ internal fun SemanticCategory.tokenType(): Int =
         SemanticCategory.ERROR -> TokenTypes.ERROR_IDENTIFIER
     }
 
+/** The inverse of [tokenType]: maps an RSTA token-type constant back to a [SemanticCategory], where one applies. */
 internal fun Int.toSemanticCategory(): SemanticCategory? =
     when (this) {
         TokenTypes.COMMENT_EOL, TokenTypes.COMMENT_MULTILINE -> SemanticCategory.COMMENT

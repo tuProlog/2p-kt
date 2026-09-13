@@ -55,8 +55,10 @@ private class SwingIdeCommand : CliktCommand(name = "ide-swing") {
         option("--list-look-and-feels", help = "List the look-and-feel names installed on this JVM and exit")
             .flag()
 
+    /** The one-line summary Clikt shows for this command in `--help` output. */
     override fun help(context: Context) = "Start the tuProlog Swing IDE"
 
+    /** Either lists installed look-and-feels and exits, or launches the IDE with the parsed CLI options. */
     override fun run() =
         runBlocking {
             if (listLookAndFeels) {
@@ -72,6 +74,7 @@ private class SwingIdeCommand : CliktCommand(name = "ide-swing") {
         }
 }
 
+/** CLI entry point: parses arguments and runs [SwingIdeCommand]. */
 fun main(args: Array<String>) = SwingIdeCommand().main(args)
 
 /**

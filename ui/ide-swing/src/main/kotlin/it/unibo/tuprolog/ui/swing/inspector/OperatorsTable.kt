@@ -12,6 +12,7 @@ import javax.swing.table.TableRowSorter
 internal class OperatorsTable : JTable(OperatorsTableModel()) {
     private val operatorsModel = model as OperatorsTableModel
 
+    /** Invoked with the new operator once the user fills in and commits the table's trailing "add" row. */
     var onOperatorAdded: ((OperatorPresentation) -> Unit)?
         get() = operatorsModel.onAdded
         set(value) {
@@ -46,6 +47,7 @@ internal class OperatorsTable : JTable(OperatorsTableModel()) {
         )
     }
 
+    /** Replaces the displayed operators with [operators] (the trailing "add" row is separate, model-owned state). */
     fun render(operators: List<OperatorPresentation>) {
         operatorsModel.data = operators
     }

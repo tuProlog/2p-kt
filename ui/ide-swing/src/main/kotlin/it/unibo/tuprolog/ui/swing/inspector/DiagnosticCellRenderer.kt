@@ -8,6 +8,7 @@ import javax.swing.DefaultListCellRenderer
 import javax.swing.JLabel
 import javax.swing.JList
 
+/** Renders a [Diagnostic] as "SEVERITY: message (line, column)", colored by [DiagnosticSeverity]. */
 internal class DiagnosticCellRenderer : DefaultListCellRenderer() {
     override fun getListCellRendererComponent(
         list: JList<*>?,

@@ -10,16 +10,20 @@ import javax.swing.table.TableCellEditor
 internal class FlagsTable : JTable(FlagsTableModel()) {
     private val flagsModel = model as FlagsTableModel
 
+    /** Invoked with a flag's name and new value once the user commits an edit to the "Value" column. */
     var onFlagChanged: ((name: String, value: String) -> Unit)?
         get() = flagsModel.onEdited
         set(value) {
             flagsModel.onEdited = value
         }
 
+    /** Replaces the displayed flags with [flags]. */
     fun render(flags: List<FlagPresentation>) {
         flagsModel.data = flags
     }
 
+    /** For a [it.unibo.tuprolog.solve.flags.NotableFlag] with a fixed set of admissible values, edits it via a
+     * dropdown of those values rather than the default free-text editor. */
     override fun getCellEditor(
         row: Int,
         column: Int,

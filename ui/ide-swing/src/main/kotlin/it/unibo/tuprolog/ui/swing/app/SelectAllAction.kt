@@ -10,6 +10,7 @@ import javax.swing.text.TextAction
  * [java.awt.KeyboardFocusManager], which a menu click can transiently null out before actionPerformed runs.
  */
 internal class SelectAllAction : TextAction("select-all") {
+    /** Selects all text in whichever [javax.swing.text.JTextComponent] last had focus. */
     override fun actionPerformed(event: ActionEvent?) {
         getFocusedComponent()?.selectAll()
     }

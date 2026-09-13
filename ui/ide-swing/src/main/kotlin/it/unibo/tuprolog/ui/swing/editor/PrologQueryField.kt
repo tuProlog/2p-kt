@@ -17,6 +17,7 @@ private const val AUTO_ACTIVATION_DELAY_MS = 250
 
 /** Single-line, syntax-coloured query editor. */
 internal class PrologQueryField : RSyntaxTextArea() {
+    /** Invoked when the user presses Enter in the field. */
     var onSubmit: (() -> Unit)? = null
 
     private var operators: List<OperatorPresentation> = emptyList()
@@ -51,6 +52,7 @@ internal class PrologQueryField : RSyntaxTextArea() {
         }
     }
 
+    /** Re-analyzes and re-colors the current text, re-running syntax analysis if [operators] actually changed. */
     fun highlight(operators: List<OperatorPresentation>) {
         if (this.operators != operators) {
             this.operators = operators
