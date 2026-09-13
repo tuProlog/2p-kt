@@ -40,6 +40,7 @@ import org.w3c.files.BlobPropertyBag
 import org.w3c.files.FileReader
 
 /** Builds and refreshes the whole page's DOM from [GuiState]; the sole entry point into the browser document. */
+@Suppress("LargeClass", "TooManyFunctions")
 internal class WebIdeView(
     private val controller: GuiController,
     private val scope: CoroutineScope,
@@ -246,7 +247,7 @@ internal class WebIdeView(
                 if (!dragging) return@addEventListener
                 val clientX = (event as MouseEvent).clientX
                 val splitRect = splitContainer.getBoundingClientRect()
-                val minSideWidth = 200.0
+                val minSideWidth = MIN_SIDE_PANEL_WIDTH_PX
                 val maxSideWidth = (splitRect.width - minSideWidth).coerceAtLeast(minSideWidth)
                 val newSideWidth = (splitRect.right - clientX).coerceIn(minSideWidth, maxSideWidth)
                 sideContainer.style.width = "${newSideWidth}px"
@@ -305,6 +306,7 @@ internal class WebIdeView(
 
     // region listeners
 
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     private fun installListeners() {
         editor.onChange {
             if (rendering) return@onChange
@@ -796,4 +798,8 @@ internal class WebIdeView(
     private inline fun <reified T : HTMLElement> byId(id: String): T =
         document.getElementById(id) as? T
             ?: error("index.html is missing the expected element #$id")
+
+    private companion object {
+        const val MIN_SIDE_PANEL_WIDTH_PX = 200.0
+    }
 }

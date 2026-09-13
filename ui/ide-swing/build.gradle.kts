@@ -1,8 +1,17 @@
 plugins {
     application
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ktMpp.fatJar)
-    alias(libs.plugins.ktMpp.mavenPublish)
+    // id(...pluginId), not alias(...): see full/build.gradle.kts's plugins block for why.
+    id(
+        libs.plugins.ktMpp.fatJar
+            .get()
+            .pluginId,
+    )
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
 }
 
 dependencies {

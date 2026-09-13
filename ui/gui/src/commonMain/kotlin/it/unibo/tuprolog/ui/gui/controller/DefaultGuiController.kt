@@ -58,6 +58,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.yield
 
 /**
  * Default presentation-independent application controller.
@@ -1074,6 +1075,11 @@ class DefaultGuiController(
                 val progress = applyResolutionStep(pageId, resolutionId, step, mode, remaining)
                 continueConsuming = progress.first
                 remaining -= progress.second
+                if (continueConsuming) {
+                    // Cede the dispatcher between steps so a long ALL-mode consumption stays cancellable and
+                    // doesn't starve other coroutines sharing this controller's scope.
+                    yield()
+                }
             }
         } catch (_: CancellationException) {
             // Cancellation state is committed by the action that invalidated/stopped the runtime.

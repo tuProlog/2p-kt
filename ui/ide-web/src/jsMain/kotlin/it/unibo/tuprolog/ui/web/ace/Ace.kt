@@ -14,6 +14,7 @@ import org.w3c.dom.Element
  * importing a JS module.
  */
 @JsName("ace")
+@Suppress("UnusedParameter")
 external object Ace {
     fun edit(element: Element): AceEditor
 }

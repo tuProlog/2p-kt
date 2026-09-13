@@ -18,6 +18,7 @@ import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.WheelEvent
 
 /** Thin, Kotlin-friendly adapter around the [Ace] editor, hiding its JS-shaped API from the rest of the view. */
+@Suppress("TooManyFunctions")
 internal class AceEditorView(
     container: HTMLElement,
 ) {

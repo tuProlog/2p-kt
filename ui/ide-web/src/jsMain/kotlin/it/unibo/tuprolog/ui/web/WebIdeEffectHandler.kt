@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import org.w3c.dom.HTMLTextAreaElement
 
 /** Executes platform effects against `localStorage` and native browser dialogs. */
+@Suppress("TooManyFunctions")
 internal class WebIdeEffectHandler(
     private val controller: GuiController,
     private val scope: CoroutineScope,

@@ -1,6 +1,15 @@
 plugins {
-    alias(libs.plugins.ktMpp.mavenPublish)
-    alias(libs.plugins.ktMpp.fatJar)
+    // id(...pluginId), not alias(...): see full/build.gradle.kts's plugins block for why.
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
+    id(
+        libs.plugins.ktMpp.fatJar
+            .get()
+            .pluginId,
+    )
 }
 
 kotlin {

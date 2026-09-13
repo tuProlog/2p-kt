@@ -1,11 +1,29 @@
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ktMpp.versions)
-    alias(libs.plugins.ktMpp.documentation)
-    alias(libs.plugins.ktMpp.linter)
-    alias(libs.plugins.ktMpp.bugFinder)
-    alias(libs.plugins.ktMpp.mavenPublish)
+    // id(...pluginId), not alias(...): see full/build.gradle.kts's plugins block for why. ktMpp.versions is
+    // deliberately not re-declared here: every "otherProject" (see root build.gradle.kts) already gets it via
+    // otherProjectTemplate.
+    id(
+        libs.plugins.ktMpp.linter
+            .get()
+            .pluginId,
+    )
+    id(
+        libs.plugins.ktMpp.documentation
+            .get()
+            .pluginId,
+    )
+    id(
+        libs.plugins.ktMpp.bugFinder
+            .get()
+            .pluginId,
+    )
+    id(
+        libs.plugins.ktMpp.mavenPublish
+            .get()
+            .pluginId,
+    )
 }
 
 kotlin {
