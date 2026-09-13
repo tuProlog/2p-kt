@@ -73,7 +73,7 @@ internal class SolverFactorySession(
                     ResolutionStep.End(signals = drainSignals())
                 } else {
                     val solution = solutions.next()
-                    solution.toStep(request.query, drainSignals(), solutionFeatures(solution))
+                    solution.toStep(request.query, drainSignals(), solutionFeatures(solution), solver.operators)
                 }
             }
 

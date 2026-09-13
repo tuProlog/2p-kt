@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.ui.gui.prolog
 
+import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
@@ -20,25 +22,36 @@ internal fun Solution.toStep(
     queryText: String,
     signals: List<SolverSignal>,
     features: Map<FeatureId, Map<String, FeatureValue>>,
+    operators: OperatorSet,
 ): ResolutionStep =
     when (this) {
-        is Solution.Yes ->
+        is Solution.Yes -> {
+            // Pretty expressions (e.g. `1 + 2` rather than `+(1, 2)`), using the solver's own operators so a
+            // custom infix/prefix/postfix operator renders the same way here as it would when parsed back in;
+            // pretty variables so repeated occurrences of the same variable within one solution stay
+            // recognizable (e.g. `X` rather than `_G123`).
+            val formatter = TermFormatter.prettyExpressions(operators)
             ResolutionStep.Yield(
                 SolutionPresentation.Yes(
                     query = queryText,
                     bindings =
                         query.variables
                             .filterNot(Var::isAnonymous)
+                            // A term contains one Var occurrence per syntactic mention, not per distinct
+                            // variable (see Variabled.variables); without this, a query mentioning the same
+                            // variable twice (e.g. "member(X, [1,2,3]), Y is X + Z.") would show X twice.
+                            .distinct()
                             .mapNotNull { variable ->
-                                valueOf(variable)?.let { BindingPresentation(variable.name, it.toString()) }
+                                valueOf(variable)?.let { BindingPresentation(variable.name, formatter.format(it)) }
                             }.toList(),
-                    solvedQuery = solvedQuery.toString(),
+                    solvedQuery = formatter.format(solvedQuery),
                     metadata = features.toSolutionMetadata(),
                 ),
                 hasMorePotentially = true,
                 signals = signals,
                 featureStateReplacements = features,
             )
+        }
         is Solution.No ->
             ResolutionStep.Yield(
                 SolutionPresentation.No(queryText),
