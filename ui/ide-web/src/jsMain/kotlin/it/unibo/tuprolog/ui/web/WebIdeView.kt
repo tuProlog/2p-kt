@@ -494,7 +494,7 @@ internal class WebIdeView(
             header.appendChild(document.createTextNode("?- ${entry.first}"))
             header.addEventListener("click", { _: Event -> dispatch(PageAction.ChangeQuery(page.id, entry.first)) })
             item.appendChild(header)
-            entry.second.forEach { solution -> item.appendChild(solutionLine(solution)) }
+            entry.second.forEachIndexed { index, solution -> item.appendChild(solutionLine(index + 1, solution)) }
             list.appendChild(item)
         }
         container.appendChild(list)
@@ -514,7 +514,10 @@ internal class WebIdeView(
         return history + live
     }
 
-    private fun solutionLine(solution: SolutionPresentation): HTMLElement {
+    private fun solutionLine(
+        number: Int,
+        solution: SolutionPresentation,
+    ): HTMLElement {
         val line = element("div", null)
         val icon =
             when (solution) {
@@ -525,11 +528,11 @@ internal class WebIdeView(
         val text =
             when (solution) {
                 is SolutionPresentation.Yes ->
-                    "yes" +
-                        (solution.solvedQuery?.let { ": $it" } ?: "") +
+                    "$number. yes: ${solution.solvedQuery ?: solution.query}" +
                         solution.bindings.joinToString("") { "\n  ${it.variable} = ${it.value}" }
-                is SolutionPresentation.No -> "no"
-                is SolutionPresentation.Halt -> "error: ${solution.message}"
+                is SolutionPresentation.No -> "$number. no"
+                is SolutionPresentation.Halt ->
+                    "$number. ${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}"
             }
         line.appendChild(
             (element("img", "tab-icon") as HTMLImageElement).apply {
