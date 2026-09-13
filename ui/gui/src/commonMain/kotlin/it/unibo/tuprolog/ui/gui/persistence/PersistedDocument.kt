@@ -2,6 +2,8 @@ package it.unibo.tuprolog.ui.gui.persistence
 
 import kotlinx.serialization.Serializable
 
+/** One page's persisted state: the document it holds (or scratch text), its query/history, and its resolutions -
+ * everything `restoreWorkspace` needs to recreate the page without re-running anything. */
 @Serializable
 data class PersistedDocument(
     val displayName: String,

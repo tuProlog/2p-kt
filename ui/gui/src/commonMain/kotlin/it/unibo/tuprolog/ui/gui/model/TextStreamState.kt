@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.gui.model
 
+/** An append-only text stream (stdout/stderr) with an unread-changes counter for a lower-tab badge. */
 data class TextStreamState(
     val text: String = "",
     val revision: Long = 0,

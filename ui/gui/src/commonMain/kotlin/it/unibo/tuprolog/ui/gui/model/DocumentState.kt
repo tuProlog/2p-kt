@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.gui.model
 
 import it.unibo.tuprolog.ui.gui.identity.DocumentId
 
+/** One open document's content and save status, independent of which page(s) reference it. */
 data class DocumentState(
     val id: DocumentId,
     val displayName: String,

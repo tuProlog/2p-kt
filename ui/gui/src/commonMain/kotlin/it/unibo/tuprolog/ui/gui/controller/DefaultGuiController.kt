@@ -1769,10 +1769,12 @@ class DefaultGuiController(
     )
 
     private sealed interface SessionPlan {
+        /** The page's current solver session can be reused as-is for the next resolution. */
         data class Existing(
             val prepared: PreparedResolution,
         ) : SessionPlan
 
+        /** The page needs a brand-new solver session built before it can resolve. */
         data class Create(
             val pageId: PageId,
             val documentId: DocumentId?,
@@ -1794,12 +1796,16 @@ class DefaultGuiController(
         private var resolutions: Long = 0
         private var effects: Long = 0
 
+        /** A fresh, never-before-used document id. */
         fun nextDocument(): DocumentId = DocumentId("document-${++documents}")
 
+        /** A fresh, never-before-used page id. */
         fun nextPage(): PageId = PageId("page-${++pages}")
 
+        /** A fresh, never-before-used resolution id. */
         fun nextResolution(): ResolutionSessionId = ResolutionSessionId("resolution-${++resolutions}")
 
+        /** A fresh, never-before-used effect id. */
         fun nextEffect(): EffectId = EffectId("effect-${++effects}")
     }
 }

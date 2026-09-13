@@ -4,6 +4,8 @@ import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.presentation.SemanticToken
 
+/** One page's entire state: what it edits/queries, its solver session, resolution/history, console, diagnostics,
+ * highlighting, and per-extension feature state. */
 data class PageState(
     val id: PageId,
     val title: String,

@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.ui.gui.model
 
+/** A page's bounded, de-duplicated (consecutive-only) history of submitted queries - what its Up/Down
+ * query-history navigation steps through. */
 data class QueryHistoryState(
     val entries: List<String> = emptyList(),
     val capacity: Int = 100,

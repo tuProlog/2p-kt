@@ -3,6 +3,8 @@ package it.unibo.tuprolog.ui.gui.solver
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 
+/** A selectable solver configuration (e.g. "Prolog" or "Problog") a user can create a page against, bundling
+ * how to build sessions for it with what it supports and starts with. */
 data class SolverProfile(
     val id: SolverProfileId,
     val displayName: String,

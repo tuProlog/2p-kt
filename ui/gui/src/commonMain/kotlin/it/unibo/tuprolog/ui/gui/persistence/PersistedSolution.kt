@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 /** Mirrors [SolutionPresentation]'s shape for JSON persistence; converted back via [toSolutionPresentation]. */
 @Serializable
 sealed interface PersistedSolution {
+    /** A successful solution, persisted with its already-formatted solved query and bindings. */
     @Serializable
     data class Yes(
         val query: String,
@@ -15,11 +16,13 @@ sealed interface PersistedSolution {
         val metadata: Map<String, String> = emptyMap(),
     ) : PersistedSolution
 
+    /** A failed solution. */
     @Serializable
     data class No(
         val query: String,
     ) : PersistedSolution
 
+    /** An aborted solution, persisted with its error message and stack trace. */
     @Serializable
     data class Halt(
         val query: String,
@@ -29,6 +32,7 @@ sealed interface PersistedSolution {
     ) : PersistedSolution
 }
 
+/** Converts to the persisted, JSON-serializable shape. */
 internal fun SolutionPresentation.toPersisted(): PersistedSolution =
     when (this) {
         is SolutionPresentation.Yes ->
@@ -42,6 +46,7 @@ internal fun SolutionPresentation.toPersisted(): PersistedSolution =
         is SolutionPresentation.Halt -> PersistedSolution.Halt(query, message, logicStackTrace, isTimeout)
     }
 
+/** Restores the runtime presentation from its persisted shape. */
 internal fun PersistedSolution.toSolutionPresentation(): SolutionPresentation =
     when (this) {
         is PersistedSolution.Yes ->

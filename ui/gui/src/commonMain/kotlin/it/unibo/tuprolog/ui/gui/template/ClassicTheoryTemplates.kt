@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.gui.template
 
 /** Classic, toolkit-independent Prolog examples suitable for any plain-Prolog frontend. */
 object ClassicTheoryTemplates {
+    /** Natural numbers as z/s(N) terms, with addition and multiplication. */
     val PEANO_ARITHMETIC =
         TheoryTemplate(
             id = "peano-arithmetic",
@@ -25,6 +26,7 @@ object ClassicTheoryTemplates {
                 """.trimIndent(),
         )
 
+    /** Place N non-attacking queens on an N x N board via backtracking. */
     val N_QUEENS =
         TheoryTemplate(
             id = "n-queens",
@@ -62,6 +64,7 @@ object ClassicTheoryTemplates {
                 """.trimIndent(),
         )
 
+    /** Classic parent/sibling/ancestor relations. */
     val FAMILY_TREE =
         TheoryTemplate(
             id = "family-tree",
@@ -99,6 +102,7 @@ object ClassicTheoryTemplates {
                 """.trimIndent(),
         )
 
+    /** Hand-written append/reverse/length/member over lists. */
     val LIST_PROCESSING =
         TheoryTemplate(
             id = "list-processing",
@@ -126,5 +130,6 @@ object ClassicTheoryTemplates {
                 """.trimIndent(),
         )
 
+    /** Every template in this object, in the order a "New from template" menu should offer them. */
     val ALL: List<TheoryTemplate> = listOf(PEANO_ARITHMETIC, N_QUEENS, FAMILY_TREE, LIST_PROCESSING)
 }

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.gui.presentation
 
+/** One toolkit-neutral diagnostic (syntax error, solver warning, ...) shown against a document/page. */
 data class Diagnostic(
     val severity: DiagnosticSeverity,
     val message: String,

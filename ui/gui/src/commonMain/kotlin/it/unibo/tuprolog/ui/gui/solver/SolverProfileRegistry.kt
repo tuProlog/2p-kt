@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.gui.solver
 
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 
+/** The set of solver profiles a running application knows about, keyed by id and rejecting duplicates. */
 class SolverProfileRegistry private constructor(
     private val profiles: Map<SolverProfileId, SolverProfile>,
 ) {

@@ -4,9 +4,14 @@ import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.model.FeatureValue
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 
+/** One observable outcome of advancing a `ResolutionCursor`: either another solution ([Yield]), exhaustion
+ * ([End]), or an unrecoverable error ([Failed]) - always carrying whatever I/O [signals] the solver emitted
+ * meanwhile. */
 sealed interface ResolutionStep {
+    /** Output produced (e.g. to stdout/stderr) while computing this step, in emission order. */
     val signals: List<SolverSignal>
 
+    /** A solution was found; [hasMorePotentially] says whether requesting another step could yield more. */
     data class Yield(
         val solution: SolutionPresentation,
         val hasMorePotentially: Boolean,
@@ -19,10 +24,12 @@ sealed interface ResolutionStep {
         val featureStateReplacements: Map<FeatureId, Map<String, FeatureValue>> = emptyMap(),
     ) : ResolutionStep
 
+    /** The resolution is exhausted: no further solutions exist. */
     data class End(
         override val signals: List<SolverSignal> = emptyList(),
     ) : ResolutionStep
 
+    /** The resolution could not proceed, e.g. a parse or solver-internal error rather than a normal "no". */
     data class Failed(
         val message: String,
         val causeType: String? = null,

@@ -18,6 +18,8 @@ object PrologSyntaxAnalyzer {
     private val lexer = PrologLexer.default()
     private val parser = PrologParser.default()
 
+    /** Lexes/parses [source] (aware of [presentedOperators] on top of the ISO defaults) into semantic tokens
+     * for highlighting plus any syntax diagnostics found. */
     fun analyze(
         source: String,
         presentedOperators: List<OperatorPresentation>,
@@ -128,6 +130,7 @@ private fun SourceSpan.toTextRange(): TextRange = TextRange(start.toTextPosition
 
 private fun SourcePosition.toTextPosition(): TextPosition = TextPosition(offset, line, column)
 
+/** Converts a parser exception into a toolkit-neutral, error-severity [Diagnostic] at its source span. */
 internal fun PrologSyntaxException.toDiagnostic(): Diagnostic =
     Diagnostic(
         severity = DiagnosticSeverity.ERROR,

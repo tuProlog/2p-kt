@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.ui.gui.solver
 
+/** A set of feature-flag strings a solver profile/session declares support for (see the companion's named
+ * constants), gating which inspector tabs/actions a frontend shows for it. */
 data class SolverCapabilities(
     val values: Set<String> = emptySet(),
 ) {

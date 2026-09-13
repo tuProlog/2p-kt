@@ -5,6 +5,7 @@ import it.unibo.tuprolog.ui.gui.solver.ResolutionSchedulingPolicy
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
+/** Workspace-wide defaults every page inherits unless it overrides them via its own `PageConfiguration`. */
 data class WorkspaceConfiguration(
     val defaultSolverProfileId: SolverProfileId,
     val defaultTimeout: Duration = 5.seconds,

@@ -3,6 +3,8 @@ package it.unibo.tuprolog.ui.gui.model
 import it.unibo.tuprolog.ui.gui.identity.DocumentId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 
+/** Every open document and page, which one is selected, and the workspace-wide configuration - invariants
+ * (every page's document exists, the selected page exists) are enforced in [init]. */
 data class WorkspaceState(
     val documents: Map<DocumentId, DocumentState> = emptyMap(),
     val pages: List<PageState> = emptyList(),

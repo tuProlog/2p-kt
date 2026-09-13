@@ -3,6 +3,8 @@ package it.unibo.tuprolog.ui.gui.model
 import it.unibo.tuprolog.ui.gui.identity.ResolutionSessionId
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 
+/** A page's current (in-progress or just-concluded) resolution: its status, solutions so far, and whether the
+ * Solutions panel has unread changes. */
 data class ResolutionState(
     val status: ResolutionStatus = ResolutionStatus.IDLE,
     val id: ResolutionSessionId? = null,

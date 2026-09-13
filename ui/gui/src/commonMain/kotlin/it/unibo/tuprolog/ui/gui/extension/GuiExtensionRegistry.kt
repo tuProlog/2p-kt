@@ -6,6 +6,9 @@ import it.unibo.tuprolog.ui.gui.model.PageState
 import it.unibo.tuprolog.ui.gui.presentation.FeatureDescriptor
 import it.unibo.tuprolog.ui.gui.solver.SolverProfile
 
+/** Aggregates every registered [GuiExtension]'s contributions (solver profiles, features, commands) into one
+ * place, rejecting duplicate ids across extensions, and routes [PageAction.ExtensionCommand]s to the owning
+ * extension's handler. */
 class GuiExtensionRegistry(
     extensions: Iterable<GuiExtension> = emptyList(),
 ) {

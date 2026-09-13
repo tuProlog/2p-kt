@@ -13,6 +13,7 @@ data class PersistedResolution(
     val error: String? = null,
 )
 
+/** Converts to the persisted, JSON-serializable shape. */
 fun ResolutionHistoryEntry.toPersisted(): PersistedResolution =
     PersistedResolution(
         query = query,
