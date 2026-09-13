@@ -40,8 +40,10 @@ private class PlpSwingIdeCommand : CliktCommand(name = "ide-plp-swing") {
         option("--list-look-and-feels", help = "List the look-and-feel names installed on this JVM and exit")
             .flag()
 
+    /** The one-line description Clikt shows for `--help`. */
     override fun help(context: Context) = "Start the tuProlog PLP (ProbLog) Swing IDE"
 
+    /** Either lists installed look-and-feels and exits, or launches the PLP Swing IDE with a ProbLog solver. */
     override fun run() =
         runBlocking {
             if (listLookAndFeels) {
@@ -79,4 +81,5 @@ private class PlpSwingIdeCommand : CliktCommand(name = "ide-plp-swing") {
         }
 }
 
+/** CLI entry point for `ide-plp-swing`; see [PlpSwingIdeCommand] for the available options. */
 fun main(args: Array<String>) = PlpSwingIdeCommand().main(args)

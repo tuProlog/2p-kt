@@ -17,11 +17,13 @@ private const val STORAGE_KEY = "tuprolog-workspace"
 object WebWorkspacePersistence {
     private val json = Json { ignoreUnknownKeys = true }
 
+    /** The previously-saved workspace, or `null` if none was saved (or it couldn't be decoded). */
     fun load(): PersistedWorkspace? =
         runCatching {
             localStorage.getItem(STORAGE_KEY)?.let { json.decodeFromString(PersistedWorkspace.serializer(), it) }
         }.getOrNull()
 
+    /** Saves [workspace], replacing whatever was previously saved. */
     fun save(workspace: PersistedWorkspace) {
         val encoded = json.encodeToString(PersistedWorkspace.serializer(), workspace)
         runCatching { localStorage.setItem(STORAGE_KEY, encoded) }

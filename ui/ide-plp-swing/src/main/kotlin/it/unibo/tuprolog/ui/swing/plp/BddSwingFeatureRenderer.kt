@@ -20,6 +20,7 @@ import javax.swing.SwingConstants
 
 private const val PANEL_BORDER_INSET = 6
 
+/** The "BDD" lower-tab: shows the current solution's binary decision diagram (if any) and a "Copy DOT" action. */
 class BddSwingFeatureRenderer(
     private val graphRenderer: SwingBddGraphRenderer = DotTextSwingBddGraphRenderer,
 ) : SwingFeatureRenderer {

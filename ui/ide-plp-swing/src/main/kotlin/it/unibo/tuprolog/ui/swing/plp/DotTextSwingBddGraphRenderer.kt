@@ -7,6 +7,7 @@ import javax.swing.JTextArea
 
 private const val DOT_FONT_SIZE = 13
 
+/** Dependency-free fallback renderer: shows a BDD's raw DOT source as read-only monospaced text. */
 object DotTextSwingBddGraphRenderer : SwingBddGraphRenderer {
     override fun createGraphComponent(
         dot: String,

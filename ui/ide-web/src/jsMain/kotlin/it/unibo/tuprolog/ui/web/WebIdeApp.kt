@@ -21,6 +21,8 @@ import kotlinx.coroutines.launch
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.events.Event
 
+/** Entry point for the Kotlin/JS web IDE: wires the GUI application, restores any persisted workspace, and
+ * starts autosaving on page unload. */
 fun main() {
     document.title = "tuProlog Web IDE ${Info.VERSION}"
     val scope = MainScope()

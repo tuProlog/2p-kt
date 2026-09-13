@@ -18,6 +18,11 @@ import it.unibo.tuprolog.ui.gui.presentation.SolverInspectionSnapshot
 import it.unibo.tuprolog.ui.gui.solver.ResolutionStep
 import it.unibo.tuprolog.ui.gui.solver.SolverSignal
 
+/**
+ * Converts this [Solution] into a toolkit-neutral [ResolutionStep.Yield], formatting the solved query and every
+ * variable binding with [TermFormatter.prettyExpressions] (using [operators] and pretty variable names) rather
+ * than each [it.unibo.tuprolog.core.Term]'s raw `toString()`.
+ */
 internal fun Solution.toStep(
     queryText: String,
     signals: List<SolverSignal>,
@@ -90,6 +95,7 @@ private fun Map<FeatureId, Map<String, FeatureValue>>.toSolutionMetadata(): Map<
         .mapNotNull { (key, value) -> (value as? FeatureValue.Number)?.let { key to it.value.toString() } }
         .toMap()
 
+/** Captures this [Solver]'s current operators, flags, libraries, and knowledge base as a toolkit-neutral snapshot. */
 internal fun Solver.inspectionSnapshot(): SolverInspectionSnapshot =
     SolverInspectionSnapshot(
         operators = operators.map { OperatorPresentation(it.functor, it.priority, it.specifier.name) },
