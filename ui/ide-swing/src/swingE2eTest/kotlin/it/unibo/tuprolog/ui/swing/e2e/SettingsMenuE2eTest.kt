@@ -5,6 +5,7 @@
 
 package it.unibo.tuprolog.ui.swing.e2e
 
+import org.assertj.swing.edt.GuiActionRunner
 import org.assertj.swing.fixture.FrameFixture
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -31,7 +32,11 @@ class SettingsMenuE2eTest {
     fun `Restore default settings resets a zoomed-in editor back to the default font size`() {
         val editor = window.textBox("pageEditor")
         val defaultSize = editor.target().font.size
-        editor.target().font = editor.target().font.deriveFont((defaultSize + ZOOM_DELTA).toFloat())
+        // Swing components may only be mutated on the EDT once realized; FailOnThreadViolationRepaintManager
+        // (installed by launchIdeSwing) enforces this and throws EdtViolationException on a direct write here.
+        GuiActionRunner.execute {
+            editor.target().font = editor.target().font.deriveFont((defaultSize + ZOOM_DELTA).toFloat())
+        }
 
         window.menuItem("restoreDefaultSettingsMenuItem").click()
 
