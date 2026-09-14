@@ -97,8 +97,9 @@ class SwingIdeFrame(
     initialFontSize: Int = 14,
     /**
      * Per-page editor zoom levels to restore, positional (matching the order pages are (re-)created in, e.g.
-     * by [restoreWorkspace] from persisted state) rather than keyed by [PageId] - which doesn't exist yet for
-     * a page still to be created. Consulted once, the first time each page's editor is built.
+     * by [it.unibo.tuprolog.ui.gui.persistence.restoreWorkspace] from persisted state) rather than keyed by
+     * [PageId] - which doesn't exist yet for a page still to be created. Consulted once, the first time each
+     * page's editor is built.
      */
     private val initialPageFontSizes: List<Int> = emptyList(),
     /** Deletes the persisted workspace file and suppresses the next normal-shutdown autosave (see "Delete

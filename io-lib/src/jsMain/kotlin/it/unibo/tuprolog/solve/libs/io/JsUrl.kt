@@ -23,7 +23,7 @@ private external class JsNativeUrl(
 
 /**
  * JS implementation of [Url], hand-parsed via the WHATWG [JsNativeUrl] binding (there being no `java.net.URL`
- * equivalent to wrap, unlike [it.unibo.tuprolog.solve.libs.io.JvmUrl]).
+ * equivalent to wrap, unlike the JVM-only `JvmUrl`).
  *
  * Its behavior further forks on [isNode]: [readAsText]/[readAsByteArray] read local ([isFile]) resources straight
  * off disk (via [LocalFileSystem]) only under Node, fall back to `window.localStorage` for local resources in a

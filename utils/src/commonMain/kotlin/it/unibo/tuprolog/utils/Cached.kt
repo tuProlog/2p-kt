@@ -26,14 +26,14 @@ interface Cached<T> {
     }
 
     /**
-     * Whether [value] currently holds an up-to-date, already-computed result (i.e. [generator] does not need
-     * to be invoked again upon the next access).
+     * Whether [value] currently holds an up-to-date, already-computed result (i.e. the generator passed to
+     * [Cached.of] does not need to be invoked again upon the next access).
      */
     val isValid: Boolean
 
     /**
-     * Whether [value] needs to be (re)computed, by invoking [generator] again, upon the next access.
-     * Always the logical negation of [isValid].
+     * Whether [value] needs to be (re)computed, by invoking the generator passed to [Cached.of] again, upon
+     * the next access. Always the logical negation of [isValid].
      */
     val isInvalid: Boolean
 

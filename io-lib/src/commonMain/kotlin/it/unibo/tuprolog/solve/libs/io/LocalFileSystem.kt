@@ -6,7 +6,7 @@ import okio.Sink
 import okio.Source
 
 /**
- * The [FileSystem] used for local files in production: [FileSystem.SYSTEM] on JVM,
+ * The [FileSystem] used for local files in production: `FileSystem.SYSTEM` on JVM,
  * `NodeJsFileSystem` on JS/Node.
  */
 internal expect val platformFileSystem: FileSystem

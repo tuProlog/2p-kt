@@ -31,7 +31,8 @@ internal class FlagsTableModel : AbstractTableModel() {
         columnIndex: Int,
     ): Any = if (columnIndex == 0) data[rowIndex].name else data[rowIndex].value
 
-    /** Only the "Value" column is editable, and only for flags that aren't fixed (e.g. [NotableFlag.MaxArity]). */
+    /** Only the "Value" column is editable, and only for flags that aren't fixed
+     * (e.g. [it.unibo.tuprolog.solve.flags.MaxArity]). */
     override fun isCellEditable(
         rowIndex: Int,
         columnIndex: Int,

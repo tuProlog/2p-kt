@@ -17,9 +17,10 @@ private typealias MguRequest = Triple<*, *, Boolean>
  * Since [Unificator.match] and [Unificator.unify] are, by default, defined in terms of [Unificator.mgu], they too
  * benefit from the cache transitively — no separate caching is performed for them.
  *
- * Cache keys are built from [term1]/[term2] (or the two [Substitution]s, for [merge]) compared via [Term.equals]/
- * [Substitution.equals]; two structurally equal but distinct term/substitution instances therefore share a cache
- * entry. This class is safe for concurrent use from multiple threads: the underlying cache synchronizes its access.
+ * Cache keys are built from the two terms passed to [mgu] (or the two [Substitution]s, for [merge]) compared via
+ * [Term.equals]/[Substitution.equals]; two structurally equal but distinct term/substitution instances therefore
+ * share a cache entry. This class is safe for concurrent use from multiple threads: the underlying cache
+ * synchronizes its access.
  *
  * Instances are normally created through [Unificator.cached] rather than directly, since that factory also avoids
  * double-wrapping an already-cached [Unificator].
