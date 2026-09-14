@@ -268,32 +268,44 @@ const SCENARIOS = [
   {
     name: "solving a query with multiple facts yields all solutions",
     async run({ evalJs }) {
-      await evalJs(`
-        (function() {
-          const textarea = document.querySelector('textarea.ace_text-input');
-          textarea.focus();
-          document.execCommand('selectAll');
-          document.execCommand('delete');
-          for (const ch of "f(1).\\nf(2).\\nf(3).\\n") document.execCommand('insertText', false, ch);
-          const queryInput = document.getElementById('query-input');
-          queryInput.focus();
-          queryInput.value = 'f(X)';
-          queryInput.dispatchEvent(new Event('input', { bubbles: true }));
-        })()
-      `);
-      await new Promise((r) => setTimeout(r, 500));
-      await evalJs(`document.getElementById('solve-all-button').click()`);
-      const status = await pollUntil(
-        () => evalJs(`document.getElementById('status-label').textContent`),
-        (v) => /COMPLETED|FAILED|CANCELLED/.test(v),
-        5000,
+      const setQueryAndSolve = async () => {
+        await evalJs(`
+          (function() {
+            const textarea = document.querySelector('textarea.ace_text-input');
+            textarea.focus();
+            document.execCommand('selectAll');
+            document.execCommand('delete');
+            for (const ch of "f(1).\\nf(2).\\nf(3).\\n") document.execCommand('insertText', false, ch);
+            const queryInput = document.getElementById('query-input');
+            queryInput.focus();
+            queryInput.value = 'f(X)';
+            queryInput.dispatchEvent(new Event('input', { bubbles: true }));
+          })()
+        `);
+        await evalJs(`document.getElementById('solve-all-button').click()`);
+        await pollUntil(
+          () => evalJs(`document.getElementById('status-label').textContent`),
+          (v) => /COMPLETED|FAILED|CANCELLED/.test(v),
+          5000,
+        );
+        return evalJs(`
+          (function() {
+            const panel = Array.from(document.querySelectorAll('.side-content')).find(d => d.querySelector('ul.solutions'));
+            return panel ? panel.textContent : null;
+          })()
+        `);
+      };
+      // The text/query changes above are dispatched to the app asynchronously (fire-and-forget coroutines);
+      // there's no signal to await their completion before clicking solve. Re-typing + re-solving is
+      // idempotent, so polling by retrying the whole thing self-heals that race instead of guessing a fixed
+      // delay is enough for it to land.
+      const solutionsText = await pollUntil(
+        setQueryAndSolve,
+        (text) => ["X = 1", "X = 2", "X = 3"].every((s) => text?.includes(s)),
+        8000,
+        250,
       );
-      const solutionsText = await evalJs(`
-        (function() {
-          const panel = Array.from(document.querySelectorAll('.side-content')).find(d => d.querySelector('ul.solutions'));
-          return panel ? panel.textContent : null;
-        })()
-      `);
+      const status = await evalJs(`document.getElementById('status-label').textContent`);
       const failures = [];
       if (!/COMPLETED/.test(status)) failures.push(`resolution ended as "${status}" instead of COMPLETED`);
       for (const expected of ["X = 1", "X = 2", "X = 3"]) {
@@ -371,36 +383,35 @@ const SCENARIOS = [
       if (!before.options) return [`expected a <select> for the 'unknown' flag, found none (value read: ${before.value})`];
 
       const target = before.value === "fail" ? "error" : "fail";
-      await evalJs(`
-        (function() {
-          const row = Array.from(document.querySelectorAll('.side-content table tr'))
-            .find(r => r.cells[0]?.textContent === 'unknown');
-          const select = row.cells[1].querySelector('select');
-          select.value = ${JSON.stringify(target)};
-          select.dispatchEvent(new Event('change', { bubbles: true }));
-        })()
-      `);
+      const setFlagAndSolve = async () => {
+        await evalJs(`
+          (function() {
+            const row = Array.from(document.querySelectorAll('.side-content table tr'))
+              .find(r => r.cells[0]?.textContent === 'unknown');
+            const select = row.cells[1].querySelector('select');
+            select.value = ${JSON.stringify(target)};
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+          })()
+        `);
+        await evalJs(`document.getElementById('solve-all-button').click()`);
+        await pollUntil(
+          () => evalJs(`document.getElementById('status-label').textContent`),
+          (v) => /COMPLETED|FAILED/.test(v),
+          5000,
+        );
+        return evalJs(`
+          (function() {
+            const row = Array.from(document.querySelectorAll('.side-content table tr'))
+              .find(r => r.cells[0]?.textContent === 'unknown');
+            return row?.cells[1].querySelector('select')?.value;
+          })()
+        `);
+      };
       // Changing a flag invalidates the current solver session (it must be rebuilt to pick up the new
       // option), so the Flags panel only reflects the new value once a fresh session exists after solving.
-      await new Promise((r) => setTimeout(r, 300));
-      await evalJs(`document.getElementById('solve-all-button').click()`);
-      await pollUntil(
-        () => evalJs(`document.getElementById('status-label').textContent`),
-        (v) => /COMPLETED|FAILED/.test(v),
-        5000,
-      );
-      const after = await pollUntil(
-        () =>
-          evalJs(`
-            (function() {
-              const row = Array.from(document.querySelectorAll('.side-content table tr'))
-                .find(r => r.cells[0]?.textContent === 'unknown');
-              return row?.cells[1].querySelector('select')?.value;
-            })()
-          `),
-        (v) => v === target,
-        3000,
-      );
+      // The ChangeConfiguration dispatch races the click the same way the query change does above; retrying
+      // the (idempotent) set-flag-and-solve step self-heals it instead of guessing a fixed delay.
+      const after = await pollUntil(setFlagAndSolve, (v) => v === target, 8000, 250);
       return after === target ? [] : [`expected the 'unknown' flag to re-render as "${target}", got "${after}"`];
     },
   },
@@ -416,10 +427,11 @@ const SCENARIOS = [
           select.dispatchEvent(new Event('change', { bubbles: true }));
         })()
       `);
-      await new Promise((r) => setTimeout(r, 500));
-      const coloredSpanCount = await evalJs(`
-        document.querySelectorAll('.ace_line [class^="ace_"]:not([class="ace_line"])').length
-      `);
+      const coloredSpanCount = await pollUntil(
+        () => evalJs(`document.querySelectorAll('.ace_line [class^="ace_"]:not([class="ace_line"])').length`),
+        (v) => v > 0,
+        3000,
+      );
       return coloredSpanCount > 0 ? [] : ["no colored (ace_*) spans found after loading a template"];
     },
   },
@@ -552,15 +564,17 @@ const SCENARIOS = [
         `);
 
       await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
-      await new Promise((r) => setTimeout(r, 200));
-      const light = await readColors();
+      const light = await pollUntil(
+        readColors,
+        (c) => c.aceClass.includes("ace-github") && !c.aceClass.includes("dark"),
+        3000,
+      );
       if (!light.aceClass.includes("ace-github") || light.aceClass.includes("dark")) {
         failures.push(`expected the light Ace theme, got class "${light.aceClass}"`);
       }
 
       await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "dark" }] });
-      await new Promise((r) => setTimeout(r, 200));
-      const dark = await readColors();
+      const dark = await pollUntil(readColors, (c) => c.aceClass.includes("dark"), 3000);
       if (!dark.aceClass.includes("dark")) failures.push(`expected the dark Ace theme, got class "${dark.aceClass}"`);
       if (dark.bodyBg === light.bodyBg) failures.push(`body background did not change between color schemes: ${dark.bodyBg}`);
 
