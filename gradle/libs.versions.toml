@@ -46,7 +46,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 ktMath = "io.github.gciatto:kt-math:0.10.2"
 plantuml = "net.sourceforge.plantuml:plantuml:1.2026.8"
-rsyntaxtextarea = "com.fifesoft:rsyntaxtextarea:3.6.1"
+rsyntaxtextarea = "com.fifesoft:rsyntaxtextarea:3.6.3"
 autocomplete = "com.fifesoft:autocomplete:3.3.3"
 rstaui = "com.fifesoft:rstaui:3.3.2"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
