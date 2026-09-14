@@ -16,8 +16,13 @@ import okio.buffer
 internal actual val platformFileSystem: FileSystem = NodeJsFileSystem
 
 // Node's own file:-URL <-> native-path conversion: correctly handles Windows drive letters,
-// backslash-vs-forward-slash, and percent-decoding, so `toLocalPath` doesn't have to.
-private val FILE_URL_TO_PATH: dynamic by lazy { js("require('url').fileURLToPath") }
+// backslash-vs-forward-slash, and percent-decoding, so `toLocalPath` doesn't have to. 'url' is a Node builtin,
+// not an npm package: called (see toLocalPath's only callers, gated on isNode) only under Node, but a literal
+// `require('url')` is still enough for webpack's static analysis to try to bundle it for a browser build too,
+// where it doesn't exist - "Module not found: Error: Can't resolve 'url'". Routing the call through a runtime
+// `eval('require')` (the standard way to keep an optional Node-only require out of a bundler's static analysis)
+// avoids that: it's still `require('url')` once actually executed under Node, just invisible to webpack.
+private val FILE_URL_TO_PATH: dynamic by lazy { js("eval('require')('url').fileURLToPath") }
 
 actual fun parseUrl(string: String): Url = JsUrl(string)
 

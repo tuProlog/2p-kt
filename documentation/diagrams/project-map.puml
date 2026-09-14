@@ -42,18 +42,29 @@ folder "test-dsl" <<test support>> as TD
 
 folder "oop-lib" as OOP
 folder "io-lib" as IO
-folder "repl" <<tool>>
-folder "ide" <<tool>>
-folder "ide-plp" <<tool>> as IDEPLP
+
+' All modules physically living under ui/ in the repo, grouped together.
+package "ui" {
+  folder "repl" <<tool>>
+  folder "gui" as GUI
+  folder "gui-plp" as GPLP
+  folder "ide-swing" <<tool>> as IDESW
+  folder "ide-plp-swing" <<tool>> as IDEPLPSW
+  folder "ide-web" <<tool>> as IDEWEB
+}
+
 folder "examples" <<tool>>
 folder "full" <<tool>>
+
+' Edges below are a transitive reduction: only direct dependencies not already implied
+' by another shown path are drawn (e.g. solve -> theory is enough, since theory already
+' implies unify and core).
 
 ' -- Foundation --
 utils <|-down- core
 
 ' -- Unification & theories --
 core <|-down- unify
-core <|-down- theory
 unify <|-down- theory
 theory <|-down- datalog
 
@@ -66,30 +77,23 @@ theory <|-down- DT
 DT <|-down- DS
 
 ' -- Resolution (solve) --
-core <|-down- solve
-unify <|-down- solve
 theory <|-down- solve
 solve <|-down- SC
 DT <|-down- SC
-solve <|-down- DS
 solve <|-down- SS
 DT <|-down- SS
 solve <|-down- SCON
 DT <|-down- SCON
 solve <|-down- SPLP
 bdd <|-down- SPLP
-bdd <|-down- SPL
 SC <|-down- SPL
 SPLP <|-down- SPL
 
 ' -- Parsing --
 core <|-down- PC
 PI <|-down- PC : uses
-core <|-down- PT
-unify <|-down- PT
 theory <|-down- PT
 PC <|-down- PT
-PI <|-down- PT : uses
 
 ' -- Serialization --
 core <|-down- SRC
@@ -101,30 +105,35 @@ solve <|-down- TS : test dep. of
 DT <|-down- TS : test dep. of
 DC <|-down- TD : test dep. of
 
-' -- Libraries & tools --
+' -- Libraries --
 solve <|-down- OOP
 solve <|-down- IO
 PT <|-down- IO
 
-core <|-down- "repl"
+' -- UI toolkit & apps (ui/) --
 OOP <|-down- "repl"
 IO <|-down- "repl"
 SC <|-down- "repl"
-PT <|-down- "repl"
 
-IO <|-down- "ide"
-OOP <|-down- "ide"
-PT <|-down- "ide"
-SC <|-down- "ide"
+IO <|-down- GUI
+OOP <|-down- GUI
 
-"ide" <|-down- IDEPLP
-SPL <|-down- IDEPLP
+GUI <|-down- GPLP
+SPLP <|-down- GPLP
 
-SC <|-down- "examples"
+GUI <|-down- IDESW
+SC <|-down- IDESW
+
+GPLP <|-down- IDEPLPSW
+IDESW <|-down- IDEPLPSW
+SPL <|-down- IDEPLPSW
+
+GUI <|-down- IDEWEB
+SC <|-down- IDEWEB
+
+' -- Tools --
 SCON <|-down- "examples"
 SPL <|-down- "examples"
-DT <|-down- "examples"
-PT <|-down- "examples"
 IO <|-down- "examples"
 OOP <|-down- "examples"
 

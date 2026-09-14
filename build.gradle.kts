@@ -18,8 +18,13 @@ log("version: $version", LogLevel.LIFECYCLE)
 multiProjectHelper {
     defaultProjectType = ProjectType.KOTLIN
 
-    jvmProjects(":examples", ":ide", ":ide-plp")
-    otherProjects(":documentation")
+    jvmProjects(":examples", ":ide-swing", ":ide-plp-swing")
+    // otherProjects(identifier, vararg other) *replaces* the whole set on every call (it's a setter, not an
+    // accumulator - see kt-mpp's RootMultiProjectExtension), so these must be one call: two separate calls left
+    // only ":documentation" in "otherProjects", silently dropping ":ide-web" back onto the default Kotlin
+    // project template on top of its own explicit plugin block - which built successfully with no error, but
+    // silently produced a broken production webpack bundle (its main() reduced to nothing at runtime).
+    otherProjects(":ide-web", ":documentation")
 
     val baseProjectTemplate =
         buildSet {
@@ -72,4 +77,13 @@ allprojects {
             }
         }
     }
+}
+
+// each dependency here is a lazily-resolved cross-project task path (no evaluationDependsOn needed): every
+// UI module with a runnable entry point registers its own "verifyFatJar" via buildSrc's
+// registerVerifyFatJarTask (see that module's build.gradle.kts) -- this just aggregates them.
+tasks.register("verifyFatJars") {
+    group = "verification"
+    description = "Runs every UI module's own verifyFatJar task."
+    dependsOn(":repl:verifyFatJar", ":ide-swing:verifyFatJar", ":ide-plp-swing:verifyFatJar", ":full:verifyFatJar")
 }

@@ -4,15 +4,18 @@ jvm = "17"
 node = "22-latest"
 jackson = "2.22.2"
 kotlinx-coroutines = "1.11.0"
+kotlinx-serialization = "1.9.0"
 javafx = "21.0.8"
 npm-yaml = "2.8.1" # yaml
 npm-syncRequest = "6.1.0" # sync-request
-ktMpp = "5.3.1"
+npm-aceBuilds = "1.44.0" # ace-builds
+ktMpp = "5.4.0"
 okio = "3.18.2"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:7.0.24"
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktMpp-bugFinder = { id = "io.github.gciatto.kt-mpp.bug-finder", version.ref = "ktMpp" }
 ktMpp-documentation = { id = "io.github.gciatto.kt-mpp.documentation", version.ref = "ktMpp" }
 ktMpp-linter = { id = "io.github.gciatto.kt-mpp.linter", version.ref = "ktMpp" }
@@ -36,10 +39,16 @@ jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xm
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 clikt = "com.github.ajalt.clikt:clikt:5.1.0"
-graphviz = "guru.nidi:graphviz-java:0.18.1"
+batik-transcoder = "org.apache.xmlgraphics:batik-transcoder:1.19"
+batik-codec = "org.apache.xmlgraphics:batik-codec:1.19"
+assertj-swing = "org.assertj:assertj-swing:3.17.1"
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 ktMath = "io.github.gciatto:kt-math:0.10.2"
 plantuml = "net.sourceforge.plantuml:plantuml:1.2026.8"
-richtextFx = "org.fxmisc.richtext:richtextfx:0.11.7"
+rsyntaxtextarea = "com.fifesoft:rsyntaxtextarea:3.6.1"
+autocomplete = "com.fifesoft:autocomplete:3.3.3"
+rstaui = "com.fifesoft:rstaui:3.3.2"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }

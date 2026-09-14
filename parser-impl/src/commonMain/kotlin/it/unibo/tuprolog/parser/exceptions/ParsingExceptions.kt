@@ -38,7 +38,7 @@ class UnexpectedTokenException(
         offendingText,
         expected,
         rulePath,
-        "Unexpected token '$offendingText' at ${token.span.start.line}:${token.span.start.column}; " +
+        "Unexpected token '$offendingText' at ${token.span.start.line + 1}:${token.span.start.column + 1}; " +
             "expected ${expected.joinToString { it.description }}",
     )
 
@@ -55,7 +55,7 @@ class UnexpectedEndOfInputException(
         null,
         expected,
         rulePath,
-        "Unexpected end of input at ${token.span.start.line}:${token.span.start.column}; " +
+        "Unexpected end of input at ${token.span.start.line + 1}:${token.span.start.column + 1}; " +
             "expected ${expected.joinToString { it.description }}",
     )
 
@@ -146,7 +146,7 @@ class MissingClauseTerminatorException(
         offendingText,
         setOf(SyntaxExpectation("clause-terminating full stop")),
         rulePath,
-        "Expected a clause-terminating full stop at ${token.span.start.line}:${token.span.start.column}",
+        "Expected a clause-terminating full stop at ${token.span.start.line + 1}:${token.span.start.column + 1}",
     )
 
 /**
@@ -167,5 +167,5 @@ class NestingLimitExceededException(
         emptySet(),
         rulePath,
         "Maximum parser nesting depth $maximumDepth exceeded at " +
-            "${token.span.start.line}:${token.span.start.column}",
+            "${token.span.start.line + 1}:${token.span.start.column + 1}",
     )
