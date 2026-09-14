@@ -4,6 +4,7 @@ package it.unibo.tuprolog.ui.web.ace
  * The subset of Ace's `Editor` API (https://ace.c9.io/#nav=api&api=editor) this IDE actually uses.
  * Obtained only via [Ace.edit]; never constructed directly from Kotlin.
  */
+@Suppress("TooManyFunctions")
 external class AceEditor {
     val session: AceEditSession
 
