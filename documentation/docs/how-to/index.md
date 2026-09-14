@@ -12,3 +12,4 @@ you want to accomplish and need the steps to do it. Each guide stands alone — 
 4. [Reuse variables with Scope](reuse-variables-with-scope.md) — a common usage recipe.
 5. [Implement a custom Unificator](implement-a-custom-unificator.md) — an advanced extension point.
 6. [Use the I/O library](use-io-lib.md) — load `:io-lib`, configure channels, and drive ISO stream predicates.
+7. [Deploy the Web IDE](deploy-the-web-ide.md) — use the hosted copy, or self-host it from a release or source.

@@ -47,11 +47,13 @@ markdown_extensions:
 # suggested reading order documented in each section's index.md, rather than alphabetical file order.
 nav:
   - Home: index.md
+  - Web IDE: https://tuprolog.github.io/2p-kt/web-ide/
   - Tutorials:
       - tutorials/index.md
       - tutorials/getting-started-kotlin.md
       - tutorials/getting-started-java.md
       - tutorials/getting-started-js.md
+      - tutorials/using-the-web-ide.md
   - How-to guides:
       - how-to/index.md
       - how-to/add-2pkt-as-a-dependency.md
@@ -60,6 +62,7 @@ nav:
       - how-to/reuse-variables-with-scope.md
       - how-to/implement-a-custom-unificator.md
       - how-to/use-io-lib.md
+      - how-to/deploy-the-web-ide.md
   - Reference:
       - reference/index.md
       - reference/module-map.md
@@ -72,6 +75,7 @@ nav:
       - reference/io-lib.md
       - reference/prolog-dsl.md
       - reference/errors-and-exceptions.md
+      - reference/web-ide.md
       - reference/ci-pipeline.md
       - API reference: https://tuprolog.github.io/2p-kt/api/
   - Explanation:
@@ -85,6 +89,7 @@ nav:
       - explanation/state-machine.md
       - explanation/parsing-architecture.md
       - explanation/io-lib-design.md
+      - explanation/web-ide-architecture.md
       - explanation/kotlin-multiplatform.md
       - explanation/gradle-multi-project-build.md
       - explanation/kotlin-dsl-background.md

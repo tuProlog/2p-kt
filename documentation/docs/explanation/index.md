@@ -17,6 +17,7 @@ with a few build-tooling rationale pages that are useful mostly to contributors:
 7. [The solve-classic state machine](state-machine.md) — how the classic SLD-resolution engine actually runs.
 8. [Parser architecture](parsing-architecture.md) — how Prolog source text becomes terms and theories.
 9. [I/O library design](io-lib-design.md) — why `:io-lib`'s `Url`/channel split looks the way it does.
-10. [Kotlin Multiplatform](kotlin-multiplatform.md) — why 2P-Kt targets multiple platforms from one codebase.
-11. [Gradle multi-project build](gradle-multi-project-build.md) — why ~30 modules instead of one.
-12. [Kotlin DSL background](kotlin-dsl-background.md) — why the build itself is written in Kotlin DSL.
+10. [Web IDE architecture](web-ide-architecture.md) — why the desktop and browser IDEs share one model, and how the browser one integrates Ace.
+11. [Kotlin Multiplatform](kotlin-multiplatform.md) — why 2P-Kt targets multiple platforms from one codebase.
+12. [Gradle multi-project build](gradle-multi-project-build.md) — why ~30 modules instead of one.
+13. [Kotlin DSL background](kotlin-dsl-background.md) — why the build itself is written in Kotlin DSL.

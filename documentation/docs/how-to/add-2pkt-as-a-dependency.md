@@ -57,11 +57,11 @@ Replace `2P_MODULE` with the module name from step 1, and `2P_VERSION` with the 
 ```
 
 **npm:** because of how the Kotlin/JS compiler works, splitting the published npm packages per-module the way the
-JVM/Maven artifacts are doesn't make sense; use the `@tuprolog/full` package regardless of which module(s) you
-actually need:
+JVM/Maven artifacts are doesn't make sense; use the `@tuprolog/2p-full` package (note the `2p-` prefix — every
+2P-Kt npm package is published as `@tuprolog/2p-<module>`) regardless of which module(s) you actually need:
 
 ```json
---8<-- "README.md:320:324"
+--8<-- "README.md:322:326"
 ```
 
 ## 4. JVM-only projects: use the `-jvm` suffix

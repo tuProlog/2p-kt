@@ -5,9 +5,11 @@ you're new to 2P-Kt.
 
 ## Suggested reading order
 
-All three tutorials build the same running example (a family-tree knowledge base), so pick the one for your
-host language — you don't need to read all three:
+The first three tutorials build the same running example (a family-tree knowledge base) from code, so pick the
+one for your host language — you don't need to read all three. The fourth builds the very same example, but
+from the browser-based Web IDE instead of code:
 
 1. [Getting started with Kotlin](getting-started-kotlin.md) — the native, most idiomatic way to use 2P-Kt.
 2. [Getting started with Java](getting-started-java.md) — using 2P-Kt from plain Java.
 3. [Getting started with JavaScript](getting-started-js.md) — using 2P-Kt from JS/Node.
+4. [Using the Web IDE](using-the-web-ide.md) — no coding required, just a browser.

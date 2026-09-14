@@ -314,12 +314,14 @@ Remember to add the `-jvm` suffix to `2P_MODULE` in case your project only targe
 The 2P-Kt software is available as a JavaScript library as well, on NPM, under the  [`@tuprolog` organization](https://www.npmjs.com/org/tuprolog).
 Because of how the Kotlin-to-JS compiler works,
 there's no sense in importing one module selectively.
-So if you want to use 2P-Kt in JavaScript, better would be for you to use the `@tuprolog/full` project as a dependency. 
-To import the `@tuprolog/full` module into your `package.json`, it is sufficient to declare your dependency as follows:
+So if you want to use 2P-Kt in JavaScript, better would be for you to use the `@tuprolog/2p-full` project as a
+dependency (note the `2p-` prefix: every 2P-Kt npm package is published as `@tuprolog/2p-<module>`, not bare
+`@tuprolog/<module>`).
+To import the `@tuprolog/2p-full` module into your `package.json`, it is sufficient to declare your dependency as follows:
 ```json
 {
   "dependencies": {
-    "@tuprolog/full": "^2P_MODULE_VERSION"
+    "@tuprolog/2p-full": "^2P_MODULE_VERSION"
   }
 }
 ```

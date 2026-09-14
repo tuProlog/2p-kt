@@ -16,6 +16,7 @@ that matches what you're trying to do.
 
 ## Links
 
+- [Web IDE](https://tuprolog.github.io/2p-kt/web-ide/) — try 2P-Kt straight from your browser, no install required
 - [GitHub repository](https://github.com/tuProlog/2p-kt)
 - [Maven Central](https://search.maven.org/search?q=g:it.unibo.tuprolog)
 - [NPM organization](https://www.npmjs.com/org/tuprolog)
