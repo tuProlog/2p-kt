@@ -1,3 +1,23 @@
+## [2.0.0](https://github.com/tuProlog/2p-kt/compare/1.5.1...2.0.0) (2026-09-14)
+
+### ⚠ BREAKING CHANGES
+
+* re-engineer gui to have platform- and toolkit-agnostic model and controller, and swing and web based incarnations with e2e tests (#964)
+
+### Features
+
+* re-engineer gui to have platform- and toolkit-agnostic model and controller, and swing and web based incarnations with e2e tests ([#964](https://github.com/tuProlog/2p-kt/issues/964)) ([e1e3149](https://github.com/tuProlog/2p-kt/commit/e1e31499029c68faf1049622ca2ea72738a252d1))
+
+### Dependency updates
+
+* **deps:** update node.js to 24.21 ([#959](https://github.com/tuProlog/2p-kt/issues/959)) ([6e244a7](https://github.com/tuProlog/2p-kt/commit/6e244a7bfd48e39b4482dfd914748d4130f1d937))
+
+### Build and continuous integration
+
+* **deps:** update actions/setup-python action to v6 ([#932](https://github.com/tuProlog/2p-kt/issues/932)) ([da28051](https://github.com/tuProlog/2p-kt/commit/da28051446c355599203b8bb94bc5ff7840fd51a))
+* **deps:** update actions/setup-python action to v7 ([#933](https://github.com/tuProlog/2p-kt/issues/933)) ([5e0d0a8](https://github.com/tuProlog/2p-kt/commit/5e0d0a8ae830affe1c1a209602c3ec99f7193ee4))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.45 ([#962](https://github.com/tuProlog/2p-kt/issues/962)) ([74f7651](https://github.com/tuProlog/2p-kt/commit/74f76511d96000efc99f92281c4c16c9980ebd62))
+
 ## [1.5.1](https://github.com/tuProlog/2p-kt/compare/1.5.0...1.5.1) (2026-09-11)
 
 ### Dependency updates
