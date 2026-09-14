@@ -119,7 +119,7 @@ actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
         }
 
 actual val KClass<*>.fullName: String
-    get() = qualifiedName ?: error("Reflection issue: cannot get qualified name of $this")
+    get() = qualifiedName ?: jvmName
 
 actual val KClass<*>.name: String
     get() = simpleName ?: error("Reflection issue: cannot get name of $this")
