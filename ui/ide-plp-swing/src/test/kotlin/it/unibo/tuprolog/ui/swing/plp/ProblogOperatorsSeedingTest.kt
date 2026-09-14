@@ -4,7 +4,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.plp.plpFeatureState
-import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
+import it.unibo.tuprolog.ui.gui.plp.plpSolverFactoryProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -18,11 +18,11 @@ class ProblogOperatorsSeedingTest {
     @Test
     fun problogProfileExposesItsAnnotationOperatorWithoutBuildingASolver() {
         val profile =
-            solverFactoryProfile(
+            plpSolverFactoryProfile(
                 Solver.problog,
                 SolverProfileId("problog"),
                 "ProbLog",
-                setOf(SolverCapabilities.CANCELLATION, SolverCapabilities.PROBABILISTIC_SOLUTIONS),
+                setOf(SolverCapabilities.CANCELLATION),
                 Solution::plpFeatureState,
             )
         assertTrue(profile.defaultOperators.any { it.name == "::" })

@@ -16,7 +16,7 @@ import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.plp.PlpGuiExtension
 import it.unibo.tuprolog.ui.gui.plp.PlpTheoryTemplates
 import it.unibo.tuprolog.ui.gui.plp.plpFeatureState
-import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
+import it.unibo.tuprolog.ui.gui.plp.plpSolverFactoryProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.swing.app.WorkspacePersistence
 import it.unibo.tuprolog.ui.swing.app.installedLookAndFeels
@@ -57,7 +57,7 @@ private class PlpSwingIdeCommand : CliktCommand(name = "ide-plp-swing") {
                     SolverCapabilities.BDD_PRESENTATION,
                 )
             val profile =
-                solverFactoryProfile(
+                plpSolverFactoryProfile(
                     Solver.problog,
                     SolverProfileId("problog"),
                     "ProbLog",

@@ -86,7 +86,6 @@ include(":full")
 
 // BEGIN 2P-KT GUI REFACTOR MODULES
 include(":gui")
-include(":gui-prolog")
 include(":gui-plp")
 include(":ide-swing")
 include(":ide-plp-swing")
@@ -98,7 +97,6 @@ include(":ide-web")
 mapOf(
     ":repl" to "repl",
     ":gui" to "gui",
-    ":gui-prolog" to "gui-prolog",
     ":gui-plp" to "gui-plp",
     ":ide-swing" to "ide-swing",
     ":ide-plp-swing" to "ide-plp-swing",

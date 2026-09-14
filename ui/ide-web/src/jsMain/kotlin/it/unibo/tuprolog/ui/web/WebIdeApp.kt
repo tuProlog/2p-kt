@@ -35,7 +35,7 @@ fun main() {
             ClassicSolverFactory,
             SolverProfileId("prolog"),
             "Prolog",
-            // OOPLib (gui-prolog's default runtime library alongside IOLib) is reflection-based and throws
+            // OOPLib (solverFactoryProfile's default runtime library alongside IOLib) is reflection-based and throws
             // NotImplementedError on Kotlin/JS as soon as a runtime tries to use it, which previously failed
             // every single resolution in this app regardless of whether the query needed OOP features at all.
             runtimeLibraries = listOf(IOLib),

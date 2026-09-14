@@ -16,7 +16,6 @@ plugins {
 
 dependencies {
     api(project(":gui"))
-    implementation(project(":gui-prolog"))
     implementation(project(":solve-classic"))
     implementation(libs.rsyntaxtextarea)
     implementation(libs.autocomplete)

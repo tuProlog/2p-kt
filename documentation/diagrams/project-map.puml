@@ -47,7 +47,6 @@ folder "io-lib" as IO
 package "ui" {
   folder "repl" <<tool>>
   folder "gui" as GUI
-  folder "gui-prolog" as GP
   folder "gui-plp" as GPLP
   folder "ide-swing" <<tool>> as IDESW
   folder "ide-plp-swing" <<tool>> as IDEPLPSW
@@ -116,25 +115,20 @@ OOP <|-down- "repl"
 IO <|-down- "repl"
 SC <|-down- "repl"
 
-core <|-down- GUI
-PI <|-down- GUI : uses
-
-GUI <|-down- GP
-SPLP <|-down- GP
-IO <|-down- GP
-OOP <|-down- GP
+IO <|-down- GUI
+OOP <|-down- GUI
 
 GUI <|-down- GPLP
 SPLP <|-down- GPLP
 
-GP <|-down- IDESW
+GUI <|-down- IDESW
 SC <|-down- IDESW
 
 GPLP <|-down- IDEPLPSW
 IDESW <|-down- IDEPLPSW
 SPL <|-down- IDEPLPSW
 
-GP <|-down- IDEWEB
+GUI <|-down- IDEWEB
 SC <|-down- IDEWEB
 
 ' -- Tools --

@@ -12,6 +12,7 @@ import it.unibo.tuprolog.ui.gui.model.FeatureValue
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.gui.solver.SolverProfile
+import it.unibo.tuprolog.ui.gui.solver.SolverSessionCreationRequest
 
 private val INSPECTION_CAPABILITIES =
     setOf(
@@ -31,6 +32,7 @@ private val INSPECTION_CAPABILITIES =
  * [NotImplementedError] on Kotlin/JS the moment a runtime tries to use it, which previously failed every single
  * resolution in ide-web regardless of whether the query needed OOP features at all.
  */
+@Suppress("LongParameterList")
 fun solverFactoryProfile(
     factory: SolverFactory,
     id: SolverProfileId,
@@ -38,19 +40,22 @@ fun solverFactoryProfile(
     capabilities: Set<String> = setOf(SolverCapabilities.CANCELLATION),
     solutionFeatures: (Solution) -> Map<FeatureId, Map<String, FeatureValue>> = { emptyMap() },
     runtimeLibraries: List<Library> = listOf(OOPLib, IOLib),
+    // Lets a frontend-specific module (e.g. gui-plp) pick a SolverFactorySession subclass instead of
+    // duplicating this function's capability-merging/operator-computation logic.
+    newSession: (
+        factory: SolverFactory,
+        request: SolverSessionCreationRequest,
+        capabilities: Set<String>,
+        solutionFeatures: (Solution) -> Map<FeatureId, Map<String, FeatureValue>>,
+        runtimeLibraries: List<Library>,
+    ) -> SolverFactorySession = ::SolverFactorySession,
 ): SolverProfile =
     SolverProfile(
         id = id,
         displayName = displayName,
         capabilities = SolverCapabilities(capabilities + INSPECTION_CAPABILITIES),
         factory = { request ->
-            SolverFactorySession(
-                factory,
-                request,
-                capabilities + INSPECTION_CAPABILITIES,
-                solutionFeatures,
-                runtimeLibraries,
-            )
+            newSession(factory, request, capabilities + INSPECTION_CAPABILITIES, solutionFeatures, runtimeLibraries)
         },
         // Cheap and pure (no solver instantiated): a dialect's own operators (e.g. ProbLog's `::`) come from
         // its defaultBuiltins library, same as a freshly built solver would see before any custom `:- op(...)`.

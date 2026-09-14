@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.solve.flags.TrackVariables.ON
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.setProbabilistic
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.identity.SolverSessionId
@@ -28,8 +27,12 @@ import it.unibo.tuprolog.ui.gui.solver.SolverSessionCreationRequest
 import it.unibo.tuprolog.ui.gui.solver.SolverSignal
 import kotlinx.coroutines.yield
 
-/** [SolverSession] backed by any [SolverFactory]; no toolkit dependency. */
-internal class SolverFactorySession(
+/**
+ * [SolverSession] backed by any [SolverFactory]; no toolkit dependency. Open so a frontend-specific module
+ * can customize the [SolveOptions] used for every resolution (see [configureSolveOptions]) without this class
+ * needing to know about any particular solving mode.
+ */
+open class SolverFactorySession(
     private val factory: SolverFactory,
     private val creationRequest: SolverSessionCreationRequest,
     capabilities: Set<String>,
@@ -59,12 +62,7 @@ internal class SolverFactorySession(
             } else {
                 SolveOptions.allLazilyWithTimeout(request.timeout.inWholeMilliseconds)
             }
-        val options =
-            if (SolverCapabilities.PROBABILISTIC_SOLUTIONS in capabilities) {
-                plainOptions.setProbabilistic(true)
-            } else {
-                plainOptions
-            }
+        val options = configureSolveOptions(plainOptions)
         val solutions = solver.solve(query, options).iterator()
         return object : ResolutionCursor {
             override suspend fun next(): ResolutionStep {
@@ -80,6 +78,12 @@ internal class SolverFactorySession(
             override suspend fun cancel() = Unit
         }
     }
+
+    /**
+     * Template-method hook for subclasses to customize the [SolveOptions] used by every resolution (e.g.
+     * enabling probabilistic solving) without this class needing to know about any specific solving mode.
+     */
+    protected open fun configureSolveOptions(options: SolveOptions): SolveOptions = options
 
     override suspend fun reset(): SolverInspectionSnapshot {
         solver = newSolver()

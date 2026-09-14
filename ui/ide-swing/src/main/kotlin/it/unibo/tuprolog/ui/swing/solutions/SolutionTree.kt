@@ -111,7 +111,8 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
     /**
      * A trailing " (p=42%)"-style annotation when the solution carries a numeric `"probability"` entry in its
      * [SolutionPresentation.Yes.metadata] (populated by profiles like PLP's, see `Solution.toStep` in
-     * gui-prolog) - so a probabilistic solver's per-solution probability shows up right next to each solution
+     * :gui's `it.unibo.tuprolog.ui.gui.prolog` package) - so a probabilistic solver's per-solution probability
+     * shows up right next to each solution
      * in this shared tree, without ide-swing needing any PLP-specific dependency to read it.
      */
     private fun probabilityAnnotation(solution: SolutionPresentation.Yes): String =

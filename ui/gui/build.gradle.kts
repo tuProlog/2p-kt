@@ -13,8 +13,14 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.kotlinx.coroutines.core)
+                // api, not implementation: SolveOptions (from :solve) appears in SolverFactorySession's
+                // protected configureSolveOptions(...), so subclassing modules (e.g. gui-plp) need it visible.
+                api(project(":solve"))
                 implementation(project(":core"))
                 implementation(project(":parser-impl"))
+                implementation(project(":parser-theory"))
+                implementation(project(":io-lib"))
+                implementation(project(":oop-lib"))
                 implementation(libs.kotlinx.serialization.core)
             }
         }
@@ -22,6 +28,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)
+                implementation(project(":solve-classic"))
             }
         }
     }

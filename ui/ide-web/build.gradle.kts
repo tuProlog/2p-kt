@@ -36,7 +36,6 @@ kotlin {
         jsMain.dependencies {
             api(project(":gui"))
             implementation(project(":core"))
-            implementation(project(":gui-prolog"))
             implementation(project(":solve-classic"))
             implementation(project(":io-lib"))
             implementation(libs.kotlinx.coroutines.core)

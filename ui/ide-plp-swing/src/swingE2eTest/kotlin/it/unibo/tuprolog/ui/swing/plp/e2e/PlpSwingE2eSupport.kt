@@ -6,7 +6,7 @@ import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.plp.PlpGuiExtension
 import it.unibo.tuprolog.ui.gui.plp.PlpTheoryTemplates
 import it.unibo.tuprolog.ui.gui.plp.plpFeatureState
-import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
+import it.unibo.tuprolog.ui.gui.plp.plpSolverFactoryProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.swing.app.SwingIdeFrame
 import it.unibo.tuprolog.ui.swing.launchSwingIde
@@ -46,7 +46,7 @@ fun launchIdePlpSwing(defaultTimeout: Duration = 5.seconds): FrameFixture {
                 SolverCapabilities.BDD_PRESENTATION,
             )
         val profile =
-            solverFactoryProfile(
+            plpSolverFactoryProfile(
                 Solver.problog,
                 SolverProfileId("problog"),
                 "ProbLog",
