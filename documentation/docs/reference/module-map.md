@@ -1,6 +1,6 @@
 # Module map
 
-2P-Kt is split into 30 Gradle/Kotlin-Multiplatform modules (per `settings.gradle.kts`), each publishing its own
+2P-Kt is split into 33 Gradle/Kotlin-Multiplatform modules (per `settings.gradle.kts`), each publishing its own
 Maven/npm artifact. See [Add 2P-Kt as a dependency](../how-to/add-2pkt-as-a-dependency.md) for how to import one.
 This page documents what each module is for and how they depend on one another.
 
@@ -34,8 +34,11 @@ This page documents what each module is for and how they depend on one another.
 | `repl` | A `clikt`-based command-line REPL/CLI for 2P-Kt. | `core`, `oop-lib`, `io-lib`, `solve-classic`, `parser-theory` |
 | `oop-lib` | A `Library` bridging Prolog terms and JVM/Kotlin objects (reflection-based object/term conversion, method/constructor invocation). | `solve` |
 | `io-lib` | A `Library` implementing the ISO Prolog I/O predicates (streams, `open/3`, `read_term/2`, `write*`, ...). | `solve`, `parser-theory` |
-| `ide-plp` | The probabilistic-logic (ProbLog) extension of the `ide` desktop application, including Graphviz-based rendering of explanations. | `ide`, `solve-problog` |
-| `ide` | A desktop IDE/GUI for editing and running 2P-Kt theories. | `io-lib`, `oop-lib`, `parser-theory`, `solve-classic` |
+| `gui` | The toolkit-neutral GUI model/controller shared by every Prolog-editing frontend: `GuiState`/`GuiController`, syntax diagnostics (`PrologSyntaxAnalyzer`), solver-session management — no widget-toolkit or probabilistic-solving concern baked in. | `solve`, `core`, `parser-impl`, `parser-theory`, `io-lib`, `oop-lib`, `solve-classic` |
+| `gui-plp` | The probabilistic-logic (ProbLog) extension of `gui`'s model/controller: BDD/explanation presentation shared by every PLP-aware frontend. | `gui`, `bdd`, `solve-plp`, `solve-problog`, `parser-theory` |
+| `ide-swing` | The desktop, Swing-based IDE/GUI for editing and running 2P-Kt theories. | `gui`, `solve-classic` |
+| `ide-plp-swing` | The ProbLog-specific extension of the Swing IDE: renders BDDs/explanations as diagrams via PlantUML's Smetana engine (no native Graphviz dependency, hence no GraalVM/JDK-native-library friction). | `gui`, `gui-plp`, `ide-swing`, `solve-problog` |
+| `ide-web` | A browser-based IDE (Kotlin/JS, Ace editor) for editing and running 2P-Kt theories — the JS counterpart of `ide-swing`. | `gui`, `core`, `solve-classic`, `io-lib`, `parser-theory` |
 | `examples` | Runnable sample programs demonstrating the other modules. | `solve-classic`, `solve-concurrent`, `solve-problog`, `dsl-theory`, `parser-theory`, `io-lib`, `oop-lib` |
 | `full` | An umbrella/aggregator module: depends on every other module (except the test-support and `examples` ones), for a single "batteries-included" artifact. | *(all of the above)* |
 

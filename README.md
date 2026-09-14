@@ -51,35 +51,40 @@ by featuring:
 aimed at bridging the logic programming with the Kotlin object-oriented \& functional environment,
   - further details are provided in [this paper](http://ceur-ws.org/Vol-2706/paper14.pdf)
 
-* two parsing modules: one aimed at parsing terms, namely `parser-core`, and the other aimed at parsing theories, 
-namely `parser-theory`,
+* three parsing modules: `parser-impl`, providing the actual (hand-written, ANTLR-free) lexer/parser, and two 
+thin public-facing wrappers around it — `parser-core`, aimed at parsing single terms/clauses, and `parser-theory`, 
+aimed at parsing whole theories (with `op/3` operator-table support),
 
 * two serialisation-related modules: one aimed at (de)serialising terms and clauses, namely `serialize-core`, and the 
 other aimed at  (de)serialising terms theories, namely `serialize-theory`,
 
 * a module for using Prolog via a command-line interface, namely `repl`,
 
-* a module for using Prolog via a graphical user interface (GUI), namely `ide`,
+* a toolkit-neutral GUI model shared by every Prolog-editing frontend, namely `gui`, coming with a probabilistic-logic
+  (PLP) extension, namely `gui-plp`,
 
-* a module for using PLP (and, in particular, ProbLob) via a GUI, namely `ide-plp`.
+* a desktop, Swing-based IDE/GUI for editing and running Prolog theories, namely `ide-swing`, coming with a
+  PLP-specific extension for inspecting ProbLog explanations, namely `ide-plp-swing`,
+
+* a browser-based IDE requiring no installation, namely `ide-web`, built on the very same `gui` model as `ide-swing`.
     
 The modular, unopinionated architecture of 2P-Kt is deliberately aimed at supporting and encouraging extensions towards 
 other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, concurrent LP, etc.
 
 Furthermore, 2P-Kt is developed as in _pure_, __multi-platform__ Kotlin project. 
 This brings two immediate advantages:
-1. it virtually supports several platforms, there including JVM, JS, Android, and Native (even if, currently, only JVM, 
-JS and Android are supported),
+1. it virtually supports several platforms, there including JVM, JS, Android, and Native (even if, currently, only JVM 
+and JS are supported),
 2. it consists of a very minimal and lightweight library, only leveraging on the Kotlin _common_ library, as it cannot 
 commit to any particular platform standard library.
 
 ## Users
-2P-Kt can either be used as a command-line program or as a Kotlin, JVM, Android, or JS library.
+2P-Kt can either be used as a command-line program or as a Kotlin, JVM, or JS library.
 
 The 2P-Kt executables are currently available for download on the [Releases section](https://github.com/tuProlog/2p-kt/releases) of the
 GitHub repository.
 
-The 2P-Kt modules for JVM, Android, or Kotlin users are currently available for import 
+The 2P-Kt modules for JVM or Kotlin users are currently available for import 
 on [Maven Central](https://search.maven.org/search?q=g:it.unibo.tuprolog), under the `it.unibo.tuprolog` group ID (not 
 to be confused with the `it.unibo.alice.tuprolog`, which contains the old Java-based implementation).
 The same modules are available through an _ad-hoc_ [Maven repository](https://github.com/orgs/tuProlog/packages?repo_name=2p-kt) as well, 
@@ -91,32 +96,27 @@ The 2P-Kt modules for JS users, are available for import on NPM, under the [`@tu
 
 #### Graphical User Interface
 
-If you need a GUI for your Prolog interpreter, you can rely on the 2P-Kt IDE which is available on the [Releases section of the 
-GitHub repository](https://github.com/tuProlog/2p-kt/releases). 
+If you need a GUI for your Prolog interpreter, 2P-Kt ships two IDE flavors, both available on the [Releases section 
+of the GitHub repository](https://github.com/tuProlog/2p-kt/releases): a desktop application (Swing-based, `ide-swing`) 
+and a browser-based one requiring no installation (`ide-web`). Both are built on the very same, toolkit-neutral `gui` 
+model, so they offer the same core editing/solving experience.
+
+##### Desktop IDE
 
 The page of the [latest release](https://github.com/tuProlog/2p-kt/releases/latest) of 2P-Kt exposes a number of _Assets_.
 There, the one named:
 ```
-2p-ide-VERSION-redist.jar
+2p-ide-swing-VERSION-redist.jar
 ```
 is the self-contained, executable Jar containing the 2P-Kt-based Prolog interpreter (`VERSION` may vary depending on the
 actual release version).
 
-Platform-specific variants of that Jar are published as well:
-```
-2p-ide-VERSION-redist-win.jar
-2p-ide-VERSION-redist-linux.jar
-2p-ide-VERSION-redist-mac.jar
-2p-ide-VERSION-redist-mac-aarch64.jar
-```
-Users of macOS on Apple Silicon must rely on the `mac-aarch64` variant.
-The all-in-one `2p-ide-VERSION-redist.jar` cannot carry the native libraries of both macOS architectures, as they share
-the very same file names, hence it ships the Intel ones: running it on an ARM JVM fails with an `UnsatisfiedLinkError`
-reporting an incompatible architecture.
+A ProbLog-specific build, bundling the `ide-plp-swing` extension described above (explanations rendered as BDD 
+diagrams), is published the same way, under matching `2p-ide-plp-swing-VERSION-redist*.jar` asset names.
 
 After you download the Jar, you can simply launch it by running:
 ```bash
-java -jar 2p-ide-VERSION-redist.jar
+java -jar 2p-ide-swing-VERSION-redist.jar
 ```
 However, if you have properly configured the JVM on your system, it may be sufficient to just double-click on the 
 aforementioned JAR to start the IDE.
@@ -141,7 +141,7 @@ Avoid this option in case of your query is expected to compute an unlimited amou
 To perform a novel query, they user may either:
 - write the new query in the query text field, and then press <kbd>Enter</kbd>, or
 - click on the <kbd>Stop</kbd> button, write the new query in the query text field, and then press the <kbd>Solve</kbd> 
-  (resp. <kbd>SolveNext</kbd>) button again.
+  (resp. <kbd>Next</kbd>) button again.
   
 The <kbd>Reset</kbd> button cleans up the status of the solver, clearing any side effect possibly provoked by previous
 queries (including assertions, retractions, prints, warnings, loading of libraries, operators, or flags).
@@ -153,6 +153,8 @@ There,
 - the _Stdout_ tab is aimed at showing the Prolog interpreter's standard output stream;
 - the _Stderr_ tab is aimed at showing the Prolog interpreter's standard error stream;
 - the _Warnings_ tab is aimed at showing any warning possibly generated by the Prolog interpreter while computing;
+- the _Diagnostics_ tab lists syntax errors/warnings found in the currently edited theory, each with a one-based 
+  line/column location matching the same underlining and tooltip shown directly in the editor;
 - the _Operators_ tab is aimed at showing the current content Prolog interpreter's operator table;
 - the _Flags_ tab is aimed showing the actual values of all the flags currently defined with the Prolog interpreter;
 - the _Libraries_ tab is aimed at letting the user inspect the currently loaded libraries and the predicates, operators, and functions they import;
@@ -160,7 +162,31 @@ There,
 
 Any of these tabs may be automatically updated after a solution to some query is computed. 
 Whenever something changes w.r.t. the previous content of the tab, an asterisk will appear close to the tab name, to notify an update in that tab.
-  
+
+Finally, the status bar at the bottom of the window shows the caret's current line/column (one-based, like every 
+other location shown by the IDE), next to the current resolution status.
+
+##### Web IDE
+
+If you would rather not install anything, the same editing/solving experience is available straight from a browser.
+
+Up-to-date Web IDE is available at <https://tuprolog.github.io/2p-kt/web-ide/>
+
+If you want to deploy the Web IDE yourself, 
+the page of the [latest release](https://github.com/tuProlog/2p-kt/releases/latest) of 2P-Kt exposes, among its 
+_Assets_, one named:
+```
+ide-web-VERSION.zip
+```
+Unzip it, then serve the resulting folder with any local static file server (its own end-to-end tests do the same) 
+and open `index.html` in a modern browser. Editing, syntax highlighting, diagnostics, and query solving all work the 
+same way as in the desktop IDE. 
+
+One notable difference among Web and Swing IDEs is how pages are stored: <kbd>New</kbd>/<kbd>Open...</kbd>/
+<kbd>Save</kbd>/<kbd>Save as...</kbd> manage pages persisted in the browser's own local storage (so they survive a 
+reload but do not touch the file system), while <kbd>Upload...</kbd>/<kbd>Download</kbd> are the ones that read/write 
+an actual theory file on disk.
+
 #### Command Line Interface
 
 If you just need a command-line Prolog interpreter, you can rely on the 2P-Kt REPL which is available on the [Releases section of the 
@@ -197,16 +223,16 @@ java -jar 2p-repl-VERSION-redist.jar --help
 ```
 This should display a message similar to the following one:
 ```
-Usage: java -jar 2p-repl.jar [OPTIONS] COMMAND [ARGS]...
+Usage: java -jar 2p-repl.jar [<options>] <command> [<args>]...
 
   Start a Prolog Read-Eval-Print loop
 
 Options:
-  -T, --theory TEXT  Path of theory file to be loaded
-  -t, --timeout INT  Maximum amount of time for computing a solution (default:
-                     1000 ms)
-  --oop              Loads the OOP library
-  -h, --help         Show this message and exit
+  -T, --theory=<text>  Path of theory file to be loaded
+  -t, --timeout=<int>  Maximum amount of time for computing a solution
+                       (default: 1000 ms)
+  --oop                Loads the OOP library
+  -h, --help           Show this message and exit
 
 Commands:
   solve  Compute a particular query and then terminate
@@ -253,7 +279,7 @@ you simply need to declare the corresponding dependency in your `pom.xml` file:
  ```xml
 <dependency>
     <groupId>it.unibo.tuprolog</groupId>
-    <artifactId>2P_MODULE</artifactId>
+    <artifactId>2P_MODULE-jvm</artifactId>
     <version>2P_VERSION</version>
 </dependency>
  ``` 
@@ -286,23 +312,28 @@ Remember to add the `-jvm` suffix to `2P_MODULE` in case your project only targe
 ### NPM users (JavaScript-only projects)
 
 The 2P-Kt software is available as a JavaScript library as well, on NPM, under the  [`@tuprolog` organization](https://www.npmjs.com/org/tuprolog).
-To import the `2P_MODULE` into your `package.json`, it is sufficient to declare your dependency as follows:
+Because of how the Kotlin-to-JS compiler works,
+there's no sense in importing one module selectively.
+So if you want to use 2P-Kt in JavaScript, better would be for you to use the `@tuprolog/full` project as a dependency. 
+To import the `@tuprolog/full` module into your `package.json`, it is sufficient to declare your dependency as follows:
 ```json
 {
   "dependencies": {
-    "@tuprolog/2P_MODULE": "^2P_MODULE_VERSION"
+    "@tuprolog/full": "^2P_MODULE_VERSION"
   }
 }
 ```
-Notice that the JS dependencies of `2P_MODULE` should be automatically imported. 
 
 ## Developers
 
 Working with the 2P-Kt codebase requires a number of tools to be installed and properly configured on your system:
-- JDK 11+ (please ensure the `JAVA_HOME` environment variable is properly) configured
-- Kotlin 1.5.10+
-- Gradle 7.1+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
+- JDK 17+ (please ensure the `JAVA_HOME` environment variable is properly configured)
+- Kotlin 2.4+
+- Gradle 9.7+ (the `./gradlew` wrapper already pins this version, so a separately installed Gradle is optional)
 - Git 2.20+
+
+> `detekt` (the static analyzer run by `./gradlew check`) is known to crash on very recent JDKs (e.g. JDK 26); if it 
+> fails for no apparent reason, retry with `JAVA_HOME` pointed at a JDK 21-23 instead.
 
 ### Develop 2P-Kt with IntelliJ Idea
 
@@ -319,32 +350,14 @@ To open such dialog, use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, then sea
 
 1. Clone this repository in a folder of your preference using `git clone` appropriately
 
-0. Open IntellJ Idea. 
-If a project opens automatically, select "Close project". 
-You should be on the welcome screen of IntelliJ idea, with an aspect similar to this image: 
-![IntelliJ Welcome Screen](https://www.jetbrains.com/help/img/idea/2018.2/ideaWelcomeScreen.png)
+0. Open IntelliJ Idea, then <kbd>File</kbd> > <kbd>Open...</kbd> and select the `2p-kt` folder you just cloned 
+(assuming you cloned without specifying a different folder name). Modern IntelliJ versions auto-detect the Gradle 
+build and import it, no separate "Import Project" wizard needed.
 
-0. Select "Import Project"
-
-0. Navigate your file system and find the folder where you cloned the repository. 
-**Do not select it**. 
-Open the folder, and you should find a lowercase `2p-in-kotlin` folder. 
-That is the correct project folder, created by `git` in case you cloned without specifying a different folder name. 
-Once the correct folder has been selected, click <kbd>Ok</kbd>
-
-0. Select "Import Project from external model"
-
-0. Make sure "Gradle" is selected as external model tool
-
-0. Click <kbd>Finish</kbd>
-
-0. If prompted to override any `.idea` file, try to answer <kbd>No</kbd>. It's possible that IntelliJ refuses to proceed, in which case click <kbd>Finish</kbd> again, then select <kbd>Yes</kbd>
-
-0. A dialog stating that "IntelliJ IDEA found a Gradle build script" may appear, in such case answer <kbd>Import Gradle Project</kbd>
-
-0. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly:
-
-0. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 'gradle-wrapper.properties file'. Enabling auto-import is also recommended
+0. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of 
+dependencies. Should the synchronization fail, make sure the IDE's Gradle is configured correctly: in 
+'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 
+'gradle-wrapper.properties file'. Enabling auto-import is also recommended
 
 ### Developing the project
 Contributions to this project are welcome. Just some rules:
@@ -377,8 +390,10 @@ The 2P project leverages on [Semantic Versioning](https://semver.org/) (SemVer, 
 In particular, SemVer is enforced by the current Gradle configuration, which features [DanySK](https://github.com/DanySK)'s [Git sensitive SemVer Gradle Plugin](https://github.com/DanySK/git-sensitive-semantic-versioning-gradle-plugin).
 This implies it is strictly forbidden in this project to create tags whose label is not a valid SemVar string.
 
-Notice that the 2P project is still in its initial development stage---as proven by the major number equal to `0` in its version string.
-According to SemVer, this implies anything _may_ change at any time, as the public API _should not_ be considered stable.
+Notice that the 2P project's version has reached major `1` (e.g. `1.5.1`), meaning it is no longer in the initial-development 
+stage of SemVer (major `0`). 
+According to SemVer, this implies the public API should not undergo breaking changes 
+without a major version bump; minor and patch releases should remain backward-compatible.
 
 #### Issue tracking
 

@@ -4,15 +4,15 @@ How to pull one or more 2P-Kt modules into your own Gradle, Maven, or npm projec
 
 2P-Kt is published under the Maven group ID `it.unibo.tuprolog` (JVM/Kotlin modules, via Maven Central and
 GitHub Packages) and under the [`@tuprolog` npm organization](https://www.npmjs.com/org/tuprolog) (JS modules).
-Every module name below (`core`, `solve-classic`, `parser-impl`, ...) maps directly to an artifact ID / npm
-package name.
+Every module name below (`core`, `solve-classic`, `parser-impl`, ...) maps directly to a Maven/Gradle artifact
+ID. npm is the one exception — see step 3 below.
 
 ## 1. Pick the module(s) you need
 
-2P-Kt is split into ~30 incrementally-dependent modules. The full, currently-published set is:
+2P-Kt is split into ~33 incrementally-dependent modules. The full, currently-published set is:
 
 ```kotlin
---8<-- "settings.gradle.kts:58:87"
+--8<-- "settings.gradle.kts:58:93"
 ```
 
 Dependencies between modules are resolved transitively: importing `theory` automatically pulls in `unify` and
@@ -25,13 +25,13 @@ highest-level module that covers your use case — e.g. `solve-classic` for a cl
 **Gradle (Kotlin DSL):**
 
 ```kotlin
---8<-- "README.md:229:233"
+--8<-- "README.md:256:260"
 ```
 
 **Maven:**
 
 ```xml
---8<-- "README.md:264:269"
+--8<-- "README.md:291:296"
 ```
 
 `mavenCentral()` alone is enough for stable releases; add the GitHub Packages repository too if you need a
@@ -47,19 +47,21 @@ Replace `2P_MODULE` with the module name from step 1, and `2P_VERSION` with the 
 **Gradle (Kotlin DSL):**
 
 ```kotlin
---8<-- "README.md:219:222"
+--8<-- "README.md:246:249"
 ```
 
 **Maven:**
 
 ```xml
---8<-- "README.md:253:257"
+--8<-- "README.md:280:284"
 ```
 
-**npm:**
+**npm:** because of how the Kotlin/JS compiler works, splitting the published npm packages per-module the way the
+JVM/Maven artifacts are doesn't make sense; use the `@tuprolog/full` package regardless of which module(s) you
+actually need:
 
 ```json
---8<-- "README.md:290:294"
+--8<-- "README.md:320:324"
 ```
 
 ## 4. JVM-only projects: use the `-jvm` suffix
@@ -70,7 +72,7 @@ to the artifact ID to avoid pulling in the multiplatform metadata artifact:
 **Gradle (Kotlin DSL):**
 
 ```kotlin
---8<-- "README.md:242:245"
+--8<-- "README.md:269:272"
 ```
 
 **Maven:**

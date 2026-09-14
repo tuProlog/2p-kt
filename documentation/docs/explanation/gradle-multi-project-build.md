@@ -3,7 +3,7 @@
 Open `settings.gradle.kts` and you will find over thirty `include(...)` calls, one per Gradle sub-project:
 
 ```kotlin
---8<-- "settings.gradle.kts:57:87"
+--8<-- "settings.gradle.kts:57:93"
 ```
 
 That is a lot of modules for one library. This page explains the tradeoff behind that choice, and how the
@@ -48,7 +48,7 @@ That "something" is a convention-plugin suite, `io.github.gciatto.kt-mpp`, appli
 `build.gradle.kts` via a small DSL block:
 
 ```kotlin
---8<-- "build.gradle.kts:18:56"
+--8<-- "build.gradle.kts:18:61"
 ```
 
 Instead of every module's `build.gradle.kts` repeating "this is a Kotlin-multiplatform project, wire up the
@@ -57,12 +57,17 @@ Maven", `multiProjectHelper` defines a handful of **project templates** once (`k
 `jvmProjectTemplate`, `jsProjectTemplate`, `otherProjectTemplate`, each a set of plugin IDs) and applies the
 right template to every included project automatically, based on a project's declared kind
 (`defaultProjectType = ProjectType.KOTLIN`, with explicit overrides via `jvmProjects(...)` for the JVM-only
-`:examples`/`:ide`/`:ide-plp` and `otherProjects(...)` for the non-Kotlin `:documentation` module). Individual
-modules' `build.gradle.kts` files stay close to empty — they declare their own inter-module dependencies and
-little else — because the shared concerns (linting, docs, versioning, bug-finding, multiplatform target
-wiring) are template-level decisions made exactly once, at the root.
+`:examples`/`:ide-swing`/`:ide-plp-swing` and `otherProjects(...)` for the non-Kotlin `:documentation` module,
+plus `:ide-web`). `:ide-web` lands in `otherProjects` too, even though it *is* Kotlin — it configures its own
+`kotlin.multiplatform` plugin block by hand (a JS-only target, `js { browser() }`) instead of taking
+`jsProjectTemplate`'s, because falling back onto the default Kotlin project template once silently re-added a
+second, conflicting multiplatform configuration that built without error but produced a broken production
+webpack bundle at runtime (see the comment at the `otherProjects(...)` call site). Individual modules'
+`build.gradle.kts` files stay close to empty — they declare their own inter-module dependencies and little
+else — because the shared concerns (linting, docs, versioning, bug-finding, multiplatform target wiring) are
+template-level decisions made exactly once, at the root.
 
-This is the actual answer to "why doesn't a 30-module build fall apart under its own configuration weight": the
+This is the actual answer to "why doesn't a 33-module build fall apart under its own configuration weight": the
 module count buys the dependency-isolation and alternative-implementation benefits above, and the templated,
 one-root-block plugin setup is what keeps the *per-module* maintenance cost close to what a single-module build
 would have.

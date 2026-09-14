@@ -43,9 +43,14 @@ platform-specific by necessity.
 
 It is easy to over-state Kotlin Multiplatform's reach in the abstract, so it is worth being precise about
 what 2P-Kt actually builds for today, per the project's own Gradle configuration: **JVM and JavaScript**.
-Most modules opt into both automatically; a handful of modules are deliberately JVM-only — `:ide`,
-`:ide-plp`, and `:examples` — because they depend on JavaFX for their GUI, which has no JS or other-platform
-equivalent. Everything else in the ecosystem, including `:core`, `:unify`, `:theory`, and the `:solve-*`
+Most modules opt into both automatically; a handful of modules are deliberately JVM-only — `:ide-swing`,
+`:ide-plp-swing`, and `:examples` — the first two because they depend on Swing for their desktop GUI, which
+has no JS or other-platform equivalent, the third because it is a plain sample-program module with no reason
+to target anything else. The GUI *model* itself (`:gui`, `:gui-plp`) is deliberately kept as common,
+multiplatform code rather than folded into `:ide-swing`, precisely so a JS frontend could reuse it without
+duplicating any state/controller logic: `:ide-web` is a single-target (JS-only: `js { browser() }`, no
+`jvm()`) multiplatform module, a browser-based IDE built on that same shared model — the JS counterpart of
+`:ide-swing`. Everything else in the ecosystem, including `:core`, `:unify`, `:theory`, and the `:solve-*`
 family, is common code compiled for both targets.
 
 Earlier design notes for this project (circa 2021) described Android and Kotlin/Native support as open
