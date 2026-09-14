@@ -1,3 +1,17 @@
+## [2.0.1](https://github.com/tuProlog/2p-kt/compare/2.0.0...2.0.1) (2026-09-14)
+
+### Bug Fixes
+
+* **docs:** resolve dokka unresolved-link warnings in KDoc comments ([55842e5](https://github.com/tuProlog/2p-kt/commit/55842e550b9d01382253e82303e48bbbe690eaaf))
+
+### Documentation
+
+* add Web IDE documentation, link it site-wide, fix npm package names ([8ef17a6](https://github.com/tuProlog/2p-kt/commit/8ef17a628ffc6c7d6b880eba5a5bb6c05890804d))
+
+### General maintenance
+
+* **docs:** update readme and docs ([311f5ba](https://github.com/tuProlog/2p-kt/commit/311f5ba592cc838b725865e280441622d6dddfe8))
+
 ## [2.0.0](https://github.com/tuProlog/2p-kt/compare/1.5.1...2.0.0) (2026-09-14)
 
 ### ⚠ BREAKING CHANGES
