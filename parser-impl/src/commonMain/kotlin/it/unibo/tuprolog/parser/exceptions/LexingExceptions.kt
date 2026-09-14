@@ -33,7 +33,7 @@ class UnexpectedCharacterException(
         source,
         span,
         offendingText,
-        message = "Unexpected character '$offendingText' at ${span.start.line}:${span.start.column}",
+        message = "Unexpected character '$offendingText' at ${span.start.line + 1}:${span.start.column + 1}",
     )
 
 /** Reports a single- or double-quoted literal that reaches EOF without its closing quote. */
@@ -47,7 +47,7 @@ class UnterminatedQuotedLiteralException(
         span,
         source.text(span),
         setOf(SyntaxExpectation("closing $quote")),
-        "Unterminated quoted literal beginning at ${span.start.line}:${span.start.column}",
+        "Unterminated quoted literal beginning at ${span.start.line + 1}:${span.start.column + 1}",
     )
 
 /** Reports a block comment that reaches EOF without a matching closing delimiter. */
@@ -60,7 +60,7 @@ class UnterminatedBlockCommentException(
         span,
         source.text(span),
         setOf(SyntaxExpectation("*/")),
-        "Unterminated block comment beginning at ${span.start.line}:${span.start.column}",
+        "Unterminated block comment beginning at ${span.start.line + 1}:${span.start.column + 1}",
     )
 
 /** Reports an unsupported, incomplete, or out-of-range escape sequence in quoted text. */
@@ -74,7 +74,7 @@ class InvalidEscapeException(
         source,
         span,
         offendingText,
-        message = "Invalid escape '$offendingText' at ${span.start.line}:${span.start.column}: $detail",
+        message = "Invalid escape '$offendingText' at ${span.start.line + 1}:${span.start.column + 1}: $detail",
     )
 
 /** Reports a numeric spelling whose radix, digits, exponent, or character code is incomplete. */
@@ -88,7 +88,8 @@ class MalformedNumericLiteralException(
         source,
         span,
         offendingText,
-        message = "Malformed numeric literal '$offendingText' at ${span.start.line}:${span.start.column}: $detail",
+        message =
+            "Malformed numeric literal '$offendingText' at ${span.start.line + 1}:${span.start.column + 1}: $detail",
     )
 
 /**
@@ -122,6 +123,6 @@ class SourceReadException(
         source,
         span,
         null,
-        message = "Could not read source at ${span.start.line}:${span.start.column}: ${cause.message}",
+        message = "Could not read source at ${span.start.line + 1}:${span.start.column + 1}: ${cause.message}",
         cause = cause,
     )

@@ -94,6 +94,14 @@ internal class AceEditorView(
         editor.session.on("change") { callback() }
     }
 
+    /** [callback] receives the one-based line and column of the caret, converted from Ace's zero-based ones. */
+    fun onCursorChange(callback: (line: Int, column: Int) -> Unit) {
+        editor.on("changeSelection") {
+            val position = editor.getCursorPosition()
+            callback((position.row as Int) + 1, (position.column as Int) + 1)
+        }
+    }
+
     fun resize() = editor.resize(true)
 
     /**

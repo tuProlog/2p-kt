@@ -185,7 +185,7 @@ async function pollUntil(get, predicate, timeoutMs, intervalMs = 100) {
 
 const SHELL_IDS = [
   "btn-new", "templates-select", "btn-open", "btn-save", "btn-save-as", "btn-close-page",
-  "status-label", "tab-bar", "query-input", "solve-button", "solve10-button", "solve-all-button", "stop-button",
+  "status-label", "caret-label", "tab-bar", "query-input", "solve-button", "solve10-button", "solve-all-button", "stop-button",
   "reset-button", "timeout-input", "editor", "side", "side-tab-bar",
 ];
 
@@ -580,6 +580,93 @@ const SCENARIOS = [
 
       await send("Emulation.setEmulatedMedia", { features: [] });
       return failures;
+    },
+  },
+  {
+    // "`" is not a layout, quote, digit, letter, bracket, or graphic character in this grammar (see
+    // IncrementalTokenScanner.isGraphicCharacter), so it deterministically triggers an UnexpectedCharacterException
+    // at a known, single-character position: line 2 (0-based 1), column 1 (0-based 0) in "a.\n`".
+    name: "the caret label reports a one-based line and column",
+    async run({ evalJs }) {
+      await evalJs(`
+        (function() {
+          const textarea = document.querySelector('textarea.ace_text-input');
+          textarea.focus();
+          document.execCommand('selectAll');
+          document.execCommand('delete');
+          for (const ch of "a.\\nb.\\nc.") document.execCommand('insertText', false, ch);
+        })()
+      `);
+      const label = await pollUntil(
+        () => evalJs(`document.getElementById('caret-label').textContent`),
+        (v) => v === "Line 3, column 3",
+        3000,
+      );
+      return label === "Line 3, column 3"
+        ? []
+        : [`expected caret label "Line 3, column 3" after typing, got: ${JSON.stringify(label)}`];
+    },
+  },
+  {
+    name: "a syntax error is reported with a one-based line and column in the Diagnostics panel",
+    async run({ evalJs }) {
+      const typeAndRead = async () => {
+        await evalJs(`
+          (function() {
+            const textarea = document.querySelector('textarea.ace_text-input');
+            textarea.focus();
+            document.execCommand('selectAll');
+            document.execCommand('delete');
+            for (const ch of "a.\\n" + String.fromCharCode(96)) document.execCommand('insertText', false, ch);
+          })()
+        `);
+        return evalJs(`
+          (function() {
+            const tab = Array.from(document.querySelectorAll('.side-tab')).find(t => t.textContent === 'Diagnostics');
+            tab.click();
+            const li = document.querySelector('.side-content li.diagnostic');
+            return li ? li.textContent : null;
+          })()
+        `);
+      };
+      const diagnosticsText = await pollUntil(typeAndRead, (v) => v !== null, 8000, 300);
+      return diagnosticsText?.includes("line 2, column 1")
+        ? []
+        : [`expected a one-based location in the diagnostic, got: ${JSON.stringify(diagnosticsText)}`];
+    },
+  },
+  {
+    name: "a broken page fails to solve with a one-based location in the failure message",
+    async run({ evalJs }) {
+      const typeAndSolve = async () => {
+        await evalJs(`
+          (function() {
+            const textarea = document.querySelector('textarea.ace_text-input');
+            textarea.focus();
+            document.execCommand('selectAll');
+            document.execCommand('delete');
+            for (const ch of "a.\\n" + String.fromCharCode(96)) document.execCommand('insertText', false, ch);
+            const queryInput = document.getElementById('query-input');
+            queryInput.focus();
+            queryInput.value = 'true';
+            queryInput.dispatchEvent(new Event('input', { bubbles: true }));
+          })()
+        `);
+        await evalJs(`document.getElementById('solve-button').click()`);
+        await pollUntil(
+          () => evalJs(`document.getElementById('status-label').textContent`),
+          (v) => /FAILED|COMPLETED|RUNNING|AWAITING/.test(v),
+          4000,
+        );
+        return evalJs(`document.getElementById('status-label').textContent`);
+      };
+      // Typing/query changes dispatch asynchronously (fire-and-forget coroutines), same race as the
+      // "solving a query with multiple facts" scenario above; retrying the whole idempotent sequence
+      // self-heals it instead of guessing a fixed delay is enough for it to land.
+      const status = await pollUntil(typeAndSolve, (v) => v.includes("2:1"), 10_000, 300);
+      return status.includes("2:1")
+        ? []
+        : [`expected a failure status containing a one-based location "2:1", got: ${JSON.stringify(status)}`];
     },
   },
 ];

@@ -122,7 +122,7 @@ class SwingIdeFrame(
     private val resetButton = JButton("Reset", Icons.RESET).apply { name = "resetButton" }
     private val timeoutField = JTextField("5s", TIMEOUT_FIELD_COLUMNS).apply { name = "timeoutField" }
     private val statusLabel = JLabel("Idle").apply { name = "statusLabel" }
-    private val caretLabel = JLabel("Line 0, column 0", SwingConstants.RIGHT).apply { name = "caretLabel" }
+    private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT).apply { name = "caretLabel" }
 
     private val solutionsTree = SolutionTree().apply { name = "solutionsTree" }
     private val clearSolutionsButton = JButton("Clear solutions", Icons.CLEAR).apply { name = "clearSolutionsButton" }
@@ -1071,7 +1071,7 @@ class SwingIdeFrame(
         val offset = max(0, event.dot)
         val line = runCatching { area.getLineOfOffset(offset) }.getOrDefault(0)
         val column = runCatching { offset - area.getLineStartOffset(line) }.getOrDefault(0)
-        caretLabel.text = "Line $line, column $column"
+        caretLabel.text = "Line ${line + 1}, column ${column + 1}"
     }
 
     private fun selectedPage(): PageState? {

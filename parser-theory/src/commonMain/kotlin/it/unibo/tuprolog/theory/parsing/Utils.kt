@@ -25,7 +25,7 @@ internal fun parseClausesLazily(session: PrologParseSession): Sequence<Clause> =
                 val visitor = PrologTermParserVisitor(scope)
                 val clause = clauseAST.root.accept(visitor)
                 with(clauseAST.source) {
-                    val clause = clause.toClause(id, start.line, start.column)
+                    val clause = clause.toClause(id, start.line + 1, start.column + 1)
                     yield(clause)
                     for (goal in clause.bodyItems.filterIsInstance<Struct>()) {
                         for (operator in Operator.manyFromTerm(goal)) {

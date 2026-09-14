@@ -67,6 +67,9 @@ html, body {
     color: var(--muted);
     font-size: 12px;
 }
+.status + .status {
+    margin-left: 12px;
+}
 .tab-bar {
     display: flex;
     gap: 2px;

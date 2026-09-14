@@ -50,6 +50,7 @@ internal class WebIdeView(
     // index.html rather than built here; only elements whose shape depends on GuiState (the document tab
     // list, per-panel side tabs, panel contents, dialogs, ...) are still constructed in Kotlin.
     private val statusLabel = byId<HTMLElement>("status-label")
+    private val caretLabel = byId<HTMLElement>("caret-label")
     private val tabBar = byId<HTMLElement>("tab-bar")
     private val editorContainer = byId<HTMLElement>("editor")
     private val editor = AceEditorView(editorContainer)
@@ -308,6 +309,9 @@ internal class WebIdeView(
 
     @Suppress("LongMethod", "CyclomaticComplexMethod")
     private fun installListeners() {
+        editor.onCursorChange { line, column ->
+            caretLabel.textContent = "Line $line, column $column"
+        }
         editor.onChange {
             if (rendering) return@onChange
             val page = selectedPage() ?: return@onChange

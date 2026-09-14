@@ -9,6 +9,8 @@ external class AceEditor {
 
     fun getValue(): String
 
+    fun getCursorPosition(): dynamic
+
     fun setValue(
         text: String,
         cursorPos: Int = definedExternally,
