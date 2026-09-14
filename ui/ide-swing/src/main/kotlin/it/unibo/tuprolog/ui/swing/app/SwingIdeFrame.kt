@@ -51,6 +51,7 @@ import java.awt.event.WindowEvent
 import java.net.URI
 import javax.swing.AbstractAction
 import javax.swing.BorderFactory
+import javax.swing.Box
 import javax.swing.ButtonGroup
 import javax.swing.Icon
 import javax.swing.JButton
@@ -219,14 +220,10 @@ class SwingIdeFrame(
     }
 
     private fun createLowerPanel(): JComponent {
-        val controlHeight = maxOf(timeoutField.preferredSize.height, solveButton.preferredSize.height)
-        timeoutField.preferredSize = Dimension(TIMEOUT_FIELD_WIDTH, controlHeight)
-        queryField.preferredSize = Dimension(queryField.preferredSize.width, controlHeight)
-        listOf(solveButton, solve10Button, solve100Button, solveAllButton, stopButton, resetButton).forEach {
-            // Only the height is forced (for row alignment); the width is left to Swing's own icon+caption
-            // measurement, since a fixed width narrower than that would silently clip the button's caption.
-            it.preferredSize = Dimension(it.preferredSize.width, controlHeight)
-        }
+        // No component here gets an explicit preferredSize: BorderLayout already stretches WEST/CENTER/EAST
+        // to one shared row height computed from their natural (current look-and-feel) preferred heights, so
+        // a hardcoded size - unlike this - would go stale the moment the look-and-feel changes (see the
+        // "Look and Feel" menu), clipping icons/captions instead of tracking the new font/padding.
         val queryRow =
             JPanel(BorderLayout(QUERY_ROW_HGAP, 0)).apply {
                 border =
@@ -238,19 +235,7 @@ class SwingIdeFrame(
                     )
                 add(JLabel("?-"), BorderLayout.WEST)
                 add(queryField, BorderLayout.CENTER)
-                add(
-                    JPanel(FlowLayout(FlowLayout.RIGHT, QUERY_BUTTONS_HGAP, 0)).apply {
-                        add(solveButton)
-                        add(solve10Button)
-                        add(solve100Button)
-                        add(solveAllButton)
-                        add(stopButton)
-                        add(resetButton)
-                        add(JLabel("Timeout"))
-                        add(timeoutField)
-                    },
-                    BorderLayout.EAST,
-                )
+                add(queryControlsBox(), BorderLayout.EAST)
             }
 
         addSolutionsTab()
@@ -278,6 +263,19 @@ class SwingIdeFrame(
             add(lowerTabs, BorderLayout.CENTER)
         }
     }
+
+    /** Horizontal stack of the solve controls, laid out left to right at their natural (current L&F) size. */
+    private fun queryControlsBox(): JComponent =
+        Box.createHorizontalBox().apply {
+            listOf(solveButton, solve10Button, solve100Button, solveAllButton, stopButton, resetButton)
+                .forEach {
+                    add(it)
+                    add(Box.createHorizontalStrut(QUERY_BUTTONS_HGAP))
+                }
+            add(JLabel("Timeout"))
+            add(Box.createHorizontalStrut(QUERY_BUTTONS_HGAP))
+            add(timeoutField)
+        }
 
     private fun addSolutionsTab() {
         val index = lowerTabs.tabCount
@@ -1267,7 +1265,6 @@ class SwingIdeFrame(
         private const val WORKSPACE_SPLIT_RESIZE_WEIGHT = 0.58
         private const val WORKSPACE_SPLIT_DIVIDER_LOCATION = 450
         private const val TIMEOUT_FIELD_COLUMNS = 8
-        private const val TIMEOUT_FIELD_WIDTH = 100
         private const val QUERY_ROW_HGAP = 8
         private const val QUERY_ROW_BORDER_INSET = 6
         private const val QUERY_BUTTONS_HGAP = 5
