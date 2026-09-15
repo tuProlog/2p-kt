@@ -1,3 +1,9 @@
+## [2.0.3](https://github.com/tuProlog/2p-kt/compare/2.0.2...2.0.3) (2026-09-15)
+
+### Bug Fixes
+
+* **ide-web:** make the layout responsive down to mobile widths ([6508262](https://github.com/tuProlog/2p-kt/commit/6508262ae51a6d95bdd89a5a095b206026352905))
+
 ## [2.0.2](https://github.com/tuProlog/2p-kt/compare/2.0.1...2.0.2) (2026-09-15)
 
 ### Bug Fixes
