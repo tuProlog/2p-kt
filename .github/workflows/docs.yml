@@ -35,7 +35,7 @@ jobs:
       - name: Install MkDocs Material
         run: pip install mkdocs-material
       - name: Build documentation site
-        uses: DanySK/build-check-deploy-gradle-action@4.0.45
+        uses: DanySK/build-check-deploy-gradle-action@4.0.46
         with:
           retries-on-failure: '2'
           build-command: ./gradlew ${LAST_VERSION:+-PforceVersion=$LAST_VERSION} :documentation:assembleSite
