@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/tuProlog/2p-kt/compare/2.0.1...2.0.2) (2026-09-15)
+
+### Bug Fixes
+
+* **deps:** update dependency com.fifesoft:rsyntaxtextarea to v3.6.3 ([#966](https://github.com/tuProlog/2p-kt/issues/966)) ([6eebba3](https://github.com/tuProlog/2p-kt/commit/6eebba35c64ac182238aeb855dbb09703718967d))
+* **deps:** update dependency com.fifesoft:rsyntaxtextarea to v4 ([#969](https://github.com/tuProlog/2p-kt/issues/969)) ([d5b6521](https://github.com/tuProlog/2p-kt/commit/d5b6521e8deae891791e0b86f0b83e2cdee44ad2))
+
 ## [2.0.1](https://github.com/tuProlog/2p-kt/compare/2.0.0...2.0.1) (2026-09-14)
 
 ### Bug Fixes
