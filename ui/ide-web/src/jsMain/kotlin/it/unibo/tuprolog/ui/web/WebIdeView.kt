@@ -228,14 +228,20 @@ internal class WebIdeView(
         }
     }
 
-    /** Lets the user drag #split-handle to resize the editor/side-panel split, clamped to keep both usable. */
+    /**
+     * Lets the user drag #split-handle to resize the editor/side-panel split, clamped to keep both usable.
+     * Listens for Pointer Events rather than mouse-only ones, so the same code drives a touchscreen drag (e.g.
+     * a tablet in landscape, above the mobile breakpoint where the handle is hidden entirely, see ide-web.css)
+     * as well as a mouse one; `MouseEvent` is still the right cast here since `PointerEvent` extends it and
+     * carries the same `clientX`, and this project's `org.w3c.dom` bindings don't expose `PointerEvent` itself.
+     */
     private fun installSplitResizeHandle() {
         val handle = byId<HTMLElement>("split-handle")
         val splitContainer = handle.parentElement as HTMLElement
         var dragging = false
 
         handle.addEventListener(
-            "mousedown",
+            "pointerdown",
             { event: Event ->
                 event.preventDefault()
                 dragging = true
@@ -243,7 +249,7 @@ internal class WebIdeView(
             },
         )
         kotlinx.browser.window.addEventListener(
-            "mousemove",
+            "pointermove",
             { event: Event ->
                 if (!dragging) return@addEventListener
                 val clientX = (event as MouseEvent).clientX
@@ -256,7 +262,7 @@ internal class WebIdeView(
             },
         )
         kotlinx.browser.window.addEventListener(
-            "mouseup",
+            "pointerup",
             { _: Event ->
                 if (!dragging) return@addEventListener
                 dragging = false

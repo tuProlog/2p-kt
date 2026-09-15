@@ -47,6 +47,7 @@ html, body {
 }
 .menu-bar {
     display: flex;
+    flex-wrap: wrap;
     gap: 4px;
     padding: 4px 8px;
     background: var(--bg-panel);
@@ -103,6 +104,7 @@ html, body {
 }
 .query-bar {
     display: flex;
+    flex-wrap: wrap;
     gap: 4px;
     padding: 4px;
     border-bottom: 1px solid var(--border);
@@ -112,7 +114,7 @@ html, body {
     font-family: monospace;
 }
 #query-input {
-    flex: 1;
+    flex: 1 1 160px;
 }
 #timeout-input {
     width: 6em;
@@ -134,6 +136,8 @@ html, body {
     background: var(--bg-panel);
     border-left: 1px solid var(--border);
     border-right: 1px solid var(--border);
+    /* Without this, a touch-drag on the handle also scrolls/pans the page before pointermove ever fires. */
+    touch-action: none;
 }
 .split-handle:hover, .split-handle.dragging {
     background: var(--accent);
@@ -245,4 +249,31 @@ ul.solutions .query {
 }
 .dialog li:hover {
     background: var(--bg-panel);
+}
+
+/* Below this width, a 320px-min side panel next to the editor leaves neither one usable, so the side panel
+   drops below the editor instead of beside it; dragging #split-handle to resize a *width* stops making sense
+   in that layout, so it's hidden and the side panel gets a fixed, independently-scrollable height instead. */
+@media (max-width: 820px) {
+    .split {
+        flex-direction: column;
+    }
+    #editor {
+        min-height: 160px;
+    }
+    .split-handle {
+        display: none;
+    }
+    .side {
+        /* !important: overrides the inline px width the (desktop-only) drag handle may have left behind
+           before the viewport shrank below this breakpoint. */
+        width: 100% !important;
+        min-width: 0;
+        height: 40vh;
+        border-top: 1px solid var(--border);
+    }
+    .dialog {
+        min-width: 0;
+        width: 92vw;
+    }
 }

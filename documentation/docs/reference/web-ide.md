@@ -17,6 +17,13 @@ same toolkit-neutral [`:gui`](module-map.md) model, so almost everything below a
 | Editor (left/center) | The Ace-based Prolog text editor for the selected page. |
 | Side panel (right) | Eleven tabs surfacing the solver's state — see [Side panels](#side-panels). |
 
+The layout is responsive: above 820px wide, the editor and side panel sit side by side, with a draggable divider
+(`#split-handle`) between them that works with a mouse, a touchscreen, or a pen alike. Below that width — a
+phone, or a browser window narrowed that far — the side panel drops below the editor instead, at a fixed 40%
+of the viewport height with its own scrolling, and the divider disappears (dragging a *width* stops making
+sense once the two areas are stacked instead of side by side). The menu bar and query bar's buttons wrap onto
+further rows rather than overflowing at any width.
+
 ## Menu bar
 
 | Button | Effect |

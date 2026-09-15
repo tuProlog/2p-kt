@@ -183,6 +183,10 @@ async function pollUntil(get, predicate, timeoutMs, intervalMs = 100) {
   return last;
 }
 
+// Above ide-web.css's 820px mobile breakpoint, wide enough that every scenario not specifically testing the
+// mobile layout can assume the desktop (row) split; see the comment where this is first applied, in main().
+const DESKTOP_VIEWPORT = { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false };
+
 const SHELL_IDS = [
   "btn-new", "templates-select", "btn-open", "btn-save", "btn-save-as", "btn-close-page",
   "status-label", "caret-label", "tab-bar", "query-input", "solve-button", "solve10-button", "solve-all-button", "stop-button",
@@ -531,6 +535,9 @@ const SCENARIOS = [
     },
   },
   {
+    // Pointer Events, not mouse-only ones: this drives both a mouse drag and a touchscreen one through the
+    // same listeners (see installSplitResizeHandle's doc comment) — dispatching PointerEvent here, instead of
+    // the MouseEvent this used before, is what actually exercises that shared code path end to end.
     name: "dragging the split handle resizes the side panel",
     async run({ evalJs }) {
       const before = await evalJs(`document.getElementById('side').getBoundingClientRect().width`);
@@ -539,9 +546,9 @@ const SCENARIOS = [
           const handle = document.getElementById('split-handle');
           const rect = handle.getBoundingClientRect();
           const x = rect.left + rect.width / 2;
-          handle.dispatchEvent(new MouseEvent('mousedown', { clientX: x, bubbles: true }));
-          window.dispatchEvent(new MouseEvent('mousemove', { clientX: x - 100, bubbles: true }));
-          window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+          handle.dispatchEvent(new PointerEvent('pointerdown', { clientX: x, bubbles: true }));
+          window.dispatchEvent(new PointerEvent('pointermove', { clientX: x - 100, bubbles: true }));
+          window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
         })()
       `);
       const after = await evalJs(`document.getElementById('side').getBoundingClientRect().width`);
@@ -669,6 +676,78 @@ const SCENARIOS = [
         : [`expected a failure status containing a one-based location "2:1", got: ${JSON.stringify(status)}`];
     },
   },
+  {
+    name: "the layout adapts to a narrow (mobile) viewport",
+    async run({ send, evalJs }) {
+      const failures = [];
+      // 390x844 ~= a modern phone in portrait; below ide-web.css's 820px breakpoint either way.
+      await send("Emulation.setDeviceMetricsOverride", {
+        width: 390,
+        height: 844,
+        deviceScaleFactor: 2,
+        mobile: true,
+      });
+      try {
+        const layout = await pollUntil(
+          () =>
+            evalJs(`
+              (function() {
+                const split = document.querySelector('.split');
+                const handle = document.getElementById('split-handle');
+                const side = document.getElementById('side');
+                return {
+                  splitDirection: getComputedStyle(split).flexDirection,
+                  handleDisplay: getComputedStyle(handle).display,
+                  sideWidth: side.getBoundingClientRect().width,
+                  viewportWidth: document.documentElement.clientWidth,
+                  scrollWidth: document.documentElement.scrollWidth,
+                };
+              })()
+            `),
+          (v) => v.splitDirection === "column",
+          3000,
+        );
+        if (layout.splitDirection !== "column") {
+          failures.push(`expected .split to stack (flex-direction: column) at 390px, got "${layout.splitDirection}"`);
+        }
+        if (layout.handleDisplay !== "none") {
+          failures.push(`expected #split-handle to be hidden at 390px, got display: "${layout.handleDisplay}"`);
+        }
+        if (Math.abs(layout.sideWidth - layout.viewportWidth) > 2) {
+          failures.push(`expected the side panel to span the full viewport width when stacked, got ${layout.sideWidth} vs ${layout.viewportWidth}`);
+        }
+        if (layout.scrollWidth > layout.viewportWidth + 1) {
+          failures.push(`page scrolls horizontally at 390px wide (scrollWidth ${layout.scrollWidth} > viewport ${layout.viewportWidth}) — something isn't wrapping/shrinking`);
+        }
+      } finally {
+        // Restore the desktop baseline (not clearDeviceMetricsOverride, which would instead fall back to
+        // headless Chrome's own undocumented default) so later scenarios keep seeing the row layout.
+        await send("Emulation.setDeviceMetricsOverride", DESKTOP_VIEWPORT);
+      }
+      return failures;
+    },
+  },
+  {
+    name: "menu bar and query bar buttons wrap instead of overflowing at tablet width",
+    async run({ send, evalJs }) {
+      const failures = [];
+      // 600px: narrower than a laptop but at/above the 820px breakpoint is NOT guaranteed here on purpose —
+      // wrapping via flex-wrap should keep every button reachable with no horizontal scrollbar regardless.
+      await send("Emulation.setDeviceMetricsOverride", { width: 600, height: 900, deviceScaleFactor: 2, mobile: true });
+      try {
+        const overflow = await evalJs(`
+          (function() {
+            const doc = document.documentElement;
+            return doc.scrollWidth > doc.clientWidth + 1;
+          })()
+        `);
+        if (overflow) failures.push("page scrolls horizontally at 600px wide — menu/query bar buttons aren't wrapping");
+      } finally {
+        await send("Emulation.setDeviceMetricsOverride", DESKTOP_VIEWPORT);
+      }
+      return failures;
+    },
+  },
 ];
 
 async function main() {
@@ -684,6 +763,11 @@ async function main() {
   const cdp = await connectCdp(cdpBase, pageUrl);
 
   try {
+    // Headless Chrome's own default viewport (observed: 756x... wide, i.e. already below ide-web.css's 820px
+    // mobile breakpoint) isn't a documented contract, so scenarios that assume a "desktop" row layout would
+    // otherwise be silently at the mercy of whatever Chrome happens to default to. Pin it explicitly instead;
+    // the mobile-layout scenarios below override this themselves and restore it afterwards.
+    await cdp.send("Emulation.setDeviceMetricsOverride", DESKTOP_VIEWPORT);
     await cdp.navigate(pageUrl);
     const results = [];
     for (const scenario of SCENARIOS) {
