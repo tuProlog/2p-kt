@@ -8,6 +8,37 @@ on:
   workflow_dispatch:
 
 jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        # Not DanySK/action-checkout here: on pull_request events it checks out the read-only merge-ref
+        # in detached HEAD, which git-auto-commit-action below can't push back to. Check out the actual
+        # PR head branch instead (falls back to the normal ref for push/workflow_dispatch).
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          submodules: recursive
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || '' }}
+      - name: Auto-format, then check style (ktlint, detekt)
+        uses: DanySK/build-check-deploy-gradle-action@4.0.45
+        with:
+          retries-on-failure: '2'
+          build-command: ./gradlew ktlintFormat
+          check-command: ./gradlew ktlintCheck detekt --parallel --continue
+          should-deploy: false
+          should-run-codecov: false
+      - name: Commit formatting fixes, if any
+        # Runs even if the step above failed (e.g. a real detekt finding), so a formatting fix still gets
+        # pushed alongside that failure. Skipped for fork PRs: GITHUB_TOKEN can't push to a fork's branch.
+        if: >-
+          always() &&
+          (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(style): automatically apply ktlintFormat repo-wise"
   build:
     runs-on: ubuntu-24.04
     steps:
@@ -57,6 +88,7 @@ jobs:
         run: xvfb-run -a ./gradlew :ide-swing:swingE2eTest :ide-plp-swing:swingE2eTest
   test-extensively:
     needs:
+      - lint
       - build
     # if: github.ref_name != 'master' || github.event.commits[0].author.name != 'renovate[bot]'
     uses: ./.github/workflows/test-extensively.yml
@@ -66,6 +98,7 @@ jobs:
       packages: write
       id-token: write  # Required for OIDC on npmjs
     needs:
+      - lint
       - build
       - test-extensively
     runs-on: ubuntu-24.04
@@ -112,6 +145,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs:
       - release
+      - lint
       - build
       - test-extensively
     if: >-
