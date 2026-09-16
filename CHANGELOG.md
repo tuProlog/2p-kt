@@ -1,3 +1,19 @@
+## [2.0.4](https://github.com/tuProlog/2p-kt/compare/2.0.3...2.0.4) (2026-09-16)
+
+### Bug Fixes
+
+* **deps:** update kotlinx.serialization to v1.11.0 ([#967](https://github.com/tuProlog/2p-kt/issues/967)) ([b1cdece](https://github.com/tuProlog/2p-kt/commit/b1cdeceef2874ffd0138c54b92bf3ea2e634d954))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.46 ([#970](https://github.com/tuProlog/2p-kt/issues/970)) ([aa478c1](https://github.com/tuProlog/2p-kt/commit/aa478c1ae2bdd731cd0d9af516997fb5f4a2a35c))
+* **deps:** update stefanzweifel/git-auto-commit-action action to v7 ([#972](https://github.com/tuProlog/2p-kt/issues/972)) ([18712b1](https://github.com/tuProlog/2p-kt/commit/18712b19c3551b28187b3796762736159b227c75))
+
+### General maintenance
+
+* **ci:** split style checks into a dedicated job, auto-fix formatting, dedupe caching ([f8eae4a](https://github.com/tuProlog/2p-kt/commit/f8eae4ac0a28a0e83443ed0d77dc338a6b7c5a97))
+* **repo:** add AGENTS.md files project-wise ([ad13e68](https://github.com/tuProlog/2p-kt/commit/ad13e6861e9c0975a52ea22f7792718ccb1a3f22))
+
 ## [2.0.3](https://github.com/tuProlog/2p-kt/compare/2.0.2...2.0.3) (2026-09-15)
 
 ### Bug Fixes
