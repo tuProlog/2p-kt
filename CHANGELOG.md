@@ -1,3 +1,9 @@
+## [2.0.5](https://github.com/tuProlog/2p-kt/compare/2.0.4...2.0.5) (2026-09-17)
+
+### Bug Fixes
+
+* **deps:** update dependency com.fifesoft:autocomplete to v4 ([#968](https://github.com/tuProlog/2p-kt/issues/968)) ([df9d51e](https://github.com/tuProlog/2p-kt/commit/df9d51eb4086f53e85ff3c699592116c3d3707c9))
+
 ## [2.0.4](https://github.com/tuProlog/2p-kt/compare/2.0.3...2.0.4) (2026-09-16)
 
 ### Bug Fixes
