@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       # empty on a workflow_dispatch run, or when the release job didn't actually release anything this run
       # (e.g. a non-release branch) -- ${LAST_VERSION:+...} below then omits -PforceVersion entirely, falling
@@ -50,7 +50,7 @@ jobs:
   deploy:
     needs: build
     if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
