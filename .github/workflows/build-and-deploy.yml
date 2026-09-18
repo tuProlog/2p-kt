@@ -27,19 +27,34 @@ jobs:
           # skips CI on that event for same-repo PRs, assuming the paired `push` run already covered it.
           # Without a real push event, that assumption is false and the auto-fix commit ships un-tested.
           token: ${{ secrets.DEPLOYMENT_TOKEN || github.token }}
-      - name: Auto-format, then check style (ktlint, detekt)
+      - name: Auto-format (ktlint)
+        id: autoformat
         uses: DanySK/build-check-deploy-gradle-action@4.0.46
         with:
           retries-on-failure: '2'
           build-command: ./gradlew ktlintFormat
+          check-command: 'true'
+          should-deploy: false
+          should-run-codecov: false
+      - name: Check style (ktlint, detekt)
+        # Runs even if formatting above failed, so real findings are still visible for a human to fix.
+        if: always()
+        uses: DanySK/build-check-deploy-gradle-action@4.0.46
+        with:
+          retries-on-failure: '2'
+          build-command: 'true'
           check-command: ./gradlew ktlintCheck detekt --parallel --continue
           should-deploy: false
           should-run-codecov: false
       - name: Commit formatting fixes, if any
-        # Runs even if the step above failed (e.g. a real detekt finding), so a formatting fix still gets
-        # pushed alongside that failure. Skipped for fork PRs: GITHUB_TOKEN can't push to a fork's branch.
+        # Gated on the format step itself succeeding, not the check step: a real detekt/ktlint finding
+        # is expected to fail the check and should still get the fix committed alongside it. But if
+        # ktlintFormat itself errors, committing whatever partial changes it left would push a new commit
+        # that retriggers CI, which fails the same way again -- an infinite loop of auto-commits.
+        # Skipped for fork PRs: GITHUB_TOKEN can't push to a fork's branch.
         if: >-
           always() &&
+          steps.autoformat.outcome == 'success' &&
           (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
