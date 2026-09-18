@@ -7,14 +7,6 @@ plugins {
     )
 }
 
-multiPlatformHelper {
-    jsTargetBrowser.set(true)
-    jsTargetNode.set(false)
-    jsWebPackOutputFileName.set("ide-web.js")
-    jsBinaryType.set(io.github.gciatto.kt.mpp.kotlin.JsBinaryType.EXECUTABLE)
-    jsModuleSystem.set(io.github.gciatto.kt.mpp.helpers.JsModuleSystem.COMMON_JS)
-}
-
 kotlin {
     sourceSets {
         jsMain.dependencies {
