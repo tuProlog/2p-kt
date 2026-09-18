@@ -22,6 +22,11 @@ jobs:
           fetch-depth: 0
           submodules: recursive
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || '' }}
+          # A PAT, not the default GITHUB_TOKEN: pushes made with GITHUB_TOKEN don't trigger a `push`
+          # event (GitHub's anti-recursion rule), only `pull_request: synchronize` -- and dispatcher.yml
+          # skips CI on that event for same-repo PRs, assuming the paired `push` run already covered it.
+          # Without a real push event, that assumption is false and the auto-fix commit ships un-tested.
+          token: ${{ secrets.DEPLOYMENT_TOKEN || github.token }}
       - name: Auto-format, then check style (ktlint, detekt)
         uses: DanySK/build-check-deploy-gradle-action@4.0.46
         with:
