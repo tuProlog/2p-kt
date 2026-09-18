@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 jvm = "17"
 node = "22-latest"
 jackson = "2.22.2"
@@ -9,7 +9,7 @@ javafx = "21.0.8"
 npm-yaml = "2.8.1" # yaml
 npm-syncRequest = "6.1.0" # sync-request
 npm-aceBuilds = "1.44.0" # ace-builds
-ktMpp = "5.5.0"
+ktMpp = "6.0.1"
 okio = "3.18.2"
 
 [plugins]

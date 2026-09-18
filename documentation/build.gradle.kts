@@ -1,6 +1,3 @@
-import java.io.OutputStream
-import java.io.PrintStream
-
 plugins {
     id("org.jetbrains.dokka")
 }
@@ -88,10 +85,6 @@ val assembleSite = tasks.register<Copy>("assembleSite") {
     from(zipTree(webIdeDistribution.map { it.outputs.files.singleFile })) { into("web-ide") }
     into(layout.buildDirectory.dir("assembledSite"))
 }
-
-//tasks.named("assemble") {
-//    dependsOn(assembleSite)
-//}
 
 val serveMkdocs = tasks.register<Exec>("serveMkdocs") {
     description = "Serve the MkDocs site locally"

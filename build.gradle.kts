@@ -19,12 +19,10 @@ multiProjectHelper {
     defaultProjectType = ProjectType.KOTLIN
 
     jvmProjects(":examples", ":ide-swing", ":ide-plp-swing")
+    jsProjects(":ide-web")
     // otherProjects(identifier, vararg other) *replaces* the whole set on every call (it's a setter, not an
-    // accumulator - see kt-mpp's RootMultiProjectExtension), so these must be one call: two separate calls left
-    // only ":documentation" in "otherProjects", silently dropping ":ide-web" back onto the default Kotlin
-    // project template on top of its own explicit plugin block - which built successfully with no error, but
-    // silently produced a broken production webpack bundle (its main() reduced to nothing at runtime).
-    otherProjects(":ide-web", ":documentation")
+    // accumulator - see kt-mpp's RootMultiProjectExtension), so these must be one call
+    otherProjects(":documentation")
 
     val baseProjectTemplate =
         buildSet {
@@ -64,18 +62,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-    }
-    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-        jvmTarget = libs.versions.jvm.get()
-        parallel = true
-    }
-    if (project.findProperty("showTestsInConsole")?.toString()?.toBoolean() == true) {
-        tasks.withType<Test>().configureEach {
-            testLogging {
-                events("passed", "skipped", "failed", "standardOut", "standardError")
-                showStandardStreams = true
-            }
-        }
     }
 }
 

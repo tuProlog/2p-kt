@@ -1,24 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform")
     alias(libs.plugins.kotlin.serialization)
-    // id(...pluginId), not alias(...): see full/build.gradle.kts's plugins block for why. ktMpp.versions is
-    // deliberately not re-declared here: every "otherProject" (see root build.gradle.kts) already gets it via
-    // otherProjectTemplate.
-    id(
-        libs.plugins.ktMpp.linter
-            .get()
-            .pluginId,
-    )
-    id(
-        libs.plugins.ktMpp.documentation
-            .get()
-            .pluginId,
-    )
-    id(
-        libs.plugins.ktMpp.bugFinder
-            .get()
-            .pluginId,
-    )
     id(
         libs.plugins.ktMpp.mavenPublish
             .get()
@@ -27,11 +8,6 @@ plugins {
 }
 
 kotlin {
-    js {
-        browser()
-        binaries.executable()
-    }
-
     sourceSets {
         jsMain.dependencies {
             api(project(":gui"))
@@ -54,10 +30,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
         }
     }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>().configureEach {
-    mainOutputFileName.set("ide-web.js")
 }
 
 wireDefaultLogoResource("jsProcessResources")
