@@ -9,7 +9,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
     steps:
@@ -45,7 +45,7 @@ jobs:
         with:
           commit_message: "chore(style): automatically apply ktlintFormat repo-wise"
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.31
@@ -106,7 +106,7 @@ jobs:
       - lint
       - build
       - test-extensively
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       version: ${{ steps.released-version.outputs.version }}
     steps:
@@ -147,7 +147,7 @@ jobs:
             echo "No release version recorded (no release happened this run)."
           fi
   success:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs:
       - release
       - lint
