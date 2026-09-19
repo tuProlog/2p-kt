@@ -23,7 +23,7 @@ jobs:
           submodules: recursive
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || '' }}
       - name: Auto-format, then check style (ktlint, detekt)
-        uses: DanySK/build-check-deploy-gradle-action@4.0.46
+        uses: DanySK/build-check-deploy-gradle-action@4.0.47
         with:
           retries-on-failure: '2'
           build-command: ./gradlew ktlintFormat
@@ -56,7 +56,7 @@ jobs:
             echo "No default Chrome found; installing google-chrome-stable."
             sudo apt-get update && sudo apt-get install -y google-chrome-stable
           fi
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.46
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.47
         with:
           retries-on-failure: '2'
           # Dry-deployment
@@ -113,7 +113,7 @@ jobs:
         uses: actions/setup-node@v7.0.0
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.46
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.47
         with:
           retries-on-failure: '1'
           build-command: ./gradlew clean
