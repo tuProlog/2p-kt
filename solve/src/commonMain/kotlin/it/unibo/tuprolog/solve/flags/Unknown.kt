@@ -29,5 +29,5 @@ object Unknown : NotableFlag {
     override val defaultValue: Term
         get() = WARNING
 
-    override val admissibleValues: Sequence<Term> = sequenceOf(ERROR, WARNING, FAIL)
+    override val admissibleValues = FlagDomain.SetOfTerms(ERROR, WARNING, FAIL)
 }

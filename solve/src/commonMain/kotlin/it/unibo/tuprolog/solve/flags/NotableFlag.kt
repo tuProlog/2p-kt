@@ -28,7 +28,7 @@ interface NotableFlag {
 
     /** Every legal value this flag may take. */
     @JsName("admissibleValues")
-    val admissibleValues: Sequence<Term>
+    val admissibleValues: FlagDomain
 
     /** Whether [value] is one of [admissibleValues]. */
     @JsName("isAdmissibleValue")

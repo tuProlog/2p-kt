@@ -24,5 +24,5 @@ object TrackVariables : NotableFlag {
     override val defaultValue: Term
         get() = OFF
 
-    override val admissibleValues: Sequence<Term> = sequenceOf(ON, OFF)
+    override val admissibleValues = FlagDomain.Enumerated(ON, OFF)
 }
