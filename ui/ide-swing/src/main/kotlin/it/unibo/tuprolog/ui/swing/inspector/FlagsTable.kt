@@ -41,7 +41,9 @@ internal class FlagsTable : JTable(FlagsTableModel()) {
                 when (val domain = flag.admissibleValues) {
                     is FlagDomain.IntRange -> {
                         val current = getValueAt(row, column).toString().toIntOrNull() ?: domain.minInclusive.toInt()
-                        SpinnerCellEditor(SpinnerNumberModel(current, domain.minInclusive.toInt(), domain.maxInclusive.toInt(), 1))
+                        SpinnerCellEditor(
+                            SpinnerNumberModel(current, domain.minInclusive.toInt(), domain.maxInclusive.toInt(), 1),
+                        )
                     }
                     else -> DefaultCellEditor(JComboBox(domain.map(Any::toString).toTypedArray()))
                 }
@@ -49,7 +51,10 @@ internal class FlagsTable : JTable(FlagsTableModel()) {
             ?: super.getCellEditor(row, column)
 
     /** Wraps a [JSpinner] as a [TableCellEditor], for flags whose domain is a [FlagDomain.IntRange]. */
-    private class SpinnerCellEditor(model: SpinnerNumberModel) : AbstractCellEditor(), TableCellEditor {
+    private class SpinnerCellEditor(
+        model: SpinnerNumberModel,
+    ) : AbstractCellEditor(),
+        TableCellEditor {
         private val spinner = JSpinner(model)
 
         override fun getCellEditorValue(): Any = spinner.value
