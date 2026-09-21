@@ -16,13 +16,9 @@ kotlin {
             implementation(project(":io-lib"))
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
-            implementation(
-                npm(
-                    "ace-builds",
-                    libs.versions.npm.aceBuilds
-                        .get(),
-                ),
-            )
+            jsDependenciesFrom(project.packageJsonFile) {
+                implementation(npm("ace-builds"))
+            }
         }
         jsTest.dependencies {
             implementation(kotlin("test"))

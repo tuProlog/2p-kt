@@ -1,3 +1,6 @@
+import jsDependenciesFrom
+import packageJsonFile
+
 plugins {
     id(
         libs.plugins.ktMpp.mavenPublish
@@ -33,13 +36,9 @@ kotlin {
                 implementation(libs.okio.nodefilesystem)
                 // Okio is not an HTTP client: remote consult/1 still needs a synchronous HTTP call on JS,
                 // which the (synchronous) Solver API requires. Kept until the Solver gets an async story.
-                implementation(
-                    npm(
-                        "sync-request",
-                        libs.versions.npm.syncRequest
-                            .get(),
-                    ),
-                )
+                jsDependenciesFrom(project.packageJsonFile) {
+                    implementation(npm("sync-request"))
+                }
             }
         }
     }
