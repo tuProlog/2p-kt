@@ -1,3 +1,18 @@
+## [2.0.6](https://github.com/tuProlog/2p-kt/compare/2.0.5...2.0.6) (2026-09-21)
+
+### Dependency updates
+
+* **deps:** update ktmpp to v5.5.0 ([#965](https://github.com/tuProlog/2p-kt/issues/965)) ([4b86059](https://github.com/tuProlog/2p-kt/commit/4b860593f36145ab5ee4d8a1e01b8502684d7613))
+
+### Bug Fixes
+
+* **build:** update kt-mpp, kotlin, and restructure build file of :ide-web ([#975](https://github.com/tuProlog/2p-kt/issues/975)) ([0d08340](https://github.com/tuProlog/2p-kt/commit/0d08340404ccc96a400fc6ac986e153b46a7a50c))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.47 ([#976](https://github.com/tuProlog/2p-kt/issues/976)) ([a7db402](https://github.com/tuProlog/2p-kt/commit/a7db4024ba75f74f9336107bed90609947d2c377))
+* **deps:** update dependency ubuntu to v26 ([#974](https://github.com/tuProlog/2p-kt/issues/974)) ([76b04ca](https://github.com/tuProlog/2p-kt/commit/76b04cafca6ba8f94c3da2e60dd114edaac400ad))
+
 ## [2.0.5](https://github.com/tuProlog/2p-kt/compare/2.0.4...2.0.5) (2026-09-17)
 
 ### Bug Fixes
