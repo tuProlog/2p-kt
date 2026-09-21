@@ -37,7 +37,14 @@ sealed interface FlagDomain : Iterable<Term> {
         override fun contains(value: Term): Boolean =
             value.asInteger()?.intValue?.let { it in minInclusive..maxInclusive } ?: false
 
-        override fun iterator(): Iterator<Term> = iterator { yield(minInclusive.toTerm()) }
+        override fun iterator(): Iterator<Term> =
+            iterator {
+                var current = minInclusive
+                while (current <= maxInclusive) {
+                    yield(current.toTerm())
+                    current += BigInteger.ONE
+                }
+            }
     }
 
     data class Enumerated(
