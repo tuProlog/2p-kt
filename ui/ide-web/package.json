@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "ace-builds": "^1.44.0"
+  }
+}

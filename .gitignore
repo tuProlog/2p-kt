@@ -1,3 +1,4 @@
+.*.sh
 kotlin-js-store/
 **/.kotlin/
 *.klib
