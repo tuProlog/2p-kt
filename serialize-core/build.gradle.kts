@@ -25,13 +25,9 @@ kotlin {
 
         getByName("jsMain") {
             dependencies {
-                api(
-                    npm(
-                        "yaml",
-                        libs.versions.npm.yaml
-                            .get(),
-                    ),
-                )
+                jsDependenciesFrom(project.packageJsonFile) {
+                    implementation(npm("yaml"))
+                }
             }
         }
     }

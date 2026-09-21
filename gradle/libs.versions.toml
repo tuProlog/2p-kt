@@ -1,15 +1,11 @@
 [versions]
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 jvm = "17"
 node = "22-latest"
 jackson = "2.22.2"
 kotlinx-coroutines = "1.11.0"
 kotlinx-serialization = "1.11.0"
-javafx = "21.0.8"
-npm-yaml = "2.8.1" # yaml
-npm-syncRequest = "6.1.0" # sync-request
-npm-aceBuilds = "1.44.0" # ace-builds
-ktMpp = "5.5.0"
+ktMpp = "6.0.2"
 okio = "3.18.2"
 
 [plugins]
@@ -30,11 +26,8 @@ ktMpp-fatJar = { id = "io.github.gciatto.kt-mpp.fat-jar", version.ref = "ktMpp" 
 gradleMockService = "io.github.gciatto.gradle-mock-service:1.4.0"
 
 [libraries]
-javafx-base = { module = "org.openjfx:javafx-base", version.ref = "javafx" }
-javafx-fxml = { module = "org.openjfx:javafx-fxml", version.ref = "javafx" }
-javafx-controls = { module = "org.openjfx:javafx-controls", version.ref = "javafx" }
-javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javafx" }
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
@@ -58,3 +51,4 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref =
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 okio-nodefilesystem = { module = "com.squareup.okio:okio-nodefilesystem", version.ref = "okio" }
 okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
