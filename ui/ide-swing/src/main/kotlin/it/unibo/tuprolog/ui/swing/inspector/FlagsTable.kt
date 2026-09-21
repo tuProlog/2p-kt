@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.swing.inspector
 
 import it.unibo.tuprolog.solve.flags.FlagDomain
 import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
+import org.gciatto.kt.math.BigInteger
 import java.awt.Component
 import javax.swing.AbstractCellEditor
 import javax.swing.DefaultCellEditor
@@ -40,10 +41,10 @@ internal class FlagsTable : JTable(FlagsTableModel()) {
             ?.let { flag ->
                 when (val domain = flag.admissibleValues) {
                     is FlagDomain.IntRange -> {
-                        val current = getValueAt(row, column).toString().toIntOrNull() ?: domain.minInclusive.toInt()
-                        SpinnerCellEditor(
-                            SpinnerNumberModel(current, domain.minInclusive.toInt(), domain.maxInclusive.toInt(), 1),
-                        )
+                        val min = domain.minInclusive.toIntClamped()
+                        val max = domain.maxInclusive.toIntClamped()
+                        val current = getValueAt(row, column).toString().toIntOrNull()?.coerceIn(min, max) ?: min
+                        SpinnerCellEditor(SpinnerNumberModel(current, min, max, 1))
                     }
                     else -> DefaultCellEditor(JComboBox(domain.map(Any::toString).toTypedArray()))
                 }
@@ -71,3 +72,13 @@ internal class FlagsTable : JTable(FlagsTableModel()) {
         }
     }
 }
+
+/** Narrows this [BigInteger] to an [Int], clamping to [Int.MIN_VALUE]/[Int.MAX_VALUE] instead of wrapping
+ * around, since [JSpinner]/[SpinnerNumberModel] only support `Int` bounds while [FlagDomain.IntRange] allows
+ * arbitrary-precision ones. */
+internal fun BigInteger.toIntClamped(): Int =
+    when {
+        this > BigInteger.of(Int.MAX_VALUE) -> Int.MAX_VALUE
+        this < BigInteger.of(Int.MIN_VALUE) -> Int.MIN_VALUE
+        else -> toInt()
+    }
