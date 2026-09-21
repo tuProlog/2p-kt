@@ -25,6 +25,7 @@ import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.gciatto.kt.math.BigInteger
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
@@ -719,7 +720,12 @@ internal class WebIdeView(
                         max = domain.maxInclusive.toString()
                         value = flag.value
                     }
-                input.addEventListener("change", { _: Event -> changeFlag(page, flag.name, input.value) })
+                input.addEventListener(
+                    "change",
+                    { _: Event ->
+                        if (isValidIntRangeInput(input.value, domain)) changeFlag(page, flag.name, input.value)
+                    },
+                )
                 cell.appendChild(input)
             }
             notable != null && notable.isEditable -> {
@@ -827,3 +833,17 @@ internal class WebIdeView(
         const val MIN_SIDE_PANEL_WIDTH_PX = 200.0
     }
 }
+
+/** Whether [value] is a non-blank integer within [domain]'s bounds. `min`/`max` on a number `<input>` are only
+ * validity hints -- the browser still fires `change` for an out-of-range, fractional, or empty value -- so this
+ * must be checked before the value is dispatched as a flag override. */
+internal fun isValidIntRangeInput(
+    value: String,
+    domain: FlagDomain.IntRange,
+): Boolean =
+    value.isNotBlank() &&
+        try {
+            BigInteger.of(value) in domain.minInclusive..domain.maxInclusive
+        } catch (e: NumberFormatException) {
+            false
+        }
