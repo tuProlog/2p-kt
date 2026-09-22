@@ -11,6 +11,7 @@ var recordVersionCmd = 'echo "${nextRelease.version}" > "$RUNNER_TEMP/last-relea
 
 var publishCmd = `
 ./gradlew ${forceVersion} publishAllPublicationsToProjectLocalRepository zipMavenCentralPortalPublication releaseMavenCentralPortalPublication || exit 3
+./gradlew ${forceVersion} publishAllPublicationsToGithubRepository || true
 ./gradlew ${forceVersion} publishJsPackageToNpmjsRegistry || true
 ${recordVersionCmd}
 `
