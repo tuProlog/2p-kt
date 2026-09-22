@@ -1,3 +1,9 @@
+## [2.0.8](https://github.com/tuProlog/2p-kt/compare/2.0.7...2.0.8) (2026-09-22)
+
+### Bug Fixes
+
+* **release:** publish to GitHub Packages too, and stop partial Maven Central failures from cascading ([1ce926c](https://github.com/tuProlog/2p-kt/commit/1ce926ccc198c9ded1711b637c785b0acbeaf047))
+
 ## [2.0.7](https://github.com/tuProlog/2p-kt/compare/2.0.6...2.0.7) (2026-09-22)
 
 ### Bug Fixes
