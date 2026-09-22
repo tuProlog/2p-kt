@@ -2,7 +2,7 @@
 kotlin = "2.4.20"
 jvm = "17"
 node = "22-latest"
-jackson = "2.22.2"
+jackson = "2.22.3"
 kotlinx-coroutines = "1.11.0"
 kotlinx-serialization = "1.11.0"
 ktMpp = "6.0.2"
