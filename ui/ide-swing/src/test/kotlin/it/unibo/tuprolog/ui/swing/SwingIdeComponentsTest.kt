@@ -23,12 +23,14 @@ import it.unibo.tuprolog.ui.swing.inspector.DiagnosticsList
 import it.unibo.tuprolog.ui.swing.inspector.FlagsTable
 import it.unibo.tuprolog.ui.swing.inspector.LibrariesTree
 import it.unibo.tuprolog.ui.swing.inspector.OperatorsTable
+import it.unibo.tuprolog.ui.swing.inspector.toIntClamped
 import it.unibo.tuprolog.ui.swing.solutions.BlankIcon
 import it.unibo.tuprolog.ui.swing.solutions.SolutionQueryEntry
 import it.unibo.tuprolog.ui.swing.solutions.SolutionTree
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument
 import org.fife.ui.rsyntaxtextarea.parser.ParserNotice
 import org.fife.ui.rtextarea.RTextScrollPane
+import org.gciatto.kt.math.BigInteger
 import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
@@ -317,6 +319,15 @@ class SwingIdeComponentsTest {
             flags.render(listOf(FlagPresentation("unknown", "warning")))
             assertIs<javax.swing.DefaultCellEditor>(flags.getCellEditor(0, 1))
         }
+    }
+
+    @Test
+    fun `BigInteger bounds outside Int range are clamped rather than wrapped`() {
+        assertEquals(42, BigInteger.of(42).toIntClamped())
+        assertEquals(Int.MAX_VALUE, BigInteger.of(Int.MAX_VALUE).toIntClamped())
+        assertEquals(Int.MIN_VALUE, BigInteger.of(Int.MIN_VALUE).toIntClamped())
+        assertEquals(Int.MAX_VALUE, (BigInteger.of(Int.MAX_VALUE) + BigInteger.of(100)).toIntClamped())
+        assertEquals(Int.MIN_VALUE, (BigInteger.of(Int.MIN_VALUE) - BigInteger.of(100)).toIntClamped())
     }
 
     @Test

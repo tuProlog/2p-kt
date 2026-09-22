@@ -28,7 +28,7 @@ interface NotableFlag {
 
     /** Every legal value this flag may take. */
     @JsName("admissibleValues")
-    val admissibleValues: Sequence<Term>
+    val admissibleValues: FlagDomain
 
     /** Whether [value] is one of [admissibleValues]. */
     @JsName("isAdmissibleValue")
@@ -52,7 +52,8 @@ interface NotableFlag {
             }
 
     companion object {
-        /** Looks up the built-in [NotableFlag] ([DoubleQuotes], [LastCallOptimization], [MaxArity], [Unknown]) named [name], or `null` if none matches. */
+        /** Looks up the built-in [NotableFlag] ([DoubleQuotes], [LastCallOptimization], [MaxArity], [TrackVariables],
+         * [Unknown]) named [name], or `null` if none matches. */
         @JsName("fromName")
         @JvmStatic
         fun fromName(name: String): NotableFlag? =
@@ -60,6 +61,7 @@ interface NotableFlag {
                 DoubleQuotes,
                 LastCallOptimization,
                 MaxArity,
+                TrackVariables,
                 Unknown,
             ).firstOrNull { it.name == name }
     }

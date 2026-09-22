@@ -23,5 +23,5 @@ object LastCallOptimization : NotableFlag {
     override val defaultValue: Term
         get() = ON
 
-    override val admissibleValues: Sequence<Term> = sequenceOf(ON, OFF)
+    override val admissibleValues = FlagDomain.Enumerated(ON, OFF)
 }

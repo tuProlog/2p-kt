@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.web
 
+import it.unibo.tuprolog.solve.flags.FlagDomain
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.ui.gui.controller.ConsumptionMode
 import it.unibo.tuprolog.ui.gui.controller.DocumentAction
@@ -24,6 +25,7 @@ import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.gciatto.kt.math.BigInteger
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
@@ -696,10 +698,11 @@ internal class WebIdeView(
     }
 
     /**
-     * A flag known to [NotableFlag] with a fixed value set gets a `<select>` of those values (mirroring
-     * ide-swing's [FlagsTable][it.unibo.tuprolog.ui.swing]); an unrecognized flag gets a free-text input, since
-     * the solver may define flags this UI has no static knowledge of; a known-but-not-editable flag stays plain
-     * text. Either way, edits dispatch [PageAction.ChangeConfiguration] the same way ide-swing does.
+     * A flag known to [NotableFlag] whose domain is a [FlagDomain.IntRange] gets a bounded `<input type="number">`;
+     * one with any other fixed value set gets a `<select>` of those values (mirroring ide-swing's
+     * [FlagsTable][it.unibo.tuprolog.ui.swing]); an unrecognized flag gets a free-text input, since the solver
+     * may define flags this UI has no static knowledge of; a known-but-not-editable flag stays plain text.
+     * Either way, edits dispatch [PageAction.ChangeConfiguration] the same way ide-swing does.
      */
     private fun flagValueCell(
         page: PageState,
@@ -707,10 +710,27 @@ internal class WebIdeView(
     ): HTMLElement {
         val cell = document.createElement("td") as HTMLElement
         val notable = NotableFlag.fromName(flag.name)
+        val domain = notable?.admissibleValues
         when {
+            notable != null && notable.isEditable && domain is FlagDomain.IntRange -> {
+                val input =
+                    (element("input", null) as HTMLInputElement).apply {
+                        type = "number"
+                        min = domain.minInclusive.toString()
+                        max = domain.maxInclusive.toString()
+                        value = flag.value
+                    }
+                input.addEventListener(
+                    "change",
+                    { _: Event ->
+                        if (isValidIntRangeInput(input.value, domain)) changeFlag(page, flag.name, input.value)
+                    },
+                )
+                cell.appendChild(input)
+            }
             notable != null && notable.isEditable -> {
                 val select = element("select", null) as HTMLSelectElement
-                notable.admissibleValues.forEach { admissibleValue ->
+                domain!!.forEach { admissibleValue ->
                     val text = admissibleValue.toString()
                     val option = document.createElement("option") as HTMLElement
                     option.textContent = text
@@ -813,3 +833,17 @@ internal class WebIdeView(
         const val MIN_SIDE_PANEL_WIDTH_PX = 200.0
     }
 }
+
+/** Whether [value] is a non-blank integer within [domain]'s bounds. `min`/`max` on a number `<input>` are only
+ * validity hints -- the browser still fires `change` for an out-of-range, fractional, or empty value -- so this
+ * must be checked before the value is dispatched as a flag override. */
+internal fun isValidIntRangeInput(
+    value: String,
+    domain: FlagDomain.IntRange,
+): Boolean =
+    value.isNotBlank() &&
+        try {
+            BigInteger.of(value) in domain.minInclusive..domain.maxInclusive
+        } catch (e: NumberFormatException) {
+            false
+        }

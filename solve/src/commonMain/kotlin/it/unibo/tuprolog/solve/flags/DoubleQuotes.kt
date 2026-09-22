@@ -21,5 +21,5 @@ object DoubleQuotes : NotableFlag {
     override val defaultValue: Term
         get() = ATOM
 
-    override val admissibleValues: Sequence<Term> = sequenceOf(ATOM)
+    override val admissibleValues = FlagDomain.Singleton(ATOM)
 }
