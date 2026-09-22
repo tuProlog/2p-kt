@@ -18,7 +18,7 @@ buildscript {
             // releaseMavenCentralPortalPublication, identically to what killed the 2.0.8 release attempt).
             // Remove this once Gradle bundles coroutines >= 1.11.0, or upstream re-tests against an
             // older/compatible Ktor: https://github.com/DanySK/publish-on-central/issues/1804
-            force("org.danilopianini:publish-on-central:9.2.4")
+            force("org.danilopianini:publish-on-central:9.2.11")
         }
     }
 }
