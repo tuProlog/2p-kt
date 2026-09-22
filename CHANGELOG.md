@@ -1,3 +1,10 @@
+## [2.0.7](https://github.com/tuProlog/2p-kt/compare/2.0.6...2.0.7) (2026-09-22)
+
+### Bug Fixes
+
+* **deps:** update jackson monorepo to v2.22.3 ([#978](https://github.com/tuProlog/2p-kt/issues/978)) ([0a9c938](https://github.com/tuProlog/2p-kt/commit/0a9c938f91d74a45f5f8d85c63787766ed45e8c3))
+* notable flags, and their domains, get correctly managed in the code and represented in the UIs ([#977](https://github.com/tuProlog/2p-kt/issues/977)) ([4ebb0bb](https://github.com/tuProlog/2p-kt/commit/4ebb0bbb5f7fba4accfb3f5d54f58aa3c58373a0))
+
 ## [2.0.6](https://github.com/tuProlog/2p-kt/compare/2.0.5...2.0.6) (2026-09-21)
 
 ### Dependency updates
