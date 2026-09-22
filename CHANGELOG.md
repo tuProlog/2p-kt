@@ -1,3 +1,9 @@
+## [2.0.9](https://github.com/tuProlog/2p-kt/compare/2.0.8...2.0.9) (2026-09-22)
+
+### Bug Fixes
+
+* **release:** pin publish-on-central to 9.2.4 to unbreak Maven Central publishing ([8145a64](https://github.com/tuProlog/2p-kt/commit/8145a641d6174fa68b5987ad6c794944c7e8846d)), closes [DanySK/publish-on-central#1804](https://github.com/DanySK/publish-on-central/issues/1804)
+
 ## [2.0.8](https://github.com/tuProlog/2p-kt/compare/2.0.7...2.0.8) (2026-09-22)
 
 ### Bug Fixes
