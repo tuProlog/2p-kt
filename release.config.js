@@ -9,8 +9,11 @@ var forceVersion = "-PforceVersion=${nextRelease.version}"
 // rather than recomputing it (and risking a mismatch, e.g. if a commit landed on the branch in between).
 var recordVersionCmd = 'echo "${nextRelease.version}" > "$RUNNER_TEMP/last-release-version.txt"'
 
+// See scripts/publish-maven-central.sh for why this needs --continue plus a scoped retry, rather
+// than a plain `./gradlew ... || exit 3` like the other publish targets below.
 var publishCmd = `
-./gradlew ${forceVersion} publishAllPublicationsToProjectLocalRepository zipMavenCentralPortalPublication releaseMavenCentralPortalPublication || exit 3
+./scripts/publish-maven-central.sh ${forceVersion} || exit 3
+./gradlew ${forceVersion} publishAllPublicationsToGithubRepository || true
 ./gradlew ${forceVersion} publishJsPackageToNpmjsRegistry || true
 ${recordVersionCmd}
 `

@@ -83,7 +83,8 @@ jobs:
           deploy-command: >-
             ./gradlew
             publishAllPublicationsToProjectLocalRepository
-            zipMavenCentralPortalPublication 
+            publishAllPublicationsToGithubRepository
+            zipMavenCentralPortalPublication
             releaseMavenCentralPortalPublication
             --dry-run
           check-command: ./gradlew check --parallel --continue
@@ -134,6 +135,12 @@ jobs:
         with:
           node-version-file: package.json
       - uses: DanySK/build-check-deploy-gradle-action@4.0.47
+        env:
+          # Credentials for publishAllPublicationsToGithubRepository (see PublishOnMavenPlugin's
+          # otherMaven* properties): GITHUB_TOKEN already has packages:write on this job (see the
+          # `permissions:` block above), so no separate PAT is needed.
+          ORG_GRADLE_PROJECT_otherMavenUsername: ${{ github.actor }}
+          ORG_GRADLE_PROJECT_otherMavenPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
           retries-on-failure: '1'
           build-command: ./gradlew clean
