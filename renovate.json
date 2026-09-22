@@ -33,6 +33,13 @@
       "matchPackageNames": [
         "/^org\\.openjfx:javafx-/"
       ]
+    },
+    {
+      "description": "publish-on-central 9.2.5+ crashes every real Maven Central release with NoSuchMethodError: Job.invokeOnCompletion$default (Gradle bundles kotlinx-coroutines-core 1.10.2 internally, incompatible with the Ktor client bundled since 9.2.5) -- see build.gradle.kts and https://github.com/DanySK/publish-on-central/issues/1804. Pinned to 9.2.4 until that's fixed upstream.",
+      "matchPackageNames": [
+        "org.danilopianini:publish-on-central"
+      ],
+      "enabled": false
     }
   ],
   "prConcurrentLimit": 25,
