@@ -539,15 +539,7 @@ internal class WebIdeView(
                 is SolutionPresentation.No -> "no-solution"
                 is SolutionPresentation.Halt -> "halt-solution"
             }
-        val text =
-            when (solution) {
-                is SolutionPresentation.Yes ->
-                    "$number. yes: ${solution.solvedQuery ?: solution.query}" +
-                        solution.bindings.joinToString("") { "\n  ${it.variable} = ${it.value}" }
-                is SolutionPresentation.No -> "$number. no"
-                is SolutionPresentation.Halt ->
-                    "$number. ${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}"
-            }
+        val text = solutionLineText(number, solution)
         line.appendChild(
             (element("img", "tab-icon") as HTMLImageElement).apply {
                 src = "icons/$icon.png"
@@ -847,3 +839,19 @@ internal fun isValidIntRangeInput(
         } catch (e: NumberFormatException) {
             false
         }
+
+/** Builds the one-line text shown for [solution] in the solutions panel, numbered as [number]. A `null`
+ * [SolutionPresentation.Yes.solvedQuery] (set when `GroundQueriesHaveBooleanSolution` is on and the query is
+ * ground) is rendered as a bare `yes.`, rather than repeating the (identical) query. */
+internal fun solutionLineText(
+    number: Int,
+    solution: SolutionPresentation,
+): String =
+    when (solution) {
+        is SolutionPresentation.Yes ->
+            "$number. " + (solution.solvedQuery?.let { "yes: $it" } ?: "yes.") +
+                solution.bindings.joinToString("") { "\n  ${it.variable} = ${it.value}" }
+        is SolutionPresentation.No -> "$number. no"
+        is SolutionPresentation.Halt ->
+            "$number. ${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}"
+    }

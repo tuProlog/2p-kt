@@ -88,10 +88,23 @@ internal sealed class SolutionImpl(
 
         override fun toString(): String = "Yes(query=$query, substitution=$substitution)"
 
-        override fun cleanUp(): Solution.Yes =
-            copy(substitution = substitution.cleanUp(query.variables.filterNot { it.isAnonymous }.toSet()))
+        override fun cleanUp(hideWildcardVariables: Boolean): Solution.Yes =
+            copy(
+                substitution =
+                    substitution.retaining(
+                        query.variables
+                            .filterNot {
+                                it.isAnonymous || (hideWildcardVariables && it.isWildcard)
+                            }.toSet(),
+                    ),
+            )
 
-        private fun Substitution.Unifier.cleanUp(toRetain: Set<Var>): Substitution.Unifier =
+        // Named distinctly from cleanUp (rather than an overload on Substitution.Unifier) to avoid any
+        // ambiguity with the class's own cleanUp(Boolean) override -- both used to be unambiguous by arity
+        // alone (0 vs 1 args) before cleanUp gained its hideWildcardVariables parameter; keeping this a
+        // clearly distinct name is simpler than relying on receiver-type disambiguation holding on every
+        // Kotlin target.
+        private fun Substitution.Unifier.retaining(toRetain: Set<Var>): Substitution.Unifier =
             filter { v, t -> (v in toRetain) || (t is Var && t in toRetain) }
     }
 
@@ -124,7 +137,7 @@ internal sealed class SolutionImpl(
 
         override fun toString(): String = "No(query=$query)"
 
-        override fun cleanUp(): Solution.No = this
+        override fun cleanUp(hideWildcardVariables: Boolean): Solution.No = this
     }
 
     /** A class representing a failed (halted) solution because of an exception */
@@ -187,7 +200,7 @@ internal sealed class SolutionImpl(
 
         override fun toString(): String = "Halt(query=$query, exception=$exception)"
 
-        override fun cleanUp(): Solution.Halt = this
+        override fun cleanUp(hideWildcardVariables: Boolean): Solution.Halt = this
     }
 
     protected companion object {

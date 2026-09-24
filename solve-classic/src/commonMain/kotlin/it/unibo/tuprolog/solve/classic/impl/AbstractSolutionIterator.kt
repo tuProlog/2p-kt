@@ -21,7 +21,7 @@ internal abstract class AbstractSolutionIterator(
             state = computeNextState(state, ++step)
             onStateTransition(previousState, state, step)
         } while (!state.isEndState)
-        return state.castToEndState().solution.cleanUp()
+        return state.castToEndState().solution
     }
 
     protected abstract fun computeNextState(

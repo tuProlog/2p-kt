@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.exception.TimeOutException
 
 internal class SolutionFormatterImpl(
     private val termFormatter: TermFormatter,
+    private val groundQueriesHaveBooleanSolution: Boolean = false,
 ) : SolutionFormatter {
     override fun format(value: Solution): String =
         when (value) {
@@ -27,10 +28,14 @@ internal class SolutionFormatterImpl(
             e.logicStackTrace.joinToString(STACK_ITEM_SEPARATOR, STACK_ITEM_SEPARATOR) { termFormatter.format(it) }
 
     private fun formatYes(value: Solution.Yes): String =
-        "yes: ${termFormatter.format(value.solvedQuery)}" +
-            value.substitution.asIterable().joinToString(ASSIGNMENT_SEPARATOR, ASSIGNMENT_SEPARATOR) { (v, t) ->
-                "${termFormatter.format(v)} = ${termFormatter.format(t)}"
-            }
+        if (groundQueriesHaveBooleanSolution && value.query.variables.none()) {
+            "yes."
+        } else {
+            "yes: ${termFormatter.format(value.solvedQuery)}" +
+                value.substitution.asIterable().joinToString(ASSIGNMENT_SEPARATOR, ASSIGNMENT_SEPARATOR) { (v, t) ->
+                    "${termFormatter.format(v)} = ${termFormatter.format(t)}"
+                }
+        }
 
     companion object {
         private const val ASSIGNMENT_SEPARATOR = "\n    "

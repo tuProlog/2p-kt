@@ -95,7 +95,8 @@ data class FlagStore(
          * The default [FlagStore] every new [it.unibo.tuprolog.solve.Solver] starts with (see
          * [it.unibo.tuprolog.solve.SolverFactory.defaultFlags]), with every [NotableFlag] set to its
          * [NotableFlag.defaultValue]: [Unknown], [MaxArity], [DoubleQuotes], [LastCallOptimization],
-         * [TrackVariables].
+         * [TrackVariables], [ShowWildCardVariablesInSolutions], [UniqueSolutions],
+         * [GroundQueriesHaveBooleanSolution].
          */
         @JvmField
         val DEFAULT =
@@ -105,6 +106,9 @@ data class FlagStore(
                 DoubleQuotes,
                 LastCallOptimization,
                 TrackVariables,
+                ShowWildCardVariablesInSolutions,
+                UniqueSolutions,
+                GroundQueriesHaveBooleanSolution,
             )
 
         /** Same as [EMPTY], as a factory method. */

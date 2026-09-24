@@ -53,6 +53,19 @@ internal class VarTest {
     }
 
     @Test
+    fun wildcardWorksAsExpected() {
+        assertTrue(Var.anonymous().isWildcard)
+        assertTrue(Var.of("_").isWildcard)
+        assertTrue(Var.of("_P").isWildcard)
+        assertTrue(Var.of("_Foo").isWildcard)
+        assertFalse(Var.of("X").isWildcard)
+        assertFalse(Var.of("Foo").isWildcard)
+
+        assertTrue(Var.of("_P").isWildcard && !Var.of("_P").isAnonymous)
+        assertTrue(Var.anonymous().let { it.isWildcard && it.isAnonymous })
+    }
+
+    @Test
     fun namedVarsWorksAsExpected() {
         val instance = Var.of("X")
         assertEquals("X", instance.name)

@@ -125,9 +125,17 @@ sealed interface Solution :
      * Returns a [Solution] equivalent to this one, but with every variable not occurring in [query] (nor bound, in
      * [substitution], to a variable occurring in [query]) removed from [substitution]. Useful to drop
      * resolution-internal variables before presenting a solution to a user.
+     *
+     * When [hideWildcardVariables] is `true`, wildcard variables (per [it.unibo.tuprolog.core.Var.isWildcard],
+     * e.g. `_P`) occurring in [query] are treated as if they didn't occur there either, so their bindings are
+     * removed from [substitution] too -- matching the `ShowWildCardVariablesInSolutions` flag's `off` setting.
+     *
+     * No default value: a default on an `@JsName`-annotated overridden interface method here triggers a
+     * Kotlin/JS default-argument-dispatch bug (an omitted-argument call recurses into itself instead of the
+     * real implementation) -- every caller passes this explicitly.
      */
     @JsName("cleanUp")
-    fun cleanUp(): Solution
+    fun cleanUp(hideWildcardVariables: Boolean): Solution
 
     /** Returns the [Term] bound to [variable] in [substitution], or `null` if [variable] is unbound (or this is not a [Yes] solution). */
     @JsName("valueOf")
@@ -154,7 +162,7 @@ sealed interface Solution :
             substitution: Substitution.Unifier = this.substitution,
         ): Yes
 
-        override fun cleanUp(): Yes
+        override fun cleanUp(hideWildcardVariables: Boolean): Yes
 
         override fun asYes(): Yes = this
     }
@@ -173,7 +181,7 @@ sealed interface Solution :
         @JsName("copy")
         fun copy(query: Struct = this.query): No
 
-        override fun cleanUp(): No
+        override fun cleanUp(hideWildcardVariables: Boolean): No
 
         override fun asNo(): No = this
     }
@@ -192,7 +200,7 @@ sealed interface Solution :
             exception: ResolutionException = this.exception,
         ): Halt
 
-        override fun cleanUp(): Halt
+        override fun cleanUp(hideWildcardVariables: Boolean): Halt
 
         override fun asHalt(): Halt = this
     }

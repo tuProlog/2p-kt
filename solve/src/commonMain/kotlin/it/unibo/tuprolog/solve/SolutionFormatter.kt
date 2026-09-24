@@ -16,17 +16,26 @@ import kotlin.jvm.JvmStatic
  */
 interface SolutionFormatter : Formatter<Solution> {
     companion object {
-        /** Creates a [SolutionFormatter] rendering terms with [termFormatter] (defaults to pretty-printed expressions). */
+        /**
+         * Creates a [SolutionFormatter] rendering terms with [termFormatter] (defaults to pretty-printed
+         * expressions). When [groundQueriesHaveBooleanSolution] is `true`, a `yes` solution to a *ground* query
+         * (no variables at all) is rendered simply as `yes.`, rather than repeating the (identical) solved query.
+         */
         @JsName("of")
         @JvmStatic
         @JvmOverloads
-        fun of(termFormatter: TermFormatter = TermFormatter.prettyExpressions()): SolutionFormatter =
-            SolutionFormatterImpl(termFormatter)
+        fun of(
+            termFormatter: TermFormatter = TermFormatter.prettyExpressions(),
+            groundQueriesHaveBooleanSolution: Boolean = false,
+        ): SolutionFormatter = SolutionFormatterImpl(termFormatter, groundQueriesHaveBooleanSolution)
 
         /** Creates a [SolutionFormatter] that pretty-prints expressions using the given [operators] for notation. */
         @JsName("withOperators")
         @JvmStatic
-        fun withOperators(operators: OperatorSet): SolutionFormatter =
-            of(TermFormatter.prettyExpressions(true, operators))
+        @JvmOverloads
+        fun withOperators(
+            operators: OperatorSet,
+            groundQueriesHaveBooleanSolution: Boolean = false,
+        ): SolutionFormatter = of(TermFormatter.prettyExpressions(true, operators), groundQueriesHaveBooleanSolution)
     }
 }

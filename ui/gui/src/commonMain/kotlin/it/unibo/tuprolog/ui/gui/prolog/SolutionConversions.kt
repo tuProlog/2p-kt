@@ -22,12 +22,17 @@ import it.unibo.tuprolog.ui.gui.solver.SolverSignal
  * Converts this [Solution] into a toolkit-neutral [ResolutionStep.Yield], formatting the solved query and every
  * variable binding with [TermFormatter.prettyExpressions] (using [operators] and pretty variable names) rather
  * than each [it.unibo.tuprolog.core.Term]'s raw `toString()`.
+ *
+ * When [groundQueriesHaveBooleanSolution] is `true` and [query] is ground (no variables at all), the resulting
+ * [SolutionPresentation.Yes.solvedQuery] is left `null` -- a frontend renders that as a bare `yes.`, since the
+ * solved query would otherwise just repeat [query] verbatim.
  */
 internal fun Solution.toStep(
     queryText: String,
     signals: List<SolverSignal>,
     features: Map<FeatureId, Map<String, FeatureValue>>,
     operators: OperatorSet,
+    groundQueriesHaveBooleanSolution: Boolean = false,
 ): ResolutionStep =
     when (this) {
         is Solution.Yes -> {
@@ -49,7 +54,12 @@ internal fun Solution.toStep(
                             .mapNotNull { variable ->
                                 valueOf(variable)?.let { BindingPresentation(variable.name, formatter.format(it)) }
                             }.toList(),
-                    solvedQuery = formatter.format(solvedQuery),
+                    solvedQuery =
+                        if (groundQueriesHaveBooleanSolution && query.variables.none()) {
+                            null
+                        } else {
+                            formatter.format(solvedQuery)
+                        },
                     metadata = features.toSolutionMetadata(),
                 ),
                 hasMorePotentially = true,

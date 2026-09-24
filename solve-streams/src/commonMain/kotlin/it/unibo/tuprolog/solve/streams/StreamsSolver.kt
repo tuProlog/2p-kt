@@ -9,9 +9,12 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.distinctSolutions
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.flags.ShowWildCardVariablesInSolutions
+import it.unibo.tuprolog.solve.flags.UniqueSolutions
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -96,8 +99,14 @@ internal class StreamsSolver constructor(
                 ),
             ).map {
                 executionContext = it.context.apply(it.solve.sideEffects)
-                it.solve.solution.cleanUp()
+                it.solve.solution.cleanUp(
+                    hideWildcardVariables =
+                        flags[ShowWildCardVariablesInSolutions] == ShowWildCardVariablesInSolutions.OFF,
+                )
             }
+        if (flags[UniqueSolutions] == UniqueSolutions.ON) {
+            solutionSequence = solutionSequence.distinctSolutions()
+        }
         if (options.limit > 0) {
             solutionSequence = solutionSequence.take(options.limit)
         }

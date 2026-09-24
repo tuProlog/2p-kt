@@ -8,8 +8,11 @@ import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.flags.GroundQueriesHaveBooleanSolution
+import it.unibo.tuprolog.solve.flags.ShowWildCardVariablesInSolutions
 import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.solve.flags.TrackVariables.ON
+import it.unibo.tuprolog.solve.flags.UniqueSolutions
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
@@ -71,7 +74,13 @@ open class SolverFactorySession(
                     ResolutionStep.End(signals = drainSignals())
                 } else {
                     val solution = solutions.next()
-                    solution.toStep(request.query, drainSignals(), solutionFeatures(solution), solver.operators)
+                    solution.toStep(
+                        request.query,
+                        drainSignals(),
+                        solutionFeatures(solution),
+                        solver.operators,
+                        solver.flags[GroundQueriesHaveBooleanSolution] == GroundQueriesHaveBooleanSolution.ON,
+                    )
                 }
             }
 
@@ -98,6 +107,9 @@ open class SolverFactorySession(
                 .newBuilder()
                 .runtime(Runtime.of(runtimeLibraries))
                 .flag(TrackVariables) { ON }
+                .flag(ShowWildCardVariablesInSolutions) { OFF }
+                .flag(UniqueSolutions) { ON }
+                .flag(GroundQueriesHaveBooleanSolution) { ON }
                 .standardInput(InputChannel.of(creationRequest.stdin))
                 .standardOutput(OutputChannel.of { signal(SolverSignal.Stdout(it)) })
                 .standardError(OutputChannel.of { signal(SolverSignal.Stderr(it)) })
