@@ -14,9 +14,12 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.directives.ClausePartition
 import it.unibo.tuprolog.solve.directives.partition
 import it.unibo.tuprolog.solve.directives.plus
+import it.unibo.tuprolog.solve.distinctSolutions
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
 import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.flags.ShowWildCardVariablesInSolutions
+import it.unibo.tuprolog.solve.flags.UniqueSolutions
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.toOperatorSet
@@ -184,7 +187,17 @@ abstract class AbstractSolver<E : ExecutionContext>(
         goal: Struct,
         options: SolveOptions,
     ): Sequence<Solution> {
-        var solutionSequence = solveImpl(goal, options)
+        var solutionSequence =
+            solveImpl(goal, options)
+                .map {
+                    it.cleanUp(
+                        hideWildcardVariables =
+                            flags[ShowWildCardVariablesInSolutions] == ShowWildCardVariablesInSolutions.OFF,
+                    )
+                }
+        if (flags[UniqueSolutions] == UniqueSolutions.ON) {
+            solutionSequence = solutionSequence.distinctSolutions()
+        }
         if (options.limit > 0) {
             solutionSequence = solutionSequence.take(options.limit)
         }

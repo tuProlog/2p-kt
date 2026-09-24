@@ -157,6 +157,28 @@ class SwingIdeComponentsTest {
     }
 
     @Test
+    fun `a null solvedQuery is rendered as a bare yes, for GroundQueriesHaveBooleanSolution`() {
+        SwingUtilities.invokeAndWait {
+            val tree = SolutionTree()
+            tree.render(
+                listOf(
+                    SolutionQueryEntry(
+                        query = "2 is 1 + 1.",
+                        solutions = listOf(SolutionPresentation.Yes(query = "2 is 1 + 1.", solvedQuery = null)),
+                        hasUnexploredPaths = false,
+                    ),
+                ),
+            )
+
+            val root = tree.model.root as DefaultMutableTreeNode
+            val queryNode = root.getChildAt(0) as DefaultMutableTreeNode
+            val solution = queryNode.getChildAt(0) as DefaultMutableTreeNode
+
+            assertEquals("1. yes.", solution.toString())
+        }
+    }
+
+    @Test
     fun `solution tree focuses one query and collapses the others`() {
         SwingUtilities.invokeAndWait {
             val tree = SolutionTree()

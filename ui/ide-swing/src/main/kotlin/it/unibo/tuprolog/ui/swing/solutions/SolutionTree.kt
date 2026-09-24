@@ -83,7 +83,9 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
             is SolutionPresentation.Yes ->
                 DefaultMutableTreeNode(
                     SolutionNodeData.ResultNode(
-                        "$number. yes: ${solution.solvedQuery ?: solution.query}${probabilityAnnotation(solution)}",
+                        "$number. " +
+                            (solution.solvedQuery?.let { "yes: $it" } ?: "yes.") +
+                            probabilityAnnotation(solution),
                         ResultKind.YES,
                     ),
                 ).apply {

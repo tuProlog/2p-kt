@@ -9,6 +9,7 @@ import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.flags.GroundQueriesHaveBooleanSolution
 
 /**
  * The `solve` subcommand of [TuPrologCmd]: `java -jar 2p-repl.jar solve QUERY [-n N]`.
@@ -49,10 +50,12 @@ class TuPrologSolveQuery :
             try {
                 val duration: TimeDuration = parentCommand.getTimeout()
                 val solutions = solver.solve(Struct.parse(query), duration).iterator()
+                val groundQueriesHaveBooleanSolution =
+                    solver.flags[GroundQueriesHaveBooleanSolution] == GroundQueriesHaveBooleanSolution.ON
                 if (maxSolutions == 0) {
-                    printSolutions(solutions, solver.operators)
+                    printSolutions(solutions, solver.operators, groundQueriesHaveBooleanSolution)
                 } else {
-                    printNumSolutions(solutions, maxSolutions, solver.operators)
+                    printNumSolutions(solutions, maxSolutions, solver.operators, groundQueriesHaveBooleanSolution)
                 }
             } catch (e: ParseException) {
                 printParseException(e)

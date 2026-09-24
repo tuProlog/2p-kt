@@ -77,8 +77,10 @@ class PlpSwingE2eTest {
         window.button("solveButton").click()
 
         // No more separate Probability tab: the probability is an annotation right on the solution row.
+        // "twoHeads." is a ground query, and the IDE defaults GroundQueriesHaveBooleanSolution to on, so the
+        // row reads a bare "yes." rather than repeating the (variable-free) solved query.
         window.awaitCondition("the probabilistic solution and its probability to appear", timeoutSeconds = 15) {
-            tree("solutionsTree").rowTexts().any { it.contains("twoHeads") && it.contains("p=30.0%") }
+            tree("solutionsTree").rowTexts().any { it.contains("yes.") && it.contains("p=30.0%") }
         }
 
         window.selectLowerTab("BDD")

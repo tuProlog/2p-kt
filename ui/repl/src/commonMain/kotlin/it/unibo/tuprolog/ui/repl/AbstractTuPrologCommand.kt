@@ -46,10 +46,11 @@ abstract class AbstractTuPrologCommand(
     private fun printSolution(
         sol: Solution,
         operatorSet: OperatorSet,
+        groundQueriesHaveBooleanSolution: Boolean,
     ) {
         when (sol) {
             is Solution.Yes -> {
-                printYesSolution(sol, operatorSet)
+                printYesSolution(sol, operatorSet, groundQueriesHaveBooleanSolution)
             }
             is Solution.No -> {
                 printNoSolution(sol, operatorSet)
@@ -63,8 +64,9 @@ abstract class AbstractTuPrologCommand(
     private fun printYesSolution(
         sol: Solution.Yes,
         operatorSet: OperatorSet,
+        groundQueriesHaveBooleanSolution: Boolean,
     ) {
-        echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
+        echo(sol.format(SolutionFormatter.withOperators(operatorSet, groundQueriesHaveBooleanSolution)))
     }
 
     private fun printHaltSolution(
@@ -146,6 +148,7 @@ abstract class AbstractTuPrologCommand(
     protected fun printSolutions(
         solutions: Iterator<Solution>,
         operatorSet: OperatorSet,
+        groundQueriesHaveBooleanSolution: Boolean = false,
     ) {
         var first = true
         while (solutions.hasNext()) {
@@ -155,7 +158,7 @@ abstract class AbstractTuPrologCommand(
             } else {
                 first = false
             }
-            printSolution(solutions.next(), operatorSet)
+            printSolution(solutions.next(), operatorSet, groundQueriesHaveBooleanSolution)
         }
         printEndOfSolutions()
     }
@@ -171,11 +174,12 @@ abstract class AbstractTuPrologCommand(
         solutions: Iterator<Solution>,
         maxSolutions: Int,
         operatorSet: OperatorSet,
+        groundQueriesHaveBooleanSolution: Boolean = false,
     ) {
         var i = 0
         while (i < maxSolutions && solutions.hasNext()) {
             i++
-            printSolution(solutions.next(), operatorSet)
+            printSolution(solutions.next(), operatorSet, groundQueriesHaveBooleanSolution)
         }
         printEndOfSolutions()
     }

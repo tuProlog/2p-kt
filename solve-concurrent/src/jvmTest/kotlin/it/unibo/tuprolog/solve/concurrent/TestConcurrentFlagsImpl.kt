@@ -58,4 +58,38 @@ class TestConcurrentFlagsImpl :
     @Test
     override fun attemptingToEditMaxArityFlagProvokesPermissionError() =
         multiRunConcurrentTest { super.attemptingToEditMaxArityFlagProvokesPermissionError() }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun defaultShowWildCardVariablesInSolutionsIsOn() =
+        multiRunConcurrentTest { super.defaultShowWildCardVariablesInSolutionsIsOn() }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun defaultUniqueSolutionsIsOff() = multiRunConcurrentTest { super.defaultUniqueSolutionsIsOff() }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun defaultGroundQueriesHaveBooleanSolutionIsOff() =
+        multiRunConcurrentTest { super.defaultGroundQueriesHaveBooleanSolutionIsOff() }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun byDefaultWildcardVariablesAppearInSolutions() =
+        multiRunConcurrentTest { super.byDefaultWildcardVariablesAppearInSolutions() }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun hidingWildcardVariablesRemovesThemFromSolutions() =
+        multiRunConcurrentTest { super.hidingWildcardVariablesRemovesThemFromSolutions() }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun byDefaultDuplicateSolutionsAreAllReturned() =
+        multiRunConcurrentTest { super.byDefaultDuplicateSolutionsAreAllReturned() }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    override fun uniqueSolutionsDropsSolutionsWithARepeatedTerm() =
+        multiRunConcurrentTest { super.uniqueSolutionsDropsSolutionsWithARepeatedTerm() }
 }

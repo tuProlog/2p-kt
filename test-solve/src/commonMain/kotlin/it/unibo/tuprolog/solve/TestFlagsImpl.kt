@@ -6,14 +6,19 @@ import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.flags.GroundQueriesHaveBooleanSolution
 import it.unibo.tuprolog.solve.flags.LastCallOptimization
 import it.unibo.tuprolog.solve.flags.MaxArity
+import it.unibo.tuprolog.solve.flags.ShowWildCardVariablesInSolutions
+import it.unibo.tuprolog.solve.flags.UniqueSolutions
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.primitive.CurrentFlag
 import it.unibo.tuprolog.solve.stdlib.primitive.SetFlag
 import it.unibo.tuprolog.utils.indexed
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /** Concrete implementation of [TestFlags], instantiated via [TestFlags.prototype]. */
@@ -232,6 +237,107 @@ class TestFlagsImpl(
                 ),
                 solver.solveList(query, shortDuration),
             )
+        }
+    }
+
+    override fun defaultShowWildCardVariablesInSolutionsIsOn() {
+        logicProgramming {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            assertEquals(ShowWildCardVariablesInSolutions.ON, ShowWildCardVariablesInSolutions.defaultValue)
+
+            val query = current_flag(ShowWildCardVariablesInSolutions.name, ShowWildCardVariablesInSolutions.ON)
+
+            assertSolutionEquals(
+                listOf(query.yes()),
+                solver.solve(query, shortDuration).toList(),
+            )
+        }
+    }
+
+    override fun defaultUniqueSolutionsIsOff() {
+        logicProgramming {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            assertEquals(UniqueSolutions.OFF, UniqueSolutions.defaultValue)
+
+            val query = current_flag(UniqueSolutions.name, UniqueSolutions.OFF)
+
+            assertSolutionEquals(
+                listOf(query.yes()),
+                solver.solve(query, shortDuration).toList(),
+            )
+        }
+    }
+
+    override fun defaultGroundQueriesHaveBooleanSolutionIsOff() {
+        logicProgramming {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            assertEquals(GroundQueriesHaveBooleanSolution.OFF, GroundQueriesHaveBooleanSolution.defaultValue)
+
+            val query = current_flag(GroundQueriesHaveBooleanSolution.name, GroundQueriesHaveBooleanSolution.OFF)
+
+            assertSolutionEquals(
+                listOf(query.yes()),
+                solver.solve(query, shortDuration).toList(),
+            )
+        }
+    }
+
+    override fun byDefaultWildcardVariablesAppearInSolutions() {
+        logicProgramming {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+            val wildcard = varOf("_P")
+            val query = structOf("f", X, wildcard) eq structOf("f", "lino", "joey")
+
+            val solution = solver.solveOnce(query, shortDuration)
+
+            assertTrue(solution.isYes)
+            assertEquals(Atom.of("lino"), solution.valueOf("X"))
+            assertEquals(Atom.of("joey"), solution.valueOf("_P"))
+        }
+    }
+
+    override fun hidingWildcardVariablesRemovesThemFromSolutions() {
+        logicProgramming {
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    flags =
+                        FlagStore.DEFAULT.set(
+                            ShowWildCardVariablesInSolutions,
+                            ShowWildCardVariablesInSolutions.OFF,
+                        ),
+                )
+            val wildcard = varOf("_P")
+            val query = structOf("f", X, wildcard) eq structOf("f", "lino", "joey")
+
+            val solution = solver.solveOnce(query, shortDuration)
+
+            assertTrue(solution.isYes)
+            assertEquals(Atom.of("lino"), solution.valueOf("X"))
+            assertNull(solution.valueOf("_P"))
+        }
+    }
+
+    override fun byDefaultDuplicateSolutionsAreAllReturned() {
+        logicProgramming {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+            val query = member(X, logicListOf(1, 1, 1))
+
+            assertEquals(3, solver.solveList(query, shortDuration).count { it.isYes })
+        }
+    }
+
+    override fun uniqueSolutionsDropsSolutionsWithARepeatedTerm() {
+        logicProgramming {
+            val solver =
+                solverFactory.solverWithDefaultBuiltins(
+                    flags = FlagStore.DEFAULT.set(UniqueSolutions, UniqueSolutions.ON),
+                )
+            val query = member(X, logicListOf(1, 1, 1))
+
+            assertEquals(1, solver.solveList(query, shortDuration).count { it.isYes })
         }
     }
 }

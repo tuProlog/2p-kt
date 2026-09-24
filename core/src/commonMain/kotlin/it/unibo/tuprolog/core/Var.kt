@@ -50,6 +50,16 @@ interface Var : Term {
         get() = Terms.ANONYMOUS_VAR_NAME == name
 
     /**
+     * Whether this variable follows the wildcard naming convention, i.e. whether its [name] starts with `"_"`
+     * (e.g. `_`, `_P`, `_Foo`). Broader than [isAnonymous] (which only matches `"_"` exactly): unlike a true
+     * anonymous variable, a named wildcard like `_P` can still be meaningfully shared across occurrences within
+     * a clause -- the convention only means "the user doesn't care to see its value", not "never shared".
+     */
+    @JsName("isWildcard")
+    val isWildcard: Boolean
+        get() = name.startsWith(Terms.ANONYMOUS_VAR_NAME)
+
+    /**
      * The simple, human-readable name of this variable, as it would appear in Prolog source (e.g. `"X"`).
      * This is *not* used to determine variable identity/equality; see [completeName] for that.
      */
