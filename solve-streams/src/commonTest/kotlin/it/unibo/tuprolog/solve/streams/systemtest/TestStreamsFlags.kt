@@ -65,4 +65,39 @@ class TestStreamsFlags :
     override fun settingMissingFlagsSucceeds() {
         prototype.settingMissingFlagsSucceeds()
     }
+
+    @Test
+    override fun defaultShowWildCardVariablesInSolutionsIsOn() {
+        prototype.defaultShowWildCardVariablesInSolutionsIsOn()
+    }
+
+    @Test
+    override fun defaultUniqueSolutionsIsOff() {
+        prototype.defaultUniqueSolutionsIsOff()
+    }
+
+    @Test
+    override fun defaultGroundQueriesHaveBooleanSolutionIsOff() {
+        prototype.defaultGroundQueriesHaveBooleanSolutionIsOff()
+    }
+
+    @Test
+    override fun byDefaultWildcardVariablesAppearInSolutions() {
+        prototype.byDefaultWildcardVariablesAppearInSolutions()
+    }
+
+    @Test
+    override fun hidingWildcardVariablesRemovesThemFromSolutions() {
+        prototype.hidingWildcardVariablesRemovesThemFromSolutions()
+    }
+
+    @Test
+    override fun byDefaultDuplicateSolutionsAreAllReturned() {
+        prototype.byDefaultDuplicateSolutionsAreAllReturned()
+    }
+
+    @Test
+    override fun uniqueSolutionsDropsSolutionsWithARepeatedTerm() {
+        prototype.uniqueSolutionsDropsSolutionsWithARepeatedTerm()
+    }
 }

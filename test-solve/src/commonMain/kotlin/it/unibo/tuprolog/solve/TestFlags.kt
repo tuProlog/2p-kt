@@ -99,4 +99,58 @@ interface TestFlags : SolverTest {
      * the standard-defined flags, this solver implementation allows setting flags it did not previously know about.
      */
     fun settingMissingFlagsSucceeds()
+
+    /**
+     * Tests that [it.unibo.tuprolog.solve.flags.ShowWildCardVariablesInSolutions]'s default value is `on`, and
+     * that the query
+     * ```prolog
+     * ?- current_flag(show_wildcard_variables_in_solutions, on).
+     * ```
+     * succeeds on a solver initialized with default built-ins.
+     */
+    fun defaultShowWildCardVariablesInSolutionsIsOn()
+
+    /**
+     * Tests that [it.unibo.tuprolog.solve.flags.UniqueSolutions]'s default value is `off`, and that the query
+     * ```prolog
+     * ?- current_flag(unique_solutions, off).
+     * ```
+     * succeeds on a solver initialized with default built-ins.
+     */
+    fun defaultUniqueSolutionsIsOff()
+
+    /**
+     * Tests that [it.unibo.tuprolog.solve.flags.GroundQueriesHaveBooleanSolution]'s default value is `off`, and
+     * that the query
+     * ```prolog
+     * ?- current_flag(ground_queries_have_boolean_solution, off).
+     * ```
+     * succeeds on a solver initialized with default built-ins.
+     */
+    fun defaultGroundQueriesHaveBooleanSolutionIsOff()
+
+    /**
+     * Tests that, by default (`show_wildcard_variables_in_solutions` left `on`), a wildcard variable (e.g. `_P`)
+     * still appears in a `yes` solution's substitution -- unaffected, standard behaviour (see #980).
+     */
+    fun byDefaultWildcardVariablesAppearInSolutions()
+
+    /**
+     * Tests that, with `show_wildcard_variables_in_solutions` set to `off`, a wildcard variable (e.g. `_P`) is
+     * removed from a `yes` solution's substitution, while every other variable is kept -- fixing #980.
+     */
+    fun hidingWildcardVariablesRemovesThemFromSolutions()
+
+    /**
+     * Tests that, by default (`unique_solutions` left `off`), `member(X, [1, 1, 1])` yields three `yes` solutions
+     * (one per list element), even though they all carry the same solved-query term -- unaffected, standard
+     * behaviour.
+     */
+    fun byDefaultDuplicateSolutionsAreAllReturned()
+
+    /**
+     * Tests that, with `unique_solutions` set to `on`, `member(X, [1, 1, 1])` yields a single `yes` solution
+     * (`X = 1`) instead of three, since the later two repeat the first one's solved-query term.
+     */
+    fun uniqueSolutionsDropsSolutionsWithARepeatedTerm()
 }
