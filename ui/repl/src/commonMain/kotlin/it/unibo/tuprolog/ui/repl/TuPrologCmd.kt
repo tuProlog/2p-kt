@@ -16,6 +16,7 @@ import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
+import it.unibo.tuprolog.solve.flags.GroundQueriesHaveBooleanSolution
 import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
@@ -123,7 +124,11 @@ class TuPrologCmd(
                 try {
                     val goal = Struct.parse(query, solver.operators)
                     val solutions = solver.solve(goal, this.getTimeout()).iterator()
-                    printSolutions(solutions, solver.operators)
+                    printSolutions(
+                        solutions,
+                        solver.operators,
+                        solver.flags[GroundQueriesHaveBooleanSolution] == GroundQueriesHaveBooleanSolution.ON,
+                    )
                 } catch (e: ParseException) {
                     printParseException(e)
                 }
