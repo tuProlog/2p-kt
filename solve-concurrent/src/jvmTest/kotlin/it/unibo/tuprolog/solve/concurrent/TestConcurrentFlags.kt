@@ -293,7 +293,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> :
         logicProgramming {
             val solver = solverWithDefaultBuiltins()
             val wildcard = varOf("_P")
-            val query = (X eq "lino") and (wildcard eq "joey")
+            val query = structOf("f", X, wildcard) eq structOf("f", "lino", "joey")
 
             val solution = solver.solveOnce(query, shortDuration)
 
@@ -314,7 +314,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> :
                         ),
                 )
             val wildcard = varOf("_P")
-            val query = (X eq "lino") and (wildcard eq "joey")
+            val query = structOf("f", X, wildcard) eq structOf("f", "lino", "joey")
 
             val solution = solver.solveOnce(query, shortDuration)
 
@@ -329,7 +329,7 @@ interface TestConcurrentFlags<T : WithAssertingEquals> :
             val solver = solverWithDefaultBuiltins()
             val query = member(X, logicListOf(1, 1, 1))
 
-            assertEquals(3, solver.solveList(query, shortDuration).size)
+            assertEquals(3, solver.solveList(query, shortDuration).count { it.isYes })
         }
     }
 

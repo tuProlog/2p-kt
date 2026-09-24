@@ -91,7 +91,7 @@ internal sealed class SolutionImpl(
         override fun cleanUp(hideWildcardVariables: Boolean): Solution.Yes =
             copy(
                 substitution =
-                    substitution.cleanUp(
+                    substitution.retaining(
                         query.variables
                             .filterNot {
                                 it.isAnonymous || (hideWildcardVariables && it.isWildcard)
@@ -99,7 +99,12 @@ internal sealed class SolutionImpl(
                     ),
             )
 
-        private fun Substitution.Unifier.cleanUp(toRetain: Set<Var>): Substitution.Unifier =
+        // Named distinctly from cleanUp (rather than an overload on Substitution.Unifier) to avoid any
+        // ambiguity with the class's own cleanUp(Boolean) override -- both used to be unambiguous by arity
+        // alone (0 vs 1 args) before cleanUp gained its hideWildcardVariables parameter; keeping this a
+        // clearly distinct name is simpler than relying on receiver-type disambiguation holding on every
+        // Kotlin target.
+        private fun Substitution.Unifier.retaining(toRetain: Set<Var>): Substitution.Unifier =
             filter { v, t -> (v in toRetain) || (t is Var && t in toRetain) }
     }
 

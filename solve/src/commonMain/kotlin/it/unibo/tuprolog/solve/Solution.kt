@@ -129,9 +129,13 @@ sealed interface Solution :
      * When [hideWildcardVariables] is `true`, wildcard variables (per [it.unibo.tuprolog.core.Var.isWildcard],
      * e.g. `_P`) occurring in [query] are treated as if they didn't occur there either, so their bindings are
      * removed from [substitution] too -- matching the `ShowWildCardVariablesInSolutions` flag's `off` setting.
+     *
+     * No default value: a default on an `@JsName`-annotated overridden interface method here triggers a
+     * Kotlin/JS default-argument-dispatch bug (an omitted-argument call recurses into itself instead of the
+     * real implementation) -- every caller passes this explicitly.
      */
     @JsName("cleanUp")
-    fun cleanUp(hideWildcardVariables: Boolean = false): Solution
+    fun cleanUp(hideWildcardVariables: Boolean): Solution
 
     /** Returns the [Term] bound to [variable] in [substitution], or `null` if [variable] is unbound (or this is not a [Yes] solution). */
     @JsName("valueOf")

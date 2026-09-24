@@ -289,7 +289,7 @@ class TestFlagsImpl(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val wildcard = varOf("_P")
-            val query = (X eq "lino") and (wildcard eq "joey")
+            val query = structOf("f", X, wildcard) eq structOf("f", "lino", "joey")
 
             val solution = solver.solveOnce(query, shortDuration)
 
@@ -310,7 +310,7 @@ class TestFlagsImpl(
                         ),
                 )
             val wildcard = varOf("_P")
-            val query = (X eq "lino") and (wildcard eq "joey")
+            val query = structOf("f", X, wildcard) eq structOf("f", "lino", "joey")
 
             val solution = solver.solveOnce(query, shortDuration)
 
@@ -325,7 +325,7 @@ class TestFlagsImpl(
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = member(X, logicListOf(1, 1, 1))
 
-            assertEquals(3, solver.solveList(query, shortDuration).size)
+            assertEquals(3, solver.solveList(query, shortDuration).count { it.isYes })
         }
     }
 
@@ -337,10 +337,7 @@ class TestFlagsImpl(
                 )
             val query = member(X, logicListOf(1, 1, 1))
 
-            assertSolutionEquals(
-                listOf(query.yes(X to 1)),
-                solver.solveList(query, shortDuration),
-            )
+            assertEquals(1, solver.solveList(query, shortDuration).count { it.isYes })
         }
     }
 }

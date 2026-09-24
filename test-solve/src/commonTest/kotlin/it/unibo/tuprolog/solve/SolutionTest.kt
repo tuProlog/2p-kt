@@ -153,7 +153,7 @@ internal class SolutionTest {
                 val query = Struct.of("f", varOf("X"), varOf("_P"))
                 val substitution = Substitution.of(mapOf(varOf("X") to Atom.of("x"), varOf("_P") to Atom.of("p")))
                 Solution.yes(query, substitution)
-            }.cleanUp()
+            }.cleanUp(hideWildcardVariables = false)
 
         assertEquals(Atom.of("x"), solution.valueOf("X"))
         assertEquals(Atom.of("p"), solution.valueOf("_P"))
