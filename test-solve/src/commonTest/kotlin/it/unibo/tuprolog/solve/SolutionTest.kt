@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.testutils.SolutionUtils.aQuery
@@ -140,5 +143,42 @@ internal class SolutionTest {
         assertFailsWith<IllegalArgumentException> {
             Solution.halt(querySignature.copy(vararg = true), queryArgList, anException)
         }
+    }
+
+    @Test
+    fun cleanUpKeepsWildcardVariablesByDefault() {
+        val scope = Scope.empty()
+        val solution =
+            with(scope) {
+                val query = Struct.of("f", varOf("X"), varOf("_P"))
+                val substitution = Substitution.of(mapOf(varOf("X") to Atom.of("x"), varOf("_P") to Atom.of("p")))
+                Solution.yes(query, substitution)
+            }.cleanUp()
+
+        assertEquals(Atom.of("x"), solution.valueOf("X"))
+        assertEquals(Atom.of("p"), solution.valueOf("_P"))
+    }
+
+    @Test
+    fun cleanUpHidesWildcardVariablesWhenAsked() {
+        val scope = Scope.empty()
+        val solution =
+            with(scope) {
+                val query = Struct.of("f", varOf("X"), varOf("_P"))
+                val substitution = Substitution.of(mapOf(varOf("X") to Atom.of("x"), varOf("_P") to Atom.of("p")))
+                Solution.yes(query, substitution)
+            }.cleanUp(hideWildcardVariables = true)
+
+        assertEquals(Atom.of("x"), solution.valueOf("X"))
+        assertNull(solution.valueOf("_P"))
+    }
+
+    @Test
+    fun cleanUpHidingWildcardVariablesIsANoOpForNoAndHalt() {
+        val no = Solution.no(aQuery).cleanUp(hideWildcardVariables = true)
+        val halt = Solution.halt(aQuery, anException).cleanUp(hideWildcardVariables = true)
+
+        assertEquals(Solution.no(aQuery), no)
+        assertEquals(Solution.halt(aQuery, anException), halt)
     }
 }
