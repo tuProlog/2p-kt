@@ -40,4 +40,52 @@ class SolutionConversionsTest {
         assertEquals("1 + 2", yes.bindings.single().value)
         assertEquals("compute(1 + 2)", yes.solvedQuery)
     }
+
+    @Test
+    fun `groundQueriesHaveBooleanSolution nulls out solvedQuery for a ground query`() {
+        val query = Struct.of("is", Integer.of(2), Struct.of("+", Integer.of(1), Integer.of(1)))
+        val solution = Solution.yes(query)
+
+        val step =
+            solution.toStep(
+                "2 is 1 + 1.",
+                emptyList(),
+                emptyMap(),
+                OperatorSet.DEFAULT,
+                groundQueriesHaveBooleanSolution = true,
+            )
+
+        val yes = assertIs<SolutionPresentation.Yes>(assertIs<ResolutionStep.Yield>(step).solution)
+        assertEquals(null, yes.solvedQuery)
+    }
+
+    @Test
+    fun `groundQueriesHaveBooleanSolution leaves a non-ground query's solvedQuery untouched`() {
+        val x = Var.of("X")
+        val query = Struct.of("is", x, Struct.of("+", Integer.of(1), Integer.of(1)))
+        val solution = Solution.yes(query, Substitution.of(mapOf(x to Integer.of(2))))
+
+        val step =
+            solution.toStep(
+                "X is 1 + 1.",
+                emptyList(),
+                emptyMap(),
+                OperatorSet.DEFAULT,
+                groundQueriesHaveBooleanSolution = true,
+            )
+
+        val yes = assertIs<SolutionPresentation.Yes>(assertIs<ResolutionStep.Yield>(step).solution)
+        assertEquals("2 is 1 + 1", yes.solvedQuery)
+    }
+
+    @Test
+    fun `groundQueriesHaveBooleanSolution defaults to false, keeping a ground query's solvedQuery`() {
+        val query = Struct.of("is", Integer.of(2), Struct.of("+", Integer.of(1), Integer.of(1)))
+        val solution = Solution.yes(query)
+
+        val step = solution.toStep("2 is 1 + 1.", emptyList(), emptyMap(), OperatorSet.DEFAULT)
+
+        val yes = assertIs<SolutionPresentation.Yes>(assertIs<ResolutionStep.Yield>(step).solution)
+        assertEquals("2 is 1 + 1", yes.solvedQuery)
+    }
 }
