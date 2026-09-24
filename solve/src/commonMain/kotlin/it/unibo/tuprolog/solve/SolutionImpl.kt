@@ -92,7 +92,10 @@ internal sealed class SolutionImpl(
             copy(
                 substitution =
                     substitution.cleanUp(
-                        query.variables.filterNot { it.isAnonymous || (hideWildcardVariables && it.isWildcard) }.toSet(),
+                        query.variables
+                            .filterNot {
+                                it.isAnonymous || (hideWildcardVariables && it.isWildcard)
+                            }.toSet(),
                     ),
             )
 
