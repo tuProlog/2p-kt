@@ -43,7 +43,9 @@ internal actual fun solverFactory(
         .firstOrNull()
         ?: throw IllegalStateException(
             "No viable implementation for ${SolverFactory::class.simpleName} in " +
-                sequenceOf(className, *classNames).joinToString(", ", "[", "]"),
+                sequenceOf(className, *classNames).joinToString(", ", "[", "]") +
+                ": on JS it is looked up by module name at runtime, which bundlers (e.g. webpack) cannot resolve; " +
+                "in bundled apps, use the factory object directly (e.g. ClassicSolverFactory)",
         )
 
 actual fun classicSolverFactory(): SolverFactory =

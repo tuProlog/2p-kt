@@ -28,12 +28,12 @@ data class JsClassName(
         qualifiedName.split('.')
     }
 
-    /** Resolves this reference via JS `require`,
+    /** Resolves this reference via JS `require`, or via `globalThis` where modules are loaded as plain scripts,
      * returning `null` if [module] or any segment of [path] can't be found. */
     @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun resolve(): dynamic {
         try {
-            var resolved = require(module)
+            var resolved = loadModule()
             for (key in path) {
                 if (resolved == null) break
                 resolved = resolved[key]
@@ -42,6 +42,18 @@ data class JsClassName(
         } catch (e: Throwable) {
             return null
         }
+    }
+
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
+    private fun loadModule(): dynamic {
+        val required: dynamic =
+            try {
+                require(module)
+            } catch (e: Throwable) {
+                null
+            }
+        // UMD modules loaded through <script> tags (no `require`) register themselves on globalThis by name
+        return required ?: js("globalThis")[module.removePrefix("./")]
     }
 
     /** The [KClass] of the value [resolve]d by this reference. */
