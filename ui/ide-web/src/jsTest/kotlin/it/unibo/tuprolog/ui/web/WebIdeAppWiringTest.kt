@@ -3,10 +3,12 @@ package it.unibo.tuprolog.ui.web
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.parsing.parseAsTerm
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import kotlin.test.Test
 import kotlin.test.assertIs
+import kotlin.test.assertSame
 
 /**
  * Exercises the exact solver [main] wires up, in a real browser via jsBrowserTest.
@@ -20,6 +22,21 @@ import kotlin.test.assertIs
  */
 class WebIdeAppWiringTest {
     @Test
+    fun `Solver prolog resolves the UMD global in a browser bundle`() {
+        val module: dynamic = js("({})")
+        var namespace = module
+        for (part in "it.unibo.tuprolog.solve.classic".split('.')) {
+            val child: dynamic = js("({})")
+            namespace[part] = child
+            namespace = child
+        }
+        namespace.ClassicSolverFactory = ClassicSolverFactory
+        globalThis["2p-solve-classic"] = module
+
+        assertSame(ClassicSolverFactory, Solver.prolog)
+    }
+
+    @Test
     fun `ClassicSolverFactory builds a working solver once bundled by webpack`() {
         val solver =
             ClassicSolverFactory
@@ -29,4 +46,7 @@ class WebIdeAppWiringTest {
         val solution = solver.solveOnce("p(X).".parseAsTerm() as Struct)
         assertIs<Solution.Yes>(solution)
     }
+
+    private val globalThis: dynamic
+        get() = js("globalThis")
 }
