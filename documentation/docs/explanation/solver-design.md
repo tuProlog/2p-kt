@@ -10,9 +10,8 @@ carries, and why that state is split the way it is. Understanding this is a prer
 The `:solve` module defines `Solver`, `Solution`, `ExecutionContext`, `Library`, `FlagStore`, and `Channel`
 without committing to *how* resolution is actually carried out. That is a deliberate split: `:solve-prolog`
 implements ISO-standard SLD-NF resolution as an explicit finite-state machine (see
-[state-machine.md](state-machine.md)); `:solve-concurrent` implements a different, more minimalistic
-side-effect-free strategy over the same `Solver` contract. Both are interchangeable from client code's point of
-view — `Solver.prolog()` and `Solver.concurrent()` return the same `Solver` interface — because everything a
+[state-machine.md](state-machine.md)); `:solve-concurrent` parallelizes resolution with coroutines over the same
+`Solver` contract. Both expose the same `Solver` interface through `Solver.prolog` and `Solver.concurrent`, because everything a
 resolution strategy needs to *read and mutate* while solving a goal is factored out into `ExecutionContext`,
 not hardwired into `Solver` itself.
 

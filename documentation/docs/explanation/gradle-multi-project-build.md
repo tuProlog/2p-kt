@@ -18,7 +18,7 @@ that map directly onto the module list itself:
 
 - **Consumers should be able to depend on exactly what they need.** A user who only wants to *represent* and
   *unify* logic terms — no parsing, no resolution, no I/O — can depend on `:core` and `:unify` alone. A user
-  embedding a full Prolog engine depends on `:solve-prolog` (or `:solve-concurrent`) and transitively pulls in
+  embedding the standard Prolog engine depends on `:solve-prolog` and transitively pulls in
   everything underneath. A single-module build forces every consumer to accept the whole dependency footprint
   (and the whole set of transitive third-party dependencies) no matter how little of it they use. This matters
   concretely on non-JVM Kotlin targets, where binary size and unnecessary transitive dependencies are a real
