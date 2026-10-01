@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":solve-classic"))
+    api(project(":solve-prolog"))
     api(project(":solve-concurrent"))
     api(project(":solve-problog"))
     api(project(":dsl-theory"))

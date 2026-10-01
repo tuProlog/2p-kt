@@ -7,36 +7,16 @@ import kotlin.test.assertNotSame
 import kotlin.test.fail
 
 /** Concrete implementation of [TestStaticFactory], instantiated via [TestStaticFactory.prototype]. */
-@Suppress("DEPRECATION", "ConstPropertyName", "ktlint:standard:property-naming")
+@Suppress("ConstPropertyName", "ktlint:standard:property-naming")
 class TestStaticFactoryImpl(
     private val expectations: Expectations,
 ) : TestStaticFactory {
     companion object {
-        private const val classicSolverClass = "it.unibo.tuprolog.solve.classic.ClassicSolver"
-        private const val streamsSolverClass = "it.unibo.tuprolog.solve.streams.StreamsSolver"
+        private const val prologSolverClass = "it.unibo.tuprolog.solve.prolog.PrologSolver"
         private const val problogSolverClass = "it.unibo.tuprolog.solve.problog.ProblogSolver"
-        private const val prologSolverClass = classicSolverClass
 
-        private const val classicName = "classic"
-        private const val streamsName = "streams"
-        private const val problogName = "problog"
         private const val prologName = "prolog"
-    }
-
-    override fun testStaticSolverFactoryForClassic() {
-        if (expectations.classicShouldWork) {
-            testStaticSolverFactoryShouldWork(classicSolverClass) { Solver.classic }
-        } else {
-            testStaticFactoryShouldFail(classicName) { Solver.classic }
-        }
-    }
-
-    override fun testStaticSolverFactoryForStreams() {
-        if (expectations.streamsShouldWork) {
-            testStaticSolverFactoryShouldWork(streamsSolverClass) { Solver.streams }
-        } else {
-            testStaticFactoryShouldFail(streamsName) { Solver.streams }
-        }
+        private const val problogName = "problog"
     }
 
     override fun testStaticSolverFactoryForProlog() {

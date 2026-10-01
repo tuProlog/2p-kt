@@ -18,9 +18,7 @@ internal actual fun solverFactory(
         .firstOrNull()
         ?: error("No viable implementation for ${SolverFactory::class.simpleName}")
 
-actual fun classicSolverFactory(): SolverFactory = solverFactory(FactoryClassNames.CLASSIC)
-
-actual fun streamsSolverFactory(): SolverFactory = solverFactory(FactoryClassNames.STREAMS)
+actual fun prologSolverFactory(): SolverFactory = solverFactory(FactoryClassNames.PROLOG)
 
 actual fun problogSolverFactory(): SolverFactory = solverFactory(FactoryClassNames.PROBLOG)
 

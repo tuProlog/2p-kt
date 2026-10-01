@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `once/1` built-in, shared by every `Solver` implementation via the
- * `TestOnce.prototype(solverFactory)` factory (see `TestClassicOnce` in `:solve-classic` for a concrete usage).
+ * `TestOnce.prototype(solverFactory)` factory (see `TestPrologOnce` in `:solve-prolog` for a concrete usage).
  */
 interface TestOnce : SolverTest {
     companion object {

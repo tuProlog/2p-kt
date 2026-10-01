@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `bagof/3` built-in, shared by every `Solver` implementation via the
- * `TestBagOf.prototype(solverFactory)` factory (see `TestClassicBagOf` in `:solve-classic` for a concrete usage).
+ * `TestBagOf.prototype(solverFactory)` factory (see `TestPrologBagOf` in `:solve-prolog` for a concrete usage).
  * Compare with [TestSetOf] (which additionally sorts and deduplicates results) and [TestFindAll] (which additionally
  * never fails and does not support the `^`/2 existential-quantification operator).
  */

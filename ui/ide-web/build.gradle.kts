@@ -12,7 +12,7 @@ kotlin {
         jsMain.dependencies {
             api(project(":gui"))
             implementation(project(":core"))
-            implementation(project(":solve-classic"))
+            implementation(project(":solve-prolog"))
             implementation(project(":io-lib"))
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)

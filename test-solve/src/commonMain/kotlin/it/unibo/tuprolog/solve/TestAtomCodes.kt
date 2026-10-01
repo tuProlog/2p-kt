@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `atom_codes/2` built-in, shared by every `Solver` implementation via the
- * `TestAtomCodes.prototype(solverFactory)` factory (see `TestClassicAtomCodes` in `:solve-classic` for a concrete
+ * `TestAtomCodes.prototype(solverFactory)` factory (see `TestPrologAtomCodes` in `:solve-prolog` for a concrete
  * usage).
  */
 interface TestAtomCodes : SolverTest {

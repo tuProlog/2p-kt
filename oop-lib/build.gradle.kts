@@ -18,7 +18,7 @@ kotlin {
         commonTest {
             dependencies {
                 api(project(":test-solve"))
-                api(project(":solve-classic"))
+                api(project(":solve-prolog"))
             }
         }
     }

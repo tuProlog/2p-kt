@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for `fail/0`, plus the `unknown` flag's effect on resolving an undefined procedure, shared by
- * every `Solver` implementation via the `TestFail.prototype(solverFactory)` factory (see `TestClassicFail` in
- * `:solve-classic` for a concrete usage).
+ * every `Solver` implementation via the `TestFail.prototype(solverFactory)` factory (see `TestPrologFail` in
+ * `:solve-prolog` for a concrete usage).
  */
 interface TestFail : SolverTest {
     companion object {

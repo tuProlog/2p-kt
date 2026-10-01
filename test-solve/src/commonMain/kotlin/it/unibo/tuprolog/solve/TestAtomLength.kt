@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `atom_length/2` built-in, shared by every `Solver` implementation via the
- * `TestAtomLength.prototype(solverFactory)` factory (see `TestClassicAtomLength` in `:solve-classic` for a concrete
+ * `TestAtomLength.prototype(solverFactory)` factory (see `TestPrologAtomLength` in `:solve-prolog` for a concrete
  * usage).
  */
 interface TestAtomLength : SolverTest {

@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * `throw/1`: raises its argument as a [it.unibo.tuprolog.solve.exception.ResolutionException], to be caught by an
  * enclosing `catch/3` (see [it.unibo.tuprolog.solve.concurrent.fsm.StateException]) or, if none catches it, to
  * halt the branch that raised it (see [it.unibo.tuprolog.solve.concurrent.fsm.StateHalt]). Behaves like the
- * `:solve-classic`/`:solve-streams` implementations of `throw/1`: an `error(Type, Extra)`-shaped argument becomes a
+ * `:solve-prolog`/`:solve-concurrent` implementations of `throw/1`: an `error(Type, Extra)`-shaped argument becomes a
  * [it.unibo.tuprolog.solve.exception.LogicError] of the corresponding `it.unibo.tuprolog.solve.exception.error`
  * subtype, anything else becomes a generic [it.unibo.tuprolog.solve.exception.error.MessageError].
  *

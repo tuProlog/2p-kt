@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for `true/0`, shared by every `Solver` implementation via the
- * `TestTrue.prototype(solverFactory)` factory (see `TestClassicTrue` in `:solve-classic` for a concrete usage).
+ * `TestTrue.prototype(solverFactory)` factory (see `TestPrologTrue` in `:solve-prolog` for a concrete usage).
  */
 interface TestTrue : SolverTest {
     companion object {

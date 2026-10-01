@@ -29,7 +29,7 @@ import kotlin.js.JsName
  * always means producing a new instance (e.g. [update] or [apply]) rather than changing this one in place -- which
  * keeps every intermediate state snapshot-able, a property resolution strategies rely on for backtracking.
  *
- * Resolution strategies (e.g. `:solve-classic`'s state-machine solver) are free to extend this interface with
+ * Resolution strategies (e.g. `:solve-prolog`'s state-machine solver) are free to extend this interface with
  * whatever extra bookkeeping they personally need; code written against the generic [ExecutionContext] keeps
  * working regardless of which concrete strategy produced the instance.
  *

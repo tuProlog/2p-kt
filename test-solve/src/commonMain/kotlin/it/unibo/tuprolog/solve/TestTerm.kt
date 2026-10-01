@@ -4,7 +4,7 @@ package it.unibo.tuprolog.solve
  * Conformance tests for the ISO standard order of terms comparison operators `\==`/2, `==`/2, `@>`/2, `@>=`/2,
  * `@<`/2 and `@=<`/2 (each comparing their two arguments *as terms*, without arithmetic evaluation, unlike the
  * arithmetic comparisons in [TestArith]), shared by every `Solver` implementation via the
- * `TestTerm.prototype(solverFactory)` factory (see `TestClassicTerm` in `:solve-classic` for a concrete usage).
+ * `TestTerm.prototype(solverFactory)` factory (see `TestPrologTerm` in `:solve-prolog` for a concrete usage).
  */
 interface TestTerm : SolverTest {
     companion object {

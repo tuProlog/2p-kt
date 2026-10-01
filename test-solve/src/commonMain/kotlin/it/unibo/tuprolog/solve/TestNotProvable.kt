@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for `\+`/1 (negation as failure), shared by every `Solver` implementation via the
- * `TestNotProvable.prototype(solverFactory)` factory (see `TestClassicNotProvable` in `:solve-classic` for a
+ * `TestNotProvable.prototype(solverFactory)` factory (see `TestPrologNotProvable` in `:solve-prolog` for a
  * concrete usage).
  */
 interface TestNotProvable : SolverTest {

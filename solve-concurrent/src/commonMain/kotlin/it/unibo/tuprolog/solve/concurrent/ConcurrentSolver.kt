@@ -17,17 +17,17 @@ import kotlin.js.JsName
 /**
  * A [Solver] whose resolution strategy explores the alternatives of a goal's search tree -- matching clauses at a
  * choice point, the branches of a disjunction, the several solutions of a backtracking primitive -- concurrently,
- * as independent Kotlin coroutines, rather than one at a time as `:solve-classic`/`:solve-streams` do. Obtained via
+ * as independent Kotlin coroutines, rather than one at a time as `:solve-prolog`/`:solve-concurrent` do. Obtained via
  * [ConcurrentSolverFactory] or, generically, via [it.unibo.tuprolog.solve.Solver.concurrent].
  *
  * Each coroutine models a single [it.unibo.tuprolog.solve.concurrent.fsm.State] transition (see that package for
  * how a resolution step is represented); whenever a transition has several possible successors, one coroutine is
  * launched per successor, all of them free to run in parallel on whatever dispatcher backs the current platform.
  * As a consequence, __the order in which [Solution]s are produced is not guaranteed to match the left-to-right,
- * depth-first order of standard SLD resolution__ -- unlike `:solve-classic`, whose solutions always come out in
+ * depth-first order of standard SLD resolution__ -- unlike `:solve-prolog`, whose solutions always come out in
  * that deterministic order. Prefer this solver when a goal has independent, parallelizable alternatives worth
  * spreading across CPU cores (e.g. an N-queens-style search with many disjoint branches) and solution order does
- * not matter; prefer `:solve-classic` (`it.unibo.tuprolog.solve.Solver.prolog`) when ISO-conformant, deterministic
+ * not matter; prefer `:solve-prolog` (`it.unibo.tuprolog.solve.Solver.prolog`) when ISO-conformant, deterministic
  * solution ordering is required, or when the overhead of spawning a coroutine per choice point would outweigh the
  * parallelism gained (e.g. goals with few, cheap alternatives).
  *

@@ -11,7 +11,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(project(":bdd"))
-                api(project(":solve-classic"))
+                api(project(":solve-prolog"))
                 api(project(":solve-plp"))
             }
         }

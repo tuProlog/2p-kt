@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `sub_atom/5` built-in (`sub_atom(Atom, Before, Length, After, SubAtom)`), shared by
- * every `Solver` implementation via the `TestSubAtom.prototype(solverFactory)` factory (see `TestClassicSubAtom` in
- * `:solve-classic` for a concrete usage).
+ * every `Solver` implementation via the `TestSubAtom.prototype(solverFactory)` factory (see `TestPrologSubAtom` in
+ * `:solve-prolog` for a concrete usage).
  */
 interface TestSubAtom : SolverTest {
     companion object {

@@ -6,7 +6,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.assertSolutionEquals
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
@@ -29,7 +29,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetChar1ReadsAndAdvances() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "qwerty")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "qwerty")
             val query = "get_char"("C1") and "get_char"("C2")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("C1" to "q", "C2" to "w")), solutions)
@@ -39,7 +39,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetChar1AtEndOfFile() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "")
             val query = "get_char"("Char")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("Char" to "end_of_file")), solutions)
@@ -49,7 +49,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetChar1UnificationFails() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "qwerty")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "qwerty")
             val query = "get_char"("a")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.no()), solutions)
@@ -59,7 +59,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetChar1NonCharacterIsTypeError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "qwerty")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "qwerty")
             val query = "get_char"(123)
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -82,7 +82,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetChar1MultiCharAtomIsTypeError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "qwerty")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "qwerty")
             val query = "get_char"("ab")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -105,7 +105,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetChar2ReadsFromNamedStream() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
+            val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
             val query = "get_char"("mickey", "Char")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("Char" to "q")), solutions)
@@ -115,7 +115,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetChar2OnMissingStreamIsExistenceError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver()
+            val solver = PrologSolverFactory.ioSolver()
             val query = "get_char"("donald", "Char")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -128,7 +128,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetChar2OnOutputStreamIsDomainError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedOutputs = mapOf(Pair("mickey", StringBuilder())))
+            val solver = PrologSolverFactory.ioSolver(namedOutputs = mapOf(Pair("mickey", StringBuilder())))
             val query = "get_char"("mickey", "Char")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -151,7 +151,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetChar2UnboundStreamIsInstantiationError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver()
+            val solver = PrologSolverFactory.ioSolver()
             val query = "get_char"("Stream", "Char")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -173,7 +173,7 @@ class TestGetPeekCharCode {
     @Test
     fun testPeekChar1DoesNotAdvanceStream() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "qwerty")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "qwerty")
             val query = "peek_char"("P1") and ("peek_char"("P2") and "get_char"("G1"))
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("P1" to "q", "P2" to "q", "G1" to "q")), solutions)
@@ -183,7 +183,7 @@ class TestGetPeekCharCode {
     @Test
     fun testPeekChar2DoesNotAdvanceNamedStream() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
+            val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
             val query = "peek_char"("mickey", "P1") and "get_char"("mickey", "G1")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("P1" to "q", "G1" to "q")), solutions)
@@ -193,7 +193,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetCode1ReadsCharacterCode() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "qwerty")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "qwerty")
             val query = "get_code"("Code")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("Code" to 'q'.code)), solutions)
@@ -203,7 +203,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetCode1AtEndOfFileYieldsMinusOne() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "")
             val query = "get_code"("Code")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("Code" to -1)), solutions)
@@ -213,7 +213,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetCode1NonIntegerIsTypeError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "qwerty")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "qwerty")
             val query = "get_code"("a")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -236,7 +236,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetCode1OutOfRangeIntegerIsRepresentationError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "qwerty")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "qwerty")
             val query = "get_code"(intOf(Char.MAX_VALUE.code + 1))
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -259,7 +259,7 @@ class TestGetPeekCharCode {
         // Regression test: get_code/2 used to check/unify the *stream* argument as if it were the
         // character-code argument, so this always failed or errored (never touching the actual code).
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
+            val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
             val query = "get_code"("mickey", "Code")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("Code" to 'q'.code)), solutions)
@@ -269,7 +269,7 @@ class TestGetPeekCharCode {
     @Test
     fun testGetCode2NonIntegerCodeIsTypeError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
+            val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
             val query = "get_code"("mickey", "a")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -292,7 +292,7 @@ class TestGetPeekCharCode {
     @Test
     fun testPeekCode1DoesNotAdvanceStream() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "qwerty")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "qwerty")
             val query = "peek_code"("P1") and ("peek_code"("P2") and "get_code"("G1"))
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -306,7 +306,7 @@ class TestGetPeekCharCode {
     fun testPeekCode2ReadsFromNamedStreamWithoutAdvancing() {
         // Regression test: peek_code/2 had the same stream/code argument mix-up as get_code/2.
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
+            val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
             val query = "peek_code"("mickey", "P1") and "get_code"("mickey", "G1")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("P1" to 'q'.code, "G1" to 'q'.code)), solutions)

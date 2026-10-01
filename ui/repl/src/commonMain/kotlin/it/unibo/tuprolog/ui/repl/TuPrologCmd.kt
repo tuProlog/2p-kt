@@ -40,7 +40,7 @@ import it.unibo.tuprolog.theory.Theory
  *
  * The solver is always built with `:io-lib`'s [it.unibo.tuprolog.solve.libs.io.IOLib] loaded (for `write/1`,
  * `nl/0`, file inclusion, and the like -- see `IOLib`'s own KDoc for the full predicate list), on top of
- * [it.unibo.tuprolog.solve.classic.ClassicSolverFactory]'s ISO-standard resolution engine
+ * [it.unibo.tuprolog.solve.prolog.PrologSolverFactory]'s ISO-standard resolution engine
  * (via [it.unibo.tuprolog.solve.Solver.Companion.prolog]).
  *
  * @param additionalLibraries extra [Library] instances to load into the solver alongside `IOLib` (and `OOPLib`

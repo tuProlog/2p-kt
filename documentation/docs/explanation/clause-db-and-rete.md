@@ -52,7 +52,7 @@ current code does contain a package literally named
 RETE terminology is not purely aspirational. What is worth being precise about is *which part* of RETE 2P-Kt
 actually implements.
 
-Classic RETE (Forgy, 1979) is a network for efficiently re-evaluating many production-rule conditions against a
+Prolog RETE (Forgy, 1979) is a network for efficiently re-evaluating many production-rule conditions against a
 working memory that changes incrementally, built from an **alpha network** (single-condition filters) feeding a
 **beta network** (joins across conditions, with partial-match memories). 2P-Kt's `rete` package implements the
 alpha-network idea — fast, incremental first-argument discrimination — and does **not** implement RETE's beta
@@ -115,5 +115,5 @@ underneath it**. A solver only ever depends on `Theory`'s interface; whether a p
 indexed or listed, mutable or immutable, is a construction-time decision, not something the resolution engine
 (see [Solver design](solver-design.md) and [The state-machine solver](state-machine.md)) needs to know about.
 This mirrors the same "many implementations, one contract" pattern used for `Solver` itself
-(`:solve-classic` vs. `:solve-streams`): 2P-Kt consistently prefers swappable implementations behind narrow
+(`:solve-prolog` vs. `:solve-concurrent`): 2P-Kt consistently prefers swappable implementations behind narrow
 interfaces over one-size-fits-all data structures.

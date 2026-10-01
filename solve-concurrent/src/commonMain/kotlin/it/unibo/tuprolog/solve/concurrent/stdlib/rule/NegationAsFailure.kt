@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 /**
  * A rule-based, two-clause implementation of negation as failure (`\+/1`): [Fail] tries `X` and, if it succeeds,
  * cuts and fails; [Success] is the fallback clause that succeeds when [Fail] didn't. This is the same encoding
- * `:solve-classic` uses, but here it is __shadowed__ by the primitive
+ * `:solve-prolog` uses, but here it is __shadowed__ by the primitive
  * [it.unibo.tuprolog.solve.concurrent.stdlib.primitive.Naf] registered under the same `\+/1` signature in
  * [it.unibo.tuprolog.solve.concurrent.stdlib.DefaultBuiltins]: primitives are looked up before rules (see
  * [it.unibo.tuprolog.solve.concurrent.fsm.StatePrimitiveSelection]), so [Fail]/[Success] never actually run as

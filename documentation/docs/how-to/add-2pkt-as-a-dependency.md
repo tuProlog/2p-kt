@@ -4,7 +4,7 @@ How to pull one or more 2P-Kt modules into your own Gradle, Maven, or npm projec
 
 2P-Kt is published under the Maven group ID `it.unibo.tuprolog` (JVM/Kotlin modules, via Maven Central and
 GitHub Packages) and under the [`@tuprolog` npm organization](https://www.npmjs.com/org/tuprolog) (JS modules).
-Every module name below (`core`, `solve-classic`, `parser-impl`, ...) maps directly to a Maven/Gradle artifact
+Every module name below (`core`, `solve-prolog`, `parser-impl`, ...) maps directly to a Maven/Gradle artifact
 ID. npm is the one exception — see step 3 below.
 
 ## 1. Pick the module(s) you need
@@ -16,8 +16,8 @@ ID. npm is the one exception — see step 3 below.
 ```
 
 Dependencies between modules are resolved transitively: importing `theory` automatically pulls in `unify` and
-`core`; importing `solve-classic` pulls in `solve`, `theory`, `unify`, and `core`; and so on. Pick the
-highest-level module that covers your use case — e.g. `solve-classic` for a classic-resolution Prolog engine,
+`core`; importing `solve-prolog` pulls in `solve`, `theory`, `unify`, and `core`; and so on. Pick the
+highest-level module that covers your use case — e.g. `solve-prolog` for a prolog-resolution Prolog engine,
 `parser-impl` for parsing terms/theories from text.
 
 ## 2. Add the 2P-Kt repositories

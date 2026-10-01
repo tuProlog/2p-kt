@@ -32,7 +32,7 @@ import it.unibo.tuprolog.utils.buffered
  * Base [Solver] implementation, factoring out the state-management concerns common to every resolution strategy
  * (initializing and updating the current [ExecutionContext], loading/partitioning the initial static and dynamic
  * knowledge bases and running their directives, honouring [SolveOptions.limit]/[SolveOptions.isEager]) so that
- * concrete solver modules (`:solve-classic`, `:solve-streams`, `:solve-concurrent`) only have to implement
+ * concrete solver modules (`:solve-prolog`, `:solve-concurrent`, `:solve-concurrent`) only have to implement
  * [solveImpl] (the actual resolution algorithm), [initializeContext] (to produce their own [E] subtype), and
  * [copy]/[clone].
  *

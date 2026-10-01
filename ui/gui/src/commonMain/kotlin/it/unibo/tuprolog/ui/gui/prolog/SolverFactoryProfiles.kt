@@ -25,7 +25,7 @@ private val INSPECTION_CAPABILITIES =
     )
 
 /**
- * Builds a [SolverProfile] backed by any [SolverFactory] (classic, ProbLog, ...); no toolkit dependency.
+ * Builds a [SolverProfile] backed by any [SolverFactory] (prolog, ProbLog, ...); no toolkit dependency.
  *
  * [runtimeLibraries] defaults to [OOPLib] and [IOLib], matching every existing caller (e.g. ide-swing). Pass a
  * narrower list on platforms where a default library doesn't work: [OOPLib] is reflection-based and throws

@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.problog.lib
 
 import it.unibo.tuprolog.core.operators.Operator
-import it.unibo.tuprolog.solve.classic.stdlib.rule.Call
+import it.unibo.tuprolog.solve.prolog.stdlib.rule.Call
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.impl.ExtensionLibrary
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
@@ -17,7 +17,7 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSolveWithEvidence
 import it.unibo.tuprolog.solve.problog.lib.rules.Prob
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
-import it.unibo.tuprolog.solve.classic.stdlib.DefaultBuiltins as ClassicDefaultBuiltins
+import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins as PrologDefaultBuiltins
 
 /**
  * The [Library] contributing ProbLog's probabilistic logic programming vocabulary on top of plain Prolog: the
@@ -27,7 +27,7 @@ import it.unibo.tuprolog.solve.classic.stdlib.DefaultBuiltins as ClassicDefaultB
  *
  * This is registered under the [Library.alias] `"problog.lang"`. Client code normally does not load this
  * library directly: [it.unibo.tuprolog.solve.problog.ProblogSolverFactory] takes care of loading either
- * [DefaultBuiltins] or [MinimalBuiltins] (depending on whether classic Prolog builtins are already present)
+ * [DefaultBuiltins] or [MinimalBuiltins] (depending on whether prolog Prolog builtins are already present)
  * when building a solver.
  *
  * @author Jason Dellaluce
@@ -73,7 +73,7 @@ object ProblogLib : ExtensionLibrary(Library.of("problog.lang")) {
                 ProbSetConfig,
             )
 
-    internal object DefaultBuiltins : ExtensionLibrary(ClassicDefaultBuiltins) {
+    internal object DefaultBuiltins : ExtensionLibrary(PrologDefaultBuiltins) {
         override val alias: String
             get() = ProblogLib.alias
 

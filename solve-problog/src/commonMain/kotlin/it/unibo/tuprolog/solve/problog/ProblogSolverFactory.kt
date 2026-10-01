@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.TrackVariables
@@ -22,7 +22,7 @@ import kotlin.js.JsExport
 
 /**
  * The [SolverFactory] for `:solve-problog`, a ProbLog-style probabilistic logic programming engine built on
- * top of [ClassicSolverFactory]'s SLD-NF resolution.
+ * top of [PrologSolverFactory]'s SLD-NF resolution.
  *
  * ProbLog extends plain Prolog with *annotated disjunctions* -- clauses and facts whose head is prefixed by a
  * probability, using the `::` operator declared in [ANNOTATION_OPERATOR] (e.g. `0.3::burglary.`, read as
@@ -47,7 +47,7 @@ import kotlin.js.JsExport
 @JsExport
 object ProblogSolverFactory : SolverFactory {
     /** The standard library of this factory: [ProblogLib]'s builtins, contributing the `::` operator, the
-     * probabilistic resolution primitives and rules, and (transitively) the classic Prolog builtins. */
+     * probabilistic resolution primitives and rules, and (transitively) the prolog Prolog builtins. */
     override val defaultBuiltins: Library
         get() = ProblogLib.DefaultBuiltins
 
@@ -61,7 +61,7 @@ object ProblogSolverFactory : SolverFactory {
     /** Same as [SolverFactory.solverOf], but ensures [ProblogLib] is loaded (see [fixLibraries]), forces
      * [TrackVariables] `ON`, and rewrites [staticKb]/[dynamicKb] into a
      * [it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory] before handing everything to
-     * [ClassicSolverFactory]. */
+     * [PrologSolverFactory]. */
     override fun solverOf(
         unificator: Unificator,
         libraries: Runtime,
@@ -72,7 +72,7 @@ object ProblogSolverFactory : SolverFactory {
         outputs: OutputStore,
     ): Solver =
         ProblogSolver(
-            ClassicSolverFactory.solverOf(
+            PrologSolverFactory.solverOf(
                 unificator,
                 fixLibraries(libraries),
                 ensureVariablesTracking(flags),
@@ -106,7 +106,7 @@ object ProblogSolverFactory : SolverFactory {
         warnings: OutputChannel<Warning>,
     ): Solver =
         ProblogSolver(
-            ClassicSolverFactory.solverOf(
+            PrologSolverFactory.solverOf(
                 unificator,
                 fixLibraries(libraries),
                 ensureVariablesTracking(flags),
@@ -132,7 +132,7 @@ object ProblogSolverFactory : SolverFactory {
         warnings: OutputChannel<Warning>,
     ): MutableSolver =
         MutableProblogSolver(
-            ClassicSolverFactory.mutableSolverOf(
+            PrologSolverFactory.mutableSolverOf(
                 unificator,
                 fixLibraries(libraries),
                 ensureVariablesTracking(flags),
@@ -148,7 +148,7 @@ object ProblogSolverFactory : SolverFactory {
     /** Same as [SolverFactory.mutableSolverOf], but ensures [ProblogLib] is loaded (see [fixLibraries]),
      * forces [TrackVariables] `ON`, and rewrites [staticKb]/[dynamicKb] into a
      * [it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory] before handing everything to
-     * [ClassicSolverFactory]. */
+     * [PrologSolverFactory]. */
     override fun mutableSolverOf(
         unificator: Unificator,
         libraries: Runtime,
@@ -159,7 +159,7 @@ object ProblogSolverFactory : SolverFactory {
         outputs: OutputStore,
     ): MutableSolver =
         MutableProblogSolver(
-            ClassicSolverFactory.mutableSolverOf(
+            PrologSolverFactory.mutableSolverOf(
                 unificator,
                 fixLibraries(libraries),
                 ensureVariablesTracking(flags),

@@ -19,8 +19,7 @@ This page documents what each module is for and how they depend on one another.
 | `dsl-theory` | Adds theory/clause-database-building sugar (`LogicProgrammingScopeWithTheories`) to the DSL. | `dsl-unify`, `theory` |
 | `dsl-solve` | Adds resolution-driving sugar (`LogicProgrammingScopeWithResolution`) to the DSL, i.e. querying a `Solver` from the DSL. | `dsl-theory`, `solve` |
 | `solve` | The platform-agnostic goal-resolution API: `Solver`, `Solution`, `SolveOptions`, `Library`/`Runtime`, I/O `Channel`s. Defines no resolution algorithm itself. See [Solver API](solver-api.md). | `core`, `unify`, `theory` |
-| `solve-classic` | A classic, SLD-resolution-based `Solver` implementation (`Solver.prolog`). | `solve`, `dsl-theory` |
-| `solve-streams` | An experimental, `Sequence`-based `Solver` implementation (`Solver.streams`); not production-ready. | `solve`, `dsl-theory` |
+| `solve-prolog` | A prolog, SLD-resolution-based `Solver` implementation (`Solver.prolog`). | `solve`, `dsl-theory` |
 | `solve-concurrent` | A coroutine-based, parallelizing `Solver` implementation (`Solver.concurrent`). | `solve`, `dsl-theory` |
 | `test-solve` | Reusable, solver-agnostic ISO-Prolog test suites, shared as test-only dependencies by every `solve` implementation. | `solve`, `dsl-theory` *(test-only, from `commonTest`)* |
 | `test-dsl` | Reusable test suites for the `dsl-core` DSL. | `dsl-core` *(test-only, from `commonTest`)* |
@@ -28,18 +27,18 @@ This page documents what each module is for and how they depend on one another.
 | `parser-impl` | The actual Prolog lexer and Pratt-parser implementation: lazy, streaming, ANTLR-free, with runtime-configurable operators. See its [module README](https://github.com/tuProlog/2p-kt/blob/master/parser-impl/README.md). | — |
 | `parser-theory` | Parsing of whole theories/clause databases, with operator-table (`op/3`) support. | `core`, `unify`, `theory`, `parser-core`, `parser-impl` |
 | `solve-plp` | Probabilistic-logic-programming extensions bridging `solve` and `bdd`. | `solve`, `bdd` |
-| `solve-problog` | A ProbLog-style probabilistic solver: annotated disjunctions, evidence, explanations, built on top of `solve-classic`/`solve-plp`/`bdd`. | `bdd`, `solve-classic`, `solve-plp` |
+| `solve-problog` | A ProbLog-style probabilistic solver: annotated disjunctions, evidence, explanations, built on top of `solve-prolog`/`solve-plp`/`bdd`. | `bdd`, `solve-prolog`, `solve-plp` |
 | `serialize-core` | A generic term (de)serialization framework, e.g. to/from JSON/YAML/XML (via Jackson on the JVM). | `core` |
 | `serialize-theory` | Serialization of whole `Theory` instances, built on `serialize-core`. | `theory`, `serialize-core` |
-| `repl` | A `clikt`-based command-line REPL/CLI for 2P-Kt. | `core`, `oop-lib`, `io-lib`, `solve-classic`, `parser-theory` |
+| `repl` | A `clikt`-based command-line REPL/CLI for 2P-Kt. | `core`, `oop-lib`, `io-lib`, `solve-prolog`, `parser-theory` |
 | `oop-lib` | A `Library` bridging Prolog terms and JVM/Kotlin objects (reflection-based object/term conversion, method/constructor invocation). | `solve` |
 | `io-lib` | A `Library` implementing the ISO Prolog I/O predicates (streams, `open/3`, `read_term/2`, `write*`, ...). | `solve`, `parser-theory` |
-| `gui` | The toolkit-neutral GUI model/controller shared by every Prolog-editing frontend: `GuiState`/`GuiController`, syntax diagnostics (`PrologSyntaxAnalyzer`), solver-session management — no widget-toolkit or probabilistic-solving concern baked in. | `solve`, `core`, `parser-impl`, `parser-theory`, `io-lib`, `oop-lib`, `solve-classic` |
+| `gui` | The toolkit-neutral GUI model/controller shared by every Prolog-editing frontend: `GuiState`/`GuiController`, syntax diagnostics (`PrologSyntaxAnalyzer`), solver-session management — no widget-toolkit or probabilistic-solving concern baked in. | `solve`, `core`, `parser-impl`, `parser-theory`, `io-lib`, `oop-lib`, `solve-prolog` |
 | `gui-plp` | The probabilistic-logic (ProbLog) extension of `gui`'s model/controller: BDD/explanation presentation shared by every PLP-aware frontend. | `gui`, `bdd`, `solve-plp`, `solve-problog`, `parser-theory` |
-| `ide-swing` | The desktop, Swing-based IDE/GUI for editing and running 2P-Kt theories. | `gui`, `solve-classic` |
+| `ide-swing` | The desktop, Swing-based IDE/GUI for editing and running 2P-Kt theories. | `gui`, `solve-prolog` |
 | `ide-plp-swing` | The ProbLog-specific extension of the Swing IDE: renders BDDs/explanations as diagrams via PlantUML's Smetana engine (no native Graphviz dependency, hence no GraalVM/JDK-native-library friction). | `gui`, `gui-plp`, `ide-swing`, `solve-problog` |
-| `ide-web` | A browser-based IDE (Kotlin/JS, Ace editor) for editing and running 2P-Kt theories — the JS counterpart of `ide-swing`. | `gui`, `core`, `solve-classic`, `io-lib`, `parser-theory` |
-| `examples` | Runnable sample programs demonstrating the other modules. | `solve-classic`, `solve-concurrent`, `solve-problog`, `dsl-theory`, `parser-theory`, `io-lib`, `oop-lib` |
+| `ide-web` | A browser-based IDE (Kotlin/JS, Ace editor) for editing and running 2P-Kt theories — the JS counterpart of `ide-swing`. | `gui`, `core`, `solve-prolog`, `io-lib`, `parser-theory` |
+| `examples` | Runnable sample programs demonstrating the other modules. | `solve-prolog`, `solve-concurrent`, `solve-problog`, `dsl-theory`, `parser-theory`, `io-lib`, `oop-lib` |
 | `full` | An umbrella/aggregator module: depends on every other module (except the test-support and `examples` ones), for a single "batteries-included" artifact. | *(all of the above)* |
 
 ## Dependency graph
@@ -51,4 +50,4 @@ Arrows point from a module to the module(s) it depends on. `test-solve` and `tes
 dependencies, even though they *are* declared in its `build.gradle.kts`.
 
 Dependencies are resolved transitively by Gradle/npm: importing `theory` automatically pulls in `unify` and `core`;
-importing `solve-classic` pulls in `solve`, `dsl-theory`, `theory`, `unify`, and `core`; and so on.
+importing `solve-prolog` pulls in `solve`, `dsl-theory`, `theory`, `unify`, and `core`; and so on.

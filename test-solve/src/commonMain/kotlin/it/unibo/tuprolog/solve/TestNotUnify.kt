@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for `\=`/2 (unifiability check without binding, "does not unify"), shared by every `Solver`
- * implementation via the `TestNotUnify.prototype(solverFactory)` factory (see `TestClassicNotUnify` in
- * `:solve-classic` for a concrete usage). See also [TestUnify] for the corresponding `=`/2 tests.
+ * implementation via the `TestNotUnify.prototype(solverFactory)` factory (see `TestPrologNotUnify` in
+ * `:solve-prolog` for a concrete usage). See also [TestUnify] for the corresponding `=`/2 tests.
  */
 interface TestNotUnify : SolverTest {
     companion object {

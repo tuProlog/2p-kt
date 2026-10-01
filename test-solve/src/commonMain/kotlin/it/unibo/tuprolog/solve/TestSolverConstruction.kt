@@ -9,11 +9,11 @@ import it.unibo.tuprolog.solve.library.Library
  * without default built-ins) and (immutable vs. mutable), the resulting [Solver]/[MutableSolver] ends up with
  * exactly the expected libraries, theories, flags, and I/O channels (see `Solver.assertHas` in `TestUtils.kt`), and
  * is an instance of the concrete class the caller expects. Shared by every `Solver` implementation via the
- * `TestSolverConstruction.prototype(factory, defaultBuiltins)` factory (see `TestClassicSolverConstruction` in
- * `:solve-classic` for a concrete usage).
+ * `TestSolverConstruction.prototype(factory, defaultBuiltins)` factory (see `TestPrologSolverConstruction` in
+ * `:solve-prolog` for a concrete usage).
  *
  * Unlike the other `TestXxx` interfaces in this module, this one is generic over [T] (the concrete immutable
- * `Solver` class expected, e.g. `ClassicSolver`) and [MT] (its mutable counterpart), which the `prototype` factory
+ * `Solver` class expected, e.g. `PrologSolver`) and [MT] (its mutable counterpart), which the `prototype` factory
  * captures reified so that every test case can assert the built solver's runtime class without needing an instance
  * of `T`/`MT` up front; it also does not extend [SolverTest], since none of its assertions need a `solve` timeout.
  */

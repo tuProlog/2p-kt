@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `atom_chars/2` built-in, shared by every `Solver` implementation via the
- * `TestAtomChars.prototype(solverFactory)` factory (see `TestClassicAtomChars` in `:solve-classic` for a concrete
+ * `TestAtomChars.prototype(solverFactory)` factory (see `TestPrologAtomChars` in `:solve-prolog` for a concrete
  * usage).
  */
 interface TestAtomChars : SolverTest {

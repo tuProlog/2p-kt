@@ -17,7 +17,7 @@ import kotlin.jvm.JvmStatic
  * according to some logic, implementing one or more inference rule, via some resolution strategy.
  *
  * A [Solver] is deliberately strategy-agnostic: this module defines no resolution algorithm at all, only the
- * contract that every implementation (`:solve-classic`'s SLD-NF resolution, `:solve-streams`'s side-effect-free
+ * contract that every implementation (`:solve-prolog`'s SLD-NF resolution, `:solve-concurrent`'s side-effect-free
  * strategy, `:solve-concurrent`, `:solve-problog`) must honour. Everything a resolution strategy needs to read
  * while solving a goal -- loaded `it.unibo.tuprolog.solve.library.Library`/`Runtime`, [FlagStore], the two
  * [Theory] knowledge bases, I/O [it.unibo.tuprolog.solve.channel.Channel]s -- is exposed through
@@ -131,43 +131,17 @@ interface Solver : ExecutionContextAware {
     fun clone(): Solver = copy()
 
     companion object {
-        /**
-         * The [SolverFactory] for the classic, ISO-standard SLD-NF resolution solver (`:solve-classic`).
-         *
-         * @see prolog
-         */
-        @JvmStatic
-        @get:JvmName("classic")
-        @JsName("classic")
-        @Deprecated(
-            message = "This method is being renamed into \"prolog\" and its usage in this form is now deprecated",
-            replaceWith = ReplaceWith("Solver.prolog"),
-        )
-        val classic: SolverFactory by lazy { classicSolverFactory() }
-
-        /** The [SolverFactory] for the classic, ISO-standard SLD-NF resolution solver (`:solve-classic`). */
+        /** The [SolverFactory] for the Prolog, ISO-standard SLD-NF resolution solver (`:solve-prolog`). */
         @JvmStatic
         @get:JvmName("prolog")
         @JsName("prolog")
-        val prolog: SolverFactory by lazy { classicSolverFactory() }
+        val prolog: SolverFactory by lazy { prologSolverFactory() }
 
         /** The [SolverFactory] for the probabilistic-logic-programming solver (`:solve-problog`). */
         @JvmStatic
         @get:JvmName("problog")
         @JsName("problog")
         val problog: SolverFactory by lazy { problogSolverFactory() }
-
-        /**
-         * The [SolverFactory] for the experimental, more side-effect-free solver (`:solve-streams`).
-         *
-         * Marked deprecated because this implementation is experimental and not mature enough for general-purpose
-         * usage yet.
-         */
-        @JvmStatic
-        @get:JvmName("streams")
-        @JsName("streams")
-        @Deprecated("The \"Streams\" solver is experimental and not mature enough for general purpose usage")
-        val streams: SolverFactory by lazy { streamsSolverFactory() }
 
         /** The [SolverFactory] for the solver that parallelizes resolution (`:solve-concurrent`). */
         @JvmStatic

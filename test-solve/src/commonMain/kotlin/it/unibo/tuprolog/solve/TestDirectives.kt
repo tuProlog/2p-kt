@@ -4,7 +4,7 @@ package it.unibo.tuprolog.solve
  * Conformance tests for directive clauses (`:- Goal.`), covering `dynamic/1`, `static/1`, `initialization/1`,
  * `solve/1`, `set_flag/2`, `set_prolog_flag/2`, `op/3`, malformed directives, and directives that fail or raise
  * during theory loading. Shared by every `Solver` implementation via the `TestDirectives.prototype(solverFactory)`
- * factory (see `TestClassicDirectives` in `:solve-classic` for a concrete usage).
+ * factory (see `TestPrologDirectives` in `:solve-prolog` for a concrete usage).
  *
  * Every test case that loads a directive-bearing theory does so via [DirectiveTestsUtils.solverInitializers] or
  * [DirectiveTestsUtils.solverInitializersWithEventsList], i.e. through all four equivalent ways a theory can end up

@@ -4,8 +4,8 @@ package it.unibo.tuprolog.solve
  * Conformance tests for the non-standard `get_ephemeral/2`, `get_durable/2`, `get_persistent/2`, `set_ephemeral/2`,
  * `set_durable/2` and `set_persistent/2` built-ins, which read/write the three tiers of
  * [it.unibo.tuprolog.solve.data.CustomDataStore] attached to a [Solver]'s execution context. Shared by every
- * `Solver` implementation via the `TestCustomData.prototype(solverFactory)` factory (see `TestClassicCustomData` in
- * `:solve-classic` for a concrete usage).
+ * `Solver` implementation via the `TestCustomData.prototype(solverFactory)` factory (see `TestPrologCustomData` in
+ * `:solve-prolog` for a concrete usage).
  *
  * The three tiers only differ in how long an entry survives (see [it.unibo.tuprolog.solve.data.CustomDataStore]'s
  * own documentation); [testEphemeralData], [testDurableData] and [testPersistentData] each probe a different one

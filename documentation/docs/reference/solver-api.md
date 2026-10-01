@@ -2,7 +2,7 @@
 
 The `:solve` module defines the platform-agnostic API for goal resolution: `Solver`, `Solution`, `SolveOptions`,
 `Library`/`Runtime`, and I/O `Channel`s. It defines *no* resolution algorithm itself — that's the job of the
-implementation modules `:solve-classic`, `:solve-streams`, `:solve-concurrent` and `:solve-problog`, each providing a
+implementation modules `:solve-prolog`, `:solve-concurrent`, `:solve-concurrent` and `:solve-problog`, each providing a
 `SolverFactory`. This page documents the common surface all of them implement.
 
 ## `Solver`
@@ -26,11 +26,11 @@ sharing/overriding specific pieces of state.
 
 `Solver`'s companion object exposes one `SolverFactory` per implementation:
 
-- `Solver.prolog` — the classic, SLD-resolution-based solver (`:solve-classic`; `Solver.classic` is a deprecated
+- `Solver.prolog` — the prolog, SLD-resolution-based solver (`:solve-prolog`; `Solver.prolog` is a deprecated
   alias for the same factory);
 - `Solver.problog` — a probabilistic-logic-programming solver (`:solve-problog`);
 - `Solver.concurrent` — a solver that parallelizes resolution (`:solve-concurrent`);
-- `Solver.streams` — an experimental, more side-effect-free solver (`:solve-streams`); marked `@Deprecated` as not
+- `Solver.concurrent` — an experimental, more side-effect-free solver (`:solve-concurrent`); marked `@Deprecated` as not
   production-ready.
 
 Each `SolverFactory` (`it.unibo.tuprolog.solve.SolverFactory`) provides `defaultRuntime`, `defaultUnificator`,

@@ -30,15 +30,15 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSo
 /**
  * The main, comprehensive conformance suite for a [Solver] implementation: control-flow constructs (conjunction,
  * disjunction, if-then(-else), cut, `call/1`, `catch/3`, `not`/`\+`), timeouts, side effects (`assert`, `write`,
- * standard output, `findall/3`), and a battery of classic Prolog examples (search trees, backtracking, recursive
+ * standard output, `findall/3`), and a battery of prolog Prolog examples (search trees, backtracking, recursive
  * list processing, term ordering, etc.) drawn from [PrologStandardExampleTheories] and [TestingClauseTheories].
  *
  * Packaging it here lets every `Solver` implementation run the very same test cases without re-authoring or
- * duplicating them: a concrete `:solve-classic`/`:solve-streams`/`:solve-concurrent` module declares a `commonTest`
+ * duplicating them: a concrete `:solve-prolog`/`:solve-concurrent`/`:solve-concurrent` module declares a `commonTest`
  * class implementing both this interface and its own `SolverFactory`, obtains a `prototype` via [TestSolver.prototype],
  * and delegates each overridden test method to it, e.g.:
  * ```kotlin
- * class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
+ * class TestPrologSolver : TestSolver, SolverFactory by PrologSolverFactory {
  *     private val prototype = TestSolver.prototype(this)
  *
  *     @Test
@@ -46,7 +46,7 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSo
  *     // ... one such override per test method declared here
  * }
  * ```
- * (see `TestClassicSolver` in `:solve-classic` for the full example). Because [callErrorSignature], [nafErrorSignature]
+ * (see `TestPrologSolver` in `:solve-prolog` for the full example). Because [callErrorSignature], [nafErrorSignature]
  * and [notErrorSignature] differ slightly across implementations (e.g. whether `not/1` or `\+/1` is used to report
  * an error), they are supplied as constructor parameters to [prototype] rather than hard-coded.
  */

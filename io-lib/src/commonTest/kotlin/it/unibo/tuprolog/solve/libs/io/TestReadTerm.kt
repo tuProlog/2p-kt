@@ -7,7 +7,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.assertSolutionEquals
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.SyntaxError
 import it.unibo.tuprolog.solve.halt
@@ -27,7 +27,7 @@ class TestReadTerm {
     @Test
     fun testRead1ParsesATerm() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "foo(a,b).")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "foo(a,b).")
             val query = "read"("T")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("T" to structOf("foo", "a", "b"))), solutions)
@@ -37,7 +37,7 @@ class TestReadTerm {
     @Test
     fun testRead1UnificationFails() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "foo(a,b).")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "foo(a,b).")
             val query = "read"(structOf("foo", "X", "a"))
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.no()), solutions)
@@ -50,7 +50,7 @@ class TestReadTerm {
         // exhausted; this implementation instead just fails (readTermAndReply bails out as soon as
         // the term channel reports no term is available, without special-casing end-of-file).
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "")
             val query = "read"("T")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.no()), solutions)
@@ -60,7 +60,7 @@ class TestReadTerm {
     @Test
     fun testRead1OnMalformedInputIsSyntaxError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "foo(a,b")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "foo(a,b")
             val query = "read"("T")
             val solution = solver.solve(query).toList().single()
             assertTrue(solution is Solution.Halt)
@@ -71,7 +71,7 @@ class TestReadTerm {
     @Test
     fun testRead2ParsesFromNamedStream() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "foo(a,b).")))
+            val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "foo(a,b).")))
             val query = "read"("mickey", "T")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes("T" to structOf("foo", "a", "b"))), solutions)
@@ -81,7 +81,7 @@ class TestReadTerm {
     @Test
     fun testReadTerm2VariablesOption() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "foo(A,B).")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "foo(A,B).")
             val query = "read_term"("T", logicListOf("variables"("Vs")))
             val solutions = solver.solve(query).toList()
             val expectedT = structOf("foo", varOf("A"), varOf("B"))
@@ -96,7 +96,7 @@ class TestReadTerm {
     fun testReadTerm2SingletonsOption() {
         logicProgramming {
             // A appears twice (not a singleton), B appears once (a singleton).
-            val solver = ClassicSolverFactory.ioSolver(stdIn = "foo(A,A,B).")
+            val solver = PrologSolverFactory.ioSolver(stdIn = "foo(A,A,B).")
             val query = "read_term"("T", logicListOf("singletons"("Ss")))
             val solutions = solver.solve(query).toList()
             val expectedSingleton = Struct.of("=", Atom.of("B"), Var.of("B"))
@@ -115,7 +115,7 @@ class TestReadTerm {
     @Test
     fun testReadTerm3ReadsFromNamedStream() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "foo(a,b).")))
+            val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "foo(a,b).")))
             val query =
                 "read_term"(
                     "mickey",
@@ -131,7 +131,7 @@ class TestReadTerm {
     @Test
     fun testReadTerm3InvalidOptionIsDomainError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "foo(a,b).")))
+            val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "foo(a,b).")))
             val badOption = "bogus_option"("X")
             val query = "read_term"("mickey", "T", logicListOf(badOption))
             val solutions = solver.solve(query).toList()

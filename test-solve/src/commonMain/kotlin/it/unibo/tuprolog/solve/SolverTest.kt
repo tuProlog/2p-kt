@@ -10,7 +10,7 @@ import it.unibo.tuprolog.Os
  * It only provides the [TimeDuration]s ([shortDuration], [mediumDuration], [longDuration]) that test cases pass to
  * `Solver.solve(goal, maxDuration)` so that a single set of ISO-conformance tests can be shared, via the `prototype`
  * factory declared on each subinterface's companion object, by every concrete `Solver` implementation
- * (`:solve-classic`, `:solve-streams`, `:solve-concurrent`) instead of being duplicated once per module. Durations are
+ * (`:solve-prolog`, `:solve-concurrent`, `:solve-concurrent`) instead of being duplicated once per module. Durations are
  * scaled up on Windows (see [Info.OS]), where CI runners have historically needed more slack to reliably finish
  * within the allotted time.
  */

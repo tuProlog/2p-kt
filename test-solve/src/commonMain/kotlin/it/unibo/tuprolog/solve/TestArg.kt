@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `arg/3` built-in, shared by every `Solver` implementation via the
- * `TestArg.prototype(solverFactory)` factory (see `TestClassicArg` in `:solve-classic` for a concrete usage).
+ * `TestArg.prototype(solverFactory)` factory (see `TestPrologArg` in `:solve-prolog` for a concrete usage).
  */
 interface TestArg : SolverTest {
     companion object {

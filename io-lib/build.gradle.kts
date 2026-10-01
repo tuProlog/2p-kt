@@ -24,8 +24,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(project(":test-solve"))
-                implementation(project(":solve-classic"))
-                implementation(project(":solve-streams"))
+                implementation(project(":solve-prolog"))
                 implementation(libs.okio.fakefilesystem)
             }
         }

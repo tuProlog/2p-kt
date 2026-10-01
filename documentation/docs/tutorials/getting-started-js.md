@@ -7,19 +7,19 @@ family tree, ask who Abraham is an ancestor of, and understand the answers 2P-Kt
 structure in the compiled output rather than being flattened for JS, and member names are kept stable with
 `@JsName` (Kotlin doesn't allow overloading in JS, so without it names like `solve` would come out mangled). One
 part of the API *is* flattened and exported cleanly for direct JS/TS use: the concrete solver factories
-(`ClassicSolverFactory` and friends), each annotated `@JsExport` for exactly this purpose — this tutorial builds
+(`PrologSolverFactory` and friends), each annotated `@JsExport` for exactly this purpose — this tutorial builds
 around that entry point rather than the `Solver.prolog` shortcut you'd use from Kotlin or Java (which resolves
-the classic engine reflectively, a mechanism aimed at same-platform Kotlin/JVM code rather than plain JS).
+the prolog engine reflectively, a mechanism aimed at same-platform Kotlin/JVM code rather than plain JS).
 
 ## 1. Add the dependency
 
-You need `solve-classic` (the SLD-resolution engine) and `parser-theory` (to read Prolog source text into a
+You need `solve-prolog` (the SLD-resolution engine) and `parser-theory` (to read Prolog source text into a
 `Theory`):
 
 ```json
 {
   "dependencies": {
-    "@tuprolog/solve-classic": "^2P_VERSION",
+    "@tuprolog/solve-prolog": "^2P_VERSION",
     "@tuprolog/parser-theory": "^2P_VERSION"
   }
 }
@@ -53,13 +53,13 @@ package's shipped `.d.ts` file — will show you the current shape.
 
 ## 3. Build a solver
 
-`ClassicSolverFactory` is exported directly and cleanly — no nested path needed. It exposes the same
+`PrologSolverFactory` is exported directly and cleanly — no nested path needed. It exposes the same
 `SolverFactory` builder used across every 2P-Kt host language:
 
 ```js
-const { ClassicSolverFactory } = require("@tuprolog/solve-classic");
+const { PrologSolverFactory } = require("@tuprolog/solve-prolog");
 
-const solver = ClassicSolverFactory.newBuilder()
+const solver = PrologSolverFactory.newBuilder()
   .staticKb(theory)
   .buildMutable();
 ```

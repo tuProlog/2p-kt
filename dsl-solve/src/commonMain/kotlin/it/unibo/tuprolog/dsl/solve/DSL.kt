@@ -43,8 +43,8 @@ fun <R> lp(
 ): R = logicProgramming(solverFactory, unificator, function)
 
 /**
- * Shorthand for [logicProgramming] defaulting its `solverFactory` argument to [Solver.prolog], the classic,
- * ISO-standard SLD-NF resolution engine (`:solve-classic`). This is the DSL's main entry point for everyday use:
+ * Shorthand for [logicProgramming] defaulting its `solverFactory` argument to [Solver.prolog], the prolog,
+ * ISO-standard SLD-NF resolution engine (`:solve-prolog`). This is the DSL's main entry point for everyday use:
  * ```kotlin
  * prolog {
  *     staticKb(
@@ -58,7 +58,7 @@ fun <R> lp(
  *     }
  * }
  * ```
- * Requires a concrete solver implementation (e.g. `:solve-classic`) on the classpath, since `Solver.prolog` resolves
+ * Requires a concrete solver implementation (e.g. `:solve-prolog`) on the classpath, since `Solver.prolog` resolves
  * to it lazily at runtime.
  *
  * @param unificator the [Unificator] shared by the scope's term-building helpers and its default solver.

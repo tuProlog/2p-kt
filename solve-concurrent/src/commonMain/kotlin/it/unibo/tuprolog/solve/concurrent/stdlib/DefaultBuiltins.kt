@@ -81,7 +81,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Write
  * [it.unibo.tuprolog.solve.concurrent.ConcurrentSolverFactory.defaultBuiltins]. Extends
  * [CommonBuiltins] (the predicates/rules shared by every resolution strategy) with a handful of control
  * predicates whose implementation must know about this module's concurrency model, and therefore cannot be
- * shared verbatim with `:solve-classic`/`:solve-streams`: [it.unibo.tuprolog.solve.concurrent.stdlib.rule.Call],
+ * shared verbatim with `:solve-prolog`/`:solve-concurrent`: [it.unibo.tuprolog.solve.concurrent.stdlib.rule.Call],
  * [it.unibo.tuprolog.solve.concurrent.stdlib.rule.Catch], [it.unibo.tuprolog.solve.concurrent.stdlib.rule.Comma],
  * [it.unibo.tuprolog.solve.concurrent.stdlib.rule.Cut],
  * [it.unibo.tuprolog.solve.concurrent.stdlib.rule.NegationAsFailure],
