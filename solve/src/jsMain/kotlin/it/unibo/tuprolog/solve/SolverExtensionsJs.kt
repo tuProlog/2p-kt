@@ -37,7 +37,8 @@ internal actual fun solverFactory(
         .firstOrNull()
         ?: throw IllegalStateException(
             "No viable implementation for ${SolverFactory::class.simpleName} in " +
-                sequenceOf(className, *classNames).joinToString(", ", "[", "]"),
+                sequenceOf(className, *classNames).joinToString(", ", "[", "]") +
+                "; webpack users must reference the factory object directly",
         )
 
 actual fun prologSolverFactory(): SolverFactory =

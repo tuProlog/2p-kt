@@ -21,6 +21,9 @@ data class JsClassName(
         }
 
         private val require: (String) -> dynamic by lazy { js("require") }
+
+        private val globalThis: dynamic
+            get() = js("globalThis")
     }
 
     /** [qualifiedName], split on `.` into the sequence of property accesses [resolve] performs. */
@@ -28,12 +31,12 @@ data class JsClassName(
         qualifiedName.split('.')
     }
 
-    /** Resolves this reference via JS `require`,
+    /** Resolves this reference via JS `require` or a UMD global,
      * returning `null` if [module] or any segment of [path] can't be found. */
     @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun resolve(): dynamic {
         try {
-            var resolved = require(module)
+            var resolved = runCatching { require(module) }.getOrNull() ?: globalThis[module]
             for (key in path) {
                 if (resolved == null) break
                 resolved = resolved[key]
