@@ -8,7 +8,7 @@ import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
 /**
- * A [Recursive] structure with functor `, ` and [arity] `2`, i.e. the prolog Prolog conjunction `(A, B)`.
+ * A [Recursive] structure with functor `, ` and [arity] `2`, i.e. the standard Prolog conjunction `(A, B)`.
  * [Tuple]s of more than two terms are represented by right-nesting: `(A, B, C)` is `[left]=A`,
  * `[right]=(B, C)`. This is the same functor Prolog uses for clause bodies with multiple goals — that is why
  * [Clause.body] and [Rule.of] fold multi-goal bodies into a [Tuple] under the hood.

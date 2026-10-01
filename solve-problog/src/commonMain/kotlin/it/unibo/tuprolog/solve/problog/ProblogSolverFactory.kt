@@ -47,7 +47,7 @@ import kotlin.js.JsExport
 @JsExport
 object ProblogSolverFactory : SolverFactory {
     /** The standard library of this factory: [ProblogLib]'s builtins, contributing the `::` operator, the
-     * probabilistic resolution primitives and rules, and (transitively) the prolog Prolog builtins. */
+     * probabilistic resolution primitives and rules, and (transitively) the standard Prolog builtins. */
     override val defaultBuiltins: Library
         get() = ProblogLib.DefaultBuiltins
 

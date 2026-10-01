@@ -17,7 +17,7 @@ ID. npm is the one exception — see step 3 below.
 
 Dependencies between modules are resolved transitively: importing `theory` automatically pulls in `unify` and
 `core`; importing `solve-prolog` pulls in `solve`, `theory`, `unify`, and `core`; and so on. Pick the
-highest-level module that covers your use case — e.g. `solve-prolog` for a prolog-resolution Prolog engine,
+highest-level module that covers your use case — e.g. `solve-prolog` for an SLD-resolution Prolog engine,
 `parser-impl` for parsing terms/theories from text.
 
 ## 2. Add the 2P-Kt repositories

@@ -19,11 +19,11 @@ import kotlin.js.JsExport
 /**
  * The [SolverFactory] for `:solve-prolog`, 2P-Kt's ISO-standard, SLD-NF resolution engine.
  *
- * This is the factory that ultimately backs `Solver.prolog` (and its deprecated alias `Solver.prolog`, both
- * declared in `:solve`): those accessors locate this object at runtime -- by fully-qualified class name on the
+ * This is the factory that ultimately backs the `Solver.prolog` property declared in `:solve`. That property
+ * locates this object at runtime -- by fully-qualified class name on the
  * JVM, by module lookup on JS -- rather than depending on `:solve-prolog` directly, which is why this object
  * must remain a top-level, no-argument-constructible `object` named exactly `PrologSolverFactory` in this
- * package. Most callers should go through `Solver.prolog`/`Solver.prolog` rather than referencing this object
+ * package. Most callers should go through `Solver.prolog` rather than referencing this object
  * directly; it is public mainly so those lookups, and the `it.unibo.tuprolog.solve.problog` and other resolution
  * strategies that build on top of the prolog engine, have something to find and construct.
  *

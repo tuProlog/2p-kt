@@ -24,7 +24,7 @@ import it.unibo.tuprolog.unify.Unificator
 /**
  * Base implementation of every `:solve-prolog` [it.unibo.tuprolog.solve.Solver]/[it.unibo.tuprolog.solve.MutableSolver]
  * ([PrologSolver] and [MutablePrologSolver], both `internal`, are the only two concrete subclasses; instances
- * are normally obtained through [PrologSolverFactory], which is what `Solver.prolog`/`Solver.prolog` resolve to).
+ * are normally obtained through [PrologSolverFactory], which is what the `Solver.prolog` property resolves to).
  *
  * What this class actually contributes over [AbstractSolver] is [solveImpl]: turning a goal into a
  * [Sequence] of [Solution]s by driving the [it.unibo.tuprolog.solve.prolog.fsm.State] finite-state machine

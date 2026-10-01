@@ -30,11 +30,11 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSo
 /**
  * The main, comprehensive conformance suite for a [Solver] implementation: control-flow constructs (conjunction,
  * disjunction, if-then(-else), cut, `call/1`, `catch/3`, `not`/`\+`), timeouts, side effects (`assert`, `write`,
- * standard output, `findall/3`), and a battery of prolog Prolog examples (search trees, backtracking, recursive
+ * standard output, `findall/3`), and a battery of standard Prolog examples (search trees, backtracking, recursive
  * list processing, term ordering, etc.) drawn from [PrologStandardExampleTheories] and [TestingClauseTheories].
  *
  * Packaging it here lets every `Solver` implementation run the very same test cases without re-authoring or
- * duplicating them: a concrete `:solve-prolog`/`:solve-concurrent`/`:solve-concurrent` module declares a `commonTest`
+ * duplicating them: a concrete solver module declares a `commonTest`
  * class implementing both this interface and its own `SolverFactory`, obtains a `prototype` via [TestSolver.prototype],
  * and delegates each overridden test method to it, e.g.:
  * ```kotlin

@@ -27,7 +27,7 @@ import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins as PrologDefaultBui
  *
  * This is registered under the [Library.alias] `"problog.lang"`. Client code normally does not load this
  * library directly: [it.unibo.tuprolog.solve.problog.ProblogSolverFactory] takes care of loading either
- * [DefaultBuiltins] or [MinimalBuiltins] (depending on whether prolog Prolog builtins are already present)
+ * [DefaultBuiltins] or [MinimalBuiltins] (depending on whether standard Prolog builtins are already present)
  * when building a solver.
  *
  * @author Jason Dellaluce

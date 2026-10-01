@@ -43,7 +43,7 @@ fun <R> lp(
 ): R = logicProgramming(solverFactory, unificator, function)
 
 /**
- * Shorthand for [logicProgramming] defaulting its `solverFactory` argument to [Solver.prolog], the prolog,
+ * Shorthand for [logicProgramming] defaulting its `solverFactory` argument to [Solver.prolog], the
  * ISO-standard SLD-NF resolution engine (`:solve-prolog`). This is the DSL's main entry point for everyday use:
  * ```kotlin
  * prolog {

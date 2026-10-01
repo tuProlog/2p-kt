@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * ```
  * \+(G) :- call(G), !, fail.
  * ```
- * in prolog Prolog, but implemented directly as a [it.unibo.tuprolog.solve.primitive.Primitive] here, spawning an
+ * in standard Prolog, but implemented directly as a [it.unibo.tuprolog.solve.primitive.Primitive] here, spawning an
  * independent [ConcurrentSolver] (via `subSolver()`) to check whether its argument has at least one solution,
  * rather than as a rule. Since [it.unibo.tuprolog.solve.concurrent.stdlib.DefaultBuiltins] registers this object
  * under the very same `\+/1` signature as the rule-based

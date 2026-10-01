@@ -139,7 +139,7 @@ abstract class AbstractTuPrologCommand(
 
     /**
      * Prints solutions from [solutions] one at a time, formatting each with [operatorSet]'s operators, in the
-     * prolog Prolog top-level style: after the first solution, the user is prompted (with an empty prompt)
+     * conventional Prolog top-level style: after the first solution, the user is prompted (with an empty prompt)
      * to type `;` to request the next solution, or anything else to stop.
      *
      * Used by both [TuPrologCmd]'s interactive REPL loop and [TuPrologSolveQuery]'s `solve` subcommand when no

@@ -52,7 +52,7 @@ current code does contain a package literally named
 RETE terminology is not purely aspirational. What is worth being precise about is *which part* of RETE 2P-Kt
 actually implements.
 
-Prolog RETE (Forgy, 1979) is a network for efficiently re-evaluating many production-rule conditions against a
+Forgy's original RETE algorithm (1979) is a network for efficiently re-evaluating many production-rule conditions against a
 working memory that changes incrementally, built from an **alpha network** (single-condition filters) feeding a
 **beta network** (joins across conditions, with partial-match memories). 2P-Kt's `rete` package implements the
 alpha-network idea — fast, incremental first-argument discrimination — and does **not** implement RETE's beta

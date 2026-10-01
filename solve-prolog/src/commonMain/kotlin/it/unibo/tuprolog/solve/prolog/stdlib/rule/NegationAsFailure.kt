@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import kotlin.collections.List as KtList
 
 /**
- * ISO negation-as-failure `'\+'/1`, encoded as the two clauses of the prolog Prolog idiom
+ * ISO negation-as-failure `'\+'/1`, encoded as the two clauses of the standard Prolog idiom
  * `\+ X :- must_be_executable(X), call(X), !, fail. \+ X :- true.`: [Fail] tries `X`, and if it succeeds at all,
  * cuts (via [it.unibo.tuprolog.solve.stdlib.magic.MagicCut], since an ordinary `!` here would only be
  * transparent up to this clause, not back to the caller that invoked `\+`) and fails; [Success] is only ever

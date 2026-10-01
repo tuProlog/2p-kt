@@ -17,7 +17,7 @@ import kotlin.js.JsName
 /**
  * A [Solver] whose resolution strategy explores the alternatives of a goal's search tree -- matching clauses at a
  * choice point, the branches of a disjunction, the several solutions of a backtracking primitive -- concurrently,
- * as independent Kotlin coroutines, rather than one at a time as `:solve-prolog`/`:solve-concurrent` do. Obtained via
+ * as independent Kotlin coroutines, rather than one at a time as `:solve-prolog` does. Obtained via
  * [ConcurrentSolverFactory] or, generically, via [it.unibo.tuprolog.solve.Solver.concurrent].
  *
  * Each coroutine models a single [it.unibo.tuprolog.solve.concurrent.fsm.State] transition (see that package for

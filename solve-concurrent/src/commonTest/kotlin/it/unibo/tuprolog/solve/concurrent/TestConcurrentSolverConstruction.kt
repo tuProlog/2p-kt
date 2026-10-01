@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.TestSolverConstruction
 import it.unibo.tuprolog.solve.concurrent.stdlib.DefaultBuiltins
 import kotlin.test.Test
 
-class TestPrologSolverConstruction :
+class TestConcurrentSolverConstruction :
     TestSolverConstruction<ConcurrentSolver, MutableConcurrentSolver>,
     SolverFactory by ConcurrentSolverFactory {
     private val prototype =

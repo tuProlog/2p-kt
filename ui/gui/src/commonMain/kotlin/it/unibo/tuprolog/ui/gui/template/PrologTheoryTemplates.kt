@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.ui.gui.template
 
-/** Prolog, toolkit-independent Prolog examples suitable for any plain-Prolog frontend. */
+/** Toolkit-independent Prolog examples suitable for any plain-Prolog frontend. */
 object PrologTheoryTemplates {
     /** Natural numbers as z/s(N) terms, with addition and multiplication. */
     val PEANO_ARITHMETIC =
