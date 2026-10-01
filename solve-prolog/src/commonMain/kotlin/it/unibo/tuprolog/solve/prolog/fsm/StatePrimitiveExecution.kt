@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.prolog.fsm
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
+import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.utils.Cursor
 
 /**

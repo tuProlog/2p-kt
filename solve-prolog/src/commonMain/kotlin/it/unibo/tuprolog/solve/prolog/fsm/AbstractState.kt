@@ -2,10 +2,10 @@ package it.unibo.tuprolog.solve.prolog.fsm
 
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.TimeInstant
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
-import it.unibo.tuprolog.solve.prolog.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
+import it.unibo.tuprolog.solve.prolog.stdlib.primitive.Throw
 
 /**
  * Common base of every `:solve-prolog` [State]: wraps [computeNext] with a shared timeout check, so no

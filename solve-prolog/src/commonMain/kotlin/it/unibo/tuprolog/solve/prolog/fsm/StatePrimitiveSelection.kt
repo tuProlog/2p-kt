@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.prolog.fsm
 
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.utils.cursor
 
 /**

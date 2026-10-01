@@ -5,12 +5,12 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.nQueens
 import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.queryNQueens
-import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.runProlog
 import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.runConcurrent
+import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.runProlog
 import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.theoryNQueens
-import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.concurrent.ConcurrentSolverFactory
 import it.unibo.tuprolog.solve.currentTimeInstant
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.ClausesReader
 

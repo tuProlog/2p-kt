@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.ui.gui.prolog
 
-import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.libs.io.IOLib
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.ui.gui.identity.DocumentId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId

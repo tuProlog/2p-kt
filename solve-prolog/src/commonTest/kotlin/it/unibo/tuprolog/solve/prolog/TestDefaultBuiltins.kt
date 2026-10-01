@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.prolog
 
-import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

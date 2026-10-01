@@ -18,12 +18,9 @@ interface TestStaticFactory {
     }
 
     /**
-     * If [Expectations.prologShouldWork], tests that `Solver.prolog` (and a solver/builder obtained from it)
-     * resolve to `it.unibo.tuprolog.solve.prolog.PrologSolver`; otherwise, tests that looking it up throws
-     * `IllegalStateException` (or is otherwise unavailable, platform permitting — see the JS caveat in the
-     * implementation).
+     * If [Expectations.prologShouldWork], tests that `Solver.prolog` resolves to
+     * `it.unibo.tuprolog.solve.prolog.PrologSolver`; otherwise tests that the lookup is unavailable.
      */
-    /** Tests [Solver.prolog] against [Expectations.prologShouldWork]. */
     fun testStaticSolverFactoryForProlog()
 
     /** Same as [testStaticSolverFactoryForProlog], but for `Solver.problog` / [Expectations.problogShouldWork],

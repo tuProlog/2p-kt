@@ -6,11 +6,11 @@ import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.assertSolutionEquals
-import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import okio.FileSystem
 import kotlin.random.Random
 import kotlin.test.AfterTest

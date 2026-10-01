@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.prolog.stdlib
 
+import it.unibo.tuprolog.solve.library.impl.ExtensionLibrary
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.prolog.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.prolog.stdlib.rule.Call
 import it.unibo.tuprolog.solve.prolog.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.prolog.stdlib.rule.Comma
 import it.unibo.tuprolog.solve.prolog.stdlib.rule.Cut
 import it.unibo.tuprolog.solve.prolog.stdlib.rule.NegationAsFailure
-import it.unibo.tuprolog.solve.library.impl.ExtensionLibrary
-import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 

@@ -4,9 +4,6 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.prolog.ChoicePointContext
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
-import it.unibo.tuprolog.solve.prolog.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
@@ -16,6 +13,9 @@ import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.LastCallOptimization
 import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
 import it.unibo.tuprolog.solve.flags.Unknown
+import it.unibo.tuprolog.solve.prolog.ChoicePointContext
+import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
+import it.unibo.tuprolog.solve.prolog.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.buffered

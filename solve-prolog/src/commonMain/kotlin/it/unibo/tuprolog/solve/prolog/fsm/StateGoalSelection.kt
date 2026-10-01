@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.prolog.fsm
 
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.flags.TrackVariables
+import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 
 /**
  * "Goal Selection", the entry point of every resolution step: decides what to do with

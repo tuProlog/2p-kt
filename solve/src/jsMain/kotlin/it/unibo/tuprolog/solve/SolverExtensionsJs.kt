@@ -13,8 +13,7 @@ private object ModuleNames {
         klass: String,
     ): String = (if (orgPrefix) "$ORGANIZATION/" else "") + module + ":" + klass
 
-    fun prologFactoryClass(orgPrefix: Boolean = false) =
-        withOptionalPrefix(orgPrefix, PROLOG, FactoryClassNames.PROLOG)
+    fun prologFactoryClass(orgPrefix: Boolean = false) = withOptionalPrefix(orgPrefix, PROLOG, FactoryClassNames.PROLOG)
 
     const val PROBLOG = "$SOLVE_PREFIX-problog"
 

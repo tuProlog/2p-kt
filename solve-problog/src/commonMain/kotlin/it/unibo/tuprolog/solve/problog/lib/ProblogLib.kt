@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.problog.lib
 
 import it.unibo.tuprolog.core.operators.Operator
-import it.unibo.tuprolog.solve.prolog.stdlib.rule.Call
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.impl.ExtensionLibrary
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
@@ -15,6 +14,7 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSolve
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSolveEvidence
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSolveWithEvidence
 import it.unibo.tuprolog.solve.problog.lib.rules.Prob
+import it.unibo.tuprolog.solve.prolog.stdlib.rule.Call
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins as PrologDefaultBuiltins

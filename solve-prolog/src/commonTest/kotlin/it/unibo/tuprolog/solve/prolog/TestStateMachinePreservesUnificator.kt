@@ -5,11 +5,11 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.prolog.fsm.State
-import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.prolog.fsm.State
+import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.yes
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator

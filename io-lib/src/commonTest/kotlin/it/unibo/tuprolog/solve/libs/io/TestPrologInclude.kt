@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import it.unibo.tuprolog.solve.SolverFactory
-import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import kotlin.test.Test
 
 class TestPrologInclude :

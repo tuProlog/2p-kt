@@ -2,11 +2,11 @@ package it.unibo.tuprolog.solve.problog.lib.rules
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbHelper
+import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 
 /**

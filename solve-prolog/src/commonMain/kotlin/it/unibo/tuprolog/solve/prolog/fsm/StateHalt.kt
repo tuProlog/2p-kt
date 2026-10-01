@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.prolog.fsm
 
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
+import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 
 /**
  * "Halt": the one true sink of the state machine, reached only via an uncaught exception (no `catch/3` matched

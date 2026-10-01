@@ -4,10 +4,10 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.assertSolutionEquals
-import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.yes
 import kotlin.test.Test
 import kotlin.test.assertEquals

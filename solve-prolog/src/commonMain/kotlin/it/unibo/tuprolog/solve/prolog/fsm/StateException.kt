@@ -3,12 +3,12 @@ package it.unibo.tuprolog.solve.prolog.fsm
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
-import it.unibo.tuprolog.solve.prolog.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.MessageError
 import it.unibo.tuprolog.solve.exception.error.SystemError
+import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
+import it.unibo.tuprolog.solve.prolog.stdlib.rule.Catch
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.plus
