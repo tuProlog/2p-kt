@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.model.FeatureValue
@@ -135,8 +136,34 @@ internal fun Solver.inspectionSnapshot(): SolverInspectionSnapshot =
                                 .sorted(),
                     )
                 }.sortedBy { it.alias },
+        documentation = documentationText(),
         staticKnowledgeBase = staticKb.joinToString("\n") { "$it." },
         dynamicKnowledgeBase = dynamicKb.joinToString("\n") { "$it." },
     )
+
+private fun Solver.documentationText(): String =
+    buildString {
+        libraries.libraries.sortedBy { it.alias }.forEach { library ->
+            append("# Library `").append(library.alias).append("`\n\n")
+            library.help.takeIf { it.isNotBlank() }?.let { append(it).append("\n\n") }
+            library.documentation.entries
+                .sortedWith(compareBy({ it.key.name }, { it.key.arity }))
+                .forEach { (signature, help) ->
+                    append("## `").append(signature.format()).append("`\n\n")
+                    append(help).append("\n\n")
+                }
+        }
+        val notableFlags =
+            flags.keys
+                .mapNotNull(NotableFlag::fromName)
+                .sortedBy { it.name }
+        if (notableFlags.isNotEmpty()) {
+            append("# Flags\n\n")
+            notableFlags.forEach { flag ->
+                append("## `flag(").append(flag.name).append(")`\n\n")
+                append(flag.help).append("\n\n")
+            }
+        }
+    }.trim()
 
 private fun Signature.format(): String = "$name/$arity${if (vararg) "+" else ""}"

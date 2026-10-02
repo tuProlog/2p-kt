@@ -284,6 +284,7 @@ internal class WebIdeView(
             PanelId.OPERATORS -> "Operators"
             PanelId.FLAGS -> "Flags"
             PanelId.LIBRARIES -> "Libraries"
+            PanelId.DOCUMENTATION -> "Documentation"
             PanelId.STATIC_KB -> "Static KB"
             PanelId.DYNAMIC_KB -> "Dynamic KB"
         }
@@ -300,6 +301,7 @@ internal class WebIdeView(
             PanelId.OPERATORS -> "operators"
             PanelId.FLAGS -> "flags"
             PanelId.LIBRARIES -> "libraries"
+            PanelId.DOCUMENTATION -> "libraries"
             PanelId.STATIC_KB -> "static-kb"
             PanelId.DYNAMIC_KB -> "dynamic-kb"
         }
@@ -486,6 +488,7 @@ internal class WebIdeView(
         badge(PanelId.OPERATORS, false)
         badge(PanelId.FLAGS, false)
         badge(PanelId.LIBRARIES, false)
+        badge(PanelId.DOCUMENTATION, false)
         badge(PanelId.STATIC_KB, false)
         badge(PanelId.DYNAMIC_KB, false)
     }
@@ -588,6 +591,10 @@ internal class WebIdeView(
         panelContents.getValue(PanelId.OPERATORS).replaceContent(operatorsTable(inspection.operators))
         panelContents.getValue(PanelId.FLAGS).replaceContent(flagsTable(page, inspection.flags))
         panelContents.getValue(PanelId.LIBRARIES).replaceContent(librariesList(inspection.libraries))
+        panelContents.getValue(PanelId.DOCUMENTATION).apply {
+            textContent = inspection.documentation
+            style.setProperty("white-space", "pre-wrap")
+        }
         panelContents.getValue(PanelId.STATIC_KB).textContent = inspection.staticKnowledgeBase
         panelContents.getValue(PanelId.DYNAMIC_KB).textContent = inspection.dynamicKnowledgeBase
     }

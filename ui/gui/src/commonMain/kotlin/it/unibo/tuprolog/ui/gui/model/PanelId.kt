@@ -11,6 +11,7 @@ enum class PanelId {
     OPERATORS,
     FLAGS,
     LIBRARIES,
+    DOCUMENTATION,
     STATIC_KB,
     DYNAMIC_KB,
 }

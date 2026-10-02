@@ -59,9 +59,11 @@ class SolverFactoryProfileTest {
                 )
 
             assertTrue(SolverCapabilities.OPERATORS_INSPECTION in session.capabilities)
+            assertTrue(SolverCapabilities.DOCUMENTATION_INSPECTION in session.capabilities)
             assertTrue(session.snapshot.operators.isNotEmpty())
             assertTrue(session.snapshot.flags.isNotEmpty())
             assertTrue(session.snapshot.libraries.isNotEmpty())
+            assertTrue(session.snapshot.documentation.contains("flag(unknown)"))
             assertTrue(session.snapshot.staticKnowledgeBase.contains("p(a)"))
 
             val step =
