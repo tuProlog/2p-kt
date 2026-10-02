@@ -6,9 +6,9 @@ import kotlin.jvm.JvmField
 
 /**
  * The ISO Prolog `unknown` flag, controlling what happens when a goal's predicate does not exist in the current
- * knowledge base/libraries at all: raise an [it.unibo.tuprolog.solve.exception.error.ExistenceError] ([ERROR],
- * the default), just report a [it.unibo.tuprolog.solve.exception.warning.MissingPredicate] warning ([WARNING]), or
- * silently fail the goal ([FAIL]).
+ * knowledge base/libraries at all: raise an [it.unibo.tuprolog.solve.exception.error.ExistenceError] ([ERROR]),
+ * report an [it.unibo.tuprolog.solve.exception.warning.MissingPredicate] warning ([WARNING], the current default),
+ * or silently fail the goal ([FAIL]).
  */
 @Suppress("MemberVisibilityCanBePrivate")
 object Unknown : NotableFlag {
