@@ -13,6 +13,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.utils.buffered
 
 object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
+    override val help: String =
+        """
+        `clause(+Head, ?Body)`
+        
+        Enumerates clauses from the static and dynamic knowledge bases whose head unifies with `Head`, unifying `Body` with the corresponding rule body. `Head` must be instantiated and callable; protected library procedures cannot be inspected.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,

@@ -10,6 +10,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TypeEnsurer
 
 object EnsureExecutable : TypeEnsurer<ExecutionContext>("ensure_executable") {
+    override val help: String =
+        """
+        `ensure_executable(+Goal)`
+        
+        Succeeds when `Goal` is executable by the solver. It is used internally by control predicates to validate goals and raises the corresponding type or instantiation error when the term cannot be executed.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.ensureType(
         context: ExecutionContext,
         term: Term,

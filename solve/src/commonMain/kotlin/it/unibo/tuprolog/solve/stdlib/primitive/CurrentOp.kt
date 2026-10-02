@@ -9,6 +9,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 
 object CurrentOp : TernaryRelation.WithoutSideEffects<ExecutionContext>("current_op") {
+    override val help: String =
+        """
+        `current_op(?Priority, ?Specifier, ?Name)`
+        
+        Enumerates the operators currently active in the solver, relating each operator with its numeric priority, specifier such as `yfx`, and functor name.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
