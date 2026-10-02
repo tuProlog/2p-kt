@@ -47,11 +47,11 @@ logic, it shows constantly. A few concrete examples straight out of this reposit
   --8<-- "core/build.gradle.kts:39:48"
   ```
 
-  and `solve-classic/build.gradle.kts` reads Gradle properties with typed defaults to size the JVM test
+  and `solve-prolog/build.gradle.kts` reads Gradle properties with typed defaults to size the JVM test
   process:
 
   ```kotlin
-  --8<-- "solve-classic/build.gradle.kts:9:10"
+  --8<-- "solve-prolog/build.gradle.kts:11:12"
   ```
 
   Both are ordinary Kotlin — string templates, `require`, the standard library — reusing exactly the language

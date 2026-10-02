@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.ui.web
 
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.libs.io.IOLib
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.ui.gui.application.buildGuiApplication
 import it.unibo.tuprolog.ui.gui.controller.PageAction
 import it.unibo.tuprolog.ui.gui.controller.WorkspaceAction
@@ -31,7 +31,7 @@ class WorkspacePersistenceTest {
         buildGuiApplication(CoroutineScope(SupervisorJob() + Dispatchers.Default)) {
             solverProfile(
                 solverFactoryProfile(
-                    ClassicSolverFactory,
+                    PrologSolverFactory,
                     SolverProfileId(profileId),
                     profileId,
                     runtimeLibraries = listOf(IOLib),

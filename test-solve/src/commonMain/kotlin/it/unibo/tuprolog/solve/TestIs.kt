@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `is/2` arithmetic-evaluation built-in, shared by every `Solver` implementation via
- * the `TestIs.prototype(solverFactory)` factory (see `TestClassicIs` in `:solve-classic` for a concrete usage).
+ * the `TestIs.prototype(solverFactory)` factory (see `TestPrologIs` in `:solve-prolog` for a concrete usage).
  */
 interface TestIs : SolverTest {
     companion object {

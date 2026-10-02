@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 
-/** [ClauseMapper] implementation that handled classic Prolog clauses, that does not contain
+/** [ClauseMapper] implementation that handles plain Prolog clauses that do not contain
  * any probabilistic information and is represented as a pure-logic clause.
  * Simple logic predicates are mapped in the probabilistic domain as Problog terms with
  * probability of 1.0.

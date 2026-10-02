@@ -24,7 +24,7 @@ import kotlin.jvm.JvmStatic
  * `0.9::alarm :- burglary, earthquake.` (an annotated rule), a plain, un-annotated Prolog clause (implicitly
  * treated as certain, i.e. probability 1.0), or an `evidence/1`/`evidence/2` clause -- is transparently rewritten
  * into an equivalent, plain Prolog-compliant clause carrying an extra "explanation" argument, so that a regular
- * Prolog resolution engine (`:solve-classic`) can be reused to enumerate solutions; explanations are later
+ * Prolog resolution engine (`:solve-prolog`) can be reused to enumerate solutions; explanations are later
  * compiled and weighted-model-counted to compute each solution's probability.
  * [it.unibo.tuprolog.solve.problog.ProblogSolverFactory] uses this rewriting internally for every
  * static/dynamic knowledge base it loads.

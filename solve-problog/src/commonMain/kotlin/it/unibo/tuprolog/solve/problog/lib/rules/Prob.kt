@@ -2,11 +2,11 @@ package it.unibo.tuprolog.solve.problog.lib.rules
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbHelper
+import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 
 /**
@@ -28,7 +28,7 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  *
  * @author Jason Dellaluce
  */
-internal object Prob : RuleWrapper<ClassicExecutionContext>(ProblogLib.PREDICATE_PREFIX, 2) {
+internal object Prob : RuleWrapper<PrologExecutionContext>(ProblogLib.PREDICATE_PREFIX, 2) {
     override val Scope.head: List<Term>
         get() = listOf(varOf("EXPL"), varOf("GOAL"))
 

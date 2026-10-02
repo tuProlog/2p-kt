@@ -20,7 +20,7 @@ kotlin {
                 api(project(":core"))
                 api(project(":oop-lib"))
                 api(project(":io-lib"))
-                api(project(":solve-classic"))
+                api(project(":solve-prolog"))
                 api(project(":parser-theory"))
             }
         }

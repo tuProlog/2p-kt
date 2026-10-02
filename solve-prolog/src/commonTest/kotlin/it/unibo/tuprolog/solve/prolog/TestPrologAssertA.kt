@@ -1,0 +1,36 @@
+package it.unibo.tuprolog.solve.prolog
+
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.TestAssertA
+import kotlin.test.Test
+
+class TestPrologAssertA :
+    TestAssertA,
+    SolverFactory by PrologSolverFactory {
+    private val prototype = TestAssertA.prototype(this)
+
+    @Test
+    override fun testAssertAClause() {
+        prototype.testAssertAClause()
+    }
+
+    @Test
+    override fun testAssertAAny() {
+        prototype.testAssertAAny()
+    }
+
+    @Test
+    override fun testAssertANumber() {
+        prototype.testAssertANumber()
+    }
+
+    @Test
+    override fun testAssertAFooNumber() {
+        prototype.testAssertAFooNumber()
+    }
+
+    @Test
+    override fun testAssertAAtomTrue() {
+        prototype.testAssertAAtomTrue()
+    }
+}

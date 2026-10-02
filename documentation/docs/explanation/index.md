@@ -14,7 +14,7 @@ with a few build-tooling rationale pages that are useful mostly to contributors:
 4. [Variables and scoping](variables-and-scoping.md) — why `Var` equality/scoping works the way it does.
 5. [Clause databases and RETE](clause-db-and-rete.md) — how theories index clauses for fast matching.
 6. [Solver design](solver-design.md) — the rationale behind the `Solver`/`Solution` API's shape.
-7. [The solve-classic state machine](state-machine.md) — how the classic SLD-resolution engine actually runs.
+7. [The solve-prolog state machine](state-machine.md) — how the prolog SLD-resolution engine actually runs.
 8. [Parser architecture](parsing-architecture.md) — how Prolog source text becomes terms and theories.
 9. [I/O library design](io-lib-design.md) — why `:io-lib`'s `Url`/channel split looks the way it does.
 10. [Web IDE architecture](web-ide-architecture.md) — why the desktop and browser IDEs share one model, and how the browser one integrates Ace.

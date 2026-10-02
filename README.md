@@ -38,7 +38,7 @@ by featuring:
 * a module for in-memory indexing and storing logic theories, as well as other sorts of collections of logic clauses, namely `theory`,
 
 * a module providing generic API for resolution of logic queries, namely `solve`, coming with several implementations 
-(e.g. `solve-classic` and `solve-streams`, targetting Prolog ISO Standard compliant resolution),
+(`solve-prolog`, targeting Prolog ISO Standard compliant resolution),
 
 * a module providing generic API for the probabilistic resolution of logic queries via _probabilistic logic programming_
   (PLP), namely `solve-plp`, coming with an implementation targetting [ProbLog](https://dtai.cs.kuleuven.be/problog/) 

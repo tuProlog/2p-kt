@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `copy_term/2` built-in, shared by every `Solver` implementation via the
- * `TestCopyTerm.prototype(solverFactory)` factory (see `TestClassicCopyTerm` in `:solve-classic` for a concrete
+ * `TestCopyTerm.prototype(solverFactory)` factory (see `TestPrologCopyTerm` in `:solve-prolog` for a concrete
  * usage).
  */
 interface TestCopyTerm : SolverTest {

@@ -15,7 +15,7 @@ through in 2P-Kt today:
 
 Its solver was built around an explicit state machine, a design credited to Michela Piancastelli's work,
 which turned the classical SLD-resolution loop into a small set of states and transitions rather than a
-recursive interpreter. That state-machine approach is a direct ancestor of the `:solve-classic` module
+recursive interpreter. That state-machine approach is a direct ancestor of the `:solve-prolog` module
 described in [Module map](../reference/module-map.md).
 
 Because it was lightweight, embeddable, and easy to interoperate with, tuProlog ended up as the logic

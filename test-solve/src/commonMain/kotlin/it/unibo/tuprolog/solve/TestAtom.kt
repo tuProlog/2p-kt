@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `atom/1` type-checking built-in, shared by every `Solver` implementation via the
- * `TestAtom.prototype(solverFactory)` factory (see `TestClassicAtom` in `:solve-classic` for a concrete usage).
+ * `TestAtom.prototype(solverFactory)` factory (see `TestPrologAtom` in `:solve-prolog` for a concrete usage).
  */
 interface TestAtom : SolverTest {
     companion object {

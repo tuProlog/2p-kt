@@ -5,11 +5,11 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.assertSolutionEquals
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.yes
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,7 +27,7 @@ class TestPutCharCodeNl {
     fun testPutChar1WritesToCurrentOutput() {
         logicProgramming {
             val output = StringBuilder()
-            val solver = ClassicSolverFactory.ioSolver(output = output)
+            val solver = PrologSolverFactory.ioSolver(output = output)
             val query = "put_char"("t") and "put_char"("o")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes()), solutions)
@@ -38,7 +38,7 @@ class TestPutCharCodeNl {
     @Test
     fun testPutChar1NonCharacterIsTypeError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver()
+            val solver = PrologSolverFactory.ioSolver()
             val query = "put_char"(1)
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -64,7 +64,7 @@ class TestPutCharCodeNl {
         // the actual character argument.
         logicProgramming {
             val mickey = StringBuilder()
-            val solver = ClassicSolverFactory.ioSolver(namedOutputs = mapOf(Pair("mickey", mickey)))
+            val solver = PrologSolverFactory.ioSolver(namedOutputs = mapOf(Pair("mickey", mickey)))
             val query = "put_char"("mickey", "t")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes()), solutions)
@@ -75,7 +75,7 @@ class TestPutCharCodeNl {
     @Test
     fun testPutChar2OnInputOnlyStreamIsDomainError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
+            val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
             val query = "put_char"("mickey", "t")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -99,7 +99,7 @@ class TestPutCharCodeNl {
     fun testPutCode1WritesToCurrentOutput() {
         logicProgramming {
             val output = StringBuilder()
-            val solver = ClassicSolverFactory.ioSolver(output = output)
+            val solver = PrologSolverFactory.ioSolver(output = output)
             val query = "put_code"(intOf('X'.code))
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes()), solutions)
@@ -110,7 +110,7 @@ class TestPutCharCodeNl {
     @Test
     fun testPutCode1OutOfRangeIsRepresentationError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver()
+            val solver = PrologSolverFactory.ioSolver()
             val query = "put_code"(intOf(-2))
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(
@@ -134,7 +134,7 @@ class TestPutCharCodeNl {
         // with a ClassCastException as soon as it was called with an alias/stream-term argument.
         logicProgramming {
             val mickey = StringBuilder()
-            val solver = ClassicSolverFactory.ioSolver(namedOutputs = mapOf(Pair("mickey", mickey)))
+            val solver = PrologSolverFactory.ioSolver(namedOutputs = mapOf(Pair("mickey", mickey)))
             val query = "put_code"("mickey", intOf('X'.code))
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes()), solutions)
@@ -146,7 +146,7 @@ class TestPutCharCodeNl {
     fun testNl1WritesNewlineToNamedStream() {
         logicProgramming {
             val mickey = StringBuilder()
-            val solver = ClassicSolverFactory.ioSolver(namedOutputs = mapOf(Pair("mickey", mickey)))
+            val solver = PrologSolverFactory.ioSolver(namedOutputs = mapOf(Pair("mickey", mickey)))
             val query = "put_char"("mickey", "a") and ("nl"("mickey") and "put_char"("mickey", "b"))
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(listOf(query.yes()), solutions)
@@ -157,7 +157,7 @@ class TestPutCharCodeNl {
     @Test
     fun testNl1OnInputOnlyStreamIsDomainError() {
         logicProgramming {
-            val solver = ClassicSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
+            val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
             val query = "nl"("mickey")
             val solutions = solver.solve(query).toList()
             assertSolutionEquals(

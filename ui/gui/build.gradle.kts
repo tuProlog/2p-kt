@@ -28,7 +28,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)
-                implementation(project(":solve-classic"))
+                implementation(project(":solve-prolog"))
             }
         }
     }

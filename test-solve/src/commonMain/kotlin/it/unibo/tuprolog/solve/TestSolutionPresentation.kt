@@ -4,8 +4,8 @@ package it.unibo.tuprolog.solve
  * Conformance tests for how a [Solution]'s substitution presents variables that only occur nested inside another
  * variable's binding (i.e. do not directly correspond to a variable of the original query), rather than for the
  * resolution logic itself. Shared by every `Solver` implementation via the
- * `TestSolutionPresentation.prototype(solverFactory)` factory (see `TestClassicSolutionPresentation` in
- * `:solve-classic` for a concrete usage).
+ * `TestSolutionPresentation.prototype(solverFactory)` factory (see `TestPrologSolutionPresentation` in
+ * `:solve-prolog` for a concrete usage).
  */
 interface TestSolutionPresentation : SolverTest {
     companion object {

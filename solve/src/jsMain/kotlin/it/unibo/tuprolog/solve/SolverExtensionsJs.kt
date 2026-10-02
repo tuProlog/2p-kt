@@ -5,7 +5,7 @@ private object ModuleNames {
 
     private const val SOLVE_PREFIX = "2p-solve"
 
-    const val CLASSIC = "$SOLVE_PREFIX-classic"
+    const val PROLOG = "$SOLVE_PREFIX-prolog"
 
     private fun withOptionalPrefix(
         orgPrefix: Boolean = false,
@@ -13,13 +13,7 @@ private object ModuleNames {
         klass: String,
     ): String = (if (orgPrefix) "$ORGANIZATION/" else "") + module + ":" + klass
 
-    fun classicFactoryClass(orgPrefix: Boolean = false) =
-        withOptionalPrefix(orgPrefix, CLASSIC, FactoryClassNames.CLASSIC)
-
-    const val STREAMS = "$SOLVE_PREFIX-streams"
-
-    fun streamsFactoryClass(orgPrefix: Boolean = false) =
-        withOptionalPrefix(orgPrefix, STREAMS, FactoryClassNames.STREAMS)
+    fun prologFactoryClass(orgPrefix: Boolean = false) = withOptionalPrefix(orgPrefix, PROLOG, FactoryClassNames.PROLOG)
 
     const val PROBLOG = "$SOLVE_PREFIX-problog"
 
@@ -47,16 +41,10 @@ internal actual fun solverFactory(
                 "; webpack users must reference the factory object directly",
         )
 
-actual fun classicSolverFactory(): SolverFactory =
+actual fun prologSolverFactory(): SolverFactory =
     solverFactory(
-        ModuleNames.classicFactoryClass(orgPrefix = true),
-        ModuleNames.classicFactoryClass(orgPrefix = false),
-    )
-
-actual fun streamsSolverFactory(): SolverFactory =
-    solverFactory(
-        ModuleNames.streamsFactoryClass(orgPrefix = true),
-        ModuleNames.streamsFactoryClass(orgPrefix = false),
+        ModuleNames.prologFactoryClass(orgPrefix = true),
+        ModuleNames.prologFactoryClass(orgPrefix = false),
     )
 
 actual fun problogSolverFactory(): SolverFactory =

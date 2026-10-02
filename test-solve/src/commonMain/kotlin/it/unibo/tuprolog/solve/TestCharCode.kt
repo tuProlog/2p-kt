@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `char_code/2` built-in, shared by every `Solver` implementation via the
- * `TestCharCode.prototype(solverFactory)` factory (see `TestClassicCharCode` in `:solve-classic` for a concrete
+ * `TestCharCode.prototype(solverFactory)` factory (see `TestPrologCharCode` in `:solve-prolog` for a concrete
  * usage).
  *
  * Contained requests:

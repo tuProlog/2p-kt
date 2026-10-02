@@ -7,7 +7,7 @@ Kotlin DSL throughout, since that's the idiomatic way to drive 2P-Kt from Kotlin
 ## 1. Add the dependency
 
 You need two modules: `dsl-solve` (the DSL, which pulls in `dsl-theory`, `dsl-unify`, `dsl-core` and the
-solver-agnostic `solve` API transitively) and `solve-classic` (the actual SLD-resolution engine that the DSL
+solver-agnostic `solve` API transitively) and `solve-prolog` (the actual SLD-resolution engine that the DSL
 resolves to at runtime — `dsl-solve` deliberately doesn't depend on any concrete solver, so you have to add one
 yourself):
 
@@ -15,7 +15,7 @@ yourself):
 // build.gradle.kts
 dependencies {
     implementation("it.unibo.tuprolog", "dsl-solve", "2P_VERSION")
-    implementation("it.unibo.tuprolog", "solve-classic", "2P_VERSION")
+    implementation("it.unibo.tuprolog", "solve-prolog", "2P_VERSION")
 }
 ```
 

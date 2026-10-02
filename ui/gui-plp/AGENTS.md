@@ -13,4 +13,4 @@ of what was asked — nothing in the PLP GUI wiring (`PlpGuiExtension`, `PlpSwin
 on before this override existed. If those tabs ever look "always empty" again, check
 `PlpSolverFactorySession.configureSolveOptions` first — it's the single place that enables probabilistic
 resolution for a session. A plain (non-PLP) Prolog profile never touches this class, so this can't regress
-the classic `ide-swing` path.
+the prolog `ide-swing` path.

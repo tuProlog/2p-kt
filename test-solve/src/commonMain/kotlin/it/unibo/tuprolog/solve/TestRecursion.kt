@@ -5,7 +5,7 @@ package it.unibo.tuprolog.solve
  * state, and deep tail recursion) actually resolves correctly, and that
  * [it.unibo.tuprolog.solve.flags.LastCallOptimization] measurably affects how deep the logic stack trace grows on
  * a failing recursive computation. Shared by every `Solver` implementation via the
- * `TestRecursion.prototype(solverFactory)` factory (see `TestClassicRecursion` in `:solve-classic` for a concrete
+ * `TestRecursion.prototype(solverFactory)` factory (see `TestPrologRecursion` in `:solve-prolog` for a concrete
  * usage).
  */
 interface TestRecursion : SolverTest {

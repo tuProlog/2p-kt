@@ -6,14 +6,14 @@ Kotlin, so every step below also notes the small number of places where that sho
 
 ## 1. Add the dependency
 
-You need two modules: `solve-classic` (the SLD-resolution engine, which transitively pulls in `solve`, `theory`,
+You need two modules: `solve-prolog` (the SLD-resolution engine, which transitively pulls in `solve`, `theory`,
 `unify` and `core`) and `parser-theory` (to read Prolog source text into a `Theory`). Since a plain Java project
 is necessarily JVM-only, use the `-jvm`-suffixed artifacts:
 
 ```xml
 <dependency>
     <groupId>it.unibo.tuprolog</groupId>
-    <artifactId>solve-classic-jvm</artifactId>
+    <artifactId>solve-prolog-jvm</artifactId>
     <version>2P_VERSION</version>
 </dependency>
 <dependency>

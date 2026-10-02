@@ -5,12 +5,12 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.nQueens
 import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.queryNQueens
-import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.runClassic
 import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.runConcurrent
+import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.runProlog
 import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.theoryNQueens
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.concurrent.ConcurrentSolverFactory
 import it.unibo.tuprolog.solve.currentTimeInstant
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.ClausesReader
 
@@ -19,13 +19,13 @@ import it.unibo.tuprolog.theory.parsing.ClausesReader
  * `it.unibo.tuprolog.solve.concurrent.ConcurrentSolverFactory`
  * (backed by `it.unibo.tuprolog.solve.concurrent.ConcurrentSolver`,
  * which explores alternative choice points on separate threads/coroutines) against the same
- * query solved with `it.unibo.tuprolog.solve.classic.ClassicSolverFactory` (a single-threaded,
+ * query solved with `it.unibo.tuprolog.solve.prolog.PrologSolverFactory` (a single-threaded,
  * depth-first resolution engine).
  *
  * The theory is loaded from the bundled `nQueens.pl` resource, which counts (rather than
  * enumerates) all solutions to the N-Queens problem for a given board size via
  * `queenCountSolution/2`. This makes the example a useful, self-contained micro-benchmark for
- * illustrating the trade-offs of `:solve-concurrent` versus `:solve-classic`: concurrent
+ * illustrating the trade-offs of `:solve-concurrent` versus `:solve-prolog`: concurrent
  * resolution can overlap the exploration of independent branches, but incurs coordination
  * overhead that may or may not pay off depending on the problem size and hardware.
  */
@@ -67,30 +67,30 @@ object ConcurrentSolverPerformance {
     }
 
     /**
-     * Solves [query] against [theory] using the classic, single-threaded solver built via
-     * `it.unibo.tuprolog.solve.classic.ClassicSolverFactory.solverWithDefaultBuiltins`, and prints
+     * Solves [query] against [theory] using the prolog, single-threaded solver built via
+     * `it.unibo.tuprolog.solve.prolog.PrologSolverFactory.solverWithDefaultBuiltins`, and prints
      * the elapsed time in milliseconds.
      */
-    fun runClassic(
+    fun runProlog(
         theory: Theory,
         query: Struct,
     ) {
-        val solver = ClassicSolverFactory.solverWithDefaultBuiltins(staticKb = theory)
+        val solver = PrologSolverFactory.solverWithDefaultBuiltins(staticKb = theory)
         val executionTime = computeTime { solver.solveOnce(query) }
-        println("Classic Execution time: ${executionTime}ms")
+        println("Prolog Execution time: ${executionTime}ms")
     }
 }
 
 /**
  * Entry point running the N-Queens benchmark first with the concurrent solver, then with the
- * classic solver, printing the elapsed time of each run to standard output so the two engines
+ * prolog solver, printing the elapsed time of each run to standard output so the two engines
  * can be compared directly for the same theory and query.
  */
 fun main() {
     println("Start of concurrent execution of nQueens with n = $nQueens")
     runConcurrent(theoryNQueens, queryNQueens)
     println("End of concurrent execution.")
-    println("Start of classic execution of nQueens with n = $nQueens")
-    runClassic(theoryNQueens, queryNQueens)
-    println("End of classic execution.")
+    println("Start of prolog execution of nQueens with n = $nQueens")
+    runProlog(theoryNQueens, queryNQueens)
+    println("End of prolog execution.")
 }

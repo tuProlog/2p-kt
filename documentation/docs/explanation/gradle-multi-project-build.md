@@ -18,21 +18,21 @@ that map directly onto the module list itself:
 
 - **Consumers should be able to depend on exactly what they need.** A user who only wants to *represent* and
   *unify* logic terms — no parsing, no resolution, no I/O — can depend on `:core` and `:unify` alone. A user
-  embedding a full Prolog engine depends on `:solve-classic` (or `:solve-streams`) and transitively pulls in
+  embedding the standard Prolog engine depends on `:solve-prolog` and transitively pulls in
   everything underneath. A single-module build forces every consumer to accept the whole dependency footprint
   (and the whole set of transitive third-party dependencies) no matter how little of it they use. This matters
   concretely on non-JVM Kotlin targets, where binary size and unnecessary transitive dependencies are a real
   cost, not just a hypothetical one.
-- **Alternative implementations need to be genuine siblings, not `if` branches.** `:solve-classic` and
-  `:solve-streams` are two different resolution strategies behind the same `Solver` interface (see
+- **Alternative implementations need to be genuine siblings, not `if` branches.** `:solve-prolog` and
+  `:solve-concurrent` are two different resolution strategies behind the same `Solver` interface (see
   [Solver design](solver-design.md)); `:parser-core`/`:parser-impl`/`:parser-theory` separate concerns that
   happen to have been implemented with completely different underlying tech at different times (see
   [Parsing architecture](parsing-architecture.md)) without ever breaking their public API. Module boundaries are
   what make "swap the implementation, keep the interface" enforceable at compile time rather than just a
-  convention: a `:solve-streams` file cannot accidentally reach into `:solve-classic`-internal state, because
+  convention: a `:solve-concurrent` file cannot accidentally reach into `:solve-prolog`-internal state, because
   there is no dependency edge between them to reach through.
 - **The dependency graph mirrors the conceptual layering.** `:core` (terms) → `:unify` (unification) →
-  `:theory` (clause storage) → `:solve` (generic resolution) → `:solve-classic`/`:solve-streams` (concrete
+  `:theory` (clause storage) → `:solve` (generic resolution) → `:solve-prolog`/`:solve-concurrent` (concrete
   strategies) is not an arbitrary split; it is the actual layering of concepts the [Explanation](index.md)
   section as a whole describes. Each `:dsl-*` and `:serialize-*` module mirrors this same layering one level up
   (a DSL/serializer for terms, one for unification, one for theories, one for solving), which is only a

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `asserta/1` built-in, shared by every `Solver` implementation via the
- * `TestAssertA.prototype(solverFactory)` factory (see `TestClassicAssertA` in `:solve-classic` for a concrete usage).
+ * `TestAssertA.prototype(solverFactory)` factory (see `TestPrologAssertA` in `:solve-prolog` for a concrete usage).
  */
 interface TestAssertA : SolverTest {
     companion object {

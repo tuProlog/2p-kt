@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `integer/1` type-checking built-in, shared by every `Solver` implementation via the
- * `TestInteger.prototype(solverFactory)` factory (see `TestClassicInteger` in `:solve-classic` for a concrete usage).
+ * `TestInteger.prototype(solverFactory)` factory (see `TestPrologInteger` in `:solve-prolog` for a concrete usage).
  */
 interface TestInteger : SolverTest {
     companion object {

@@ -8,11 +8,10 @@ carries, and why that state is split the way it is. Understanding this is a prer
 ## A solver is strategy-agnostic on purpose
 
 The `:solve` module defines `Solver`, `Solution`, `ExecutionContext`, `Library`, `FlagStore`, and `Channel`
-without committing to *how* resolution is actually carried out. That is a deliberate split: `:solve-classic`
+without committing to *how* resolution is actually carried out. That is a deliberate split: `:solve-prolog`
 implements ISO-standard SLD-NF resolution as an explicit finite-state machine (see
-[state-machine.md](state-machine.md)); `:solve-streams` implements a different, more minimalistic
-side-effect-free strategy over the same `Solver` contract. Both are interchangeable from client code's point of
-view — `Solver.classic()` and `Solver.streams()` return the same `Solver` interface — because everything a
+[state-machine.md](state-machine.md)); `:solve-concurrent` parallelizes resolution with coroutines over the same
+`Solver` contract. Both expose the same `Solver` interface through `Solver.prolog` and `Solver.concurrent`, because everything a
 resolution strategy needs to *read and mutate* while solving a goal is factored out into `ExecutionContext`,
 not hardwired into `Solver` itself.
 
@@ -23,7 +22,7 @@ not hardwired into `Solver` itself.
 An `ExecutionContext` is the solver's entire mutable state, reified as a value: the current substitution, the
 call stack trace, custom data, and (via `createSolver`/`update`) the unificator, libraries, flags, both
 knowledge bases, and channels. Every resolution strategy is free to extend this with whatever bookkeeping it
-personally needs (`:solve-classic`'s `ClassicExecutionContext` adds the goal/rule/primitive cursors and the
+personally needs (`:solve-prolog`'s `PrologExecutionContext` adds the goal/rule/primitive cursors and the
 choice-point stack described in [state-machine.md](state-machine.md)) — but any code written against the
 *generic* `ExecutionContext` interface keeps working regardless of which concrete strategy produced it.
 
@@ -72,12 +71,12 @@ implementation-specific — read via a `FlagStore` (an immutable `String → Ter
 subclasses (`Unknown`, `DoubleQuotes`, `LastCallOptimization`, `TrackVariables`, `MaxArity`, in
 `it.unibo.tuprolog.solve.flags`). Keeping flags as data (a map) rather than as scattered solver fields means the
 whole configurable surface of a solver is enumerable, snapshot-able as part of `ExecutionContext`, and equally
-settable whether the strategy is `:solve-classic` or `:solve-streams`.
+settable whether the strategy is `:solve-prolog` or `:solve-concurrent`.
 
 Two of these flags are worth calling out because they visibly shape the *state machine's* behaviour, not just
 cosmetic solver output: `Unknown` controls what happens in `Rule Selection` when a goal's predicate does not
 exist at all (fail silently, raise an `ExistenceError`, or just warn — see `StateRuleSelection.missingProcedure`
-in the codebase), and `LastCallOptimization` lets the classic solver avoid growing the execution-context stack
+in the codebase), and `LastCallOptimization` lets the prolog solver avoid growing the execution-context stack
 on genuine tail calls.
 
 ### Channels: solver I/O without a fixed transport
@@ -98,7 +97,7 @@ single stdin/stdout pair.
 ## Why the split matters
 
 None of these five aspects need to change *type* when the resolution strategy changes; they only need to change
-*value* as resolution proceeds. That is precisely what lets `:solve-classic`'s finite-state-machine engine
-(described in detail in [state-machine.md](state-machine.md)) and `:solve-streams`'s alternative strategy share
+*value* as resolution proceeds. That is precisely what lets `:solve-prolog`'s finite-state-machine engine
+(described in detail in [state-machine.md](state-machine.md)) and `:solve-concurrent`'s alternative strategy share
 one `Solver`/`ExecutionContext`/`Library`/`Solution` vocabulary while disagreeing entirely on *how* a goal
 becomes a stream of solutions.

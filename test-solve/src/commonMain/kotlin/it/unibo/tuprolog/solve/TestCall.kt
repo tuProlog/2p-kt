@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `call/1` built-in, shared by every `Solver` implementation via the
- * `TestCall.prototype(solverFactory)` factory (see `TestClassicCall` in `:solve-classic` for a concrete usage).
+ * `TestCall.prototype(solverFactory)` factory (see `TestPrologCall` in `:solve-prolog` for a concrete usage).
  */
 interface TestCall : SolverTest {
     companion object {

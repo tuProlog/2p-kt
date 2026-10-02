@@ -22,7 +22,7 @@ import it.unibo.tuprolog.ui.gui.model.DocumentOrigin
 import it.unibo.tuprolog.ui.gui.model.FeatureValue
 import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
-import it.unibo.tuprolog.ui.gui.template.ClassicTheoryTemplates
+import it.unibo.tuprolog.ui.gui.template.PrologTheoryTemplates
 import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
 import it.unibo.tuprolog.ui.swing.app.JVM_PATH_PROVIDER
 import it.unibo.tuprolog.ui.swing.app.SwingIdeApplication
@@ -94,7 +94,7 @@ suspend fun launchSwingIde(
     registerProfile: Boolean = true,
     capabilities: Set<String> = setOf(SolverCapabilities.CANCELLATION),
     solutionFeatures: (Solution) -> Map<FeatureId, Map<String, FeatureValue>> = { emptyMap() },
-    templates: List<TheoryTemplate> = ClassicTheoryTemplates.ALL,
+    templates: List<TheoryTemplate> = PrologTheoryTemplates.ALL,
     persistence: WorkspacePersistence? = WorkspacePersistence("ide-swing"),
     theoryFiles: List<File> = emptyList(),
     defaultTimeout: Duration = 5.seconds,
