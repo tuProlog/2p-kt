@@ -7,6 +7,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
 object Halt1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("halt") {
+    override val help: String =
+        """
+        `halt(+Status)`
+        
+        Stops the current Prolog computation with the non-negative integer exit status `Status`.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsNonNegativeInteger(0)
         throw HaltException(context = context, exitStatus = (first.castToInteger()).intValue.toInt())

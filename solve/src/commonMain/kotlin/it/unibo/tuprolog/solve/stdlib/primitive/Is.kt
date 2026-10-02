@@ -13,6 +13,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * @author Enrico
  */
 object Is : BinaryRelation.Functional<ExecutionContext>("is") {
+    override val help: String =
+        """
+        `?Result is +Expression`
+        
+        Evaluates the arithmetic `Expression` and unifies the resulting number with `Result`. `Expression` must be instantiated enough to evaluate.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
