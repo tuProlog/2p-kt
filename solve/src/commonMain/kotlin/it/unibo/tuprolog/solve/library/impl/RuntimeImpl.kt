@@ -6,9 +6,9 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.library.mergeDocumentation
 import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
+import it.unibo.tuprolog.solve.library.mergeDocumentation
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
