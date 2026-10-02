@@ -10,6 +10,13 @@ import it.unibo.tuprolog.solve.primitive.QuinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom") {
+    override val help: String =
+        """
+        `sub_atom(+Atom, ?Before, ?Length, ?After, ?SubAtom)`
+        
+        Relates `Atom` with a contiguous `SubAtom` and the number of characters before, within, and after it. Integer position arguments constrain the selected slice; variable arguments are unified with the corresponding values.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         // string
         first: Term,

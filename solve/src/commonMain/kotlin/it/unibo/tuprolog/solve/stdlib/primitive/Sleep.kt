@@ -14,6 +14,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * Furthermore, the resolution of a `sleep(N)` sub-goal is guaranteed to require at least `N` milliseconds
  */
 object Sleep : UnaryPredicate<ExecutionContext>("sleep") {
+    override val help: String =
+        """
+        `sleep(+Milliseconds)`
+        
+        Delays resolution for at least `Milliseconds` milliseconds, then succeeds. The argument must be an instantiated integer.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> =
         sequence {
             ensuringAllArgumentsAreInstantiated()

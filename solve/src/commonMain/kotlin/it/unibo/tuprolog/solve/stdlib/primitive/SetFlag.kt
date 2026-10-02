@@ -12,6 +12,13 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object SetFlag : BinaryRelation.NonBacktrackable<ExecutionContext>("set_flag") {
+    override val help: String =
+        """
+        `set_flag(+Name, +Value)`
+        
+        Sets solver flag `Name` to the ground `Value`. For notable flags, editability and the declared admissible-value domain are enforced.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,
