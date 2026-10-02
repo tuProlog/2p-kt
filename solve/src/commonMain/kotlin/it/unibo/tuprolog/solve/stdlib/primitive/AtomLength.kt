@@ -10,6 +10,13 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object AtomLength : BinaryRelation.Functional<ExecutionContext>("atom_length") {
+    override val help: String =
+        """
+        `atom_length(+Atom, ?Length)`
+        
+        Relates `Atom` with its character length. `Length` is a non-negative integer when supplied.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

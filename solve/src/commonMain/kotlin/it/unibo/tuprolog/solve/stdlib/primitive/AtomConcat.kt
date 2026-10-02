@@ -13,6 +13,13 @@ import it.unibo.tuprolog.solve.primitive.TernaryRelation
  */
 
 object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") {
+    override val help: String =
+        """
+        `atom_concat(?Left, ?Right, ?Whole)`
+        
+        Relates two atoms with their concatenation. The predicate supports construction and decomposition modes when enough of the three arguments are instantiated.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
