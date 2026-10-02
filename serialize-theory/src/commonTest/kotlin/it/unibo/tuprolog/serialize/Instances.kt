@@ -358,6 +358,30 @@ object Instances {
         |            }
         |         ]
         |      }
+        |   },
+        |   {
+        |      "head":{
+        |         "fun":"help",
+        |         "args":[
+        |            {
+        |               "var":"Subject"
+        |            },
+        |            {
+        |               "var":"Help"
+        |            }
+        |         ]
+        |      },
+        |      "body":{
+        |         "fun":"__help__",
+        |         "args":[
+        |            {
+        |               "var":"Subject"
+        |            },
+        |            {
+        |               "var":"Help"
+        |            }
+        |         ]
+        |      }
         |   }
         |]
         """.trimMargin()
@@ -507,5 +531,15 @@ object Instances {
         |    args:
         |    - var: "Key"
         |    - var: "Value"
+        |- head:
+        |    fun: "help"
+        |    args:
+        |    - var: "Subject"
+        |    - var: "Help"
+        |  body:
+        |    fun: "__help__"
+        |    args:
+        |    - var: "Subject"
+        |    - var: "Help"
         """.trimMargin()
 }

@@ -124,8 +124,8 @@ interface Library :
                 library.clauses,
                 library.operators,
                 library.functions,
-                library.help,
-                library.documentation,
+                library.help.takeUnless { it == "`library(${library.alias})`" }.orEmpty(),
+                library.documentation.takeUnless { it == defaultDocumentation(library) }.orEmpty(),
             )
     }
 }

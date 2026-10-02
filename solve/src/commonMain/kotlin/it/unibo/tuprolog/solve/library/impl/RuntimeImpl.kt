@@ -32,7 +32,7 @@ internal class RuntimeImpl(
     override val documentation: Map<Signature, String>
         get() =
             mergeDocumentation(
-                super.documentation,
+                super<AbstractPluggable>.documentation,
                 *libraries.map { it.documentation }.toTypedArray(),
             )
 
