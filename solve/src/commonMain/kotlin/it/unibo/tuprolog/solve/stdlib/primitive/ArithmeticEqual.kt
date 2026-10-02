@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.primitive.ArithmeticRelation
 object ArithmeticEqual : ArithmeticRelation<ExecutionContext>("=:=") {
     override val help: String =
         """
-        `=:= (+Left, +Right)`
+        `=:=(+Left, +Right)`
         
         Succeeds when the arithmetic values of `Left` and `Right` are numerically equal. Both arguments are evaluated as arithmetic expressions.
         """.trimIndent()

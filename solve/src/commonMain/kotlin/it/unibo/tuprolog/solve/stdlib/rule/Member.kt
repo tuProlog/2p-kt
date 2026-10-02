@@ -13,7 +13,7 @@ sealed class Member : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         """
         `member(?Element, ?List)`
         
-        Succeeds when `Element` is an element of `List`. On backtracking it enumerates matching elements or positions; with suitable variables it can also generate list structures.
+        Succeeds when `Element` is an element of `List`. On backtracking it enumerates matching elements; with suitable variables it can also generate list structures.
         """.trimIndent()
 
     abstract override val Scope.head: KtList<Term>

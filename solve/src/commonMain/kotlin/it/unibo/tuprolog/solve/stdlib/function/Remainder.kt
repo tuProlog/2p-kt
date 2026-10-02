@@ -16,7 +16,7 @@ object Remainder : IntegersBinaryMathFunction("rem") {
         """
         `rem(+Dividend, +Divisor)`
         
-        Evaluates the integer remainder of `Dividend` divided by `Divisor`. Both operands must evaluate to integers. A zero divisor raises an evaluation error.
+        Evaluates the integer remainder of `Dividend` divided by `Divisor`. Both operands must evaluate to integers. A zero divisor raises an evaluation error. On the JVM the result takes the sign of `Dividend` (e.g. `-7 rem 2` is `-1`); on JavaScript the current implementation returns a non-negative result (`-7 rem 2` is `1`) and fails with a host arithmetic exception for a negative `Divisor`.
         """.trimIndent()
 
     override fun mathFunction(

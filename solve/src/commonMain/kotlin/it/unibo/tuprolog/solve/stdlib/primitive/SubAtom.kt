@@ -14,7 +14,7 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
         """
         `sub_atom(+Atom, ?Before, ?Length, ?After, ?SubAtom)`
         
-        Relates `Atom` with a contiguous `SubAtom` and the number of characters before, within, and after it. Integer position arguments constrain the selected slice; variable arguments are unified with the corresponding values.
+        Relates `Atom` with a contiguous `SubAtom` and the number of characters before, within, and after it. This is a partial implementation: it computes a single slice when enough position arguments are bound, returns each computed binding as a separate solution, does not enumerate sub-atoms on backtracking, and, when `SubAtom` is bound, only considers its first occurrence.
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(

@@ -20,7 +20,7 @@ object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
         """
         `?Term =.. ?List`
         
-        Relates a term to its univ representation. A compound term is represented by a list whose first element is the functor and remaining elements are the arguments; atomic terms are represented by a singleton list. The relation can also construct a term from a suitable list.
+        Relates a term to its univ representation. A compound term is represented by a list whose first element is the functor and remaining elements are the arguments; atoms are represented by a singleton list. Numbers are not supported on the left-hand side and raise a `callable` type error. The relation can also construct a term from a suitable list.
         """.trimIndent()
 
     private fun Solve.Request<ExecutionContext>.decompose(

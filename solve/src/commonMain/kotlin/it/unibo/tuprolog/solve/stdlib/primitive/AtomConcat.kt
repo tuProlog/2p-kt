@@ -17,7 +17,7 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
         """
         `atom_concat(?Left, ?Right, ?Whole)`
         
-        Relates two atoms with their concatenation. The predicate supports construction and decomposition modes when enough of the three arguments are instantiated.
+        Relates two atoms with their concatenation. The predicate is deterministic and requires at least two of the three arguments to be instantiated; the possible splits of `Whole` are not enumerated.
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(

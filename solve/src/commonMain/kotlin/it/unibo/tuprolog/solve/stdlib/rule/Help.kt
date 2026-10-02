@@ -16,7 +16,7 @@ object Help : RuleWrapper<ExecutionContext>("help", 2) {
         Retrieves Markdown documentation for a solver component.
 
         Supported subjects include predicate/function/operator indicators such as `functor/3`,
-        flags such as `flag(unknown)`, and libraries such as `library(prolog.lang)`.
+        flags such as `flag(unknown)`, and libraries such as `library('prolog.lang')`.
 
         The first argument may be left variable to enumerate documented subjects.
         """.trimIndent()

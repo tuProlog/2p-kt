@@ -33,8 +33,16 @@ internal class RuntimeImpl(
         get() =
             mergeDocumentation(
                 super<AbstractPluggable>.documentation,
-                *libraries.map { it.documentation }.toTypedArray(),
+                *libraries.map { lib -> lib.documentation.filterKeys { !isShadowedIn(lib, it) } }.toTypedArray(),
             )
+
+    /** Whether [signature]'s primitive/function in [library] is overridden by another library's in this runtime. */
+    private fun isShadowedIn(
+        library: Library,
+        signature: Signature,
+    ): Boolean =
+        library.primitives[signature]?.let { it != primitives[signature] } == true ||
+            library.functions[signature]?.let { it != functions[signature] } == true
 
     private val theoryCache: Cache<Unificator, Theory> = Cache.simpleLru(1)
 

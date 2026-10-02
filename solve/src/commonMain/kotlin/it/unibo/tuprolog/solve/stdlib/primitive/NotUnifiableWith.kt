@@ -11,7 +11,7 @@ object NotUnifiableWith : BinaryRelation.Predicative<ExecutionContext>("\\=") {
         """
         `Left \= Right`
         
-        Succeeds when `Left` and `Right` cannot be unified without changing either term. Fails when a unifier exists.
+        Succeeds when `Left` and `Right` do not unify; no bindings are made. Fails when a unifier exists.
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.compute(

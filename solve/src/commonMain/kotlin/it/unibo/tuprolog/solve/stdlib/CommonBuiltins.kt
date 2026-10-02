@@ -27,7 +27,7 @@ object CommonBuiltins : AbstractLibrary() {
     override val help: String
         get() =
             """
-            `library(prolog.lang)`
+            `library('prolog.lang')`
 
             Standard Prolog built-ins, arithmetic functions, control constructs, and operators.
             """.trimIndent()

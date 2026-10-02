@@ -12,7 +12,8 @@ internal fun defaultDocumentation(pluggable: Pluggable): Map<Signature, String> 
         signature: Signature,
         text: String,
     ) {
-        if (signature.name == INTERNAL_HELP_FUNCTOR) return
+        // also hides runtime-qualified aliases, e.g. `prolog.lang.__help__/2`
+        if (signature.name.substringAfterLast(Library.ALIAS_SEPARATOR) == INTERNAL_HELP_FUNCTOR) return
         val trimmed = text.trim()
         if (trimmed.isNotEmpty()) {
             fragments.getOrPut(signature) { mutableListOf() }.add(trimmed)

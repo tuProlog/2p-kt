@@ -8,8 +8,8 @@ import kotlin.jvm.JvmStatic
 /**
  * A typed, well-known Prolog flag, i.e. a named switch whose legal values and default are known ahead of time --
  * as opposed to the arbitrary `String → `[Term]` entries a plain [FlagStore] can also hold. Implemented as `object`s
- * for both ISO-standard flags ([Unknown], [DoubleQuotes]) and implementation-specific ones ([LastCallOptimization],
- * [TrackVariables], [MaxArity]).
+ * for both ISO-standard flags ([Unknown], [DoubleQuotes], [MaxArity]) and implementation-specific ones
+ * ([LastCallOptimization], [TrackVariables]).
  *
  * @see FlagStore
  */

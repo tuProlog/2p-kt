@@ -16,7 +16,7 @@ object Sign : UnaryMathFunction("sign") {
         """
         `sign(+Number)`
         
-        Evaluates to the implementation's sign value for `Number`: `-1` for negative values and `1` for positive values. The current implementation also returns `1` for zero.
+        Evaluates to the implementation's sign value for `Number`: `-1` for negative values and `1` for positive values. The current implementation also returns `1` for zero. Integer inputs yield integers; real inputs yield reals.
         """.trimIndent()
 
     override fun mathFunction(

@@ -2,16 +2,25 @@ package it.unibo.tuprolog.solve.prolog
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
+import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.libraryOf
+import it.unibo.tuprolog.solve.primitive.Primitive
+import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.CommonFunctions
 import it.unibo.tuprolog.solve.stdlib.CommonPrimitives
 import it.unibo.tuprolog.solve.stdlib.CommonRules
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
@@ -99,7 +108,61 @@ class TestPrologHelp {
         }
     }
 
-    private fun helpFor(subject: it.unibo.tuprolog.core.Term): String {
+    @Test
+    fun internalHelpIsNeverListed() {
+        val subject = Var.of("Subject")
+        val subjects = solver.solve(Struct.of("help", subject, Var.of("Help"))).filter { it.isYes }
+        val internal = subjects.map { it.substitution[subject].toString() }.filter { "__help__" in it }.toList()
+        assertTrue(internal.isEmpty(), "Internal help leaked as: ${internal.joinToString()}")
+    }
+
+    @Test
+    fun qualifiedSignaturesAndLibrariesAreDocumented() {
+        assertTrue("arity" in helpFor(Signature("prolog.lang.functor", 3).toIndicator()))
+        assertTrue("Standard Prolog" in helpFor(Struct.of("library", Atom.of("prolog.lang"))))
+    }
+
+    @Test
+    fun thirdPartyRuleHelpSurvivesAliasingAndRuntimeAggregation() {
+        val rule =
+            object : RuleWrapper<ExecutionContext>("third_party", 0) {
+                override val help: String = "Third-party rule semantics."
+            }
+        val runtime = Runtime.of(libraryOf("third.party", rule))
+        assertEquals("Third-party rule semantics.", runtime.documentation[rule.signature])
+        assertTrue("Third-party rule semantics." in helpFor(rule.signature.toIndicator(), runtime))
+    }
+
+    @Test
+    fun shadowedPrimitivesDoNotContributeDocumentation() {
+        fun primitive(help: String) =
+            object : Primitive {
+                override val help: String = help
+
+                override fun solve(request: Solve.Request<ExecutionContext>) = emptySequence<Solve.Response>()
+            }
+        val signature = Signature("clash", 0)
+        val runtime =
+            Runtime.of(
+                Library.of("first", primitives = mapOf(signature to primitive("Shadowed."))),
+                Library.of("second", primitives = mapOf(signature to primitive("Effective."))),
+            )
+        assertEquals("Effective.", runtime.documentation[signature])
+        assertEquals("Shadowed.", runtime.documentation[signature.copy(name = "first.clash")])
+    }
+
+    private fun helpFor(
+        subject: Term,
+        otherLibraries: Runtime = Runtime.empty(),
+    ): String {
+        val solver =
+            if (otherLibraries.isEmpty()) {
+                solver
+            } else {
+                Solver.prolog.solverWithDefaultBuiltins(
+                    otherLibraries = otherLibraries,
+                )
+            }
         val help = Var.of("Help")
         val solution = assertIs<Solution.Yes>(solver.solveOnce(Struct.of("help", subject, help)))
         return assertIs<Atom>(solution.substitution[help]).value
