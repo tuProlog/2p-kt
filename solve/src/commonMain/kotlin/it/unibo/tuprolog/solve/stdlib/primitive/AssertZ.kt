@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-object AssertZ : AbstractAssert("z", false)
- {
+object AssertZ : AbstractAssert("z", false) {
     override val help: String =
         """
         `assertz(+Clause)`
