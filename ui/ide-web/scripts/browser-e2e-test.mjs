@@ -323,7 +323,7 @@ const SCENARIOS = [
     async run({ evalJs }) {
       const count = await evalJs(`document.querySelectorAll('.side-content').length`);
       const failures = [];
-      if (count !== 11) failures.push(`expected 11 .side-content panels, found ${count}`);
+      if (count !== 12) failures.push(`expected 12 .side-content panels, found ${count}`);
       const toggled = await evalJs(`
         (function() {
           const tabs = Array.from(document.querySelectorAll('.side-tab'));

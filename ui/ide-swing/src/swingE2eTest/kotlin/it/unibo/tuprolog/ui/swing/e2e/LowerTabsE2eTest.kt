@@ -97,6 +97,16 @@ class LowerTabsE2eTest {
     }
 
     @Test
+    fun `the Documentation tab shows the solver's help`() {
+        solveTrivialQuery()
+
+        window.selectLowerTab("Documentation")
+        window.awaitCondition("the documentation to be rendered") {
+            textBox("documentationArea").text().contains("flag(unknown)")
+        }
+    }
+
+    @Test
     fun `Static KB and Dynamic KB tabs are reachable read-only views`() {
         window.selectLowerTab("Static KB")
         assertTrue(!window.textBox("staticKbArea").target().isEditable)
