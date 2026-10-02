@@ -6,6 +6,11 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.flags.NotableFlag
+import it.unibo.tuprolog.solve.stdlib.CommonFunctions
+import it.unibo.tuprolog.solve.stdlib.CommonPrimitives
+import it.unibo.tuprolog.solve.stdlib.CommonRules
 import kotlin.test.Test
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
@@ -33,6 +38,30 @@ class TestPrologHelp {
         val help = Var.of("Help")
         val solutions = solver.solve(Struct.of("help", Struct.of("flag", name), help))
         assertTrue(solutions.any { it.isYes })
+    }
+
+    @Test
+    fun everyRegisteredStdlibComponentHasSemanticHelp() {
+        val wrappers =
+            CommonPrimitives.wrappers.filter { it.functor != "__help__" } +
+                CommonFunctions.wrappers +
+                CommonRules.wrappers
+        val undocumented =
+            wrappers
+                .filter { wrapper ->
+                    val fallback =
+                        "`${wrapper.signature.name}/${wrapper.signature.arity}${if (wrapper.signature.vararg) "+" else ""}`"
+                    wrapper.help.isBlank() || wrapper.help.trim() == fallback
+                }.map { it.signature.toString() }
+                .toList()
+        assertTrue(undocumented.isEmpty(), "Missing semantic help for: ${undocumented.joinToString()}")
+
+        val undocumentedFlags =
+            FlagStore.DEFAULT.keys
+                .mapNotNull(NotableFlag::fromName)
+                .filter { it.help.isBlank() || "flag(${it.name})" !in it.help }
+                .map { it.name }
+        assertTrue(undocumentedFlags.isEmpty(), "Missing flag help for: ${undocumentedFlags.joinToString()}")
     }
 
     @Test
