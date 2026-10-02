@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the combined `->`/2 `;`/2 construct (if-then-else), shared by every `Solver` implementation
- * via the `TestIfThenElse.prototype(solverFactory)` factory (see `TestClassicIfThenElse` in `:solve-classic` for a
+ * via the `TestIfThenElse.prototype(solverFactory)` factory (see `TestPrologIfThenElse` in `:solve-prolog` for a
  * concrete usage). See also [TestIfThen] for the plain `->`/2 (if-then, without an else branch) construct.
  */
 interface TestIfThenElse : SolverTest {

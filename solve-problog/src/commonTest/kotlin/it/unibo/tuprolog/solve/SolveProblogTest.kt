@@ -6,7 +6,6 @@ object SolveProblogTest {
     @JvmField
     val expectations =
         Expectations(
-            classicShouldWork = true,
             prologShouldWork = true,
             problogShouldWork = true,
         )

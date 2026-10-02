@@ -17,7 +17,7 @@ import kotlin.js.JsName
  * A factory for a specific [Solver] implementation (i.e. a specific resolution strategy), providing both defaults
  * for every piece of a solver's state and constructors for [Solver]/[MutableSolver] instances.
  *
- * Each resolution strategy module (`:solve-classic`, `:solve-streams`, `:solve-concurrent`, `:solve-problog`)
+ * Each resolution strategy module (`:solve-prolog`, `:solve-concurrent`, `:solve-problog`)
  * provides its own [SolverFactory] implementation, reachable from [Solver]'s companion object (e.g. [Solver.prolog]).
  * All factories are interchangeable from client code's perspective, since they all produce the same [Solver]
  * interface.

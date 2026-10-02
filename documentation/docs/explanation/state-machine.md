@@ -1,17 +1,17 @@
-# The State-Machine Solver (`:solve-classic`)
+# The State-Machine Solver (`:solve-prolog`)
 
-`:solve-classic` is 2P-Kt's ISO-standard, SLD-NF resolution engine, and the `Solver` you get from
-`Solver.classic()` (see [Solver design](solver-design.md) for what a `Solver` is in general). What sets it apart
-from other possible resolution strategies (e.g. `:solve-streams`) is *how* it resolves goals: not via the host
+`:solve-prolog` is 2P-Kt's ISO-standard, SLD-NF resolution engine, and the `Solver` you get from
+`Solver.prolog()` (see [Solver design](solver-design.md) for what a `Solver` is in general). What sets it apart
+from other possible resolution strategies (e.g. `:solve-concurrent`) is *how* it resolves goals: not via the host
 language's native call stack and recursion, but as an explicit, inspectable finite-state machine (FSM) that
 steps through a fixed set of named locations. This design was formalised in a dedicated paper, "Formal Modelling
 of a Prolog Solver as a State Machine" (Ciatto, 2021), which traces the approach back to Piancastelli's original
 state-machine design for tuProlog. This page distills that formal model down to something a developer can use to
-actually reason about the code, and cross-checks every claim against the current `solve-classic` sources.
+actually reason about the code, and cross-checks every claim against the current `solve-prolog` sources.
 
 The terminology has survived essentially unchanged from the 2021 paper to the current codebase: the paper's
 nine "locations" map one-to-one onto nine `State` subtypes under
-`it.unibo.tuprolog.solve.classic.fsm`:
+`it.unibo.tuprolog.solve.prolog.fsm`:
 
 | Paper location | Current class |
 |---|---|
@@ -34,7 +34,7 @@ of `libraries.hasPrimitive(signature)`.
 Every `State` shares the same tiny contract:
 
 ```kotlin
---8<-- "solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/State.kt"
+--8<-- "solve-prolog/src/commonMain/kotlin/it/unibo/tuprolog/solve/prolog/fsm/State.kt"
 ```
 
 `next()` computes the successor state (a pure function of the current state's `context`), and a
@@ -50,7 +50,7 @@ described below — ordinary heap data, not native stack frames.
 
 Two data structures are threaded through every state transition:
 
-- **The execution-context stack.** Each `ClassicExecutionContext` is one frame: a substitution, the stream of
+- **The execution-context stack.** Each `PrologExecutionContext` is one frame: a substitution, the stream of
   remaining goals, the stream of remaining candidate rules, the stream of remaining primitive responses, plus a
   `parent` link (so it *is* the stack, via chaining, rather than needing a separate stack container). Resolving
   a sub-goal pushes a new context whose parent is the current one; finishing a context's goals pops back to its
@@ -61,11 +61,11 @@ Two data structures are threaded through every state transition:
   to resume an entirely different branch of the proof tree on backtracking:
 
 ```kotlin
---8<-- "solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/ChoicePointContext.kt:8:13"
+--8<-- "solve-prolog/src/commonMain/kotlin/it/unibo/tuprolog/solve/prolog/ChoicePointContext.kt:8:13"
 ```
 
 ```kotlin
---8<-- "solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/ChoicePointContext.kt:24:39"
+--8<-- "solve-prolog/src/commonMain/kotlin/it/unibo/tuprolog/solve/prolog/ChoicePointContext.kt:24:39"
 ```
 
 Both **primitives** and **rules** are modelled uniformly as producers of *lazy streams* of alternatives
@@ -109,7 +109,7 @@ enumeration of every possible solution up front.
    rules:
 
    ```kotlin
-   --8<-- "solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateBacktracking.kt:9:25"
+   --8<-- "solve-prolog/src/commonMain/kotlin/it/unibo/tuprolog/solve/prolog/fsm/StateBacktracking.kt:9:25"
    ```
 7. **Exception** — reached whenever a primitive's response, or an ISO error raised mid-resolution, carries an
    exception rather than a substitution. It climbs the execution-context stack (`context.parent`, one frame at a
@@ -142,10 +142,10 @@ careful, because ISO cut semantics are more subtle than that one-line descriptio
 - A separate `MagicCut` marker exists for cuts injected by other built-ins (e.g. `once/1`, if-then-else) that
   must cut back to the *caller's* choice point rather than the lexically enclosing clause — a wrinkle specific
   to how those built-ins are themselves implemented as ordinary rules over the same FSM (see
-  `it.unibo.tuprolog.solve.classic.stdlib.rule`).
+  `it.unibo.tuprolog.solve.prolog.stdlib.rule`).
 
 None of this changes the *shape* of the FSM — cut is still handled inside Rule Selection, still ends up at Goal
 Selection, still manipulates the choice-point queue — but it is a good illustration of why "read the formal
 model, then read the code" is the right way to use this page: the paper gives you the skeleton that is genuinely
-still there in `solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm`, and the code fills in
+still there in `solve-prolog/src/commonMain/kotlin/it/unibo/tuprolog/solve/prolog/fsm`, and the code fills in
 the ISO-compliance details the abstract model intentionally leaves out.

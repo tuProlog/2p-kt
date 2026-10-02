@@ -4,7 +4,7 @@ package it.unibo.tuprolog.solve
  * A stress test that recursively builds a list of [BigListOptions.SIZE] elements (via a hand-written `biglist/2`
  * predicate) and checks the resulting list is correct, to catch performance regressions or stack-depth issues that
  * only manifest on deep/large resolutions. Shared by every `Solver` implementation via the
- * `TestBigList.prototype(solverFactory)` factory (see `TestClassicBigList` in `:solve-classic` for a concrete usage).
+ * `TestBigList.prototype(solverFactory)` factory (see `TestPrologBigList` in `:solve-prolog` for a concrete usage).
  * [BigListOptions.SIZE] is tuned per platform (smaller on JS, where recursion is costlier).
  */
 interface TestBigList : SolverTest {

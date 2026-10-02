@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for `;`/2 (disjunction, `or`), shared by every `Solver` implementation via the
- * `TestOr.prototype(solverFactory)` factory (see `TestClassicOr` in `:solve-classic` for a concrete usage).
+ * `TestOr.prototype(solverFactory)` factory (see `TestPrologOr` in `:solve-prolog` for a concrete usage).
  */
 interface TestOr : SolverTest {
     companion object {

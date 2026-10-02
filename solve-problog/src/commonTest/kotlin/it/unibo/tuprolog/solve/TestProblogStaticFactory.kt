@@ -9,16 +9,6 @@ class TestProblogStaticFactory : TestStaticFactory {
         )
 
     @Test
-    override fun testStaticSolverFactoryForClassic() {
-        prototype.testStaticSolverFactoryForClassic()
-    }
-
-    @Test
-    override fun testStaticSolverFactoryForStreams() {
-        prototype.testStaticSolverFactoryForStreams()
-    }
-
-    @Test
     override fun testStaticSolverFactoryForProlog() {
         prototype.testStaticSolverFactoryForProlog()
     }

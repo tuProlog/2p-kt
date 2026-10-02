@@ -6,7 +6,7 @@ package it.unibo.tuprolog.solve
  * [it.unibo.tuprolog.solve.flags.FlagStore] they operate on: default values, admissible values, error cases
  * (non-atom names, unbound names/values, out-of-domain values), and the ability to both read and write flags that
  * are not part of the built-in set. Shared by every `Solver` implementation via the
- * `TestFlags.prototype(solverFactory)` factory (see `TestClassicFlags` in `:solve-classic` for a concrete usage).
+ * `TestFlags.prototype(solverFactory)` factory (see `TestPrologFlags` in `:solve-prolog` for a concrete usage).
  */
 interface TestFlags : SolverTest {
     companion object {

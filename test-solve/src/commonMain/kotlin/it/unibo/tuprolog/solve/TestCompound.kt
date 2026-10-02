@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `compound/1` type-checking built-in, shared by every `Solver` implementation via
- * the `TestCompound.prototype(solverFactory)` factory (see `TestClassicCompound` in `:solve-classic` for a concrete
+ * the `TestCompound.prototype(solverFactory)` factory (see `TestPrologCompound` in `:solve-prolog` for a concrete
  * usage).
  */
 interface TestCompound : SolverTest {

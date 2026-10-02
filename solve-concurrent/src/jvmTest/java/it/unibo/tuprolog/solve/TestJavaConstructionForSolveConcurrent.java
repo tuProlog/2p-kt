@@ -9,26 +9,14 @@ public class TestJavaConstructionForSolveConcurrent extends TestJavaConstruction
 
     @Override
     @Test
-    public void testClassicFactory() {
-        super.testClassicFactory();
-    }
-
-    @Override
-    @Test
-    public void testStreamsFactory() {
-        super.testStreamsFactory();
+    public void testPrologFactory() {
+        super.testPrologFactory();
     }
 
     @Override
     @Test
     public void testProblogFactory() {
         super.testProblogFactory();
-    }
-
-    @Override
-    @Test
-    public void testPrologFactory() {
-        super.testPrologFactory();
     }
 
     @Override

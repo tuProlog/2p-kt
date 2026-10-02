@@ -5,7 +5,7 @@ package it.unibo.tuprolog.solve
  * the exception was raised, from the innermost failing goal to the top-level query. All test cases share the same
  * three-rule theory `foo(X) :- bar(X). bar(X) :- baz(X). baz(X) :- <errorExpression>.`, varying only the innermost
  * `<errorExpression>` and the query wrapping `foo(X)`. Shared by every `Solver` implementation via the
- * `TestStackTrace.prototype(solverFactory)` factory (see `TestClassicStackTrace` in `:solve-classic` for a concrete
+ * `TestStackTrace.prototype(solverFactory)` factory (see `TestPrologStackTrace` in `:solve-prolog` for a concrete
  * usage).
  */
 interface TestStackTrace : SolverTest {

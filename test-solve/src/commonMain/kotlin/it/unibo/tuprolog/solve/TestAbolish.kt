@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the (deprecated ISO) `abolish/1` built-in, shared by every `Solver` implementation via the
- * `TestAbolish.prototype(solverFactory)` factory (see `TestClassicAbolish` in `:solve-classic` for a concrete usage).
+ * `TestAbolish.prototype(solverFactory)` factory (see `TestPrologAbolish` in `:solve-prolog` for a concrete usage).
  */
 interface TestAbolish : SolverTest {
     companion object {

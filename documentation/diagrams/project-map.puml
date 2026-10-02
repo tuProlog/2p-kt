@@ -24,8 +24,7 @@ folder "dsl-theory" as DT
 folder "dsl-solve" as DS
 
 folder "solve" <<api only>>
-folder "solve-classic" as SC
-folder "solve-streams" as SS
+folder "solve-prolog" as SC
 folder "solve-concurrent" as SCON
 folder "solve-plp" as SPLP
 folder "solve-problog" as SPL
@@ -80,8 +79,6 @@ DT <|-down- DS
 theory <|-down- solve
 solve <|-down- SC
 DT <|-down- SC
-solve <|-down- SS
-DT <|-down- SS
 solve <|-down- SCON
 DT <|-down- SCON
 solve <|-down- SPLP

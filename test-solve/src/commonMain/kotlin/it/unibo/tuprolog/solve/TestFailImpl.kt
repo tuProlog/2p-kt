@@ -23,7 +23,7 @@ internal class TestFailImpl(
         }
     }
 
-    override fun testUndefPred() { // streams solver: `No(query=undef_pred)` instead of undef_pred/0
+    override fun testUndefPred() {
         logicProgramming {
             val solver =
                 solverFactory.solverWithDefaultBuiltins(

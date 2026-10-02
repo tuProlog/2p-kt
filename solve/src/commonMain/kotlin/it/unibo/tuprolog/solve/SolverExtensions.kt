@@ -1,8 +1,7 @@
 package it.unibo.tuprolog.solve
 
 internal object FactoryClassNames {
-    const val CLASSIC = "it.unibo.tuprolog.solve.classic.ClassicSolverFactory"
-    const val STREAMS = "it.unibo.tuprolog.solve.streams.StreamsSolverFactory"
+    const val PROLOG = "it.unibo.tuprolog.solve.prolog.PrologSolverFactory"
     const val PROBLOG = "it.unibo.tuprolog.solve.problog.ProblogSolverFactory"
     const val CONCURRENT = "it.unibo.tuprolog.solve.concurrent.ConcurrentSolverFactory"
 }
@@ -14,16 +13,12 @@ internal expect fun solverFactory(
 ): SolverFactory
 
 /**
- * Platform-specific lookup of the `:solve-classic` [SolverFactory] (backing [it.unibo.tuprolog.solve.Solver.prolog]/
- * [it.unibo.tuprolog.solve.Solver.classic]).
+ * Platform-specific lookup of the `:solve-prolog` [SolverFactory] (backing [it.unibo.tuprolog.solve.Solver.prolog]).
  */
-expect fun classicSolverFactory(): SolverFactory
+expect fun prologSolverFactory(): SolverFactory
 
 /** Platform-specific lookup of the `:solve-concurrent` [SolverFactory] (backing [it.unibo.tuprolog.solve.Solver.concurrent]). */
 expect fun concurrentSolverFactory(): SolverFactory
-
-/** Platform-specific lookup of the `:solve-streams` [SolverFactory] (backing [it.unibo.tuprolog.solve.Solver.streams]). */
-expect fun streamsSolverFactory(): SolverFactory
 
 /** Platform-specific lookup of the `:solve-problog` [SolverFactory] (backing [it.unibo.tuprolog.solve.Solver.problog]). */
 expect fun problogSolverFactory(): SolverFactory

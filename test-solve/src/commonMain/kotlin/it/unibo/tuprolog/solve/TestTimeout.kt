@@ -6,7 +6,7 @@ package it.unibo.tuprolog.solve
  * [it.unibo.tuprolog.solve.exception.TimeOutException], both for a plainly slow goal (`sleep/1`) and for
  * non-terminating all-solutions collectors (`findall/3`, `bagof/3`, `setof/3`) fed by an infinite generator. Shared
  * by every `Solver` implementation via the `TestTimeout.prototype(solverFactory)` factory (see
- * `TestClassicTimeout` in `:solve-classic` for a concrete usage).
+ * `TestPrologTimeout` in `:solve-prolog` for a concrete usage).
  */
 interface TestTimeout : SolverTest {
     companion object {

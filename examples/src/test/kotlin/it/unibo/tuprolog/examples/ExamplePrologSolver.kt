@@ -14,7 +14,6 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.classic.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.LogicFunction
@@ -24,6 +23,7 @@ import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Ignore
 import kotlin.test.Test

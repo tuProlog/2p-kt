@@ -20,22 +20,12 @@ public class TestJavaConstruction {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    public void testClassicFactory() {
-        test(Expectations::getClassicShouldWork, Solver::classic);
-    }
-
-    @SuppressWarnings("deprecation")
-    public void testStreamsFactory() {
-        test(Expectations::getStreamsShouldWork, Solver::streams);
+    public void testPrologFactory() {
+        test(Expectations::getPrologShouldWork, Solver::prolog);
     }
 
     public void testProblogFactory() {
         test(Expectations::getProblogShouldWork, Solver::problog);
-    }
-
-    public void testPrologFactory() {
-        test(Expectations::getPrologShouldWork, Solver::prolog);
     }
 
     public void testConcurrentFactory() {

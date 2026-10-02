@@ -4,7 +4,7 @@ import kotlin.reflect.KClass
 
 /**
  * A parsed reference to a JS value (e.g. a [SolverFactory] object instance) reachable as `require(module)` followed
- * by the dotted [qualifiedName] path, as used by the JS `actual` lookups of `classicSolverFactory()` and friends.
+ * by the dotted [qualifiedName] path, as used by the JS `actual` lookups of `prologSolverFactory()` and friends.
  */
 data class JsClassName(
     val module: String,

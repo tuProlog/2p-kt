@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `number_codes/2` built-in, shared by every `Solver` implementation via the
- * `TestNumberCodes.prototype(solverFactory)` factory (see `TestClassicNumberCodes` in `:solve-classic` for a
+ * `TestNumberCodes.prototype(solverFactory)` factory (see `TestPrologNumberCodes` in `:solve-prolog` for a
  * concrete usage). See also [TestNumberChars] for the analogous built-in working on single-character atoms.
  */
 interface TestNumberCodes : SolverTest {

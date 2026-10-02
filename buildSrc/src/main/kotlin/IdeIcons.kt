@@ -4,7 +4,7 @@ import org.gradle.kotlin.dsl.register
 
 /**
  * Makes this module's [resourcesTaskName] task ship the shared action icons under `.img/ide-icons` (New, Open,
- * Save, Save-as, Solve, Solve-all, Clear - sourced from the classic tuProlog Swing IDE) under an `icons/`
+ * Save, Save-as, Solve, Solve-all, Clear - sourced from the legacy tuProlog Swing IDE) under an `icons/`
  * classpath (or web root) folder, so ide-swing and ide-web can both load them by the same relative path.
  */
 fun Project.wireIdeIconsResource(resourcesTaskName: String) {

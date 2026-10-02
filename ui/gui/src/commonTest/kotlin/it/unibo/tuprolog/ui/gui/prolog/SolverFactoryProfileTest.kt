@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.ui.gui.prolog
 
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.libs.io.IOLib
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.ui.gui.identity.DocumentId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
@@ -21,7 +21,7 @@ class SolverFactoryProfileTest {
     fun profileExposesDefaultOperatorsWithoutBuildingASolver() {
         val profile =
             solverFactoryProfile(
-                ClassicSolverFactory,
+                PrologSolverFactory,
                 SolverProfileId("test"),
                 "Test",
                 runtimeLibraries = listOf(IOLib),
@@ -39,7 +39,7 @@ class SolverFactoryProfileTest {
             // exercise OOP features, so it opts out the same way ide-web's WebIdeApp does.
             val profile =
                 solverFactoryProfile(
-                    ClassicSolverFactory,
+                    PrologSolverFactory,
                     SolverProfileId("test"),
                     "Test",
                     runtimeLibraries = listOf(IOLib),

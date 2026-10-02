@@ -5,7 +5,7 @@ package it.unibo.tuprolog.solve
  * the original query ("uninteresting" variables, introduced only by intermediate goals/clause bodies), and for the
  * [it.unibo.tuprolog.solve.flags.TrackVariables] flag that controls whether they are kept visible to a custom
  * primitive during resolution. Shared by every `Solver` implementation via the
- * `TestSubstitutions.prototype(solverFactory)` factory (see `TestClassicSubstitutions` in `:solve-classic` for a
+ * `TestSubstitutions.prototype(solverFactory)` factory (see `TestPrologSubstitutions` in `:solve-prolog` for a
  * concrete usage).
  *
  * The last two test cases use a custom `inspect/1` primitive (registered against

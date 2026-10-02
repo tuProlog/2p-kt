@@ -4,10 +4,10 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.assertSolutionEquals
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import kotlin.test.Test
 
 /**
@@ -26,7 +26,7 @@ class TestUnsupportedIOPrimitives {
         arity: Int,
         query: Struct,
     ) {
-        val solver = ClassicSolverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(IOLib))
+        val solver = PrologSolverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(IOLib))
         val solutions = solver.solve(query).toList()
         assertSolutionEquals(
             listOf(

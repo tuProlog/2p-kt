@@ -21,7 +21,7 @@ point rather than a given:
   strategy.
 
 Concretely, this is why "resolution" and "SLD-NF resolution" are two different modules: `:solve` defines a
-generic, strategy-agnostic API for resolving logic queries, and `:solve-classic` / `:solve-streams` are two
+generic, strategy-agnostic API for resolving logic queries, and `:solve-prolog` / `:solve-concurrent` are two
 independent, swappable implementations of Prolog-style SLD-NF resolution on top of it. The same pattern
 repeats with `:solve-plp`, which resolves queries under a probabilistic-logic-programming semantics instead.
 Nothing in `:core`, `:unify`, or `:theory` assumes Prolog is the only client.

@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.ui.web
 
 import it.unibo.tuprolog.Info
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.libs.io.IOLib
+import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.ui.gui.application.GuiApplication
 import it.unibo.tuprolog.ui.gui.application.buildGuiApplication
 import it.unibo.tuprolog.ui.gui.controller.ApplicationAction
@@ -12,7 +12,7 @@ import it.unibo.tuprolog.ui.gui.persistence.capturePersistedWorkspace
 import it.unibo.tuprolog.ui.gui.persistence.restoreWorkspace
 import it.unibo.tuprolog.ui.gui.presentation.EditorZoom
 import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
-import it.unibo.tuprolog.ui.gui.template.ClassicTheoryTemplates
+import it.unibo.tuprolog.ui.gui.template.PrologTheoryTemplates
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
@@ -26,13 +26,13 @@ import org.w3c.dom.events.Event
 fun main() {
     document.title = "tuProlog Web IDE ${Info.VERSION}"
     val scope = MainScope()
-    // Solver.prolog resolves ClassicSolverFactory via a runtime `require("2p-solve-classic")` by string module
+    // Solver.prolog resolves PrologSolverFactory via a runtime `require("2p-solve-prolog")` by string module
     // name (see solve/src/jsMain/.../SolverExtensionsJs.kt), which only works when Kotlin/JS modules are
     // resolved by Node at runtime. Webpack bundles ide-web ahead of time instead, so that lookup fails at
-    // startup; importing the factory directly (ide-web already depends on :solve-classic) sidesteps it.
+    // startup; importing the factory directly (ide-web already depends on :solve-prolog) sidesteps it.
     val profile =
         solverFactoryProfile(
-            ClassicSolverFactory,
+            PrologSolverFactory,
             SolverProfileId("prolog"),
             "Prolog",
             // OOPLib (solverFactoryProfile's default runtime library alongside IOLib) is reflection-based and throws
@@ -45,7 +45,7 @@ fun main() {
             solverProfile(profile, makeDefault = true)
         }
     val restored = WebWorkspacePersistence.load()
-    val view = WebIdeView(application.controller, scope, ClassicTheoryTemplates.ALL)
+    val view = WebIdeView(application.controller, scope, PrologTheoryTemplates.ALL)
     view.editorFontSizePx = restored?.fontSize ?: EditorZoom.DEFAULT_FONT_SIZE
     val effects = WebIdeEffectHandler(application.controller, scope)
 

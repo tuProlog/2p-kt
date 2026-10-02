@@ -7,11 +7,11 @@ import kotlin.js.JsName
 /**
  * One location of the `:solve-concurrent` finite-state machine: an explicit, inspectable representation of
  * "where resolution currently is" along one branch of the search tree, carrying the [ConcurrentExecutionContext]
- * it operates on. Mirrors `:solve-classic`'s own `State` (see that module's "state-machine" explanation for the
+ * it operates on. Mirrors `:solve-prolog`'s own `State` (see that module's "state-machine" explanation for the
  * formal model this is based on: `StateGoalSelection`, `StatePrimitiveSelection`, `StatePrimitiveExecution`,
  * `StateRuleSelection`, `StateRuleExecution`, `StateException`, `StateEnd` and `StateHalt`).
  *
- * The key difference from `:solve-classic` is [next]'s return type: there, a state has exactly one successor, and
+ * The key difference from `:solve-prolog` is [next]'s return type: there, a state has exactly one successor, and
  * backtracking across the *other* matching clauses/solutions is driven explicitly by a choice-point stack;
  * here, [next] returns __every__ alternative successor state at once (e.g. one [StateRuleExecution] per matching
  * clause, or one [StatePrimitiveExecution] per solution a backtracking primitive can produce). It is

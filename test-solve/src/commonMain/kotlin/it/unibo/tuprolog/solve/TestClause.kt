@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `clause/2` built-in, shared by every `Solver` implementation via the
- * `TestClause.prototype(solverFactory)` factory (see `TestClassicClause` in `:solve-classic` for a concrete usage).
+ * `TestClause.prototype(solverFactory)` factory (see `TestPrologClause` in `:solve-prolog` for a concrete usage).
  */
 interface TestClause : SolverTest {
     companion object {

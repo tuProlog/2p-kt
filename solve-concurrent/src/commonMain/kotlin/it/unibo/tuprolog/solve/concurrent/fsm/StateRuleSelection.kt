@@ -30,7 +30,7 @@ import it.unibo.tuprolog.utils.buffered
  * by `:solve-concurrent`'s solver -- this is what "concurrently tries alternative clauses" concretely means in
  * this module.
  *
- * __Cut caveat__: unlike `:solve-classic`, there is no choice-point stack to prune here. `!` is registered as an
+ * __Cut caveat__: unlike `:solve-prolog`, there is no choice-point stack to prune here. `!` is registered as an
  * ordinary rule (`it.unibo.tuprolog.solve.concurrent.stdlib.rule.Cut`, resolved through this very state like any
  * other goal) whose body is the inherited `RuleWrapper` default of `true` -- i.e. __`!` currently succeeds without
  * pruning any alternative branch__. Sibling branches that ISO Prolog's cut would have discarded keep running

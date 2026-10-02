@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 /**
  * Conformance tests for the ISO `atom_concat/3` built-in, shared by every `Solver` implementation via the
- * `TestAtomConcat.prototype(solverFactory)` factory (see `TestClassicAtomConcat` in `:solve-classic` for a concrete
+ * `TestAtomConcat.prototype(solverFactory)` factory (see `TestPrologAtomConcat` in `:solve-prolog` for a concrete
  * usage).
  */
 interface TestAtomConcat : SolverTest {
