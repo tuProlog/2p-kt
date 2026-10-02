@@ -6,6 +6,13 @@ import it.unibo.tuprolog.solve.primitive.ArithmeticRelation
 
 /** Implementation of '=\='/2 predicate */
 object ArithmeticNotEqual : ArithmeticRelation<ExecutionContext>("=\\=") {
+    override val help: String =
+        """
+        `=\=(+Left, +Right)`
+        
+        Succeeds when the arithmetic values of `Left` and `Right` are different. Both arguments are evaluated as arithmetic expressions.
+        """.trimIndent()
+
     override fun computeNumeric(
         x: Numeric,
         y: Numeric,

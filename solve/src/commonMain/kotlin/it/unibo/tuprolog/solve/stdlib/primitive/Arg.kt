@@ -11,6 +11,13 @@ import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import org.gciatto.kt.math.BigInteger
 
 object Arg : TernaryRelation.WithoutSideEffects<ExecutionContext>("arg") {
+    override val help: String =
+        """
+        `arg(?Index, +Term, ?Argument)`
+        
+        Relates a compound `Term` with one of its arguments, using one-based indexing. If `Index` is a variable, solutions enumerate argument positions; otherwise `Index` must be an integer. `Term` must be instantiated and compound.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
