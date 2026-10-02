@@ -13,6 +13,13 @@ import org.gciatto.kt.math.BigDecimal
  * @author Enrico
  */
 object SquareRoot : UnaryMathFunction("sqrt") {
+    override val help: String =
+        """
+        `sqrt(+Number)`
+        
+        Evaluates to the square root of `Number`.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

@@ -12,6 +12,13 @@ import it.unibo.tuprolog.solve.function.UnaryMathFunction
  * @author Enrico
  */
 object Sign : UnaryMathFunction("sign") {
+    override val help: String =
+        """
+        `sign(+Number)`
+        
+        Evaluates to the implementation's sign value for `Number`: `-1` for negative values and `1` for positive values. The current implementation also returns `1` for zero.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

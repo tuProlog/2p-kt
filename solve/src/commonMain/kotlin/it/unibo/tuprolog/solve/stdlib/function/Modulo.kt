@@ -12,6 +12,13 @@ import org.gciatto.kt.math.BigInteger
  * @author Enrico
  */
 object Modulo : IntegersBinaryMathFunction("mod") {
+    override val help: String =
+        """
+        `mod(+Dividend, +Divisor)`
+        
+        Evaluates the integer remainder produced by the implementation's modulo operation. Both operands must evaluate to integers. A zero divisor raises an evaluation error.
+        """.trimIndent()
+
     override fun mathFunction(
         integer1: Integer,
         integer2: Integer,

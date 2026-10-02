@@ -14,6 +14,13 @@ import org.gciatto.kt.math.RoundingMode
  * @author Enrico
  */
 object Floor : UnaryMathFunction("floor") {
+    override val help: String =
+        """
+        `floor(+Number)`
+        
+        Evaluates to the greatest integer not greater than `Number`.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

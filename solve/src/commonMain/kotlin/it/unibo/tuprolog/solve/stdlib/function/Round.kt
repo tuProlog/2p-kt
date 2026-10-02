@@ -14,6 +14,13 @@ import org.gciatto.kt.math.RoundingMode
  * @author Enrico
  */
 object Round : UnaryMathFunction("round") {
+    override val help: String =
+        """
+        `round(+Number)`
+        
+        Rounds `Number` to the nearest integer using half-up rounding.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

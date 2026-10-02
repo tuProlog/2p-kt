@@ -12,6 +12,13 @@ import org.gciatto.kt.math.BigInteger
  * @author Enrico
  */
 object Remainder : IntegersBinaryMathFunction("rem") {
+    override val help: String =
+        """
+        `rem(+Dividend, +Divisor)`
+        
+        Evaluates the integer remainder of `Dividend` divided by `Divisor`. Both operands must evaluate to integers. A zero divisor raises an evaluation error.
+        """.trimIndent()
+
     override fun mathFunction(
         integer1: Integer,
         integer2: Integer,

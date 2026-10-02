@@ -14,6 +14,13 @@ import kotlin.math.sin
  * @author Enrico
  */
 object Sine : UnaryMathFunction("sin") {
+    override val help: String =
+        """
+        `sin(+Number)`
+        
+        Evaluates to the sine of `Number`, interpreting the argument as radians.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

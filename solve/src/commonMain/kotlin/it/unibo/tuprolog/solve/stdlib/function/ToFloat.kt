@@ -12,6 +12,13 @@ import it.unibo.tuprolog.solve.function.UnaryMathFunction
  * @author Enrico
  */
 object ToFloat : UnaryMathFunction("float") {
+    override val help: String =
+        """
+        `float(+Number)`
+        
+        Converts `Number` to a floating-point value.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

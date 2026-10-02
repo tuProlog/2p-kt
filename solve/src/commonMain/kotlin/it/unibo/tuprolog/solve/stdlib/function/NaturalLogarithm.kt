@@ -15,6 +15,13 @@ import kotlin.math.log
  * @author Enrico
  */
 object NaturalLogarithm : UnaryMathFunction("log") {
+    override val help: String =
+        """
+        `log(+Number)`
+        
+        Evaluates to the natural logarithm of `Number`.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

@@ -12,6 +12,13 @@ import org.gciatto.kt.math.BigInteger
  * @author Enrico
  */
 object IntegerDivision : IntegersBinaryMathFunction("//") {
+    override val help: String =
+        """
+        `//(+Dividend, +Divisor)`
+        
+        Performs integer division. Both operands must evaluate to integers. A zero divisor raises an evaluation error.
+        """.trimIndent()
+
     override fun mathFunction(
         integer1: Integer,
         integer2: Integer,
