@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.library.mergeDocumentation
 import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
 import it.unibo.tuprolog.solve.primitive.Primitive
@@ -27,6 +28,13 @@ internal class RuntimeImpl(
 
     override val libraries: Set<Library>
         get() = values.toSet()
+
+    override val documentation: Map<Signature, String>
+        get() =
+            mergeDocumentation(
+                super.documentation,
+                *libraries.map { it.documentation }.toTypedArray(),
+            )
 
     private val theoryCache: Cache<Unificator, Theory> = Cache.simpleLru(1)
 

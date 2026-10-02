@@ -18,7 +18,15 @@ internal data class LibraryImpl(
     override val clauses: List<Clause>,
     override val primitives: Map<Signature, Primitive>,
     override val functions: Map<Signature, LogicFunction>,
+    private val declaredHelp: String,
+    private val declaredDocumentation: Map<Signature, String>,
 ) : AbstractLibrary() {
+    override val help: String
+        get() = declaredHelp.ifBlank { super.help }
+
+    override val documentation: Map<Signature, String>
+        get() = mergeDocumentation(super.documentation, declaredDocumentation)
+
     init {
         require(alias.isNotBlank())
     }

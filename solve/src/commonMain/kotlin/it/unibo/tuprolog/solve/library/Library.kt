@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.library
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.solve.Helpable
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.impl.LibraryImpl
@@ -30,7 +31,9 @@ import kotlin.jvm.JvmStatic
  * @see Runtime
  * @see it.unibo.tuprolog.solve.libraryOf
  * */
-interface Library : Pluggable {
+interface Library :
+    Pluggable,
+    Helpable {
     /** The alias identifying this library */
     @JsName("alias")
     val alias: String
@@ -85,11 +88,13 @@ interface Library : Pluggable {
             clauses: Iterable<Clause> = emptyList(),
             operators: OperatorSet = OperatorSet(),
             functions: Map<Signature, LogicFunction> = emptyMap(),
+            help: String = "",
+            documentation: Map<Signature, String> = emptyMap(),
         ): Library {
             require(ALIAS_PATTERN.matches(alias)) {
                 "Aliases should match the pattern $ALIAS_PATTERN"
             }
-            return LibraryImpl(alias, operators, clauses.toList(), primitives, functions)
+            return LibraryImpl(alias, operators, clauses.toList(), primitives, functions, help, documentation)
         }
 
         /** Same as [of], defaulting [alias] to `"default"`. */
@@ -101,7 +106,9 @@ interface Library : Pluggable {
             clauses: Iterable<Clause> = emptyList(),
             operators: OperatorSet = OperatorSet(),
             functions: Map<Signature, LogicFunction> = emptyMap(),
-        ): Library = of(DEFAULT_ALIAS, primitives, clauses, operators, functions)
+            help: String = "",
+            documentation: Map<Signature, String> = emptyMap(),
+        ): Library = of(DEFAULT_ALIAS, primitives, clauses, operators, functions, help, documentation)
 
         /** Creates a copy of [library] renamed to [alias] (`"default"` by default). */
         @JvmStatic
@@ -110,6 +117,15 @@ interface Library : Pluggable {
         fun of(
             alias: String = DEFAULT_ALIAS,
             library: Library,
-        ): Library = of(alias, library.primitives, library.clauses, library.operators, library.functions)
+        ): Library =
+            of(
+                alias,
+                library.primitives,
+                library.clauses,
+                library.operators,
+                library.functions,
+                library.help,
+                library.documentation,
+            )
     }
 }
