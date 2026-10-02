@@ -14,6 +14,20 @@ import kotlin.jvm.JvmField
  */
 @Suppress("MemberVisibilityCanBePrivate")
 object GroundQueriesHaveBooleanSolution : NotableFlag {
+    override val help: String =
+        """
+        `flag(ground_queries_have_boolean_solution)`
+        
+        Controls presentation of successful ground queries.
+        
+        - `on`: present a successful ground query simply as `yes.`
+        - `off`: keep the solved query in the rendered success, for example `yes: 2 is 1 + 1`.
+        - Default: `off`
+        - Editable: yes
+        
+        This affects formatting only; the underlying solution object is unchanged.
+        """.trimIndent()
+
     /** A ground query's `yes` solution is presented simply as `yes.`. */
     @JvmField
     val ON = Atom.of("on")

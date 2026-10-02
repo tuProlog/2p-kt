@@ -12,6 +12,20 @@ import kotlin.jvm.JvmField
  */
 @Suppress("MemberVisibilityCanBePrivate")
 object ShowWildCardVariablesInSolutions : NotableFlag {
+    override val help: String =
+        """
+        `flag(show_wildcard_variables_in_solutions)`
+        
+        Controls whether wildcard variables, whose names start with `_`, are retained in displayed solution substitutions.
+        
+        - `on`: show wildcard-variable bindings.
+        - `off`: hide them from presented substitutions.
+        - Default: `on`
+        - Editable: yes
+        
+        This affects solution presentation, not the logical result itself.
+        """.trimIndent()
+
     /** Wildcard variables are shown in solutions' substitutions. */
     @JvmField
     val ON = Atom.of("on")

@@ -11,6 +11,18 @@ import kotlin.jvm.JvmField
  */
 @Suppress("MemberVisibilityCanBePrivate")
 object TrackVariables : NotableFlag {
+    override val help: String =
+        """
+        `flag(track_variables)`
+        
+        Controls whether the solver keeps additional variable-name/binding information for inspection and debugging.
+        
+        - `on`: enable variable tracking.
+        - `off`: disable the additional tracking.
+        - Default: `off`
+        - Editable: yes
+        """.trimIndent()
+
     /** Variable tracking is enabled. */
     @JvmField
     val ON = Atom.of("on")

@@ -12,6 +12,18 @@ import kotlin.jvm.JvmField
  */
 @Suppress("MemberVisibilityCanBePrivate")
 object UniqueSolutions : NotableFlag {
+    override val help: String =
+        """
+        `flag(unique_solutions)`
+        
+        Controls whether duplicate successful solutions with the same solved-query term are suppressed.
+        
+        - `on`: keep only the first occurrence of each distinct solved-query term.
+        - `off`: emit every successful solution, including duplicates.
+        - Default: `off`
+        - Editable: yes
+        """.trimIndent()
+
     /** Duplicate `yes` solutions (by solved-query term) are dropped. */
     @JvmField
     val ON = Atom.of("on")

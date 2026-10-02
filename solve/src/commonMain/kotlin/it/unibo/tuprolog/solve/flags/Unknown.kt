@@ -12,6 +12,19 @@ import kotlin.jvm.JvmField
  */
 @Suppress("MemberVisibilityCanBePrivate")
 object Unknown : NotableFlag {
+    override val help: String =
+        """
+        `flag(unknown)`
+        
+        Controls what happens when a goal refers to a predicate that does not exist in the current knowledge bases or loaded libraries.
+        
+        - `error`: raise an existence error.
+        - `warning`: emit a missing-predicate warning instead of raising the error.
+        - `fail`: silently fail the goal.
+        - Default in the current implementation: `warning`
+        - Editable: yes
+        """.trimIndent()
+
     /** Raise an [it.unibo.tuprolog.solve.exception.error.ExistenceError] for missing predicates. */
     @JvmField
     val ERROR = Atom.of("error")

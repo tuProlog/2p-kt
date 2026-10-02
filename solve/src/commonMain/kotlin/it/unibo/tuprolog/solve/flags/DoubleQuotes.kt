@@ -12,6 +12,19 @@ import kotlin.jvm.JvmField
  */
 @Suppress("MemberVisibilityCanBePrivate")
 object DoubleQuotes : NotableFlag {
+    override val help: String =
+        """
+        `flag(double_quotes)`
+        
+        Controls how double-quoted text is parsed.
+        
+        - Admissible value: `atom`
+        - Default: `atom`
+        - Editable: yes
+        
+        2P-Kt currently supports only atom semantics for double-quoted text; the ISO `chars` and `codes` alternatives are not available.
+        """.trimIndent()
+
     /** The (only) admissible/default value: double-quoted text is parsed as an [Atom]. */
     @JvmField
     val ATOM = Atom.of("atom")
