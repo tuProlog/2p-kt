@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.flags
 
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.Helpable
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -12,7 +13,7 @@ import kotlin.jvm.JvmStatic
  *
  * @see FlagStore
  */
-interface NotableFlag {
+interface NotableFlag : Helpable {
     /** This flag's name, as it appears as the key in a [FlagStore] (e.g. `"unknown"`, `"double_quotes"`). */
     @JsName("name")
     val name: String
@@ -29,6 +30,26 @@ interface NotableFlag {
     /** Every legal value this flag may take. */
     @JsName("admissibleValues")
     val admissibleValues: FlagDomain
+
+    /** Markdown documentation exposed through `help(flag(Name), Help)`. */
+    override val help: String
+        get() =
+            buildString {
+                append("`flag(").append(name).append(")`\n\n")
+                append("Solver flag `").append(name).append("`.\n\n")
+                append("- Default: `").append(defaultValue).append("`\n")
+                append("- Editable: `").append(isEditable).append("`\n")
+                append("- Admissible values: ")
+                when (val domain = admissibleValues) {
+                    is FlagDomain.IntRange ->
+                        append("`")
+                            .append(domain.minInclusive)
+                            .append("..")
+                            .append(domain.maxInclusive)
+                            .append("`")
+                    else -> append(domain.joinToString(", ") { "`$it`" })
+                }
+            }
 
     /** Whether [value] is one of [admissibleValues]. */
     @JsName("isAdmissibleValue")

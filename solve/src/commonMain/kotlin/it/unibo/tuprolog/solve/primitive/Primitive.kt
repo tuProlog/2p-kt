@@ -1,12 +1,13 @@
 package it.unibo.tuprolog.solve.primitive
 
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Helpable
 import it.unibo.tuprolog.solve.Signature
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /** A typealias for a primitive function that accepts a [Solve.Request] and returns a Sequence of [Solve.Response]s */
-fun interface Primitive {
+fun interface Primitive : Helpable {
     @JsName("solve")
     fun solve(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response>
 

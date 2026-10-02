@@ -11,8 +11,11 @@ import kotlin.js.JsName
  */
 abstract class AbstractWrapper<out Wrapped>(
     @JsName("signature") val signature: Signature,
-) {
+) : Helpable {
     constructor(name: String, arity: Int, vararg: Boolean = false) : this(Signature(name, arity, vararg))
+
+    override val help: String
+        get() = "`${signature.name}/${signature.arity}${if (signature.vararg) "+" else ""}`"
 
     /** The wrapped implementation */
     @JsName("wrappedImplementation")

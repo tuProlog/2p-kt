@@ -47,8 +47,22 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
     /** The function expressing the implementation of the primitive, without any check for application to correct signature */
     protected abstract fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response>
 
-    /** Checked primitive implementation */
-    final override val implementation: Primitive = Primitive.enforcingSignature(signature, ::uncheckedImplementation)
+    /** Checked primitive implementation, retaining this wrapper's [help] metadata. */
+    final override val implementation: Primitive =
+        object : Primitive {
+            override val help: String
+                get() = this@PrimitiveWrapper.help
+
+            @Suppress("UNCHECKED_CAST")
+            override fun solve(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
+                when (request.signature) {
+                    signature -> uncheckedImplementation(request as Solve.Request<C>)
+                    else ->
+                        throw IllegalArgumentException(
+                            "This primitive supports only this signature `$signature`",
+                        )
+                }
+        }
 
     companion object {
         @JvmStatic

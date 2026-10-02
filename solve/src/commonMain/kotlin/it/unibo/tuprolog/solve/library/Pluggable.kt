@@ -33,6 +33,11 @@ interface Pluggable {
     @JsName("functions")
     val functions: Map<Signature, LogicFunction>
 
+    /** Markdown documentation indexed by the effective component signature. */
+    @JsName("documentation")
+    val documentation: Map<Signature, String>
+        get() = defaultDocumentation(this)
+
     /**
      * Checks whether this library contains the provided signature.
      *
