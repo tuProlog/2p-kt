@@ -10,6 +10,13 @@ import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
 sealed class Semicolon : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
+    override val help: String =
+        """
+        `(+Left ; +Right)`
+        
+        Implements disjunction: solutions come from `Left` and, on backtracking, from `Right`. When the left operand is an if-then term `Condition -> Then`, this predicate implements the usual `Condition -> Then ; Else` control behavior.
+        """.trimIndent()
+
     abstract override val Scope.head: KtList<Term>
 
     abstract override val Scope.body: Term

@@ -8,6 +8,13 @@ import it.unibo.tuprolog.solve.stdlib.primitive.SetFlag
 import kotlin.collections.List as KtList
 
 object SetPrologFlag : RuleWrapper<ExecutionContext>("set_prolog_flag", 2) {
+    override val help: String =
+        """
+        `set_prolog_flag(+Name, +Value)`
+        
+        Sets a Prolog flag in the current solver. Notable flags enforce their editability and admissible values; invalid assignments raise the corresponding flag error.
+        """.trimIndent()
+
     override val Scope.head: KtList<Term>
         get() = listOf(varOf("Key"), varOf("Value"))
 

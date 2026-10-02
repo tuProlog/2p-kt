@@ -9,6 +9,13 @@ import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
 object Once : RuleWrapper<ExecutionContext>("once", 1) {
+    override val help: String =
+        """
+        `once(+Goal)`
+        
+        Calls `Goal` and commits to its first solution, discarding any further alternatives. `Goal` must be executable.
+        """.trimIndent()
+
     override val Scope.head: KtList<Term>
         get() = ktListOf(varOf("G"))
 

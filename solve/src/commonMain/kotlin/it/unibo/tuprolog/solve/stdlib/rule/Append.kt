@@ -9,6 +9,13 @@ import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
 sealed class Append : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
+    override val help: String =
+        """
+        `append(?Prefix, ?Suffix, ?Whole)`
+        
+        Relates two lists with their concatenation: `Whole` is obtained by appending `Suffix` to `Prefix`. The relation is reversible and can be used to concatenate lists or enumerate splits of a list.
+        """.trimIndent()
+
     abstract override val Scope.head: KtList<Term>
 
     object Base : Append() {

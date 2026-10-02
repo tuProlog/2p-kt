@@ -9,6 +9,13 @@ import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
 object Not : RuleWrapper<ExecutionContext>("not", 1) {
+    override val help: String =
+        """
+        `not(+Goal)`
+        
+        Calls `Goal` under negation as failure. It succeeds when `Goal` has no solution and fails when `Goal` succeeds. `Goal` must be executable.
+        """.trimIndent()
+
     override val Scope.head: KtList<Term>
         get() = ktListOf(varOf("G"))
 
