@@ -62,7 +62,28 @@ internal fun mergeDocumentation(vararg documentation: Map<Signature, String>): M
             }
         }
     }
-    return fragments.mapValues { (_, values) -> values.distinct().joinToString("\n\n---\n\n") }
+    return fragments.mapValues { (signature, values) ->
+        val unique = values.distinct()
+        val hasSemanticDocumentation =
+            unique.any {
+                !signature.isGeneratedFallback(it) && !signature.isGeneratedOperatorDocumentation(it)
+            }
+        val normalized =
+            if (hasSemanticDocumentation) {
+                unique.filterNot(signature::isGeneratedFallback)
+            } else {
+                unique
+            }
+        normalized.joinToString("\n\n---\n\n")
+    }
 }
+
+private fun Signature.isGeneratedFallback(help: String): Boolean =
+    help == "`${formatForHelp()}`\n\nPrimitive." ||
+        help == "`${formatForHelp()}`\n\nFunction." ||
+        help == "`${formatForHelp()}`\n\nRule."
+
+private fun Signature.isGeneratedOperatorDocumentation(help: String): Boolean =
+    help.startsWith("`${formatForHelp()}`\n\nOperator ")
 
 private fun Signature.formatForHelp(): String = "$name/$arity${if (vararg) "+" else ""}"
