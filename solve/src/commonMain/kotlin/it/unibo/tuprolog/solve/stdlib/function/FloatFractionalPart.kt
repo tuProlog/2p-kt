@@ -14,6 +14,13 @@ import org.gciatto.kt.math.RoundingMode
  * @author Enrico
  */
 object FloatFractionalPart : UnaryMathFunction("float_fractional_part") {
+    override val help: String =
+        """
+        `float_fractional_part(+Number)`
+        
+        Evaluates to the fractional part of `Number`, preserving its sign. For example, the fractional part of `-3.25` is `-0.25`.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

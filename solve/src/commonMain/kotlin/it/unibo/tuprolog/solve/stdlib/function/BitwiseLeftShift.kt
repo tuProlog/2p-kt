@@ -11,6 +11,13 @@ import it.unibo.tuprolog.solve.function.IntegersBinaryMathFunction
  * @author Enrico
  */
 object BitwiseLeftShift : IntegersBinaryMathFunction("<<") {
+    override val help: String =
+        """
+        `<<(+Integer, +Shift)`
+        
+        Shifts `Integer` left by `Shift` bit positions. Both operands must evaluate to integers.
+        """.trimIndent()
+
     override fun mathFunction(
         integer1: Integer,
         integer2: Integer,

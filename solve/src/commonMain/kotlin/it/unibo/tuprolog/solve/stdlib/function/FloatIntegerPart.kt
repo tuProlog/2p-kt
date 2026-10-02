@@ -14,6 +14,13 @@ import org.gciatto.kt.math.RoundingMode
  * @author Enrico
  */
 object FloatIntegerPart : UnaryMathFunction("float_integer_part") {
+    override val help: String =
+        """
+        `float_integer_part(+Number)`
+        
+        Evaluates to the integral part of `Number` obtained by truncating toward zero.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

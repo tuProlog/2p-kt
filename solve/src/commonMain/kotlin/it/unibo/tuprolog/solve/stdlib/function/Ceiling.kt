@@ -13,6 +13,13 @@ import kotlin.math.ceil
  * @author Enrico
  */
 object Ceiling : UnaryMathFunction("ceiling") {
+    override val help: String =
+        """
+        `ceiling(+Number)`
+        
+        Evaluates to the smallest integer not less than `Number`. Integer inputs are returned unchanged.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

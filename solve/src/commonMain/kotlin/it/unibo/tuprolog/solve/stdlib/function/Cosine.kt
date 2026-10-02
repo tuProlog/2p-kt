@@ -14,6 +14,13 @@ import kotlin.math.cos
  * @author Enrico
  */
 object Cosine : UnaryMathFunction("cos") {
+    override val help: String =
+        """
+        `cos(+Number)`
+        
+        Evaluates to the cosine of `Number`, interpreting the argument as radians.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

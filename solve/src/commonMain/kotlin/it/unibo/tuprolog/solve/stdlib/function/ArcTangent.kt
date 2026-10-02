@@ -14,6 +14,13 @@ import kotlin.math.atan
  * @author Enrico
  */
 object ArcTangent : UnaryMathFunction("atan") {
+    override val help: String =
+        """
+        `atan(+Number)`
+        
+        Evaluates to the arc tangent of `Number`, expressed in radians.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

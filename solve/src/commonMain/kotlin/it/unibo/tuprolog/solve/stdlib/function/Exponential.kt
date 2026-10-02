@@ -14,6 +14,13 @@ import kotlin.math.exp
  * @author Enrico
  */
 object Exponential : UnaryMathFunction("exp") {
+    override val help: String =
+        """
+        `exp(+Number)`
+        
+        Evaluates to `e` raised to `Number`.
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

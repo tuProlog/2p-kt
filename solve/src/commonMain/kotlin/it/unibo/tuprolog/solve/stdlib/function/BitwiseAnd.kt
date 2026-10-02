@@ -11,6 +11,13 @@ import it.unibo.tuprolog.solve.function.IntegersBinaryMathFunction
  * @author Enrico
  */
 object BitwiseAnd : IntegersBinaryMathFunction("/\\") {
+    override val help: String =
+        """
+        `/\(+Left, +Right)`
+        
+        Evaluates to the bitwise AND of the two integer operands. Both operands must evaluate to integers.
+        """.trimIndent()
+
     override fun mathFunction(
         integer1: Integer,
         integer2: Integer,

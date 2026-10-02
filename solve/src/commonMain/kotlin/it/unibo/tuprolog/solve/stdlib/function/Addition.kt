@@ -13,6 +13,13 @@ import org.gciatto.kt.math.BigDecimal
  * @author Enrico
  */
 object Addition : BinaryMathFunction("+") {
+    override val help: String =
+        """
+        `+(+Left, +Right)`
+        
+        Evaluates to the arithmetic sum of `Left` and `Right`. Integer + integer yields an integer; mixed or real operands yield a real value.
+        """.trimIndent()
+
     override fun mathFunction(
         integer1: Integer,
         integer2: Integer,

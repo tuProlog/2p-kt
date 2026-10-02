@@ -14,6 +14,13 @@ import org.gciatto.kt.math.MathContext
  * @author Enrico
  */
 object FloatingPointDivision : BinaryMathFunction("/") {
+    override val help: String =
+        """
+        `/(+Dividend, +Divisor)`
+        
+        Evaluates to floating-point division of `Dividend` by `Divisor`. A zero divisor raises an evaluation error.
+        """.trimIndent()
+
     override fun mathFunction(
         integer1: Integer,
         integer2: Integer,
