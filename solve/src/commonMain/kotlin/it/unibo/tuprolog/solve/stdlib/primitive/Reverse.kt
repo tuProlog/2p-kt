@@ -9,6 +9,13 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object Reverse : BinaryRelation.Functional<ExecutionContext>("reverse") {
+    override val help: String =
+        """
+        `reverse(?List, ?Reversed)`
+        
+        Relates a proper list with the list containing the same elements in reverse order. Either argument may be used to determine the other when sufficiently instantiated.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

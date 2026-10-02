@@ -11,6 +11,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.theory.RetractResult
 
 object RetractAll : UnaryPredicate.NonBacktrackable<ExecutionContext>("retractall") {
+    override val help: String =
+        """
+        `retractall(+Clause)`
+        
+        Removes all dynamic clauses matching `Clause` and succeeds once, even when no matching clause exists.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsStruct(0)
         val clause = if (first is Clause) first else Rule.of(first as Struct, Var.anonymous())

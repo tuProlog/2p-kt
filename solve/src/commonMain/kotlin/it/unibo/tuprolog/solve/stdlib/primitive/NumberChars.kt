@@ -12,6 +12,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.core.List as LogicList
 
 object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars") {
+    override val help: String =
+        """
+        `number_chars(?Number, ?Chars)`
+        
+        Relates a number with the list of one-character atoms forming its textual representation. Either side may drive the conversion when sufficiently instantiated.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

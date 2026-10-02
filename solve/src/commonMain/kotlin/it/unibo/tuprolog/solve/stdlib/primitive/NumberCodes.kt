@@ -13,6 +13,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.core.List as LogicList
 
 object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes") {
+    override val help: String =
+        """
+        `number_codes(?Number, ?Codes)`
+        
+        Relates a number with the list of integer character codes forming its textual representation. Either side may drive the conversion when sufficiently instantiated.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

@@ -11,6 +11,13 @@ import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 
 object Op : TernaryRelation.NonBacktrackable<ExecutionContext>("op") {
+    override val help: String =
+        """
+        `op(+Priority, +Specifier, +Name)`
+        
+        Adds or updates an operator declaration in the current solver state. `Priority` must be a non-negative integer, `Specifier` a valid operator specifier such as `yfx`, and `Name` an atom.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,
