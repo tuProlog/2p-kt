@@ -8,6 +8,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
 object Write : UnaryPredicate.NonBacktrackable<ExecutionContext>("write") {
+    override val help: String =
+        """
+        `write(+Term)`
+        
+        Writes the textual representation of `Term` to the current output channel and succeeds. It fails if no current output channel is available.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         return context.outputChannels.current.let {
             if (it == null) {

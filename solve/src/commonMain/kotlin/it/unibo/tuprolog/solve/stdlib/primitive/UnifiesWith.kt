@@ -8,6 +8,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
 
 /** Implementation of '='/2 predicate */
 object UnifiesWith : BinaryRelation.Functional<ExecutionContext>("=") {
+    override val help: String =
+        """
+        `Left = Right`
+        
+        Unifies `Left` and `Right`, succeeding with their most general unifier when one exists and failing otherwise.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

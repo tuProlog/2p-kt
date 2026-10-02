@@ -16,6 +16,13 @@ import it.unibo.tuprolog.core.List as LogicList
  * Implementation of '=..'/2 predicate
  */
 object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
+    override val help: String =
+        """
+        `?Term =.. ?List`
+        
+        Relates a term to its univ representation. A compound term is represented by a list whose first element is the functor and remaining elements are the arguments; atomic terms are represented by a singleton list. The relation can also construct a term from a suitable list.
+        """.trimIndent()
+
     private fun Solve.Request<ExecutionContext>.decompose(
         first: Struct,
         second: Term,
