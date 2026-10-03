@@ -19,6 +19,13 @@ import it.unibo.tuprolog.solve.primitive.TernaryRelation
  * ```
  */
 object Open3 : TernaryRelation.NonBacktrackable<ExecutionContext>("open") {
+    override val help: String =
+        """
+        `open(+SourceSink, +Mode, -Stream)`
+        
+        Opens `SourceSink`, an atom holding a URL or a plain file path, in `Mode` (`read`, `write` or `append`), registers the new stream under an auto-generated alias, and unifies `Stream` with its `${'$'}stream(Direction, Id)` term; it behaves as `open/4` with an empty options list. Any URL readable by the platform (e.g. files or `http(s)`) can be opened for reading, but the current implementation can only write or append to local files on the JVM, and never on JS. It raises an instantiation error if `SourceSink` or `Mode` is unbound, a domain error (`source_sink`) if `SourceSink` is not a valid URL or path, a type or domain error (`io_mode`) if `Mode` is not one of the allowed atoms, a type error (`variable`) if `Stream` is bound (ISO prescribes an uninstantiation error), and a system error if the resource cannot be opened.
+        """.trimIndent()
+
     override fun Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

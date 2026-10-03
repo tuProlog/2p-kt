@@ -18,7 +18,7 @@ object ArcTangent : UnaryMathFunction("atan") {
         """
         `atan(+Number)`
         
-        Evaluates to the arc tangent of `Number`, expressed in radians.
+        Evaluates to the arc tangent of `Number`, as a real value expressed in radians, in the range from `-pi/2` to `pi/2`.
         """.trimIndent()
 
     override fun mathFunction(

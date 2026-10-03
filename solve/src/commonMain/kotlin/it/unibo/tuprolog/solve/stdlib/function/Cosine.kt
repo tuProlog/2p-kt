@@ -18,7 +18,7 @@ object Cosine : UnaryMathFunction("cos") {
         """
         `cos(+Number)`
         
-        Evaluates to the cosine of `Number`, interpreting the argument as radians.
+        Evaluates to the cosine of `Number`, interpreted as an angle in radians. The result is always a real value.
         """.trimIndent()
 
     override fun mathFunction(

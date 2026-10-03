@@ -14,6 +14,13 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  * two sides of a comma.
  */
 object Comma : RuleWrapper<ConcurrentExecutionContext>(",", 2) {
+    override val help: String =
+        """
+        `(+First, +Second)`
+
+        Conjunction: proves `First` and then `Second`, using each solution of `First` to prove `Second`. In this concurrent solver conjunction is not itself a source of parallelism: the conjuncts are proved in sequence, while the alternative solutions of each conjunct may be explored concurrently.
+        """.trimIndent()
+
     override val Scope.head: List<Term>
         get() = listOf(varOf("A"), varOf("B"))
 

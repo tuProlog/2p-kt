@@ -23,6 +23,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * object's own registration in `DefaultBuiltins`).
  */
 object Naf : UnaryPredicate.NonBacktrackable<ConcurrentExecutionContext>("\\+") {
+    override val help: String =
+        """
+        `\+ +Goal`
+
+        Negation as failure: succeeds if `Goal` has no solution, and fails as soon as `Goal` has one. It never binds the variables of `Goal`, and is equivalent to `not/1`. `Goal` is proved by an independent sub-solver; errors it raises are propagated. `Goal` must be callable, otherwise an instantiation or type error is raised.
+        """.trimIndent()
+
     override fun Solve.Request<ConcurrentExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsCallable(0)
         val solver = subSolver() as ConcurrentSolver

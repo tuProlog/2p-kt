@@ -17,6 +17,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * Fails, rather than erroring, if the channel is closed.
  */
 object Nl1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("nl") {
+    override val help: String =
+        """
+        `nl(+Stream)`
+        
+        Writes a newline character to the output stream `Stream`, succeeding deterministically (`nl/0`, writing to the current output, is provided by `prolog.lang`). `Stream` must be an alias (e.g. `user_output`) or a `${'$'}stream(out, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an input stream a domain error (`stream_type`), where ISO prescribes a permission error. It fails, instead of raising an error, if the underlying channel has been closed.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         val channel = ensuringArgumentIsOutputChannel(0)
         return try {

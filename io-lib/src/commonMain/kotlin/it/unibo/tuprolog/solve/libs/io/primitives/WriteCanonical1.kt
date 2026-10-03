@@ -16,6 +16,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * Fails, rather than erroring, if the channel is closed.
  */
 object WriteCanonical1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("write_canonical") {
+    override val help: String =
+        """
+        `write_canonical(@Term)`
+        
+        Writes `Term` to the current output stream (standard output, unless changed via `set_output/1`) in canonical form: atoms and functors are quoted where needed, operators are written in functional notation, and `'${'$'}VAR'(N)` terms are written as-is. It succeeds deterministically. It fails, instead of raising an error, if the underlying channel has been closed.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response =
         writeTermAndReply(currentOutputChannel, first, TermFormatter.canonical())
 }

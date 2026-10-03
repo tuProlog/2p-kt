@@ -18,7 +18,7 @@ object Sine : UnaryMathFunction("sin") {
         """
         `sin(+Number)`
         
-        Evaluates to the sine of `Number`, interpreting the argument as radians.
+        Evaluates to the sine of `Number`, interpreted as an angle in radians. The result is always a real value.
         """.trimIndent()
 
     override fun mathFunction(

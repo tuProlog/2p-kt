@@ -16,7 +16,7 @@ object ToFloat : UnaryMathFunction("float") {
         """
         `float(+Number)`
         
-        Converts `Number` to a floating-point value.
+        Evaluates to `Number` converted to a real (floating-point) value; real inputs are returned unchanged.
         """.trimIndent()
 
     override fun mathFunction(

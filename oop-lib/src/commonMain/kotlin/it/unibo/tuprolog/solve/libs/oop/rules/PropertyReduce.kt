@@ -24,6 +24,13 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  */
 @Suppress("PropertyName")
 sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
+    override val help: String =
+        """
+        `property_reduce(+Expression, ?Ref, ?Property)`
+        
+        Helper behind the assignment form of `:=/2`: given a chain of member accesses `Receiver.M1....Mn.Property`, evaluates every access but the last one (as `fluent_reduce/2` does, via `invoke_method/3`), unifying `Ref` with the reference reached that way and `Property` with the final access. Deterministic (each clause cuts); fails if `Expression` is not a chain. Example: `property_reduce(Obj.child.name, R, P)` binds `R` to the result of `Obj.child` and `P` to `name`.
+        """.trimIndent()
+
     companion object {
         const val FUNCTOR = "property_reduce"
         const val ARITY = 3

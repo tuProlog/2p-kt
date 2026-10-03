@@ -17,6 +17,13 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  * @see NewObject3
  */
 object NewObject2 : RuleWrapper<ExecutionContext>(NewObject3.functor, 2) {
+    override val help: String =
+        """
+        `new_object(+Type, -ObjectRef)`
+        
+        Instantiates `Type` through its public no-argument constructor and unifies `ObjectRef` with a reference to the new object; shorthand for `new_object(Type, [], ObjectRef)`. `Type` may be an atom holding a fully qualified type name, a type reference, or a `${'$'}Alias` reference to a type. Errors are those of `new_object/3`. Example: `new_object('java.util.ArrayList', L)`.
+        """.trimIndent()
+
     private val Type by variables
     private val Instance by variables
 

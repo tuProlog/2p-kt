@@ -12,5 +12,12 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * @throws it.unibo.tuprolog.solve.exception.error.SystemError unconditionally.
  */
 object PeekByte1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("peek_byte") {
+    override val help: String =
+        """
+        `peek_byte(?Byte)`
+        
+        Registered for ISO conformance only: the current implementation supports text streams exclusively, so every call raises a system error regardless of its arguments; use `peek_code/1` instead.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response = notSupported()
 }

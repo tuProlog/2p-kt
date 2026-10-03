@@ -19,6 +19,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * Fails, rather than erroring, if the channel is closed.
  */
 object GetCode1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("get_code") {
+    override val help: String =
+        """
+        `get_code(?Code)`
+        
+        Reads and consumes the next character from the current input stream (standard input, unless changed via `set_input/1`) and unifies its code with `Code`, which becomes `-1` at the end of the stream. It is deterministic. `Code` must be unbound or an integer (type error otherwise) within the character-code range or `-1` (representation error otherwise). It fails, instead of raising an error, if the underlying channel has been closed.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsVarOrCharCode(0)
         return readCodeAndReply(currentInputChannel, first)

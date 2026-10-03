@@ -13,6 +13,13 @@ import kotlin.collections.List as KtList
  * some choice point local to this rule.
  */
 object Comma : RuleWrapper<PrologExecutionContext>(",", 2) {
+    override val help: String =
+        """
+        `(+First, +Second)`
+
+        Conjunction: proves `First` and then `Second`, backtracking into `First` for further solutions whenever `Second` fails. Conjunction is transparent to cut: a `!` occurring in either conjunct cuts the clause in which the conjunction appears.
+        """.trimIndent()
+
     override val Scope.head: KtList<Term>
         get() = listOf(varOf("A"), varOf("B"))
 

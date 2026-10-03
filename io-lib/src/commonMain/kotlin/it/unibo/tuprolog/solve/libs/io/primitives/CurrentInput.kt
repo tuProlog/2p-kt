@@ -17,6 +17,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * than a `$stream(...)` term.
  */
 object CurrentInput : UnaryPredicate.NonBacktrackable<ExecutionContext>("current_input") {
+    override val help: String =
+        """
+        `current_input(?Stream)`
+        
+        Unifies `Stream` with the `${'$'}stream(in, Id)` term of the current input stream (standard input, unless changed via `set_input/1`); if `Stream` is already a stream term, it succeeds iff that term denotes the current input stream. It is deterministic. It raises an existence error if `Stream` is a stream term denoting no open stream, and a domain error (`stream_or_alias`) if it is bound to anything else, aliases included.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         val channel = ensuringArgumentIsVarOrStream(0)
         val currentChannel = context.inputChannels.let { it.current ?: it.stdIn }

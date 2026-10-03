@@ -23,6 +23,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * to something other than `input`, `output`, or `alias(_)`.
  */
 object StreamProperty : BinaryRelation<ExecutionContext>("stream_property") {
+    override val help: String =
+        """
+        `stream_property(?Stream, ?Property)`
+        
+        Enumerates, on backtracking, every open stream `Stream` (as a `${'$'}stream(Direction, Id)` term) together with each `Property` holding for it; the current implementation reports `input` or `output`, one `alias(Name)` per alias of the stream, and `type(text)`. If `Stream` is bound it must be a stream term (aliases are not accepted), otherwise a domain error (`stream_or_alias`) is raised, or an existence error if it denotes no open stream. If `Property` is bound it must be `input`, `output` or `alias(Name)`, otherwise a domain error (`stream_property`) is raised, so the reported `type(text)` property cannot be queried directly.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeAll(
         first: Term,
         second: Term,

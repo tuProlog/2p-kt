@@ -11,6 +11,13 @@ import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
  * callable term, then resolves it as a goal -- equivalent to `call(G) :- ensure_executable(G), G.`.
  */
 object Call : RuleWrapper<ConcurrentExecutionContext>("call", 1) {
+    override val help: String =
+        """
+        `call(+Goal)`
+
+        Calls `Goal`, which allows executing terms built or bound at runtime. `Goal` must be callable: a variable raises an instantiation error, a number or other non-callable term a type error (`callable`).
+        """.trimIndent()
+
     override val Scope.head: List<Term>
         get() = listOf(varOf("G"))
 

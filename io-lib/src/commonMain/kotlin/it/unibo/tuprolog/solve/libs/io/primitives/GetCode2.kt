@@ -19,6 +19,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * Fails, rather than erroring, if the channel is closed.
  */
 object GetCode2 : BinaryRelation.NonBacktrackable<ExecutionContext>("get_code") {
+    override val help: String =
+        """
+        `get_code(+Stream, ?Code)`
+        
+        Reads and consumes the next character from the input stream `Stream` and unifies its code with `Code`, which becomes `-1` at the end of the stream. `Stream` must be an alias (e.g. `user_input`) or a `${'$'}stream(in, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an output stream a domain error (`stream_type`), where ISO prescribes a permission error. `Code` must be unbound or an integer (type error otherwise) within the character-code range or `-1` (representation error otherwise). It fails, instead of raising an error, if the underlying channel has been closed.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

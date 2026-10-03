@@ -19,7 +19,7 @@ object NaturalLogarithm : UnaryMathFunction("log") {
         """
         `log(+Number)`
         
-        Evaluates to the natural logarithm of `Number`.
+        Evaluates to the natural (base `e`) logarithm of `Number`, always as a real value. `Number` must be positive: the current implementation does not raise the standard `undefined` evaluation error for zero or negative inputs, which are not handled.
         """.trimIndent()
 
     override fun mathFunction(

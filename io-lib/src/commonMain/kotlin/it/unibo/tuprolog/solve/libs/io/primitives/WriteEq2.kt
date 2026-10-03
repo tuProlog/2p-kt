@@ -19,6 +19,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * Fails, rather than erroring, if the channel is closed.
  */
 object WriteEq2 : BinaryRelation.NonBacktrackable<ExecutionContext>("writeq") {
+    override val help: String =
+        """
+        `writeq(+Stream, @Term)`
+        
+        Writes `Term` to the output stream `Stream` so that it can be read back, quoting atoms and functors where needed and writing `'${'$'}VAR'(N)` terms as variable letters; the current implementation formats operators according to the default operator table rather than the current one. It succeeds deterministically. `Stream` must be an alias (e.g. `user_output`) or a `${'$'}stream(out, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an input stream a domain error (`stream_type`), where ISO prescribes a permission error. It fails, instead of raising an error, if the underlying channel has been closed.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

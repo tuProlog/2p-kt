@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.libs.io
 
+import it.unibo.tuprolog.solve.assertFullyDocumented
 import it.unibo.tuprolog.solve.library.Runtime
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,5 +14,10 @@ class TestIOLib {
     @Test
     fun testItemEquality() {
         assertEquals(Runtime.of(IOLib), Runtime.of(IOLib))
+    }
+
+    @Test
+    fun everyItemIsDocumented() {
+        assertFullyDocumented(IOLib)
     }
 }

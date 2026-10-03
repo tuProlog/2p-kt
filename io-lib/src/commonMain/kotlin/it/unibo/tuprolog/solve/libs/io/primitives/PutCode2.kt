@@ -23,6 +23,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * Fails, rather than erroring, if the channel is closed.
  */
 object PutCode2 : BinaryRelation.NonBacktrackable<ExecutionContext>("put_code") {
+    override val help: String =
+        """
+        `put_code(+Stream, +Code)`
+        
+        Writes the character whose code is `Code` to the output stream `Stream`, succeeding deterministically. `Stream` must be an alias (e.g. `user_output`) or a `${'$'}stream(out, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an input stream a domain error (`stream_type`), where ISO prescribes a permission error. `Code` must be an integer (type error otherwise, even when unbound) and a valid character code (representation error otherwise). It fails, instead of raising an error, if the underlying channel has been closed.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

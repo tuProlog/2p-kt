@@ -21,6 +21,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * Fails, rather than erroring, if the channel is already closed.
  */
 object Close1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("close") {
+    override val help: String =
+        """
+        `close(+Stream)`
+        
+        Closes the stream `Stream`, given as an alias or a `${'$'}stream(Direction, Id)` term, and unregisters every alias it was reachable through, succeeding deterministically. It raises an instantiation error if `Stream` is unbound, an existence error if it does not denote an open stream, and a domain error (`stream_or_alias`) if it is a compound term other than a stream term. It fails, instead of raising an error, if the underlying channel has been closed.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         val channel = ensuringArgumentIsChannel(0)
         try {

@@ -29,6 +29,13 @@ import it.unibo.tuprolog.solve.stdlib.rule.Arrow
  * @throws it.unibo.tuprolog.solve.exception.error.TypeError if either branch is not callable.
  */
 object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
+    override val help: String =
+        """
+        `(+Left ; +Right)`
+
+        Disjunction: solutions come from `Left` and from `Right`, each proved by an independent sub-solver. When `Left` is `Condition -> Then`, it acts as if-then-else instead: `Condition` is proved once, then `Then` is proved under its bindings if it succeeded, `Else` (i.e. `Right`) otherwise. Both arguments, and both sides of `->`, must be callable, otherwise a type error is raised.
+        """.trimIndent()
+
     override fun Solve.Request<ConcurrentExecutionContext>.computeAll(
         first: Term,
         second: Term,

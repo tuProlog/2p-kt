@@ -20,6 +20,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * Fails, rather than erroring, if the channel is closed.
  */
 object PutCode1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("put_code") {
+    override val help: String =
+        """
+        `put_code(+Code)`
+        
+        Writes the character whose code is `Code` to the current output stream (standard output, unless changed via `set_output/1`), succeeding deterministically. `Code` must be an integer, otherwise (even when unbound, where ISO prescribes an instantiation error) a type error (`integer`) is raised, and a valid character code, otherwise a representation error (`character_code`) is raised. It fails, instead of raising an error, if the underlying channel has been closed.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsCharCode(0)
         return writeCodeAndReply(currentOutputChannel, first as Integer)

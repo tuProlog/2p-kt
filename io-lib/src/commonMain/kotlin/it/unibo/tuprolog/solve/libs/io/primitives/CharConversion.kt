@@ -12,6 +12,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * @throws it.unibo.tuprolog.solve.exception.error.SystemError unconditionally.
  */
 object CharConversion : BinaryRelation.NonBacktrackable<ExecutionContext>("char_conversion") {
+    override val help: String =
+        """
+        `char_conversion(+InChar, +OutChar)`
+        
+        Registered for ISO conformance only: the current implementation does not support a character conversion table, so every call raises a system error regardless of its arguments.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

@@ -12,7 +12,7 @@ object Write : UnaryPredicate.NonBacktrackable<ExecutionContext>("write") {
         """
         `write(+Term)`
         
-        Writes the textual representation of `Term` to the current output channel and succeeds. It fails if no current output channel is available.
+        Writes the textual representation of `Term` to the current output channel and succeeds. Operators currently defined are honoured, atoms are never quoted (`write('hello world')` prints `hello world`), and `'${'$'}VAR'(N)` terms are printed as variable names. It fails if no current output channel is available.
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

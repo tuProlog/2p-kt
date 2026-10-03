@@ -26,6 +26,13 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  * @see FluentReduce
  */
 object Dot : RuleWrapper<ExecutionContext>(ACCESS_OPERATOR, 2) {
+    override val help: String =
+        """
+        `+Receiver.+Message`
+        
+        Fluent member access: invokes `Message` on the object, type, or `${'$'}Alias` referenced by `Receiver`, discarding the result. `Message` is an atom (a no-argument method, or a property to read) or a compound `name(Arg1, ..., ArgN)`; arguments are converted to objects, with `as` casts to steer overload selection. Since `.` is right-associative, accesses can be chained: `Obj.foo(1).bar` calls `foo(1)` on `Obj`, then `bar` on its result, each step via `invoke_method/3`. Used as a goal, it runs the chain for its side effects; to capture the final result write `Result := Obj.foo(1).bar` (see `:=/2`). Errors are those of `invoke_method/3`. Example: `${'$'}stdout.println(hello)`.
+        """.trimIndent()
+
     private val Method by variables
     private val Ref by variables
 

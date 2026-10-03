@@ -27,6 +27,13 @@ class Alias private constructor(
     val alias: Struct,
     val ref: Ref,
 ) : RuleWrapper<ExecutionContext>(FUNCTOR, 2) {
+    override val help: String =
+        """
+        `alias(?Alias, ?Ref)`
+        
+        Associates a ground term `Alias` with an object or type reference `Ref`, so that `${'$'}Alias` can stand for `Ref` wherever a reference is expected (as a method receiver, as a constructor or method argument, or as the type in `as` casts and `cast/3`). The library ships facts for common types (`string`, `array`, `list`, `arraylist`, `map`, `hashmap`, `int`, `integer`, `double`, `float`, `long`, `short`, `byte`, `char`, `bool`, `boolean`, `any`, `nothing`, `big_integer`, `big_decimal`) and, on the JVM, `system` and `math` (types) plus `stdout`, `stderr` and `stdin` (objects). Querying it enumerates the registered aliases on backtracking; add or remove aliases with `register/2` and `unregister/1`. Example: `alias(string, T)` binds `T` to the type reference for `String`.
+        """.trimIndent()
+
     companion object {
         /** Builds an [Alias] fact naming [object] (wrapped into an [ObjectRef]) as [alias]. */
         fun forObject(

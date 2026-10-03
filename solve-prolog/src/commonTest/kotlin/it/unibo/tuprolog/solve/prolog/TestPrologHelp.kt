@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.assertFullyDocumented
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.Library
@@ -15,10 +16,8 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libraryOf
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.rule.RuleWrapper
-import it.unibo.tuprolog.solve.stdlib.CommonFunctions
-import it.unibo.tuprolog.solve.stdlib.CommonPrimitives
-import it.unibo.tuprolog.solve.stdlib.CommonRules
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -51,19 +50,7 @@ class TestPrologHelp {
 
     @Test
     fun everyRegisteredStdlibComponentHasSemanticHelp() {
-        val wrappers =
-            CommonPrimitives.wrappers.filter { it.functor != "__help__" } +
-                CommonFunctions.wrappers +
-                CommonRules.wrappers
-        val undocumented =
-            wrappers
-                .filter { wrapper ->
-                    val fallback =
-                        "`${wrapper.signature.name}/${wrapper.signature.arity}${if (wrapper.signature.vararg) "+" else ""}`"
-                    wrapper.help.isBlank() || wrapper.help.trim() == fallback
-                }.map { it.signature.toString() }
-                .toList()
-        assertTrue(undocumented.isEmpty(), "Missing semantic help for: ${undocumented.joinToString()}")
+        assertFullyDocumented(DefaultBuiltins)
 
         val undocumentedFlags =
             FlagStore.DEFAULT.keys

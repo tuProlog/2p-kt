@@ -27,6 +27,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * @throws it.unibo.tuprolog.solve.exception.error.SyntaxError if the fetched text is not a well-formed theory.
  */
 object Consult : UnaryPredicate.NonBacktrackable<ExecutionContext>("consult") {
+    override val help: String =
+        """
+        `consult(+Source)`
+        
+        Loads the Prolog theory found at `Source`, an atom holding either a URL (e.g. `'https://example.com/theory.pl'`) or a plain absolute or relative file path, parsing it with the current operators. This tuProlog-specific predicate adds the loaded clauses to the knowledge base without removing any existing clause (so consulting the same source twice duplicates its clauses), with clauses of predicates declared dynamic going to the dynamic knowledge base and all others to the static one; operators and flags set by the theory's directives take effect as well. It raises an instantiation error if `Source` is unbound, a type error (`atom`) if it is not an atom, a type error (`url`) if it is not a valid URL or path, a system error if the resource cannot be read, and a syntax error if its content is not a well-formed theory.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsInstantiated(0)
         ensuringArgumentIsAtom(0)

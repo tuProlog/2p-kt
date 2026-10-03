@@ -21,6 +21,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * Fails, rather than erroring, if the channel is closed.
  */
 object GetChar2 : BinaryRelation.NonBacktrackable<ExecutionContext>("get_char") {
+    override val help: String =
+        """
+        `get_char(+Stream, ?Char)`
+        
+        Reads and consumes the next character from the input stream `Stream` and unifies it with `Char`, which becomes `end_of_file` at the end of the stream. `Stream` must be an alias (e.g. `user_input`) or a `${'$'}stream(in, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an output stream a domain error (`stream_type`), where ISO prescribes a permission error. `Char` must be unbound, `end_of_file`, or a one-character atom, otherwise a type error (`in_character`) is raised. It fails, instead of raising an error, if the underlying channel has been closed.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

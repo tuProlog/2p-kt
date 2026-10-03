@@ -23,6 +23,13 @@ import it.unibo.tuprolog.solve.primitive.TernaryRelation
  * mutable property named `PropertyName` accepting a value compatible with `Value`.
  */
 object Assign : TernaryRelation.Predicative<ExecutionContext>("assign") {
+    override val help: String =
+        """
+        `assign(+Ref, +Property, +Value)`
+        
+        Writes `Value` into the public mutable property named `Property` of the object (or, for a type reference, the static/companion member) referenced by `Ref`. `Ref` must be an object or type reference (not a `${'$'}Alias` term); `Value` is converted to the property's type (it may use `as` casts or be a `${'$'}Alias` reference). If several properties share the name, the one whose type best fits `Value` is chosen. Succeeds once. Raises a type error if `Ref` is not a reference or `Property` is not an atom, an existence error if no suitable mutable property exists, and a representation error if `Value` cannot be converted. This is what `Obj.prop := Value` (see `:=/2`) lowers to.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.compute(
         first: Term,
         second: Term,

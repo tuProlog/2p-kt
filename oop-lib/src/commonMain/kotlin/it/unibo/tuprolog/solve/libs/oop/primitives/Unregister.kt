@@ -19,6 +19,13 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if `Alias` is unbound or not ground.
  */
 object Unregister : UnaryPredicate.NonBacktrackable<ExecutionContext>("unregister") {
+    override val help: String =
+        """
+        `unregister(+Alias)`
+        
+        Removes every `alias(Alias, _)` fact for the ground term `Alias` from the static knowledge base, undoing `register/2` (it can also remove the library's default aliases, such as `string` or `stdout`). Fails if no such alias is registered. Raises a type error if `Alias` is unbound or not callable, and an instantiation error if it is not ground.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsStruct(0)
         if (!first.isGround) {

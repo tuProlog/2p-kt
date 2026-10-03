@@ -19,5 +19,12 @@ import it.unibo.tuprolog.solve.libs.oop.Result
  * wrapping the boxed `Integer` value `5`.
  */
 object InvokeMethod : AbstractInvoke("method") {
+    override val help: String =
+        """
+        `invoke_method(+Ref, +Method, ?Result)`
+        
+        Invokes a public member of the object referenced by `Ref` and unifies `Result` with the returned value, converted to a plain term when possible: strings and characters become atoms, numbers become numbers, booleans become `true`/`false`, `null` becomes the null reference, and any other object stays an object reference. `Ref` may be an object reference, a type reference (to call static or companion-object members) or a `${'$'}Alias` reference; `Method` is an atom (no arguments; also reads a property) or a compound `name(Arg1, ..., ArgN)`. Arguments are converted to objects and the best-matching overload is selected; use `as` casts to steer the choice. Succeeds once. Raises a type error if `Ref` is neither a reference nor a `${'$'}Alias` term, an existence error if the alias is not registered or no suitable method exists, a representation error if an argument cannot be converted, and a system error if the method itself throws. This is what `Obj.method(...)` (see `./2`) lowers to. Example: `invoke_method(${'$'}math, max(1, 2), M)`.
+        """.trimIndent()
+
     override fun Result.Value.getInvocationResult(): Term = toTerm()
 }

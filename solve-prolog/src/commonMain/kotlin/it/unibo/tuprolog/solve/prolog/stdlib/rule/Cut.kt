@@ -8,4 +8,11 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  * unused, body is just `true`): `StateRuleSelection` recognises `!` via its own `isCut()` check before it ever
  * reaches ordinary rule resolution, and performs the actual pruning of the choice-point queue directly.
  */
-object Cut : RuleWrapper<ExecutionContext>("!", 0)
+object Cut : RuleWrapper<ExecutionContext>("!", 0) {
+    override val help: String =
+        """
+        `!`
+
+        Cut: always succeeds, committing to the choices made since the current clause was selected. The remaining alternative clauses of the predicate being proved, and the remaining alternatives of the goals at the left of `!` in the clause body, are discarded. Within `call/1`, `\+/1`, `findall/3` and similar meta-calls, cut is local to the called goal.
+        """.trimIndent()
+}

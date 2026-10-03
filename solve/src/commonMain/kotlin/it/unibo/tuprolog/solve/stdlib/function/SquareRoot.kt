@@ -17,7 +17,7 @@ object SquareRoot : UnaryMathFunction("sqrt") {
         """
         `sqrt(+Number)`
         
-        Evaluates to the square root of `Number`.
+        Evaluates to the non-negative square root of `Number`, always as a real value. `Number` must be non-negative: the current implementation does not raise the standard `undefined` evaluation error for negative inputs, which are not handled.
         """.trimIndent()
 
     override fun mathFunction(

@@ -27,6 +27,13 @@ import it.unibo.tuprolog.theory.parsing.ClausesParser
  * @throws it.unibo.tuprolog.solve.exception.error.SyntaxError if it is not well-formed Prolog source text.
  */
 object SetTheory : UnaryPredicate.NonBacktrackable<ExecutionContext>("set_theory") {
+    override val help: String =
+        """
+        `set_theory(+Text)`
+        
+        Parses the atom `Text` as Prolog source code, using the current operators, and makes the resulting theory the new knowledge base: both the static and the dynamic knowledge bases are replaced (clauses of predicates declared dynamic go to the dynamic one), and operators and flags set by its directives take effect. This predicate is tuProlog-specific; see `consult/1` to add clauses loaded from a file or URL instead. It raises a type error (`atom`) if `Text` is not an atom (including when it is unbound, where an instantiation error would be customary) and a syntax error if `Text` is not a well-formed theory.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsAtom(0)
         return setTheory(first.castTo<Atom>().value, append = false)

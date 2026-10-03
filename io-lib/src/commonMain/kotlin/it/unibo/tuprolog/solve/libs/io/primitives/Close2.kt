@@ -11,6 +11,13 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * @throws it.unibo.tuprolog.solve.exception.error.SystemError unconditionally.
  */
 object Close2 : BinaryRelation.NonBacktrackable<ExecutionContext>("close") {
+    override val help: String =
+        """
+        `close(+Stream, +Options)`
+        
+        Registered for ISO conformance only: the current implementation does not support close options such as `force(true)`, so every call raises a system error regardless of its arguments; use `close/1` instead.
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

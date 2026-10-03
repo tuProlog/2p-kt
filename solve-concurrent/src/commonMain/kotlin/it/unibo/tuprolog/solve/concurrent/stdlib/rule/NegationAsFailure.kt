@@ -17,6 +17,13 @@ import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
  * long as that primitive stays registered.
  */
 sealed class NegationAsFailure : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
+    override val help: String =
+        """
+        `\+ +Goal`
+
+        Negation as failure: succeeds if `Goal` has no solution, and fails as soon as `Goal` has one. It never binds the variables of `Goal`, and is equivalent to `not/1`. `Goal` is proved by an independent sub-solver; errors it raises are propagated. `Goal` must be callable, otherwise an instantiation or type error is raised.
+        """.trimIndent()
+
     override val Scope.head: List<Term>
         get() = listOf(varOf("X"))
 

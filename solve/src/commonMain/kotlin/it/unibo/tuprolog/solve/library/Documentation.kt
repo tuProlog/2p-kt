@@ -2,8 +2,11 @@ package it.unibo.tuprolog.solve.library
 
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.Signature
+import kotlin.js.JsName
 
 private const val INTERNAL_HELP_FUNCTOR = "__help__"
+
+private const val FRAGMENT_SEPARATOR = "\n\n---\n\n"
 
 internal fun defaultDocumentation(pluggable: Pluggable): Map<Signature, String> {
     val fragments = linkedMapOf<Signature, MutableList<String>>()
@@ -39,10 +42,12 @@ internal fun defaultDocumentation(pluggable: Pluggable): Map<Signature, String> 
         )
     }
 
-    return fragments.mapValues { (_, values) -> values.distinct().joinToString("\n\n---\n\n") }
+    return fragments.mapValues { (_, values) -> values.distinct().joinToString(FRAGMENT_SEPARATOR) }
 }
 
-internal fun documentationOf(wrappers: Sequence<AbstractWrapper<*>>): Map<Signature, String> {
+/** Markdown documentation of [wrappers], indexed by signature; wrappers with blank help contribute nothing. */
+@JsName("documentationOf")
+fun documentationOf(wrappers: Sequence<AbstractWrapper<*>>): Map<Signature, String> {
     val fragments = linkedMapOf<Signature, MutableList<String>>()
     for (wrapper in wrappers) {
         val help = wrapper.help.trim()
@@ -50,16 +55,24 @@ internal fun documentationOf(wrappers: Sequence<AbstractWrapper<*>>): Map<Signat
             fragments.getOrPut(wrapper.signature) { mutableListOf() }.add(help)
         }
     }
-    return fragments.mapValues { (_, values) -> values.distinct().joinToString("\n\n---\n\n") }
+    return fragments.mapValues { (_, values) -> values.distinct().joinToString(FRAGMENT_SEPARATOR) }
 }
 
-internal fun mergeDocumentation(vararg documentation: Map<Signature, String>): Map<Signature, String> {
+/**
+ * Merges signature-indexed [documentation] maps, dropping duplicate fragments, as well as generated placeholders
+ * of signatures which also have semantic documentation.
+ */
+@JsName("mergeDocumentation")
+fun mergeDocumentation(vararg documentation: Map<Signature, String>): Map<Signature, String> {
     val fragments = linkedMapOf<Signature, MutableList<String>>()
     for (map in documentation) {
         for ((signature, help) in map) {
-            val trimmed = help.trim()
-            if (trimmed.isNotEmpty()) {
-                fragments.getOrPut(signature) { mutableListOf() }.add(trimmed)
+            // already-merged entries are split back, so that their fragments are de-duplicated too
+            for (fragment in help.split(FRAGMENT_SEPARATOR)) {
+                val trimmed = fragment.trim()
+                if (trimmed.isNotEmpty()) {
+                    fragments.getOrPut(signature) { mutableListOf() }.add(trimmed)
+                }
             }
         }
     }
@@ -75,7 +88,8 @@ internal fun mergeDocumentation(vararg documentation: Map<Signature, String>): M
             } else {
                 unique
             }
-        normalized.joinToString("\n\n---\n\n")
+        // semantic documentation first, generated operator syntax last
+        normalized.sortedBy(signature::isGeneratedOperatorDocumentation).joinToString(FRAGMENT_SEPARATOR)
     }
 }
 
