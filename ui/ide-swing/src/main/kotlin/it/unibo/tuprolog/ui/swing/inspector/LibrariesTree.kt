@@ -2,16 +2,9 @@ package it.unibo.tuprolog.ui.swing.inspector
 
 import it.unibo.tuprolog.ui.gui.presentation.LibraryPresentation
 import it.unibo.tuprolog.ui.gui.presentation.documentationPreview
-import it.unibo.tuprolog.ui.gui.presentation.markdownToHtml
-import java.awt.Dimension
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import javax.swing.JDialog
-import javax.swing.JEditorPane
-import javax.swing.JScrollPane
 import javax.swing.JTree
-import javax.swing.SwingUtilities
-import javax.swing.WindowConstants
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
@@ -37,7 +30,13 @@ internal class LibrariesTree : JTree(DefaultMutableTreeNode("Libraries")) {
                 override fun mouseClicked(e: MouseEvent) {
                     if (e.clickCount != 2) return
                     val node = getPathForLocation(e.x, e.y)?.lastPathComponent as? DefaultMutableTreeNode
-                    (node?.userObject as? Entry)?.let(::showDocumentation)
+                    (node?.userObject as? Entry)?.let {
+                        showDocumentationWindow(
+                            this@LibrariesTree,
+                            it.label,
+                            it.markdown,
+                        )
+                    }
                 }
             },
         )
@@ -49,27 +48,6 @@ internal class LibrariesTree : JTree(DefaultMutableTreeNode("Libraries")) {
         libraries.forEach { root.add(libraryNode(it)) }
         model = DefaultTreeModel(root)
         for (row in 0 until rowCount) expandRow(row)
-    }
-
-    /** Opens a window showing [entry]'s rendered documentation, if it has any. */
-    fun showDocumentation(entry: Entry) {
-        val markdown = entry.markdown?.takeIf { it.isNotBlank() } ?: return
-        val pane =
-            JEditorPane("text/html", markdownToHtml(markdown)).apply {
-                name = "documentationPane"
-                isEditable = false
-                putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true)
-                font = this@LibrariesTree.font
-                caretPosition = 0
-            }
-        JDialog(SwingUtilities.getWindowAncestor(this), entry.label).apply {
-            name = "documentationWindow"
-            defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
-            contentPane.add(JScrollPane(pane))
-            size = Dimension(DOCUMENTATION_WIDTH, DOCUMENTATION_HEIGHT)
-            setLocationRelativeTo(this@LibrariesTree)
-            isVisible = true
-        }
     }
 
     private fun libraryNode(library: LibraryPresentation): DefaultMutableTreeNode =
@@ -96,9 +74,4 @@ internal class LibrariesTree : JTree(DefaultMutableTreeNode("Libraries")) {
         DefaultMutableTreeNode(title).apply {
             items.forEach { add(DefaultMutableTreeNode(Entry(it, library.documentation[it]))) }
         }
-
-    private companion object {
-        const val DOCUMENTATION_WIDTH = 640
-        const val DOCUMENTATION_HEIGHT = 480
-    }
 }

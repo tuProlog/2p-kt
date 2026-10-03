@@ -343,8 +343,21 @@ class SwingIdeComponentsTest {
             assertEquals(OperatorPresentation("joins", 500, "yfx"), added)
 
             val flags = FlagsTable()
-            flags.render(listOf(FlagPresentation("unknown", "warning")))
+            flags.render(listOf(FlagPresentation("unknown", "warning", "`flag(unknown)`\n\nWhat to do.")))
             assertIs<javax.swing.DefaultCellEditor>(flags.getCellEditor(0, 1))
+            flags.setSize(200, 100)
+            val hover =
+                java.awt.event.MouseEvent(
+                    flags,
+                    0,
+                    0,
+                    0,
+                    5,
+                    flags.getCellRect(0, 0, true).centerY.toInt(),
+                    0,
+                    false,
+                )
+            assertEquals("What to do.", flags.getToolTipText(hover))
         }
     }
 

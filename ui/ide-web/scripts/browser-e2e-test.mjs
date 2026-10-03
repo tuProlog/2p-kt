@@ -426,7 +426,7 @@ const SCENARIOS = [
       const preview = await evalJs(`
         (function() {
           Array.from(document.querySelectorAll('.side-tab')).find(t => t.textContent === 'Libraries').click();
-          const entry = Array.from(document.querySelectorAll('.side-content li.library-entry'))
+          const entry = Array.from(document.querySelectorAll('.side-content li.documented'))
             .find(li => li.textContent.startsWith('functor/3 — '));
           if (!entry) return null;
           entry.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
@@ -447,6 +447,29 @@ const SCENARIOS = [
       const failures = [];
       if (!rendered.hasCode) failures.push("the documentation dialog shows no rendered <code> element");
       if (!rendered.closed) failures.push("the documentation dialog's Close button did not dismiss it");
+      return failures;
+    },
+  },
+  {
+    name: "flag names preview their documentation and open it rendered on double-click",
+    async run({ evalJs }) {
+      const result = await evalJs(`
+        (function() {
+          Array.from(document.querySelectorAll('.side-tab')).find(t => t.textContent === 'Flags').click();
+          const cell = Array.from(document.querySelectorAll('.side-content td.documented'))
+            .find(td => td.textContent === 'unknown');
+          if (!cell) return null;
+          cell.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+          const dialog = document.querySelector('.dialog.documentation');
+          const opened = dialog !== null && dialog.textContent.includes('flag(unknown)');
+          dialog?.querySelector('button')?.click();
+          return { tooltip: cell.title, opened };
+        })()
+      `);
+      if (!result) return ["no documented 'unknown' cell found in the Flags table"];
+      const failures = [];
+      if (!result.tooltip.includes("double-click")) failures.push(`unexpected tooltip: "${result.tooltip}"`);
+      if (!result.opened) failures.push("double-clicking the 'unknown' flag did not open its documentation");
       return failures;
     },
   },

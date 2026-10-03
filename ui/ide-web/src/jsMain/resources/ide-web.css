@@ -294,7 +294,7 @@ ul.solutions .query {
 .libraries .doc-preview {
     color: var(--muted);
 }
-.library-entry[title] {
+.documented[title] {
     cursor: pointer;
 }
 .dialog.documentation {

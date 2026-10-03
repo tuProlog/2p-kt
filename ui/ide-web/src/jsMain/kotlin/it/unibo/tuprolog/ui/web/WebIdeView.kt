@@ -639,7 +639,7 @@ internal class WebIdeView(
         )
         sortedBy(flags, comparators, flagsSort).forEach { flag ->
             val row = element("tr", null)
-            row.appendChild((document.createElement("td") as HTMLElement).apply { textContent = flag.name })
+            row.appendChild(documentedEntry("td", flag.name, flag.help, "flag(${flag.name})", inlinePreview = false))
             row.appendChild(flagValueCell(page, flag))
             table.appendChild(row)
         }
@@ -793,19 +793,28 @@ internal class WebIdeView(
         return list
     }
 
-    /** A [tag] element labelled [label], previewing [markdown] and showing it rendered on double-click. */
+    /**
+     * A [tag] element labelled [label], previewing [markdown] inline (or, if not [inlinePreview], as its hover
+     * tooltip) and showing it rendered, in a dialog titled [title], on double-click.
+     */
     private fun documentedEntry(
         tag: String,
         label: String,
         markdown: String?,
+        title: String = label,
+        inlinePreview: Boolean = true,
     ): HTMLElement =
-        element(tag, "library-entry").apply {
+        element(tag, "documented").apply {
             textContent = label
             val preview = markdown?.let(::documentationPreview).orEmpty()
             if (markdown != null && preview.isNotEmpty()) {
-                appendChild(element("span", "doc-preview").apply { textContent = " — $preview" })
-                title = "Double-click for documentation"
-                addEventListener("dblclick", { _: Event -> showDocumentation(label, markdown) })
+                if (!inlinePreview) {
+                    this.title = "$preview (double-click for documentation)"
+                } else {
+                    appendChild(element("span", "doc-preview").apply { textContent = " — $preview" })
+                    this.title = "Double-click for documentation"
+                }
+                addEventListener("dblclick", { _: Event -> showDocumentation(title, markdown) })
             }
         }
 

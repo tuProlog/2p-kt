@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.model.FeatureValue
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
@@ -109,7 +110,11 @@ private fun Map<FeatureId, Map<String, FeatureValue>>.toSolutionMetadata(): Map<
 internal fun Solver.inspectionSnapshot(): SolverInspectionSnapshot =
     SolverInspectionSnapshot(
         operators = operators.map { OperatorPresentation(it.functor, it.priority, it.specifier.name) },
-        flags = flags.entries.map { FlagPresentation(it.key, it.value.toString()) }.sortedBy { it.name },
+        flags =
+            flags.entries
+                .map {
+                    FlagPresentation(it.key, it.value.toString(), NotableFlag.fromName(it.key)?.help.orEmpty())
+                }.sortedBy { it.name },
         libraries =
             libraries.libraries
                 .map { library ->
