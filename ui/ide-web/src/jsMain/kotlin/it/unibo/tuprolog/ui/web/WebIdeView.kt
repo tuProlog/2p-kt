@@ -806,7 +806,19 @@ internal class WebIdeView(
     ): HTMLElement =
         element(tag, "documented").apply {
             textContent = label
-            val preview = markdown?.let(::documentationPreview).orEmpty()
+            // inline previews are truncated by CSS to the available width, tooltips by length
+            val preview =
+                markdown
+                    ?.let {
+                        if (inlinePreview) {
+                            documentationPreview(
+                                it,
+                                maxLength = Int.MAX_VALUE,
+                            )
+                        } else {
+                            documentationPreview(it)
+                        }
+                    }.orEmpty()
             if (markdown != null && preview.isNotEmpty()) {
                 if (!inlinePreview) {
                     this.title = "$preview (double-click for documentation)"

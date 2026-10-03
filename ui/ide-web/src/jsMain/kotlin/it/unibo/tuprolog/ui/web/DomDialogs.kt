@@ -5,25 +5,38 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.KeyboardEvent
 
-/** Shows a small modal overlay built by [build], which receives a callback to dismiss it. */
-internal fun showOverlay(build: (close: () -> Unit) -> HTMLElement) {
+/**
+ * Shows a small modal overlay built by [build], which receives a callback to dismiss it; if [dismissOnEscape], the
+ * Escape key dismisses it too.
+ */
+internal fun showOverlay(
+    dismissOnEscape: Boolean = false,
+    build: (close: () -> Unit) -> HTMLElement,
+) {
     val backdrop = document.createElement("div") as HTMLElement
     backdrop.className = "overlay-backdrop"
+    var onKeydown: ((Event) -> Unit)? = null
 
     fun close() {
         backdrop.parentNode?.removeChild(backdrop)
+        onKeydown?.let { document.removeEventListener("keydown", it) }
+    }
+    if (dismissOnEscape) {
+        onKeydown = { event: Event -> if ((event as KeyboardEvent).key == "Escape") close() }
+        document.addEventListener("keydown", onKeydown)
     }
     backdrop.appendChild(build(::close))
     document.body?.appendChild(backdrop)
 }
 
-/** Shows [markdown], rendered, in a modal titled [title]. */
+/** Shows [markdown], rendered, in a modal titled [title], dismissed by its Close button or by Escape. */
 internal fun showDocumentation(
     title: String,
     markdown: String,
 ) {
-    showOverlay { close ->
+    showOverlay(dismissOnEscape = true) { close ->
         val box = document.createElement("div") as HTMLElement
         box.className = "dialog documentation"
         val heading = document.createElement("div") as HTMLElement
