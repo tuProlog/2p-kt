@@ -13,6 +13,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /** Covers the query-page-scoped inspector tabs below the query row: every one of them should be reachable. */
+@Suppress("TooManyFunctions")
 class LowerTabsE2eTest {
     private lateinit var window: FrameFixture
 
