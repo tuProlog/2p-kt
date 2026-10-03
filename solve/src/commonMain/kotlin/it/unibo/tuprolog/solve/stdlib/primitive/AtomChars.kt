@@ -11,6 +11,26 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.core.List as LogicList
 
 object AtomChars : BinaryRelation.Functional<ExecutionContext>("atom_chars") {
+    override val help: String =
+        """
+        `atom_chars(?Atom, ?Chars)`
+        
+        Relates an atom to the list of one-character atoms representing its characters. At least one side must provide enough information to perform the conversion.
+
+        **Examples**
+
+        ```prolog
+        ?- atom_chars(abc, L).
+        L = [a, b, c].
+
+        ?- atom_chars(X, [h, i]).
+        X = hi.
+
+        ?- atom_chars(X, Y).
+        throws error(instantiation_error, _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

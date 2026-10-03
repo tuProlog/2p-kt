@@ -9,6 +9,26 @@ import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
 object Once : RuleWrapper<ExecutionContext>("once", 1) {
+    override val help: String =
+        """
+        `once(+Goal)`
+        
+        Calls `Goal` and commits to its first solution, discarding any further alternatives. `Goal` must be executable.
+
+        **Examples**
+
+        ```prolog
+        ?- once(member(X, [a, b, c])).
+        X = a.
+
+        ?- findall(X, once(member(X, [a, b, c])), L).
+        L = [a].
+
+        ?- once(3).
+        throws error(type_error(callable, 3), _).
+        ```
+        """.trimIndent()
+
     override val Scope.head: KtList<Term>
         get() = ktListOf(varOf("G"))
 

@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.ui.gui.identity.DocumentId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
+import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 import it.unibo.tuprolog.ui.gui.solver.ResolutionRequest
 import it.unibo.tuprolog.ui.gui.solver.ResolutionStep
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
@@ -62,6 +63,10 @@ class SolverFactoryProfileTest {
             assertTrue(session.snapshot.operators.isNotEmpty())
             assertTrue(session.snapshot.flags.isNotEmpty())
             assertTrue(session.snapshot.libraries.isNotEmpty())
+            val prologLang = session.snapshot.libraries.first { it.alias == "prolog.lang" }
+            assertTrue(prologLang.help.isNotBlank())
+            assertTrue("arity" in prologLang.documentation.getValue("functor/3"))
+            assertTrue("priority `500`" in prologLang.documentationOf(OperatorPresentation("+", 500, "YFX"))!!)
             assertTrue(session.snapshot.staticKnowledgeBase.contains("p(a)"))
 
             val step =

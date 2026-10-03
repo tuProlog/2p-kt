@@ -9,6 +9,26 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object Reverse : BinaryRelation.Functional<ExecutionContext>("reverse") {
+    override val help: String =
+        """
+        `reverse(?List, ?Reversed)`
+        
+        Relates a proper list with the list containing the same elements in reverse order. Either argument may be used to determine the other when sufficiently instantiated.
+
+        **Examples**
+
+        ```prolog
+        ?- reverse([1, 2, 3], R).
+        R = [3, 2, 1].
+
+        ?- reverse(L, [a, b]).
+        L = [b, a].
+
+        ?- reverse([1|T], R).
+        throws error(domain_error(well_formed_list, _), _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

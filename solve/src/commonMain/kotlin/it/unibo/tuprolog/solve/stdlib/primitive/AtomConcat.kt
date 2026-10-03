@@ -13,6 +13,26 @@ import it.unibo.tuprolog.solve.primitive.TernaryRelation
  */
 
 object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") {
+    override val help: String =
+        """
+        `atom_concat(?Left, ?Right, ?Whole)`
+        
+        Relates two atoms with their concatenation. The predicate is deterministic and requires at least two of the three arguments to be instantiated; the possible splits of `Whole` are not enumerated.
+
+        **Examples**
+
+        ```prolog
+        ?- atom_concat(hello, ' world', X).
+        X = 'hello world'.
+
+        ?- atom_concat(X, def, abcdef).
+        X = abc.
+
+        ?- atom_concat(X, Y, abc).
+        throws error(instantiation_error, _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

@@ -11,6 +11,23 @@ import it.unibo.tuprolog.solve.function.IntegersBinaryMathFunction
  * @author Enrico
  */
 object BitwiseOr : IntegersBinaryMathFunction("\\/") {
+    override val help: String =
+        """
+        `\/(+Left, +Right)`
+        
+        Evaluates to the bitwise OR of the two integer operands. Both operands must evaluate to integers.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 12 \/ 10.
+        X = 14.
+
+        ?- X is 12 \/ 1.5.
+        throws error(type_error(integer, 1.5), _).
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer1: Integer,
         integer2: Integer,

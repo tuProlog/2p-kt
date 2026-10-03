@@ -420,6 +420,64 @@ const SCENARIOS = [
     },
   },
   {
+    name: "library entries preview their documentation and open it rendered on double-click",
+    async run({ evalJs }) {
+      // Libraries, like flags, only exist once a solver session does; earlier scenarios already solved.
+      const preview = await evalJs(`
+        (function() {
+          Array.from(document.querySelectorAll('.side-tab')).find(t => t.textContent === 'Libraries').click();
+          const entry = Array.from(document.querySelectorAll('.side-content li.documented'))
+            .find(li => li.textContent.startsWith('functor/3 — '));
+          if (!entry) return null;
+          entry.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+          return { text: entry.textContent, whiteSpace: getComputedStyle(entry).whiteSpace };
+        })()
+      `);
+      if (!preview) return ["no 'functor/3 — …' documentation preview found in the Libraries panel"];
+      const rendered = await evalJs(`
+        (function() {
+          const dialog = document.querySelector('.dialog.documentation');
+          if (!dialog) return null;
+          const hasCode = dialog.querySelector('code') !== null;
+          Array.from(dialog.querySelectorAll('button')).find(b => b.textContent === 'Close').click();
+          return { hasCode, closed: document.querySelector('.dialog.documentation') === null };
+        })()
+      `);
+      if (!rendered) return ["double-clicking a library entry did not open a documentation dialog"];
+      const failures = [];
+      if (!rendered.hasCode) failures.push("the documentation dialog shows no rendered <code> element");
+      if (!rendered.closed) failures.push("the documentation dialog's Close button did not dismiss it");
+      // the preview is the whole first paragraph, left to CSS to truncate to the available width on one line
+      if (preview.text.endsWith("…")) failures.push(`the documentation preview is truncated by length: "${preview.text}"`);
+      if (preview.whiteSpace !== "nowrap") failures.push(`the documentation preview may wrap (white-space: ${preview.whiteSpace})`);
+      return failures;
+    },
+  },
+  {
+    name: "flag names preview their documentation, open it rendered on double-click, and Escape closes it",
+    async run({ evalJs }) {
+      const result = await evalJs(`
+        (function() {
+          Array.from(document.querySelectorAll('.side-tab')).find(t => t.textContent === 'Flags').click();
+          const cell = Array.from(document.querySelectorAll('.side-content td.documented'))
+            .find(td => td.textContent === 'unknown');
+          if (!cell) return null;
+          cell.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+          const dialog = document.querySelector('.dialog.documentation');
+          const opened = dialog !== null && dialog.textContent.includes('flag(unknown)');
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+          return { tooltip: cell.title, opened, dismissed: document.querySelector('.dialog.documentation') === null };
+        })()
+      `);
+      if (!result) return ["no documented 'unknown' cell found in the Flags table"];
+      const failures = [];
+      if (!result.tooltip.includes("double-click")) failures.push(`unexpected tooltip: "${result.tooltip}"`);
+      if (!result.opened) failures.push("double-clicking the 'unknown' flag did not open its documentation");
+      if (!result.dismissed) failures.push("pressing Escape did not dismiss the documentation dialog");
+      return failures;
+    },
+  },
+  {
     name: "loading a template applies syntax coloring without requiring an edit",
     async run({ evalJs }) {
       const hasTemplates = await evalJs(`!document.getElementById('templates-select').hidden`);

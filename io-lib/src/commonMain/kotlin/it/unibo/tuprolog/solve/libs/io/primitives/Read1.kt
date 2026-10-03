@@ -20,6 +20,25 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * ```
  */
 object Read1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("read") {
+    override val help: String =
+        """
+        `read(?Term)`
+        
+        Reads the next term, terminated by a full stop, from the current input stream (standard input, unless changed via `set_input/1`) and unifies it with `Term`, using the current operators. It is deterministic. Deviating from ISO, the current implementation fails, instead of unifying `Term` with `end_of_file`, when no more terms are available; it raises a syntax error if the next term is malformed and a system error if the channel is closed or cannot be read term by term.
+
+        **Examples**
+
+        ```prolog
+        % with `foo(X, bar).` to be read from standard input
+        ?- read(T).
+        T = foo(_, bar).
+
+        % once standard input has been exhausted
+        ?- read(T).
+        no.
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response =
         readTermAndReply(currentInputChannel, first)
 }

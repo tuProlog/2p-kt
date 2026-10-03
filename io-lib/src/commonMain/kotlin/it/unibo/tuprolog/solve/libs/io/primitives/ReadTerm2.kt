@@ -23,6 +23,23 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * @throws it.unibo.tuprolog.solve.exception.error.SyntaxError if the stream's next term is malformed Prolog syntax.
  */
 object ReadTerm2 : BinaryRelation.NonBacktrackable<ExecutionContext>("read_term") {
+    override val help: String =
+        """
+        `read_term(?Term, ?Options)`
+        
+        Reads the next term from the current input stream (standard input, unless changed via `set_input/1`) like `read/1`, and unifies the elements of the `Options` list with information about the term's variables. Each element of `Options` may be `variables(Vars)` (the variables of the term, in order of appearance), `variable_names(Names)` (a list of `'Name' = Var` pairs) or `singletons(Names)` (the same, for variables occurring once); other elements raise a domain error (`read_option`). Deviating from ISO, an unbound `Options` is not an error: it is unified with `[variables(Vars), variable_names(Names), singletons(Singletons)]`. Deviating from ISO, the current implementation fails, instead of unifying `Term` with `end_of_file`, when no more terms are available; it raises a syntax error if the next term is malformed and a system error if the channel is closed or cannot be read term by term.
+
+        **Examples**
+
+        ```prolog
+        ?- read_term(T, [foo]).
+        throws error(domain_error(read_option, foo), _).
+
+        ?- read_term(T, foo).
+        throws error(type_error(list, foo), _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

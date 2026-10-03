@@ -5,5 +5,28 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.TypeTester
 
 object Atom : TypeTester<ExecutionContext>("atom") {
+    override val help: String =
+        """
+        `atom(@Term)`
+        
+        Succeeds if `Term` is an atom; fails otherwise. The predicate does not instantiate its argument.
+
+        **Examples**
+
+        ```prolog
+        ?- atom(foo).
+        yes.
+
+        ?- atom('hello world').
+        yes.
+
+        ?- atom(f(x)).
+        no.
+
+        ?- atom(X).
+        no.
+        ```
+        """.trimIndent()
+
     override fun testType(term: Term): Boolean = term is it.unibo.tuprolog.core.Atom
 }

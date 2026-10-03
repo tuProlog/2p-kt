@@ -2,8 +2,11 @@ package it.unibo.tuprolog.ui.swing.inspector
 
 import it.unibo.tuprolog.solve.flags.FlagDomain
 import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
+import it.unibo.tuprolog.ui.gui.presentation.documentationPreview
 import org.gciatto.kt.math.BigInteger
 import java.awt.Component
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import javax.swing.AbstractCellEditor
 import javax.swing.DefaultCellEditor
 import javax.swing.JComboBox
@@ -12,9 +15,32 @@ import javax.swing.JTable
 import javax.swing.SpinnerNumberModel
 import javax.swing.table.TableCellEditor
 
-/** Table of solver flags whose "Value" column is editable; edits are reported via [onFlagChanged]. */
+/**
+ * Table of solver flags whose "Value" column is editable; edits are reported via [onFlagChanged]. Hovering a
+ * documented flag previews its documentation; double-clicking its name opens the rendered documentation.
+ */
 internal class FlagsTable : JTable(FlagsTableModel()) {
     private val flagsModel = model as FlagsTableModel
+
+    init {
+        addMouseListener(
+            object : MouseAdapter() {
+                override fun mouseClicked(e: MouseEvent) {
+                    val row = rowAtPoint(e.point)
+                    if (e.clickCount != 2 || row < 0 || columnAtPoint(e.point) != 0) return
+                    val flag = flagsModel.data[convertRowIndexToModel(row)]
+                    showDocumentationWindow(this@FlagsTable, "flag(${flag.name})", flag.help)
+                }
+            },
+        )
+    }
+
+    /** A preview of the hovered flag's documentation, if any. */
+    override fun getToolTipText(event: MouseEvent): String? =
+        rowAtPoint(event.point)
+            .takeIf { it >= 0 }
+            ?.let { documentationPreview(flagsModel.data[convertRowIndexToModel(it)].help) }
+            ?.takeIf { it.isNotEmpty() }
 
     /** Invoked with a flag's name and new value once the user commits an edit to the "Value" column. */
     var onFlagChanged: ((name: String, value: String) -> Unit)?

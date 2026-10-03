@@ -10,6 +10,26 @@ import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
 sealed class Semicolon : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
+    override val help: String =
+        """
+        `(+Left ; +Right)`
+        
+        Implements disjunction: solutions come from `Left` and, on backtracking, from `Right`. When the left operand is an if-then term `Condition -> Then`, this predicate implements the usual `Condition -> Then ; Else` control behavior.
+
+        **Examples**
+
+        ```prolog
+        ?- (X = 1 ; X = 2).
+        X = 1 ; X = 2.
+
+        ?- (member(X, [1, 2, 3]), X > 1 -> Y = big ; Y = small).
+        X = 2, Y = big.
+
+        ?- (fail -> Y = big ; Y = small).
+        Y = small.
+        ```
+        """.trimIndent()
+
     abstract override val Scope.head: KtList<Term>
 
     abstract override val Scope.body: Term

@@ -13,6 +13,26 @@ import kotlin.collections.List as KtList
  * proving `G` itself, since `call/1` becomes its own frame on the execution-context stack).
  */
 object Call : RuleWrapper<PrologExecutionContext>("call", 1) {
+    override val help: String =
+        """
+        `call(+Goal)`
+
+        Calls `Goal`, which allows executing terms built or bound at runtime. `Goal` must be callable: a variable raises an instantiation error, a number or other non-callable term a type error (`callable`). `call/1` is opaque to cut: a `!` inside `Goal` only prunes the choice points created by `Goal` itself.
+
+        **Examples**
+
+        ```prolog
+        ?- G = member(X, [a, b]), call(G).
+        X = a ; X = b.
+
+        ?- findall(X, (member(X, [1, 2, 3]), call(!)), L).
+        L = [1, 2, 3].
+
+        ?- call(1).
+        throws error(type_error(callable, 1), _).
+        ```
+        """.trimIndent()
+
     override val Scope.head: KtList<Term>
         get() = listOf(varOf("G"))
 

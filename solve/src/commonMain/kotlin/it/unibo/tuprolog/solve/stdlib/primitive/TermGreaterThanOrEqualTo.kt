@@ -7,6 +7,26 @@ import it.unibo.tuprolog.solve.primitive.Solve
 
 /** Implementation of '@>='/2 predicate */
 object TermGreaterThanOrEqualTo : BinaryRelation.Predicative<ExecutionContext>("@>=") {
+    override val help: String =
+        """
+        `Left @>= Right`
+        
+        Succeeds when `Left` is equal to or follows `Right` in the standard term ordering used by the solver.
+
+        **Examples**
+
+        ```prolog
+        ?- f(a) @>= f(a).
+        yes.
+
+        ?- b @>= a.
+        yes.
+
+        ?- a @>= b.
+        no.
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.compute(
         first: Term,
         second: Term,

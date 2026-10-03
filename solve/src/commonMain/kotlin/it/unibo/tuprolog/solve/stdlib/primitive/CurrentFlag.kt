@@ -9,6 +9,26 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object CurrentFlag : BinaryRelation.WithoutSideEffects<ExecutionContext>("current_flag") {
+    override val help: String =
+        """
+        `current_flag(?Name, ?Value)`
+        
+        Enumerates the flags currently present in the solver's flag store, relating each atom `Name` with its current `Value`.
+
+        **Examples**
+
+        ```prolog
+        ?- current_flag(max_arity, X).
+        X = 2147483647.
+
+        ?- current_flag(unknown, X).
+        X = warning.
+
+        ?- current_flag(no_such_flag, X).
+        no.
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,

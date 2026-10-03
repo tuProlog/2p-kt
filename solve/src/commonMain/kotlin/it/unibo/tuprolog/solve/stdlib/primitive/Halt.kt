@@ -11,5 +11,20 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * @author Enrico
  */
 object Halt : PredicateWithoutArguments.NonBacktrackable<ExecutionContext>("halt") {
+    override val help: String =
+        """
+        `halt`
+        
+        Stops the current Prolog computation by raising a halt condition with the default exit status.
+
+        **Examples**
+
+        ```prolog
+        % stops the computation: nothing after halt is run
+        ?- halt.
+        yes.
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(): Solve.Response = throw HaltException(context = context)
 }

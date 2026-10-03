@@ -7,6 +7,27 @@ import it.unibo.tuprolog.solve.primitive.Solve
 
 /** Implementation of '\='/2 predicate */
 object NotUnifiableWith : BinaryRelation.Predicative<ExecutionContext>("\\=") {
+    override val help: String =
+        """
+        `Left \= Right`
+        
+        Succeeds when `Left` and `Right` do not unify; no bindings are made. Fails when a unifier exists.
+
+        **Examples**
+
+        ```prolog
+        ?- a \= b.
+        yes.
+
+        ?- f(X) \= f(a).
+        no.
+
+        % X cannot be both a and b
+        ?- f(X, b) \= f(a, X).
+        yes.
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.compute(
         first: Term,
         second: Term,

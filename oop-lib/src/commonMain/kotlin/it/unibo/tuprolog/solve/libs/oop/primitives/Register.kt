@@ -22,6 +22,26 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * [it.unibo.tuprolog.solve.libs.oop.Ref], or `Alias` is not a [it.unibo.tuprolog.core.Struct].
  */
 object Register : BinaryRelation.NonBacktrackable<ExecutionContext>("register") {
+    override val help: String =
+        """
+        `register(+Ref, +Alias)`
+        
+        Registers the object or type reference `Ref` under the ground term `Alias`, by adding an `alias(Alias, Ref)` fact to the static knowledge base. Afterwards `${'$'}Alias` can be used wherever a reference is expected, e.g. as the receiver of a method call. Registering an already-used alias adds another fact, so the earliest registration keeps taking precedence until removed with `unregister/1`. Raises an instantiation error if an argument is unbound or `Alias` is not ground, and a type error if `Ref` is not a reference or `Alias` is not callable.
+
+        **Examples**
+
+        ```prolog
+        ?- new_object('java.util.ArrayList', [], L), register(L, my_list).
+        yes.
+
+        ?- ${'$'}my_list.add(a), N := ${'$'}my_list.size.
+        N = 1.
+
+        ?- register(X, my_alias).
+        throws error(instantiation_error, _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

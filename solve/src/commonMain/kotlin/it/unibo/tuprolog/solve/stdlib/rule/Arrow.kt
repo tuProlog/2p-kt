@@ -9,6 +9,26 @@ import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
 object Arrow : RuleWrapper<ExecutionContext>("->", 2) {
+    override val help: String =
+        """
+        `(+Condition -> +Then)`
+        
+        Implements if-then control. `Condition` is called once; if it succeeds, alternatives of the condition are committed and `Then` is executed. If the condition fails, the whole construct fails unless embedded in `;/2` as if-then-else.
+
+        **Examples**
+
+        ```prolog
+        ?- (member(X, [1, 2, 3]), X > 1 -> Y = X).
+        X = 2, Y = 2.
+
+        ?- findall(X, (member(X, [1, 2, 3]) -> true), L).
+        L = [1].
+
+        ?- (fail -> true).
+        no.
+        ```
+        """.trimIndent()
+
     override val Scope.head: KtList<Term>
         get() = ktListOf(varOf("Cond"), varOf("Then"))
 

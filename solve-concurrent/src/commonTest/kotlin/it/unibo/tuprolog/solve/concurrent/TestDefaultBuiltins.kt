@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
+import it.unibo.tuprolog.solve.assertFullyDocumented
 import it.unibo.tuprolog.solve.concurrent.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.library.Runtime
 import kotlin.test.Test
@@ -14,5 +15,10 @@ class TestDefaultBuiltins {
     @Test
     fun testItemEquality() {
         assertEquals(Runtime.of(DefaultBuiltins), Runtime.of(DefaultBuiltins))
+    }
+
+    @Test
+    fun everyItemIsDocumented() {
+        assertFullyDocumented(DefaultBuiltins)
     }
 }

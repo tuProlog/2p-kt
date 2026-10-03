@@ -14,6 +14,26 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * @throws it.unibo.tuprolog.solve.exception.error.DomainError (`stream_type`) if it identifies an output channel instead.
  */
 object AtEndOfStream1 : UnaryPredicate.Predicative<ExecutionContext>("at_end_of_stream") {
+    override val help: String =
+        """
+        `at_end_of_stream(+Stream)`
+        
+        Succeeds iff the input stream `Stream` is closed or has no more characters to read, and fails otherwise. `Stream` must be an alias (e.g. `user_input`) or a `${'$'}stream(in, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an output stream a domain error (`stream_type`), where ISO prescribes a permission error.
+
+        **Examples**
+
+        ```prolog
+        ?- at_end_of_stream(user_output).
+        throws error(domain_error(stream_type, user_output), _).
+
+        ?- at_end_of_stream(S).
+        throws error(instantiation_error, _).
+
+        ?- at_end_of_stream(no_such_stream).
+        throws error(existence_error(source_sink, no_such_stream), _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.compute(first: Term): Boolean =
         ensuringArgumentIsInputChannel(0).let { it.isClosed || it.isOver }
 }

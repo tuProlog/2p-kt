@@ -14,6 +14,23 @@ import org.gciatto.kt.math.RoundingMode
  * @author Enrico
  */
 object Truncate : UnaryMathFunction("truncate") {
+    override val help: String =
+        """
+        `truncate(+Number)`
+        
+        Evaluates to the integer obtained by truncating `Number` toward zero.
+
+        **Examples**
+
+        ```prolog
+        ?- X is truncate(3.7).
+        X = 3.
+
+        ?- X is truncate(-3.7).
+        X = -3.
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

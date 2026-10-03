@@ -21,6 +21,26 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * Fails, rather than erroring, if the channel is closed.
  */
 object PeekChar2 : BinaryRelation.NonBacktrackable<ExecutionContext>("peek_char") {
+    override val help: String =
+        """
+        `peek_char(+Stream, ?Char)`
+        
+        Unifies `Char` with the next character of the input stream `Stream` without consuming it, or with `end_of_file` at the end of the stream. `Stream` must be an alias (e.g. `user_input`) or a `${'$'}stream(in, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an output stream a domain error (`stream_type`), where ISO prescribes a permission error. `Char` must be unbound, `end_of_file`, or a one-character atom, otherwise a type error (`in_character`) is raised. It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- peek_char(user_input, ab).
+        throws error(type_error(in_character, ab), _).
+
+        ?- peek_char(S, C).
+        throws error(instantiation_error, _).
+
+        ?- peek_char(user_output, C).
+        throws error(domain_error(stream_type, user_output), _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

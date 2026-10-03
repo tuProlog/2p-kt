@@ -13,6 +13,23 @@ import org.gciatto.kt.math.BigDecimal
  * @author Enrico
  */
 object SquareRoot : UnaryMathFunction("sqrt") {
+    override val help: String =
+        """
+        `sqrt(+Number)`
+        
+        Evaluates to the non-negative square root of `Number`, always as a real value. `Number` must be non-negative: the current implementation does not raise the standard `undefined` evaluation error for negative inputs, which are not handled.
+
+        **Examples**
+
+        ```prolog
+        ?- X is sqrt(4).
+        X = 2.0.
+
+        ?- X is sqrt(2.25).
+        X = 1.5.
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

@@ -15,6 +15,9 @@ import it.unibo.tuprolog.solve.primitive.Primitive
 abstract class AbstractLibrary :
     AbstractPluggable(),
     Library {
+    override val help: String
+        get() = "`library($alias)`"
+
     override val operators: OperatorSet
         get() = OperatorSet.EMPTY
 

@@ -16,6 +16,29 @@ import it.unibo.tuprolog.core.List as LogicList
  * Implementation of '=..'/2 predicate
  */
 object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
+    override val help: String =
+        """
+        `?Term =.. ?List`
+        
+        Relates a term to its univ representation. A compound term is represented by a list whose first element is the functor and remaining elements are the arguments; atoms are represented by a singleton list. Numbers are not supported on the left-hand side and raise a `callable` type error. The relation can also construct a term from a suitable list.
+
+        **Examples**
+
+        ```prolog
+        ?- foo(a, B) =.. L.
+        L = [foo, a, _].
+
+        ?- T =.. [point, 1, 2].
+        T = point(1, 2).
+
+        ?- hello =.. L.
+        L = [hello].
+
+        ?- 42 =.. L.
+        throws error(type_error(callable, _), _).
+        ```
+        """.trimIndent()
+
     private fun Solve.Request<ExecutionContext>.decompose(
         first: Struct,
         second: Term,

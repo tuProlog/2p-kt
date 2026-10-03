@@ -7,6 +7,27 @@ import it.unibo.tuprolog.solve.primitive.Solve
 
 /** Implementation of '@<'/2 predicate */
 object TermLowerThan : BinaryRelation.Predicative<ExecutionContext>("@<") {
+    override val help: String =
+        """
+        `Left @< Right`
+        
+        Succeeds when `Left` precedes `Right` in the standard term ordering used by the solver. No arithmetic evaluation or unification is performed.
+
+        **Examples**
+
+        ```prolog
+        ?- a @< b.
+        yes.
+
+        % numbers precede atoms
+        ?- 1 @< a.
+        yes.
+
+        ?- f(b) @< f(a).
+        no.
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.compute(
         first: Term,
         second: Term,

@@ -22,6 +22,26 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if both arguments are unbound.
  */
 object Type : BinaryRelation.Functional<ExecutionContext>("type") {
+    override val help: String =
+        """
+        `type(?TypeName, ?TypeRef)`
+        
+        Converts between an atom `TypeName` and a type reference `TypeRef` to the class it names. Given an atom holding a fully qualified type name (e.g. `'java.lang.String'`), unifies `TypeRef` with a reference to that class, failing if no such class exists; given a type reference, unifies `TypeName` with the name of its class. Deterministic. Raises an instantiation error if both arguments are unbound and a type error if the bound argument has the wrong shape.
+
+        **Examples**
+
+        ```prolog
+        ?- type('java.util.ArrayList', T), new_object(T, [], L), N := L.size.
+        N = 0.
+
+        ?- type('java.util.ArrayList', T), type(Name, T).
+        Name = 'ArrayList'.
+
+        ?- type('no.such.Type', T).
+        no.
+        ```
+        """.trimIndent()
+
     private val typeFactory = TypeFactory.default
 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(

@@ -12,6 +12,20 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * @throws it.unibo.tuprolog.solve.exception.error.SystemError unconditionally.
  */
 object PeekByte2 : BinaryRelation.NonBacktrackable<ExecutionContext>("peek_byte") {
+    override val help: String =
+        """
+        `peek_byte(+Stream, ?Byte)`
+        
+        Registered for ISO conformance only: the current implementation supports text streams exclusively, so every call raises a system error regardless of its arguments; use `peek_code/2` instead.
+
+        **Examples**
+
+        ```prolog
+        ?- peek_byte(user_input, B).
+        throws error(system_error, _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

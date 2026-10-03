@@ -19,6 +19,7 @@ import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
 import it.unibo.tuprolog.ui.gui.presentation.LibraryPresentation
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
+import it.unibo.tuprolog.ui.gui.presentation.documentationPreview
 import it.unibo.tuprolog.ui.gui.presentation.formatDurationInput
 import it.unibo.tuprolog.ui.gui.presentation.parseDurationInput
 import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
@@ -638,7 +639,7 @@ internal class WebIdeView(
         )
         sortedBy(flags, comparators, flagsSort).forEach { flag ->
             val row = element("tr", null)
-            row.appendChild((document.createElement("td") as HTMLElement).apply { textContent = flag.name })
+            row.appendChild(documentedEntry("td", flag.name, flag.help, "flag(${flag.name})", inlinePreview = false))
             row.appendChild(flagValueCell(page, flag))
             table.appendChild(row)
         }
@@ -761,17 +762,73 @@ internal class WebIdeView(
     }
 
     private fun librariesList(libraries: List<LibraryPresentation>): HTMLElement {
-        val list = element("div", null)
+        val list = element("div", "libraries")
         libraries.forEach { library ->
-            val entry = element("div", null)
-            entry.innerHTML =
-                "<strong>${library.alias}</strong><br/>" +
-                "Predicates: ${library.predicates.joinToString(", ")}<br/>" +
-                "Functions: ${library.functions.joinToString(", ")}"
+            val entry = element("details", null).apply { setAttribute("open", "") }
+            entry.appendChild(documentedEntry("summary", library.alias, library.help))
+
+            fun group(
+                title: String,
+                items: List<Pair<String, String?>>,
+            ) {
+                if (items.isEmpty()) return
+                val details = element("details", null).apply { setAttribute("open", "") }
+                details.appendChild(element("summary", null).apply { textContent = title })
+                val ul = element("ul", null)
+                items.forEach { (label, markdown) -> ul.appendChild(documentedEntry("li", label, markdown)) }
+                details.appendChild(ul)
+                entry.appendChild(details)
+            }
+            group("Predicates", library.predicates.map { it to library.documentation[it] })
+            group("Functions", library.functions.map { it to library.documentation[it] })
+            group(
+                "Operators",
+                library.operators.map {
+                    "${it.name} (${it.specifier}, priority ${it.priority})" to
+                        library.documentationOf(it)
+                },
+            )
             list.appendChild(entry)
         }
         return list
     }
+
+    /**
+     * A [tag] element labelled [label], previewing [markdown] inline (or, if not [inlinePreview], as its hover
+     * tooltip) and showing it rendered, in a dialog titled [title], on double-click.
+     */
+    private fun documentedEntry(
+        tag: String,
+        label: String,
+        markdown: String?,
+        title: String = label,
+        inlinePreview: Boolean = true,
+    ): HTMLElement =
+        element(tag, "documented").apply {
+            textContent = label
+            // inline previews are truncated by CSS to the available width, tooltips by length
+            val preview =
+                markdown
+                    ?.let {
+                        if (inlinePreview) {
+                            documentationPreview(
+                                it,
+                                maxLength = Int.MAX_VALUE,
+                            )
+                        } else {
+                            documentationPreview(it)
+                        }
+                    }.orEmpty()
+            if (markdown != null && preview.isNotEmpty()) {
+                if (!inlinePreview) {
+                    this.title = "$preview (double-click for documentation)"
+                } else {
+                    appendChild(element("span", "doc-preview").apply { textContent = " — $preview" })
+                    this.title = "Double-click for documentation"
+                }
+                addEventListener("dblclick", { _: Event -> showDocumentation(title, markdown) })
+            }
+        }
 
     private fun tableRow(
         cells: List<String>,

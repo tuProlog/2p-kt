@@ -40,6 +40,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Ground
 import it.unibo.tuprolog.solve.stdlib.primitive.Halt
 import it.unibo.tuprolog.solve.stdlib.primitive.Halt1
 import it.unibo.tuprolog.solve.stdlib.primitive.Integer
+import it.unibo.tuprolog.solve.stdlib.primitive.InternalHelp
 import it.unibo.tuprolog.solve.stdlib.primitive.Is
 import it.unibo.tuprolog.solve.stdlib.primitive.Natural
 import it.unibo.tuprolog.solve.stdlib.primitive.NewLine
@@ -120,6 +121,7 @@ object CommonPrimitives {
             Halt,
             Halt1,
             Integer,
+            InternalHelp,
             Is,
             Natural,
             NewLine,

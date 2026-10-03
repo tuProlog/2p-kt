@@ -13,6 +13,23 @@ import org.gciatto.kt.math.BigDecimal
  * @author Enrico
  */
 object Multiplication : BinaryMathFunction("*") {
+    override val help: String =
+        """
+        `*(+Left, +Right)`
+        
+        Evaluates to the arithmetic product of `Left` and `Right`. Integer × integer yields an integer; mixed or real operands yield a real value.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 3 * 4.
+        X = 12.
+
+        ?- X is 2 * 1.5.
+        X = 3.0.
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer1: Integer,
         integer2: Integer,

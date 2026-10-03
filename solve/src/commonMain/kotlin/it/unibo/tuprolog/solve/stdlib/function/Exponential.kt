@@ -14,6 +14,23 @@ import kotlin.math.exp
  * @author Enrico
  */
 object Exponential : UnaryMathFunction("exp") {
+    override val help: String =
+        """
+        `exp(+Number)`
+        
+        Evaluates to `e` (Euler's number) raised to `Number`, always as a real value. The current implementation does not raise the standard `float_overflow` evaluation error: results too large to be represented, e.g. `exp(1000)`, are not handled.
+
+        **Examples**
+
+        ```prolog
+        ?- X is exp(0).
+        X = 1.0.
+
+        ?- X is exp(1), X > 2.718, X < 2.719.
+        yes.
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

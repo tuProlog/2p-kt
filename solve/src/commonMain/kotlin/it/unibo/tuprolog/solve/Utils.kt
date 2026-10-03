@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.function.FunctionWrapper
 import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.library.documentationOf
 import it.unibo.tuprolog.solve.library.toRuntime
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
@@ -75,7 +76,8 @@ fun libraryOf(
     val clauses = mutableListOf<Clause>()
     val primitives = mutableMapOf<Signature, Primitive>()
     val functions = mutableMapOf<Signature, LogicFunction>()
-    for (item in arrayOf(item1, *items)) {
+    val wrappers = arrayOf(item1, *items)
+    for (item in wrappers) {
         when (item) {
             is PrimitiveWrapper<*> -> primitives += item.descriptionPair
             is FunctionWrapper<*> -> functions += item.descriptionPair
@@ -83,7 +85,14 @@ fun libraryOf(
             else -> throw NotImplementedError("Cannot handle wrappers of type ${item::class}")
         }
     }
-    val library = Library.of(primitives, clauses, OperatorSet.EMPTY, functions)
+    val library =
+        Library.of(
+            primitives,
+            clauses,
+            OperatorSet.EMPTY,
+            functions,
+            documentation = documentationOf(wrappers.asSequence()),
+        )
     return alias?.let { Library.of(it, library) } ?: library
 }
 
