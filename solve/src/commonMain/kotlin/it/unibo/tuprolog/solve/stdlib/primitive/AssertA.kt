@@ -6,5 +6,15 @@ object AssertA : AbstractAssert("a", true) {
         `asserta(+Clause)`
         
         Adds `Clause` to the beginning of the corresponding dynamic predicate. Struct terms are treated as facts.
+
+        **Examples**
+
+        ```prolog
+        ?- asserta(p(1)), asserta(p(2)).
+        yes.
+
+        ?- p(X).
+        X = 2 ; X = 1.
+        ```
         """.trimIndent()
 }

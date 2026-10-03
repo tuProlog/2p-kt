@@ -19,6 +19,19 @@ object Sleep : UnaryPredicate<ExecutionContext>("sleep") {
         `sleep(+Milliseconds)`
         
         Delays resolution for at least `Milliseconds` milliseconds, then succeeds. The argument must be an instantiated integer.
+
+        **Examples**
+
+        ```prolog
+        ?- sleep(10).
+        yes.
+
+        ?- sleep(X).
+        throws error(instantiation_error, _).
+
+        ?- sleep(a).
+        throws error(type_error(integer, a), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> =

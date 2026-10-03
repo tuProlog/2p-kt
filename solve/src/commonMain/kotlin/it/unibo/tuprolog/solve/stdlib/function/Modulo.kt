@@ -17,6 +17,19 @@ object Modulo : IntegersBinaryMathFunction("mod") {
         `mod(+Dividend, +Divisor)`
         
         Evaluates the truncated integer remainder of `Dividend` divided by `Divisor`: the current implementation gives the result the sign of `Dividend` (e.g. `-7 mod 2` is `-1` and `7 mod -2` is `1`), rather than the sign of `Divisor`. Both operands must evaluate to integers. A zero divisor raises an evaluation error.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 7 mod 2.
+        X = 1.
+
+        ?- X is -7 mod 2.
+        X = -1.
+
+        ?- X is 7 mod 0.
+        throws error(evaluation_error(zero_divisor), _).
+        ```
         """.trimIndent()
 
     override fun mathFunction(

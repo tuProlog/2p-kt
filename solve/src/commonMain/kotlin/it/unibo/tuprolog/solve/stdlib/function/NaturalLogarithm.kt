@@ -20,6 +20,16 @@ object NaturalLogarithm : UnaryMathFunction("log") {
         `log(+Number)`
         
         Evaluates to the natural (base `e`) logarithm of `Number`, always as a real value. `Number` must be positive: the current implementation does not raise the standard `undefined` evaluation error for zero or negative inputs, which are not handled.
+
+        **Examples**
+
+        ```prolog
+        ?- X is log(1).
+        X = 0.0.
+
+        ?- X is log(exp(2)), X > 1.999, X < 2.001.
+        yes.
+        ```
         """.trimIndent()
 
     override fun mathFunction(

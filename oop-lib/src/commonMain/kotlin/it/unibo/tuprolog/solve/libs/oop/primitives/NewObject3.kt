@@ -29,7 +29,23 @@ object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
         """
         `new_object(+Type, +Arguments, -ObjectRef)`
         
-        Instantiates `Type` by calling its public constructor that best matches the list `Arguments`, and unifies `ObjectRef` with a reference to the new object. `Type` may be an atom holding a fully qualified type name (e.g. `'java.util.ArrayList'`), a type reference, or a `${'$'}Alias` reference to a type (e.g. `${'$'}arraylist`). Arguments are converted to objects as in `invoke_method/3`; use `as` casts to disambiguate overloaded constructors. Fails if the type name cannot be resolved. Raises a type error if `Type` is not callable or `Arguments` is not a list, an existence error if no constructor accepts the arguments, and a system error if the constructor throws. Example: `new_object('java.util.ArrayList', [], L), L.add(1)`.
+        Instantiates `Type` by calling its public constructor that best matches the list `Arguments`, and unifies `ObjectRef` with a reference to the new object. `Type` may be an atom holding a fully qualified type name (e.g. `'java.util.ArrayList'`), a type reference, or a `${'$'}Alias` reference to a type (e.g. `${'$'}arraylist`). Arguments are converted to objects as in `invoke_method/3`; use `as` casts to disambiguate overloaded constructors. Fails if the type name cannot be resolved. Raises a type error if `Type` is not callable or `Arguments` is not a list, an existence error if no constructor accepts the arguments, and a system error if the constructor throws.
+
+        **Examples**
+
+        ```prolog
+        ?- new_object('java.util.ArrayList', [], L), L.add(a), N := L.size.
+        N = 1.
+
+        ?- new_object(${'$'}arraylist, [], L), list_items(L, Items).
+        Items = [].
+
+        ?- new_object('no.such.Type', [], L).
+        no.
+
+        ?- new_object('java.util.ArrayList', [a], L).
+        throws error(representation_error(_), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(

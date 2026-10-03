@@ -19,6 +19,16 @@ object MaxArity : NotableFlag {
         - Editable: no
         
         The value effectively means that 2P-Kt imposes no practical arity limit below the host integer bound.
+
+        **Examples**
+
+        ```prolog
+        ?- current_prolog_flag(max_arity, V).
+        V = 2147483647.
+
+        ?- set_prolog_flag(max_arity, 10).
+        throws error(permission_error(modify, flag, max_arity), _).
+        ```
         """.trimIndent()
 
     override val name: String = "max_arity"

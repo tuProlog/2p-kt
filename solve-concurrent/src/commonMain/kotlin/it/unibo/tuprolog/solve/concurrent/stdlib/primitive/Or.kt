@@ -34,6 +34,21 @@ object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
         `(+Left ; +Right)`
 
         Disjunction: solutions come from `Left` and from `Right`, each proved by an independent sub-solver. When `Left` is `Condition -> Then`, it acts as if-then-else instead: `Condition` is proved once, then `Then` is proved under its bindings if it succeeded, `Else` (i.e. `Right`) otherwise. Both arguments, and both sides of `->`, must be callable, otherwise a type error is raised.
+
+        **Examples**
+
+        ```prolog
+        % solutions may come in any order: collect them to compare
+        % solutions may come in any order on this engine
+        ?- findall(X, (X = 1 ; X = 2), L), member(1, L), member(2, L).
+        yes.
+
+        ?- (X = 1 -> Y = one ; Y = other).
+        X = 1, Y = one.
+
+        ?- (1 ; true).
+        throws error(type_error(callable, 1), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ConcurrentExecutionContext>.computeAll(

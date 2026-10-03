@@ -11,6 +11,16 @@ object ArithmeticLowerThanOrEqualTo : ArithmeticRelation<ExecutionContext>("=<")
         `=<(+Left, +Right)`
         
         Succeeds when the arithmetic value of `Left` is less than or equal to the arithmetic value of `Right`.
+
+        **Examples**
+
+        ```prolog
+        ?- 2 =< 2.
+        yes.
+
+        ?- 3 =< 2.
+        no.
+        ```
         """.trimIndent()
 
     override fun computeNumeric(

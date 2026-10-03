@@ -13,6 +13,18 @@ object Write : UnaryPredicate.NonBacktrackable<ExecutionContext>("write") {
         `write(+Term)`
         
         Writes the textual representation of `Term` to the current output channel and succeeds. Operators currently defined are honoured, atoms are never quoted (`write('hello world')` prints `hello world`), and `'${'$'}VAR'(N)` terms are printed as variable names. It fails if no current output channel is available.
+
+        **Examples**
+
+        ```prolog
+        % prints: hello world
+        ?- write('hello world').
+        yes.
+
+        % prints: B
+        ?- write('${'$'}VAR'(1)).
+        yes.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

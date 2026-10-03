@@ -10,6 +10,16 @@ object NonVar : TypeTester<ExecutionContext>("nonvar") {
         `nonvar(@Term)`
         
         Succeeds if `Term` is not a variable; fails otherwise.
+
+        **Examples**
+
+        ```prolog
+        ?- nonvar(f(X)).
+        yes.
+
+        ?- nonvar(X).
+        no.
+        ```
         """.trimIndent()
 
     override fun testType(term: Term): Boolean = term !is it.unibo.tuprolog.core.Var

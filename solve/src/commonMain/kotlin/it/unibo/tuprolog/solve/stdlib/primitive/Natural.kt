@@ -15,6 +15,19 @@ object Natural : UnaryPredicate<ExecutionContext>("natural") {
         `natural(?N)`
         
         Recognizes non-negative integers. With a variable argument, it generates the infinite sequence `0, 1, 2, ...` on backtracking.
+
+        **Examples**
+
+        ```prolog
+        ?- natural(N).
+        N = 0 ; N = 1 ; N = 2.
+
+        ?- natural(5).
+        yes.
+
+        ?- natural(-1).
+        no.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> =

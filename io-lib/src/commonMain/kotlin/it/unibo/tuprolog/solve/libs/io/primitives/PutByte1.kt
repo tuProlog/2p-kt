@@ -17,6 +17,13 @@ object PutByte1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("put_byte") 
         `put_byte(+Byte)`
         
         Registered for ISO conformance only: the current implementation supports text streams exclusively, so every call raises a system error regardless of its arguments; use `put_code/1` instead.
+
+        **Examples**
+
+        ```prolog
+        ?- put_byte(65).
+        throws error(system_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response = notSupported()

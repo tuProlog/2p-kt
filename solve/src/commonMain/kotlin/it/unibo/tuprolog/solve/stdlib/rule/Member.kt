@@ -14,6 +14,19 @@ sealed class Member : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         `member(?Element, ?List)`
         
         Succeeds when `Element` is an element of `List`. On backtracking it enumerates matching elements; with suitable variables it can also generate list structures.
+
+        **Examples**
+
+        ```prolog
+        ?- member(X, [a, b, c]).
+        X = a ; X = b ; X = c.
+
+        ?- member(b, [a, b, c]).
+        yes.
+
+        ?- member(d, [a, b, c]).
+        no.
+        ```
         """.trimIndent()
 
     abstract override val Scope.head: KtList<Term>

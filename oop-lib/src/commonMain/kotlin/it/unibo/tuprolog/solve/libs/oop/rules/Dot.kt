@@ -30,7 +30,21 @@ object Dot : RuleWrapper<ExecutionContext>(ACCESS_OPERATOR, 2) {
         """
         `+Receiver.+Message`
         
-        Fluent member access: invokes `Message` on the object, type, or `${'$'}Alias` referenced by `Receiver`, discarding the result. `Message` is an atom (a no-argument method, or a property to read) or a compound `name(Arg1, ..., ArgN)`; arguments are converted to objects, with `as` casts to steer overload selection. Since `.` is right-associative, accesses can be chained: `Obj.foo(1).bar` calls `foo(1)` on `Obj`, then `bar` on its result, each step via `invoke_method/3`. Used as a goal, it runs the chain for its side effects; to capture the final result write `Result := Obj.foo(1).bar` (see `:=/2`). Errors are those of `invoke_method/3`. Example: `${'$'}stdout.println(hello)`.
+        Fluent member access: invokes `Message` on the object, type, or `${'$'}Alias` referenced by `Receiver`, discarding the result. `Message` is an atom (a no-argument method, or a property to read) or a compound `name(Arg1, ..., ArgN)`; arguments are converted to objects, with `as` casts to steer overload selection. Since `.` is right-associative, accesses can be chained: `Obj.foo(1).bar` calls `foo(1)` on `Obj`, then `bar` on its result, each step via `invoke_method/3`. Used as a goal, it runs the chain for its side effects; to capture the final result write `Result := Obj.foo(1).bar` (see `:=/2`). Errors are those of `invoke_method/3`.
+
+        **Examples**
+
+        ```prolog
+        ?- ${'$'}stdout.println(hello).
+        % prints: hello
+        yes.
+
+        ?- new_object('java.util.ArrayList', [], L), L.add(a), L.add(b), list_items(L, Items).
+        Items = [a, b].
+
+        ?- new_object('java.util.ArrayList', [], L), L.nope.
+        throws error(existence_error(_, _), _).
+        ```
         """.trimIndent()
 
     private val Method by variables

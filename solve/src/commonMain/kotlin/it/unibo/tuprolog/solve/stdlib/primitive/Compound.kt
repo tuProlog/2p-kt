@@ -11,6 +11,22 @@ object Compound : TypeTester<ExecutionContext>("compound") {
         `compound(@Term)`
         
         Succeeds if `Term` is a compound structure with one or more arguments; fails otherwise.
+
+        **Examples**
+
+        ```prolog
+        ?- compound(f(a)).
+        yes.
+
+        ?- compound([a]).
+        yes.
+
+        ?- compound(foo).
+        no.
+
+        ?- compound(X).
+        no.
+        ```
         """.trimIndent()
 
     override fun testType(term: Term): Boolean = term is Struct && term.arity > 0

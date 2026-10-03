@@ -17,6 +17,13 @@ object CharConversion : BinaryRelation.NonBacktrackable<ExecutionContext>("char_
         `char_conversion(+InChar, +OutChar)`
         
         Registered for ISO conformance only: the current implementation does not support a character conversion table, so every call raises a system error regardless of its arguments.
+
+        **Examples**
+
+        ```prolog
+        ?- char_conversion(a, b).
+        throws error(system_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

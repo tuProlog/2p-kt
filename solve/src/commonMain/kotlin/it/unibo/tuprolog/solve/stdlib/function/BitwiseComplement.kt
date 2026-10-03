@@ -17,6 +17,16 @@ object BitwiseComplement : UnaryMathFunction("\\") {
         `\(+Integer)`
         
         Evaluates to the bitwise complement of `Integer`. The operand must evaluate to an integer.
+
+        **Examples**
+
+        ```prolog
+        ?- X is \(5).
+        X = -6.
+
+        ?- X is \(2.5).
+        throws error(type_error(integer, 2.5), _).
+        ```
         """.trimIndent()
 
     override fun mathFunction(

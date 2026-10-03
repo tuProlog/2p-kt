@@ -12,6 +12,19 @@ object Ref : TypeTester<ExecutionContext>("ref") {
         `ref(@Term)`
         
         Succeeds if `Term` is a reference of any kind: either an object reference (see `object_ref/1`, including the null reference) or a type reference (see `type_ref/1`). Fails otherwise, including when `Term` is unbound. References are opaque atomic terms that can be passed around, unified, and used as receivers of method calls.
+
+        **Examples**
+
+        ```prolog
+        ?- type('java.lang.String', T), ref(T).
+        yes.
+
+        ?- new_object('java.util.ArrayList', [], L), ref(L).
+        yes.
+
+        ?- ref(hello).
+        no.
+        ```
         """.trimIndent()
 
     override fun testType(term: Term): Boolean = term is RefTerm

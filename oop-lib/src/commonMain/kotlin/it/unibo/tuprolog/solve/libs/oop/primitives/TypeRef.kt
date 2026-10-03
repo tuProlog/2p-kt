@@ -12,6 +12,19 @@ object TypeRef : TypeTester<ExecutionContext>("type_ref") {
         `type_ref(@Term)`
         
         Succeeds if `Term` is a type reference, i.e. a term wrapping a JVM/Kotlin class (rendered like `<type:java.lang.String>`), as produced by `type/2` or by `${'$'}Alias` references to types such as `${'$'}string`. Type references can be used to instantiate a class (`new_object/3`) or to invoke its static members. Fails otherwise, including when `Term` is unbound.
+
+        **Examples**
+
+        ```prolog
+        ?- alias(string, T), type_ref(T).
+        yes.
+
+        ?- type_ref('java.lang.String').
+        no.
+
+        ?- new_object('java.util.ArrayList', [], L), type_ref(L).
+        no.
+        ```
         """.trimIndent()
 
     override fun testType(term: Term): Boolean = term is TypeRefTerm

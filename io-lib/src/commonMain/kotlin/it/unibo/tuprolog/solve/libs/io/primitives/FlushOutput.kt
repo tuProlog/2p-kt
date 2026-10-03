@@ -22,6 +22,17 @@ object FlushOutput : UnaryPredicate.NonBacktrackable<ExecutionContext>("flush_ou
         `flush_output(+Stream)`
         
         Forces any buffered output of the output stream `Stream` to be written to its destination, succeeding deterministically. `Stream` must be an alias (e.g. `user_output`) or a `${'$'}stream(out, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an input stream a domain error (`stream_type`), where ISO prescribes a permission error. It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- write(user_output, hello), flush_output(user_output).
+        % prints: hello
+        yes.
+
+        ?- flush_output(user_input).
+        throws error(domain_error(stream_type, user_input), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

@@ -19,6 +19,18 @@ object AtEndOfStream0 : PredicateWithoutArguments.Predicative<ExecutionContext>(
         `at_end_of_stream`
         
         Succeeds iff the current input stream (standard input, unless changed via `set_input/1`) is closed or has no more characters to read, and fails otherwise. It is deterministic and raises no errors.
+
+        **Examples**
+
+        ```prolog
+        % with `foo.` still to be read from standard input
+        ?- at_end_of_stream.
+        no.
+
+        % once standard input has been exhausted
+        ?- at_end_of_stream.
+        yes.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.compute(): Boolean =

@@ -16,6 +16,22 @@ object Arg : TernaryRelation.WithoutSideEffects<ExecutionContext>("arg") {
         `arg(?Index, +Term, ?Argument)`
         
         Relates a compound `Term` with one of its arguments, using one-based indexing. If `Index` is a variable, solutions enumerate argument positions; otherwise `Index` must be an integer. `Term` must be instantiated and compound.
+
+        **Examples**
+
+        ```prolog
+        ?- arg(2, f(a, b, c), X).
+        X = b.
+
+        ?- arg(N, f(a, b), X).
+        N = 1, X = a ; N = 2, X = b.
+
+        ?- arg(4, f(a, b, c), X).
+        no.
+
+        ?- arg(a, f(a), X).
+        throws error(type_error(integer, a), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(

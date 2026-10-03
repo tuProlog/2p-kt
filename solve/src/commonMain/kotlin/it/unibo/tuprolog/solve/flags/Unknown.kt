@@ -23,6 +23,22 @@ object Unknown : NotableFlag {
         - `fail`: silently fail the goal.
         - Default in the current implementation: `warning`
         - Editable: yes
+
+        **Examples**
+
+        ```prolog
+        ?- current_prolog_flag(unknown, V).
+        V = warning.
+
+        ?- undefined_pred.
+        no.
+
+        ?- set_prolog_flag(unknown, error), undefined_pred.
+        throws error(existence_error(procedure, undefined_pred/0), _).
+
+        ?- set_prolog_flag(unknown, fail), undefined_pred.
+        no.
+        ```
         """.trimIndent()
 
     /** Raise an [it.unibo.tuprolog.solve.exception.error.ExistenceError] for missing predicates. */

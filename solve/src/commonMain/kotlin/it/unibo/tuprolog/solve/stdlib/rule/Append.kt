@@ -14,6 +14,19 @@ sealed class Append : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         `append(?Prefix, ?Suffix, ?Whole)`
         
         Relates two lists with their concatenation: `Whole` is obtained by appending `Suffix` to `Prefix`. The relation is reversible and can be used to concatenate lists or enumerate splits of a list.
+
+        **Examples**
+
+        ```prolog
+        ?- append([1, 2], [3], L).
+        L = [1, 2, 3].
+
+        ?- append(X, [3], [1, 2, 3]).
+        X = [1, 2].
+
+        ?- append(X, Y, [1, 2]).
+        X = [], Y = [1, 2] ; X = [1], Y = [2] ; X = [1, 2], Y = [].
+        ```
         """.trimIndent()
 
     abstract override val Scope.head: KtList<Term>

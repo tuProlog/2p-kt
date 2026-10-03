@@ -24,6 +24,13 @@ object PeekChar1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("peek_char"
         `peek_char(?Char)`
         
         Unifies `Char` with the next character of the current input stream (standard input, unless changed via `set_input/1`) without consuming it, or with `end_of_file` at the end of the stream. It is deterministic. `Char` must be unbound, `end_of_file`, or a one-character atom, otherwise a type error (`in_character`) is raised. It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- peek_char(ab).
+        throws error(type_error(in_character, ab), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

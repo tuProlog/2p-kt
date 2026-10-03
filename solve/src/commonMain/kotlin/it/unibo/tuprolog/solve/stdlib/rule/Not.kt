@@ -14,6 +14,19 @@ object Not : RuleWrapper<ExecutionContext>("not", 1) {
         `not(+Goal)`
         
         Calls `Goal` under negation as failure. It succeeds when `Goal` has no solution and fails when `Goal` succeeds. `Goal` must be executable.
+
+        **Examples**
+
+        ```prolog
+        ?- not(member(d, [a, b, c])).
+        yes.
+
+        ?- not(X = 1).
+        no.
+
+        ?- not(X).
+        throws error(instantiation_error, _).
+        ```
         """.trimIndent()
 
     override val Scope.head: KtList<Term>

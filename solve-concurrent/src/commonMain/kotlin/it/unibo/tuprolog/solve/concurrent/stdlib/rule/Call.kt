@@ -16,6 +16,18 @@ object Call : RuleWrapper<ConcurrentExecutionContext>("call", 1) {
         `call(+Goal)`
 
         Calls `Goal`, which allows executing terms built or bound at runtime. `Goal` must be callable: a variable raises an instantiation error, a number or other non-callable term a type error (`callable`).
+
+        **Examples**
+
+        ```prolog
+        % solutions may come in any order: collect them to compare
+        % solutions may come in any order on this engine
+        ?- G = member(X, [a, b]), findall(X, call(G), L), member(a, L), member(b, L).
+        yes.
+
+        ?- call(1).
+        throws error(type_error(callable, 1), _).
+        ```
         """.trimIndent()
 
     override val Scope.head: List<Term>

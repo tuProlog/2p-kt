@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.assertExamplesHold
 import it.unibo.tuprolog.solve.assertFullyDocumented
 import it.unibo.tuprolog.solve.library.Runtime
 import kotlin.test.Test
@@ -19,5 +21,12 @@ class TestOOPLib {
     @Test
     fun everyItemIsDocumented() {
         assertFullyDocumented(OOPLib)
+    }
+
+    @Test
+    fun documentationExamplesHold() {
+        assertExamplesHold(OOPLib, skip = emptySet()) {
+            Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
+        }
     }
 }

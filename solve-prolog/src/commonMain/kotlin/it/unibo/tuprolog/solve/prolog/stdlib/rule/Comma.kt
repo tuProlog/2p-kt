@@ -18,6 +18,19 @@ object Comma : RuleWrapper<PrologExecutionContext>(",", 2) {
         `(+First, +Second)`
 
         Conjunction: proves `First` and then `Second`, backtracking into `First` for further solutions whenever `Second` fails. Conjunction is transparent to cut: a `!` occurring in either conjunct cuts the clause in which the conjunction appears.
+
+        **Examples**
+
+        ```prolog
+        ?- X = 1, Y is X + 1.
+        X = 1, Y = 2.
+
+        ?- member(X, [1, 2, 3]), X > 1.
+        X = 2 ; X = 3.
+
+        ?- X = 1, X = 2.
+        no.
+        ```
         """.trimIndent()
 
     override val Scope.head: KtList<Term>

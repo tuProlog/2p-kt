@@ -24,6 +24,22 @@ object Unregister : UnaryPredicate.NonBacktrackable<ExecutionContext>("unregiste
         `unregister(+Alias)`
         
         Removes every `alias(Alias, _)` fact for the ground term `Alias` from the static knowledge base, undoing `register/2` (it can also remove the library's default aliases, such as `string` or `stdout`). Fails if no such alias is registered. Raises a type error if `Alias` is unbound or not callable, and an instantiation error if it is not ground.
+
+        **Examples**
+
+        ```prolog
+        ?- new_object('java.util.ArrayList', [], L), register(L, my_list).
+        yes.
+
+        ?- unregister(my_list).
+        yes.
+
+        ?- alias(my_list, R).
+        no.
+
+        ?- unregister(my_list).
+        no.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

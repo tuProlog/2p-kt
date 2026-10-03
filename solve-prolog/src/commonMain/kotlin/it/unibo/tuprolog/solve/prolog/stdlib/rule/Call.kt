@@ -18,6 +18,19 @@ object Call : RuleWrapper<PrologExecutionContext>("call", 1) {
         `call(+Goal)`
 
         Calls `Goal`, which allows executing terms built or bound at runtime. `Goal` must be callable: a variable raises an instantiation error, a number or other non-callable term a type error (`callable`). `call/1` is opaque to cut: a `!` inside `Goal` only prunes the choice points created by `Goal` itself.
+
+        **Examples**
+
+        ```prolog
+        ?- G = member(X, [a, b]), call(G).
+        X = a ; X = b.
+
+        ?- findall(X, (member(X, [1, 2, 3]), call(!)), L).
+        L = [1, 2, 3].
+
+        ?- call(1).
+        throws error(type_error(callable, 1), _).
+        ```
         """.trimIndent()
 
     override val Scope.head: KtList<Term>

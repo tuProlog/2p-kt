@@ -31,6 +31,24 @@ object WriteTerm2 : BinaryRelation.NonBacktrackable<ExecutionContext>("write_ter
         `write_term(@Term, +Options)`
         
         Writes `Term` to the current output stream (standard output, unless changed via `set_output/1`), formatted according to `Options` and the current operators, succeeding deterministically. `Options` must be a list (an unbound `Options` raises a type error (`list`) rather than ISO's instantiation error) whose elements are `quoted(Bool)` (quote atoms and functors where needed), `ignore_ops(Bool)` (write operators in canonical functional notation) and `numbervars(Bool)` (write `'${'$'}VAR'(N)` terms as variable letters), with `Bool` being `true` or `false`; missing options default to `false`, and any other element raises a domain error (`write_option`). It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- write_term(f('A', 1 + 2), [quoted(true), ignore_ops(true)]).
+        % prints: f('A', '+'(1, 2))
+        yes.
+
+        ?- write_term(f('A', 1 + 2), []).
+        % prints: f(A, 1 + 2)
+        yes.
+
+        ?- write_term(a, [foo]).
+        throws error(domain_error(write_option, foo), _).
+
+        ?- write_term(a, Options).
+        throws error(type_error(list, _), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

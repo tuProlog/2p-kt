@@ -18,6 +18,22 @@ object Retract : UnaryPredicate<ExecutionContext>("retract") {
         `retract(+Clause)`
         
         Removes one matching clause from the dynamic knowledge base and succeeds once for each removable matching clause on backtracking.
+
+        **Examples**
+
+        ```prolog
+        ?- assertz(p(1)), assertz(p(2)), assertz(p(3)).
+        yes.
+
+        ?- retract(p(X)).
+        X = 1.
+
+        ?- findall(X, p(X), L).
+        L = [2, 3].
+
+        ?- retract(p(4)).
+        no.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> {

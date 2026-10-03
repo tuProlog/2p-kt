@@ -17,6 +17,13 @@ object PutByte2 : BinaryRelation.NonBacktrackable<ExecutionContext>("put_byte") 
         `put_byte(+Stream, +Byte)`
         
         Registered for ISO conformance only: the current implementation supports text streams exclusively, so every call raises a system error regardless of its arguments; use `put_code/2` instead.
+
+        **Examples**
+
+        ```prolog
+        ?- put_byte(user_output, 65).
+        throws error(system_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

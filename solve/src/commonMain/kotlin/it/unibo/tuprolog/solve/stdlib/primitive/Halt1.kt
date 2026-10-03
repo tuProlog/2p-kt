@@ -12,6 +12,14 @@ object Halt1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("halt") {
         `halt(+Status)`
         
         Stops the current Prolog computation with the non-negative integer exit status `Status`.
+
+        **Examples**
+
+        ```prolog
+        % stops the computation with exit status 1
+        ?- halt(1).
+        yes.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

@@ -19,6 +19,19 @@ object FloatingPointDivision : BinaryMathFunction("/") {
         `/(+Dividend, +Divisor)`
         
         Evaluates to floating-point division of `Dividend` by `Divisor`. A zero divisor raises an evaluation error.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 7 / 2.
+        X = 3.5.
+
+        ?- X is 4 / 2.
+        X = 2.0.
+
+        ?- X is 1 / 0.
+        throws error(evaluation_error(zero_divisor), _).
+        ```
         """.trimIndent()
 
     override fun mathFunction(

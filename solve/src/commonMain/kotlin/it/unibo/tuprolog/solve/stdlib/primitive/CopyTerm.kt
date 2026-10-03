@@ -12,6 +12,19 @@ object CopyTerm : BinaryRelation.Functional<ExecutionContext>("copy_term") {
         `copy_term(+Term, -Copy)`
         
         Unifies `Copy` with a fresh copy of `Term`, preserving term structure while replacing variables with fresh variables.
+
+        **Examples**
+
+        ```prolog
+        ?- copy_term(f(X, Y, X), C).
+        C = f(A, B, A).
+
+        ?- copy_term(f(X, a), f(b, Y)), var(X).
+        Y = a.
+
+        ?- copy_term(foo, C).
+        C = foo.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(

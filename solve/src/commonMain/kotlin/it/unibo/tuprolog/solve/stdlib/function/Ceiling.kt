@@ -18,6 +18,19 @@ object Ceiling : UnaryMathFunction("ceiling") {
         `ceiling(+Number)`
         
         Evaluates to the smallest integer not less than `Number`. Integer inputs are returned unchanged.
+
+        **Examples**
+
+        ```prolog
+        ?- X is ceiling(2.1).
+        X = 3.
+
+        ?- X is ceiling(-2.9).
+        X = -2.
+
+        ?- X is ceiling(5).
+        X = 5.
+        ```
         """.trimIndent()
 
     override fun mathFunction(

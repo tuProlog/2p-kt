@@ -10,6 +10,19 @@ object Integer : TypeTester<ExecutionContext>("integer") {
         `integer(@Term)`
         
         Succeeds if `Term` is an integer; fails otherwise.
+
+        **Examples**
+
+        ```prolog
+        ?- integer(42).
+        yes.
+
+        ?- integer(4.2).
+        no.
+
+        ?- integer(X).
+        no.
+        ```
         """.trimIndent()
 
     override fun testType(term: Term): Boolean = term is it.unibo.tuprolog.core.Integer

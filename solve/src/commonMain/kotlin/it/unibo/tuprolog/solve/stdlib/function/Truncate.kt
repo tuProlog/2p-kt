@@ -19,6 +19,16 @@ object Truncate : UnaryMathFunction("truncate") {
         `truncate(+Number)`
         
         Evaluates to the integer obtained by truncating `Number` toward zero.
+
+        **Examples**
+
+        ```prolog
+        ?- X is truncate(3.7).
+        X = 3.
+
+        ?- X is truncate(-3.7).
+        X = -3.
+        ```
         """.trimIndent()
 
     override fun mathFunction(

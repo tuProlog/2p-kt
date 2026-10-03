@@ -28,6 +28,22 @@ object Naf : UnaryPredicate.NonBacktrackable<ConcurrentExecutionContext>("\\+") 
         `\+ +Goal`
 
         Negation as failure: succeeds if `Goal` has no solution, and fails as soon as `Goal` has one. It never binds the variables of `Goal`, and is equivalent to `not/1`. `Goal` is proved by an independent sub-solver; errors it raises are propagated. `Goal` must be callable, otherwise an instantiation or type error is raised.
+
+        **Examples**
+
+        ```prolog
+        ?- \+ member(d, [a, b, c]).
+        yes.
+
+        ?- \+ X = 1.
+        no.
+
+        ?- \+ (X = 1, X = 2), var(X).
+        yes.
+
+        ?- \+ 3.
+        throws error(type_error(callable, 3), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ConcurrentExecutionContext>.computeOne(first: Term): Solve.Response {

@@ -18,6 +18,13 @@ object GetByte1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("get_byte") 
         `get_byte(?Byte)`
         
         Registered for ISO conformance only: the current implementation supports text streams exclusively, so every call raises a system error regardless of its arguments; use `get_code/1` instead.
+
+        **Examples**
+
+        ```prolog
+        ?- get_byte(B).
+        throws error(system_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response = notSupported()

@@ -26,6 +26,19 @@ object Close1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("close") {
         `close(+Stream)`
         
         Closes the stream `Stream`, given as an alias or a `${'$'}stream(Direction, Id)` term, and unregisters every alias it was reachable through, succeeding deterministically. It raises an instantiation error if `Stream` is unbound, an existence error if it does not denote an open stream, and a domain error (`stream_or_alias`) if it is a compound term other than a stream term. It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- close(S).
+        throws error(instantiation_error, _).
+
+        ?- close(no_such_stream).
+        throws error(existence_error(source_sink, no_such_stream), _).
+
+        ?- close(foo(bar)).
+        throws error(domain_error(stream_or_alias, foo(bar)), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

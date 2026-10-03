@@ -8,9 +8,11 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.assertExamplesHold
 import it.unibo.tuprolog.solve.assertFullyDocumented
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
+import it.unibo.tuprolog.solve.hasExample
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libraryOf
@@ -55,9 +57,23 @@ class TestPrologHelp {
         val undocumentedFlags =
             FlagStore.DEFAULT.keys
                 .mapNotNull(NotableFlag::fromName)
-                .filter { it.help.isBlank() || "flag(${it.name})" !in it.help }
+                .filter { it.help.isBlank() || "flag(${it.name})" !in it.help || !hasExample(it.help) }
                 .map { it.name }
         assertTrue(undocumentedFlags.isEmpty(), "Missing flag help for: ${undocumentedFlags.joinToString()}")
+    }
+
+    @Test
+    fun documentationExamplesHold() {
+        assertExamplesHold(
+            DefaultBuiltins,
+            // halting stops the whole resolution, so it can't be checked like an ordinary answer
+            skip = setOf("halt/0", "halt/1"),
+            extra =
+                FlagStore.DEFAULT.keys
+                    .mapNotNull(
+                        NotableFlag::fromName,
+                    ).associate { "flag(${it.name})" to it.help },
+        ) { Solver.prolog.solverWithDefaultBuiltins() }
     }
 
     @Test

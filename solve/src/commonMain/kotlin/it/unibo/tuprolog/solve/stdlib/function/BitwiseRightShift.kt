@@ -16,6 +16,16 @@ object BitwiseRightShift : IntegersBinaryMathFunction(">>") {
         `>>(+Integer, +Shift)`
         
         Shifts `Integer` right by `Shift` bit positions. Both operands must evaluate to integers.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 16 >> 2.
+        X = 4.
+
+        ?- X is -16 >> 2.
+        X = -4.
+        ```
         """.trimIndent()
 
     override fun mathFunction(

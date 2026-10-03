@@ -11,6 +11,19 @@ object Float : TypeTester<ExecutionContext>("float") {
         `float(@Term)`
         
         Succeeds if `Term` is a floating-point number; fails otherwise.
+
+        **Examples**
+
+        ```prolog
+        ?- float(1.5).
+        yes.
+
+        ?- float(1).
+        no.
+
+        ?- float(X).
+        no.
+        ```
         """.trimIndent()
 
     override fun testType(term: Term): Boolean = term is Real

@@ -24,6 +24,17 @@ object WriteEq2 : BinaryRelation.NonBacktrackable<ExecutionContext>("writeq") {
         `writeq(+Stream, @Term)`
         
         Writes `Term` to the output stream `Stream` so that it can be read back, quoting atoms and functors where needed and writing `'${'$'}VAR'(N)` terms as variable letters; the current implementation formats operators according to the default operator table rather than the current one. It succeeds deterministically. `Stream` must be an alias (e.g. `user_output`) or a `${'$'}stream(out, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an input stream a domain error (`stream_type`), where ISO prescribes a permission error. It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- writeq(user_output, f('A', 1 + 2)).
+        % prints: f('A', 1 + 2)
+        yes.
+
+        ?- writeq(user_input, a).
+        throws error(domain_error(stream_type, user_input), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

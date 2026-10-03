@@ -12,6 +12,7 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 api(project(":dsl-theory"))
+                api(project(":parser-core"))
                 api(kotlin("test-common"))
                 api(kotlin("test-annotations-common"))
             }

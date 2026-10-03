@@ -17,6 +17,13 @@ object CurrentCharConversion : BinaryRelation.NonBacktrackable<ExecutionContext>
         `current_char_conversion(?InChar, ?OutChar)`
         
         Registered for ISO conformance only: since character conversion is not supported (see `char_conversion/2`), the current implementation raises a system error on every call regardless of its arguments.
+
+        **Examples**
+
+        ```prolog
+        ?- current_char_conversion(X, Y).
+        throws error(system_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

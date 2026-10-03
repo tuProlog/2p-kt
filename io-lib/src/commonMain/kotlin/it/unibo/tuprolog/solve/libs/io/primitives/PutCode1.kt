@@ -25,6 +25,20 @@ object PutCode1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("put_code") 
         `put_code(+Code)`
         
         Writes the character whose code is `Code` to the current output stream (standard output, unless changed via `set_output/1`), succeeding deterministically. `Code` must be an integer, otherwise (even when unbound, where ISO prescribes an instantiation error) a type error (`integer`) is raised, and a valid character code, otherwise a representation error (`character_code`) is raised. It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- put_code(97).
+        % prints: a
+        yes.
+
+        ?- put_code(a).
+        throws error(type_error(integer, a), _).
+
+        ?- put_code(-1).
+        throws error(representation_error(character_code), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

@@ -10,6 +10,14 @@ object NewLine : PredicateWithoutArguments.NonBacktrackable<ExecutionContext>("n
         `nl`
         
         Writes a newline to the current output channel. Fails if no current output channel is available.
+
+        **Examples**
+
+        ```prolog
+        % prints a, then b on the next line
+        ?- write(a), nl, write(b).
+        yes.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(): Solve.Response =

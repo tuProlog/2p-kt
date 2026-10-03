@@ -19,6 +19,19 @@ object Exponentiation : BinaryMathFunction("**") {
         `**(+Base, +Exponent)`
         
         Evaluates `Base` raised to `Exponent`. The result is represented as a real value; the current implementation defines `0 ** 0` as `1.0`.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 2 ** 3.
+        X = 8.0.
+
+        ?- X is 4 ** 0.5.
+        X = 2.0.
+
+        ?- X is 0 ** 0.
+        X = 1.0.
+        ```
         """.trimIndent()
 
     // TODO: 24/10/2019 missing "float_overflow", "underflow" and "undefined" error checks (see the standard)

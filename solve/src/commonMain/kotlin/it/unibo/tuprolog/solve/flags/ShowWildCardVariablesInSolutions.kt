@@ -24,6 +24,19 @@ object ShowWildCardVariablesInSolutions : NotableFlag {
         - Editable: yes
         
         This affects solution presentation, not the logical result itself.
+
+        **Examples**
+
+        ```prolog
+        ?- current_prolog_flag(show_wildcard_variables_in_solutions, V).
+        V = on.
+
+        ?- set_prolog_flag(show_wildcard_variables_in_solutions, off).
+        yes.
+
+        ?- current_prolog_flag(show_wildcard_variables_in_solutions, V).
+        V = off.
+        ```
         """.trimIndent()
 
     /** Wildcard variables are shown in solutions' substitutions. */

@@ -23,6 +23,20 @@ object PutChar1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("put_char") 
         `put_char(+Char)`
         
         Writes the character `Char` to the current output stream (standard output, unless changed via `set_output/1`), succeeding deterministically. `Char` must be a one-character atom, otherwise a type error (`character`) is raised; the current implementation raises that type error even when `Char` is unbound, where ISO prescribes an instantiation error. It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- put_char(a).
+        % prints: a
+        yes.
+
+        ?- put_char(ab).
+        throws error(type_error(character, ab), _).
+
+        ?- put_char(C).
+        throws error(type_error(character, _), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

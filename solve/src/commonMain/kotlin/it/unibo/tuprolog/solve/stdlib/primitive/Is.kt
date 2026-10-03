@@ -18,6 +18,22 @@ object Is : BinaryRelation.Functional<ExecutionContext>("is") {
         `?Result is +Expression`
         
         Evaluates the arithmetic `Expression` and unifies the resulting number with `Result`. `Expression` must be instantiated enough to evaluate.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 1 + 2 * 3.
+        X = 7.
+
+        ?- X is 10 / 4.
+        X = 2.5.
+
+        ?- 3 is 1 + 2.
+        yes.
+
+        ?- X is Y + 1.
+        throws error(instantiation_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(

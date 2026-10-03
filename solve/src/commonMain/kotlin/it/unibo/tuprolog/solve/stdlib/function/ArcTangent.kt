@@ -19,6 +19,16 @@ object ArcTangent : UnaryMathFunction("atan") {
         `atan(+Number)`
         
         Evaluates to the arc tangent of `Number`, as a real value expressed in radians, in the range from `-pi/2` to `pi/2`.
+
+        **Examples**
+
+        ```prolog
+        ?- X is atan(0).
+        X = 0.0.
+
+        ?- X is atan(1) * 4, X > 3.14, X < 3.15.
+        yes.
+        ```
         """.trimIndent()
 
     override fun mathFunction(

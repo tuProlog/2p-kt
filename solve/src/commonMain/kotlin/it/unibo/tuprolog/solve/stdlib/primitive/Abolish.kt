@@ -14,6 +14,22 @@ object Abolish : UnaryPredicate.NonBacktrackable<ExecutionContext>("abolish") {
         `abolish(+PredicateIndicator)`
         
         Removes all clauses of the dynamic predicate identified by `PredicateIndicator` (for example `foo/2`). The indicator must be well formed and the predicate must be modifiable.
+
+        **Examples**
+
+        ```prolog
+        ?- assertz(foo(1)), assertz(foo(2)).
+        yes.
+
+        ?- abolish(foo/1).
+        yes.
+
+        ?- clause(foo(X), true).
+        no.
+
+        ?- abolish(foo).
+        throws error(type_error(predicate_indicator, foo), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

@@ -19,6 +19,19 @@ object Round : UnaryMathFunction("round") {
         `round(+Number)`
         
         Rounds `Number` to the nearest integer using half-up rounding.
+
+        **Examples**
+
+        ```prolog
+        ?- X is round(2.5).
+        X = 3.
+
+        ?- X is round(2.4).
+        X = 2.
+
+        ?- X is round(-2.5).
+        X = -3.
+        ```
         """.trimIndent()
 
     override fun mathFunction(

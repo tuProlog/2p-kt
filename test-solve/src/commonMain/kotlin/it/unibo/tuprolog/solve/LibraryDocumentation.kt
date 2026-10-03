@@ -10,7 +10,8 @@ private const val MIN_DESCRIPTION_LENGTH = 40
 /**
  * Asserts that [library] and every predicate, function, rule and operator it contributes are documented
  * non-trivially: each one needs a fragment with a description of at least [MIN_DESCRIPTION_LENGTH] characters
- * following its signature line, generated placeholders do not count, and no fragment may be repeated.
+ * following its signature line and a ```` ```prolog ```` example (see [assertExamplesHold]); generated placeholders do
+ * not count, and no fragment may be repeated.
  */
 fun assertFullyDocumented(library: Library) {
     val signatures =
@@ -25,10 +26,11 @@ fun assertFullyDocumented(library: Library) {
                     ?.split(FRAGMENT_SEPARATOR)
                     ?.map { it.trim() }
                     .orEmpty()
+            val semantic = fragments.filterNot { it.isGeneratedFor(signature) }
             when {
                 fragments.size != fragments.distinct().size -> "$signature: repeated fragments"
-                fragments.filterNot { it.isGeneratedFor(signature) }.none { it.hasDescription() } ->
-                    "$signature: missing or too minimal"
+                semantic.none { it.hasDescription() } -> "$signature: missing or too minimal"
+                semantic.none(::hasExample) -> "$signature: missing example"
                 else -> null
             }
         } + listOfNotNull("library help: missing or too minimal".takeUnless { library.help.hasDescription() })

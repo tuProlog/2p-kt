@@ -17,6 +17,16 @@ object Remainder : IntegersBinaryMathFunction("rem") {
         `rem(+Dividend, +Divisor)`
         
         Evaluates the integer remainder of `Dividend` divided by `Divisor`. Both operands must evaluate to integers. A zero divisor raises an evaluation error. On the JVM the result takes the sign of `Dividend` (e.g. `-7 rem 2` is `-1`); on JavaScript the current implementation returns a non-negative result (`-7 rem 2` is `1`) and fails with a host arithmetic exception for a negative `Divisor`.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 7 rem 2.
+        X = 1.
+
+        ?- X is 7 rem 0.
+        throws error(evaluation_error(zero_divisor), _).
+        ```
         """.trimIndent()
 
     override fun mathFunction(

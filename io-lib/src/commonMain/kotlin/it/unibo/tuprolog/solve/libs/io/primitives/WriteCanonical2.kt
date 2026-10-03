@@ -24,6 +24,17 @@ object WriteCanonical2 : BinaryRelation.NonBacktrackable<ExecutionContext>("writ
         `write_canonical(+Stream, @Term)`
         
         Writes `Term` to the output stream `Stream` in canonical form: atoms and functors are quoted where needed, operators are written in functional notation, and `'${'$'}VAR'(N)` terms are written as-is. It succeeds deterministically. `Stream` must be an alias (e.g. `user_output`) or a `${'$'}stream(out, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an input stream a domain error (`stream_type`), where ISO prescribes a permission error. It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- write_canonical(user_output, f('A', 1 + 2)).
+        % prints: f('A', '+'(1, 2))
+        yes.
+
+        ?- write_canonical(user_input, a).
+        throws error(domain_error(stream_type, user_input), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

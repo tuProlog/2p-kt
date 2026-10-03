@@ -12,6 +12,21 @@ object TermSame : BinaryRelation.Predicative<ExecutionContext>("=@=") {
         `Left =@= Right`
         
         Succeeds when `Left` and `Right` compare as equal in the standard order of terms. It does not instantiate either term. In the current implementation a variable is only equal to itself, so variants such as `f(X)` and `f(Y)` are not considered the same.
+
+        **Examples**
+
+        ```prolog
+        % `=@=` is not a default operator, so canonical notation is used
+        ?- =@=(f(a, X), f(a, X)).
+        yes.
+
+        ?- =@=(f(a), f(b)).
+        no.
+
+        % variants are not considered the same
+        ?- =@=(f(X), f(Y)).
+        no.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.compute(

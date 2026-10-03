@@ -16,6 +16,19 @@ object Op : TernaryRelation.NonBacktrackable<ExecutionContext>("op") {
         `op(+Priority, +Specifier, +Name)`
         
         Adds or updates an operator declaration in the current solver state. `Priority` must be a non-negative integer, `Specifier` a valid operator specifier such as `yfx`, and `Name` an atom.
+
+        **Examples**
+
+        ```prolog
+        ?- op(700, xfx, likes).
+        yes.
+
+        ?- X = (alice likes bob), X = likes(A, B).
+        A = alice, B = bob.
+
+        ?- op(700, abc, foo).
+        throws error(domain_error(operator_specifier, abc), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

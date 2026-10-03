@@ -23,6 +23,19 @@ object Read2 : BinaryRelation.NonBacktrackable<ExecutionContext>("read") {
         `read(+Stream, ?Term)`
         
         Reads the next term, terminated by a full stop, from the input stream `Stream` and unifies it with `Term`, using the current operators. `Stream` must be an alias (e.g. `user_input`) or a `${'$'}stream(in, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an output stream a domain error (`stream_type`), where ISO prescribes a permission error. Deviating from ISO, the current implementation fails, instead of unifying `Term` with `end_of_file`, when no more terms are available; it raises a syntax error if the next term is malformed and a system error if the channel is closed or cannot be read term by term.
+
+        **Examples**
+
+        ```prolog
+        ?- read(S, T).
+        throws error(instantiation_error, _).
+
+        ?- read(user_output, T).
+        throws error(domain_error(stream_type, user_output), _).
+
+        ?- read(no_such_stream, T).
+        throws error(existence_error(source_sink, no_such_stream), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

@@ -12,6 +12,19 @@ object TermNotIdentical : BinaryRelation.Predicative<ExecutionContext>("\\==") {
         `Left \== Right`
         
         Succeeds when `Left` and `Right` are not identical terms. It is the negation of term identity and does not bind variables.
+
+        **Examples**
+
+        ```prolog
+        ?- a \== b.
+        yes.
+
+        ?- X \== Y.
+        yes.
+
+        ?- X \== X.
+        no.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.compute(

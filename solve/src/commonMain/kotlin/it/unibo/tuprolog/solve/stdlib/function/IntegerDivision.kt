@@ -17,6 +17,19 @@ object IntegerDivision : IntegersBinaryMathFunction("//") {
         `//(+Dividend, +Divisor)`
         
         Performs integer division. Both operands must evaluate to integers. A zero divisor raises an evaluation error.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 7 // 2.
+        X = 3.
+
+        ?- X is -7 // 2.
+        X = -3.
+
+        ?- X is 1 // 0.
+        throws error(evaluation_error(zero_divisor), _).
+        ```
         """.trimIndent()
 
     override fun mathFunction(

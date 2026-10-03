@@ -12,6 +12,19 @@ object TermIdentical : BinaryRelation.Predicative<ExecutionContext>("==") {
         `Left == Right`
         
         Succeeds when `Left` and `Right` are identical terms without performing unification; variables must denote the same variables in the same positions.
+
+        **Examples**
+
+        ```prolog
+        ?- f(a, X) == f(a, X).
+        yes.
+
+        ?- X == Y.
+        no.
+
+        ?- 1 == 1.0.
+        no.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.compute(

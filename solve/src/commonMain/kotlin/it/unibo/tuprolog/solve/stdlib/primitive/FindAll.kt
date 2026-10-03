@@ -12,6 +12,22 @@ object FindAll : AbstractCollectingPrimitive("findall") {
         `findall(?Template, +Goal, -Bag)`
         
         Collects every instance of `Template` produced by solutions of `Goal` into `Bag`, preserving duplicates and solution order. Unlike `bagof/3`, free variables of `Goal` do not create separate groups; failure yields an empty list.
+
+        **Examples**
+
+        ```prolog
+        ?- findall(X, member(X, [a, b, a]), L).
+        L = [a, b, a].
+
+        ?- findall(X-Y, member(X, [1, 2]), L).
+        L = [1-_, 2-_].
+
+        ?- findall(X, fail, L).
+        L = [].
+
+        ?- findall(X, G, L).
+        throws error(instantiation_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(

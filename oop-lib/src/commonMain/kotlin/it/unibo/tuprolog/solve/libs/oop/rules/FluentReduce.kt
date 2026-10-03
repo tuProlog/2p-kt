@@ -30,7 +30,20 @@ sealed class FluentReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         """
         `fluent_reduce(+Expression, ?Result)`
         
-        Helper behind `./2` and `:=/2`: evaluates a chain of member accesses `Receiver.M1.M2...` (which, as `.` is the list constructor, is the same term as the improper list `[Receiver, M1 | M2]`) by invoking `M1` on `Receiver` via `invoke_method/3`, then `M2` on that result, and so on, unifying `Result` with the last result. A term that is not a chain is unified with `Result` unchanged. Deterministic (each clause cuts). Errors are those of `invoke_method/3`. Example: `fluent_reduce(${'$'}math.max(1, 2), M)` binds `M` to `2`.
+        Helper behind `./2` and `:=/2`: evaluates a chain of member accesses `Receiver.M1.M2...` (which, as `.` is the list constructor, is the same term as the improper list `[Receiver, M1 | M2]`) by invoking `M1` on `Receiver` via `invoke_method/3`, then `M2` on that result, and so on, unifying `Result` with the last result. A term that is not a chain is unified with `Result` unchanged. Deterministic (each clause cuts). Errors are those of `invoke_method/3`.
+
+        **Examples**
+
+        ```prolog
+        ?- fluent_reduce(${'$'}math.max(1, 2), M).
+        M = 2.
+
+        ?- new_object('java.lang.StringBuilder', [abc], B), fluent_reduce(B.reverse.toString, S).
+        S = cba.
+
+        ?- fluent_reduce(foo, R).
+        R = foo.
+        ```
         """.trimIndent()
 
     companion object {

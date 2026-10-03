@@ -9,6 +9,16 @@ object SetPersistent : AbstractSetData("persistent") {
         `set_persistent(+Key, ?Value)`
         
         Stores `Value` under atom `Key` in the persistent custom-data store of the current execution context.
+
+        **Examples**
+
+        ```prolog
+        ?- set_persistent(counter, 1).
+        yes.
+
+        ?- get_persistent(counter, X).
+        X = 1.
+        ```
         """.trimIndent()
 
     override fun SideEffectsBuilder.setData(

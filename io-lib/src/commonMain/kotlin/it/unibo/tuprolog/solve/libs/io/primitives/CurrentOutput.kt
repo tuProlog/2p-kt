@@ -22,6 +22,20 @@ object CurrentOutput : UnaryPredicate.NonBacktrackable<ExecutionContext>("curren
         `current_output(?Stream)`
         
         Unifies `Stream` with the `${'$'}stream(out, Id)` term of the current output stream (standard output, unless changed via `set_output/1`); if `Stream` is already a stream term, it succeeds iff that term denotes the current output stream. It is deterministic. It raises an existence error if `Stream` is a stream term denoting no open stream, and a domain error (`stream_or_alias`) if it is bound to anything else, aliases included.
+
+        **Examples**
+
+        ```prolog
+        ?- current_output(S), stream_property(S, alias(user_output)).
+        yes.
+
+        ?- current_output(S), write(S, hello).
+        % prints: hello
+        yes.
+
+        ?- current_output(user_output).
+        throws error(domain_error(stream_or_alias, user_output), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

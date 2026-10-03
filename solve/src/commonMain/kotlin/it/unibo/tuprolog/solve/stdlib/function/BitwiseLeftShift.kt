@@ -16,6 +16,16 @@ object BitwiseLeftShift : IntegersBinaryMathFunction("<<") {
         `<<(+Integer, +Shift)`
         
         Shifts `Integer` left by `Shift` bit positions. Both operands must evaluate to integers.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 1 << 4.
+        X = 16.
+
+        ?- X is 1.0 << 4.
+        throws error(type_error(integer, 1.0), _).
+        ```
         """.trimIndent()
 
     override fun mathFunction(

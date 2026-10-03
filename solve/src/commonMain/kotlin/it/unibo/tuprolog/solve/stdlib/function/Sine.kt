@@ -19,6 +19,16 @@ object Sine : UnaryMathFunction("sin") {
         `sin(+Number)`
         
         Evaluates to the sine of `Number`, interpreted as an angle in radians. The result is always a real value.
+
+        **Examples**
+
+        ```prolog
+        ?- X is sin(0).
+        X = 0.0.
+
+        ?- X is sin(0.0).
+        X = 0.0.
+        ```
         """.trimIndent()
 
     override fun mathFunction(

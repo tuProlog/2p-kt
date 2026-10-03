@@ -24,6 +24,16 @@ object GetCode1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("get_code") 
         `get_code(?Code)`
         
         Reads and consumes the next character from the current input stream (standard input, unless changed via `set_input/1`) and unifies its code with `Code`, which becomes `-1` at the end of the stream. It is deterministic. `Code` must be unbound or an integer (type error otherwise) within the character-code range or `-1` (representation error otherwise). It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- get_code(a).
+        throws error(type_error(integer, a), _).
+
+        ?- get_code(-2).
+        throws error(representation_error(character_code), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

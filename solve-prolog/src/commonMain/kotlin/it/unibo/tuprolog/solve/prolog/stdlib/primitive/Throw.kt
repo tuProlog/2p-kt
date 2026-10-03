@@ -25,6 +25,19 @@ object Throw : UnaryPredicate<ExecutionContext>("throw") {
         `throw(+Ball)`
 
         Raises `Ball` as an exception: resolution unwinds to the innermost enclosing `catch/3` whose catcher unifies with `Ball`, or halts the query if none does. A ball shaped like `error(Type, Context)` (or `error(Type)`) is raised as the standard error of that `Type`, any other term as a user-defined exception carrying it. `Ball` must be instantiated, otherwise an instantiation error is raised instead.
+
+        **Examples**
+
+        ```prolog
+        ?- catch(throw(my_error), E, true).
+        E = my_error.
+
+        ?- throw(error(type_error(integer, a), my_context)).
+        throws error(type_error(integer, a), _).
+
+        ?- throw(_).
+        throws error(instantiation_error, _).
+        ```
         """.trimIndent()
 
     private fun handleError(

@@ -23,6 +23,16 @@ object GetChar1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("get_char") 
         `get_char(?Char)`
         
         Reads and consumes the next character from the current input stream (standard input, unless changed via `set_input/1`) and unifies it with `Char`, which becomes `end_of_file` at the end of the stream. It is deterministic. `Char` must be unbound, `end_of_file`, or a one-character atom, otherwise a type error (`in_character`) is raised. It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- get_char(ab).
+        throws error(type_error(in_character, ab), _).
+
+        ?- get_char(1).
+        throws error(type_error(in_character, 1), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

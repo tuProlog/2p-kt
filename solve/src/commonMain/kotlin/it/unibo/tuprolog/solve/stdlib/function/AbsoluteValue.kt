@@ -17,6 +17,19 @@ object AbsoluteValue : UnaryMathFunction("abs") {
         `abs(+Number)`
         
         Evaluates to the absolute value of `Number`. Integer inputs produce integers; real inputs produce reals.
+
+        **Examples**
+
+        ```prolog
+        ?- X is abs(-3).
+        X = 3.
+
+        ?- X is abs(-2.5).
+        X = 2.5.
+
+        ?- X is abs(foo).
+        throws error(type_error(evaluable, foo), _).
+        ```
         """.trimIndent()
 
     override fun mathFunction(

@@ -18,6 +18,16 @@ object Subtraction : BinaryMathFunction("-") {
         `-(+Left, +Right)`
         
         Evaluates to `Left - Right`. Integer − integer yields an integer; mixed or real operands yield a real value.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 5 - 7.
+        X = -2.
+
+        ?- X is 5 - 1.5.
+        X = 3.5.
+        ```
         """.trimIndent()
 
     override fun mathFunction(

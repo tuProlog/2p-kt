@@ -32,6 +32,19 @@ object SetTheory : UnaryPredicate.NonBacktrackable<ExecutionContext>("set_theory
         `set_theory(+Text)`
         
         Parses the atom `Text` as Prolog source code, using the current operators, and makes the resulting theory the new knowledge base: both the static and the dynamic knowledge bases are replaced (clauses of predicates declared dynamic go to the dynamic one), and operators and flags set by its directives take effect. This predicate is tuProlog-specific; see `consult/1` to add clauses loaded from a file or URL instead. It raises a type error (`atom`) if `Text` is not an atom (including when it is unbound, where an instantiation error would be customary) and a syntax error if `Text` is not a well-formed theory.
+
+        **Examples**
+
+        ```prolog
+        ?- set_theory('parent(tom, bob). parent(bob, ann).'), parent(bob, X).
+        X = ann.
+
+        ?- set_theory(42).
+        throws error(type_error(atom, 42), _).
+
+        ?- set_theory('foo(.').
+        throws error(syntax_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

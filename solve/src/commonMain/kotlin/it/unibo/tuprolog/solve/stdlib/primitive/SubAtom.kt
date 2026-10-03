@@ -15,6 +15,20 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
         `sub_atom(+Atom, ?Before, ?Length, ?After, ?SubAtom)`
         
         Relates `Atom` with a contiguous `SubAtom` and the number of characters before, within, and after it. This is a partial implementation: it computes a single slice when enough position arguments are bound, returns each computed binding as a separate solution, does not enumerate sub-atoms on backtracking, and, when `SubAtom` is bound, only considers its first occurrence.
+
+        **Examples**
+
+        ```prolog
+        % each computed binding is reported as a separate solution
+        ?- sub_atom(hello, 1, 3, A, S).
+        S = ell ; A = 1.
+
+        ?- sub_atom(hello, B, L, A, ll).
+        B = 2 ; A = 1 ; L = 2.
+
+        ?- sub_atom(X, 0, 1, _, S).
+        throws error(instantiation_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(

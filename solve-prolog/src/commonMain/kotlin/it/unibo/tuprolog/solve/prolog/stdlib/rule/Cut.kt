@@ -14,5 +14,18 @@ object Cut : RuleWrapper<ExecutionContext>("!", 0) {
         `!`
 
         Cut: always succeeds, committing to the choices made since the current clause was selected. The remaining alternative clauses of the predicate being proved, and the remaining alternatives of the goals at the left of `!` in the clause body, are discarded. Within `call/1`, `\+/1`, `findall/3` and similar meta-calls, cut is local to the called goal.
+
+        **Examples**
+
+        ```prolog
+        ?- assertz((first(X) :- member(X, [a, b, c]), !)), findall(X, first(X), L).
+        L = [a].
+
+        ?- findall(X, (member(X, [a, b, c]), !), L).
+        L = [a].
+
+        ?- findall(X, (member(X, [a, b, c]), call(!)), L).
+        L = [a, b, c].
+        ```
         """.trimIndent()
 }

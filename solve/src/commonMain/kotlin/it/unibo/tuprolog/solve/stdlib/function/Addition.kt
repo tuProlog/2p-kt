@@ -18,6 +18,19 @@ object Addition : BinaryMathFunction("+") {
         `+(+Left, +Right)`
         
         Evaluates to the arithmetic sum of `Left` and `Right`. Integer + integer yields an integer; mixed or real operands yield a real value.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 1 + 2.
+        X = 3.
+
+        ?- X is 1 + 2.5.
+        X = 3.5.
+
+        ?- X is 1 + Y.
+        throws error(instantiation_error, _).
+        ```
         """.trimIndent()
 
     override fun mathFunction(

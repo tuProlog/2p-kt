@@ -9,6 +9,13 @@ object SetDurable : AbstractSetData("durable") {
         `set_durable(+Key, ?Value)`
         
         Stores `Value` under atom `Key` in the durable custom-data store of the current execution context.
+
+        **Examples**
+
+        ```prolog
+        ?- set_durable(counter, 1), get_durable(counter, X).
+        X = 1.
+        ```
         """.trimIndent()
 
     override fun SideEffectsBuilder.setData(

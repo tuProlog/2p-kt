@@ -19,6 +19,19 @@ object Help : RuleWrapper<ExecutionContext>("help", 2) {
         flags such as `flag(unknown)`, and libraries such as `library('prolog.lang')`.
 
         The first argument may be left variable to enumerate documented subjects.
+
+        **Examples**
+
+        ```prolog
+        ?- help(member/2, H), atom(H).
+        yes.
+
+        ?- help(flag(unknown), H), sub_atom(H, _, _, _, 'flag(unknown)').
+        yes.
+
+        ?- help(no_such_predicate/7, H).
+        no.
+        ```
         """.trimIndent()
 
     override val Scope.head: KtList<Term>

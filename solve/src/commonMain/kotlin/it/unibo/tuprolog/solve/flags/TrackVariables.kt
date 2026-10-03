@@ -21,6 +21,16 @@ object TrackVariables : NotableFlag {
         - `off`: disable the additional tracking.
         - Default: `off`
         - Editable: yes
+
+        **Examples**
+
+        ```prolog
+        ?- current_prolog_flag(track_variables, V).
+        V = off.
+
+        ?- set_prolog_flag(track_variables, on), current_prolog_flag(track_variables, V).
+        V = on.
+        ```
         """.trimIndent()
 
     /** Variable tracking is enabled. */

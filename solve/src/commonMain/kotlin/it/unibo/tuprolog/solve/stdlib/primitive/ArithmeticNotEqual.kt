@@ -11,6 +11,16 @@ object ArithmeticNotEqual : ArithmeticRelation<ExecutionContext>("=\\=") {
         `=\=(+Left, +Right)`
         
         Succeeds when the arithmetic values of `Left` and `Right` are different. Both arguments are evaluated as arithmetic expressions.
+
+        **Examples**
+
+        ```prolog
+        ?- 1 =\= 2.
+        yes.
+
+        ?- 2 + 2 =\= 4.
+        no.
+        ```
         """.trimIndent()
 
     override fun computeNumeric(

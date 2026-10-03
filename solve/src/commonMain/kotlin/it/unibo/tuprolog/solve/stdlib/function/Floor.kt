@@ -19,6 +19,16 @@ object Floor : UnaryMathFunction("floor") {
         `floor(+Number)`
         
         Evaluates to the greatest integer not greater than `Number`.
+
+        **Examples**
+
+        ```prolog
+        ?- X is floor(2.7).
+        X = 2.
+
+        ?- X is floor(-2.1).
+        X = -3.
+        ```
         """.trimIndent()
 
     override fun mathFunction(

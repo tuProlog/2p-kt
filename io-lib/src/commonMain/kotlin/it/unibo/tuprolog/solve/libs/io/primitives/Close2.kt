@@ -16,6 +16,13 @@ object Close2 : BinaryRelation.NonBacktrackable<ExecutionContext>("close") {
         `close(+Stream, +Options)`
         
         Registered for ISO conformance only: the current implementation does not support close options such as `force(true)`, so every call raises a system error regardless of its arguments; use `close/1` instead.
+
+        **Examples**
+
+        ```prolog
+        ?- close(user_output, [force(true)]).
+        throws error(system_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

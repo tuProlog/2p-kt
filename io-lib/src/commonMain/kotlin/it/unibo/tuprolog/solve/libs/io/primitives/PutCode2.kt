@@ -28,6 +28,20 @@ object PutCode2 : BinaryRelation.NonBacktrackable<ExecutionContext>("put_code") 
         `put_code(+Stream, +Code)`
         
         Writes the character whose code is `Code` to the output stream `Stream`, succeeding deterministically. `Stream` must be an alias (e.g. `user_output`) or a `${'$'}stream(out, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an input stream a domain error (`stream_type`), where ISO prescribes a permission error. `Code` must be an integer (type error otherwise, even when unbound) and a valid character code (representation error otherwise). It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- put_code(user_output, 97).
+        % prints: a
+        yes.
+
+        ?- put_code(user_output, C).
+        throws error(type_error(integer, _), _).
+
+        ?- put_code(user_input, 97).
+        throws error(domain_error(stream_type, user_input), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

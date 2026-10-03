@@ -181,13 +181,40 @@ object OOPLib : AbstractLibrary() {
                     """
                     `${'$'}+Alias`
                     
-                    Alias reference, with no predicate behind it: `${'$'}Alias` stands for the object or type reference registered under the atom `Alias` by an `alias/2` fact, i.e. one of the library's default aliases (`string`, `int`, `arraylist`, `stdout`, ...) or one added via `register/2`. It is resolved by the library wherever a reference is expected: as the receiver of `invoke_method/3`, `invoke_strict/3`, `./2` and `:=/2`, as the type of `new_object/2,3` and `cast/3`, as the value of `assign/3`, as the type in `as/2` casts, and inside method or constructor arguments (where it must denote an object). An unregistered alias raises an existence error. Example: `${'$'}stdout.println(hello)` or `new_object(${'$'}arraylist, L)`.
+                    Alias reference, with no predicate behind it: `${'$'}Alias` stands for the object or type reference registered under the atom `Alias` by an `alias/2` fact, i.e. one of the library's default aliases (`string`, `int`, `arraylist`, `stdout`, ...) or one added via `register/2`. It is resolved by the library wherever a reference is expected: as the receiver of `invoke_method/3`, `invoke_strict/3`, `./2` and `:=/2`, as the type of `new_object/2,3` and `cast/3`, as the value of `assign/3`, as the type in `as/2` casts, and inside method or constructor arguments (where it must denote an object). An unregistered alias raises an existence error.
+
+                    **Examples**
+
+                    ```prolog
+                    ?- ${'$'}stdout.println(hello).
+                    % prints: hello
+                    yes.
+
+                    ?- new_object(${'$'}arraylist, L), L.add(a), N := L.size.
+                    N = 1.
+
+                    ?- invoke_method(${'$'}nope, toString, R).
+                    throws error(existence_error(_, _), _).
+                    ```
                     """.trimIndent(),
                 Signature("as", 2) to
                     """
                     `+Term as +Type`
                     
-                    Explicit conversion, with no predicate behind it. Inside method or constructor arguments (of `invoke_method/3`, `invoke_strict/3`, `new_object/3`, `./2` chains, `*_items/2` lists and `assign/3` values), `Term as Type` converts `Term` into exactly `Type` instead of the automatically inferred type, which also steers overload selection. There `Type` is an atom holding a fully qualified type name (e.g. `'java.lang.Long'`), a type reference, or a `${'$'}Alias` reference to a type; if `Term` cannot be represented as `Type`, an error is raised. On the right of `:=/2`, `Result := Term as Type` instead calls `cast/3`, which requires a type reference or a `${'$'}Alias`. Since `as` binds tighter than `.`, parenthesise chains: `R := (Obj.size) as ${'$'}long`. Example: `L.add(1 as 'java.lang.Long')`.
+                    Explicit conversion, with no predicate behind it. Inside method or constructor arguments (of `invoke_method/3`, `invoke_strict/3`, `new_object/3`, `./2` chains, `*_items/2` lists and `assign/3` values), `Term as Type` converts `Term` into exactly `Type` instead of the automatically inferred type, which also steers overload selection. There `Type` is an atom holding a fully qualified type name (e.g. `'java.lang.Long'`), a type reference, or a `${'$'}Alias` reference to a type; if `Term` cannot be represented as `Type`, an error is raised. On the right of `:=/2`, `Result := Term as Type` instead calls `cast/3`, which requires a type reference or a `${'$'}Alias`. Since `as` binds tighter than `.`, parenthesise chains: `R := (Obj.size) as ${'$'}long`.
+
+                    **Examples**
+
+                    ```prolog
+                    ?- X := ${'$'}math.max(1 as 'java.lang.Double', 2).
+                    X = 2.0.
+
+                    ?- new_object('java.util.ArrayList', [], L), L.add(1 as 'java.lang.Long'), A := L.contains(1 as 'java.lang.Long'), B := L.contains(1).
+                    A = true, B = false.
+
+                    ?- new_object('java.util.ArrayList', [], L), L.add(abc as 'java.lang.Long').
+                    throws error(representation_error(_), _).
+                    ```
                     """.trimIndent(),
             )
 }

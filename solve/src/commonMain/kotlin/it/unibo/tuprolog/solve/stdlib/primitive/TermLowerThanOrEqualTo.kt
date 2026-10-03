@@ -12,6 +12,19 @@ object TermLowerThanOrEqualTo : BinaryRelation.Predicative<ExecutionContext>("@=
         `Left @=< Right`
         
         Succeeds when `Left` is equal to or precedes `Right` in the standard term ordering used by the solver.
+
+        **Examples**
+
+        ```prolog
+        ?- a @=< a.
+        yes.
+
+        ?- a @=< b.
+        yes.
+
+        ?- f(b) @=< f(a).
+        no.
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.compute(

@@ -11,6 +11,19 @@ object ArithmeticEqual : ArithmeticRelation<ExecutionContext>("=:=") {
         `=:=(+Left, +Right)`
         
         Succeeds when the arithmetic values of `Left` and `Right` are numerically equal. Both arguments are evaluated as arithmetic expressions.
+
+        **Examples**
+
+        ```prolog
+        ?- 1 + 2 =:= 3.
+        yes.
+
+        ?- 1 =:= 1.0.
+        yes.
+
+        ?- X =:= 1.
+        throws error(instantiation_error, _).
+        ```
         """.trimIndent()
 
     override fun computeNumeric(

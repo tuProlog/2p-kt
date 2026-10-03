@@ -26,6 +26,19 @@ object GroundQueriesHaveBooleanSolution : NotableFlag {
         - Editable: yes
         
         This affects formatting only; the underlying solution object is unchanged.
+
+        **Examples**
+
+        ```prolog
+        ?- current_prolog_flag(ground_queries_have_boolean_solution, V).
+        V = off.
+
+        ?- set_prolog_flag(ground_queries_have_boolean_solution, on).
+        yes.
+
+        ?- current_prolog_flag(ground_queries_have_boolean_solution, V).
+        V = on.
+        ```
         """.trimIndent()
 
     /** A ground query's `yes` solution is presented simply as `yes.`. */

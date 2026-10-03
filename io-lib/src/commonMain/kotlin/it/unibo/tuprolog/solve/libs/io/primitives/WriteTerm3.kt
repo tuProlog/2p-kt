@@ -28,6 +28,20 @@ object WriteTerm3 : TernaryRelation.NonBacktrackable<ExecutionContext>("write_te
         `write_term(+Stream, @Term, +Options)`
         
         Writes `Term` to the output stream `Stream`, formatted according to `Options` and the current operators, succeeding deterministically. `Stream` must be an alias (e.g. `user_output`) or a `${'$'}stream(out, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an input stream a domain error (`stream_type`), where ISO prescribes a permission error. `Options` must be a list (an unbound `Options` raises a type error (`list`) rather than ISO's instantiation error) whose elements are `quoted(Bool)` (quote atoms and functors where needed), `ignore_ops(Bool)` (write operators in canonical functional notation) and `numbervars(Bool)` (write `'${'$'}VAR'(N)` terms as variable letters), with `Bool` being `true` or `false`; missing options default to `false`, and any other element raises a domain error (`write_option`). It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- write_term(user_output, '${'$'}VAR'(27), [numbervars(true)]).
+        % prints: B1
+        yes.
+
+        ?- write_term(user_output, a, [quoted(maybe)]).
+        throws error(domain_error(write_option, quoted(maybe)), _).
+
+        ?- write_term(user_input, a, []).
+        throws error(domain_error(stream_type, user_input), _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(

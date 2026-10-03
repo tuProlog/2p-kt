@@ -17,6 +17,19 @@ object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars")
         `number_chars(?Number, ?Chars)`
         
         Relates a number with the list of one-character atoms forming its textual representation. Either side may drive the conversion when sufficiently instantiated.
+
+        **Examples**
+
+        ```prolog
+        ?- number_chars(N, ['4', '2']).
+        N = 42.
+
+        ?- number_chars(3.5, L).
+        L = ['3', '.', '5'].
+
+        ?- number_chars(N, L).
+        throws error(instantiation_error, _).
+        ```
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
