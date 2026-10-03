@@ -21,7 +21,6 @@ private val INSPECTION_CAPABILITIES =
         SolverCapabilities.OPERATORS_INSPECTION,
         SolverCapabilities.FLAGS_INSPECTION,
         SolverCapabilities.LIBRARIES_INSPECTION,
-        SolverCapabilities.DOCUMENTATION_INSPECTION,
         SolverCapabilities.INTERACTIVE_INPUT,
     )
 

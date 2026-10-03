@@ -22,6 +22,7 @@ kotlin {
                 implementation(project(":io-lib"))
                 implementation(project(":oop-lib"))
                 implementation(libs.kotlinx.serialization.core)
+                implementation(libs.markdown)
             }
         }
         commonTest {

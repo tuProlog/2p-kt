@@ -323,7 +323,7 @@ const SCENARIOS = [
     async run({ evalJs }) {
       const count = await evalJs(`document.querySelectorAll('.side-content').length`);
       const failures = [];
-      if (count !== 12) failures.push(`expected 12 .side-content panels, found ${count}`);
+      if (count !== 11) failures.push(`expected 11 .side-content panels, found ${count}`);
       const toggled = await evalJs(`
         (function() {
           const tabs = Array.from(document.querySelectorAll('.side-tab'));
@@ -417,6 +417,37 @@ const SCENARIOS = [
       // the (idempotent) set-flag-and-solve step self-heals it instead of guessing a fixed delay.
       const after = await pollUntil(setFlagAndSolve, (v) => v === target, 8000, 250);
       return after === target ? [] : [`expected the 'unknown' flag to re-render as "${target}", got "${after}"`];
+    },
+  },
+  {
+    name: "library entries preview their documentation and open it rendered on double-click",
+    async run({ evalJs }) {
+      // Libraries, like flags, only exist once a solver session does; earlier scenarios already solved.
+      const preview = await evalJs(`
+        (function() {
+          Array.from(document.querySelectorAll('.side-tab')).find(t => t.textContent === 'Libraries').click();
+          const entry = Array.from(document.querySelectorAll('.side-content li.library-entry'))
+            .find(li => li.textContent.startsWith('functor/3 — '));
+          if (!entry) return null;
+          entry.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+          return entry.textContent;
+        })()
+      `);
+      if (!preview) return ["no 'functor/3 — …' documentation preview found in the Libraries panel"];
+      const rendered = await evalJs(`
+        (function() {
+          const dialog = document.querySelector('.dialog.documentation');
+          if (!dialog) return null;
+          const hasCode = dialog.querySelector('code') !== null;
+          Array.from(dialog.querySelectorAll('button')).find(b => b.textContent === 'Close').click();
+          return { hasCode, closed: document.querySelector('.dialog.documentation') === null };
+        })()
+      `);
+      if (!rendered) return ["double-clicking a library entry did not open a documentation dialog"];
+      const failures = [];
+      if (!rendered.hasCode) failures.push("the documentation dialog shows no rendered <code> element");
+      if (!rendered.closed) failures.push("the documentation dialog's Close button did not dismiss it");
+      return failures;
     },
   },
   {

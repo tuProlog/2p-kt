@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.web
 
+import it.unibo.tuprolog.ui.gui.presentation.markdownToHtml
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.HTMLElement
@@ -15,6 +16,30 @@ internal fun showOverlay(build: (close: () -> Unit) -> HTMLElement) {
     }
     backdrop.appendChild(build(::close))
     document.body?.appendChild(backdrop)
+}
+
+/** Shows [markdown], rendered, in a modal titled [title]. */
+internal fun showDocumentation(
+    title: String,
+    markdown: String,
+) {
+    showOverlay { close ->
+        val box = document.createElement("div") as HTMLElement
+        box.className = "dialog documentation"
+        val heading = document.createElement("div") as HTMLElement
+        heading.className = "row"
+        heading.appendChild((document.createElement("strong") as HTMLElement).apply { textContent = title })
+        box.appendChild(heading)
+        box.appendChild((document.createElement("div") as HTMLElement).apply { innerHTML = markdownToHtml(markdown) })
+        val row = document.createElement("div") as HTMLElement
+        row.className = "row"
+        val button = document.createElement("button") as HTMLElement
+        button.textContent = "Close"
+        button.addEventListener("click", { _: Event -> close() })
+        row.appendChild(button)
+        box.appendChild(row)
+        box
+    }
 }
 
 /** Lists [names] in a modal, invoking [onSelected] with the chosen one or [onCancel] if dismissed. */

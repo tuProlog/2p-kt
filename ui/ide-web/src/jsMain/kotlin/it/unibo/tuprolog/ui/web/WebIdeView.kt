@@ -19,6 +19,7 @@ import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
 import it.unibo.tuprolog.ui.gui.presentation.LibraryPresentation
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
+import it.unibo.tuprolog.ui.gui.presentation.documentationPreview
 import it.unibo.tuprolog.ui.gui.presentation.formatDurationInput
 import it.unibo.tuprolog.ui.gui.presentation.parseDurationInput
 import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
@@ -284,7 +285,6 @@ internal class WebIdeView(
             PanelId.OPERATORS -> "Operators"
             PanelId.FLAGS -> "Flags"
             PanelId.LIBRARIES -> "Libraries"
-            PanelId.DOCUMENTATION -> "Documentation"
             PanelId.STATIC_KB -> "Static KB"
             PanelId.DYNAMIC_KB -> "Dynamic KB"
         }
@@ -301,7 +301,6 @@ internal class WebIdeView(
             PanelId.OPERATORS -> "operators"
             PanelId.FLAGS -> "flags"
             PanelId.LIBRARIES -> "libraries"
-            PanelId.DOCUMENTATION -> "libraries"
             PanelId.STATIC_KB -> "static-kb"
             PanelId.DYNAMIC_KB -> "dynamic-kb"
         }
@@ -488,7 +487,6 @@ internal class WebIdeView(
         badge(PanelId.OPERATORS, false)
         badge(PanelId.FLAGS, false)
         badge(PanelId.LIBRARIES, false)
-        badge(PanelId.DOCUMENTATION, false)
         badge(PanelId.STATIC_KB, false)
         badge(PanelId.DYNAMIC_KB, false)
     }
@@ -591,10 +589,6 @@ internal class WebIdeView(
         panelContents.getValue(PanelId.OPERATORS).replaceContent(operatorsTable(inspection.operators))
         panelContents.getValue(PanelId.FLAGS).replaceContent(flagsTable(page, inspection.flags))
         panelContents.getValue(PanelId.LIBRARIES).replaceContent(librariesList(inspection.libraries))
-        panelContents.getValue(PanelId.DOCUMENTATION).apply {
-            textContent = inspection.documentation
-            style.setProperty("white-space", "pre-wrap")
-        }
         panelContents.getValue(PanelId.STATIC_KB).textContent = inspection.staticKnowledgeBase
         panelContents.getValue(PanelId.DYNAMIC_KB).textContent = inspection.dynamicKnowledgeBase
     }
@@ -768,17 +762,52 @@ internal class WebIdeView(
     }
 
     private fun librariesList(libraries: List<LibraryPresentation>): HTMLElement {
-        val list = element("div", null)
+        val list = element("div", "libraries")
         libraries.forEach { library ->
-            val entry = element("div", null)
-            entry.innerHTML =
-                "<strong>${library.alias}</strong><br/>" +
-                "Predicates: ${library.predicates.joinToString(", ")}<br/>" +
-                "Functions: ${library.functions.joinToString(", ")}"
+            val entry = element("details", null).apply { setAttribute("open", "") }
+            entry.appendChild(documentedEntry("summary", library.alias, library.help))
+
+            fun group(
+                title: String,
+                items: List<Pair<String, String?>>,
+            ) {
+                if (items.isEmpty()) return
+                val details = element("details", null).apply { setAttribute("open", "") }
+                details.appendChild(element("summary", null).apply { textContent = title })
+                val ul = element("ul", null)
+                items.forEach { (label, markdown) -> ul.appendChild(documentedEntry("li", label, markdown)) }
+                details.appendChild(ul)
+                entry.appendChild(details)
+            }
+            group("Predicates", library.predicates.map { it to library.documentation[it] })
+            group("Functions", library.functions.map { it to library.documentation[it] })
+            group(
+                "Operators",
+                library.operators.map {
+                    "${it.name} (${it.specifier}, priority ${it.priority})" to
+                        library.documentationOf(it)
+                },
+            )
             list.appendChild(entry)
         }
         return list
     }
+
+    /** A [tag] element labelled [label], previewing [markdown] and showing it rendered on double-click. */
+    private fun documentedEntry(
+        tag: String,
+        label: String,
+        markdown: String?,
+    ): HTMLElement =
+        element(tag, "library-entry").apply {
+            textContent = label
+            val preview = markdown?.let(::documentationPreview).orEmpty()
+            if (markdown != null && preview.isNotEmpty()) {
+                appendChild(element("span", "doc-preview").apply { textContent = " — $preview" })
+                title = "Double-click for documentation"
+                addEventListener("dblclick", { _: Event -> showDocumentation(label, markdown) })
+            }
+        }
 
     private fun tableRow(
         cells: List<String>,

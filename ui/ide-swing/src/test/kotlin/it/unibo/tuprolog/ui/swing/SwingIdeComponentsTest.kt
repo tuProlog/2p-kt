@@ -293,14 +293,19 @@ class SwingIdeComponentsTest {
                         predicates = listOf("p/1"),
                         operators = listOf(OperatorPresentation("+", 500, "yfx")),
                         functions = listOf("f/1"),
+                        documentation = mapOf("p/1" to "`p(+X)`\n\nHolds for `X`.", "+/2" to "Adds."),
                     ),
                 ),
             )
             val root = tree.model.root as DefaultMutableTreeNode
             val library = root.getChildAt(0) as DefaultMutableTreeNode
-            assertEquals("lib", library.userObject)
+            assertEquals("lib", library.toString())
             assertEquals(3, library.childCount)
-            assertTrue((library.getChildAt(0) as DefaultMutableTreeNode).toString() == "Predicates")
+            val predicates = library.getChildAt(0) as DefaultMutableTreeNode
+            assertTrue(predicates.toString() == "Predicates")
+            assertEquals("p/1 — Holds for X.", predicates.getChildAt(0).toString())
+            assertEquals("f/1", library.getChildAt(1).getChildAt(0).toString())
+            assertEquals("+ (yfx, priority 500) — Adds.", library.getChildAt(2).getChildAt(0).toString())
         }
     }
 

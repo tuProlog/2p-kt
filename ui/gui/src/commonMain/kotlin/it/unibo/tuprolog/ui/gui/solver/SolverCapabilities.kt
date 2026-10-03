@@ -17,7 +17,6 @@ data class SolverCapabilities(
         const val OPERATORS_INSPECTION: String = "operators-inspection"
         const val FLAGS_INSPECTION: String = "flags-inspection"
         const val LIBRARIES_INSPECTION: String = "libraries-inspection"
-        const val DOCUMENTATION_INSPECTION: String = "documentation-inspection"
         const val INTERACTIVE_INPUT: String = "interactive-input"
         const val CANCELLATION: String = "cancellation"
         const val PROBABILISTIC_SOLUTIONS: String = "probabilistic-solutions"

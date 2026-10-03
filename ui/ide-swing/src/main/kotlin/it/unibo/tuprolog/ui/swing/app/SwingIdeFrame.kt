@@ -135,7 +135,6 @@ class SwingIdeFrame(
     private val operatorsTable = OperatorsTable().apply { name = "operatorsTable" }
     private val flagsTable = FlagsTable().apply { name = "flagsTable" }
     private val librariesTree = LibrariesTree().apply { name = "librariesTree" }
-    private val documentationArea = readOnlyArea().apply { name = "documentationArea" }
     private val staticKbArea =
         PrologEditor(currentFontSize).apply {
             isEditable = false
@@ -257,7 +256,6 @@ class SwingIdeFrame(
         addLowerTab("Operators", PanelId.OPERATORS, operatorsTable, Icons.OPERATORS)
         addLowerTab("Flags", PanelId.FLAGS, flagsTable, Icons.FLAGS)
         addLowerTab("Libraries", PanelId.LIBRARIES, librariesTree, Icons.LIBRARIES)
-        addLowerTab("Documentation", PanelId.DOCUMENTATION, documentationArea, Icons.LIBRARIES)
         addLowerTab("Static KB", PanelId.STATIC_KB, staticKbArea, Icons.STATIC_KB)
         addLowerTab("Dynamic KB", PanelId.DYNAMIC_KB, dynamicKbArea, Icons.DYNAMIC_KB)
 
@@ -797,7 +795,6 @@ class SwingIdeFrame(
         flagsTable.render(page.solverSession.inspection.flags)
         flagsTable.isEnabled = page.resolution.status != ResolutionStatus.RUNNING
         librariesTree.render(page.solverSession.inspection.libraries)
-        documentationArea.text = page.solverSession.inspection.documentation
         staticKbArea.text = page.solverSession.inspection.staticKnowledgeBase
         staticKbArea.highlight(page.solverSession.inspection.operators)
         dynamicKbArea.text = page.solverSession.inspection.dynamicKnowledgeBase
@@ -974,8 +971,7 @@ class SwingIdeFrame(
         operatorsTable.render(emptyList())
         flagsTable.render(emptyList())
         librariesTree.render(emptyList())
-        listOf(stdinArea, stdoutArea, stderrArea, warningsArea, documentationArea, staticKbArea, dynamicKbArea)
-            .forEach { it.text = "" }
+        listOf(stdinArea, stdoutArea, stderrArea, warningsArea, staticKbArea, dynamicKbArea).forEach { it.text = "" }
     }
 
     private fun onEditorTabChanged() {

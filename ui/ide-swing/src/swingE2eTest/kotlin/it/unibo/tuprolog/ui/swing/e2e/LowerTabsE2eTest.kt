@@ -13,7 +13,6 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /** Covers the query-page-scoped inspector tabs below the query row: every one of them should be reachable. */
-@Suppress("TooManyFunctions")
 class LowerTabsE2eTest {
     private lateinit var window: FrameFixture
 
@@ -94,17 +93,9 @@ class LowerTabsE2eTest {
         solveTrivialQuery()
 
         window.selectLowerTab("Libraries")
-        assertTrue(window.tree("librariesTree").rowTexts().isNotEmpty())
-    }
-
-    @Test
-    fun `the Documentation tab shows the solver's help`() {
-        solveTrivialQuery()
-
-        window.selectLowerTab("Documentation")
-        window.awaitCondition("the documentation to be rendered") {
-            textBox("documentationArea").text().contains("flag(unknown)")
-        }
+        val rows = window.tree("librariesTree").rowTexts()
+        assertTrue(rows.isNotEmpty())
+        assertTrue(rows.any { it.startsWith("functor/3 — ") }, "no documentation preview in: $rows")
     }
 
     @Test

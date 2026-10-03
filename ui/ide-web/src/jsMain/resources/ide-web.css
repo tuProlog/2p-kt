@@ -277,3 +277,29 @@ ul.solutions .query {
         width: 92vw;
     }
 }
+.libraries summary,
+.libraries li {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.libraries ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 16px;
+}
+.libraries details details {
+    padding-left: 16px;
+}
+.libraries .doc-preview {
+    color: var(--muted);
+}
+.library-entry[title] {
+    cursor: pointer;
+}
+.dialog.documentation {
+    max-width: min(720px, 80vw);
+}
+.dialog.documentation pre {
+    white-space: pre-wrap;
+}
