@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.function
 
+import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
@@ -34,6 +35,20 @@ abstract class MathFunction : FunctionWrapper<ExecutionContext> {
     /** Utility function to throw undefined math error */
     protected fun throwUndefinedError(context: ExecutionContext): Nothing =
         throw EvaluationError(context = context, errorType = EvaluationError.Type.UNDEFINED)
+
+    /**
+     * Converts the [value] computed by a host floating-point operation into a [Real], raising the `undefined`
+     * evaluation error if it is not a number, or the `float_overflow` one if it is infinite.
+     */
+    protected fun realOf(
+        value: Double,
+        context: ExecutionContext,
+    ): Real =
+        when {
+            value.isNaN() -> throwUndefinedError(context)
+            value.isInfinite() -> throwFloatOverflowError(context)
+            else -> Real.of(value)
+        }
 
     /** Utility function to throw a TypeError for operators requiring only integers as parameters */
     protected fun throwTypeErrorBecauseOnlyIntegersAccepted(
