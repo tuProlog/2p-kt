@@ -8,7 +8,7 @@ object SetPersistent : AbstractSetData("persistent") {
         """
         `set_persistent(+Key, ?Value)`
         
-        Stores `Value` under atom `Key` in the persistent custom-data store of the current execution context.
+        Stores `Value` under atom `Key` in the persistent custom-data store of the current execution context. A non-ground `Key` raises an instantiation error, any other non-atom `Key` a type error.
 
         **Examples**
 
@@ -18,6 +18,9 @@ object SetPersistent : AbstractSetData("persistent") {
 
         ?- get_persistent(counter, X).
         X = 1.
+
+        ?- set_persistent(f(x), 1).
+        throws error(type_error(atom, f(x)), _).
         ```
         """.trimIndent()
 
