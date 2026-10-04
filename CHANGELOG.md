@@ -1,3 +1,35 @@
+## [3.0.0](https://github.com/tuProlog/2p-kt/compare/2.0.9...3.0.0) (2026-10-04)
+
+### ⚠ BREAKING CHANGES
+
+* **solve:** replace classic and streams solvers (#994)
+
+### Features
+
+* add solver help documentation ([#996](https://github.com/tuProlog/2p-kt/issues/996)) ([1ff336a](https://github.com/tuProlog/2p-kt/commit/1ff336a5b2c205ede2f6bb22e6f65e030be84da9))
+* standard solutions presentation ([#982](https://github.com/tuProlog/2p-kt/issues/982)) ([6b1ae0a](https://github.com/tuProlog/2p-kt/commit/6b1ae0ad572505732452eba54bc5d287eaf47252)), closes [#980](https://github.com/tuProlog/2p-kt/issues/980) [#980](https://github.com/tuProlog/2p-kt/issues/980) [#980](https://github.com/tuProlog/2p-kt/issues/980)
+
+### Dependency updates
+
+* **deps:** stop renovate from proposing publish-on-central updates ([bc2082f](https://github.com/tuProlog/2p-kt/commit/bc2082fdc22a7fd29cd2d16a10b6a90e6bb0c70c)), closes [#979](https://github.com/tuProlog/2p-kt/issues/979) [DanySK/publish-on-central#1804](https://github.com/DanySK/publish-on-central/issues/1804)
+* **deps:** update gradle to v9.8.0 ([#983](https://github.com/tuProlog/2p-kt/issues/983)) ([c38a381](https://github.com/tuProlog/2p-kt/commit/c38a3817c795cda2521abcf7731c3a23f2bc9193))
+* **deps:** update ktmpp to v6.0.3 ([#985](https://github.com/tuProlog/2p-kt/issues/985)) ([888e4e0](https://github.com/tuProlog/2p-kt/commit/888e4e08e9ca4376518cacfd4e145f2173a019ab))
+* **deps:** update ktmpp to v6.0.4 ([#995](https://github.com/tuProlog/2p-kt/issues/995)) ([c6c3362](https://github.com/tuProlog/2p-kt/commit/c6c33620251f220bbbd89e5ec29a5d3877efa02d))
+* **deps:** update plugin com.gradle.develocity to v4.6.0 ([#984](https://github.com/tuProlog/2p-kt/issues/984)) ([e07cb14](https://github.com/tuProlog/2p-kt/commit/e07cb1445c59072a7ca5e97ee5f4fa4cfff1f30c))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.25 ([#986](https://github.com/tuProlog/2p-kt/issues/986)) ([5296ef2](https://github.com/tuProlog/2p-kt/commit/5296ef2e073416e0be972f5848dcc30c8f6965a2))
+
+### Bug Fixes
+
+* **solve:** resolve JS solver modules from UMD globals ([#993](https://github.com/tuProlog/2p-kt/issues/993), also closing [#987](https://github.com/tuProlog/2p-kt/issues/987)) ([e8f82cf](https://github.com/tuProlog/2p-kt/commit/e8f82cf74a37ce2d55adcfaff17940faa562d941))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.48 ([#988](https://github.com/tuProlog/2p-kt/issues/988)) ([4691231](https://github.com/tuProlog/2p-kt/commit/4691231d817d71429b15e7c1a4ac677d93dc6d66))
+
+### Refactoring
+
+* **solve:** replace classic and streams solvers ([#994](https://github.com/tuProlog/2p-kt/issues/994)) ([828ab45](https://github.com/tuProlog/2p-kt/commit/828ab45bc590977f9f282234d88f79689b0aa81f))
+
 ## [2.0.9](https://github.com/tuProlog/2p-kt/compare/2.0.8...2.0.9) (2026-09-22)
 
 ### Bug Fixes
