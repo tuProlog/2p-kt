@@ -8,6 +8,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR
@@ -175,7 +176,8 @@ fun <C : ExecutionContext> Solve.Request<C>.findRefFromAlias(alias: Struct): Ref
 /**
  * Runs [action], converting any [it.unibo.tuprolog.solve.libs.oop.exceptions.OopException] it
  * throws into the [it.unibo.tuprolog.solve.exception.LogicError] this request's solver actually
- * expects (via [it.unibo.tuprolog.solve.libs.oop.exceptions.OopException.toLogicError]), and any
+ * expects (via [it.unibo.tuprolog.solve.libs.oop.exceptions.OopException.toLogicError]), letting
+ * [ResolutionException]s (e.g. the errors raised by argument checks) through as they are, and any
  * other unexpected [Throwable] into an
  * [it.unibo.tuprolog.solve.exception.error.SystemError.forUncaughtException]. Every primitive in
  * `:oop-lib` wraps its logic with this to turn reflection failures into well-formed Prolog errors.
@@ -185,6 +187,8 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
         return action()
     } catch (e: OopException) {
         throw e.toLogicError(context, signature)
+    } catch (e: ResolutionException) {
+        throw e
     } catch (e: Throwable) {
         throw SystemError.forUncaughtException(context, e)
     }

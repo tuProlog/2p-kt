@@ -39,6 +39,9 @@ object Type : BinaryRelation.Functional<ExecutionContext>("type") {
 
         ?- type('no.such.Type', T).
         no.
+
+        ?- type(Name, 'java.lang.String').
+        throws error(type_error(type_reference, 'java.lang.String'), _).
         ```
         """.trimIndent()
 
