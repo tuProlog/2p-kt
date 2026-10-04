@@ -36,6 +36,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.io.IOMode
 import it.unibo.tuprolog.solve.libs.io.Url
 import it.unibo.tuprolog.solve.libs.io.asTermChannel
+import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 import it.unibo.tuprolog.solve.libs.io.openInputChannel
 import it.unibo.tuprolog.solve.libs.io.openOutputChannel
@@ -684,9 +685,9 @@ object IOPrimitiveUtils {
      * `Mode` is not `read`/`write`/`append`, or an element of `Options` is not a `stream_property/2` shape.
      * @throws SystemError if an element of `Options` is a stream property this implementation does not report
      * (e.g. `type(binary)`).
-     * @throws it.unibo.tuprolog.solve.libs.io.exceptions.IOException if the resource cannot actually be opened
-     * (e.g. missing file, writing attempted on a non-file [Url]), converted into a
-     * [it.unibo.tuprolog.solve.exception.error.SystemError].
+     * @throws ExistenceError (`source_sink`) if the resource does not exist.
+     * @throws SystemError if the resource cannot be opened for any other reason (e.g. writing attempted on a non-file
+     * [Url]).
      */
     fun Solve.Request<ExecutionContext>.open(third: Term): Solve.Response {
         val url = ensuringArgumentIsUrl(0)
@@ -704,10 +705,18 @@ object IOPrimitiveUtils {
                 emptySet()
             }
         val alias = options.firstOrNull { match(PROPERTY_ALIAS_PATTERN, it) }?.alias
-        return when (mode) {
-            IOMode.READ -> replyOpeningStream(url.openInputChannel(), third, alias)
-            IOMode.WRITE -> replyOpeningStream(url.openOutputChannel(false), third, alias)
-            IOMode.APPEND -> replyOpeningStream(url.openOutputChannel(true), third, alias)
+        return try {
+            when (mode) {
+                IOMode.READ -> replyOpeningStream(url.openInputChannel(), third, alias)
+                IOMode.WRITE -> replyOpeningStream(url.openOutputChannel(false), third, alias)
+                IOMode.APPEND -> replyOpeningStream(url.openOutputChannel(true), third, alias)
+            }
+        } catch (e: IOException) {
+            throw if (e.cause is okio.FileNotFoundException) {
+                ExistenceError(e.message, e, context, ExistenceError.ObjectType.SOURCE_SINK, arguments[0])
+            } else {
+                e.toLogicError(context)
+            }
         }
     }
 

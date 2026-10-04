@@ -23,9 +23,10 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * `write` or `append`.
  * @throws it.unibo.tuprolog.solve.exception.error.DomainError (`stream_property`) if an element of the options list
  * is not a `stream_property/2` shape.
+ * @throws it.unibo.tuprolog.solve.exception.error.ExistenceError (`source_sink`) if the resource does not exist.
  * @throws it.unibo.tuprolog.solve.exception.error.SystemError if an element of the options list is a
  * `stream_property/2` shape this implementation does not actually support (e.g. `type(binary)`), or if the resource
- * cannot be opened (e.g. missing file, or writing attempted on a non-file [it.unibo.tuprolog.solve.libs.io.Url]).
+ * cannot be opened for any other reason (e.g. writing attempted on a non-file [it.unibo.tuprolog.solve.libs.io.Url]).
  */
 object Open4 : QuaternaryRelation.NonBacktrackable<ExecutionContext>("open") {
     override val help: String =

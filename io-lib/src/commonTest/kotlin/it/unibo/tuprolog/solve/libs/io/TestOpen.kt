@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.exception.error.DomainError
+import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.library.Runtime
@@ -17,7 +18,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 /**
@@ -148,17 +149,18 @@ class TestOpen {
     }
 
     @Test
-    fun testOpen3OnMissingFileCrashesInsteadOfRaisingAnExistenceError() {
-        // Known gap: Url.openInputChannel() does not catch the underlying file-system exception, so
-        // it escapes as a raw platform exception (okio.FileNotFoundException on the JVM, this
-        // library's own IOException on JS/Node) instead of the ISO
-        // existence_error(source_sink, Source_sink) the standard mandates. This test pins the
-        // current (non-compliant) behavior rather than silently masking it, without pinning the
-        // exact (platform-dependent) exception type.
+    fun testOpenOnMissingFileIsExistenceError() {
         logicProgramming {
             val url = tempFileUrl("missing")
-            val query = "open"(url.toString(), "read", "S")
-            assertFailsWith<Throwable> { solver().solve(query).toList() }
+            for (query in listOf(
+                "open"(url.toString(), "read", "S"),
+                "open"(url.toString(), "read", "S", emptyLogicList),
+            )) {
+                val solution = solver().solveOnce(query)
+                val error = assertIs<ExistenceError>((solution as? Solution.Halt)?.exception, "$solution")
+                assertEquals(ExistenceError.ObjectType.SOURCE_SINK, error.expectedObject)
+                assertEquals(atomOf(url.toString()), error.culprit)
+            }
         }
     }
 }

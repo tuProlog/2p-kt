@@ -74,10 +74,12 @@ internal actual fun Url.toLocalPath(): Path = File(toURL().toURI()).toOkioPath()
  * resources in full.
  */
 actual fun Url.openInputChannel(): InputChannel<String> =
-    if (isFile) {
-        ReaderChannel(LocalFileSystem.source(toLocalPath()).buffer().inputStream())
-    } else {
-        ReaderChannel(toURL().openStream())
+    wrappingIOException {
+        if (isFile) {
+            ReaderChannel(LocalFileSystem.source(toLocalPath()).buffer().inputStream())
+        } else {
+            ReaderChannel(toURL().openStream())
+        }
     }
 
 /**
@@ -89,6 +91,15 @@ actual fun Url.openOutputChannel(append: Boolean): OutputChannel<String> {
         throw IOException("Writing not supported for ${toString()}")
     }
     val path = toLocalPath()
-    val sink = if (append) LocalFileSystem.appendingSink(path) else LocalFileSystem.sink(path)
-    return WriterChannel(sink.buffer().outputStream())
+    return wrappingIOException {
+        val sink = if (append) LocalFileSystem.appendingSink(path) else LocalFileSystem.sink(path)
+        WriterChannel(sink.buffer().outputStream())
+    }
 }
+
+private fun <T> wrappingIOException(action: () -> T): T =
+    try {
+        action()
+    } catch (e: java.io.IOException) {
+        throw IOException(e.message, e)
+    }
