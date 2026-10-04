@@ -16,15 +16,14 @@ object TermNotSame : BinaryRelation.Predicative<ExecutionContext>("\\=@=") {
         **Examples**
 
         ```prolog
-        % `\=@=` is not a default operator, so canonical notation is used
-        ?- \=@=(f(a), f(b)).
+        ?- f(a) \=@= f(b).
         yes.
 
-        ?- \=@=(f(X), f(X)).
+        ?- f(X) \=@= f(X).
         no.
 
         % variants are not considered the same
-        ?- \=@=(f(X), f(Y)).
+        ?- f(X) \=@= f(Y).
         yes.
         ```
         """.trimIndent()

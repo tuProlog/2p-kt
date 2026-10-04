@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.solve.stdlib
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.documentationOf
@@ -15,11 +17,14 @@ import it.unibo.tuprolog.solve.primitive.Primitive
  *
  * It merely assembles the other `Common*` singletons in this package: [CommonRules.clauses] as [clauses],
  * [CommonPrimitives.primitives] as [primitives], and [CommonFunctions.functions] as [functions], plus the default
- * operator table ([it.unibo.tuprolog.core.operators.OperatorSet.DEFAULT]). It is what
+ * operator table ([it.unibo.tuprolog.core.operators.OperatorSet.DEFAULT]) extended with the variant comparisons
+ * `=@=` and `\=@=` (`xfx`, priority 700, as in most Prolog systems). It is what
  * [it.unibo.tuprolog.solve.SolverFactory.defaultBuiltins] is expected to return, and what
  * `solverWithDefaultBuiltins(...)`/`mutableSolverWithDefaultBuiltins(...)` add on top of any other
  * [it.unibo.tuprolog.solve.library.Runtime].
  */
+private const val VARIANT_COMPARISON_PRIORITY = 700
+
 object CommonBuiltins : AbstractLibrary() {
     override val alias: String
         get() = "prolog.lang"
@@ -141,7 +146,9 @@ object CommonBuiltins : AbstractLibrary() {
         )
 
     override val operators: OperatorSet
-        get() = OperatorSet.DEFAULT
+        get() =
+            OperatorSet.DEFAULT +
+                OperatorSet(sequenceOf("=@=", "\\=@=").map { Operator(it, Specifier.XFX, VARIANT_COMPARISON_PRIORITY) })
 
     override val clauses: List<Clause>
         get() = CommonRules.clauses
