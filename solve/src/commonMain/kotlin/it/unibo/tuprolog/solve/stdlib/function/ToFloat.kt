@@ -28,7 +28,7 @@ object ToFloat : UnaryMathFunction("float") {
         X = 2.5.
 
         ?- X is float(foo).
-        throws error(type_error(evaluable, foo), _).
+        throws error(type_error(evaluable, foo/0), _).
         ```
         """.trimIndent()
 

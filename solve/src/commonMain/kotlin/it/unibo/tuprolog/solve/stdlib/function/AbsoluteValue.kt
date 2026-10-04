@@ -28,7 +28,7 @@ object AbsoluteValue : UnaryMathFunction("abs") {
         X = 2.5.
 
         ?- X is abs(foo).
-        throws error(type_error(evaluable, foo), _).
+        throws error(type_error(evaluable, foo/0), _).
         ```
         """.trimIndent()
 

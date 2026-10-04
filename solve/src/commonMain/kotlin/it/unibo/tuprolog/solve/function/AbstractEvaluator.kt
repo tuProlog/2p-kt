@@ -69,7 +69,13 @@ abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
      * sub-terms untouched instead of failing.
      */
     open fun unevaluable(struct: Struct): Term =
-        throw TypeError.forArgument(request.context, request.signature, TypeError.Expected.EVALUABLE, struct, index)
+        throw TypeError.forArgument(
+            request.context,
+            request.signature,
+            TypeError.Expected.EVALUABLE,
+            struct.extractSignature().toIndicator(),
+            index,
+        )
 
     /**
      * Template method to implement static checks, i.e. those checks that can be made before evaluating sub-expressions

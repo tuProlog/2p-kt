@@ -119,7 +119,7 @@ object CommonBuiltins : AbstractLibrary() {
                 Y = a, L = [1] ; Y = b, L = [2].
 
                 ?- X is 2 ^ 3.
-                throws error(type_error(evaluable, 2 ^ 3), _).
+                throws error(type_error(evaluable, (^)/2), _).
                 ```
                 """.trimIndent(),
             Signature("+", 1) to
@@ -135,7 +135,7 @@ object CommonBuiltins : AbstractLibrary() {
                 yes.
 
                 ?- Y = 1, X is +Y.
-                throws error(type_error(evaluable, +(1)), _).
+                throws error(type_error(evaluable, (+)/1), _).
                 ```
                 """.trimIndent(),
         )

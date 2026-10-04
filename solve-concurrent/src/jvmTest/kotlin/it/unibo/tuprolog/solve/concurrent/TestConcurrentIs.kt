@@ -84,7 +84,7 @@ interface TestConcurrentIs<T : WithAssertingEquals> :
                             DummyInstances.executionContext,
                             Signature("is", 2),
                             TypeError.Expected.EVALUABLE,
-                            atomOf("foo"),
+                            indicatorOf("foo", 0),
                             index = 1,
                         ),
                     ),

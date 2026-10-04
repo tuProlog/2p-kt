@@ -22,7 +22,7 @@ object ArithmeticGreaterThan : ArithmeticRelation<ExecutionContext>(">") {
         no.
 
         ?- a > 1.
-        throws error(type_error(evaluable, a), _).
+        throws error(type_error(evaluable, a/0), _).
         ```
         """.trimIndent()
 
