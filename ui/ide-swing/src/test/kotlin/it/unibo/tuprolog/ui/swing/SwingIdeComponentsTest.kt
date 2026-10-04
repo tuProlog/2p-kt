@@ -320,6 +320,26 @@ class SwingIdeComponentsTest {
     }
 
     @Test
+    fun `libraries tree is fully expanded`() {
+        SwingUtilities.invokeAndWait {
+            val tree = LibrariesTree()
+            tree.render(
+                listOf(
+                    it.unibo.tuprolog.ui.gui.presentation.LibraryPresentation(
+                        alias = "lib",
+                        predicates = listOf("p/1", "q/2"),
+                        operators = listOf(OperatorPresentation("+", 500, "yfx")),
+                        functions = listOf("f/1"),
+                    ),
+                ),
+            )
+            val rows = (0 until tree.rowCount).map { tree.getPathForRow(it).lastPathComponent.toString() }
+            assertEquals(listOf("lib", "Predicates", "p/1", "q/2", "Functions", "f/1", "Operators"), rows.take(7))
+            assertEquals(8, rows.size)
+        }
+    }
+
+    @Test
     fun `libraries tree previews span the available width on a single line`() {
         lateinit var tree: LibrariesTree
         SwingUtilities.invokeAndWait {

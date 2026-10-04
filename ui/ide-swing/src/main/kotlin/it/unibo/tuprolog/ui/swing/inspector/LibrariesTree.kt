@@ -93,7 +93,9 @@ internal class LibrariesTree : JTree(DefaultMutableTreeNode("Libraries")) {
         val root = DefaultMutableTreeNode("Libraries")
         libraries.forEach { root.add(libraryNode(it)) }
         model = DefaultTreeModel(root)
-        for (row in 0 until rowCount) expandRow(row)
+        // rowCount grows while expanding, so it must be re-read at every step
+        var row = 0
+        while (row < rowCount) expandRow(row++)
     }
 
     private fun libraryNode(library: LibraryPresentation): DefaultMutableTreeNode =
