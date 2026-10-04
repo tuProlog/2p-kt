@@ -8,6 +8,8 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectToTermConverter
 import it.unibo.tuprolog.utils.NumberTypeTester
+import org.gciatto.kt.math.BigDecimal
+import org.gciatto.kt.math.BigInteger
 
 internal class ObjectToTermConverterImpl : ObjectToTermConverter {
     private val numberTypeTester = NumberTypeTester()
@@ -17,6 +19,9 @@ internal class ObjectToTermConverterImpl : ObjectToTermConverter {
             when (source) {
                 null -> ObjectRef.NULL
                 is String -> Atom.of(source)
+                // what Prolog numbers are converted into, see TermToObjectConverter
+                is BigInteger -> Integer.of(source)
+                is BigDecimal -> Real.of(source)
                 is Number ->
                     when {
                         source.isInteger -> Integer.of(source.toInteger())

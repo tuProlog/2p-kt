@@ -21,6 +21,9 @@ object ListItems : AbstractIterableItems<List<*>>("list", List::class) {
         ?- list_items(L, [a, b]), N := L.size.
         N = 2.
 
+        ?- list_items(L, [1, 2.5]), list_items(L, Items).
+        Items = [1, 2.5].
+
         ?- new_object('java.util.ArrayList', [], L), L.add(x), L.add(y), list_items(L, Items).
         Items = [x, y].
 

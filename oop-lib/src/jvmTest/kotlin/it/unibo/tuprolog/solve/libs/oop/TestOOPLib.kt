@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.libs.oop
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solution
@@ -56,6 +57,19 @@ class TestOOPLib {
         for (goal in goals) {
             val solution = solver.solveOnce(goal)
             assertIs<ExistenceError>((solution as? Solution.Halt)?.exception, "$solution")
+        }
+    }
+
+    @Test
+    fun numbersAreConvertedBackToNumbers() {
+        val solver = Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
+        val items = List.of(Integer.of(1), Real.of(2.5), Atom.of("a"))
+        for (functor in listOf("array_items", "list_items", "set_items")) {
+            val ref = Var.of("Ref")
+            val back = Var.of("Back")
+            val goal = Struct.of(",", Struct.of(functor, ref, items), Struct.of(functor, ref, back))
+            val solution = solver.solveOnce(goal)
+            assertEquals(items, solution.substitution[back], "$functor: $solution")
         }
     }
 
