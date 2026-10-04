@@ -38,13 +38,18 @@ object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
         **Examples**
 
         ```prolog
-        % solutions may come in any order: collect them to compare
         % solutions may come in any order on this engine
         ?- findall(X, (X = 1 ; X = 2), L), member(1, L), member(2, L).
         yes.
 
         ?- (X = 1 -> Y = one ; Y = other).
         X = 1, Y = one.
+
+        ?- (fail -> X = a ; X = b).
+        X = b.
+
+        ?- catch((throw(oops) -> X = a ; X = b), E, true).
+        E = oops.
 
         ?- (1 ; true).
         throws error(type_error(callable, 1), _).
@@ -65,12 +70,14 @@ object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
                     throw TypeError.forGoal(context, signature, TypeError.Expected.CALLABLE, it)
                 }
             }
-            val condition = solver.solveOnce(first[0] as Struct)
-            return if (condition.isYes) {
-                solver.solve(first[1].apply(condition.substitution).castToStruct())
-            } else {
-                solver.solve(second as Struct)
-            }.map { mapSolution(it, condition.substitution) }
+            return when (val condition = solver.solveOnce(first[0] as Struct)) {
+                is Solution.Yes ->
+                    solver.solve(first[1].apply(condition.substitution).castToStruct()).map {
+                        mapSolution(it, condition.substitution)
+                    }
+                is Solution.No -> solver.solve(second as Struct).map { mapSolution(it) }
+                is Solution.Halt -> sequenceOf(mapSolution(condition))
+            }
         } else {
             val solver1: ConcurrentSolver = subSolver() as ConcurrentSolver
             val solver2: ConcurrentSolver = subSolver() as ConcurrentSolver
