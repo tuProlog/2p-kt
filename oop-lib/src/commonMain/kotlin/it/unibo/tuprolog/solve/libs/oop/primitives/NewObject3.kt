@@ -45,6 +45,9 @@ object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
 
         ?- new_object('java.util.ArrayList', [a], L).
         throws error(representation_error(_), _).
+
+        ?- new_object('java.util.ArrayList', [a, b, c], L).
+        throws error(existence_error(oop_constructor, _), _).
         ```
         """.trimIndent()
 
