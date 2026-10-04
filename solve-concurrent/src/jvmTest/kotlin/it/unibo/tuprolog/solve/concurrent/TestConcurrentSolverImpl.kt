@@ -42,7 +42,6 @@ class TestConcurrentSolverImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    @Ignore // Assert need to be implemented
     override fun testAssert() =
         multiRunConcurrentTest {
             super.testAssert()
@@ -50,7 +49,6 @@ class TestConcurrentSolverImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    @Ignore // Assert need to be implemented
     override fun testAssertZ() =
         multiRunConcurrentTest {
             super.testAssertZ()
@@ -58,7 +56,6 @@ class TestConcurrentSolverImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    @Ignore // Assert need to be implemented
     override fun testAssertA() =
         multiRunConcurrentTest {
             super.testAssertA()
@@ -397,7 +394,6 @@ class TestConcurrentSolverImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    @Ignore // Assert need to be implemented
     override fun testAssertRules() =
         multiRunConcurrentTest {
             super.testAssertRules()

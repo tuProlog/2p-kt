@@ -13,18 +13,44 @@ import org.gciatto.kt.math.BigDecimal
  * @author Enrico
  */
 object SquareRoot : UnaryMathFunction("sqrt") {
+    override val help: String =
+        """
+        `sqrt(+Number)`
+        
+        Evaluates to the non-negative square root of `Number`, always as a real value. `Number` must be non-negative, otherwise the `undefined` evaluation error is raised.
+
+        **Examples**
+
+        ```prolog
+        ?- X is sqrt(4).
+        X = 2.0.
+
+        ?- X is sqrt(2.25).
+        X = 1.5.
+
+        ?- X is sqrt(-1).
+        throws error(evaluation_error(undefined), _).
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(integer.decimalValue)
+    ): Numeric = commonBehaviour(integer.decimalValue, context)
 
     override fun mathFunction(
         real: Real,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(real.value)
+    ): Numeric = commonBehaviour(real.value, context)
 
     /** Implements common behaviour for Integer and Real*/
-    private fun commonBehaviour(decimal: BigDecimal): Real =
-        // TODO: 25/10/2019 "undefined" checks missing (see the standard)
-        Numeric.of(decimal.sqrt())
+    private fun commonBehaviour(
+        decimal: BigDecimal,
+        context: ExecutionContext,
+    ): Real =
+        if (decimal.signum < 0) {
+            throwUndefinedError(context)
+        } else {
+            Numeric.of(decimal.sqrt())
+        }
 }

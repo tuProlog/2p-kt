@@ -310,7 +310,7 @@ interface TestConcurrentSolver<T : WithAssertingEquals> :
                     assertX("f"(3)) and
                     "f"(X)
 
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = fromSequence(solver.solve(query, mediumDuration))
             val ints = if (inverse) (3 downTo 1) else (1..3)
             val expected = fromSequence((ints).map { query.yes(X to it) })
 

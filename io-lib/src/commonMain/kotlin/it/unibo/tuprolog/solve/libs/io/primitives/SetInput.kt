@@ -16,6 +16,26 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * @throws it.unibo.tuprolog.solve.exception.error.DomainError (`stream_type`) if it identifies an output channel instead.
  */
 object SetInput : UnaryPredicate.NonBacktrackable<ExecutionContext>("set_input") {
+    override val help: String =
+        """
+        `set_input(+Stream)`
+        
+        Makes the input stream `Stream` the current input stream, i.e. the one used by the predicates without an explicit stream argument (e.g. `get_char/1`, `read/1`), succeeding deterministically. `Stream` must be an alias (e.g. `user_input`) or a `${'$'}stream(in, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an output stream a domain error (`stream_type`), where ISO prescribes a permission error.
+
+        **Examples**
+
+        ```prolog
+        ?- set_input(user_input), current_input(S), stream_property(S, alias(user_input)).
+        yes.
+
+        ?- set_input(user_output).
+        throws error(domain_error(stream_type, user_output), _).
+
+        ?- set_input(S).
+        throws error(instantiation_error, _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         val channel = ensuringArgumentIsInputChannel(0)
         return replySuccess {

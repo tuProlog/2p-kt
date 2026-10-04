@@ -13,6 +13,29 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.utils.buffered
 
 object Retract : UnaryPredicate<ExecutionContext>("retract") {
+    override val help: String =
+        """
+        `retract(+Clause)`
+        
+        Removes one matching clause from the dynamic knowledge base and succeeds once for each removable matching clause on backtracking.
+
+        **Examples**
+
+        ```prolog
+        ?- assertz(p(1)), assertz(p(2)), assertz(p(3)).
+        yes.
+
+        ?- retract(p(X)).
+        X = 1.
+
+        ?- findall(X, p(X), L).
+        L = [2, 3].
+
+        ?- retract(p(4)).
+        no.
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> {
         ensuringArgumentIsWellFormedClause(0)
         val clause: Clause =

@@ -15,7 +15,6 @@ class TestConcurrentIfThenElseImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    @Ignore // todo implement specific rule -> (arrow) for concurrent solver
     override fun testIfFailElseTrue() = multiRunConcurrentTest { super.testIfFailElseTrue() }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,7 +31,6 @@ class TestConcurrentIfThenElseImpl :
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    @Ignore // todo implement specific rule -> (arrow) for concurrent solver
     override fun testIfFailElseX() = multiRunConcurrentTest { super.testIfFailElseX() }
 
     @OptIn(ExperimentalCoroutinesApi::class)

@@ -29,6 +29,33 @@ import it.unibo.tuprolog.solve.stdlib.rule.Arrow
  * @throws it.unibo.tuprolog.solve.exception.error.TypeError if either branch is not callable.
  */
 object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
+    override val help: String =
+        """
+        `(+Left ; +Right)`
+
+        Disjunction: solutions come from `Left` and from `Right`, each proved by an independent sub-solver. When `Left` is `Condition -> Then`, it acts as if-then-else instead: `Condition` is proved once, then `Then` is proved under its bindings if it succeeded, `Else` (i.e. `Right`) otherwise. Both arguments, and both sides of `->`, must be callable, otherwise a type error is raised.
+
+        **Examples**
+
+        ```prolog
+        % solutions may come in any order on this engine
+        ?- findall(X, (X = 1 ; X = 2), L), member(1, L), member(2, L).
+        yes.
+
+        ?- (X = 1 -> Y = one ; Y = other).
+        X = 1, Y = one.
+
+        ?- (fail -> X = a ; X = b).
+        X = b.
+
+        ?- catch((throw(oops) -> X = a ; X = b), E, true).
+        E = oops.
+
+        ?- (1 ; true).
+        throws error(type_error(callable, 1), _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ConcurrentExecutionContext>.computeAll(
         first: Term,
         second: Term,
@@ -43,12 +70,14 @@ object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
                     throw TypeError.forGoal(context, signature, TypeError.Expected.CALLABLE, it)
                 }
             }
-            val condition = solver.solveOnce(first[0] as Struct)
-            return if (condition.isYes) {
-                solver.solve(first[1].apply(condition.substitution).castToStruct())
-            } else {
-                solver.solve(second as Struct)
-            }.map { mapSolution(it, condition.substitution) }
+            return when (val condition = solver.solveOnce(first[0] as Struct)) {
+                is Solution.Yes ->
+                    solver.solve(first[1].apply(condition.substitution).castToStruct()).map {
+                        mapSolution(it, condition.substitution)
+                    }
+                is Solution.No -> solver.solve(second as Struct).map { mapSolution(it) }
+                is Solution.Halt -> sequenceOf(mapSolution(condition))
+            }
         } else {
             val solver1: ConcurrentSolver = subSolver() as ConcurrentSolver
             val solver2: ConcurrentSolver = subSolver() as ConcurrentSolver

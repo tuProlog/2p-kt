@@ -14,6 +14,23 @@ import kotlin.math.cos
  * @author Enrico
  */
 object Cosine : UnaryMathFunction("cos") {
+    override val help: String =
+        """
+        `cos(+Number)`
+        
+        Evaluates to the cosine of `Number`, interpreted as an angle in radians. The result is always a real value.
+
+        **Examples**
+
+        ```prolog
+        ?- X is cos(0).
+        X = 1.0.
+
+        ?- X is cos(0.0).
+        X = 1.0.
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

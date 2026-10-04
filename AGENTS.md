@@ -11,9 +11,10 @@ available wastes a lot of tokens on a project this size — the task names below
 the authoritative CI source) are stable and work both at the root (applies repo-wide) and scoped to one
 module with `:<module>:<task>` (e.g. `:core:ktlintCheck`, `:ide-swing:test`):
 
-- **Style**: `ktlintFormat` (auto-fixes), `ktlintCheck` (verifies, no fixes), `detekt` (aggregates that
-  module's `detektMain`/`detektTest`/... — see below for the JDK caveat). CI runs `ktlintFormat` first, then
-  `ktlintCheck detekt --parallel --continue`, and commits any formatting fix — mirror that order locally so
+- **Style**: `ktlintFormat` (auto-fixes), `ktlintCheck` (verifies, no fixes), `detektAll` (every detekt
+  task of that module, incl. custom source sets like `ide-swing`'s `detektSwingE2eTest` — plain `detekt` misses
+  those, and CI's `check` runs them; see below for the JDK caveat). CI runs `ktlintFormat` first, then
+  `ktlintCheck detekt --parallel --continue` (then `check`, which covers `detektAll`), and commits any formatting fix — mirror that order locally so
   you fix formatting before reading style findings that formatting would have silently resolved.
 - **Compile without running tests**: `jvmMainClasses`/`jvmTestClasses` (JVM sources), `jsMainClasses`/
   `jsTestClasses` (JS sources) — fast correctness check when you don't need test execution yet.
@@ -50,9 +51,10 @@ A single config (`.detekt.yml`) applies to every module.
 - **JDK compatibility**: detekt's embedded Kotlin compiler can crash `detektMain`/`detektTest` with a bare
   version-number error (e.g. `26.0.2.1`) and no other detail, on JDKs newer than it supports (observed with
   JDK 25 and 26, as of October 2026) — unrelated to code content; reproduces even on unmodified files. If this happens, point Gradle at
-  an older JDK toolchain for that invocation (21–23 is known to work):
+  an older JDK toolchain for that invocation (21–22 is known to work; 23 makes `:ide-web`'s detekt tasks fail
+  with `Invalid value (23) passed to --jvm-target`):
   ```
-  ./gradlew :<module>:detektMain -Dorg.gradle.java.home=<path-to-a-JDK-21-to-23-installation>
+  ./gradlew detektAll -Dorg.gradle.java.home=<path-to-a-JDK-21-or-22-installation>
   ```
 - **`MagicNumber` exemptions** (default config):
   - `const val X = ...` at file/class scope → exempt (only works for primitives/`String`).

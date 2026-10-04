@@ -11,6 +11,29 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.theory.RetractResult
 
 object RetractAll : UnaryPredicate.NonBacktrackable<ExecutionContext>("retractall") {
+    override val help: String =
+        """
+        `retractall(+Clause)`
+        
+        Removes all dynamic clauses matching `Clause` and succeeds once, even when no matching clause exists.
+
+        **Examples**
+
+        ```prolog
+        ?- assertz(p(1)), assertz(p(2)), assertz(q(1)).
+        yes.
+
+        ?- retractall(p(_)).
+        yes.
+
+        ?- findall(X, p(X), L), findall(Y, q(Y), M).
+        L = [], M = [1].
+
+        ?- retractall(r(_)).
+        yes.
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsStruct(0)
         val clause = if (first is Clause) first else Rule.of(first as Struct, Var.anonymous())

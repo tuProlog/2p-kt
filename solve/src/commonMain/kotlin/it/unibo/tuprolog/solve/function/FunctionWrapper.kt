@@ -16,8 +16,20 @@ abstract class FunctionWrapper<C : ExecutionContext> : AbstractWrapper<LogicFunc
     /** The function expressing the implementation of the PrologFunction, without any check for application to correct signature */
     protected abstract fun uncheckedImplementation(request: Compute.Request<C>): Compute.Response
 
-    /** Checked PrologFunction implementation */
-    @Suppress("UNCHECKED_CAST")
+    /** Checked PrologFunction implementation, retaining this wrapper's [help] metadata. */
     final override val implementation: LogicFunction =
-        LogicFunction.enforcingSignature(signature, ::uncheckedImplementation)
+        object : LogicFunction {
+            override val help: String
+                get() = this@FunctionWrapper.help
+
+            @Suppress("UNCHECKED_CAST")
+            override fun compute(request: Compute.Request<ExecutionContext>): Compute.Response =
+                when (request.signature) {
+                    signature -> uncheckedImplementation(request as Compute.Request<C>)
+                    else ->
+                        throw IllegalArgumentException(
+                            "This function supports only this signature `$signature`",
+                        )
+                }
+        }
 }

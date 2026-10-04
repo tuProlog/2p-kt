@@ -67,7 +67,7 @@ internal abstract class AbstractTermFormatter(
     private fun numberedVar(integer: Integer): String {
         val letterIndex = (integer.value % TWENTY_SIX).toInt() + A_INDEX
         val varNumber = integer.value / TWENTY_SIX
-        return "${letterIndex.toChar()}$varNumber"
+        return "${letterIndex.toChar()}${if (varNumber.signum > 0) varNumber else ""}"
     }
 
     private fun formatFunctor(term: Struct): String =

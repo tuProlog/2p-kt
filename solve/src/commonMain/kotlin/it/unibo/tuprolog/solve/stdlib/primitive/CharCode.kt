@@ -10,6 +10,29 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 object CharCode : BinaryRelation.Functional<ExecutionContext>("char_code") {
+    override val help: String =
+        """
+        `char_code(?Char, ?Code)`
+        
+        Relates a one-character atom `Char` with its integer character code `Code`. Either argument may supply the value, provided the other can be determined consistently.
+
+        **Examples**
+
+        ```prolog
+        ?- char_code(a, C).
+        C = 97.
+
+        ?- char_code(X, 98).
+        X = b.
+
+        ?- char_code(X, Y).
+        throws error(instantiation_error, _).
+
+        ?- char_code(ab, C).
+        throws error(type_error(character, ab), _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

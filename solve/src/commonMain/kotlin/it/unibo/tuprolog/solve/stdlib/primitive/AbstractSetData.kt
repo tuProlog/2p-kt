@@ -15,6 +15,7 @@ abstract class AbstractSetData(
         second: Term,
     ): Solve.Response {
         ensuringArgumentIsGround(0)
+        ensuringArgumentIsAtom(0)
         val key = (first as Atom).value
         return replySuccess {
             setData(key, second)

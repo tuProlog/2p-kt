@@ -12,6 +12,23 @@ import it.unibo.tuprolog.solve.function.UnaryMathFunction
  * @author Enrico
  */
 object SignReversal : UnaryMathFunction("-") {
+    override val help: String =
+        """
+        `-(+Number)`
+        
+        Evaluates to the arithmetic negation of `Number`.
+
+        **Examples**
+
+        ```prolog
+        ?- Y = 3, X is -Y.
+        X = -3.
+
+        ?- X is -(-2.5).
+        X = 2.5.
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

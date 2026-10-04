@@ -11,6 +11,23 @@ import it.unibo.tuprolog.solve.function.IntegersBinaryMathFunction
  * @author Enrico
  */
 object BitwiseRightShift : IntegersBinaryMathFunction(">>") {
+    override val help: String =
+        """
+        `>>(+Integer, +Shift)`
+        
+        Shifts `Integer` right by `Shift` bit positions. Both operands must evaluate to integers.
+
+        **Examples**
+
+        ```prolog
+        ?- X is 16 >> 2.
+        X = 4.
+
+        ?- X is -16 >> 2.
+        X = -4.
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer1: Integer,
         integer2: Integer,

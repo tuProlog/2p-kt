@@ -14,6 +14,23 @@ import org.gciatto.kt.math.RoundingMode
  * @author Enrico
  */
 object FloatIntegerPart : UnaryMathFunction("float_integer_part") {
+    override val help: String =
+        """
+        `float_integer_part(+Number)`
+        
+        Evaluates to the integral part of `Number` obtained by truncating toward zero.
+
+        **Examples**
+
+        ```prolog
+        ?- X is float_integer_part(3.7).
+        X = 3.0.
+
+        ?- X is float_integer_part(-3.7).
+        X = -3.0.
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

@@ -8,6 +8,8 @@ import it.unibo.tuprolog.solve.function.FunctionWrapper
 import it.unibo.tuprolog.solve.function.LogicFunction
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Library.Companion.toMapEnsuringNoDuplicates
+import it.unibo.tuprolog.solve.library.documentationOf
+import it.unibo.tuprolog.solve.library.mergeDocumentation
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
@@ -28,6 +30,21 @@ abstract class ExtensionLibrary(
 ) : AbstractLibrary() {
     override val alias: String
         get() = extended.alias
+
+    override val help: String
+        get() = extended.help
+
+    override val documentation: Map<Signature, String>
+        get() =
+            mergeDocumentation(
+                super.documentation,
+                extended.documentation,
+                documentationOf(
+                    additionalRules.asSequence() +
+                        additionalPrimitives.asSequence() +
+                        additionalFunctions.asSequence(),
+                ),
+            )
 
     override val operators: OperatorSet by lazy {
         extended.operators + OperatorSet(additionalOperators)

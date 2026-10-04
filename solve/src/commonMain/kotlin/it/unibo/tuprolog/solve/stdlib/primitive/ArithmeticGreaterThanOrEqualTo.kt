@@ -6,6 +6,23 @@ import it.unibo.tuprolog.solve.primitive.ArithmeticRelation
 
 /** Implementation of '>='/2 predicate */
 object ArithmeticGreaterThanOrEqualTo : ArithmeticRelation<ExecutionContext>(">=") {
+    override val help: String =
+        """
+        `>=(+Left, +Right)`
+        
+        Succeeds when the arithmetic value of `Left` is greater than or equal to the arithmetic value of `Right`.
+
+        **Examples**
+
+        ```prolog
+        ?- 3 >= 3.
+        yes.
+
+        ?- 2.5 >= 3.
+        no.
+        ```
+        """.trimIndent()
+
     override fun computeNumeric(
         x: Numeric,
         y: Numeric,

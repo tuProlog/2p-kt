@@ -19,6 +19,23 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * Fails, rather than erroring, if the channel is closed.
  */
 object PeekCode1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("peek_code") {
+    override val help: String =
+        """
+        `peek_code(?Code)`
+        
+        Unifies `Code` with the code of the next character of the current input stream (standard input, unless changed via `set_input/1`) without consuming it, or with `-1` at the end of the stream. It is deterministic. `Code` must be unbound or an integer (type error otherwise) within the character-code range or `-1` (representation error otherwise). It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- peek_code(a).
+        throws error(type_error(integer, a), _).
+
+        ?- peek_code(-2).
+        throws error(representation_error(character_code), _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsVarOrCharCode(0)
         return peekCodeAndReply(currentInputChannel, first)

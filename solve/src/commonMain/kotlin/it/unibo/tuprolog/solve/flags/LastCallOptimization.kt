@@ -10,6 +10,31 @@ import kotlin.jvm.JvmField
  */
 @Suppress("MemberVisibilityCanBePrivate")
 object LastCallOptimization : NotableFlag {
+    override val help: String =
+        """
+        `flag(last_call_optimization)`
+        
+        Controls last-call (tail-call) optimization in the solver.
+        
+        - `on`: eligible tail calls avoid growing the execution-context stack.
+        - `off`: tail calls use ordinary context chaining.
+        - Default: `on`
+        - Editable: yes
+
+        **Examples**
+
+        ```prolog
+        ?- current_prolog_flag(last_call_optimization, V).
+        V = on.
+
+        ?- set_prolog_flag(last_call_optimization, off), current_prolog_flag(last_call_optimization, V).
+        V = off.
+
+        ?- set_prolog_flag(last_call_optimization, maybe).
+        throws error(domain_error(_, maybe), _).
+        ```
+        """.trimIndent()
+
     /** Tail-call optimization is enabled. */
     @JvmField
     val ON = Atom.of("on")

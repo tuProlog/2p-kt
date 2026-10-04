@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.function
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
@@ -40,10 +39,14 @@ class ArithmeticEvaluator<E : ExecutionContext>(
         when {
             this is Var ->
                 throw InstantiationError.forArgument(request.context, request.signature, this, index)
-            this is Atom ->
-                throw TypeError.forArgument(request.context, request.signature, EVALUABLE, this, index)
             this is Struct && this.extractSignature() !in allowedArithmeticSignatures ->
-                throw TypeError.forArgument(request.context, request.signature, EVALUABLE, this, index)
+                throw TypeError.forArgument(
+                    request.context,
+                    request.signature,
+                    EVALUABLE,
+                    extractSignature().toIndicator(),
+                    index,
+                )
         }
     }
 

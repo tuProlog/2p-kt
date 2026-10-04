@@ -72,6 +72,17 @@ import it.unibo.tuprolog.solve.primitive.Primitive
  * @see it.unibo.tuprolog.solve.library.Library
  */
 object IOLib : AbstractLibrary() {
+    override val help: String =
+        """
+        `library('prolog.io')`
+
+        Provides the ISO Prolog stream-based input/output predicates. Streams are opened on files or URLs via `open/3,4` and are denoted by aliases (e.g. `user_input`, `user_output`) or by `${'$'}stream(Direction, Id)` terms; `close/1`, `current_input/1`, `current_output/1`, `set_input/1`, `set_output/1`, `stream_property/2`, `at_end_of_stream/0,1` and `flush_output/1` manage them. Only text streams are supported, and writing is only possible to local files on the JVM.
+
+        Character-level I/O is offered by `get_char/1,2`, `get_code/1,2`, `peek_char/1,2`, `peek_code/1,2`, `put_char/1,2`, `put_code/1,2` and `nl/1`, while term-level I/O is offered by `read/1,2`, `read_term/2,3`, `write/2`, `writeq/1,2`, `write_canonical/1,2` and `write_term/2,3`; the variants without a stream argument use the current input or output stream. The tuProlog-specific `consult/1` adds the clauses of a theory loaded from a file or URL to the knowledge base, whereas `set_theory/1` replaces the knowledge base with a theory given as source text.
+
+        The byte-oriented predicates (`get_byte/1,2`, `peek_byte/1,2`, `put_byte/1,2`), the character conversion predicates (`char_conversion/2`, `current_char_conversion/2`) and `close/2` are registered for ISO conformance, but are not supported: calling them always raises a system error.
+        """.trimIndent()
+
     override val alias: String
         get() = "prolog.io"
 

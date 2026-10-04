@@ -12,6 +12,26 @@ import it.unibo.tuprolog.solve.function.UnaryMathFunction
  * @author Enrico
  */
 object AbsoluteValue : UnaryMathFunction("abs") {
+    override val help: String =
+        """
+        `abs(+Number)`
+        
+        Evaluates to the absolute value of `Number`. Integer inputs produce integers; real inputs produce reals.
+
+        **Examples**
+
+        ```prolog
+        ?- X is abs(-3).
+        X = 3.
+
+        ?- X is abs(-2.5).
+        X = 2.5.
+
+        ?- X is abs(foo).
+        throws error(type_error(evaluable, foo/0), _).
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

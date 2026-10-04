@@ -13,6 +13,26 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.core.List as LogicList
 
 object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
+    override val help: String =
+        """
+        `atom_codes(?Atom, ?Codes)`
+        
+        Relates an atom to the list of integer character codes representing it. At least one side must be instantiated sufficiently to perform the conversion.
+
+        **Examples**
+
+        ```prolog
+        ?- atom_codes(abc, L).
+        L = [97, 98, 99].
+
+        ?- atom_codes(X, [104, 105]).
+        X = hi.
+
+        ?- atom_codes(X, [a]).
+        throws error(type_error(integer, a), _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

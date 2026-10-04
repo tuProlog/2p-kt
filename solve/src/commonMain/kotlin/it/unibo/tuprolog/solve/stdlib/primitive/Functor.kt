@@ -18,6 +18,29 @@ import org.gciatto.kt.math.BigInteger
  * Implementation of 'functor'/3 predicate
  */
 object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
+    override val help: String =
+        """
+        `functor(?Term, ?Name, ?Arity)`
+        
+        Decomposes a non-variable `Term` into its functor `Name` and `Arity`, or constructs a term from an atomic `Name` and non-negative `Arity`. Atomic terms have arity `0`.
+
+        **Examples**
+
+        ```prolog
+        ?- functor(f(a, b), N, A).
+        N = f, A = 2.
+
+        ?- functor(T, point, 3).
+        T = point(_, _, _).
+
+        ?- functor(foo, N, A).
+        N = foo, A = 0.
+
+        ?- functor(T, N, 2).
+        throws error(instantiation_error, _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,

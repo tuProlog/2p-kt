@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
+import it.unibo.tuprolog.solve.library.mergeDocumentation
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
@@ -27,6 +28,21 @@ internal class RuntimeImpl(
 
     override val libraries: Set<Library>
         get() = values.toSet()
+
+    override val documentation: Map<Signature, String>
+        get() =
+            mergeDocumentation(
+                super<AbstractPluggable>.documentation,
+                *libraries.map { lib -> lib.documentation.filterKeys { !isShadowedIn(lib, it) } }.toTypedArray(),
+            )
+
+    /** Whether [signature]'s primitive/function in [library] is overridden by another library's in this runtime. */
+    private fun isShadowedIn(
+        library: Library,
+        signature: Signature,
+    ): Boolean =
+        library.primitives[signature]?.let { it != primitives[signature] } == true ||
+            library.functions[signature]?.let { it != functions[signature] } == true
 
     private val theoryCache: Cache<Unificator, Theory> = Cache.simpleLru(1)
 

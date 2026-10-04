@@ -93,7 +93,9 @@ class LowerTabsE2eTest {
         solveTrivialQuery()
 
         window.selectLowerTab("Libraries")
-        assertTrue(window.tree("librariesTree").rowTexts().isNotEmpty())
+        val rows = window.tree("librariesTree").rowTexts()
+        assertTrue(rows.isNotEmpty())
+        assertTrue(rows.any { it.startsWith("functor/3 — ") }, "no documentation preview in: $rows")
     }
 
     @Test

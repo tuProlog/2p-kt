@@ -28,9 +28,7 @@ internal class OverloadSelectorImpl(
             type.members
                 .filter { it.name == name }
                 .filter { it.visibility == KVisibility.PUBLIC }
-                .map { it to it.instanceParameters.score(arguments) }
-                .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
-                ?.first
+                .bestMatchFor(arguments)
                 ?: throw MethodInvocationException(
                     type,
                     name,
@@ -73,10 +71,16 @@ internal class OverloadSelectorImpl(
     override fun findConstructor(arguments: List<Term>): KCallable<*> =
         type.constructors
             .filter { it.visibility == KVisibility.PUBLIC }
-            .map { it to it.instanceParameters.score(arguments) }
-            .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
-            ?.first
+            .bestMatchFor(arguments)
             ?: throw ConstructorInvocationException(type, arguments.map { termToObjectConverter.admissibleTypes(it) })
+
+    /**
+     * The callable taking as many parameters as [arguments] whose parameters best fit them, or `null` if none takes
+     * that many. Callables [score] cannot rank are still candidates, as their arguments may be convertible anyway.
+     */
+    private fun <T : KCallable<*>> List<T>.bestMatchFor(arguments: List<Term>): T? =
+        filter { it.instanceParameters.size == arguments.size }
+            .minByOrNull { it.instanceParameters.score(arguments) ?: Int.MAX_VALUE }
 
     @Suppress("ReturnCount")
     private fun List<KParameter>.score(arguments: List<Term>): Int? {

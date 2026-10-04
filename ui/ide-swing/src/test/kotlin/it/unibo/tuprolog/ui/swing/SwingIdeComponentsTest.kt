@@ -23,6 +23,7 @@ import it.unibo.tuprolog.ui.swing.inspector.DiagnosticsList
 import it.unibo.tuprolog.ui.swing.inspector.FlagsTable
 import it.unibo.tuprolog.ui.swing.inspector.LibrariesTree
 import it.unibo.tuprolog.ui.swing.inspector.OperatorsTable
+import it.unibo.tuprolog.ui.swing.inspector.showDocumentationWindow
 import it.unibo.tuprolog.ui.swing.inspector.toIntClamped
 import it.unibo.tuprolog.ui.swing.solutions.BlankIcon
 import it.unibo.tuprolog.ui.swing.solutions.SolutionQueryEntry
@@ -31,12 +32,21 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument
 import org.fife.ui.rsyntaxtextarea.parser.ParserNotice
 import org.fife.ui.rtextarea.RTextScrollPane
 import org.gciatto.kt.math.BigInteger
+import org.junit.Assume
+import java.awt.GraphicsEnvironment
+import java.awt.Window
+import java.awt.event.ActionEvent
+import java.awt.event.KeyEvent
+import javax.swing.JDialog
+import javax.swing.JLabel
+import javax.swing.KeyStroke
 import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.TreePath
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
@@ -293,14 +303,82 @@ class SwingIdeComponentsTest {
                         predicates = listOf("p/1"),
                         operators = listOf(OperatorPresentation("+", 500, "yfx")),
                         functions = listOf("f/1"),
+                        documentation = mapOf("p/1" to "`p(+X)`\n\nHolds for `X`.", "+/2" to "Adds."),
                     ),
                 ),
             )
             val root = tree.model.root as DefaultMutableTreeNode
             val library = root.getChildAt(0) as DefaultMutableTreeNode
-            assertEquals("lib", library.userObject)
+            assertEquals("lib", library.toString())
             assertEquals(3, library.childCount)
-            assertTrue((library.getChildAt(0) as DefaultMutableTreeNode).toString() == "Predicates")
+            val predicates = library.getChildAt(0) as DefaultMutableTreeNode
+            assertTrue(predicates.toString() == "Predicates")
+            assertEquals("p/1 — Holds for X.", predicates.getChildAt(0).toString())
+            assertEquals("f/1", library.getChildAt(1).getChildAt(0).toString())
+            assertEquals("+ (yfx, priority 500) — Adds.", library.getChildAt(2).getChildAt(0).toString())
+        }
+    }
+
+    @Test
+    fun `libraries tree is fully expanded`() {
+        SwingUtilities.invokeAndWait {
+            val tree = LibrariesTree()
+            tree.render(
+                listOf(
+                    it.unibo.tuprolog.ui.gui.presentation.LibraryPresentation(
+                        alias = "lib",
+                        predicates = listOf("p/1", "q/2"),
+                        operators = listOf(OperatorPresentation("+", 500, "yfx")),
+                        functions = listOf("f/1"),
+                    ),
+                ),
+            )
+            val rows = (0 until tree.rowCount).map { tree.getPathForRow(it).lastPathComponent.toString() }
+            assertEquals(listOf("lib", "Predicates", "p/1", "q/2", "Functions", "f/1", "Operators"), rows.take(7))
+            assertEquals(8, rows.size)
+        }
+    }
+
+    @Test
+    fun `libraries tree previews span the available width on a single line`() {
+        lateinit var tree: LibrariesTree
+        SwingUtilities.invokeAndWait {
+            tree = LibrariesTree()
+            tree.render(
+                listOf(
+                    it.unibo.tuprolog.ui.gui.presentation.LibraryPresentation(
+                        alias = "lib",
+                        predicates = listOf("p/1"),
+                        documentation = mapOf("p/1" to "`p(+X)`\n\n" + "Holds for `X`. ".repeat(40)),
+                    ),
+                ),
+            )
+            val entry = (tree.model.root as DefaultMutableTreeNode).getChildAt(0).getChildAt(0).getChildAt(0)
+            assertTrue(entry.toString().endsWith("Holds for X."), "preview truncated by length: $entry")
+            tree.setSize(400, 300)
+        }
+        for (width in listOf(400, 250)) {
+            // a separate EDT task, so that the resize event posted by setSize is handled first
+            SwingUtilities.invokeAndWait {
+                val rows = (0 until tree.rowCount).map { tree.getRowBounds(it) }
+                val lineHeight = tree.getFontMetrics(tree.font).height
+                assertTrue(rows.all { it.maxX <= width }, "rows overflow $width px: $rows")
+                assertEquals(width, rows.last().maxX.toInt(), "the preview row does not reach the right edge")
+                assertTrue(rows.all { it.height < 2 * lineHeight }, "rows span several lines: $rows")
+                tree.setSize(250, 300)
+            }
+        }
+    }
+
+    @Test
+    fun `documentation window closes on escape`() {
+        Assume.assumeFalse(GraphicsEnvironment.isHeadless())
+        SwingUtilities.invokeAndWait {
+            showDocumentationWindow(JLabel(), "doc", "`p/1`\n\nDoes p.")
+            val window = Window.getWindows().filterIsInstance<JDialog>().last { it.name == "documentationWindow" }
+            val escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)
+            window.rootPane.getActionForKeyStroke(escape).actionPerformed(ActionEvent(window, 0, null))
+            assertFalse(window.isDisplayable, "escape did not dispose the documentation window")
         }
     }
 
@@ -338,8 +416,21 @@ class SwingIdeComponentsTest {
             assertEquals(OperatorPresentation("joins", 500, "yfx"), added)
 
             val flags = FlagsTable()
-            flags.render(listOf(FlagPresentation("unknown", "warning")))
+            flags.render(listOf(FlagPresentation("unknown", "warning", "`flag(unknown)`\n\nWhat to do.")))
             assertIs<javax.swing.DefaultCellEditor>(flags.getCellEditor(0, 1))
+            flags.setSize(200, 100)
+            val hover =
+                java.awt.event.MouseEvent(
+                    flags,
+                    0,
+                    0,
+                    0,
+                    5,
+                    flags.getCellRect(0, 0, true).centerY.toInt(),
+                    0,
+                    false,
+                )
+            assertEquals("What to do.", flags.getToolTipText(hover))
         }
     }
 

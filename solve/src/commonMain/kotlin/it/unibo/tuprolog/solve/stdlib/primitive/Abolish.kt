@@ -9,6 +9,29 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
 object Abolish : UnaryPredicate.NonBacktrackable<ExecutionContext>("abolish") {
+    override val help: String =
+        """
+        `abolish(+PredicateIndicator)`
+        
+        Removes all clauses of the dynamic predicate identified by `PredicateIndicator` (for example `foo/2`). The indicator must be well formed and the predicate must be modifiable.
+
+        **Examples**
+
+        ```prolog
+        ?- assertz(foo(1)), assertz(foo(2)).
+        yes.
+
+        ?- abolish(foo/1).
+        yes.
+
+        ?- clause(foo(X), true).
+        no.
+
+        ?- abolish(foo).
+        throws error(type_error(predicate_indicator, foo), _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsWellFormedIndicator(0)
         val indicator = first as Indicator

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Helpable
 import it.unibo.tuprolog.solve.Signature
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -10,7 +11,7 @@ import kotlin.jvm.JvmStatic
  *
  * @author Enrico
  */
-fun interface LogicFunction {
+fun interface LogicFunction : Helpable {
     @JsName("compute")
     fun compute(request: Compute.Request<ExecutionContext>): Compute.Response
 

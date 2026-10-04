@@ -21,6 +21,27 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * Fails, rather than erroring, if the channel is closed.
  */
 object PutChar2 : BinaryRelation.NonBacktrackable<ExecutionContext>("put_char") {
+    override val help: String =
+        """
+        `put_char(+Stream, +Char)`
+        
+        Writes the character `Char` to the output stream `Stream`, succeeding deterministically. `Stream` must be an alias (e.g. `user_output`) or a `${'$'}stream(out, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an input stream a domain error (`stream_type`), where ISO prescribes a permission error. `Char` must be a one-character atom, otherwise (even when unbound) a type error (`character`) is raised. It fails, instead of raising an error, if the underlying channel has been closed.
+
+        **Examples**
+
+        ```prolog
+        ?- put_char(user_output, a).
+        % prints: a
+        yes.
+
+        ?- put_char(user_output, ab).
+        throws error(type_error(character, ab), _).
+
+        ?- put_char(user_input, a).
+        throws error(domain_error(stream_type, user_input), _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeOne(
         first: Term,
         second: Term,

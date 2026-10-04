@@ -20,6 +20,9 @@ import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticGreaterThanOrEqualTo
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticLowerThan
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticLowerThanOrEqualTo
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticNotEqual
+import it.unibo.tuprolog.solve.stdlib.primitive.Assert
+import it.unibo.tuprolog.solve.stdlib.primitive.AssertA
+import it.unibo.tuprolog.solve.stdlib.primitive.AssertZ
 import it.unibo.tuprolog.solve.stdlib.primitive.Atom
 import it.unibo.tuprolog.solve.stdlib.primitive.AtomChars
 import it.unibo.tuprolog.solve.stdlib.primitive.AtomCodes
@@ -114,9 +117,9 @@ object DefaultBuiltins : ExtensionLibrary(CommonBuiltins) {
                 ArithmeticLowerThan,
                 ArithmeticLowerThanOrEqualTo,
                 ArithmeticNotEqual,
-                // Assert,
-                // AssertA,
-                // AssertZ,
+                Assert,
+                AssertA,
+                AssertZ,
                 Atom,
                 AtomChars,
                 AtomCodes,

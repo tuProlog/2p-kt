@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.rule.Append
 import it.unibo.tuprolog.solve.stdlib.rule.Arrow
 import it.unibo.tuprolog.solve.stdlib.rule.CurrentPrologFlag
+import it.unibo.tuprolog.solve.stdlib.rule.Help
 import it.unibo.tuprolog.solve.stdlib.rule.Member
 import it.unibo.tuprolog.solve.stdlib.rule.Not
 import it.unibo.tuprolog.solve.stdlib.rule.Once
@@ -38,6 +39,7 @@ object CommonRules {
             Once,
             SetPrologFlag,
             CurrentPrologFlag,
+            Help,
         )
 
     /** [wrappers]' underlying [Clause]s, as consumed by [it.unibo.tuprolog.solve.library.Library.clauses]. */

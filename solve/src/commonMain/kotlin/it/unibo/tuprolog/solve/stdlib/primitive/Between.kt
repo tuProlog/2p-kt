@@ -11,6 +11,26 @@ import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.Integer as LogicInteger
 
 object Between : TernaryRelation.WithoutSideEffects<ExecutionContext>("between") {
+    override val help: String =
+        """
+        `between(+Lower, +Upper, ?Value)`
+        
+        Relates `Value` to the integers in the inclusive interval from `Lower` to `Upper`. The bounds must be instantiated integers; a variable `Value` is enumerated on backtracking.
+
+        **Examples**
+
+        ```prolog
+        ?- between(1, 3, X).
+        X = 1 ; X = 2 ; X = 3.
+
+        ?- between(1, 3, 5).
+        no.
+
+        ?- between(1, N, 2).
+        throws error(instantiation_error, _).
+        ```
+        """.trimIndent()
+
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,

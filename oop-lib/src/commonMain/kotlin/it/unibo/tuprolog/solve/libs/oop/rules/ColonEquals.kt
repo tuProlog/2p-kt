@@ -33,6 +33,29 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.Cast as CastPrimitive
  * @see PropertyReduce
  */
 sealed class ColonEquals : RuleWrapper<ExecutionContext>(CALL_OPERATOR, 2) {
+    override val help: String =
+        """
+        `?Target := +Expression`
+        
+        Fluent evaluation and assignment. If `Target` is unbound, `Target := Receiver.m1(...).m2` evaluates the method/property chain on the right (see `./2`) and binds `Target` to the converted result of the last access; a right-hand side that is not a chain is just unified with `Target` (e.g. `X := 5`). `Target := Term as Type` additionally converts the (evaluated) `Term` via `cast/3`, binding `Target` to an object reference; here `Type` must be a type reference or a `${'$'}Alias` such as `${'$'}long`, and since `as` binds tighter than `.`, a chain must be parenthesised: `R := (Obj.size) as ${'$'}long`. If `Target` is bound, it must be a chain `Receiver.Property` (possibly longer), and `:=` evaluates everything but the last access and then assigns `Expression` to `Property` via `assign/3`.
+
+        **Examples**
+
+        ```prolog
+        ?- new_object('java.util.ArrayList', [], L), L.add(a), N := L.size.
+        N = 1.
+
+        ?- X := 5.
+        X = 5.
+
+        ?- new_object('java.util.ArrayList', [], L), R := (L.size) as ${'$'}long, object_ref(R).
+        yes.
+
+        ?- new_object('java.awt.Point', [1, 2], P), P.x := 7, X := P.x.
+        X = 7.
+        ```
+        """.trimIndent()
+
     object Cast : ColonEquals() {
         private val R by variables
         private val X by variables

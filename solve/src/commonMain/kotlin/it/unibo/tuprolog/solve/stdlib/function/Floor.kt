@@ -14,6 +14,23 @@ import org.gciatto.kt.math.RoundingMode
  * @author Enrico
  */
 object Floor : UnaryMathFunction("floor") {
+    override val help: String =
+        """
+        `floor(+Number)`
+        
+        Evaluates to the greatest integer not greater than `Number`.
+
+        **Examples**
+
+        ```prolog
+        ?- X is floor(2.7).
+        X = 2.
+
+        ?- X is floor(-2.1).
+        X = -3.
+        ```
+        """.trimIndent()
+
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,

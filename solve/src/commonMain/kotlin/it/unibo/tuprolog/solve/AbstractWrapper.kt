@@ -11,7 +11,7 @@ import kotlin.js.JsName
  */
 abstract class AbstractWrapper<out Wrapped>(
     @JsName("signature") val signature: Signature,
-) {
+) : Helpable {
     constructor(name: String, arity: Int, vararg: Boolean = false) : this(Signature(name, arity, vararg))
 
     /** The wrapped implementation */
