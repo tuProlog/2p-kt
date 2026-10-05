@@ -89,4 +89,16 @@ class TestPrologSolverConstruction :
     override fun testBuildingCustomMutableSolverWithDefaultBuiltins() {
         prototype.testBuildingCustomMutableSolverWithDefaultBuiltins()
     }
+
+    @Test
+    fun testUnloadLibraryRemovesLibrary() {
+        val solver = MutablePrologSolver()
+        val customLib =
+            it.unibo.tuprolog.solve.library.Library
+                .of("custom.lib")
+        solver.loadLibrary(customLib)
+        kotlin.test.assertTrue(customLib.alias in solver.libraries.aliases)
+        solver.unloadLibrary(customLib)
+        kotlin.test.assertTrue(customLib.alias !in solver.libraries.aliases)
+    }
 }
