@@ -1,3 +1,9 @@
+## [3.0.1](https://github.com/tuProlog/2p-kt/compare/3.0.0...3.0.1) (2026-10-05)
+
+### Bug Fixes
+
+* **deps:** update dependency com.fifesoft:rstaui to v4 ([#1013](https://github.com/tuProlog/2p-kt/issues/1013)) ([e05cbbe](https://github.com/tuProlog/2p-kt/commit/e05cbbec0b0a3d1399546e7c924e7742a0aba705))
+
 ## [3.0.0](https://github.com/tuProlog/2p-kt/compare/2.0.9...3.0.0) (2026-10-04)
 
 ### ⚠ BREAKING CHANGES
