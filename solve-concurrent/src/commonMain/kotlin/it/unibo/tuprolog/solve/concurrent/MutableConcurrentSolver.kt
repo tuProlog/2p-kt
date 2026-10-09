@@ -59,7 +59,7 @@ internal class MutableConcurrentSolver :
 
     override fun unloadLibrary(library: Library) {
         updateContext {
-            val newLibraries = libraries + library
+            val newLibraries = libraries - library
             copy(
                 libraries = newLibraries,
                 operators = getAllOperators(newLibraries, staticKb, dynamicKb).toOperatorSet(),
