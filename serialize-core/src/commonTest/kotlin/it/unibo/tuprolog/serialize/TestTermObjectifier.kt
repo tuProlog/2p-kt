@@ -15,6 +15,11 @@ class TestTermObjectifier {
      * (via delegation) from [Truth.TRUE]. Equality is deliberately narrowed to reference identity: the
      * delegated members would resolve to the delegate, making this term equal to [Truth.TRUE] itself,
      * which is precisely what must not happen for a value the objectifier is unable to represent.
+     * [hashCode] must stay platform-neutral, because this fixture lives in `commonTest` and is also
+     * compiled for Kotlin/JS, where JVM-only helpers such as `System.identityHashCode` do not exist.
+     *
+     * Delegation is kept intact: this fixture overrides only [equals] and [hashCode], so the
+     * `isTrue` value inherited from [Truth.TRUE] is irrelevant to what is being tested here.
      */
     private class UnexpectedTruth : Truth by Truth.TRUE {
         override val functor: String = "unexpected"
@@ -23,7 +28,8 @@ class TestTermObjectifier {
 
         override fun equals(other: Any?): Boolean = this === other
 
-        override fun hashCode(): Int = System.identityHashCode(this)
+        // Platform-neutral: consistent with the identity-based `equals` above, and without JVM-only APIs.
+        override fun hashCode(): Int = functor.hashCode()
 
         override fun toString(): String = functor
     }
