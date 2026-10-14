@@ -31,7 +31,7 @@ interface DirectiveSelector : DirectiveListener {
 
         val Goal = scope.varOf("Goal")
 
-        val Priority = scope.varOf("Goal")
+        val Priority = scope.varOf("Priority")
 
         val Specifier = scope.varOf("Specifier")
 
