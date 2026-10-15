@@ -24,7 +24,6 @@ enum class Os(
                 description.contains("dalvik", ignoreCase = true) -> ANDROID
                 description.contains("win", ignoreCase = true) -> WINDOWS
                 description.contains("mac", ignoreCase = true) -> MAC
-                description.contains("mac", ignoreCase = true) -> MAC
                 description.contains("linux", ignoreCase = true) -> LINUX
                 else -> null
             }
