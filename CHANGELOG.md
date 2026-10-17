@@ -1,3 +1,24 @@
+## [3.0.2](https://github.com/tuProlog/2p-kt/compare/3.0.1...3.0.2) (2026-10-17)
+
+### Dependency updates
+
+* **deps:** update dependency org.jetbrains.kotlin.jvm to v2.4.21 ([#1025](https://github.com/tuProlog/2p-kt/issues/1025)) ([67025ee](https://github.com/tuProlog/2p-kt/commit/67025eec129fe651c1727a6c297215d3ff76056f))
+* **deps:** update gradle to v9.8.1 ([#1021](https://github.com/tuProlog/2p-kt/issues/1021)) ([d95146f](https://github.com/tuProlog/2p-kt/commit/d95146f1ce662329a26ecec702c2a4863787647e))
+* **deps:** update ktmpp to v6.0.5 ([#1023](https://github.com/tuProlog/2p-kt/issues/1023)) ([fc0b1cc](https://github.com/tuProlog/2p-kt/commit/fc0b1cc1280f21415b2b1a8dacf594a595a1b77d))
+* **deps:** update ktmpp to v6.0.6 ([#1027](https://github.com/tuProlog/2p-kt/issues/1027)) ([588eb8b](https://github.com/tuProlog/2p-kt/commit/588eb8b893255a6364dc55600a72857cdc01b6b9))
+* **deps:** update node.js to 24.22 ([#1032](https://github.com/tuProlog/2p-kt/issues/1032)) ([e38195c](https://github.com/tuProlog/2p-kt/commit/e38195c9624f7f53e9811ed3d5c35ab4cfd3e211))
+* **deps:** update plugin gitsemver to v7.0.25 ([#1028](https://github.com/tuProlog/2p-kt/issues/1028)) ([0d33b1f](https://github.com/tuProlog/2p-kt/commit/0d33b1fa2826984565c876f92df2a3f23618afa3))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.26 ([#1022](https://github.com/tuProlog/2p-kt/issues/1022)) ([98bc01e](https://github.com/tuProlog/2p-kt/commit/98bc01e9a96911720c9024570f35a71b56f6c827))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.27 ([#1029](https://github.com/tuProlog/2p-kt/issues/1029)) ([f388ea6](https://github.com/tuProlog/2p-kt/commit/f388ea647ccdd7992b147d1ab20382dffe267bcb))
+
+### Bug Fixes
+
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2026.9 ([#1034](https://github.com/tuProlog/2p-kt/issues/1034)) ([c7af9cf](https://github.com/tuProlog/2p-kt/commit/c7af9cfeeab524dbc26979e40b9abaec3954fab6))
+
+### Build and continuous integration
+
+* **deps:** update actions/setup-node action to v7.1.0 ([#1024](https://github.com/tuProlog/2p-kt/issues/1024)) ([a740008](https://github.com/tuProlog/2p-kt/commit/a740008f421624553692bf155326489d82f636a0))
+
 ## [3.0.1](https://github.com/tuProlog/2p-kt/compare/3.0.0...3.0.1) (2026-10-05)
 
 ### Bug Fixes
