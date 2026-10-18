@@ -1,3 +1,13 @@
+## [3.0.3](https://github.com/tuProlog/2p-kt/compare/3.0.2...3.0.3) (2026-10-18)
+
+### Bug Fixes
+
+* **deps:** update jackson monorepo to v2.22.4 ([#1035](https://github.com/tuProlog/2p-kt/issues/1035)) ([8f40156](https://github.com/tuProlog/2p-kt/commit/8f401566c8d57d5df7e9e8844b28bdc2e2023a59))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.49 ([#1033](https://github.com/tuProlog/2p-kt/issues/1033)) ([198e5a9](https://github.com/tuProlog/2p-kt/commit/198e5a913b11d2dbe6931735738dcc1829c6e4b9))
+
 ## [3.0.2](https://github.com/tuProlog/2p-kt/compare/3.0.1...3.0.2) (2026-10-17)
 
 ### Dependency updates
