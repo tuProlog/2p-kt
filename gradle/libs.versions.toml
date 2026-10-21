@@ -33,7 +33,7 @@ jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-y
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 clikt = "com.github.ajalt.clikt:clikt:5.1.0"
 batik-transcoder = "org.apache.xmlgraphics:batik-transcoder:1.19"
-batik-codec = "org.apache.xmlgraphics:batik-codec:1.19"
+batik-codec = "org.apache.xmlgraphics:batik-codec:1.20"
 assertj-swing = "org.assertj:assertj-swing:3.17.1"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
