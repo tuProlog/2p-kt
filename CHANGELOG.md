@@ -1,3 +1,16 @@
+## [3.0.4](https://github.com/tuProlog/2p-kt/compare/3.0.3...3.0.4) (2026-10-21)
+
+### Dependency updates
+
+* **deps:** update gradle to v9.8.2 ([#1037](https://github.com/tuProlog/2p-kt/issues/1037)) ([b194b2c](https://github.com/tuProlog/2p-kt/commit/b194b2cd1b2664b1cb9a3797cbc44bcc25211b6f))
+* **deps:** update ktmpp to v6.0.7 ([#1038](https://github.com/tuProlog/2p-kt/issues/1038)) ([9f48bb3](https://github.com/tuProlog/2p-kt/commit/9f48bb3bf6bbaa5877e6aee4fb99a46e54627b70))
+* **deps:** update plugin com.gradle.develocity to v4.6.1 ([#1039](https://github.com/tuProlog/2p-kt/issues/1039)) ([f0e1eb3](https://github.com/tuProlog/2p-kt/commit/f0e1eb35d650ca14323df431a87825fd69264ed6))
+* **deps:** update plugin gitsemver to v7.3.0 ([#1040](https://github.com/tuProlog/2p-kt/issues/1040)) ([586cdc3](https://github.com/tuProlog/2p-kt/commit/586cdc3e4d02d1f35e39f6fa4fd9ecb7bc3b8a6b))
+
+### Bug Fixes
+
+* **deps:** update dependency org.apache.xmlgraphics:batik-codec to v1.20 ([#1041](https://github.com/tuProlog/2p-kt/issues/1041)) ([e986968](https://github.com/tuProlog/2p-kt/commit/e986968c9e4cddfb2ae031571cff32d806aaf58a))
+
 ## [3.0.3](https://github.com/tuProlog/2p-kt/compare/3.0.2...3.0.3) (2026-10-18)
 
 ### Bug Fixes
