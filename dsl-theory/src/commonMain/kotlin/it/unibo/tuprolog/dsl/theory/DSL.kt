@@ -59,12 +59,12 @@ fun CoreLogicProgrammingScope.withTheories(unificator: Unificator = LogicProgram
 /**
  * Upgrades this `:dsl-unify` scope into a `:dsl-theory` [LogicProgrammingScope] adding theory-building support to
  * it, reusing its underlying [it.unibo.tuprolog.core.Scope], [it.unibo.tuprolog.dsl.Termificator] and
- * [it.unibo.tuprolog.core.VariablesProvider], and equipping it with [unificator] ([LogicProgrammingScope.defaultUnificator]
- * unless stated otherwise — *not* necessarily this scope's own [it.unibo.tuprolog.unify.UnificationAware.unificator],
- * so pass it explicitly to preserve it) and [theoryFactory] (an [IndexedTheoryFactory] over [unificator] by
- * default). Useful when a `:dsl-unify` scope is already at hand and theory-building is only needed from that point on.
+ * [it.unibo.tuprolog.core.VariablesProvider], and equipping it with [unificator] (this scope's own
+ * [it.unibo.tuprolog.unify.UnificationAware.unificator] unless stated otherwise, so the unification strategy is
+ * preserved across the upgrade) and [theoryFactory] (an [IndexedTheoryFactory] over [unificator] by default). Useful
+ * when a `:dsl-unify` scope is already at hand and theory-building is only needed from that point on.
  */
 fun UnifyLogicProgrammingScope.withTheories(
-    unificator: Unificator = LogicProgrammingScope.defaultUnificator,
+    unificator: Unificator = this.unificator,
     theoryFactory: TheoryFactory = IndexedTheoryFactory(unificator),
 ) = LogicProgrammingScope.of(unificator, theoryFactory, scope, termificator, variablesProvider)
