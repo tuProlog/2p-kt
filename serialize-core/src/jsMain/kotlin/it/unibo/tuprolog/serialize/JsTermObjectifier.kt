@@ -36,7 +36,7 @@ internal class JsTermObjectifier : TermObjectifier {
             Truth.TRUE -> true
             Truth.FALSE -> false
             Truth.FAIL -> "fail"
-            else -> NotImplementedError("Serialization of Truth value: $term")
+            else -> throw NotImplementedError("Serialization of Truth value: $term")
         }
 
     override fun visitStruct(term: Struct): Any =
