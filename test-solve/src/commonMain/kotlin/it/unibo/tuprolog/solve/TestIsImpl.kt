@@ -110,4 +110,22 @@ internal class TestIsImpl(
             )
         }
     }
+
+    override fun testIsCeilingOfLargeReal() {
+        logicProgramming {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            val positive = "X" `is` structOf("ceiling", realOf("1.0e30"))
+            assertSolutionEquals(
+                kotlin.collections.listOf(positive.yes("X" to intOf("1000000000000000000000000000000"))),
+                solver.solve(positive, mediumDuration).toList(),
+            )
+
+            val negative = "X" `is` structOf("ceiling", realOf("-12345678901234567890.5"))
+            assertSolutionEquals(
+                kotlin.collections.listOf(negative.yes("X" to intOf("-12345678901234567890"))),
+                solver.solve(negative, mediumDuration).toList(),
+            )
+        }
+    }
 }

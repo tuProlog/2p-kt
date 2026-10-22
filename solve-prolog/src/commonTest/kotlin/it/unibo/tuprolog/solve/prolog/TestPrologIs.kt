@@ -38,4 +38,9 @@ class TestPrologIs :
     override fun testIsXFloat() {
         prototype.testIsXFloat()
     }
+
+    @Test
+    override fun testIsCeilingOfLargeReal() {
+        prototype.testIsCeilingOfLargeReal()
+    }
 }

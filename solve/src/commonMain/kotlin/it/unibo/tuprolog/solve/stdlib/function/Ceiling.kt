@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.UnaryMathFunction
-import kotlin.math.ceil
+import org.gciatto.kt.math.RoundingMode
 
 /**
  * Implementation of `ceiling/1` arithmetic functor
@@ -41,5 +41,5 @@ object Ceiling : UnaryMathFunction("ceiling") {
     override fun mathFunction(
         real: Real,
         context: ExecutionContext,
-    ): Numeric = Numeric.of(ceil(real.value.toDouble()).toLong())
+    ): Numeric = Numeric.of(real.value.setScale(0, RoundingMode.CEILING).toBigInteger())
 }
