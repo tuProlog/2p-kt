@@ -12,7 +12,7 @@ internal class JvmTheoryDeobjectifier : TheoryDeobjectifier {
             TermDeobjectifier.default
                 .deobjectifyMany(`object`)
                 .asSequence()
-                .map { it as Clause },
+                .map { it as? Clause ?: throw DeobjectificationException(it) },
         )
 
     override fun deobjectifyMany(`object`: Any): Iterable<Theory> =
