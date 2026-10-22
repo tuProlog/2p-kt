@@ -1,3 +1,9 @@
+## [3.0.5](https://github.com/tuProlog/2p-kt/compare/3.0.4...3.0.5) (2026-10-22)
+
+### Bug Fixes
+
+* **deps:** update dependency org.apache.xmlgraphics:batik-transcoder to v1.20 ([#1042](https://github.com/tuProlog/2p-kt/issues/1042)) ([a7d179d](https://github.com/tuProlog/2p-kt/commit/a7d179d38939070d38539a541707549e24d467b5))
+
 ## [3.0.4](https://github.com/tuProlog/2p-kt/compare/3.0.3...3.0.4) (2026-10-21)
 
 ### Dependency updates
