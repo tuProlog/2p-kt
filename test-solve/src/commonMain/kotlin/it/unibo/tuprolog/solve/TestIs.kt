@@ -67,4 +67,17 @@ interface TestIs : SolverTest {
      * producing 1 solution which binds variable `X` to `3.0`.
      */
     fun testIsXFloat()
+
+    /**
+     * Tests the queries
+     * ```prolog
+     * ?- 'is'(X,ceiling(1.0e30)).
+     * ?- 'is'(X,ceiling(-12345678901234567890.5)).
+     * ```
+     * succeed on a solver initialized with default built-ins and with and empty theory,
+     * producing 1 solution each which binds variable `X` to `1000000000000000000000000000000`
+     * and `-12345678901234567890`, respectively, i.e. without saturating to the bounds of a
+     * 64-bit integer.
+     */
+    fun testIsCeilingOfLargeReal()
 }
