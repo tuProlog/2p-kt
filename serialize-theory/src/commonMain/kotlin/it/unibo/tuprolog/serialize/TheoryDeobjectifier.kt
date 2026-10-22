@@ -11,12 +11,11 @@ import kotlin.jvm.JvmStatic
  * clause. Used e.g. by a [TheoryDeserializer] after parsing a JSON/YAML/XML document into such a
  * plain list.
  *
- * Besides the usual [DeobjectificationException] (thrown when the top-level object is not a
- * list, or one of its elements does not have the shape expected for a
- * [it.unibo.tuprolog.core.Term]), implementations may also throw a `ClassCastException` if an
- * element, once deobjectified with [TermDeobjectifier], denotes a
- * [it.unibo.tuprolog.core.Term] that is not a [it.unibo.tuprolog.core.Clause] (e.g. a plain
- * [it.unibo.tuprolog.core.Struct] with neither a `"head"` nor a `"body"` key).
+ * A [DeobjectificationException] is thrown when the top-level object is not a list, when one of
+ * its elements does not have the shape expected for a [it.unibo.tuprolog.core.Term], or when an
+ * element, once deobjectified with [TermDeobjectifier], denotes a [it.unibo.tuprolog.core.Term]
+ * that is not a [it.unibo.tuprolog.core.Clause] (e.g. a plain [it.unibo.tuprolog.core.Struct]
+ * with neither a `"head"` nor a `"body"` key).
  *
  * @see TheoryObjectifier for the inverse conversion and the exact object shape recognized here.
  */
