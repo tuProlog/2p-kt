@@ -41,6 +41,16 @@ class TestOOPLib {
     }
 
     @Test
+    fun typeErrorsOfNewObjectBlameTheTypeArgument() {
+        val solver = Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
+        val notAType = Struct.of("foo", Integer.of(1))
+        val solution = solver.solveOnce(Struct.of("new_object", notAType, List.empty(), Var.of("L")))
+        val error = assertIs<TypeError>((solution as? Solution.Halt)?.exception, "$solution")
+        assertEquals(TypeError.Expected.TYPE_REFERENCE, error.expectedType)
+        assertEquals(notAType, error.culprit)
+    }
+
+    @Test
     fun callsMatchingNoOverloadRaiseExistenceErrors() {
         val solver = Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
         val tooManyArguments = List.of((1..3).map { Integer.of(it) })
