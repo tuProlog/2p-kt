@@ -107,7 +107,7 @@ class PrologSolverSpec :
         include(notProvableContract(PrologSolverFactory, ensureExecutable))
         include(notUnifyContract(PrologSolverFactory))
         include(numberContract(PrologSolverFactory))
-        include(numberCharsContract(PrologSolverFactory, disabled = setOf("number-chars/number-chars-decimal-number")))
+        include(numberCharsContract(PrologSolverFactory))
         include(numberCodesContract(PrologSolverFactory))
         include(onceContract(PrologSolverFactory, ensureExecutable))
         include(orContract(PrologSolverFactory))
