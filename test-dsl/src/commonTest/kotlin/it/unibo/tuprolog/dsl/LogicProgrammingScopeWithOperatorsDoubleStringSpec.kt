@@ -1,34 +1,36 @@
 package it.unibo.tuprolog.dsl
 
+import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.core.Term
 
-class TestLogicProgrammingScopeWithOperatorsIntString :
-    AbstractTestLogicProgrammingScopeWithOperators<Int, String>(
-        first = 3,
-        second = "X",
-    ) {
+class LogicProgrammingScopeWithOperatorsDoubleStringSpec :
+    FunSpec({
+        include(operatorsTests(3.2, "X", DoubleStringOperators))
+    })
+
+private object DoubleStringOperators : ArithmeticOperators<Double, String> {
     override fun LogicProgrammingScopeWithOperators<*>.plus(
-        a: Int,
+        a: Double,
         b: String,
     ): Term = a + b
 
     override fun LogicProgrammingScopeWithOperators<*>.minus(
-        a: Int,
+        a: Double,
         b: String,
     ): Term = a - b
 
     override fun LogicProgrammingScopeWithOperators<*>.times(
-        a: Int,
+        a: Double,
         b: String,
     ): Term = a * b
 
     override fun LogicProgrammingScopeWithOperators<*>.div(
-        a: Int,
+        a: Double,
         b: String,
     ): Term = a / b
 
     override fun LogicProgrammingScopeWithOperators<*>.rem(
-        a: Int,
+        a: Double,
         b: String,
     ): Term = a % b
 }

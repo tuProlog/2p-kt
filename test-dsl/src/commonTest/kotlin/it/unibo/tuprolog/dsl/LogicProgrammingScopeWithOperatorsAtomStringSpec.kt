@@ -1,13 +1,15 @@
 package it.unibo.tuprolog.dsl
 
+import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 
-class TestLogicProgrammingScopeWithOperatorsAtomString :
-    AbstractTestLogicProgrammingScopeWithOperators<Atom, String>(
-        first = Atom.of("a"),
-        second = "X",
-    ) {
+class LogicProgrammingScopeWithOperatorsAtomStringSpec :
+    FunSpec({
+        include(operatorsTests(Atom.of("a"), "X", AtomStringOperators))
+    })
+
+private object AtomStringOperators : ArithmeticOperators<Atom, String> {
     override fun LogicProgrammingScopeWithOperators<*>.plus(
         a: Atom,
         b: String,

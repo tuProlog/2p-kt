@@ -1,14 +1,15 @@
 package it.unibo.tuprolog.dsl.theory
 
-import it.unibo.tuprolog.dsl.AbstractLogicProgrammingScopeTest
 import it.unibo.tuprolog.dsl.BaseLogicProgrammingScope
+import it.unibo.tuprolog.dsl.LogicProgrammingScopeTester
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-abstract class AbstractLogicProgrammingScopeTestWithTheories<S : BaseLogicProgrammingScope<*>> :
-    AbstractLogicProgrammingScopeTest<S>() {
-    protected fun LogicProgrammingScopeWithTheories<*>.theoryAssertions(theory: Theory) {
+class LogicProgrammingScopeWithTheoriesTester<S : BaseLogicProgrammingScope<*>>(
+    createLogicProgrammingScope: () -> S,
+) : LogicProgrammingScopeTester<S>(createLogicProgrammingScope) {
+    fun LogicProgrammingScopeWithTheories<*>.theoryAssertions(theory: Theory) {
         assertEquals(3, theory.size)
         assertTrue(factOf(structOf("f", varOf("X"))) in theory)
         assertTrue(ruleOf(structOf("f", varOf("X")), atomOf("a")) in theory)
