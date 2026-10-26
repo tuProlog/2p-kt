@@ -1,0 +1,3 @@
+old_module,old_class,old_test,new_spec,new_cases,new_case_count
+core,it.unibo.tuprolog.core.IndicatorTest,ofTermsNameAndArityCreatesCorrectInstance,it.unibo.tuprolog.core.IndicatorSpec,of-terms/*,15
+core,it.unibo.tuprolog.core.IndicatorTest,ofNameAndArityCreatesCorrectInstance,it.unibo.tuprolog.core.IndicatorSpec,of-name-and-arity/*,11
