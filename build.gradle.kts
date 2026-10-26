@@ -82,11 +82,11 @@ multiProjectHelper {
     applyProjectTemplates()
 }
 
-// Kotest (#1017): every multiplatform module with test sources gets the Kotest engine and assertions, plus the
-// KSP-based Kotest Gradle plugin that Kotlin/JS needs to discover specs (JVM discovers them on the JUnit Platform,
-// enabled by `jvmTestFramework=junit5` in gradle.properties).
+// Kotest (#1017): every Kotlin Multiplatform module with test sources (JS-only ones included) gets the Kotest
+// engine and assertions, plus the KSP-based Kotest Gradle plugin that Kotlin/JS needs to discover specs (JVM
+// discovers them on the JUnit Platform, enabled by `jvmTestFramework=junit5` in gradle.properties).
 subprojects {
-    plugins.withId(Plugins.multiplatform.name) {
+    plugins.withId("org.jetbrains.kotlin.multiplatform") {
         if (file("src").listFiles().orEmpty().none { it.isDirectory && it.name.endsWith("Test") }) return@withId
         apply(
             plugin =
@@ -112,6 +112,13 @@ subprojects {
                     implementation(rootProject.libs.kotest.runner.junit5)
                 }
             }
+        }
+    }
+    // JVM-only modules (examples, ide-swing, ide-plp-swing) only need the JUnit Platform runner
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        dependencies {
+            "testImplementation"(rootProject.libs.kotest.runner.junit5)
+            "testImplementation"(rootProject.libs.kotest.assertions.core)
         }
     }
 }

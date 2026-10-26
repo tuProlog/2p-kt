@@ -8,8 +8,8 @@ import csv, json, re, sys
 from collections import Counter
 
 inv, maps, modules = sys.argv[1], sys.argv[2], set(sys.argv[3:])
-norm_c = lambda c: re.sub(r"^jsNodeTest\.", "", c)
-norm_t = lambda t: re.sub(r"(\(\)|\[js, node\]|\[jvm\])$", "", t)
+norm_c = lambda c: re.sub(r"^js\w*Test\.", "", c)
+norm_t = lambda t: re.sub(r"(\(\)|\[js, [^]]*\]|\[jvm\])$", "", t)
 m = {(r["old_class"], r["old_test"]): (r["new_spec"], r["new_case"]) for r in map(json.loads, open(maps)) if r["module"] in modules}
 base = [r for r in csv.DictReader(open("migration/baseline.csv")) if r["module"] in modules]
 new = {(r["module"], r["task"], norm_c(r["class"]), norm_t(r["test"])): r["status"] for r in csv.DictReader(open(inv)) if r["module"] in modules}
