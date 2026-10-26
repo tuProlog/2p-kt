@@ -8,8 +8,8 @@ class MutableListedTheorySpec :
     FunSpec({
         include(
             theoryTests(
-                Factories::emptyMutableIndexedTheory,
-                Factories::mutableIndexedTheoryOf,
+                Factories::emptyMutableListedTheory,
+                Factories::mutableListedTheoryOf,
             ),
         )
     })

@@ -8,11 +8,11 @@ class MutableListedTheoryCreationSpec :
     FunSpec({
         include(
             theoryCreationTests(
-                Factories::emptyMutableIndexedTheory,
-                Factories::mutableIndexedTheoryOf,
-                Factories::mutableIndexedTheoryOf,
-                Factories::mutableIndexedTheoryOf,
-                Factories::mutableIndexedTheoryOf,
+                Factories::emptyMutableListedTheory,
+                Factories::mutableListedTheoryOf,
+                Factories::mutableListedTheoryOf,
+                Factories::mutableListedTheoryOf,
+                Factories::mutableListedTheoryOf,
             ),
         )
     })

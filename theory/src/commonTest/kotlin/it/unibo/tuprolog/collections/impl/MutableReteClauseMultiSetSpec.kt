@@ -5,5 +5,5 @@ import it.unibo.tuprolog.collections.prototypes.clauseMultiSetTests
 
 class MutableReteClauseMultiSetSpec :
     FunSpec({
-        include(clauseMultiSetTests(Factories::emptyClauseMultiset, Factories::mutableClauseMultisetOf))
+        include(clauseMultiSetTests(Factories::emptyMutableClauseMultiset, Factories::mutableClauseMultisetOf))
     })

@@ -5,5 +5,5 @@ import it.unibo.tuprolog.collections.prototypes.clauseQueueTests
 
 class MutableReteClauseQueueSpec :
     FunSpec({
-        include(clauseQueueTests(Factories::emptyClauseQueue, Factories::clauseQueueOf))
+        include(clauseQueueTests(Factories::emptyMutableClauseQueue, Factories::mutableClauseQueueOf))
     })
