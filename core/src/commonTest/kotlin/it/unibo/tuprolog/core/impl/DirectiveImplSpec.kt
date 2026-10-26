@@ -1,0 +1,93 @@
+package it.unibo.tuprolog.core.impl
+
+import io.kotest.core.spec.style.FunSpec
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
+import it.unibo.tuprolog.core.testutils.ConstantUtils
+import it.unibo.tuprolog.core.testutils.DirectiveUtils
+import it.unibo.tuprolog.core.testutils.StructUtils
+import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+
+/**
+ * Test class for [DirectiveImpl] and [Directive]
+ *
+ * @author Enrico
+ */
+class DirectiveImplSpec :
+    FunSpec({
+        val groundDirectivesInstances = DirectiveUtils.groundDirectives.map(::DirectiveImpl)
+
+        val nonGroundDirectivesInstances = DirectiveUtils.nonGroundDirectives.map(::DirectiveImpl)
+
+        val wellFormedDirectivesInstances = DirectiveUtils.wellFormedDirectives.map(::DirectiveImpl)
+
+        val nonWellFormedDirectivesInstances = DirectiveUtils.nonWellFormedDirectives.map(::DirectiveImpl)
+
+        val mixedDirectivesInstances = DirectiveUtils.mixedDirectives.map(::DirectiveImpl)
+
+        test("head-null") {
+            mixedDirectivesInstances.forEach { assertNull(it.head) }
+        }
+
+        test("body-correct") {
+            onCorrespondingItems(
+                DirectiveUtils.mixedDirectives,
+                mixedDirectivesInstances.map { it.body },
+                ::assertEqualities,
+            )
+        }
+
+        test("is-well-formed-returns-true-if-directive-well-formed") {
+            wellFormedDirectivesInstances.forEach { assertTrue("$it isWellFormed should be true") { it.isWellFormed } }
+        }
+
+        test("is-well-formed-returns-false-if-directive-not-well-formed") {
+            nonWellFormedDirectivesInstances.forEach {
+                assertFalse(
+                    "$it isWellFormed should be false",
+                ) { it.isWellFormed }
+            }
+        }
+
+        test("is-properties-and-types") {
+            mixedDirectivesInstances.forEach(TermTypeAssertionUtils::assertIsDirective)
+        }
+
+        test("is-ground-true-if-no-variables-are-present") {
+            groundDirectivesInstances.forEach { assertTrue("$it isGround should be true") { it.isGround } }
+            nonGroundDirectivesInstances.forEach { assertFalse("$it isGround should be false") { it.isGround } }
+        }
+
+        test("fresh-copy-should-return-instance-itself-if-ground") {
+            groundDirectivesInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
+        }
+
+        test("fresh-copy-should-renew-variables") {
+            nonGroundDirectivesInstances.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
+        }
+
+        test("functor-correct") {
+            mixedDirectivesInstances.forEach { assertEquals(":-", it.functor) }
+        }
+
+        test("args-correct") {
+            val correctArgs = DirectiveUtils.mixedDirectives.map { listOf(it) }
+
+            onCorrespondingItems(correctArgs, mixedDirectivesInstances.map { it.args }) { expected, actual ->
+                assertEquals(expected, actual)
+            }
+        }
+
+        test("to-string-works-as-expected") {
+            val correctToStrings = mixedDirectivesInstances.map { "${it.functor} ${it.body}" }
+
+            onCorrespondingItems(correctToStrings, mixedDirectivesInstances.map { it.toString() }) { expected, actual ->
+                assertEquals(expected, actual)
+            }
+        }
+    })
