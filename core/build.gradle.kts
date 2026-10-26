@@ -10,6 +10,8 @@ plugins {
             .get()
             .pluginId,
     )
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotest)
 }
 
 val tuPrologPackage: String
@@ -32,6 +34,17 @@ val infoKtFileContent: String
 
 kotlin {
     sourceSets {
+        commonTest {
+            dependencies {
+                implementation(libs.kotest.framework.engine)
+                implementation(libs.kotest.assertions.core)
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation(libs.kotest.runner.junit5)
+            }
+        }
         commonMain {
             dependencies {
                 api(libs.ktMath)
@@ -71,6 +84,7 @@ kotlin {
             tasks.withType<DokkaBaseTask>().configureEach { dependsOn(createInfoKt) }
             tasks.withType<BaseKtLintCheckTask>().configureEach { dependsOn(createInfoKt) }
             tasks.withType<KotlinCompilationTask<*>>().configureEach { dependsOn(createInfoKt) }
+            tasks.matching { it.name.startsWith("ksp") }.configureEach { dependsOn(createInfoKt) }
         }
     }
 }

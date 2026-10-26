@@ -6,6 +6,8 @@ plugins {
             .get()
             .pluginId,
     )
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotest)
 }
 
 val jvmStackSize: String = findProperty("jvmStackSize")?.toString() ?: "256m"
@@ -23,6 +25,12 @@ kotlin {
         commonTest {
             dependencies {
                 api(project(":test-solve"))
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation(libs.kotest.runner.junit5)
             }
         }
     }
