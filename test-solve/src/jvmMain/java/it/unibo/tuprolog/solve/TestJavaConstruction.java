@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -14,9 +14,9 @@ public class TestJavaConstruction {
 
     private void test(Predicate<Expectations> shouldWork, Supplier<SolverFactory> constructor) {
         if (shouldWork.test(expectations)) {
-            Assert.assertNotNull(constructor.get());
+            Assertions.assertNotNull(constructor.get());
         } else {
-            Assert.assertThrows(IllegalStateException.class, constructor::get);
+            Assertions.assertThrows(IllegalStateException.class, constructor::get);
         }
     }
 

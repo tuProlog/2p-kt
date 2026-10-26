@@ -10,7 +10,7 @@ kotlin {
 
         getByName("jvmMain") {
             dependencies {
-                implementation(kotlin("test-junit"))
+                implementation(kotlin("test-junit5"))
             }
         }
 

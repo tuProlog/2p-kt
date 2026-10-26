@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
-import org.junit.Test
+import kotlin.test.Test
 
 class TestPrologCreation :
     TestCreation,

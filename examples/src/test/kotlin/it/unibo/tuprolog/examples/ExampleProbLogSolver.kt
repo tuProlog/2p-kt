@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.probabilistic
 import it.unibo.tuprolog.solve.probability
 import it.unibo.tuprolog.solve.problog.PROBLOG_OPERATORS
 import it.unibo.tuprolog.theory.parsing.ClausesParser
-import org.junit.Test
+import kotlin.test.Test
 
 class ExampleProbLogSolver {
     @Test

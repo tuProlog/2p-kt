@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestJavaConstructionForSolveProblog extends TestJavaConstruction {
     public TestJavaConstructionForSolveProblog() {

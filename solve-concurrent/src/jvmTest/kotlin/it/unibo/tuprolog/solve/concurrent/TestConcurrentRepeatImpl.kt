@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.solve.SolverFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.Ignore
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestConcurrentRepeatImpl :

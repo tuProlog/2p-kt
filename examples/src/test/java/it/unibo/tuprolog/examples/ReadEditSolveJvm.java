@@ -10,12 +10,12 @@ import it.unibo.tuprolog.solve.Solver;
 import it.unibo.tuprolog.theory.Theory;
 import it.unibo.tuprolog.theory.parsing.ClausesReader;
 import org.gciatto.kt.math.BigInteger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.util.Iterator;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReadEditSolveJvm {
 

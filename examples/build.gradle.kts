@@ -15,5 +15,5 @@ dependencies {
     api(project(":io-lib"))
     api(project(":oop-lib"))
     api(kotlin("stdlib-jdk8"))
-    testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit5"))
 }

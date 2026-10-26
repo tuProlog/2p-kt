@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.SolveOptions;
 import it.unibo.tuprolog.solve.Solver;
 import it.unibo.tuprolog.theory.Theory;
 import it.unibo.tuprolog.theory.parsing.ClausesParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 

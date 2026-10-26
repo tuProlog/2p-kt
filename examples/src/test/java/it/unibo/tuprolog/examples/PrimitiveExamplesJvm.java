@@ -17,7 +17,7 @@ import it.unibo.tuprolog.unify.Unificator;
 import kotlin.sequences.Sequence;
 import org.gciatto.kt.math.BigInteger;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,8 @@ import static kotlin.collections.MapsKt.mapOf;
 import static kotlin.sequences.SequencesKt.generateSequence;
 import static kotlin.sequences.SequencesKt.map;
 import static kotlin.sequences.SequencesKt.takeWhile;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PrimitiveExamplesJvm {
 

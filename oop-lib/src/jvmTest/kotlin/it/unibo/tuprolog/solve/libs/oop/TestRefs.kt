@@ -8,8 +8,8 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
-import org.junit.Test
 import kotlin.reflect.KClass
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

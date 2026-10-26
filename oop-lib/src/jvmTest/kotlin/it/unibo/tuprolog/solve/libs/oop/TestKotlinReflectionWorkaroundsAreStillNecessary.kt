@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.libs.oop
 
-import org.junit.Ignore
-import org.junit.Test
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
+import kotlin.test.Ignore
+import kotlin.test.Test
 import kotlin.test.assertTrue
 import kotlin.test.fail
 

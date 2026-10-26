@@ -2,7 +2,7 @@ package it.unibo.tuprolog.examples
 
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import org.junit.Test
+import kotlin.test.Test
 
 class ExampleChannels {
     @Test

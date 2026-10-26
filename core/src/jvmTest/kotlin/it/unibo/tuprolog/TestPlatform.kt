@@ -1,6 +1,6 @@
 package it.unibo.tuprolog
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 actual class TestPlatform {

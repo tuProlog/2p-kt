@@ -2,8 +2,8 @@
 
 package it.unibo.tuprolog.solve.libs.oop
 
-import org.junit.Test
 import kotlin.reflect.KClass
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import java.lang.annotation.Annotation as JavaAnnotation

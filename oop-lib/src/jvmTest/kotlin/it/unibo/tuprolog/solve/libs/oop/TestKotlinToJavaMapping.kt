@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.libs.oop
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TestKotlinToJavaMapping {
