@@ -72,8 +72,12 @@ classes keep running next to them in the same tasks.
   `assertEqualsUsingVariablesSimpleNames`, test-solve's `assertSolutionEquals`, …). Their equality notions
   differ on purpose, so don't collapse them into `shouldBe`. Use Kotest matchers for generic checks. Decide
   explicitly between sequence, multiset and set equality for solutions, and never relax the first two.
-- **Shared solver behaviours are Kotest factories** in `:test-solve` (`fun xContract(solverFactory) =
-  funSpec { ... }`, see `UnifyContract.kt`). Each solver's own `commonTest` has a spec that `include`s them.
+- **Shared solver behaviours are Kotest factories** in `:test-solve` (`fun xContract(solverFactory, disabled) =
+  contract(solverFactory, disabled) { ... }`, see `Contract.kt`). Inside, `case(id) { query yields { listOf(it.yes()) } }`
+  is one query on a fresh solver with default built-ins, compared as an exact solution sequence. Anything else
+  is a `scenario(id) { ... }` that builds its own solver and asserts. Each solver's `commonTest` has one
+  `<Solver>SolverSpec` that `include`s every contract. Cases that solver doesn't support go in `disabled`, which
+  must only name ids the contract registers.
 - **Coroutines:** use `test("...").config(coroutineTestScope = true) { ... }` for virtual time. Never call
   `runTest` inside a Kotest leaf: on Kotlin/JS it isn't awaited, so its body (and its failures) run after
   the test has already passed.

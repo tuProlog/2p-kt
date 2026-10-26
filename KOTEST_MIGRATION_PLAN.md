@@ -282,19 +282,43 @@ Two sub-steps, kept apart as the issue requires:
 - **API:** `:test-solve` is internal-only (D1). `TestX`, `TestXImpl` and `prototype()` stay only while 3a
   factories delegate to them, then get deleted in Stage 7. No deprecation cycle.
 
+**Results (2026-10-26). Done, together with the parts of Stage 4 that used the shared prototypes.**
+- *3a:* a throwaway script generated one `xContract(...)` factory per `TestX` interface from its method list
+  (ids `area/kebab-method`, the hand-named `unify/*` kept). The forwarding classes became one spec per solver
+  that `include`s every contract: `PrologSolverSpec` (56 classes and the duplicate `PrologUnifySpec`),
+  `ProblogSolverSpec` (52 classes, pulled forward from Stage 4; class- and method-level `@Ignore`s became
+  explicit `disabled` sets), and `ConcurrentSolverSpec` (the 2 `solve-concurrent` classes that used the shared
+  prototypes). Parity was checked id by id on JVM and JS and recorded in `migration/parity.csv`.
+- *3b:* the contracts no longer delegate. `ContractScope` offers `case(id) { query yields { ... } }` (one query
+  on a fresh solver with default built-ins, exact sequence through `assertSolutionEquals`) and `scenario(id)`
+  (any other body, moved verbatim). 347 cases are rows and 142 scenarios. The 15 methods that checked several
+  independent queries on one immutable solver were split into numbered rows (93 leaves), the only change in
+  case count. `TestX`, `TestXImpl`, `prototype()` and the 3a delegation helper are deleted (D1). `contract()`
+  rejects `disabled` ids it does not register, so a rename can't silently re-enable a skipped case.
+- *Leftovers in `solve-prolog`:* its 7 plain `kotlin.test` classes became `PrologHelpSpec`,
+  `DefaultBuiltinsSpec`, `AbstractPrologSolverSpec` and leaves of `PrologSolverSpec` (arithmetic errors as a
+  case table). The module has no `kotlin.test` left besides the Java construction test.
+- *Found:* `testNumberCharsDecimalNumber` had no `@Test` in the Prolog and Problog classes, so it never ran.
+  It passes on both and is enabled, in its own `fix(test)` commits.
+- *Not done:* hand-renaming the generated ids (e.g. `atom/atom-aof-b`). They are stable, unique and traceable
+  to the old method names. Renaming is cheap now that `disabled` is checked, so it can happen whenever a
+  contract is next touched.
+
 ### Stage 4 — Remaining solver modules
 
-- `solve-problog`: same as 3a, with `disabled = ...` lists.
-- `solve-concurrent`: its `TestConcurrentX` set duplicates test-solve with multiset semantics. Keep it a
+- `solve-problog`: *done in Stage 3* (`ProblogSolverSpec`). Its plain classes (examples, probabilistic mode,
+  `TestDefaultBuiltins`) remain.
+- `solve-concurrent`: the 2 classes using the shared prototypes are *done in Stage 3*. Its `TestConcurrentX` set duplicates test-solve with multiset semantics. Keep it a
   separate contract family (`concurrentUnifyContract`, …) in its own `commonTest`, migrated the same
   3a → 3b way. **Do not** merge it with the sequential contracts here: that would change assertion
   semantics. Merging is deferred to a later PR (D4).
-- `solve`, `solve-plp`, `io-lib`, `oop-lib` (6 prototype users).
+- `solve`, `solve-plp`, `io-lib`, `oop-lib`. `io-lib` and `oop-lib` have their own `TestX`/prototype families
+  (6 users), to migrate the same 3a → 3b way.
 
 ### Stage 5 — Foundations, parsers, DSLs, libraries, apps
 
 Order follows the issue: `utils`, `core`, `unify`, `theory` → `parser-*` → `dsl-*` + `test-dsl` →
-`serialize-*`, `bdd`, `datalog`, `io-lib`, `oop-lib` → `gui`, `gui-plp`, `ide-*` ordinary tests,
+`serialize-*`, `bdd`, `datalog`, `io-lib`, `oop-lib`, `test-solve`'s own unit tests (~70 classes) → `gui`, `gui-plp`, `ide-*` ordinary tests,
 `examples`, `full`. One PR per group. For each module:
 
 1. Convert dummy-instance lists (e.g. `RuleUtils.mixedRules`, `wellFormedRules`) into case lists with IDs.
@@ -324,7 +348,7 @@ Order follows the issue: `utils`, `core`, `unify`, `theory` → `parser-*` → `
 
 1. Release kt-mpp K1. Set `ktTestFramework=none` in `gradle.properties`, drop `junit-vintage-engine`, drop
    `kotlin("test*")` from `test-solve`, `test-dsl`, `ui/*`, `full`, `examples`.
-2. Delete the prototype/forwarding infrastructure (`TestX`, `TestXImpl`, `prototype()`),
+2. Delete the remaining prototype/forwarding infrastructure (`test-solve`'s is already gone, see Stage 3),
    `onCorrespondingItems`, and any helpers that have been superseded.
 3. Guard against regressions with detekt's `ForbiddenImport` (`kotlin.test.Test`, `kotlin.test.Ignore`,
    `org.junit.*`) in `.detekt.yml`. It is one config entry, applies to every module and source set, and needs no
