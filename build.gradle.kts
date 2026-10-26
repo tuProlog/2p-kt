@@ -1,6 +1,7 @@
 import io.github.gciatto.kt.mpp.Plugins
 import io.github.gciatto.kt.mpp.helpers.ProjectType
 import io.github.gciatto.kt.mpp.utils.log
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 buildscript {
     configurations.classpath {
@@ -26,6 +27,8 @@ buildscript {
 plugins {
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.ktMpp.multiProjectHelper)
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.kotest) apply false
 }
 
 group = "it.unibo.tuprolog"
@@ -77,6 +80,40 @@ multiProjectHelper {
         }
 
     applyProjectTemplates()
+}
+
+// Kotest (#1017): every multiplatform module with test sources gets the Kotest engine and assertions, plus the
+// KSP-based Kotest Gradle plugin that Kotlin/JS needs to discover specs (JVM discovers them on the JUnit Platform,
+// enabled by `jvmTestFramework=junit5` in gradle.properties).
+subprojects {
+    plugins.withId(Plugins.multiplatform.name) {
+        if (file("src").listFiles().orEmpty().none { it.isDirectory && it.name.endsWith("Test") }) return@withId
+        apply(
+            plugin =
+                rootProject.libs.plugins.ksp
+                    .get()
+                    .pluginId,
+        )
+        apply(
+            plugin =
+                rootProject.libs.plugins.kotest
+                    .get()
+                    .pluginId,
+        )
+        configure<KotlinMultiplatformExtension> {
+            sourceSets.named("commonTest") {
+                dependencies {
+                    implementation(rootProject.libs.kotest.framework.engine)
+                    implementation(rootProject.libs.kotest.assertions.core)
+                }
+            }
+            sourceSets.matching { it.name == "jvmTest" }.configureEach {
+                dependencies {
+                    implementation(rootProject.libs.kotest.runner.junit5)
+                }
+            }
+        }
+    }
 }
 
 allprojects {
