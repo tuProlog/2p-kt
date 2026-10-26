@@ -361,6 +361,29 @@ Order follows the issue: `utils`, `core`, `unify`, `theory` → `parser-*` → `
 
 `theory` (597) and `core` (581) are the largest, so plan two PRs each.
 
+**Results (2026-10-26). Done: apart from the Swing E2E suites (Stage 6) and the Java tests, no module has a
+`kotlin.test` or JUnit test left.**
+- *How:* class by class, keeping each test's name (kebab-cased method name), so parity stayed checkable id by id.
+  `migration/plain2spec.py` converted ~420 plain classes. It now also handles class/method `@Suppress`, companion
+  objects (their members become private top-level), getters (local functions), one-line annotated tests and early
+  `return`s (`return@test`). `migration/proto2factory.py` turned `theory`'s prototype classes into factories;
+  `migration/scope2spec.py` did the DSL scope tests.
+- *Prototype families:* `theory`'s 5 `Prototype*Test` classes and 3 `ClauseCollection` interfaces, and `utils`'
+  `CacheTest`, are Kotest factories (`theoryTests(...)`, `clauseQueueTests(...)`, `cacheTests(...)`, …), included
+  once per implementation. In `test-dsl`, the abstract bases became helper classes the leaves run with
+  (`LogicProgrammingScopeTester`, `TermificatorTester`; `LogicProgrammingScopeWithTheoriesTester` in
+  `dsl-theory`); the operator suites share `operatorsTests(first, second, ArithmeticOperators)`, which keeps the
+  overloads picked statically per type pair.
+- *Wiring:* the root build keys Kotest on the Kotlin Multiplatform plugin (so JS-only `ide-web` gets it) and adds
+  the JUnit Platform runner to JVM-only modules. `runTest` is gone from every leaf (`coroutineTestScope`).
+- *Found:* `MutableListedTheoryTest`/`MutableListedTheoryCreationTest` built mutable *indexed* theories, and the
+  clause multiset/queue suites mixed mutable and immutable factories. Fixed in their own commit; all pass.
+- *Not done (items 1–3):* dummy-instance lists are still iterated inside leaves rather than split into named
+  cases. That is a rename-heavy follow-up, best done module by module (`core`, `theory` first) now that parity
+  no longer depends on old names.
+- *Parity:* checked id by id with statuses on JVM, JS (Node and browser) for every module
+  (`migration/parity_check.py`); mappings appended to `migration/parity.csv`.
+
 ### Stage 6 — E2E suites
 
 - **Swing:** move the specs in `src/swingE2eTest` to FunSpec. AssertJ Swing, the JDK 21 launcher, the locale
