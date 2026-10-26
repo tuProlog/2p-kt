@@ -133,7 +133,7 @@ class ProblogSolverSpec :
         include(notProvableContract(ProblogSolverFactory, ensureExecutable))
         include(notUnifyContract(ProblogSolverFactory))
         include(numberContract(ProblogSolverFactory))
-        include(numberCharsContract(ProblogSolverFactory, disabled = setOf("number-chars/number-chars-decimal-number")))
+        include(numberCharsContract(ProblogSolverFactory))
         include(numberCodesContract(ProblogSolverFactory))
         include(onceContract(ProblogSolverFactory, ensureExecutable))
         include(orContract(ProblogSolverFactory))
