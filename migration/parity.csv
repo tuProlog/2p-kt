@@ -1365,3 +1365,57 @@ oop-lib,it.unibo.tuprolog.solve.libs.oop.TestPrologStrictInvocation,overloadSele
 oop-lib,it.unibo.tuprolog.solve.libs.oop.TestPrologStrictInvocation,mostProperOverloadIsSelectedWhenInvokingTypeRefMethod,it.unibo.tuprolog.solve.libs.oop.StrictInvocationSpec,most-proper-overload-is-selected-when-invoking-type-ref-method,1
 oop-lib,it.unibo.tuprolog.solve.libs.oop.TestPrologStrictInvocation,overloadCanBeSelectedViaExplicitCastWhenInvokingTypeRefMethod,it.unibo.tuprolog.solve.libs.oop.StrictInvocationSpec,overload-can-be-selected-via-explicit-cast-when-invoking-type-ref-method,1
 oop-lib,it.unibo.tuprolog.solve.libs.oop.TestPrologStrictInvocation,overloadSelectionMayFailWhenInvokingTypeRefMethod,it.unibo.tuprolog.solve.libs.oop.StrictInvocationSpec,overload-selection-may-fail-when-invoking-type-ref-method,1
+solve-plp,it.unibo.tuprolog.solve.TestProbability,example,it.unibo.tuprolog.solve.ProbabilitySpec,example,1
+solve-problog,it.unibo.tuprolog.solve.problog.prolog.TestDefaultBuiltins,testSelfEquality,it.unibo.tuprolog.solve.problog.prolog.DefaultBuiltinsSpec,self-equality,1
+solve-problog,it.unibo.tuprolog.solve.problog.prolog.TestDefaultBuiltins,testItemEquality,it.unibo.tuprolog.solve.problog.prolog.DefaultBuiltinsSpec,item-equality,1
+solve,it.unibo.tuprolog.solve.TestJsClassName,resolvesFromGlobalThisWhenRequireIsUnavailable,it.unibo.tuprolog.solve.JsClassNameSpec,resolves-from-global-this-when-require-is-unavailable,1
+solve,it.unibo.tuprolog.solve.TestJsClassName,resolvesMissingModuleToNull,it.unibo.tuprolog.solve.JsClassNameSpec,resolves-missing-module-to-null,1
+solve,it.unibo.tuprolog.solve.TestJsTypeChecker,testInstantiationErrorKlassIsSubstitutionFail,it.unibo.tuprolog.solve.JsTypeCheckerSpec,instantiation-error-klass-is-substitution-fail,1
+solve,it.unibo.tuprolog.solve.TestJsTypeChecker,testLogicErrorKlassIsSubstitutionFail,it.unibo.tuprolog.solve.JsTypeCheckerSpec,logic-error-klass-is-substitution-fail,1
+solve,it.unibo.tuprolog.solve.TestJsTypeChecker,testResolutionExceptionKlassIsSubstitutionFail,it.unibo.tuprolog.solve.JsTypeCheckerSpec,resolution-exception-klass-is-substitution-fail,1
+solve,it.unibo.tuprolog.solve.TestJsTypeChecker,testTuPrologExceptionKlassIsSubstitutionFail,it.unibo.tuprolog.solve.JsTypeCheckerSpec,tu-prolog-exception-klass-is-substitution-fail,1
+solve,it.unibo.tuprolog.solve.TestJsTypeChecker,testRuntimeExceptionKlassIsSubstitutionFail,it.unibo.tuprolog.solve.JsTypeCheckerSpec,runtime-exception-klass-is-substitution-fail,1
+solve,it.unibo.tuprolog.solve.TestJsTypeChecker,testExceptionKlassIsSubstitutionFail,it.unibo.tuprolog.solve.JsTypeCheckerSpec,exception-klass-is-substitution-fail,1
+solve,it.unibo.tuprolog.solve.TestJsTypeChecker,testAnyKlassIsSubstitutionFail,it.unibo.tuprolog.solve.JsTypeCheckerSpec,any-klass-is-substitution-fail,1
+solve,it.unibo.tuprolog.solve.TestTimeoutException,testToString,it.unibo.tuprolog.solve.TimeoutExceptionSpec,to-string,1
+solve,it.unibo.tuprolog.solve.TestTimeoutException,testToPrintStackTrace,it.unibo.tuprolog.solve.TimeoutExceptionSpec,to-print-stack-trace,1
+solve,it.unibo.tuprolog.solve.directives.TestDirectivePartitioning,testStaticPartitioning,it.unibo.tuprolog.solve.directives.DirectivePartitioningSpec,static-partitioning,1
+solve,it.unibo.tuprolog.solve.directives.TestDirectivePartitioning,testDynamicPartitioning,it.unibo.tuprolog.solve.directives.DirectivePartitioningSpec,dynamic-partitioning,1
+solve,it.unibo.tuprolog.solve.flags.FlagDomainTest,"IntRange iterates every value in the range, not just the minimum",it.unibo.tuprolog.solve.flags.FlagDomainSpec,"IntRange iterates every value in the range, not just the minimum",1
+solve,it.unibo.tuprolog.solve.flags.FlagDomainTest,IntRange with a single value iterates exactly that value,it.unibo.tuprolog.solve.flags.FlagDomainSpec,IntRange with a single value iterates exactly that value,1
+solve,it.unibo.tuprolog.solve.flags.FlagDomainTest,"IntRange contains every value between its bounds, inclusive",it.unibo.tuprolog.solve.flags.FlagDomainSpec,"IntRange contains every value between its bounds, inclusive",1
+solve,it.unibo.tuprolog.solve.flags.FlagStoreTest,"of(vararg NotableFlag) keeps every distinct flag, not just the last one",it.unibo.tuprolog.solve.flags.FlagStoreSpec,"of(vararg NotableFlag) keeps every distinct flag, not just the last one",1
+solve,it.unibo.tuprolog.solve.flags.FlagStoreTest,DEFAULT contains every notable flag at its own default value,it.unibo.tuprolog.solve.flags.FlagStoreSpec,DEFAULT contains every notable flag at its own default value,1
+solve,it.unibo.tuprolog.solve.flags.FlagStoreTest,the new solution-presentation flags default to leaving behaviour unaffected,it.unibo.tuprolog.solve.flags.FlagStoreSpec,the new solution-presentation flags default to leaving behaviour unaffected,1
+solve,it.unibo.tuprolog.solve.TestSolutionMetadata,tagsStickToSolutions,it.unibo.tuprolog.solve.SolutionMetadataSpec,tags-stick-to-solutions,1
+solve,it.unibo.tuprolog.solve.TestSolutionMetadata,solutionsPreserveQueryTags,it.unibo.tuprolog.solve.SolutionMetadataSpec,solutions-preserve-query-tags,1
+solve,it.unibo.tuprolog.solve.TestSolutionMetadata,tagsCanBeReplaced,it.unibo.tuprolog.solve.SolutionMetadataSpec,tags-can-be-replaced,1
+solve,it.unibo.tuprolog.solve.TestSolutionMetadata,addingTagsPreservesEquality,it.unibo.tuprolog.solve.SolutionMetadataSpec,adding-tags-preserves-equality,1
+solve,it.unibo.tuprolog.solve.TestSolutionMetadata,summingTagsPreservesEquality,it.unibo.tuprolog.solve.SolutionMetadataSpec,summing-tags-preserves-equality,1
+solve,it.unibo.tuprolog.solve.TestSolutionMetadata,settingTagsPreservesEquality,it.unibo.tuprolog.solve.SolutionMetadataSpec,setting-tags-preserves-equality,1
+solve,it.unibo.tuprolog.solve.TestSolutionMetadata,settingMultipleTagsPreservesEquality,it.unibo.tuprolog.solve.SolutionMetadataSpec,setting-multiple-tags-preserves-equality,1
+solve,it.unibo.tuprolog.solve.TestSolutionMetadata,clearingTagsPreservesEquality,it.unibo.tuprolog.solve.SolutionMetadataSpec,clearing-tags-preserves-equality,1
+solve,it.unibo.tuprolog.solve.TestSolutionMetadata,addingAnExistingTagReplacesThatTag,it.unibo.tuprolog.solve.SolutionMetadataSpec,adding-an-existing-tag-replaces-that-tag,1
+solve,it.unibo.tuprolog.solve.TestSolutionMetadata,settingAnExistingTagReplacesThatTag,it.unibo.tuprolog.solve.SolutionMetadataSpec,setting-an-existing-tag-replaces-that-tag,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestMontyHallExamples,testMontyHallPuzzle,it.unibo.tuprolog.solve.problog.probabilistic.MontyHallExamplesSpec,monty-hall-puzzle,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestMontyHallExamples,testMontyHallPuzzle2,it.unibo.tuprolog.solve.problog.probabilistic.MontyHallExamplesSpec,monty-hall-puzzle2,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProbabilisticGraphExamples,testProbabilisticGraph,it.unibo.tuprolog.solve.problog.probabilistic.ProbabilisticGraphExamplesSpec,probabilistic-graph,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProbabilisticMode,testProbabilisticModeDisabled,it.unibo.tuprolog.solve.problog.probabilistic.ProbabilisticModeSpec,probabilistic-mode-disabled,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProbabilisticMode,testProbabilisticModeEnabled,it.unibo.tuprolog.solve.problog.probabilistic.ProbabilisticModeSpec,probabilistic-mode-enabled,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProbabilisticMode,testBinaryDecisionDiagramProbabilisticModeDisabled,it.unibo.tuprolog.solve.problog.probabilistic.ProbabilisticModeSpec,binary-decision-diagram-probabilistic-mode-disabled,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProbabilisticMode,testBinaryDecisionDiagramProbabilisticModeEnabled,it.unibo.tuprolog.solve.problog.probabilistic.ProbabilisticModeSpec,binary-decision-diagram-probabilistic-mode-enabled,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogBayesianNetworksExamples,testProbabilisticFacts,it.unibo.tuprolog.solve.problog.probabilistic.ProblogBayesianNetworksExamplesSpec,probabilistic-facts,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogBayesianNetworksExamples,testProbabilisticClauses,it.unibo.tuprolog.solve.problog.probabilistic.ProblogBayesianNetworksExamplesSpec,probabilistic-clauses,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogBayesianNetworksExamples,testFirstOrder,it.unibo.tuprolog.solve.problog.probabilistic.ProblogBayesianNetworksExamplesSpec,first-order,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogBayesianNetworksExamples,testAnnotatedDisjunctions,it.unibo.tuprolog.solve.problog.probabilistic.ProblogBayesianNetworksExamplesSpec,annotated-disjunctions,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogRollingDiceExamples,testAnnotatedDisjunctions,it.unibo.tuprolog.solve.problog.probabilistic.ProblogRollingDiceExamplesSpec,annotated-disjunctions,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogRollingDiceExamples,testNegationAsFailure,it.unibo.tuprolog.solve.problog.probabilistic.ProblogRollingDiceExamplesSpec,negation-as-failure,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogRollingDiceExamples,testNegationAsFailure2,it.unibo.tuprolog.solve.problog.probabilistic.ProblogRollingDiceExamplesSpec,negation-as-failure2,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogRollingDiceExamples,testArithmeticExpressions,it.unibo.tuprolog.solve.problog.probabilistic.ProblogRollingDiceExamplesSpec,arithmetic-expressions,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogRollingDiceExamples,testArithmeticExpressions2,it.unibo.tuprolog.solve.problog.probabilistic.ProblogRollingDiceExamplesSpec,arithmetic-expressions2,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogRollingDiceExamples,testBetweenPredicate,it.unibo.tuprolog.solve.problog.probabilistic.ProblogRollingDiceExamplesSpec,between-predicate,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogRollingDiceExamples,testRecursionAndLists,it.unibo.tuprolog.solve.problog.probabilistic.ProblogRollingDiceExamplesSpec,recursion-and-lists,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogTossingCoinsExamples,testBasic,it.unibo.tuprolog.solve.problog.probabilistic.ProblogTossingCoinsExamplesSpec,basic,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogTossingCoinsExamples,testNoisyOr,it.unibo.tuprolog.solve.problog.probabilistic.ProblogTossingCoinsExamplesSpec,noisy-or,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogTossingCoinsExamples,testFirstOrder,it.unibo.tuprolog.solve.problog.probabilistic.ProblogTossingCoinsExamplesSpec,first-order,1
+solve-problog,it.unibo.tuprolog.solve.problog.probabilistic.TestProblogTossingCoinsExamples,testProbabilisticClauses,it.unibo.tuprolog.solve.problog.probabilistic.ProblogTossingCoinsExamplesSpec,probabilistic-clauses,1
