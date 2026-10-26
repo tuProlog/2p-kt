@@ -58,11 +58,15 @@ Other patterns to migrate: `@BeforeTest` ×40, `@AfterTest` ×20, `runTest` ×22
 ## 1. Key design decisions (proposed defaults)
 
 1. **Spec style:** `FunSpec` everywhere, as the issue suggests. Parameterized leaves via Kotest 6's
-   data-driven API (`withTests`, `nameFn = { it.id }`). Confirm exact names against 6.2.6 in the spike.
-2. **Coexistence on JVM with no kt-mpp change:** in 2p-kt, switch every JVM `Test` task to
-   `useJUnitPlatform()` and add `junit-vintage-engine` to `jvmTestRuntimeOnly`. Legacy kotlin-test (JUnit 4)
-   tests then run under the vintage engine and Kotest specs under the Kotest engine, in the same task and the
-   same report. kt-mpp keeps adding `kotlin-test-junit` until Step 6.
+   data-driven API (`io.kotest.datatest.withTests`, `nameFn = { it.id }`), confirmed on 6.2.6.
+2. **Coexistence on JVM via JUnit 5 (revised by the spike):** `jvmTestFramework=junit5` in
+   `gradle.properties` (new kt-mpp knob K1). It makes kt-mpp add `kotlin-test-junit5` instead of
+   `kotlin-test-junit` and puts every JVM `Test` task on the JUnit Platform. Legacy `kotlin.test` tests then
+   run on the Jupiter engine and Kotest specs on the Kotest engine, in the same task and the same report.
+   The vintage-engine idea was dropped: once any module consumes the umbrella `kotlin-test` (e.g. through
+   `test-solve`'s `api(kotlin("test-common"))`), Gradle resolves it to the JUnit 5 flavour for a
+   JUnit-Platform task, which collides with kt-mpp's hard-wired `kotlin-test-junit` (capability
+   `kotlin-test-framework-impl`).
 3. **Kotest wiring stays in 2p-kt first, upstream later.** A root-level convention (a `buildSrc` function in
    the style of `registerSwingE2eTestSourceSet`, or the root `subprojects {}` block) applies `io.kotest` + KSP
    and adds `kotest-framework-engine` + `kotest-assertions-core` to `commonTest`. Only what kt-mpp
@@ -81,22 +85,30 @@ Other patterns to migrate: `@BeforeTest` ×40, `@AfterTest` ×20, `runTest` ×22
 7. **A single PR into `develop` at the end (D2)**, carrying every stage on `feature/issue-1017`. Every stage
    still ends with a green `check`, as one or more commits that can be reviewed on their own.
 
-## 2. Proposed kt-mpp changes (in `../kt-mpp`, tested via `--include-build ../kt-mpp`)
+## 2. kt-mpp changes (in `../kt-mpp`, tested via `--include-build ../kt-mpp`)
 
 Keep these minimal. kt-mpp is shared by other projects, so defaults must preserve current behaviour.
+Implemented on kt-mpp branch `feature/jvm-test-framework` (local, not pushed):
 
-- **K1 (needed by Step 6, not before):** a `multiPlatformHelper` property, e.g. `testFramework` populated from
-  Gradle property `ktTestFramework`, with values `kotlin-test` (default, today's behaviour) and `none`.
-  `none` skips `addTestDependencies` in `MultiplatformPlugin`, `AbstractKotlinProjectPlugin` (js) and
-  `JvmOnlyPlugin`. With it, 2p-kt can drop kotlin-test/JUnit 4 completely without exclusion hacks.
-- **K2 (only if the spike shows Mocha config conflicts with Kotest JS):** make the Mocha `testTask`
-  configuration skippable under the same property.
+- **K1 (needed now, done):** property `jvmTestFramework` (`junit`, default and today's behaviour, or
+  `junit5`). Under `junit5`, `MultiplatformPlugin` and `JvmOnlyPlugin` add `kotlin-test-junit5` and every JVM
+  `Test` task calls `useJUnitPlatform()`. Documented in kt-mpp's README.
+- **K3 (needed now, done):** ktlint and detekt skip sources under the project's build directory. KSP registers
+  `build/generated/ksp/<target>/<sourceSet>/kotlin` as a source root of its own, so ktlint's existing
+  `**/generated/**` filter, which matches paths relative to each root, never saw it. Kotest's generated JS
+  entry point (`io/kotest/framework/runtime/kotest.kt`) then failed `ktlintJsTestSourceSetCheck` and
+  `detektJsTest`.
+- **K2 (not needed):** Mocha config did not conflict with Kotest JS.
+- **K4 (Stage 7, optional):** a value that skips kotlin-test entirely, once no `kotlin.test` remains. It may
+  be unnecessary, since Java tests keep needing Jupiter on JVM (see Stage 1 results).
 - **Not proposed:** bundling Kotest coordinates/versions into kt-mpp. That would tie kt-mpp releases to
   Kotest releases. Revisit after 2p-kt's migration if other kt-mpp consumers want the same thing.
 
 Workflow: edit `../kt-mpp` on a branch there. Test with
 `./gradlew --info --include-build ../kt-mpp <tasks>` from 2p-kt. Open a kt-mpp PR, then bump `ktMpp` in
 the catalog once it is released. 2p-kt never merges anything that depends on an unreleased kt-mpp.
+**Until K1 is released, this branch only builds with `--include-build ../kt-mpp`.** Without it,
+`jvmTestFramework` is silently ignored and the JVM test classpaths hit the capability conflict above.
 
 ## 3. Stages
 
@@ -143,7 +155,7 @@ Pilot: `:core` (multiplatform foundation), `:test-solve` + `:solve-prolog` (shar
 
 1. Add to the catalog: `kotest = "6.2.6"`, `ksp = "2.3.12"`, plugin ids `io.kotest` and
    `com.google.devtools.ksp`, libraries `kotest-framework-engine`, `kotest-assertions-core`,
-   `kotest-runner-junit5`, `junit-vintage-engine`.
+   `kotest-runner-junit5`.
 2. Shared convention as in §1.3, applied to the pilot modules only.
 3. Write throwaway specs that check each spike criterion listed in the issue: plain test, nested `context`,
    named parameterized leaves, a factory included from another module (`test-solve` → `solve-prolog`),
@@ -163,11 +175,51 @@ Pilot: `:core` (multiplatform foundation), `:test-solve` + `:solve-prolog` (shar
 Exit (issue's own criterion): parameterized and shared-contract Kotest tests run correctly on JVM and JS, and
 failures propagate. Spike specs are deleted or turned into real tests.
 
+**Results (2026-10-26). The exit criterion is met.**
+
+| Check | JVM | JS (Node) |
+|---|---|---|
+| plain test, nested `context`, `withTests` leaves, `include`d factory, `xtest` / `enabled = false` | ✅ | ✅ |
+| factory in `test-solve` `commonMain`, included by `solve-prolog` (`PrologUnifySpec`, 11 cases) | ✅ | ✅ |
+| deliberately failing case fails the build and names the exact case | ✅ | ✅ |
+| legacy `kotlin.test` + Kotest in the same task | ✅ (Jupiter + Kotest engines) | ✅ (same Mocha task) |
+| `runTest` inside a Kotest leaf | ✅ | ❌ **not awaited**: body runs after the leaf ends, failures are lost |
+| `.config(coroutineTestScope = true)` virtual time (60 s `delay` in ≈0 s) and failure propagation | ✅ | ✅ |
+| KSP 2.3.12 + Kotlin 2.4.21 | ✅ | ✅ |
+| ktlint / detekt on KSP output | ✅ after K3 | ✅ after K3 |
+
+Findings that change the conventions or later stages:
+- **Report names.** JVM reports keep only the leaf name (`atom/lowercase[jvm]`) and drop the `context`
+  path. JS reports keep the path (`parameterized » atom/lowercase`), list contexts as test cases of their own,
+  and add a synthetic `Kotest.Executor` case. So **case IDs must be self-contained full paths**
+  (`area/sub-area/case`), and JS inventory counts include context rows.
+- **Filtering.** Only fully qualified names work: `--tests 'pkg.Spec'` or
+  `--tests 'pkg.Spec.context -- leaf'` for one nested case. A leading wildcard (`'*Spec'`) matches nothing
+  on JVM, where it fails with "No tests found". `jsTest` is an alias task, so pass `--tests` to `jsNodeTest`.
+  On JS the Kotest plugin deliberately clears Gradle's filter for the Kotlin/JS task (kotest#5704), so in a
+  mixed module every legacy `kotlin.test` test still runs. This goes away per module once it is migrated.
+- **`runTest` → `coroutineTestScope`.** The 22 `runTest` call sites must become
+  `test(...).config(coroutineTestScope = true) { ... }`. They cannot stay as they are in a Kotest leaf,
+  because on JS they silently pass.
+- **JUnit 4 direct users (27 files) moved to `kotlin.test`/Jupiter** as part of the `junit5` switch:
+  `org.junit.Test`/`Ignore` became `kotlin.test.*` in Kotlin, and Jupiter `Test`/`Assertions`/`Assumptions`
+  in Java and where kotlin.test has no equivalent. **Java tests** (`TestJavaConstruction*`,
+  `examples/*Jvm.java`) cannot become Kotest specs. They stay Jupiter tests permanently, which falls under
+  the issue's "legacy frameworks remain only where technically required".
+- **`core` needs KSP tasks to depend on `createInfoKt`**, which writes `Info.kt` into `commonMain`.
+  Otherwise Gradle reports an implicit-dependency error.
+- **JVM parity after the `junit5` switch:** every baseline JVM case reran (Jupiter appends `()` to method
+  names; the inventory comparison normalizes that) with no missing cases and no status changes, apart from
+  the wall-clock timeout tests flipping both ways (JS `solve-prolog` `testTimeout3` failed once under load).
+  Exception: `io-lib`'s `startMock` could not bind port 8080, held by a leftover Gradle daemon from an
+  aborted run. Rerun `io-lib` once that port is free.
+
 ### Stage 2 — Conventions and shared infrastructure (this branch)
 
 1. Roll the convention out to every module with tests (still in coexistence mode).
 2. Write the conventions into `AGENTS.md` (repo-wide testing section): FunSpec, case-ID format
-   `area/sub-area/case` (lower-kebab, unique per group), small domain case types
+   `area/sub-area/case` (lower-kebab, unique per spec, and self-contained, because JVM reports drop context
+   names), fully qualified `--tests` filters, `coroutineTestScope` instead of `runTest`, small domain case types
    (`data class UnificationCase(val id: String, ..., val fixture: () -> ...)`), fixtures built inside the leaf,
    when a loop stays a loop (sequences, ordering, state transitions), and sequence vs multiset vs set
    assertions.
