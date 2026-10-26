@@ -7,7 +7,7 @@ import it.unibo.tuprolog.theory.Theory
 /**
  * A theory whose resolution takes a predictable amount of time (via nested `sleep/1` calls), and the expected
  * [Solution]s of resolving it against maximum durations that fall just below/above each of its timing thresholds;
- * used by [TestSolver] to check that a `Solver.solve(goal, maxDuration)` call's timeout is honored as soon as it is
+ * used by [solverContract] to check that a `Solver.solve(goal, maxDuration)` call's timeout is honored as soon as it is
  * exceeded, without waiting for the whole (deeper) computation to finish first.
  */
 object TimeRelatedTheories {

@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve
 
-/** Kotest registration of the [TestTrue] cases. */
+/** Conformance tests for `true/0`. */
 fun trueContract(
     solverFactory: SolverFactory,
     disabled: Set<String> = emptySet(),
-) = contract(disabled, { TestTrue.prototype(solverFactory) }) {
-    case("true/true") { testTrue() }
+) = contract(solverFactory, disabled) {
+    case("true/true") { atomOf("true") yields { kotlin.collections.listOf(it.yes()) } }
 }

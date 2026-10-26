@@ -272,7 +272,7 @@ expect fun <T : Any> assertClassNameIs(
 
 /**
  * Asserts that the receiver [Solver] was built with exactly the given [libraries], [staticKb], [dynamicKb], [flags],
- * [inputs] and [outputs], used by [TestSolverConstruction] to check a `Solver`/`MutableSolver` built via either
+ * [inputs] and [outputs], used by [solverConstructionContract] to check a `Solver`/`MutableSolver` built via either
  * [SolverFactory.solverOf]-style factory methods or the builder API ends up with the expected configuration.
  */
 fun Solver.assertHas(

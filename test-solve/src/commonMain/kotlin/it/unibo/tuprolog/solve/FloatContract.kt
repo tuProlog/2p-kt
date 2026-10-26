@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve
 
-/** Kotest registration of the [TestFloat] cases. */
+/** Conformance tests for the ISO `float/1` type-checking built-in. */
 fun floatContract(
     solverFactory: SolverFactory,
     disabled: Set<String> = emptySet(),
-) = contract(disabled, { TestFloat.prototype(solverFactory) }) {
-    case("float/float-dec") { testFloatDec() }
-    case("float/float-dec-neg") { testFloatDecNeg() }
-    case("float/float-nat") { testFloatNat() }
-    case("float/float-atom") { testFloatAtom() }
-    case("float/float-x") { testFloatX() }
+) = contract(solverFactory, disabled) {
+    case("float/float-dec") { float(3.3) yields { kotlin.collections.listOf(it.yes()) } }
+    case("float/float-dec-neg") { float(-3.3) yields { kotlin.collections.listOf(it.yes()) } }
+    case("float/float-nat") { float(3) yields { kotlin.collections.listOf(it.no()) } }
+    case("float/float-atom") { float("atom") yields { kotlin.collections.listOf(it.no()) } }
+    case("float/float-x") { float("X") yields { kotlin.collections.listOf(it.no()) } }
 }

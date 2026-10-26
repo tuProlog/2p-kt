@@ -5,7 +5,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 /**
  * Request goals (and their expected [Solution]s) exercising the standard order of terms comparison operators
  * `@</2`, `@=</2`, `@>/2`, `@>=/2`, plus the term-variance operators `=@=/2` (variant) and `\=@=/2` (not variant),
- * used by [TestSolver].
+ * used by [solverContract].
  */
 object TestingTermOperators {
     /**

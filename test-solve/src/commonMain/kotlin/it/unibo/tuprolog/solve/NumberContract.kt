@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve
 
-/** Kotest registration of the [TestNumber] cases. */
+/** Conformance tests for the ISO `number/1` type-checking built-in. */
 fun numberContract(
     solverFactory: SolverFactory,
     disabled: Set<String> = emptySet(),
-) = contract(disabled, { TestNumber.prototype(solverFactory) }) {
-    case("number/basic-num") { testBasicNum() }
-    case("number/dec-num") { testDecNum() }
-    case("number/neg-num") { testNegNum() }
-    case("number/letter-num") { testLetterNum() }
-    case("number/x-num") { testXNum() }
+) = contract(solverFactory, disabled) {
+    case("number/basic-num") { number(3) yields { kotlin.collections.listOf(it.yes()) } }
+    case("number/dec-num") { number(3.3) yields { kotlin.collections.listOf(it.yes()) } }
+    case("number/neg-num") { number(-3) yields { kotlin.collections.listOf(it.yes()) } }
+    case("number/letter-num") { number("a") yields { kotlin.collections.listOf(it.no()) } }
+    case("number/x-num") { number("X") yields { kotlin.collections.listOf(it.no()) } }
 }

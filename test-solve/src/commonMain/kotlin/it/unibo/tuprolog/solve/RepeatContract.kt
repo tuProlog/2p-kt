@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve
 
-/** Kotest registration of the [TestRepeat] cases. */
+/** Conformance tests for the ISO `repeat/0` built-in. */
 fun repeatContract(
     solverFactory: SolverFactory,
     disabled: Set<String> = emptySet(),
-) = contract(disabled, { TestRepeat.prototype(solverFactory) }) {
-    case("repeat/repeat") { testRepeat() }
+) = contract(solverFactory, disabled) {
+    case("repeat/repeat") { (repeat and (cut and fail)) yields { kotlin.collections.listOf(it.no()) } }
 }

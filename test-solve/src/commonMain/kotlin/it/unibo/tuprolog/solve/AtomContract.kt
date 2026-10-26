@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.solve
 
-/** Kotest registration of the [TestAtom] cases. */
+/** Conformance tests for the ISO `atom/1` type-checking built-in. */
 fun atomContract(
     solverFactory: SolverFactory,
     disabled: Set<String> = emptySet(),
-) = contract(disabled, { TestAtom.prototype(solverFactory) }) {
-    case("atom/atom-atom") { testAtomAtom() }
-    case("atom/atom-string") { testAtomString() }
-    case("atom/atom-aof-b") { testAtomAofB() }
-    case("atom/atom-var") { testAtomVar() }
-    case("atom/atom-empty-list") { testAtomEmptyList() }
-    case("atom/atom-num") { testAtomNum() }
-    case("atom/atom-num-dec") { testAtomNumDec() }
+) = contract(solverFactory, disabled) {
+    case("atom/atom-atom") { atom("atom") yields { listOf(it.yes()) } }
+    case("atom/atom-string") { atom("string") yields { listOf(it.yes()) } }
+    case("atom/atom-aof-b") { atom("a"("b")) yields { listOf(it.no()) } }
+    case("atom/atom-var") { atom("Var") yields { listOf(it.no()) } }
+    case("atom/atom-empty-list") { atom(emptyLogicList) yields { listOf(it.yes()) } }
+    case("atom/atom-num") { atom(6) yields { listOf(it.no()) } }
+    case("atom/atom-num-dec") { atom(3.3) yields { listOf(it.no()) } }
 }
