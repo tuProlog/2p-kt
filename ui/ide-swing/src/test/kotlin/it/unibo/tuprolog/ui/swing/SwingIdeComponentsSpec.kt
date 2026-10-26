@@ -33,7 +33,6 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument
 import org.fife.ui.rsyntaxtextarea.parser.ParserNotice
 import org.fife.ui.rtextarea.RTextScrollPane
 import org.gciatto.kt.math.BigInteger
-import org.junit.jupiter.api.Assumptions
 import java.awt.GraphicsEnvironment
 import java.awt.Window
 import java.awt.event.ActionEvent
@@ -365,8 +364,7 @@ class SwingIdeComponentsSpec :
             }
         }
 
-        test("documentation window closes on escape") {
-            Assumptions.assumeFalse(GraphicsEnvironment.isHeadless())
+        test("documentation window closes on escape").config(enabled = !GraphicsEnvironment.isHeadless()) {
             SwingUtilities.invokeAndWait {
                 showDocumentationWindow(JLabel(), "doc", "`p/1`\n\nDoes p.")
                 val window = Window.getWindows().filterIsInstance<JDialog>().last { it.name == "documentationWindow" }

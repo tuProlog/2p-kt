@@ -12,7 +12,6 @@ import it.unibo.tuprolog.ui.gui.solver.ResolutionStep
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.gui.solver.SolverSessionCreationRequest
 import it.unibo.tuprolog.ui.gui.solver.SolverSignal
-import kotlinx.coroutines.test.runTest
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
@@ -32,53 +31,51 @@ class SolverFactoryProfileSpec :
             assertTrue(profile.defaultOperators.isNotEmpty())
         }
 
-        test("solver-profile-exposes-and-refreshes-inspector-state") {
-            runTest {
-                // OOPLib (the default runtime library alongside IOLib) is reflection-based and throws
-                // NotImplementedError on Kotlin/JS as soon as a runtime tries to use it; this test doesn't
-                // exercise OOP features, so it opts out the same way ide-web's WebIdeApp does.
-                val profile =
-                    solverFactoryProfile(
-                        PrologSolverFactory,
-                        SolverProfileId("test"),
-                        "Test",
-                        runtimeLibraries = listOf(IOLib),
-                    )
-                val pageId = PageId("page")
-                val session =
-                    profile.factory.create(
-                        SolverSessionCreationRequest(
-                            pageId = pageId,
-                            documentId = DocumentId("document"),
-                            sourceText = "p(a).",
-                            documentRevision = 1,
-                            profileId = profile.id,
-                            options = emptyMap(),
-                            stdin = "",
-                        ),
-                    )
+        test("solver-profile-exposes-and-refreshes-inspector-state").config(coroutineTestScope = true) {
+            // OOPLib (the default runtime library alongside IOLib) is reflection-based and throws
+            // NotImplementedError on Kotlin/JS as soon as a runtime tries to use it; this test doesn't
+            // exercise OOP features, so it opts out the same way ide-web's WebIdeApp does.
+            val profile =
+                solverFactoryProfile(
+                    PrologSolverFactory,
+                    SolverProfileId("test"),
+                    "Test",
+                    runtimeLibraries = listOf(IOLib),
+                )
+            val pageId = PageId("page")
+            val session =
+                profile.factory.create(
+                    SolverSessionCreationRequest(
+                        pageId = pageId,
+                        documentId = DocumentId("document"),
+                        sourceText = "p(a).",
+                        documentRevision = 1,
+                        profileId = profile.id,
+                        options = emptyMap(),
+                        stdin = "",
+                    ),
+                )
 
-                assertTrue(SolverCapabilities.OPERATORS_INSPECTION in session.capabilities)
-                assertTrue(session.snapshot.operators.isNotEmpty())
-                assertTrue(session.snapshot.flags.isNotEmpty())
-                assertTrue(session.snapshot.libraries.isNotEmpty())
-                val prologLang = session.snapshot.libraries.first { it.alias == "prolog.lang" }
-                assertTrue(prologLang.help.isNotBlank())
-                assertTrue("arity" in prologLang.documentation.getValue("functor/3"))
-                assertTrue("priority `500`" in prologLang.documentationOf(OperatorPresentation("+", 500, "YFX"))!!)
-                assertTrue(session.snapshot.staticKnowledgeBase.contains("p(a)"))
+            assertTrue(SolverCapabilities.OPERATORS_INSPECTION in session.capabilities)
+            assertTrue(session.snapshot.operators.isNotEmpty())
+            assertTrue(session.snapshot.flags.isNotEmpty())
+            assertTrue(session.snapshot.libraries.isNotEmpty())
+            val prologLang = session.snapshot.libraries.first { it.alias == "prolog.lang" }
+            assertTrue(prologLang.help.isNotBlank())
+            assertTrue("arity" in prologLang.documentation.getValue("functor/3"))
+            assertTrue("priority `500`" in prologLang.documentationOf(OperatorPresentation("+", 500, "YFX"))!!)
+            assertTrue(session.snapshot.staticKnowledgeBase.contains("p(a)"))
 
-                val step =
-                    session.openResolution(ResolutionRequest(pageId, "p(X).", 1.seconds, emptyMap(), "")).next()
-                assertIs<ResolutionStep.Yield>(step)
-                assertTrue(step.signals.isNotEmpty())
+            val step =
+                session.openResolution(ResolutionRequest(pageId, "p(X).", 1.seconds, emptyMap(), "")).next()
+            assertIs<ResolutionStep.Yield>(step)
+            assertTrue(step.signals.isNotEmpty())
 
-                val outputStep =
-                    session
-                        .openResolution(
-                            ResolutionRequest(pageId, "write(hello).", 1.seconds, emptyMap(), ""),
-                        ).next()
-                assertTrue(outputStep.signals.filterIsInstance<SolverSignal.Stdout>().any { "hello" in it.text })
-            }
+            val outputStep =
+                session
+                    .openResolution(
+                        ResolutionRequest(pageId, "write(hello).", 1.seconds, emptyMap(), ""),
+                    ).next()
+            assertTrue(outputStep.signals.filterIsInstance<SolverSignal.Stdout>().any { "hello" in it.text })
         }
     })

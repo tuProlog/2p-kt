@@ -20,7 +20,6 @@ import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.test.runTest
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -44,54 +43,54 @@ class WorkspacePersistenceSpec :
 
         fun capturePersistedWorkspaceStub() = PersistedWorkspace(fontSize = 14, documents = emptyList())
 
-        test("a captured workspace round-trips through localStorage and restores query, history and font size") {
-            runTest {
-                WebWorkspacePersistence.delete()
-                val application = testApplication("test")
-                application.start()
-                val controller = application.controller
-                try {
-                    controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl", "p(1)."))
-                    val pageId = controller.state.value.workspace.selectedPageId!!
-                    controller.dispatch(PageAction.ChangeQuery(pageId, "p(X)."))
-                    val restoredEntry =
-                        ResolutionHistoryEntry(
-                            query = "p(1).",
-                            solutions = listOf(SolutionPresentation.Yes(query = "p(1).", solvedQuery = "p(1).")),
-                            terminalStatus = ResolutionStatus.COMPLETED,
-                        )
-                    controller.dispatch(
-                        PageAction.RestoreHistory(
-                            pageId,
-                            queryHistory = listOf("p(1)."),
-                            resolutions = listOf(restoredEntry),
-                        ),
+        test(
+            "a captured workspace round-trips through localStorage and restores query, history and font size",
+        ).config(coroutineTestScope = true) {
+            WebWorkspacePersistence.delete()
+            val application = testApplication("test")
+            application.start()
+            val controller = application.controller
+            try {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl", "p(1)."))
+                val pageId = controller.state.value.workspace.selectedPageId!!
+                controller.dispatch(PageAction.ChangeQuery(pageId, "p(X)."))
+                val restoredEntry =
+                    ResolutionHistoryEntry(
+                        query = "p(1).",
+                        solutions = listOf(SolutionPresentation.Yes(query = "p(1).", solvedQuery = "p(1).")),
+                        terminalStatus = ResolutionStatus.COMPLETED,
                     )
+                controller.dispatch(
+                    PageAction.RestoreHistory(
+                        pageId,
+                        queryHistory = listOf("p(1)."),
+                        resolutions = listOf(restoredEntry),
+                    ),
+                )
 
-                    val snapshot = capturePersistedWorkspace(controller.state.value, fontSize = 18)
-                    assertEquals(18, snapshot.fontSize)
-                    WebWorkspacePersistence.save(snapshot)
-                    val loaded = WebWorkspacePersistence.load()
-                    assertEquals(snapshot, loaded)
+                val snapshot = capturePersistedWorkspace(controller.state.value, fontSize = 18)
+                assertEquals(18, snapshot.fontSize)
+                WebWorkspacePersistence.save(snapshot)
+                val loaded = WebWorkspacePersistence.load()
+                assertEquals(snapshot, loaded)
 
-                    val application2 = testApplication("test2")
-                    application2.start()
-                    try {
-                        restoreWorkspace(loaded!!, application2.controller)
-                        val restoredPage =
-                            application2.controller.state.value.workspace.pages
-                                .single()
-                        assertTrue(restoredPage.content is PageContent.DocumentReference)
-                        assertEquals("p(X).", restoredPage.query.text)
-                        assertEquals(listOf("p(1)."), restoredPage.query.history.entries)
-                        assertEquals(1, restoredPage.history.resolutions.size)
-                    } finally {
-                        application2.close()
-                    }
+                val application2 = testApplication("test2")
+                application2.start()
+                try {
+                    restoreWorkspace(loaded!!, application2.controller)
+                    val restoredPage =
+                        application2.controller.state.value.workspace.pages
+                            .single()
+                    assertTrue(restoredPage.content is PageContent.DocumentReference)
+                    assertEquals("p(X).", restoredPage.query.text)
+                    assertEquals(listOf("p(1)."), restoredPage.query.history.entries)
+                    assertEquals(1, restoredPage.history.resolutions.size)
                 } finally {
-                    application.close()
-                    WebWorkspacePersistence.delete()
+                    application2.close()
                 }
+            } finally {
+                application.close()
+                WebWorkspacePersistence.delete()
             }
         }
 
