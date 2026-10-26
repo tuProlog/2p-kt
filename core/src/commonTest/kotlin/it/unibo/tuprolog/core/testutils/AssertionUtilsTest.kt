@@ -64,10 +64,15 @@ internal class AssertionUtilsTest {
     }
 
     @Test
-    fun onCorrespondingItemsSilentlyTruncatesToShorterCollection() {
+    fun onCorrespondingItemsFailsOnSizeMismatchBeforeVisitingAnything() {
         val visited = mutableListOf<Pair<Int, String>>()
-        onCorrespondingItems(listOf(1, 2, 3), listOf("a", "b")) { i, s -> visited += i to s }
-        assertEquals(listOf(1 to "a", 2 to "b"), visited)
+        assertFailsWith<AssertionError> {
+            onCorrespondingItems(listOf(1, 2, 3), listOf("a", "b")) { i, s -> visited += i to s }
+        }
+        assertFailsWith<AssertionError> {
+            onCorrespondingItems(listOf(1), listOf("a", "b")) { i, s -> visited += i to s }
+        }
+        assertEquals(emptyList(), visited)
     }
 
     @Test

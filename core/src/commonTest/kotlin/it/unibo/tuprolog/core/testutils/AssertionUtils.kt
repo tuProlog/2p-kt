@@ -85,12 +85,18 @@ internal object AssertionUtils {
         assertNotEqualsUsingVariablesSimpleNames(expected, actual)
     }
 
-    /** Executes the [function] with corresponding items in order */
+    /** Executes the [function] with corresponding items in order, failing if the two collections differ in size */
     fun <A, B> onCorrespondingItems(
         expected: Iterable<A>,
         actual: Iterable<B>,
         function: (A, B) -> Unit,
-    ) = expected.zip(actual).forEach { (expected, actual) -> function(expected, actual) }
+    ) {
+        // materialized once, since callers may pass single-use iterables (e.g. from generateSequence)
+        val expectedItems = expected.toList()
+        val actualItems = actual.toList()
+        assertEquals(expectedItems.size, actualItems.size, "Corresponding collections differ in size")
+        expectedItems.zip(actualItems).forEach { (expected, actual) -> function(expected, actual) }
+    }
 
     /** Asserts the [assertion] for each [E] versus all the [E]s (itself included). */
     fun <E : Any> assertAllVsAll(
