@@ -108,8 +108,7 @@ class ConsultSpec :
         }
 
         test("consulting-wrong-theory-works-locally") {
-            // TestPrologConsult forwarded this case to testConsultWorksRemotely
-            testConsultCorrectTheory(Url.of(ExampleUrls.PARENTS))
+            testConsultWrongTheory(findResource("WrongParents.pl"))
         }
 
         test("consulting-wrong-theory-works-remotely") {
