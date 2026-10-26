@@ -231,6 +231,32 @@ Findings that change the conventions or later stages:
 
 Exit: one solver contract and one `core` spec use the conventions with no forwarding boilerplate.
 
+**Results (2026-10-26). The exit criterion is met.**
+1. *Done:* a `subprojects {}` block in the root `build.gradle.kts` applies KSP and the Kotest plugin and adds
+   the Kotest dependencies to every kt-mpp multiplatform module with a `src/*Test` directory. That covers 27
+   modules, and the pilot modules' own wiring was removed. A module with no Kotest specs yet (e.g. `utils`)
+   still runs its legacy JS tests normally. JVM-only (`examples`, `ide-swing`, `ide-plp-swing`) and JS-only
+   (`ide-web`) modules are not covered yet; they get wired when their tests migrate (Stages 5–6).
+2. *Done:* `AGENTS.md` § "Tests: Kotest conventions".
+3. *Not needed (changed):* the `core` helpers already work unchanged inside Kotest leaves, because
+   kotlin.test's `assert*` throw `AssertionError`, which `IndicatorSpec` relies on. They keep their names and
+   semantics. They only need reimplementing in Stage 7, and only if `kotlin.test` itself is removed.
+4. *Done in Stage 1:* `unifyContract` in `test-solve`, included by `solve-prolog`'s `PrologUnifySpec`.
+5. *Template `core` spec:* `IndicatorTest` (2 methods) became `IndicatorSpec` (26 named leaves). The shared
+   `IndicatorUtils` now holds `IndicatorCase(id, name, arity)` lists as the single source of data. The old
+   pair lists are derived from them in the same order, so unmigrated users (`ScopeImplTest`,
+   `IndicatorImplTest`) are untouched. The spike spec was deleted. The mapping is recorded in
+   `migration/parity.csv` (one row per old test, with the new case pattern and its count).
+6. *Full-suite check* (all modules, JVM + JS, ktlint + detekt): every baseline case is present, except the 2
+   migrated `IndicatorTest` methods (now 26 `IndicatorSpec` cases) and **4 `TestDefaultTermifier` JVM cases
+   lost by the `junit5` switch**. `testMaps`/`testPairs`/`testTriples`/`testKeyValues` overrode `@Test`
+   methods without re-annotating them. JUnit 4 still ran them, but Jupiter, like kotlin.test on JS, does not
+   inherit `@Test` onto an overriding method, so they never ran on JS either. Fixed by annotating them, in a
+   dedicated commit; they now run and pass on JVM **and** JS. Watch for this pattern when migrating
+   override-based suites. The other differences were wall-clock timeout flakiness under load:
+   `solve-prolog` JS `testTimeout3` and `TestPrologRecursion.testNonTailRecursion`, which hit the solver's
+   8 s `longDuration` while detekt ran in parallel and passed in 1.0 s when rerun alone.
+
 ### Stage 3 — `test-solve` + `solve-prolog`
 
 Two sub-steps, kept apart as the issue requires:
