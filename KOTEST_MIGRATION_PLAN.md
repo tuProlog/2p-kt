@@ -88,7 +88,8 @@ Other patterns to migrate: `@BeforeTest` ×40, `@AfterTest` ×20, `runTest` ×22
 ## 2. kt-mpp changes (in `../kt-mpp`, tested via `--include-build ../kt-mpp`)
 
 Keep these minimal. kt-mpp is shared by other projects, so defaults must preserve current behaviour.
-Implemented on kt-mpp branch `feature/jvm-test-framework` (local, not pushed):
+Implemented on kt-mpp branch `feature/jvm-test-framework`, PR https://github.com/gciatto/kt-mpp/pull/727.
+Once released: bump `ktMpp` and drop the `--include-build` requirement.
 
 - **K1 (needed now, done):** property `jvmTestFramework` (`junit`, default and today's behaviour, or
   `junit5`). Under `junit5`, `MultiplatformPlugin` and `JvmOnlyPlugin` add `kotlin-test-junit5` and every JVM
@@ -211,8 +212,7 @@ Findings that change the conventions or later stages:
 - **JVM parity after the `junit5` switch:** every baseline JVM case reran (Jupiter appends `()` to method
   names; the inventory comparison normalizes that) with no missing cases and no status changes, apart from
   the wall-clock timeout tests flipping both ways (JS `solve-prolog` `testTimeout3` failed once under load).
-  Exception: `io-lib`'s `startMock` could not bind port 8080, held by a leftover Gradle daemon from an
-  aborted run. Rerun `io-lib` once that port is free.
+  `io-lib` was rerun separately once a stale daemon released mock port 8080: 121/121, as in the baseline.
 
 ### Stage 2 — Conventions and shared infrastructure (this branch)
 
