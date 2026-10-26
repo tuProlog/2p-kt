@@ -53,8 +53,7 @@ classes keep running next to them in the same tasks.
 - **Wiring is automatic.** The root `build.gradle.kts` applies KSP and the Kotest Gradle plugin to every
   multiplatform module with test sources, and adds `kotest-framework-engine` and `kotest-assertions-core`
   (`commonTest`) plus `kotest-runner-junit5` (`jvmTest`). JVM tests run on the JUnit Platform because
-  `jvmTestFramework=junit5` in `gradle.properties`. That is a kt-mpp property: until the kt-mpp release that
-  has it is in the catalog, build with `--include-build ../kt-mpp`.
+  `jvmTestFramework=junit5` in `gradle.properties` (a kt-mpp property, since 6.1.0).
 - **Style:** `FunSpec` only. Name classes `<Subject>Spec`, in the same package as the subject.
 - **Independent examples are parameterized leaves,** not loops: `withTests(nameFn = { ... }, cases) { case -> }`
   (`io.kotest.datatest`). Keep a loop inside one leaf only when iterating *is* the behaviour (consuming a

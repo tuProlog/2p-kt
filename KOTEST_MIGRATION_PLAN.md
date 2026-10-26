@@ -89,7 +89,8 @@ Other patterns to migrate: `@BeforeTest` ×40, `@AfterTest` ×20, `runTest` ×22
 
 Keep these minimal. kt-mpp is shared by other projects, so defaults must preserve current behaviour.
 Implemented on kt-mpp branch `feature/jvm-test-framework`, PR https://github.com/gciatto/kt-mpp/pull/727.
-Once released: bump `ktMpp` and drop the `--include-build` requirement.
+**Released in kt-mpp 6.1.0** (2026-10-26). `ktMpp` is bumped to 6.1.0, and the branch builds without
+`--include-build`: the full suite (ktlint, detekt, `jvmTest`, `jsTest`) passed with no failures.
 
 - **K1 (needed now, done):** property `jvmTestFramework` (`junit`, default and today's behaviour, or
   `junit5`). Under `junit5`, `MultiplatformPlugin` and `JvmOnlyPlugin` add `kotlin-test-junit5` and every JVM
@@ -108,8 +109,8 @@ Once released: bump `ktMpp` and drop the `--include-build` requirement.
 Workflow: edit `../kt-mpp` on a branch there. Test with
 `./gradlew --info --include-build ../kt-mpp <tasks>` from 2p-kt. Open a kt-mpp PR, then bump `ktMpp` in
 the catalog once it is released. 2p-kt never merges anything that depends on an unreleased kt-mpp.
-**Until K1 is released, this branch only builds with `--include-build ../kt-mpp`.** Without it,
-`jvmTestFramework` is silently ignored and the JVM test classpaths hit the capability conflict above.
+Before 6.1.0, an older kt-mpp silently ignored `jvmTestFramework`, and the JVM test classpaths hit the
+capability conflict above.
 
 ## 3. Stages
 
