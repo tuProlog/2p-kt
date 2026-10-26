@@ -315,12 +315,41 @@ Two sub-steps, kept apart as the issue requires:
 - `solve`, `solve-plp`, `io-lib`, `oop-lib`. `io-lib` and `oop-lib` have their own `TestX`/prototype families
   (6 users), to migrate the same 3a → 3b way.
 
+**Results (2026-10-26). Done: no `kotlin.test` class and no prototype user is left in any solver or library
+module.**
+- *`solve-concurrent`:* its 43 `TestConcurrentX` interface + Impl pairs became `concurrentXContract()`
+  factories (in `jvmTest`, where they lived), included by `ConcurrentSolverConformanceSpec`. Since there is
+  one implementation, the 3a/3b steps were done at once: `ConcurrentContractScope` mirrors `ContractScope`
+  but keeps the family's semantics (every case runs 5 times via `multiRunConcurrentTest`, solutions compared
+  as a `MultiSet`). Ids follow `test-solve`'s scheme so that D4 can line them up. The 47 `@Ignore`s are each
+  factory's `disabled` set, with their reasons as comments. The 6 `term/*` methods were split (48 rows).
+  The case-table files suppress detekt's `LongMethod`; `test-solve`'s are in `commonMain`, which the KMP
+  detekt tasks here don't appear to analyze.
+- *`io-lib`, `oop-lib`:* their prototype families had one implementation each, so they became plain specs
+  (`ConsultSpec`, `IncludeSpec`, `AliasSpec`, `CreationSpec`). The abstract invocation suite became an
+  `invocationCases(invoke, caseToResult)` factory included by `MethodInvocationSpec` and
+  `StrictInvocationSpec`. `IncludeSpec` keeps the old class's factory override that adds `IOLib` to the
+  default runtime; dropping it made the include cases fail on JS. An audit of every forwarding class
+  deleted in Stages 3–4 found no other factory override.
+- *Plain classes* (`solve`, `solve-plp`, `solve-problog`, `solve-concurrent`, `io-lib`, `oop-lib`: 38
+  classes) were converted by `migration/plain2spec.py`, which Stage 5 reuses. It turns `@Test` methods into
+  leaves, `@Ignore` into `xtest`, `@BeforeTest`/`@AfterTest` into `beforeTest`/`afterTest`, fields and
+  helpers into locals (hoisting what Kotlin can't declare locally to private top level), and keeps doc
+  comments and `@Suppress`es. It refuses classes with supertypes or companion objects, and warns about
+  mutable fields without per-test hooks and about multi-line raw strings it would re-indent.
+- *Found:* `TestPrologConsult.testConsultingWrongTheoryWorksLocally` forwarded to the remote correct-theory
+  case, so consulting a local file with a syntax error was never tested. Fixed in its own commit; it passes.
+- *Parity:* checked id by id with statuses on JVM and JS for every module; all mappings are in
+  `migration/parity.csv`.
+
 ### Stage 5 — Foundations, parsers, DSLs, libraries, apps
 
 Order follows the issue: `utils`, `core`, `unify`, `theory` → `parser-*` → `dsl-*` + `test-dsl` →
 `serialize-*`, `bdd`, `datalog`, `io-lib`, `oop-lib`, `test-solve`'s own unit tests (~70 classes) → `gui`, `gui-plp`, `ide-*` ordinary tests,
 `examples`, `full`. One PR per group. For each module:
 
+0. `theory` and `utils` have their own prototype families (`PrototypeClauseMultiSetTest`, …: 6 forwarding
+   classes); migrate them like `oop-lib`'s, into factories or plain specs.
 1. Convert dummy-instance lists (e.g. `RuleUtils.mixedRules`, `wellFormedRules`) into case lists with IDs.
    Wherever two lists are correlated by position today, merge them into one typed case.
 2. `assertAllVsAll` matrices keep their full N² coverage. When N² leaves are too many to register (measure
