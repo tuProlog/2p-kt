@@ -123,10 +123,15 @@ the catalog once it is released. 2p-kt never merges anything that depends on an 
 
 **Latent defects found while reading the helpers.** Each gets its own `fix(test):` commit with a test that
 reproduces it:
-- `solve-concurrent` `MultiSet.add()` stores `count ?: 1` instead of `count + 1`, so repeated adds never go
-  above 1. Check for callers first: if there are none, delete it instead.
-- `solve-concurrent` `KeySolution`'s `Term.hash` evaluates a `when` and throws the result away, so it always
-  returns `0`. Equality is unaffected, but hashing degrades to a linear scan.
+- *Done:* `core` `onCorrespondingItems` now asserts equal sizes. It also materializes both sides, because
+  `assertAllVsAll` passes single-use `generateSequence` iterables. The check exposed
+  `IndicatorTest.ofNameAndArityCreatesCorrectInstance`, which had mismatched filters (9 vs 11 items), so its
+  two negative-arity cases were never checked. Fixed in its own commit. They pass.
+- *Done:* `solve-concurrent` `MultiSet.add()` stored `count ?: 1` instead of `count + 1`. It had no callers,
+  so it was deleted.
+- *Not a defect:* `solve-concurrent` `KeySolution`'s `Term.hash` discards its `when` and always returns `0`.
+  That keeps hashCode consistent with its loose `similar()` equality: same-named fresh `Var`s are equal but
+  have different `hashCode()`s. Only the dead `when` is misleading. Clean it up in the D4 PR.
 - `test-solve` `assertSolutionEquals(Iterable, Iterable)` is already count-checked before its `zip`, so it
   is safe.
 
