@@ -46,13 +46,17 @@ def companion_members(decl):
     body = body[: max(i for i, l in enumerate(body) if l.strip() == "}")]
     body = [l[8:] if l.startswith("        ") else l.strip() for l in body]
     out, cur = [], []
-    for l in body + [""]:
-        if not l.strip():
-            if cur:
-                out.append(cur)
+    for l in body:  # a declaration starts at column 0 and runs until the next one
+        if re.match(r"[^\s})\]]", l) and cur and not re.match(r"[@/*]", cur[-1].strip()[:1] or "x"):
+            out.append(cur)
             cur = []
-            continue
-        cur.append(l)
+        if l.strip() or cur:
+            cur.append(l)
+    if cur:
+        out.append(cur)
+    out = [[l for l in blk] for blk in out]
+    while out and out[-1] and not out[-1][-1].strip():
+        out[-1].pop()
     tops, carry = [], []
     for block in out:
         block, carry = carry + block, []
@@ -62,7 +66,7 @@ def companion_members(decl):
             continue
         if not re.match(r"(private|internal|public) ", block[i]):
             block[i] = "private " + re.sub(r"^public ", "", block[i])
-        tops.append("\n".join(block))
+        tops.append("\n".join(block).rstrip())
     return tops
 
 
@@ -70,6 +74,7 @@ def convert(path, text=None, factory=None, leaf_names=None):
     """factory=(name, params): emit `fun name(params) = funSpec { ... }` into <Name>.kt instead of a spec class;
     leaf_names maps method names to leaf names (default: derived from the method name)."""
     text = text or path.read_text()
+    text = re.sub(r"^(    )((?:@\w+ )+)fun ", lambda m: "".join(m.group(1) + a + "\n" for a in m.group(2).split()) + m.group(1) + "fun ", text, flags=re.M)
     cm = re.search(r"^((?:@[\w.]+(?:\([^)]*\))?\s*\n)*)(?:internal |open |abstract )?class (\w+)(\s*:[^{]*)?\s*\{\n", text, re.M)
     if not cm:
         return f"SKIP {path}: no class"
@@ -131,6 +136,8 @@ def convert(path, text=None, factory=None, leaf_names=None):
                     suppressions.update(x.strip() for x in args.strip("()").split(","))
             rest = decl[fm.end():]
             inner = rest.rsplit("}", 1)[0] if fm.group(2) == "{" else "\n    " + rest.strip() + "\n"
+            fn = "xtest" if "Ignore" in names else "test"
+            inner = re.sub(r"\breturn\b(?!@)", f"return@{fn}", inner)  # the leaf is a lambda now
             leaves.append((fm.group(1).strip("`"), "Ignore" in names, inner, comment))
         elif names & {"BeforeTest", "AfterTest"}:
             if not fm:
