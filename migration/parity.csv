@@ -414,3 +414,17 @@ solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologUnify,testMultipleTermUnif
 solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologUnify,testNumberUnify,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,unify/number-with-same-number,1
 solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologUnify,testNumberXUnify,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,unify/variable-with-number,1
 solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologUnify,testXYUnify,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,unify/variable-with-variable,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologArithmeticErrors,logOfNonPositiveIsUndefined,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,arithmetic-errors/log-of-*,3
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologArithmeticErrors,sqrtOfNegativeIsUndefined,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,arithmetic-errors/sqrt-of-*,2
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologArithmeticErrors,expOverflows,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,arithmetic-errors/exp-overflows,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologArithmeticErrors,powerOfZeroToNegativeIsUndefined,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,arithmetic-errors/power-of-zero-to-negative*,2
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologArithmeticErrors,powerOfNegativeToFractionalIsUndefined,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,arithmetic-errors/power-of-negative-to-fractional,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologArithmeticErrors,powerOverflows,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,arithmetic-errors/power-overflows,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologArithmeticErrors,powerToNegativeIntegerIsFractional,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,arithmetic/power-to-negative-integer-is-fractional,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologOp,priorityAbove1200IsDomainError,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,op/priority-above-1200-is-domain-error,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologVariantOperators,variantComparisonsAreInfixOperators,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,variant-operators/comparisons-are-infix-operators,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestSubstitutionMerging,testSubstitutionsAreCorrectlyMergedAfterPrimitives,it.unibo.tuprolog.solve.prolog.PrologSolverSpec,substitution-merging/substitutions-are-merged-after-primitives,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestDefaultBuiltins,testSelfEquality,it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltinsSpec,default-builtins/self-equality,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestDefaultBuiltins,testItemEquality,it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltinsSpec,default-builtins/runtime-equality,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestStateMachinePreservesUnificator,testUnificatorIsPreserved,it.unibo.tuprolog.solve.prolog.AbstractPrologSolverSpec,state-machine/preserves-custom-unificator,1
+solve-prolog,it.unibo.tuprolog.solve.prolog.TestPrologHelp,*,it.unibo.tuprolog.solve.prolog.PrologHelpSpec,help/*,11
