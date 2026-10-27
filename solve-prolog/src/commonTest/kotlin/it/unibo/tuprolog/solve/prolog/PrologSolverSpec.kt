@@ -14,7 +14,7 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.SolvePrologTest
+import it.unibo.tuprolog.solve.SolvePrologExpectations
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.abolishContract
 import it.unibo.tuprolog.solve.andContract
@@ -145,7 +145,7 @@ class PrologSolverSpec :
         include(termContract(PrologSolverFactory))
         include(timeoutContract(PrologSolverFactory))
         include(trueContract(PrologSolverFactory))
-        include(staticFactoryContract(SolvePrologTest.expectations))
+        include(staticFactoryContract(SolvePrologExpectations.expectations))
 
         test("custom-data/non-atom-keys-are-type-errors") {
             for (functor in listOf("set_ephemeral", "set_durable", "set_persistent")) {

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.problog
 
 import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.SolveProblogTest
+import it.unibo.tuprolog.solve.SolveProblogExpectations
 import it.unibo.tuprolog.solve.abolishContract
 import it.unibo.tuprolog.solve.andContract
 import it.unibo.tuprolog.solve.argContract
@@ -60,7 +60,7 @@ import it.unibo.tuprolog.solve.unifyContract
 class ProblogSolverSpec :
     FunSpec({
         val ensureExecutable = Signature("ensure_executable", 1)
-        include(staticFactoryContract(SolveProblogTest.expectations))
+        include(staticFactoryContract(SolveProblogExpectations.expectations))
         include(
             solverConstructionContract<ProblogSolver, MutableProblogSolver>(
                 ProblogSolverFactory,

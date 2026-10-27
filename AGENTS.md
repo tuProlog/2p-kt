@@ -84,7 +84,7 @@ Every Kotlin test is a Kotest 6 spec (issue #1017). `kotlin.test` remains only a
 - **Coroutines:** use `test("...").config(coroutineTestScope = true) { ... }` for virtual time. Never call
   `runTest` inside a Kotest leaf: on Kotlin/JS it isn't awaited, so its body (and its failures) run after
   the test has already passed.
-- **Java tests** (`*.java`) can't be Kotest specs. They stay JUnit Jupiter tests (`org.junit.jupiter.api.*`).
+- **Java tests** (`*.java`) can't be Kotest specs. They stay JUnit Jupiter tests (`org.junit.jupiter.api.*`), still named `<Subject>Spec`; a shared base class is a `<Subject>Contract`.
 - **Guard:** every module's `check` runs `verifyTestImports` (root `build.gradle.kts`), which fails on
   `kotlin.test.Test`/`Ignore`/`BeforeTest`/`AfterTest`, `org.junit.*` or `kotlinx.coroutines.test.runTest` imports
   in Kotlin sources. detekt can't enforce this: kt-mpp's detekt tasks don't scan `commonMain`/`commonTest`.

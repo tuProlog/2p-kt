@@ -31,7 +31,7 @@ import static kotlin.sequences.SequencesKt.takeWhile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PrimitiveExamplesJvm {
+public class PrimitiveExamplesJavaSpec {
 
     private static final List<String> logs = new ArrayList<>();
 

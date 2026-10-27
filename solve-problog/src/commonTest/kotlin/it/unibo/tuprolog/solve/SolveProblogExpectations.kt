@@ -2,10 +2,11 @@ package it.unibo.tuprolog.solve
 
 import kotlin.jvm.JvmField
 
-object SolvePrologTest {
+object SolveProblogExpectations {
     @JvmField
     val expectations =
         Expectations(
             prologShouldWork = true,
+            problogShouldWork = true,
         )
 }

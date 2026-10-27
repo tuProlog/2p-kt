@@ -15,7 +15,7 @@ import static it.unibo.tuprolog.solve.ProbExtensions.getProbability;
 import static it.unibo.tuprolog.solve.ProbExtensions.probabilistic;
 import static it.unibo.tuprolog.solve.problog.Operators.PROBLOG_OPERATORS;
 
-public class ExampleProbLogSolverJvm {
+public class ExampleProbLogSolverJavaSpec {
     @Test
     public void examplifyProblogSolver() {
         ClausesParser clausesParser = ClausesParser.withOperators(PROBLOG_OPERATORS);

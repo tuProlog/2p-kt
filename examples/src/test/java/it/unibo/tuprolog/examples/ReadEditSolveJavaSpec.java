@@ -17,11 +17,11 @@ import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ReadEditSolveJvm {
+public class ReadEditSolveJavaSpec {
 
     @Test
     public void main() {
-        InputStream inputStream = ReadEditSolveJvm.class.getResourceAsStream("increment.pl");
+        InputStream inputStream = ReadEditSolveJavaSpec.class.getResourceAsStream("increment.pl");
         ClausesReader clausesReader = ClausesReader.withDefaultOperators();
         Theory theory = clausesReader.readTheory(inputStream);
         MutableSolver solver = Solver.prolog().newBuilder().staticKb(theory).buildMutable();
@@ -42,7 +42,7 @@ public class ReadEditSolveJvm {
 
     @Test
     public void simple() {
-        InputStream inputStream = ReadEditSolveJvm.class.getResourceAsStream("increment.pl");
+        InputStream inputStream = ReadEditSolveJavaSpec.class.getResourceAsStream("increment.pl");
         ClausesReader clausesReader = ClausesReader.withDefaultOperators();
         Theory theory = clausesReader.readTheory(inputStream);
         MutableSolver solver = Solver.prolog().newBuilder().staticKb(theory).buildMutable();

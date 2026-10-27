@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Assertions;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class TestJavaConstruction {
+public class JavaConstructionContract {
     private final Expectations expectations;
 
-    public TestJavaConstruction(Expectations expectations) {
+    public JavaConstructionContract(Expectations expectations) {
         this.expectations = expectations;
     }
 

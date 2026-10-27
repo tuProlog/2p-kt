@@ -2,9 +2,9 @@ package it.unibo.tuprolog.solve;
 
 import org.junit.jupiter.api.Test;
 
-public class TestJavaConstructionForSolveConcurrent extends TestJavaConstruction {
-    public TestJavaConstructionForSolveConcurrent() {
-        super(SolveConcurrentTest.expectations);
+public class PrologJavaConstructionSpec extends JavaConstructionContract {
+    public PrologJavaConstructionSpec() {
+        super(SolvePrologExpectations.expectations);
     }
 
     @Override
