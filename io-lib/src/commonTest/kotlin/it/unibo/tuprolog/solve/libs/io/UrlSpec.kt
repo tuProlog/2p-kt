@@ -73,7 +73,7 @@ class UrlSpec :
         }
 
         test("text-retrieval") {
-            val url = Url.of("http://localhost:8080/hello")
+            val url = Url.of(ExampleUrls.HELLO)
             val text = url.readAsText()
 
             assertTrue {
@@ -82,7 +82,7 @@ class UrlSpec :
         }
 
         test("bin-retrieval") {
-            val url = Url.of("http://localhost:8080/random.bin")
+            val url = Url.of(ExampleUrls.RANDOM_BIN)
             val bytes = url.readAsByteArray()
             assertTrue(bytes.isNotEmpty())
             assertEquals(1024, bytes.size)
