@@ -13,5 +13,11 @@ kotlin {
                 api(project(":core"))
             }
         }
+
+        commonTest {
+            dependencies {
+                implementation(project(":test-dsl"))
+            }
+        }
     }
 }

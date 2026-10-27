@@ -77,6 +77,10 @@ Every Kotlin test is a Kotest 6 spec (issue #1017). `kotlin.test` remains only a
   is a `scenario(id) { ... }` that builds its own solver and asserts. Each solver's `commonTest` has one
   `<Solver>SolverSpec` that `include`s every contract. Cases that solver doesn't support go in `disabled`, which
   must only name ids the contract registers.
+- **Property tests** use `kotest-property` with generators from `:test-dsl`'s `TermArbs` (bounded terms over a
+  tiny signature, shared variable pools, term/instance pairs). Pin `PropTestConfig(seed = ..., iterations = ...)`
+  so runs are reproducible on both platforms, and keep hand-picked regression cases next to each property
+  (see `UnificationPropertiesSpec`, `TermSerializationPropertiesSpec`, `FormatParseRoundTripSpec`).
 - **Coroutines:** use `test("...").config(coroutineTestScope = true) { ... }` for virtual time. Never call
   `runTest` inside a Kotest leaf: on Kotlin/JS it isn't awaited, so its body (and its failures) run after
   the test has already passed.
