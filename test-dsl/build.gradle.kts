@@ -4,7 +4,6 @@ kotlin {
             dependencies {
                 api(project(":dsl-core"))
                 api(kotlin("test-common"))
-                api(kotlin("test-annotations-common"))
             }
         }
 

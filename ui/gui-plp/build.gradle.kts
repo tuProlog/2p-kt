@@ -18,7 +18,6 @@ kotlin {
         }
         commonTest {
             dependencies {
-                implementation(kotlin("test"))
                 implementation(project(":solve-problog"))
                 implementation(project(":parser-theory"))
             }

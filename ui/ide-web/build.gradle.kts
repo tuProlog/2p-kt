@@ -21,7 +21,6 @@ kotlin {
             }
         }
         jsTest.dependencies {
-            implementation(kotlin("test"))
             implementation(project(":parser-theory"))
             implementation(libs.kotlinx.coroutines.test)
         }

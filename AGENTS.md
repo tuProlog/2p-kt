@@ -46,9 +46,8 @@ and mostly irrelevant. A few habits that generalize beyond this repo:
 
 ## Tests: Kotest conventions
 
-The test suite is migrating from `kotlin.test` to Kotest 6 (issue #1017; plan and progress in
-`KOTEST_MIGRATION_PLAN.md` until the migration ends). New tests are Kotest specs. Unmigrated `kotlin.test`
-classes keep running next to them in the same tasks.
+Every Kotlin test is a Kotest 6 spec (issue #1017). `kotlin.test` remains only as an assertion library
+(`assertEquals`, `assertTrue`, …), which Kotest leaves are free to use.
 
 - **Wiring is automatic.** The root `build.gradle.kts` applies KSP and the Kotest Gradle plugin to every
   multiplatform module with test sources, and adds `kotest-framework-engine` and `kotest-assertions-core`
@@ -82,11 +81,61 @@ classes keep running next to them in the same tasks.
   `runTest` inside a Kotest leaf: on Kotlin/JS it isn't awaited, so its body (and its failures) run after
   the test has already passed.
 - **Java tests** (`*.java`) can't be Kotest specs. They stay JUnit Jupiter tests (`org.junit.jupiter.api.*`).
+- **Guard:** every module's `check` runs `verifyTestImports` (root `build.gradle.kts`), which fails on
+  `kotlin.test.Test`/`Ignore`/`BeforeTest`/`AfterTest`, `org.junit.*` or `kotlinx.coroutines.test.runTest` imports
+  in Kotlin sources. detekt can't enforce this: kt-mpp's detekt tasks don't scan `commonMain`/`commonTest`.
 - **Running one spec or case:** pass a fully qualified name to the *platform* task, e.g.
   `:core:jvmTest --tests 'it.unibo.tuprolog.core.IndicatorSpec'`, or
   `--tests 'pkg.Spec.context -- leaf'` for one nested case. Leading wildcards (`'*Spec'`) match nothing.
-  `jsTest` is an alias without `--tests`, so use `jsNodeTest`. On JS, Gradle's filter applies only to Kotest
-  specs, and every `kotlin.test` test in the module still runs.
+  `jsTest` is an alias without `--tests`, so use `jsNodeTest`.
+
+### Examples
+
+A plain spec, with one platform-specific value (`core`'s `PlatformSpec`): the `expect` sits in `commonTest`, and
+each platform's test source set (`jvmTest`, `jsTest`) provides its `actual`.
+
+```kotlin
+internal expect val expectedPlatform: Platform // jvmTest: `internal actual val expectedPlatform = Platform.JVM`
+
+class PlatformSpec :
+    FunSpec({
+        test("current-platform") {
+            assertEquals(expectedPlatform, Info.PLATFORM)
+        }
+    })
+```
+
+Parameterized leaves over typed cases (`core`'s `IndicatorSpec`), one leaf per case, named by `id`:
+
+```kotlin
+internal class IndicatorSpec :
+    FunSpec({
+        withTests(nameFn = { "of-terms/${it.id}" }, IndicatorUtils.mixedIndicatorCases) { case ->
+            assertEqualities(IndicatorImpl(case.name, case.arity), Indicator.of(case.name, case.arity))
+        }
+    })
+```
+
+A solver contract in `:test-solve` (`FailContract.kt`), included by every solver's spec, which lists the ids it
+doesn't support:
+
+```kotlin
+fun failContract(
+    solverFactory: SolverFactory,
+    disabled: Set<String> = emptySet(),
+) = contract(solverFactory, disabled) {
+    case("fail/fail") { fail yields { listOf(it.no()) } }
+    scenario("fail/undef-pred") { /* builds its own solver, then assertSolutionEquals(...) */ }
+}
+
+class ProblogSolverSpec :
+    FunSpec({
+        include(failContract(ProblogSolverFactory, disabled = setOf("fail/undef-pred")))
+    })
+```
+
+Behaviour that exists on one platform only goes in a spec under that platform's test source set, written the same
+way as a common one (e.g. `oop-lib`'s `jvmTest` `KotlinToJavaMappingSpec`).
 
 ## detekt
 

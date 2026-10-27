@@ -3,7 +3,7 @@
 A lazy, streaming-capable Kotlin Multiplatform lexer and parser for Prolog syntax with
 runtime-configurable operators.
 
-The implementation has no runtime dependency beyond the Kotlin standard library. The test suite uses `kotlin-test`.
+The implementation has no runtime dependency beyond the Kotlin standard library. The test suite uses Kotest.
 
 ## Design
 

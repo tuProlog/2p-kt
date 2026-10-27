@@ -49,11 +49,6 @@ multiProjectHelper {
                     }
                 }
             }
-            getByName("jvmTest") {
-                dependencies {
-                    implementation(kotlin("test"))
-                }
-            }
             getByName("jsMain") {
                 dependencies {
                     api(project(":ide-web"))

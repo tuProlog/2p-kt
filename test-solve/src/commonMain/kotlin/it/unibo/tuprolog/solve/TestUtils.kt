@@ -30,15 +30,6 @@ import kotlin.test.fail
 
 private inline val loggingOn get() = false
 
-/**
- * Concatenates [l1] and [l2], callable from Java (`+` on [List] is a Kotlin-only operator) as
- * `TestUtils.ktListConcat(l1, l2)`. As of this writing, no test source set in the repository calls it.
- */
-fun <T> ktListConcat(
-    l1: List<T>,
-    l2: List<T>,
-): List<T> = l1 + l2
-
 /** Utility function to help writing tests; it creates a mapping between the receiver goal struct and the list of given solutions */
 fun <S : Solution> Struct.hasSolutions(vararg solution: Struct.() -> S) = this to solution.map { it() }
 
