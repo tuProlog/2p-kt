@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aRequestIssuingInstant
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSignature
@@ -191,6 +192,56 @@ class SolveRequestSpec :
                 defaultRequestFailedResponse,
             )
         }
+
+        test("reply-with-unifier-creates-success-response") {
+            assertEquals(
+                defaultRequestSuccessResponse,
+                createRequest().replyWith(solutionSubstitution as Substitution, aSideEffectManager) {
+                    sideEffects.addAll(defaultRequestSuccessResponse.sideEffects)
+                },
+            )
+        }
+
+        test("reply-with-failed-substitution-creates-failed-response") {
+            assertEquals(
+                defaultRequestFailedResponse,
+                createRequest().replyWith(Substitution.failed(), aSideEffectManager) {
+                    sideEffects.addAll(defaultRequestFailedResponse.sideEffects)
+                },
+            )
+        }
+
+        // Known bug: the `vararg sideEffects` overloads of replySuccess/replyFail/replyException (and the replyWith
+        // overloads delegating to them) build the Response without the side effects, silently dropping them.
+        for (case in varargReplyCases) {
+            xtest("reply-with-vararg-side-effects/${case.id}") {
+                val expected = case.expected()
+                assertEquals(expected, createRequest().(case.reply)(expected.sideEffects.toTypedArray()))
+            }
+        }
     })
 
 private const val TOLERANCE = 10L
+
+private class VarargReplyCase(
+    val id: String,
+    val expected: () -> Solve.Response,
+    val reply: Solve.Request<ExecutionContext>.(Array<SideEffect>) -> Solve.Response,
+)
+
+private val varargReplyCases =
+    listOf(
+        VarargReplyCase("success", { defaultRequestSuccessResponse }) {
+            replySuccess(solutionSubstitution, aSideEffectManager, *it)
+        },
+        VarargReplyCase("fail", { defaultRequestFailedResponse }) { replyFail(aSideEffectManager, *it) },
+        VarargReplyCase("exception", { defaultRequestHaltedResponse }) {
+            replyException(solutionException, aSideEffectManager, *it)
+        },
+        VarargReplyCase("with-solution", { defaultRequestSuccessResponse }) {
+            replyWith(defaultRequestSuccessResponse.solution, aSideEffectManager, *it)
+        },
+        VarargReplyCase("with-substitution", { defaultRequestSuccessResponse }) {
+            replyWith(solutionSubstitution as Substitution, aSideEffectManager, *it)
+        },
+    )

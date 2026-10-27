@@ -151,10 +151,11 @@ subprojects {
 }
 
 // Coverage of the JVM test runs, aggregated at the root: `./gradlew koverHtmlReport` (or koverXmlReport).
-// Test-only modules, docs and the fat-jar/examples aggregates are not production code; the Swing/web UIs are
-// covered by display-bound E2E suites, which this report doesn't run.
-val notCovered =
-    setOf("documentation", "examples", "full", "test-dsl", "test-solve", "ide-swing", "ide-plp-swing", "ide-web")
+// Docs and the fat-jar/examples aggregates are not production code; the Swing/web UIs are covered by
+// display-bound E2E suites, which this report doesn't run. The test-only modules' own tests exercise production
+// code (e.g. :solve's), so they are instrumented, but their own classes are left out of the report. (Excluding
+// their source sets instead would also drop the coverage their tests record for other modules.)
+val notCovered = setOf("documentation", "examples", "full", "ide-swing", "ide-plp-swing", "ide-web")
 
 subprojects {
     if (name !in notCovered) {
@@ -162,6 +163,9 @@ subprojects {
         rootProject.dependencies.add("kover", this)
     }
 }
+
+kover.reports.filters.excludes.projects
+    .addAll(":test-dsl", ":test-solve")
 
 allprojects {
     repositories {
