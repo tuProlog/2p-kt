@@ -82,6 +82,10 @@ tasks.register<Exec>("browserE2ETest") {
             webDistribution
                 .get()
                 .outputs.files.singleFile.absolutePath,
+            layout.buildDirectory
+                .file("test-results/browserE2ETest/TEST-BrowserE2E.xml")
+                .get()
+                .asFile.absolutePath,
         )
     }
 }

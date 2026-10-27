@@ -396,6 +396,19 @@ Order follows the issue: `utils`, `core`, `unify`, `theory` → `parser-*` → `
   scenario under `ui/ide-web/build/test-results/browserE2ETest/`. A failing scenario fails the task without
   hiding the scenarios after it. CI already runs the task as its own step.
 
+**Results (2026-10-27). Done.**
+
+- **Swing:** `plain2spec.py` converted the 8 classes (46 cases, same names; mappings in `parity.csv`). The
+  `@BeforeTest`/`@AfterTest` pairs became `beforeTest { window = launch…() }`/`afterTest { window.cleanUp() }`,
+  and the `FunctionNaming`/`TooManyFunctions` suppressions went away with the functions. With
+  `useJUnitPlatform()` on `swingE2eTest`, both reports list only the e2e specs (7 in `ide-swing`, 1 in
+  `ide-plp-swing`): Gradle hands Kotest class selectors from `testClassesDirs`, so the `test.output` on the
+  classpath isn't rediscovered. All 46 pass locally (macOS). Two PLP cases failed once on focus/pop-up timing
+  and passed on a clean rerun.
+- **Browser:** the script already ran each scenario in its own `try` and kept going. It now takes an optional
+  report path and writes one `<testcase>` per scenario. `browserE2ETest` passes
+  `build/test-results/browserE2ETest/TEST-BrowserE2E.xml`. 22/22 pass.
+
 ### Stage 7 — Remove scaffolding
 
 1. Release kt-mpp K1. Set `ktTestFramework=none` in `gradle.properties`, drop `junit-vintage-engine`, drop
