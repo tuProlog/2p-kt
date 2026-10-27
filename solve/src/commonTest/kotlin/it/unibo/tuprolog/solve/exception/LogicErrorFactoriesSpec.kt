@@ -170,7 +170,7 @@ private fun assertBuiltBy(
     assertEquals(case.type(), error.type)
 }
 
-class LogicErrorSpec :
+class LogicErrorFactoriesSpec :
     FunSpec({
         withTests(nameFn = { "of/${it.id}" }, dispatchCases) { case ->
             val error = LogicError.of(context = context, type = case.type())
