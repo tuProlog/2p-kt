@@ -7,11 +7,13 @@ kotlinx-coroutines = "1.11.0"
 kotlinx-serialization = "1.11.0"
 ktMpp = "6.1.0"
 kotest = "6.2.6"
+kover = "0.9.11"
 ksp = "2.3.12"
 okio = "3.18.2"
 
 [plugins]
 kotest = { id = "io.kotest", version.ref = "kotest" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:7.3.0"

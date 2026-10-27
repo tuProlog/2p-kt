@@ -29,6 +29,7 @@ plugins {
     alias(libs.plugins.ktMpp.multiProjectHelper)
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotest) apply false
+    alias(libs.plugins.kover)
 }
 
 group = "it.unibo.tuprolog"
@@ -147,6 +148,19 @@ subprojects {
             }
         }
     tasks.matching { it.name == "check" }.configureEach { dependsOn(verifyTestImports) }
+}
+
+// Coverage of the JVM test runs, aggregated at the root: `./gradlew koverHtmlReport` (or koverXmlReport).
+// Test-only modules, docs and the fat-jar/examples aggregates are not production code; the Swing/web UIs are
+// covered by display-bound E2E suites, which this report doesn't run.
+val notCovered =
+    setOf("documentation", "examples", "full", "test-dsl", "test-solve", "ide-swing", "ide-plp-swing", "ide-web")
+
+subprojects {
+    if (name !in notCovered) {
+        apply(plugin = "org.jetbrains.kotlinx.kover")
+        rootProject.dependencies.add("kover", this)
+    }
 }
 
 allprojects {

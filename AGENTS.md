@@ -22,6 +22,8 @@ module with `:<module>:<task>` (e.g. `:core:ktlintCheck`, `:ide-swing:test`):
   wired into it. Swing E2E: `:ide-swing:swingE2eTest`, `:ide-plp-swing:swingE2eTest` (needs a real or virtual
   display — `xvfb-run -a` on Linux; see `ui/AGENTS.md` for the macOS Accessibility caveat). Web E2E:
   `:ide-web:browserE2ETest`. Docs: `:documentation:assembleSite`.
+- **Coverage**: `koverHtmlReport`/`koverXmlReport` at the root aggregate the JVM test runs of every production module
+  (report in `build/reports/kover/`); per module, `:<module>:koverHtmlReport`. JS-only code isn't measured.
 - `--parallel` and `--continue` (run everything, collect all failures instead of stopping at the first) are
   used throughout CI and are worth defaulting to locally for the same reason: one invocation instead of a
   fix-rerun-fix loop.
