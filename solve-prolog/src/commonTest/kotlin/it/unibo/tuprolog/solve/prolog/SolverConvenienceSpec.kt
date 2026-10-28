@@ -50,8 +50,8 @@ class SolverConvenienceSpec :
             assertSolutionEquals(reference.take(case.expectedCount), newSolver().(case.call)(goal))
         }
 
-        // Known bug, JS only: every Prolog solver's copy()/clone() recurses forever (RangeError), likely because the
-        // JS bridges for its covariant overrides share the `@JsName("copy")`/`@JsName("clone")` of Solver.
+        // Known bug, JS only (#1050): every Prolog solver's copy()/clone() recurses forever (RangeError), because the
+        // Kotlin/JS bridge emitted for an override of `@JsName("copy")` Solver.copy calls itself.
         test(
             "clone/copies-the-knowledge-base-into-an-independent-solver",
         ).config(enabledIf = { platform != Platform.JS }) {

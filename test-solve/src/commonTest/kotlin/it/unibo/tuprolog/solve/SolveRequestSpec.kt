@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
@@ -211,13 +212,9 @@ class SolveRequestSpec :
             )
         }
 
-        // Known bug: the `vararg sideEffects` overloads of replySuccess/replyFail/replyException (and the replyWith
-        // overloads delegating to them) build the Response without the side effects, silently dropping them.
-        for (case in varargReplyCases) {
-            xtest("reply-with-vararg-side-effects/${case.id}") {
-                val expected = case.expected()
-                assertEquals(expected, createRequest().(case.reply)(expected.sideEffects.toTypedArray()))
-            }
+        withTests(nameFn = { "reply-with-vararg-side-effects/${it.id}" }, varargReplyCases) { case ->
+            val expected = case.expected()
+            assertEquals(expected, createRequest().(case.reply)(expected.sideEffects.toTypedArray()))
         }
     })
 
