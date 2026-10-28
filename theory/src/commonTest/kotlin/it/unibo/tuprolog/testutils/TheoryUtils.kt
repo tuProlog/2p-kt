@@ -32,7 +32,10 @@ internal object TheoryUtils {
         )
 
     /** Contains well formed clauses queries based on [wellFormedClauses] and expected responses from the ClauseDatabase */
-    internal val clausesQueryResultsMap get() = ReteNodeUtils.mixedClausesQueryResultsMap
+    internal val clausesQueryResultsMap get() =
+        ReteNodeUtils.mixedClauseQueryCases.associate {
+            it.query to it.expected
+        }
 
     /** Contains rules queries that have Variable as body, to be used when testing the methods accepting only heads */
     internal val rulesQueryWithVarBodyResultsMap =

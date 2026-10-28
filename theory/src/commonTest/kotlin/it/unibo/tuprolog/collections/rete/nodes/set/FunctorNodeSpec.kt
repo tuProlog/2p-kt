@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.collections.rete.generic.set.FunctorNode
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
@@ -76,51 +77,43 @@ class FunctorNodeSpec :
             )
         }
 
-        test("get-clause") {
-            ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, result) ->
-                assertClauseHeadPartialOrderingRespected(result, filledAFunctorNode.get(query).toList())
-            }
+        withTests(nameFn = { "get-clause/${it.id}" }, ReteNodeUtils.aFunctorRuleQueryCases) { case ->
+            assertClauseHeadPartialOrderingRespected(case.expected, filledAFunctorNode.get(case.query).toList())
         }
 
-        test("remove-clause-with-zero-limit-does-nothing") {
-            ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, _) ->
-                assertNoChangesInReteNode(filledAFunctorNode) { remove(query, 0) }
-            }
+        withTests(nameFn = {
+            "remove-clause-with-zero-limit-does-nothing/${it.id}"
+        }, ReteNodeUtils.aFunctorRuleQueryCases) { case ->
+            assertNoChangesInReteNode(filledAFunctorNode) { remove(case.query, 0) }
         }
 
         test("remove-clause-from-empty-node-does-nothing") {
             assertNoChangesInReteNode(emptyAFunctorNode) { remove(aRule) }
         }
 
-        test("remove-clause-with-limit-works-as-expected") {
-            for (limit in 0..10) {
-                ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
-                    init() // because removal of side-effects is needed
-
-                    assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, allMatching, limit) {
-                        remove(query, limit)
-                    }
-                }
-            }
+        withTests(
+            nameFn = { (limit, case) -> "remove-clause-with-limit-works-as-expected/limit-$limit/${case.id}" },
+            (0..10).flatMap { limit -> ReteNodeUtils.aFunctorRuleQueryCases.map { limit to it } },
+        ) { (limit, case) ->
+            assertRemovedFromReteNodeRespectingPartialOrder(
+                filledAFunctorNode,
+                case.expected,
+                limit,
+            ) { remove(case.query, limit) }
         }
 
-        test("remove-clause-with-negative-limit-removes-all-matching-rules") {
-            val negativeLimit = -1
-            ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
-                init() // because removal of side-effects is needed
-
-                assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, allMatching) {
-                    remove(query, negativeLimit)
-                }
-            }
+        withTests(
+            nameFn = { "remove-clause-with-negative-limit-removes-all-matching-rules/${it.id}" },
+            ReteNodeUtils.aFunctorRuleQueryCases,
+        ) { case ->
+            assertRemovedFromReteNodeRespectingPartialOrder(
+                filledAFunctorNode,
+                case.expected,
+            ) { remove(case.query, -1) }
         }
 
-        test("remove-all-clause") {
-            ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
-                init() // because removal of side-effects is needed
-
-                assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, allMatching) { removeAll(query) }
-            }
+        withTests(nameFn = { "remove-all-clause/${it.id}" }, ReteNodeUtils.aFunctorRuleQueryCases) { case ->
+            assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, case.expected) { removeAll(case.query) }
         }
 
         test("deep-copy-creates-independent-instance") {
