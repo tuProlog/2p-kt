@@ -191,9 +191,7 @@ class LogicErrorFactoriesSpec :
             assertEquals(errorStructOf(case.type(), Atom.of("x")), error.errorStruct)
         }
 
-        // Known bug: ExistenceError.ObjectType.of doesn't uppercase its input (unlike the other errors' enums), so
-        // LogicError.of throws IllegalArgumentException on every existence_error type term.
-        xtest("of/existence-error") {
+        test("of/existence-error") {
             val type = Struct.of("existence_error", Atom.of("procedure"), Indicator.of("foo", 1))
             assertBuiltBy(
                 DispatchCase("existence-error", ExistenceError::class) {
@@ -203,9 +201,7 @@ class LogicErrorFactoriesSpec :
             )
         }
 
-        // Known bug: an unknown enum value (here a representation limit) makes LogicError.of throw
-        // IllegalArgumentException, because it only falls back to a custom error on NullPointerException.
-        xtest("of/custom/representation-error-unknown-limit") {
+        test("of/custom/representation-error-unknown-limit") {
             val type = Struct.of("representation_error", Atom.of("nonsense"))
             assertBuiltBy(
                 DispatchCase("unknown-limit", LogicError::class) { type },
@@ -239,8 +235,7 @@ class LogicErrorFactoriesSpec :
             assertEquals(errorStructOf(case.expectedType(), Atom.of(message)), error.errorStruct)
         }
 
-        // Known bug: the message lacks a space ("An argumentof `foo/2` ...").
-        xtest("factories/domain/for-argument-message") {
+        test("factories/domain/for-argument-message") {
             val error = DomainError.forArgument(context, foo2, DomainError.Expected.ORDER, Atom.of("x"))
             assertTrue(error.message!!.startsWith("An argument of `foo/2`"), error.message)
         }

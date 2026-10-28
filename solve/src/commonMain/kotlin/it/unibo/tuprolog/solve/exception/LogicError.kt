@@ -198,6 +198,9 @@ abstract class LogicError(
                     }
                 } catch (_: NullPointerException) {
                     customError(message, cause, contexts, type, extraData)
+                } catch (_: IllegalArgumentException) {
+                    // an unknown enum value (e.g. representation_error(foo))
+                    customError(message, cause, contexts, type, extraData)
                 }
             }
     }
