@@ -1,16 +1,14 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertFalse
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Test class for [ConsImpl] and [Cons]
@@ -19,124 +17,48 @@ import kotlin.test.assertTrue
  */
 class ConsImplSpec :
     FunSpec({
-        val consInstances = ConsUtils.mixedConsInstances(::ConsImpl)
+        fun conses(
+            property: String,
+            cases: List<ConsUtils.ConsCase> = ConsUtils.mixedConsCases,
+            test: (ConsUtils.ConsCase, Cons) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it, it.cons(::ConsImpl)) }
 
-        val consInstancesHeads = ConsUtils.mixedConsInstancesHeads
+        conses("functor") { _, cons -> assertEquals(".", cons.functor) }
 
-        val consInstancesTails = ConsUtils.mixedConsInstancesTails(::ConsImpl)
+        conses("head") { case, cons -> assertEqualities(case.head, cons.head) }
 
-        val consInstancesElementLists = ConsUtils.mixedConsInstancesElementLists
+        conses("tail") { case, cons -> assertEqualities(case.tail(::ConsImpl), cons.tail) }
 
-        val consInstancesUnfoldedLists = ConsUtils.mixedConsInstancesUnfoldedLists
+        conses("args") { case, cons -> assertEquals(listOf(case.head, case.tail(::ConsImpl)), cons.args) }
 
-        test("cons-functor") {
-            consInstances.forEach { assertEquals(".", it.functor) }
+        conses("unfolded-list") { case, cons -> assertEquals(case.unfoldedList, cons.unfoldedList) }
+
+        conses("unfolded-sequence") { case, cons -> assertEquals(case.unfoldedList, cons.unfoldedSequence.toList()) }
+
+        conses("unfolded-array") { case, cons -> assertEquals(case.unfoldedList, cons.unfoldedArray.toList()) }
+
+        conses("to-list") { case, cons -> assertEquals(case.elements, cons.toList()) }
+
+        conses("to-array") { case, cons -> assertEquals(case.elements, cons.toArray().toList()) }
+
+        conses("to-sequence") { case, cons -> assertEquals(case.elements, cons.toSequence().toList()) }
+
+        conses("to-string") { case, cons -> assertEquals(case.expectedToString, cons.toString()) }
+
+        conses("size") { case, cons -> assertEquals(case.elements.size, cons.size) }
+
+        conses("is-ground") { case, cons -> assertEquals(case.isGround, cons.isGround) }
+
+        conses("type-checks") { _, cons -> TermTypeAssertionUtils.assertIsCons(cons) }
+
+        conses("two-arity") { _, cons -> assertEquals(cons.arity, 2) }
+
+        conses("fresh-copy-is-itself", ConsUtils.mixedConsCases.filter { it.isGround }) { _, cons ->
+            ConstantUtils.assertFreshCopyIsItself(cons)
         }
 
-        test("head-correct") {
-            onCorrespondingItems(consInstancesHeads, consInstances.map { it.head }, ::assertEqualities)
-        }
-
-        test("tail-correct") {
-            onCorrespondingItems(consInstancesTails, consInstances.map { it.tail }, ::assertEqualities)
-        }
-
-        test("args-correct") {
-            val consInstancesArgs =
-                consInstancesHeads.zip(consInstancesTails).map { (head, tail) ->
-                    listOf(head, tail)
-                }
-
-            onCorrespondingItems(consInstancesArgs, consInstances.map { it.args }) { expectedArgs, actualArgs ->
-                assertEquals(expectedArgs, actualArgs)
-            }
-        }
-
-        test("unfolded-list-correct") {
-            onCorrespondingItems(
-                consInstancesUnfoldedLists,
-                consInstances.map { it.unfoldedList },
-            ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
-        }
-
-        test("unfolded-sequence-correct") {
-            onCorrespondingItems(
-                consInstancesUnfoldedLists,
-                consInstances.map { it.unfoldedSequence.toList() },
-            ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
-        }
-
-        test("unfolded-array-correct") {
-            onCorrespondingItems(
-                consInstancesUnfoldedLists,
-                consInstances.map { it.unfoldedArray.toList() },
-            ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
-        }
-
-        test("to-list-return-value") {
-            onCorrespondingItems(
-                consInstancesElementLists,
-                consInstances.map { it.toList() },
-            ) { expectedList, actualList ->
-                assertEquals(expectedList, actualList)
-            }
-        }
-
-        test("to-array-return-value") {
-            onCorrespondingItems(
-                consInstancesElementLists,
-                consInstances.map { it.toArray().toList() },
-            ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
-        }
-
-        test("to-sequence-return-value") {
-            onCorrespondingItems(
-                consInstancesElementLists,
-                consInstances.map { it.toSequence().toList() },
-            ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
-        }
-
-        test("to-string-works-as-expected") {
-            val correctToString = ConsUtils.mixedConsInstancesCorrectToString
-
-            onCorrespondingItems(correctToString, consInstances.map { it.toString() }) { expectedString, actualString ->
-                assertEquals(expectedString, actualString)
-            }
-        }
-
-        test("size-correct") {
-            val correctSizes = consInstancesElementLists.map { it.size }
-
-            onCorrespondingItems(correctSizes, consInstances.map { it.size }) { expectedSize, actualSize ->
-                assertEquals(expectedSize, actualSize)
-            }
-        }
-
-        test("is-ground-true-only-if-no-variables-are-present") {
-            assertFalse(
-                ConsUtils.oneElementList(::ConsImpl).isGround,
-                ConsUtils.twoElementList(::ConsImpl).isGround,
-                ConsUtils.twoElementListWithPipe(::ConsImpl).isGround,
-                ConsUtils.threeElementListWithPipe(::ConsImpl).isGround,
-            )
-
-            assertTrue(ConsUtils.threeElementList(::ConsImpl).isGround)
-        }
-
-        test("is-properties-and-types") {
-            consInstances.forEach(TermTypeAssertionUtils::assertIsCons)
-        }
-
-        test("two-arity") {
-            consInstances.forEach { assertEquals(it.arity, 2) }
-        }
-
-        test("fresh-copy-should-return-instance-itself-if-ground") {
-            consInstances.filter { it.isGround }.forEach(ConstantUtils::assertFreshCopyIsItself)
-        }
-
-        test("fresh-copy-should-renew-variables") {
-            consInstances.filterNot { it.isGround }.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
+        conses("fresh-copy-renews-variables", ConsUtils.mixedConsCases.filterNot { it.isGround }) { _, cons ->
+            StructUtils.assertFreshCopyRenewsContainedVariables(cons)
         }
 
         test("fresh-copy-merges-different-variables-with-same-name") {

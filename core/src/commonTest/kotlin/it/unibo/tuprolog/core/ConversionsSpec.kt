@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
@@ -113,31 +114,18 @@ class ConversionsSpec :
             onCorrespondingItems(correctVars, toBeTestedVars, ::assertDifferentVariableExceptForName)
         }
 
-        test("list-of-terms-to-term") {
-            val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
-            val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        fun listsToTerm(
+            property: String,
+            toBeTested: (kotlin.collections.List<Term>) -> Term,
+        ) = withTests(nameFn = { "$property/${it.id}" }, ConsUtils.mixedConsCases) { case ->
+            assertEqualities(List.of(case.elements), toBeTested(case.elements))
         }
 
-        test("sequence-of-terms-to-term") {
-            val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
-            val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.asSequence().toTerm() }
+        listsToTerm("list-of-terms-to-term") { it.toTerm() }
 
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
-        }
+        listsToTerm("sequence-of-terms-to-term") { it.asSequence().toTerm() }
 
-        test("iterable-of-terms-to-term") {
-            val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
-            val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.asIterable().toTerm() }
+        listsToTerm("iterable-of-terms-to-term") { it.asIterable().toTerm() }
 
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
-        }
-
-        test("array-of-terms-to-term") {
-            val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
-            val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.toTypedArray().toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
-        }
+        listsToTerm("array-of-terms-to-term") { it.toTypedArray().toTerm() }
     })

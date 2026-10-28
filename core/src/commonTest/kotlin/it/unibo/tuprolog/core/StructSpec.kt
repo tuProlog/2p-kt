@@ -8,7 +8,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualsUsingVariable
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNoEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TupleUtils
@@ -80,34 +79,26 @@ class StructSpec :
             Indicator.of(it.args.first(), it.args.last())
         }
 
-        test("struct-fold-can-create-folded-cons-instances-empty-list-terminated") {
-            val correctInstances = ConsUtils.onlyConsEmptyListTerminatedElementLists.map { List.of(it) }
-            val toBeTested =
-                ConsUtils.onlyConsEmptyListTerminatedElementLists.map { Struct.fold(Cons.FUNCTOR, it, EmptyList()) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(
+            nameFn = { "fold/cons-empty-list-terminated/${it.id}" },
+            ConsUtils.onlyConsEmptyListTerminatedCases,
+        ) { case ->
+            assertEqualities(List.of(case.elements), Struct.fold(Cons.FUNCTOR, case.elements, EmptyList()))
         }
 
-        test("struct-fold-can-create-folded-cons-instances-pipe-terminated") {
-            val correctInstances = ConsUtils.onlyConsPipeTerminatedElementLists.map { List.from(it) }
-            val toBeTested = ConsUtils.onlyConsPipeTerminatedElementLists.map { Struct.fold(Cons.FUNCTOR, it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "fold/cons-pipe-terminated/${it.id}" }, ConsUtils.onlyConsPipeTerminatedCases) { case ->
+            assertEqualities(List.from(case.elements), Struct.fold(Cons.FUNCTOR, case.elements))
         }
 
-        test("struct-fold-can-create-tuple-without-specifying-terminal") {
-            val correctInstances = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it) }
-            val toBeTested = TupleUtils.tupleInstancesElementLists.map { Struct.fold(Tuple.FUNCTOR, it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "fold/tuple-without-terminal/${it.id}" }, TupleUtils.tupleCases) { case ->
+            assertEqualities(Tuple.of(case.elements), Struct.fold(Tuple.FUNCTOR, case.elements))
         }
 
-        test("struct-fold-can-create-tuple-specifying-terminal") {
-            val correctInstances = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it) }
-            val toBeTested =
-                TupleUtils.tupleInstancesElementLists.map { Struct.fold(Tuple.FUNCTOR, it.dropLast(), it.last()) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "fold/tuple-with-terminal/${it.id}" }, TupleUtils.tupleCases) { case ->
+            assertEqualities(
+                Tuple.of(case.elements),
+                Struct.fold(Tuple.FUNCTOR, case.elements.dropLast(), case.elements.last()),
+            )
         }
 
         test("struct-fold-without-terminal-requires-two-or-more-terms") {

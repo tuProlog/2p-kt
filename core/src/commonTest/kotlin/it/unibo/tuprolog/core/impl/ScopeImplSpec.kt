@@ -165,68 +165,53 @@ class ScopeImplSpec :
         // /////////////////////
         // General Factories //
         // /////////////////////
-        test("block-of-iterable") {
-            val correctInstances = BlockUtils.mixedBlocks.map { Block.of(it.asIterable()) }
-            val toBeTested = BlockUtils.mixedBlocks.map { emptyScopeInstance.blockOf(it.asIterable()) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "block-of-iterable/${it.id}" }, BlockUtils.mixedBlockCases) { case ->
+            assertEqualities(
+                Block.of(case.elements.asIterable()),
+                ScopeImpl(ScopeUtils.emptyScope).blockOf(case.elements.asIterable()),
+            )
         }
 
-        test("block-of-varargs") {
-            val correctInstances = BlockUtils.mixedBlocks.map { Block.of(*it) }
-            val toBeTested = BlockUtils.mixedBlocks.map { emptyScopeInstance.blockOf(*it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "block-of-varargs/${it.id}" }, BlockUtils.mixedBlockCases) { case ->
+            assertEqualities(
+                Block.of(*case.elements.toTypedArray()),
+                ScopeImpl(ScopeUtils.emptyScope).blockOf(*case.elements.toTypedArray()),
+            )
         }
 
-        test("list-of-iterable") {
-            val correctInstances = ConsUtils.mixedConsInstancesElementLists.map { LogicList.of(it.asIterable()) }
-            val toBeTested =
-                ConsUtils.mixedConsInstancesElementLists.map {
-                    emptyScopeInstance.logicListOf(
-                        it.asIterable(),
-                    )
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "list-of-iterable/${it.id}" }, ConsUtils.mixedConsCases) { case ->
+            assertEqualities(
+                LogicList.of(case.elements.asIterable()),
+                ScopeImpl(ScopeUtils.emptyScope).logicListOf(case.elements.asIterable()),
+            )
         }
 
-        test("list-of-varargs") {
-            val correctInstances = ConsUtils.mixedConsInstancesElementLists.map { LogicList.of(*it.toTypedArray()) }
-            val toBeTested =
-                ConsUtils.mixedConsInstancesElementLists.map {
-                    emptyScopeInstance.logicListOf(
-                        *it.toTypedArray(),
-                    )
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "list-of-varargs/${it.id}" }, ConsUtils.mixedConsCases) { case ->
+            assertEqualities(
+                LogicList.of(*case.elements.toTypedArray()),
+                ScopeImpl(ScopeUtils.emptyScope).logicListOf(*case.elements.toTypedArray()),
+            )
         }
 
-        test("list-from") {
-            val correctInstances = ConsUtils.onlyConsPipeTerminatedElementLists.map { LogicList.from(it) }
-            val toBeTested = ConsUtils.onlyConsPipeTerminatedElementLists.map { emptyScopeInstance.logicListFrom(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "list-from/${it.id}" }, ConsUtils.onlyConsPipeTerminatedCases) { case ->
+            assertEqualities(
+                LogicList.from(case.elements),
+                ScopeImpl(ScopeUtils.emptyScope).logicListFrom(case.elements),
+            )
         }
 
-        test("tuple-of-iterable") {
-            val correctInstances = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it.asIterable()) }
-            val toBeTested = TupleUtils.tupleInstancesElementLists.map { emptyScopeInstance.tupleOf(it.asIterable()) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "tuple-of-iterable/${it.id}" }, TupleUtils.tupleCases) { case ->
+            assertEqualities(
+                Tuple.of(case.elements.asIterable()),
+                ScopeImpl(ScopeUtils.emptyScope).tupleOf(case.elements.asIterable()),
+            )
         }
 
-        test("tuple-of-varargs") {
-            val correctInstances = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it) }
-            val toBeTested =
-                TupleUtils.tupleInstancesElementLists.map {
-                    emptyScopeInstance.tupleOf(
-                        *it.toTypedArray(),
-                    )
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "tuple-of-varargs/${it.id}" }, TupleUtils.tupleCases) { case ->
+            assertEqualities(
+                Tuple.of(case.elements),
+                ScopeImpl(ScopeUtils.emptyScope).tupleOf(*case.elements.toTypedArray()),
+            )
         }
 
         test("atom-of") {
@@ -280,11 +265,8 @@ class ScopeImplSpec :
             onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
         }
 
-        test("cons-of") {
-            val correctInstances = ConsUtils.mixedConsInstances(Cons.Companion::of)
-            val toBeTested = ConsUtils.mixedConsInstances(emptyScopeInstance::consOf)
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "cons-of/${it.id}" }, ConsUtils.mixedConsCases) { case ->
+            assertEqualities(case.cons(Cons.Companion::of), case.cons(ScopeImpl(ScopeUtils.emptyScope)::consOf))
         }
 
         test("indicator-of-terms") {
