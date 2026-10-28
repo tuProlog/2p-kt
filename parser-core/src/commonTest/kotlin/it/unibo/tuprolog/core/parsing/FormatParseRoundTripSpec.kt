@@ -5,9 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
 import io.kotest.property.PropTestConfig
 import io.kotest.property.checkAll
-import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
@@ -58,6 +56,10 @@ private val regressions =
         TermCase("clause") { structOf(":-", atomOf("a"), structOf(",", atomOf("b"), atomOf("c"))) },
         TermCase("partial-list") { consOf(varOf("H"), varOf("T")) },
         TermCase("whole-real") { realOf(1.0) },
+        TermCase("prefix-minus") { structOf("-", intOf(1)) },
+        TermCase("prefix-plus") { structOf("+", realOf(2.5)) },
+        TermCase("prefix-minus-of-negative") { structOf("-", intOf(-1)) },
+        TermCase("prefix-minus-of-atom") { structOf("-", atomOf("a")) },
     )
 
 class FormatParseRoundTripSpec :
@@ -65,10 +67,6 @@ class FormatParseRoundTripSpec :
         test("readable-format-parses-back") {
             checkAll(config, TermArbs.nonGroundTerms()) { assertRoundTrips(it) }
         }
-
-        // Known bug: '-'(1) is formatted as `- 1`, which the parser reads back as the integer -1 (ISO reads it as
-        // -(1); only `-1`, with no layout in between, is a negative numeral).
-        xtest("regressions/prefix-minus") { assertRoundTrips(Struct.of("-", Integer.of(1))) }
 
         withTests(nameFn = { "regressions/${it.id}" }, regressions) { case -> assertRoundTrips(case.term()) }
     })
