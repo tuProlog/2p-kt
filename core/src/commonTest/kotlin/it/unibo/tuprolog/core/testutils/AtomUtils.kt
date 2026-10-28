@@ -9,42 +9,48 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal object AtomUtils {
+    /** A named atom value, for parameterized tests */
+    internal data class AtomCase(
+        val id: String,
+        val value: String,
+    )
+
     /** For non special atoms are intended all valid atoms excluding: `true, fail, [], {}` */
-    internal val nonSpecialAtoms by lazy {
-        // these could be randomly generated from some library in future, maybe starting from Atom regex
+    internal val nonSpecialAtomCases by lazy {
         listOf(
-            "anAtom",
-            "AnUppercaseAtom",
-            "_anAtomStartingWithUnderscore",
-            "a_snake_cased_atom",
-            "a string",
-            "1",
-            "1.3",
-            "+",
-            ",",
-            "is",
-            "!",
+            AtomCase("camel-case", "anAtom"),
+            AtomCase("uppercase-initial", "AnUppercaseAtom"),
+            AtomCase("underscore-initial", "_anAtomStartingWithUnderscore"),
+            AtomCase("snake-case", "a_snake_cased_atom"),
+            AtomCase("with-space", "a string"),
+            AtomCase("integer-digits", "1"),
+            AtomCase("real-digits", "1.3"),
+            AtomCase("plus", "+"),
+            AtomCase("comma", ","),
+            AtomCase("is", "is"),
+            AtomCase("cut", "!"),
         )
     }
 
     /** Special atoms are atoms for which there's a known subclass, like: `true, fail, [], {}` */
-    internal val specialAtoms by lazy {
+    internal val specialAtomCases by lazy {
         listOf(
-            "[]",
-            "{}",
-            "true",
-            "fail",
-            "false",
+            AtomCase("empty-list", "[]"),
+            AtomCase("empty-block", "{}"),
+            AtomCase("true", "true"),
+            AtomCase("fail", "fail"),
+            AtomCase("false", "false"),
         )
     }
 
-    /**
-     * A mix of special and non special atoms
-     *
-     * @see specialAtoms
-     * @see nonSpecialAtoms
-     */
-    internal val mixedAtoms by lazy { nonSpecialAtoms + specialAtoms }
+    /** A mix of special and non special atoms */
+    internal val mixedAtomCases by lazy { nonSpecialAtomCases + specialAtomCases }
+
+    internal val nonSpecialAtoms by lazy { nonSpecialAtomCases.map { it.value } }
+
+    internal val specialAtoms by lazy { specialAtomCases.map { it.value } }
+
+    internal val mixedAtoms by lazy { mixedAtomCases.map { it.value } }
 
     /** Asserts that no arguments are present in an Atom */
     internal fun assertNoArguments(atom: Atom) {

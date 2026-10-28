@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
@@ -20,36 +20,25 @@ import kotlin.test.assertTrue
  */
 class AtomImplSpec :
     FunSpec({
-        val mixedAtomInstances = AtomUtils.mixedAtoms.map(::AtomImpl)
+        fun atoms(
+            property: String,
+            cases: List<AtomUtils.AtomCase> = AtomUtils.mixedAtomCases,
+            test: (AtomImpl) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(AtomImpl(it.value)) }
 
-        test("functor-correctness") {
-            onCorrespondingItems(
-                AtomUtils.mixedAtoms,
-                mixedAtomInstances.map { it.functor },
-            ) { atomString, atomInstanceFunctor -> assertEquals(atomString, atomInstanceFunctor) }
+        withTests(nameFn = { "functor/${it.id}" }, AtomUtils.mixedAtomCases) { case ->
+            assertEquals(case.value, AtomImpl(case.value).functor)
         }
 
-        test("atom-functor-and-value-are-the-same") {
-            mixedAtomInstances.forEach { assertSame(it.value, it.functor) }
-        }
+        atoms("functor-is-the-value") { assertSame(it.value, it.functor) }
 
-        test("no-arguments") {
-            mixedAtomInstances.forEach(AtomUtils::assertNoArguments)
-        }
+        atoms("no-arguments", test = AtomUtils::assertNoArguments)
 
-        test("zero-arity") {
-            mixedAtomInstances.forEach { assertEquals(0, it.arity) }
-        }
+        atoms("zero-arity") { assertEquals(0, it.arity) }
 
-        test("variables-empty") {
-            mixedAtomInstances.forEach { assertTrue { it.variables.none() } }
-        }
+        atoms("no-variables") { assertTrue { it.variables.none() } }
 
-        test("is-properties-and-types-for-non-special-atom") {
-            AtomUtils.nonSpecialAtoms
-                .map(::AtomImpl)
-                .forEach(TermTypeAssertionUtils::assertIsAtom)
-        }
+        atoms("type-checks", AtomUtils.nonSpecialAtomCases, TermTypeAssertionUtils::assertIsAtom)
 
         test("empty-block-atom-detected") {
             assertTrue(AtomImpl("{}").isEmptyBlock)
@@ -85,15 +74,9 @@ class AtomImplSpec :
             assertStructurallyEquals(trueAtom, trueTruth)
         }
 
-        test("atom-fresh-copy-should-return-the-instance-itself") {
-            mixedAtomInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
-        }
+        atoms("fresh-copy-is-itself", test = ConstantUtils::assertFreshCopyIsItself)
 
-        test("atom-fresh-copy-with-scope-should-return-the-instance-itself") {
-            mixedAtomInstances.forEach(ConstantUtils::assertFreshCopyWithScopeIsItself)
-        }
+        atoms("fresh-copy-with-scope-is-itself", test = ConstantUtils::assertFreshCopyWithScopeIsItself)
 
-        test("apply-always-returns-the-instance-itself") {
-            mixedAtomInstances.forEach(ConstantUtils::assertApplyingSubstitutionIsItself)
-        }
+        atoms("apply-is-itself", test = ConstantUtils::assertApplyingSubstitutionIsItself)
     })
