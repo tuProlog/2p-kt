@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.function
 
 import io.kotest.core.spec.style.FunSpec
-import it.unibo.tuprolog.core.Struct
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.function.testutils.ExpressionEvaluatorUtils.createRequestWithFunctionBy
-import it.unibo.tuprolog.solve.function.testutils.ExpressionEvaluatorUtils.inputFunctionOutputTriple
 import it.unibo.tuprolog.solve.function.testutils.ExpressionEvaluatorUtils.noFunctionRequest
+import it.unibo.tuprolog.solve.function.testutils.ExpressionEvaluatorUtils.reductionCases
 import kotlin.test.assertEquals
 
 /**
@@ -15,18 +15,13 @@ import kotlin.test.assertEquals
  */
 class ExpressionReducerSpec :
     FunSpec({
-        test("does-nothing-if-given-execution-context-does-not-define-functions") {
-            inputFunctionOutputTriple.forEach { (input, _, _) ->
-                assertEquals(input, input.accept(ExpressionReducer(noFunctionRequest)))
-            }
+        withTests(nameFn = { "does-nothing-without-functions/${it.id}" }, reductionCases) { case ->
+            assertEquals(case.input, case.input.accept(ExpressionReducer(noFunctionRequest)))
         }
 
-        test("applies-correctly-transformation-if-function-loaded") {
-            inputFunctionOutputTriple.forEach { (input, function, output) ->
-                val req = createRequestWithFunctionBy((input as Struct).extractSignature(), function)
-                val toBeTested = input.accept(ExpressionReducer(req))
+        withTests(nameFn = { "applies-loaded-function/${it.id}" }, reductionCases) { case ->
+            val req = createRequestWithFunctionBy(case.input.extractSignature(), case.function)
 
-                assertEquals(output, toBeTested)
-            }
+            assertEquals(case.output, case.input.accept(ExpressionReducer(req)))
         }
     })

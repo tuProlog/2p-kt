@@ -10,6 +10,7 @@ import it.unibo.tuprolog.solve.exception.error.EvaluationError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 
 /**
@@ -27,13 +28,28 @@ internal object LogicErrorUtils {
 
     internal val aDifferentContext = TuPrologRuntimeExceptionUtils.aDifferentContext
 
+    /** A named error [type], recognized as an instance of [expectedClass] */
+    internal class SubTypeCase(
+        val id: String,
+        val type: Struct,
+        val expectedClass: KClass<out LogicError>,
+    )
+
     /** Contains PrologErrors subclasses that will be recognized by type parameter */
     internal val recognizedSubTypes by lazy {
-        mapOf(
-            Atom.of(InstantiationError.typeFunctor) to InstantiationError::class,
-            Atom.of(SystemError.typeFunctor) to SystemError::class,
-            Struct.of(TypeError.typeFunctor, Atom.of("callable"), Atom.of("someActualValue")) to TypeError::class,
-            Struct.of(EvaluationError.typeFunctor, Atom.of("zero_divisor")) to EvaluationError::class,
+        listOf(
+            SubTypeCase("instantiation-error", Atom.of(InstantiationError.typeFunctor), InstantiationError::class),
+            SubTypeCase("system-error", Atom.of(SystemError.typeFunctor), SystemError::class),
+            SubTypeCase(
+                "type-error",
+                Struct.of(TypeError.typeFunctor, Atom.of("callable"), Atom.of("someActualValue")),
+                TypeError::class,
+            ),
+            SubTypeCase(
+                "evaluation-error",
+                Struct.of(EvaluationError.typeFunctor, Atom.of("zero_divisor")),
+                EvaluationError::class,
+            ),
         )
     }
 

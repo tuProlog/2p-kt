@@ -1,8 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import io.kotest.core.spec.style.FunSpec
-import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.solve.primitive.UnaryPredicate
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.TypeTestingUtils.assertCorrectResponse
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.TypeTestingUtils.atomQueryToResult
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.TypeTestingUtils.atomicQueryToResult
@@ -37,56 +36,47 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Var as VarPrimitive
  */
 class TypeTestingPrimitivesSpec :
     FunSpec({
-        fun assertTypeTestingWorks(
-            primitive: UnaryPredicate<*>,
-            cases: Map<Solve.Request<*>, Any>,
-        ) {
-            cases.forEach { (request, result) ->
-                assertCorrectResponse(primitive, request, result)
-            }
+        withTests(nameFn = { "atom-type-testing/${it.id}" }, atomQueryToResult) { case ->
+            assertCorrectResponse(AtomPrimitive, case.request, case.expected)
         }
 
-        test("atom-type-testing-works-correctly") {
-            assertTypeTestingWorks(AtomPrimitive, atomQueryToResult)
+        withTests(nameFn = { "float-type-testing/${it.id}" }, floatQueryToResult) { case ->
+            assertCorrectResponse(FloatPrimitive, case.request, case.expected)
         }
 
-        test("float-type-testing-works-correctly") {
-            assertTypeTestingWorks(FloatPrimitive, floatQueryToResult)
+        withTests(nameFn = { "integer-type-testing/${it.id}" }, integerQueryToResult) { case ->
+            assertCorrectResponse(IntegerPrimitive, case.request, case.expected)
         }
 
-        test("integer-type-testing-works-correctly") {
-            assertTypeTestingWorks(IntegerPrimitive, integerQueryToResult)
+        withTests(nameFn = { "number-term-type-testing/${it.id}" }, numberQueryToResult) { case ->
+            assertCorrectResponse(NumberTerm, case.request, case.expected)
         }
 
-        test("number-term-type-testing-works-correctly") {
-            assertTypeTestingWorks(NumberTerm, numberQueryToResult)
+        withTests(nameFn = { "var-type-testing/${it.id}" }, varQueryToResult) { case ->
+            assertCorrectResponse(VarPrimitive, case.request, case.expected)
         }
 
-        test("var-type-testing-works-correctly") {
-            assertTypeTestingWorks(VarPrimitive, varQueryToResult)
+        withTests(nameFn = { "ensure-executable-type-testing/${it.id}" }, ensureExecutableQueryToResult) { case ->
+            assertCorrectResponse(EnsureExecutable, case.request, case.expected)
         }
 
-        test("ensure-executable-type-testing-works-correctly") {
-            assertTypeTestingWorks(EnsureExecutable, ensureExecutableQueryToResult)
+        withTests(nameFn = { "atomic-type-testing/${it.id}" }, atomicQueryToResult) { case ->
+            assertCorrectResponse(Atomic, case.request, case.expected)
         }
 
-        test("atomic-type-testing-works-correctly") {
-            assertTypeTestingWorks(Atomic, atomicQueryToResult)
+        withTests(nameFn = { "callable-type-testing/${it.id}" }, callableQueryToResult) { case ->
+            assertCorrectResponse(Callable, case.request, case.expected)
         }
 
-        test("callable-type-testing-works-correctly") {
-            assertTypeTestingWorks(Callable, callableQueryToResult)
+        withTests(nameFn = { "compound-type-testing/${it.id}" }, compoundQueryToResult) { case ->
+            assertCorrectResponse(Compound, case.request, case.expected)
         }
 
-        test("compound-type-testing-works-correctly") {
-            assertTypeTestingWorks(Compound, compoundQueryToResult)
+        withTests(nameFn = { "ground-type-testing/${it.id}" }, groundQueryToResult) { case ->
+            assertCorrectResponse(Ground, case.request, case.expected)
         }
 
-        test("ground-type-testing-works-correctly") {
-            assertTypeTestingWorks(Ground, groundQueryToResult)
-        }
-
-        test("non-var-type-testing-works-correctly") {
-            assertTypeTestingWorks(NonVar, nonVarQueryToResult)
+        withTests(nameFn = { "non-var-type-testing/${it.id}" }, nonVarQueryToResult) { case ->
+            assertCorrectResponse(NonVar, case.request, case.expected)
         }
     })

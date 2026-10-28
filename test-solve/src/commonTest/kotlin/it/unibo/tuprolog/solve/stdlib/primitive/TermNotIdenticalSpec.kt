@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.BinaryRelationUtils.assertCorrectResponse
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.TermUtils.notEqualQueryToResult
 
@@ -10,9 +11,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.testutils.TermUtils.notEqualQuer
  */
 class TermNotIdenticalSpec :
     FunSpec({
-        test("computes-correct-result") {
-            notEqualQueryToResult.forEach { (input, result) ->
-                assertCorrectResponse(TermNotIdentical, input, result)
-            }
+        withTests(nameFn = { "computes-correct-result/${it.id}" }, notEqualQueryToResult) { case ->
+            assertCorrectResponse(TermNotIdentical, case.request, case.expected)
         }
     })

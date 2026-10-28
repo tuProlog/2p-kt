@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.library
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.libraryWithAliasConstructor
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.libraryWithoutAliasConstructor
@@ -15,17 +16,14 @@ import kotlin.test.assertTrue
  */
 class LibrarySpec :
     FunSpec({
-        val correctInstances = LibraryUtils.allLibraries.map { makeLib(it, ::libraryWithoutAliasConstructor) }
+        val cases = LibraryUtils.allLibraryCases
 
-        val correctInstancesWithAlias = LibraryUtils.allLibraries.map { makeLib(it, ::libraryWithAliasConstructor) }
-
-        test("of-creates-correct-instance") {
-            val toBeTested =
-                LibraryUtils.allLibraries.map { (_, opSet, theory, primitives, functions) ->
-                    Library.of(primitives, theory, opSet, functions)
-                }
-
-            assertEquals(correctInstances, toBeTested)
+        withTests(nameFn = { "of/${it.id}" }, cases) { case ->
+            val (_, opSet, theory, primitives, functions) = case.raw
+            assertEquals(
+                makeLib(case.raw, ::libraryWithoutAliasConstructor),
+                Library.of(primitives, theory, opSet, functions),
+            )
         }
 
         test("of-with-omitted-parameters-creates-empty-library") {
@@ -36,21 +34,19 @@ class LibrarySpec :
             assertTrue { toBeTested.primitives.none() }
         }
 
-        test("of-with-alias-creates-correct-instance") {
-            val toBeTested =
-                LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
-                    Library.of(alias, primitives, theory, opSet, functions)
-                }
-
-            assertEquals(correctInstancesWithAlias, toBeTested)
+        withTests(nameFn = { "of-with-alias/${it.id}" }, cases) { case ->
+            val (alias, opSet, theory, primitives, functions) = case.raw
+            assertEquals(
+                makeLib(case.raw, ::libraryWithAliasConstructor),
+                Library.of(alias, primitives, theory, opSet, functions),
+            )
         }
 
-        test("of-library-and-alias-creates-correct-instance") {
-            val toBeTested =
-                LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
-                    Library.of(alias, libraryWithoutAliasConstructor(opSet, theory, primitives, functions))
-                }
-
-            assertEquals(correctInstancesWithAlias, toBeTested)
+        withTests(nameFn = { "of-library-and-alias/${it.id}" }, cases) { case ->
+            val (alias, opSet, theory, primitives, functions) = case.raw
+            assertEquals(
+                makeLib(case.raw, ::libraryWithAliasConstructor),
+                Library.of(alias, libraryWithoutAliasConstructor(opSet, theory, primitives, functions)),
+            )
         }
     })

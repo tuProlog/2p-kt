@@ -5,12 +5,9 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.FunctionWrapper
 import it.unibo.tuprolog.solve.function.LogicFunction
-import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils
-import kotlin.test.assertTrue
 
 /**
  * Test class for [FunctionWrapper]
@@ -39,25 +36,4 @@ internal object FunctionWrapperUtils {
             override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response =
                 uncheckedImplementation.compute(request)
         }
-
-    /** All under test requests */
-    private val allRequests by lazy {
-        (WrapperUtils.allMatchingRawStruct + WrapperUtils.allNotMatchingStruct)
-            .flatten()
-            .map { createFunctionRequest(it.extractSignature(), it.args) }
-    }
-
-    /** All ground requests */
-    internal val allGroundRequests by lazy {
-        allRequests
-            .filter { it.query.isGround }
-            .also { assertTrue("Test data empty") { it.isNotEmpty() } }
-    }
-
-    /** All non-ground requests */
-    internal val nonAllGroundRequests by lazy {
-        allRequests
-            .filterNot { it.query.isGround }
-            .also { assertTrue("Test data empty") { it.isNotEmpty() } }
-    }
 }

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ArithmeticUtils.equalQueryToResult
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.BinaryRelationUtils.assertCorrectResponse
 
@@ -11,9 +12,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.testutils.BinaryRelationUtils.as
  */
 class ArithmeticEqualSpec :
     FunSpec({
-        test("computes-correct-result") {
-            equalQueryToResult.forEach { (input, result) ->
-                assertCorrectResponse(ArithmeticEqual, input, result)
-            }
+        withTests(nameFn = { "computes-correct-result/${it.id}" }, equalQueryToResult) { case ->
+            assertCorrectResponse(ArithmeticEqual, case.request, case.expected)
         }
     })

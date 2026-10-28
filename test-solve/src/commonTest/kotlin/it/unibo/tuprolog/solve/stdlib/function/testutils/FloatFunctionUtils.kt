@@ -8,20 +8,27 @@ import org.gciatto.kt.math.BigDecimal
  * @author Enrico
  */
 internal object FloatFunctionUtils {
-    /** A map from an input number to the pair (integer part, fractional part) */
-    internal val numbersToFloatParts =
-        mapOf<Number, Pair<Double, Double>>(
-            1 to (1.0 to 0.0),
-            1.0 to (1.0 to 0.0),
-            1.1 to (1.0 to 0.10),
-            3.123456789101 to (3.0 to 0.123456789101),
-            2.0000000001 to (2.0 to 0.0000000001),
-            -3.123456789101 to (-3.0 to -0.123456789101),
-            -2.0000000001 to (-2.0 to -0.0000000001),
-            -1984984.02 to (-1984984.0 to -0.02),
-        ).mapKeys { (k, _) -> BigDecimal.of(k.toString()) }
-            .mapValues { (_, v) ->
-                BigDecimal.of(v.first.toString()).stripTrailingZeros() to
-                    BigDecimal.of(v.second.toString()).stripTrailingZeros()
-            }
+    /** A named input number, with its expected integer and fractional parts */
+    internal class FloatPartsCase(
+        val id: String,
+        input: Number,
+        integerPart: Double,
+        fractionalPart: Double,
+    ) {
+        val input: BigDecimal = BigDecimal.of(input.toString())
+        val integerPart: BigDecimal = BigDecimal.of(integerPart.toString()).stripTrailingZeros()
+        val fractionalPart: BigDecimal = BigDecimal.of(fractionalPart.toString()).stripTrailingZeros()
+    }
+
+    internal val floatPartsCases =
+        listOf(
+            FloatPartsCase("integer-one", 1, 1.0, 0.0),
+            FloatPartsCase("real-one", 1.0, 1.0, 0.0),
+            FloatPartsCase("one-tenth-above-one", 1.1, 1.0, 0.10),
+            FloatPartsCase("many-decimals", 3.123456789101, 3.0, 0.123456789101),
+            FloatPartsCase("tiny-fraction", 2.0000000001, 2.0, 0.0000000001),
+            FloatPartsCase("negative-many-decimals", -3.123456789101, -3.0, -0.123456789101),
+            FloatPartsCase("negative-tiny-fraction", -2.0000000001, -2.0, -0.0000000001),
+            FloatPartsCase("large-negative", -1984984.02, -1984984.0, -0.02),
+        )
 }

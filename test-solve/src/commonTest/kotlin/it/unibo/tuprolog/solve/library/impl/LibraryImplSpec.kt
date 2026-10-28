@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.library.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
@@ -25,46 +26,35 @@ import kotlin.test.assertTrue
  */
 class LibraryImplSpec :
     FunSpec({
-        val libraryInstances = LibraryUtils.allLibraries.map { makeLib(it, ::libraryWithoutAliasConstructor) }
+        val cases = LibraryUtils.allLibraryCases
 
-        test("operators-correct") {
-            val correct = LibraryUtils.allLibraries.map { (_, opSet) -> opSet }
-            val toBeTested = libraryInstances.map { it.operators }
+        fun LibraryUtils.LibraryCase.instance(): Library = makeLib(raw, ::libraryWithoutAliasConstructor)
 
-            correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
+        withTests(nameFn = { "operators-correct/${it.id}" }, cases) { case ->
+            assertEquals(case.raw.opSet, case.instance().operators)
         }
 
-        test("theory-correct") {
-            val correct = LibraryUtils.allLibraries.map { (_, _, theory) -> theory }
-            val toBeTested = libraryInstances.map { it.clauses }.map { Theory.of(it) }
-
-            correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
+        withTests(nameFn = { "theory-correct/${it.id}" }, cases) { case ->
+            assertEquals(case.raw.theory, Theory.of(case.instance().clauses))
         }
 
-        test("primitives-correct") {
-            val correct = LibraryUtils.allLibraries.map { (_, _, _, primitives) -> primitives }
-            val toBeTested = libraryInstances.map { it.primitives }
-
-            correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
+        withTests(nameFn = { "primitives-correct/${it.id}" }, cases) { case ->
+            assertEquals(case.raw.primitives, case.instance().primitives)
         }
 
-        test("functions-correct") {
-            val correct = LibraryUtils.allLibraries.map { (_, _, _, _, functions) -> functions }
-            val toBeTested = libraryInstances.map { it.functions }
-
-            correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
+        withTests(nameFn = { "functions-correct/${it.id}" }, cases) { case ->
+            assertEquals(case.raw.functions, case.instance().functions)
         }
 
-        test("contains-signature-works-as-expected") {
-            LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
-                val (_, _, theory, primitives) = libraryToAlias
+        withTests(nameFn = { "contains-signature/${it.id}" }, cases) { case ->
+            val libraryInstance = case.instance()
 
-                theory.rules.map { it.head.extractSignature() } +
-                    primitives.keys
-                        .forEach { signature -> assertTrue { signature in libraryInstance } }
+            (
+                case.raw.theory.rules
+                    .map { it.head.extractSignature() } + case.raw.primitives.keys
+            ).forEach { signature -> assertTrue { signature in libraryInstance } }
 
-                assertFalse { Signature("ciao", 3) in libraryInstance }
-            }
+            assertFalse { Signature("ciao", 3) in libraryInstance }
         }
 
         test("contains-signature-discards-vararg-signatures") {
@@ -80,43 +70,36 @@ class LibraryImplSpec :
             assertFalse { Signature("f", 1, true) in library }
         }
 
-        test("contains-operator-works-as-expected") {
-            LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
-                val (_, opSet) = libraryToAlias
+        withTests(nameFn = { "contains-operator/${it.id}" }, cases) { case ->
+            val libraryInstance = case.instance()
 
-                opSet.forEach { operator -> assertTrue { operator in libraryInstance } }
+            case.raw.opSet.forEach { operator -> assertTrue { operator in libraryInstance } }
 
-                assertFalse { Operator("ciao", Specifier.XFX, 9) in libraryInstance }
+            assertFalse { Operator("ciao", Specifier.XFX, 9) in libraryInstance }
+        }
+
+        withTests(nameFn = { "has-primitive/${it.id}" }, cases) { case ->
+            val libraryInstance = case.instance()
+
+            case.raw.primitives.keys
+                .forEach { signature -> assertTrue { libraryInstance.hasPrimitive(signature) } }
+
+            (
+                case.raw.theory.rules
+                    .map { it.head.extractSignature() } + Signature("ciao", 3)
+            ).forEach {
+                assertFalse { libraryInstance.hasPrimitive(it) }
             }
         }
 
-        test("has-primitive-works-as-expected") {
-            LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
-                val (_, _, theory, primitives) = libraryToAlias
+        withTests(nameFn = { "has-protected/${it.id}" }, cases) { case ->
+            val libraryInstance = case.instance()
 
-                primitives.keys.forEach { signature -> assertTrue { libraryInstance.hasPrimitive(signature) } }
+            (
+                case.raw.theory.rules
+                    .map { it.head.extractSignature() } + case.raw.primitives.keys
+            ).forEach { signature -> assertTrue { libraryInstance.hasProtected(signature) } }
 
-                (
-                    theory.rules.map { it.head.extractSignature() } +
-                        Signature(
-                            "ciao",
-                            3,
-                        )
-                ).forEach {
-                    assertFalse { libraryInstance.hasPrimitive(it) }
-                }
-            }
-        }
-
-        test("has-protected-works-as-expected") {
-            LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
-                val (_, _, theory, primitives) = libraryToAlias
-
-                theory.rules.map { it.head.extractSignature() } +
-                    primitives.keys
-                        .forEach { signature -> assertTrue { libraryInstance.hasProtected(signature) } }
-
-                assertFalse { libraryInstance.hasProtected(Signature("ciao", 3)) }
-            }
+            assertFalse { libraryInstance.hasProtected(Signature("ciao", 3)) }
         }
     })

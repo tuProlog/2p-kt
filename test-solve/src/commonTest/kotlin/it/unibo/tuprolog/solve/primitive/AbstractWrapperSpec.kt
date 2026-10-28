@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.primitive
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.Signature
 import kotlin.test.assertEquals
@@ -14,30 +15,30 @@ class AbstractWrapperSpec :
     FunSpec({
         val signature = Signature("a", 0)
 
-        val underTest1 = WrapperOfConstant(signature, 1)
+        val cases =
+            listOf(
+                WrapperCase("signature-constructor") { WrapperOfConstant(signature, 1) },
+                WrapperCase("name-and-arity-constructor") { WrapperOfConstant(signature.name, signature.arity, 2) },
+            )
 
-        val underTest2 = WrapperOfConstant(signature.name, signature.arity, 2)
-
-        val allUnderTest = listOf(underTest1, underTest2)
-
-        test("signature-correct") {
-            allUnderTest.forEach {
-                assertEquals(signature, it.signature)
-            }
+        withTests(nameFn = { "signature-correct/${it.id}" }, cases) { case ->
+            assertEquals(signature, case.wrapper().signature)
         }
 
-        test("functor-correct") {
-            allUnderTest.forEach {
-                assertEquals(signature.name, it.functor)
-            }
+        withTests(nameFn = { "functor-correct/${it.id}" }, cases) { case ->
+            assertEquals(signature.name, case.wrapper().functor)
         }
 
-        test("description-pair-correct") {
-            allUnderTest.forEach {
-                assertEquals(Pair(signature, it.implementation), it.descriptionPair)
-            }
+        withTests(nameFn = { "description-pair-correct/${it.id}" }, cases) { case ->
+            val wrapper = case.wrapper()
+            assertEquals(Pair(signature, wrapper.implementation), wrapper.descriptionPair)
         }
     })
+
+private class WrapperCase(
+    val id: String,
+    val wrapper: () -> WrapperOfConstant<Int>,
+)
 
 /** A testing class for AbstractWrapper functionality */
 private class WrapperOfConstant<out T>(

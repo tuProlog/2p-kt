@@ -103,11 +103,6 @@ internal object SolveUtils {
         )
     }
 
-    /** The various responses to default request */
-    internal val defaultRequestResponses by lazy {
-        listOf(defaultRequestSuccessResponse, defaultRequestFailedResponse, defaultRequestHaltedResponse)
-    }
-
     /** Utility function to create a request with some default values */
     internal fun createRequest(
         signature: Signature = aSignature,

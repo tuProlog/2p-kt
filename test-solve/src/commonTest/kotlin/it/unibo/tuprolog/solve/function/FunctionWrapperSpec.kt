@@ -1,12 +1,13 @@
 package it.unibo.tuprolog.solve.function
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.function.testutils.FunctionWrapperUtils.createFunctionRequest
 import it.unibo.tuprolog.solve.function.testutils.FunctionWrapperUtils.createFunctionWrapper
 import it.unibo.tuprolog.solve.function.testutils.FunctionWrapperUtils.defaultFunctionResult
 import it.unibo.tuprolog.solve.function.testutils.FunctionWrapperUtils.function
-import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.wrapperToMatchingSignatureRequest
-import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.wrapperToNotMatchingSignatureRequest
+import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.notMatchingCases
+import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.withMatchingCases
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -17,23 +18,15 @@ import kotlin.test.assertFailsWith
  */
 class FunctionWrapperSpec :
     FunSpec({
-        test("function-works-if-correct-request-provided") {
-            wrapperToMatchingSignatureRequest(::createFunctionWrapper, function, ::createFunctionRequest)
-                .forEach { (wrapper, acceptedRequests) ->
-                    acceptedRequests.forEach {
-                        // TODO remove this "if" after solving TODO in "Signature"
-                        if (wrapper.signature.vararg) return@test
-                        assertEquals(defaultFunctionResult, wrapper.implementation.compute(it))
-                    }
-                }
+        withMatchingCases("accepts") { case ->
+            val wrapper = createFunctionWrapper(case.signature, function)
+            assertEquals(defaultFunctionResult, wrapper.implementation.compute(case.request(::createFunctionRequest)))
         }
 
-        test("function-complains-with-wrong-request-signature-or-arguments") {
-            wrapperToNotMatchingSignatureRequest(::createFunctionWrapper, function, ::createFunctionRequest)
-                .forEach { (wrapper, badRequests) ->
-                    badRequests.forEach {
-                        assertFailsWith<IllegalArgumentException> { wrapper.implementation.compute(it) }
-                    }
-                }
+        withTests(nameFn = { "rejects/${it.id}" }, notMatchingCases) { case ->
+            val wrapper = createFunctionWrapper(case.signature, function)
+            assertFailsWith<IllegalArgumentException> {
+                wrapper.implementation.compute(case.request(::createFunctionRequest))
+            }
         }
     })
