@@ -297,67 +297,40 @@ class ScopeImplSpec :
             assertTrue { emptyScopeInstance.whatever().isAnonymous }
         }
 
-        test("num-of-big-decimal") {
-            val correctInstances = RealUtils.bigDecimals.map { Numeric.of(it) }
-            val toBeTested = RealUtils.bigDecimals.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-big-decimal/${it.id}" }, RealUtils.realCases) { case ->
+            assertEqualities(Numeric.of(case.value), ScopeImpl(ScopeUtils.emptyScope).numOf(case.value))
         }
 
-        test("num-of-double") {
-            val correctInstances = RealUtils.decimalsAsDoubles.map { Numeric.of(it) }
-            val toBeTested = RealUtils.decimalsAsDoubles.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-double/${it.id}" }, RealUtils.realCases) { case ->
+            assertEqualities(Numeric.of(case.double), ScopeImpl(ScopeUtils.emptyScope).numOf(case.double))
         }
 
-        test("num-of-float") {
-            val correctInstances = RealUtils.decimalsAsFloats.map { Numeric.of(it) }
-            val toBeTested = RealUtils.decimalsAsFloats.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-float/${it.id}" }, RealUtils.realCases.filter { it.float != null }) { case ->
+            assertEqualities(Numeric.of(case.float!!), ScopeImpl(ScopeUtils.emptyScope).numOf(case.float!!))
         }
 
-        test("num-of-big-integer") {
-            val correctInstances = IntegerUtils.bigIntegers.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.bigIntegers.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-big-integer/${it.id}" }, IntegerUtils.integerCases) { case ->
+            assertEqualities(Numeric.of(case.value), ScopeImpl(ScopeUtils.emptyScope).numOf(case.value))
         }
 
-        test("num-of-int") {
-            val correctInstances = IntegerUtils.onlyInts.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.onlyInts.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-int/${it.id}" }, IntegerUtils.integerCases.filter { it.int != null }) { case ->
+            assertEqualities(Numeric.of(case.int!!), ScopeImpl(ScopeUtils.emptyScope).numOf(case.int!!))
         }
 
-        test("num-of-long") {
-            val correctInstances = IntegerUtils.onlyLongs.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.onlyLongs.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-long/${it.id}" }, IntegerUtils.integerCases.filter { it.long != null }) { case ->
+            assertEqualities(Numeric.of(case.long!!), ScopeImpl(ScopeUtils.emptyScope).numOf(case.long!!))
         }
 
-        test("num-of-short") {
-            val correctInstances = IntegerUtils.onlyShorts.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.onlyShorts.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-short/${it.id}" }, IntegerUtils.integerCases.filter { it.short != null }) { case ->
+            assertEqualities(Numeric.of(case.short!!), ScopeImpl(ScopeUtils.emptyScope).numOf(case.short!!))
         }
 
-        test("num-of-byte") {
-            val correctInstances = IntegerUtils.onlyBytes.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.onlyBytes.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-byte/${it.id}" }, IntegerUtils.integerCases.filter { it.byte != null }) { case ->
+            assertEqualities(Numeric.of(case.byte!!), ScopeImpl(ScopeUtils.emptyScope).numOf(case.byte!!))
         }
 
-        test("num-of-string") {
-            val correctInstances = IntegerUtils.stringNumbers.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.stringNumbers.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-string/${it.id}" }, IntegerUtils.integerCases) { case ->
+            assertEqualities(Numeric.of(case.string), ScopeImpl(ScopeUtils.emptyScope).numOf(case.string))
         }
 
         test("truth-of-boolean") {
