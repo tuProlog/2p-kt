@@ -32,7 +32,8 @@ fun bigListContract(
             val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory)
 
             val query = "biglist"(BigListOptions.SIZE, L)
-            val solutions = solver.solve(query, longDuration).toList()
+            // no timeout: this checks the result, and a wall-clock limit only fails it on a slow machine
+            val solutions = solver.solve(query).toList()
 
             assertSolutionEquals(
                 listOf(

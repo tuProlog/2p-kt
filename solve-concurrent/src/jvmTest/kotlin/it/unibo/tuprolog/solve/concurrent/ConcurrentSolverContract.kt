@@ -36,10 +36,10 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalT
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingTermOperators
 import it.unibo.tuprolog.solve.TimeRelatedTheories
-import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.allSolutionsInTimeGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.noSolutionInTimeGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.oneSolutionInTimeGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.twoSolutionsInTimeGoalToSolution
 import it.unibo.tuprolog.solve.assertHasPredicateInAPI
 import it.unibo.tuprolog.solve.changeQueriesTo
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -436,7 +436,7 @@ fun concurrentSolverContract() =
             )
         }
 
-        // Test with [lessThan500MsGoalToSolution]
+        // Test with [noSolutionInTimeGoalToSolution]
 
         scenario("solver/timeout1") {
             assertConcurrentSolverSolutionsCorrect(
@@ -444,12 +444,12 @@ fun concurrentSolverContract() =
                     solverWithDefaultBuiltins(
                         staticKb = TimeRelatedTheories.timeRelatedTheory,
                     ),
-                goalToSolutions = lessThan500MsGoalToSolution,
-                maxDuration = 400L,
+                goalToSolutions = noSolutionInTimeGoalToSolution,
+                maxDuration = TimeRelatedTheories.maxDurationFor(0),
             )
         }
 
-        // Test with [slightlyMoreThan500MsGoalToSolution]
+        // Test with [oneSolutionInTimeGoalToSolution]
 
         scenario("solver/timeout2") {
             assertConcurrentSolverSolutionsCorrect(
@@ -457,12 +457,12 @@ fun concurrentSolverContract() =
                     solverWithDefaultBuiltins(
                         staticKb = TimeRelatedTheories.timeRelatedTheory,
                     ),
-                goalToSolutions = slightlyMoreThan500MsGoalToSolution,
-                maxDuration = 599L,
+                goalToSolutions = oneSolutionInTimeGoalToSolution,
+                maxDuration = TimeRelatedTheories.maxDurationFor(1),
             )
         }
 
-        // Test with [slightlyMoreThan600MsGoalToSolution]
+        // Test with [twoSolutionsInTimeGoalToSolution]
 
         scenario("solver/timeout3") {
             assertConcurrentSolverSolutionsCorrect(
@@ -470,12 +470,12 @@ fun concurrentSolverContract() =
                     solverWithDefaultBuiltins(
                         staticKb = TimeRelatedTheories.timeRelatedTheory,
                     ),
-                goalToSolutions = slightlyMoreThan600MsGoalToSolution,
-                maxDuration = 699L,
+                goalToSolutions = twoSolutionsInTimeGoalToSolution,
+                maxDuration = TimeRelatedTheories.maxDurationFor(2),
             )
         }
 
-        // Test with [slightlyMoreThan700MsGoalToSolution]
+        // Test with [allSolutionsInTimeGoalToSolution]
 
         scenario("solver/timeout4") {
             assertConcurrentSolverSolutionsCorrect(
@@ -483,8 +483,8 @@ fun concurrentSolverContract() =
                     solverWithDefaultBuiltins(
                         staticKb = TimeRelatedTheories.timeRelatedTheory,
                     ),
-                goalToSolutions = slightlyMoreThan700MsGoalToSolution,
-                maxDuration = 799L,
+                goalToSolutions = allSolutionsInTimeGoalToSolution,
+                maxDuration = TimeRelatedTheories.maxDurationFor(3),
             )
         }
 

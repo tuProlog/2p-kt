@@ -49,11 +49,12 @@ import it.unibo.tuprolog.solve.TestingTermOperators.greaterThanTesting
 import it.unibo.tuprolog.solve.TestingTermOperators.lowerThanOrEqualTesting
 import it.unibo.tuprolog.solve.TestingTermOperators.lowerThanTesting
 import it.unibo.tuprolog.solve.TestingTermOperators.notEqualTesting
-import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.allSolutionsInTimeGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.maxDurationFor
+import it.unibo.tuprolog.solve.TimeRelatedTheories.noSolutionInTimeGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.oneSolutionInTimeGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.timeRelatedTheory
+import it.unibo.tuprolog.solve.TimeRelatedTheories.twoSolutionsInTimeGoalToSolution
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.Warning
@@ -540,59 +541,54 @@ fun solverContract(
 
     case("solver/true") { truthOf(true) yields { listOf(it.yes()) } }
 
-    // Test with [lessThan500MsGoalToSolution]
-    // Test with [lessThan500MsGoalToSolution]
+    // Test with [noSolutionInTimeGoalToSolution]
     scenario("solver/timeout1") {
         assertSolverSolutionsCorrect(
             solver =
                 solverFactory.solverWithDefaultBuiltins(
                     staticKb = timeRelatedTheory,
                 ),
-            goalToSolutions = lessThan500MsGoalToSolution,
-            maxDuration = 400L,
+            goalToSolutions = noSolutionInTimeGoalToSolution,
+            maxDuration = maxDurationFor(0),
         )
     }
 
-    // Test with [slightlyMoreThan500MsGoalToSolution]
-    // Test with [slightlyMoreThan500MsGoalToSolution]
+    // Test with [oneSolutionInTimeGoalToSolution]
     scenario("solver/timeout2") {
         assertSolverSolutionsCorrect(
             solver =
                 solverFactory.solverWithDefaultBuiltins(
                     staticKb = timeRelatedTheory,
                 ),
-            goalToSolutions = slightlyMoreThan500MsGoalToSolution,
-            maxDuration = 599L,
+            goalToSolutions = oneSolutionInTimeGoalToSolution,
+            maxDuration = maxDurationFor(1),
         )
     }
 
-    // Test with [slightlyMoreThan600MsGoalToSolution]
-    // Test with [slightlyMoreThan600MsGoalToSolution]
+    // Test with [twoSolutionsInTimeGoalToSolution]
     scenario("solver/timeout3") {
         assertSolverSolutionsCorrect(
             solver =
                 solverFactory.solverWithDefaultBuiltins(
                     staticKb = timeRelatedTheory,
                 ),
-            goalToSolutions = slightlyMoreThan600MsGoalToSolution,
-            maxDuration = 699L,
+            goalToSolutions = twoSolutionsInTimeGoalToSolution,
+            maxDuration = maxDurationFor(2),
         )
     }
 
-    // Test with [slightlyMoreThan700MsGoalToSolution]
-    // Test with [slightlyMoreThan700MsGoalToSolution]
+    // Test with [allSolutionsInTimeGoalToSolution]
     scenario("solver/timeout4") {
         assertSolverSolutionsCorrect(
             solver =
                 solverFactory.solverWithDefaultBuiltins(
                     staticKb = timeRelatedTheory,
                 ),
-            goalToSolutions = slightlyMoreThan700MsGoalToSolution,
-            maxDuration = 799L,
+            goalToSolutions = allSolutionsInTimeGoalToSolution,
+            maxDuration = maxDurationFor(3),
         )
     }
 
-    // Test with [ifThen1ToSolution]
     // Test with [ifThen1ToSolution]
     scenario("solver/if-then1") {
         assertSolverSolutionsCorrect(
@@ -603,7 +599,6 @@ fun solverContract(
     }
 
     // Test with [ifThenElse1ToSolution]
-    // Test with [ifThenElse1ToSolution]
     scenario("solver/if-then-else1") {
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory1),
@@ -612,7 +607,6 @@ fun solverContract(
         )
     }
 
-    // Test with [ifThenElse2ToSolution]
     // Test with [ifThenElse2ToSolution]
     scenario("solver/if-then-else2") {
         assertSolverSolutionsCorrect(
@@ -623,7 +617,6 @@ fun solverContract(
     }
 
     // Test with [ifThen2ToSolution]
-    // Test with [ifThen2ToSolution]
     scenario("solver/if-then2") {
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory2),
@@ -632,7 +625,6 @@ fun solverContract(
         )
     }
 
-    // Test with [simpleFactTheoryNotableGoalToSolutions]
     // Test with [simpleFactTheoryNotableGoalToSolutions]
     scenario("solver/unification") {
         assertSolverSolutionsCorrect(
@@ -643,7 +635,6 @@ fun solverContract(
     }
 
     // Test with [simpleCutTheoryNotableGoalToSolutions]
-    // Test with [simpleCutTheoryNotableGoalToSolutions]
     scenario("solver/simple-cut-alternatives") {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutTheory),
@@ -652,7 +643,6 @@ fun solverContract(
         )
     }
 
-    // Test with [simpleCutAndConjunctionTheoryNotableGoalToSolutions]
     // Test with [simpleCutAndConjunctionTheoryNotableGoalToSolutions]
     scenario("solver/cut-and-conjunction") {
         assertSolverSolutionsCorrect(
@@ -663,7 +653,6 @@ fun solverContract(
     }
 
     // Test with [cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions]
-    // Test with [cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions]
     scenario("solver/cut-conjunction-and-backtracking") {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = cutConjunctionAndBacktrackingTheory),
@@ -672,7 +661,6 @@ fun solverContract(
         )
     }
 
-    // Test with [infiniteComputationTheoryNotableGoalToSolution]
     // Test with [infiniteComputationTheoryNotableGoalToSolution]
     scenario("solver/max-duration-parameter-and-time-out-exception") {
         assertSolverSolutionsCorrect(
@@ -683,7 +671,6 @@ fun solverContract(
     }
 
     // Test with [prologStandardExampleTheoryNotableGoalToSolution]
-    // Test with [prologStandardExampleTheoryNotableGoalToSolution]
     scenario("solver/prolog-standard-search-tree-example") {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = prologStandardExampleTheory),
@@ -692,7 +679,6 @@ fun solverContract(
         )
     }
 
-    // Test with [prologStandardExampleWithCutTheoryNotableGoalToSolution]
     // Test with [prologStandardExampleWithCutTheoryNotableGoalToSolution]
     scenario("solver/prolog-standard-search-tree-with-cut-example") {
         assertSolverSolutionsCorrect(
@@ -705,7 +691,6 @@ fun solverContract(
     }
 
     // Test with [customReverseListTheoryNotableGoalToSolution]
-    // Test with [customReverseListTheoryNotableGoalToSolution]
     scenario("solver/backtracking-with-custom-reverse-list-implementation") {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = customReverseListTheory),
@@ -714,7 +699,6 @@ fun solverContract(
         )
     }
 
-    // Test with [conjunctionStandardExampleTheoryNotableGoalToSolution]
     // Test with [conjunctionStandardExampleTheoryNotableGoalToSolution]
     scenario("solver/with-prolog-standard-conjunction-examples") {
         assertSolverSolutionsCorrect(
@@ -948,7 +932,6 @@ fun solverContract(
         )
     }
 
-    // Test with [customRangeListGeneratorTheoryNotableGoalToSolution]
     // Test with [customRangeListGeneratorTheoryNotableGoalToSolution]
     scenario("solver/numbers-range-list-generation") {
         assertSolverSolutionsCorrect(
