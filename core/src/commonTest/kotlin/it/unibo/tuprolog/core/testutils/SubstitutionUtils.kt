@@ -15,60 +15,89 @@ import kotlin.collections.listOf as ktListOf
  * @author Enrico
  */
 internal object SubstitutionUtils {
-    /** Returns terms that internally can have multiple times the provided [internalTerm] */
-    internal fun termsWith(internalTerm: Term) =
+    /** A named way of building a term that internally can have multiple times a given term */
+    internal data class TermWithCase(
+        val id: String,
+        val build: (Term) -> Term,
+    )
+
+    /** Builds terms that internally can have multiple times the provided term */
+    internal val termsWithCases by lazy {
         ktListOf(
-            internalTerm,
-            Struct.of("f", internalTerm, internalTerm),
-            Struct.fold("f", internalTerm, Atom.of("ciao"), internalTerm),
+            TermWithCase("itself") { it },
+            TermWithCase("struct-with-it-twice") { Struct.of("f", it, it) },
+            TermWithCase("folded-struct-with-it-twice") { Struct.fold("f", it, Atom.of("ciao"), it) },
         )
+    }
+
+    /** A named mapping of variables to terms */
+    internal data class SubstitutionCase(
+        val id: String,
+        val map: Map<Var, Term>,
+    ) {
+        val pairs: List<Pair<Var, Term>> get() = map.entries.map { it.toPair() }
+    }
 
     /** Contains mixed groundSubstitutions and nonGroundSubstitutions */
-    internal val mixedSubstitutions by lazy {
+    internal val mixedSubstitutionCases by lazy {
         ktListOf(
-            mapOf(Var.of("X") to Atom.of("x")),
-            mapOf(
-                Var.of("A") to Struct.of("f", Atom.of("ciao")),
-                Var.of("B") to Empty.list(),
+            SubstitutionCase("variable-to-atom", mapOf(Var.of("X") to Atom.of("x"))),
+            SubstitutionCase(
+                "two-variables-to-ground-terms",
+                mapOf(
+                    Var.of("A") to Struct.of("f", Atom.of("ciao")),
+                    Var.of("B") to Empty.list(),
+                ),
             ),
-            mapOf(Var.of("Var") to Struct.of("f", Var.of("A"), Var.of("B"))),
-            mapOf(Var.of("Z") to Struct.of("f", Var.of("Z"))),
-            mapOf(Var.anonymous() to Var.of("A")),
+            SubstitutionCase(
+                "variable-to-non-ground-struct",
+                mapOf(
+                    Var.of("Var") to Struct.of("f", Var.of("A"), Var.of("B")),
+                ),
+            ),
+            SubstitutionCase("variable-to-struct-containing-it", mapOf(Var.of("Z") to Struct.of("f", Var.of("Z")))),
+            SubstitutionCase("anonymous-variable-to-variable", mapOf(Var.anonymous() to Var.of("A"))),
         )
     }
 
-    /** Contains [mixedSubstitutions] represented as list of pairs */
-    internal val mixedSubstitutionsAsPairs by lazy {
-        mixedSubstitutions.map {
-            it.entries.map { entry ->
-                entry.toPair()
-            }
-        }
-    }
+    /** A named list of variable-term pairs */
+    internal data class PairsCase(
+        val id: String,
+        val pairs: List<Pair<Var, Term>>,
+    )
 
-    /** Contains a duplicated pair substitution, that should result in unique final substitution */
-    internal val duplicatedPairSubstitution by lazy {
+    /** Contains duplicated pair substitutions, that should result in unique final substitution */
+    internal val duplicatedPairCases by lazy {
         Scope.empty {
             ktListOf(
-                ktListOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("a")),
-                ktListOf(
-                    varOf("A") to atomOf("a"),
-                    varOf("A") to atomOf("a"),
-                    varOf("B") to atomOf("b"),
-                    varOf("B") to atomOf("b"),
+                PairsCase("one-duplicated-pair", ktListOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("a"))),
+                PairsCase(
+                    "two-duplicated-pairs",
+                    ktListOf(
+                        varOf("A") to atomOf("a"),
+                        varOf("A") to atomOf("a"),
+                        varOf("B") to atomOf("b"),
+                        varOf("B") to atomOf("b"),
+                    ),
                 ),
             )
         }
     }
 
     /** Contains contradicting substitutions whose creation should result in [Substitution.Fail] */
-    internal val contradictingSubstitutions by lazy {
+    internal val contradictingPairCases by lazy {
         Scope.empty {
             ktListOf(
-                ktListOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("b")),
-                ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C")),
-                ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("a")),
-                ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("b")),
+                PairsCase("two-atoms", ktListOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("b"))),
+                PairsCase("atom-and-variable", ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"))),
+                PairsCase(
+                    "atom-and-variable-bound-to-same-atom",
+                    ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("a")),
+                ),
+                PairsCase(
+                    "atom-and-variable-bound-to-other-atom",
+                    ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("b")),
+                ),
             )
         }
     }

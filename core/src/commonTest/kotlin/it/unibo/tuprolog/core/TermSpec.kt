@@ -1,12 +1,19 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import kotlin.collections.List as KtList
+
+private class CompoundCase(
+    val id: String,
+    val compound: Term,
+    val expected: Term,
+)
 
 class TermSpec :
     FunSpec({
@@ -15,90 +22,63 @@ class TermSpec :
 
         val sub = Substitution.unifier(X, Integer.ONE)
 
-        val compounds =
+        val compoundCases =
             listOf(
-                MyStruct("f", listOf(X)),
-                Struct.of("g", X),
-                List.of(X),
-                Block.of(X),
-                Tuple.of(X, X),
-                Fact.of(MyStruct("f", listOf(X))),
-                Fact.of(Struct.of("g", X)),
-                Fact.of(List.of(X)),
-                Fact.of(Block.of(X)),
-                Fact.of(Tuple.of(X, X)),
+                CompoundCase("custom-struct", MyStruct("f", listOf(X)), MyStruct("f", listOf(Integer.ONE))),
+                CompoundCase("struct", Struct.of("g", X), Struct.of("g", Integer.ONE)),
+                CompoundCase("list", List.of(X), List.of(Integer.ONE)),
+                CompoundCase("block", Block.of(X), Block.of(Integer.ONE)),
+                CompoundCase("tuple", Tuple.of(X, X), Tuple.of(Integer.ONE, Integer.ONE)),
+                CompoundCase(
+                    "fact-of-custom-struct",
+                    Fact.of(MyStruct("f", listOf(X))),
+                    Fact.of(MyStruct("f", listOf(Integer.ONE))),
+                ),
+                CompoundCase("fact-of-struct", Fact.of(Struct.of("g", X)), Fact.of(Struct.of("g", Integer.ONE))),
+                CompoundCase("fact-of-list", Fact.of(List.of(X)), Fact.of(List.of(Integer.ONE))),
+                CompoundCase("fact-of-block", Fact.of(Block.of(X)), Fact.of(Block.of(Integer.ONE))),
+                CompoundCase("fact-of-tuple", Fact.of(Tuple.of(X, X)), Fact.of(Tuple.of(Integer.ONE, Integer.ONE))),
             )
 
-        val expected =
-            listOf(
-                MyStruct("f", listOf(Integer.ONE)),
-                Struct.of("g", Integer.ONE),
-                List.of(Integer.ONE),
-                Block.of(Integer.ONE),
-                Tuple.of(Integer.ONE, Integer.ONE),
-                Fact.of(MyStruct("f", listOf(Integer.ONE))),
-                Fact.of(Struct.of("g", Integer.ONE)),
-                Fact.of(List.of(Integer.ONE)),
-                Fact.of(Block.of(Integer.ONE)),
-                Fact.of(Tuple.of(Integer.ONE, Integer.ONE)),
-            )
+        fun compounds(
+            property: String,
+            test: (CompoundCase) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, compoundCases) { test(it) }
 
-        test("substitution-apply-to-preserves-returns-null-with-failed-substitution") {
-            for (i in compounds.indices) {
-                assertNull(Substitution.failed().applyTo(compounds[i]))
+        compounds("substitution-apply-to-returns-null-with-failed-substitution") {
+            assertNull(Substitution.failed().applyTo(it.compound))
+        }
+
+        compounds("term-apply-throw-exception-with-failed-substitution") {
+            try {
+                it.compound.apply(Substitution.failed())
+            } catch (e: SubstitutionApplicationException) {
+                assertSame(it.compound, e.term)
+                assertEquals(Substitution.failed(), e.substitution)
             }
         }
 
-        test("term-apply-throw-exception-with-failed-substitution") {
-            for (i in compounds.indices) {
-                try {
-                    compounds[i].apply(Substitution.failed())
-                } catch (e: SubstitutionApplicationException) {
-                    assertSame(compounds[i], e.term)
-                    assertEquals(Substitution.failed(), e.substitution)
-                }
+        compounds("term-get-throw-exception-with-failed-substitution") {
+            try {
+                it.compound[Substitution.failed()]
+            } catch (e: SubstitutionApplicationException) {
+                assertSame(it.compound, e.term)
+                assertEquals(Substitution.failed(), e.substitution)
             }
         }
 
-        test("term-get-throw-exception-with-failed-substitution") {
-            for (i in compounds.indices) {
-                try {
-                    compounds[i][Substitution.failed()]
-                } catch (e: SubstitutionApplicationException) {
-                    assertSame(compounds[i], e.term)
-                    assertEquals(Substitution.failed(), e.substitution)
-                }
-            }
+        compounds("substitution-apply-to-preserves-type") { assertEquals(it.expected, sub.applyTo(it.compound)) }
+
+        compounds("term-apply-preserves-type") { assertEquals(it.expected, it.compound.apply(sub)) }
+
+        compounds("term-get-preserves-type") { assertEquals(it.expected, it.compound[sub]) }
+
+        compounds("term-fresh-copy-preserves-type") {
+            assertTrue { it.compound.freshCopy().equals(it.compound, useVarCompleteName = false) }
         }
 
-        test("substitution-apply-to-preserves-type") {
-            for (i in compounds.indices) {
-                assertEquals(expected[i], sub.applyTo(compounds[i]))
-            }
-        }
-
-        test("term-apply-preserves-type") {
-            for (i in compounds.indices) {
-                assertEquals(expected[i], compounds[i].apply(sub))
-            }
-        }
-
-        test("term-get-preserves-type") {
-            for (i in compounds.indices) {
-                assertEquals(expected[i], compounds[i][sub])
-            }
-        }
-
-        test("term-fresh-copy-preserves-type") {
-            for (i in compounds.indices) {
-                assertTrue { compounds[i].freshCopy().equals(compounds[i], useVarCompleteName = false) }
-            }
-        }
-
-        test("term-fresh-copy-with-scope-preserves-type") {
-            for (i in compounds.indices) {
-                assertTrue { compounds[i].freshCopy(Scope.of("Y")).equals(compounds[i], useVarCompleteName = false) }
-            }
+        compounds("term-fresh-copy-with-scope-preserves-type") {
+            assertTrue { it.compound.freshCopy(Scope.of("Y")).equals(it.compound, useVarCompleteName = false) }
         }
     })
 

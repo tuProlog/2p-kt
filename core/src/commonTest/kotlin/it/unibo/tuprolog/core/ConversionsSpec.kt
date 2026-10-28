@@ -52,24 +52,39 @@ class ConversionsSpec :
             assertEqualities(Integer.of(case.byte!!), case.byte!!.toTerm())
         }
 
-        fun numberToTerm(
+        fun integersToTerm(
             kind: String,
-            values: kotlin.collections.List<Pair<String, Number>>,
-        ) = withTests(nameFn = { "number-to-term/$kind/${it.first}" }, values) { (_, value) ->
-            assertEqualities(Numeric.of(value), value.toTerm())
+            value: (IntegerUtils.IntegerCase) -> Number?,
+        ) = withTests(
+            nameFn = { "number-to-term/$kind/${it.id}" },
+            IntegerUtils.integerCases.filter { value(it) != null },
+        ) { case ->
+            val number = value(case)!!
+            assertEqualities(Numeric.of(number), number.toTerm())
         }
 
-        numberToTerm("byte", IntegerUtils.integerCases.mapNotNull { case -> case.byte?.let { case.id to it } })
+        fun realsToTerm(
+            kind: String,
+            value: (RealUtils.RealCase) -> Number?,
+        ) = withTests(
+            nameFn = { "number-to-term/$kind/${it.id}" },
+            RealUtils.realCases.filter { value(it) != null },
+        ) { case ->
+            val number = value(case)!!
+            assertEqualities(Numeric.of(number), number.toTerm())
+        }
 
-        numberToTerm("int", IntegerUtils.integerCases.mapNotNull { case -> case.int?.let { case.id to it } })
+        integersToTerm("byte") { it.byte }
 
-        numberToTerm("short", IntegerUtils.integerCases.mapNotNull { case -> case.short?.let { case.id to it } })
+        integersToTerm("int") { it.int }
 
-        numberToTerm("long", IntegerUtils.integerCases.mapNotNull { case -> case.long?.let { case.id to it } })
+        integersToTerm("short") { it.short }
 
-        numberToTerm("double", RealUtils.realCases.map { it.id to it.double })
+        integersToTerm("long") { it.long }
 
-        numberToTerm("float", RealUtils.realCases.mapNotNull { case -> case.float?.let { case.id to it } })
+        realsToTerm("double") { it.double }
+
+        realsToTerm("float") { it.float }
 
         withTests(nameFn = { "string-as-atom/${it.id}" }, AtomUtils.mixedAtomCases) { case ->
             assertEqualities(Atom.of(case.value), case.value.toAtom())
