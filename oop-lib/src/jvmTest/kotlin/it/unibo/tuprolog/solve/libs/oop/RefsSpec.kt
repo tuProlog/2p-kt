@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
@@ -9,7 +10,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
-import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -50,27 +50,26 @@ class RefsSpec :
 
         @Suppress("SwallowedException")
         fun testConstructorInvocation(
-            cases: List<TestDatum>,
-            detectorType: KClass<*> = ConstructorOverloadDetector::class,
+            case: TestDatum,
             case2Term: (TestDatum) -> Term,
         ) {
-            val ref = TypeRef.of(detectorType)
-            for (case in cases) {
-                try {
-                    val result = ref.create(case2Term(case))
-                    assertFalse { case.isFailed }
-                    assertTrue { result is Result.Value }
-                    assertTrue { result.asObjectRef()?.`object` is ConstructorOverloadDetector }
-                    val constructorOverloadDetector = result.asObjectRef()?.`object` as ConstructorOverloadDetector
-                    assertEquals(case.converted to case.type, constructorOverloadDetector.args)
-                } catch (e: OopRuntimeException) {
-                    assertTrue { case.term.let { it is Var || it is NullRef } }
-                } catch (e: OopException) {
-                    assertTrue { case.isFailed }
-                    assertEquals(case.exception!!::class, e::class)
-                }
+            val ref = TypeRef.of(ConstructorOverloadDetector::class)
+            try {
+                val result = ref.create(case2Term(case))
+                assertFalse { case.isFailed }
+                assertTrue { result is Result.Value }
+                assertTrue { result.asObjectRef()?.`object` is ConstructorOverloadDetector }
+                val constructorOverloadDetector = result.asObjectRef()?.`object` as ConstructorOverloadDetector
+                assertEquals(case.converted to case.type, constructorOverloadDetector.args)
+            } catch (e: OopRuntimeException) {
+                assertTrue { case.term.let { it is Var || it is NullRef } }
+            } catch (e: OopException) {
+                assertTrue { case.isFailed }
+                assertEquals(case.exception!!::class, e::class)
             }
         }
+
+        fun castTerm(case: TestDatum): Term = Struct.of(CAST_OPERATOR, case.term, Atom.of(case.type.fullName))
 
         test("most-proper-overload-is-selected-when-invoking-object-ref-method") {
             testMethodInvocation(Conversions.bestCases) { it.term }
@@ -116,19 +115,18 @@ class RefsSpec :
             }
         }
 
-        test("most-proper-constructor-is-selected-when-instantiating-type-ref") {
-            testConstructorInvocation(Conversions.bestCases, ConstructorOverloadDetector::class) { it.term }
+        withTests(nameFn = { "most-proper-constructor-is-selected/${it.id}" }, Conversions.bestCases) { case ->
+            testConstructorInvocation(case, TestDatum::term)
         }
 
-        test("constructor-can-be-selected-via-explicit-cast-when-instantiating-type-ref") {
-            testConstructorInvocation(Conversions.explicitCases, ConstructorOverloadDetector::class) {
-                Struct.of(CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
-            }
+        withTests(
+            nameFn = { "constructor-can-be-selected-via-explicit-cast/${it.id}" },
+            Conversions.explicitCases,
+        ) { case ->
+            testConstructorInvocation(case, ::castTerm)
         }
 
-        test("constructor-selection-may-fail-when-instantiating-type-ref") {
-            testConstructorInvocation(Conversions.cornerCases, ConstructorOverloadDetector::class) {
-                Struct.of(CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
-            }
+        withTests(nameFn = { "constructor-selection-may-fail/${it.id}" }, Conversions.cornerCases) { case ->
+            testConstructorInvocation(case, ::castTerm)
         }
     })

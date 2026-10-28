@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
@@ -37,35 +38,37 @@ class OOPLibSpec :
             assertIs<TypeError>((solution as? Solution.Halt)?.exception, "$solution")
         }
 
-        test("calls-matching-no-overload-raise-existence-errors") {
-            val solver = Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
-            val tooManyArguments = List.of((1..3).map { Integer.of(it) })
-            val list = Var.of("L")
-            val goals =
-                listOf(
-                    Struct.of("new_object", Atom.of("java.util.ArrayList"), tooManyArguments, list),
+        withTests(
+            nameFn = { "calls-matching-no-overload-raise-existence-errors/${it.id}" },
+            listOf(
+                NoOverloadCase("constructor") { tooManyArguments, list ->
+                    Struct.of("new_object", Atom.of("java.util.ArrayList"), tooManyArguments, list)
+                },
+                NoOverloadCase("method") { tooManyArguments, list ->
                     Struct.of(
                         ",",
                         Struct.of("new_object", Atom.of("java.util.ArrayList"), List.empty(), list),
                         Struct.of("invoke_method", list, Struct.of("add", tooManyArguments.toList()), Var.of("R")),
-                    ),
-                )
-            for (goal in goals) {
-                val solution = solver.solveOnce(goal)
-                assertIs<ExistenceError>((solution as? Solution.Halt)?.exception, "$solution")
-            }
+                    )
+                },
+            ),
+        ) { case ->
+            val solver = Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
+            val solution = solver.solveOnce(case.goal(List.of((1..3).map { Integer.of(it) }), Var.of("L")))
+            assertIs<ExistenceError>((solution as? Solution.Halt)?.exception, "$solution")
         }
 
-        test("numbers-are-converted-back-to-numbers") {
+        withTests(
+            nameFn = { "numbers-are-converted-back-to-numbers/${it.replace('_', '-')}" },
+            listOf("array_items", "list_items", "set_items"),
+        ) { functor ->
             val solver = Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
             val items = List.of(Integer.of(1), Real.of(2.5), Atom.of("a"))
-            for (functor in listOf("array_items", "list_items", "set_items")) {
-                val ref = Var.of("Ref")
-                val back = Var.of("Back")
-                val goal = Struct.of(",", Struct.of(functor, ref, items), Struct.of(functor, ref, back))
-                val solution = solver.solveOnce(goal)
-                assertEquals(items, solution.substitution[back], "$functor: $solution")
-            }
+            val ref = Var.of("Ref")
+            val back = Var.of("Back")
+            val goal = Struct.of(",", Struct.of(functor, ref, items), Struct.of(functor, ref, back))
+            val solution = solver.solveOnce(goal)
+            assertEquals(items, solution.substitution[back], "$functor: $solution")
         }
 
         test("documentation-examples-hold") {
@@ -74,3 +77,8 @@ class OOPLibSpec :
             }
         }
     })
+
+private class NoOverloadCase(
+    val id: String,
+    val goal: (tooManyArguments: List, list: Var) -> Struct,
+)
