@@ -84,6 +84,9 @@ fun FrameFixture.awaitCondition(
     Pause.pause(
         object : Condition(description) {
             override fun test() = predicate()
+
+            // a timeout then also says what the window showed instead
+            override fun descriptionAddendum() = " (window state: ${stateSnapshot()})"
         },
         Timeout.timeout(timeoutSeconds, TimeUnit.SECONDS),
     )
@@ -103,6 +106,15 @@ fun FrameFixture.clickMenuItem(name: String) {
         !onEdt { item.isShowing }
     }
 }
+
+/** The status, pages and solutions currently shown, for failure messages. */
+private fun FrameFixture.stateSnapshot(): String =
+    runCatching {
+        val status = label("statusLabel").text()
+        val pages = tabbedPane("editorTabs").tabTitles().toList()
+        val solutions = tree("solutionsTree").rowTexts()
+        "status='$status', pages=$pages, solutions=$solutions"
+    }.getOrElse { "unavailable: $it" }
 
 /** Opens [menu] and every menu enclosing it, clicking each one again until its pop-up is actually showing. */
 fun FrameFixture.openMenu(menu: JMenu) {

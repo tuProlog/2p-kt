@@ -60,6 +60,9 @@ fun FrameFixture.awaitCondition(
     Pause.pause(
         object : Condition(description) {
             override fun test() = predicate()
+
+            // a timeout then also says what the window showed instead
+            override fun descriptionAddendum() = " (window state: ${stateSnapshot()})"
         },
         Timeout.timeout(timeoutSeconds, TimeUnit.SECONDS),
     )
@@ -92,6 +95,15 @@ fun FrameFixture.openMenu(menu: JMenu) {
 private fun parentMenuOf(item: JMenuItem): JMenu? = onEdt { (item.parent as? JPopupMenu)?.invoker as? JMenu }
 
 private fun <T> onEdt(query: () -> T): T = GuiActionRunner.execute(Callable(query))
+
+/** The status, pages and solutions currently shown, for failure messages. */
+private fun FrameFixture.stateSnapshot(): String =
+    runCatching {
+        val status = label("statusLabel").text()
+        val pages = tabbedPane("editorTabs").tabTitles().toList()
+        val solutions = tree("solutionsTree").rowTexts()
+        "status='$status', pages=$pages, solutions=$solutions"
+    }.getOrElse { "unavailable: $it" }
 
 /** The text of every currently visible row, top to bottom; robust against exactly how many rows are expanded. */
 fun JTreeFixture.rowTexts(): List<String> = (0 until target().rowCount).map(::valueAt)
