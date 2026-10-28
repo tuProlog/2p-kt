@@ -117,9 +117,7 @@ class IterUtilsSpec :
             assertEquals(listOf(emptyList()), emptyList<Int>().subsequences().map { it.toList() }.toList())
         }
 
-        // Known bug: the full sequence is yielded twice (`[[1], [1, 2], [1, 2], ...]`), because the loop only stops
-        // after a prefix comes out no longer than the previous one.
-        xtest("subsequences/are-the-growing-prefixes") {
+        test("subsequences/are-the-growing-prefixes") {
             assertEquals(
                 listOf(listOf(1), listOf(1, 2), listOf(1, 2, 3)),
                 subsequences(1, 2, 3).map { it.toList() }.toList(),
@@ -151,9 +149,9 @@ class IterUtilsSpec :
             assertEquals(listOf(1, 9, 8, 2), sequenceOf(1, 2).insertAt(1, 9, 8).toList())
         }
 
-        // Known bug: KDoc says an index at or past the end appends the items, but they are never yielded.
-        xtest("insert-at/past-the-end-appends") {
+        test("insert-at/past-the-end-appends") {
             assertEquals(listOf(1, 2, 9), sequenceOf(1, 2).insertAt(2, 9).toList())
+            assertEquals(listOf(1, 2, 9, 8), sequenceOf(1, 2).insertAt(5, 9, 8).toList())
         }
 
         test("assert-items-are-not-null/passes-non-null-items") {
