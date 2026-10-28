@@ -43,7 +43,7 @@ class ProbabilisticModeSpec :
             assertEquals(solutions.size, 4)
             solutions.forEach {
                 assertEquals(it.solvedQuery, query)
-                TestUtils.assertEqualsDouble(solutions[0].probability, 1.0, 0.0)
+                assertEquals(1.0, it.probability)
             }
         }
 
@@ -55,7 +55,8 @@ class ProbabilisticModeSpec :
 
             assertEquals(solutions.size, 1)
             assertEquals(solutions[0].solvedQuery, query)
-            TestUtils.assertEqualsDouble(solutions[0].probability, 0.9744)
+            val probability = solutions[0].probability
+            assertTrue(TestUtils.assertEqualsDouble(probability, 0.9744), "probability $probability is not 0.9744")
         }
 
         test("binary-decision-diagram-probabilistic-mode-disabled") {
