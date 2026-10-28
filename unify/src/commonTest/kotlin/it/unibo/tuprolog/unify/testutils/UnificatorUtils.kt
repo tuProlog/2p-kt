@@ -27,15 +27,59 @@ private typealias MatchStrategy = (Term, Term) -> Boolean
 /** Represents teh Unification Unify function */
 private typealias UnifyStrategy = (Term, Term) -> Term?
 
-/** A typealias to simplify method signature writing */
-private typealias CorrectnessMap = Map<Equation, Triple<Substitution, Boolean, Term?>>
-
 /**
  * Utils singleton for testing [Unificator]T2
  *
  * @author Enrico
  */
 internal object UnificatorUtils {
+    /** A named [equation], with its expected mgu, matching outcome and unified term */
+    internal data class UnificationCase(
+        val id: String,
+        val equation: Equation,
+        val mgu: Substitution,
+        val isMatching: Boolean,
+        val unifiedTerm: Term?,
+    )
+
+    /** A named sequence of [equations] solved in the same context, with the expected outcome of the [last] one */
+    internal class EquationSequenceCase(
+        val id: String,
+        val equations: KtList<Equation>,
+        expected: Triple<Substitution, Boolean, Term?>,
+    ) {
+        val last = UnificationCase(id, equations.last(), expected.first, expected.second, expected.third)
+
+        /** The context obtained by solving all [equations] but the last one */
+        fun contextBeforeLast(unificationStrategyConstructor: (Substitution) -> Unificator): Substitution =
+            equations.dropLast(1).fold<Equation, Substitution>(Substitution.empty()) { context, equation ->
+                val (lhs, rhs) = equation.toPair()
+                unificationStrategyConstructor(context).mgu(lhs, rhs)
+            }
+    }
+
+    /** A named pattern to be matched against [memberClause] */
+    internal class MemberPatternCase(
+        val id: String,
+        val pattern: Rule,
+    )
+
+    private fun named(
+        id: String,
+        expectation: Pair<Equation, Triple<Substitution, Boolean, Term?>>,
+    ) = UnificationCase(
+        id,
+        expectation.first,
+        expectation.second.first,
+        expectation.second.second,
+        expectation.second.third,
+    )
+
+    private fun namedSequence(
+        id: String,
+        expectation: Pair<KtList<Equation>, Triple<Substitution, Boolean, Term?>>,
+    ) = EquationSequenceCase(id, expectation.first, expectation.second)
+
     private val aAtom = Atom.of("a")
     private val bAtom = Atom.of("b")
     private val xVar = Var.of("X")
@@ -50,241 +94,221 @@ internal object UnificatorUtils {
         }
 
     private fun member(
+        id: String,
         first: Term,
         second: Term,
-    ): kotlin.collections.List<Rule> =
+    ): KtList<MemberPatternCase> =
         listOf(
-            Fact.of(Struct.of("member", first, second)),
-            Rule.of(Struct.of("member", first, second), Var.of("B")),
+            MemberPatternCase("fact/$id", Fact.of(Struct.of("member", first, second))),
+            MemberPatternCase("rule/$id", Rule.of(Struct.of("member", first, second), Var.of("B"))),
         )
 
     internal val positiveMemberPatterns =
-        member(Atom.of("a"), List.of(Atom.of("a"))) +
+        member("atom-in-list", Atom.of("a"), List.of(Atom.of("a"))) +
             member(
+                "struct-in-nested-list",
                 List.of(Struct.of("a", Var.of("X"))),
                 List.of(List.of(Struct.of("a", Integer.of(1)))),
             )
 
     internal val negativeMemberPatterns =
-        member(Atom.of("a"), List.of(Atom.of("b"))) +
+        member("atom-not-in-list", Atom.of("a"), List.of(Atom.of("b"))) +
             member(
+                "struct-not-in-nested-list",
                 List.of(Struct.of("a", Var.of("X"))),
                 List.of(List.of(Struct.of("b", Integer.of(1)))),
             )
 
     /** Contains a mapping between equations that should have success unifying and a `Triple(mgu, isMatching, unifiedTerm)` */
     internal val successfulUnifications by lazy {
-        mapOf(
-            *EquationUtils.allIdentityEquations
-                .map { (lhs, rhs) ->
-                    (lhs eq rhs) to Triple(Substitution.empty(), true, lhs)
-                }.toTypedArray(),
-            (aAtom eq aAtom) to Triple(Substitution.empty(), true, aAtom),
-            (xVar eq xVar) to Triple(Substitution.empty(), true, xVar),
-            (aAtom eq xVar) to Triple(Substitution.of(xVar, aAtom), true, aAtom),
-            (xVar eq yVar) to Triple(Substitution.of(xVar, yVar), true, yVar),
-            Scope.empty { (xVar eq varOf("X")) to Triple(Substitution.of(xVar, varOf("X")), true, varOf("X")) },
-            Var.anonymous().let { (xVar eq it) to Triple(Substitution.of(xVar, it), true, it) },
-            (Struct.of("f", aAtom, xVar) eq Struct.of("f", aAtom, bAtom)) to
-                Triple(Substitution.of(xVar, bAtom), true, Struct.of("f", aAtom, bAtom)),
-            (Struct.of("f", xVar) eq Struct.of("f", yVar)) to
-                Triple(Substitution.of(xVar, yVar), true, Struct.of("f", yVar)),
-            (Struct.of("f", Struct.of("g", xVar)) eq Struct.of("f", yVar)) to
-                Triple(
-                    Substitution.of(yVar, Struct.of("g", xVar)),
-                    true,
-                    Struct.of("f", Struct.of("g", xVar)),
+        EquationUtils.allIdentityEquations.map {
+            UnificationCase(it.id, it.lhs eq it.rhs, Substitution.empty(), true, it.lhs)
+        } +
+            listOf(
+                named("unification/same-atom", (aAtom eq aAtom) to Triple(Substitution.empty(), true, aAtom)),
+                named("unification/same-var", (xVar eq xVar) to Triple(Substitution.empty(), true, xVar)),
+                named(
+                    "unification/atom-with-var",
+                    (aAtom eq xVar) to Triple(Substitution.of(xVar, aAtom), true, aAtom),
                 ),
-            (Struct.of("f", Struct.of("g", xVar), xVar) eq Struct.of("f", yVar, aAtom)) to
-                Triple(
-                    Substitution.of(yVar to Struct.of("g", aAtom), xVar to aAtom),
-                    true,
-                    Struct.of("f", Struct.of("g", aAtom), aAtom),
+                named("unification/var-with-var", (xVar eq yVar) to Triple(Substitution.of(xVar, yVar), true, yVar)),
+                named(
+                    "unification/var-with-same-named-var",
+                    Scope.empty {
+                        (xVar eq varOf("X")) to
+                            Triple(Substitution.of(xVar, varOf("X")), true, varOf("X"))
+                    },
                 ),
-            Scope.empty {
-                Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom) eq
-                    Rule.of(Struct.of("f", varOf("A"), varOf("B")), varOf("C")) to
-                    Triple(
-                        Substitution.of(
-                            varOf("A") to aAtom,
-                            varOf("B") to Struct.of("b", varOf("X")),
-                            varOf("C") to bAtom,
+                named(
+                    "unification/var-with-anonymous-var",
+                    Var.anonymous().let {
+                        (xVar eq it) to
+                            Triple(Substitution.of(xVar, it), true, it)
+                    },
+                ),
+                named(
+                    "unification/struct-binding-var",
+                    (Struct.of("f", aAtom, xVar) eq Struct.of("f", aAtom, bAtom)) to
+                        Triple(Substitution.of(xVar, bAtom), true, Struct.of("f", aAtom, bAtom)),
+                ),
+                named(
+                    "unification/structs-with-var-args",
+                    (Struct.of("f", xVar) eq Struct.of("f", yVar)) to
+                        Triple(Substitution.of(xVar, yVar), true, Struct.of("f", yVar)),
+                ),
+                named(
+                    "unification/nested-struct-with-var",
+                    (Struct.of("f", Struct.of("g", xVar)) eq Struct.of("f", yVar)) to
+                        Triple(
+                            Substitution.of(yVar, Struct.of("g", xVar)),
+                            true,
+                            Struct.of("f", Struct.of("g", xVar)),
                         ),
-                        true,
-                        Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom),
-                    )
-            },
-            Scope.empty {
-                Indicator.of("ciao", 2) eq Indicator.of(varOf("A"), varOf("B")) to
-                    Triple(
-                        Substitution.of(varOf("A") to Atom.of("ciao"), varOf("B") to Integer.of(2)),
-                        true,
-                        Indicator.of("ciao", 2),
-                    )
-            },
-        )
+                ),
+                named(
+                    "unification/nested-struct-binding-two-vars",
+                    (Struct.of("f", Struct.of("g", xVar), xVar) eq Struct.of("f", yVar, aAtom)) to
+                        Triple(
+                            Substitution.of(yVar to Struct.of("g", aAtom), xVar to aAtom),
+                            true,
+                            Struct.of("f", Struct.of("g", aAtom), aAtom),
+                        ),
+                ),
+                named(
+                    "unification/rule",
+                    Scope.empty {
+                        Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom) eq
+                            Rule.of(Struct.of("f", varOf("A"), varOf("B")), varOf("C")) to
+                            Triple(
+                                Substitution.of(
+                                    varOf("A") to aAtom,
+                                    varOf("B") to Struct.of("b", varOf("X")),
+                                    varOf("C") to bAtom,
+                                ),
+                                true,
+                                Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom),
+                            )
+                    },
+                ),
+                named(
+                    "unification/indicator",
+                    Scope.empty {
+                        Indicator.of("ciao", 2) eq Indicator.of(varOf("A"), varOf("B")) to
+                            Triple(
+                                Substitution.of(varOf("A") to Atom.of("ciao"), varOf("B") to Integer.of(2)),
+                                true,
+                                Indicator.of("ciao", 2),
+                            )
+                    },
+                ),
+            )
     }
 
     /** Contains a mapping between faulty equations and their failed result Triple(mgu, isMatching, unifiedTerm) */
     internal val failedUnifications by lazy {
-        mapOf(
-            *EquationUtils.allContradictionEquations
-                .map { (lhs, rhs) ->
-                    (lhs eq rhs) to failedResultsTriple
-                }.toTypedArray(),
-            (aAtom eq bAtom) to failedResultsTriple,
-            (Struct.of("f", aAtom) eq Struct.of("g", aAtom)) to failedResultsTriple,
-            (Struct.of("f", xVar) eq Struct.of("g", yVar)) to failedResultsTriple,
-            (Struct.of("f", xVar) eq Struct.of("f", yVar, Var.of("Z"))) to failedResultsTriple,
-        )
+        EquationUtils.allContradictionEquations.map {
+            UnificationCase(it.id, it.lhs eq it.rhs, Substitution.failed(), false, null)
+        } +
+            listOf(
+                named("failure/different-atoms", (aAtom eq bAtom) to failedResultsTriple),
+                named(
+                    "failure/different-functors",
+                    (Struct.of("f", aAtom) eq Struct.of("g", aAtom)) to failedResultsTriple,
+                ),
+                named(
+                    "failure/different-functors-with-vars",
+                    (Struct.of("f", xVar) eq Struct.of("g", yVar)) to failedResultsTriple,
+                ),
+                named(
+                    "failure/different-arities",
+                    (Struct.of("f", xVar) eq Struct.of("f", yVar, Var.of("Z"))) to failedResultsTriple,
+                ),
+            )
     }
 
     /** Contains faulty equations that will be rejected by the occur-check */
     internal val occurCheckFailedUnifications by lazy {
-        mapOf(
-            (xVar eq Struct.of("f", xVar)) to failedResultsTriple,
-            (xVar eq LogicList.from(listOf(aAtom, bAtom), xVar)) to failedResultsTriple,
+        listOf(
+            named("occur-check/var-in-struct", (xVar eq Struct.of("f", xVar)) to failedResultsTriple),
+            named(
+                "occur-check/var-in-partial-list",
+                (xVar eq LogicList.from(listOf(aAtom, bAtom), xVar)) to failedResultsTriple,
+            ),
         )
     }
 
     /** Contains successful sequence of equations that should result in specified Triple(mgu, isMatching, unifiedTerm) */
     internal val successSequenceOfUnification by lazy {
-        mapOf(
-            listOf(xVar eq yVar, yVar eq aAtom) to
-                Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
-            listOf(aAtom eq yVar, xVar eq yVar) to
-                Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
-            listOf(aAtom eq yVar, xVar eq yVar, xVar eq aAtom) to
-                Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
+        listOf(
+            namedSequence(
+                "sequence/var-var-then-var-atom",
+                listOf(xVar eq yVar, yVar eq aAtom) to
+                    Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
+            ),
+            namedSequence(
+                "sequence/atom-var-then-var-var",
+                listOf(aAtom eq yVar, xVar eq yVar) to
+                    Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
+            ),
+            namedSequence(
+                "sequence/atom-var-then-var-var-then-var-atom",
+                listOf(aAtom eq yVar, xVar eq yVar, xVar eq aAtom) to
+                    Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
+            ),
         )
     }
 
     /** Contains faulty sequence of equations that should result in a failure */
     internal val failSequenceOfUnification by lazy {
-        mapOf(
-            listOf(xVar eq aAtom, bAtom eq xVar) to failedResultsTriple,
-            listOf(xVar eq aAtom, bAtom eq xVar, yVar eq aAtom) to failedResultsTriple,
-            listOf(aAtom eq yVar, xVar eq yVar, xVar eq bAtom) to failedResultsTriple,
-            listOf(xVar eq Struct.of("f", yVar, xVar), yVar eq Struct.of("f", xVar, yVar)) to failedResultsTriple,
-            listOf(xVar eq Struct.of("f", yVar), yVar eq Struct.of("f", xVar), aAtom eq bAtom) to failedResultsTriple,
+        listOf(
+            namedSequence("sequence/rebinding-var", listOf(xVar eq aAtom, bAtom eq xVar) to failedResultsTriple),
+            namedSequence(
+                "sequence/rebinding-var-then-binding-another",
+                listOf(xVar eq aAtom, bAtom eq xVar, yVar eq aAtom) to failedResultsTriple,
+            ),
+            namedSequence(
+                "sequence/conflicting-bindings-through-var",
+                listOf(aAtom eq yVar, xVar eq yVar, xVar eq bAtom) to failedResultsTriple,
+            ),
+            namedSequence(
+                "sequence/cyclic-structs",
+                listOf(xVar eq Struct.of("f", yVar, xVar), yVar eq Struct.of("f", xVar, yVar)) to failedResultsTriple,
+            ),
+            namedSequence(
+                "sequence/cyclic-structs-then-contradiction",
+                listOf(xVar eq Struct.of("f", yVar), yVar eq Struct.of("f", xVar), aAtom eq bAtom) to
+                    failedResultsTriple,
+            ),
         )
     }
 
-    /** Asserts that mgu computed with [mguStrategy] over [equation] is equals to [expectedMgu] */
+    /** Asserts that mgu computed with [mguStrategy] over the equation of [case] is the expected one */
     internal inline fun assertMguCorrect(
-        equation: Equation,
-        expectedMgu: Substitution,
+        case: UnificationCase,
         mguStrategy: MguStrategy,
     ) {
-        val (equationLhs, equationRhs) = equation.toPair()
+        val (equationLhs, equationRhs) = case.equation.toPair()
 
-        assertEquals(
-            expectedMgu,
-            mguStrategy(equationLhs, equationRhs),
-            "$equationLhs=$equationRhs mgu?",
-        )
+        assertEquals(case.mgu, mguStrategy(equationLhs, equationRhs), "$equationLhs=$equationRhs mgu?")
     }
 
-    /** Asserts that mgu computed with [mguStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values */
-    internal inline fun assertMguCorrect(
-        correctnessMap: CorrectnessMap,
-        mguStrategy: MguStrategy,
-    ) = correctnessMap.forEach { (equation, correctTriple) ->
-        assertMguCorrect(
-            equation,
-            correctTriple.first,
-            mguStrategy,
-        )
-    }
-
-    /** Asserts that match computed with [matchStrategy] over [equation] is equals to [expectedMatch] */
+    /** Asserts that match computed with [matchStrategy] over the equation of [case] is the expected one */
     internal inline fun assertMatchCorrect(
-        equation: Equation,
-        expectedMatch: Boolean,
+        case: UnificationCase,
         matchStrategy: MatchStrategy,
     ) {
-        val (equationLhs, equationRhs) = equation.toPair()
+        val (equationLhs, equationRhs) = case.equation.toPair()
 
-        assertEquals(
-            expectedMatch,
-            matchStrategy(equationLhs, equationRhs),
-            "$equationLhs=$equationRhs match?",
-        )
+        assertEquals(case.isMatching, matchStrategy(equationLhs, equationRhs), "$equationLhs=$equationRhs match?")
     }
 
-    /** Asserts that matching computed with [matchStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values */
-    internal inline fun assertMatchCorrect(
-        correctnessMap: CorrectnessMap,
-        matchStrategy: MatchStrategy,
-    ) = correctnessMap.forEach { (equation, correctTriple) ->
-        assertMatchCorrect(
-            equation,
-            correctTriple.second,
-            matchStrategy,
-        )
-    }
-
-    /** Asserts that unified term computed with [unifyStrategy] over [equation] is equals to [expectedUnifiedTerm] */
+    /** Asserts that unified term computed with [unifyStrategy] over the equation of [case] is the expected one */
     internal inline fun assertUnifiedTermCorrect(
-        equation: Equation,
-        expectedUnifiedTerm: Term?,
+        case: UnificationCase,
         unifyStrategy: UnifyStrategy,
     ) {
-        val (equationLhs, equationRhs) = equation.toPair()
+        val (equationLhs, equationRhs) = case.equation.toPair()
 
-        assertEquals(
-            expectedUnifiedTerm,
-            unifyStrategy(equationLhs, equationRhs),
-            "$equationLhs=$equationRhs unify?",
-        )
-    }
-
-    /** Asserts that unified term computed with [unifyStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values */
-    internal inline fun assertUnifiedTermCorrect(
-        correctnessMap: CorrectnessMap,
-        unifyStrategy: UnifyStrategy,
-    ) = correctnessMap.forEach { (equation, correctTriple) ->
-        assertUnifiedTermCorrect(
-            equation,
-            correctTriple.third,
-            unifyStrategy,
-        )
-    }
-
-    /** Utility function to calculate the unifier for more than one equation, passing created context through different unification */
-    private inline fun multipleEquationMgu(
-        equations: KtList<Equation>,
-        unificationStrategyConstructor: (Substitution) -> Unificator,
-    ): Substitution {
-        var context: Substitution = Substitution.empty()
-
-        // enrich the context with subsequent equations
-        equations.forEach { equation ->
-            val (equationLhs, equationRhs) = equation.toPair()
-            context = unificationStrategyConstructor(context).mgu(equationLhs, equationRhs)
-        }
-        return context
-    }
-
-    /**
-     * Utility function to work with Sequence of Equations to be solved within same context;
-     *
-     * It calculates mgu for the equation list except for the last equation, piggy-backing the context created;
-     * the last equation is used to launch the [lastEquationAssertion] and verify at last if solving equations consecutively,
-     * results in expected [correctnessMap] keys
-     */
-    internal inline fun <T1 : Term, T2 : Term, O> forEquationSequence(
-        lastEquationAssertion: (CorrectnessMap, (T1, T2) -> O) -> Unit,
-        correctnessMap: Map<KtList<Equation>, Triple<Substitution, Boolean, Term?>>,
-        unificationStrategyConstructor: (Substitution) -> Unificator,
-        crossinline unificationStrategyUse: (Substitution, T1, T2) -> O,
-    ) {
-        correctnessMap.forEach { (equations, correctTriple) ->
-            val context = multipleEquationMgu(equations.dropLast(1), unificationStrategyConstructor)
-
-            lastEquationAssertion(mapOf(equations.last() to correctTriple)) { term1, term2 ->
-                unificationStrategyUse(context, term1, term2)
-            }
-        }
+        assertEquals(case.unifiedTerm, unifyStrategy(equationLhs, equationRhs), "$equationLhs=$equationRhs unify?")
     }
 }

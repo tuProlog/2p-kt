@@ -17,7 +17,7 @@ class ThreadSafetySpec :
             val results: MutableList<Future<Substitution>> = Collections.synchronizedList(LinkedList())
             val unificator = Unificator.cached(Unificator.strict())
             repeat(100) {
-                for (equation in successfulUnifications.keys) {
+                for (equation in successfulUnifications.map { it.equation }) {
                     results.add(
                         executors.submit<Substitution> {
                             unificator.mgu(equation.lhs, equation.rhs)
