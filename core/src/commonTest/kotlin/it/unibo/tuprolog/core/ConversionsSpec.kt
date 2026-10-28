@@ -88,30 +88,23 @@ class ConversionsSpec :
             onCorrespondingItems(toBeTested, correct, ::assertEqualities)
         }
 
-        test("string-as-atom") {
-            val correct = AtomUtils.mixedAtoms.map { Atom.of(it) }
-            val toBeTested = AtomUtils.mixedAtoms.map { it.toAtom() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "string-as-atom/${it.id}" }, AtomUtils.mixedAtomCases) { case ->
+            assertEqualities(Atom.of(case.value), case.value.toAtom())
         }
 
-        test("string-as-var") {
-            val correct = VarUtils.correctlyNamedVars.map { Var.of(it) }
-            val toBeTested = VarUtils.correctlyNamedVars.map { it.toVar() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertDifferentVariableExceptForName)
+        withTests(nameFn = { "string-as-var/${it.id}" }, VarUtils.correctlyNamedVarCases) { case ->
+            assertDifferentVariableExceptForName(Var.of(case.name), case.name.toVar())
         }
 
-        test("string-to-term") {
-            val correctAtoms = AtomUtils.mixedAtoms.filterNot { it matches Var.NAME_PATTERN }.map { Atom.of(it) }
-            val toBeTestedAtoms = AtomUtils.mixedAtoms.filterNot { it matches Var.NAME_PATTERN }.map { it.toTerm() }
+        withTests(
+            nameFn = { "string-to-term/atom/${it.id}" },
+            AtomUtils.mixedAtomCases.filterNot { it.value matches Var.NAME_PATTERN },
+        ) { case ->
+            assertEqualities(Atom.of(case.value), case.value.toTerm())
+        }
 
-            onCorrespondingItems(correctAtoms, toBeTestedAtoms, ::assertEqualities)
-
-            val correctVars = VarUtils.correctlyNamedVars.map { Var.of(it) }
-            val toBeTestedVars = VarUtils.correctlyNamedVars.map { it.toTerm() as Var }
-
-            onCorrespondingItems(correctVars, toBeTestedVars, ::assertDifferentVariableExceptForName)
+        withTests(nameFn = { "string-to-term/var/${it.id}" }, VarUtils.correctlyNamedVarCases) { case ->
+            assertDifferentVariableExceptForName(Var.of(case.name), case.name.toTerm() as Var)
         }
 
         fun listsToTerm(

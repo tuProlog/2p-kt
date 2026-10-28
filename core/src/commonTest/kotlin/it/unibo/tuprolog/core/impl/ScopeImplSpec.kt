@@ -269,25 +269,21 @@ class ScopeImplSpec :
             assertEqualities(case.cons(Cons.Companion::of), case.cons(ScopeImpl(ScopeUtils.emptyScope)::consOf))
         }
 
-        test("indicator-of-terms") {
-            val correctInstances = IndicatorUtils.mixedIndicators.map { (name, arity) -> Indicator.of(name, arity) }
-            val toBeTested =
-                IndicatorUtils.mixedIndicators.map { (name, arity) -> emptyScopeInstance.indicatorOf(name, arity) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "indicator-of-terms/${it.id}" }, IndicatorUtils.mixedIndicatorCases) { case ->
+            assertEqualities(
+                Indicator.of(case.name, case.arity),
+                ScopeImpl(ScopeUtils.emptyScope).indicatorOf(case.name, case.arity),
+            )
         }
 
-        test("indicator-of-name-and-arity") {
-            val correctInstances =
-                IndicatorUtils.rawWellFormedIndicators.map { (name, arity) ->
-                    Indicator.of(name, arity)
-                }
-            val toBeTested =
-                IndicatorUtils.rawWellFormedIndicators.map { (name, arity) ->
-                    emptyScopeInstance.indicatorOf(name, arity)
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(
+            nameFn = { "indicator-of-name-and-arity/${it.id}" },
+            IndicatorUtils.wellFormedIndicatorCases,
+        ) { case ->
+            assertEqualities(
+                Indicator.of(case.rawName, case.rawArity),
+                ScopeImpl(ScopeUtils.emptyScope).indicatorOf(case.rawName, case.rawArity),
+            )
         }
 
         test("anonymous") {

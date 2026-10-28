@@ -12,14 +12,35 @@ import kotlin.test.assertNotEquals
  * @author Enrico
  */
 internal object VarUtils {
+    /** A named variable name, for parameterized tests */
+    internal data class VarCase(
+        val id: String,
+        val name: String,
+    )
+
     /** Contains variables that are correctly named */
-    val correctlyNamedVars by lazy { listOf("A", "X", "_", "_X", "_1", "X1", "X_1") }
+    val correctlyNamedVarCases by lazy {
+        listOf(
+            VarCase("uppercase-a", "A"),
+            VarCase("uppercase-x", "X"),
+            VarCase("anonymous", "_"),
+            VarCase("underscore-initial", "_X"),
+            VarCase("underscore-digit", "_1"),
+            VarCase("uppercase-digit", "X1"),
+            VarCase("uppercase-underscore-digit", "X_1"),
+        )
+    }
 
     /** Contains variables that aren't correctly named */
-    val incorrectlyNamedVars by lazy { listOf("a", "x") }
+    val incorrectlyNamedVarCases by lazy {
+        listOf(
+            VarCase("lowercase-a", "a"),
+            VarCase("lowercase-x", "x"),
+        )
+    }
 
     /** Contains mixed variables, correctly and incorrectly named */
-    val mixedVars by lazy { correctlyNamedVars + incorrectlyNamedVars }
+    val mixedVarCases by lazy { correctlyNamedVarCases + incorrectlyNamedVarCases }
 
     /** Asserts that the refreshed variable is not tied to the original variable, except for the name */
     internal fun assertDifferentVariableExceptForName(
