@@ -1,6 +1,12 @@
 name: CI/CD Process
 on:
   workflow_call:
+    inputs:
+      summary-check-run:
+        description: "Id of the run's \"CI summary\" check run, which each job updates as it finishes (see dispatcher.yml)."
+        required: false
+        type: string
+        default: ''
     outputs:
       version:
         description: "The version semantic-release released this run, if any (empty if no release happened)."
@@ -12,6 +18,8 @@ jobs:
     runs-on: ubuntu-26.04
     permissions:
       contents: write
+      actions: read
+      checks: write
     steps:
       - name: Checkout
         # Not DanySK/action-checkout here: on pull_request events it checks out the read-only merge-ref
@@ -52,6 +60,7 @@ jobs:
         # ktlintFormat itself errors, committing whatever partial changes it left would push a new commit
         # that retriggers CI, which fails the same way again -- an infinite loop of auto-commits.
         # Skipped for fork PRs: GITHUB_TOKEN can't push to a fork's branch.
+        id: autocommit
         if: >-
           always() &&
           steps.autoformat.outcome == 'success' &&
@@ -59,6 +68,15 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore(style): automatically apply ktlintFormat repo-wise"
+      - name: CI summary
+        if: always()
+        uses: ./.github/actions/ci-summary
+        with:
+          kind: lint
+          name: ci-digest-lint
+          dims: autoformat=${{ steps.autocommit.outputs.changes_detected || 'false' }}
+          outcome: ${{ job.status }}
+          check-run: ${{ inputs.summary-check-run }}
   build:
     runs-on: ubuntu-26.04
     steps:
@@ -109,68 +127,31 @@ jobs:
         # needs a real or virtual display -- never add -Djava.awt.headless=true here. Xvfb provides that
         # virtual X11 display; see buildSrc/src/main/kotlin/SwingE2eTesting.kt for the task itself.
         run: xvfb-run -a ./gradlew :ide-swing:swingE2eTest :ide-plp-swing:swingE2eTest
-      - name: Digest test results, coverage and Gradle scans for the CI summary
+      - name: CI summary
         if: always()
-        run: python3 .github/scripts/ci-summary.py collect --kind build --outcome "${{ job.status }}" --out ci-digest-build.json
-      - name: Upload the digest
-        if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: ./.github/actions/ci-summary
         with:
-          # also the coverage baseline of later runs, see the summary job
+          kind: build
+          # also the coverage baseline of later runs (see the action)
           name: ci-digest-build
-          path: ci-digest-build.json
-          retention-days: 90
+          retention-days: '90'
+          outcome: ${{ job.status }}
+          check-run: ${{ inputs.summary-check-run }}
   test-extensively:
     needs:
       - lint
       - build
     # if: github.ref_name != 'master' || github.event.commits[0].author.name != 'renovate[bot]'
     uses: ./.github/workflows/test-extensively.yml
-  summary:
-    needs:
-      - lint
-      - build
-      - test-extensively
-    if: always()
-    runs-on: ubuntu-26.04
-    permissions:
-      actions: read
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-        with:
-          sparse-checkout: .github/scripts
-      - name: Download every job's digest
-        uses: actions/download-artifact@v8.0.2
-        with:
-          pattern: ci-digest-*
-          path: digests
-          merge-multiple: true
-      - name: Download the base branch's last digest, for the coverage trend
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          base="${{ github.base_ref }}"
-          if [ -z "$base" ]; then
-            base=develop
-            [ "$GITHUB_REF_NAME" = master ] && base=master
-          fi
-          run_id=$(gh run list -R "$GITHUB_REPOSITORY" --workflow dispatcher.yml --branch "$base" --status success \
-            --limit 1 --json databaseId -q '.[0].databaseId')
-          if [ -n "$run_id" ]; then
-            gh run download "$run_id" -R "$GITHUB_REPOSITORY" -n ci-digest-build -D baseline \
-              || echo "Run $run_id of $base has no build digest yet."
-          fi
-      - name: Write the CI summary
-        run: >-
-          python3 .github/scripts/ci-summary.py report
-          --digests digests --baseline baseline/ci-digest-build.json --summary "$GITHUB_STEP_SUMMARY"
+    with:
+      summary-check-run: ${{ inputs.summary-check-run }}
   release:
     permissions:
       contents: write
       packages: write
       id-token: write  # Required for OIDC on npmjs
+      actions: read
+      checks: write
     needs:
       - lint
       - build
@@ -215,12 +196,23 @@ jobs:
         # so release.config.js drops the version into a $RUNNER_TEMP file instead (see its recordVersionCmd);
         # this step is what turns that file into an actual job output (see docs.yml, which consumes it).
         id: released-version
+        if: always()
         run: |
           if [ -f "$RUNNER_TEMP/last-release-version.txt" ]; then
             echo "version=$(cat "$RUNNER_TEMP/last-release-version.txt")" >> "$GITHUB_OUTPUT"
           else
             echo "No release version recorded (no release happened this run)."
           fi
+      - name: CI summary
+        if: always()
+        uses: ./.github/actions/ci-summary
+        with:
+          kind: release
+          name: ci-digest-release
+          version: ${{ steps.released-version.outputs.version }}
+          outcome: ${{ job.status }}
+          retention-days: '90'
+          check-run: ${{ inputs.summary-check-run }}
   success:
     runs-on: ubuntu-26.04
     needs:
