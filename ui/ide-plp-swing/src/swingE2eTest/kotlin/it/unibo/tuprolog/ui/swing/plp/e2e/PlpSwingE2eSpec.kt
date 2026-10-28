@@ -37,8 +37,10 @@ class PlpSwingE2eSpec :
             window.awaitCondition("the trivial query to solve") {
                 tree("solutionsTree").rowTexts().isNotEmpty()
             }
-
-            assertTrue(pane.target().isEnabledAt(titles.indexOf("BDD")))
+            // the tab is enabled by its own re-render, which may land after the solution shows up
+            window.awaitCondition("the BDD tab to become enabled") {
+                pane.target().isEnabledAt(titles.indexOf("BDD"))
+            }
         }
 
         test("New from template opens the Bayesian alarm network theory") {

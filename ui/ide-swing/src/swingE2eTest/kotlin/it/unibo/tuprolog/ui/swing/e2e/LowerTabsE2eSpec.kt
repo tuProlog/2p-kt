@@ -23,12 +23,9 @@ class LowerTabsE2eSpec :
         afterTest { window.cleanUp() }
 
         test("every lower tab can be selected") {
-            val pane = window.tabbedPane("lowerTabs")
-            val baseTitles = pane.tabTitles().map { it.removeSuffix("*") }
-            for (index in baseTitles.indices) {
-                pane.selectTab(index)
-                assertTrue(pane.target().selectedIndex == index, "could not select tab '${baseTitles[index]}'")
-            }
+            val baseTitles = window.tabbedPane("lowerTabs").tabTitles().map { it.removeSuffix("*") }
+            // selectLowerTab retries until the tab is actually selected, or fails after a timeout
+            baseTitles.forEach(window::selectLowerTab)
         }
 
         test("Stdin text survives switching to another tab and back") {
