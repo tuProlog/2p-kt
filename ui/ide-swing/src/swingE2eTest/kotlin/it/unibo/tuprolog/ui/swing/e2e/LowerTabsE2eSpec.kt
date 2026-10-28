@@ -70,19 +70,21 @@ class LowerTabsE2eSpec :
             solveTrivialQuery()
 
             window.selectLowerTab("Flags")
-            val table = window.table("flagsTable")
-            val flagNames = (0 until table.target().rowCount).map { table.valueAt(TableCell.row(it).column(0)) }
-            assertTrue(flagNames.contains("unknown"))
-            assertTrue(flagNames.contains("double_quotes"))
+            // the inspected flags are rendered by their own state update, which may land after the solution shows up
+            window.awaitCondition("the notable flags to be listed") {
+                val table = table("flagsTable")
+                val flagNames = (0 until table.target().rowCount).map { table.valueAt(TableCell.row(it).column(0)) }
+                flagNames.containsAll(listOf("unknown", "double_quotes"))
+            }
         }
 
         test("the Libraries tab lists the loaded runtime libraries") {
             solveTrivialQuery()
 
             window.selectLowerTab("Libraries")
-            val rows = window.tree("librariesTree").rowTexts()
-            assertTrue(rows.isNotEmpty())
-            assertTrue(rows.any { it.startsWith("functor/3 — ") }, "no documentation preview in: $rows")
+            window.awaitCondition("the libraries to be listed with documentation previews") {
+                tree("librariesTree").rowTexts().any { it.startsWith("functor/3 — ") }
+            }
         }
 
         test("Static KB and Dynamic KB tabs are reachable read-only views") {

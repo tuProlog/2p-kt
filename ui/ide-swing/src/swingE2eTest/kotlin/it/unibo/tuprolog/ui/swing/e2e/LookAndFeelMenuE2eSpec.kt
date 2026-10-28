@@ -3,6 +3,7 @@ package it.unibo.tuprolog.ui.swing.e2e
 import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.ui.swing.app.installedLookAndFeels
 import org.assertj.swing.fixture.FrameFixture
+import javax.swing.JMenu
 import javax.swing.JRadioButtonMenuItem
 import javax.swing.UIManager
 import kotlin.test.assertEquals
@@ -18,8 +19,7 @@ class LookAndFeelMenuE2eSpec :
         afterTest { window.cleanUp() }
 
         test("every installed look-and-feel has a menu item, matching the currently active one") {
-            val menu = window.menuItemWithPath("Look and Feel")
-            menu.click()
+            window.openMenu(window.menuItemWithPath("Look and Feel").target() as JMenu)
             val expectedNames = installedLookAndFeels().map { it.name }
             expectedNames.forEach { name ->
                 window.menuItem("lookAndFeelMenuItem.$name").requireVisible()
@@ -34,8 +34,7 @@ class LookAndFeelMenuE2eSpec :
             val other =
                 installedLookAndFeels().first { it.className != UIManager.getLookAndFeel().javaClass.name }
 
-            window.menuItemWithPath("Look and Feel").click()
-            window.menuItem("lookAndFeelMenuItem.${other.name}").click()
+            window.clickMenuItem("lookAndFeelMenuItem.${other.name}")
 
             window.awaitCondition("the look-and-feel to switch to ${other.name}") {
                 UIManager.getLookAndFeel().javaClass.name == other.className

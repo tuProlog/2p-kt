@@ -44,7 +44,7 @@ class PlpSwingE2eSpec :
         }
 
         test("New from template opens the Bayesian alarm network theory") {
-            window.menuItem("newFromTemplateMenuItem.bayesian-alarm").click()
+            window.clickMenuItem("newFromTemplateMenuItem.bayesian-alarm")
 
             window.awaitCondition("the template page to open") {
                 tabbedPane("editorTabs").tabTitles().any { it.removeSuffix("*").startsWith("bayesian-alarm.pl") }

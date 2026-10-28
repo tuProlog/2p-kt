@@ -28,6 +28,9 @@ clicking a `JTabbedPane` tab never changes `selectedIndex` — no exception is t
 - **Swing** (`src/swingE2eTest`, task `swingE2eTest`): Kotest `FunSpec`s, one real application window per leaf
   (`beforeTest { window = launchIdeSwing() }`, `afterTest { window.cleanUp() }`). The task runs on the JUnit
   Platform under a pinned JDK 21 and `en_US`, and only discovers the e2e specs, not the module's unit specs.
+  Synchronize on observed state, never on time: `awaitCondition` for anything rendered asynchronously, and
+  `clickMenuItem(name)`/`selectLowerTab(title)` instead of AssertJ's `menuItem(...).click()`/`selectTab(...)`, since
+  they repeat a lost click until its effect shows up.
 - **Browser** (`scripts/browser-e2e-test.mjs`, task `:ide-web:browserE2ETest`, not part of `check`): runs every
   scenario even after a failure and writes one JUnit test case per scenario to
   `ide-web/build/test-results/browserE2ETest/TEST-BrowserE2E.xml`.

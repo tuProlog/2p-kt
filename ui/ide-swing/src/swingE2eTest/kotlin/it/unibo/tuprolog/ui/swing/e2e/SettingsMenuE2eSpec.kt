@@ -25,7 +25,7 @@ class SettingsMenuE2eSpec :
                 editor.target().font = editor.target().font.deriveFont((defaultSize + ZOOM_DELTA).toFloat())
             }
 
-            window.menuItem("restoreDefaultSettingsMenuItem").click()
+            window.clickMenuItem("restoreDefaultSettingsMenuItem")
 
             window.awaitCondition("the editor to go back to the default font size") {
                 editor.target().font.size == defaultSize
@@ -34,7 +34,7 @@ class SettingsMenuE2eSpec :
         }
 
         test("Delete persisted state asks for confirmation and can be cancelled") {
-            window.menuItem("deletePersistedStateMenuItem").click()
+            window.clickMenuItem("deletePersistedStateMenuItem")
             val dialog = window.optionPane()
             dialog.requireVisible()
             dialog.cancelButton().click()

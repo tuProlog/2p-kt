@@ -15,7 +15,7 @@ class PageNavigationE2eSpec :
         afterTest { window.cleanUp() }
 
         test("File New adds and selects another untitled document page") {
-            window.menuItem("newMenuItem").click()
+            window.clickMenuItem("newMenuItem")
 
             window.awaitCondition("a second page tab to appear") {
                 tabbedPane("editorTabs").tabTitles().size == 2
@@ -24,7 +24,7 @@ class PageNavigationE2eSpec :
         }
 
         test("File New scratch page adds a scratch-named page") {
-            window.menuItem("newScratchPageMenuItem").click()
+            window.clickMenuItem("newScratchPageMenuItem")
 
             window.awaitCondition("a scratch page tab to appear") {
                 tabbedPane("editorTabs").tabTitles().any { it.removeSuffix(" •").startsWith("scratch-") }
@@ -33,7 +33,7 @@ class PageNavigationE2eSpec :
 
         test("each page keeps its own query text when switching tabs") {
             window.textBox("queryField").setText("first_page_query.")
-            window.menuItem("newMenuItem").click()
+            window.clickMenuItem("newMenuItem")
             window.awaitCondition("second page selected") { tabbedPane("editorTabs").tabTitles().size == 2 }
 
             window.textBox("queryField").requireText("")
@@ -51,15 +51,15 @@ class PageNavigationE2eSpec :
         }
 
         test("Close page removes the selected tab") {
-            window.menuItem("newMenuItem").click()
+            window.clickMenuItem("newMenuItem")
             window.awaitCondition("second page selected") { tabbedPane("editorTabs").tabTitles().size == 2 }
 
-            window.menuItem("closePageMenuItem").click()
+            window.clickMenuItem("closePageMenuItem")
             window.awaitCondition("back down to one page") { tabbedPane("editorTabs").tabTitles().size == 1 }
         }
 
         test("closing every page falls back to a disabled, page-less workspace") {
-            window.menuItem("closePageMenuItem").click()
+            window.clickMenuItem("closePageMenuItem")
 
             window.awaitCondition("no pages left") { tabbedPane("editorTabs").tabTitles().isEmpty() }
             window.label("statusLabel").requireText("No page")

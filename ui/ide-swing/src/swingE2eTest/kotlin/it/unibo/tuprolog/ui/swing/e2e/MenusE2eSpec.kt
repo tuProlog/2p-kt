@@ -16,7 +16,7 @@ class MenusE2eSpec :
         afterTest { window.cleanUp() }
 
         test("File Open shows a file chooser that can be cancelled") {
-            window.menuItem("openMenuItem").click()
+            window.clickMenuItem("openMenuItem")
             window.fileChooser().cancel()
             window.awaitCondition("still exactly one page, nothing opened") {
                 tabbedPane("editorTabs").tabTitles().size == 1
@@ -24,18 +24,18 @@ class MenusE2eSpec :
         }
 
         test("File Save on a never-saved page shows a save file chooser that can be cancelled") {
-            window.menuItem("saveMenuItem").click()
+            window.clickMenuItem("saveMenuItem")
             window.fileChooser().cancel()
         }
 
         test("File Reload on an untitled page is safely rejected") {
-            window.menuItem("reloadMenuItem").click()
+            window.clickMenuItem("reloadMenuItem")
             // Untitled documents have no origin to reload from; the controller rejects the action with no dialog.
             window.label("statusLabel").requireText("Idle")
         }
 
         test("File properties shows the current page's metadata") {
-            window.menuItem("filePropertiesMenuItem").click()
+            window.clickMenuItem("filePropertiesMenuItem")
             val info = window.optionPane().requireInformationMessage()
             assertTrue(
                 info
@@ -48,12 +48,12 @@ class MenusE2eSpec :
         }
 
         test("File Quit closes the window when there is nothing unsaved") {
-            window.menuItem("quitMenuItem").click()
+            window.clickMenuItem("quitMenuItem")
             window.awaitCondition("the window to close") { !target().isShowing }
         }
 
         test("File Close page removes the page") {
-            window.menuItem("closePageMenuItem").click()
+            window.clickMenuItem("closePageMenuItem")
             window.awaitCondition("no pages left") { tabbedPane("editorTabs").tabTitles().isEmpty() }
         }
 
@@ -62,14 +62,14 @@ class MenusE2eSpec :
             // "Select all" acts on whatever component currently owns OS keyboard focus, so the field must
             // actually be focused first -- setText() alone never grants it real focus.
             window.textBox("queryField").focus()
-            window.menuItem("selectAllMenuItem").click()
+            window.clickMenuItem("selectAllMenuItem")
 
             val queryField = window.textBox("queryField").target()
             assertTrue(queryField.selectedText == "member(X, [1, 2]).")
         }
 
         test("Search Find opens and can be dismissed") {
-            window.menuItem("findMenuItem").click()
+            window.clickMenuItem("findMenuItem")
             val dialog = window.dialog()
             dialog.requireVisible()
             dialog.button(JButtonMatcher.withText("Cancel")).click()
@@ -77,7 +77,7 @@ class MenusE2eSpec :
         }
 
         test("Search Replace opens and can be dismissed") {
-            window.menuItem("replaceMenuItem").click()
+            window.clickMenuItem("replaceMenuItem")
             val dialog = window.dialog()
             dialog.requireVisible()
             dialog.button(JButtonMatcher.withText("Cancel")).click()
@@ -87,7 +87,7 @@ class MenusE2eSpec :
         test("Search Go to line moves the caret to the requested line") {
             window.textBox("pageEditor").setText("a.\nb.\nc.\nd.")
 
-            window.menuItem("goToLineMenuItem").click()
+            window.clickMenuItem("goToLineMenuItem")
             val dialog = window.dialog()
             dialog.textBox().setText("3")
             dialog.button(JButtonMatcher.withText("OK")).click()
@@ -97,7 +97,7 @@ class MenusE2eSpec :
         }
 
         test("Help About shows the application's info dialog") {
-            window.menuItem("aboutMenuItem").click()
+            window.clickMenuItem("aboutMenuItem")
             val info = window.optionPane().requireInformationMessage()
             assertTrue(
                 info
@@ -110,7 +110,7 @@ class MenusE2eSpec :
         }
 
         test("Help Report an issue includes a status report and can be closed") {
-            window.menuItem("reportIssueMenuItem").click()
+            window.clickMenuItem("reportIssueMenuItem")
             val optionPane = window.optionPane()
             assertTrue(optionPane.textBox("reportIssueReportArea").text().contains("tuProlog IDE"))
             optionPane.buttonWithText("Close").click()

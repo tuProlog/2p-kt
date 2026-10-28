@@ -14,7 +14,11 @@ import org.assertj.swing.timing.Condition
 import org.assertj.swing.timing.Pause
 import org.assertj.swing.timing.Timeout
 import java.awt.GraphicsEnvironment
+import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
+import javax.swing.JMenu
+import javax.swing.JMenuItem
+import javax.swing.JPopupMenu
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -60,6 +64,34 @@ fun FrameFixture.awaitCondition(
         Timeout.timeout(timeoutSeconds, TimeUnit.SECONDS),
     )
 }
+
+/**
+ * Clicks the menu item named [name] like a user would: opens every enclosing menu, outermost first, then clicks the
+ * item. On a busy display a synthesized click can get lost: the menu simply never opens, and AssertJ's own
+ * `menuItem(...).click()` then fails after its timeout. So each click is repeated until its effect (the menu open,
+ * or closed again once the item is clicked) is actually observed, rather than trusted.
+ */
+fun FrameFixture.clickMenuItem(name: String) {
+    val item = menuItem(name).target()
+    openMenu(checkNotNull(parentMenuOf(item)) { "menu item '$name' is not inside a menu" })
+    awaitCondition("the '$name' menu item to be clicked") {
+        if (onEdt { item.isShowing }) robot().click(item)
+        !onEdt { item.isShowing }
+    }
+}
+
+/** Opens [menu] and every menu enclosing it, clicking each one again until its pop-up is actually showing. */
+fun FrameFixture.openMenu(menu: JMenu) {
+    parentMenuOf(menu)?.let(::openMenu)
+    awaitCondition("the '${menu.text}' menu to open") {
+        if (!onEdt { menu.isPopupMenuVisible }) robot().click(menu)
+        onEdt { menu.isPopupMenuVisible }
+    }
+}
+
+private fun parentMenuOf(item: JMenuItem): JMenu? = onEdt { (item.parent as? JPopupMenu)?.invoker as? JMenu }
+
+private fun <T> onEdt(query: () -> T): T = GuiActionRunner.execute(Callable(query))
 
 /** The text of every currently visible row, top to bottom; robust against exactly how many rows are expanded. */
 fun JTreeFixture.rowTexts(): List<String> = (0 until target().rowCount).map(::valueAt)

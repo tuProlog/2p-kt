@@ -37,7 +37,7 @@ class PositionIndexingE2eSpec :
             window.label("caretLabel").requireText("Line 1, column 1")
 
             window.textBox("pageEditor").setText("a.\nb.\nc.")
-            window.menuItem("goToLineMenuItem").click()
+            window.clickMenuItem("goToLineMenuItem")
             val dialog = window.dialog()
             dialog.textBox().setText("3")
             dialog.button(JButtonMatcher.withText("OK")).click()
