@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -50,21 +51,15 @@ class TermSpec :
         }
 
         compounds("term-apply-throw-exception-with-failed-substitution") {
-            try {
-                it.compound.apply(Substitution.failed())
-            } catch (e: SubstitutionApplicationException) {
-                assertSame(it.compound, e.term)
-                assertEquals(Substitution.failed(), e.substitution)
-            }
+            val e = assertFailsWith<SubstitutionApplicationException> { it.compound.apply(Substitution.failed()) }
+            assertSame(it.compound, e.term)
+            assertEquals(Substitution.failed(), e.substitution)
         }
 
         compounds("term-get-throw-exception-with-failed-substitution") {
-            try {
-                it.compound[Substitution.failed()]
-            } catch (e: SubstitutionApplicationException) {
-                assertSame(it.compound, e.term)
-                assertEquals(Substitution.failed(), e.substitution)
-            }
+            val e = assertFailsWith<SubstitutionApplicationException> { it.compound[Substitution.failed()] }
+            assertSame(it.compound, e.term)
+            assertEquals(Substitution.failed(), e.substitution)
         }
 
         compounds("substitution-apply-to-preserves-type") { assertEquals(it.expected, sub.applyTo(it.compound)) }

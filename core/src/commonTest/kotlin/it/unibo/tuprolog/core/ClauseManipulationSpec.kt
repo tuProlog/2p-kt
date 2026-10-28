@@ -142,11 +142,11 @@ class ClauseManipulationSpec :
             )
 
             for (i in 0 until rule.headArity) {
-                assertEquals(rule.head[i], rule.getHeadArg(0))
+                assertEquals(rule.head[i], rule.getHeadArg(i))
             }
 
             for (i in 0 until fact.headArity) {
-                assertEquals(fact.head[i], fact.getHeadArg(0))
+                assertEquals(fact.head[i], fact.getHeadArg(i))
             }
         }
 
