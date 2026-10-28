@@ -37,6 +37,7 @@ import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
+import it.unibo.tuprolog.core.List as LogicList
 
 /** `++` is not a default operator, so inputs using it only parse when an operator set is passed explicitly. */
 private val customOperators = OperatorSet.DEFAULT + Operator("++", Specifier.XFX, 700)
@@ -284,16 +285,16 @@ class TypedParsingSpec :
             assertEquals(kind.type, error.type)
         }
 
-        // Known bug: parseClause's KDoc says plain structures are promoted to facts, but it throws
-        // InvalidTermTypeException instead (only `p(a) :- true` parses as a fact).
-        xtest("clause/promotes-a-plain-struct-to-a-fact") {
+        test("clause/promotes-a-plain-struct-to-a-fact") {
             assertEquals(Fact.of(Struct.of("p", Atom.of("a"))), parser.parseClause("p(a)"))
+            assertEquals(Fact.of(Struct.of("p", Atom.of("a"))), "p(a)".parseAsClause())
         }
 
-        // Known bug: an operator used as a plain atom argument (ISO allows `f(+)`) fails
-        // with "Operator '+' ... is missing its right operand"; only quoted or parenthesised operators parse.
-        xtest("atom/bare-operator-as-argument") {
+        test("atom/bare-operator-as-argument") {
             assertEquals(Struct.of("f", Atom.of("+")), parser.parseTerm("f(+)"))
+            assertEquals(Struct.of("f", Atom.of("-"), Atom.of("=")), parser.parseTerm("f(-, =)"))
+            assertEquals(LogicList.of(Atom.of("+"), Atom.of("*")), parser.parseTerm("[+, *]"))
+            assertEquals(Struct.of("=", Atom.of("x"), Atom.of("-")), parser.parseTerm("x = -"))
         }
 
         test("parsers-with-operators-use-them-by-default") {
