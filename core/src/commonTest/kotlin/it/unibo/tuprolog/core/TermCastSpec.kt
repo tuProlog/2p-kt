@@ -1,30 +1,36 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 
+private class CastableTermCase(
+    val id: String,
+    val term: Term,
+)
+
 class TermCastSpec :
     FunSpec({
         val terms =
             listOf(
-                Integer.ONE,
-                Real.ONE_HALF,
-                Atom.of("a"),
-                Struct.of("f", Var.of("X")),
-                Var.of("X"),
-                EmptyList(),
-                EmptyBlock(),
-                List.of(Integer.ZERO, Real.ZERO),
-                Block.of(Integer.ZERO, Real.ZERO),
-                Tuple.of(Integer.ZERO, Real.ZERO),
-                Indicator.of("a", 2),
-                Directive.of(Atom.of("b")),
-                Rule.of(Atom.of("c"), Atom.of("d")),
-                Fact.of(Atom.of("e")),
-                Truth.FAIL,
+                CastableTermCase("integer", Integer.ONE),
+                CastableTermCase("real", Real.ONE_HALF),
+                CastableTermCase("atom", Atom.of("a")),
+                CastableTermCase("struct", Struct.of("f", Var.of("X"))),
+                CastableTermCase("variable", Var.of("X")),
+                CastableTermCase("empty-list", EmptyList()),
+                CastableTermCase("empty-block", EmptyBlock()),
+                CastableTermCase("list", List.of(Integer.ZERO, Real.ZERO)),
+                CastableTermCase("block", Block.of(Integer.ZERO, Real.ZERO)),
+                CastableTermCase("tuple", Tuple.of(Integer.ZERO, Real.ZERO)),
+                CastableTermCase("indicator", Indicator.of("a", 2)),
+                CastableTermCase("directive", Directive.of(Atom.of("b"))),
+                CastableTermCase("rule", Rule.of(Atom.of("c"), Atom.of("d"))),
+                CastableTermCase("fact", Fact.of(Atom.of("e"))),
+                CastableTermCase("fail", Truth.FAIL),
             )
 
         val asTypeTester =
@@ -842,11 +848,9 @@ class TermCastSpec :
                 }
             }
 
-        test("type-checking-and-casting") {
-            for (term in terms) {
-                term.accept(positiveTypeTester)
-                term.accept(asTypeTester)
-                term.accept(castToTypeTester)
-            }
+        withTests(nameFn = { "type-checking-and-casting/${it.id}" }, terms) { case ->
+            case.term.accept(positiveTypeTester)
+            case.term.accept(asTypeTester)
+            case.term.accept(castToTypeTester)
         }
     })
