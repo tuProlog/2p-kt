@@ -63,54 +63,49 @@ internal object StructUtils {
         assertSame(firstVarAfter, secondVarAfter)
     }
 
+    /** A named [Struct] functor and arguments pair, for parameterized tests */
+    internal data class StructCase(
+        val id: String,
+        val functor: String,
+        val args: List<Term>,
+    ) {
+        /** Whether no argument is a [Var] */
+        val isGround: Boolean get() = args.none { it.isVar }
+    }
+
     /** For non special Structs are intended all valid Structs that has not a corresponding representation in any Struct subclass */
-    internal val nonSpecialStructs by lazy {
+    internal val nonSpecialStructCases by lazy {
         listOf(
-            "ciao" to listOf<Term>(Truth.TRUE),
-            "myFunctor" to listOf<Term>(Atom.of("hello"), Atom.of("world"), Atom.of("!")),
-            "varFunctor" to listOf<Term>(Var.of("A"), Var.of("B")),
-            "{}" to listOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
-            "[]" to listOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
-            "." to listOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar")),
-            "," to listOf<Term>(EmptyList(), EmptyBlock(), Truth.TRUE),
-            "/" to listOf<Term>(Truth.FALSE),
-            "sameVar" to Scope.empty { listOf<Term>(varOf("X"), varOf("X")) },
+            StructCase("ciao-1", "ciao", listOf(Truth.TRUE)),
+            StructCase("my-functor-3", "myFunctor", listOf(Atom.of("hello"), Atom.of("world"), Atom.of("!"))),
+            StructCase("var-functor-2", "varFunctor", listOf(Var.of("A"), Var.of("B"))),
+            StructCase("curly-braces-3", "{}", listOf(Integer.of(1), Integer.of(2), Integer.of(3))),
+            StructCase("square-brackets-3", "[]", listOf(Integer.of(1), Integer.of(2), Integer.of(3))),
+            StructCase("dot-3", ".", listOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar"))),
+            StructCase("comma-3", ",", listOf(EmptyList(), EmptyBlock(), Truth.TRUE)),
+            StructCase("slash-1", "/", listOf(Truth.FALSE)),
+            StructCase("same-var-2", "sameVar", Scope.empty { listOf(varOf("X"), varOf("X")) }),
         )
     }
 
     /** Special Structs are those Structs that can be mapped exactly in a subclass of Struct */
-    internal val specialStructs by lazy {
+    internal val specialStructCases by lazy {
         listOf(
-            Cons.FUNCTOR to listOf<Term>(Var.of("H"), Var.of("T")),
-            Block.FUNCTOR to listOf(Tuple.wrapIfNeeded(Atom.of("My atom"))),
-            Tuple.FUNCTOR to listOf<Term>(Atom.of("left"), Atom.of("right")),
-            Clause.FUNCTOR to listOf<Term>(Atom.of("rule1"), Atom.of("rule2")),
-            Clause.FUNCTOR to listOf<Term>(Atom.of("myDirective")),
-            Clause.FUNCTOR to listOf<Term>(Atom.of("myFact"), Truth.TRUE),
-            "myAtom" to listOf(),
-            Empty.EMPTY_LIST_FUNCTOR to listOf(),
-            Empty.EMPTY_BLOCK_FUNCTOR to listOf(),
-            Truth.TRUE_FUNCTOR to listOf(),
-            Truth.FAIL_FUNCTOR to listOf(),
-            Indicator.FUNCTOR to listOf<Term>(Atom.of("func"), Integer.of(4)),
+            StructCase("cons", Cons.FUNCTOR, listOf(Var.of("H"), Var.of("T"))),
+            StructCase("block", Block.FUNCTOR, listOf(Tuple.wrapIfNeeded(Atom.of("My atom")))),
+            StructCase("tuple", Tuple.FUNCTOR, listOf(Atom.of("left"), Atom.of("right"))),
+            StructCase("rule", Clause.FUNCTOR, listOf(Atom.of("rule1"), Atom.of("rule2"))),
+            StructCase("directive", Clause.FUNCTOR, listOf(Atom.of("myDirective"))),
+            StructCase("fact", Clause.FUNCTOR, listOf(Atom.of("myFact"), Truth.TRUE)),
+            StructCase("atom", "myAtom", listOf()),
+            StructCase("empty-list", Empty.EMPTY_LIST_FUNCTOR, listOf()),
+            StructCase("empty-block", Empty.EMPTY_BLOCK_FUNCTOR, listOf()),
+            StructCase("true", Truth.TRUE_FUNCTOR, listOf()),
+            StructCase("fail", Truth.FAIL_FUNCTOR, listOf()),
+            StructCase("indicator", Indicator.FUNCTOR, listOf(Atom.of("func"), Integer.of(4))),
         )
     }
 
-    /** All Structs under testing, [specialStructs] and [nonSpecialStructs] */
-    internal val mixedStructs by lazy { nonSpecialStructs + specialStructs }
-
-    /** All under testing ground Structs, those containing at least one variable */
-    internal val groundStructs by lazy { mixedStructs.filterNot { (_, args) -> args.any { it.isVar } } }
-
-    /** All not ground Structs, those not containing variables */
-    internal val nonGroundStructs by lazy { mixedStructs - groundStructs }
-
-    /** All Struct functors */
-    internal val mixedStructFunctors by lazy { mixedStructs.map { (functor, _) -> functor } }
-
-    /** All Struct arguments */
-    internal val mixedStructArguments by lazy { mixedStructs.map { (_, args) -> args } }
-
-    /** All Struct variables */
-    internal val mixedStructVariables by lazy { mixedStructArguments.map { it.filter(Term::isVar) } }
+    /** All Structs under testing, [specialStructCases] and [nonSpecialStructCases] */
+    internal val mixedStructCases by lazy { nonSpecialStructCases + specialStructCases }
 }

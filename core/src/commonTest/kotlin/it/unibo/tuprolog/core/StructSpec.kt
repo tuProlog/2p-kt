@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.StructImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualsUsingVariablesSimpleNames
@@ -22,9 +23,6 @@ import kotlin.test.assertNotSame
  */
 class StructSpec :
     FunSpec({
-        val correctNonSpecialStructInstances =
-            StructUtils.nonSpecialStructs.map { (functor, args) -> StructImpl(functor, args) }
-
         val arbitraryFoldedStructElements = listOf(Atom.of("hello"), Atom.of("world"), Atom.of("!"))
 
         val arbitraryFoldedStructCorrectInstance =
@@ -42,98 +40,44 @@ class StructSpec :
                 ),
             )
 
-        test("struct-of-should-create-sub-class-instance-with-special-structs") {
-            val specialStructInstances = StructUtils.specialStructs.map { (functor, args) -> Struct.of(functor, args) }
-            specialStructInstances.forEach { assertNotEquals(StructImpl::class, it::class) }
+        fun structsOf(
+            kind: String,
+            filter: (StructUtils.StructCase) -> Boolean,
+            expected: (StructUtils.StructCase) -> Term,
+        ) = withTests(
+            nameFn = { "of/creates-$kind/${it.id}" },
+            StructUtils.mixedStructCases.filter(filter),
+        ) { case ->
+            assertEqualities(expected(case), Struct.of(case.functor, case.args))
         }
 
-        test("struct-of-creates-correct-non-specific-struct-instances") {
-            onCorrespondingItems(
-                correctNonSpecialStructInstances,
-                StructUtils.nonSpecialStructs.map { (functor, args) -> Struct.of(functor, args.asSequence()) },
-                ::assertEqualities,
-            )
+        withTests(nameFn = { "of/special/${it.id}" }, StructUtils.specialStructCases) { case ->
+            assertNotEquals(StructImpl::class, Struct.of(case.functor, case.args)::class)
         }
 
-        test("struct-of-creates-cons-if-needed") {
-            val consStructs =
-                StructUtils.mixedStructs.filter { (functor, args) ->
-                    args.size == 2 && Cons.FUNCTOR == functor
-                }
-
-            val correctInstances = consStructs.map { (_, args) -> Cons.of(args.first(), args.last()) }
-            val toBeTested = consStructs.map { (functor, args) -> Struct.of(functor, args) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of/non-special/${it.id}" }, StructUtils.nonSpecialStructCases) { case ->
+            assertEqualities(StructImpl(case.functor, case.args), Struct.of(case.functor, case.args.asSequence()))
         }
 
-        test("struct-of-creates-rule-if-needed") {
-            val ruleStructs =
-                StructUtils.mixedStructs.filter { (functor, args) ->
-                    args.size == 2 && Clause.FUNCTOR == functor && args.first() is Struct
-                }
+        structsOf(
+            "cons",
+            { it.args.size == 2 && Cons.FUNCTOR == it.functor },
+        ) { Cons.of(it.args.first(), it.args.last()) }
 
-            val correctInstances = ruleStructs.map { (_, args) -> Rule.of(args.first() as Struct, args.last()) }
-            val toBeTested = ruleStructs.map { (functor, args) -> Struct.of(functor, args) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        structsOf("rule", { it.args.size == 2 && Clause.FUNCTOR == it.functor && it.args.first() is Struct }) {
+            Rule.of(it.args.first() as Struct, it.args.last())
         }
 
-        test("struct-of-creates-tuple-if-needed") {
-            val tupleStructs =
-                StructUtils.mixedStructs.filter { (functor, args) ->
-                    args.size == 2 && Tuple.FUNCTOR == functor
-                }
+        structsOf("tuple", { it.args.size == 2 && Tuple.FUNCTOR == it.functor }) { Tuple.of(it.args) }
 
-            val correctInstances = tupleStructs.map { (_, args) -> Tuple.of(args.toList()) }
-            val toBeTested = tupleStructs.map { (functor, args) -> Struct.of(functor, args) }
+        structsOf("block", { it.args.size == 1 && Block.FUNCTOR == it.functor }) { Block.of(it.args) }
 
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
-        }
+        structsOf("directive", { it.args.size == 1 && Clause.FUNCTOR == it.functor }) { Directive.of(it.args.first()) }
 
-        test("struct-of-creates-set-if-needed") {
-            val setStructs =
-                StructUtils.mixedStructs.filter { (functor, args) ->
-                    args.size == 1 && Block.FUNCTOR == functor
-                }
+        structsOf("atom", { it.args.isEmpty() }) { Atom.of(it.functor) }
 
-            val correctInstances = setStructs.map { (_, args) -> Block.of(args) }
-            val toBeTested = setStructs.map { (functor, args) -> Struct.of(functor, args) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
-        }
-
-        test("struct-of-creates-directive-if-needed") {
-            val directiveStructs =
-                StructUtils.mixedStructs.filter { (functor, args) ->
-                    args.size == 1 && Clause.FUNCTOR == functor
-                }
-
-            val correctInstances = directiveStructs.map { (_, args) -> Directive.of(args.first()) }
-            val toBeTested = directiveStructs.map { (functor, args) -> Struct.of(functor, args) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
-        }
-
-        test("struct-of-creates-atom-if-needed") {
-            val atomStructs = StructUtils.mixedStructs.filter { (_, args) -> args.isEmpty() }
-
-            val correctInstances = atomStructs.map { (functor, _) -> Atom.of(functor) }
-            val toBeTested = atomStructs.map { (functor, args) -> Struct.of(functor, args) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
-        }
-
-        test("struct-of-creates-indicator-if-needed") {
-            val indicatorStructs =
-                StructUtils.mixedStructs.filter { (functor, args) ->
-                    args.size == 2 && Indicator.FUNCTOR == functor
-                }
-
-            val correctInstances = indicatorStructs.map { (_, args) -> Indicator.of(args.first(), args.last()) }
-            val toBeTested = indicatorStructs.map { (functor, args) -> Struct.of(functor, args) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        structsOf("indicator", { it.args.size == 2 && Indicator.FUNCTOR == it.functor }) {
+            Indicator.of(it.args.first(), it.args.last())
         }
 
         test("struct-fold-can-create-folded-cons-instances-empty-list-terminated") {

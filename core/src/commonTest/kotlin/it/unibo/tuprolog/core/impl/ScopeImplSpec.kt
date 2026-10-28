@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
@@ -235,27 +236,18 @@ class ScopeImplSpec :
             onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
         }
 
-        test("struct-of-functor-and-varargs") {
-            val correctInstances = StructUtils.mixedStructs.map { (functor, args) -> Struct.of(functor, args) }
-            val toBeTested =
-                StructUtils.mixedStructs.map { (functor, args) ->
-                    emptyScopeInstance.structOf(functor, args)
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "struct-of-functor-and-varargs/${it.id}" }, StructUtils.mixedStructCases) { case ->
+            assertEqualities(
+                Struct.of(case.functor, case.args),
+                ScopeImpl(ScopeUtils.emptyScope).structOf(case.functor, case.args),
+            )
         }
 
-        test("struct-of-functor-and-sequence") {
-            val correctInstances =
-                StructUtils.mixedStructs.map { (functor, args) ->
-                    Struct.of(functor, args.asSequence())
-                }
-            val toBeTested =
-                StructUtils.mixedStructs.map { (functor, args) ->
-                    emptyScopeInstance.structOf(functor, args.asSequence())
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "struct-of-functor-and-sequence/${it.id}" }, StructUtils.mixedStructCases) { case ->
+            assertEqualities(
+                Struct.of(case.functor, case.args.asSequence()),
+                ScopeImpl(ScopeUtils.emptyScope).structOf(case.functor, case.args.asSequence()),
+            )
         }
 
         test("fact-of") {
