@@ -70,6 +70,7 @@ class LogicProgrammingScopeWithUnificationSpec :
 
             beforeTest { setUp() }
 
+            // --8<-- [start:unification-operators]
             test("matches") {
                 logicProgramming {
                     assertTrue(term1 matches term2)
@@ -87,6 +88,7 @@ class LogicProgrammingScopeWithUnificationSpec :
                     assertEquals(unified, unify(term1, term2))
                 }
             }
+            // --8<-- [end:unification-operators]
 
             test("unify-with") {
                 logicProgramming {

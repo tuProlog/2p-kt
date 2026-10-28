@@ -49,14 +49,18 @@ develocity {
     }
 }
 
+// --8<-- [start:git-hooks]
 gitHooks {
     commitMsg { conventionalCommits() }
     createHooks(true)
 }
+// --8<-- [end:git-hooks]
 
 rootProject.name = "2p"
 
+// --8<-- [start:modules]
 include(":documentation")
+// --8<-- [start:published-modules]
 include(":utils")
 include(":core")
 include(":unify")
@@ -92,6 +96,8 @@ include(":ide-swing")
 include(":ide-plp-swing")
 include(":ide-web")
 // END 2P-KT GUI REFACTOR MODULES
+// --8<-- [end:published-modules]
+// --8<-- [end:modules]
 
 // UI-related modules (:repl, :gui*, :ide*) live under ui/ for discoverability, but keep their original
 // Gradle names/paths (no ":ui:" prefix) so no project(...) reference elsewhere needs to change.

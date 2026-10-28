@@ -24,6 +24,7 @@ buildscript {
     }
 }
 
+// --8<-- [start:project-templates]
 plugins {
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.ktMpp.multiProjectHelper)
@@ -82,6 +83,7 @@ multiProjectHelper {
 
     applyProjectTemplates()
 }
+// --8<-- [end:project-templates]
 
 // Kotest (#1017): every Kotlin Multiplatform module with test sources (JS-only ones included) gets the Kotest
 // engine and assertions, plus the KSP-based Kotest Gradle plugin that Kotlin/JS needs to discover specs (JVM

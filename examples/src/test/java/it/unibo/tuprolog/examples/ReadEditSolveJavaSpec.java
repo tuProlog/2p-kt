@@ -27,6 +27,7 @@ public class ReadEditSolveJavaSpec {
         MutableSolver solver = Solver.prolog().newBuilder().staticKb(theory).buildMutable();
         Struct fact = Struct.of("diff", Integer.of(15));
         solver.assertZ(fact);
+        // --8<-- [start:iterate-solutions]
         Struct query = Struct.of("increment", Integer.of(15), Var.of("X"));
         Iterator<Solution> solutionIterator = solver.solve(query).iterator();
         while (solutionIterator.hasNext()) {
@@ -38,6 +39,7 @@ public class ReadEditSolveJavaSpec {
                 assertEquals(30, actualValue);
             }
         }
+        // --8<-- [end:iterate-solutions]
     }
 
     @Test

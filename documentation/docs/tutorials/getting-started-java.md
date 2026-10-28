@@ -110,7 +110,7 @@ instead of a `List` — but `Sequence` isn't a `java.lang.Iterable`, so Java can
 directly; call `.iterator()` and drive it with a `while` loop instead:
 
 ```java
---8<-- "examples/src/test/java/it/unibo/tuprolog/examples/ReadEditSolveJavaSpec.java:30:40"
+--8<-- "examples/src/test/java/it/unibo/tuprolog/examples/ReadEditSolveJavaSpec.java:iterate-solutions"
 ```
 
 (That snippet is from a different, real example in 2P-Kt's own test suite — same pattern, different query.)

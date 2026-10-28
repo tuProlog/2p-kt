@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.gradleMockService)
 }
 
+// --8<-- [start:dependencies]
 kotlin {
     sourceSets {
         commonMain {
@@ -44,6 +45,7 @@ kotlin {
         }
     }
 }
+// --8<-- [end:dependencies]
 
 fun Project.getCommonResource(name: String): File {
     val file = file("src/commonTest/resources/it/unibo/tuprolog/solve/libs/io").resolve(name)
