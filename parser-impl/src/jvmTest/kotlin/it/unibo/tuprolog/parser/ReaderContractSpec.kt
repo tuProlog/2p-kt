@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.parser
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import java.io.Reader
 import java.io.StringReader
 import kotlin.test.assertEquals
@@ -39,13 +40,14 @@ class ReaderContractSpec :
             assertFailsWith<IllegalArgumentException> { StringReader("a").toSource(chunkSize = -1) }
         }
 
-        test("auto-close-controls-reader-ownership") {
-            for (autoClose in listOf(false, true)) {
-                val reader = TrackingReader("a.")
-                PrologLexer.default().lex(reader.toSource(chunkSize = 1, autoClose = autoClose)).materialize()
-                assertEquals(autoClose, reader.closed)
-                assertEquals(if (autoClose) 1 else 0, reader.closeCount)
-            }
+        withTests(
+            nameFn = { "auto-close-controls-reader-ownership/${if (it) "auto-close" else "no-auto-close"}" },
+            listOf(false, true),
+        ) { autoClose ->
+            val reader = TrackingReader("a.")
+            PrologLexer.default().lex(reader.toSource(chunkSize = 1, autoClose = autoClose)).materialize()
+            assertEquals(autoClose, reader.closed)
+            assertEquals(if (autoClose) 1 else 0, reader.closeCount)
         }
 
         test("empty-intermediate-reads-do-not-prematurely-end-the-source") {
