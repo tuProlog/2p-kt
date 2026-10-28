@@ -36,23 +36,8 @@ class RealSpec :
             assertTrue(case.string matches Real.PATTERN)
         }
 
-        // which cases are affected is platform-dependent: e.g. 1E-84 on both, 5E-324 (Double.MIN_VALUE) on JS only
-        val isScientificWithoutDot: (RealUtils.RealCase) -> Boolean = {
-            it.value.toString().let { string -> "E" in string && "." !in string }
-        }
-
-        withTests(
-            nameFn = { "to-string-matches-pattern/${it.id}" },
-            RealUtils.realCases.filterNot(isScientificWithoutDot),
-        ) { case ->
+        withTests(nameFn = { "to-string-matches-pattern/${it.id}" }, RealUtils.realCases) { case ->
             assertTrue(Real.of(case.string).toString() matches Real.PATTERN)
-        }
-
-        // Known bug: Real.toStringEnsuringDecimal appends ".0" to scientific notations lacking a dot (e.g. "1E-84.0")
-        RealUtils.realCases.filter(isScientificWithoutDot).forEach { case ->
-            xtest("to-string-matches-pattern/${case.id}") {
-                assertTrue(Real.of(case.string).toString() matches Real.PATTERN)
-            }
         }
 
         test("infinity-handling") {

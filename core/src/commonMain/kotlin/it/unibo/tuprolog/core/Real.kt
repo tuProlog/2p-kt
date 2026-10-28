@@ -44,7 +44,12 @@ interface Real : Numeric {
         @JsName("toStringEnsuringDecimal")
         fun toStringEnsuringDecimal(real: BigDecimal): String =
             real.toString().let {
-                if ("." !in it) "$it.0" else it
+                val exponent = it.indexOfFirst { c -> c == 'E' || c == 'e' }
+                when {
+                    "." in it -> it
+                    exponent < 0 -> "$it.0"
+                    else -> it.substring(0, exponent) + ".0" + it.substring(exponent)
+                }
             }
 
         /** Creates a [Real] with the given [real] value. */
