@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import kotlin.test.assertEquals
 
 /**
@@ -42,6 +41,8 @@ internal object ScopeUtils {
         actual: Map<String, Var>,
     ) {
         assertEquals(expected.keys, actual.keys)
-        onCorrespondingItems(expected.values, actual.values, VarUtils::assertDifferentVariableExceptForName)
+        for (name in expected.keys) {
+            VarUtils.assertDifferentVariableExceptForName(expected.getValue(name), actual.getValue(name))
+        }
     }
 }

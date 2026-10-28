@@ -11,7 +11,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNoEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotEqualsUsingVariablesSimpleNames
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -51,23 +50,6 @@ class AssertionUtilsSpec :
             assertNotStructurallyEquals(term1, term2)
             assertFailsWith<AssertionError> { assertStructurallyEquals(term1, term2) }
             assertFailsWith<AssertionError> { assertNoEqualities(term1, term1) }
-        }
-
-        test("on-corresponding-items-visits-pairs-in-order") {
-            val visited = mutableListOf<Pair<Int, String>>()
-            onCorrespondingItems(listOf(1, 2), listOf("a", "b")) { i, s -> visited += i to s }
-            assertEquals(listOf(1 to "a", 2 to "b"), visited)
-        }
-
-        test("on-corresponding-items-fails-on-size-mismatch-before-visiting-anything") {
-            val visited = mutableListOf<Pair<Int, String>>()
-            assertFailsWith<AssertionError> {
-                onCorrespondingItems(listOf(1, 2, 3), listOf("a", "b")) { i, s -> visited += i to s }
-            }
-            assertFailsWith<AssertionError> {
-                onCorrespondingItems(listOf(1), listOf("a", "b")) { i, s -> visited += i to s }
-            }
-            assertEquals(emptyList(), visited)
         }
 
         test("assert-all-vs-all-visits-every-ordered-pair-including-self-pairs") {
