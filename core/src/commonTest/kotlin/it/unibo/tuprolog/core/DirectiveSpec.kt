@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.DirectiveImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.DirectiveUtils
 import kotlin.test.assertFailsWith
 
@@ -14,12 +14,8 @@ import kotlin.test.assertFailsWith
  */
 class DirectiveSpec :
     FunSpec({
-        val correctInstances = DirectiveUtils.mixedDirectives.map(::DirectiveImpl)
-
-        test("directive-of-vararg-returns-correct-instance") {
-            val toBeTested = DirectiveUtils.mixedDirectives.map { body -> Directive.of(body) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of/${it.id}" }, DirectiveUtils.mixedDirectiveCases) { case ->
+            assertEqualities(DirectiveImpl(case.body), Directive.of(case.body))
         }
 
         test("directive-of-vararg-constructs-tuple-for-multiple-arguments") {

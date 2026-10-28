@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.FactImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.FactUtils
 
 /**
@@ -13,9 +13,7 @@ import it.unibo.tuprolog.core.testutils.FactUtils
  */
 class FactSpec :
     FunSpec({
-        val correctInstances = FactUtils.mixedFacts.map(::FactImpl)
-
-        test("fact-of-creates-correct-instances") {
-            onCorrespondingItems(correctInstances, FactUtils.mixedFacts.map { Fact.of(it) }, ::assertEqualities)
+        withTests(nameFn = { "of/${it.id}" }, FactUtils.mixedFactCases) { case ->
+            assertEqualities(FactImpl(case.head), Fact.of(case.head))
         }
     })

@@ -235,34 +235,30 @@ class ScopeImplSpec :
             )
         }
 
-        test("fact-of") {
-            val correctInstances = FactUtils.mixedFacts.map { Fact.of(it) }
-            val toBeTested = FactUtils.mixedFacts.map(emptyScopeInstance::factOf)
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "fact-of/${it.id}" }, FactUtils.mixedFactCases) { case ->
+            assertEqualities(Fact.of(case.head), ScopeImpl(ScopeUtils.emptyScope).factOf(case.head))
         }
 
-        test("rule-of") {
-            val correctInstances = RuleUtils.mixedRules.map { (head, body) -> Rule.of(head, body) }
-            val toBeTested = RuleUtils.mixedRules.map { (head, body) -> emptyScopeInstance.ruleOf(head, body) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "rule-of/${it.id}" }, RuleUtils.mixedRuleCases) { case ->
+            assertEqualities(
+                Rule.of(case.head, case.body),
+                ScopeImpl(ScopeUtils.emptyScope).ruleOf(case.head, case.body),
+            )
         }
 
-        test("directive-of") {
-            val correctInstances = DirectiveUtils.mixedDirectives.map { Directive.of(it) }
-            val toBeTested = DirectiveUtils.mixedDirectives.map { emptyScopeInstance.directiveOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "directive-of/${it.id}" }, DirectiveUtils.mixedDirectiveCases) { case ->
+            assertEqualities(Directive.of(case.body), ScopeImpl(ScopeUtils.emptyScope).directiveOf(case.body))
         }
 
-        test("clause-of") {
-            val mixedClauses = RuleUtils.mixedRules + DirectiveUtils.mixedDirectives.map { Pair(null, it) }
+        withTests(nameFn = { "clause-of/rule/${it.id}" }, RuleUtils.mixedRuleCases) { case ->
+            assertEqualities(
+                Clause.of(case.head, case.body),
+                ScopeImpl(ScopeUtils.emptyScope).clauseOf(case.head, case.body),
+            )
+        }
 
-            val correctInstances = mixedClauses.map { (head, body) -> Clause.of(head, body) }
-            val toBeTested = mixedClauses.map { (head, body) -> emptyScopeInstance.clauseOf(head, body) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "clause-of/directive/${it.id}" }, DirectiveUtils.mixedDirectiveCases) { case ->
+            assertEqualities(Clause.of(null, case.body), ScopeImpl(ScopeUtils.emptyScope).clauseOf(null, case.body))
         }
 
         withTests(nameFn = { "cons-of/${it.id}" }, ConsUtils.mixedConsCases) { case ->
