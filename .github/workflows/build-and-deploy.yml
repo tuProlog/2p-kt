@@ -87,9 +87,11 @@ jobs:
             zipMavenCentralPortalPublication
             releaseMavenCentralPortalPublication
             --dry-run
-          check-command: ./gradlew check --parallel --continue
+          # koverXmlReport only aggregates the coverage the JVM tests in `check` already recorded
+          check-command: ./gradlew check koverXmlReport --parallel --continue
           should-deploy: true
-          should-run-codecov: false
+          should-run-codecov: true
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
           maven-central-username: ${{ secrets.MAVEN_USERNAME }}
           maven-central-password: ${{ secrets.MAVEN_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
@@ -107,12 +109,63 @@ jobs:
         # needs a real or virtual display -- never add -Djava.awt.headless=true here. Xvfb provides that
         # virtual X11 display; see buildSrc/src/main/kotlin/SwingE2eTesting.kt for the task itself.
         run: xvfb-run -a ./gradlew :ide-swing:swingE2eTest :ide-plp-swing:swingE2eTest
+      - name: Digest test results, coverage and Gradle scans for the CI summary
+        if: always()
+        run: python3 .github/scripts/ci-summary.py collect --kind build --outcome "${{ job.status }}" --out ci-digest-build.json
+      - name: Upload the digest
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          # also the coverage baseline of later runs, see the summary job
+          name: ci-digest-build
+          path: ci-digest-build.json
+          retention-days: 90
   test-extensively:
     needs:
       - lint
       - build
     # if: github.ref_name != 'master' || github.event.commits[0].author.name != 'renovate[bot]'
     uses: ./.github/workflows/test-extensively.yml
+  summary:
+    needs:
+      - lint
+      - build
+      - test-extensively
+    if: always()
+    runs-on: ubuntu-26.04
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          sparse-checkout: .github/scripts
+      - name: Download every job's digest
+        uses: actions/download-artifact@v8.0.2
+        with:
+          pattern: ci-digest-*
+          path: digests
+          merge-multiple: true
+      - name: Download the base branch's last digest, for the coverage trend
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          base="${{ github.base_ref }}"
+          if [ -z "$base" ]; then
+            base=develop
+            [ "$GITHUB_REF_NAME" = master ] && base=master
+          fi
+          run_id=$(gh run list -R "$GITHUB_REPOSITORY" --workflow dispatcher.yml --branch "$base" --status success \
+            --limit 1 --json databaseId -q '.[0].databaseId')
+          if [ -n "$run_id" ]; then
+            gh run download "$run_id" -R "$GITHUB_REPOSITORY" -n ci-digest-build -D baseline \
+              || echo "Run $run_id of $base has no build digest yet."
+          fi
+      - name: Write the CI summary
+        run: >-
+          python3 .github/scripts/ci-summary.py report
+          --digests digests --baseline baseline/ci-digest-build.json --summary "$GITHUB_STEP_SUMMARY"
   release:
     permissions:
       contents: write

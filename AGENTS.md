@@ -24,6 +24,9 @@ module with `:<module>:<task>` (e.g. `:core:ktlintCheck`, `:ide-swing:test`):
   `:ide-web:browserE2ETest`. Docs: `:documentation:assembleSite`.
 - **Coverage**: `koverHtmlReport`/`koverXmlReport` at the root aggregate the JVM test runs of every production module
   (report in `build/reports/kover/`); per module, `:<module>:koverHtmlReport`. JS-only code isn't measured.
+- **CI summary**: every CI job digests its JUnit XML, Kover report and Gradle scan links with
+  `.github/scripts/ci-summary.py collect`, and the `summary` job of `build-and-deploy.yml` renders them all (OS × runtime
+  matrix, unit/E2E failures, coverage vs. the base branch's last green run) into the workflow run's summary page.
 - `--parallel` and `--continue` (run everything, collect all failures instead of stopping at the first) are
   used throughout CI and are worth defaulting to locally for the same reason: one invocation instead of a
   fix-rerun-fix loop.

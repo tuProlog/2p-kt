@@ -53,6 +53,21 @@ jobs:
       - name: Skip tests on cache hit
         if: steps.cache-test-result.outputs.cache-hit == 'true'
         run: echo "Inputs unchanged since last successful run, skipping tests."
+      - name: Digest test results for the CI summary
+        if: always()
+        shell: bash
+        run: |
+          py=python3; [ "$RUNNER_OS" = Windows ] && py=python
+          $py .github/scripts/ci-summary.py collect --kind matrix --dim runtime=jvm --dim os=${{ matrix.os }} \
+            --dim version=${{ matrix.java-version }} --dim dist=${{ matrix.jdk-dist }} \
+            --outcome "${{ steps.run-tests.outcome }}" --out ci-digest-jvm-${{ matrix.os }}-${{ matrix.java-version }}-${{ matrix.jdk-dist }}.json
+      - name: Upload the digest
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: ci-digest-jvm-${{ matrix.os }}-${{ matrix.java-version }}-${{ matrix.jdk-dist }}
+          path: ci-digest-jvm-${{ matrix.os }}-${{ matrix.java-version }}-${{ matrix.jdk-dist }}.json
+          retention-days: 7
 
   test-js:
     strategy:
@@ -103,3 +118,17 @@ jobs:
       - name: Skip tests on cache hit
         if: steps.cache-test-result.outputs.cache-hit == 'true'
         run: echo "Inputs unchanged since last successful run, skipping tests."
+      - name: Digest test results for the CI summary
+        if: always()
+        shell: bash
+        run: |
+          py=python3; [ "$RUNNER_OS" = Windows ] && py=python
+          $py .github/scripts/ci-summary.py collect --kind matrix --dim runtime=js --dim os=${{ matrix.os }} --dim version=${{ matrix.node-version }} \
+            --outcome "${{ steps.run-tests.outcome }}" --out ci-digest-js-${{ matrix.os }}-${{ matrix.node-version }}.json
+      - name: Upload the digest
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: ci-digest-js-${{ matrix.os }}-${{ matrix.node-version }}
+          path: ci-digest-js-${{ matrix.os }}-${{ matrix.node-version }}.json
+          retention-days: 7

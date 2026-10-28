@@ -42,6 +42,8 @@ develocity {
         buildScanPublished {
             if (ci) {
                 println("::error title=Gradle scan for $osTag, $jvmTag, $whenTag::$buildScanUri")
+                // collected into the CI run summary by .github/scripts/ci-summary.py
+                File(settingsDir, "build/gradle-scans.txt").apply { parentFile.mkdirs() }.appendText("$buildScanUri\n")
             }
         }
     }
