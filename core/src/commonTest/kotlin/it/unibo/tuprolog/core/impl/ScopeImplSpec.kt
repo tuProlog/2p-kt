@@ -17,7 +17,6 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.BlockUtils
 import it.unibo.tuprolog.core.testutils.ConsUtils
@@ -48,118 +47,85 @@ import it.unibo.tuprolog.core.List as LogicList
  */
 class ScopeImplSpec :
     FunSpec({
-        lateinit var emptyScopeInstance: Scope
-
-        lateinit var nonEmptyScopeInstances: List<Scope>
-
-        lateinit var mixedScopeInstances: List<Scope>
-
-        fun init() {
-            emptyScopeInstance = ScopeImpl(ScopeUtils.emptyScope)
-            nonEmptyScopeInstances = ScopeUtils.nonEmptyScopes.map(::ScopeImpl)
-            mixedScopeInstances = ScopeUtils.mixedScopes.map(::ScopeImpl)
-        }
-
-        beforeTest { init() }
+        fun scopes(
+            property: String,
+            cases: List<ScopeUtils.ScopeCase> = ScopeUtils.mixedScopeCases,
+            test: (ScopeUtils.ScopeCase) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it) }
 
         // //////////////////
         // Scope specific //
         // //////////////////
-        test("contains-var-works-as-expected") {
-            assertFalse { emptyScopeInstance.contains(Var.of("A")) }
-
-            onCorrespondingItems(ScopeUtils.nonEmptyScopeVars, nonEmptyScopeInstances) { containedVars, scope ->
-                containedVars.forEach { assertTrue { it in scope } }
-            }
+        test("contains-var-in-empty-scope") {
+            assertFalse { ScopeImpl(ScopeUtils.emptyScope).contains(Var.of("A")) }
         }
 
-        test("contains-string-works-as-expected") {
-            assertFalse { emptyScopeInstance.contains("A") }
-
-            onCorrespondingItems(ScopeUtils.nonEmptyScopeVarNames, nonEmptyScopeInstances) { containedVars, scope ->
-                containedVars.forEach { assertTrue { it in scope } }
-            }
+        scopes("contains-var", ScopeUtils.nonEmptyScopeCases) { case ->
+            val scope = ScopeImpl(case.scope())
+            case.scope().values.forEach { assertTrue { it in scope } }
         }
 
-        test("variables-correct") {
-            onCorrespondingItems(
-                ScopeUtils.mixedScopes,
-                mixedScopeInstances.map { it.variables },
-                ::assertScopeCorrectContents,
-            )
+        test("contains-string-in-empty-scope") {
+            assertFalse { ScopeImpl(ScopeUtils.emptyScope).contains("A") }
         }
 
-        test("var-of-string-with-non-present-variable-name-should-insert-a-new-one-among-others") {
+        scopes("contains-string", ScopeUtils.nonEmptyScopeCases) { case ->
+            val scope = ScopeImpl(case.scope())
+            case.varNames.forEach { assertTrue { it in scope } }
+        }
+
+        scopes("variables") { case -> assertScopeCorrectContents(case.scope(), ScopeImpl(case.scope()).variables) }
+
+        test("var-of-string-with-non-present-variable-name-should-insert-it-in-empty-scope") {
+            val emptyScopeInstance = ScopeImpl(ScopeUtils.emptyScope)
             emptyScopeInstance.varOf("Test")
             assertEquals(1, emptyScopeInstance.variables.count())
-
-            val scopeVarInitialCounts = ScopeUtils.nonEmptyScopeVarNames.map { it.count() }
-            val newVarNames = ScopeUtils.nonEmptyScopeVarNames.map { scopeVarNames -> scopeVarNames.map { it + "x" } }
-            onCorrespondingItems(newVarNames, nonEmptyScopeInstances) { toBeAddedVars, nonEmptyScope ->
-                toBeAddedVars.forEach { nonEmptyScope.varOf(it) }
-            }
-
-            onCorrespondingItems(scopeVarInitialCounts, nonEmptyScopeInstances) { initialCount, scopeInstance ->
-                assertEquals(initialCount * 2, scopeInstance.variables.count())
-            }
         }
 
-        test("var-of-string-with-already-contained-variable-should-not-insert-that-variable-again") {
-            val scopeVarInitialCounts = ScopeUtils.nonEmptyScopeVarNames.map { it.count() }
-            onCorrespondingItems(
-                ScopeUtils.nonEmptyScopeVarNames,
-                nonEmptyScopeInstances,
-            ) { presentVars, nonEmptyScope ->
-                presentVars.forEach { nonEmptyScope.varOf(it) }
-            }
+        scopes("var-of-string-with-non-present-variable-name-should-insert-it", ScopeUtils.nonEmptyScopeCases) { case ->
+            val scope = ScopeImpl(case.scope())
+            case.varNames.forEach { scope.varOf(it + "x") }
+            assertEquals(case.varNames.count() * 2, scope.variables.count())
+        }
 
-            onCorrespondingItems(scopeVarInitialCounts, nonEmptyScopeInstances) { initialCount, scopeInstance ->
-                assertEquals(initialCount, scopeInstance.variables.count())
-            }
+        scopes(
+            "var-of-string-with-already-contained-variable-should-not-insert-it",
+            ScopeUtils.nonEmptyScopeCases,
+        ) { case ->
+            val scope = ScopeImpl(case.scope())
+            case.varNames.forEach { scope.varOf(it) }
+            assertEquals(case.varNames.count(), scope.variables.count())
         }
 
         xtest("var-of-underscore-creates-always-different-anonymous-instances") {
+            val emptyScopeInstance = ScopeImpl(ScopeUtils.emptyScope)
             assertNotSame(emptyScopeInstance.varOf("_"), emptyScopeInstance.varOf("_"))
         }
 
-        test("where-executes-the-given-lambda") {
-            mixedScopeInstances.forEach { aScope ->
-                assertFailsWith<IllegalStateException> { aScope.where { throw IllegalStateException() } }
-            }
+        scopes("where-executes-the-given-lambda") { case ->
+            assertFailsWith<IllegalStateException> { ScopeImpl(case.scope()).where { throw IllegalStateException() } }
         }
 
-        test("where-returns-starting-scope-after-execution") {
-            onCorrespondingItems(
-                mixedScopeInstances,
-                mixedScopeInstances.map { it.where { 1 + 2 } },
-            ) { expected, actual ->
-                assertSame(expected, actual)
-            }
+        scopes("where-returns-starting-scope-after-execution") { case ->
+            val scope = ScopeImpl(case.scope())
+            assertSame(scope, scope.where { 1 + 2 })
         }
 
-        test("with-executes-given-lambda") {
-            mixedScopeInstances.forEach { aScope ->
-                assertFailsWith<IllegalStateException> { aScope.with { throw IllegalStateException() } }
-            }
+        scopes("with-executes-given-lambda") { case ->
+            assertFailsWith<IllegalStateException> { ScopeImpl(case.scope()).with { throw IllegalStateException() } }
         }
 
-        test("with-returns-computation-results-after-execution") {
+        scopes("with-returns-computation-results-after-execution") { case ->
             val myResult = 3
-            onCorrespondingItems(
-                mixedScopeInstances.map { myResult },
-                mixedScopeInstances.map { it.with { myResult } },
-            ) { expected, actual -> assertEquals(expected, actual) }
+            assertEquals(myResult, ScopeImpl(case.scope()).with { myResult })
         }
 
-        test("scope-equals-works-as-expected") {
-            val toTestEmptyScope = ScopeImpl(ScopeUtils.emptyScope)
-            val toTestNonEmptyScopes = ScopeUtils.nonEmptyScopes.map(::ScopeImpl)
-            val toTestMixedScopes = ScopeUtils.mixedScopes.map(::ScopeImpl)
+        test("empty-scopes-are-equal") {
+            assertEquals(ScopeImpl(ScopeUtils.emptyScope), ScopeImpl(ScopeUtils.emptyScope))
+        }
 
-            assertEquals(emptyScopeInstance, toTestEmptyScope)
-
-            assertNotEquals(nonEmptyScopeInstances, toTestNonEmptyScopes)
-            assertNotEquals(mixedScopeInstances, toTestMixedScopes)
+        scopes("scopes-with-fresh-variables-are-not-equal", ScopeUtils.nonEmptyScopeCases) { case ->
+            assertNotEquals(ScopeImpl(case.scope()), ScopeImpl(case.scope()))
         }
 
         // /////////////////////
@@ -214,11 +180,8 @@ class ScopeImplSpec :
             )
         }
 
-        test("atom-of") {
-            val correctInstances = AtomUtils.mixedAtoms.map { Atom.of(it) }
-            val toBeTested = AtomUtils.mixedAtoms.map(emptyScopeInstance::atomOf)
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "atom-of/${it.id}" }, AtomUtils.mixedAtomCases) { case ->
+            assertEqualities(Atom.of(case.value), ScopeImpl(ScopeUtils.emptyScope).atomOf(case.value))
         }
 
         withTests(nameFn = { "struct-of-functor-and-varargs/${it.id}" }, StructUtils.mixedStructCases) { case ->
@@ -283,18 +246,18 @@ class ScopeImplSpec :
         }
 
         test("anonymous") {
-            TermTypeAssertionUtils.assertIsVar(emptyScopeInstance.anonymous())
-            assertTrue { emptyScopeInstance.anonymous().isAnonymous }
+            TermTypeAssertionUtils.assertIsVar(ScopeImpl(ScopeUtils.emptyScope).anonymous())
+            assertTrue { ScopeImpl(ScopeUtils.emptyScope).anonymous().isAnonymous }
         }
 
         test("underscore-property") {
-            TermTypeAssertionUtils.assertIsVar(emptyScopeInstance.`_`)
-            assertTrue { emptyScopeInstance.`_`.isAnonymous }
+            TermTypeAssertionUtils.assertIsVar(ScopeImpl(ScopeUtils.emptyScope).`_`)
+            assertTrue { ScopeImpl(ScopeUtils.emptyScope).`_`.isAnonymous }
         }
 
         test("whatever") {
-            TermTypeAssertionUtils.assertIsVar(emptyScopeInstance.whatever())
-            assertTrue { emptyScopeInstance.whatever().isAnonymous }
+            TermTypeAssertionUtils.assertIsVar(ScopeImpl(ScopeUtils.emptyScope).whatever())
+            assertTrue { ScopeImpl(ScopeUtils.emptyScope).whatever().isAnonymous }
         }
 
         withTests(nameFn = { "num-of-big-decimal/${it.id}" }, RealUtils.realCases) { case ->
@@ -333,10 +296,7 @@ class ScopeImplSpec :
             assertEqualities(Numeric.of(case.string), ScopeImpl(ScopeUtils.emptyScope).numOf(case.string))
         }
 
-        test("truth-of-boolean") {
-            val correctInstances = listOf(true, false).map { Truth.of(it) }
-            val toBeTested = listOf(true, false).map { emptyScopeInstance.truthOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "truth-of-boolean/$it" }, listOf(true, false)) { boolean ->
+            assertEqualities(Truth.of(boolean), ScopeImpl(ScopeUtils.emptyScope).truthOf(boolean))
         }
     })

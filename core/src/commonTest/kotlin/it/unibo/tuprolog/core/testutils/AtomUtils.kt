@@ -46,12 +46,6 @@ internal object AtomUtils {
     /** A mix of special and non special atoms */
     internal val mixedAtomCases by lazy { nonSpecialAtomCases + specialAtomCases }
 
-    internal val nonSpecialAtoms by lazy { nonSpecialAtomCases.map { it.value } }
-
-    internal val specialAtoms by lazy { specialAtomCases.map { it.value } }
-
-    internal val mixedAtoms by lazy { mixedAtomCases.map { it.value } }
-
     /** Asserts that no arguments are present in an Atom */
     internal fun assertNoArguments(atom: Atom) {
         assertTrue(atom.args.isEmpty())
