@@ -30,7 +30,8 @@ clicking a `JTabbedPane` tab never changes `selectedIndex` — no exception is t
   Platform under a pinned JDK 21 and `en_US`, and only discovers the e2e specs, not the module's unit specs.
   Synchronize on observed state, never on time: `awaitCondition` for anything rendered asynchronously, and
   `clickMenuItem(name)`/`selectLowerTab(title)` instead of AssertJ's `menuItem(...).click()`/`selectTab(...)`, since
-  they repeat a lost click until its effect shows up.
+  a synthesized click can get lost or land late on a busy display: `clickMenuItem` fires the item with `doClick` on
+  the EDT (a menu click toggles, so retrying it is unsafe) and `selectLowerTab` retries until the tab is selected.
 - **Browser** (`scripts/browser-e2e-test.mjs`, task `:ide-web:browserE2ETest`, not part of `check`): runs every
   scenario even after a failure and writes one JUnit test case per scenario to
   `ide-web/build/test-results/browserE2ETest/TEST-BrowserE2E.xml`.

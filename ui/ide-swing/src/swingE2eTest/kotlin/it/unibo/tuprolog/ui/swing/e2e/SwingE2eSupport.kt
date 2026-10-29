@@ -1,5 +1,3 @@
-@file:Suppress("TooManyFunctions") // the E2E toolkit: small helpers, one per user gesture
-
 package it.unibo.tuprolog.ui.swing.e2e
 
 import it.unibo.tuprolog.solve.Solver
@@ -19,8 +17,7 @@ import java.awt.GraphicsEnvironment
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 import javax.swing.JMenu
-import javax.swing.JMenuItem
-import javax.swing.JPopupMenu
+import javax.swing.SwingUtilities
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -71,40 +68,23 @@ fun FrameFixture.awaitCondition(
 }
 
 /**
- * Clicks the menu item named [name] like a user would: opens every enclosing menu, outermost first, then clicks the
- * item. On a busy display a synthesized click can get lost: the menu simply never opens, and AssertJ's own
- * `menuItem(...).click()` then fails after its timeout. So each click is repeated until its effect (the menu open,
- * or closed again once the item is clicked) is actually observed, rather than trusted.
+ * Fires the menu item named [name] as a click on it would, but directly on the EDT rather than through the display:
+ * there a synthesized click can get lost or land late, and since a menu click toggles, neither waiting nor retrying
+ * makes it reliable. Mouse delivery to menus is Swing's job; these tests cover what the item does. It's posted with
+ * `invokeLater` because an item may open a modal dialog, which would block a synchronous call until the test closes
+ * it; `waitForIdle` then lets the action run.
  */
 fun FrameFixture.clickMenuItem(name: String) {
     val item = menuItem(name).target()
-    openMenu(checkNotNull(parentMenuOf(item)) { "menu item '$name' is not inside a menu" })
-    clickUntil("the '$name' menu item to be clicked", { robot().click(item) }) { !onEdt { item.isShowing } }
+    SwingUtilities.invokeLater { item.doClick(0) }
+    robot().waitForIdle()
 }
 
-/** Opens [menu] and every menu enclosing it, clicking each one again until its pop-up is actually showing. */
+/** Opens [menu], and every menu enclosing it, on the EDT, for the same reason [clickMenuItem] doesn't click. */
 fun FrameFixture.openMenu(menu: JMenu) {
-    parentMenuOf(menu)?.let(::openMenu)
-    clickUntil("the '${menu.text}' menu to open", { robot().click(menu) }) { onEdt { menu.isPopupMenuVisible } }
+    GuiActionRunner.execute { menu.doClick(0) }
+    awaitCondition("the '${menu.text}' menu to open") { onEdt { menu.isPopupMenuVisible } }
 }
-
-/**
- * Clicks with [click] until [effect] holds, giving each click a few seconds to take effect before repeating it: a
- * menu click toggles, so clicking again while a slow first click is still landing would close the menu it opened.
- */
-private fun FrameFixture.clickUntil(
-    description: String,
-    click: () -> Unit,
-    effect: () -> Boolean,
-) = awaitCondition(description, timeoutSeconds = 30) {
-    effect() ||
-        run {
-            click()
-            runCatching { awaitCondition(description, timeoutSeconds = 3) { effect() } }.isSuccess
-        }
-}
-
-private fun parentMenuOf(item: JMenuItem): JMenu? = onEdt { (item.parent as? JPopupMenu)?.invoker as? JMenu }
 
 private fun <T> onEdt(query: () -> T): T = GuiActionRunner.execute(Callable(query))
 
