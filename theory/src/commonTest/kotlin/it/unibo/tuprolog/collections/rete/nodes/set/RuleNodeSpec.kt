@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.collections.rete.generic.set.RuleNode
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
@@ -62,47 +63,37 @@ class RuleNodeSpec :
             assertEquals(aRule, filledRuleNode.indexedElements.first())
         }
 
-        test("get-clause") {
-            ReteNodeUtils.rulesQueryResultsMap.forEach { (query, result) ->
-                assertEquals(result, filledRuleNode.get(query).toList())
-            }
+        withTests(nameFn = { "get-clause/${it.id}" }, ReteNodeUtils.ruleQueryCases) { case ->
+            assertEquals(case.expected, filledRuleNode.get(case.query).toList())
         }
 
-        test("remove-clause-with-zero-limit-does-nothing") {
-            ReteNodeUtils.rulesQueryResultsMap.forEach { (query, _) ->
-                assertNoChangesInReteNode(filledRuleNode) { remove(query, 0) }
-            }
+        withTests(
+            nameFn = { "remove-clause-with-zero-limit-does-nothing/${it.id}" },
+            ReteNodeUtils.ruleQueryCases,
+        ) { case ->
+            assertNoChangesInReteNode(filledRuleNode) { remove(case.query, 0) }
         }
 
         test("remove-clause-from-empty-node-does-nothing") {
             assertNoChangesInReteNode(emptyRuleNode) { remove(aRule) }
         }
 
-        test("remove-clause-with-limit-works-as-expected") {
-            for (limit in 0..10) {
-                ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
-                    init() // because removal of side-effects is needed
-
-                    assertRemovedFromReteNode(filledRuleNode, allMatching.take(limit)) { remove(query, limit) }
-                }
-            }
+        withTests(
+            nameFn = { (limit, case) -> "remove-clause-with-limit-works-as-expected/limit-$limit/${case.id}" },
+            (0..10).flatMap { limit -> ReteNodeUtils.ruleQueryCases.map { limit to it } },
+        ) { (limit, case) ->
+            assertRemovedFromReteNode(filledRuleNode, case.expected.take(limit)) { remove(case.query, limit) }
         }
 
-        test("remove-clause-with-negative-limit-removes-all-matching-rules") {
-            val negativeLimit = -1
-            ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
-                init() // because removal of side-effects is needed
-
-                assertRemovedFromReteNode(filledRuleNode, allMatching) { remove(query, negativeLimit) }
-            }
+        withTests(
+            nameFn = { "remove-clause-with-negative-limit-removes-all-matching-rules/${it.id}" },
+            ReteNodeUtils.ruleQueryCases,
+        ) { case ->
+            assertRemovedFromReteNode(filledRuleNode, case.expected) { remove(case.query, -1) }
         }
 
-        test("remove-all-clause") {
-            ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
-                init() // because removal of side-effects is needed
-
-                assertRemovedFromReteNode(filledRuleNode, allMatching) { removeAll(query) }
-            }
+        withTests(nameFn = { "remove-all-clause/${it.id}" }, ReteNodeUtils.ruleQueryCases) { case ->
+            assertRemovedFromReteNode(filledRuleNode, case.expected) { removeAll(case.query) }
         }
 
         test("deep-copy-creates-independent-instance") {

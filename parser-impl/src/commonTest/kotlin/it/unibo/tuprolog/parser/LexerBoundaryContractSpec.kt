@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.parser
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.parser.exceptions.MalformedNumericLiteralException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedBlockCommentException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedQuotedLiteralException
@@ -36,18 +37,9 @@ class LexerBoundaryContractSpec :
 
         fun String.escape(): String = replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
 
-        test("full-stop-termination-context-matrix") {
-            val terminatingSuffixes = listOf("", " ", "\t", "\n", "\r\n", "% comment", "/* comment */")
-            for (suffix in terminatingSuffixes) {
-                val source = lex("a.$suffix")
-                assertEquals(TokenKind.FULL_STOP, source.significantTokens()[1].kind, "suffix=${suffix.escape()}")
-            }
-
-            val embeddedSuffixes = listOf("b", "+", ".", "/x")
-            for (suffix in embeddedSuffixes) {
-                val source = lex("a.$suffix")
-                assertEquals(TokenKind.GRAPHIC_ATOM, source.significantTokens()[1].kind, "suffix=$suffix")
-            }
+        withTests(nameFn = { "full-stop-termination/${it.id}" }, fullStopSuffixes) { case ->
+            val source = lex("a.${case.suffix}")
+            assertEquals(case.expected, source.significantTokens()[1].kind, "suffix=${case.suffix.escape()}")
         }
 
         test("line-comments-terminate-at-every-supported-line-ending") {
@@ -56,14 +48,14 @@ class LexerBoundaryContractSpec :
                 listOf(TokenKind.WORD_ATOM, TokenKind.END_OF_INPUT),
                 atEof.significantTokens().map(Token::kind),
             )
+        }
 
-            for (ending in listOf("\n", "\r", "\r\n")) {
-                val input = lex("a % comment${ending}b")
-                assertEquals(
-                    listOf(TokenKind.WORD_ATOM, TokenKind.WORD_ATOM, TokenKind.END_OF_INPUT),
-                    input.significantTokens().map(Token::kind),
-                )
-            }
+        withTests(nameFn = { "line-comments-terminate-at-line-ending/${it.id}" }, lineEndings) { case ->
+            val input = lex("a % comment${case.ending}b")
+            assertEquals(
+                listOf(TokenKind.WORD_ATOM, TokenKind.WORD_ATOM, TokenKind.END_OF_INPUT),
+                input.significantTokens().map(Token::kind),
+            )
         }
 
         test("empty-and-doubled-quoted-literals-are-decoded") {
@@ -77,41 +69,84 @@ class LexerBoundaryContractSpec :
             )
         }
 
-        test("malformed-numeric-prefixes-are-rejected-case-insensitively") {
-            for (input in listOf("0x", "0X", "0o", "0O", "0b", "0B")) {
-                assertFailsWith<MalformedNumericLiteralException>(input) { lex(input).materialize() }
-            }
+        withTests(
+            nameFn = {
+                "malformed-numeric-prefix-is-rejected/${it.lowercase()}-${if (it[1].isUpperCase()) "upper" else "lower"}"
+            },
+            listOf("0x", "0X", "0o", "0O", "0b", "0B"),
+        ) { input ->
+            assertFailsWith<MalformedNumericLiteralException>(input) { lex(input).materialize() }
         }
 
-        test("unterminated-constructs-remain-typed-across-chunk-boundaries") {
+        test("unterminated-constructs-remain-typed-across-chunk-boundaries/quoted-literal") {
             forEverySingleSplit("'unterminated") { source ->
                 assertFailsWith<UnterminatedQuotedLiteralException> { source.materialize() }
             }
+        }
+
+        test("unterminated-constructs-remain-typed-across-chunk-boundaries/block-comment") {
             forEverySingleSplit("/* unterminated") { source ->
                 assertFailsWith<UnterminatedBlockCommentException> { source.materialize() }
             }
         }
 
-        test("lexing-is-invariant-under-every-single-chunk-split") {
-            val cases =
-                listOf(
-                    "foo(X) :- X = 0xff.",
-                    "'I''m' \"a\\n\\x41\\\" 0'\\n",
-                    "a /* block */ + b. % tail\nnext.",
-                    "[a,b|T] {x,y} 2.0e-3",
+        withTests(nameFn = { "lexing-is-invariant-under-every-single-chunk-split/${it.id}" }, splitTexts) { case ->
+            val expected =
+                signature(
+                    testLexer
+                        .lex(
+                            it.unibo.tuprolog.parser.sources
+                                .SourceText(case.text),
+                        ).materialize(),
                 )
-            for (text in cases) {
-                val expected =
-                    signature(
-                        testLexer
-                            .lex(
-                                it.unibo.tuprolog.parser.sources
-                                    .SourceText(text),
-                            ).materialize(),
-                    )
-                forEverySingleSplit(text) { source ->
-                    assertEquals(expected, signature(source.materialize()), "split input: $text")
-                }
+            forEverySingleSplit(case.text) { source ->
+                assertEquals(expected, signature(source.materialize()), "split input: ${case.text}")
             }
         }
     })
+
+private class FullStopSuffixCase(
+    val id: String,
+    val suffix: String,
+    val expected: TokenKind,
+)
+
+private val fullStopSuffixes =
+    listOf(
+        FullStopSuffixCase("terminating/end-of-input", "", TokenKind.FULL_STOP),
+        FullStopSuffixCase("terminating/space", " ", TokenKind.FULL_STOP),
+        FullStopSuffixCase("terminating/tab", "\t", TokenKind.FULL_STOP),
+        FullStopSuffixCase("terminating/line-feed", "\n", TokenKind.FULL_STOP),
+        FullStopSuffixCase("terminating/crlf", "\r\n", TokenKind.FULL_STOP),
+        FullStopSuffixCase("terminating/line-comment", "% comment", TokenKind.FULL_STOP),
+        FullStopSuffixCase("terminating/block-comment", "/* comment */", TokenKind.FULL_STOP),
+        FullStopSuffixCase("embedded/letter", "b", TokenKind.GRAPHIC_ATOM),
+        FullStopSuffixCase("embedded/plus", "+", TokenKind.GRAPHIC_ATOM),
+        FullStopSuffixCase("embedded/dot", ".", TokenKind.GRAPHIC_ATOM),
+        FullStopSuffixCase("embedded/slash", "/x", TokenKind.GRAPHIC_ATOM),
+    )
+
+private class LineEndingCase(
+    val id: String,
+    val ending: String,
+)
+
+private val lineEndings =
+    listOf(
+        LineEndingCase("lf", "\n"),
+        LineEndingCase("cr", "\r"),
+        LineEndingCase("crlf", "\r\n"),
+    )
+
+private class SplitTextCase(
+    val id: String,
+    val text: String,
+)
+
+private val splitTexts =
+    listOf(
+        SplitTextCase("clause-with-hex", "foo(X) :- X = 0xff."),
+        SplitTextCase("quoted-literals-and-escapes", "'I''m' \"a\\n\\x41\\\" 0'\\n"),
+        SplitTextCase("comments-and-two-clauses", "a /* block */ + b. % tail\nnext."),
+        SplitTextCase("list-block-and-real", "[a,b|T] {x,y} 2.0e-3"),
+    )

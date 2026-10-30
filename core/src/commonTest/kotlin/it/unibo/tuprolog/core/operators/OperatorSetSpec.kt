@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.operators
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.operators.testutils.OperatorSetUtils
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -76,31 +77,29 @@ class OperatorSetSpec :
             assertNotEquals(operatorSet, OperatorSet())
         }
 
-        test("predefined-operators-correct") {
-            assertEquals(OperatorSet.DEFAULT.count(), OperatorSetUtils.defaultOperators.count())
+        test("predefined-operators-count") {
+            assertEquals(OperatorSet.DEFAULT.count(), OperatorSetUtils.defaultOperatorCases.count())
+        }
 
-            OperatorSetUtils.defaultOperators.forEach { expectedTriple ->
-                val (expectedFunctor, expectedSpecifier, expectedPriority) = expectedTriple
+        withTests(nameFn = { "predefined-operators/${it.id}" }, OperatorSetUtils.defaultOperatorCases) { case ->
+            // expectedOperator should be present in OperatorSet
+            val actualOperator =
+                OperatorSet.DEFAULT.single { it == Operator(case.functor, case.specifier, case.priority) }
 
-                // expectedOperator should be present in OperatorSet
-                val actualOperator =
-                    OperatorSet.DEFAULT.single { it == Operator(expectedFunctor, expectedSpecifier, expectedPriority) }
-
-                assertEquals(
-                    expectedFunctor,
-                    actualOperator.functor,
-                    "$actualOperator functor expected to be: $expectedFunctor",
-                )
-                assertEquals(
-                    expectedSpecifier,
-                    actualOperator.specifier,
-                    "$actualOperator specifier expected to be: $expectedSpecifier",
-                )
-                assertEquals(
-                    expectedPriority,
-                    actualOperator.priority,
-                    "$actualOperator priority expected to be: $expectedPriority",
-                )
-            }
+            assertEquals(
+                case.functor,
+                actualOperator.functor,
+                "$actualOperator functor expected to be: ${case.functor}",
+            )
+            assertEquals(
+                case.specifier,
+                actualOperator.specifier,
+                "$actualOperator specifier expected to be: ${case.specifier}",
+            )
+            assertEquals(
+                case.priority,
+                actualOperator.priority,
+                "$actualOperator priority expected to be: ${case.priority}",
+            )
         }
     })

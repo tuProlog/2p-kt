@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import it.unibo.tuprolog.core.testutils.IntegerUtils
@@ -17,127 +17,106 @@ import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptFo
  */
 class ConversionsSpec :
     FunSpec({
-        test("big-integers-to-term") {
-            val correct = IntegerUtils.bigIntegers.map { Integer.of(it) }
-            val toBeTested = IntegerUtils.bigIntegers.map { it.toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "big-integer-to-term/${it.id}" }, IntegerUtils.integerCases) { case ->
+            assertEqualities(Integer.of(case.value), case.value.toTerm())
         }
 
-        test("big-decimal-to-term") {
-            val correct = RealUtils.bigDecimals.map { Real.of(it) }
-            val toBeTested = RealUtils.bigDecimals.map { it.toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "big-decimal-to-term/${it.id}" }, RealUtils.realCases) { case ->
+            assertEqualities(Real.of(case.value), case.value.toTerm())
         }
 
-        test("float-to-term") {
-            val correct = RealUtils.decimalsAsFloats.map { Real.of(it) }
-            val toBeTested = RealUtils.decimalsAsFloats.map { it.toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "float-to-term/${it.id}" }, RealUtils.realCases.filter { it.float != null }) { case ->
+            assertEqualities(Real.of(case.float!!), case.float!!.toTerm())
         }
 
-        test("double-to-term") {
-            val correct = RealUtils.decimalsAsDoubles.map { Real.of(it) }
-            val toBeTested = RealUtils.decimalsAsDoubles.map { it.toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "double-to-term/${it.id}" }, RealUtils.realCases) { case ->
+            assertEqualities(Real.of(case.double), case.double.toTerm())
         }
 
-        test("int-to-term") {
-            val correct = IntegerUtils.onlyInts.map { Integer.of(it) }
-            val toBeTested = IntegerUtils.onlyInts.map { it.toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "int-to-term/${it.id}" }, IntegerUtils.integerCases.filter { it.int != null }) { case ->
+            assertEqualities(Integer.of(case.int!!), case.int!!.toTerm())
         }
 
-        test("long-to-term") {
-            val correct = IntegerUtils.onlyLongs.map { Integer.of(it) }
-            val toBeTested = IntegerUtils.onlyLongs.map { it.toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "long-to-term/${it.id}" }, IntegerUtils.integerCases.filter { it.long != null }) { case ->
+            assertEqualities(Integer.of(case.long!!), case.long!!.toTerm())
         }
 
-        test("short-to-term") {
-            val correct = IntegerUtils.onlyShorts.map { Integer.of(it) }
-            val toBeTested = IntegerUtils.onlyShorts.map { it.toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(
+            nameFn = { "short-to-term/${it.id}" },
+            IntegerUtils.integerCases.filter { it.short != null },
+        ) { case ->
+            assertEqualities(Integer.of(case.short!!), case.short!!.toTerm())
         }
 
-        test("byte-to-term") {
-            val correct = IntegerUtils.onlyBytes.map { Integer.of(it) }
-            val toBeTested = IntegerUtils.onlyBytes.map { it.toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "byte-to-term/${it.id}" }, IntegerUtils.integerCases.filter { it.byte != null }) { case ->
+            assertEqualities(Integer.of(case.byte!!), case.byte!!.toTerm())
         }
 
-        test("number-to-term") {
-            @Suppress("USELESS_CAST")
-            val numberValues =
-                (
-                    with(IntegerUtils) { onlyBytes + onlyInts + onlyShorts + onlyLongs } +
-                        with(RealUtils) { decimalsAsDoubles + decimalsAsFloats }
-                ).map { it as Number }
-
-            val correct = numberValues.map { Numeric.of(it) }
-            val toBeTested = numberValues.map { it.toTerm() }
-
-            onCorrespondingItems(toBeTested, correct, ::assertEqualities)
+        fun integersToTerm(
+            kind: String,
+            value: (IntegerUtils.IntegerCase) -> Number?,
+        ) = withTests(
+            nameFn = { "number-to-term/$kind/${it.id}" },
+            IntegerUtils.integerCases.filter { value(it) != null },
+        ) { case ->
+            val number = value(case)!!
+            assertEqualities(Numeric.of(number), number.toTerm())
         }
 
-        test("string-as-atom") {
-            val correct = AtomUtils.mixedAtoms.map { Atom.of(it) }
-            val toBeTested = AtomUtils.mixedAtoms.map { it.toAtom() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        fun realsToTerm(
+            kind: String,
+            value: (RealUtils.RealCase) -> Number?,
+        ) = withTests(
+            nameFn = { "number-to-term/$kind/${it.id}" },
+            RealUtils.realCases.filter { value(it) != null },
+        ) { case ->
+            val number = value(case)!!
+            assertEqualities(Numeric.of(number), number.toTerm())
         }
 
-        test("string-as-var") {
-            val correct = VarUtils.correctlyNamedVars.map { Var.of(it) }
-            val toBeTested = VarUtils.correctlyNamedVars.map { it.toVar() }
+        integersToTerm("byte") { it.byte }
 
-            onCorrespondingItems(correct, toBeTested, ::assertDifferentVariableExceptForName)
+        integersToTerm("int") { it.int }
+
+        integersToTerm("short") { it.short }
+
+        integersToTerm("long") { it.long }
+
+        realsToTerm("double") { it.double }
+
+        realsToTerm("float") { it.float }
+
+        withTests(nameFn = { "string-as-atom/${it.id}" }, AtomUtils.mixedAtomCases) { case ->
+            assertEqualities(Atom.of(case.value), case.value.toAtom())
         }
 
-        test("string-to-term") {
-            val correctAtoms = AtomUtils.mixedAtoms.filterNot { it matches Var.NAME_PATTERN }.map { Atom.of(it) }
-            val toBeTestedAtoms = AtomUtils.mixedAtoms.filterNot { it matches Var.NAME_PATTERN }.map { it.toTerm() }
-
-            onCorrespondingItems(correctAtoms, toBeTestedAtoms, ::assertEqualities)
-
-            val correctVars = VarUtils.correctlyNamedVars.map { Var.of(it) }
-            val toBeTestedVars = VarUtils.correctlyNamedVars.map { it.toTerm() as Var }
-
-            onCorrespondingItems(correctVars, toBeTestedVars, ::assertDifferentVariableExceptForName)
+        withTests(nameFn = { "string-as-var/${it.id}" }, VarUtils.correctlyNamedVarCases) { case ->
+            assertDifferentVariableExceptForName(Var.of(case.name), case.name.toVar())
         }
 
-        test("list-of-terms-to-term") {
-            val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
-            val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(
+            nameFn = { "string-to-term/atom/${it.id}" },
+            AtomUtils.mixedAtomCases.filterNot { it.value matches Var.NAME_PATTERN },
+        ) { case ->
+            assertEqualities(Atom.of(case.value), case.value.toTerm())
         }
 
-        test("sequence-of-terms-to-term") {
-            val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
-            val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.asSequence().toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "string-to-term/var/${it.id}" }, VarUtils.correctlyNamedVarCases) { case ->
+            assertDifferentVariableExceptForName(Var.of(case.name), case.name.toTerm() as Var)
         }
 
-        test("iterable-of-terms-to-term") {
-            val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
-            val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.asIterable().toTerm() }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        fun listsToTerm(
+            property: String,
+            toBeTested: (kotlin.collections.List<Term>) -> Term,
+        ) = withTests(nameFn = { "$property/${it.id}" }, ConsUtils.mixedConsCases) { case ->
+            assertEqualities(List.of(case.elements), toBeTested(case.elements))
         }
 
-        test("array-of-terms-to-term") {
-            val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
-            val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.toTypedArray().toTerm() }
+        listsToTerm("list-of-terms-to-term") { it.toTerm() }
 
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
-        }
+        listsToTerm("sequence-of-terms-to-term") { it.asSequence().toTerm() }
+
+        listsToTerm("iterable-of-terms-to-term") { it.asIterable().toTerm() }
+
+        listsToTerm("array-of-terms-to-term") { it.toTypedArray().toTerm() }
     })

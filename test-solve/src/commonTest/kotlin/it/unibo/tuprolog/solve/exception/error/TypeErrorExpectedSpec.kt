@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve.exception.error
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.exception.error.testutils.TypeErrorExpectedUtils
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertSame
@@ -17,17 +17,15 @@ import kotlin.test.fail
  */
 class TypeErrorExpectedSpec :
     FunSpec({
-        test("type-error-expected-to-atom-works-as-expected") {
-            TypeErrorExpectedUtils.allNamesToInstances.forEach { (name, instance) ->
-                assertEquals(Atom.of(name), instance.toTerm())
-            }
+        val expectedTypes = TypeError.Expected.entries
+
+        withTests(nameFn = { "to-term/${it.id}" }, expectedTypes) { expected ->
+            assertEquals(Atom.of(expected.toString()), expected.toTerm())
         }
 
-        test("type-error-expected-of-returns-predefined-instance-if-name-correct") {
-            TypeErrorExpectedUtils.predefinedErrorNamesToInstances.forEach { (name, instance) ->
-                assertSame(instance, TypeError.Expected.of(name))
-                assertSame(instance, TypeError.Expected.of(name.uppercase()))
-            }
+        withTests(nameFn = { "of-returns-predefined-instance/${it.id}" }, expectedTypes) { expected ->
+            assertSame(expected, TypeError.Expected.of(expected.toString()))
+            assertSame(expected, TypeError.Expected.of(expected.toString().uppercase()))
         }
 
         test("type-error-expected-of-throws-exception-if-name-is-unknown") {
@@ -45,18 +43,11 @@ class TypeErrorExpectedSpec :
             assertSame(TypeError.Expected.CALLABLE, TypeError.Expected.of("callable"))
         }
 
-        test("type-error-expected-from-term-work-for-predefined-terms") {
-            TypeErrorExpectedUtils.predefinedErrorNamesToInstances.forEach { (name, instance) ->
-                assertSame(instance, TypeError.Expected.fromTerm(Atom.of(name))!!)
-                assertSame(instance, TypeError.Expected.fromTerm(Atom.of(name.uppercase()))!!)
-                assertSame(instance, TypeError.Expected.fromTerm(instance.toTerm())!!)
-            }
-        }
-
-        test("type-error-expected-from-term-work-for-correct-terms") {
-            for (e in TypeError.Expected.values()) {
-                assertEquals(e, TypeError.Expected.fromTerm(e.toTerm()))
-            }
+        withTests(nameFn = { "from-term-returns-predefined-instance/${it.id}" }, expectedTypes) { expected ->
+            val name = expected.toString()
+            assertSame(expected, TypeError.Expected.fromTerm(Atom.of(name))!!)
+            assertSame(expected, TypeError.Expected.fromTerm(Atom.of(name.uppercase()))!!)
+            assertSame(expected, TypeError.Expected.fromTerm(expected.toTerm())!!)
         }
 
         test("type-error-expected-enum-from-term-complains-for-incorrect-terms") {
@@ -72,3 +63,6 @@ class TypeErrorExpectedSpec :
             }
         }
     })
+
+private val TypeError.Expected.id: String
+    get() = name.lowercase().replace('_', '-')

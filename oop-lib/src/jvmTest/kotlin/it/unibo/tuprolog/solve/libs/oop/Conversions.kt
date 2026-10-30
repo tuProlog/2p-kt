@@ -14,17 +14,17 @@ import kotlin.reflect.KClass
 internal object Conversions {
     val bestCases =
         listOf(
-            TestDatum(Atom.of("a"), String::class, "a"),
-            TestDatum(Integer.ONE, BigInteger::class, BigInteger.ONE),
-            TestDatum(Real.ONE, BigDecimal::class, BigDecimal.ONE),
-            TestDatum(Truth.TRUE, Boolean::class, true),
-            TestDatum(Truth.FAIL, Boolean::class, false),
-            TestDatum(Truth.FALSE, Boolean::class, false),
-            TestDatum(Var.anonymous(), Any::class, null),
-            TestDatum(Var.of("X"), Any::class, null),
-            TestDatum(A.B(1, "a"), Any::class),
-            TestDatum(A.C(2, "b"), Any::class),
-            TestDatum(null, Any::class),
+            TestDatum("atom-a", Atom.of("a"), String::class, "a"),
+            TestDatum("integer-one", Integer.ONE, BigInteger::class, BigInteger.ONE),
+            TestDatum("real-one", Real.ONE, BigDecimal::class, BigDecimal.ONE),
+            TestDatum("true", Truth.TRUE, Boolean::class, true),
+            TestDatum("fail", Truth.FAIL, Boolean::class, false),
+            TestDatum("false", Truth.FALSE, Boolean::class, false),
+            TestDatum("anonymous-var", Var.anonymous(), Any::class, null),
+            TestDatum("var-x", Var.of("X"), Any::class, null),
+            TestDatum("object-b", A.B(1, "a"), Any::class),
+            TestDatum("object-c", A.C(2, "b"), Any::class),
+            TestDatum("null", null, Any::class),
         )
 
     private val higherThanMaxLong = BigInteger.of(Long.MAX_VALUE) + BigInteger.ONE
@@ -41,30 +41,30 @@ internal object Conversions {
 
     val explicitCases =
         listOf(
-            TestDatum(Atom.of("a"), String::class, "a"),
-            TestDatum(Atom.of("a"), Char::class, 'a'),
-            TestDatum(Integer.ONE, BigInteger::class, BigInteger.ONE),
-            TestDatum(Integer.ONE, BigDecimal::class, BigDecimal.ONE),
-            TestDatum(Integer.ONE, Int::class, 1),
-            TestDatum(Integer.ONE, Short::class, 1.toShort()),
-            TestDatum(Integer.ONE, Long::class, 1.toLong()),
-            TestDatum(Integer.ONE, Byte::class, 1.toByte()),
-            TestDatum(Integer.ONE, Double::class, 1.0),
-            TestDatum(Integer.ONE, Float::class, 1.0f),
-            TestDatum(Real.ONE, BigDecimal::class, BigDecimal.ONE),
-            TestDatum(Real.ONE, Float::class, 1.0f),
-            TestDatum(Real.ONE, Double::class, 1.0),
-            TestDatum(Truth.TRUE, Boolean::class, true),
-            TestDatum(Truth.TRUE, String::class, "true"),
-            TestDatum(Truth.FAIL, Boolean::class, false),
-            TestDatum(Truth.FAIL, String::class, "fail"),
-            TestDatum(Truth.FALSE, Boolean::class, false),
-            TestDatum(Truth.FALSE, String::class, "false"),
-            TestDatum(Var.anonymous(), Any::class, null),
-            TestDatum(Var.of("X"), Any::class, null),
-            TestDatum(A.B(1, "a"), Any::class),
-            TestDatum(A.C(2, "b"), Any::class),
-            TestDatum(null, Any::class),
+            TestDatum("atom-a", Atom.of("a"), String::class, "a"),
+            TestDatum("atom-a", Atom.of("a"), Char::class, 'a'),
+            TestDatum("integer-one", Integer.ONE, BigInteger::class, BigInteger.ONE),
+            TestDatum("integer-one", Integer.ONE, BigDecimal::class, BigDecimal.ONE),
+            TestDatum("integer-one", Integer.ONE, Int::class, 1),
+            TestDatum("integer-one", Integer.ONE, Short::class, 1.toShort()),
+            TestDatum("integer-one", Integer.ONE, Long::class, 1.toLong()),
+            TestDatum("integer-one", Integer.ONE, Byte::class, 1.toByte()),
+            TestDatum("integer-one", Integer.ONE, Double::class, 1.0),
+            TestDatum("integer-one", Integer.ONE, Float::class, 1.0f),
+            TestDatum("real-one", Real.ONE, BigDecimal::class, BigDecimal.ONE),
+            TestDatum("real-one", Real.ONE, Float::class, 1.0f),
+            TestDatum("real-one", Real.ONE, Double::class, 1.0),
+            TestDatum("true", Truth.TRUE, Boolean::class, true),
+            TestDatum("true", Truth.TRUE, String::class, "true"),
+            TestDatum("fail", Truth.FAIL, Boolean::class, false),
+            TestDatum("fail", Truth.FAIL, String::class, "fail"),
+            TestDatum("false", Truth.FALSE, Boolean::class, false),
+            TestDatum("false", Truth.FALSE, String::class, "false"),
+            TestDatum("anonymous-var", Var.anonymous(), Any::class, null),
+            TestDatum("var-x", Var.of("X"), Any::class, null),
+            TestDatum("object-b", A.B(1, "a"), Any::class),
+            TestDatum("object-c", A.C(2, "b"), Any::class),
+            TestDatum("null", null, Any::class),
         )
 
     private fun Term.product(
@@ -73,15 +73,17 @@ internal object Conversions {
     ): List<TestDatum> = sequenceOf(this).product(sequenceOf(*types)).map { (t, k) -> datum(t, k) }.toList()
 
     private fun MutableList<TestDatum>.cornerCase(
+        termId: String,
         term: Term,
         vararg types: KClass<*>,
     ) {
-        addAll(term.product(*types, datum = TestDatum::failed))
+        addAll(term.product(*types) { t, k -> TestDatum.failed(termId, t, k) })
     }
 
     @Suppress("ktlint:standard:multiline-expression-wrapping")
     val cornerCases: List<TestDatum> = buildList {
         cornerCase(
+            "var-x",
             Var.of("X"),
             String::class,
             Char::class,
@@ -95,6 +97,7 @@ internal object Conversions {
             Float::class,
         )
         cornerCase(
+            "anonymous-var",
             Var.anonymous(),
             String::class,
             Char::class,
@@ -108,6 +111,7 @@ internal object Conversions {
             Float::class,
         )
         cornerCase(
+            "object-b",
             ObjectRef.of(A.B(1, "a")),
             String::class,
             Char::class,
@@ -121,6 +125,7 @@ internal object Conversions {
             Float::class,
         )
         cornerCase(
+            "object-c",
             ObjectRef.of(A.C(2, "b")),
             String::class,
             Char::class,
@@ -134,6 +139,7 @@ internal object Conversions {
             Float::class,
         )
         cornerCase(
+            "true",
             Truth.TRUE,
             Char::class,
             BigInteger::class,
@@ -146,6 +152,7 @@ internal object Conversions {
             Float::class,
         )
         cornerCase(
+            "fail",
             Truth.FAIL,
             Char::class,
             BigInteger::class,
@@ -158,6 +165,7 @@ internal object Conversions {
             Float::class,
         )
         cornerCase(
+            "false",
             Truth.FALSE,
             Char::class,
             BigInteger::class,
@@ -170,6 +178,7 @@ internal object Conversions {
             Float::class,
         )
         cornerCase(
+            "atom-a",
             Atom.of("a"),
             BigInteger::class,
             BigDecimal::class,
@@ -182,6 +191,7 @@ internal object Conversions {
             Boolean::class,
         )
         cornerCase(
+            "atom-ab",
             Atom.of("ab"),
             Char::class,
             BigInteger::class,
@@ -195,6 +205,7 @@ internal object Conversions {
             Boolean::class,
         )
         cornerCase(
+            "integer-above-max-long",
             Integer.of(higherThanMaxLong),
             String::class,
             Char::class,
@@ -205,6 +216,7 @@ internal object Conversions {
             Boolean::class,
         )
         cornerCase(
+            "integer-below-min-long",
             Integer.of(lowerThanMinLong),
             String::class,
             Char::class,
@@ -215,6 +227,7 @@ internal object Conversions {
             Boolean::class,
         )
         cornerCase(
+            "integer-above-max-int",
             Integer.of(higherThanMaxInt),
             String::class,
             Char::class,
@@ -224,6 +237,7 @@ internal object Conversions {
             Boolean::class,
         )
         cornerCase(
+            "integer-below-min-int",
             Integer.of(lowerThanMinInt),
             String::class,
             Char::class,
@@ -233,6 +247,7 @@ internal object Conversions {
             Boolean::class,
         )
         cornerCase(
+            "integer-above-max-short",
             Integer.of(higherThanMaxShort),
             String::class,
             Char::class,
@@ -241,6 +256,7 @@ internal object Conversions {
             Boolean::class,
         )
         cornerCase(
+            "integer-below-min-short",
             Integer.of(lowerThanMinShort),
             String::class,
             Char::class,
@@ -249,6 +265,7 @@ internal object Conversions {
             Boolean::class,
         )
         cornerCase(
+            "integer-above-max-byte",
             Integer.of(higherThanMaxByte),
             String::class,
             Char::class,
@@ -256,6 +273,7 @@ internal object Conversions {
             Boolean::class,
         )
         cornerCase(
+            "integer-below-min-byte",
             Integer.of(lowerThanMinByte),
             String::class,
             Char::class,
@@ -263,6 +281,7 @@ internal object Conversions {
             Boolean::class,
         )
         cornerCase(
+            "integer-zero",
             Integer.of(0),
             String::class,
             Char::class,

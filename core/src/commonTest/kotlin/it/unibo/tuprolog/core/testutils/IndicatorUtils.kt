@@ -21,7 +21,18 @@ internal object IndicatorUtils {
         val name: Term,
         val arity: Term,
     ) {
-        val pair: Pair<Term, Term> get() = name to arity
+        val isGround: Boolean get() = name.isGround && arity.isGround
+
+        /** The indicated name, for well-formed indicators */
+        val rawName: String get() = name.castToAtom().value
+
+        /** The indicated arity, for well-formed indicators */
+        val rawArity: Int
+            get() =
+                arity
+                    .castToInteger()
+                    .intValue
+                    .toInt()
     }
 
     /** Well-formed [Indicator]s according to [Indicator.isWellFormed] */
@@ -61,32 +72,4 @@ internal object IndicatorUtils {
     internal val mixedIndicatorCases by lazy {
         wellFormedIndicatorCases + nonWellFormedNameIndicatorCases + nonWellFormedArityIndicatorCases
     }
-
-    /** Contains well-formed [Indicator]s in raw format */
-    internal val rawWellFormedIndicators by lazy {
-        wellFormedIndicatorCases.map {
-            it.name.castToAtom().value to
-                it.arity
-                    .castToInteger()
-                    .intValue
-                    .toInt()
-        }
-    }
-
-    /** Contains well-formed [Indicator]s according to [Indicator.isWellFormed] */
-    internal val wellFormedIndicators by lazy { wellFormedIndicatorCases.map { it.pair } }
-
-    /** Contains non well-formed [Indicator]s, due to bad name */
-    internal val nonWellFormedNameIndicator by lazy { nonWellFormedNameIndicatorCases.map { it.pair } }
-
-    /** Contains non well-formed [Indicator]s, due to bad arity */
-    internal val nonWellFormedArityIndicator by lazy { nonWellFormedArityIndicatorCases.map { it.pair } }
-
-    /** Contains non well-formed [Indicator]s */
-    internal val nonWellFormedIndicators by lazy {
-        nonWellFormedNameIndicator + nonWellFormedArityIndicator
-    }
-
-    /** Contains well-formed and non-well-formed indicators */
-    internal val mixedIndicators by lazy { mixedIndicatorCases.map { it.pair } }
 }

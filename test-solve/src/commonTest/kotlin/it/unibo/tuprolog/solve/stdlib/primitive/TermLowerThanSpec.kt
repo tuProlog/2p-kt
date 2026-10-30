@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.BinaryRelationUtils.assertCorrectResponse
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.TermUtils.lowerQueryToResult
 
@@ -10,9 +11,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.testutils.TermUtils.lowerQueryTo
  */
 class TermLowerThanSpec :
     FunSpec({
-        test("computes-correct-result") {
-            lowerQueryToResult.forEach { (input, result) ->
-                assertCorrectResponse(TermLowerThan, input, result)
-            }
+        withTests(nameFn = { "computes-correct-result/${it.id}" }, lowerQueryToResult) { case ->
+            assertCorrectResponse(TermLowerThan, case.request, case.expected)
         }
     })

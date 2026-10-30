@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.parser
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.parser.tree.StructureNode
 import java.io.Reader
 import java.io.StringReader
@@ -19,25 +20,26 @@ class ReaderParsingSpec :
             assertTrue(reader.charactersRead < reader.textLength)
         }
 
-        test("reader-sessions-do-not-load-the-whole-file") {
-            for (autoClose in listOf(false, true)) {
-                val reader = CountingReader("first.\nsecond.\nthird.")
-                val session =
-                    buildParserFor(reader, chunkSize = 1, autoClose = autoClose) { parser, lexedSource ->
-                        parser.openSession(lexedSource)
-                    }
+        withTests(
+            nameFn = { "reader-sessions-do-not-load-the-whole-file/${if (it) "auto-close" else "no-auto-close"}" },
+            listOf(false, true),
+        ) { autoClose ->
+            val reader = CountingReader("first.\nsecond.\nthird.")
+            val session =
+                buildParserFor(reader, chunkSize = 1, autoClose = autoClose) { parser, lexedSource ->
+                    parser.openSession(lexedSource)
+                }
 
-                assertEquals(0, reader.charactersRead)
-                val first = assertNotNull(session.parseNextClause())
-                assertTrue(reader.charactersRead < reader.textLength)
-                assertEquals("first", (first.root.expression as StructureNode).functor)
+            assertEquals(0, reader.charactersRead)
+            val first = assertNotNull(session.parseNextClause())
+            assertTrue(reader.charactersRead < reader.textLength)
+            assertEquals("first", (first.root.expression as StructureNode).functor)
 
-                assertNotNull(session.parseNextClause())
-                assertNotNull(session.parseNextClause())
-                assertTrue(session.isAtEnd)
-                assertEquals(reader.textLength, reader.charactersRead)
-                assertEquals(autoClose, reader.closed)
-            }
+            assertNotNull(session.parseNextClause())
+            assertNotNull(session.parseNextClause())
+            assertTrue(session.isAtEnd)
+            assertEquals(reader.textLength, reader.charactersRead)
+            assertEquals(autoClose, reader.closed)
         }
 
         test("parser-convenience-functions-accept-readers") {

@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.DirectiveUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
@@ -20,74 +20,47 @@ import kotlin.test.assertTrue
  */
 class DirectiveImplSpec :
     FunSpec({
-        val groundDirectivesInstances = DirectiveUtils.groundDirectives.map(::DirectiveImpl)
+        fun directives(
+            property: String,
+            cases: List<DirectiveUtils.DirectiveCase> = DirectiveUtils.mixedDirectiveCases,
+            test: (DirectiveUtils.DirectiveCase, Directive) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it, DirectiveImpl(it.body)) }
 
-        val nonGroundDirectivesInstances = DirectiveUtils.nonGroundDirectives.map(::DirectiveImpl)
+        directives("head-null") { _, directive -> assertNull(directive.head) }
 
-        val wellFormedDirectivesInstances = DirectiveUtils.wellFormedDirectives.map(::DirectiveImpl)
+        directives("body") { case, directive -> assertEqualities(case.body, directive.body) }
 
-        val nonWellFormedDirectivesInstances = DirectiveUtils.nonWellFormedDirectives.map(::DirectiveImpl)
-
-        val mixedDirectivesInstances = DirectiveUtils.mixedDirectives.map(::DirectiveImpl)
-
-        test("head-null") {
-            mixedDirectivesInstances.forEach { assertNull(it.head) }
+        directives("is-well-formed", DirectiveUtils.wellFormedDirectiveCases) { _, directive ->
+            assertTrue("$directive isWellFormed should be true") { directive.isWellFormed }
         }
 
-        test("body-correct") {
-            onCorrespondingItems(
-                DirectiveUtils.mixedDirectives,
-                mixedDirectivesInstances.map { it.body },
-                ::assertEqualities,
-            )
+        directives("is-not-well-formed", DirectiveUtils.nonWellFormedDirectiveCases) { _, directive ->
+            assertFalse("$directive isWellFormed should be false") { directive.isWellFormed }
         }
 
-        test("is-well-formed-returns-true-if-directive-well-formed") {
-            wellFormedDirectivesInstances.forEach { assertTrue("$it isWellFormed should be true") { it.isWellFormed } }
+        directives("type-checks") { _, directive -> TermTypeAssertionUtils.assertIsDirective(directive) }
+
+        directives("is-ground", DirectiveUtils.groundDirectiveCases) { _, directive ->
+            assertTrue("$directive isGround should be true") { directive.isGround }
         }
 
-        test("is-well-formed-returns-false-if-directive-not-well-formed") {
-            nonWellFormedDirectivesInstances.forEach {
-                assertFalse(
-                    "$it isWellFormed should be false",
-                ) { it.isWellFormed }
-            }
+        directives("is-not-ground", DirectiveUtils.nonGroundDirectiveCases) { _, directive ->
+            assertFalse("$directive isGround should be false") { directive.isGround }
         }
 
-        test("is-properties-and-types") {
-            mixedDirectivesInstances.forEach(TermTypeAssertionUtils::assertIsDirective)
+        directives("fresh-copy-is-itself", DirectiveUtils.groundDirectiveCases) { _, directive ->
+            ConstantUtils.assertFreshCopyIsItself(directive)
         }
 
-        test("is-ground-true-if-no-variables-are-present") {
-            groundDirectivesInstances.forEach { assertTrue("$it isGround should be true") { it.isGround } }
-            nonGroundDirectivesInstances.forEach { assertFalse("$it isGround should be false") { it.isGround } }
+        directives("fresh-copy-renews-variables", DirectiveUtils.nonGroundDirectiveCases) { _, directive ->
+            StructUtils.assertFreshCopyRenewsContainedVariables(directive)
         }
 
-        test("fresh-copy-should-return-instance-itself-if-ground") {
-            groundDirectivesInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
-        }
+        directives("functor") { _, directive -> assertEquals(":-", directive.functor) }
 
-        test("fresh-copy-should-renew-variables") {
-            nonGroundDirectivesInstances.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
-        }
+        directives("args") { case, directive -> assertEquals(listOf(case.body), directive.args) }
 
-        test("functor-correct") {
-            mixedDirectivesInstances.forEach { assertEquals(":-", it.functor) }
-        }
-
-        test("args-correct") {
-            val correctArgs = DirectiveUtils.mixedDirectives.map { listOf(it) }
-
-            onCorrespondingItems(correctArgs, mixedDirectivesInstances.map { it.args }) { expected, actual ->
-                assertEquals(expected, actual)
-            }
-        }
-
-        test("to-string-works-as-expected") {
-            val correctToStrings = mixedDirectivesInstances.map { "${it.functor} ${it.body}" }
-
-            onCorrespondingItems(correctToStrings, mixedDirectivesInstances.map { it.toString() }) { expected, actual ->
-                assertEquals(expected, actual)
-            }
+        directives("to-string") { _, directive ->
+            assertEquals("${directive.functor} ${directive.body}", directive.toString())
         }
     })

@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllVsAll
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.BlockUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
@@ -23,108 +23,46 @@ import kotlin.test.assertTrue
  */
 class BlockImplSpec :
     FunSpec({
-        val mixedBlocksInstances = BlockUtils.mixedBlocksTupleWrapped.map(::BlockImpl)
+        fun blocks(
+            property: String,
+            cases: List<BlockUtils.BlockCase> = BlockUtils.mixedBlockCases,
+            test: (BlockUtils.BlockCase, Block) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it, BlockImpl(it.tupleWrapped)) }
 
-        test("block-functor") {
-            mixedBlocksInstances.forEach { assertEquals("{}", it.functor) }
-        }
+        blocks("functor") { _, block -> assertEquals("{}", block.functor) }
 
-        test("args-correct") {
-            onCorrespondingItems(
-                BlockUtils.mixedBlocksTupleWrapped,
-                mixedBlocksInstances.map { it.args.first() },
-                ::assertEqualities,
-            )
-        }
+        blocks("args") { case, block -> assertEqualities(case.tupleWrapped, block.args.first()) }
 
-        test("unfolded-list-correct") {
-            val correctElementLists = BlockUtils.mixedBlocks.map { it.toList() }
+        blocks("unfolded-list") { case, block -> assertEquals(case.elements, block.unfoldedList) }
 
-            onCorrespondingItems(
-                correctElementLists,
-                mixedBlocksInstances.map { it.unfoldedList },
-            ) { expected, actual ->
-                assertEquals(expected, actual)
-            }
-        }
+        blocks("unfolded-sequence") { case, block -> assertEquals(case.elements, block.unfoldedSequence.toList()) }
 
-        test("unfolded-sequence-correct") {
-            val correctElementLists = BlockUtils.mixedBlocks.map { it.toList() }
+        blocks("unfolded-array") { case, block -> assertEquals(case.elements, block.unfoldedArray.toList()) }
 
-            onCorrespondingItems(
-                correctElementLists,
-                mixedBlocksInstances.map { it.unfoldedSequence.toList() },
-            ) { expected, actual -> assertEquals(expected, actual) }
-        }
+        blocks("to-string") { case, block -> assertEquals("{${case.elements.joinToString(", ")}}", block.toString()) }
 
-        test("unfolded-array-correct") {
-            val correctElementLists = BlockUtils.mixedBlocks.map { it.toList() }
+        blocks("type-checks") { _, block -> TermTypeAssertionUtils.assertIsBlock(block) }
 
-            onCorrespondingItems(
-                correctElementLists,
-                mixedBlocksInstances.map { it.unfoldedArray.toList() },
-            ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
-        }
+        blocks("is-ground", BlockUtils.groundBlockCases) { _, block -> assertTrue { block.isGround } }
 
-        test("to-string-should-work-as-expected") {
-            val blocksToString = BlockUtils.mixedBlocks.map { "{${it.joinToString(", ")}}" }
-
-            onCorrespondingItems(
-                blocksToString,
-                mixedBlocksInstances.map { it.toString() },
-            ) { expectedToString, actualToString -> assertEquals(expectedToString, actualToString) }
-        }
-
-        test("is-properties-and-types") {
-            mixedBlocksInstances.forEach(TermTypeAssertionUtils::assertIsBlock)
-        }
-
-        test("is-ground-true-only-if-no-variables-are-present") {
-            val groundBlocksInstances = BlockUtils.groundBlocksTupleWrapped.map(::BlockImpl)
-            val nonGroundBlocksInstances = BlockUtils.nonGroundBlocksTupleWrapped.map(::BlockImpl)
-
-            groundBlocksInstances.forEach { assertTrue { it.isGround } }
-            nonGroundBlocksInstances.forEach { assertFalse { it.isGround } }
-        }
+        blocks("is-not-ground", BlockUtils.nonGroundBlockCases) { _, block -> assertFalse { block.isGround } }
 
         test("empty-block-detected") {
             assertTrue(BlockImpl(null).isEmptyBlock)
         }
 
-        test("to-list-return-value") {
-            val mixedBlocks = BlockUtils.mixedBlocks.map { it.toList() }
+        blocks("to-list") { case, block -> assertEquals(case.elements, block.toList()) }
 
-            onCorrespondingItems(mixedBlocks, mixedBlocksInstances.map { it.toList() }) { expectedList, actualList ->
-                assertEquals(expectedList, actualList)
-            }
+        blocks("to-array") { case, block -> assertEquals(case.elements, block.toArray().toList()) }
+
+        blocks("to-sequence") { case, block -> assertEquals(case.elements, block.toSequence().toList()) }
+
+        blocks("fresh-copy-is-itself", BlockUtils.groundBlockCases) { _, block ->
+            ConstantUtils.assertFreshCopyIsItself(block)
         }
 
-        test("to-array-return-value") {
-            val mixedBlocks = BlockUtils.mixedBlocks.map { it.toList() }
-
-            onCorrespondingItems(
-                mixedBlocks,
-                mixedBlocksInstances.map { it.toArray().toList() },
-            ) { expectedList, actualList ->
-                assertEquals(expectedList, actualList)
-            }
-        }
-
-        test("to-sequence-return-value") {
-            val mixedBlocks = BlockUtils.mixedBlocks.map { it.toList() }
-
-            onCorrespondingItems(
-                mixedBlocks,
-                mixedBlocksInstances.map { it.toSequence().toList() },
-            ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
-        }
-
-        test("fresh-copy-should-return-instance-itself-if-ground") {
-            mixedBlocksInstances.filter { it.isGround }.forEach(ConstantUtils::assertFreshCopyIsItself)
-        }
-
-        test("fresh-copy-should-renew-variables") {
-            mixedBlocksInstances.filterNot { it.isGround }.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
+        blocks("fresh-copy-renews-variables", BlockUtils.nonGroundBlockCases) { _, block ->
+            StructUtils.assertFreshCopyRenewsContainedVariables(block)
         }
 
         test("fresh-copy-merges-different-variables-with-same-name") {

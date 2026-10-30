@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
@@ -16,7 +17,6 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.BlockUtils
 import it.unibo.tuprolog.core.testutils.ConsUtils
@@ -47,357 +47,256 @@ import it.unibo.tuprolog.core.List as LogicList
  */
 class ScopeImplSpec :
     FunSpec({
-        lateinit var emptyScopeInstance: Scope
-
-        lateinit var nonEmptyScopeInstances: List<Scope>
-
-        lateinit var mixedScopeInstances: List<Scope>
-
-        fun init() {
-            emptyScopeInstance = ScopeImpl(ScopeUtils.emptyScope)
-            nonEmptyScopeInstances = ScopeUtils.nonEmptyScopes.map(::ScopeImpl)
-            mixedScopeInstances = ScopeUtils.mixedScopes.map(::ScopeImpl)
-        }
-
-        beforeTest { init() }
+        fun scopes(
+            property: String,
+            cases: List<ScopeUtils.ScopeCase> = ScopeUtils.mixedScopeCases,
+            test: (ScopeUtils.ScopeCase) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it) }
 
         // //////////////////
         // Scope specific //
         // //////////////////
-        test("contains-var-works-as-expected") {
-            assertFalse { emptyScopeInstance.contains(Var.of("A")) }
-
-            onCorrespondingItems(ScopeUtils.nonEmptyScopeVars, nonEmptyScopeInstances) { containedVars, scope ->
-                containedVars.forEach { assertTrue { it in scope } }
-            }
+        test("contains-var-in-empty-scope") {
+            assertFalse { ScopeImpl(ScopeUtils.emptyScope).contains(Var.of("A")) }
         }
 
-        test("contains-string-works-as-expected") {
-            assertFalse { emptyScopeInstance.contains("A") }
-
-            onCorrespondingItems(ScopeUtils.nonEmptyScopeVarNames, nonEmptyScopeInstances) { containedVars, scope ->
-                containedVars.forEach { assertTrue { it in scope } }
-            }
+        scopes("contains-var", ScopeUtils.nonEmptyScopeCases) { case ->
+            val scope = ScopeImpl(case.scope())
+            case.scope().values.forEach { assertTrue { it in scope } }
         }
 
-        test("variables-correct") {
-            onCorrespondingItems(
-                ScopeUtils.mixedScopes,
-                mixedScopeInstances.map { it.variables },
-                ::assertScopeCorrectContents,
-            )
+        test("contains-string-in-empty-scope") {
+            assertFalse { ScopeImpl(ScopeUtils.emptyScope).contains("A") }
         }
 
-        test("var-of-string-with-non-present-variable-name-should-insert-a-new-one-among-others") {
+        scopes("contains-string", ScopeUtils.nonEmptyScopeCases) { case ->
+            val scope = ScopeImpl(case.scope())
+            case.varNames.forEach { assertTrue { it in scope } }
+        }
+
+        scopes("variables") { case -> assertScopeCorrectContents(case.scope(), ScopeImpl(case.scope()).variables) }
+
+        test("var-of-string-with-non-present-variable-name-should-insert-it-in-empty-scope") {
+            val emptyScopeInstance = ScopeImpl(ScopeUtils.emptyScope)
             emptyScopeInstance.varOf("Test")
             assertEquals(1, emptyScopeInstance.variables.count())
-
-            val scopeVarInitialCounts = ScopeUtils.nonEmptyScopeVarNames.map { it.count() }
-            val newVarNames = ScopeUtils.nonEmptyScopeVarNames.map { scopeVarNames -> scopeVarNames.map { it + "x" } }
-            onCorrespondingItems(newVarNames, nonEmptyScopeInstances) { toBeAddedVars, nonEmptyScope ->
-                toBeAddedVars.forEach { nonEmptyScope.varOf(it) }
-            }
-
-            onCorrespondingItems(scopeVarInitialCounts, nonEmptyScopeInstances) { initialCount, scopeInstance ->
-                assertEquals(initialCount * 2, scopeInstance.variables.count())
-            }
         }
 
-        test("var-of-string-with-already-contained-variable-should-not-insert-that-variable-again") {
-            val scopeVarInitialCounts = ScopeUtils.nonEmptyScopeVarNames.map { it.count() }
-            onCorrespondingItems(
-                ScopeUtils.nonEmptyScopeVarNames,
-                nonEmptyScopeInstances,
-            ) { presentVars, nonEmptyScope ->
-                presentVars.forEach { nonEmptyScope.varOf(it) }
-            }
+        scopes("var-of-string-with-non-present-variable-name-should-insert-it", ScopeUtils.nonEmptyScopeCases) { case ->
+            val scope = ScopeImpl(case.scope())
+            case.varNames.forEach { scope.varOf(it + "x") }
+            assertEquals(case.varNames.count() * 2, scope.variables.count())
+        }
 
-            onCorrespondingItems(scopeVarInitialCounts, nonEmptyScopeInstances) { initialCount, scopeInstance ->
-                assertEquals(initialCount, scopeInstance.variables.count())
-            }
+        scopes(
+            "var-of-string-with-already-contained-variable-should-not-insert-it",
+            ScopeUtils.nonEmptyScopeCases,
+        ) { case ->
+            val scope = ScopeImpl(case.scope())
+            case.varNames.forEach { scope.varOf(it) }
+            assertEquals(case.varNames.count(), scope.variables.count())
         }
 
         xtest("var-of-underscore-creates-always-different-anonymous-instances") {
+            val emptyScopeInstance = ScopeImpl(ScopeUtils.emptyScope)
             assertNotSame(emptyScopeInstance.varOf("_"), emptyScopeInstance.varOf("_"))
         }
 
-        test("where-executes-the-given-lambda") {
-            mixedScopeInstances.forEach { aScope ->
-                assertFailsWith<IllegalStateException> { aScope.where { throw IllegalStateException() } }
-            }
+        scopes("where-executes-the-given-lambda") { case ->
+            assertFailsWith<IllegalStateException> { ScopeImpl(case.scope()).where { throw IllegalStateException() } }
         }
 
-        test("where-returns-starting-scope-after-execution") {
-            onCorrespondingItems(
-                mixedScopeInstances,
-                mixedScopeInstances.map { it.where { 1 + 2 } },
-            ) { expected, actual ->
-                assertSame(expected, actual)
-            }
+        scopes("where-returns-starting-scope-after-execution") { case ->
+            val scope = ScopeImpl(case.scope())
+            assertSame(scope, scope.where { 1 + 2 })
         }
 
-        test("with-executes-given-lambda") {
-            mixedScopeInstances.forEach { aScope ->
-                assertFailsWith<IllegalStateException> { aScope.with { throw IllegalStateException() } }
-            }
+        scopes("with-executes-given-lambda") { case ->
+            assertFailsWith<IllegalStateException> { ScopeImpl(case.scope()).with { throw IllegalStateException() } }
         }
 
-        test("with-returns-computation-results-after-execution") {
+        scopes("with-returns-computation-results-after-execution") { case ->
             val myResult = 3
-            onCorrespondingItems(
-                mixedScopeInstances.map { myResult },
-                mixedScopeInstances.map { it.with { myResult } },
-            ) { expected, actual -> assertEquals(expected, actual) }
+            assertEquals(myResult, ScopeImpl(case.scope()).with { myResult })
         }
 
-        test("scope-equals-works-as-expected") {
-            val toTestEmptyScope = ScopeImpl(ScopeUtils.emptyScope)
-            val toTestNonEmptyScopes = ScopeUtils.nonEmptyScopes.map(::ScopeImpl)
-            val toTestMixedScopes = ScopeUtils.mixedScopes.map(::ScopeImpl)
+        test("empty-scopes-are-equal") {
+            assertEquals(ScopeImpl(ScopeUtils.emptyScope), ScopeImpl(ScopeUtils.emptyScope))
+        }
 
-            assertEquals(emptyScopeInstance, toTestEmptyScope)
-
-            assertNotEquals(nonEmptyScopeInstances, toTestNonEmptyScopes)
-            assertNotEquals(mixedScopeInstances, toTestMixedScopes)
+        scopes("scopes-with-fresh-variables-are-not-equal", ScopeUtils.nonEmptyScopeCases) { case ->
+            assertNotEquals(ScopeImpl(case.scope()), ScopeImpl(case.scope()))
         }
 
         // /////////////////////
         // General Factories //
         // /////////////////////
-        test("block-of-iterable") {
-            val correctInstances = BlockUtils.mixedBlocks.map { Block.of(it.asIterable()) }
-            val toBeTested = BlockUtils.mixedBlocks.map { emptyScopeInstance.blockOf(it.asIterable()) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "block-of-iterable/${it.id}" }, BlockUtils.mixedBlockCases) { case ->
+            assertEqualities(
+                Block.of(case.elements.asIterable()),
+                ScopeImpl(ScopeUtils.emptyScope).blockOf(case.elements.asIterable()),
+            )
         }
 
-        test("block-of-varargs") {
-            val correctInstances = BlockUtils.mixedBlocks.map { Block.of(*it) }
-            val toBeTested = BlockUtils.mixedBlocks.map { emptyScopeInstance.blockOf(*it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "block-of-varargs/${it.id}" }, BlockUtils.mixedBlockCases) { case ->
+            assertEqualities(
+                Block.of(*case.elements.toTypedArray()),
+                ScopeImpl(ScopeUtils.emptyScope).blockOf(*case.elements.toTypedArray()),
+            )
         }
 
-        test("list-of-iterable") {
-            val correctInstances = ConsUtils.mixedConsInstancesElementLists.map { LogicList.of(it.asIterable()) }
-            val toBeTested =
-                ConsUtils.mixedConsInstancesElementLists.map {
-                    emptyScopeInstance.logicListOf(
-                        it.asIterable(),
-                    )
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "list-of-iterable/${it.id}" }, ConsUtils.mixedConsCases) { case ->
+            assertEqualities(
+                LogicList.of(case.elements.asIterable()),
+                ScopeImpl(ScopeUtils.emptyScope).logicListOf(case.elements.asIterable()),
+            )
         }
 
-        test("list-of-varargs") {
-            val correctInstances = ConsUtils.mixedConsInstancesElementLists.map { LogicList.of(*it.toTypedArray()) }
-            val toBeTested =
-                ConsUtils.mixedConsInstancesElementLists.map {
-                    emptyScopeInstance.logicListOf(
-                        *it.toTypedArray(),
-                    )
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "list-of-varargs/${it.id}" }, ConsUtils.mixedConsCases) { case ->
+            assertEqualities(
+                LogicList.of(*case.elements.toTypedArray()),
+                ScopeImpl(ScopeUtils.emptyScope).logicListOf(*case.elements.toTypedArray()),
+            )
         }
 
-        test("list-from") {
-            val correctInstances = ConsUtils.onlyConsPipeTerminatedElementLists.map { LogicList.from(it) }
-            val toBeTested = ConsUtils.onlyConsPipeTerminatedElementLists.map { emptyScopeInstance.logicListFrom(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "list-from/${it.id}" }, ConsUtils.onlyConsPipeTerminatedCases) { case ->
+            assertEqualities(
+                LogicList.from(case.elements),
+                ScopeImpl(ScopeUtils.emptyScope).logicListFrom(case.elements),
+            )
         }
 
-        test("tuple-of-iterable") {
-            val correctInstances = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it.asIterable()) }
-            val toBeTested = TupleUtils.tupleInstancesElementLists.map { emptyScopeInstance.tupleOf(it.asIterable()) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "tuple-of-iterable/${it.id}" }, TupleUtils.tupleCases) { case ->
+            assertEqualities(
+                Tuple.of(case.elements.asIterable()),
+                ScopeImpl(ScopeUtils.emptyScope).tupleOf(case.elements.asIterable()),
+            )
         }
 
-        test("tuple-of-varargs") {
-            val correctInstances = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it) }
-            val toBeTested =
-                TupleUtils.tupleInstancesElementLists.map {
-                    emptyScopeInstance.tupleOf(
-                        *it.toTypedArray(),
-                    )
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "tuple-of-varargs/${it.id}" }, TupleUtils.tupleCases) { case ->
+            assertEqualities(
+                Tuple.of(case.elements),
+                ScopeImpl(ScopeUtils.emptyScope).tupleOf(*case.elements.toTypedArray()),
+            )
         }
 
-        test("atom-of") {
-            val correctInstances = AtomUtils.mixedAtoms.map { Atom.of(it) }
-            val toBeTested = AtomUtils.mixedAtoms.map(emptyScopeInstance::atomOf)
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "atom-of/${it.id}" }, AtomUtils.mixedAtomCases) { case ->
+            assertEqualities(Atom.of(case.value), ScopeImpl(ScopeUtils.emptyScope).atomOf(case.value))
         }
 
-        test("struct-of-functor-and-varargs") {
-            val correctInstances = StructUtils.mixedStructs.map { (functor, args) -> Struct.of(functor, args) }
-            val toBeTested =
-                StructUtils.mixedStructs.map { (functor, args) ->
-                    emptyScopeInstance.structOf(functor, args)
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "struct-of-functor-and-varargs/${it.id}" }, StructUtils.mixedStructCases) { case ->
+            assertEqualities(
+                Struct.of(case.functor, case.args),
+                ScopeImpl(ScopeUtils.emptyScope).structOf(case.functor, case.args),
+            )
         }
 
-        test("struct-of-functor-and-sequence") {
-            val correctInstances =
-                StructUtils.mixedStructs.map { (functor, args) ->
-                    Struct.of(functor, args.asSequence())
-                }
-            val toBeTested =
-                StructUtils.mixedStructs.map { (functor, args) ->
-                    emptyScopeInstance.structOf(functor, args.asSequence())
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "struct-of-functor-and-sequence/${it.id}" }, StructUtils.mixedStructCases) { case ->
+            assertEqualities(
+                Struct.of(case.functor, case.args.asSequence()),
+                ScopeImpl(ScopeUtils.emptyScope).structOf(case.functor, case.args.asSequence()),
+            )
         }
 
-        test("fact-of") {
-            val correctInstances = FactUtils.mixedFacts.map { Fact.of(it) }
-            val toBeTested = FactUtils.mixedFacts.map(emptyScopeInstance::factOf)
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "fact-of/${it.id}" }, FactUtils.mixedFactCases) { case ->
+            assertEqualities(Fact.of(case.head), ScopeImpl(ScopeUtils.emptyScope).factOf(case.head))
         }
 
-        test("rule-of") {
-            val correctInstances = RuleUtils.mixedRules.map { (head, body) -> Rule.of(head, body) }
-            val toBeTested = RuleUtils.mixedRules.map { (head, body) -> emptyScopeInstance.ruleOf(head, body) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "rule-of/${it.id}" }, RuleUtils.mixedRuleCases) { case ->
+            assertEqualities(
+                Rule.of(case.head, case.body),
+                ScopeImpl(ScopeUtils.emptyScope).ruleOf(case.head, case.body),
+            )
         }
 
-        test("directive-of") {
-            val correctInstances = DirectiveUtils.mixedDirectives.map { Directive.of(it) }
-            val toBeTested = DirectiveUtils.mixedDirectives.map { emptyScopeInstance.directiveOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "directive-of/${it.id}" }, DirectiveUtils.mixedDirectiveCases) { case ->
+            assertEqualities(Directive.of(case.body), ScopeImpl(ScopeUtils.emptyScope).directiveOf(case.body))
         }
 
-        test("clause-of") {
-            val mixedClauses = RuleUtils.mixedRules + DirectiveUtils.mixedDirectives.map { Pair(null, it) }
-
-            val correctInstances = mixedClauses.map { (head, body) -> Clause.of(head, body) }
-            val toBeTested = mixedClauses.map { (head, body) -> emptyScopeInstance.clauseOf(head, body) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "clause-of/rule/${it.id}" }, RuleUtils.mixedRuleCases) { case ->
+            assertEqualities(
+                Clause.of(case.head, case.body),
+                ScopeImpl(ScopeUtils.emptyScope).clauseOf(case.head, case.body),
+            )
         }
 
-        test("cons-of") {
-            val correctInstances = ConsUtils.mixedConsInstances(Cons.Companion::of)
-            val toBeTested = ConsUtils.mixedConsInstances(emptyScopeInstance::consOf)
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "clause-of/directive/${it.id}" }, DirectiveUtils.mixedDirectiveCases) { case ->
+            assertEqualities(Clause.of(null, case.body), ScopeImpl(ScopeUtils.emptyScope).clauseOf(null, case.body))
         }
 
-        test("indicator-of-terms") {
-            val correctInstances = IndicatorUtils.mixedIndicators.map { (name, arity) -> Indicator.of(name, arity) }
-            val toBeTested =
-                IndicatorUtils.mixedIndicators.map { (name, arity) -> emptyScopeInstance.indicatorOf(name, arity) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "cons-of/${it.id}" }, ConsUtils.mixedConsCases) { case ->
+            assertEqualities(case.cons(Cons.Companion::of), case.cons(ScopeImpl(ScopeUtils.emptyScope)::consOf))
         }
 
-        test("indicator-of-name-and-arity") {
-            val correctInstances =
-                IndicatorUtils.rawWellFormedIndicators.map { (name, arity) ->
-                    Indicator.of(name, arity)
-                }
-            val toBeTested =
-                IndicatorUtils.rawWellFormedIndicators.map { (name, arity) ->
-                    emptyScopeInstance.indicatorOf(name, arity)
-                }
+        withTests(nameFn = { "indicator-of-terms/${it.id}" }, IndicatorUtils.mixedIndicatorCases) { case ->
+            assertEqualities(
+                Indicator.of(case.name, case.arity),
+                ScopeImpl(ScopeUtils.emptyScope).indicatorOf(case.name, case.arity),
+            )
+        }
 
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(
+            nameFn = { "indicator-of-name-and-arity/${it.id}" },
+            IndicatorUtils.wellFormedIndicatorCases,
+        ) { case ->
+            assertEqualities(
+                Indicator.of(case.rawName, case.rawArity),
+                ScopeImpl(ScopeUtils.emptyScope).indicatorOf(case.rawName, case.rawArity),
+            )
         }
 
         test("anonymous") {
-            TermTypeAssertionUtils.assertIsVar(emptyScopeInstance.anonymous())
-            assertTrue { emptyScopeInstance.anonymous().isAnonymous }
+            TermTypeAssertionUtils.assertIsVar(ScopeImpl(ScopeUtils.emptyScope).anonymous())
+            assertTrue { ScopeImpl(ScopeUtils.emptyScope).anonymous().isAnonymous }
         }
 
         test("underscore-property") {
-            TermTypeAssertionUtils.assertIsVar(emptyScopeInstance.`_`)
-            assertTrue { emptyScopeInstance.`_`.isAnonymous }
+            TermTypeAssertionUtils.assertIsVar(ScopeImpl(ScopeUtils.emptyScope).`_`)
+            assertTrue { ScopeImpl(ScopeUtils.emptyScope).`_`.isAnonymous }
         }
 
         test("whatever") {
-            TermTypeAssertionUtils.assertIsVar(emptyScopeInstance.whatever())
-            assertTrue { emptyScopeInstance.whatever().isAnonymous }
+            TermTypeAssertionUtils.assertIsVar(ScopeImpl(ScopeUtils.emptyScope).whatever())
+            assertTrue { ScopeImpl(ScopeUtils.emptyScope).whatever().isAnonymous }
         }
 
-        test("num-of-big-decimal") {
-            val correctInstances = RealUtils.bigDecimals.map { Numeric.of(it) }
-            val toBeTested = RealUtils.bigDecimals.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-big-decimal/${it.id}" }, RealUtils.realCases) { case ->
+            assertEqualities(Numeric.of(case.value), ScopeImpl(ScopeUtils.emptyScope).numOf(case.value))
         }
 
-        test("num-of-double") {
-            val correctInstances = RealUtils.decimalsAsDoubles.map { Numeric.of(it) }
-            val toBeTested = RealUtils.decimalsAsDoubles.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-double/${it.id}" }, RealUtils.realCases) { case ->
+            assertEqualities(Numeric.of(case.double), ScopeImpl(ScopeUtils.emptyScope).numOf(case.double))
         }
 
-        test("num-of-float") {
-            val correctInstances = RealUtils.decimalsAsFloats.map { Numeric.of(it) }
-            val toBeTested = RealUtils.decimalsAsFloats.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-float/${it.id}" }, RealUtils.realCases.filter { it.float != null }) { case ->
+            assertEqualities(Numeric.of(case.float!!), ScopeImpl(ScopeUtils.emptyScope).numOf(case.float!!))
         }
 
-        test("num-of-big-integer") {
-            val correctInstances = IntegerUtils.bigIntegers.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.bigIntegers.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-big-integer/${it.id}" }, IntegerUtils.integerCases) { case ->
+            assertEqualities(Numeric.of(case.value), ScopeImpl(ScopeUtils.emptyScope).numOf(case.value))
         }
 
-        test("num-of-int") {
-            val correctInstances = IntegerUtils.onlyInts.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.onlyInts.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-int/${it.id}" }, IntegerUtils.integerCases.filter { it.int != null }) { case ->
+            assertEqualities(Numeric.of(case.int!!), ScopeImpl(ScopeUtils.emptyScope).numOf(case.int!!))
         }
 
-        test("num-of-long") {
-            val correctInstances = IntegerUtils.onlyLongs.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.onlyLongs.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-long/${it.id}" }, IntegerUtils.integerCases.filter { it.long != null }) { case ->
+            assertEqualities(Numeric.of(case.long!!), ScopeImpl(ScopeUtils.emptyScope).numOf(case.long!!))
         }
 
-        test("num-of-short") {
-            val correctInstances = IntegerUtils.onlyShorts.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.onlyShorts.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-short/${it.id}" }, IntegerUtils.integerCases.filter { it.short != null }) { case ->
+            assertEqualities(Numeric.of(case.short!!), ScopeImpl(ScopeUtils.emptyScope).numOf(case.short!!))
         }
 
-        test("num-of-byte") {
-            val correctInstances = IntegerUtils.onlyBytes.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.onlyBytes.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-byte/${it.id}" }, IntegerUtils.integerCases.filter { it.byte != null }) { case ->
+            assertEqualities(Numeric.of(case.byte!!), ScopeImpl(ScopeUtils.emptyScope).numOf(case.byte!!))
         }
 
-        test("num-of-string") {
-            val correctInstances = IntegerUtils.stringNumbers.map { Numeric.of(it) }
-            val toBeTested = IntegerUtils.stringNumbers.map { emptyScopeInstance.numOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "num-of-string/${it.id}" }, IntegerUtils.integerCases) { case ->
+            assertEqualities(Numeric.of(case.string), ScopeImpl(ScopeUtils.emptyScope).numOf(case.string))
         }
 
-        test("truth-of-boolean") {
-            val correctInstances = listOf(true, false).map { Truth.of(it) }
-            val toBeTested = listOf(true, false).map { emptyScopeInstance.truthOf(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "truth-of-boolean/$it" }, listOf(true, false)) { boolean ->
+            assertEqualities(Truth.of(boolean), ScopeImpl(ScopeUtils.emptyScope).truthOf(boolean))
         }
     })

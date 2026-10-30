@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.unify
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
@@ -11,7 +12,6 @@ import it.unibo.tuprolog.unify.testutils.UnificatorUtils
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertMatchCorrect
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertMguCorrect
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertUnifiedTermCorrect
-import it.unibo.tuprolog.unify.testutils.UnificatorUtils.forEquationSequence
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.memberClause
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.negativeMemberPatterns
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.positiveMemberPatterns
@@ -44,183 +44,82 @@ class AbstractUnificatorSpec :
             assertEquals(mySubstitution, myStrategyConstructor(mySubstitution).context)
         }
 
-        test("mgu-works-as-expected-with-positive-examples") {
-            assertMguCorrect(
-                UnificatorUtils.successfulUnifications,
-            ) { term1, term2 -> myStrategy.mgu(term1, term2, true) }
-            assertMguCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
-                myStrategy.mgu(term1, term2, false)
+        val examples = UnificatorUtils.successfulUnifications + UnificatorUtils.failedUnifications
+
+        for (occurCheck in listOf(true, false)) {
+            val flag = if (occurCheck) "with-occur-check" else "without-occur-check"
+
+            withTests(nameFn = { "mgu/$flag/${it.id}" }, examples) { case ->
+                assertMguCorrect(case) { term1, term2 -> myStrategy.mgu(term1, term2, occurCheck) }
+            }
+
+            withTests(nameFn = { "match/$flag/${it.id}" }, examples) { case ->
+                assertMatchCorrect(case) { term1, term2 -> myStrategy.match(term1, term2, occurCheck) }
+            }
+
+            withTests(nameFn = { "unify/$flag/${it.id}" }, examples) { case ->
+                assertUnifiedTermCorrect(case) { term1, term2 -> myStrategy.unify(term1, term2, occurCheck) }
             }
         }
 
-        test("match-works-as-expected-with-positive-examples") {
-            assertMatchCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
-                myStrategy.match(term1, term2, true)
-            }
-            assertMatchCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
-                myStrategy.match(term1, term2, false)
-            }
+        withTests(nameFn = { "mgu/with-occur-check/${it.id}" }, UnificatorUtils.occurCheckFailedUnifications) { case ->
+            assertMguCorrect(case) { term1, term2 -> myStrategy.mgu(term1, term2, true) }
         }
 
-        test("unify-works-as-expected-with-positive-examples") {
-            assertUnifiedTermCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
-                myStrategy.unify(term1, term2, true)
-            }
-            assertUnifiedTermCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
-                myStrategy.unify(term1, term2, false)
-            }
+        withTests(
+            nameFn = { "match/with-occur-check/${it.id}" },
+            UnificatorUtils.occurCheckFailedUnifications,
+        ) { case ->
+            assertMatchCorrect(case) { term1, term2 -> myStrategy.match(term1, term2, true) }
         }
 
-        test("mgu-works-as-expected-with-negative-examples") {
-            assertMguCorrect(UnificatorUtils.failedUnifications) { term1, term2 -> myStrategy.mgu(term1, term2, true) }
-            assertMguCorrect(UnificatorUtils.failedUnifications) { term1, term2 -> myStrategy.mgu(term1, term2, false) }
-        }
-
-        test("match-works-as-expected-with-negative-examples") {
-            assertMatchCorrect(
-                UnificatorUtils.failedUnifications,
-            ) { term1, term2 -> myStrategy.match(term1, term2, true) }
-            assertMatchCorrect(UnificatorUtils.failedUnifications) { term1, term2 ->
-                myStrategy.match(term1, term2, false)
-            }
-        }
-
-        test("unify-works-as-expected-with-negative-examples") {
-            assertUnifiedTermCorrect(UnificatorUtils.failedUnifications) { term1, term2 ->
-                myStrategy.unify(term1, term2, true)
-            }
-            assertUnifiedTermCorrect(UnificatorUtils.failedUnifications) { term1, term2 ->
-                myStrategy.unify(term1, term2, false)
-            }
-        }
-
-        test("mgu-with-occur-check-enabled-stops-executing-with-failure-on-bad-equation") {
-            assertMguCorrect(UnificatorUtils.occurCheckFailedUnifications) { term1, term2 ->
-                myStrategy.mgu(term1, term2, true)
-            }
-        }
-
-        test("match-with-occur-check-enabled-stops-executing-with-failure-on-bad-equation") {
-            assertMatchCorrect(UnificatorUtils.occurCheckFailedUnifications) { term1, term2 ->
-                myStrategy.match(term1, term2, true)
-            }
-        }
-
-        test("unify-with-occur-check-enabled-stops-executing-with-failure-on-bad-equation") {
-            assertUnifiedTermCorrect(UnificatorUtils.occurCheckFailedUnifications) { term1, term2 ->
-                myStrategy.unify(term1, term2, true)
-            }
+        withTests(
+            nameFn = { "unify/with-occur-check/${it.id}" },
+            UnificatorUtils.occurCheckFailedUnifications,
+        ) { case ->
+            assertUnifiedTermCorrect(case) { term1, term2 -> myStrategy.unify(term1, term2, true) }
         }
 
         test("occur-check-disabled-testing") {
             val xVar = Var.of("X")
             val structWithX = Struct.of("f", xVar)
-
-            val correctnessMap =
-                mapOf(
-                    (xVar eq structWithX) to
-                        Triple(Substitution.of(xVar, structWithX), true, structWithX),
+            val case =
+                UnificatorUtils.UnificationCase(
+                    "occur-check-disabled",
+                    xVar eq structWithX,
+                    Substitution.of(xVar, structWithX),
+                    true,
+                    structWithX,
                 )
 
-            assertMguCorrect(correctnessMap) { term1, term2 -> myStrategy.mgu(term1, term2, false) }
-            assertMatchCorrect(correctnessMap) { term1, term2 -> myStrategy.match(term1, term2, false) }
-            assertUnifiedTermCorrect(correctnessMap) { term1, term2 -> myStrategy.unify(term1, term2, false) }
+            assertMguCorrect(case) { term1, term2 -> myStrategy.mgu(term1, term2, false) }
+            assertMatchCorrect(case) { term1, term2 -> myStrategy.match(term1, term2, false) }
+            assertUnifiedTermCorrect(case) { term1, term2 -> myStrategy.unify(term1, term2, false) }
         }
 
-        test("sequence-of-equations-success-unification") {
-            forEquationSequence(
-                ::assertMguCorrect,
-                UnificatorUtils.successSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
+        val sequences = UnificatorUtils.successSequenceOfUnification + UnificatorUtils.failSequenceOfUnification
 
-            forEquationSequence(
-                ::assertMguCorrect,
-                UnificatorUtils.successSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
-
-            forEquationSequence(
-                ::assertMatchCorrect,
-                UnificatorUtils.successSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
-
-            forEquationSequence(
-                ::assertMatchCorrect,
-                UnificatorUtils.successSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
-
-            forEquationSequence(
-                ::assertUnifiedTermCorrect,
-                UnificatorUtils.successSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
-
-            forEquationSequence(
-                ::assertUnifiedTermCorrect,
-                UnificatorUtils.successSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
+        withTests(nameFn = { "mgu/${it.id}" }, sequences) { case ->
+            val context = case.contextBeforeLast(myStrategyConstructor)
+            assertMguCorrect(case.last) { t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
         }
 
-        test("positive-corner-cases") {
-            for (pattern in positiveMemberPatterns) {
-                with(myStrategyConstructor(Substitution.empty())) {
-                    assertTrue {
-                        match(pattern, memberClause)
-                    }
-                }
-            }
+        withTests(nameFn = { "match/${it.id}" }, sequences) { case ->
+            val context = case.contextBeforeLast(myStrategyConstructor)
+            assertMatchCorrect(case.last) { t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
         }
 
-        test("negative-corner-cases") {
-            for (pattern in negativeMemberPatterns) {
-                with(myStrategyConstructor(Substitution.empty())) {
-                    assertFalse {
-                        match(pattern, memberClause)
-                    }
-                }
-            }
+        withTests(nameFn = { "unify/${it.id}" }, sequences) { case ->
+            val context = case.contextBeforeLast(myStrategyConstructor)
+            assertUnifiedTermCorrect(case.last) { t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
         }
 
-        test("sequence-of-equations-failed-unification") {
-            forEquationSequence(
-                ::assertMguCorrect,
-                UnificatorUtils.failSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
+        withTests(nameFn = { "positive-corner-cases/${it.id}" }, positiveMemberPatterns) { case ->
+            assertTrue { myStrategyConstructor(Substitution.empty()).match(case.pattern, memberClause) }
+        }
 
-            forEquationSequence(
-                ::assertMguCorrect,
-                UnificatorUtils.failSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
-
-            forEquationSequence(
-                ::assertMatchCorrect,
-                UnificatorUtils.failSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
-
-            forEquationSequence(
-                ::assertMatchCorrect,
-                UnificatorUtils.failSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
-
-            forEquationSequence(
-                ::assertUnifiedTermCorrect,
-                UnificatorUtils.failSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
-
-            forEquationSequence(
-                ::assertUnifiedTermCorrect,
-                UnificatorUtils.failSequenceOfUnification,
-                myStrategyConstructor,
-            ) { context, t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
+        withTests(nameFn = { "negative-corner-cases/${it.id}" }, negativeMemberPatterns) { case ->
+            assertFalse { myStrategyConstructor(Substitution.empty()).match(case.pattern, memberClause) }
         }
 
         test("unification-works-for-big-lists") {

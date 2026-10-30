@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.VarImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualsUsingVariablesSimpleNames
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.VarUtils
 import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
 import kotlin.test.assertEquals
@@ -21,16 +21,16 @@ import kotlin.test.assertTrue
  */
 class VarSpec :
     FunSpec({
-        test("var-regex-correct") {
-            assertTrue(VarUtils.correctlyNamedVars.all { it matches Var.NAME_PATTERN })
-            assertFalse(VarUtils.incorrectlyNamedVars.any { it matches Var.NAME_PATTERN })
+        withTests(nameFn = { "name-pattern-matches/${it.id}" }, VarUtils.correctlyNamedVarCases) { case ->
+            assertTrue(case.name matches Var.NAME_PATTERN)
         }
 
-        test("var-of-works-as-expected") {
-            val correctInstances = VarUtils.mixedVars.map { VarImpl(it) }
-            val toBeTested = VarUtils.mixedVars.map { Var.of(it) }
+        withTests(nameFn = { "name-pattern-does-not-match/${it.id}" }, VarUtils.incorrectlyNamedVarCases) { case ->
+            assertFalse(case.name matches Var.NAME_PATTERN)
+        }
 
-            onCorrespondingItems(correctInstances, toBeTested, ::assertDifferentVariableExceptForName)
+        withTests(nameFn = { "of/${it.id}" }, VarUtils.mixedVarCases) { case ->
+            assertDifferentVariableExceptForName(VarImpl(case.name), Var.of(case.name))
         }
 
         test("anonymous-works-as-expected") {

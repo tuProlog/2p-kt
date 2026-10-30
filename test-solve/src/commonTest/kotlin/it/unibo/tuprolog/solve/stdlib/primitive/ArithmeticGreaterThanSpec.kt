@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ArithmeticUtils.greaterQueryToResult
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.BinaryRelationUtils.assertCorrectResponse
 
@@ -11,9 +12,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.testutils.BinaryRelationUtils.as
  */
 class ArithmeticGreaterThanSpec :
     FunSpec({
-        test("computes-correct-result") {
-            greaterQueryToResult.forEach { (input, result) ->
-                assertCorrectResponse(ArithmeticGreaterThan, input, result)
-            }
+        withTests(nameFn = { "computes-correct-result/${it.id}" }, greaterQueryToResult) { case ->
+            assertCorrectResponse(ArithmeticGreaterThan, case.request, case.expected)
         }
     })

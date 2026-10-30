@@ -3,6 +3,7 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Integer
@@ -10,7 +11,6 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.IntegerUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
@@ -28,39 +28,18 @@ import kotlin.test.assertTrue
  */
 class IntegerImplSpec :
     FunSpec({
-        val integerInstances = IntegerUtils.bigIntegers.map(::IntegerImpl)
+        fun integers(
+            property: String,
+            test: (IntegerUtils.IntegerCase, Integer) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, IntegerUtils.integerCases) { test(it, IntegerImpl(it.value)) }
 
-        test("correct-value") {
-            onCorrespondingItems(
-                IntegerUtils.bigIntegers,
-                integerInstances.map { it.value },
-            ) { expectedValue, integerValue -> assertEquals(expectedValue, integerValue) }
-        }
+        integers("value") { case, integer -> assertEquals(case.value, integer.value) }
 
-        test("correct-int-value") {
-            onCorrespondingItems(
-                IntegerUtils.bigIntegers,
-                integerInstances.map { it.intValue },
-            ) { expectedValue, integerIntValue -> assertEquals(expectedValue, integerIntValue) }
-        }
+        integers("int-value") { case, integer -> assertEquals(case.value, integer.intValue) }
 
-        test("correct-decimal-value") {
-            val expectedDecimals = IntegerUtils.bigIntegers.map { BigDecimal.of(it) }
+        integers("decimal-value") { case, integer -> assertEquals(BigDecimal.of(case.value), integer.decimalValue) }
 
-            onCorrespondingItems(
-                expectedDecimals,
-                integerInstances.map { it.decimalValue },
-            ) { expectedValue, integerDecimalValue -> assertEquals(expectedValue, integerDecimalValue) }
-        }
-
-        test("correct-to-string") {
-            val expectedToString = IntegerUtils.bigIntegers.map { it.toString() }
-
-            onCorrespondingItems(
-                expectedToString,
-                integerInstances.map { it.toString() },
-            ) { expectedString, integerToString -> assertEquals(expectedString, integerToString) }
-        }
+        integers("to-string") { case, integer -> assertEquals(case.value.toString(), integer.toString()) }
 
         test("compare-to-works-as-expected") {
             val one = IntegerImpl(BigInteger.of(1))
@@ -77,9 +56,7 @@ class IntegerImplSpec :
             assertFalse(one.compareValueTo(two) > 0)
         }
 
-        test("is-properties-and-types") {
-            integerInstances.forEach(TermTypeAssertionUtils::assertIsInteger)
-        }
+        integers("type-checks") { _, integer -> TermTypeAssertionUtils.assertIsInteger(integer) }
 
         test("equals-works-as-expected") {
             val oneInteger = IntegerImpl(BigInteger.of(1))
@@ -103,15 +80,11 @@ class IntegerImplSpec :
             assertNotStructurallyEquals(oneInteger, oneAtom)
         }
 
-        test("integer-fresh-copy-should-return-the-instance-itself") {
-            integerInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
+        integers("fresh-copy-is-itself") { _, integer -> ConstantUtils.assertFreshCopyIsItself(integer) }
+
+        integers("fresh-copy-with-scope-is-itself") { _, integer ->
+            ConstantUtils.assertFreshCopyWithScopeIsItself(integer)
         }
 
-        test("integer-fresh-copy-with-scope-should-return-the-instance-itself") {
-            integerInstances.forEach(ConstantUtils::assertFreshCopyWithScopeIsItself)
-        }
-
-        test("apply-always-returns-the-instance-itself") {
-            integerInstances.forEach(ConstantUtils::assertApplyingSubstitutionIsItself)
-        }
+        integers("apply-is-itself") { _, integer -> ConstantUtils.assertApplyingSubstitutionIsItself(integer) }
     })

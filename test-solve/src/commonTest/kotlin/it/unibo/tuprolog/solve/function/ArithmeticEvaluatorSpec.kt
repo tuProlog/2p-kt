@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.solve.function
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.function.testutils.ArithmeticEvaluatorUtils
-import it.unibo.tuprolog.solve.function.testutils.ArithmeticEvaluatorUtils.inputToErrorType
-import it.unibo.tuprolog.solve.function.testutils.ArithmeticEvaluatorUtils.inputToResult
+import it.unibo.tuprolog.solve.function.testutils.ArithmeticEvaluatorUtils.errorCases
+import it.unibo.tuprolog.solve.function.testutils.ArithmeticEvaluatorUtils.resultCases
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -14,20 +15,15 @@ import kotlin.test.assertFailsWith
  */
 class ArithmeticEvaluatorSpec :
     FunSpec({
-        val arithmeticEvaluator = ArithmeticEvaluator(ArithmeticEvaluatorUtils.commonFunctionsRequest)
-
-        test("throws-expected-errors") {
-            inputToErrorType.forEach { (input, errorType) ->
-                assertFailsWith(errorType) { input.accept(arithmeticEvaluator) }
-            }
+        withTests(nameFn = { "throws-expected-errors/${it.id}" }, errorCases) { case ->
+            val arithmeticEvaluator = ArithmeticEvaluator(ArithmeticEvaluatorUtils.commonFunctionsRequest)
+            assertFailsWith(case.errorType) { case.input.accept(arithmeticEvaluator) }
         }
 
-        test("computes-correctly-the-result") {
-            inputToResult.forEach { (input, result) ->
-                val toBeTested = input.accept(arithmeticEvaluator)
+        withTests(nameFn = { "computes-correctly-the-result/${it.id}" }, resultCases) { case ->
+            val toBeTested = case.input.accept(ArithmeticEvaluator(ArithmeticEvaluatorUtils.commonFunctionsRequest))
 
-                assertEquals(result::class, toBeTested::class)
-                assertEquals(result, toBeTested)
-            }
+            assertEquals(case.result::class, toBeTested::class)
+            assertEquals(case.result, toBeTested)
         }
     })

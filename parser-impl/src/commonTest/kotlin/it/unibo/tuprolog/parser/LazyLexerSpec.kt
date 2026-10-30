@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.parser
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.parser.exceptions.SourceReadException
 import it.unibo.tuprolog.parser.exceptions.TokenBufferLimitExceededException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedQuotedLiteralException
@@ -55,33 +56,32 @@ class LazyLexerSpec :
             assertFailsWith<UnterminatedQuotedLiteralException> { source.significantToken(0) }
         }
 
-        test("every-character-chunking-produces-the-same-tokens-and-coordinates") {
+        withTests(nameFn = {
+            "chunking-produces-the-same-tokens-and-coordinates/chunk-size-$it"
+        }, (1..12).toList()) { chunkSize ->
             val text = "foo(X) /* c */ :- X = 0xff, Y = 1.25e-3, Z = '\\x41\\'.\r\nnext."
             val expected = testLexer.lex(SourceText(text)).materialize()
             val expectedTokens = expected.tokens.toList()
+            var offset = 0
+            val actual =
+                testLexer
+                    .lex(
+                        TextChunkSource {
+                            if (offset == text.length) {
+                                null
+                            } else {
+                                val end = (offset + chunkSize).coerceAtMost(text.length)
+                                text.substring(offset, end).also { offset = end }
+                            }
+                        },
+                    ).materialize()
 
-            for (chunkSize in 1..12) {
-                var offset = 0
-                val actual =
-                    testLexer
-                        .lex(
-                            TextChunkSource {
-                                if (offset == text.length) {
-                                    null
-                                } else {
-                                    val end = (offset + chunkSize).coerceAtMost(text.length)
-                                    text.substring(offset, end).also { offset = end }
-                                }
-                            },
-                        ).materialize()
-
-                assertEquals(expectedTokens, actual.tokens.toList(), "chunk size $chunkSize")
-                assertEquals(
-                    expectedTokens.map(expected::textOf),
-                    actual.tokens.toList().map(actual::textOf),
-                    "chunk size $chunkSize",
-                )
-            }
+            assertEquals(expectedTokens, actual.tokens.toList(), "chunk size $chunkSize")
+            assertEquals(
+                expectedTokens.map(expected::textOf),
+                actual.tokens.toList().map(actual::textOf),
+                "chunk size $chunkSize",
+            )
         }
 
         test("streamed-session-snapshots-survive-input-release") {

@@ -32,20 +32,30 @@ internal object ExpressionEvaluatorUtils {
             context = noFunctionsContext,
         )
 
-    /** Test data is in the form (input, transforming function, expected output) */
-    internal val inputFunctionOutputTriple by lazy {
-        listOf<Triple<Term, LogicFunction, Term>>(
-            Triple(
+    /** A named [input], to be reduced by [function] into [output] */
+    internal class ReductionCase(
+        val id: String,
+        val input: Struct,
+        val function: LogicFunction,
+        val output: Term,
+    )
+
+    internal val reductionCases by lazy {
+        listOf(
+            ReductionCase(
+                "atom",
                 Atom.of("a"),
                 LogicFunction { request -> request.replyWith(Atom.of("b")) },
                 Atom.of("b"),
             ),
-            Triple(
+            ReductionCase(
+                "unary-struct",
                 Struct.of("extractAnotherTerm", Atom.of("b")),
                 LogicFunction { request -> with(request) { replyWith(Struct.of("resultTerm", arguments.single())) } },
                 Struct.of("resultTerm", Atom.of("b")),
             ),
-            Triple(
+            ReductionCase(
+                "binary-struct",
                 Struct.of("concat", Atom.of("a"), Atom.of("b")),
                 LogicFunction { request ->
                     with(request) {
@@ -58,7 +68,8 @@ internal object ExpressionEvaluatorUtils {
                 },
                 Atom.of("ab"),
             ),
-            Triple(
+            ReductionCase(
+                "nested-structs",
                 Struct.of(
                     "concat",
                     Struct.of("concat", Atom.of("a"), Atom.of("b")),

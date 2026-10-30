@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.IndicatorUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
@@ -19,110 +19,63 @@ import kotlin.test.assertTrue
  */
 class IndicatorImplSpec :
     FunSpec({
-        val indicatorInstances = IndicatorUtils.mixedIndicators.map { (name, arity) -> IndicatorImpl(name, arity) }
+        fun indicators(
+            property: String,
+            cases: List<IndicatorUtils.IndicatorCase> = IndicatorUtils.mixedIndicatorCases,
+            test: (IndicatorUtils.IndicatorCase, IndicatorImpl) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it, IndicatorImpl(it.name, it.arity)) }
 
-        val wellFormedIndicatorInstances =
-            IndicatorUtils.wellFormedIndicators.map { (name, arity) -> IndicatorImpl(name, arity) }
+        val nonWellFormedIndicatorCases =
+            IndicatorUtils.nonWellFormedNameIndicatorCases + IndicatorUtils.nonWellFormedArityIndicatorCases
 
-        test("name-term-correct") {
-            val correctNameTerms = IndicatorUtils.mixedIndicators.map { (name, _) -> name }
+        indicators("name-term") { case, indicator -> assertEqualities(case.name, indicator.nameTerm) }
 
-            onCorrespondingItems(correctNameTerms, indicatorInstances.map { it.nameTerm }, ::assertEqualities)
+        indicators("arity-term") { case, indicator -> assertEqualities(case.arity, indicator.arityTerm) }
+
+        indicators("functor") { _, indicator -> assertEquals("/", indicator.functor) }
+
+        indicators("args") { case, indicator -> assertEquals(listOf(case.name, case.arity), indicator.args) }
+
+        indicators("indicated-name", IndicatorUtils.wellFormedIndicatorCases) { case, indicator ->
+            assertEquals(case.rawName, indicator.indicatedName)
         }
 
-        test("arity-term-correct") {
-            val correctArityTerms = IndicatorUtils.mixedIndicators.map { (_, arity) -> arity }
-
-            onCorrespondingItems(correctArityTerms, indicatorInstances.map { it.arityTerm }, ::assertEqualities)
+        indicators("indicated-name-null", IndicatorUtils.nonWellFormedNameIndicatorCases) { _, indicator ->
+            assertEquals(null, indicator.indicatedName)
         }
 
-        test("indicator-functor") {
-            indicatorInstances.forEach { assertEquals("/", it.functor) }
+        indicators("indicated-arity", IndicatorUtils.wellFormedIndicatorCases) { case, indicator ->
+            assertEquals(case.rawArity, indicator.indicatedArity)
         }
 
-        test("arg-correct") {
-            val correctArgs = IndicatorUtils.mixedIndicators.map { (name, arity) -> listOf(name, arity) }
-
-            onCorrespondingItems(correctArgs, indicatorInstances.map { it.args }) { expected, actual ->
-                assertEquals(expected, actual)
-            }
+        indicators("indicated-arity-null", IndicatorUtils.nonWellFormedArityIndicatorCases) { _, indicator ->
+            assertEquals(null, indicator.indicatedArity)
         }
 
-        test("indicated-name-correct") {
-            val correctIndicatedName = IndicatorUtils.rawWellFormedIndicators.map { (name, _) -> name }
-
-            onCorrespondingItems(
-                correctIndicatedName,
-                wellFormedIndicatorInstances.map { it.indicatedName },
-            ) { expected, actual -> assertEquals(expected, actual) }
+        indicators("to-string") { case, indicator ->
+            assertEquals("${case.name}${Indicator.FUNCTOR}${case.arity}", indicator.toString())
         }
 
-        test("indicated-name-null-if-indicator-name-not-well-formed") {
-            val correct = arrayOfNulls<String?>(IndicatorUtils.nonWellFormedNameIndicator.count()).toList()
-            val toBeTested =
-                IndicatorUtils.nonWellFormedNameIndicator
-                    .map { (name, arity) -> IndicatorImpl(name, arity) }
-                    .map { it.indicatedName }
+        indicators("type-checks") { _, indicator -> TermTypeAssertionUtils.assertIsIndicator(indicator) }
 
-            onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+        indicators("two-arity") { _, indicator -> assertEquals(2, indicator.arity) }
+
+        indicators("is-well-formed", IndicatorUtils.wellFormedIndicatorCases) { _, indicator ->
+            assertTrue { indicator.isWellFormed }
         }
 
-        test("indicated-arity-correct") {
-            val correctIndicatedArity = IndicatorUtils.rawWellFormedIndicators.map { (_, arity) -> arity }
-
-            onCorrespondingItems(
-                correctIndicatedArity,
-                wellFormedIndicatorInstances.map { it.indicatedArity },
-            ) { expected, actual -> assertEquals(expected, actual) }
+        indicators("is-not-well-formed", nonWellFormedIndicatorCases) { _, indicator ->
+            assertFalse { indicator.isWellFormed }
         }
 
-        test("indicated-arity-null-if-indicator-arity-not-well-formed") {
-            val correct = arrayOfNulls<Int?>(IndicatorUtils.nonWellFormedArityIndicator.count()).toList()
-            val toBeTested =
-                IndicatorUtils.nonWellFormedArityIndicator
-                    .map { (name, arity) -> IndicatorImpl(name, arity) }
-                    .map { it.indicatedArity }
-
-            onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+        indicators("fresh-copy-is-itself", IndicatorUtils.mixedIndicatorCases.filter { it.isGround }) { _, indicator ->
+            ConstantUtils.assertFreshCopyIsItself(indicator)
         }
 
-        test("to-string-works-as-expected") {
-            val correctToString =
-                IndicatorUtils.mixedIndicators.map { (name, arity) ->
-                    "$name${Indicator.FUNCTOR}$arity"
-                }
-
-            onCorrespondingItems(
-                correctToString,
-                indicatorInstances.map { it.toString() },
-            ) { expected, actual -> assertEquals(expected, actual) }
-        }
-
-        test("is-properties-and-types") {
-            indicatorInstances.forEach(TermTypeAssertionUtils::assertIsIndicator)
-        }
-
-        test("two-arity") {
-            indicatorInstances.forEach { assertEquals(2, it.arity) }
-        }
-
-        test("is-well-formed-works-as-expected") {
-            val wellFormedInstances =
-                IndicatorUtils.wellFormedIndicators.map { (name, arity) -> IndicatorImpl(name, arity) }
-            val nonWellFormedInstances =
-                IndicatorUtils.nonWellFormedIndicators.map { (name, arity) -> IndicatorImpl(name, arity) }
-
-            wellFormedInstances.forEach { assertTrue { it.isWellFormed } }
-            nonWellFormedInstances.forEach { assertFalse { it.isWellFormed } }
-        }
-
-        test("fresh-copy-should-return-instance-itself-if-ground") {
-            indicatorInstances.filter { it.isGround }.forEach(ConstantUtils::assertFreshCopyIsItself)
-        }
-
-        test("fresh-copy-should-renew-variables") {
-            indicatorInstances.filterNot { it.isGround }.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
-        }
+        indicators(
+            "fresh-copy-renews-variables",
+            IndicatorUtils.mixedIndicatorCases.filterNot { it.isGround },
+        ) { _, indicator -> StructUtils.assertFreshCopyRenewsContainedVariables(indicator) }
 
         test("fresh-copy-merges-different-variables-with-same-name") {
             StructUtils.assertFreshCopyMergesDifferentVariablesWithSameName(::IndicatorImpl)

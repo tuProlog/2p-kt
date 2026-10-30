@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.FactUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
@@ -21,50 +21,33 @@ import kotlin.test.assertTrue
  */
 class FactImplSpec :
     FunSpec({
-        val mixedFactInstances by lazy { FactUtils.mixedFacts.map(::FactImpl) }
+        fun facts(
+            property: String,
+            cases: List<FactUtils.FactCase> = FactUtils.mixedFactCases,
+            test: (FactUtils.FactCase, Fact) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it, FactImpl(it.head)) }
 
-        val groundFactInstances by lazy { FactUtils.groundFacts.map(::FactImpl) }
+        facts("head") { case, fact -> assertEqualities(case.head, fact.head) }
 
-        val nonGroundFactInstances by lazy { FactUtils.nonGroundFacts.map(::FactImpl) }
+        facts("args") { case, fact -> assertEquals(listOf(case.head, Truth.TRUE), fact.args) }
 
-        test("head-correct") {
-            onCorrespondingItems(FactUtils.mixedFacts, mixedFactInstances.map { it.head }, ::assertEqualities)
+        facts("arity-is-two") { _, fact -> assertEquals(2, fact.arity) }
+
+        facts("body-is-true") { _, fact -> assertSame(Truth.TRUE, fact.body) }
+
+        facts("is-well-formed") { _, fact -> assertTrue { fact.isWellFormed } }
+
+        facts("type-checks") { _, fact -> TermTypeAssertionUtils.assertIsFact(fact) }
+
+        facts("is-ground", FactUtils.groundFactCases) { _, fact -> assertTrue { fact.isGround } }
+
+        facts("is-not-ground", FactUtils.nonGroundFactCases) { _, fact -> assertFalse { fact.isGround } }
+
+        facts("fresh-copy-is-itself", FactUtils.groundFactCases) { _, fact ->
+            ConstantUtils.assertFreshCopyIsItself(fact)
         }
 
-        test("args-correct") {
-            val correctFactArgs = FactUtils.mixedFacts.map { listOf(it, Truth.TRUE) }
-
-            onCorrespondingItems(correctFactArgs, mixedFactInstances.map { it.args }) { expected, actual ->
-                assertEquals(expected, actual)
-            }
-        }
-
-        test("arity-is-two") {
-            mixedFactInstances.forEach { assertEquals(2, it.arity) }
-        }
-
-        test("body-is-true") {
-            mixedFactInstances.forEach { assertSame(Truth.TRUE, it.body) }
-        }
-
-        test("is-well-formed-always-true") {
-            mixedFactInstances.forEach { assertTrue { it.isWellFormed } }
-        }
-
-        test("is-properties-and-types") {
-            mixedFactInstances.forEach(TermTypeAssertionUtils::assertIsFact)
-        }
-
-        test("is-ground-true-if-no-variables-are-present") {
-            groundFactInstances.forEach { assertTrue { it.isGround } }
-            nonGroundFactInstances.forEach { assertFalse { it.isGround } }
-        }
-
-        test("fresh-copy-should-return-instance-itself-if-ground") {
-            groundFactInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
-        }
-
-        test("fresh-copy-should-renew-variables") {
-            nonGroundFactInstances.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
+        facts("fresh-copy-renews-variables", FactUtils.nonGroundFactCases) { _, fact ->
+            StructUtils.assertFreshCopyRenewsContainedVariables(fact)
         }
     })

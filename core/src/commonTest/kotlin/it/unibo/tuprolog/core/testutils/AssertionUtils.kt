@@ -85,35 +85,17 @@ internal object AssertionUtils {
         assertNotEqualsUsingVariablesSimpleNames(expected, actual)
     }
 
-    /** Executes the [function] with corresponding items in order, failing if the two collections differ in size */
-    fun <A, B> onCorrespondingItems(
-        expected: Iterable<A>,
-        actual: Iterable<B>,
-        function: (A, B) -> Unit,
-    ) {
-        // materialized once, since callers may pass single-use iterables (e.g. from generateSequence)
-        val expectedItems = expected.toList()
-        val actualItems = actual.toList()
-        assertEquals(expectedItems.size, actualItems.size, "Corresponding collections differ in size")
-        expectedItems.zip(actualItems).forEach { (expected, actual) -> function(expected, actual) }
-    }
-
     /** Asserts the [assertion] for each [E] versus all the [E]s (itself included). */
     fun <E : Any> assertAllVsAll(
         toBeTested: Iterable<E>,
         assertion: (E, E) -> Unit,
     ) {
-        val toTestItems = toBeTested.count()
-        val repeatedElementsSequence =
-            toBeTested.flatMap { underTestItem ->
-                generateSequence { underTestItem }.take(toTestItems).asIterable()
+        // materialized once, since callers may pass single-use iterables (e.g. from generateSequence)
+        val items = toBeTested.toList()
+        for (first in items) {
+            for (second in items) {
+                assertion(first, second)
             }
-        val repeatedSequenceOfElements =
-            generateSequence { toBeTested }
-                .take(toTestItems)
-                .flatten()
-                .asIterable()
-
-        onCorrespondingItems(repeatedElementsSequence, repeatedSequenceOfElements, assertion)
+        }
     }
 }

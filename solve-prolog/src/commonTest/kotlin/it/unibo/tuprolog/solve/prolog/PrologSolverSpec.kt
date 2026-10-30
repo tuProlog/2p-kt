@@ -147,14 +147,15 @@ class PrologSolverSpec :
         include(trueContract(PrologSolverFactory))
         include(staticFactoryContract(SolvePrologExpectations.expectations))
 
-        test("custom-data/non-atom-keys-are-type-errors") {
-            for (functor in listOf("set_ephemeral", "set_durable", "set_persistent")) {
-                val solution =
-                    PrologSolverFactory
-                        .solverWithDefaultBuiltins()
-                        .solveOnce(Struct.of(functor, Integer.of(1), Integer.of(2)))
-                assertIs<TypeError>((solution as? Solution.Halt)?.exception, "$functor: $solution")
-            }
+        withTests(
+            nameFn = { "custom-data/non-atom-keys-are-type-errors/${it.replace('_', '-')}" },
+            listOf("set_ephemeral", "set_durable", "set_persistent"),
+        ) { functor ->
+            val solution =
+                PrologSolverFactory
+                    .solverWithDefaultBuiltins()
+                    .solveOnce(Struct.of(functor, Integer.of(1), Integer.of(2)))
+            assertIs<TypeError>((solution as? Solution.Halt)?.exception, "$functor: $solution")
         }
 
         test("op/priority-above-1200-is-domain-error") {

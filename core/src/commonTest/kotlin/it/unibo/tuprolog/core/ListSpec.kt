@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -15,13 +15,19 @@ import it.unibo.tuprolog.core.List as LogicList
  */
 class ListSpec :
     FunSpec({
-        val emptyTerminatedInstances = ConsUtils.onlyConsEmptyListTerminated(Cons.Companion::of)
+        fun emptyTerminated(
+            property: String,
+            toBeTested: (kotlin.collections.List<Term>) -> Term,
+        ) = withTests(nameFn = { "$property/${it.id}" }, ConsUtils.onlyConsEmptyListTerminatedCases) { case ->
+            assertEqualities(case.cons(Cons.Companion::of), toBeTested(case.elements))
+        }
 
-        val pipedListInstances = ConsUtils.onlyConsPipeTerminated(Cons.Companion::of)
-
-        val emptyTerminatedElementLists = ConsUtils.onlyConsEmptyListTerminatedElementLists
-
-        val pipeTerminatedElementLists = ConsUtils.onlyConsPipeTerminatedElementLists
+        fun pipeTerminated(
+            property: String,
+            toBeTested: (kotlin.collections.List<Term>) -> Term,
+        ) = withTests(nameFn = { "$property/${it.id}" }, ConsUtils.onlyConsPipeTerminatedCases) { case ->
+            assertEqualities(case.cons(Cons.Companion::of), toBeTested(case.elements))
+        }
 
         test("empty-returns-empty-list") {
             assertEqualities(Empty.list(), LogicList.empty())
@@ -33,11 +39,7 @@ class ListSpec :
             assertEquals(Empty.list(), LogicList.of())
         }
 
-        test("of-vararg-terms") {
-            val toBeTested = emptyTerminatedElementLists.map { LogicList.of(*it.toTypedArray()) }
-
-            onCorrespondingItems(emptyTerminatedInstances, toBeTested, ::assertEqualities)
-        }
+        emptyTerminated("of-varargs") { LogicList.of(*it.toTypedArray()) }
 
         test("of-empty-iterable") {
             val toBeTested = LogicList.of(emptyList<Term>().asIterable())
@@ -46,10 +48,7 @@ class ListSpec :
             assertEquals(Empty.list(), toBeTested)
         }
 
-        test("of-iterable-of-terms") {
-            val toBeTested = emptyTerminatedElementLists.map { LogicList.of(it.asIterable()) }
-            onCorrespondingItems(emptyTerminatedInstances, toBeTested, ::assertEqualities)
-        }
+        emptyTerminated("of-iterable") { LogicList.of(it.asIterable()) }
 
         test("from-empty-iterable-without-last-specified-behaves-like-of-method") {
             val toBeTested = LogicList.from(emptyList<Term>().asIterable())
@@ -69,17 +68,9 @@ class ListSpec :
             assertFailsWith<IllegalArgumentException> { LogicList.from(emptyList<Term>().asIterable(), Truth.FALSE) }
         }
 
-        test("from-iterable-without-last-specified-does-not-behave-like-of-method") {
-            val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.asIterable()) }
+        pipeTerminated("from-iterable-without-last") { LogicList.from(it.asIterable()) }
 
-            onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
-        }
-
-        test("from-iterable-specifying-last") {
-            val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it) }
-
-            onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
-        }
+        pipeTerminated("from-iterable-specifying-last") { LogicList.from(it) }
 
         test("from-empty-sequence-without-last-specified-behaves-like-of-method") {
             val toBeTested = LogicList.from(emptyList<Term>().asSequence())
@@ -99,15 +90,7 @@ class ListSpec :
             assertFailsWith<IllegalArgumentException> { LogicList.from(emptyList<Term>().asSequence(), Truth.FALSE) }
         }
 
-        test("from-sequence-without-last-specified-does-not-behave-like-of-method") {
-            val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.asSequence()) }
+        pipeTerminated("from-sequence-without-last") { LogicList.from(it.asSequence()) }
 
-            onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
-        }
-
-        test("from-sequence-specifying-last") {
-            val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it) }
-
-            onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
-        }
+        pipeTerminated("from-sequence-specifying-last") { LogicList.from(it) }
     })

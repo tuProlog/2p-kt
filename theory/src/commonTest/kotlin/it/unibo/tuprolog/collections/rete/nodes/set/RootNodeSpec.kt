@@ -1,9 +1,11 @@
 package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.collections.rete.generic.set.RootNode
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Truth
@@ -33,18 +35,14 @@ class RootNodeSpec :
 
         val aDirective: Directive = Directive.of(Truth.TRUE, Var.of("B"))
 
-        val reteTreeTestContents by lazy {
+        val reteTreeContentCases =
             listOf(
-                ReteNodeUtils.rules,
-                ReteNodeUtils.directives,
-                ReteNodeUtils.mixedClauses,
+                ContentCase("rules", ReteNodeUtils.rules),
+                ContentCase("directives", ReteNodeUtils.directives),
+                ContentCase("mixed-clauses", ReteNodeUtils.mixedClauses),
             )
-        }
 
-        val correctInstances =
-            reteTreeTestContents.map { clauses ->
-                RootNode().apply { clauses.forEach { put(it) } }
-            }
+        fun correctInstance(clauses: List<Clause>) = RootNode().apply { clauses.forEach { put(it) } }
 
         fun init() {
             emptyRootNode = RootNode()
@@ -94,51 +92,40 @@ class RootNodeSpec :
             )
         }
 
-        test("get-clause") {
-            ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, result) ->
-                assertEquals(result, filledRootNode.get(query).toList())
-            }
+        withTests(nameFn = { "get-clause/${it.id}" }, ReteNodeUtils.mixedClauseQueryCases) { case ->
+            assertEquals(case.expected, filledRootNode.get(case.query).toList())
         }
 
-        test("remove-clause-with-zero-limit-does-nothing") {
-            ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, _) ->
-                assertNoChangesInReteNode(filledRootNode) { remove(query, 0) }
-            }
+        withTests(nameFn = {
+            "remove-clause-with-zero-limit-does-nothing/${it.id}"
+        }, ReteNodeUtils.mixedClauseQueryCases) { case ->
+            assertNoChangesInReteNode(filledRootNode) { remove(case.query, 0) }
         }
 
         test("remove-clause-from-empty-node-does-nothing") {
             assertNoChangesInReteNode(emptyRootNode) { remove(aRule) }
         }
 
-        test("remove-clause-with-limit-works-as-expected") {
-            for (limit in 0..10) {
-                ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
-                    init() // because removal of side-effects is needed
-
-                    assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching, limit) {
-                        remove(query, limit)
-                    }
-                }
-            }
+        withTests(
+            nameFn = { (limit, case) -> "remove-clause-with-limit-works-as-expected/limit-$limit/${case.id}" },
+            (0..10).flatMap { limit -> ReteNodeUtils.mixedClauseQueryCases.map { limit to it } },
+        ) { (limit, case) ->
+            assertRemovedFromReteNodeRespectingPartialOrder(
+                filledRootNode,
+                case.expected,
+                limit,
+            ) { remove(case.query, limit) }
         }
 
-        test("remove-clause-with-negative-limit-removes-all-matching-rules") {
-            val negativeLimit = -1
-            ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
-                init() // because removal of side-effects is needed
-
-                assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching) {
-                    remove(query, negativeLimit)
-                }
-            }
+        withTests(
+            nameFn = { "remove-clause-with-negative-limit-removes-all-matching-rules/${it.id}" },
+            ReteNodeUtils.mixedClauseQueryCases,
+        ) { case ->
+            assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, case.expected) { remove(case.query, -1) }
         }
 
-        test("remove-all-clause") {
-            ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
-                init() // because removal of side-effects is needed
-
-                assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching) { removeAll(query) }
-            }
+        withTests(nameFn = { "remove-all-clause/${it.id}" }, ReteNodeUtils.mixedClauseQueryCases) { case ->
+            assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, case.expected) { removeAll(case.query) }
         }
 
         test("deep-copy-creates-independent-instance") {
@@ -163,15 +150,22 @@ class RootNodeSpec :
             assertSame(emptyRootNode.indexedElements.single(), independentCopy.indexedElements.single())
         }
 
-        test("rete-tree-of-iterable-creates-correct-instances") {
-            val toBeTested = reteTreeTestContents.map { ReteNode.ofSet(it) }
-
-            assertEquals(correctInstances, toBeTested)
+        withTests(
+            nameFn = { "rete-tree-of-iterable-creates-correct-instances/${it.id}" },
+            reteTreeContentCases,
+        ) { case ->
+            assertEquals(correctInstance(case.clauses), ReteNode.ofSet(case.clauses))
         }
 
-        test("rete-tree-of-varargs-creates-correct-instances") {
-            val toBeTested = reteTreeTestContents.map { ReteNode.ofSet(*it.toTypedArray()) }
-
-            assertEquals(correctInstances, toBeTested)
+        withTests(
+            nameFn = { "rete-tree-of-varargs-creates-correct-instances/${it.id}" },
+            reteTreeContentCases,
+        ) { case ->
+            assertEquals(correctInstance(case.clauses), ReteNode.ofSet(*case.clauses.toTypedArray()))
         }
     })
+
+private data class ContentCase(
+    val id: String,
+    val clauses: List<Clause>,
+)

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.theory.parsing
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
@@ -77,13 +78,19 @@ class ClausesParserContractSpec :
             assertEquals("++", "a ++ b.".parseAsClausesLazily(custom).singleHead().functor)
         }
 
-        test("empty-and-trivia-only-inputs-produce-empty-results") {
+        withTests(
+            nameFn = { "empty-and-trivia-only-inputs-produce-empty-results/${it.id}" },
+            listOf(
+                TriviaCase("empty", ""),
+                TriviaCase("whitespace", "  \n\t"),
+                TriviaCase("line-comment", "% comment without a newline"),
+                TriviaCase("block-comment", "/* block comment */"),
+            ),
+        ) { case ->
             val parser = ClausesParser.withDefaultOperators()
 
-            for (input in listOf("", "  \n\t", "% comment without a newline", "/* block comment */")) {
-                assertTrue(parser.parseClauses(input).isEmpty(), input)
-                assertTrue(parser.parseTheory(input).isEmpty, input)
-            }
+            assertTrue(parser.parseClauses(case.input).isEmpty(), case.input)
+            assertTrue(parser.parseTheory(case.input).isEmpty, case.input)
         }
 
         test("anonymous-variables-in-the-same-parsed-clause-are-distinct") {
@@ -119,3 +126,8 @@ class ClausesParserContractSpec :
             )
         }
     })
+
+private class TriviaCase(
+    val id: String,
+    val input: String,
+)

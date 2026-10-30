@@ -24,32 +24,61 @@ import kotlin.test.fail
  * @author Enrico
  */
 internal object ReteNodeUtils {
+    /** A named clause, for parameterized tests */
+    internal data class ClauseCase<out C : Clause>(
+        val id: String,
+        val clause: C,
+    )
+
+    /** A named query, along with the clauses it is expected to retrieve, for parameterized tests */
+    internal data class QueryCase<out C : Clause>(
+        val id: String,
+        val query: C,
+        val expected: List<C>,
+    )
+
     /** Contains some well-formed rules */
-    internal val rules =
+    internal val ruleCases =
         listOf(
-            Fact.of(Truth.TRUE),
-            Fact.of(Truth.FAIL),
-            Fact.of(Atom.of("a")),
-            Fact.of(Atom.of("other")),
-            Fact.of(Struct.of("a", Atom.of("other"))),
-            Fact.of(Struct.of("other", Integer.of(1))),
-            Fact.of(Tuple.of(Var.of("A"), Var.of("B"))),
-            Rule.of(Atom.of("a"), Atom.of("other")),
-            Rule.of(Tuple.of(Var.of("A"), Var.of("B")), Atom.of("a")),
-            Rule.of(Struct.of("a", Atom.of("other")), Atom.of("a")),
-            Rule.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
-            Rule.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
-            Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-            Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-            Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
-            Rule.of(Struct.of("a", Atom.of("a")), Empty.block()),
-            Rule.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
-            Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
-            Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
+            ClauseCase("fact-true", Fact.of(Truth.TRUE)),
+            ClauseCase("fact-fail", Fact.of(Truth.FAIL)),
+            ClauseCase("fact-a", Fact.of(Atom.of("a"))),
+            ClauseCase("fact-other", Fact.of(Atom.of("other"))),
+            ClauseCase("fact-a-of-other", Fact.of(Struct.of("a", Atom.of("other")))),
+            ClauseCase("fact-other-of-1", Fact.of(Struct.of("other", Integer.of(1)))),
+            ClauseCase("fact-tuple-of-vars", Fact.of(Tuple.of(Var.of("A"), Var.of("B")))),
+            ClauseCase("rule-a-if-other", Rule.of(Atom.of("a"), Atom.of("other"))),
+            ClauseCase("rule-tuple-of-vars-if-a", Rule.of(Tuple.of(Var.of("A"), Var.of("B")), Atom.of("a"))),
+            ClauseCase("rule-a-of-other-if-a", Rule.of(Struct.of("a", Atom.of("other")), Atom.of("a"))),
+            ClauseCase(
+                "fact-f-of-a-b-of-x-do-something-else",
+                Rule.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
+            ),
+            ClauseCase("rule-a-of-22-if-anonymous", Rule.of(Struct.of("a", Integer.of(22)), Var.anonymous())),
+            ClauseCase("rule-f-of-a-if-variable", Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable"))),
+            ClauseCase("rule-f-of-a-if-variable-again", Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable"))),
+            ClauseCase(
+                "rule-a-of-anonymous-if-b-of-anonymous",
+                Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
+            ),
+            ClauseCase("rule-a-of-a-if-empty-block", Rule.of(Struct.of("a", Atom.of("a")), Empty.block())),
+            ClauseCase(
+                "rule-a-of-a-if-other-of-anonymous",
+                Rule.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
+            ),
+            ClauseCase(
+                "rule-a-of-a-if-a-of-anonymous",
+                Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
+            ),
+            ClauseCase("rule-a-of-a-if-anonymous", Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous())),
         )
 
+    internal val rules = ruleCases.map { it.clause }
+
     /** Contains some well-formed rules with no args head */
-    internal val noArgHeadedRules = rules.filter { it.head.isAtom }
+    internal val noArgHeadedRuleCases = ruleCases.filter { it.clause.head.isAtom }
+
+    internal val noArgHeadedRules = noArgHeadedRuleCases.map { it.clause }
 
     /** Contains some well-formed wules with "a" functor */
     internal val aFunctorRules = rules.filter { it.head.functor == "a" }
@@ -57,67 +86,110 @@ internal object ReteNodeUtils {
     /** Contains some well-formed wules with "f" functor */
     internal val fFunctorRules = rules.filter { it.head.functor == "f" }
 
-    /** Contains a map of queries and results crafted watching [rules] collection (NOTE: any modifications must be reviewed by hand) */
-    internal val rulesQueryResultsMap =
-        mapOf(
-            Fact.of(Truth.TRUE) to listOf(Fact.of(Truth.TRUE)),
-            Fact.of(Empty.list()) to emptyList(),
-            Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous()) to rules.takeLast(5),
-            Rule.of(Struct.of("a", Atom.of("other")), Var.anonymous()).run {
-                this to rules.filter { this matches it }
-            },
-            Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())).run {
-                this to rules.filter { this matches it }
-            },
-            Rule.of(Struct.of("a", Var.anonymous()), Var.anonymous()).run {
-                this to rules.filter { this matches it }
-            },
+    private fun <C : Clause> matchingQuery(
+        id: String,
+        query: C,
+        clauses: List<C>,
+    ) = QueryCase(id, query, clauses.filter { query matches it })
+
+    /** Contains queries and results crafted watching [rules] collection (NOTE: any modifications must be reviewed by hand) */
+    internal val ruleQueryCases =
+        listOf(
+            QueryCase("true", Fact.of(Truth.TRUE), listOf(Fact.of(Truth.TRUE))),
+            QueryCase("empty-list", Fact.of(Empty.list()), emptyList()),
+            QueryCase("a-of-a", Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous()), rules.takeLast(5)),
+            matchingQuery("a-of-other", Rule.of(Struct.of("a", Atom.of("other")), Var.anonymous()), rules),
+            matchingQuery(
+                "a-of-any-if-b-of-any",
+                Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
+                rules,
+            ),
+            matchingQuery("a-of-any", Rule.of(Struct.of("a", Var.anonymous()), Var.anonymous()), rules),
         )
 
-    /** Contains a map of queries and results made excluding queries with non "a" functor from [rulesQueryResultsMap] */
-    internal val aFunctorRulesQueryResultsMap = rulesQueryResultsMap.filterKeys { it.head.functor == "a" }
+    /** Contains queries and results made excluding queries with non "a" functor from [ruleQueryCases] */
+    internal val aFunctorRuleQueryCases = ruleQueryCases.filter { it.query.head.functor == "a" }
 
     /** Contains some well-formed directives */
-    internal val directives =
+    internal val directiveCases =
         listOf(
-            Directive.of(Truth.TRUE),
-            Directive.of(Truth.FAIL),
-            Directive.of(Atom.of("a")),
-            Directive.of(Atom.of("other")),
-            Directive.of(Struct.of("a", Atom.of("other"))),
-            Directive.of(Struct.of("other", Integer.of(1))),
-            Directive.of(Atom.of("a"), Atom.of("other")),
-            Directive.of(Struct.of("a", Atom.of("other")), Atom.of("a")),
-            Directive.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
-            Directive.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
-            Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-            Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-            Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
-            Directive.of(Struct.of("a", Atom.of("a")), Empty.block()),
-            Directive.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
-            Directive.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
-            Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
+            ClauseCase("directive-true", Directive.of(Truth.TRUE)),
+            ClauseCase("directive-fail", Directive.of(Truth.FAIL)),
+            ClauseCase("directive-a", Directive.of(Atom.of("a"))),
+            ClauseCase("directive-other", Directive.of(Atom.of("other"))),
+            ClauseCase("directive-a-of-other", Directive.of(Struct.of("a", Atom.of("other")))),
+            ClauseCase("directive-other-of-1", Directive.of(Struct.of("other", Integer.of(1)))),
+            ClauseCase("directive-a-and-other", Directive.of(Atom.of("a"), Atom.of("other"))),
+            ClauseCase("directive-a-of-other-and-a", Directive.of(Struct.of("a", Atom.of("other")), Atom.of("a"))),
+            ClauseCase(
+                "directive-f-of-a-b-of-x-do-something-else",
+                Directive.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
+            ),
+            ClauseCase(
+                "directive-a-of-22-and-anonymous",
+                Directive.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
+            ),
+            ClauseCase(
+                "directive-f-of-a-and-variable",
+                Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+            ),
+            ClauseCase(
+                "directive-f-of-a-and-variable-again",
+                Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+            ),
+            ClauseCase(
+                "directive-a-of-anonymous-and-b-of-anonymous",
+                Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
+            ),
+            ClauseCase(
+                "directive-a-of-a-and-empty-block",
+                Directive.of(Struct.of("a", Atom.of("a")), Empty.block()),
+            ),
+            ClauseCase(
+                "directive-a-of-a-and-other-of-anonymous",
+                Directive.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
+            ),
+            ClauseCase(
+                "directive-a-of-a-and-a-of-anonymous",
+                Directive.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
+            ),
+            ClauseCase(
+                "directive-a-of-a-and-anonymous",
+                Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
+            ),
         )
 
-    /** Contains a map of queries and results crafted watching [directives] collection (NOTE: any modifications must be reviewed by hand)*/
-    internal val directivesQueryResultsMap =
-        mapOf(
-            Directive.of(Truth.TRUE) to listOf(Directive.of(Truth.TRUE)),
-            Directive.of(Empty.list()) to emptyList(),
-            Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous()) to directives.takeLast(5),
-            Directive.of(Var.anonymous(), Struct.of("a", Atom.of("other"))).run {
-                this to directives.filter { this matches it }
-            },
-            Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())).run {
-                this to directives.filter { this matches it }
-            },
+    internal val directives = directiveCases.map { it.clause }
+
+    /** Contains queries and results crafted watching [directives] collection (NOTE: any modifications must be reviewed by hand)*/
+    internal val directiveQueryCases =
+        listOf(
+            QueryCase("directive-true", Directive.of(Truth.TRUE), listOf(Directive.of(Truth.TRUE))),
+            QueryCase("directive-empty-list", Directive.of(Empty.list()), emptyList()),
+            QueryCase(
+                "directive-a-of-a-and-any",
+                Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
+                directives.takeLast(5),
+            ),
+            matchingQuery(
+                "directive-any-and-a-of-other",
+                Directive.of(Var.anonymous(), Struct.of("a", Atom.of("other"))),
+                directives,
+            ),
+            matchingQuery(
+                "directive-a-of-any-and-b-of-any",
+                Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
+                directives,
+            ),
         )
 
     /** Contains well-formed mixed [rules] and [directives] */
-    internal val mixedClauses = rules + directives
+    internal val mixedClauseCases: List<ClauseCase<Clause>> = ruleCases + directiveCases
 
-    /** Contains a map of queries and results obtained by [rulesQueryResultsMap] and [directivesQueryResultsMap] */
-    internal val mixedClausesQueryResultsMap = rulesQueryResultsMap + directivesQueryResultsMap
+    internal val mixedClauses = mixedClauseCases.map { it.clause }
+
+    /** Contains queries and results obtained by [ruleQueryCases] and [directiveQueryCases] */
+    internal val mixedClauseQueryCases: List<QueryCase<Clause>> = ruleQueryCases + directiveQueryCases
 
     /** Asserts that rete node has correct elements count */
     internal fun assertReteNodeElementCount(

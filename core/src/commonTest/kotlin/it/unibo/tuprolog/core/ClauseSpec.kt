@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.DirectiveUtils
 import it.unibo.tuprolog.core.testutils.FactUtils
 import it.unibo.tuprolog.core.testutils.RuleUtils
@@ -11,6 +11,20 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+private class ClauseCase(
+    val id: String,
+    val head: Struct?,
+    val body: Term,
+) {
+    val expected: Clause get() = head?.let { Rule.of(it, body) } ?: Directive.of(body)
+}
+
+private fun clauseCases(
+    rules: kotlin.collections.List<RuleUtils.RuleCase>,
+    directives: kotlin.collections.List<DirectiveUtils.DirectiveCase>,
+) = rules.map { ClauseCase("rule/${it.id}", it.head, it.body) } +
+    directives.map { ClauseCase("directive/${it.id}", null, it.body) }
+
 /**
  * Test class for [Clause] companion object
  *
@@ -18,20 +32,6 @@ import kotlin.test.assertTrue
  */
 class ClauseSpec :
     FunSpec({
-        val mixedClauses = RuleUtils.mixedRules + DirectiveUtils.mixedDirectives.map { Pair(null, it) }
-
-        val correctInstances =
-            RuleUtils.mixedRules.map { (head, body) -> Rule.of(head, body) } +
-                DirectiveUtils.mixedDirectives.map { Directive.of(it) }
-
-        val wellFormedClauseInstances =
-            RuleUtils.wellFormedRules.map { (head, body) -> Rule.of(head, body) } +
-                DirectiveUtils.wellFormedDirectives.map { Directive.of(it) }
-
-        val nonWellFormedClauseInstances =
-            RuleUtils.nonWellFormedRules.map { (head, body) -> Rule.of(head, body) } +
-                DirectiveUtils.nonWellFormedDirectives.map { Directive.of(it) }
-
         fun replaceCorrectVarWithCalls(term: Term): Term =
             when (term) {
                 is Clause -> Clause.of(term.head, replaceCorrectVarWithCalls(term.body))
@@ -45,27 +45,20 @@ class ClauseSpec :
                 else -> term
             }
 
-        val wellFormedClausesCorrectlyPreparedForExecution =
-            correctInstances.filter { it.isWellFormed }.map { replaceCorrectVarWithCalls(it) as Clause }
+        val mixedClauseCases = clauseCases(RuleUtils.mixedRuleCases, DirectiveUtils.mixedDirectiveCases)
 
-        test("clause-of-returns-correct-rule-or-directive-instance") {
-            val toBeTested = mixedClauses.map { (head, body) -> Clause.of(head, body) }
+        val wellFormedClauseCases = mixedClauseCases.filter { it.expected.isWellFormed }
 
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of/${it.id}" }, mixedClauseCases) { case ->
+            assertEqualities(case.expected, Clause.of(case.head, case.body))
         }
 
-        test("clause-of-with-only-non-null-head-provided-returns-a-fact") {
-            val correctInstances = FactUtils.mixedFacts.map { Fact.of(it) }
-            val toBeTested = FactUtils.mixedFacts.map { Clause.of(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of-head-only-is-fact/${it.id}" }, FactUtils.mixedFactCases) { case ->
+            assertEqualities(Fact.of(case.head), Clause.of(case.head))
         }
 
-        test("clause-of-non-null-head-and-true-body-provided-returns-a-fact") {
-            val correctInstances = FactUtils.mixedFacts.map { Fact.of(it) }
-            val toBeTested = FactUtils.mixedFacts.map { Clause.of(it, Truth.TRUE) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of-head-and-true-is-fact/${it.id}" }, FactUtils.mixedFactCases) { case ->
+            assertEqualities(Fact.of(case.head), Clause.of(case.head, Truth.TRUE))
         }
 
         test("clause-of-null-head-and-body-vararg-constructs-tuple-for-multiple-arguments") {
@@ -86,20 +79,35 @@ class ClauseSpec :
             assertEquals(listOf(",", ";", "->"), Clause.notableFunctors.toList())
         }
 
-        test("body-well-formed-visitor-works-as-expected") {
-            wellFormedClauseInstances.forEach {
-                assertTrue("${it.body} bodyWellFormedVisitor should return true") {
-                    it.body.accept(Clause.bodyWellFormedVisitor)
-                }
-            }
-            nonWellFormedClauseInstances.forEach {
-                assertFalse("${it.body} bodyWellFormedVisitor should return false") {
-                    it.body.accept(Clause.bodyWellFormedVisitor)
-                }
+        withTests(
+            nameFn = { "body-well-formed-visitor/${it.id}" },
+            clauseCases(RuleUtils.wellFormedRuleCases, DirectiveUtils.wellFormedDirectiveCases),
+        ) { case ->
+            val clause = case.expected
+            assertTrue("${clause.body} bodyWellFormedVisitor should return true") {
+                clause.body.accept(Clause.bodyWellFormedVisitor)
             }
         }
 
-        test("default-preparation-for-execution-visitor-works-as-expected") {
+        withTests(
+            nameFn = { "body-not-well-formed-visitor/${it.id}" },
+            clauseCases(RuleUtils.nonWellFormedRuleCases, DirectiveUtils.nonWellFormedDirectiveCases),
+        ) { case ->
+            val clause = case.expected
+            assertFalse("${clause.body} bodyWellFormedVisitor should return false") {
+                clause.body.accept(Clause.bodyWellFormedVisitor)
+            }
+        }
+
+        withTests(nameFn = { "default-preparation-for-execution-visitor/${it.id}" }, wellFormedClauseCases) { case ->
+            val clause = case.expected
+            assertEquals(
+                replaceCorrectVarWithCalls(clause),
+                clause.accept(Clause.defaultPreparationForExecutionVisitor),
+            )
+        }
+
+        test("default-preparation-for-execution-visitor-works-with-variables-in-head") {
             val aVar = Var.of("A")
             val aFactWithVarInHead = Fact.of(Tuple.of(aVar, aVar))
             val aRuleWithVarInHead = Rule.of(Tuple.of(aVar, aVar), Tuple.of(aVar, aVar))
@@ -107,39 +115,29 @@ class ClauseSpec :
                 Rule.of(Tuple.of(aVar, aVar), Tuple.of(Struct.of("call", aVar), Struct.of("call", aVar)))
 
             val toBeTested =
-                (
-                    correctInstances.filter { it.isWellFormed } +
-                        listOf(
-                            aFactWithVarInHead,
-                            aRuleWithVarInHead,
-                            aRuleWithVarInHeadAfterPreparation,
-                        )
+                listOf(
+                    aFactWithVarInHead,
+                    aRuleWithVarInHead,
+                    aRuleWithVarInHeadAfterPreparation,
                 ).map { it.accept(Clause.defaultPreparationForExecutionVisitor) }
 
             val correct =
-                wellFormedClausesCorrectlyPreparedForExecution +
-                    listOf(
-                        aFactWithVarInHead,
-                        aRuleWithVarInHeadAfterPreparation,
-                        aRuleWithVarInHeadAfterPreparation,
-                    )
+                listOf(
+                    aFactWithVarInHead,
+                    aRuleWithVarInHeadAfterPreparation,
+                    aRuleWithVarInHeadAfterPreparation,
+                )
 
             assertEquals(correct, toBeTested)
         }
 
-        test("prepare-for-execution-works-as-expected") {
-            val toBeTested = correctInstances.filter { it.isWellFormed }.map { it.prepareForExecution() }
-
-            onCorrespondingItems(wellFormedClausesCorrectlyPreparedForExecution, toBeTested) { expected, actual ->
-                assertEquals(expected, actual)
-            }
+        withTests(nameFn = { "prepare-for-execution/${it.id}" }, wellFormedClauseCases) { case ->
+            val clause = case.expected
+            assertEquals(replaceCorrectVarWithCalls(clause), clause.prepareForExecution())
         }
 
-        test("prepare-for-execution-is-idempotent") {
-            val correct = correctInstances.filter { it.isWellFormed }.map { it.prepareForExecution() }
-            val toBeTested =
-                correctInstances.filter { it.isWellFormed }.map { it.prepareForExecution().prepareForExecution() }
-
-            onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+        withTests(nameFn = { "prepare-for-execution-is-idempotent/${it.id}" }, wellFormedClauseCases) { case ->
+            val clause = case.expected
+            assertEquals(clause.prepareForExecution(), clause.prepareForExecution().prepareForExecution())
         }
     })

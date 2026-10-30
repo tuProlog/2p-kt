@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.AtomImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import kotlin.test.assertTrue
 
@@ -12,6 +12,21 @@ import kotlin.test.assertTrue
  *
  * @author Enrico
  */
+private class NotableAtomCase(
+    val id: String,
+    val value: String,
+    val expected: Atom,
+)
+
+private val notableAtoms =
+    listOf(
+        NotableAtomCase("empty-list", "[]", EmptyList()),
+        NotableAtomCase("empty-block", "{}", EmptyBlock()),
+        NotableAtomCase("true", "true", Truth.TRUE),
+        NotableAtomCase("fail", "fail", Truth.FAIL),
+        NotableAtomCase("false", "false", Truth.FALSE),
+    )
+
 class AtomSpec :
     FunSpec({
         test("empty-set-atom-detected") {
@@ -34,29 +49,18 @@ class AtomSpec :
             assertEqualities(Atom.of("fail"), Truth.FAIL)
         }
 
-        test("atom-of-works-as-expected") {
-            val correctInstances = AtomUtils.nonSpecialAtoms.map(::AtomImpl)
-            val toBeTested = AtomUtils.nonSpecialAtoms.map { Atom.of(it) }
-
-            onCorrespondingItems(toBeTested, correctInstances, ::assertEqualities)
+        withTests(nameFn = { "of/${it.id}" }, AtomUtils.nonSpecialAtomCases) { case ->
+            assertEqualities(AtomImpl(case.value), Atom.of(case.value))
         }
 
-        test("atom-of-works-with-notable-atoms") {
-            val correctInstances = listOf(EmptyList(), EmptyBlock(), Truth.TRUE, Truth.FAIL, Truth.FALSE)
-            val toBeTested = AtomUtils.specialAtoms.map { Atom.of(it) }
-
-            onCorrespondingItems(toBeTested, correctInstances, ::assertEqualities)
+        withTests(nameFn = { "of/notable/${it.id}" }, notableAtoms) { case ->
+            assertEqualities(case.expected, Atom.of(case.value))
         }
 
-        test("atom-is-a-valid-functor") {
-            val correctAtoms = AtomUtils.mixedAtoms
-            val correctAtomInstances = correctAtoms.map { Atom.of(it) }
-
-            correctAtoms
-                .zip(correctAtomInstances)
-                .filter { (atomString, _) -> atomString matches Atom.ATOM_PATTERN }
-                .forEach { (_, atomInstance) ->
-                    assertTrue { atomInstance.isFunctorWellFormed }
-                }
+        withTests(
+            nameFn = { "is-functor-well-formed/${it.id}" },
+            AtomUtils.mixedAtomCases.filter { it.value matches Atom.ATOM_PATTERN },
+        ) { case ->
+            assertTrue(Atom.of(case.value).isFunctorWellFormed)
         }
     })

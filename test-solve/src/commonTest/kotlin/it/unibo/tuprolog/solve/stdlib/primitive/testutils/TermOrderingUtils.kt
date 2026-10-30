@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.TermLowerThan
 import it.unibo.tuprolog.solve.stdlib.primitive.TermLowerThanOrEqualTo
 import it.unibo.tuprolog.solve.stdlib.primitive.TermNotSame
 import it.unibo.tuprolog.solve.stdlib.primitive.TermSame
+import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.requestCase
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -48,70 +49,70 @@ internal object TermOrderingUtils {
     /** =@= test */
     internal val standardOrderEqualTest by lazy {
         logicProgramming {
-            mapOf(
-                TermSame.functor(realOf(1.0), realOf(1.0)) to true,
-                TermSame.functor("stringTest", "stringTest") to true,
-                TermSame.functor("stringTest", realOf(1.0)) to false,
-            ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
+            listOf(
+                requestCase("same-real", TermSame.functor(realOf(1.0), realOf(1.0)), true),
+                requestCase("same-atom", TermSame.functor("stringTest", "stringTest"), true),
+                requestCase("atom-vs-real", TermSame.functor("stringTest", realOf(1.0)), false),
+            )
         }
     }
 
     /** \=@= test */
     internal val standardOrderNotEqualTest by lazy {
         logicProgramming {
-            mapOf(
-                TermNotSame.functor(realOf(1.0), realOf(1.0)) to false,
-                TermNotSame.functor("stringTest", "stringTest") to false,
-                TermNotSame.functor("stringTest", realOf(1.0)) to true,
-            ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
+            listOf(
+                requestCase("same-real", TermNotSame.functor(realOf(1.0), realOf(1.0)), false),
+                requestCase("same-atom", TermNotSame.functor("stringTest", "stringTest"), false),
+                requestCase("atom-vs-real", TermNotSame.functor("stringTest", realOf(1.0)), true),
+            )
         }
     }
 
     /** @> test */
     internal val standardOrderGreaterThanTest by lazy {
         logicProgramming {
-            mapOf(
-                TermGreaterThan.functor(intOf(1), realOf(1.0)) to true,
-                TermGreaterThan.functor(realOf(1.0), intOf(1)) to false,
-                TermGreaterThan.functor("stringTest", intOf(1)) to true,
-                TermGreaterThan.functor("stringTesta", "stringTestb") to false,
-                TermGreaterThan.functor("stringTestb", "stringTesta") to true,
-            ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
+            listOf(
+                requestCase("integer-vs-real", TermGreaterThan.functor(intOf(1), realOf(1.0)), true),
+                requestCase("real-vs-integer", TermGreaterThan.functor(realOf(1.0), intOf(1)), false),
+                requestCase("atom-vs-integer", TermGreaterThan.functor("stringTest", intOf(1)), true),
+                requestCase("lower-atom", TermGreaterThan.functor("stringTesta", "stringTestb"), false),
+                requestCase("greater-atom", TermGreaterThan.functor("stringTestb", "stringTesta"), true),
+            )
         }
     }
 
     /** @>= test */
     internal val standardOrderGreaterThanOrEqualToTest by lazy {
         logicProgramming {
-            mapOf(
-                TermGreaterThanOrEqualTo.functor(intOf(1), intOf(1)) to true,
-                TermGreaterThanOrEqualTo.functor("stringTest", "stringTest") to true,
-                TermGreaterThanOrEqualTo.functor("stringTest", "stringTest1") to false,
-                TermGreaterThanOrEqualTo.functor("stringTest", intOf(1)) to true,
-            ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
+            listOf(
+                requestCase("same-integer", TermGreaterThanOrEqualTo.functor(intOf(1), intOf(1)), true),
+                requestCase("same-atom", TermGreaterThanOrEqualTo.functor("stringTest", "stringTest"), true),
+                requestCase("lower-atom", TermGreaterThanOrEqualTo.functor("stringTest", "stringTest1"), false),
+                requestCase("atom-vs-integer", TermGreaterThanOrEqualTo.functor("stringTest", intOf(1)), true),
+            )
         }
     }
 
     /** @< test */
     internal val standardOrderLowerThanTest by lazy {
         logicProgramming {
-            mapOf(
-                TermLowerThan.functor(realOf(1.0), intOf(1)) to true,
-                TermLowerThan.functor(intOf(1), realOf(1.0)) to false,
-                TermLowerThan.functor("stringTestA", "stringTestZ") to true,
-                TermLowerThan.functor(realOf(1.0), "stringTest") to true,
-            ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
+            listOf(
+                requestCase("real-vs-integer", TermLowerThan.functor(realOf(1.0), intOf(1)), true),
+                requestCase("integer-vs-real", TermLowerThan.functor(intOf(1), realOf(1.0)), false),
+                requestCase("lower-atom", TermLowerThan.functor("stringTestA", "stringTestZ"), true),
+                requestCase("real-vs-atom", TermLowerThan.functor(realOf(1.0), "stringTest"), true),
+            )
         }
     }
 
     /** @<= test */
     internal val standardOrderLowerThanOrEqualToTest by lazy {
         logicProgramming {
-            mapOf(
-                TermLowerThanOrEqualTo.functor(intOf(1), realOf(1.0)) to false,
-                TermLowerThanOrEqualTo.functor(realOf(1.0), realOf(1.0)) to true,
-                TermLowerThanOrEqualTo.functor("stringTest", "stringTest") to true,
-            ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
+            listOf(
+                requestCase("integer-vs-real", TermLowerThanOrEqualTo.functor(intOf(1), realOf(1.0)), false),
+                requestCase("same-real", TermLowerThanOrEqualTo.functor(realOf(1.0), realOf(1.0)), true),
+                requestCase("same-atom", TermLowerThanOrEqualTo.functor("stringTest", "stringTest"), true),
+            )
         }
     }
 }

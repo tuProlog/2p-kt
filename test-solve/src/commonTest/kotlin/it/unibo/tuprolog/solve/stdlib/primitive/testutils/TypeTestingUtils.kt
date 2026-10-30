@@ -23,7 +23,6 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Compound
 import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.solve.stdlib.primitive.Ground
 import it.unibo.tuprolog.solve.stdlib.primitive.NonVar
-import it.unibo.tuprolog.utils.squared
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -48,50 +47,62 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Var as VarPrimitive
  * [Ground],
  * [NonVar]
  */
-object TypeTestingUtils {
-    private val baseArgs: Sequence<Term> =
+internal object TypeTestingUtils {
+    private class NamedTerm(
+        val id: String,
+        val term: Term,
+    )
+
+    private val baseArgs: List<NamedTerm> =
         logicProgramming {
-            sequenceOf(
-                "a",
-                "a b",
-                "A",
-                "B",
-                1,
-                -1,
-                -1.1,
-                2.2,
-                "f"("a"),
-                "f"("a b"),
-                "f"("A"),
-                "f"("B"),
-                "f"(1),
-                "f"(-1),
-                "f"(-1.1),
-                "f"(2),
-            ).map { it.toTerm() }
+            fun named(
+                id: String,
+                value: Any,
+            ) = NamedTerm(id, value.toTerm())
+
+            listOf(
+                named("atom", "a"),
+                named("spaced-atom", "a b"),
+                named("var-a", "A"),
+                named("var-b", "B"),
+                named("positive-int", 1),
+                named("negative-int", -1),
+                named("negative-real", -1.1),
+                named("positive-real", 2.2),
+                named("f-of-atom", "f"("a")),
+                named("f-of-spaced-atom", "f"("a b")),
+                named("f-of-var-a", "f"("A")),
+                named("f-of-var-b", "f"("B")),
+                named("f-of-positive-int", "f"(1)),
+                named("f-of-negative-int", "f"(-1)),
+                named("f-of-negative-real", "f"(-1.1)),
+                named("f-of-two", "f"(2)),
+            )
         }
 
-    private val commonArgs: List<Term> =
+    private val commonArgs: List<NamedTerm> =
         LogicProgrammingScope
             .empty()
-            .let {
+            .let { scope ->
+                fun pairs(
+                    kind: String,
+                    combinator: (Term, Term) -> Term,
+                ) = baseArgs.flatMap { x ->
+                    baseArgs.map { y -> NamedTerm("$kind/${x.id}/${y.id}", combinator(x.term, y.term)) }
+                }
                 baseArgs +
-                    baseArgs.squared { x, y -> it.tupleOf(x, y) } +
-                    baseArgs.squared { x, y -> it.structOf(";", x, y) } +
-                    baseArgs.squared { x, y -> it.structOf("->", x, y) }
-            }.toList()
+                    pairs("tuple") { x, y -> scope.tupleOf(x, y) } +
+                    pairs("disjunction") { x, y -> scope.structOf(";", x, y) } +
+                    pairs("if-then") { x, y -> scope.structOf("->", x, y) }
+            }
 
     private inline fun typeTest(
         functor: String,
-        terms: List<Term> = commonArgs,
-        crossinline predicate: (Term) -> Boolean,
-    ): Map<Solve.Request<*>, Boolean> =
+        terms: List<NamedTerm> = commonArgs,
+        crossinline expected: (Term) -> Any,
+    ): List<PrimitiveUtils.RequestCase> =
         logicProgramming {
-            terms
-                .asSequence()
-                .map { functor(it) to predicate(it) }
-                .toMap()
-                .mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
+            terms.map { PrimitiveUtils.requestCase(it.id, functor(it.term), expected(it.term)) }
         }
 
     private fun isExecutable(term: Term): Boolean =
@@ -126,11 +137,9 @@ object TypeTestingUtils {
     @Suppress("IMPLICIT_CAST_TO_ANY")
     val ensureExecutableQueryToResult by lazy {
         typeTest(EnsureExecutable.functor) {
-            isExecutable(it)
-        }.mapValues { (request, result) ->
             when {
-                request.arguments[0] is Var -> InstantiationError::class
-                result -> result
+                it is Var -> InstantiationError::class
+                isExecutable(it) -> true
                 else -> TypeError::class
             }
         }

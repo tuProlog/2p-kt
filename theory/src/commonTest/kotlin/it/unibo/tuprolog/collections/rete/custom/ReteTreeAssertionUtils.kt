@@ -535,50 +535,44 @@ internal object ReteTreeAssertionUtils {
 
     val factsAndRules = defaultClauses.filterIsInstance<Rule>()
 
-    val a0FactsAndRules = factsAndRules.filter { it.head.functor == "a" && it.head.arity == 0 }
-    val b0FactsAndRules = factsAndRules.filter { it.head.functor == "b" && it.head.arity == 0 }
-    val c0FactsAndRules = factsAndRules.filter { it.head.functor == "c" && it.head.arity == 0 }
-    val d0FactsAndRules = factsAndRules.filter { it.head.functor == "d" && it.head.arity == 0 }
-    val f1FactsAndRules = factsAndRules.filter { it.head.functor == "f" && it.head.arity == 1 }
-    val g1FactsAndRules = factsAndRules.filter { it.head.functor == "g" && it.head.arity == 1 }
-    val h1FactsAndRules = factsAndRules.filter { it.head.functor == "h" && it.head.arity == 1 }
-    val i1FactsAndRules = factsAndRules.filter { it.head.functor == "i" && it.head.arity == 1 }
-    val j1FactsAndRules = factsAndRules.filter { it.head.functor == "j" && it.head.arity == 1 }
-    val l1FactsAndRules = factsAndRules.filter { it.head.functor == "l" && it.head.arity == 1 }
-    val m1FactsAndRules = factsAndRules.filter { it.head.functor == "m" && it.head.arity == 1 }
-    val n1FactsAndRules = factsAndRules.filter { it.head.functor == "n" && it.head.arity == 1 }
-    val o1FactsAndRules = factsAndRules.filter { it.head.functor == "o" && it.head.arity == 1 }
-    val f2FactsAndRules = factsAndRules.filter { it.head.functor == "f" && it.head.arity == 2 }
-    val g2FactsAndRules = factsAndRules.filter { it.head.functor == "g" && it.head.arity == 2 }
-    val h2FactsAndRules = factsAndRules.filter { it.head.functor == "h" && it.head.arity == 2 }
-    val i2FactsAndRules = factsAndRules.filter { it.head.functor == "i" && it.head.arity == 2 }
-    val l2FactsAndRules = factsAndRules.filter { it.head.functor == "l" && it.head.arity == 2 }
-    val m2FactsAndRules = factsAndRules.filter { it.head.functor == "m" && it.head.arity == 2 }
-    val n2FactsAndRules = factsAndRules.filter { it.head.functor == "n" && it.head.arity == 2 }
-    val o2FactsAndRules = factsAndRules.filter { it.head.functor == "o" && it.head.arity == 2 }
+    /** Facts and rules sharing the same head functor and arity, for parameterized tests */
+    data class FamilyCase(
+        val id: String,
+        val template: Rule,
+        val clauses: KtList<Rule>,
+    )
+
+    private fun family(
+        functor: String,
+        arity: Int,
+    ) = FamilyCase(
+        "$functor-$arity",
+        Rule.template(functor, arity),
+        factsAndRules.filter { it.head.functor == functor && it.head.arity == arity },
+    )
 
     val factsAndRulesFamilies =
-        mapOf(
-            Rule.template("a", 0) to a0FactsAndRules,
-            Rule.template("b", 0) to b0FactsAndRules,
-            Rule.template("c", 0) to c0FactsAndRules,
-            Rule.template("d", 0) to d0FactsAndRules,
-            Rule.template("f", 1) to f1FactsAndRules,
-            Rule.template("g", 1) to g1FactsAndRules,
-            Rule.template("h", 1) to h1FactsAndRules,
-            Rule.template("i", 1) to i1FactsAndRules,
-            Rule.template("j", 1) to j1FactsAndRules,
-            Rule.template("l", 1) to l1FactsAndRules,
-            Rule.template("m", 1) to m1FactsAndRules,
-            Rule.template("n", 1) to n1FactsAndRules,
-            Rule.template("o", 1) to o1FactsAndRules,
-            Rule.template("f", 2) to f2FactsAndRules,
-            Rule.template("g", 2) to g2FactsAndRules,
-            Rule.template("h", 2) to h2FactsAndRules,
-            Rule.template("i", 2) to i2FactsAndRules,
-            Rule.template("l", 2) to l2FactsAndRules,
-            Rule.template("m", 2) to m2FactsAndRules,
-            Rule.template("n", 2) to n2FactsAndRules,
-            Rule.template("o", 2) to o2FactsAndRules,
+        listOf(
+            family("a", 0),
+            family("b", 0),
+            family("c", 0),
+            family("d", 0),
+            family("f", 1),
+            family("g", 1),
+            family("h", 1),
+            family("i", 1),
+            family("j", 1),
+            family("l", 1),
+            family("m", 1),
+            family("n", 1),
+            family("o", 1),
+            family("f", 2),
+            family("g", 2),
+            family("h", 2),
+            family("i", 2),
+            family("l", 2),
+            family("m", 2),
+            family("n", 2),
+            family("o", 2),
         )
 }
