@@ -76,19 +76,15 @@ class TuPrologCmd(
     ).flag(default = false)
 
     /**
-     * Builds a solver (see [getSolver]) and, if no subcommand was invoked on the command line, starts the
+     * If no subcommand was invoked on the command line, builds a solver (see [getSolver]) and starts the
      * interactive read-eval-print loop with it. When a subcommand (e.g. `solve`) was invoked instead, clikt
-     * dispatches to that subcommand's own `run` after this method returns, reusing the solver built here
-     * through [getSolver]/[getTimeout].
+     * dispatches to that subcommand's own `run` after this method returns, and the subcommand builds its solver
+     * through [getSolver]/[getTimeout]: building one here too would load every theory file twice.
      */
     override fun run() {
-        val solve: Solver = getSolver()
-        val subcommand = this.currentContext.invokedSubcommand
-
-        if (subcommand == null) {
-            readEvalPrintLoop(solve)
+        if (currentContext.invokedSubcommand == null) {
+            readEvalPrintLoop(getSolver())
         }
-        // nota: se subcommand è diverso da null, il controllo fluisce automaticamente al metodo run di subcommand
     }
 
     private fun loadTheory(): Theory {
