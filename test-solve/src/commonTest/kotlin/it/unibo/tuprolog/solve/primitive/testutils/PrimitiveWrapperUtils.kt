@@ -4,11 +4,9 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.primitive.Solve
-import kotlin.test.assertTrue
 
 /**
  * Test class for [PrimitiveWrapper]
@@ -33,25 +31,4 @@ internal object PrimitiveWrapperUtils {
         signature: Signature,
         uncheckedImplementation: Primitive,
     ): PrimitiveWrapper<ExecutionContext> = PrimitiveWrapper.wrap(signature) { uncheckedImplementation.solve(it) }
-
-    /** All under test requests */
-    private val allRequests by lazy {
-        (WrapperUtils.allMatchingRawStruct + WrapperUtils.allNotMatchingStruct)
-            .flatten()
-            .map { createPrimitiveRequest(it.extractSignature(), it.args) }
-    }
-
-    /** All ground requests */
-    internal val allGroundRequests by lazy {
-        allRequests
-            .filter { it.query.isGround }
-            .also { assertTrue("Test data empty") { it.isNotEmpty() } }
-    }
-
-    /** All non-ground requests */
-    internal val nonAllGroundRequests by lazy {
-        allRequests
-            .filterNot { it.query.isGround }
-            .also { assertTrue("Test data empty") { it.isNotEmpty() } }
-    }
 }

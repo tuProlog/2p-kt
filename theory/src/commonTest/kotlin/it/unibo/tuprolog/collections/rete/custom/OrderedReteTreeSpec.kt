@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete.custom
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.allChunksOfSize
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmpty
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmptyAndOrdered
@@ -287,7 +288,10 @@ class OrderedReteTreeSpec :
             }
         }
 
-        test("an-ordered-tree-preserves-the-insertion-order-of-similar-clauses1") {
+        withTests(
+            nameFn = { "an-ordered-tree-preserves-the-insertion-order-of-similar-clauses1/${it.id}" },
+            factsAndRulesFamilies,
+        ) { (_, template, family) ->
             val tree = reteTreeOf()
 
             assertIsEmptyAndOrdered(tree)
@@ -298,69 +302,63 @@ class OrderedReteTreeSpec :
 
             assertEquals(defaultClauses.size, tree.size)
 
-            for ((template, factsAndRules) in factsAndRulesFamilies) {
-                assertPartialOrderIsTheSame(factsAndRules.asSequence(), tree.clauses)
-                assertItemsAreEquals(factsAndRules.asSequence(), tree.get(template))
-            }
+            assertPartialOrderIsTheSame(family.asSequence(), tree.clauses)
+            assertItemsAreEquals(family.asSequence(), tree.get(template))
         }
-
-        test("an-ordered-tree-preserves-the-insertion-order-of-similar-clauses2") {
-            val allFactsAndRules = factsAndRules
+        withTests(
+            nameFn = { "an-ordered-tree-preserves-the-insertion-order-of-similar-clauses2/${it.id}" },
+            factsAndRulesFamilies,
+        ) { (_, template, family) ->
             val tree = reteTreeOf()
 
             assertIsEmptyAndOrdered(tree)
 
-            for (clause in allFactsAndRules) {
+            for (clause in factsAndRules) {
                 tree.assertA(clause)
             }
 
-            assertEquals(allFactsAndRules.size, tree.size)
+            assertEquals(factsAndRules.size, tree.size)
 
-            for ((template, factsAndRules) in factsAndRulesFamilies) {
-                assertPartialOrderIsTheSame(factsAndRules.asReversed().asSequence(), tree.clauses)
-                assertItemsAreEquals(factsAndRules.asReversed().asSequence(), tree.get(template))
-            }
+            assertPartialOrderIsTheSame(family.asReversed().asSequence(), tree.clauses)
+            assertItemsAreEquals(family.asReversed().asSequence(), tree.get(template))
         }
+        withTests(
+            nameFn = { "an-ordered-tree-retracts-clauses-in-a-order-sensitive-way1/${it.id}" },
+            factsAndRulesFamilies,
+        ) { (_, template, family) ->
+            var tree = reteTreeOf(factsAndRules)
+            assertIsNonEmpty(tree)
+            assertPartialOrderIsTheSame(family.asSequence(), tree.clauses)
+            assertItemsAreEquals(family.asSequence(), tree.get(template))
 
-        test("an-ordered-tree-retracts-clauses-in-a-order-sensitive-way1") {
-            val allFactsAndRules = factsAndRules
-
-            for ((template, factsAndRules) in factsAndRulesFamilies) {
-                var tree = reteTreeOf(allFactsAndRules)
-                assertIsNonEmpty(tree)
-                assertPartialOrderIsTheSame(factsAndRules.asSequence(), tree.clauses)
-                assertItemsAreEquals(factsAndRules.asSequence(), tree.get(template))
-
-                factsAndRules.forEachIndexed { i, f ->
-                    val a = tree.retractFirst(template)
-                    assertItemsAreEquals(sequenceOf(f), a)
-                    assertItemsAreEquals(factsAndRules.asSequence().drop(i + 1), tree.get(template))
-                }
-
-                // reset
-
-                tree = reteTreeOf(allFactsAndRules)
-                assertIsNonEmpty(tree)
-                assertPartialOrderIsTheSame(factsAndRules.asSequence(), tree.clauses)
-                assertItemsAreEquals(factsAndRules.asSequence(), tree.get(template))
-
-                assertItemsAreEquals(factsAndRules.subList(0, 2).asSequence(), tree.retractOnly(template, 2))
-                assertItemsAreEquals(factsAndRules.asSequence().drop(2), tree.get(template))
-                assertItemsAreEquals(factsAndRules.subList(2, 4).asSequence(), tree.retractOnly(template, 2))
-                assertItemsAreEquals(factsAndRules.asSequence().drop(4), tree.get(template))
-
-                // reset
-
-                tree = reteTreeOf(allFactsAndRules)
-                assertIsNonEmpty(tree)
-                assertPartialOrderIsTheSame(factsAndRules.asSequence(), tree.clauses)
-                assertItemsAreEquals(factsAndRules.asSequence(), tree.get(template))
-
-                assertItemsAreEquals(factsAndRules.asSequence(), tree.retractAll(template))
-                assertItemsAreEquals(emptySequence(), tree.get(template))
+            family.forEachIndexed { i, f ->
+                val a = tree.retractFirst(template)
+                assertItemsAreEquals(sequenceOf(f), a)
+                assertItemsAreEquals(family.asSequence().drop(i + 1), tree.get(template))
             }
-        }
 
+            // reset
+
+            tree = reteTreeOf(factsAndRules)
+            assertIsNonEmpty(tree)
+            assertPartialOrderIsTheSame(family.asSequence(), tree.clauses)
+            assertItemsAreEquals(family.asSequence(), tree.get(template))
+
+            assertItemsAreEquals(family.subList(0, 2).asSequence(), tree.retractOnly(template, 2))
+            assertItemsAreEquals(family.asSequence().drop(2), tree.get(template))
+            assertItemsAreEquals(family.subList(2, 4).asSequence(), tree.retractOnly(template, 2))
+            assertItemsAreEquals(family.asSequence().drop(4), tree.get(template))
+
+            // reset
+
+            tree = reteTreeOf(factsAndRules)
+            assertIsNonEmpty(tree)
+            assertPartialOrderIsTheSame(family.asSequence(), tree.clauses)
+            assertItemsAreEquals(family.asSequence(), tree.get(template))
+
+            assertItemsAreEquals(family.asSequence(), tree.retractAll(template))
+            assertItemsAreEquals(emptySequence(), tree.get(template))
+        }
         test("a-tree-can-always-retrieve-the-clauses-it-contains") {
             val tree = reteTreeOf(defaultClauses)
 
@@ -373,34 +371,34 @@ class OrderedReteTreeSpec :
             }
         }
 
-        test("an-ordered-tree-retracts-clauses-in-a-order-sensitive-way2") {
+        withTests(
+            nameFn = { "an-ordered-tree-retracts-clauses-in-a-order-sensitive-way2/${it.id}" },
+            factsAndRulesFamilies,
+        ) { (_, template, family) ->
             val tree = reteTreeOf(factsAndRules)
 
             assertIsNonEmpty(tree)
             assertEquals(factsAndRules.size, tree.size)
 
-            for ((template, factsAndRules) in factsAndRulesFamilies) {
-                assertPartialOrderIsTheSame(factsAndRules.asSequence(), tree.clauses)
-                assertItemsAreEquals(factsAndRules.asSequence(), tree.get(template))
+            assertPartialOrderIsTheSame(family.asSequence(), tree.clauses)
+            assertItemsAreEquals(family.asSequence(), tree.get(template))
 
-                assertItemsAreEquals(sequenceOf(factsAndRules[0]), tree.retractFirst(template))
-                assertItemsAreEquals(factsAndRules.asSequence().drop(1), tree.get(template))
+            assertItemsAreEquals(sequenceOf(family[0]), tree.retractFirst(template))
+            assertItemsAreEquals(family.asSequence().drop(1), tree.get(template))
 
-                tree.assertA(factsAndRules[0])
-                assertItemsAreEquals(factsAndRules.asSequence(), tree.get(template))
+            tree.assertA(family[0])
+            assertItemsAreEquals(family.asSequence(), tree.get(template))
 
-                assertItemsAreEquals(factsAndRules.subList(0, 2).asSequence(), tree.retractOnly(template, 2))
-                assertItemsAreEquals(factsAndRules.asSequence().drop(2), tree.get(template))
+            assertItemsAreEquals(family.subList(0, 2).asSequence(), tree.retractOnly(template, 2))
+            assertItemsAreEquals(family.asSequence().drop(2), tree.get(template))
 
-                tree.assertA(factsAndRules[1])
-                tree.assertA(factsAndRules[0])
-                assertItemsAreEquals(factsAndRules.asSequence(), tree.get(template))
+            tree.assertA(family[1])
+            tree.assertA(family[0])
+            assertItemsAreEquals(family.asSequence(), tree.get(template))
 
-                assertItemsAreEquals(factsAndRules.asSequence(), tree.retractAll(template))
-                assertItemsAreEquals(emptySequence(), tree.get(template))
-            }
+            assertItemsAreEquals(family.asSequence(), tree.retractAll(template))
+            assertItemsAreEquals(emptySequence(), tree.get(template))
         }
-
         test("an-ordered-tree-filters-clauses-by-body-as-well") {
             val groundTerms =
                 defaultClauses

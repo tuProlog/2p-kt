@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.parsing.test
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.parsing.toAssociativity
@@ -12,16 +13,18 @@ import kotlin.test.assertEquals
 
 class ParsingUtilsContractSpec :
     FunSpec({
-        test("every-associativity-round-trips-through-core-specifier") {
-            for (associativity in Associativity.entries) {
-                assertEquals(associativity, associativity.toSpecifier().toAssociativity())
-            }
+        withTests(
+            nameFn = { "associativity-round-trips-through-core-specifier/${it.name.lowercase()}" },
+            Associativity.entries,
+        ) { associativity ->
+            assertEquals(associativity, associativity.toSpecifier().toAssociativity())
         }
 
-        test("every-core-specifier-round-trips-through-parser-associativity") {
-            for (specifier in Specifier.entries) {
-                assertEquals(specifier, specifier.toAssociativity().toSpecifier())
-            }
+        withTests(
+            nameFn = { "core-specifier-round-trips-through-parser-associativity/${it.name.lowercase()}" },
+            Specifier.entries,
+        ) { specifier ->
+            assertEquals(specifier, specifier.toAssociativity().toSpecifier())
         }
 
         test("operator-definitions-round-trip-without-losing-fields") {

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.prototypes
 
 import io.kotest.core.spec.style.funSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.Atom
@@ -12,7 +13,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import it.unibo.tuprolog.testutils.TheoryUtils.deepClause
-import it.unibo.tuprolog.testutils.TheoryUtils.deepQueries
+import it.unibo.tuprolog.testutils.TheoryUtils.deepQueryCases
 import it.unibo.tuprolog.testutils.TheoryUtils.member
 import it.unibo.tuprolog.testutils.TheoryUtils.memberClause
 import kotlin.test.assertEquals
@@ -129,19 +130,15 @@ fun clauseCollectionTests(
         )
     }
 
-    test("nested-get-works-at-several-depth-levels") {
+    withTests(nameFn = { "nested-get-works-at-several-depth-levels/${it.id}" }, deepQueryCases) { case ->
         val collection = collectionGenerator(deepClause)
 
-        for (query in deepQueries) {
-            assertClausesHaveSameLengthAndContent(deepClause.asSequence(), getClauses(collection, query))
-        }
+        assertClausesHaveSameLengthAndContent(deepClause.asSequence(), getClauses(collection, case.clause))
     }
 
-    test("nested-retract-works-at-several-depth-levels") {
-        for (query in deepQueries) {
-            val collection = collectionGenerator(deepClause)
-            assertClausesHaveSameLengthAndContent(deepClause.asSequence(), retractClauses(collection, query))
-        }
+    withTests(nameFn = { "nested-retract-works-at-several-depth-levels/${it.id}" }, deepQueryCases) { case ->
+        val collection = collectionGenerator(deepClause)
+        assertClausesHaveSameLengthAndContent(deepClause.asSequence(), retractClauses(collection, case.clause))
     }
 
     test("collection-has-the-correct-size") {

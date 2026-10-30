@@ -1,17 +1,17 @@
 package it.unibo.tuprolog.solve.primitive
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.assertOverFailure
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringAllArgumentsAreInstantiated
-import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.allGroundRequests
 import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.createPrimitiveRequest
 import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.createPrimitiveWrapper
 import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.defaultPrimitiveResult
-import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.nonAllGroundRequests
 import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.primitive
-import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.wrapperToMatchingSignatureRequest
-import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.wrapperToNotMatchingSignatureRequest
+import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.allCases
+import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.notMatchingCases
+import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.withMatchingCases
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
@@ -23,46 +23,41 @@ import kotlin.test.assertSame
  */
 class PrimitiveWrapperSpec :
     FunSpec({
-        test("primitive-works-if-correct-request-provided") {
-            wrapperToMatchingSignatureRequest(::createPrimitiveWrapper, primitive, ::createPrimitiveRequest)
-                .forEach { (wrapper, acceptedRequests) ->
-                    acceptedRequests.forEach {
-                        // TODO remove this "if" after solving TODO in "Signature"
-                        if (wrapper.signature.vararg) return@test
-                        assertEquals(defaultPrimitiveResult, wrapper.implementation.solve(it))
-                    }
-                }
+        val groundCases = allCases.filter { it.struct.isGround }
+
+        val nonGroundCases = allCases.filterNot { it.struct.isGround }
+
+        withMatchingCases("accepts") { case ->
+            val wrapper = createPrimitiveWrapper(case.signature, primitive)
+            assertEquals(defaultPrimitiveResult, wrapper.implementation.solve(case.request(::createPrimitiveRequest)))
         }
 
-        test("primitive-complains-with-wrong-request-signature-or-arguments") {
-            wrapperToNotMatchingSignatureRequest(::createPrimitiveWrapper, primitive, ::createPrimitiveRequest)
-                .forEach { (wrapper, badRequests) ->
-                    badRequests.forEach {
-                        assertFailsWith<IllegalArgumentException> { wrapper.implementation.solve(it) }
-                    }
-                }
-        }
-
-        test("ensuring-all-argument-instantiated-returns-same-request-if-all-arguments-instantiated") {
-            allGroundRequests.forEach {
-                assertSame(it, it.ensuringAllArgumentsAreInstantiated())
+        withTests(nameFn = { "rejects/${it.id}" }, notMatchingCases) { case ->
+            val wrapper = createPrimitiveWrapper(case.signature, primitive)
+            assertFailsWith<IllegalArgumentException> {
+                wrapper.implementation.solve(case.request(::createPrimitiveRequest))
             }
         }
 
-        test("ensuring-all-argument-instantiated-throw-instantiation-error-if-some-argument-is-not-instantiated") {
-            nonAllGroundRequests.forEach {
-                assertFailsWith<InstantiationError> { it.ensuringAllArgumentsAreInstantiated() }
-            }
+        withTests(
+            nameFn = { "ensuring-all-arguments-instantiated/returns-same-request/${it.id}" },
+            groundCases,
+        ) { case ->
+            val request = case.request(::createPrimitiveRequest)
+            assertSame(request, request.ensuringAllArgumentsAreInstantiated())
         }
 
-        test("ensuring-all-argument-instantiated-instantiation-error-contains-correct-data") {
-            nonAllGroundRequests.forEach { request ->
-                assertOverFailure<InstantiationError>(
-                    { request.ensuringAllArgumentsAreInstantiated() },
-                ) { error ->
-                    assertSame(request.context, error.context)
-                    //                assertSame(request.arguments.first { !it.isGround }, error.extraData)
-                }
+        withTests(nameFn = { "ensuring-all-arguments-instantiated/throws/${it.id}" }, nonGroundCases) { case ->
+            val request = case.request(::createPrimitiveRequest)
+            assertFailsWith<InstantiationError> { request.ensuringAllArgumentsAreInstantiated() }
+        }
+
+        withTests(nameFn = { "ensuring-all-arguments-instantiated/error-data/${it.id}" }, nonGroundCases) { case ->
+            val request = case.request(::createPrimitiveRequest)
+            assertOverFailure<InstantiationError>(
+                { request.ensuringAllArgumentsAreInstantiated() },
+            ) { error ->
+                assertSame(request.context, error.context)
             }
         }
     })

@@ -13,51 +13,32 @@ import it.unibo.tuprolog.core.Var
  * @author Enrico
  */
 internal object TupleUtils {
-    private val firstOfFirstTuple = Var.of("A")
-    private val secondOfFirstTuple = Var.of("B")
-    private val elementsOfFirstTuple = listOf(firstOfFirstTuple, secondOfFirstTuple)
+    /** A named list of (two or more) Tuple [elements], for parameterized tests */
+    internal data class TupleCase(
+        val id: String,
+        val elements: List<Term>,
+    ) {
+        val left: Term get() = elements.first()
 
-    /** Constructs a Tuple with two Terms */
-    internal fun twoElementTuple(constructor: (Term, Term) -> Tuple) =
-        constructor(firstOfFirstTuple, secondOfFirstTuple)
+        val isGround: Boolean get() = elements.all { it.isGround }
 
-    private val firstOfSecondTuple = Atom.of("bigTuple")
-    private val secondOfSecondTuple = Integer.of(4)
-    private val thirdOfSecondTuple = Real.of(1.5)
+        /** Constructs the Tuple through [constructor] */
+        fun tuple(constructor: (Term, Term) -> Tuple): Tuple = fold(elements, constructor) as Tuple
 
-    private fun rightOfSecondTuple(constructor: (Term, Term) -> Tuple) =
-        constructor(
-            secondOfSecondTuple,
-            thirdOfSecondTuple,
-        )
+        /** Constructs the right element through [constructor], since some right elements are Tuples themselves */
+        fun right(constructor: (Term, Term) -> Tuple): Term = fold(elements.drop(1), constructor)
 
-    private val elementsOfSecondTuple = listOf(firstOfSecondTuple, secondOfSecondTuple, thirdOfSecondTuple)
-
-    /** Constructs a Tuple with three Terms */
-    internal fun threeElementTuple(constructor: (Term, Term) -> Tuple) =
-        constructor(firstOfSecondTuple, rightOfSecondTuple(constructor))
-
-    /** Returns all constructed Tuples (of 2, 3 elements respectively) */
-    internal fun tupleInstances(constructor: (Term, Term) -> Tuple) =
-        listOf(
-            twoElementTuple(constructor),
-            threeElementTuple(constructor),
-        )
-
-    /** Tuple instances left element */
-    internal val tupleInstancesLefts by lazy {
-        listOf(firstOfFirstTuple, firstOfSecondTuple)
+        private fun fold(
+            items: List<Term>,
+            constructor: (Term, Term) -> Tuple,
+        ): Term = items.singleOrNull() ?: constructor(items.first(), fold(items.drop(1), constructor))
     }
 
-    /** Tuple instances right element (needs constructor because some right elements are Tuples themselves) */
-    internal fun tupleInstancesRights(constructor: (Term, Term) -> Tuple) =
+    /** Tuples of 2 and 3 elements respectively */
+    internal val tupleCases by lazy {
         listOf(
-            secondOfFirstTuple,
-            rightOfSecondTuple(constructor),
+            TupleCase("two-variables", listOf(Var.of("A"), Var.of("B"))),
+            TupleCase("three-ground-elements", listOf(Atom.of("bigTuple"), Integer.of(4), Real.of(1.5))),
         )
-
-    /** Tuples elements lists */
-    internal val tupleInstancesElementLists by lazy {
-        listOf(elementsOfFirstTuple, elementsOfSecondTuple)
     }
 }

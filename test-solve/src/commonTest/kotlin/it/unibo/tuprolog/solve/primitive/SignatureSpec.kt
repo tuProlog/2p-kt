@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.primitive
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
@@ -43,16 +44,18 @@ class SignatureSpec :
         val varargSignatureTerm =
             Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Atom.of("vararg")))
 
-        val signatures = listOf(normalSignature, varargSignature)
+        val cases =
+            listOf(
+                SignatureCase("normal", normalSignature, normalSignatureTerm),
+                SignatureCase("vararg", varargSignature, varargSignatureTerm),
+            )
 
-        val signatureTerms = listOf(normalSignatureTerm, varargSignatureTerm)
-
-        test("name-correct") {
-            signatures.forEach { assertEquals(signatureName, it.name) }
+        withTests(nameFn = { "name-correct/${it.id}" }, cases) { case ->
+            assertEquals(signatureName, case.signature.name)
         }
 
-        test("arity-correct") {
-            signatures.forEach { assertEquals(signatureArity, it.arity) }
+        withTests(nameFn = { "arity-correct/${it.id}" }, cases) { case ->
+            assertEquals(signatureArity, case.signature.arity)
         }
 
         test("vararg-correct") {
@@ -69,10 +72,8 @@ class SignatureSpec :
             }
         }
 
-        test("to-term-works-as-expected") {
-            signatureTerms.zip(signatures.map { it.toTerm() }).forEach { (expected, actual) ->
-                assertEquals(expected, actual)
-            }
+        withTests(nameFn = { "to-term/${it.id}" }, cases) { case ->
+            assertEquals(case.term, case.signature.toTerm())
         }
 
         test("with-args-works-on-non-vararg-signatures") {
@@ -94,17 +95,13 @@ class SignatureSpec :
             assertEquals(varargSignature.withArgs(argList + aAtom), Struct.of(signatureName, argList + aAtom))
         }
 
-        test("from-term-with-struct-creates-correct-instance") {
-            signatures.forEach {
-                val reconstructed =
-                    Signature.fromSignatureTerm(it.toTerm())
-                        ?: fail("Cannot reconstruct signature $it from it.toTerm(): ${it.toTerm()}")
-                assertEquals(it, reconstructed)
-            }
-
-            signatureTerms.zip(signatures).forEach { (signatureTerm, signature) ->
-                assertEquals(signature, Signature.fromSignatureTerm(signatureTerm) ?: fail())
-            }
+        withTests(nameFn = { "from-term-with-struct/${it.id}" }, cases) { case ->
+            val signature = case.signature
+            val reconstructed =
+                Signature.fromSignatureTerm(signature.toTerm())
+                    ?: fail("Cannot reconstruct signature $signature from toTerm(): ${signature.toTerm()}")
+            assertEquals(signature, reconstructed)
+            assertEquals(signature, Signature.fromSignatureTerm(case.term) ?: fail())
         }
 
         test("from-term-with-struct-returns-null-if-something-not-matching-correct-pattern") {
@@ -151,14 +148,9 @@ class SignatureSpec :
             )
         }
 
-        test("from-term-with-term-creates-correct-instance") {
-            signatures.forEach {
-                assertEquals(it, Signature.fromSignatureTerm(it.toTerm() as Term) ?: fail())
-            }
-
-            signatureTerms.zip(signatures).forEach { (signatureTerm, signature) ->
-                assertEquals(signature, Signature.fromSignatureTerm(signatureTerm as Term) ?: fail())
-            }
+        withTests(nameFn = { "from-term-with-term/${it.id}" }, cases) { case ->
+            assertEquals(case.signature, Signature.fromSignatureTerm(case.signature.toTerm() as Term) ?: fail())
+            assertEquals(case.signature, Signature.fromSignatureTerm(case.term as Term) ?: fail())
         }
 
         test("from-term-with-term-returns-null-if-not-a-struct") {
@@ -184,10 +176,17 @@ class SignatureSpec :
             assertFailsWith<NotImplementedError> { varargSignature.toIndicator() }
         }
 
-        test("struct-extract-signature-works-as-expected") {
+        test("extract-signature/atom") {
             assertEquals(Signature(aAtom.value, aAtom.arity), aAtom.extractSignature())
-            signatureTerms.forEach {
-                assertEquals(Signature(it.functor, it.arity), it.extractSignature())
-            }
+        }
+
+        withTests(nameFn = { "extract-signature/${it.id}" }, cases) { case ->
+            assertEquals(Signature(case.term.functor, case.term.arity), case.term.extractSignature())
         }
     })
+
+private class SignatureCase(
+    val id: String,
+    val signature: Signature,
+    val term: Struct,
+)

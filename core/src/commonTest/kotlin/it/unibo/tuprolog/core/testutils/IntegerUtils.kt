@@ -9,74 +9,50 @@ import org.gciatto.kt.math.BigInteger
  * @author Enrico
  */
 internal object IntegerUtils {
-    /** Map from an integer in string format to it's corresponding BigInteger instance */
-    private val stringToIntegerCorrectnessMap by lazy {
-        mapOf(
-            "0" to BigInteger.ZERO,
-            "1" to BigInteger.ONE,
-            "2" to BigInteger.TWO,
-            "-1" to -BigInteger.ONE,
-            "-2" to -BigInteger.TWO,
-            Int.MAX_VALUE.toString() to BigInteger.of(Int.MAX_VALUE),
-            Int.MIN_VALUE.toString() to BigInteger.of(Int.MIN_VALUE),
-            Long.MAX_VALUE.toString() to BigInteger.of(Long.MAX_VALUE),
-            Long.MIN_VALUE.toString() to BigInteger.of(Long.MIN_VALUE),
-            "0xf" to BigInteger.of(15),
-            "0XA" to BigInteger.of(10),
-            "0b0" to BigInteger.of(0),
-            "0B1" to BigInteger.of(1),
-            "0o7" to BigInteger.of(7),
-            "0O10" to BigInteger.of(8),
+    /** A named integer in string format, along with its corresponding BigInteger instance */
+    internal data class IntegerCase(
+        val id: String,
+        val string: String,
+        val value: BigInteger,
+    ) {
+        /** The [value] as Long, if representable */
+        val long: Long? get() = exactOrNull { value.toLongExact() }
+
+        /** The [value] as Int, if representable */
+        val int: Int? get() = exactOrNull { value.toIntExact() }
+
+        /** The [value] as Short, if representable */
+        val short: Short? get() = exactOrNull { value.toShortExact() }
+
+        /** The [value] as Byte, if representable */
+        val byte: Byte? get() = exactOrNull { value.toByteExact() }
+
+        private fun <T> exactOrNull(conversion: () -> T): T? =
+            try {
+                conversion()
+            } catch (e: Exception) {
+                null
+            }
+    }
+
+    /** Contains testing integer values, in string format and as BigInteger instances */
+    internal val integerCases by lazy {
+        listOf(
+            IntegerCase("zero", "0", BigInteger.ZERO),
+            IntegerCase("one", "1", BigInteger.ONE),
+            IntegerCase("two", "2", BigInteger.TWO),
+            IntegerCase("minus-one", "-1", -BigInteger.ONE),
+            IntegerCase("minus-two", "-2", -BigInteger.TWO),
+            IntegerCase("int-max", Int.MAX_VALUE.toString(), BigInteger.of(Int.MAX_VALUE)),
+            IntegerCase("int-min", Int.MIN_VALUE.toString(), BigInteger.of(Int.MIN_VALUE)),
+            IntegerCase("long-max", Long.MAX_VALUE.toString(), BigInteger.of(Long.MAX_VALUE)),
+            IntegerCase("long-min", Long.MIN_VALUE.toString(), BigInteger.of(Long.MIN_VALUE)),
+            IntegerCase("hexadecimal-lowercase", "0xf", BigInteger.of(15)),
+            IntegerCase("hexadecimal-uppercase", "0XA", BigInteger.of(10)),
+            IntegerCase("binary-lowercase", "0b0", BigInteger.of(0)),
+            IntegerCase("binary-uppercase", "0B1", BigInteger.of(1)),
+            IntegerCase("octal-lowercase", "0o7", BigInteger.of(7)),
+            IntegerCase("octal-uppercase", "0O10", BigInteger.of(8)),
         )
-    }
-
-    /** Contains testing integer values in string format */
-    internal val stringNumbers by lazy { stringToIntegerCorrectnessMap.keys }
-
-    /** Contains testing integer values instances */
-    internal val bigIntegers by lazy { stringToIntegerCorrectnessMap.values }
-
-    /** Contains only numbers representable with Long */
-    internal val onlyLongs by lazy {
-        bigIntegers.mapNotNull {
-            try {
-                it.toLongExact()
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    /** Contains only numbers representable with Int */
-    internal val onlyInts by lazy {
-        bigIntegers.mapNotNull {
-            try {
-                it.toIntExact()
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    /** Contains only numbers representable with Short */
-    internal val onlyShorts by lazy {
-        bigIntegers.mapNotNull {
-            try {
-                it.toShortExact()
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    /** Contains only numbers representable with Byte */
-    internal val onlyBytes by lazy {
-        bigIntegers.mapNotNull {
-            try {
-                it.toByteExact()
-            } catch (e: Exception) {
-                null
-            }
-        }
     }
 }

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Cons
@@ -25,148 +26,150 @@ import kotlin.test.assertTrue
 
 class SolutionMetadataSpec :
     FunSpec({
-        @Suppress("PrivatePropertyName", "ktlint:standard:property-naming")
-        val X = Var.of("X")
+        withTests(nameFn = { "tags-stick-to-solutions/${it.id}" }, solutionCases) { case ->
+            val solution = case.solution()
+            assertNull(solution.getTag<Metadata<String>>(SOME_KEY))
+            assertFalse { solution.containsTag(SOME_KEY) }
+            val tagged = solution.setTag(SOME_KEY, someValue1)
+            assertFalse { solution.containsTag(SOME_KEY) }
+            assertNull(solution.getTag<Metadata<String>>(SOME_KEY))
+            assertTrue { tagged.containsTag(SOME_KEY) }
+            assertEquals(someValue1, tagged.getTag<Metadata<String>>(SOME_KEY))
+            assertEquals(emptyMap(), solution.tags)
+            assertEquals(mapOf(SOME_KEY to someValue1), tagged.tags)
+        }
 
-        val someKey = "some_key1"
-
-        val someOtherKey = "some_key2"
-
-        val yetAnotherKey = "some_key3"
-
-        val someValue1 = Metadata("1")
-
-        val someValue2 = Metadata("2")
-
-        val someOtherValue = Metadata("3")
-
-        val queries =
-            listOf<Struct>(
-                Struct.of("q", X),
-                Struct.of("q", Var.anonymous()),
-                Atom.of("atom"),
-                Struct.of("q", Integer.ONE),
-                Struct.of("q", Real.ONE_TENTH),
-                EmptyList(),
-                EmptyBlock(),
-                Cons.of(Real.ONE_HALF, X),
-                Struct.of("g", X),
-                List.of(X),
-                Block.of(X),
-                Tuple.of(X, X),
-            ).map { it.setTag(yetAnotherKey, someValue2) }
-
-        val solutions =
-            queries.flatMap {
-                listOf(
-                    Solution.no(it),
-                    Solution.halt(it, Dummy.RuntimeException),
-                    Solution.yes(it),
-                    Solution.yes(it, Substitution.of(X, Integer.ONE)),
-                )
-            }
-
-        test("tags-stick-to-solutions") {
-            for (solution in solutions) {
-                assertNull(solution.getTag<Metadata<String>>(someKey))
-                assertFalse { solution.containsTag(someKey) }
-                val tagged = solution.setTag(someKey, someValue1)
-                assertFalse { solution.containsTag(someKey) }
-                assertNull(solution.getTag<Metadata<String>>(someKey))
-                assertTrue { tagged.containsTag(someKey) }
-                assertEquals(someValue1, tagged.getTag<Metadata<String>>(someKey))
-                assertEquals(emptyMap(), solution.tags)
-                assertEquals(mapOf(someKey to someValue1), tagged.tags)
+        withTests(nameFn = { "solutions-preserve-query-tags/${it.id}" }, solutionCases) { case ->
+            val solution = case.solution()
+            assertEquals(mapOf(YET_ANOTHER_KEY to someValue2), solution.query.tags)
+            if (solution is Solution.Yes) {
+                assertEquals(mapOf(YET_ANOTHER_KEY to someValue2), solution.solvedQuery.tags)
+            } else {
+                assertNull(solution.solvedQuery)
             }
         }
 
-        test("solutions-preserve-query-tags") {
-            for (solution in solutions) {
-                assertEquals(mapOf(yetAnotherKey to someValue2), solution.query.tags)
-                if (solution is Solution.Yes) {
-                    assertEquals(mapOf(yetAnotherKey to someValue2), solution.solvedQuery.tags)
-                } else {
-                    assertNull(solution.solvedQuery)
-                }
-            }
+        withTests(nameFn = { "tags-can-be-replaced/${it.id}" }, solutionCases) { case ->
+            val solution = case.solution().setTag(SOME_KEY, someValue1)
+            val tags = mapOf<String, Any>(SOME_KEY to someValue2, SOME_OTHER_KEY to someOtherValue)
+            val replaced = solution.replaceTags(tags)
+            assertEquals(mapOf(SOME_KEY to someValue1), solution.tags)
+            assertEquals(tags, replaced.tags)
         }
 
-        test("tags-can-be-replaced") {
-            for (solution in solutions.map { it.setTag(someKey, someValue1) }) {
-                val tags = mapOf<String, Any>(someKey to someValue2, someOtherKey to someOtherValue)
-                val replaced = solution.replaceTags(tags)
-                assertEquals(mapOf(someKey to someValue1), solution.tags)
-                assertEquals(tags, replaced.tags)
-            }
+        fun assertTaggingPreservesEquality(
+            nonTagged: Solution,
+            tagged: Solution,
+        ) {
+            assertEquals(nonTagged, tagged)
+            assertEquals(nonTagged.hashCode(), tagged.hashCode())
+            assertTrue { nonTagged.tags.isEmpty() }
+            assertTrue { tagged.tags.isNotEmpty() }
         }
 
-        test("adding-tags-preserves-equality") {
-            for ((nonTagged, tagged) in solutions.zip(solutions.map { it.addTag(someKey, someValue1) })) {
-                assertEquals(nonTagged, tagged)
-                assertEquals(nonTagged.hashCode(), tagged.hashCode())
-                assertTrue { nonTagged.tags.isEmpty() }
-                assertTrue { tagged.tags.isNotEmpty() }
-            }
+        withTests(nameFn = { "adding-tags-preserves-equality/${it.id}" }, solutionCases) { case ->
+            val solution = case.solution()
+            assertTaggingPreservesEquality(solution, solution.addTag(SOME_KEY, someValue1))
         }
 
-        test("summing-tags-preserves-equality") {
-            for ((nonTagged, tagged) in solutions.zip(solutions.map { it + (someKey to someValue1) })) {
-                assertEquals(nonTagged, tagged)
-                assertEquals(nonTagged.hashCode(), tagged.hashCode())
-                assertTrue { nonTagged.tags.isEmpty() }
-                assertTrue { tagged.tags.isNotEmpty() }
-            }
+        withTests(nameFn = { "summing-tags-preserves-equality/${it.id}" }, solutionCases) { case ->
+            val solution = case.solution()
+            assertTaggingPreservesEquality(solution, solution + (SOME_KEY to someValue1))
         }
 
-        test("setting-tags-preserves-equality") {
-            for ((nonTagged, tagged) in solutions.zip(solutions.map { it.setTag(someKey, someValue1) })) {
-                assertEquals(nonTagged, tagged)
-                assertEquals(nonTagged.hashCode(), tagged.hashCode())
-                assertTrue { nonTagged.tags.isEmpty() }
-                assertTrue { tagged.tags.isNotEmpty() }
-            }
+        withTests(nameFn = { "setting-tags-preserves-equality/${it.id}" }, solutionCases) { case ->
+            val solution = case.solution()
+            assertTaggingPreservesEquality(solution, solution.setTag(SOME_KEY, someValue1))
         }
 
-        test("setting-multiple-tags-preserves-equality") {
-            val taggedSolutions = solutions.map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
-            for ((nonTagged, tagged) in solutions.zip(taggedSolutions)) {
-                assertEquals(nonTagged, tagged)
-                assertEquals(nonTagged.hashCode(), tagged.hashCode())
-                assertTrue { nonTagged.tags.isEmpty() }
-                assertTrue { tagged.tags.isNotEmpty() }
-            }
+        withTests(nameFn = { "setting-multiple-tags-preserves-equality/${it.id}" }, solutionCases) { case ->
+            val solution = case.solution()
+            assertTaggingPreservesEquality(
+                solution,
+                solution.setTags(SOME_KEY to someValue1, SOME_OTHER_KEY to someOtherValue),
+            )
         }
 
-        test("clearing-tags-preserves-equality") {
-            val taggedSolutions = solutions.map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
-            for ((tagged, cleared) in taggedSolutions.zip(taggedSolutions.map { it.clearTags() })) {
-                assertEquals(tagged, cleared)
-                assertEquals(tagged.hashCode(), cleared.hashCode())
-                assertTrue { cleared.tags.isEmpty() }
-                assertTrue { tagged.tags.isNotEmpty() }
-            }
+        withTests(nameFn = { "clearing-tags-preserves-equality/${it.id}" }, solutionCases) { case ->
+            val tagged = case.solution().setTags(SOME_KEY to someValue1, SOME_OTHER_KEY to someOtherValue)
+            val cleared = tagged.clearTags()
+            assertEquals(tagged, cleared)
+            assertEquals(tagged.hashCode(), cleared.hashCode())
+            assertTrue { cleared.tags.isEmpty() }
+            assertTrue { tagged.tags.isNotEmpty() }
         }
 
-        test("adding-an-existing-tag-replaces-that-tag") {
-            val taggedSolutions = solutions.map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
-            for (replaced in taggedSolutions.map { it.addTag(someKey, someValue2) }) {
-                assertEquals(someValue2, replaced.getTag<Metadata<String>>(someKey))
-            }
+        withTests(nameFn = { "adding-an-existing-tag-replaces-that-tag/${it.id}" }, solutionCases) { case ->
+            val tagged = case.solution().setTags(SOME_KEY to someValue1, SOME_OTHER_KEY to someOtherValue)
+            assertEquals(someValue2, tagged.addTag(SOME_KEY, someValue2).getTag<Metadata<String>>(SOME_KEY))
         }
 
-        test("setting-an-existing-tag-replaces-that-tag") {
-            val taggedSubstitutions =
-                solutions.map {
-                    it.setTags(
-                        someKey to someValue1,
-                        someOtherKey to someOtherValue,
-                    )
-                }
-            for (replaced in taggedSubstitutions.map { it.setTag(someKey, someValue2) }) {
-                assertEquals(someValue2, replaced.getTag<Metadata<String>>(someKey))
-            }
+        withTests(nameFn = { "setting-an-existing-tag-replaces-that-tag/${it.id}" }, solutionCases) { case ->
+            val tagged = case.solution().setTags(SOME_KEY to someValue1, SOME_OTHER_KEY to someOtherValue)
+            assertEquals(someValue2, tagged.setTag(SOME_KEY, someValue2).getTag<Metadata<String>>(SOME_KEY))
         }
     })
+
+private const val SOME_KEY = "some_key1"
+
+private const val SOME_OTHER_KEY = "some_key2"
+
+private const val YET_ANOTHER_KEY = "some_key3"
+
+private val someValue1 = Metadata("1")
+
+private val someValue2 = Metadata("2")
+
+private val someOtherValue = Metadata("3")
+
+private class QueryShape(
+    val id: String,
+    val query: (Var) -> Struct,
+)
+
+private class SolutionKind(
+    val id: String,
+    val solution: (Struct, Var) -> Solution,
+)
+
+private class SolutionCase(
+    val id: String,
+    val solution: () -> Solution,
+)
+
+private val queryShapes =
+    listOf(
+        QueryShape("q-of-var") { Struct.of("q", it) },
+        QueryShape("q-of-anonymous-var") { Struct.of("q", Var.anonymous()) },
+        QueryShape("atom") { Atom.of("atom") },
+        QueryShape("q-of-integer") { Struct.of("q", Integer.ONE) },
+        QueryShape("q-of-real") { Struct.of("q", Real.ONE_TENTH) },
+        QueryShape("empty-list") { EmptyList() },
+        QueryShape("empty-block") { EmptyBlock() },
+        QueryShape("cons") { Cons.of(Real.ONE_HALF, it) },
+        QueryShape("g-of-var") { Struct.of("g", it) },
+        QueryShape("list") { List.of(it) },
+        QueryShape("block") { Block.of(it) },
+        QueryShape("tuple") { Tuple.of(it, it) },
+    )
+
+private val solutionKinds =
+    listOf(
+        SolutionKind("no") { query, _ -> Solution.no(query) },
+        SolutionKind("halt") { query, _ -> Solution.halt(query, Dummy.RuntimeException) },
+        SolutionKind("yes") { query, _ -> Solution.yes(query) },
+        SolutionKind("yes-with-substitution") { query, x -> Solution.yes(query, Substitution.of(x, Integer.ONE)) },
+    )
+
+private val solutionCases =
+    queryShapes.flatMap { shape ->
+        solutionKinds.map { kind ->
+            SolutionCase("${shape.id}/${kind.id}") {
+                val x = Var.of("X")
+                kind.solution(shape.query(x).setTag(YET_ANOTHER_KEY, someValue2), x)
+            }
+        }
+    }
 
 private data class Metadata<T>(
     val value: T,

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.parser
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.parser.exceptions.PrologParsingException
 import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
@@ -68,12 +69,13 @@ class ParserTermSpec :
             assertFailsWith<PrologParsingException> { parseTerm("\"text\"(x)") }
         }
 
-        test("parses-truth-cut-and-empty-forms") {
-            for (truth in listOf("true", "false", "fail")) {
-                val node = assertIs<StructureNode>(parseTerm(truth))
-                assertEquals(StructureKind.TRUTH, node.structureKind)
-                assertEquals(truth, node.functor)
-            }
+        withTests(nameFn = { "parses-truth/$it" }, listOf("true", "false", "fail")) { truth ->
+            val node = assertIs<StructureNode>(parseTerm(truth))
+            assertEquals(StructureKind.TRUTH, node.structureKind)
+            assertEquals(truth, node.functor)
+        }
+
+        test("parses-cut-and-empty-forms") {
             assertEquals(StructureKind.CUT, assertIs<StructureNode>(parseTerm("!")).structureKind)
             assertEquals(StructureKind.EMPTY_LIST, assertIs<StructureNode>(parseTerm("[ ]")).structureKind)
             assertEquals(StructureKind.EMPTY_BLOCK, assertIs<StructureNode>(parseTerm("{\n}")).structureKind)

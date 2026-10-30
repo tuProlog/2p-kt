@@ -3,13 +3,15 @@ package it.unibo.tuprolog.solve.problog.probabilistic
 import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
+import it.unibo.tuprolog.solve.problog.probabilistic.TestUtils.queriesOn
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 
 class ProblogBayesianNetworksExamplesSpec :
     FunSpec({
         // https://dtai.cs.kuleuven.be/problog/tutorial/basic/02_bayes.html#probabilistic-facts
-        test("probabilistic-facts") {
-            TestUtils.assertQueryWithSolutions(
+        queriesOn(
+            "probabilistic-facts",
+            {
                 """
                     0.7::burglary.
                     0.2::earthquake.
@@ -20,23 +22,26 @@ class ProblogBayesianNetworksExamplesSpec :
                     alarm :- burglary, \+earthquake, p_alarm2.
                     alarm :- \+burglary, earthquake, p_alarm3.
                     evidence(alarm,true).
-                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
-                listOf(
-                    QueryWithSolutions(
-                        "burglary".parseAsStruct(),
-                        listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517)),
-                    ),
-                    QueryWithSolutions(
-                        "earthquake".parseAsStruct(),
-                        listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22758621)),
-                    ),
+                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators)
+            },
+            listOf(
+                QueryCase(
+                    "burglary",
+                    "burglary".parseAsStruct(),
+                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517)),
                 ),
-            )
-        }
+                QueryCase(
+                    "earthquake",
+                    "earthquake".parseAsStruct(),
+                    listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22758621)),
+                ),
+            ),
+        )
 
         // https://dtai.cs.kuleuven.be/problog/tutorial/basic/02_bayes.html#probabilistic-clauses
-        test("probabilistic-clauses") {
-            TestUtils.assertQueryWithSolutions(
+        queriesOn(
+            "probabilistic-clauses",
+            {
                 """
                     0.7::burglary.
                     0.2::earthquake.         
@@ -44,23 +49,26 @@ class ProblogBayesianNetworksExamplesSpec :
                     0.8::alarm :- burglary, \+earthquake.
                     0.1::alarm :- \+burglary, earthquake.        
                     evidence(alarm,true).
-                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
-                listOf(
-                    QueryWithSolutions(
-                        "burglary".parseAsStruct(),
-                        listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98193926)),
-                    ),
-                    QueryWithSolutions(
-                        "earthquake".parseAsStruct(),
-                        listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22685136)),
-                    ),
+                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators)
+            },
+            listOf(
+                QueryCase(
+                    "burglary",
+                    "burglary".parseAsStruct(),
+                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98193926)),
                 ),
-            )
-        }
+                QueryCase(
+                    "earthquake",
+                    "earthquake".parseAsStruct(),
+                    listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22685136)),
+                ),
+            ),
+        )
 
         // https://dtai.cs.kuleuven.be/problog/tutorial/basic/02_bayes.html#first-order
-        test("first-order") {
-            TestUtils.assertQueryWithSolutions(
+        queriesOn(
+            "first-order",
+            {
                 """
                     person(john).
                     person(mary).
@@ -73,23 +81,26 @@ class ProblogBayesianNetworksExamplesSpec :
                     0.1::calls(X) :- \+alarm, person(X).
                     evidence(calls(john),true).
                     evidence(calls(mary),true).
-                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
-                listOf(
-                    QueryWithSolutions(
-                        "burglary".parseAsStruct(),
-                        listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517)),
-                    ),
-                    QueryWithSolutions(
-                        "earthquake".parseAsStruct(),
-                        listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22758621)),
-                    ),
+                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators)
+            },
+            listOf(
+                QueryCase(
+                    "burglary",
+                    "burglary".parseAsStruct(),
+                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517)),
                 ),
-            )
-        }
+                QueryCase(
+                    "earthquake",
+                    "earthquake".parseAsStruct(),
+                    listOf(ExpectedSolution("earthquake".parseAsStruct(), 0.22758621)),
+                ),
+            ),
+        )
 
         // https://dtai.cs.kuleuven.be/problog/tutorial/basic/02_bayes.html#annotated-disjunctions-dealing-with-multi-valued-variables
-        test("annotated-disjunctions") {
-            TestUtils.assertQueryWithSolutions(
+        queriesOn(
+            "annotated-disjunctions",
+            {
                 """
                     person(john).
                     person(mary). 
@@ -104,21 +115,23 @@ class ProblogBayesianNetworksExamplesSpec :
                     0.1::calls(X) :- \+alarm, person(X).       
                     evidence(calls(john),true).
                     evidence(calls(mary),true).
-                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
-                listOf(
-                    QueryWithSolutions(
-                        "burglary".parseAsStruct(),
-                        listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517)),
-                    ),
-                    QueryWithSolutions(
-                        "earthquake(X)".parseAsStruct(),
-                        listOf(
-                            ExpectedSolution("earthquake(heavy)".parseAsStruct(), 0.012476167),
-                            ExpectedSolution("earthquake(mild)".parseAsStruct(), 0.20644476),
-                            ExpectedSolution("earthquake(none)".parseAsStruct(), 0.78107907),
-                        ),
+                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators)
+            },
+            listOf(
+                QueryCase(
+                    "burglary",
+                    "burglary".parseAsStruct(),
+                    listOf(ExpectedSolution("burglary".parseAsStruct(), 0.98965517)),
+                ),
+                QueryCase(
+                    "earthquake-x",
+                    "earthquake(X)".parseAsStruct(),
+                    listOf(
+                        ExpectedSolution("earthquake(heavy)".parseAsStruct(), 0.012476167),
+                        ExpectedSolution("earthquake(mild)".parseAsStruct(), 0.20644476),
+                        ExpectedSolution("earthquake(none)".parseAsStruct(), 0.78107907),
                     ),
                 ),
-            )
-        }
+            ),
+        )
     })

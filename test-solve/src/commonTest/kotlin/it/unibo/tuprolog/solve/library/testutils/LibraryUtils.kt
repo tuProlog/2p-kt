@@ -104,14 +104,20 @@ internal object LibraryUtils {
         RawLibrary("myLibrary", OperatorSet(), Theory.of(Fact.of(Truth.FAIL)), emptyMap(), emptyMap())
     }
 
+    /** A named [RawLibrary], for parameterized tests */
+    internal data class LibraryCase(
+        val id: String,
+        val raw: RawLibrary,
+    )
+
     /** Contains various libraries */
-    internal val allLibraries by lazy {
+    internal val allLibraryCases by lazy {
         listOf(
-            emptyLibrary,
-            library,
-            overridingLibrary,
-            overriddenLibrary,
-            duplicatedAliasLibrary,
+            LibraryCase("empty", emptyLibrary),
+            LibraryCase("base", library),
+            LibraryCase("overriding", overridingLibrary),
+            LibraryCase("overridden", overriddenLibrary),
+            LibraryCase("duplicated-alias", duplicatedAliasLibrary),
         )
     }
 

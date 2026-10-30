@@ -3,8 +3,8 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.ScopeImpl
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ScopeUtils
 import it.unibo.tuprolog.core.testutils.ScopeUtils.assertScopeCorrectContents
 import kotlin.test.assertEquals
@@ -19,8 +19,6 @@ class ScopeSpec :
     FunSpec({
         val correctEmptyInstance = ScopeImpl(ScopeUtils.emptyScope)
 
-        val correctNonEmptyScopeInstances = ScopeUtils.nonEmptyScopes.map(::ScopeImpl)
-
         test("empty-returns-empty-scope") {
             val toBeTested = Scope.empty()
 
@@ -33,23 +31,17 @@ class ScopeSpec :
             assertEquals(Scope.empty(), Scope.of { this })
         }
 
-        test("scope-of-vararg-variables-works-as-expected") {
-            val toBeTested = ScopeUtils.nonEmptyScopeVars.map { Scope.of(it) }.map { it.variables }
-
-            onCorrespondingItems(
-                correctNonEmptyScopeInstances.map { it.variables },
-                toBeTested,
-                ::assertScopeCorrectContents,
+        withTests(nameFn = { "of-variables/${it.id}" }, ScopeUtils.nonEmptyScopeCases) { case ->
+            assertScopeCorrectContents(
+                ScopeImpl(case.scope()).variables,
+                Scope.of(case.scope().values.toList()).variables,
             )
         }
 
-        test("scope-of-vararg-strings-works-as-expected") {
-            val toBeTested = ScopeUtils.nonEmptyScopeVarNames.map { Scope.of(*it.toTypedArray()) }.map { it.variables }
-
-            onCorrespondingItems(
-                correctNonEmptyScopeInstances.map { it.variables },
-                toBeTested,
-                ::assertScopeCorrectContents,
+        withTests(nameFn = { "of-vararg-strings/${it.id}" }, ScopeUtils.nonEmptyScopeCases) { case ->
+            assertScopeCorrectContents(
+                ScopeImpl(case.scope()).variables,
+                Scope.of(*case.varNames.toTypedArray()).variables,
             )
         }
 

@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import it.unibo.tuprolog.core.testutils.VarUtils
 import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
@@ -25,32 +25,27 @@ import kotlin.test.assertTrue
  */
 class VarImplSpec :
     FunSpec({
-        val mixedVarInstances = VarUtils.mixedVars.map { VarImpl(it) }
+        fun vars(
+            property: String,
+            cases: List<VarUtils.VarCase> = VarUtils.mixedVarCases,
+            test: (VarUtils.VarCase) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it) }
 
-        val mixedVarsSecondInstance = VarUtils.mixedVars.map { VarImpl(it) }
+        vars("name") { assertEquals(it.name, VarImpl(it.name).name) }
 
-        test("correct-name") {
-            onCorrespondingItems(VarUtils.mixedVars, mixedVarInstances.map { it.name }) { expectedName, varName ->
-                assertEquals(expectedName, varName)
-            }
+        vars("name-handling-for-different-instances-of-same-var") {
+            val firstInstance = VarImpl(it.name)
+            val secondInstance = VarImpl(it.name)
+            assertEquals(firstInstance.name, secondInstance.name)
+            assertNotEquals(firstInstance.completeName, secondInstance.completeName)
         }
 
-        test("name-handling-for-different-instances-of-same-var") {
-            onCorrespondingItems(mixedVarInstances, mixedVarsSecondInstance) { firstInstance, secondInstance ->
-                assertEquals(firstInstance.name, secondInstance.name)
-                assertNotEquals(firstInstance.completeName, secondInstance.completeName)
-            }
-        }
-
-        test("complete-name-starts-with-name") {
-            VarUtils.mixedVars.zip(mixedVarInstances).forEach { (varString, varInstance) ->
-                assertTrue { varInstance.completeName.startsWith(varString) }
-            }
-        }
+        vars("complete-name-starts-with-name") { assertTrue { VarImpl(it.name).completeName.startsWith(it.name) } }
 
         test("complete-names-contains-different-generated-numbers-if-simple-name-is-the-same") {
             assertTrue {
-                mixedVarInstances
+                VarUtils.mixedVarCases
+                    .map { VarImpl(it.name) }
                     .groupingBy { it.name }
                     .eachCount()
                     .values
@@ -62,53 +57,47 @@ class VarImplSpec :
             assertEqualities(VarImpl("Var", 0), VarImpl("Var", 0))
         }
 
-        test("same-var-instances-are-equals") {
-            onCorrespondingItems(mixedVarInstances, mixedVarInstances, ::assertEqualities)
+        vars("same-instance-equalities") {
+            val instance = VarImpl(it.name)
+            assertEqualities(instance, instance)
         }
 
-        test("structurally-equals-works-as-expected") {
-            onCorrespondingItems(mixedVarInstances, mixedVarsSecondInstance, ::assertStructurallyEquals)
+        vars("different-instances-structurally-equal") {
+            assertStructurallyEquals(VarImpl(it.name), VarImpl(it.name))
         }
 
-        test("equals-works-as-expected") {
-            onCorrespondingItems(mixedVarInstances, mixedVarsSecondInstance) { firstCreatedVar, secondCreatedVar ->
-                assertNotEquals(firstCreatedVar, secondCreatedVar)
-            }
+        vars("different-instances-not-equal") { assertNotEquals(VarImpl(it.name), VarImpl(it.name)) }
+
+        vars("is-not-anonymous", VarUtils.mixedVarCases.filter { it.name != Var.ANONYMOUS_NAME }) {
+            assertFalse { VarImpl(it.name).isAnonymous }
         }
 
         test("anonymous-var-detection") {
-            VarUtils.mixedVars
-                .filter { it != Var.ANONYMOUS_NAME }
-                .map { VarImpl(it) }
-                .forEach { nonAnonymousVarInstance ->
-                    assertFalse { nonAnonymousVarInstance.isAnonymous }
-                }
-
             assertTrue(VarImpl("_").isAnonymous)
         }
 
-        test("is-name-well-formed-property") {
-            VarUtils.correctlyNamedVars.map { VarImpl(it) }.forEach { assertTrue { it.isNameWellFormed } }
-            VarUtils.incorrectlyNamedVars.map { VarImpl(it) }.forEach { assertFalse { it.isNameWellFormed } }
+        vars(
+            "is-name-well-formed",
+            VarUtils.correctlyNamedVarCases,
+        ) { assertTrue { VarImpl(it.name).isNameWellFormed } }
+
+        vars("is-name-not-well-formed", VarUtils.incorrectlyNamedVarCases) {
+            assertFalse { VarImpl(it.name).isNameWellFormed }
         }
 
-        test("fresh-copy-works-as-expected") {
-            val refreshedVarInstances = mixedVarInstances.map { it.freshCopy() }
-
-            onCorrespondingItems(refreshedVarInstances, mixedVarInstances, ::assertDifferentVariableExceptForName)
+        vars("fresh-copy") {
+            val instance = VarImpl(it.name)
+            assertDifferentVariableExceptForName(instance.freshCopy(), instance)
         }
 
-        test("fresh-copy-with-scope-and-no-matching-variables-inside-it") {
-            val refreshedVarInstances = mixedVarInstances.map { it.freshCopy(Scope.empty()) }
-
-            onCorrespondingItems(refreshedVarInstances, mixedVarInstances, ::assertDifferentVariableExceptForName)
+        vars("fresh-copy-with-scope-not-containing-it") {
+            val instance = VarImpl(it.name)
+            assertDifferentVariableExceptForName(instance.freshCopy(Scope.empty()), instance)
         }
 
-        test("fresh-copy-with-scope-and-matching-variable-inside-it") {
-            val notAnonymousVarInstances = mixedVarInstances.filterNot { it.isAnonymous }
-            val refreshedNamedVarInstances = notAnonymousVarInstances.map { it.freshCopy(Scope.of(it)) }
-
-            onCorrespondingItems(refreshedNamedVarInstances, notAnonymousVarInstances, ::assertSameVariable)
+        vars("fresh-copy-with-scope-containing-it", VarUtils.mixedVarCases.filter { it.name != Var.ANONYMOUS_NAME }) {
+            val instance = VarImpl(it.name)
+            assertSameVariable(instance.freshCopy(Scope.of(instance)), instance)
         }
 
         test("fresh-copy-of-anonymous-variable-always-returns-different-variable") {
@@ -118,25 +107,15 @@ class VarImplSpec :
             assertDifferentVariableExceptForName(anonymousVar, refreshedAnonymous)
         }
 
-        test("to-string-works-as-expected") {
-            val correctNamedVarsToString = VarUtils.correctlyNamedVars.map { VarImpl(it).toString() }
-            val incorrectNamedVarsToString = VarUtils.incorrectlyNamedVars.map { VarImpl(it).toString() }
-
-            onCorrespondingItems(correctNamedVarsToString, VarUtils.correctlyNamedVars) { underTestToString, varName ->
-                assertTrue { underTestToString.matches("${varName}_[0-9]*".toRegex()) }
-            }
-
-            onCorrespondingItems(
-                incorrectNamedVarsToString,
-                VarUtils.incorrectlyNamedVars,
-            ) { underTestToString, varName ->
-                assertTrue { underTestToString.matches("`${varName}_[0-9]*`".toRegex()) }
-            }
+        vars("to-string", VarUtils.correctlyNamedVarCases) {
+            assertTrue { VarImpl(it.name).toString().matches("${it.name}_[0-9]*".toRegex()) }
         }
 
-        test("is-properties-and-types") {
-            mixedVarInstances.forEach(TermTypeAssertionUtils::assertIsVar)
+        vars("to-string-quoted", VarUtils.incorrectlyNamedVarCases) {
+            assertTrue { VarImpl(it.name).toString().matches("`${it.name}_[0-9]*`".toRegex()) }
         }
+
+        vars("type-checks") { TermTypeAssertionUtils.assertIsVar(VarImpl(it.name)) }
 
         test("apply-replaces-variable-if-correct-substitution") {
             val myAtom = Atom.of("hello")

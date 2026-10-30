@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
@@ -14,12 +15,10 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -29,58 +28,32 @@ import kotlin.test.assertTrue
  */
 class StructImplSpec :
     FunSpec({
-        val mixedStructInstances = StructUtils.mixedStructs.map { (functor, args) -> StructImpl(functor, args) }
+        fun structs(
+            property: String,
+            cases: List<StructUtils.StructCase> = StructUtils.mixedStructCases,
+            test: (StructImpl) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(StructImpl(it.functor, it.args)) }
 
-        val nonSpecialStructInstances =
-            StructUtils.nonSpecialStructs.map { (functor, args) -> StructImpl(functor, args) }
+        fun detects(
+            property: String,
+            expected: (Struct) -> Boolean,
+            actual: (Struct) -> Boolean,
+        ) = structs(property) { assertEquals(expected(it), actual(it)) }
 
-        val groundStructInstances = StructUtils.groundStructs.map { (functor, args) -> StructImpl(functor, args) }
-
-        val nonGroundStructInstances =
-            StructUtils.nonGroundStructs.map { (functor, args) -> StructImpl(functor, args) }
-
-        test("functor-correct") {
-            onCorrespondingItems(
-                StructUtils.mixedStructFunctors,
-                mixedStructInstances.map { it.functor },
-            ) { expected, actual ->
-                assertEquals(expected, actual)
-            }
+        withTests(nameFn = { "functor/${it.id}" }, StructUtils.mixedStructCases) { case ->
+            assertEquals(case.functor, StructImpl(case.functor, case.args).functor)
         }
 
-        test("args-correct") {
-            onCorrespondingItems(
-                StructUtils.mixedStructArguments,
-                mixedStructInstances.map { it.args },
-            ) { expected, actual ->
-                assertEquals(expected, actual)
-            }
+        withTests(nameFn = { "args/${it.id}" }, StructUtils.mixedStructCases) { case ->
+            assertEquals(case.args, StructImpl(case.functor, case.args).args)
         }
 
-        test("args-list-correct") {
-            val correctArgsLists = StructUtils.mixedStructArguments.map { it.toList() }
-
-            onCorrespondingItems(correctArgsLists, mixedStructInstances.map { it.args }) { expected, actual ->
-                assertEquals(expected, actual)
-            }
+        withTests(nameFn = { "args-sequence/${it.id}" }, StructUtils.mixedStructCases) { case ->
+            assertEquals(case.args, StructImpl(case.functor, case.args).argsSequence.toList())
         }
 
-        test("args-sequence-correct") {
-            val correctArgSequences = StructUtils.mixedStructArguments.map { it.asSequence() }
-
-            onCorrespondingItems(
-                correctArgSequences,
-                mixedStructInstances.map { it.argsSequence },
-            ) { expected, actual ->
-                assertEquals(expected.toList(), actual.toList())
-            }
-        }
-
-        test("variables-correct") {
-            onCorrespondingItems(
-                StructUtils.mixedStructVariables,
-                mixedStructInstances.map { it.variables },
-            ) { expected, actual -> assertEquals(expected.toList(), actual.toList()) }
+        withTests(nameFn = { "variables/${it.id}" }, StructUtils.mixedStructCases) { case ->
+            assertEquals(case.args.filter { it.isVar }, StructImpl(case.functor, case.args).variables.toList())
         }
 
         test("equals-works-as-expected") {
@@ -101,165 +74,81 @@ class StructImplSpec :
             assertStructurallyEquals(trueStruct, trueTruth)
         }
 
-        test("is-functor-well-formed") {
-            mixedStructInstances
-                .filter { it.functor matches Struct.WELL_FORMED_FUNCTOR_PATTERN }
-                .forEach { assertTrue { it.isFunctorWellFormed } }
+        structs(
+            "is-functor-well-formed",
+            StructUtils.mixedStructCases.filter { it.functor matches Struct.WELL_FORMED_FUNCTOR_PATTERN },
+        ) { assertTrue { it.isFunctorWellFormed } }
+
+        structs("to-string") {
+            val expected =
+                (if (it.isFunctorWellFormed) it.functor else "'${it.functor}'") +
+                    (if (it.arity > 0) "(${it.args.joinToString(", ")})" else "")
+            assertEquals(expected, it.toString())
         }
 
-        test("to-string-works-as-expected") {
-            val correctToStrings =
-                mixedStructInstances.map {
-                    (if (it.isFunctorWellFormed) it.functor else "'${it.functor}'") +
-                        (if (it.arity > 0) "(${it.args.joinToString(", ")})" else "")
-                }
-            onCorrespondingItems(correctToStrings, mixedStructInstances.map { it.toString() }) { expected, actual ->
-                assertEquals(expected, actual)
-            }
+        withTests(nameFn = { "is-ground/${it.id}" }, StructUtils.mixedStructCases) { case ->
+            assertEquals(case.isGround, StructImpl(case.functor, case.args).isGround)
         }
 
-        test("is-ground-true-if-no-variables-are-present") {
-            groundStructInstances.forEach { assertTrue { it.isGround } }
-            nonGroundStructInstances.forEach { assertFalse { it.isGround } }
-        }
+        structs("type-checks", StructUtils.nonSpecialStructCases, TermTypeAssertionUtils::assertIsStruct)
 
-        test("is-properties-and-types") {
-            nonSpecialStructInstances.forEach(TermTypeAssertionUtils::assertIsStruct)
-        }
+        structs("indicator") { assertEquals(Indicator.of(it.functor, it.arity), it.indicator) }
 
-        test("indicator-correct") {
-            mixedStructInstances.forEach { assertEquals(Indicator.of(it.functor, it.arity), it.indicator) }
-        }
+        detects("is-clause", { it.functor == Clause.FUNCTOR }) { it.isClause }
 
-        test("clause-detected") {
-            val isClause: (Struct) -> Boolean = { aStruct -> aStruct.functor == Clause.FUNCTOR }
+        detects("is-rule", { it.functor == Clause.FUNCTOR && it.arity == 2 }) { it.isRule }
 
-            mixedStructInstances.filter(isClause).forEach { assertTrue { it.isClause } }
-            mixedStructInstances.filterNot(isClause).forEach { assertFalse { it.isClause } }
-        }
+        detects("is-directive", { it.functor == Clause.FUNCTOR && it.arity == 1 }) { it.isDirective }
 
-        test("rule-detected") {
-            val isRule: (Struct) -> Boolean = { aStruct -> aStruct.functor == Clause.FUNCTOR && aStruct.arity == 2 }
+        detects("is-fact", { it.functor == Clause.FUNCTOR && it.arity == 2 && it.args.last().isTrue }) { it.isFact }
 
-            mixedStructInstances.filter(isRule).forEach { assertTrue { it.isRule } }
-            mixedStructInstances.filterNot(isRule).forEach { assertFalse { it.isRule } }
-        }
+        detects("is-tuple", { it.functor == Tuple.FUNCTOR && it.arity == 2 }) { it.isTuple }
 
-        test("directive-detected") {
-            val isDirective: (
-                Struct,
-            ) -> Boolean = { aStruct -> aStruct.functor == Clause.FUNCTOR && aStruct.arity == 1 }
+        detects("is-atom", { it.arity == 0 }) { it.isAtom }
 
-            mixedStructInstances.filter(isDirective).forEach { assertTrue { it.isDirective } }
-            mixedStructInstances.filterNot(isDirective).forEach { assertFalse { it.isDirective } }
-        }
+        detects("is-cons", { it.functor == Cons.FUNCTOR && it.arity == 2 }) { it.isCons }
 
-        test("fact-detected") {
-            val isFact: (Struct) -> Boolean =
-                { aStruct -> aStruct.functor == Clause.FUNCTOR && aStruct.arity == 2 && aStruct.args.last().isTrue }
+        detects(
+            "is-list",
+            {
+                it.functor == Cons.FUNCTOR &&
+                    it.arity == 2 ||
+                    it.functor == Empty.EMPTY_LIST_FUNCTOR &&
+                    it.arity == 0
+            },
+        ) { it.isList }
 
-            mixedStructInstances.filter(isFact).forEach { assertTrue { it.isFact } }
-            mixedStructInstances.filterNot(isFact).forEach { assertFalse { it.isFact } }
-        }
+        detects(
+            "is-block",
+            {
+                it.functor == Block.FUNCTOR &&
+                    it.arity == 1 ||
+                    it.functor == Empty.EMPTY_BLOCK_FUNCTOR &&
+                    it.arity == 0
+            },
+        ) { it.isBlock }
 
-        test("tuple-detected") {
-            val isTuple: (Struct) -> Boolean = { aStruct -> aStruct.functor == Tuple.FUNCTOR && aStruct.arity == 2 }
+        detects("is-empty-block", { it.functor == Empty.EMPTY_BLOCK_FUNCTOR && it.arity == 0 }) { it.isEmptyBlock }
 
-            mixedStructInstances.filter(isTuple).forEach { assertTrue { it.isTuple } }
-            mixedStructInstances.filterNot(isTuple).forEach { assertFalse { it.isTuple } }
-        }
+        detects("is-empty-list", { it.functor == Empty.EMPTY_LIST_FUNCTOR && it.arity == 0 }) { it.isEmptyList }
 
-        test("atom-detected") {
-            val isAtom: (Struct) -> Boolean = { aStruct -> aStruct.arity == 0 }
+        detects("is-true", { it.functor == Truth.TRUE_FUNCTOR && it.arity == 0 }) { it.isTrue }
 
-            mixedStructInstances.filter(isAtom).forEach { assertTrue { it.isAtom } }
-            mixedStructInstances.filterNot(isAtom).forEach { assertFalse { it.isAtom } }
-        }
+        detects("is-fail", { it.functor == Truth.FAIL_FUNCTOR && it.arity == 0 }) { it.isFail }
 
-        test("cons-detected") {
-            val isCons: (Struct) -> Boolean = { aStruct -> aStruct.functor == Cons.FUNCTOR && aStruct.arity == 2 }
+        detects("is-indicator", { it.functor == Indicator.FUNCTOR && it.arity == 2 }) { it.isIndicator }
 
-            mixedStructInstances.filter(isCons).forEach { assertTrue { it.isCons } }
-            mixedStructInstances.filterNot(isCons).forEach { assertFalse { it.isCons } }
-        }
+        structs(
+            "fresh-copy-is-itself",
+            StructUtils.mixedStructCases.filter { it.isGround },
+            ConstantUtils::assertFreshCopyIsItself,
+        )
 
-        test("list-detected") {
-            val isList: (Struct) -> Boolean =
-                { aStruct ->
-                    aStruct.functor == Cons.FUNCTOR &&
-                        aStruct.arity == 2 ||
-                        aStruct.functor == Empty.EMPTY_LIST_FUNCTOR &&
-                        aStruct.arity == 0
-                }
-
-            mixedStructInstances.filter(isList).forEach { assertTrue { it.isList } }
-            mixedStructInstances.filterNot(isList).forEach { assertFalse { it.isList } }
-        }
-
-        test("block-detected") {
-            val isBlock: (Struct) -> Boolean =
-                { aStruct ->
-                    aStruct.functor == Block.FUNCTOR &&
-                        aStruct.arity == 1 ||
-                        aStruct.functor == Empty.EMPTY_BLOCK_FUNCTOR &&
-                        aStruct.arity == 0
-                }
-
-            mixedStructInstances.filter(isBlock).forEach { assertTrue { it.isBlock } }
-            mixedStructInstances.filterNot(isBlock).forEach { assertFalse { it.isBlock } }
-        }
-
-        test("empty-block-detected") {
-            val isEmptyBlock: (Struct) -> Boolean =
-                { aStruct -> aStruct.functor == Empty.EMPTY_BLOCK_FUNCTOR && aStruct.arity == 0 }
-
-            mixedStructInstances.filter(isEmptyBlock).forEach { assertTrue { it.isEmptyBlock } }
-            mixedStructInstances.filterNot(isEmptyBlock).forEach { assertFalse { it.isEmptyBlock } }
-        }
-
-        test("empty-list-detected") {
-            val isEmptyList: (Struct) -> Boolean =
-                { aStruct -> aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0 }
-
-            mixedStructInstances.filter(isEmptyList).forEach { assertTrue { it.isEmptyList } }
-            mixedStructInstances.filterNot(isEmptyList).forEach { assertFalse { it.isEmptyList } }
-        }
-
-        test("is-true-detected") {
-            val isTrue: (Struct) -> Boolean = { aStruct -> aStruct.functor == Truth.TRUE_FUNCTOR && aStruct.arity == 0 }
-
-            mixedStructInstances.filter(isTrue).forEach { assertTrue { it.isTrue } }
-            mixedStructInstances.filterNot(isTrue).forEach { assertFalse { it.isTrue } }
-        }
-
-        test("is-fail-detected") {
-            val isFail: (Struct) -> Boolean = { aStruct -> aStruct.functor == Truth.FAIL_FUNCTOR && aStruct.arity == 0 }
-
-            mixedStructInstances.filter(isFail).forEach { assertTrue { it.isFail } }
-            mixedStructInstances.filterNot(isFail).forEach { assertFalse { it.isFail } }
-        }
-
-        test("indicator-detected") {
-            val isIndicator: (Struct) -> Boolean = { aStruct ->
-                aStruct.functor == Indicator.FUNCTOR &&
-                    aStruct.arity == 2
-            }
-
-            mixedStructInstances.filter(isIndicator).forEach { assertTrue { it.isIndicator } }
-            mixedStructInstances.filterNot(isIndicator).forEach { assertFalse { it.isIndicator } }
-        }
-
-        test("fresh-copy-should-return-instance-itself-if-ground") {
-            groundStructInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
-        }
-
-        test("fresh-copy-should-renew-variables") {
-            val nonGroundNonSpecialStructInstances =
-                (StructUtils.nonGroundStructs - StructUtils.specialStructs)
-                    .map { (functor, args) -> StructImpl(functor, args) }
-
-            nonGroundNonSpecialStructInstances.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
-        }
+        structs(
+            "fresh-copy-renews-variables",
+            StructUtils.nonSpecialStructCases.filterNot { it.isGround },
+            StructUtils::assertFreshCopyRenewsContainedVariables,
+        )
 
         test("fresh-copy-merges-different-variables-with-same-name") {
             StructUtils.assertFreshCopyMergesDifferentVariablesWithSameName { var1, var2 ->
@@ -267,23 +156,17 @@ class StructImplSpec :
             }
         }
 
-        test("arity-is-args-size") {
-            mixedStructInstances.forEach { assertEquals(it.args.size, it.arity) }
-        }
+        structs("arity-is-args-size") { assertEquals(it.args.size, it.arity) }
 
-        test("get-arg-at-works-as-expected") {
-            mixedStructInstances.forEach {
-                it.args.forEachIndexed { index, arg ->
-                    assertEqualities(it.getArgAt(index), arg)
-                }
+        structs("get-arg-at") { struct ->
+            struct.args.forEachIndexed { index, arg ->
+                assertEqualities(struct.getArgAt(index), arg)
             }
         }
 
-        test("get-works-as-expected") {
-            mixedStructInstances.forEach {
-                it.args.forEachIndexed { index, arg ->
-                    assertEqualities(it[index], arg)
-                }
+        structs("get") { struct ->
+            struct.args.forEachIndexed { index, arg ->
+                assertEqualities(struct[index], arg)
             }
         }
 

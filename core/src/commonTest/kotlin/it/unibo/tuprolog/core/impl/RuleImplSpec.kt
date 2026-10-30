@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.RuleUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
@@ -21,74 +21,45 @@ import kotlin.test.assertTrue
  */
 class RuleImplSpec :
     FunSpec({
-        val groundRulesInstances = RuleUtils.groundRules.map { (head, body) -> RuleImpl(head, body) }
+        fun rules(
+            property: String,
+            cases: List<RuleUtils.RuleCase> = RuleUtils.mixedRuleCases,
+            test: (RuleUtils.RuleCase, Rule) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it, RuleImpl(it.head, it.body)) }
 
-        val nonGroundRulesInstances = RuleUtils.nonGroundRules.map { (head, body) -> RuleImpl(head, body) }
+        rules("head") { case, rule -> assertEqualities(case.head, rule.head) }
 
-        val wellFormedRulesInstances = RuleUtils.wellFormedRules.map { (head, body) -> RuleImpl(head, body) }
+        rules("body") { case, rule -> assertEqualities(case.body, rule.body) }
 
-        val nonWellFormedRulesInstances = RuleUtils.nonWellFormedRules.map { (head, body) -> RuleImpl(head, body) }
-
-        val mixedRulesInstances = RuleUtils.mixedRules.map { (head, body) -> RuleImpl(head, body) }
-
-        test("head-correct") {
-            val correctHeads = RuleUtils.mixedRules.map { (head, _) -> head }
-
-            onCorrespondingItems(correctHeads, mixedRulesInstances.map { it.head }, ::assertEqualities)
+        rules("is-well-formed", RuleUtils.wellFormedRuleCases) { _, rule ->
+            assertTrue("$rule isWellFormed should be true") { rule.isWellFormed }
         }
 
-        test("body-correct") {
-            val correctBodies = RuleUtils.mixedRules.map { (_, body) -> body }
-
-            onCorrespondingItems(correctBodies, mixedRulesInstances.map { it.body }, ::assertEqualities)
+        rules("is-not-well-formed", RuleUtils.nonWellFormedRuleCases) { _, rule ->
+            assertFalse("$rule isWellFormed should be false") { rule.isWellFormed }
         }
 
-        test("is-well-formed-returns-true-if-rule-well-formed") {
-            wellFormedRulesInstances.forEach { assertTrue("$it isWellFormed should be true") { it.isWellFormed } }
-        }
-
-        test("is-well-formed-returns-false-if-rule-not-well-formed") {
-            nonWellFormedRulesInstances.forEach { assertFalse("$it isWellFormed should be false") { it.isWellFormed } }
-        }
-
-        test("is-properties-and-types") {
-            mixedRulesInstances.forEach(TermTypeAssertionUtils::assertIsRule)
-        }
+        rules("type-checks") { _, rule -> TermTypeAssertionUtils.assertIsRule(rule) }
 
         test("fact-detected") {
             assertTrue(RuleImpl(Atom.of("hey"), Truth.TRUE).isFact)
         }
 
-        test("is-ground-true-if-no-variables-are-present") {
-            groundRulesInstances.forEach { assertTrue { it.isGround } }
-            nonGroundRulesInstances.forEach { assertFalse { it.isGround } }
+        rules("is-ground", RuleUtils.groundRuleCases) { _, rule -> assertTrue { rule.isGround } }
+
+        rules("is-not-ground", RuleUtils.nonGroundRuleCases) { _, rule -> assertFalse { rule.isGround } }
+
+        rules("fresh-copy-is-itself", RuleUtils.groundRuleCases) { _, rule ->
+            ConstantUtils.assertFreshCopyIsItself(rule)
         }
 
-        test("fresh-copy-should-return-instance-itself-if-ground") {
-            groundRulesInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
+        rules("fresh-copy-renews-variables", RuleUtils.nonGroundRuleCases) { _, rule ->
+            StructUtils.assertFreshCopyRenewsContainedVariables(rule)
         }
 
-        test("fresh-copy-should-renew-variables") {
-            nonGroundRulesInstances.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
-        }
+        rules("functor") { _, rule -> assertEquals(":-", rule.functor) }
 
-        test("functor-correct") {
-            mixedRulesInstances.forEach { assertEquals(":-", it.functor) }
-        }
+        rules("args") { case, rule -> assertEquals(listOf(case.head, case.body), rule.args) }
 
-        test("args-correct") {
-            val correctArgs = RuleUtils.mixedRules.map { (head, body) -> listOf(head, body) }
-
-            onCorrespondingItems(correctArgs, mixedRulesInstances.map { it.args }) { expected, actual ->
-                assertEquals(expected, actual)
-            }
-        }
-
-        test("to-string-works-as-expected") {
-            val correctToStrings = mixedRulesInstances.map { "${it.head} ${it.functor} ${it.body}" }
-
-            onCorrespondingItems(correctToStrings, mixedRulesInstances.map { it.toString() }) { expected, actual ->
-                assertEquals(expected, actual)
-            }
-        }
+        rules("to-string") { _, rule -> assertEquals("${rule.head} ${rule.functor} ${rule.body}", rule.toString()) }
     })

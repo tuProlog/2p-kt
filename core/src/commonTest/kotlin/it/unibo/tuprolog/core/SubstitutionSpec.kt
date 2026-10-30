@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropFirst
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
 import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
 import kotlin.test.assertEquals
@@ -20,8 +20,6 @@ class SubstitutionSpec :
         val aVar = Var.of("A")
 
         val bVar = Var.of("B")
-
-        val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution.Companion::of) }
 
         test("failed-should-return-the-failed-substitution-instance") {
             assertEquals(Substitution.failed(), Substitution.failed())
@@ -48,10 +46,8 @@ class SubstitutionSpec :
             assertFalse(Substitution.empty().isFailed)
         }
 
-        test("as-unifier-converts-a-map-var-term-to-substitution") {
-            val toBeTested = SubstitutionUtils.mixedSubstitutions.map { it.asUnifier() }
-
-            onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+        withTests(nameFn = { "as-unifier/${it.id}" }, SubstitutionUtils.mixedSubstitutionCases) { case ->
+            assertEquals(Substitution.of(case.map), case.map.asUnifier())
         }
 
         test("as-unifier-results-in-empty-substitution-if-identity-mappings") {
@@ -62,78 +58,68 @@ class SubstitutionSpec :
             assertEquals(Substitution.empty(), mapOf(aVar to bVar, bVar to aVar).asUnifier())
         }
 
-        test("of-variable-and-term") {
-            val correct = correctInstances.filter { it.size == 1 }
-            val toBeTested =
-                SubstitutionUtils.mixedSubstitutionsAsPairs
-                    .filter { it.size == 1 }
-                    .map { it.first() }
-                    .map { (variable, withTerm) -> Substitution.of(variable, withTerm) }
+        val singleMappingCases = SubstitutionUtils.mixedSubstitutionCases.filter { it.map.size == 1 }
 
-            onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+        withTests(nameFn = { "of-variable-and-term/${it.id}" }, singleMappingCases) { case ->
+            val (variable, withTerm) = case.pairs.single()
+            assertEquals(Substitution.of(case.map), Substitution.of(variable, withTerm))
         }
 
-        test("of-string-variable-and-term") {
-            val correct = correctInstances.filter { it.size == 1 }
-            val toBeTested =
-                SubstitutionUtils.mixedSubstitutionsAsPairs
-                    .filter { it.size == 1 }
-                    .map { it.first() }
-                    .map { (variable, withTerm) -> Substitution.of(variable.name, withTerm) }
-
-            onCorrespondingItems(correct, toBeTested) { expectedMap, actualMap ->
-                onCorrespondingItems(expectedMap.keys, actualMap.keys, ::assertDifferentVariableExceptForName)
-                assertEquals(expectedMap.values.toList(), actualMap.values.toList())
-            }
+        withTests(nameFn = { "of-string-variable-and-term/${it.id}" }, singleMappingCases) { case ->
+            val (variable, withTerm) = case.pairs.single()
+            val expected = Substitution.of(case.map)
+            val actual = Substitution.of(variable.name, withTerm)
+            assertEquals(expected.size, actual.size)
+            assertDifferentVariableExceptForName(expected.keys.single(), actual.keys.single())
+            assertEquals(expected.values.toList(), actual.values.toList())
         }
 
-        test("of-variable-term-pairs") {
-            val toBeTested =
-                SubstitutionUtils.mixedSubstitutionsAsPairs.map {
-                    Substitution.of(it.first(), *it.dropFirst().toTypedArray())
-                }
-
-            onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+        withTests(nameFn = { "of-variable-term-pairs/${it.id}" }, SubstitutionUtils.mixedSubstitutionCases) { case ->
+            assertEquals(
+                Substitution.of(case.map),
+                Substitution.of(case.pairs.first(), *case.pairs.dropFirst().toTypedArray()),
+            )
         }
 
-        test("of-variable-term-pairs-doesnt-complain-if-exact-duplicates") {
-            val toBeTested =
-                SubstitutionUtils.duplicatedPairSubstitution.map {
-                    Substitution.of(it.first(), *it.dropFirst().toTypedArray())
-                }
-
-            val correctInstances = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.of(it.toMap()) }
-
-            onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+        withTests(
+            nameFn = { "of-variable-term-pairs-doesnt-complain-if-exact-duplicates/${it.id}" },
+            SubstitutionUtils.duplicatedPairCases,
+        ) { case ->
+            assertEquals(
+                Substitution.of(case.pairs.toMap()),
+                Substitution.of(case.pairs.first(), *case.pairs.dropFirst().toTypedArray()),
+            )
         }
 
-        test("of-variable-term-pairs-result-in-failed-substitution-if-contradicting") {
-            val toBeTested =
-                SubstitutionUtils.contradictingSubstitutions.map {
-                    Substitution.of(it.first(), *it.dropFirst().toTypedArray())
-                }
-
-            toBeTested.forEach { assertEquals(Substitution.failed(), it) }
+        withTests(
+            nameFn = { "of-variable-term-pairs-result-in-failed-substitution-if-contradicting/${it.id}" },
+            SubstitutionUtils.contradictingPairCases,
+        ) { case ->
+            assertEquals(
+                Substitution.failed(),
+                Substitution.of(case.pairs.first(), *case.pairs.dropFirst().toTypedArray()),
+            )
         }
 
-        test("of-iterable-variable-term-pairs") {
-            val toBeTested = SubstitutionUtils.mixedSubstitutionsAsPairs.map { Substitution.of(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+        withTests(
+            nameFn = { "of-iterable-variable-term-pairs/${it.id}" },
+            SubstitutionUtils.mixedSubstitutionCases,
+        ) { case ->
+            assertEquals(Substitution.of(case.map), Substitution.of(case.pairs))
         }
 
-        test("of-iterable-variable-term-pairs-doesnt-complain-if-exact-duplicates") {
-            val toBeTested = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.of(it) }
-
-            val correctInstances = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.unifier(it.toMap()) }
-
-            onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+        withTests(
+            nameFn = { "of-iterable-variable-term-pairs-doesnt-complain-if-exact-duplicates/${it.id}" },
+            SubstitutionUtils.duplicatedPairCases,
+        ) { case ->
+            assertEquals(Substitution.unifier(case.pairs.toMap()), Substitution.of(case.pairs))
         }
 
-        test("of-iterable-variable-term-pairs-result-in-failed-substitution-if-contradicting") {
-            val toBeTested = SubstitutionUtils.contradictingSubstitutions.map { Substitution.of(it) }
-
-            toBeTested.forEach { assertEquals(Substitution.failed(), it) }
+        withTests(
+            nameFn = { "of-iterable-variable-term-pairs-result-in-failed-substitution-if-contradicting/${it.id}" },
+            SubstitutionUtils.contradictingPairCases,
+        ) { case ->
+            assertEquals(Substitution.failed(), Substitution.of(case.pairs))
         }
 
         test("of-empty-iterable") {
@@ -141,9 +127,10 @@ class SubstitutionSpec :
         }
 
         test("of-substitutions") {
+            val correctInstances = SubstitutionUtils.mixedSubstitutionCases.map { Substitution.of(it.map) }
             val correct =
                 Substitution.unifier(
-                    SubstitutionUtils.mixedSubstitutions.reduce {
+                    SubstitutionUtils.mixedSubstitutionCases.map { it.map }.reduce {
                         map1,
                         map2,
                         ->

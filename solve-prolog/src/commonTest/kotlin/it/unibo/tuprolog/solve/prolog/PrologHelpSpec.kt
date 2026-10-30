@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.prolog
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -90,19 +91,18 @@ class PrologHelpSpec :
             assertTrue("priority `1100`" in disjunction)
         }
 
-        test("help/semantic-help-replaces-generated-fallbacks") {
-            val subjects =
-                listOf(
-                    Signature("functor", 3).toIndicator(),
-                    Signature("+", 2).toIndicator(),
-                    Signature("member", 2).toIndicator(),
-                )
-            for (subject in subjects) {
-                val help = helpFor(subject)
-                assertTrue("\n\nPrimitive." !in help)
-                assertTrue("\n\nFunction." !in help)
-                assertTrue("\n\nRule." !in help)
-            }
+        withTests(
+            nameFn = { "help/semantic-help-replaces-generated-fallbacks/${it.id}" },
+            listOf(
+                HelpSubjectCase("functor-3", Signature("functor", 3)),
+                HelpSubjectCase("plus-2", Signature("+", 2)),
+                HelpSubjectCase("member-2", Signature("member", 2)),
+            ),
+        ) { case ->
+            val help = helpFor(case.signature.toIndicator())
+            assertTrue("\n\nPrimitive." !in help)
+            assertTrue("\n\nFunction." !in help)
+            assertTrue("\n\nRule." !in help)
         }
 
         test("help/internal-help-is-never-listed") {
@@ -154,3 +154,8 @@ private fun helpFor(
     val solution = assertIs<Solution.Yes>(solver.solveOnce(Struct.of("help", subject, help)))
     return assertIs<Atom>(solution.substitution[help]).value
 }
+
+private class HelpSubjectCase(
+    val id: String,
+    val signature: Signature,
+)

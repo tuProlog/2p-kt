@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete.custom
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.allChunksOfSize
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmpty
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmptyAndUnordered
@@ -296,7 +297,12 @@ class UnorderedReteTreeSpec :
             }
         }
 
-        test("an-unordered-tree-does-not-necessarily-preserve-the-insertion-order-of-similar-clauses1") {
+        withTests(
+            nameFn = {
+                "an-unordered-tree-does-not-necessarily-preserve-the-insertion-order-of-similar-clauses1/${it.id}"
+            },
+            factsAndRulesFamilies,
+        ) { (_, template, family) ->
             val tree = reteTreeOf()
 
             assertIsEmptyAndUnordered(tree)
@@ -307,72 +313,68 @@ class UnorderedReteTreeSpec :
 
             assertEquals(defaultClauses.size, tree.size)
 
-            for ((template, factsAndRules) in factsAndRulesFamilies) {
-                assertPartialOrderIsTheSame(factsAndRules.asSequence(), tree.clauses)
-                assertItemMultisetsAreEqual(factsAndRules.asSequence(), tree.get(template))
-            }
+            assertPartialOrderIsTheSame(family.asSequence(), tree.clauses)
+            assertItemMultisetsAreEqual(family.asSequence(), tree.get(template))
         }
-
-        test("an-unordered-tree-does-not-necessarily-preserve-the-insertion-order-of-similar-clauses2") {
-            val allFactsAndRules = factsAndRules
+        withTests(
+            nameFn = {
+                "an-unordered-tree-does-not-necessarily-preserve-the-insertion-order-of-similar-clauses2/${it.id}"
+            },
+            factsAndRulesFamilies,
+        ) { (_, template, family) ->
             val tree = reteTreeOf()
 
             assertIsEmptyAndUnordered(tree)
 
-            for (clause in allFactsAndRules) {
+            for (clause in factsAndRules) {
                 tree.assertZ(clause)
             }
 
-            assertEquals(allFactsAndRules.size, tree.size)
+            assertEquals(factsAndRules.size, tree.size)
 
-            for ((template, factsAndRules) in factsAndRulesFamilies) {
-                assertSubMultisetOf(factsAndRules.asSequence(), tree.clauses)
-                assertItemMultisetsAreEqual(factsAndRules.asSequence(), tree.get(template))
-            }
+            assertSubMultisetOf(family.asSequence(), tree.clauses)
+            assertItemMultisetsAreEqual(family.asSequence(), tree.get(template))
         }
+        withTests(
+            nameFn = { "an-unordered-tree-retracts-clauses-in-a-order-insensitive-way1/${it.id}" },
+            factsAndRulesFamilies,
+        ) { (_, template, family) ->
+            var tree = reteTreeOf(factsAndRules)
+            assertIsNonEmpty(tree)
+            assertSubMultisetOf(family.asSequence(), tree.clauses)
+            assertItemMultisetsAreEqual(family.asSequence(), tree.get(template))
 
-        test("an-unordered-tree-retracts-clauses-in-a-order-insensitive-way1") {
-            val allFactsAndRules = factsAndRules
-
-            for ((template, factsAndRules) in factsAndRulesFamilies) {
-                var tree = reteTreeOf(allFactsAndRules)
-                assertIsNonEmpty(tree)
-                assertSubMultisetOf(factsAndRules.asSequence(), tree.clauses)
-                assertItemMultisetsAreEqual(factsAndRules.asSequence(), tree.get(template))
-
-                factsAndRules.distinct().forEachIndexed { i, _ ->
-                    val retracted = tree.retractFirst(template).toList()
-                    assertSubMultisetOf(retracted, factsAndRules)
-                    assertEquals(factsAndRules.size - 1 - i, tree.get(template).count())
-                }
-
-                // reset
-
-                tree = reteTreeOf(allFactsAndRules)
-                assertIsNonEmpty(tree)
-                assertSubMultisetOf(factsAndRules.asSequence(), tree.clauses)
-                assertItemMultisetsAreEqual(factsAndRules.asSequence(), tree.get(template))
-
-                var retracted2 = tree.retractOnly(template, 2).toList()
-                assertSubMultisetOf(retracted2, factsAndRules)
-                assertEquals(factsAndRules.size - 2, tree.get(template).count())
-
-                retracted2 = tree.retractOnly(template, 2).toList()
-                assertSubMultisetOf(retracted2, factsAndRules)
-                assertEquals(factsAndRules.size - 4, tree.get(template).count())
-
-                // reset
-
-                tree = reteTreeOf(allFactsAndRules)
-                assertIsNonEmpty(tree)
-                assertSubMultisetOf(factsAndRules.asSequence(), tree.clauses)
-                assertItemMultisetsAreEqual(factsAndRules.asSequence(), tree.get(template))
-
-                assertItemMultisetsAreEqual(factsAndRules.asSequence(), tree.retractAll(template))
-                assertItemMultisetsAreEqual(emptySequence(), tree.get(template))
+            family.distinct().forEachIndexed { i, _ ->
+                val retracted = tree.retractFirst(template).toList()
+                assertSubMultisetOf(retracted, family)
+                assertEquals(family.size - 1 - i, tree.get(template).count())
             }
-        }
 
+            // reset
+
+            tree = reteTreeOf(factsAndRules)
+            assertIsNonEmpty(tree)
+            assertSubMultisetOf(family.asSequence(), tree.clauses)
+            assertItemMultisetsAreEqual(family.asSequence(), tree.get(template))
+
+            var retracted2 = tree.retractOnly(template, 2).toList()
+            assertSubMultisetOf(retracted2, family)
+            assertEquals(family.size - 2, tree.get(template).count())
+
+            retracted2 = tree.retractOnly(template, 2).toList()
+            assertSubMultisetOf(retracted2, family)
+            assertEquals(family.size - 4, tree.get(template).count())
+
+            // reset
+
+            tree = reteTreeOf(factsAndRules)
+            assertIsNonEmpty(tree)
+            assertSubMultisetOf(family.asSequence(), tree.clauses)
+            assertItemMultisetsAreEqual(family.asSequence(), tree.get(template))
+
+            assertItemMultisetsAreEqual(family.asSequence(), tree.retractAll(template))
+            assertItemMultisetsAreEqual(emptySequence(), tree.get(template))
+        }
         test("a-tree-can-always-retrieve-the-clauses-it-contains") {
             val tree = reteTreeOf(defaultClauses)
 
@@ -385,38 +387,38 @@ class UnorderedReteTreeSpec :
             }
         }
 
-        test("an-unordered-tree-retracts-clauses-in-a-order-insensitive-way2") {
+        withTests(
+            nameFn = { "an-unordered-tree-retracts-clauses-in-a-order-insensitive-way2/${it.id}" },
+            factsAndRulesFamilies,
+        ) { (_, template, family) ->
             val tree = reteTreeOf(factsAndRules)
 
             assertIsNonEmpty(tree)
             assertEquals(factsAndRules.size, tree.size)
 
-            for ((template, factsAndRules) in factsAndRulesFamilies) {
-                assertSubMultisetOf(factsAndRules.asSequence(), tree.clauses)
-                assertItemMultisetsAreEqual(factsAndRules.asSequence(), tree.get(template))
+            assertSubMultisetOf(family.asSequence(), tree.clauses)
+            assertItemMultisetsAreEqual(family.asSequence(), tree.get(template))
 
-                val firstRetracted = tree.retractFirst(template).toList()
-                assertSubMultisetOf(firstRetracted, factsAndRules)
-                assertNotContainedIn(firstRetracted.asSequence(), tree.get(template))
+            val firstRetracted = tree.retractFirst(template).toList()
+            assertSubMultisetOf(firstRetracted, family)
+            assertNotContainedIn(firstRetracted.asSequence(), tree.get(template))
 
-                tree.assertZ(firstRetracted[0])
-                assertSubMultisetOf(firstRetracted.asSequence(), tree.get(template))
+            tree.assertZ(firstRetracted[0])
+            assertSubMultisetOf(firstRetracted.asSequence(), tree.get(template))
 
-                val numberOfClausesBeforeRetracting = tree.get(template).toList().count()
-                val twoRetracted = tree.retractOnly(template, 2).toList()
-                assertSubMultisetOf(twoRetracted, factsAndRules)
-                assertTrue((numberOfClausesBeforeRetracting - tree.get(template).count()) in (0..2))
+            val numberOfClausesBeforeRetracting = tree.get(template).toList().count()
+            val twoRetracted = tree.retractOnly(template, 2).toList()
+            assertSubMultisetOf(twoRetracted, family)
+            assertTrue((numberOfClausesBeforeRetracting - tree.get(template).count()) in (0..2))
 
-                twoRetracted.forEach { tree.assertZ(it) }
-                assertSubMultisetOf(twoRetracted.asSequence(), tree.get(template))
+            twoRetracted.forEach { tree.assertZ(it) }
+            assertSubMultisetOf(twoRetracted.asSequence(), tree.get(template))
 
-                val allRetracted = tree.retractAll(template).toList()
-                assertItemMultisetsAreEqual(allRetracted, factsAndRules)
-                assertNotContainedIn(allRetracted.asSequence(), tree.get(template))
-                assertItemMultisetsAreEqual(emptySequence(), tree.get(template))
-            }
+            val allRetracted = tree.retractAll(template).toList()
+            assertItemMultisetsAreEqual(allRetracted, family)
+            assertNotContainedIn(allRetracted.asSequence(), tree.get(template))
+            assertItemMultisetsAreEqual(emptySequence(), tree.get(template))
         }
-
         test("an-unordered-tree-filters-clauses-by-body-as-well") {
             val groundTerms =
                 defaultClauses

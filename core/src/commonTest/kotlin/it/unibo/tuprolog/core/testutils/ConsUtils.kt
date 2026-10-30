@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 
 /**
  * Utils singleton for testing [Cons]
@@ -15,122 +14,60 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
  * @author Enrico
  */
 internal object ConsUtils {
-    private val headOfFirstList = Var.of("H")
-    private val tailOfFirstList = Empty.list()
-    private val elementsOfFirstList = listOf(headOfFirstList)
+    /** A named list of [elements], terminated by its last element if [isPipeTerminated], by an EmptyList otherwise */
+    internal data class ConsCase(
+        val id: String,
+        val elements: List<Term>,
+        val isPipeTerminated: Boolean = false,
+    ) {
+        /** The "unfolded list" representation, i.e. [elements] followed by the terminal EmptyList if needed */
+        val unfoldedList: List<Term> get() = if (isPipeTerminated) elements else elements + Empty.list()
 
-    /** Constructs a non ground Cons with one Term */
-    internal fun oneElementList(constructor: (Term, Term) -> Cons) = constructor(headOfFirstList, tailOfFirstList)
+        val head: Term get() = elements.first()
 
-    private val headOfSecondList = Var.of("H")
-    private val tailOfSecondListElement = Var.of("T")
+        val isGround: Boolean get() = elements.all { it.isGround }
 
-    private fun tailOfSecondList(constructor: (Term, Term) -> Cons) = constructor(tailOfSecondListElement, Empty.list())
+        val expectedToString: String
+            get() =
+                if (isPipeTerminated) {
+                    elements.dropLast(1).joinToString(prefix = "[") + " | ${elements.last()}]"
+                } else {
+                    elements.joinToString(prefix = "[", postfix = "]")
+                }
 
-    private val elementsOfSecondList = listOf(headOfSecondList, tailOfSecondListElement)
+        /** Constructs the Cons through [constructor] */
+        fun cons(constructor: (Term, Term) -> Cons): Cons = fold(unfoldedList, constructor) as Cons
 
-    /** Constructs a non ground Cons with two Terms */
-    internal fun twoElementList(constructor: (Term, Term) -> Cons) =
-        constructor(headOfSecondList, tailOfSecondList(constructor))
+        /** Constructs the tail through [constructor], since some tails are Cons themselves */
+        fun tail(constructor: (Term, Term) -> Cons): Term = fold(unfoldedList.drop(1), constructor)
 
-    private val headOfThirdList = Atom.of("bigList")
-    private val tailOfThirdListFirstElement = Integer.of(4)
-    private val tailOfThirdListSecondElement = Real.of(1.5)
+        private fun fold(
+            items: List<Term>,
+            constructor: (Term, Term) -> Cons,
+        ): Term = items.singleOrNull() ?: constructor(items.first(), fold(items.drop(1), constructor))
+    }
 
-    private fun tailOfThirdList(constructor: (Term, Term) -> Cons) =
-        constructor(tailOfThirdListFirstElement, constructor(tailOfThirdListSecondElement, Empty.list()))
-
-    private val elementsOfThirdList = listOf(headOfThirdList, tailOfThirdListFirstElement, tailOfThirdListSecondElement)
-
-    /** Constructs a ground Cons with three Terms */
-    internal fun threeElementList(constructor: (Term, Term) -> Cons) =
-        constructor(headOfThirdList, tailOfThirdList(constructor))
-
-    private val headOfFourthList = Var.of("Head")
-    private val tailOfFourthList = Var.of("Tail")
-    private val elementsOfFourthList = listOf(headOfFourthList, tailOfFourthList)
-
-    /** Constructs a non ground Cons with two Terms, without terminal emptyList */
-    internal fun twoElementListWithPipe(constructor: (Term, Term) -> Cons) =
-        constructor(headOfFourthList, tailOfFourthList)
-
-    private val headOfFifthList = Atom.of("head")
-    private val tailOfFifthListFirstElement = Var.of("M")
-    private val tailOfFifthListSecondElement = Var.of("N")
-
-    private fun tailOfFifthList(constructor: (Term, Term) -> Cons) =
-        constructor(
-            tailOfFifthListFirstElement,
-            tailOfFifthListSecondElement,
-        )
-
-    private val elementsOfFifthList = listOf(headOfFifthList, tailOfFifthListFirstElement, tailOfFifthListSecondElement)
-
-    /** Constructs a non ground Cons with three Terms, without terminal EmptyList */
-    internal fun threeElementListWithPipe(constructor: (Term, Term) -> Cons) =
-        constructor(headOfFifthList, tailOfFifthList(constructor))
-
-    /** Returns only those Cons that are terminated with an EmptyList */
-    internal fun onlyConsEmptyListTerminated(constructor: (Term, Term) -> Cons) =
+    /** Only those Cons that are terminated with an EmptyList */
+    internal val onlyConsEmptyListTerminatedCases by lazy {
         listOf(
-            oneElementList(constructor),
-            twoElementList(constructor),
-            threeElementList(constructor),
+            ConsCase("one-element", listOf(Var.of("H"))),
+            ConsCase("two-elements", listOf(Var.of("H"), Var.of("T"))),
+            ConsCase("three-ground-elements", listOf(Atom.of("bigList"), Integer.of(4), Real.of(1.5))),
         )
+    }
 
-    /** Returns only those Cons that *NOT* terminate with an EmptyList */
-    internal fun onlyConsPipeTerminated(constructor: (Term, Term) -> Cons) =
+    /** Only those Cons that *NOT* terminate with an EmptyList */
+    internal val onlyConsPipeTerminatedCases by lazy {
         listOf(
-            twoElementListWithPipe(constructor),
-            threeElementListWithPipe(constructor),
-        )
-
-    /** Returns all Cons mixing [onlyConsEmptyListTerminated] and [onlyConsPipeTerminated] */
-    internal fun mixedConsInstances(constructor: (Term, Term) -> Cons) =
-        onlyConsEmptyListTerminated(constructor) + onlyConsPipeTerminated(constructor)
-
-    /** All Cons heads */
-    internal val mixedConsInstancesHeads by lazy {
-        listOf(headOfFirstList, headOfSecondList, headOfThirdList, headOfFourthList, headOfFifthList)
-    }
-
-    /** All Cons tails (needs constructor because some tails are Cons themselves) */
-    internal fun mixedConsInstancesTails(constructor: (Term, Term) -> Cons) =
-        listOf(
-            tailOfFirstList,
-            tailOfSecondList(constructor),
-            tailOfThirdList(constructor),
-            tailOfFourthList,
-            tailOfFifthList(constructor),
-        )
-
-    /** All Cons correct toString representations */
-    internal val mixedConsInstancesCorrectToString by lazy {
-        onlyConsEmptyListTerminatedElementLists.map { it.joinToString(prefix = "[", postfix = "]") } +
-            onlyConsPipeTerminatedElementLists.map { it.dropLast().joinToString(prefix = "[") + " | ${it.last()}]" }
-    }
-
-    internal val onlyConsEmptyListTerminatedElementLists by lazy {
-        listOf(elementsOfFirstList, elementsOfSecondList, elementsOfThirdList)
-    }
-
-    internal val onlyConsPipeTerminatedElementLists by lazy {
-        listOf(elementsOfFourthList, elementsOfFifthList)
-    }
-
-    /** All Cons elements lists */
-    internal val mixedConsInstancesElementLists by lazy {
-        onlyConsEmptyListTerminatedElementLists + onlyConsPipeTerminatedElementLists
-    }
-
-    /** All Cons "unfolded list" representation */
-    internal val mixedConsInstancesUnfoldedLists by lazy {
-        listOf(
-            elementsOfFirstList + Empty.list(),
-            elementsOfSecondList + Empty.list(),
-            elementsOfThirdList + Empty.list(),
-            elementsOfFourthList,
-            elementsOfFifthList,
+            ConsCase("two-elements-with-pipe", listOf(Var.of("Head"), Var.of("Tail")), isPipeTerminated = true),
+            ConsCase(
+                "three-elements-with-pipe",
+                listOf(Atom.of("head"), Var.of("M"), Var.of("N")),
+                isPipeTerminated = true,
+            ),
         )
     }
+
+    /** All Cons mixing [onlyConsEmptyListTerminatedCases] and [onlyConsPipeTerminatedCases] */
+    internal val mixedConsCases by lazy { onlyConsEmptyListTerminatedCases + onlyConsPipeTerminatedCases }
 }

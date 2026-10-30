@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.collections.rete.generic.set.ArityNode
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Empty
@@ -27,21 +28,24 @@ import kotlin.test.assertTrue
  */
 class ArityNodeSpec :
     FunSpec({
-        lateinit var emptyArityNodes: Iterable<ArityNode>
-
-        lateinit var filledArityNodes: Iterable<ArityNode>
-
         val aRule: Rule = Rule.of(Atom.of("myTestRule"), Var.of("A"))
 
-        fun init() {
-            emptyArityNodes = (0..3).map { ArityNode(it) }
-            filledArityNodes =
-                (0..3).map { arity ->
-                    ArityNode(arity).apply { ReteNodeUtils.rules.forEach { put(it) } }
-                }
-        }
+        val arities = (0..3).toList()
 
-        beforeTest { init() }
+        fun filledArityNode(arity: Int) = ArityNode(arity).apply { ReteNodeUtils.rules.forEach { put(it) } }
+
+        fun arities(
+            property: String,
+            test: (Int) -> Unit,
+        ) = withTests(nameFn = { "$property/arity-$it" }, arities) { test(it) }
+
+        fun queries(
+            property: String,
+            test: (Int, ReteNodeUtils.QueryCase<Rule>) -> Unit,
+        ) = withTests(
+            nameFn = { (arity, case) -> "$property/arity-$arity/${case.id}" },
+            arities.flatMap { arity -> ReteNodeUtils.ruleQueryCases.map { arity to it } },
+        ) { (arity, case) -> test(arity, case) }
 
         test("arity-node-cannot-accept-negative-arity-upon-construction") {
             assertFailsWith<IllegalArgumentException> {
@@ -51,148 +55,128 @@ class ArityNodeSpec :
             }
         }
 
-        test("empty-node-has-empty-children-collection") {
-            emptyArityNodes.forEach { assertTrue { it.children.isEmpty() } }
+        arities("empty-node-has-empty-children-collection") {
+            assertTrue { ArityNode(it).children.isEmpty() }
         }
 
-        test("filled-node-has-non-empty-children-collection") {
-            filledArityNodes.forEach { assertTrue { it.children.isNotEmpty() } }
+        arities("filled-node-has-non-empty-children-collection") {
+            assertTrue { filledArityNode(it).children.isNotEmpty() }
         }
 
-        test("clauses-correct") {
-            emptyArityNodes.forEach { assertReteNodeEmpty(it) }
-            filledArityNodes.forEach { assertCorrectAndPartialOrderRespected(it, ReteNodeUtils.rules) }
+        arities("clauses-correct") {
+            assertReteNodeEmpty(ArityNode(it))
+            assertCorrectAndPartialOrderRespected(filledArityNode(it), ReteNodeUtils.rules)
         }
 
-        test("put-clause-inserts-rule") {
+        arities("put-clause-inserts-rule") {
             // notice that no check is made, at this level, to ensure that inserted clause has correct "arity"
-            emptyArityNodes.forEach { it.put(aRule) }
+            val node = ArityNode(it).apply { put(aRule) }
 
-            emptyArityNodes.forEach { assertEquals(aRule, it.indexedElements.single()) }
+            assertEquals(aRule, node.indexedElements.single())
         }
 
-        test("put-clause-inserts-relatively-after-by-default") {
-            filledArityNodes.forEach { it.put(aRule) }
+        arities("put-clause-inserts-relatively-after-by-default") {
+            val node = filledArityNode(it).apply { put(aRule) }
 
-            filledArityNodes.forEach { assertCorrectAndPartialOrderRespected(it, ReteNodeUtils.rules + aRule) }
+            assertCorrectAndPartialOrderRespected(node, ReteNodeUtils.rules + aRule)
         }
 
-        test("put-clause-inserts-relatively-before-all-if-specified") {
-            filledArityNodes.forEach { it.put(aRule, true) }
+        arities("put-clause-inserts-relatively-before-all-if-specified") {
+            val node = filledArityNode(it).apply { put(aRule, true) }
 
-            filledArityNodes.forEach {
-                assertCorrectAndPartialOrderRespected(it, ReteNodeUtils.rules.toMutableList().apply { add(0, aRule) })
+            assertCorrectAndPartialOrderRespected(node, ReteNodeUtils.rules.toMutableList().apply { add(0, aRule) })
+        }
+
+        arities("put-clause-creates-different-children-for-different-first-argument") {
+            val node = ArityNode(it)
+            node.put(Fact.of(Struct.of("f", Atom.of("a"), Empty.list())))
+            node.put(Fact.of(Struct.of("f", Atom.of("b"), Empty.list())))
+
+            assertEquals(2, node.children.count())
+        }
+
+        arities("put-clause-reuses-children-with-equals-first-argument") {
+            val node = ArityNode(it)
+            node.put(Fact.of(Struct.of("f", Atom.of("a"), Atom.of("b"))))
+            node.put(Fact.of(Struct.of("f", Atom.of("a"), Atom.of("a"))))
+
+            assertEquals(1, node.children.count())
+        }
+
+        arities("put-clause-reuses-structurally-equals-children") {
+            val node = ArityNode(it)
+            node.put(Fact.of(Struct.of("f", Var.of("A"), Atom.of("a"))))
+            node.put(Fact.of(Struct.of("f", Var.anonymous(), Atom.of("a"))))
+
+            assertEquals(1, node.children.count())
+        }
+
+        arities("put-clause-reuses-children-for-different-arity-but-same-first-arg") {
+            val node = ArityNode(it)
+            node.put(Fact.of(Struct.of("f", Atom.of("a"))))
+            node.put(Fact.of(Struct.of("f", Atom.of("a"), Empty.list())))
+
+            assertEquals(1, node.children.count())
+        }
+
+        queries("get-clause") { arity, case ->
+            assertClauseHeadPartialOrderingRespected(case.expected, filledArityNode(arity).get(case.query).toList())
+        }
+
+        queries("remove-clause-with-zero-limit-does-nothing") { arity, case ->
+            assertNoChangesInReteNode(filledArityNode(arity)) { remove(case.query, 0) }
+        }
+
+        arities("remove-clause-from-empty-node-does-nothing") {
+            assertNoChangesInReteNode(filledArityNode(it)) { remove(aRule) }
+        }
+
+        withTests(
+            nameFn = { (limit, arity, case) ->
+                "remove-clause-with-limit-works-as-expected/limit-$limit/arity-$arity/${case.id}"
+            },
+            (0..10).flatMap { limit ->
+                arities.flatMap { arity -> ReteNodeUtils.ruleQueryCases.map { Triple(limit, arity, it) } }
+            },
+        ) { (limit, arity, case) ->
+            assertRemovedFromReteNodeRespectingPartialOrder(filledArityNode(arity), case.expected, limit) {
+                remove(case.query, limit)
             }
         }
 
-        test("put-clause-creates-different-children-for-different-first-argument") {
-            emptyArityNodes.forEach {
-                it.put(Fact.of(Struct.of("f", Atom.of("a"), Empty.list())))
-                it.put(Fact.of(Struct.of("f", Atom.of("b"), Empty.list())))
-
-                assertEquals(2, it.children.count())
+        queries("remove-clause-with-negative-limit-removes-all-matching-rules") { arity, case ->
+            assertRemovedFromReteNodeRespectingPartialOrder(filledArityNode(arity), case.expected) {
+                remove(case.query, -1)
             }
         }
 
-        test("put-clause-reuses-children-with-equals-first-argument") {
-            emptyArityNodes.forEach {
-                it.put(Fact.of(Struct.of("f", Atom.of("a"), Atom.of("b"))))
-                it.put(Fact.of(Struct.of("f", Atom.of("a"), Atom.of("a"))))
-
-                assertEquals(1, it.children.count())
+        queries("remove-all-clause") { arity, case ->
+            assertRemovedFromReteNodeRespectingPartialOrder(filledArityNode(arity), case.expected) {
+                removeAll(case.query)
             }
         }
 
-        test("put-clause-reuses-structurally-equals-children") {
-            emptyArityNodes.forEach {
-                it.put(Fact.of(Struct.of("f", Var.of("A"), Atom.of("a"))))
-                it.put(Fact.of(Struct.of("f", Var.anonymous(), Atom.of("a"))))
+        arities("deep-copy-creates-independent-instance") {
+            val node = ArityNode(it)
+            node.put(aRule)
 
-                assertEquals(1, it.children.count())
-            }
+            val independentCopy = node.deepCopy()
+
+            assertReteNodeClausesCorrect(node, listOf(aRule))
+            assertReteNodeClausesCorrect(independentCopy, listOf(aRule))
+
+            node.remove(aRule)
+
+            assertReteNodeClausesCorrect(node, emptyList())
+            assertReteNodeClausesCorrect(independentCopy, listOf(aRule))
         }
 
-        test("put-clause-reuses-children-for-different-arity-but-same-first-arg") {
-            emptyArityNodes.forEach {
-                it.put(Fact.of(Struct.of("f", Atom.of("a"))))
-                it.put(Fact.of(Struct.of("f", Atom.of("a"), Empty.list())))
+        arities("deep-copy-does-not-copy-indexed-instances") {
+            val node = ArityNode(it)
+            node.put(aRule)
 
-                assertEquals(1, it.children.count())
-            }
-        }
+            val independentCopy = node.deepCopy()
 
-        test("get-clause") {
-            ReteNodeUtils.rulesQueryResultsMap.forEach { (query, result) ->
-                filledArityNodes.forEach { assertClauseHeadPartialOrderingRespected(result, it.get(query).toList()) }
-            }
-        }
-
-        test("remove-clause-with-zero-limit-does-nothing") {
-            ReteNodeUtils.rulesQueryResultsMap.forEach { (query, _) ->
-                filledArityNodes.forEach { assertNoChangesInReteNode(it) { remove(query, 0) } }
-            }
-        }
-
-        test("remove-clause-from-empty-node-does-nothing") {
-            filledArityNodes.forEach { assertNoChangesInReteNode(it) { remove(aRule) } }
-        }
-
-        test("remove-clause-with-limit-works-as-expected") {
-            for (limit in 0..10) {
-                ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
-                    init() // because removal of side-effects is needed
-
-                    filledArityNodes.forEach {
-                        assertRemovedFromReteNodeRespectingPartialOrder(it, allMatching, limit) { remove(query, limit) }
-                    }
-                }
-            }
-        }
-
-        test("remove-clause-with-negative-limit-removes-all-matching-rules") {
-            val negativeLimit = -1
-            ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
-                init() // because removal of side-effects is needed
-
-                filledArityNodes.forEach {
-                    assertRemovedFromReteNodeRespectingPartialOrder(it, allMatching) { remove(query, negativeLimit) }
-                }
-            }
-        }
-
-        test("remove-all-clause") {
-            ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
-                init() // because removal of side-effects is needed
-
-                filledArityNodes.forEach {
-                    assertRemovedFromReteNodeRespectingPartialOrder(it, allMatching) { removeAll(query) }
-                }
-            }
-        }
-
-        test("deep-copy-creates-independent-instance") {
-            emptyArityNodes.forEach {
-                it.put(aRule)
-
-                val independentCopy = it.deepCopy()
-
-                assertReteNodeClausesCorrect(it, listOf(aRule))
-                assertReteNodeClausesCorrect(independentCopy, listOf(aRule))
-
-                it.remove(aRule)
-
-                assertReteNodeClausesCorrect(it, emptyList())
-                assertReteNodeClausesCorrect(independentCopy, listOf(aRule))
-            }
-        }
-
-        test("deep-copy-does-not-copy-indexed-instances") {
-            emptyArityNodes.forEach {
-                it.put(aRule)
-
-                val independentCopy = it.deepCopy()
-
-                assertSame(it.indexedElements.single(), independentCopy.indexedElements.single())
-            }
+            assertSame(node.indexedElements.single(), independentCopy.indexedElements.single())
         }
     })

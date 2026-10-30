@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.TupleImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import it.unibo.tuprolog.core.testutils.TupleUtils
 import kotlin.test.assertEquals
@@ -17,8 +17,6 @@ import kotlin.test.assertSame
  */
 class TupleSpec :
     FunSpec({
-        val correctInstances = TupleUtils.tupleInstances(::TupleImpl)
-
         test("wrap-if-needed-with-no-args") {
             assertSame(Truth.TRUE, Tuple.wrapIfNeeded())
         }
@@ -44,10 +42,8 @@ class TupleSpec :
             assertSame(myDefault, Tuple.wrapIfNeeded { myDefault })
         }
 
-        test("tuple-of-left-right") {
-            val toBeTested = TupleUtils.tupleInstances { left, right -> Tuple.of(left, right) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of-left-right/${it.id}" }, TupleUtils.tupleCases) { case ->
+            assertEqualities(case.tuple(::TupleImpl), case.tuple { left, right -> Tuple.of(left, right) })
         }
 
         test("tuple-of-left-right-others") {
@@ -63,10 +59,8 @@ class TupleSpec :
             assertEqualities(correctInstance, toBeTested)
         }
 
-        test("tuple-of-list") {
-            val toBeTested = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it.toList()) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of-list/${it.id}" }, TupleUtils.tupleCases) { case ->
+            assertEqualities(case.tuple(::TupleImpl), Tuple.of(case.elements.toList()))
         }
 
         test("tuple-of-list-should-complain-with-lower-than-two-elements") {
@@ -74,10 +68,8 @@ class TupleSpec :
             assertFailsWith<IllegalArgumentException> { Tuple.of(listOf(Atom.of("a"))) }
         }
 
-        test("tuple-of-iterable") {
-            val toBeTested = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it.toList().asIterable()) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of-iterable/${it.id}" }, TupleUtils.tupleCases) { case ->
+            assertEqualities(case.tuple(::TupleImpl), Tuple.of(case.elements.toList().asIterable()))
         }
 
         test("big-tuples-do-not-provoke-stack-overflow") {

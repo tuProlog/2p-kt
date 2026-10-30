@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.collections.rete.generic.set.DirectiveNode
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Truth
@@ -62,47 +63,36 @@ class DirectiveNodeSpec :
             assertEquals(aDirective, filledDirectiveNode.indexedElements.first())
         }
 
-        test("get-clause") {
-            ReteNodeUtils.directivesQueryResultsMap.forEach { (query, result) ->
-                assertEquals(result, filledDirectiveNode.get(query).toList())
-            }
+        withTests(nameFn = { "get-clause/${it.id}" }, ReteNodeUtils.directiveQueryCases) { case ->
+            assertEquals(case.expected, filledDirectiveNode.get(case.query).toList())
         }
 
-        test("remove-clause-with-zero-limit-does-nothing") {
-            ReteNodeUtils.directivesQueryResultsMap.forEach { (query, _) ->
-                assertNoChangesInReteNode(filledDirectiveNode) { remove(query, 0) }
-            }
+        withTests(nameFn = {
+            "remove-clause-with-zero-limit-does-nothing/${it.id}"
+        }, ReteNodeUtils.directiveQueryCases) { case ->
+            assertNoChangesInReteNode(filledDirectiveNode) { remove(case.query, 0) }
         }
 
         test("remove-clause-from-empty-node-does-nothing") {
             assertNoChangesInReteNode(emptyDirectiveNode) { remove(aDirective) }
         }
 
-        test("remove-clause-with-limit-works-as-expected") {
-            for (limit in 0..10) {
-                ReteNodeUtils.directivesQueryResultsMap.forEach { (query, allMatching) ->
-                    init() // because removal of side-effects is needed
-
-                    assertRemovedFromReteNode(filledDirectiveNode, allMatching.take(limit)) { remove(query, limit) }
-                }
-            }
+        withTests(
+            nameFn = { (limit, case) -> "remove-clause-with-limit-works-as-expected/limit-$limit/${case.id}" },
+            (0..10).flatMap { limit -> ReteNodeUtils.directiveQueryCases.map { limit to it } },
+        ) { (limit, case) ->
+            assertRemovedFromReteNode(filledDirectiveNode, case.expected.take(limit)) { remove(case.query, limit) }
         }
 
-        test("remove-clause-with-negative-limit-removes-all-matching-directives") {
-            val negativeLimit = -1
-            ReteNodeUtils.directivesQueryResultsMap.forEach { (query, allMatching) ->
-                init() // because removal of side-effects is needed
-
-                assertRemovedFromReteNode(filledDirectiveNode, allMatching) { remove(query, negativeLimit) }
-            }
+        withTests(
+            nameFn = { "remove-clause-with-negative-limit-removes-all-matching-directives/${it.id}" },
+            ReteNodeUtils.directiveQueryCases,
+        ) { case ->
+            assertRemovedFromReteNode(filledDirectiveNode, case.expected) { remove(case.query, -1) }
         }
 
-        test("remove-all-clause") {
-            ReteNodeUtils.directivesQueryResultsMap.forEach { (query, allMatching) ->
-                init() // because removal of side-effects is needed
-
-                assertRemovedFromReteNode(filledDirectiveNode, allMatching) { removeAll(query) }
-            }
+        withTests(nameFn = { "remove-all-clause/${it.id}" }, ReteNodeUtils.directiveQueryCases) { case ->
+            assertRemovedFromReteNode(filledDirectiveNode, case.expected) { removeAll(case.query) }
         }
 
         test("deep-copy-creates-independent-instance") {

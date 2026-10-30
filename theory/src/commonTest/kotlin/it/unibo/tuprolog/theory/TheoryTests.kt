@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.theory
 
 import io.kotest.core.spec.style.funSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
@@ -9,18 +10,22 @@ import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
+import it.unibo.tuprolog.testutils.ReteNodeUtils
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
 import it.unibo.tuprolog.testutils.TheoryUtils
-import it.unibo.tuprolog.testutils.TheoryUtils.clausesQueryResultsMap
+import it.unibo.tuprolog.testutils.TheoryUtils.clauseQueryCases
 import it.unibo.tuprolog.testutils.TheoryUtils.deepClause
-import it.unibo.tuprolog.testutils.TheoryUtils.deepQueries
+import it.unibo.tuprolog.testutils.TheoryUtils.deepQueryCases
 import it.unibo.tuprolog.testutils.TheoryUtils.memberClause
-import it.unibo.tuprolog.testutils.TheoryUtils.negativeMemberQueries
+import it.unibo.tuprolog.testutils.TheoryUtils.negativeMemberQueryCases
+import it.unibo.tuprolog.testutils.TheoryUtils.notWellFormedClauseCases
 import it.unibo.tuprolog.testutils.TheoryUtils.notWellFormedClauses
-import it.unibo.tuprolog.testutils.TheoryUtils.positiveMemberQueries
-import it.unibo.tuprolog.testutils.TheoryUtils.rulesQueryResultByFunctorAndArity
-import it.unibo.tuprolog.testutils.TheoryUtils.rulesQueryWithVarBodyResultsMap
+import it.unibo.tuprolog.testutils.TheoryUtils.positiveMemberQueryCases
+import it.unibo.tuprolog.testutils.TheoryUtils.ruleQueryByFunctorAndArityCases
+import it.unibo.tuprolog.testutils.TheoryUtils.ruleQueryWithVarBodyCases
+import it.unibo.tuprolog.testutils.TheoryUtils.wellFormedClauseCases
 import it.unibo.tuprolog.testutils.TheoryUtils.wellFormedClauses
+import it.unibo.tuprolog.testutils.TheoryUtils.wellFormedRuleCases
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
@@ -47,13 +52,15 @@ fun theoryTests(
 
     val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
 
-    val successfulRetractQueryResultMap by lazy {
-        clausesQueryResultsMap.filterValues { it.isNotEmpty() }
-    }
+    val successfulRetractQueryCases = clauseQueryCases.filter { it.expected.isNotEmpty() }
 
-    val successfulRetractQueryWithBodyVarResultsMap by lazy {
-        rulesQueryWithVarBodyResultsMap.filterValues { it.isNotEmpty() }
-    }
+    val failingRetractQueryCases = clauseQueryCases.filter { it.expected.isEmpty() }
+
+    val successfulRetractQueryWithBodyVarCases = ruleQueryWithVarBodyCases.filter { it.expected.isNotEmpty() }
+
+    val successfulRuleQueryCases = ReteNodeUtils.ruleQueryCases.filter { it.expected.isNotEmpty() }
+
+    val failingRuleQueryCases = ReteNodeUtils.ruleQueryCases.filter { it.expected.isEmpty() }
 
     fun FreshTheoriesScope.assertTrueIfMutableFalseOtherwise(boolean: Boolean) {
         if (filledTheory is MutableTheory) {
@@ -166,78 +173,87 @@ fun theoryTests(
         }
     }
 
-    test("plus-clause-complains-on-bad-clause") {
+    withTests(nameFn = { "plus-clause-complains-on-bad-clause/${it.id}" }, notWellFormedClauseCases) { case ->
         withFreshTheories {
-            notWellFormedClauses.forEach {
-                assertFailsWith<IllegalArgumentException> { filledTheory + it }
-            }
+            assertFailsWith<IllegalArgumentException> { filledTheory + case.clause }
+        }
+    }
+    withTests(
+        nameFn = { "contains-clause-returns-true-with-present-clauses/clause/${it.id}" },
+        wellFormedClauseCases,
+    ) { case ->
+        withFreshTheories {
+            assertTrue { case.clause in filledTheory }
         }
     }
 
-    test("contains-clause-returns-true-with-present-clauses") {
+    withTests(
+        nameFn = { "contains-clause-returns-true-with-present-clauses/query/${it.id}" },
+        successfulRetractQueryCases,
+    ) { case ->
         withFreshTheories {
-            wellFormedClauses.forEach {
-                assertTrue { it in filledTheory }
-            }
-
-            clausesQueryResultsMap.forEach { (query, result) ->
-                if (result.isNotEmpty()) assertTrue { query in filledTheory }
-            }
+            assertTrue { case.query in filledTheory }
         }
     }
-
     test("contains-clause-returns-false-with-non-present-clauses") {
         withFreshTheories {
             assertFalse(anIndependentFact in filledTheory)
-
-            clausesQueryResultsMap.forEach { (query, result) ->
-                if (result.isEmpty()) assertFalse { query in filledTheory }
-            }
         }
     }
 
-    test("contains-struct-returns-true-if-matching-head-is-found") {
+    withTests(
+        nameFn = { "contains-clause-returns-false-with-non-present-clauses/query/${it.id}" },
+        failingRetractQueryCases,
+    ) { case ->
         withFreshTheories {
-            wellFormedClauses.filterIsInstance<Rule>().forEach {
-                assertTrue { it.head in filledTheory }
-            }
+            assertFalse { case.query in filledTheory }
         }
     }
-
+    withTests(
+        nameFn = { "contains-struct-returns-true-if-matching-head-is-found/${it.id}" },
+        wellFormedRuleCases,
+    ) { case ->
+        withFreshTheories {
+            assertTrue { case.clause.head in filledTheory }
+        }
+    }
     test("contains-struct-returns-false-if-no-matching-head-is-found") {
         withFreshTheories {
             assertFalse(anIndependentFact.head in filledTheory)
         }
     }
 
-    test("contains-indicator-returns-true-if-matching-clause-is-found") {
+    withTests(
+        nameFn = { "contains-indicator-returns-true-if-matching-clause-is-found/clause/${it.id}" },
+        wellFormedRuleCases,
+    ) { case ->
         withFreshTheories {
-            wellFormedClauses.filterIsInstance<Rule>().forEach {
-                assertTrue { it.head.indicator in filledTheory }
-            }
-
-            clausesQueryResultsMap
-                .filterKeys { it is Rule }
-                .mapKeys { it.key as Rule }
-                .forEach { (query, result) ->
-                    if (result.isNotEmpty()) assertTrue { query.head.indicator in filledTheory }
-                }
+            assertTrue { case.clause.head.indicator in filledTheory }
         }
     }
 
+    withTests(
+        nameFn = { "contains-indicator-returns-true-if-matching-clause-is-found/query/${it.id}" },
+        successfulRuleQueryCases,
+    ) { case ->
+        withFreshTheories {
+            assertTrue { case.query.head.indicator in filledTheory }
+        }
+    }
     test("contains-indicator-returns-false-if-no-matching-clause-is-found") {
         withFreshTheories {
             assertFalse(filledTheory.contains(anIndependentFact.head.indicator))
-
-            clausesQueryResultsMap
-                .filterKeys { it is Rule }
-                .mapKeys { it.key as Rule }
-                .forEach { (query, result) ->
-                    if (result.isEmpty()) assertFalse { query.head.indicator in filledTheory }
-                }
         }
     }
 
+    withTests(
+        nameFn = { "contains-indicator-returns-false-if-no-matching-clause-is-found/query/${it.id}" },
+        failingRuleQueryCases,
+    ) { case ->
+        withFreshTheories {
+            assertFalse { case.query.head.indicator in filledTheory }
+        }
+    }
     test("contains-indicator-complains-if-indicator-non-well-formed") {
         withFreshTheories {
             assertFailsWith<IllegalArgumentException> {
@@ -246,34 +262,21 @@ fun theoryTests(
         }
     }
 
-    test("get-clause") {
+    withTests(nameFn = { "get-clause/${it.id}" }, clauseQueryCases) { case ->
         withFreshTheories {
-            clausesQueryResultsMap.forEach { (query, result) ->
-                assertEquals(result, filledTheory[query].toList())
-            }
+            assertEquals(case.expected, filledTheory[case.query].toList())
         }
     }
-
-    test("get-struct") {
+    withTests(nameFn = { "get-struct/${it.id}" }, ruleQueryWithVarBodyCases) { case ->
         withFreshTheories {
-            rulesQueryWithVarBodyResultsMap
-                .forEach { (query, result) ->
-                    val a = filledTheory[query.head].toList()
-                    assertEquals(result, a)
-                }
+            assertEquals(case.expected, filledTheory[case.query.head].toList())
         }
     }
-
-    test("get-indicator") {
+    withTests(nameFn = { "get-indicator/${it.id}" }, ruleQueryByFunctorAndArityCases) { case ->
         withFreshTheories {
-            rulesQueryResultByFunctorAndArity
-                .forEach { (query, result) ->
-                    val a = filledTheory[query.head.indicator].toList()
-                    assertEquals(result, a)
-                }
+            assertEquals(case.expected, filledTheory[case.query.head.indicator].toList())
         }
     }
-
     test("get-indicator-complains-if-indicator-non-well-formed") {
         withFreshTheories {
             assertFailsWith<IllegalArgumentException> {
@@ -291,14 +294,11 @@ fun theoryTests(
         }
     }
 
-    test("assert-a-clause-complains-on-bad-clause") {
+    withTests(nameFn = { "assert-a-clause-complains-on-bad-clause/${it.id}" }, notWellFormedClauseCases) { case ->
         withFreshTheories {
-            notWellFormedClauses.forEach {
-                assertFailsWith<IllegalArgumentException> { filledTheory.assertA(it) }
-            }
+            assertFailsWith<IllegalArgumentException> { filledTheory.assertA(case.clause) }
         }
     }
-
     test("assert-a-struct") {
         withFreshTheories {
             val correctPartiallyOrderedClauses =
@@ -328,14 +328,11 @@ fun theoryTests(
         }
     }
 
-    test("assert-z-clause-complains-on-bad-clause") {
+    withTests(nameFn = { "assert-z-clause-complains-on-bad-clause/${it.id}" }, notWellFormedClauseCases) { case ->
         withFreshTheories {
-            notWellFormedClauses.forEach {
-                assertFailsWith<IllegalArgumentException> { filledTheory.assertZ(it) }
-            }
+            assertFailsWith<IllegalArgumentException> { filledTheory.assertZ(case.clause) }
         }
     }
-
     test("assert-z-struct") {
         withFreshTheories {
             val toBeTested = filledTheory.assertZ(aRule.head)
@@ -356,54 +353,52 @@ fun theoryTests(
         }
     }
 
-    test("retract-clause-returns-failure-if-empty-retracted-collection-success-otherwise") {
+    withTests(
+        nameFn = { "retract-clause-returns-failure-if-empty-retracted-collection-success-otherwise/${it.id}" },
+        clauseQueryCases,
+    ) { case ->
         withFreshTheories {
-            clausesQueryResultsMap.forEach { (query, result) ->
-                val retractResult = filledTheory.retract(query)
+            val retractResult = filledTheory.retract(case.query)
 
-                if (result.isEmpty()) {
-                    assertTrue { retractResult is RetractResult.Failure }
-                } else {
-                    assertTrue { retractResult is RetractResult.Success }
-                }
+            if (case.expected.isEmpty()) {
+                assertTrue { retractResult is RetractResult.Failure }
+            } else {
+                assertTrue { retractResult is RetractResult.Success }
             }
         }
     }
-
-    test("retract-clause-removes-only-first-matching-clause") {
-        successfulRetractQueryResultMap.forEach { (query, result) ->
-            withFreshTheories {
-                val retractResult = filledTheory.retract(query) as RetractResult.Success
-
-                assertEquals(listOf(result.first()), retractResult.clauses.toList())
-            }
-        }
-    }
-
-    test("retract-struct-returns-failure-if-empty-retracted-collection-success-otherwise") {
+    withTests(nameFn = {
+        "retract-clause-removes-only-first-matching-clause/${it.id}"
+    }, successfulRetractQueryCases) { case ->
         withFreshTheories {
-            rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
-                val retractResult = filledTheory.retract(query)
+            val retractResult = filledTheory.retract(case.query) as RetractResult.Success
 
-                if (result.isEmpty()) {
-                    assertTrue { retractResult is RetractResult.Failure }
-                } else {
-                    assertTrue { retractResult is RetractResult.Success }
-                }
+            assertEquals(listOf(case.expected.first()), retractResult.clauses.toList())
+        }
+    }
+    withTests(
+        nameFn = { "retract-struct-returns-failure-if-empty-retracted-collection-success-otherwise/${it.id}" },
+        ruleQueryWithVarBodyCases,
+    ) { case ->
+        withFreshTheories {
+            val retractResult = filledTheory.retract(case.query)
+
+            if (case.expected.isEmpty()) {
+                assertTrue { retractResult is RetractResult.Failure }
+            } else {
+                assertTrue { retractResult is RetractResult.Success }
             }
         }
     }
+    withTests(nameFn = {
+        "retract-struct-removes-only-first-matching-clause/${it.id}"
+    }, successfulRetractQueryWithBodyVarCases) { case ->
+        withFreshTheories {
+            val retractResult = filledTheory.retract(case.query.head) as RetractResult.Success
 
-    test("retract-struct-removes-only-first-matching-clause") {
-        successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
-            withFreshTheories {
-                val retractResult = filledTheory.retract(query.head) as RetractResult.Success
-
-                assertEquals(listOf(result.first()), retractResult.clauses.toList())
-            }
+            assertEquals(listOf(case.expected.first()), retractResult.clauses.toList())
         }
     }
-
     test("retract-creates-new-unlinked-instance-if-successful") {
         withFreshTheories {
             val aDatabaseClause = filledTheory.clauses.first()
@@ -423,54 +418,52 @@ fun theoryTests(
         }
     }
 
-    test("retract-all-clause-returns-failure-if-empty-retracted-collection-success-otherwise") {
-        clausesQueryResultsMap.forEach { (query, result) ->
-            withFreshTheories {
-                val retractResult = filledTheory.retractAll(query)
+    withTests(
+        nameFn = { "retract-all-clause-returns-failure-if-empty-retracted-collection-success-otherwise/${it.id}" },
+        clauseQueryCases,
+    ) { case ->
+        withFreshTheories {
+            val retractResult = filledTheory.retractAll(case.query)
 
-                if (result.isEmpty()) {
-                    assertTrue { retractResult is RetractResult.Failure }
-                } else {
-                    assertTrue { retractResult is RetractResult.Success }
-                }
+            if (case.expected.isEmpty()) {
+                assertTrue { retractResult is RetractResult.Failure }
+            } else {
+                assertTrue { retractResult is RetractResult.Success }
             }
         }
     }
+    withTests(nameFn = {
+        "retract-all-clause-removes-only-first-matching-clause/${it.id}"
+    }, successfulRetractQueryCases) { case ->
+        withFreshTheories {
+            val retractResult = filledTheory.retractAll(case.query) as RetractResult.Success
 
-    test("retract-all-clause-removes-only-first-matching-clause") {
-        successfulRetractQueryResultMap.forEach { (query, result) ->
-            withFreshTheories {
-                val retractResult = filledTheory.retractAll(query) as RetractResult.Success
+            assertEquals(case.expected, retractResult.clauses.toList())
+        }
+    }
+    withTests(
+        nameFn = { "retract-all-struct-returns-failure-if-empty-retracted-collection-success-otherwise/${it.id}" },
+        ruleQueryWithVarBodyCases,
+    ) { case ->
+        withFreshTheories {
+            val retractResult = filledTheory.retractAll(case.query)
 
-                assertEquals(result, retractResult.clauses.toList())
+            if (case.expected.isEmpty()) {
+                assertTrue { retractResult is RetractResult.Failure }
+            } else {
+                assertTrue { retractResult is RetractResult.Success }
             }
         }
     }
+    withTests(nameFn = {
+        "retract-all-struct-removes-only-first-matching-clause/${it.id}"
+    }, successfulRetractQueryWithBodyVarCases) { case ->
+        withFreshTheories {
+            val retractResult = filledTheory.retractAll(case.query.head) as RetractResult.Success
 
-    test("retract-all-struct-returns-failure-if-empty-retracted-collection-success-otherwise") {
-        rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
-            withFreshTheories {
-                val retractResult = filledTheory.retractAll(query)
-
-                if (result.isEmpty()) {
-                    assertTrue { retractResult is RetractResult.Failure }
-                } else {
-                    assertTrue { retractResult is RetractResult.Success }
-                }
-            }
+            assertEquals(case.expected, retractResult.clauses.toList())
         }
     }
-
-    test("retract-all-struct-removes-only-first-matching-clause") {
-        successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
-            withFreshTheories {
-                val retractResult = filledTheory.retractAll(query.head) as RetractResult.Success
-
-                assertEquals(result, retractResult.clauses.toList())
-            }
-        }
-    }
-
     test("retract-all-creates-new-unlinked-instance-if-successful") {
         withFreshTheories {
             val aDatabaseClause = filledTheory.clauses.first()
@@ -499,78 +492,69 @@ fun theoryTests(
         }
     }
 
-    test("get-takes-unification-into-account") {
+    withTests(nameFn = { "get-takes-unification-into-account/${it.id}" }, positiveMemberQueryCases) { case ->
         val theory = theoryGenerator(memberClause)
 
-        for (query in positiveMemberQueries) {
-            assertClausesHaveSameLengthAndContent(
-                memberClause.asSequence(),
-                theory[query],
-            )
-            assertClausesHaveSameLengthAndContent(
-                memberClause.asSequence(),
-                theory[query.head],
-            )
-        }
-
-        for (query in negativeMemberQueries) {
-            assertClausesHaveSameLengthAndContent(
-                emptySequence(),
-                theory[query],
-            )
-            assertClausesHaveSameLengthAndContent(
-                emptySequence(),
-                theory[query.head],
-            )
-        }
+        assertClausesHaveSameLengthAndContent(
+            memberClause.asSequence(),
+            theory[case.clause],
+        )
+        assertClausesHaveSameLengthAndContent(
+            memberClause.asSequence(),
+            theory[case.clause.head],
+        )
     }
 
-    test("retract-takes-unification-into-account") {
-        for (query in positiveMemberQueries) {
-            var theory = theoryGenerator(memberClause)
-            assertClausesHaveSameLengthAndContent(
-                memberClause,
-                (theory.retract(query) as RetractResult.Success).clauses,
-            )
-            theory = theoryGenerator(memberClause)
-            assertClausesHaveSameLengthAndContent(
-                memberClause,
-                (theory.retract(query.head) as RetractResult.Success).clauses,
-            )
-        }
+    withTests(nameFn = { "get-takes-unification-into-account/${it.id}" }, negativeMemberQueryCases) { case ->
+        val theory = theoryGenerator(memberClause)
 
-        for (query in negativeMemberQueries) {
-            val theory = theoryGenerator(memberClause)
-            assertEquals(
-                RetractResult.Failure(theory),
-                theory.retract(query),
-            )
-            assertEquals(
-                RetractResult.Failure(theory),
-                theory.retract(query.head),
-            )
-        }
+        assertClausesHaveSameLengthAndContent(
+            emptySequence(),
+            theory[case.clause],
+        )
+        assertClausesHaveSameLengthAndContent(
+            emptySequence(),
+            theory[case.clause.head],
+        )
+    }
+    withTests(nameFn = { "retract-takes-unification-into-account/${it.id}" }, positiveMemberQueryCases) { case ->
+        var theory = theoryGenerator(memberClause)
+        assertClausesHaveSameLengthAndContent(
+            memberClause,
+            (theory.retract(case.clause) as RetractResult.Success).clauses,
+        )
+        theory = theoryGenerator(memberClause)
+        assertClausesHaveSameLengthAndContent(
+            memberClause,
+            (theory.retract(case.clause.head) as RetractResult.Success).clauses,
+        )
     }
 
-    test("nested-get-works-at-several-depth-levels") {
+    withTests(nameFn = { "retract-takes-unification-into-account/${it.id}" }, negativeMemberQueryCases) { case ->
+        val theory = theoryGenerator(memberClause)
+        assertEquals(
+            RetractResult.Failure(theory),
+            theory.retract(case.clause),
+        )
+        assertEquals(
+            RetractResult.Failure(theory),
+            theory.retract(case.clause.head),
+        )
+    }
+    withTests(nameFn = { "nested-get-works-at-several-depth-levels/${it.id}" }, deepQueryCases) { case ->
         val theory = theoryGenerator(deepClause)
 
-        for (query in deepQueries) {
-            assertClausesHaveSameLengthAndContent(
-                deepClause.asSequence(),
-                theory[query],
-            )
-        }
+        assertClausesHaveSameLengthAndContent(
+            deepClause.asSequence(),
+            theory[case.clause],
+        )
     }
-
-    test("nested-retract-works-at-several-depth-levels") {
-        for (query in deepQueries) {
-            val theory = theoryGenerator(deepClause)
-            assertClausesHaveSameLengthAndContent(
-                deepClause,
-                (theory.retract(query) as RetractResult.Success).clauses,
-            )
-        }
+    withTests(nameFn = { "nested-retract-works-at-several-depth-levels/${it.id}" }, deepQueryCases) { case ->
+        val theory = theoryGenerator(deepClause)
+        assertClausesHaveSameLengthAndContent(
+            deepClause,
+            (theory.retract(case.clause) as RetractResult.Success).clauses,
+        )
     }
 }
 

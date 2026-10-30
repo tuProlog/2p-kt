@@ -3,6 +3,7 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.utils.addTag
 import it.unibo.tuprolog.utils.clearTags
 import it.unibo.tuprolog.utils.plus
@@ -13,6 +14,11 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+private class TaggableSubstitutionCase(
+    val id: String,
+    val substitution: Substitution,
+)
+
 class SubstitutionsMetadataSpec :
     FunSpec({
         val X = Var.of("X")
@@ -21,47 +27,37 @@ class SubstitutionsMetadataSpec :
 
         val Z = Var.of("Z")
 
-        val substitutions =
+        val assignedTerms: kotlin.collections.List<Pair<String, () -> Term>> =
             listOf(
-                Substitution.failed(),
-                Substitution.empty(),
-                Substitution.unifier(Y, X),
-                Substitution.unifier(Y, Var.anonymous()),
-                Substitution.unifier(Y, Atom.of("atom")),
-                Substitution.unifier(Y, Integer.ONE),
-                Substitution.unifier(Y, Real.ONE_TENTH),
-                Substitution.unifier(Y, EmptyList()),
-                Substitution.unifier(Y, EmptyBlock()),
-                Substitution.unifier(Y, Cons.of(Real.ONE_HALF, X)),
-                Substitution.unifier(Y, Struct.of("g", X)),
-                Substitution.unifier(Y, List.of(X)),
-                Substitution.unifier(Y, Block.of(X)),
-                Substitution.unifier(Y, Tuple.of(X, X)),
-                Substitution.unifier(Y, Fact.of(Struct.of("f", X))),
-                Substitution.unifier(Y, Fact.of(List.of(X))),
-                Substitution.unifier(Y, Fact.of(Block.of(X))),
-                Substitution.unifier(Y, Fact.of(Tuple.of(X, X))),
-                Substitution.unifier(Y, Directive.of(Struct.of("h", X), Tuple.of(X, X))),
-                Substitution.unifier(Y, Rule.of(Struct.of("h", X), Tuple.of(X, X))),
-                Substitution.of(Z, X),
-                Substitution.of(Z, Var.anonymous()),
-                Substitution.of(Z, Atom.of("atom")),
-                Substitution.of(Z, Integer.ONE),
-                Substitution.of(Z, Real.ONE_TENTH),
-                Substitution.of(Z, EmptyList()),
-                Substitution.of(Z, EmptyBlock()),
-                Substitution.of(Z, Cons.of(Real.ONE_HALF, X)),
-                Substitution.of(Z, Struct.of("g", X)),
-                Substitution.of(Z, List.of(X)),
-                Substitution.of(Z, Block.of(X)),
-                Substitution.of(Z, Tuple.of(X, X)),
-                Substitution.of(Z, Fact.of(Struct.of("f", X))),
-                Substitution.of(Z, Fact.of(List.of(X))),
-                Substitution.of(Z, Fact.of(Block.of(X))),
-                Substitution.of(Z, Fact.of(Tuple.of(X, X))),
-                Substitution.of(Z, Directive.of(Struct.of("h", X), Tuple.of(X, X))),
-                Substitution.of(Z, Rule.of(Struct.of("h", X), Tuple.of(X, X))),
+                "variable" to { X },
+                "anonymous-variable" to { Var.anonymous() },
+                "atom" to { Atom.of("atom") },
+                "integer" to { Integer.ONE },
+                "real" to { Real.ONE_TENTH },
+                "empty-list" to { EmptyList() },
+                "empty-block" to { EmptyBlock() },
+                "cons" to { Cons.of(Real.ONE_HALF, X) },
+                "struct" to { Struct.of("g", X) },
+                "list" to { List.of(X) },
+                "block" to { Block.of(X) },
+                "tuple" to { Tuple.of(X, X) },
+                "fact-of-struct" to { Fact.of(Struct.of("f", X)) },
+                "fact-of-list" to { Fact.of(List.of(X)) },
+                "fact-of-block" to { Fact.of(Block.of(X)) },
+                "fact-of-tuple" to { Fact.of(Tuple.of(X, X)) },
+                "directive" to { Directive.of(Struct.of("h", X), Tuple.of(X, X)) },
+                "rule" to { Rule.of(Struct.of("h", X), Tuple.of(X, X)) },
             )
+
+        val substitutionCases =
+            listOf(
+                TaggableSubstitutionCase("failed", Substitution.failed()),
+                TaggableSubstitutionCase("empty", Substitution.empty()),
+            ) +
+                assignedTerms.map { (id, term) ->
+                    TaggableSubstitutionCase("unifier-to-$id", Substitution.unifier(Y, term()))
+                } +
+                assignedTerms.map { (id, term) -> TaggableSubstitutionCase("of-to-$id", Substitution.of(Z, term())) }
 
         val someKey = "some_key1"
 
@@ -75,152 +71,111 @@ class SubstitutionsMetadataSpec :
 
         val someOtherValue = SubstitutionTag(2L)
 
-        fun alteringPreservesTags(alter: Substitution.() -> Substitution) {
+        fun substitutions(
+            property: String,
+            test: (Substitution) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, substitutionCases) { test(it.substitution) }
+
+        fun alteringPreservesTags(
+            property: String,
+            alter: Substitution.() -> Substitution,
+        ) = substitutions(property) {
             val tags = mapOf(someKey to someValue1, someOtherKey to someValue2)
-            for (substitution in substitutions.map { it.setTags(tags) }) {
-                assertEquals(tags, substitution.tags)
-                assertEquals(substitution.tags, substitution.alter().tags)
-            }
+            val substitution = it.setTags(tags)
+            assertEquals(tags, substitution.tags)
+            assertEquals(substitution.tags, substitution.alter().tags)
         }
 
         fun summingMergesTags(
+            property: String,
             other: Substitution,
             sum: Substitution.(Substitution) -> Substitution,
-        ) {
+        ) = substitutions(property) {
             val tags = mapOf(someKey to someValue1, someOtherKey to someValue2)
-            for (substitution in substitutions.map { it.setTags(tags) }) {
-                assertEquals(tags, substitution.tags)
-                assertEquals(tags + other.tags, substitution.sum(other).tags)
-            }
+            val substitution = it.setTags(tags)
+            assertEquals(tags, substitution.tags)
+            assertEquals(tags + other.tags, substitution.sum(other).tags)
         }
 
-        test("tags-stick-to-substitutions") {
-            for (substitution in substitutions) {
-                assertNull(substitution.getTag<SubstitutionTag<Long>>(someKey))
-                assertFalse { substitution.containsTag(someKey) }
-                val tagged = substitution.setTag(someKey, someValue1)
-                assertFalse { substitution.containsTag(someKey) }
-                assertNull(substitution.getTag<SubstitutionTag<Long>>(someKey))
-                assertTrue { tagged.containsTag(someKey) }
-                assertEquals(someValue1, tagged.getTag<SubstitutionTag<Long>>(someKey))
-                assertEquals(emptyMap(), substitution.tags)
-                assertEquals(mapOf(someKey to someValue1), tagged.tags)
-            }
+        substitutions("tags-stick-to-substitutions") { substitution ->
+            assertNull(substitution.getTag<SubstitutionTag<Long>>(someKey))
+            assertFalse { substitution.containsTag(someKey) }
+            val tagged = substitution.setTag(someKey, someValue1)
+            assertFalse { substitution.containsTag(someKey) }
+            assertNull(substitution.getTag<SubstitutionTag<Long>>(someKey))
+            assertTrue { tagged.containsTag(someKey) }
+            assertEquals(someValue1, tagged.getTag<SubstitutionTag<Long>>(someKey))
+            assertEquals(emptyMap(), substitution.tags)
+            assertEquals(mapOf(someKey to someValue1), tagged.tags)
         }
 
-        test("tags-can-be-replaced") {
-            for (substitution in substitutions.map { it.setTag(someKey, someValue1) }) {
-                val tags = mapOf<String, Any>(someKey to someValue2, someOtherKey to someOtherValue)
-                val replaced = substitution.replaceTags(tags)
-                assertEquals(mapOf(someKey to someValue1), substitution.tags)
-                assertEquals(tags, replaced.tags)
-            }
+        substitutions("tags-can-be-replaced") {
+            val substitution = it.setTag(someKey, someValue1)
+            val tags = mapOf<String, Any>(someKey to someValue2, someOtherKey to someOtherValue)
+            val replaced = substitution.replaceTags(tags)
+            assertEquals(mapOf(someKey to someValue1), substitution.tags)
+            assertEquals(tags, replaced.tags)
         }
 
-        test("adding-tags-preserves-equality") {
-            for ((nonTagged, tagged) in substitutions.zip(substitutions.map { it.addTag(someKey, someValue1) })) {
-                assertEquals(nonTagged, tagged)
-                assertEquals(nonTagged.hashCode(), tagged.hashCode())
-                assertTrue { nonTagged.tags.isEmpty() }
-                assertTrue { tagged.tags.isNotEmpty() }
-            }
+        fun taggingPreservesEquality(
+            property: String,
+            tag: Substitution.() -> Substitution,
+        ) = substitutions(property) { nonTagged ->
+            val tagged = nonTagged.tag()
+            assertEquals(nonTagged, tagged)
+            assertEquals(nonTagged.hashCode(), tagged.hashCode())
+            assertTrue { nonTagged.tags.isEmpty() }
+            assertTrue { tagged.tags.isNotEmpty() }
         }
 
-        test("summing-tags-preserves-equality") {
-            for ((nonTagged, tagged) in substitutions.zip(substitutions.map { it + (someKey to someValue1) })) {
-                assertEquals(nonTagged, tagged)
-                assertEquals(nonTagged.hashCode(), tagged.hashCode())
-                assertTrue { nonTagged.tags.isEmpty() }
-                assertTrue { tagged.tags.isNotEmpty() }
-            }
+        taggingPreservesEquality("adding-tags-preserves-equality") { addTag(someKey, someValue1) }
+
+        taggingPreservesEquality("summing-tags-preserves-equality") { this + (someKey to someValue1) }
+
+        taggingPreservesEquality("setting-tags-preserves-equality") { setTag(someKey, someValue1) }
+
+        taggingPreservesEquality("setting-multiple-tags-preserves-equality") {
+            setTags(someKey to someValue1, someOtherKey to someOtherValue)
         }
 
-        test("setting-tags-preserves-equality") {
-            for ((nonTagged, tagged) in substitutions.zip(substitutions.map { it.setTag(someKey, someValue1) })) {
-                assertEquals(nonTagged, tagged)
-                assertEquals(nonTagged.hashCode(), tagged.hashCode())
-                assertTrue { nonTagged.tags.isEmpty() }
-                assertTrue { tagged.tags.isNotEmpty() }
-            }
+        substitutions("clearing-tags-preserves-equality") {
+            val tagged = it.setTags(someKey to someValue1, someOtherKey to someOtherValue)
+            val cleared = tagged.clearTags()
+            assertEquals(tagged, cleared)
+            assertEquals(tagged.hashCode(), cleared.hashCode())
+            assertTrue { cleared.tags.isEmpty() }
+            assertTrue { tagged.tags.isNotEmpty() }
         }
 
-        test("setting-multiple-tags-preserves-equality") {
-            val taggedSubstitutions =
-                substitutions.map {
-                    it.setTags(
-                        someKey to someValue1,
-                        someOtherKey to someOtherValue,
-                    )
-                }
-            for ((nonTagged, tagged) in substitutions.zip(taggedSubstitutions)) {
-                assertEquals(nonTagged, tagged)
-                assertEquals(nonTagged.hashCode(), tagged.hashCode())
-                assertTrue { nonTagged.tags.isEmpty() }
-                assertTrue { tagged.tags.isNotEmpty() }
-            }
+        substitutions("adding-an-existing-tag-replaces-that-tag") {
+            val tagged = it.setTags(someKey to someValue1, someOtherKey to someOtherValue)
+            val replaced = tagged.addTag(someKey, someValue2)
+            assertEquals(someValue2, replaced.getTag<SubstitutionTag<Long>>(someKey))
         }
 
-        test("clearing-tags-preserves-equality") {
-            val taggedSubstitutions =
-                substitutions.map {
-                    it.setTags(
-                        someKey to someValue1,
-                        someOtherKey to someOtherValue,
-                    )
-                }
-            for ((tagged, cleared) in taggedSubstitutions.zip(taggedSubstitutions.map { it.clearTags() })) {
-                assertEquals(tagged, cleared)
-                assertEquals(tagged.hashCode(), cleared.hashCode())
-                assertTrue { cleared.tags.isEmpty() }
-                assertTrue { tagged.tags.isNotEmpty() }
-            }
+        substitutions("setting-an-existing-tag-replaces-that-tag") {
+            val tagged = it.setTags(someKey to someValue1, someOtherKey to someOtherValue)
+            val replaced = tagged.setTag(someKey, someValue2)
+            assertEquals(someValue2, replaced.getTag<SubstitutionTag<Long>>(someKey))
         }
 
-        test("adding-an-existing-tag-replaces-that-tag") {
-            val taggedSubstitutions =
-                substitutions.map {
-                    it.setTags(
-                        someKey to someValue1,
-                        someOtherKey to someOtherValue,
-                    )
-                }
-            for (replaced in taggedSubstitutions.map { it.addTag(someKey, someValue2) }) {
-                assertEquals(someValue2, replaced.getTag<SubstitutionTag<Long>>(someKey))
-            }
+        alteringPreservesTags("minus-iterable-preserves-tags") { this - listOf(X, Y, Z) }
+
+        alteringPreservesTags("minus-preserves-tags") { this - X - Y - Z }
+
+        alteringPreservesTags("filter-with-function-preserves-tags") { filter { (k, _) -> k in setOf(X, Y, Z) } }
+
+        alteringPreservesTags("filter-preserves-tags") { filter(setOf(X, Y, Z)) }
+
+        summingMergesTags("plus-preserves-tags", Substitution.empty().setTag(yetAnotherKey, someOtherValue)) {
+            plus(it)
         }
 
-        test("setting-an-existing-tag-replaces-that-tag") {
-            val taggedSubstitutions =
-                substitutions.map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
-            for (replaced in taggedSubstitutions.map { it.setTag(someKey, someValue2) }) {
-                assertEquals(someValue2, replaced.getTag<SubstitutionTag<Long>>(someKey))
-            }
-        }
-
-        test("minus-iterable-preserves-tags") {
-            alteringPreservesTags { this - listOf(X, Y, Z) }
-        }
-
-        test("minus-preserves-tags") {
-            alteringPreservesTags { this - X - Y - Z }
-        }
-
-        test("filter-with-function-preserves-tags") {
-            alteringPreservesTags { filter { (k, _) -> k in setOf(X, Y, Z) } }
-        }
-
-        test("filter-preserves-tags") {
-            alteringPreservesTags { filter(setOf(X, Y, Z)) }
-        }
-
-        test("plus-preserves-tags") {
-            summingMergesTags(Substitution.empty().setTag(yetAnotherKey, someOtherValue)) { plus(it) }
-        }
-
-        test("plus-with-function-preserves-tags") {
-            summingMergesTags(Substitution.of(X to EmptyBlock()).setTag(yetAnotherKey, someOtherValue)) {
-                plus(it) { x, y -> x + y }
-            }
+        summingMergesTags(
+            "plus-with-function-preserves-tags",
+            Substitution.of(X to EmptyBlock()).setTag(yetAnotherKey, someOtherValue),
+        ) {
+            plus(it) { x, y -> x + y }
         }
     })
 

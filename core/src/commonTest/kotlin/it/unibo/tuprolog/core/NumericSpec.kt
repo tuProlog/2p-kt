@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.IntegerUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
 import org.gciatto.kt.math.BigDecimal
@@ -31,122 +31,88 @@ class NumericSpec :
             }
         }
 
-        val realToRealWithTrailingZerosMap by lazy {
-            RealUtils.stringNumbers
-                .filterNot { "E" in it || "e" in it }
-                .flatMap {
-                    listOf(
-                        BigDecimal.of(it) to BigDecimal.of(it + "0"),
-                        BigDecimal.of(it) to BigDecimal.of(it + "00"),
-                    )
-                }
+        val realWithoutExponentCases = RealUtils.realCases.filterNot { "E" in it.string || "e" in it.string }
+
+        withTests(nameFn = { "of-big-decimal/${it.id}" }, RealUtils.realCases) { case ->
+            assertEqualities(Numeric.of(case.value), Real.of(case.value))
         }
 
-        test("numeric-of-big-decimal") {
-            val correct = RealUtils.bigDecimals.map { Real.of(it) }
-            val toTest = RealUtils.bigDecimals.map { Numeric.of(it) }
-
-            onCorrespondingItems(toTest, correct, ::assertEqualities)
-        }
-
-        test("numeric-of-number") {
-            val correctReal = RealUtils.decimalsAsDoubles.map { Real.of(it) }
-
+        withTests(nameFn = { "of-number/real/${it.id}" }, RealUtils.realCases) { case ->
             @Suppress("USELESS_CAST")
-            val toTestReal = RealUtils.decimalsAsDoubles.map { it as Number }.map { Numeric.of(it) }
+            assertEqualities(Numeric.of(case.double as Number), Real.of(case.double))
+        }
 
-            val correctInteger = IntegerUtils.bigIntegers.map { Integer.of(it) }
-
+        withTests(
+            nameFn = { "of-number/integer/${it.id}" },
+            IntegerUtils.integerCases.filter { it.long != null },
+        ) { case ->
             @Suppress("USELESS_CAST")
-            val toTestInteger = IntegerUtils.onlyLongs.map { it as Number }.map { Numeric.of(it) }
-
-            onCorrespondingItems(toTestReal, correctReal, ::assertEqualities)
-            onCorrespondingItems(toTestInteger, correctInteger, ::assertEqualities)
+            assertEqualities(Numeric.of(case.long!! as Number), Integer.of(case.value))
         }
 
-        test("numeric-of-double") {
-            val correct = RealUtils.decimalsAsDoubles.map { Real.of(it) }
-            val toTest = RealUtils.decimalsAsDoubles.map { Numeric.of(it) }
-
-            onCorrespondingItems(toTest, correct, ::assertEqualities)
+        withTests(nameFn = { "of-double/${it.id}" }, RealUtils.realCases) { case ->
+            assertEqualities(Numeric.of(case.double), Real.of(case.double))
         }
 
-        test("numeric-of-float") {
-            val correct = RealUtils.decimalsAsFloats.map { Real.of(it) }
-            val toTest = RealUtils.decimalsAsFloats.map { Numeric.of(it) }
-
-            onCorrespondingItems(toTest, correct, ::assertEqualities)
+        withTests(nameFn = { "of-float/${it.id}" }, RealUtils.realCases.filter { it.float != null }) { case ->
+            assertEqualities(Numeric.of(case.float!!), Real.of(case.float!!))
         }
 
-        test("numeric-of-big-integer") {
-            val correct = IntegerUtils.bigIntegers.map { Integer.of(it) }
-            val toTest = IntegerUtils.bigIntegers.map { Numeric.of(it) }
-
-            onCorrespondingItems(toTest, correct, ::assertEqualities)
+        withTests(nameFn = { "of-big-integer/${it.id}" }, IntegerUtils.integerCases) { case ->
+            assertEqualities(Numeric.of(case.value), Integer.of(case.value))
         }
 
-        test("numeric-of-int") {
-            val correct = IntegerUtils.onlyInts.map { Integer.of(it) }
-            val toTest = IntegerUtils.onlyInts.map { Numeric.of(it) }
-
-            onCorrespondingItems(toTest, correct, ::assertEqualities)
+        withTests(nameFn = { "of-int/${it.id}" }, IntegerUtils.integerCases.filter { it.int != null }) { case ->
+            assertEqualities(Numeric.of(case.int!!), Integer.of(case.int!!))
         }
 
-        test("numeric-of-long") {
-            val correct = IntegerUtils.onlyLongs.map { Integer.of(it) }
-            val toTest = IntegerUtils.onlyLongs.map { Numeric.of(it) }
-
-            onCorrespondingItems(toTest, correct, ::assertEqualities)
+        withTests(nameFn = { "of-long/${it.id}" }, IntegerUtils.integerCases.filter { it.long != null }) { case ->
+            assertEqualities(Numeric.of(case.long!!), Integer.of(case.long!!))
         }
 
-        test("numeric-of-short") {
-            val correct = IntegerUtils.onlyShorts.map { Integer.of(it) }
-            val toTest = IntegerUtils.onlyShorts.map { Numeric.of(it) }
-
-            onCorrespondingItems(toTest, correct, ::assertEqualities)
+        withTests(nameFn = { "of-short/${it.id}" }, IntegerUtils.integerCases.filter { it.short != null }) { case ->
+            assertEqualities(Numeric.of(case.short!!), Integer.of(case.short!!))
         }
 
-        test("numeric-of-byte") {
-            val correct = IntegerUtils.onlyBytes.map { Integer.of(it) }
-            val toTest = IntegerUtils.onlyBytes.map { Numeric.of(it) }
-
-            onCorrespondingItems(toTest, correct, ::assertEqualities)
+        withTests(nameFn = { "of-byte/${it.id}" }, IntegerUtils.integerCases.filter { it.byte != null }) { case ->
+            assertEqualities(Numeric.of(case.byte!!), Integer.of(case.byte!!))
         }
 
-        test("numeric-of-string") {
-            val correctInteger = IntegerUtils.stringNumbers.map { Integer.of(it) }
-            val toTestInteger = IntegerUtils.stringNumbers.map { Numeric.of(it) }
-
-            val correctReal = RealUtils.stringNumbers.map { Real.of(it) }
-            val toTestReal = RealUtils.stringNumbers.map { Numeric.of(it) }
-
-            onCorrespondingItems(toTestInteger, correctInteger, ::assertEqualities)
-            onCorrespondingItems(toTestReal, correctReal, ::assertEqualities)
+        withTests(nameFn = { "of-string/integer/${it.id}" }, IntegerUtils.integerCases) { case ->
+            assertEqualities(Numeric.of(case.string), Integer.of(case.string))
         }
 
-        test("integer-not-equal-to-real-even-if-same-value") {
-            IntegerUtils.bigIntegers.map { it to it.toDouble() }.forEach { (integer, sameValueToDouble) ->
-                assertNotEquals<Numeric>(
-                    Numeric.of(integer),
-                    Numeric.of(sameValueToDouble),
+        withTests(nameFn = { "of-string/real/${it.id}" }, RealUtils.realCases) { case ->
+            assertEqualities(Numeric.of(case.string), Real.of(case.string))
+        }
+
+        withTests(
+            nameFn = { "integer-not-equal-to-real-even-if-same-value/${it.id}" },
+            IntegerUtils.integerCases,
+        ) { case ->
+            assertNotEquals<Numeric>(
+                Numeric.of(case.value),
+                Numeric.of(case.value.toDouble()),
+            )
+        }
+
+        withTests(
+            nameFn = { "real-comparison-does-not-take-trailing-zeros-into-account/${it.id}" },
+            realWithoutExponentCases,
+        ) { case ->
+            for (trailingZeros in listOf("0", "00")) {
+                assertEquals(
+                    Real.of(BigDecimal.of(case.string)),
+                    Real.of(BigDecimal.of(case.string + trailingZeros)),
                 )
             }
         }
 
-        test("real-comparison-does-not-take-trailing-zeros-into-account") {
-            realToRealWithTrailingZerosMap.forEach { (real, realWithTrailingZeros) ->
+        withTests(nameFn = { "real-hash-code-is-consistent-with-equals/${it.id}" }, realWithoutExponentCases) { case ->
+            for (trailingZeros in listOf("0", "00")) {
                 assertEquals(
-                    Real.of(real),
-                    Real.of(realWithTrailingZeros),
-                )
-            }
-        }
-
-        test("real-hash-code-is-consistent-with-equals") {
-            realToRealWithTrailingZerosMap.forEach { (real, realWithTrailingZeros) ->
-                assertEquals(
-                    Real.of(real).hashCode(),
-                    Real.of(realWithTrailingZeros).hashCode(),
+                    Real.of(BigDecimal.of(case.string)).hashCode(),
+                    Real.of(BigDecimal.of(case.string + trailingZeros)).hashCode(),
                 )
             }
         }
