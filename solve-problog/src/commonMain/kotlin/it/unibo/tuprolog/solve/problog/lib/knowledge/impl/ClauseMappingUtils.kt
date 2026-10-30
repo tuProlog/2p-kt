@@ -69,6 +69,10 @@ internal val Clause.isMappedAsProblog: Boolean
 
 internal fun Clause.setMappedAsProblog(value: Boolean): Clause = setTag(PROBLOG_MAPPED_TAG, value)
 
+/** An already-mapped [Clause] matching every mapped clause with this head, whatever its body and explanation. */
+internal fun Struct.anyMappedClause(): Clause =
+    Rule.of(withExplanation(Var.anonymous()), Var.anonymous()).setMappedAsProblog(true)
+
 private val nonWrappableFunctors = setOf("!", "true", "false")
 
 internal val Term.isWrappableWithExplanation: Boolean get() = this.safeToStruct().functor !in nonWrappableFunctors

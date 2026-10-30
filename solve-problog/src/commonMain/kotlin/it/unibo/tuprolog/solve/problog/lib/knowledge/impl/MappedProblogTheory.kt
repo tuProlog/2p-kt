@@ -3,9 +3,7 @@ package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
-import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.problog.lib.knowledge.MutableProblogTheory
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.RetractResult
@@ -103,11 +101,11 @@ internal class MappedProblogTheory(
 
     override fun assertZ(clauses: Sequence<Clause>): ProblogTheory = assertZ(clauses.asIterable())
 
-    override fun retract(head: Struct): RetractResult<ProblogTheory> = retract(Rule.of(head, Var.anonymous()))
+    override fun retract(head: Struct): RetractResult<ProblogTheory> = retract(head.anyMappedClause())
 
     override fun retract(clause: Clause): RetractResult<ProblogTheory> = retract(listOf(clause))
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<ProblogTheory> = retract(clauses.asIterable())
 
-    override fun retractAll(head: Struct): RetractResult<ProblogTheory> = retractAll(Rule.of(head, Var.anonymous()))
+    override fun retractAll(head: Struct): RetractResult<ProblogTheory> = retractAll(head.anyMappedClause())
 }
