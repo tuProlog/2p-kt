@@ -189,7 +189,7 @@ class ExistenceError(
             /** Returns the [ObjectType] instance described by [type]; creates a new instance only if [type] was not predefined */
             @JsName("of")
             @JvmStatic
-            fun of(type: String): ObjectType = valueOf(type)
+            fun of(type: String): ObjectType = valueOf(type.uppercase())
 
             /** Gets [ObjectType] instance from [term] representation, if possible */
             @JsName("fromTerm")

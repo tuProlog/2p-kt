@@ -12,7 +12,7 @@ import org.gradle.kotlin.dsl.register
  * with AssertJ Swing (see `src/swingE2eTest/kotlin`).
  *
  * The new source set reuses this module's compiled `main` and `test` classes plus every dependency already on
- * `testImplementation`/`testRuntimeOnly` (so it automatically gets the same `kotlin("test")` setup as `test`),
+ * `testImplementation`/`testRuntimeOnly` (so it automatically gets the same Kotest runner as `test`),
  * and adds `assertj-swing` on top. The Kotlin Gradle plugin picks up `src/swingE2eTest/kotlin` for it by the same
  * naming convention it already uses for `main`/`test`, so no explicit source directory wiring is needed here.
  *
@@ -44,6 +44,7 @@ fun Project.registerSwingE2eTestSourceSet(assertjSwing: Any) {
             "virtual (Xvfb) display -- never run with -Djava.awt.headless=true."
         testClassesDirs = e2e.output.classesDirs
         classpath = e2e.runtimeClasspath
+        useJUnitPlatform()
         // AssertJ Swing 3.17.1's AWT hierarchy setup transitively touches java.applet.Applet, which some JDK
         // builds newer than the project's own JVM toolchain (see the `jvm` version in libs.versions.toml) have
         // finished removing (JEP 504); pin a known-good, older LTS runtime for this task specifically, rather

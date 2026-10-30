@@ -1,6 +1,12 @@
 name: Test Extensively
 on:
   workflow_call:
+    inputs:
+      summary-check-run:
+        description: "Id of the run's \"CI summary\" check run, which each job updates as it finishes (see dispatcher.yml)."
+        required: false
+        type: string
+        default: ''
   workflow_dispatch:
 
 jobs:
@@ -53,6 +59,15 @@ jobs:
       - name: Skip tests on cache hit
         if: steps.cache-test-result.outputs.cache-hit == 'true'
         run: echo "Inputs unchanged since last successful run, skipping tests."
+      - name: CI summary
+        if: always()
+        uses: ./.github/actions/ci-summary
+        with:
+          kind: matrix
+          name: ci-digest-jvm-${{ matrix.os }}-${{ matrix.java-version }}-${{ matrix.jdk-dist }}
+          dims: runtime=jvm os=${{ matrix.os }} version=${{ matrix.java-version }} dist=${{ matrix.jdk-dist }}
+          outcome: ${{ steps.run-tests.outcome }}
+          check-run: ${{ inputs.summary-check-run }}
 
   test-js:
     strategy:
@@ -103,3 +118,12 @@ jobs:
       - name: Skip tests on cache hit
         if: steps.cache-test-result.outputs.cache-hit == 'true'
         run: echo "Inputs unchanged since last successful run, skipping tests."
+      - name: CI summary
+        if: always()
+        uses: ./.github/actions/ci-summary
+        with:
+          kind: matrix
+          name: ci-digest-js-${{ matrix.os }}-${{ matrix.node-version }}
+          dims: runtime=js os=${{ matrix.os }} version=${{ matrix.node-version }}
+          outcome: ${{ steps.run-tests.outcome }}
+          check-run: ${{ inputs.summary-check-run }}

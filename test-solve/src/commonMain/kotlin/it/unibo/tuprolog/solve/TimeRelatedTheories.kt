@@ -1,17 +1,31 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.theory.Theory
 
 /**
- * A theory whose resolution takes a predictable amount of time (via nested `sleep/1` calls), and the expected
- * [Solution]s of resolving it against maximum durations that fall just below/above each of its timing thresholds;
- * used by [TestSolver] to check that a `Solver.solve(goal, maxDuration)` call's timeout is honored as soon as it is
- * exceeded, without waiting for the whole (deeper) computation to finish first.
+ * A theory whose solutions each take a known amount of time (via `sleep/1`), and the expected [Solution]s of
+ * resolving it with a per-solution timeout (see [maxDurationFor]) that lets exactly 0, 1, 2 or 3 of them arrive in
+ * time; used by [solverContract] to check that a `Solver.solve(goal, maxDuration)` call's timeout is honored.
  */
 object TimeRelatedTheories {
     internal val timeOutException = TimeOutException(context = DummyInstances.executionContext, exceededDuration = 1)
+
+    /** The k-th solution of `a(X)` busy-waits `k * SLEEP_STEP` ms, so solution times are this far apart. */
+    const val SLEEP_STEP = 500L
+
+    /**
+     * A timeout that lets exactly [solutions] solutions of `a(X)` arrive in time. The timeout restarts with each
+     * solution, so the margin left to the last expected solution is `SLEEP_STEP - 100` ms. That margin absorbs a slow
+     * or busy machine: running late can only turn an expected solution into a timeout, never the other way round.
+     */
+    @Suppress("MagicNumber")
+    fun maxDurationFor(solutions: Int): Long = SLEEP_STEP * (solutions + 1) - 100
 
     /**
      * Clause database used for time-related tests:
@@ -19,85 +33,36 @@ object TimeRelatedTheories {
      * ```prolog
      * a(X) :- b(X).
      * b(500) :- sleep(500).
-     * b(600) :- sleep(600).
-     * b(700) :- sleep(700).
+     * b(1000) :- sleep(1000).
+     * b(1500) :- sleep(1500).
      * ```
      */
     val timeRelatedTheory: Theory by lazy {
         logicProgramming {
             theoryOf(
                 rule { "a"("X") `if` "b"("X") },
-                rule { "b"(500) `if` "sleep"(500) },
-                rule { "b"(600) `if` "sleep"(600) },
-                rule { "b"(700) `if` "sleep"(700) },
+                *(1..3).map { k -> rule { "b"(SLEEP_STEP * k) `if` "sleep"(SLEEP_STEP * k) } }.toTypedArray(),
             )
         }
     }
 
-    /**
-     * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
-     * In particular the requested goal assumes the resolution terminates in less than 500 ms,
-     * thus a [TimeOutException] is returned as the first solution
-     */
-    val lessThan500MsGoalToSolution by lazy {
-        logicProgramming {
-            listOf(
-                "a"("X").hasSolutions(
-                    { halt(timeOutException) },
-                ),
-            )
-        }
-    }
+    /** `a(X)` with [maxDurationFor] `(0)`: the first solution is already a [TimeOutException]. */
+    val noSolutionInTimeGoalToSolution by lazy { inTimeGoalToSolution(0) }
 
-    /**
-     * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
-     * In particular the requested goal assumes the resolution terminates in slightly more than 500 ms
-     * (and, in any case, within 600 ms),
-     * thus a [TimeOutException] is returned as the second solution
-     */
-    val slightlyMoreThan500MsGoalToSolution by lazy {
-        logicProgramming {
-            listOf(
-                "a"("X").hasSolutions(
-                    { yes("X" to 500) },
-                    { halt(timeOutException) },
-                ),
-            )
-        }
-    }
+    /** `a(X)` with [maxDurationFor] `(1)`: one solution, then a [TimeOutException]. */
+    val oneSolutionInTimeGoalToSolution by lazy { inTimeGoalToSolution(1) }
 
-    /**
-     * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
-     * In particular the requested goal assumes the resolution terminates in slightly more than 600 ms
-     * (and, in any case, within 700 ms),
-     * thus a [TimeOutException] is returned as the third solution
-     */
-    val slightlyMoreThan600MsGoalToSolution by lazy {
-        logicProgramming {
-            listOf(
-                "a"("X").hasSolutions(
-                    { yes("X" to 500) },
-                    { yes("X" to 600) },
-                    { halt(timeOutException) },
-                ),
-            )
-        }
-    }
+    /** `a(X)` with [maxDurationFor] `(2)`: two solutions, then a [TimeOutException]. */
+    val twoSolutionsInTimeGoalToSolution by lazy { inTimeGoalToSolution(2) }
 
-    /**
-     * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
-     * In particular the requested goal assumes the resolution terminates in slightly more than 700 ms,
-     * thus no [TimeOutException] is returned and 3 positive solutions are returned instead
-     */
-    val slightlyMoreThan700MsGoalToSolution by lazy {
-        logicProgramming {
-            listOf(
-                "a"("X").hasSolutions(
-                    { yes("X" to 500) },
-                    { yes("X" to 600) },
-                    { yes("X" to 700) },
-                ),
-            )
-        }
+    /** `a(X)` with [maxDurationFor] `(3)`: all three solutions, no [TimeOutException]. */
+    val allSolutionsInTimeGoalToSolution by lazy { inTimeGoalToSolution(3) }
+
+    private fun inTimeGoalToSolution(solutions: Int): List<Pair<Struct, List<Solution>>> {
+        val x = Var.of("X")
+        val query = Struct.of("a", x)
+        val inTime = (1..solutions).map { k -> query.yes(Substitution.of(x, Integer.of(SLEEP_STEP * k))) }
+        val timedOut = if (solutions < 3) listOf(query.halt(timeOutException)) else emptyList()
+        return listOf(query to inTime + timedOut)
     }
 }

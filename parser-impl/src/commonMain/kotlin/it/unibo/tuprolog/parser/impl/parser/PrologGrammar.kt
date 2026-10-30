@@ -165,6 +165,10 @@ internal class PrologGrammar(
 
             val token = cursor.peek()
             val definitions = operatorDefinitions(token, delimiters)
+            if (definitions.isNotEmpty() && cursor.peek(1).kind in TERM_TERMINATORS) {
+                // an operator with nothing to apply to is a plain atom, e.g. `f(+)` or `X = -`
+                return@rule parseTermNode()
+            }
             val prefixCandidates =
                 definitions.filter { it.specifier.fixity == Fixity.PREFIX && it.priority <= maximumPriority }
 
@@ -601,7 +605,10 @@ internal class PrologGrammar(
                     functorToken.kind == TokenKind.GRAPHIC_ATOM
 
             val canBeFunctor = followedByArguments && !hasPrefixDefinition
-            val canBeZeroArityAtom = ordinaryLexicalAtom && definitions.isEmpty()
+            val operatorWithoutOperands =
+                (ordinaryLexicalAtom || functorToken.kind == TokenKind.SIGN) &&
+                    cursor.peek(1).kind in TERM_TERMINATORS
+            val canBeZeroArityAtom = (ordinaryLexicalAtom && definitions.isEmpty()) || operatorWithoutOperands
 
             if (!isTruth && !canBeFunctor && !canBeZeroArityAtom) {
                 unexpected("non-operator atom", "functor application", "parenthesized operator")
@@ -880,5 +887,15 @@ internal class PrologGrammar(
     private companion object {
         const val TOP_PRIORITY: Int = 1200
         val TRUTH_FUNCTORS: Set<String> = setOf("true", "false", "fail")
+        val TERM_TERMINATORS: Set<TokenKind> =
+            setOf(
+                TokenKind.END_OF_INPUT,
+                TokenKind.FULL_STOP,
+                TokenKind.RIGHT_PARENTHESIS,
+                TokenKind.RIGHT_BRACKET,
+                TokenKind.RIGHT_BRACE,
+                TokenKind.COMMA,
+                TokenKind.PIPE,
+            )
     }
 }

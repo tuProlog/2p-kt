@@ -3,7 +3,7 @@
 Open `settings.gradle.kts` and you will find over thirty `include(...)` calls, one per Gradle sub-project:
 
 ```kotlin
---8<-- "settings.gradle.kts:57:93"
+--8<-- "settings.gradle.kts:modules"
 ```
 
 That is a lot of modules for one library. This page explains the tradeoff behind that choice, and how the
@@ -48,7 +48,7 @@ That "something" is a convention-plugin suite, `io.github.gciatto.kt-mpp`, appli
 `build.gradle.kts` via a small DSL block:
 
 ```kotlin
---8<-- "build.gradle.kts:18:61"
+--8<-- "build.gradle.kts:project-templates"
 ```
 
 Instead of every module's `build.gradle.kts` repeating "this is a Kotlin-multiplatform project, wire up the
