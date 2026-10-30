@@ -34,11 +34,11 @@ internal class MappedMutableProblogTheory(
 ) : MutableTheory by theory,
     MutableProblogTheory {
     override val isMutable: Boolean
-        get() = false
+        get() = true
 
     override fun toMutableTheory(): MutableProblogTheory = MutableProblogTheory.of(unificator, this)
 
-    override fun toImmutableTheory(): ProblogTheory = this
+    override fun toImmutableTheory(): ProblogTheory = MappedProblogTheory(null, unificator, theory.toImmutableTheory())
 
     override fun plus(theory: ProblogTheory): MutableProblogTheory =
         MappedMutableProblogTheory(null, unificator, this.theory.plus(theory))
