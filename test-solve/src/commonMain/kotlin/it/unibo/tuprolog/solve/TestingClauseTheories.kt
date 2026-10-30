@@ -16,7 +16,7 @@ import it.unibo.tuprolog.theory.Theory
  *
  * Alongside [PrologStandardExampleTheories] (the manual's own worked examples), this gathers hand-written theories
  * exercising cut, conjunction, backtracking, recursion/non-termination and custom list predicates, each paired with
- * its expected goal-to-[Solution]s mapping; both are consumed by [TestSolver] via
+ * its expected goal-to-[Solution]s mapping; both are consumed by [solverContract] via
  * [allPrologTestingTheoriesToRespectiveGoalsAndSolutions].
  *
  * @author Enrico

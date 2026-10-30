@@ -36,9 +36,11 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.highlight
   - pymdownx.snippets:
+      # the repository root first: documentation/ has its own build.gradle.kts and README.md, which would
+      # otherwise shadow the root ones that the pages quote
       base_path:
-        - "."
         - ".."
+        - "."
       check_paths: true
   - toc:
       permalink: true

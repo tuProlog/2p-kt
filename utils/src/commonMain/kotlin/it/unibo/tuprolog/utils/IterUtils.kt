@@ -259,16 +259,13 @@ fun <T> interleaveSequences(iterables: Iterable<Sequence<T>>): Sequence<T> =
  */
 fun <T> Sequence<T>.subsequences(): Sequence<Sequence<T>> =
     sequence {
-        var maxSize = 1
-        var actualSize = 0
+        var prefix = this@subsequences.take(1).toList()
+        yield(prefix.asSequence())
         while (true) {
-            val sublist = this@subsequences.take(maxSize).toList()
-            yield(sublist.asSequence())
-            if (actualSize >= sublist.size) {
-                break
-            }
-            maxSize++
-            actualSize = sublist.size
+            val next = this@subsequences.take(prefix.size + 1).toList()
+            if (next.size == prefix.size) break
+            yield(next.asSequence())
+            prefix = next
         }
     }
 
@@ -447,12 +444,18 @@ fun <T> Sequence<T>.insertAt(
     vararg items: T,
 ): Sequence<T> =
     sequence {
+        var inserted = false
         for ((i, x) in withIndex().asIterable()) {
             if (i == index) {
                 yield(item)
                 yieldAll(items.asIterable())
+                inserted = true
             }
             yield(x)
+        }
+        if (!inserted) {
+            yield(item)
+            yieldAll(items.asIterable())
         }
     }
 

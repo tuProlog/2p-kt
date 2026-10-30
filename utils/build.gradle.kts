@@ -13,5 +13,11 @@ kotlin {
                 api(libs.ktMath)
             }
         }
+
+        commonTest {
+            dependencies {
+                implementation(libs.kotest.property)
+            }
+        }
     }
 }

@@ -5,10 +5,16 @@ node = "22-latest"
 jackson = "2.22.4"
 kotlinx-coroutines = "1.11.0"
 kotlinx-serialization = "1.11.0"
-ktMpp = "6.0.7"
+ktMpp = "6.1.0"
+kotest = "6.2.6"
+kover = "0.9.11"
+ksp = "2.3.12"
 okio = "3.18.2"
 
 [plugins]
+kotest = { id = "io.kotest", version.ref = "kotest" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:7.3.0"
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
@@ -35,6 +41,10 @@ clikt = "com.github.ajalt.clikt:clikt:5.1.0"
 batik-transcoder = "org.apache.xmlgraphics:batik-transcoder:1.20"
 batik-codec = "org.apache.xmlgraphics:batik-codec:1.20"
 assertj-swing = "org.assertj:assertj-swing:3.17.1"
+kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 ktMath = "io.github.gciatto:kt-math:0.10.2"

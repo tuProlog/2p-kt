@@ -4,13 +4,13 @@ kotlin {
             dependencies {
                 api(project(":dsl-core"))
                 api(kotlin("test-common"))
-                api(kotlin("test-annotations-common"))
+                api(libs.kotest.property)
             }
         }
 
         getByName("jvmMain") {
             dependencies {
-                implementation(kotlin("test-junit"))
+                implementation(kotlin("test-junit5"))
             }
         }
 

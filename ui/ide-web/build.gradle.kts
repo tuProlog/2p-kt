@@ -21,7 +21,6 @@ kotlin {
             }
         }
         jsTest.dependencies {
-            implementation(kotlin("test"))
             implementation(project(":parser-theory"))
             implementation(libs.kotlinx.coroutines.test)
         }
@@ -82,6 +81,10 @@ tasks.register<Exec>("browserE2ETest") {
             webDistribution
                 .get()
                 .outputs.files.singleFile.absolutePath,
+            layout.buildDirectory
+                .file("test-results/browserE2ETest/TEST-BrowserE2E.xml")
+                .get()
+                .asFile.absolutePath,
         )
     }
 }

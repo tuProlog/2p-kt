@@ -6,12 +6,19 @@ on:
         description: "Version to force this build to use (from the release job), if any."
         required: false
         type: string
+      summary-check-run:
+        description: "Id of the run's \"CI summary\" check run, which each job updates as it finishes (see dispatcher.yml)."
+        required: false
+        type: string
+        default: ''
   workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
+  checks: write
 
 concurrency:
   group: pages
@@ -38,10 +45,22 @@ jobs:
         uses: DanySK/build-check-deploy-gradle-action@4.0.49
         with:
           retries-on-failure: '2'
-          build-command: ./gradlew ${LAST_VERSION:+-PforceVersion=$LAST_VERSION} :documentation:assembleSite
+          # the log feeds the CI summary's documentation warnings
+          build-command: |
+            set -o pipefail
+            ./gradlew ${LAST_VERSION:+-PforceVersion=$LAST_VERSION} :documentation:assembleSite --console=plain 2>&1 | tee docs-build.log
           check-command: true
           should-deploy: false
           should-run-codecov: false
+      - name: CI summary
+        if: always()
+        uses: ./.github/actions/ci-summary
+        with:
+          kind: docs
+          name: ci-digest-docs
+          log: docs-build.log
+          outcome: ${{ job.status }}
+          check-run: ${{ inputs.summary-check-run }}
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/master'
         uses: actions/upload-pages-artifact@v5

@@ -1,6 +1,7 @@
 import io.github.gciatto.kt.mpp.Plugins
 import io.github.gciatto.kt.mpp.helpers.ProjectType
 import io.github.gciatto.kt.mpp.utils.log
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 buildscript {
     configurations.classpath {
@@ -23,9 +24,13 @@ buildscript {
     }
 }
 
+// --8<-- [start:project-templates]
 plugins {
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.ktMpp.multiProjectHelper)
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.kotest) apply false
+    alias(libs.plugins.kover)
 }
 
 group = "it.unibo.tuprolog"
@@ -78,6 +83,91 @@ multiProjectHelper {
 
     applyProjectTemplates()
 }
+// --8<-- [end:project-templates]
+
+// Kotest (#1017): every Kotlin Multiplatform module with test sources (JS-only ones included) gets the Kotest
+// engine and assertions, plus the KSP-based Kotest Gradle plugin that Kotlin/JS needs to discover specs (JVM
+// discovers them on the JUnit Platform, enabled by `jvmTestFramework=junit5` in gradle.properties).
+subprojects {
+    plugins.withId("org.jetbrains.kotlin.multiplatform") {
+        if (file("src").listFiles().orEmpty().none { it.isDirectory && it.name.endsWith("Test") }) return@withId
+        apply(
+            plugin =
+                rootProject.libs.plugins.ksp
+                    .get()
+                    .pluginId,
+        )
+        apply(
+            plugin =
+                rootProject.libs.plugins.kotest
+                    .get()
+                    .pluginId,
+        )
+        configure<KotlinMultiplatformExtension> {
+            sourceSets.named("commonTest") {
+                dependencies {
+                    implementation(rootProject.libs.kotest.framework.engine)
+                    implementation(rootProject.libs.kotest.assertions.core)
+                }
+            }
+            sourceSets.matching { it.name == "jvmTest" }.configureEach {
+                dependencies {
+                    implementation(rootProject.libs.kotest.runner.junit5)
+                }
+            }
+        }
+    }
+    // JVM-only modules (examples, ide-swing, ide-plp-swing) only need the JUnit Platform runner
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        dependencies {
+            "testImplementation"(rootProject.libs.kotest.runner.junit5)
+            "testImplementation"(rootProject.libs.kotest.assertions.core)
+        }
+    }
+}
+
+// Kotest (#1017): Kotlin tests must not regress to kotlin.test/JUnit runners, nor call runTest inside a leaf (not
+// awaited on Kotlin/JS: use `test(...).config(coroutineTestScope = true)`). detekt's ForbiddenImport can't do this
+// here: kt-mpp's detekt tasks never scan commonMain/commonTest, where most tests live. Java tests stay on JUnit.
+val legacyTestImport =
+    Regex(
+        """^import (kotlin\.test\.(Test|Ignore|BeforeTest|AfterTest)|org\.junit\.|kotlinx\.coroutines\.test\.runTest)\b.*""",
+        RegexOption.MULTILINE,
+    )
+
+subprojects {
+    val verifyTestImports =
+        tasks.register("verifyTestImports") {
+            group = "verification"
+            description = "Fails on kotlin.test/JUnit runner imports or runTest in Kotlin sources (#1017)."
+            val sources = fileTree("src") { include("**/*.kt") }
+            doLast {
+                val offending =
+                    sources.flatMap { file ->
+                        legacyTestImport.findAll(file.readText()).map { "${file.relativeTo(rootDir)}: ${it.value}" }
+                    }
+                if (offending.isNotEmpty()) throw GradleException(offending.joinToString("\n", "Use Kotest instead:\n"))
+            }
+        }
+    tasks.matching { it.name == "check" }.configureEach { dependsOn(verifyTestImports) }
+}
+
+// Coverage of the JVM test runs, aggregated at the root: `./gradlew koverHtmlReport` (or koverXmlReport).
+// Docs and the fat-jar/examples aggregates are not production code; the Swing/web UIs are covered by
+// display-bound E2E suites, which this report doesn't run. The test-only modules' own tests exercise production
+// code (e.g. :solve's), so they are instrumented, but their own classes are left out of the report. (Excluding
+// their source sets instead would also drop the coverage their tests record for other modules.)
+val notCovered = setOf("documentation", "examples", "full", "ide-swing", "ide-plp-swing", "ide-web")
+
+subprojects {
+    if (name !in notCovered) {
+        apply(plugin = "org.jetbrains.kotlinx.kover")
+        rootProject.dependencies.add("kover", this)
+    }
+}
+
+kover.reports.filters.excludes.projects
+    .addAll(":test-dsl", ":test-solve")
 
 allprojects {
     repositories {

@@ -1,5 +1,7 @@
 import jsDependenciesFrom
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import packageJsonFile
+import java.net.ServerSocket
 
 plugins {
     id(
@@ -10,6 +12,7 @@ plugins {
     alias(libs.plugins.gradleMockService)
 }
 
+// --8<-- [start:dependencies]
 kotlin {
     sourceSets {
         commonMain {
@@ -42,6 +45,7 @@ kotlin {
         }
     }
 }
+// --8<-- [end:dependencies]
 
 fun Project.getCommonResource(name: String): File {
     val file = file("src/commonTest/resources/it/unibo/tuprolog/solve/libs/io").resolve(name)
@@ -51,8 +55,11 @@ fun Project.getCommonResource(name: String): File {
     return file
 }
 
+// A free port per build, so that a leftover server (e.g. from another daemon) can't make the tests fail.
+val mockServicePort = ServerSocket(0).use { it.localPort }
+
 mockService {
-    port = 8080
+    port = mockServicePort
 
     val parents = getCommonResource("Parents.pl")
     val parentsWrong = getCommonResource("WrongParents.pl")
@@ -70,3 +77,6 @@ mockService {
 
     wrapTasks("jvmTest", "jsNodeTest")
 }
+
+tasks.withType<Test>().configureEach { environment("MOCK_SERVICE_PORT", mockServicePort) }
+tasks.withType<KotlinJsTest>().configureEach { environment("MOCK_SERVICE_PORT", mockServicePort.toString()) }

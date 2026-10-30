@@ -1,0 +1,99 @@
+name: CI summary
+description: >-
+  Digests this job's outcome (when `kind` is set), then re-renders the run's CI summary from every digest uploaded so
+  far and publishes it to the "CI summary" check run (when `check-run` is set). With `final: true`, also writes the
+  summary to the run summary page, emits annotations, and completes the check run with `conclusion`.
+  Every step is best-effort: a summary problem never fails the job. See .github/scripts/ci-summary.py.
+inputs:
+  kind:
+    description: build, matrix, lint, docs or release; empty to only re-render
+    default: ''
+  name:
+    description: artifact name of this job's digest, unique in the run (ci-digest-...)
+    default: ''
+  dims:
+    description: space-separated key=value pairs describing this job (e.g. its matrix coordinates)
+    default: ''
+  outcome:
+    description: this job's outcome so far (job.status, or a step's outcome)
+    default: ''
+  log:
+    description: a build log to scan for warnings (docs)
+    default: ''
+  version:
+    description: the version released by this job, if any (release)
+    default: ''
+  retention-days:
+    default: '7'
+  check-run:
+    description: id of the run's "CI summary" check run; empty when it couldn't be created (e.g. fork PRs)
+    default: ''
+  final:
+    default: 'false'
+  conclusion:
+    description: with final, the check run's conclusion
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Digest this job
+      if: inputs.kind != ''
+      continue-on-error: true
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        py=python3; [ "$RUNNER_OS" = Windows ] && py=python
+        dims=(); for d in ${{ inputs.dims }}; do dims+=(--dim "$d"); done
+        mkdir -p "$RUNNER_TEMP/ci-digest"
+        $py .github/scripts/ci-summary.py collect --kind "${{ inputs.kind }}" "${dims[@]}" \
+          --outcome "${{ inputs.outcome }}" --log "${{ inputs.log }}" --version "${{ inputs.version }}" \
+          --out "$RUNNER_TEMP/ci-digest/${{ inputs.name }}.json"
+    - name: Upload the digest
+      if: inputs.kind != ''
+      continue-on-error: true
+      uses: actions/upload-artifact@v7.0.2
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ runner.temp }}/ci-digest/${{ inputs.name }}.json
+        retention-days: ${{ inputs.retention-days }}
+    - name: Download every digest uploaded so far
+      if: inputs.check-run != '' || inputs.final == 'true'
+      continue-on-error: true
+      uses: actions/download-artifact@v8.0.2
+      with:
+        pattern: ci-digest-*
+        path: ${{ runner.temp }}/ci-digests
+        merge-multiple: true
+    - name: Render and publish the summary
+      if: inputs.check-run != '' || inputs.final == 'true'
+      continue-on-error: true
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        py=python3; [ "$RUNNER_OS" = Windows ] && py=python
+        dir="$RUNNER_TEMP/ci-summary"; rm -rf "$dir"; mkdir -p "$dir"
+        gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100" --paginate \
+          --jq '.jobs[] | {name, status, conclusion}' > "$dir/jobs.jsonl" || true
+        # coverage trend: the build digest of the base branch's last successful run
+        base="${{ github.base_ref }}"
+        if [ -z "$base" ]; then base=develop; [ "$GITHUB_REF_NAME" = master ] && base=master; fi
+        run_id=$(gh run list -R "$GITHUB_REPOSITORY" --workflow dispatcher.yml --branch "$base" --status success \
+          --limit 1 --json databaseId -q '.[0].databaseId' || true)
+        if [ -n "$run_id" ]; then
+          gh run download "$run_id" -R "$GITHUB_REPOSITORY" -n ci-digest-build -D "$dir/baseline" || true
+        fi
+        args=(--digests "$RUNNER_TEMP/ci-digests" --jobs "$dir/jobs.jsonl" --baseline "$dir/baseline/ci-digest-build.json"
+          --summary "$dir/summary.md" --title-out "$dir/title.txt")
+        if [ "${{ inputs.final }}" = true ]; then
+          $py .github/scripts/ci-summary.py report "${args[@]}" --annotate
+          cat "$dir/summary.md" >> "$GITHUB_STEP_SUMMARY"
+        else
+          $py .github/scripts/ci-summary.py report "${args[@]}"
+        fi
+        if [ -n "${{ inputs.check-run }}" ]; then
+          conclusion=(); [ -n "${{ inputs.conclusion }}" ] && conclusion=(--conclusion "${{ inputs.conclusion }}")
+          $py .github/scripts/ci-summary.py publish --check-run "${{ inputs.check-run }}" \
+            --summary "$dir/summary.md" --title "$dir/title.txt" "${conclusion[@]}"
+        fi

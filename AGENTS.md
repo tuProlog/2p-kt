@@ -22,6 +22,13 @@ module with `:<module>:<task>` (e.g. `:core:ktlintCheck`, `:ide-swing:test`):
   wired into it. Swing E2E: `:ide-swing:swingE2eTest`, `:ide-plp-swing:swingE2eTest` (needs a real or virtual
   display — `xvfb-run -a` on Linux; see `ui/AGENTS.md` for the macOS Accessibility caveat). Web E2E:
   `:ide-web:browserE2ETest`. Docs: `:documentation:assembleSite`.
+- **Coverage**: `koverHtmlReport`/`koverXmlReport` at the root aggregate the JVM test runs of every production module
+  (report in `build/reports/kover/`); per module, `:<module>:koverHtmlReport`. JS-only code isn't measured.
+- **CI summary**: every CI job (style, build, each test-extensively cell, docs, release) digests its outcome with
+  `.github/actions/ci-summary` (backed by `.github/scripts/ci-summary.py`): test failures, coverage, style findings, docs
+  warnings, released items, Gradle scans. Each job then re-renders the run's "CI summary" check run from every digest so
+  far, so the summary shows up in the PR checks with the first finished job and fills in live; `dispatcher.yml`'s final
+  `summary` job writes the complete version to the run summary page, whatever the run's outcome.
 - `--parallel` and `--continue` (run everything, collect all failures instead of stopping at the first) are
   used throughout CI and are worth defaulting to locally for the same reason: one invocation instead of a
   fix-rerun-fix loop.
@@ -43,6 +50,103 @@ and mostly irrelevant. A few habits that generalize beyond this repo:
 - `-q`/`--quiet` is useful when you only need the pass/fail exit code and nothing else — but it also
   swallows the compiler-error detail you'd want on failure, so prefer `--console=plain` + grep over `-q` when
   a task might actually fail.
+
+## Tests: Kotest conventions
+
+Every Kotlin test is a Kotest 6 spec (issue #1017). `kotlin.test` remains only as an assertion library
+(`assertEquals`, `assertTrue`, …), which Kotest leaves are free to use.
+
+- **Wiring is automatic.** The root `build.gradle.kts` applies KSP and the Kotest Gradle plugin to every
+  multiplatform module with test sources, and adds `kotest-framework-engine` and `kotest-assertions-core`
+  (`commonTest`) plus `kotest-runner-junit5` (`jvmTest`). JVM tests run on the JUnit Platform because
+  `jvmTestFramework=junit5` in `gradle.properties` (a kt-mpp property, since 6.1.0).
+- **Style:** `FunSpec` only. Name classes `<Subject>Spec`, in the same package as the subject.
+- **Independent examples are parameterized leaves,** not loops: `withTests(nameFn = { ... }, cases) { case -> }`
+  (`io.kotest.datatest`). Keep a loop inside one leaf only when iterating *is* the behaviour (consuming a
+  sequence, checking order, several state transitions on one solver).
+- **Cases are small typed records with an `id`,** e.g. `IndicatorCase(id, name, arity)` in
+  `core/.../testutils/IndicatorUtils.kt`. Don't build parallel `inputs`/`expected` lists correlated by
+  position. Don't write one universal `TestCase` type.
+- **Case names are self-contained lower-kebab paths** (`of-terms/well-formed/sumlist-2`), unique within the
+  spec, and never derived from `toString()` of terms with variables. JVM reports keep only the leaf name and
+  drop `context(...)` names, so a leaf's name alone must identify it.
+- **Fixtures are built inside the leaf** (or by a `() -> Fixture` factory stored in the case) for anything
+  mutable or identity-sensitive: solvers, streams, stores, scopes, UI. Kotest does not create a fresh spec
+  instance per test the way JUnit did, so `@BeforeTest`-style spec fields become leaf-local values. Keep
+  terms that must share a `Var` instance in the same factory call.
+- **Keep the domain assertions** (`AssertionUtils.assertEqualities`, `assertStructurallyEquals`,
+  `assertEqualsUsingVariablesSimpleNames`, test-solve's `assertSolutionEquals`, …). Their equality notions
+  differ on purpose, so don't collapse them into `shouldBe`. Use Kotest matchers for generic checks. Decide
+  explicitly between sequence, multiset and set equality for solutions, and never relax the first two.
+- **Shared solver behaviours are Kotest factories** in `:test-solve` (`fun xContract(solverFactory, disabled) =
+  contract(solverFactory, disabled) { ... }`, see `Contract.kt`). Inside, `case(id) { query yields { listOf(it.yes()) } }`
+  is one query on a fresh solver with default built-ins, compared as an exact solution sequence. Anything else
+  is a `scenario(id) { ... }` that builds its own solver and asserts. Each solver's `commonTest` has one
+  `<Solver>SolverSpec` that `include`s every contract. Cases that solver doesn't support go in `disabled`, which
+  must only name ids the contract registers.
+- **Property tests** use `kotest-property` with generators from `:test-dsl`'s `TermArbs` (bounded terms over a
+  tiny signature, shared variable pools, term/instance pairs). Pin `PropTestConfig(seed = ..., iterations = ...)`
+  so runs are reproducible on both platforms, and keep hand-picked regression cases next to each property
+  (see `UnificationPropertiesSpec`, `TermSerializationPropertiesSpec`, `FormatParseRoundTripSpec`).
+- **Coroutines:** use `test("...").config(coroutineTestScope = true) { ... }` for virtual time. Never call
+  `runTest` inside a Kotest leaf: on Kotlin/JS it isn't awaited, so its body (and its failures) run after
+  the test has already passed.
+- **Java tests** (`*.java`) can't be Kotest specs. They stay JUnit Jupiter tests (`org.junit.jupiter.api.*`), still named `<Subject>Spec`; a shared base class is a `<Subject>Contract`.
+- **Guard:** every module's `check` runs `verifyTestImports` (root `build.gradle.kts`), which fails on
+  `kotlin.test.Test`/`Ignore`/`BeforeTest`/`AfterTest`, `org.junit.*` or `kotlinx.coroutines.test.runTest` imports
+  in Kotlin sources. detekt can't enforce this: kt-mpp's detekt tasks don't scan `commonMain`/`commonTest`.
+- **Running one spec or case:** pass a fully qualified name to the *platform* task, e.g.
+  `:core:jvmTest --tests 'it.unibo.tuprolog.core.IndicatorSpec'`, or
+  `--tests 'pkg.Spec.context -- leaf'` for one nested case. Leading wildcards (`'*Spec'`) match nothing.
+  `jsTest` is an alias without `--tests`, so use `jsNodeTest`.
+
+### Examples
+
+A plain spec, with one platform-specific value (`core`'s `PlatformSpec`): the `expect` sits in `commonTest`, and
+each platform's test source set (`jvmTest`, `jsTest`) provides its `actual`.
+
+```kotlin
+internal expect val expectedPlatform: Platform // jvmTest: `internal actual val expectedPlatform = Platform.JVM`
+
+class PlatformSpec :
+    FunSpec({
+        test("current-platform") {
+            assertEquals(expectedPlatform, Info.PLATFORM)
+        }
+    })
+```
+
+Parameterized leaves over typed cases (`core`'s `IndicatorSpec`), one leaf per case, named by `id`:
+
+```kotlin
+internal class IndicatorSpec :
+    FunSpec({
+        withTests(nameFn = { "of-terms/${it.id}" }, IndicatorUtils.mixedIndicatorCases) { case ->
+            assertEqualities(IndicatorImpl(case.name, case.arity), Indicator.of(case.name, case.arity))
+        }
+    })
+```
+
+A solver contract in `:test-solve` (`FailContract.kt`), included by every solver's spec, which lists the ids it
+doesn't support:
+
+```kotlin
+fun failContract(
+    solverFactory: SolverFactory,
+    disabled: Set<String> = emptySet(),
+) = contract(solverFactory, disabled) {
+    case("fail/fail") { fail yields { listOf(it.no()) } }
+    scenario("fail/undef-pred") { /* builds its own solver, then assertSolutionEquals(...) */ }
+}
+
+class ProblogSolverSpec :
+    FunSpec({
+        include(failContract(ProblogSolverFactory, disabled = setOf("fail/undef-pred")))
+    })
+```
+
+Behaviour that exists on one platform only goes in a spec under that platform's test source set, written the same
+way as a common one (e.g. `oop-lib`'s `jvmTest` `KotlinToJavaMappingSpec`).
 
 ## detekt
 
