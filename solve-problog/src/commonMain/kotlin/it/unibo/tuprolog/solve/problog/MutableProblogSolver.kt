@@ -131,7 +131,17 @@ internal class MutableProblogSolver(
         warnings: OutputChannel<Warning>,
     ): MutableSolver =
         MutableProblogSolver(
-            solver.copy(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings),
+            solver.copy(
+                unificator,
+                libraries,
+                flags,
+                ProblogTheory.of(unificator, staticKb),
+                ProblogTheory.of(unificator, dynamicKb),
+                stdIn,
+                stdOut,
+                stdErr,
+                warnings,
+            ),
         )
 
     override fun clone(): MutableSolver = MutableProblogSolver(solver.clone())
