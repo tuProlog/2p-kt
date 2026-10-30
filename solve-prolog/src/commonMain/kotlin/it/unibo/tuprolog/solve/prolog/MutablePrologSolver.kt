@@ -59,7 +59,7 @@ internal class MutablePrologSolver :
 
     override fun unloadLibrary(library: Library) {
         updateContext {
-            val newRuntime = libraries + library
+            val newRuntime = libraries - library
             copy(
                 libraries = newRuntime,
                 operators = getAllOperators(newRuntime, staticKb, dynamicKb).toOperatorSet(),
