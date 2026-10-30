@@ -6,7 +6,9 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.dropFirst
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
 import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
@@ -235,5 +237,49 @@ class SubstitutionSpec :
                 assertEquals(Substitution.failed(), base + assignment2)
                 assertEquals(unifierOf("X" to a, "Y" to a, "Z" to a), base + assignment3)
             }
+        }
+
+        test("when-is/dispatches-a-unifier") {
+            assertEquals("unifier", Substitution.empty().whenIs(unifier = { "unifier" }, fail = { "fail" }))
+        }
+
+        test("when-is/dispatches-a-failure") {
+            assertEquals("fail", Substitution.failed().whenIs(unifier = { "unifier" }, fail = { "fail" }))
+        }
+
+        test("when-is/falls-back-to-otherwise") {
+            assertEquals("other", Substitution.failed().whenIs(unifier = { "unifier" }, otherwise = { "other" }))
+        }
+
+        test("when-is/without-a-handler-throws") {
+            assertFailsWith<IllegalStateException> { Substitution.empty().whenIs<Unit>(fail = {}) }
+        }
+
+        test("cast-to-unifier/rejects-a-failure") {
+            assertFailsWith<ClassCastException> { Substitution.failed().castToUnifier() }
+        }
+
+        test("cast-to-fail/rejects-a-unifier") {
+            assertFailsWith<ClassCastException> { Substitution.empty().castToFail() }
+        }
+
+        test("fail/has-no-original-variables") {
+            assertNull(Substitution.failed().getOriginal(Var.of("X")))
+        }
+
+        test("unifier/of-a-variable-name") {
+            assertEquals(Atom.of("a"), Substitution.unifier("X", Atom.of("a")).getByName("X"))
+        }
+
+        test("unifier/of-a-sequence") {
+            val x = Var.of("X")
+            assertEquals(Atom.of("a"), Substitution.unifier(sequenceOf(x to Atom.of("a")))[x])
+        }
+
+        test("minus/several-variables") {
+            val (x, y, z) = listOf(Var.of("X"), Var.of("Y"), Var.of("Z"))
+            val a = Atom.of("a")
+            assertEquals(Substitution.of(z, a), Substitution.of(x to a, y to a, z to a).minus(x, y))
+            assertTrue(Substitution.failed().minus(x, y).isFailed)
         }
     })
