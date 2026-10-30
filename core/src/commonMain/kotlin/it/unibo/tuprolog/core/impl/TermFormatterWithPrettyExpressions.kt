@@ -37,6 +37,18 @@ internal class TermFormatterWithPrettyExpressions private constructor(
 
         private val SIGNS = setOf("-", "+")
 
+        private const val TUPLE_ITEM_PRIORITY = 999
+
+        /**
+         * The highest priority the [index]-th operand of an operator with this specifier and priority may have
+         * unparenthesised: the priority itself on a `y` side, one less on an `x` side.
+         */
+        private fun Pair<Specifier, Int>.argumentPriority(index: Int): Int {
+            val (specifier, priority) = this
+            val side = specifier.name.filter { it != 'F' }[index]
+            return if (side == 'Y') priority else priority - 1
+        }
+
         private val adHocDecorations: Map<String, OperatorDecorations> =
             mapOf(
                 "," to OperatorDecorations("", " "),
@@ -108,8 +120,9 @@ internal class TermFormatterWithPrettyExpressions private constructor(
     override fun visitTuple(term: Tuple): String =
         addingParenthesesIfForced(term) {
             val op = TUPLE_FUNCTOR
+            // `,` is xfy 1000: an item must bind tighter, or `(a :- b), c` would read back as `a :- (b, c)`
             term.unfoldedSequence.joinToString("${op.prefix}$op${op.suffix}") {
-                it.accept(itemFormatter())
+                it.accept(childFormatter(TUPLE_ITEM_PRIORITY, setOf(",", "|")))
             }
         }
 
@@ -117,7 +130,7 @@ internal class TermFormatterWithPrettyExpressions private constructor(
         val prefix = struct.isPrefix()
         if (prefix != null) {
             return addingParenthesesIfForced(struct) {
-                val arg = getArgAt(0).accept(childFormatter(prefix.second))
+                val arg = getArgAt(0).accept(childFormatter(prefix.argumentPriority(0)))
                 // `- 1` would read back as the number -1, so a sign applied to a number keeps the canonical syntax
                 if (getArgAt(0) is Numeric && functor in SIGNS) "$functor($arg)" else "$functor${functor.suffix}$arg"
             }
@@ -125,15 +138,15 @@ internal class TermFormatterWithPrettyExpressions private constructor(
         val postfix = struct.isPostfix()
         if (postfix != null) {
             return addingParenthesesIfForced(struct) {
-                "${getArgAt(0).accept(childFormatter(postfix.second))}${functor.prefix}$functor"
+                "${getArgAt(0).accept(childFormatter(postfix.argumentPriority(0)))}${functor.prefix}$functor"
             }
         }
         val infix = struct.isInfix()
         if (infix != null) {
             return addingParenthesesIfForced(struct) {
-                getArgAt(0).accept(childFormatter(infix.second)) +
+                getArgAt(0).accept(childFormatter(infix.argumentPriority(0))) +
                     "${functor.prefix}$functor${functor.suffix}" +
-                    getArgAt(1).accept(childFormatter(infix.second))
+                    getArgAt(1).accept(childFormatter(infix.argumentPriority(1)))
             }
         }
         val lowerPriority = struct.isLowerPriority()

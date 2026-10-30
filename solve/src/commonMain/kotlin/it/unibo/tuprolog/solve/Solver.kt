@@ -113,7 +113,6 @@ interface Solver : ExecutionContextAware {
      * current value. Useful to derive variants of a solver overriding just a few "mutable aspects"
      * (e.g. redirecting [stdOut] while keeping everything else identical).
      */
-    @JsName("copy")
     fun copy(
         unificator: Unificator = this.unificator,
         libraries: Runtime = this.libraries,

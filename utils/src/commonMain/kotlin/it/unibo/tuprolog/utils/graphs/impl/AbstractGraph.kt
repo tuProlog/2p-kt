@@ -126,7 +126,7 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
         initialNode: Node<T>,
     ): Sequence<Visit<T, S>> = searchStrategy.search(this, initialNode)
 
-    override fun toMutable(): MutableGraph<T, W> = MutableGraphImpl(connections)
+    override fun toMutable(): MutableGraph<T, W> = MutableGraphImpl(copyOfConnections())
 
     override fun ingoingEdges(to: Node<T>): Iterable<Edge<T, W>> =
         connections
@@ -145,29 +145,20 @@ internal abstract class AbstractGraph<T, W, Self : AbstractGraph<T, W, Self>> pr
 
     protected abstract fun newInstance(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>): Self
 
-    override fun plus(node: Node<T>): Self {
-        val connections = connections.toMutableMap()
-        connections[node] = mutableMapOf()
-        return newInstance(connections)
-    }
+    /** A copy of [connections] sharing none of its maps, so that editing it leaves this graph untouched. */
+    protected fun copyOfConnections(): MutableMap<Node<T>, MutableMap<Node<T>, W?>> =
+        connections.mapValuesTo(mutableMapOf()) { (_, destinations) -> destinations.toMutableMap() }
 
-    override fun plus(edge: Edge<T, W>): Self {
-        val connections = connections.toMutableMap()
-        connections[edge.source] = mutableMapOf(edge.destination to edge.weight)
-        return newInstance(connections)
-    }
+    private fun copy(edit: MutableMap<Node<T>, MutableMap<Node<T>, W?>>.() -> Unit): Self =
+        newInstance(copyOfConnections().apply(edit))
 
-    override fun minus(node: Node<T>): Self {
-        val connections = connections.toMutableMap()
-        connections.removeNode(node)
-        return newInstance(connections)
-    }
+    override fun plus(node: Node<T>): Self = copy { getOrPut(node) { mutableMapOf() } }
 
-    override fun minus(edge: Edge<T, W>): Self {
-        val connections = connections.toMutableMap()
-        connections[edge.source]?.remove(edge.destination)
-        return newInstance(connections)
-    }
+    override fun plus(edge: Edge<T, W>): Self = copy { putEdge(edge) }
+
+    override fun minus(node: Node<T>): Self = copy { removeNode(node) }
+
+    override fun minus(edge: Edge<T, W>): Self = copy { get(edge.source)?.remove(edge.destination) }
 
     override val edgesCount: Int
         get() = connections.map { it.value.size }.sum()

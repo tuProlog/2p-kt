@@ -10,8 +10,7 @@ import it.unibo.tuprolog.solve.libs.oop.Result
  * to keep invoking further members on the result reflectively, rather than getting e.g. a bare
  * Prolog integer back.
  *
- * Fails (rather than throwing) if the invoked member returns no value
- * ([it.unibo.tuprolog.solve.libs.oop.Result.None], e.g. a `void`-returning method).
+ * A `void`-returning method still succeeds, binding `Result` to a reference to `kotlin.Unit`.
  */
 object InvokeStrict : AbstractInvoke("strict") {
     override val help: String =

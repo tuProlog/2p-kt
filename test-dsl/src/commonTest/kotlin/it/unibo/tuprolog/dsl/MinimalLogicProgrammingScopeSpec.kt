@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Real
@@ -281,6 +282,18 @@ class MinimalLogicProgrammingScopeSpec :
             test("to-term-tuple") {
                 assertLogicProgrammingExpressionIsCorrect(Tuple.of(Atom.of("a"), Atom.of("b"))) {
                     tupleOf("a", "b")
+                }
+            }
+
+            test("directive-of-plain-values") {
+                assertLogicProgrammingExpressionIsCorrect(Directive.of(Atom.of("a"), Atom.of("b"))) {
+                    directiveOf("a", "b")
+                }
+            }
+
+            test("logic-list-without-a-tail") {
+                assertLogicProgrammingExpressionIsCorrect(List.of(Atom.of("a"), Atom.of("b"))) {
+                    logicList("a", "b")
                 }
             }
         }

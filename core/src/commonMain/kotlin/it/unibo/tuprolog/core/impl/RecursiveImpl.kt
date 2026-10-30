@@ -74,7 +74,7 @@ internal abstract class RecursiveImpl(
 
         override fun contains(element: T): Boolean = fst == element || snd == element
 
-        override fun containsAll(elements: KtCollection<T>): Boolean = elements.any { contains(it) }
+        override fun containsAll(elements: KtCollection<T>): Boolean = elements.all { contains(it) }
 
         override fun get(index: Int): T =
             when (index) {
@@ -122,11 +122,11 @@ internal abstract class RecursiveImpl(
                         throw NoSuchElementException()
                     }
 
-                override fun nextIndex(): Int = index + 1
+                override fun nextIndex(): Int = currentIndex
 
                 override fun previous(): T =
                     if (hasPrevious()) {
-                        get(currentIndex--)
+                        get(--currentIndex)
                     } else {
                         throw NoSuchElementException()
                     }

@@ -5,7 +5,9 @@ import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.IntegerImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.IntegerUtils
+import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -52,5 +54,10 @@ class IntegerSpec :
 
         withTests(nameFn = { "to-string-matches-pattern/${it.id}" }, IntegerUtils.integerCases) { case ->
             assertTrue(Integer.of(case.string).toString() matches Integer.PATTERN)
+        }
+
+        test("decimal-and-int-values") {
+            assertEquals(BigDecimal.of(5), Integer.of(5).decimalValue)
+            assertEquals(BigInteger.of(5), Integer.of(5).intValue)
         }
     })
