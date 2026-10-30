@@ -233,6 +233,47 @@ class ControllerActionsSpec :
             }
         }
 
+        test("signals/reach-every-console-panel-diagnostics-and-inspection") {
+            withController {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl", "p."))
+                val page = selectedPage
+                controller.dispatch(PageAction.ChangeQuery(page, "signals."))
+                controller.dispatch(PageAction.Solve(page, ConsumptionMode.ALL))
+                val done = controller.awaitResolution(page, ResolutionStatus.COMPLETED)
+                done.console.stdout.text shouldBe "out\nbye\n"
+                done.console.stderr.text shouldBe "err\n"
+                done.console.warnings.values
+                    .map { it.message } shouldBe listOf("careful")
+                done.diagnostics.values
+                    .map { it.message } shouldBe listOf("hmm")
+                done.solverSession.inspection.flags
+                    .map { it.name } shouldBe listOf("f")
+            }
+        }
+
+        test("failure/a-failed-step-fails-the-resolution-with-its-message") {
+            withController {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl", "p."))
+                val page = selectedPage
+                controller.dispatch(PageAction.ChangeQuery(page, "failing."))
+                controller.dispatch(PageAction.Solve(page))
+                val failed = controller.awaitResolution(page, ResolutionStatus.FAILED)
+                (failed.resolution.error!!.contains("it broke")) shouldBe true
+                failed.console.stderr.text shouldBe "why\n"
+            }
+        }
+
+        test("failure/an-exception-from-the-solver-fails-the-resolution") {
+            withController {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl", "p."))
+                val page = selectedPage
+                controller.dispatch(PageAction.ChangeQuery(page, "throwing."))
+                controller.dispatch(PageAction.Solve(page))
+                val failed = controller.awaitResolution(page, ResolutionStatus.FAILED)
+                (failed.resolution.error!!.contains("cursor exploded")) shouldBe true
+            }
+        }
+
         test("exit/with-nothing-unsaved-exits-at-once") {
             withController {
                 effect(ApplicationAction.RequestExit)
