@@ -57,20 +57,23 @@ internal class MutableProblogSolver(
         solver.resetDynamicKb()
     }
 
+    /** The clauses [clause] maps to: one, or more for an annotated disjunction. */
+    private fun mapped(clause: Clause): List<Clause> = ProblogTheory.of(solver.unificator, clause).clauses.toList()
+
     override fun assertA(clause: Clause) {
-        solver.assertA(ProblogTheory.of(solver.unificator, clause).clauses.first())
+        mapped(clause).asReversed().forEach(solver::assertA)
     }
 
     override fun assertA(fact: Struct) {
-        solver.assertA(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
+        assertA(Fact.of(fact))
     }
 
     override fun assertZ(clause: Clause) {
-        solver.assertZ(ProblogTheory.of(solver.unificator, clause).clauses.first())
+        mapped(clause).forEach(solver::assertZ)
     }
 
     override fun assertZ(fact: Struct) {
-        solver.assertA(ProblogTheory.of(solver.unificator, Fact.of(fact)).clauses.first())
+        assertZ(Fact.of(fact))
     }
 
     override fun retract(clause: Clause): RetractResult<Theory> =
