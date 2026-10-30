@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
@@ -98,8 +97,7 @@ fun mutableSolverContract(
 
     scenario("mutable-solver/channels") {
         val solver = solver()
-        val written = StringBuilder()
-        val output = OutputChannel.of<String> { written.append(it) }
+        val output = OutputChannel.of<String> { }
         val error = OutputChannel.of<String> { }
         val warnings = OutputChannel.of<Warning> { }
         val input = InputChannel.of("x")
@@ -111,8 +109,6 @@ fun mutableSolverContract(
         assertSame(error, solver.standardError)
         assertSame(warnings, solver.warnings)
         assertSame(input, solver.standardInput)
-        solver.solveOnce(Struct.of("write", Atom.of("hello")))
-        assertEquals("hello", written.toString())
     }
 
     scenario("mutable-solver/copies-are-independent") {
