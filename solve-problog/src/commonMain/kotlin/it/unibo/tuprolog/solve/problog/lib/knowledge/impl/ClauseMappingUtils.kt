@@ -227,33 +227,17 @@ internal fun Rule.withoutAnonymousVars(): Rule {
 /** Encapsulates a [ProbExplanation] object inside a Prolog [Term] */
 internal fun ProbExplanation.toTerm(): Term = ProbExplanationTerm(this)
 
-/** If the given term represents an arithmetic expression, this function returns
- * a [Double] containing the numeric solution of the expression. Otherwise,
- * an exception is thrown. */
-internal fun Term.solveArithmeticExpression(): Double {
-    val termStr = this.toString().replace("\\s".toRegex(), "")
-    val regexMatch =
-        Regex("([0-9.]+)(/)([0-9.]+).*").find(termStr)
-            ?: throw TuPrologException(
-                "Unsupported probability notation in annotated disjunction: $termStr",
-            )
-    val (dividendStr, _, divisorStr) = regexMatch.destructured
-    val dividend = dividendStr.toDoubleOrNull()
-    val divisor = divisorStr.toDoubleOrNull()
-    if (dividend == null || divisor == null) {
-        throw TuPrologException(
-            "Unable to parse arithmetic division expression: $termStr",
-        )
-    }
-    return dividend / divisor
-}
+private val arithmeticOperators: Map<String, (Double, Double) -> Double> =
+    mapOf("+" to { a, b -> a + b }, "-" to { a, b -> a - b }, "*" to { a, b -> a * b }, "/" to { a, b -> a / b })
 
-/** If the given term represents an arithmetic expression, this function returns
- * a [Double] containing the numeric solution of the expression. Otherwise,
- * this returns null. */
-internal fun Term.solveArithmeticExpressionOrNull(): Double? =
-    try {
-        this.solveArithmeticExpression()
-    } catch (e: Throwable) {
-        null
+/** Evaluates a probability written as a number, or as an expression combining numbers with `+`, `-`, `*`, and `/`.
+ * @throws TuPrologException for any other term */
+internal fun Term.solveArithmeticExpression(): Double =
+    when {
+        this is Numeric -> decimalValue.toDouble()
+        this is Struct && arity == 2 && functor in arithmeticOperators -> {
+            val (left, right) = args.map { it.solveArithmeticExpression() }
+            arithmeticOperators.getValue(functor)(left, right)
+        }
+        else -> throw TuPrologException("Unsupported probability notation: $this")
     }
