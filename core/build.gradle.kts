@@ -71,6 +71,7 @@ kotlin {
             tasks.withType<DokkaBaseTask>().configureEach { dependsOn(createInfoKt) }
             tasks.withType<BaseKtLintCheckTask>().configureEach { dependsOn(createInfoKt) }
             tasks.withType<KotlinCompilationTask<*>>().configureEach { dependsOn(createInfoKt) }
+            tasks.matching { it.name.startsWith("ksp") }.configureEach { dependsOn(createInfoKt) }
         }
     }
 }

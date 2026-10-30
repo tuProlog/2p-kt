@@ -14,7 +14,10 @@ import org.assertj.swing.timing.Condition
 import org.assertj.swing.timing.Pause
 import org.assertj.swing.timing.Timeout
 import java.awt.GraphicsEnvironment
+import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
+import javax.swing.JMenu
+import javax.swing.SwingUtilities
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -56,10 +59,43 @@ fun FrameFixture.awaitCondition(
     Pause.pause(
         object : Condition(description) {
             override fun test() = predicate()
+
+            // a timeout then also says what the window showed instead
+            override fun descriptionAddendum() = " (window state: ${stateSnapshot()})"
         },
         Timeout.timeout(timeoutSeconds, TimeUnit.SECONDS),
     )
 }
+
+/**
+ * Fires the menu item named [name] as a click on it would, but directly on the EDT rather than through the display:
+ * there a synthesized click can get lost or land late, and since a menu click toggles, neither waiting nor retrying
+ * makes it reliable. Mouse delivery to menus is Swing's job; these tests cover what the item does. It's posted with
+ * `invokeLater` because an item may open a modal dialog, which would block a synchronous call until the test closes
+ * it; `waitForIdle` then lets the action run.
+ */
+fun FrameFixture.clickMenuItem(name: String) {
+    val item = menuItem(name).target()
+    SwingUtilities.invokeLater { item.doClick(0) }
+    robot().waitForIdle()
+}
+
+/** Opens [menu], and every menu enclosing it, on the EDT, for the same reason [clickMenuItem] doesn't click. */
+fun FrameFixture.openMenu(menu: JMenu) {
+    GuiActionRunner.execute { menu.doClick(0) }
+    awaitCondition("the '${menu.text}' menu to open") { onEdt { menu.isPopupMenuVisible } }
+}
+
+private fun <T> onEdt(query: () -> T): T = GuiActionRunner.execute(Callable(query))
+
+/** The status, pages and solutions currently shown, for failure messages. */
+private fun FrameFixture.stateSnapshot(): String =
+    runCatching {
+        val status = label("statusLabel").text()
+        val pages = tabbedPane("editorTabs").tabTitles().toList()
+        val solutions = tree("solutionsTree").rowTexts()
+        "status='$status', pages=$pages, solutions=$solutions"
+    }.getOrElse { "unavailable: $it" }
 
 /** The text of every currently visible row, top to bottom; robust against exactly how many rows are expanded. */
 fun JTreeFixture.rowTexts(): List<String> = (0 until target().rowCount).map(::valueAt)

@@ -18,6 +18,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(project(":test-solve"))
+                implementation(project(":test-dsl"))
             }
         }
     }

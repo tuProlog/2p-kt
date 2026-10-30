@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.TermFormatter
@@ -33,6 +34,8 @@ internal class TermFormatterWithPrettyExpressions private constructor(
         )
 
         private val defaultDecorations = OperatorDecorations(" ", " ")
+
+        private val SIGNS = setOf("-", "+")
 
         private val adHocDecorations: Map<String, OperatorDecorations> =
             mapOf(
@@ -114,7 +117,9 @@ internal class TermFormatterWithPrettyExpressions private constructor(
         val prefix = struct.isPrefix()
         if (prefix != null) {
             return addingParenthesesIfForced(struct) {
-                "$functor${functor.suffix}${getArgAt(0).accept(childFormatter(prefix.second))}"
+                val arg = getArgAt(0).accept(childFormatter(prefix.second))
+                // `- 1` would read back as the number -1, so a sign applied to a number keeps the canonical syntax
+                if (getArgAt(0) is Numeric && functor in SIGNS) "$functor($arg)" else "$functor${functor.suffix}$arg"
             }
         }
         val postfix = struct.isPostfix()

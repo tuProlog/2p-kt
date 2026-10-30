@@ -12,7 +12,7 @@ ID. npm is the one exception — see step 3 below.
 2P-Kt is split into ~33 incrementally-dependent modules. The full, currently-published set is:
 
 ```kotlin
---8<-- "settings.gradle.kts:58:93"
+--8<-- "settings.gradle.kts:published-modules"
 ```
 
 Dependencies between modules are resolved transitively: importing `theory` automatically pulls in `unify` and

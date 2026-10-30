@@ -38,7 +38,7 @@ This repository enforces the [Conventional Commits](https://www.conventionalcomm
 commit message via a Git hook, configured in `settings.gradle.kts`:
 
 ```kotlin
---8<-- "settings.gradle.kts:50:53"
+--8<-- "settings.gradle.kts:git-hooks"
 ```
 
 The hook is installed automatically the first time you let Gradle sync (`createHooks(true)`), so running any

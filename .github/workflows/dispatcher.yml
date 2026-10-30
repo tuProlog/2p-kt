@@ -21,21 +21,64 @@ jobs:
       github.event_name != 'pull_request'
       || github.event.pull_request.head.repo.full_name != github.repository
       || startsWith(github.head_ref, 'refs/heads/dependabot/')
+    outputs:
+      summary-check-run: ${{ steps.summary-check-run.outputs.id }}
     steps:
-      - run: 'true'
+      - name: Create the "CI summary" check run, which every job updates as it finishes
+        id: summary-check-run
+        # fork PRs only get a read-only token: they go without the live summary, and only get the final one
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          id=$(gh api "repos/$GITHUB_REPOSITORY/check-runs" \
+            -f name="CI summary" -f head_sha="${{ github.event.pull_request.head.sha || github.sha }}" \
+            -f status=in_progress -f "details_url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            -f "output[title]=⏳ CI started" -f "output[summary]=This summary fills in as jobs finish." --jq .id)
+          echo "id=$id" >> "$GITHUB_OUTPUT"
   ci-cd:
     needs:
       - dispatcher
     uses: ./.github/workflows/build-and-deploy.yml
+    with:
+      summary-check-run: ${{ needs.dispatcher.outputs.summary-check-run }}
     secrets: inherit
   docs:
     needs:
+      - dispatcher
       - ci-cd
     permissions:
       contents: read
       pages: write
       id-token: write
+      actions: read
+      checks: write
     uses: ./.github/workflows/docs.yml
     with:
       version: ${{ needs.ci-cd.outputs.version }}
+      summary-check-run: ${{ needs.dispatcher.outputs.summary-check-run }}
     secrets: inherit
+  summary:
+    # whatever happened before: the summary of a failed or cancelled run matters most
+    needs:
+      - dispatcher
+      - ci-cd
+      - docs
+    if: always() && needs.dispatcher.result == 'success'
+    runs-on: ubuntu-26.04
+    permissions:
+      actions: read
+      checks: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          sparse-checkout: .github
+      - name: Write the CI summary
+        uses: ./.github/actions/ci-summary
+        with:
+          final: 'true'
+          check-run: ${{ needs.dispatcher.outputs.summary-check-run }}
+          conclusion: >-
+            ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && 'failure' || 'success' }}

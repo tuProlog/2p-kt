@@ -14,6 +14,12 @@ kotlin {
             }
         }
 
+        commonTest {
+            dependencies {
+                implementation(project(":test-dsl"))
+            }
+        }
+
         getByName("jvmMain") {
             dependencies {
                 implementation(libs.jackson.core)

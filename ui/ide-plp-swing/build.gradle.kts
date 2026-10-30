@@ -22,8 +22,6 @@ dependencies {
     // Pure-JVM diagram rendering (Smetana layout engine - see PlantUmlSwingBddGraphRenderer): no native
     // Graphviz install and no GraalVM needed, unlike the graphviz-java dependency this used to carry.
     implementation(libs.plantuml)
-
-    testImplementation(kotlin("test"))
 }
 
 application {

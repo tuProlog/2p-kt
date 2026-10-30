@@ -50,7 +50,7 @@ Other builders: `structOf(functor, *args)`, `logicListOf(*items)`/`logicList(*it
 configurable `Unificator` (`LogicProgrammingScope.defaultUnificator`).
 
 ```kotlin
---8<-- "dsl-unify/src/commonTest/kotlin/it/unibo/tuprolog/dsl/unify/TestLogicProgrammingScopeWithUnification.kt:61:77"
+--8<-- "dsl-unify/src/commonTest/kotlin/it/unibo/tuprolog/dsl/unify/LogicProgrammingScopeWithUnificationSpec.kt:unification-operators"
 ```
 
 ## Theories (`:dsl-theory`)
@@ -70,7 +70,7 @@ SLD solver).
 Putting it together — the full DSL surface, in one query:
 
 ```kotlin
---8<-- "dsl-solve/src/commonTest/kotlin/it/unibo/tuprolog/dsl/solve/TestPrologWithResolution.kt:9:38"
+--8<-- "dsl-solve/src/commonTest/kotlin/it/unibo/tuprolog/dsl/solve/PrologWithResolutionSpec.kt:abraham-family-tree"
 ```
 
 See [Kotlin DSL background](../explanation/kotlin-dsl-background.md) for the rationale behind layering the scope
