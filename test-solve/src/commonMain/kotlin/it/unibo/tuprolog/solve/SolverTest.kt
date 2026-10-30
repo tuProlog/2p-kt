@@ -4,15 +4,11 @@ import it.unibo.tuprolog.Info
 import it.unibo.tuprolog.Os
 
 /**
- * Base interface shared by every reusable, solver-agnostic conformance test suite in this module (e.g. [TestSolver],
- * [TestAbolish], [TestFindAll], and so on).
- *
- * It only provides the [TimeDuration]s ([shortDuration], [mediumDuration], [longDuration]) that test cases pass to
- * `Solver.solve(goal, maxDuration)` so that a single set of ISO-conformance tests can be shared, via the `prototype`
- * factory declared on each subinterface's companion object, by every concrete `Solver` implementation
- * (`:solve-prolog`, `:solve-concurrent`) instead of being duplicated once per module. Durations are
- * scaled up on Windows (see [Info.OS]), where CI runners have historically needed more slack to reliably finish
- * within the allotted time.
+ * The [TimeDuration]s ([shortDuration], [mediumDuration], [longDuration]) that conformance cases pass to
+ * `Solver.solve(goal, maxDuration)`. Shared solver contracts get them through [ContractScope]; the per-module suites
+ * that still implement this interface (e.g. `:solve-concurrent`'s) get them directly. Durations are scaled up on
+ * Windows (see [Info.OS]), where CI runners have historically needed more slack to reliably finish within the
+ * allotted time.
  */
 interface SolverTest {
     /** A short test max duration, used for queries expected to resolve almost immediately. */

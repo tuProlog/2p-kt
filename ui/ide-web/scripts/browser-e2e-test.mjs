@@ -17,15 +17,16 @@
 //      its focused textarea, not calling Kotlin setters directly), clicking real buttons, reading back the
 //      rendered DOM.
 //   5. Report a pass/fail table plus any captured console errors/exceptions, and exit non-zero on any failure.
+//      With a second argument, also write a JUnit XML report there: one test case per scenario.
 //
 // Requires a local Chrome/Chromium install. Resolution order: $CHROME_BIN, then common per-OS install paths
 // (the same convention karma-chrome-launcher uses for jsBrowserTest, so if that task works here, this will too).
 //
-// Usage: node browser-e2e-test.mjs <path-to-jsBrowserDistribution-output>
+// Usage: node browser-e2e-test.mjs <path-to-jsBrowserDistribution-output> [junit-xml-report-path]
 
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
-import { readFile, mkdtemp, rm, readdir } from "node:fs/promises";
+import { readFile, mkdtemp, rm, readdir, mkdir, writeFile } from "node:fs/promises";
 import { existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -808,10 +809,35 @@ const SCENARIOS = [
   },
 ];
 
+const xmlEscape = (s) =>
+  String(s).replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" })[c]);
+
+async function writeJUnitReport(reportPath, results) {
+  const failed = results.filter((r) => r.failures.length > 0).length;
+  const seconds = (ms) => (ms / 1000).toFixed(3);
+  const cases = results.map(({ name, failures, ms }) => {
+    const open = `  <testcase classname="BrowserE2E" name="${xmlEscape(name)}" time="${seconds(ms)}"`;
+    if (failures.length === 0) return `${open}/>`;
+    const message = xmlEscape(failures.join("\n"));
+    return `${open}>\n    <failure message="${message}">${message}</failure>\n  </testcase>`;
+  });
+  const total = seconds(results.reduce((sum, r) => sum + r.ms, 0));
+  const xml = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    `<testsuite name="BrowserE2E" tests="${results.length}" failures="${failed}" errors="0" skipped="0" time="${total}">`,
+    ...cases,
+    "</testsuite>",
+    "",
+  ].join("\n");
+  await mkdir(path.dirname(reportPath), { recursive: true });
+  await writeFile(reportPath, xml);
+}
+
 async function main() {
   const distDir = process.argv[2];
+  const reportPath = process.argv[3];
   if (!distDir || !existsSync(path.join(distDir, "index.html"))) {
-    console.error("Usage: node browser-e2e-test.mjs <path-to-jsBrowserDistribution-output>");
+    console.error("Usage: node browser-e2e-test.mjs <path-to-jsBrowserDistribution-output> [junit-xml-report-path]");
     process.exit(2);
   }
 
@@ -830,12 +856,13 @@ async function main() {
     const results = [];
     for (const scenario of SCENARIOS) {
       let failures;
+      const start = Date.now();
       try {
         failures = await scenario.run(cdp);
       } catch (e) {
         failures = [`threw: ${e.message}`];
       }
-      results.push({ name: scenario.name, failures });
+      results.push({ name: scenario.name, failures, ms: Date.now() - start });
       console.log(`${failures.length === 0 ? "PASS" : "FAIL"}  ${scenario.name}`);
       failures.forEach((f) => console.log(`      - ${f}`));
     }
@@ -849,6 +876,7 @@ async function main() {
       cdp.exceptions.forEach((e) => console.log(`  ${e}`));
     }
 
+    if (reportPath) await writeJUnitReport(reportPath, results);
     const failedCount = results.filter((r) => r.failures.length > 0).length;
     console.log(`\n${results.length - failedCount}/${results.length} scenarios passed.`);
     process.exitCode = failedCount > 0 ? 1 : 0;

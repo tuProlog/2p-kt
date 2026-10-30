@@ -79,7 +79,7 @@ class DomainError(
         ): DomainError =
             message(
                 (index?.let { "The $it-th argument" } ?: "An argument") +
-                    "of `${procedure.pretty()}` should be one of " +
+                    " of `${procedure.pretty()}` should be one of " +
                     flagValues.joinToString(", ", "{", "}") { "`${it.pretty()}`" } +
                     " but `${actualValue.pretty()}` has been provided instead",
             ) { m, extra ->
@@ -107,7 +107,7 @@ class DomainError(
         ): DomainError =
             message(
                 (index?.let { "The $it-th argument" } ?: "An argument") +
-                    "of `${procedure.pretty()}` should be `$expectedDomain`, " +
+                    " of `${procedure.pretty()}` should be `$expectedDomain`, " +
                     "but `${actualValue.pretty()}` has been provided instead",
             ) { m, extra ->
                 DomainError(

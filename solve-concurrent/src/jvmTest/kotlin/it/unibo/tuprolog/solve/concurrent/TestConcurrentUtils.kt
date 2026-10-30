@@ -203,11 +203,6 @@ class MultiSet(
 
     constructor(vararg solutions: Solution) : this(solutions.asIterable())
 
-    fun add(solution: Solution): MultiSet =
-        MultiSet(
-            solutionOccurrences + (solution.key() to (solutionOccurrences[solution.key()] ?: 1)),
-        )
-
     override fun assertingEquals(other: Any?) {
         if (this === other) {
             assertSame(this, other)

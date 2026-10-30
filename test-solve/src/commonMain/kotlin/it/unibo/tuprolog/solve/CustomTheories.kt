@@ -5,7 +5,7 @@ import it.unibo.tuprolog.theory.Theory
 
 /**
  * Hand-written theories (and their expected goal-to-solutions mappings), covering `->/2`, `;/2` and `member/2`,
- * consumed by [TestSolver]'s `testIfThen1`/`testIfThen2`/`testIfThenElse1`/`testIfThenElse2`/`testMember` cases, as
+ * consumed by [solverContract]'s `testIfThen1`/`testIfThen2`/`testIfThenElse1`/`testIfThenElse2`/`testMember` cases, as
  * an alternative/complement to the standard-manual examples gathered in [PrologStandardExampleTheories].
  */
 object CustomTheories {

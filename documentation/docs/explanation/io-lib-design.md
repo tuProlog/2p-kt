@@ -60,7 +60,7 @@ Local-file access used to be hand-rolled per platform. This branch moved it onto
 both JVM and Node:
 
 ```kotlin
---8<-- "io-lib/build.gradle.kts:10:46"
+--8<-- "io-lib/build.gradle.kts:dependencies"
 ```
 
 Two things this buys, beyond not hand-rolling buffered readers/writers per platform:

@@ -114,11 +114,11 @@ variables (e.g. `X` into `X_2`) when you build terms outside of one shared scope
 The exact program you just built (matching output included) lives in 2P-Kt's own test suite:
 
 ```kotlin
---8<-- "dsl-solve/src/commonTest/kotlin/it/unibo/tuprolog/dsl/solve/TestPrologWithResolution.kt:10:23"
+--8<-- "dsl-solve/src/commonTest/kotlin/it/unibo/tuprolog/dsl/solve/PrologWithResolutionSpec.kt:abraham-kb"
 ```
 
 ```kotlin
---8<-- "dsl-solve/src/commonTest/kotlin/it/unibo/tuprolog/dsl/solve/TestPrologWithResolution.kt:27:31"
+--8<-- "dsl-solve/src/commonTest/kotlin/it/unibo/tuprolog/dsl/solve/PrologWithResolutionSpec.kt:abraham-query"
 ```
 
 ## Going further

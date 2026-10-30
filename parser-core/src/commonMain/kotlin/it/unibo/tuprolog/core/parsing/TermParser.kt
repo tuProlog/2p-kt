@@ -207,7 +207,7 @@ interface TermParser {
     fun parseClause(
         input: String,
         operators: OperatorSet,
-    ): Clause = parseAs(input, operators)
+    ): Clause = parseTerm(input, operators).toClause(input)
 
     /**
      * @throws ParseException if parsing fails
