@@ -381,4 +381,80 @@ class GraphSpec :
 
             assertTrue(tree.isAcyclic)
         }
+
+        /** a -1-> b, a -2-> c, b -3-> c */
+        fun triangle(): Graph<String, Int> =
+            Graph.build {
+                this += edgeOf(nodeOf("a"), nodeOf("b"), 1)
+                this += edgeOf(nodeOf("a"), nodeOf("c"), 2)
+                this += edgeOf(nodeOf("b"), nodeOf("c"), 3)
+            }
+
+        test("immutable-edits/leave-the-original-untouched") {
+            val graph = triangle()
+            val before = graph.edges
+            graph - nodeOf("c")
+            graph - edgeOf(nodeOf("a"), nodeOf("b"), 1)
+            graph + edgeOf(nodeOf("a"), nodeOf("d"), 4)
+            graph + nodeOf("a")
+            assertEquals(before, graph.edges)
+        }
+
+        test("immutable-edits/adding-an-edge-keeps-the-other-edges-of-its-source") {
+            val graph = triangle() + edgeOf(nodeOf("a"), nodeOf("d"), 4)
+            assertEquals(setOf("b", "c", "d"), graph.outgoingEdges(nodeOf("a")).map { it.destination.value }.toSet())
+            assertTrue(nodeOf("d") in graph)
+        }
+
+        test("immutable-edits/adding-an-existing-node-keeps-its-edges") {
+            assertEquals(2, (triangle() + nodeOf("a")).outdegree(nodeOf("a")))
+        }
+
+        test("immutable-edits/removing-an-edge") {
+            val graph = triangle() - edgeOf(nodeOf("a"), nodeOf("b"), 1)
+            assertFalse(graph.containsEdgeAmong(nodeOf("a"), nodeOf("b")))
+            assertEquals(2, graph.edgesCount)
+        }
+
+        test("copies/editing-a-mutable-copy-leaves-the-original-untouched") {
+            val graph = triangle()
+            val before = graph.edges
+            graph.toMutable().also { it += edgeOf(nodeOf("a"), nodeOf("d"), 4) }
+            graph.toMutable().also { it -= nodeOf("c") }
+            assertEquals(before, graph.edges)
+        }
+
+        test("copies/editing-a-mutable-graph-leaves-its-copies-untouched") {
+            val mutable = triangle().toMutable()
+            val clone = mutable.clone()
+            val immutable = mutable.toImmutable()
+            val before = immutable.edges
+            mutable += edgeOf(nodeOf("a"), nodeOf("d"), 4)
+            mutable -= edgeOf(nodeOf("b"), nodeOf("c"), 3)
+            assertEquals(before, clone.edges)
+            assertEquals(before, immutable.edges)
+        }
+
+        test("queries/degrees-and-edges") {
+            val graph = triangle()
+            assertEquals(2, graph.indegree(nodeOf("c")))
+            assertEquals(2, graph.outdegree(nodeOf("a")))
+            assertEquals(0, graph.outdegree(nodeOf("z")))
+            assertEquals(setOf("a", "b"), graph.ingoingEdges(nodeOf("c")).map { it.source.value }.toSet())
+            assertEquals(3, graph[nodeOf("b") to nodeOf("c")])
+            assertTrue(edgeOf(nodeOf("a"), nodeOf("b"), 1) in graph)
+            assertFalse(edgeOf(nodeOf("a"), nodeOf("b"), 9) in graph)
+            assertEquals(3, graph.size)
+            assertEquals(graph.edges, graph.toSet())
+        }
+
+        test("queries/equality-and-rendering") {
+            assertEquals(triangle(), triangle())
+            assertEquals(triangle().hashCode(), triangle().hashCode())
+            assertTrue("a -1-> b" in triangle().toString())
+            assertEquals(
+                listOf("a", "b", "c", "c"),
+                triangle().asIterable(DepthFirst(), nodeOf("a")).map { it.node.value }.toList(),
+            )
+        }
     })
