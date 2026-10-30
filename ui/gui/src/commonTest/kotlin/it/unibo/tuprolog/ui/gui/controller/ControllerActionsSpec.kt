@@ -4,12 +4,20 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import it.unibo.tuprolog.ui.gui.extension.ExtensionActionHandler
+import it.unibo.tuprolog.ui.gui.extension.ExtensionCommandResult
+import it.unibo.tuprolog.ui.gui.extension.GuiContributions
+import it.unibo.tuprolog.ui.gui.extension.GuiExtension
+import it.unibo.tuprolog.ui.gui.extension.GuiExtensionRegistry
 import it.unibo.tuprolog.ui.gui.identity.CommandId
 import it.unibo.tuprolog.ui.gui.identity.DocumentId
+import it.unibo.tuprolog.ui.gui.identity.EffectId
 import it.unibo.tuprolog.ui.gui.identity.ExtensionId
+import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.model.DocumentOrigin
+import it.unibo.tuprolog.ui.gui.model.FeatureValue
 import it.unibo.tuprolog.ui.gui.model.PageConfiguration
 import it.unibo.tuprolog.ui.gui.model.PageContent
 import it.unibo.tuprolog.ui.gui.model.PanelId
@@ -89,6 +97,9 @@ private val invalidArguments =
             "reload-failure-is-reported",
             "disk on fire",
         ) { _, d -> DocumentAction.ReloadFailed(d, "disk on fire") },
+        InvalidCase("extension-without-a-handler", "No handler registered") { p, _ ->
+            PageAction.ExtensionCommand(p, ExtensionId("absent"), CommandId("c"))
+        },
     )
 
 /** A controller living in the test's own scope, with what the tests below need to drive it. */
@@ -121,12 +132,16 @@ private class Harness(
     }
 }
 
-private suspend fun CoroutineScope.withController(block: suspend Harness.() -> Unit) {
+private suspend fun CoroutineScope.withController(
+    extensions: GuiExtensionRegistry = GuiExtensionRegistry(),
+    block: suspend Harness.() -> Unit,
+) {
     val controller =
         DefaultGuiController(
             workspaceConfiguration = WorkspaceConfiguration(defaultSolverProfileId = testProfileId),
             baseProfiles = listOf(TestSolverFactory().profile),
             parentScope = this,
+            extensions = extensions,
         )
     try {
         Harness(controller, this).block()
@@ -271,6 +286,41 @@ class ControllerActionsSpec :
                 controller.dispatch(PageAction.Solve(page))
                 val failed = controller.awaitResolution(page, ResolutionStatus.FAILED)
                 (failed.resolution.error!!.contains("cursor exploded")) shouldBe true
+            }
+        }
+
+        test("extension-command/merges-feature-updates-and-forwards-effects") {
+            val feature = FeatureId("counter")
+            val handler =
+                ExtensionActionHandler { context ->
+                    ExtensionCommandResult(
+                        featureUpdates =
+                            mapOf(
+                                feature to
+                                    mapOf(context.commandId.value to FeatureValue.Text(context.payload.getValue("v"))),
+                            ),
+                        effects = listOf(GuiEffect.CopyTextToClipboard(EffectId("copy"), "copied")),
+                    )
+                }
+            val extension =
+                object : GuiExtension {
+                    override val id = ExtensionId("ext")
+                    override val contributions = GuiContributions(actionHandler = handler)
+                }
+            withController(GuiExtensionRegistry(listOf(extension))) {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl", "p."))
+                val page = selectedPage
+                effect(PageAction.ExtensionCommand(page, extension.id, CommandId("a"), mapOf("v" to "1")))
+                    .shouldBeInstanceOf<GuiEffect.CopyTextToClipboard>()
+                    .text shouldBe "copied"
+                effect(PageAction.ExtensionCommand(page, extension.id, CommandId("b"), mapOf("v" to "2")))
+                val state =
+                    controller.state.value.workspace
+                        .page(page)!!
+                        .features
+                        .getValue(feature)
+                state.values shouldBe mapOf("a" to FeatureValue.Text("1"), "b" to FeatureValue.Text("2"))
+                state.revision shouldBe 2
             }
         }
 
