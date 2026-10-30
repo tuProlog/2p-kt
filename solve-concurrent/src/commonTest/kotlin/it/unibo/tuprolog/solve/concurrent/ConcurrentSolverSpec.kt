@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.concurrent
 import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.solve.SolveConcurrentExpectations
 import it.unibo.tuprolog.solve.concurrent.stdlib.DefaultBuiltins
+import it.unibo.tuprolog.solve.mutableSolverContract
 import it.unibo.tuprolog.solve.solverConstructionContract
 import it.unibo.tuprolog.solve.staticFactoryContract
 
@@ -16,4 +17,5 @@ class ConcurrentSolverSpec :
             ),
         )
         include(staticFactoryContract(SolveConcurrentExpectations.expectations))
+        include(mutableSolverContract(ConcurrentSolverFactory))
     })

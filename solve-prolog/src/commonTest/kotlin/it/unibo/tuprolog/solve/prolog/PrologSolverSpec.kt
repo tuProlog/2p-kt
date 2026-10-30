@@ -54,6 +54,7 @@ import it.unibo.tuprolog.solve.integerContract
 import it.unibo.tuprolog.solve.isContract
 import it.unibo.tuprolog.solve.library.toRuntime
 import it.unibo.tuprolog.solve.libraryOf
+import it.unibo.tuprolog.solve.mutableSolverContract
 import it.unibo.tuprolog.solve.nonVarContract
 import it.unibo.tuprolog.solve.notProvableContract
 import it.unibo.tuprolog.solve.notUnifyContract
@@ -217,6 +218,7 @@ class PrologSolverSpec :
                 )
             }
         }
+        include(mutableSolverContract(PrologSolverFactory))
     })
 
 private data class ArithmeticErrorCase(
