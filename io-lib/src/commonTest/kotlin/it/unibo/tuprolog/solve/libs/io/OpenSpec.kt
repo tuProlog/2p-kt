@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
@@ -145,18 +146,19 @@ class OpenSpec :
             }
         }
 
-        test("open-on-missing-file-is-existence-error") {
+        withTests(nameFn = { "open-on-missing-file-is-existence-error/open-$it" }, listOf(3, 4)) { arity ->
             logicProgramming {
                 val url = tempFileUrl("missing")
-                for (query in listOf(
-                    "open"(url.toString(), "read", "S"),
-                    "open"(url.toString(), "read", "S", emptyLogicList),
-                )) {
-                    val solution = solver().solveOnce(query)
-                    val error = assertIs<ExistenceError>((solution as? Solution.Halt)?.exception, "$solution")
-                    assertEquals(ExistenceError.ObjectType.SOURCE_SINK, error.expectedObject)
-                    assertEquals(atomOf(url.toString()), error.culprit)
-                }
+                val query =
+                    if (arity == 3) {
+                        "open"(url.toString(), "read", "S")
+                    } else {
+                        "open"(url.toString(), "read", "S", emptyLogicList)
+                    }
+                val solution = solver().solveOnce(query)
+                val error = assertIs<ExistenceError>((solution as? Solution.Halt)?.exception, "$solution")
+                assertEquals(ExistenceError.ObjectType.SOURCE_SINK, error.expectedObject)
+                assertEquals(atomOf(url.toString()), error.culprit)
             }
         }
     })

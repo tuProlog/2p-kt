@@ -18,7 +18,6 @@ import it.unibo.tuprolog.solve.testutils.SolveUtils.anExecutionMaxDuration
 import it.unibo.tuprolog.solve.testutils.SolveUtils.createRequest
 import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestFailedResponse
 import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestHaltedResponse
-import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestResponses
 import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestSuccessResponse
 import it.unibo.tuprolog.solve.testutils.SolveUtils.differentDynamicKB
 import it.unibo.tuprolog.solve.testutils.SolveUtils.differentFlags
@@ -100,21 +99,20 @@ class SolveRequestSpec :
             assertEquals(aRequest.copy(), aRequest)
         }
 
-        test("reply-with-solution-creates-correct-response") {
-            defaultRequestResponses.forEach {
-                assertEquals(
-                    createRequest().replyWith(
-                        it.solution,
-                        aSideEffectManager,
-                    ) {
-                        resetRuntime(differentLibraries)
-                        resetFlags(differentFlags)
-                        resetStaticKb(differentStaticKB)
-                        resetDynamicKb(differentDynamicKB)
-                    },
-                    it,
-                )
-            }
+        withTests(nameFn = { "reply-with-solution/${it.id}" }, responseCases) { case ->
+            val expected = case.expected()
+            assertEquals(
+                createRequest().replyWith(
+                    expected.solution,
+                    aSideEffectManager,
+                ) {
+                    resetRuntime(differentLibraries)
+                    resetFlags(differentFlags)
+                    resetStaticKb(differentStaticKB)
+                    resetDynamicKb(differentDynamicKB)
+                },
+                expected,
+            )
         }
 
         test("reply-success-creates-correct-response") {
@@ -219,6 +217,18 @@ class SolveRequestSpec :
     })
 
 private const val TOLERANCE = 10L
+
+private class ResponseCase(
+    val id: String,
+    val expected: () -> Solve.Response,
+)
+
+private val responseCases =
+    listOf(
+        ResponseCase("success") { defaultRequestSuccessResponse },
+        ResponseCase("fail") { defaultRequestFailedResponse },
+        ResponseCase("halt") { defaultRequestHaltedResponse },
+    )
 
 private class VarargReplyCase(
     val id: String,

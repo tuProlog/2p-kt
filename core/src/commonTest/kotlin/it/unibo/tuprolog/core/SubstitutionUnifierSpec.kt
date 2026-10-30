@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -16,6 +16,11 @@ import kotlin.test.assertTrue
  *
  * @author Enrico
  */
+private class UnifierCase(
+    val id: String,
+    val substitution: Substitution,
+)
+
 class SubstitutionUnifierSpec :
     FunSpec({
         val aVar = Var.of("A")
@@ -28,10 +33,9 @@ class SubstitutionUnifierSpec :
 
         val bVarToXAtomSubstitution = Substitution.unifier(mapOf(bVar to xAtom))
 
-        val substitutions by lazy {
-            SubstitutionUtils.mixedSubstitutions.map(Substitution.Companion::unifier) +
-                listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
-        }
+        val substitutionCases =
+            SubstitutionUtils.mixedSubstitutionCases.map { UnifierCase(it.id, Substitution.unifier(it.map)) } +
+                listOf(UnifierCase("a-to-x", aVarToXAtomSubstitution), UnifierCase("b-to-x", bVarToXAtomSubstitution))
 
         test("unifier-get-by-name-retrieves-some-matching-variable") {
             val anotherVar = Var.of("A")
@@ -60,36 +64,36 @@ class SubstitutionUnifierSpec :
             assertEquals(correct, toBeTested)
         }
 
-        test("is-success-is-true") {
-            substitutions.forEach { assertTrue { it.isSuccess } }
+        withTests(nameFn = { "is-success-is-true/${it.id}" }, substitutionCases) { case ->
+            assertTrue { case.substitution.isSuccess }
         }
 
-        test("is-failed-is-false") {
-            substitutions.forEach { assertFalse { it.isFailed } }
+        withTests(nameFn = { "is-failed-is-false/${it.id}" }, substitutionCases) { case ->
+            assertFalse { case.substitution.isFailed }
         }
 
-        test("apply-to-should-substitute-variable-if-same-as-provided-substitution") {
-            val correct = SubstitutionUtils.termsWith(xAtom)
-            val toBeTested = SubstitutionUtils.termsWith(aVar).map { aVarToXAtomSubstitution.applyTo(it) }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(
+            nameFn = { "apply-to-should-substitute-variable-if-same-as-provided-substitution/${it.id}" },
+            SubstitutionUtils.termsWithCases,
+        ) { case ->
+            assertEqualities(case.build(xAtom), aVarToXAtomSubstitution.applyTo(case.build(aVar)))
         }
 
-        test("apply-to-should-not-substitute-variable-if-not-same-as-provided-substitution") {
-            val correct = SubstitutionUtils.termsWith(Var.of("A"))
-            val toBeTested = SubstitutionUtils.termsWith(Var.of("A")).map { aVarToXAtomSubstitution.applyTo(it) }
-
-            onCorrespondingItems(correct, toBeTested) { expected, actual ->
-                assertNotEquals(expected, actual)
-                assertStructurallyEquals(expected, actual)
-            }
+        withTests(
+            nameFn = { "apply-to-should-not-substitute-variable-if-not-same-as-provided-substitution/${it.id}" },
+            SubstitutionUtils.termsWithCases,
+        ) { case ->
+            val expected = case.build(Var.of("A"))
+            val actual = aVarToXAtomSubstitution.applyTo(case.build(Var.of("A")))
+            assertNotEquals(expected, actual)
+            assertStructurallyEquals(expected, actual)
         }
 
-        test("apply-to-should-not-substitute-not-corresponding-variable") {
-            val correct = SubstitutionUtils.termsWith(aVar)
-            val toBeTested = SubstitutionUtils.termsWith(aVar).map { bVarToXAtomSubstitution.applyTo(it) }
-
-            onCorrespondingItems(correct, toBeTested, ::assertEqualities)
+        withTests(
+            nameFn = { "apply-to-should-not-substitute-not-corresponding-variable/${it.id}" },
+            SubstitutionUtils.termsWithCases,
+        ) { case ->
+            assertEqualities(case.build(aVar), bVarToXAtomSubstitution.applyTo(case.build(aVar)))
         }
 
         test("equals-works-as-expected") {
@@ -134,11 +138,10 @@ class SubstitutionUnifierSpec :
             toBeTested.forEach { assertEquals(Substitution.failed(), it) }
         }
 
-        test("plus-failed-substitution-return-failed-substitution") {
-            substitutions.forEach {
-                assertEquals(Substitution.failed(), it + Substitution.failed())
-                assertEquals(Substitution.failed(), Substitution.failed() + it)
-            }
+        withTests(nameFn = { "plus-failed-substitution-return-failed-substitution/${it.id}" }, substitutionCases) {
+            val substitution = it.substitution
+            assertEquals(Substitution.failed(), substitution + Substitution.failed())
+            assertEquals(Substitution.failed(), Substitution.failed() + substitution)
         }
 
         test("plus-compliance-with-composition-defined-in-standard-prolog") {

@@ -31,4 +31,18 @@ internal object PrimitiveUtils {
             query.args,
             contextWith(database),
         )
+
+    /** A named request, with its expected outcome: a [Boolean], a [it.unibo.tuprolog.core.Substitution] or an error class */
+    internal data class RequestCase(
+        val id: String,
+        val request: Solve.Request<ExecutionContext>,
+        val expected: Any,
+    )
+
+    /** Creates a [RequestCase] for [query], with [CommonBuiltins] loaded */
+    internal fun requestCase(
+        id: String,
+        query: Struct,
+        expected: Any,
+    ) = RequestCase(id, createSolveRequest(query), expected)
 }

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.collections.rete.generic.set.NoArgsNode
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
@@ -66,52 +67,37 @@ class NoArgsNodeSpec :
             assertEquals(aRule, filledNoArgsNode.indexedElements.first())
         }
 
-        test("get-clause") {
-            ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
-                assertEquals(queryAndResult, filledNoArgsNode.get(queryAndResult).single())
-            }
+        withTests(nameFn = { "get-clause/${it.id}" }, ReteNodeUtils.noArgHeadedRuleCases) { case ->
+            assertEquals(case.clause, filledNoArgsNode.get(case.clause).single())
         }
 
-        test("remove-clause-with-zero-limit-does-nothing") {
-            ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
-                assertNoChangesInReteNode(filledNoArgsNode) { remove(queryAndResult, 0) }
-            }
+        withTests(
+            nameFn = { "remove-clause-with-zero-limit-does-nothing/${it.id}" },
+            ReteNodeUtils.noArgHeadedRuleCases,
+        ) { case ->
+            assertNoChangesInReteNode(filledNoArgsNode) { remove(case.clause, 0) }
         }
 
         test("remove-clause-from-empty-node-does-nothing") {
             assertNoChangesInReteNode(emptyNoArgsNode) { remove(aRule) }
         }
 
-        test("remove-clause-with-limit-works-as-expected") {
-            for (limit in 1..3) {
-                ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
-                    init() // because removal of side-effects is needed
-
-                    assertRemovedFromReteNode(
-                        filledNoArgsNode,
-                        listOf(queryAndResult),
-                    ) { remove(queryAndResult, limit) }
-                }
-            }
+        withTests(
+            nameFn = { (limit, case) -> "remove-clause-with-limit-works-as-expected/limit-$limit/${case.id}" },
+            (1..3).flatMap { limit -> ReteNodeUtils.noArgHeadedRuleCases.map { limit to it } },
+        ) { (limit, case) ->
+            assertRemovedFromReteNode(filledNoArgsNode, listOf(case.clause)) { remove(case.clause, limit) }
         }
 
-        test("remove-clause-with-negative-limit-removes-all-matching-rules") {
-            val negativeLimit = -1
-            ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
-                init() // because removal of side-effects is needed
-
-                assertRemovedFromReteNode(filledNoArgsNode, listOf(queryAndResult)) {
-                    remove(queryAndResult, negativeLimit)
-                }
-            }
+        withTests(
+            nameFn = { "remove-clause-with-negative-limit-removes-all-matching-rules/${it.id}" },
+            ReteNodeUtils.noArgHeadedRuleCases,
+        ) { case ->
+            assertRemovedFromReteNode(filledNoArgsNode, listOf(case.clause)) { remove(case.clause, -1) }
         }
 
-        test("remove-all-clause") {
-            ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
-                init() // because removal of side-effects is needed
-
-                assertRemovedFromReteNode(filledNoArgsNode, listOf(queryAndResult)) { removeAll(queryAndResult) }
-            }
+        withTests(nameFn = { "remove-all-clause/${it.id}" }, ReteNodeUtils.noArgHeadedRuleCases) { case ->
+            assertRemovedFromReteNode(filledNoArgsNode, listOf(case.clause)) { removeAll(case.clause) }
         }
 
         test("deep-copy-creates-independent-instance") {

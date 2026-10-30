@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.RuleImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.FactUtils
 import it.unibo.tuprolog.core.testutils.RuleUtils
 
@@ -14,26 +14,16 @@ import it.unibo.tuprolog.core.testutils.RuleUtils
  */
 class RuleSpec :
     FunSpec({
-        val correctInstances = RuleUtils.mixedRules.map { (head, body) -> RuleImpl(head, body) }
-
-        test("rule-of-with-only-head-provided-returns-a-fact") {
-            val correctInstances = FactUtils.mixedFacts.map { Fact.of(it) }
-            val toBeTested = FactUtils.mixedFacts.map { Rule.of(it) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of-head-only-is-fact/${it.id}" }, FactUtils.mixedFactCases) { case ->
+            assertEqualities(Fact.of(case.head), Rule.of(case.head))
         }
 
-        test("rule-of-with-head-and-true-body-provided-returns-a-fact") {
-            val correctInstances = FactUtils.mixedFacts.map { Fact.of(it) }
-            val toBeTested = FactUtils.mixedFacts.map { Rule.of(it, Truth.TRUE) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of-head-and-true-is-fact/${it.id}" }, FactUtils.mixedFactCases) { case ->
+            assertEqualities(Fact.of(case.head), Rule.of(case.head, Truth.TRUE))
         }
 
-        test("rule-of-with-other-arguments-returns-correct-rule") {
-            val toBeTested = RuleUtils.mixedRules.map { (head, body) -> Rule.of(head, body) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of-head-and-body/${it.id}" }, RuleUtils.mixedRuleCases) { case ->
+            assertEqualities(RuleImpl(case.head, case.body), Rule.of(case.head, case.body))
         }
 
         test("rule-of-passing-more-terms-creates-body-as-tuple") {

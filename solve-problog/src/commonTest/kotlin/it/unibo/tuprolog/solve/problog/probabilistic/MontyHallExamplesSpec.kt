@@ -3,13 +3,15 @@ package it.unibo.tuprolog.solve.problog.probabilistic
 import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
+import it.unibo.tuprolog.solve.problog.probabilistic.TestUtils.queriesOn
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 
 class MontyHallExamplesSpec :
     FunSpec({
         // https://dtai.cs.kuleuven.be/problog/tutorial/various/01_montyhall.html
-        test("monty-hall-puzzle") {
-            TestUtils.assertQueryWithSolutions(
+        queriesOn(
+            "monty-hall-puzzle",
+            {
                 """
                     1/3::prize(1) ; 1/3::prize(2) ; 1/3::prize(3). 
                     select_door(1).   
@@ -34,35 +36,40 @@ class MontyHallExamplesSpec :
                       \+ select_door(A),
                       prize(A),
                       \+ open_door(A).
-                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
-                listOf(
-                    QueryWithSolutions(
-                        "prize(X)".parseAsStruct(),
-                        listOf(
-                            ExpectedSolution("prize(1)".parseAsStruct(), 0.33333333),
-                            ExpectedSolution("prize(2)".parseAsStruct(), 0.33333333),
-                            ExpectedSolution("prize(3)".parseAsStruct(), 0.33333333),
-                        ),
-                    ),
-                    QueryWithSolutions(
-                        "select_door(X)".parseAsStruct(),
-                        listOf(ExpectedSolution("select_door(1)".parseAsStruct(), 1.0)),
-                    ),
-                    QueryWithSolutions(
-                        "win_keep".parseAsStruct(),
-                        listOf(ExpectedSolution("win_keep".parseAsStruct(), 0.33333333)),
-                    ),
-                    QueryWithSolutions(
-                        "win_switch".parseAsStruct(),
-                        listOf(ExpectedSolution("win_switch".parseAsStruct(), 0.66666667)),
+                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators)
+            },
+            listOf(
+                QueryCase(
+                    "prize-x",
+                    "prize(X)".parseAsStruct(),
+                    listOf(
+                        ExpectedSolution("prize(1)".parseAsStruct(), 0.33333333),
+                        ExpectedSolution("prize(2)".parseAsStruct(), 0.33333333),
+                        ExpectedSolution("prize(3)".parseAsStruct(), 0.33333333),
                     ),
                 ),
-            )
-        }
+                QueryCase(
+                    "select-door-x",
+                    "select_door(X)".parseAsStruct(),
+                    listOf(ExpectedSolution("select_door(1)".parseAsStruct(), 1.0)),
+                ),
+                QueryCase(
+                    "win-keep",
+                    "win_keep".parseAsStruct(),
+                    listOf(ExpectedSolution("win_keep".parseAsStruct(), 0.33333333)),
+                ),
+                QueryCase(
+                    "win-switch",
+                    "win_switch".parseAsStruct(),
+                    listOf(ExpectedSolution("win_switch".parseAsStruct(), 0.66666667)),
+                ),
+            ),
+        )
 
         // https://dtai.cs.kuleuven.be/problog/tutorial/various/01_montyhall.html
-        test("monty-hall-puzzle2") {
-            TestUtils.assertQueryWithSolutions(
+        queriesOn(
+            "monty-hall-puzzle2",
+            {
                 """
                    1/3::picked_car.
                     picked_goat:- not(picked_car).
@@ -75,17 +82,19 @@ class MontyHallExamplesSpec :
                     revealed_goat:- revealed_goat1 ; revealed_goat2.        
                     switched_gets_car:-picked_goat, revealed_goat.
                     switched_gets_goat:- not(switched_gets_car).
-                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
-                listOf(
-                    QueryWithSolutions(
-                        "switched_gets_goat".parseAsStruct(),
-                        listOf(ExpectedSolution("switched_gets_goat".parseAsStruct(), 0.33333333)),
-                    ),
-                    QueryWithSolutions(
-                        "switched_gets_car".parseAsStruct(),
-                        listOf(ExpectedSolution("switched_gets_car".parseAsStruct(), 0.66666667)),
-                    ),
+                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators)
+            },
+            listOf(
+                QueryCase(
+                    "switched-gets-goat",
+                    "switched_gets_goat".parseAsStruct(),
+                    listOf(ExpectedSolution("switched_gets_goat".parseAsStruct(), 0.33333333)),
                 ),
-            )
-        }
+                QueryCase(
+                    "switched-gets-car",
+                    "switched_gets_car".parseAsStruct(),
+                    listOf(ExpectedSolution("switched_gets_car".parseAsStruct(), 0.66666667)),
+                ),
+            ),
+        )
     })

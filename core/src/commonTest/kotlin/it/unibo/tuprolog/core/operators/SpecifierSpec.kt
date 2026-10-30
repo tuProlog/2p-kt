@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.operators
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
@@ -13,13 +14,10 @@ import it.unibo.tuprolog.core.operators.Specifier.XFY
 import it.unibo.tuprolog.core.operators.Specifier.YF
 import it.unibo.tuprolog.core.operators.Specifier.YFX
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for [Specifier]
@@ -36,33 +34,18 @@ class SpecifierSpec :
 
         val allSpecifiers = prefixSpecifiers + postfixSpecifiers + infixSpecifiers
 
-        test("is-prefix") {
-            prefixSpecifiers.forEach { assertTrue { it.isPrefix } }
+        fun specifiers(
+            property: String,
+            test: (Specifier) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.name.lowercase()}" }, allSpecifiers.toList()) { test(it) }
 
-            postfixSpecifiers.forEach { assertFalse { it.isPrefix } }
-            infixSpecifiers.forEach { assertFalse { it.isPrefix } }
-        }
+        specifiers("is-prefix") { assertEquals(it in prefixSpecifiers, it.isPrefix) }
 
-        test("is-postfix") {
-            postfixSpecifiers.forEach { assertTrue { it.isPostfix } }
+        specifiers("is-postfix") { assertEquals(it in postfixSpecifiers, it.isPostfix) }
 
-            prefixSpecifiers.forEach { assertFalse { it.isPostfix } }
-            infixSpecifiers.forEach { assertFalse { it.isPostfix } }
-        }
+        specifiers("is-infix") { assertEquals(it in infixSpecifiers, it.isInfix) }
 
-        test("is-infix") {
-            infixSpecifiers.forEach { assertTrue { it.isInfix } }
-
-            prefixSpecifiers.forEach { assertFalse { it.isInfix } }
-            postfixSpecifiers.forEach { assertFalse { it.isInfix } }
-        }
-
-        test("to-term") {
-            val correctTerms = allSpecifiers.map { Atom.of(it.name.lowercase()) }
-            val toBeTested = allSpecifiers.map { it.toTerm() }
-
-            onCorrespondingItems(correctTerms, toBeTested, ::assertEqualities)
-        }
+        specifiers("to-term") { assertEqualities(Atom.of(it.name.lowercase()), it.toTerm()) }
 
         test("prefix-set") {
             assertEquals(prefixSpecifiers, Specifier.PREFIX)

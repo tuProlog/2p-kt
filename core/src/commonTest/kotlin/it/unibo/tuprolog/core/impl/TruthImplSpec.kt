@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
@@ -31,11 +32,11 @@ class TruthImplSpec :
             assertTrue(Truth.FAIL.isFail)
         }
 
-        test("truth-fresh-copy-should-return-the-instance-itself") {
-            truthInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
+        withTests(nameFn = { "fresh-copy-is-itself/${it.value}" }, truthInstances) { truth ->
+            ConstantUtils.assertFreshCopyIsItself(truth)
         }
 
-        test("truth-fresh-copy-with-scope-should-return-the-instance-itself") {
-            truthInstances.forEach(ConstantUtils::assertFreshCopyWithScopeIsItself)
+        withTests(nameFn = { "fresh-copy-with-scope-is-itself/${it.value}" }, truthInstances) { truth ->
+            ConstantUtils.assertFreshCopyWithScopeIsItself(truth)
         }
     })

@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 
@@ -13,52 +14,63 @@ import it.unibo.tuprolog.core.Var
  * @author Enrico
  */
 internal object DirectiveUtils {
+    /** A named [Directive] body, for parameterized tests */
+    internal data class DirectiveCase(
+        val id: String,
+        val body: Term,
+    )
+
+    private fun bodiesOf(rules: List<RuleUtils.RuleCase>) = rules.map { DirectiveCase("body-of-${it.id}", it.body) }
+
     /** Contains ground Directives (aka without variables), well-formed */
-    val groundWellFormedDirectives by lazy {
+    val groundWellFormedDirectiveCases by lazy {
         listOf(
-            Struct.of("assert", Struct.of("son", Atom.of("jack"), Atom.of("bob"))),
-            Tuple.wrapIfNeeded(
-                Struct.of("assertZ", Struct.of("money", Integer.of(50))),
-                Struct.of("assertA", Struct.of("debt", Integer.of(30))),
+            DirectiveCase("assert", Struct.of("assert", Struct.of("son", Atom.of("jack"), Atom.of("bob")))),
+            DirectiveCase(
+                "tuple-of-asserts",
+                Tuple.wrapIfNeeded(
+                    Struct.of("assertZ", Struct.of("money", Integer.of(50))),
+                    Struct.of("assertA", Struct.of("debt", Integer.of(30))),
+                ),
             ),
-        ) + RuleUtils.groundWellFormedRules.map { (_, body) -> body }
+        ) + bodiesOf(RuleUtils.groundWellFormedRuleCases)
     }
 
     /** Contains non ground Directives, with variables and well-formed */
-    val nonGroundWellFormedDirectives by lazy {
+    val nonGroundWellFormedDirectiveCases by lazy {
         listOf(
-            Struct.of("retract", Struct.of("f", Var.anonymous())),
-            Struct.of("retractAll", Struct.of("x", Var.of("X"))),
-        ) + RuleUtils.nonGroundWellFormedRules.map { (_, body) -> body }.filterNot { it.isGround }
+            DirectiveCase("retract", Struct.of("retract", Struct.of("f", Var.anonymous()))),
+            DirectiveCase("retract-all", Struct.of("retractAll", Struct.of("x", Var.of("X")))),
+        ) + bodiesOf(RuleUtils.nonGroundWellFormedRuleCases).filterNot { it.body.isGround }
     }
 
     /** Contains ground Directives (aka without variables), not well-formed */
-    val groundNonWellFormedDirectives by lazy {
-        RuleUtils.groundNonWellFormedRules.map { (_, body) -> body }
-    }
+    val groundNonWellFormedDirectiveCases by lazy { bodiesOf(RuleUtils.groundNonWellFormedRuleCases) }
 
     /** Contains non ground Directives, with variables and not well-formed */
-    val nonGroundNonWellFormedDirectives by lazy {
-        RuleUtils.nonGroundNonWellFormedRules.map { (_, body) -> body }.filterNot { it.isGround }
+    val nonGroundNonWellFormedDirectiveCases by lazy {
+        bodiesOf(RuleUtils.nonGroundNonWellFormedRuleCases).filterNot { it.body.isGround }
     }
 
     /** Contains well-formed Directives, ground and not */
-    val wellFormedDirectives by lazy { groundWellFormedDirectives + nonGroundWellFormedDirectives }
+    val wellFormedDirectiveCases by lazy { groundWellFormedDirectiveCases + nonGroundWellFormedDirectiveCases }
 
     /** Contains not well-formed Directives, ground and not */
-    val nonWellFormedDirectives by lazy { groundNonWellFormedDirectives + nonGroundNonWellFormedDirectives }
+    val nonWellFormedDirectiveCases by lazy {
+        groundNonWellFormedDirectiveCases + nonGroundNonWellFormedDirectiveCases
+    }
 
     /** Contains ground Directives (aka without variables), well-formed and not */
-    val groundDirectives by lazy { groundWellFormedDirectives + groundNonWellFormedDirectives }
+    val groundDirectiveCases by lazy { groundWellFormedDirectiveCases + groundNonWellFormedDirectiveCases }
 
     /** Contains non ground Directives, with variables, well-formed and not*/
-    val nonGroundDirectives by lazy { nonGroundWellFormedDirectives + nonGroundNonWellFormedDirectives }
+    val nonGroundDirectiveCases by lazy { nonGroundWellFormedDirectiveCases + nonGroundNonWellFormedDirectiveCases }
 
-    /** Contains mixed [groundDirectives] and [nonGroundDirectives] */
-    val mixedDirectives by lazy {
-        groundWellFormedDirectives +
-            groundNonWellFormedDirectives +
-            nonGroundWellFormedDirectives +
-            nonGroundNonWellFormedDirectives
+    /** Contains mixed [groundDirectiveCases] and [nonGroundDirectiveCases] */
+    val mixedDirectiveCases by lazy {
+        groundWellFormedDirectiveCases +
+            groundNonWellFormedDirectiveCases +
+            nonGroundWellFormedDirectiveCases +
+            nonGroundNonWellFormedDirectiveCases
     }
 }

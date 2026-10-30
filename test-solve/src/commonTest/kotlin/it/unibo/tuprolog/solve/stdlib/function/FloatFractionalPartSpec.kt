@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.function
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FloatFunctionUtils
@@ -18,13 +19,7 @@ class FloatFractionalPartSpec :
             assertEquals(Signature("float_fractional_part", 1), FloatFractionalPart.signature)
         }
 
-        test("computation-correct") {
-            FloatFunctionUtils.numbersToFloatParts.forEach { (input, parts) ->
-                val (_, fractionalPart) = parts
-                assertEquals(
-                    fractionalPart,
-                    FloatFractionalPart.computeOf(Numeric.of(input)).castToReal().value,
-                )
-            }
+        withTests(nameFn = { "computation-correct/${it.id}" }, FloatFunctionUtils.floatPartsCases) { case ->
+            assertEquals(case.fractionalPart, FloatFractionalPart.computeOf(Numeric.of(case.input)).castToReal().value)
         }
     })

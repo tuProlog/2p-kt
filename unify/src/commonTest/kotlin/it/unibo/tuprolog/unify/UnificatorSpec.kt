@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.unify
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
@@ -58,21 +59,17 @@ class UnificatorSpec :
             assertEquals(Substitution.failed(), Unificator.strict().mgu(Integer.of(1), Real.of(1.0)))
         }
 
-        test("mgu-with-function-works-as-expected") {
-            val toTestUnification = UnificatorUtils.successfulUnifications + UnificatorUtils.failedUnifications
+        val examples = UnificatorUtils.successfulUnifications + UnificatorUtils.failedUnifications
 
-            assertMguCorrect(toTestUnification) { term1, term2 -> term1 mguWith term2 }
+        withTests(nameFn = { "mgu-with/${it.id}" }, examples) { case ->
+            assertMguCorrect(case) { term1, term2 -> term1 mguWith term2 }
         }
 
-        test("matches-function-works-as-expected") {
-            val toTestUnification = UnificatorUtils.successfulUnifications + UnificatorUtils.failedUnifications
-
-            assertMatchCorrect(toTestUnification) { term1, term2 -> term1 matches term2 }
+        withTests(nameFn = { "matches/${it.id}" }, examples) { case ->
+            assertMatchCorrect(case) { term1, term2 -> term1 matches term2 }
         }
 
-        test("unify-with-function-works-as-expected") {
-            val toTestUnification = UnificatorUtils.successfulUnifications + UnificatorUtils.failedUnifications
-
-            assertUnifiedTermCorrect(toTestUnification) { term1, term2 -> term1 unifyWith term2 }
+        withTests(nameFn = { "unify-with/${it.id}" }, examples) { case ->
+            assertUnifiedTermCorrect(case) { term1, term2 -> term1 unifyWith term2 }
         }
     })

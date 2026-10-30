@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.exception.error
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
@@ -14,19 +15,19 @@ import kotlin.test.assertNull
  */
 class EvaluationErrorTypeSpec :
     FunSpec({
-        test("evaluation-error-type-enum-to-atom-works-as-expected") {
-            EvaluationError.Type.values().forEach {
-                assertEquals(Atom.of(it.toString().lowercase()), it.toTerm())
-            }
+        val types = EvaluationError.Type.entries
+
+        withTests(nameFn = { "to-term/${it.id}" }, types) { type ->
+            assertEquals(Atom.of(type.toString().lowercase()), type.toTerm())
         }
 
-        test("evaluation-error-type-enum-from-term-work-for-correct-terms") {
+        test("from-term/case-insensitive-name") {
             assertEquals(EvaluationError.Type.INT_OVERFLOW, EvaluationError.Type.fromTerm(Atom.of("int_overflow"))!!)
             assertEquals(EvaluationError.Type.INT_OVERFLOW, EvaluationError.Type.fromTerm(Atom.of("INT_OVERFLOW"))!!)
+        }
 
-            EvaluationError.Type.values().forEach {
-                assertEquals(it, EvaluationError.Type.fromTerm(it.toTerm()))
-            }
+        withTests(nameFn = { "from-term/${it.id}" }, types) { type ->
+            assertEquals(type, EvaluationError.Type.fromTerm(type.toTerm()))
         }
 
         test("evaluation-error-type-enum-from-term-complains-for-incorrect-terms") {
@@ -35,3 +36,6 @@ class EvaluationErrorTypeSpec :
             assertNull(EvaluationError.Type.fromTerm(Atom.of("ciao")))
         }
     })
+
+private val EvaluationError.Type.id: String
+    get() = name.lowercase().replace('_', '-')

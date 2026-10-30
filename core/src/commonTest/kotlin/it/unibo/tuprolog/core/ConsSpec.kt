@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.ConsImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConsUtils
 
 /**
@@ -13,11 +13,8 @@ import it.unibo.tuprolog.core.testutils.ConsUtils
  */
 class ConsSpec :
     FunSpec({
-        test("cons-of-works-as-expected") {
-            val correctInstances = ConsUtils.mixedConsInstances(::ConsImpl)
-            val toBeTested = ConsUtils.mixedConsInstances { head, tail -> Cons.of(head, tail) }
-
-            onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+        withTests(nameFn = { "of/${it.id}" }, ConsUtils.mixedConsCases) { case ->
+            assertEqualities(case.cons(::ConsImpl), case.cons { head, tail -> Cons.of(head, tail) })
         }
 
         test("cons-singleton-works-as-expected") {

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.exception
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.aCause
@@ -43,11 +44,6 @@ class LogicErrorSpec :
 
                 override fun pushContext(newContext: ExecutionContext): LogicError =
                     of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
-            }
-
-        val logicErrorTypeToInstanceMap =
-            LogicErrorUtils.recognizedSubTypes.map { (typeParam, _) ->
-                typeParam to LogicError.of(aMessage, aCause, aContext, typeParam, someExtraData)
             }
 
         test("holds-inserted-data") {
@@ -139,20 +135,20 @@ class LogicErrorSpec :
             )
         }
 
-        test("update-context-returns-exception-with-same-contents-but-updated-context") {
-            val allPrologErrorInstances = logicErrorTypeToInstanceMap + (aType to underTestPrologError)
+        test("update-context-keeps-contents/custom") {
+            val toBeTested = underTestPrologError.updateContext(aDifferentContext)
 
-            allPrologErrorInstances.forEach { (type, prologError) ->
-                val toBeTested = prologError.updateContext(aDifferentContext)
-
-                assertEqualPrologErrorData(aMessage, aCause, aDifferentContext, type, someExtraData, toBeTested)
-            }
+            assertEqualPrologErrorData(aMessage, aCause, aDifferentContext, aType, someExtraData, toBeTested)
         }
 
-        test("of-creates-correct-sub-instance-if-detected") {
-            LogicErrorUtils.recognizedSubTypes.forEach { (typeParam, expectedType) ->
-                val actualError = LogicError.of(context = aContext, type = typeParam)
-                assertEquals(expectedType, actualError::class)
-            }
+        withTests(nameFn = { "update-context-keeps-contents/${it.id}" }, LogicErrorUtils.recognizedSubTypes) { case ->
+            val toBeTested =
+                LogicError.of(aMessage, aCause, aContext, case.type, someExtraData).updateContext(aDifferentContext)
+
+            assertEqualPrologErrorData(aMessage, aCause, aDifferentContext, case.type, someExtraData, toBeTested)
+        }
+
+        withTests(nameFn = { "of-creates-sub-instance/${it.id}" }, LogicErrorUtils.recognizedSubTypes) { case ->
+            assertEquals(case.expectedClass, LogicError.of(context = aContext, type = case.type)::class)
         }
     })

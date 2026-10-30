@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.unify
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Empty
@@ -28,15 +29,16 @@ import it.unibo.tuprolog.core.List as LogicList
  */
 class EquationSpec :
     FunSpec({
-        val oneInstancePerType: List<Equation> by lazy {
+        val oneInstancePerType =
             listOf(
-                Equation.Identity(Atom.of("a"), Atom.of("a")),
-                Equation.LeftAssignment(Var.of("X"), Atom.of("a")),
-                Equation.RightAssignment(Atom.of("a"), Var.of("X")),
-                Equation.Comparison(Struct.of("f", Var.of("X")), Struct.of("f", Var.of("Y"))),
-                Equation.Contradiction(Atom.of("a"), Atom.of("b")),
+                EquationTypeCase("identity") { Equation.Identity(Atom.of("a"), Atom.of("a")) },
+                EquationTypeCase("left-assignment") { Equation.LeftAssignment(Var.of("X"), Atom.of("a")) },
+                EquationTypeCase("right-assignment") { Equation.RightAssignment(Atom.of("a"), Var.of("X")) },
+                EquationTypeCase("comparison") {
+                    Equation.Comparison(Struct.of("f", Var.of("X")), Struct.of("f", Var.of("Y")))
+                },
+                EquationTypeCase("contradiction") { Equation.Contradiction(Atom.of("a"), Atom.of("b")) },
             )
-        }
 
         fun assertOnlyDiscriminator(
             equation: Equation,
@@ -150,12 +152,11 @@ class EquationSpec :
 
         // endregion
         // region clone
-        test("clone-without-arguments-returns-an-equal-instance-of-the-same-type") {
-            oneInstancePerType.forEach { equation ->
-                val cloned = equation.clone()
-                assertEquals(equation, cloned)
-                assertEquals(equation::class, cloned::class)
-            }
+        withTests(nameFn = { "clone-without-arguments/${it.id}" }, oneInstancePerType) { case ->
+            val equation = case.equation()
+            val cloned = equation.clone()
+            assertEquals(equation, cloned)
+            assertEquals(equation::class, cloned::class)
         }
 
         test("clone-with-new-arguments-replaces-lhs-and-rhs") {
@@ -184,10 +185,9 @@ class EquationSpec :
         }
 
         // endregion
-        test("to-contradiction-converts-any-equation-keeping-lhs-and-rhs") {
-            oneInstancePerType.forEach { equation ->
-                assertEquals(Equation.Contradiction(equation.lhs, equation.rhs), equation.toContradiction())
-            }
+        withTests(nameFn = { "to-contradiction/${it.id}" }, oneInstancePerType) { case ->
+            val equation = case.equation()
+            assertEquals(Equation.Contradiction(equation.lhs, equation.rhs), equation.toContradiction())
         }
 
         // region toAssignmentPair
@@ -251,10 +251,9 @@ class EquationSpec :
         }
 
         // endregion
-        test("to-term-wraps-lhs-and-rhs-in-equals-struct") {
-            oneInstancePerType.forEach { equation ->
-                assertEquals(Struct.of("=", equation.lhs, equation.rhs), equation.toTerm())
-            }
+        withTests(nameFn = { "to-term/${it.id}" }, oneInstancePerType) { case ->
+            val equation = case.equation()
+            assertEquals(Struct.of("=", equation.lhs, equation.rhs), equation.toTerm())
         }
 
         // region toPair
@@ -324,10 +323,9 @@ class EquationSpec :
             assertEquals(Equation.LeftAssignment(y, x), swapped)
         }
 
-        test("double-swap-returns-the-original-equation-for-every-type") {
-            oneInstancePerType.forEach { equation ->
-                assertEquals(equation, equation.swap().swap())
-            }
+        withTests(nameFn = { "double-swap/${it.id}" }, oneInstancePerType) { case ->
+            val equation = case.equation()
+            assertEquals(equation, equation.swap().swap())
         }
 
         // endregion
@@ -566,114 +564,120 @@ class EquationSpec :
 
         // endregion
         // region bulk checks against EquationUtils fixtures
-        test("of-classifies-all-shallow-fixtures-correctly") {
+        withTests(
+            nameFn = { "of-classifies-shallow-fixtures/${it.id}" },
+            EquationUtils.shallowIdentityEquations,
+        ) { case ->
+            assertEquals(Equation.Identity(case.lhs, case.rhs), Equation.of(case.pair))
+        }
+
+        withTests(
+            nameFn = { "of-classifies-shallow-fixtures/${it.id}" },
+            EquationUtils.assignmentEquationsShuffled,
+        ) { case ->
             val expected =
-                EquationUtils.shallowIdentityEquations.map { (lhs, rhs) -> Equation.Identity(lhs, rhs) } +
-                    EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) ->
-                        if (lhs.isVar) {
-                            Equation.LeftAssignment(lhs.castToVar(), rhs)
-                        } else {
-                            Equation.RightAssignment(lhs, rhs.castToVar())
-                        }
-                    } +
-                    EquationUtils.comparisonEquations.map { (lhs, rhs) -> Equation.Comparison(lhs, rhs) } +
-                    EquationUtils.shallowContradictionEquations.map { (lhs, rhs) -> Equation.Contradiction(lhs, rhs) }
-
-            assertEquals(expected, EquationUtils.mixedShuffledShallowEquations.map { Equation.of(it) })
-        }
-
-        test("of-preserves-assignment-variable-term-mapping-regardless-of-orientation") {
-            val expected = EquationUtils.assignmentEquations.map { Equation.of(it).toAssignmentPair() }
-            val actual = EquationUtils.assignmentEquationsShuffled.map { Equation.of(it).toAssignmentPair() }
-
-            assertEquals(expected, actual)
-        }
-
-        test("all-of-classifies-all-fixtures-correctly") {
-            EquationUtils.allIdentityEquations.map { Equation.allOf(it) }.forEach(::assertAllIdentities)
-
-            EquationUtils.assignmentEquationsShuffled.map { Equation.allOf(it) }.forEach { eqSequence ->
-                assertAnyAssignment(eqSequence)
-                assertNoComparisons(eqSequence)
-            }
-
-            EquationUtils.comparisonEquations.map { Equation.allOf(it) }.forEach(::assertNoComparisons)
-
-            EquationUtils.allContradictionEquations.map { Equation.allOf(it) }.forEach { eqSequence ->
-                assertAnyContradiction(eqSequence)
-                assertNoComparisons(eqSequence)
-            }
-        }
-
-        test("all-of-produces-one-equation-per-leaf-for-identity-fixtures") {
-            val expected = EquationUtils.allIdentityEquations.sumOf { (lhs, _) -> countDeepGeneratedEquations(lhs) }
-            val actual = EquationUtils.allIdentityEquations.sumOf { Equation.allOf(it).count() }
-
-            assertEquals(expected, actual)
-        }
-
-        test("all-of-preserves-assignment-variable-term-mapping-regardless-of-orientation") {
-            val expected =
-                EquationUtils.assignmentEquations.map { pair ->
-                    Equation.allOf(pair).map { it.toAssignmentPair() }.toList()
+                if (case.lhs.isVar) {
+                    Equation.LeftAssignment(case.lhs.castToVar(), case.rhs)
+                } else {
+                    Equation.RightAssignment(case.lhs, case.rhs.castToVar())
                 }
-            val actual =
-                EquationUtils.assignmentEquationsShuffled.map { pair ->
-                    Equation.allOf(pair).map { it.toAssignmentPair() }.toList()
-                }
-
-            assertEquals(expected, actual)
+            assertEquals(expected, Equation.of(case.pair))
         }
 
-        test("all-of-never-exposes-bare-comparison-across-all-fixtures") {
-            EquationUtils.mixedShuffledAllEquations.map { Equation.allOf(it) }.forEach(::assertNoComparisons)
+        withTests(nameFn = { "of-classifies-shallow-fixtures/${it.id}" }, EquationUtils.comparisonEquations) { case ->
+            assertEquals(Equation.Comparison(case.lhs, case.rhs), Equation.of(case.pair))
         }
 
-        test("swap-preserves-assignment-variable-term-mapping-for-non-var-to-var-assignments") {
-            val nonVarToVarAssignments =
-                EquationUtils.assignmentEquations.filterNot { (lhs, rhs) ->
-                    lhs.isVar && rhs.isVar
-                }
-
-            val expected = nonVarToVarAssignments.map { Equation.of(it).toAssignmentPair() }
-            val actual = nonVarToVarAssignments.map { Equation.of(it).swap().toAssignmentPair() }
-
-            assertEquals(expected, actual)
+        withTests(
+            nameFn = { "of-classifies-shallow-fixtures/${it.id}" },
+            EquationUtils.shallowContradictionEquations,
+        ) { case ->
+            assertEquals(Equation.Contradiction(case.lhs, case.rhs), Equation.of(case.pair))
         }
 
-        test("swap-can-invert-identity-comparison-and-contradiction-fixtures") {
-            val testableItems =
-                EquationUtils.allIdentityEquations + EquationUtils.allContradictionEquations +
-                    EquationUtils.comparisonEquations
-
-            val expected = testableItems.map { (lhs, rhs) -> rhs to lhs }.map { Equation.of(it) }
-            val actual = testableItems.map { Equation.of(it) }.map(Equation::swap)
-
-            assertEquals(expected, actual)
+        withTests(
+            nameFn = { "of-preserves-assignment-mapping/${it.id}" },
+            EquationUtils.assignmentEquationsShuffled,
+        ) { case ->
+            val original = if (case.lhs.isVar) case else case.swapped()
+            assertEquals(Equation.of(original.pair).toAssignmentPair(), Equation.of(case.pair).toAssignmentPair())
         }
 
-        test("of-uses-provided-equality-checker-across-all-fixtures") {
-            assertNoIdentities(EquationUtils.mixedAllEquations.map { Equation.of(it) { _, _ -> false } }.asSequence())
+        withTests(nameFn = { "all-of-classifies-fixtures/${it.id}" }, EquationUtils.allIdentityEquations) { case ->
+            assertAllIdentities(Equation.allOf(case.pair))
         }
 
-        test("all-of-uses-provided-equality-checker-across-all-fixtures") {
-            assertNoIdentities(
-                EquationUtils.mixedAllEquations
-                    .flatMap {
-                        Equation
-                            .allOf(
-                                it,
-                            ) { _, _ -> false }
-                            .asIterable()
-                    }.asSequence(),
+        withTests(
+            nameFn = { "all-of-classifies-fixtures/${it.id}" },
+            EquationUtils.assignmentEquationsShuffled,
+        ) { case ->
+            val eqSequence = Equation.allOf(case.pair)
+            assertAnyAssignment(eqSequence)
+            assertNoComparisons(eqSequence)
+        }
+
+        withTests(nameFn = { "all-of-classifies-fixtures/${it.id}" }, EquationUtils.comparisonEquations) { case ->
+            assertNoComparisons(Equation.allOf(case.pair))
+        }
+
+        withTests(nameFn = { "all-of-classifies-fixtures/${it.id}" }, EquationUtils.allContradictionEquations) { case ->
+            val eqSequence = Equation.allOf(case.pair)
+            assertAnyContradiction(eqSequence)
+            assertNoComparisons(eqSequence)
+        }
+
+        withTests(
+            nameFn = { "all-of-produces-one-equation-per-leaf/${it.id}" },
+            EquationUtils.allIdentityEquations,
+        ) { case ->
+            assertEquals(countDeepGeneratedEquations(case.lhs), Equation.allOf(case.pair).count())
+        }
+
+        withTests(
+            nameFn = { "all-of-preserves-assignment-mapping/${it.id}" },
+            EquationUtils.assignmentEquationsShuffled,
+        ) { case ->
+            val original = if (case.lhs.isVar) case else case.swapped()
+            assertEquals(
+                Equation.allOf(original.pair).map { it.toAssignmentPair() }.toList(),
+                Equation.allOf(case.pair).map { it.toAssignmentPair() }.toList(),
             )
         }
 
-        test("equation-to-substitution-matches-substitution-built-from-raw-pairs") {
-            val expected = EquationUtils.assignmentEquations.map { Substitution.of(it) }
-            val actual = EquationUtils.assignmentEquations.map { Equation.of(it).toSubstitution() }
+        withTests(nameFn = {
+            "all-of-never-exposes-bare-comparison/${it.id}"
+        }, EquationUtils.mixedShuffledAllEquations) { case ->
+            assertNoComparisons(Equation.allOf(case.pair))
+        }
 
-            assertEquals(expected, actual)
+        withTests(
+            nameFn = { "swap-preserves-assignment-mapping/${it.id}" },
+            EquationUtils.assignmentEquations.filterNot { it.lhs.isVar && it.rhs.isVar },
+        ) { case ->
+            assertEquals(Equation.of(case.pair).toAssignmentPair(), Equation.of(case.pair).swap().toAssignmentPair())
+        }
+
+        withTests(
+            nameFn = { "swap-inverts-fixtures/${it.id}" },
+            EquationUtils.allIdentityEquations + EquationUtils.allContradictionEquations +
+                EquationUtils.comparisonEquations,
+        ) { case ->
+            assertEquals(Equation.of(case.rhs to case.lhs), Equation.of(case.pair).swap())
+        }
+
+        withTests(nameFn = { "of-uses-provided-equality-checker/${it.id}" }, EquationUtils.mixedAllEquations) { case ->
+            assertNoIdentities(sequenceOf(Equation.of(case.pair) { _, _ -> false }))
+        }
+
+        withTests(
+            nameFn = { "all-of-uses-provided-equality-checker/${it.id}" },
+            EquationUtils.mixedAllEquations,
+        ) { case ->
+            assertNoIdentities(Equation.allOf(case.pair) { _, _ -> false })
+        }
+
+        withTests(nameFn = { "to-substitution/${it.id}" }, EquationUtils.assignmentEquations) { case ->
+            assertEquals(Substitution.of(case.pair), Equation.of(case.pair).toSubstitution())
         }
 
         // endregion
@@ -686,15 +690,20 @@ class EquationSpec :
         }
 
         test("iterable-of-equations-to-substitution-merges-all-assignments") {
-            val equations = EquationUtils.assignmentEquations.map { Equation.of(it) }
-            assertEquals(Substitution.of(EquationUtils.assignmentEquations), equations.toSubstitution())
+            val pairs = EquationUtils.assignmentEquations.map { it.pair }
+            assertEquals(Substitution.of(pairs), pairs.map { Equation.of(it) }.toSubstitution())
         }
 
         test("substitution-to-equations-always-produces-left-assignments") {
-            val substitution = Substitution.of(EquationUtils.assignmentEquations)
-            val equations = substitution.toEquations()
+            val pairs = EquationUtils.assignmentEquations.map { it.pair }
+            val equations = Substitution.of(pairs).toEquations()
 
             assertTrue(equations.all { it.isLeftAssignment })
-            assertEquals(EquationUtils.assignmentEquations.map { Equation.of(it) }, equations)
+            assertEquals(pairs.map { Equation.of(it) }, equations)
         }
     })
+
+private class EquationTypeCase(
+    val id: String,
+    val equation: () -> Equation,
+)

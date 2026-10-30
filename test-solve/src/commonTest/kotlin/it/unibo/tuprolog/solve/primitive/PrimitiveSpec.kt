@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve.primitive
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.createPrimitiveRequest
 import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.defaultPrimitiveResult
 import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.primitive
-import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.allSignatures
-import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.wrapperToMatchingSignatureRequest
-import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.wrapperToNotMatchingSignatureRequest
+import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.notMatchingCases
+import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.withMatchingCases
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -17,36 +17,13 @@ import kotlin.test.assertFailsWith
  */
 class PrimitiveSpec :
     FunSpec({
-        test("primitive-of-returns-primitive-behaving-exactly-as-provided-one") {
-            wrapperToMatchingSignatureRequest(
-                Primitive.Companion::enforcingSignature,
-                primitive,
-                ::createPrimitiveRequest,
-            ).zip(allSignatures)
-                .forEach { (primitiveToGoodRequests, primitiveSignature) ->
-                    val (checkedPrimitive, goodRequests) = primitiveToGoodRequests
-                    goodRequests.forEach {
-                        if (primitiveSignature.vararg) return@test
-                        assertEquals(defaultPrimitiveResult, checkedPrimitive.solve(it))
-                    }
-                }
-            // TODO delete above test and enable the code below after solving TODO in "Signature"
-            //        wrapperToMatchingSignatureRequest(::primitiveOf, primitive, ::createRequest).forEach { (checkedPrimitive, goodRequests) ->
-            //            goodRequests.forEach {
-            //                assertEquals(defaultPrimitiveResult, checkedPrimitive(it))
-            //            }
-            //        }
+        withMatchingCases("enforcing-signature/accepts") { case ->
+            val checkedPrimitive = Primitive.enforcingSignature(case.signature, primitive)
+            assertEquals(defaultPrimitiveResult, checkedPrimitive.solve(case.request(::createPrimitiveRequest)))
         }
 
-        test("primitive-of-complains-if-different-request-signature-is-detected") {
-            wrapperToNotMatchingSignatureRequest(
-                Primitive.Companion::enforcingSignature,
-                primitive,
-                ::createPrimitiveRequest,
-            ).forEach { (checkedPrimitive, badRequests) ->
-                badRequests.forEach {
-                    assertFailsWith<IllegalArgumentException> { checkedPrimitive.solve(it) }
-                }
-            }
+        withTests(nameFn = { "enforcing-signature/rejects/${it.id}" }, notMatchingCases) { case ->
+            val checkedPrimitive = Primitive.enforcingSignature(case.signature, primitive)
+            assertFailsWith<IllegalArgumentException> { checkedPrimitive.solve(case.request(::createPrimitiveRequest)) }
         }
     })

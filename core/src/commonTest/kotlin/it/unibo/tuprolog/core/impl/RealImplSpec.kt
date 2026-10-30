@@ -3,12 +3,12 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
@@ -25,39 +25,18 @@ import kotlin.test.assertTrue
  */
 class RealImplSpec :
     FunSpec({
-        val realInstances = RealUtils.bigDecimals.map(::RealImpl)
+        fun reals(
+            property: String,
+            test: (RealUtils.RealCase, Real) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, RealUtils.realCases) { test(it, RealImpl(it.value)) }
 
-        test("correct-value") {
-            onCorrespondingItems(RealUtils.bigDecimals, realInstances.map { it.value }) { expectedValue, realValue ->
-                assertEquals(expectedValue, realValue)
-            }
-        }
+        reals("value") { case, real -> assertEquals(case.value, real.value) }
 
-        test("correct-decimal-value") {
-            onCorrespondingItems(
-                RealUtils.bigDecimals,
-                realInstances.map { it.decimalValue },
-            ) { expectedValue, realDecimalValue -> assertEquals(expectedValue, realDecimalValue) }
-        }
+        reals("decimal-value") { case, real -> assertEquals(case.value, real.decimalValue) }
 
-        test("correct-int-value") {
-            val expectedIntegers = RealUtils.bigDecimals.map { it.toBigInteger() }
+        reals("int-value") { case, real -> assertEquals(case.value.toBigInteger(), real.intValue) }
 
-            onCorrespondingItems(expectedIntegers, realInstances.map { it.intValue }) { expectedValue, realIntValue ->
-                assertEquals(expectedValue, realIntValue)
-            }
-        }
-
-        test("correct-to-string") {
-            val expectedToString = RealUtils.bigDecimals.map { Real.toStringEnsuringDecimal(it) }
-
-            onCorrespondingItems(
-                expectedToString,
-                realInstances.map { it.toString() },
-            ) { expectedString, realToString ->
-                assertEquals(expectedString, realToString)
-            }
-        }
+        reals("to-string") { case, real -> assertEquals(Real.toStringEnsuringDecimal(case.value), real.toString()) }
 
         test("compare-to-works-as-expected") {
             val oneDotOne = RealImpl(BigDecimal.of(1.1))
@@ -74,9 +53,7 @@ class RealImplSpec :
             assertFalse(oneDotOne.compareValueTo(oneDotTwentyTwo) > 0)
         }
 
-        test("is-properties-and-types") {
-            realInstances.forEach(TermTypeAssertionUtils::assertIsReal)
-        }
+        reals("type-checks") { _, real -> TermTypeAssertionUtils.assertIsReal(real) }
 
         test("equals-works-as-expected") {
             val oneReal = RealImpl(BigDecimal.of(1.1))
@@ -96,15 +73,9 @@ class RealImplSpec :
             assertNotStructurallyEquals(oneReal, oneAtom)
         }
 
-        test("real-fresh-copy-should-return-the-instance-itself") {
-            realInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
-        }
+        reals("fresh-copy-is-itself") { _, real -> ConstantUtils.assertFreshCopyIsItself(real) }
 
-        test("real-fresh-copy-with-scope-should-return-the-instance-itself") {
-            realInstances.forEach(ConstantUtils::assertFreshCopyWithScopeIsItself)
-        }
+        reals("fresh-copy-with-scope-is-itself") { _, real -> ConstantUtils.assertFreshCopyWithScopeIsItself(real) }
 
-        test("apply-always-returns-the-instance-itself") {
-            realInstances.forEach(ConstantUtils::assertApplyingSubstitutionIsItself)
-        }
+        reals("apply-is-itself") { _, real -> ConstantUtils.assertApplyingSubstitutionIsItself(real) }
     })

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.testutils.StructUtils
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -27,10 +28,8 @@ class SubstitutionFailSpec :
             assertFalse(failedSubstitution.isSuccess)
         }
 
-        test("failed-substitution-application-returns-null") {
-            val someTerms = StructUtils.mixedStructs.map { (functor, args) -> Struct.of(functor, args) }
-
-            someTerms.forEach { term -> assertEquals(null, failedSubstitution.applyTo(term)) }
+        withTests(nameFn = { "apply-to-returns-null/${it.id}" }, StructUtils.mixedStructCases) { case ->
+            assertEquals(null, failedSubstitution.applyTo(Struct.of(case.functor, case.args)))
         }
 
         test("failed-substitution-plus-other-substitution-returns-always-failed-substitution") {

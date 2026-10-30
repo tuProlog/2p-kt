@@ -3,13 +3,15 @@ package it.unibo.tuprolog.solve.problog.probabilistic
 import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
+import it.unibo.tuprolog.solve.problog.probabilistic.TestUtils.queriesOn
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 
 class ProbabilisticGraphExamplesSpec :
     FunSpec({
         // https://dtai.cs.kuleuven.be/problog/tutorial/basic/04_pgraph.html
-        test("probabilistic-graph") {
-            TestUtils.assertQueryWithSolutions(
+        queriesOn(
+            "probabilistic-graph",
+            {
                 """
                     0.6::edge(1,2).
                     0.1::edge(1,3).
@@ -24,17 +26,19 @@ class ProbabilisticGraphExamplesSpec :
 
                     query(path(1,5)).
                     query(path(1,6)).
-                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
-                listOf(
-                    QueryWithSolutions(
-                        "path(1,5)".parseAsStruct(),
-                        listOf(ExpectedSolution("path(1,5)".parseAsStruct(), 0.25824)),
-                    ),
-                    QueryWithSolutions(
-                        "path(1,6)".parseAsStruct(),
-                        listOf(ExpectedSolution("path(1,6)".parseAsStruct(), 0.2167296)),
-                    ),
+                """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators)
+            },
+            listOf(
+                QueryCase(
+                    "path-1-5",
+                    "path(1,5)".parseAsStruct(),
+                    listOf(ExpectedSolution("path(1,5)".parseAsStruct(), 0.25824)),
                 ),
-            )
-        }
+                QueryCase(
+                    "path-1-6",
+                    "path(1,6)".parseAsStruct(),
+                    listOf(ExpectedSolution("path(1,6)".parseAsStruct(), 0.2167296)),
+                ),
+            ),
+        )
     })

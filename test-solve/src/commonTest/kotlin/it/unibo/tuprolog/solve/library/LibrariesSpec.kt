@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.library
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.aliasLibraryMap
@@ -73,11 +74,9 @@ class LibrariesSpec :
             assertEquals(differentAliasInstances.map { it.alias }.toSet(), librariesInstance.aliases)
         }
 
-        test("operators-correct-with-single-library") {
-            val correct = allLibInstances.map { it.operators }
-            val toBeTested = allLibInstances.map { Runtime.of(it).operators }
-
-            correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
+        withTests(nameFn = { "operators-correct-with-single-library/${it.id}" }, LibraryUtils.allLibraryCases) { case ->
+            val instance = makeLib(case.raw, ::libraryWithAliasConstructor)
+            assertEquals(instance.operators, Runtime.of(instance).operators)
         }
 
         test("operators-should-return-overridden-ones-by-lastly-added-library") {
@@ -85,11 +84,9 @@ class LibrariesSpec :
             assertEquals(overriddenLibrary.operators, Runtime.of(library, overridingLibrary).operators)
         }
 
-        test("theory-correct-with-single-library") {
-            val correct = allLibInstances.map { it.clauses }
-            val toBeTested = allLibInstances.map { Runtime.of(it).clauses }
-
-            correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
+        withTests(nameFn = { "theory-correct-with-single-library/${it.id}" }, LibraryUtils.allLibraryCases) { case ->
+            val instance = makeLib(case.raw, ::libraryWithAliasConstructor)
+            assertEquals(instance.clauses, Runtime.of(instance).clauses)
         }
 
         test("theory-should-return-all-clauses-composing-all-provided-theories") {
@@ -97,11 +94,12 @@ class LibrariesSpec :
             assertEquals(overriddenLibrary.clauses, Runtime.of(library, overridingLibrary).clauses)
         }
 
-        test("primitives-correct-with-single-library") {
-            val correct = allLibInstances.map { aliasLibraryMap(it.alias, it.primitives) }
-            val toBeTested = allLibInstances.map { Runtime.of(it).primitives }
-
-            correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
+        withTests(
+            nameFn = { "primitives-correct-with-single-library/${it.id}" },
+            LibraryUtils.allLibraryCases,
+        ) { case ->
+            val instance = makeLib(case.raw, ::libraryWithAliasConstructor)
+            assertEquals(aliasLibraryMap(instance.alias, instance.primitives), Runtime.of(instance).primitives)
         }
 
         test("primitives-should-return-non-aliased-overridden-primitive-from-lastly-added-library") {
@@ -127,11 +125,9 @@ class LibrariesSpec :
             )
         }
 
-        test("functions-correct-with-single-library") {
-            val correct = allLibInstances.map { aliasLibraryMap(it.alias, it.functions) }
-            val toBeTested = allLibInstances.map { Runtime.of(it).functions }
-
-            correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
+        withTests(nameFn = { "functions-correct-with-single-library/${it.id}" }, LibraryUtils.allLibraryCases) { case ->
+            val instance = makeLib(case.raw, ::libraryWithAliasConstructor)
+            assertEquals(aliasLibraryMap(instance.alias, instance.functions), Runtime.of(instance).functions)
         }
 
         test("functions-should-return-non-aliased-overridden-primitive-from-lastly-added-library") {

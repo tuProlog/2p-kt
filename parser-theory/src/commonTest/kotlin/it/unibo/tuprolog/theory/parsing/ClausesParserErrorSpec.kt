@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.theory.parsing
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -95,17 +96,22 @@ class ClausesParserErrorSpec :
             assertEquals(0, bufferError.clauseIndex)
         }
 
-        test("invalid-operator-definitions-are-translated-and-identify-their-directive") {
-            for (input in listOf(":- op(0, xfx, bad).", ":- op(1201, xfx, bad).", ":- op(500, xfx, '').")) {
-                val error = assertFailsWith<ParseException> { parser.parseClauses(input) }
+        withTests(
+            nameFn = { "invalid-operator-definitions-are-translated/${it.id}" },
+            listOf(
+                InvalidOperatorCase("zero-priority", ":- op(0, xfx, bad)."),
+                InvalidOperatorCase("priority-above-1200", ":- op(1201, xfx, bad)."),
+                InvalidOperatorCase("empty-name", ":- op(500, xfx, '')."),
+            ),
+        ) { case ->
+            val error = assertFailsWith<ParseException> { parser.parseClauses(case.input) }
 
-                assertEquals(0, error.clauseIndex)
-                assertEquals(1, error.line)
-                assertEquals(1, error.column)
-                assertEquals(input, error.input)
-                assertIs<InvalidOperatorDefinitionException>(error.cause)
-                assertTrue(error.offendingSymbol.orEmpty().contains("op"))
-            }
+            assertEquals(0, error.clauseIndex)
+            assertEquals(1, error.line)
+            assertEquals(1, error.column)
+            assertEquals(case.input, error.input)
+            assertIs<InvalidOperatorDefinitionException>(error.cause)
+            assertTrue(error.offendingSymbol.orEmpty().contains("op"))
         }
 
         test("lazy-parsing-defers-errors-until-the-failing-clause-is-requested") {
@@ -136,3 +142,8 @@ private inline fun <reified T : PrologSyntaxException> assertTranslatedError(
     assertEquals(cause.offendingText, error.offendingSymbol)
     assertEquals(cause.message, error.message)
 }
+
+private class InvalidOperatorCase(
+    val id: String,
+    val input: String,
+)
