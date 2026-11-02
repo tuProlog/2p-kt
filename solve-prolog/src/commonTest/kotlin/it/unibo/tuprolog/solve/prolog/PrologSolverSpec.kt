@@ -83,6 +83,7 @@ import it.unibo.tuprolog.solve.subAtomContract
 import it.unibo.tuprolog.solve.substitutionsContract
 import it.unibo.tuprolog.solve.tagsPreservationDuringResolutionContract
 import it.unibo.tuprolog.solve.termContract
+import it.unibo.tuprolog.solve.termSameContract
 import it.unibo.tuprolog.solve.timeoutContract
 import it.unibo.tuprolog.solve.trueContract
 import it.unibo.tuprolog.solve.unifyContract
@@ -149,6 +150,7 @@ class PrologSolverSpec :
         include(timeoutContract(PrologSolverFactory))
         include(trueContract(PrologSolverFactory))
         include(univContract(PrologSolverFactory))
+        include(termSameContract(PrologSolverFactory))
         include(staticFactoryContract(SolvePrologExpectations.expectations))
 
         withTests(
