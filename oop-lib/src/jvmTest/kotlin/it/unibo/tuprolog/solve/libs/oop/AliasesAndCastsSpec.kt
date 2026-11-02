@@ -60,12 +60,14 @@ private val bindings =
         Binding("static-property", "type('java.lang.Integer', T), X := T.'MAX_VALUE'", Integer.of(Int.MAX_VALUE)),
         Binding(
             "cast-3-to-a-type-name",
-            "cast(1, 'java.lang.Long', R), invoke_method(R, longValue, X)",
+            "cast(1, 'java.lang.Long', R), new_object('java.util.ArrayList', [], L), invoke_method(L, add(R), _), " +
+                "invoke_method(L, get(0), X)",
             Integer.of(1),
         ),
         Binding(
             "colon-equals-cast-to-a-type-name",
-            "R := 1 as 'java.lang.Long', invoke_method(R, longValue, X)",
+            "R := 1 as 'java.lang.Long', new_object('java.util.ArrayList', [], L), invoke_method(L, add(R), _), " +
+                "invoke_method(L, get(0), X)",
             Integer.of(1),
         ),
         Binding("type-name-of-a-type-is-qualified", "type('java.util.ArrayList', T), type(X, T)", Atom.of("java.util.ArrayList")),
