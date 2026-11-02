@@ -43,4 +43,8 @@ fun setOfContract(
         solverFactory.answers("setof(X, member(X, [c, f(a), 2.0, a, 1, b, a]), S)") shouldBe
             listOf("yes: S = [1, 2.0, a, b, c, f(a)]")
     }
+
+    scenario("set-of/nested-existential-variables") {
+        solverFactory.answers("setof(X, Y^Z^member(X-Y-Z, [2-a-b, 1-c-d]), L)") shouldBe listOf("yes: L = [1, 2]")
+    }
 }
