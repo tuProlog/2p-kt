@@ -4,8 +4,11 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.ConsUtils
+import it.unibo.tuprolog.utils.cursor
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
 
 /**
@@ -93,4 +96,48 @@ class ListSpec :
         pipeTerminated("from-sequence-without-last") { LogicList.from(it.asSequence()) }
 
         pipeTerminated("from-sequence-specifying-last") { LogicList.from(it) }
+
+        test("substituting-iterator/applies-the-unifier-to-each-item") {
+            val x = Var.of("X")
+            val a = Atom.of("a")
+            val list = LogicList.of(x, x)
+            val unifier = Substitution.unifier(x, a)
+            assertEquals(
+                listOf(a, a, EmptyList()),
+                ListIterator.Substituting
+                    .All(list, unifier)
+                    .asSequence()
+                    .toList(),
+            )
+            assertEquals(
+                listOf(a, a),
+                ListIterator.Substituting
+                    .SkippingLast(list, unifier)
+                    .asSequence()
+                    .toList(),
+            )
+        }
+
+        test("skipping-last-iterator/throws-past-the-end") {
+            val iterator = ListIterator.SkippingLast(LogicList.of(Atom.of("a")))
+            iterator.next()
+            assertFailsWith<NoSuchElementException> { iterator.next() }
+        }
+
+        test("lazy-partial-list/fresh-copy-renames-consistently") {
+            val (x, y, z) = listOf(Var.of("X"), Var.of("Y"), Var.of("Z"))
+            val list = LogicList.from(listOf<Term>(x, y, x).cursor(), z)
+            val copy = list.freshCopy()
+            assertEquals(3, copy.variables.toSet().size)
+            assertEquals(copy[0], copy.castToList().toList()[2])
+            assertNotEquals(x, copy[0])
+            assertTrue(list.structurallyEquals(copy))
+        }
+
+        test("lazy-partial-list/keeps-its-tail-and-tags") {
+            val (x, z) = listOf(Var.of("X"), Var.of("Z"))
+            val list = LogicList.from(listOf<Term>(x).cursor(), z)
+            assertEquals(z, list.last)
+            assertEquals(mapOf<String, Any>("t" to 1), list.replaceTags(mapOf("t" to 1)).tags)
+        }
     })

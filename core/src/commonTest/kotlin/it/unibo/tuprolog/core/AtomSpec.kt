@@ -5,6 +5,7 @@ import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.AtomImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AtomUtils
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -62,5 +63,14 @@ class AtomSpec :
             AtomUtils.mixedAtomCases.filter { it.value matches Atom.ATOM_PATTERN },
         ) { case ->
             assertTrue(Atom.of(case.value).isFunctorWellFormed)
+        }
+
+        test("escape-value/always-quotes") {
+            assertEquals("'a'", Atom.escapeValue("a"))
+        }
+
+        test("escape-value-if-necessary/quotes-only-ill-formed-names") {
+            assertEquals("a", Atom.escapeValueIfNecessary("a"))
+            assertEquals("'A b'", Atom.escapeValueIfNecessary("A b"))
         }
     })

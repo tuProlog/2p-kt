@@ -34,6 +34,7 @@ import it.unibo.tuprolog.solve.ifThenContract
 import it.unibo.tuprolog.solve.ifThenElseContract
 import it.unibo.tuprolog.solve.integerContract
 import it.unibo.tuprolog.solve.isContract
+import it.unibo.tuprolog.solve.mutableSolverContract
 import it.unibo.tuprolog.solve.nonVarContract
 import it.unibo.tuprolog.solve.notProvableContract
 import it.unibo.tuprolog.solve.notUnifyContract
@@ -205,4 +206,5 @@ class ProblogSolverSpec :
         include(termContract(ProblogSolverFactory))
         include(trueContract(ProblogSolverFactory))
         include(unifyContract(ProblogSolverFactory))
+        include(mutableSolverContract(ProblogSolverFactory))
     })

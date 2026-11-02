@@ -293,5 +293,54 @@ internal class SolverBuilderImpl(
             override val defaultOutputChannel: OutputChannel<String> = outputs.stdOut
             override val defaultErrorChannel: OutputChannel<String> = outputs.stdErr
             override val defaultWarningsChannel: OutputChannel<Warning> = outputs.warnings
+
+            // `by factory` forwards these too, and their bodies would then read factory's defaults instead of these
+            override fun newBuilder(): SolverBuilder = SolverBuilderImpl(this)
+
+            override fun solverWithDefaultBuiltins(
+                unificator: Unificator,
+                otherLibraries: Runtime,
+                flags: FlagStore,
+                staticKb: Theory,
+                dynamicKb: Theory,
+                stdIn: InputChannel<String>,
+                stdOut: OutputChannel<String>,
+                stdErr: OutputChannel<String>,
+                warnings: OutputChannel<Warning>,
+            ): Solver =
+                solverOf(
+                    unificator,
+                    otherLibraries + defaultBuiltins,
+                    flags,
+                    staticKb,
+                    dynamicKb,
+                    stdIn,
+                    stdOut,
+                    stdErr,
+                    warnings,
+                )
+
+            override fun mutableSolverWithDefaultBuiltins(
+                unificator: Unificator,
+                otherLibraries: Runtime,
+                flags: FlagStore,
+                staticKb: Theory,
+                dynamicKb: Theory,
+                stdIn: InputChannel<String>,
+                stdOut: OutputChannel<String>,
+                stdErr: OutputChannel<String>,
+                warnings: OutputChannel<Warning>,
+            ): MutableSolver =
+                mutableSolverOf(
+                    unificator,
+                    otherLibraries + defaultBuiltins,
+                    flags,
+                    staticKb,
+                    dynamicKb,
+                    stdIn,
+                    stdOut,
+                    stdErr,
+                    warnings,
+                )
         }
 }

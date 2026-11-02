@@ -53,6 +53,22 @@ fun isContract(
         }
     }
 
+    case("is/bitwise-operator-on-a-float") {
+        "X" `is` structOf("/\\", realOf(1.0), intOf(1)) yields {
+            kotlin.collections.listOf(
+                // raised by the bitwise function itself, as type_error(integer, 1.0)
+                it.halt(
+                    TypeError(
+                        message = "Operator `/\\` accepts only integers!",
+                        context = DummyInstances.executionContext,
+                        expectedType = TypeError.Expected.INTEGER,
+                        culprit = realOf(1.0),
+                    ),
+                ),
+            )
+        }
+    }
+
     case("is/is-x-float") {
         "X" `is` float(intOf(3)) yields {
             kotlin.collections.listOf(it.yes("X" to realOf(3.0)))

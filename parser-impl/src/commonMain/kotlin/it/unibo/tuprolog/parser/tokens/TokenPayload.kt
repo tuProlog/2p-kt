@@ -35,7 +35,7 @@ sealed interface TokenPayload : Representable {
             when (radix) {
                 10 -> digits
                 2 -> "0b$digits"
-                8 -> "0$digits"
+                8 -> "0o$digits"
                 16 -> "0x$digits"
                 else -> throw IllegalArgumentException("Invalid integer digits $radix")
             }
@@ -51,12 +51,11 @@ sealed interface TokenPayload : Representable {
         val decoded: String,
         val quoteKind: QuoteKind,
     ) : TokenPayload {
-        /** Returns a normalized quoted representation of [decoded]. */
-        override fun toRepresentation(): String =
-            when (quoteKind) {
-                QuoteKind.SINGLE -> "'$decoded'"
-                QuoteKind.DOUBLE -> "\"$decoded\""
-            }
+        /** Returns a normalized quoted representation of [decoded], escaping backslashes and its delimiter. */
+        override fun toRepresentation(): String {
+            val quote = if (quoteKind == QuoteKind.SINGLE) "'" else "\""
+            return quote + decoded.replace("\\", "\\\\").replace(quote, "\\$quote") + quote
+        }
     }
 
     /**

@@ -51,10 +51,7 @@ interface Runtime :
 
     /**
      * Removes the library from this library group.
-     *
-     * __Note__: as currently implemented, this throws [it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException]
-     * when [library]'s alias *is* loaded, and silently returns an unchanged [Runtime] when it is *not* -- the
-     * opposite of what the exception's name suggests; verify against `RuntimeImpl.minus` before relying on this.
+     * @throws it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException if [library]'s alias is not loaded.
      */
     @JsName("minus")
     operator fun minus(library: Library): Runtime
@@ -68,10 +65,7 @@ interface Runtime :
 
     /**
      * Removes the library aliased [alias] from this library group.
-     *
-     * __Note__: see [minus]'s caveat -- as currently implemented this throws
-     * [it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException] when [alias] *is* loaded, and is a no-op
-     * when it is *not*.
+     * @throws it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException if [alias] is not loaded.
      */
     @JsName("minusAlias")
     operator fun minus(alias: String): Runtime

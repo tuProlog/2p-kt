@@ -11,6 +11,7 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TupleUtils
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotSame
@@ -157,5 +158,28 @@ class StructSpec :
 
             assertNotEquals(Struct.of("f", Var.of("X")), fX)
             assertNotSame(Struct.of("f", Var.of("X")), fX)
+        }
+
+        test("of-iterable/same-as-of-list") {
+            val (a, b) = listOf(Atom.of("a"), Atom.of("b"))
+            assertEquals(Struct.of("f", a, b), Struct.of("f", setOf(a, b)))
+        }
+
+        test("fold-iterable/right-nested") {
+            val (a, b, c) = listOf(Atom.of("a"), Atom.of("b"), Atom.of("c"))
+            assertEquals(Struct.of("f", a, Struct.of("f", b, c)), Struct.fold("f", setOf(a, b, c)))
+        }
+
+        test("fold-vararg-with-terminal/right-nested") {
+            val (a, b, c) = listOf(Atom.of("a"), Atom.of("b"), Atom.of("c"))
+            assertEquals(Struct.of("f", a, Struct.of("f", b, c)), Struct.fold("f", a, b, terminal = c))
+        }
+
+        test("escape-functor/escapes-single-quotes-by-default") {
+            assertEquals("a\\tb\\rc\"d\\'e", Struct.escapeFunctor("a\tb\rc\"d'e"))
+        }
+
+        test("escape-functor/escapes-double-quotes-instead") {
+            assertEquals("c\\\"d'e", Struct.escapeFunctor("c\"d'e", escapeSingleQuotes = false))
         }
     })

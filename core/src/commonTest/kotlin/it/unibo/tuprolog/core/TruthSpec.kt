@@ -3,8 +3,10 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.impl.TruthImpl
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
 
 /**
@@ -38,5 +40,16 @@ class TruthSpec :
 
         test("fail-truth-retrieval") {
             assertEquals(FAIL, Truth.FAIL)
+        }
+
+        withTests(
+            nameFn = { "of-string/${it.first}" },
+            listOf("true" to Truth.TRUE, "false" to Truth.FALSE, "fail" to Truth.FAIL),
+        ) { (string, truth) ->
+            assertSame(truth, Truth.of(string))
+        }
+
+        test("of-string/rejects-other-atoms") {
+            assertFailsWith<IllegalArgumentException> { Truth.of("maybe") }
         }
     })

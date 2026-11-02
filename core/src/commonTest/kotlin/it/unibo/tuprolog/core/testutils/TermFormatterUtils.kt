@@ -109,6 +109,42 @@ object TermFormatterUtils {
     val expectedFormatsWithPrettyExpressions =
         common +
             listOf(
+                // an operand whose operator binds looser than its context allows must be parenthesised
+                FormatCase(
+                    "looser-infix-operand",
+                    Struct.of("*", Struct.of("+", Atom.of("a"), Atom.of("b")), Atom.of("c")),
+                    "(a + b) * c",
+                ),
+                FormatCase(
+                    "looser-operand-of-a-prefix-operator",
+                    Struct.of("-", Struct.of("+", Atom.of("a"), Atom.of("b"))),
+                    "- (a + b)",
+                ),
+                FormatCase(
+                    "left-associative-operator-nested-left",
+                    Struct.of("-", Struct.of("-", Atom.of("a"), Atom.of("b")), Atom.of("c")),
+                    "a - b - c",
+                ),
+                FormatCase(
+                    "left-associative-operator-nested-right",
+                    Struct.of("-", Atom.of("a"), Struct.of("-", Atom.of("b"), Atom.of("c"))),
+                    "a - (b - c)",
+                ),
+                FormatCase(
+                    "rule-with-a-conjunction-body",
+                    Struct.of(":-", Atom.of("a"), Tuple.of(Atom.of("b"), Atom.of("c"))),
+                    "a :- b, c",
+                ),
+                FormatCase(
+                    "non-associative-operator-nested-left",
+                    Struct.of("=", Struct.of("=", Atom.of("a"), Atom.of("b")), Atom.of("c")),
+                    "(a = b) = c",
+                ),
+                FormatCase(
+                    "rule-inside-a-tuple",
+                    Tuple.of(Struct.of(":-", Atom.of("a"), Atom.of("b")), Atom.of("c")),
+                    "(a :- b), c",
+                ),
                 FormatCase(
                     "tuple-with-homonym-variables",
                     Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")),
@@ -168,7 +204,8 @@ object TermFormatterUtils {
                         Struct.of("+", Var.of("A"), Var.of("B")),
                         Struct.of("+", Var.of("C"), Var.of("D")),
                     ),
-                    "A + B + C + D",
+                    // `+` is yfx: a right operand of the same priority needs parentheses to read back the same
+                    "A + B + (C + D)",
                 ),
                 FormatCase(
                     "sum-of-differences",
@@ -177,7 +214,7 @@ object TermFormatterUtils {
                         Struct.of("-", Var.of("A"), Var.of("B")),
                         Struct.of("-", Var.of("C"), Var.of("D")),
                     ),
-                    "A - B + C - D",
+                    "A - B + (C - D)",
                 ),
                 FormatCase("indicator", Indicator.of(Var.of("A"), Var.of("B")), "A / B"),
                 FormatCase(

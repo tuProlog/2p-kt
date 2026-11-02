@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
@@ -15,6 +16,21 @@ import it.unibo.tuprolog.solve.testutils.SolutionUtils.theQuerySolved
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
+
+/** One kind of solution, and the name [Solution.whenIs] must dispatch it to. */
+private class KindCase(
+    val id: String,
+    val solution: () -> Solution,
+)
+
+private val kinds =
+    listOf(
+        KindCase("yes") { Solution.yes(aQuery) },
+        KindCase("no") { Solution.no(aQuery) },
+        KindCase("halt") { Solution.halt(aQuery, anException) },
+    )
+
+private fun Solution.dispatched(): String = whenIs(yes = { "yes" }, no = { "no" }, halt = { "halt" })
 
 /**
  * Test class for [Solution], [Solution.Yes], [Solution.No] and [Solution.Halt]
@@ -166,5 +182,25 @@ class SolutionSpec :
 
             assertEquals(Solution.no(aQuery), no)
             assertEquals(Solution.halt(aQuery, anException), halt)
+        }
+
+        withTests(nameFn = { "kind/${it.id}/casts-only-to-itself" }, kinds) { case ->
+            val solution = case.solution()
+            assertEquals(case.id == "yes", solution.asYes() != null)
+            assertEquals(case.id == "no", solution.asNo() != null)
+            assertEquals(case.id == "halt", solution.asHalt() != null)
+            if (case.id != "yes") assertFailsWith<ClassCastException> { solution.castToYes() }
+            if (case.id != "no") assertFailsWith<ClassCastException> { solution.castToNo() }
+            if (case.id != "halt") assertFailsWith<ClassCastException> { solution.castToHalt() }
+        }
+
+        withTests(nameFn = { "kind/${it.id}/when-is-dispatches-to-its-branch" }, kinds) { case ->
+            assertEquals(case.id, case.solution().dispatched())
+        }
+
+        withTests(nameFn = { "kind/${it.id}/when-is-falls-back-to-otherwise" }, kinds) { case ->
+            val solution = case.solution()
+            assertEquals("otherwise", solution.whenIs<String>(otherwise = { "otherwise" }))
+            assertFailsWith<IllegalStateException> { solution.whenIs<String>() }
         }
     })

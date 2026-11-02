@@ -337,13 +337,7 @@ abstract class SideEffect {
             )
     }
 
-    /**
-     * Nominally replaces the whole [OperatorSet] with [operators].
-     *
-     * @implNote as of this writing, [applyTo] actually merges [operators] into the existing set (same as
-     * [SetOperators]) rather than replacing it outright — likely a bug, since every sibling `Reset*` side effect
-     * in this file does replace the corresponding piece of state.
-     */
+    /** Replaces the whole [OperatorSet] with [operators], like every other `Reset*` side effect. */
     data class ResetOperators(
         override val operators: Iterable<Operator>,
     ) : AlterOperators(operators) {
@@ -351,10 +345,7 @@ abstract class SideEffect {
 
         constructor(operators: Sequence<Operator>) : this(operators.toOperatorSet())
 
-        override fun applyTo(context: ExecutionContext): ExecutionContext =
-            context.update(
-                operators = context.operators + operatorSet,
-            )
+        override fun applyTo(context: ExecutionContext): ExecutionContext = context.update(operators = operatorSet)
     }
 
     /** Removes [operators] from the current [OperatorSet]. */

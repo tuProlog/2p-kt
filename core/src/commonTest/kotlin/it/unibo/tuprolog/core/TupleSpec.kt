@@ -83,4 +83,17 @@ class TupleSpec :
             assertEquals(tuple.hashCode(), otherTuple.hashCode())
             assertEquals(tuple, otherTuple)
         }
+
+        test("wrap-sequence-if-needed/several-terms-are-a-tuple") {
+            val (a, b) = listOf(Atom.of("a"), Atom.of("b"))
+            assertEquals(Tuple.of(a, b), Tuple.wrapIfNeeded(sequenceOf(a, b)))
+        }
+
+        test("wrap-sequence-if-needed/one-term-stays-as-is") {
+            assertEquals(Atom.of("a"), Tuple.wrapIfNeeded(sequenceOf(Atom.of("a"))))
+        }
+
+        test("wrap-sequence-if-needed/no-terms-is-true") {
+            assertEquals(Truth.TRUE, Tuple.wrapIfNeeded(emptySequence()))
+        }
     })
