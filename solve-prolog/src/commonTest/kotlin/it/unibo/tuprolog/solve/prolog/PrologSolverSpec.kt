@@ -66,6 +66,7 @@ import it.unibo.tuprolog.solve.numberCharsContract
 import it.unibo.tuprolog.solve.numberCodesContract
 import it.unibo.tuprolog.solve.numberContract
 import it.unibo.tuprolog.solve.onceContract
+import it.unibo.tuprolog.solve.opContract
 import it.unibo.tuprolog.solve.orContract
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
@@ -150,6 +151,7 @@ class PrologSolverSpec :
         include(timeoutContract(PrologSolverFactory))
         include(trueContract(PrologSolverFactory))
         include(univContract(PrologSolverFactory))
+        include(opContract(PrologSolverFactory))
         include(termSameContract(PrologSolverFactory))
         include(staticFactoryContract(SolvePrologExpectations.expectations))
 
