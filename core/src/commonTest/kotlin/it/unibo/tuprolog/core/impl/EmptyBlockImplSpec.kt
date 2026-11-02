@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.testutils.AtomUtils
@@ -44,5 +45,13 @@ class EmptyBlockImplSpec :
 
         test("empty-block-fresh-copy-with-scope-should-return-the-instance-itself") {
             ConstantUtils.assertFreshCopyWithScopeIsItself(testedObj)
+        }
+
+        // on Kotlin/JS, toList() used to call itself until the stack overflowed
+        test("unfolds-into-no-items") {
+            testedObj.toList().shouldBeEmpty()
+            testedObj.toArray().toList().shouldBeEmpty()
+            testedObj.toSequence().toList().shouldBeEmpty()
+            testedObj.unfoldedList.shouldBeEmpty()
         }
     })
