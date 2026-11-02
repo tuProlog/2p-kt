@@ -6,6 +6,9 @@ import java.time.format.DateTimeFormatter
 
 pluginManagement {
     repositories {
+        // Google's mirror of Maven Central, tried first: Maven Central rate-limits (HTTP 429) busy CI/cloud hosts.
+        // Resolution only: publishing targets are configured separately.
+        maven("https://maven-central.storage-download.googleapis.com/maven2") { name = "MavenCentralMirror" }
         gradlePluginPortal()
         google()
         mavenCentral()
