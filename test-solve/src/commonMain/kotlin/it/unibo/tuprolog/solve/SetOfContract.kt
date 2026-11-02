@@ -39,9 +39,10 @@ fun setOfContract(
         }
     }
 
+    // ISO's standard order: variables, then floats, then integers, then atoms, then compound terms
     scenario("set-of/sorts-by-the-standard-order-of-terms") {
         solverFactory.answers("setof(X, member(X, [c, f(a), 2.0, a, 1, b, a]), S)") shouldBe
-            listOf("yes: S = [1, 2.0, a, b, c, f(a)]")
+            listOf("yes: S = [2.0, 1, a, b, c, f(a)]")
     }
 
     scenario("set-of/nested-existential-variables") {
