@@ -5,7 +5,8 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-private val CALL_N_THEORY =
+/** The theory [callNCases] run on. */
+val CALL_N_THEORY =
     arrayOf(
         "inc(N, M) :- M is N + 1",
         "map([], _, [])",
@@ -14,7 +15,7 @@ private val CALL_N_THEORY =
     )
 
 /** `call/2..8` (ISO/IEC 13211-1:1995/Cor.2:2012): queries on [CALL_N_THEORY], and their answers. */
-private val callNCases =
+val callNCases =
     listOf(
         "atom-goal" to ("call(inc, 1, X)" to "yes: X = 2"),
         "compound-goal" to ("call(inc(1), X)" to "yes: X = 2"),
