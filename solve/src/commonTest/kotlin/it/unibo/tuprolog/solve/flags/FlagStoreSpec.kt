@@ -16,8 +16,9 @@ class FlagStoreSpec :
         }
 
         test("DEFAULT contains every notable flag at its own default value") {
-            FlagStore.DEFAULT.size shouldBe 8
+            FlagStore.DEFAULT.size shouldBe 9
             FlagStore.DEFAULT[Unknown.name] shouldBe Unknown.defaultValue
+            FlagStore.DEFAULT[Bounded.name] shouldBe Bounded.defaultValue
             FlagStore.DEFAULT[TrackVariables.name] shouldBe TrackVariables.defaultValue
             FlagStore.DEFAULT[ShowWildCardVariablesInSolutions.name] shouldBe
                 ShowWildCardVariablesInSolutions.defaultValue
