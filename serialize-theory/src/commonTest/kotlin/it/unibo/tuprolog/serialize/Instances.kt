@@ -1,11 +1,17 @@
 package it.unibo.tuprolog.serialize
 
 import it.unibo.tuprolog.solve.stdlib.CommonRules
+import it.unibo.tuprolog.solve.stdlib.rule.CallN
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
 object Instances {
-    val commonRules = Theory.of(Unificator.default, CommonRules.clauses)
+    // the standard rules the JSON and YAML below were written for: call/2..8 came later
+    val commonRules =
+        Theory.of(
+            Unificator.default,
+            CommonRules.wrappers.filterNot { it is CallN }.map { it.implementation }.asIterable(),
+        )
 
     val commonRulesInJSON =
         """
