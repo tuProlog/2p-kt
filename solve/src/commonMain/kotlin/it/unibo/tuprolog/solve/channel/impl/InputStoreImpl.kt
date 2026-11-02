@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.InputStore.Companion.STDIN
 import it.unibo.tuprolog.solve.channel.impl.ChannelStoreUtils.ensureAliasRefersToChannel
+import it.unibo.tuprolog.solve.channel.impl.ChannelStoreUtils.rebindingStandardAliases
 import it.unibo.tuprolog.solve.channel.impl.ChannelStoreUtils.setCurrent
 
 internal class InputStoreImpl(
@@ -18,13 +19,7 @@ internal class InputStoreImpl(
     ),
     InputStore {
     override fun setStdIn(channel: InputChannel<String>): InputStore =
-        (channels - STDIN).let {
-            if (current == stdIn) {
-                InputStoreImpl(channel, it + (CURRENT to channel))
-            } else {
-                InputStoreImpl(channel, it)
-            }
-        }
+        InputStoreImpl(channel, (channels - STDIN).rebindingStandardAliases("user_input", stdIn, channel))
 
     override fun setCurrent(alias: String): InputStore =
         when (val newCurrentChannel = get(alias)) {
