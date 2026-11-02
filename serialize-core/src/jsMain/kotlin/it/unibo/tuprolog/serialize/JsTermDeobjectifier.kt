@@ -32,6 +32,12 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
             hasProperty(value, "tuple") -> deobjectifyTuple(value)
             hasProperty(value, "integer") -> deobjectifyInteger(value)
             hasProperty(value, "real") -> deobjectifyReal(value)
+            else -> deobjectifyClauseOrIndicator(value)
+        }
+
+    private fun deobjectifyClauseOrIndicator(value: dynamic): Term =
+        when {
+            hasProperty(value, "name") && hasProperty(value, "arity") -> deobjectifyIndicator(value)
             hasProperty(value, "head") || hasProperty(value, "body") -> deobjectifyClause(value)
             hasProperty(value, "set") -> deobjectifyBlock(value, "set")
             else -> throw DeobjectificationException(value)
@@ -50,6 +56,9 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
             is Int -> scope.intOf(actualValue as Int)
             else -> throw DeobjectificationException(value)
         }
+
+    private fun deobjectifyIndicator(value: dynamic): Term =
+        scope.indicatorOf(deobjectify(value["name"] as Any), deobjectify(value["arity"] as Any))
 
     private fun deobjectifyClause(value: dynamic): Term {
         var head = value["head"]

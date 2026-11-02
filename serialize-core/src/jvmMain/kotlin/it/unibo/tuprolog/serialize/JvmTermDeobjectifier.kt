@@ -37,6 +37,12 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
             value.containsKey("tuple") -> deobjectifyTuple(value)
             value.containsKey("integer") -> deobjectifyInteger(value)
             value.containsKey("real") -> deobjectifyReal(value)
+            else -> deobjectifyClauseOrIndicator(value)
+        }
+
+    private fun deobjectifyClauseOrIndicator(value: Map<*, *>): Term =
+        when {
+            value.containsKey("name") && value.containsKey("arity") -> deobjectifyIndicator(value)
             value.containsKey("head") || value.containsKey("body") -> deobjectifyClause(value)
             value.containsKey("set") -> deobjectifyBlock(value, "set")
             else -> throw DeobjectificationException(value)
@@ -56,15 +62,21 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
             else -> throw DeobjectificationException(value)
         }
 
+    // a directive has a body but no head
     private fun deobjectifyClause(value: Map<*, *>): Term {
-        val head = value["head"]?.let { deobjectify(it) as? Struct } ?: throw DeobjectificationException(value)
+        val head = value["head"]?.let { deobjectify(it) as? Struct ?: throw DeobjectificationException(value) }
         val body = value["body"]?.let { deobjectify(it) }
-        return if (body == null) {
-            scope.factOf(head)
-        } else {
-            scope.clauseOf(head, body)
+        return when {
+            body == null -> scope.factOf(head ?: throw DeobjectificationException(value))
+            else -> scope.clauseOf(head, body)
         }
     }
+
+    private fun deobjectifyIndicator(value: Map<*, *>): Term =
+        scope.indicatorOf(
+            deobjectify(value["name"] ?: throw DeobjectificationException(value)),
+            deobjectify(value["arity"] ?: throw DeobjectificationException(value)),
+        )
 
     private fun deobjectifyList(value: Map<*, *>): Term {
         val items = value["list"] as? List<*> ?: throw DeobjectificationException(value)
