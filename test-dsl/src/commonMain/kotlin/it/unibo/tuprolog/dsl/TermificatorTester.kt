@@ -67,14 +67,18 @@ class TermificatorTester(
         input: T,
         expected: Scope.(T) -> Term,
         actual: Termificator.(T) -> Term = Termificator::termify,
-    ) = termificator.actual(input) shouldBe scope.expected(input)
+    ) {
+        termificator.actual(input) shouldBe scope.expected(input)
+    }
 
     /** Asserts that converting [input] via [actual] (defaulting to [Termificator.termify]) produces [expected]. */
     fun <T> assertTermificationWorks(
         input: T,
         expected: Term,
         actual: Termificator.(T) -> Term = Termificator::termify,
-    ) = termificator.actual(input) shouldBe expected
+    ) {
+        termificator.actual(input) shouldBe expected
+    }
 
     /**
      * Asserts that converting [input] via [actual] (defaulting to [Termificator.termify]) throws
