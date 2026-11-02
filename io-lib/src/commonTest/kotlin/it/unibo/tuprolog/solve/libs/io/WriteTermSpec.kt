@@ -2,9 +2,12 @@ package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.TypeError
@@ -187,5 +190,21 @@ class WriteTermSpec :
                     solutions,
                 )
             }
+        }
+
+        test("write-eq1-honours-operators-defined-at-runtime") {
+            val output = StringBuilder()
+            val solver = PrologSolverFactory.ioSolver(output = output)
+            solver.solveOnce("op(700, xfx, likes), writeq(likes(a, b))".parseAsStruct()).shouldBeInstanceOf<Solution.Yes>()
+            output.toString() shouldBe "a likes b"
+        }
+
+        test("write-eq2-honours-operators-defined-at-runtime") {
+            val mickey = StringBuilder()
+            val solver = PrologSolverFactory.ioSolver(namedOutputs = mapOf(Pair("mickey", mickey)))
+            solver
+                .solveOnce("op(700, xfx, likes), writeq(mickey, likes(a, b))".parseAsStruct())
+                .shouldBeInstanceOf<Solution.Yes>()
+            mickey.toString() shouldBe "a likes b"
         }
     })
