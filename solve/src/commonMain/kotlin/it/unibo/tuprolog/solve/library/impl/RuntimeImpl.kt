@@ -95,14 +95,14 @@ internal class RuntimeImpl(
             ?: RuntimeImpl(libraries.asSequence() + runtime.libraries.asSequence())
 
     override fun minus(library: Library): RuntimeImpl {
-        if (library.alias in aliases) {
+        if (library.alias !in aliases) {
             noSuchALibraryError(library)
         }
         return RuntimeImpl(libraries.asSequence().filter { it.alias != library.alias })
     }
 
     override operator fun minus(alias: String): RuntimeImpl {
-        if (alias in aliases) {
+        if (alias !in aliases) {
             noSuchALibraryError(alias)
         }
         return RuntimeImpl(libraries.asSequence().filter { it.alias != alias })
@@ -112,7 +112,7 @@ internal class RuntimeImpl(
         val toBeRemoved =
             aliases
                 .map {
-                    if (it in this.aliases) {
+                    if (it !in this.aliases) {
                         noSuchALibraryError(it)
                     }
                     it

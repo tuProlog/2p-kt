@@ -2,6 +2,8 @@ package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
@@ -46,6 +48,14 @@ class BlockImplSpec :
         blocks("is-ground", BlockUtils.groundBlockCases) { _, block -> assertTrue { block.isGround } }
 
         blocks("is-not-ground", BlockUtils.nonGroundBlockCases) { _, block -> assertFalse { block.isGround } }
+
+        test("unfold/yields-the-block-then-each-nested-tuple-then-the-last-item") {
+            val (a, b, c) = listOf("a", "b", "c").map { Atom.of(it) }
+            val block = Block.of(a, b, c)
+            block.unfold().toList() shouldBe listOf(block, Tuple.of(a, b, c), Tuple.of(b, c), c)
+            Block.of(a).unfold().toList() shouldBe listOf(Block.of(a), a)
+            Block.empty().unfold().toList() shouldBe listOf(Block.empty())
+        }
 
         test("empty-block-detected") {
             assertTrue(BlockImpl(null).isEmptyBlock)

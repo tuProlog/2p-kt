@@ -13,9 +13,9 @@ internal class MutableGraphImpl<T, W> :
 
     internal constructor(connections: MutableMap<Node<T>, MutableMap<Node<T>, W?>>) : super(connections)
 
-    override fun clone(): MutableGraphImpl<T, W> = MutableGraphImpl(connections.toMutableMap())
+    override fun clone(): MutableGraphImpl<T, W> = MutableGraphImpl(copyOfConnections())
 
-    override fun toImmutable(): Graph<T, W> = GraphImpl(connections.toMutableMap())
+    override fun toImmutable(): Graph<T, W> = GraphImpl(copyOfConnections())
 
     public override fun remove(edge: Edge<T, W>) = removeEdge(edge)
 

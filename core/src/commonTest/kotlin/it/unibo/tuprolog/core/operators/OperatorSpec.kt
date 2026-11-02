@@ -130,4 +130,11 @@ class OperatorSpec :
             assertNull(testFromTerm(specifier = "a".toTerm()))
             assertNull(testFromTerm(opFunctor = Var.anonymous()))
         }
+
+        test("compare-to/same-priority-orders-by-specifier") {
+            val yfx = Operator("+", Specifier.YFX, 500)
+            val xfx = Operator("+", Specifier.XFX, 500)
+            assertEquals(yfx.specifier.compareTo(xfx.specifier), yfx.compareTo(xfx))
+            assertNotEquals(0, yfx.compareTo(xfx))
+        }
     })
