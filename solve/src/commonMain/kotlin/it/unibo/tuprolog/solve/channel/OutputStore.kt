@@ -44,8 +44,8 @@ interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore>
 
         /**
          * Creates an [OutputStore] with [output] (defaulting to [OutputChannel.stdOut]) as both [stdOut] and
-         * `"user_output"`, [error] (defaulting to [OutputChannel.stdErr]) as [stdErr], and [warnings] (defaulting to
-         * [OutputChannel.warn]) as the warnings channel.
+         * `"user_output"`, [error] (defaulting to [OutputChannel.stdErr]) as both [stdErr] and `"user_error"`, and
+         * [warnings] (defaulting to [OutputChannel.warn]) as the warnings channel.
          */
         @JsName("fromStandard")
         @JvmStatic
@@ -54,7 +54,7 @@ interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore>
             output: OutputChannel<String> = OutputChannel.stdOut(),
             error: OutputChannel<String> = OutputChannel.stdErr(),
             warnings: OutputChannel<Warning> = OutputChannel.warn(),
-        ): OutputStore = OutputStoreImpl(output, error, warnings, mapOf("user_output" to output))
+        ): OutputStore = OutputStoreImpl(output, error, warnings, mapOf("user_output" to output, "user_error" to error))
 
         /**
          * Creates an [OutputStore] out of [channels], using the [STDOUT]/[STDERR]-aliased ones (or the platform
