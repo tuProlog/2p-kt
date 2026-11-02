@@ -34,8 +34,8 @@ object Op : TernaryRelation.NonBacktrackable<ExecutionContext>("op") {
         ?- X = (alice likes bob), X = likes(A, B).
         A = alice, B = bob.
 
-        ?- op(200, xfx, [foo, bar]), X = (a foo b), Y = (a bar b).
-        X = foo(a, b), Y = bar(a, b).
+        ?- op(200, xfx, [foo, bar]), current_op(P, T, bar).
+        P = 200, T = xfx.
 
         ?- op(700, abc, foo).
         throws error(domain_error(operator_specifier, abc), _).
