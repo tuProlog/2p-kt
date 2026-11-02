@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
@@ -115,5 +116,25 @@ fun clauseContract(
                 solutions,
             )
         }
+    }
+
+    // each call returns a fresh copy of the clause, whose variables can't clash with those of an earlier copy
+    scenario("clause/renames-the-clause-on-each-call") {
+        solverFactory.answers(
+            "clause(s(a), (P, _)), clause(P, (s(X), t(_, Z))), X == Z",
+            "s(N) :- s(M), t(N, M)",
+        ) shouldBe listOf("no")
+    }
+
+    scenario("clause/supports-the-vanilla-meta-interpreter") {
+        solverFactory.answers(
+            "solve(len([a, b], N))",
+            "len([], 0)",
+            "len([_|T], N) :- len(T, M), N is M + 1",
+            "solve(true) :- !",
+            "solve((A, B)) :- !, solve(A), solve(B)",
+            "solve(X is E) :- !, X is E",
+            "solve(G) :- clause(G, B), solve(B)",
+        ) shouldBe listOf("yes: N = 2")
     }
 }
