@@ -1,3 +1,18 @@
+## [3.0.6](https://github.com/tuProlog/2p-kt/compare/3.0.5...3.0.6) (2026-11-02)
+
+### Dependency updates
+
+* **deps:** update ktmpp to v6.1.0 ([#1048](https://github.com/tuProlog/2p-kt/issues/1048)) ([6914247](https://github.com/tuProlog/2p-kt/commit/6914247f94f0f8eb7e4215a45c7c3f2482fc5a05))
+* **deps:** update ktmpp to v6.1.1 ([#1057](https://github.com/tuProlog/2p-kt/issues/1057)) ([e0c1bab](https://github.com/tuProlog/2p-kt/commit/e0c1babdcc0184fd4bb6ff9d7f29ed8c3518b2c6))
+
+### Bug Fixes
+
+* **deps:** update kotlinx.serialization to v1.12.0 ([#1043](https://github.com/tuProlog/2p-kt/issues/1043)) ([d545f8e](https://github.com/tuProlog/2p-kt/commit/d545f8ed44fac7d7a2e608d6a5b0fe27e7f553e7))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.50 ([#1053](https://github.com/tuProlog/2p-kt/issues/1053)) ([2b17bd9](https://github.com/tuProlog/2p-kt/commit/2b17bd9789385c0da69853b95d71da6a4a998b8e))
+
 ## [3.0.5](https://github.com/tuProlog/2p-kt/compare/3.0.4...3.0.5) (2026-10-22)
 
 ### Bug Fixes
