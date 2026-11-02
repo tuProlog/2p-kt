@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.serialize
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
+
+private val nonClauses = listOf("atom" to "\"a\"", "number" to "1", "variable" to "{\"var\":\"X\"}")
 
 class TheoryDeserializationSpec :
     FunSpec({
@@ -16,5 +20,11 @@ class TheoryDeserializationSpec :
                 .of(
                     MimeType.Yaml,
                 ).assertDeserializationWorks(Instances.commonRules, Instances.commonRulesInYAML)
+        }
+    
+        withTests(nameFn = { "non-clause-is-malformed-input/${it.first}" }, nonClauses) { (_, element) ->
+            shouldThrow<DeobjectificationException> {
+                TheoryDeserializer.of(MimeType.Json).deserialize("[$element]").clauses.toList()
+            }
         }
     })
