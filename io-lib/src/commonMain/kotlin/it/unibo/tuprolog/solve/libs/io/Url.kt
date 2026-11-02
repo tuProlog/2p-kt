@@ -71,6 +71,9 @@ interface Url {
         get() = protocol.startsWith("http")
 
     companion object {
+        /** The drive prefix of an absolute Windows path, e.g. `C:\` or `C:/`. */
+        private val WINDOWS_DRIVE = Regex("^[A-Za-z]:[\\\\/]")
+
         private fun <T : Any> T?.str(transformation: (T) -> String = { it.toString() }): String =
             if (this == null) "" else transformation(this)
 
@@ -123,11 +126,14 @@ interface Url {
          * Parses [string] into a [Url], e.g. `Url.of("https://example.com/page")`.
          *
          * As a fallback for bare filesystem paths (which are not well-formed URLs on their own), if [string] fails
-         * to parse as-is, parsing is retried after prefixing it with `"file://"`; this is what lets
-         * [it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.ensuringArgumentIsUrl] accept both
-         * `open('file:///tmp/x.pl', ...)` and `open('/tmp/x.pl', ...)` (or a relative path) as valid source/sinks.
+         * to parse as-is, an absolute path (`/...`, or `C:\...` on Windows) is parsed again after prefixing it with
+         * `"file://"`, and a relative one is turned into a [file] URL (on the JVM, resolved against the working
+         * directory); this is what lets
+         * [it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.ensuringArgumentIsUrl] accept
+         * `open('file:///tmp/x.pl', ...)`, `open('/tmp/x.pl', ...)` and `open('x.pl', ...)` as valid source/sinks.
          *
-         * @throws InvalidUrlException if [string] is not a well-formed URL even after the `file://` fallback.
+         * @throws InvalidUrlException if [string] is an absolute path that is not well-formed even with the `file://`
+         * prefix.
          */
         @JvmStatic
         @JsName("of")
@@ -135,10 +141,15 @@ interface Url {
             try {
                 parseUrl(string)
             } catch (e: InvalidUrlException) {
-                try {
-                    parseUrl("file://$string")
-                } catch (_: InvalidUrlException) {
-                    throw e
+                if (string.startsWith("/") || WINDOWS_DRIVE.containsMatchIn(string)) {
+                    try {
+                        parseUrl("file://$string")
+                    } catch (_: InvalidUrlException) {
+                        throw e
+                    }
+                } else {
+                    // prefixing a relative path with file:// would make its first segment the URL's host
+                    file(string)
                 }
             }
 
