@@ -17,7 +17,7 @@ private const val RELATIVE_FILE = "build/tmp/relative-path-spec.txt"
 class RelativePathSpec :
     FunSpec({
         withTests(nameFn = { "url-of/$it" }, listOf("t.pl", "./t.pl", "dir/t.pl")) { path ->
-            File(Url.of(path).toURL().toURI()) shouldBe File(path).absoluteFile.normalize()
+            File(Url.of(path).toURL().toURI()).normalize() shouldBe File(path).absoluteFile.normalize()
         }
 
         test("open/reads-a-file-given-by-a-relative-path") {
