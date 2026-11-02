@@ -74,4 +74,11 @@ class VarSpec :
             assertNotEquals(Var.of("X"), instance)
             assertNotSame(Var.of("X"), instance)
         }
+
+        withTests(
+            nameFn = { "escape-name-if-necessary/${it.first}" },
+            listOf("well-formed" to ("X" to "X"), "lower-case" to ("x" to "`x`"), "spaces" to ("A B" to "`A B`")),
+        ) { (_, io) ->
+            assertEquals(io.second, Var.escapeNameIfNecessary(io.first))
+        }
     })

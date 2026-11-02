@@ -1,8 +1,10 @@
 package it.unibo.tuprolog.parser
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import it.unibo.tuprolog.parser.exceptions.InvalidEscapeException
 import it.unibo.tuprolog.parser.exceptions.MalformedNumericLiteralException
+import it.unibo.tuprolog.parser.exceptions.PrologLexingException
 import it.unibo.tuprolog.parser.exceptions.SyntaxErrorCode
 import it.unibo.tuprolog.parser.exceptions.UnexpectedCharacterException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedBlockCommentException
@@ -13,10 +15,53 @@ import it.unibo.tuprolog.parser.tokens.Token
 import it.unibo.tuprolog.parser.tokens.TokenChannel
 import it.unibo.tuprolog.parser.tokens.TokenKind
 import it.unibo.tuprolog.parser.tokens.TokenPayload
+import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+
+private class MalformedCase(
+    val id: String,
+    val text: String,
+    val expected: KClass<out PrologLexingException>,
+)
+
+private val malformed =
+    listOf(
+        MalformedCase("character-code/without-a-character", "0'", MalformedNumericLiteralException::class),
+        MalformedCase("character-code/with-a-line-break", "0'\n", MalformedNumericLiteralException::class),
+        MalformedCase("character-code/with-a-tab", "0'\t", MalformedNumericLiteralException::class),
+        MalformedCase("character-code/escape-at-end-of-input", "0'\\", InvalidEscapeException::class),
+        MalformedCase("character-code/escape-beyond-a-code-unit", "0'\\x1F600\\", InvalidEscapeException::class),
+        MalformedCase("escape/hexadecimal-without-digits", "'\\x\\'", InvalidEscapeException::class),
+        MalformedCase("escape/numeric-without-closing-backslash", "'\\x41'", InvalidEscapeException::class),
+        MalformedCase("escape/octal-without-closing-backslash", "'\\101'", InvalidEscapeException::class),
+        MalformedCase("quoted/line-break-inside", "'a\nb'", UnterminatedQuotedLiteralException::class),
+    )
+
+private class EscapeCase(
+    val id: String,
+    val text: String,
+    val decoded: String,
+)
+
+private val escapes =
+    listOf(
+        EscapeCase("alert", "'\\a'", "\u0007"),
+        EscapeCase("backspace", "'\\b'", "\b"),
+        EscapeCase("form-feed", "'\\f'", "\u000c"),
+        EscapeCase("carriage-return", "'\\r'", "\r"),
+        EscapeCase("tab", "'\\t'", "\t"),
+        EscapeCase("vertical-tab", "'\\v'", "\u000b"),
+        EscapeCase("backslash", "'\\\\'", "\\"),
+        EscapeCase("single-quote", "'\\''", "'"),
+        EscapeCase("double-quote", "'\\\"'", "\""),
+        EscapeCase("back-quote", "'\\`'", "`"),
+        EscapeCase("line-continuation/lf", "'a\\\nb'", "ab"),
+        EscapeCase("line-continuation/crlf", "'a\\\r\nb'", "ab"),
+        EscapeCase("upper-case-hexadecimal", "'\\X41\\'", "A"),
+    )
 
 class SourceAndLexerSpec :
     FunSpec({
@@ -167,5 +212,15 @@ class SourceAndLexerSpec :
             val error = assertFailsWith<InvalidEscapeException> { lex("'\\q'").materialize() }
             assertEquals(SyntaxErrorCode.INVALID_ESCAPE, error.code)
             assertEquals("\\q", error.offendingText)
+        }
+
+        withTests(nameFn = { "malformed/${it.id}" }, malformed) { case ->
+            val error = assertFailsWith<PrologLexingException> { lex(case.text).materialize() }
+            assertEquals(case.expected, error::class)
+        }
+
+        withTests(nameFn = { "escape/${it.id}" }, escapes) { case ->
+            val payload = lex(case.text).significantTokens().first().payload
+            assertEquals(case.decoded, (payload as TokenPayload.QuotedText).decoded)
         }
     })

@@ -151,4 +151,64 @@ class LazyLexerSpec :
             assertNull(runSuspend { session.parseNextClause() })
             assertTrue(session.isAtEnd)
         }
+
+        fun chunks(vararg texts: String): SuspendingTextChunkSource {
+            val queue = ArrayDeque(texts.toList())
+            return object : SuspendingTextChunkSource {
+                var closed = false
+
+                override suspend fun readChunk(): String? = queue.removeFirstOrNull()
+
+                override suspend fun close() {
+                    closed = true
+                }
+
+                override fun toString() = "closed=$closed"
+            }
+        }
+
+        test("suspending-sessions-track-their-position") {
+            val session = testParser.openSession(chunks("a.", " b."))
+            assertEquals(0, session.currentPosition.offset)
+            session.parseNextClause()
+            assertEquals(2, session.currentPosition.offset)
+        }
+
+        test("suspending-sessions-end-on-trailing-trivia") {
+            val session = testParser.openSession(chunks("a. % only a comment\n"))
+            assertNotNull(session.parseNextClause())
+            assertNull(session.parseNextClause())
+            assertTrue(session.isAtEnd)
+        }
+
+        test("suspending-sessions-close-their-source") {
+            val source = chunks("a.")
+            testParser.openSession(source).close()
+            assertEquals("closed=true", source.toString())
+        }
+
+        test("suspending-sessions-reject-a-clause-longer-than-the-retention-limit") {
+            val session = testParser.openSession(chunks("f(a, b, c)."), maximumRetainedTokens = 3)
+            assertFailsWith<TokenBufferLimitExceededException> { session.parseNextClause() }
+            assertFailsWith<TokenBufferLimitExceededException> { session.parseNextClause() }
+        }
+
+        test("suspending-sessions-require-a-positive-retention-limit") {
+            assertFailsWith<IllegalArgumentException> {
+                testParser.openSession(
+                    chunks("a."),
+                    maximumRetainedTokens = 0,
+                )
+            }
+        }
+
+        test("suspending-sessions-wrap-read-failures") {
+            val failure = IllegalStateException("broken source")
+            val source =
+                object : SuspendingTextChunkSource {
+                    override suspend fun readChunk(): String? = throw failure
+                }
+            val error = assertFailsWith<SourceReadException> { testParser.openSession(source).parseNextClause() }
+            assertTrue(error.cause === failure)
+        }
     })

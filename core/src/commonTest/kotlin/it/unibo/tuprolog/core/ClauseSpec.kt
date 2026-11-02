@@ -140,4 +140,14 @@ class ClauseSpec :
             val clause = case.expected
             assertEquals(clause.prepareForExecution(), clause.prepareForExecution().prepareForExecution())
         }
+
+        test("of-sequence/without-head-is-a-directive") {
+            assertTrue(Clause.of(null, sequenceOf(Atom.of("a"))).isDirective)
+        }
+
+        test("of-sequence/with-head-is-a-rule") {
+            val clause = Clause.of(Atom.of("h"), sequenceOf(Atom.of("a"), Atom.of("b")))
+            assertEquals(Rule.of(Atom.of("h"), Atom.of("a"), Atom.of("b")), clause)
+            assertEquals(clause, Rule.of(Atom.of("h"), sequenceOf(Atom.of("a"), Atom.of("b"))))
+        }
     })

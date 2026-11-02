@@ -149,4 +149,10 @@ private val splitTexts =
         SplitTextCase("quoted-literals-and-escapes", "'I''m' \"a\\n\\x41\\\" 0'\\n"),
         SplitTextCase("comments-and-two-clauses", "a /* block */ + b. % tail\nnext."),
         SplitTextCase("list-block-and-real", "[a,b|T] {x,y} 2.0e-3"),
+        SplitTextCase("exponents", "1.5e+10 1.5E7 2.5e-3"),
+        SplitTextCase("character-codes", "0'a 0''' 0'\\x41\\ 0'\\101\\ 0'\\n"),
+        SplitTextCase("escapes-and-continuations", "'a\\\nb' 'c\\\r\nd' '\\101\\' \"\\t\""),
+        SplitTextCase("comments-ending-on-stars", "/* x **/ a % end\nb."),
+        SplitTextCase("full-stop-at-end", "a."),
+        SplitTextCase("graphic-atoms", "a :- \\+ b, c =.. d, e --> f."),
     )

@@ -83,4 +83,37 @@ class ScopeSpec :
                 assertEquals(myResult, toBeTestedResult2)
             }
         }
+
+        test("of-sequence/holds-the-variables") {
+            val x = Var.of("X")
+            assertEquals(x, Scope.of(sequenceOf(x))["X"])
+        }
+
+        test("of-variabled/holds-its-variables") {
+            val x = Var.of("X")
+            assertEquals(x, Scope.of(Struct.of("f", x))["X"])
+        }
+
+        test("of-with-lambda/runs-in-the-scope") {
+            val x = Var.of("X")
+            val f = Struct.of("f", x)
+            assertEquals(x, Scope.of(x) { this["X"] })
+            assertEquals(x, Scope.of(listOf(x)) { this["X"] })
+            assertEquals(x, Scope.of(sequenceOf(x)) { this["X"] })
+            assertEquals(x, Scope.of(f) { this["X"] })
+        }
+
+        test("logic-list-from/terms-are-the-last-the-tail") {
+            val (a, b) = listOf(Atom.of("a"), Atom.of("b"))
+            Scope.empty {
+                assertEquals(List.from(listOf(a, b), null), logicListFrom(a, b))
+                assertEquals(List.from(listOf(a, b), null), logicListFrom(listOf(a, b)))
+            }
+        }
+
+        test("equal-scopes-have-equal-hashes") {
+            val x = Var.of("X")
+            assertEquals(Scope.of(x).hashCode(), Scope.of(x).hashCode())
+            assertEquals("{X=$x}", Scope.of(x).toString())
+        }
     })

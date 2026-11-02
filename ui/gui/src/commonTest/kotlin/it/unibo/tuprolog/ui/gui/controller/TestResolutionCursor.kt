@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.ui.gui.controller
 
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
+import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
+import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
+import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
+import it.unibo.tuprolog.ui.gui.presentation.SolverInspectionSnapshot
 import it.unibo.tuprolog.ui.gui.presentation.WarningPresentation
 import it.unibo.tuprolog.ui.gui.solver.ResolutionCursor
 import it.unibo.tuprolog.ui.gui.solver.ResolutionRequest
@@ -54,6 +58,32 @@ internal class TestResolutionCursor(
                 } else {
                     ResolutionStep.End()
                 }
+            "signals." ->
+                if (step == 0) {
+                    ResolutionStep.Yield(
+                        solution = SolutionPresentation.Yes(request.query),
+                        hasMorePotentially = true,
+                        signals =
+                            listOf(
+                                SolverSignal.Stdout("out\n"),
+                                SolverSignal.Stderr("err\n"),
+                                SolverSignal.Warning(WarningPresentation("careful")),
+                                SolverSignal.Diagnostics(listOf(Diagnostic(DiagnosticSeverity.WARNING, "hmm"))),
+                                SolverSignal.Inspection(
+                                    SolverInspectionSnapshot(flags = listOf(FlagPresentation("f", "v"))),
+                                ),
+                            ),
+                    )
+                } else {
+                    ResolutionStep.End(signals = listOf(SolverSignal.Stdout("bye\n")))
+                }
+            "failing." ->
+                ResolutionStep.Failed(
+                    "it broke",
+                    causeType = "TestError",
+                    signals = listOf(SolverSignal.Stderr("why\n")),
+                )
+            "throwing." -> error("cursor exploded")
             "slow(X)." -> {
                 // Deliberately ignores cooperative cancellation while sleeping. The controller must still
                 // reject this result after Stop, source invalidation, or a newer resolution.

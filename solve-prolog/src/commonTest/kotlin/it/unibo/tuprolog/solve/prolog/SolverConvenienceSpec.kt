@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.solve.prolog
 
-import io.kotest.common.Platform
-import io.kotest.common.platform
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
 import it.unibo.tuprolog.core.Fact
@@ -50,11 +48,7 @@ class SolverConvenienceSpec :
             assertSolutionEquals(reference.take(case.expectedCount), newSolver().(case.call)(goal))
         }
 
-        // Known bug, JS only (#1050): every Prolog solver's copy()/clone() recurses forever (RangeError), because the
-        // Kotlin/JS bridge emitted for an override of `@JsName("copy")` Solver.copy calls itself.
-        test(
-            "clone/copies-the-knowledge-base-into-an-independent-solver",
-        ).config(enabledIf = { platform != Platform.JS }) {
+        test("clone/copies-the-knowledge-base-into-an-independent-solver") {
             val solver =
                 Solver.prolog.mutableSolverWithDefaultBuiltins(
                     staticKb = Theory.of(Fact.of(Struct.of("f", Integer.of(1)))),
@@ -64,5 +58,20 @@ class SolverConvenienceSpec :
             assertEquals(solver.staticKb, clone.staticKb)
             solver.loadStaticClauses(Fact.of(Struct.of("f", Integer.of(2))))
             assertEquals(1, clone.solveList(Struct.of("f", Var.of("X"))).count { it.isYes })
+        }
+
+        test("copy/replaces-only-what-it-is-given") {
+            val theory = Theory.of(Fact.of(Struct.of("f", Integer.of(1))))
+            val solver = Solver.prolog.solverWithDefaultBuiltins()
+            val copy = solver.copy(staticKb = theory)
+            assertEquals(theory, copy.staticKb)
+            assertEquals(solver.libraries, copy.libraries)
+            assertEquals(
+                theory,
+                Solver.prolog
+                    .solverWithDefaultBuiltins(staticKb = theory)
+                    .clone()
+                    .staticKb,
+            )
         }
     })

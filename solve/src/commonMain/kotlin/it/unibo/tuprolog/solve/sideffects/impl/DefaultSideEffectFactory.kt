@@ -203,9 +203,7 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
 
     override fun <X> addEphemeralData(data: Map<String, X>) =
         SideEffect.SetEphemeralData(
-            data.mapValues {
-                it
-            },
+            data.mapValues { (_, value) -> value as Any },
             reset = false,
         )
 
@@ -219,9 +217,7 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
 
     override fun <X> setEphemeralData(data: Map<String, X>) =
         SideEffect.SetEphemeralData(
-            data.mapValues {
-                it
-            },
+            data.mapValues { (_, value) -> value as Any },
             reset = false,
         )
 
@@ -235,7 +231,7 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
 
     override fun <X> addDurableData(data: Map<String, X>) =
         SideEffect.SetDurableData(
-            data.mapValues { it },
+            data.mapValues { (_, value) -> value as Any },
             reset = false,
         )
 
@@ -249,7 +245,7 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
 
     override fun <X> setDurableData(data: Map<String, X>) =
         SideEffect.SetDurableData(
-            data.mapValues { it },
+            data.mapValues { (_, value) -> value as Any },
             reset = false,
         )
 
@@ -263,9 +259,7 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
 
     override fun <X> addPersistentData(data: Map<String, X>) =
         SideEffect.SetPersistentData(
-            data.mapValues {
-                it
-            },
+            data.mapValues { (_, value) -> value as Any },
             reset = false,
         )
 
@@ -279,9 +273,7 @@ internal object DefaultSideEffectFactory : SideEffectFactory {
 
     override fun <X> setPersistentData(data: Map<String, X>) =
         SideEffect.SetPersistentData(
-            data.mapValues {
-                it
-            },
+            data.mapValues { (_, value) -> value as Any },
             reset = false,
         )
 

@@ -11,8 +11,7 @@ import it.unibo.tuprolog.solve.libs.oop.Result
  * [Term] (e.g. a JVM `String` becomes a Prolog atom). Use [InvokeStrict] instead to keep the
  * result as an [it.unibo.tuprolog.solve.libs.oop.ObjectRef] regardless of its type.
  *
- * Fails (rather than throwing) if the invoked member returns no value
- * ([it.unibo.tuprolog.solve.libs.oop.Result.None], e.g. a `void`-returning method).
+ * A `void`-returning method still succeeds, binding `Result` to a reference to `kotlin.Unit`.
  *
  * Example: `new_object('java.lang.String', [hello], S), invoke_method(S, length, N)` binds `N`
  * to the plain Prolog integer `5`; [InvokeStrict] would instead bind it to an [it.unibo.tuprolog.solve.libs.oop.ObjectRef]
