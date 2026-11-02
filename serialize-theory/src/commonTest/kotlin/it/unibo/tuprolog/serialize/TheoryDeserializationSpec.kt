@@ -9,6 +9,9 @@ import it.unibo.tuprolog.serialize.ObjectsUtils.parseAsObject
 
 private val casesByMimeType = theoryCases.flatMap { case -> textualMimeTypes.map { case to it } }
 
+/** A single clause, in each format: neither a theory nor a list of theories. */
+private val singleClauses = listOf(MimeType.Json to "{\"head\": \"a\"}", MimeType.Yaml to "head: \"a\"")
+
 private val nonClauses = listOf("atom" to "\"a\"", "number" to "1", "variable" to "{\"var\":\"X\"}")
 
 class TheoryDeserializationSpec :
@@ -53,5 +56,9 @@ class TheoryDeserializationSpec :
                     .clauses
                     .toList()
             }
+        }
+
+        withTests(nameFn = { "many-theories-must-be-a-list/${it.first.subType}" }, singleClauses) { (mimeType, text) ->
+            shouldThrow<DeobjectificationException> { TheoryDeserializer.of(mimeType).deserializeMany(text).toList() }
         }
     })
