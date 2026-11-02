@@ -53,7 +53,8 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
         val template = Rule.of(head, second)
         return (context.staticKb[head] + context.dynamicKb[head].buffered())
             .map {
-                mgu(it, template)
+                // a fresh copy each time: variables of an earlier answer must not clash with this one's
+                mgu(it.freshCopy(), template)
             }.filter {
                 it.isSuccess
             }
