@@ -550,13 +550,25 @@ object IOPrimitiveUtils {
             replyFail()
         }
 
+    /**
+     * The code of [char] as read from an input channel (`-1` at end of stream), or a
+     * `representation_error(character_code)` if it is beyond the Basic Multilingual Plane, which some channels read
+     * whole: character codes are UTF-16 `Char`s.
+     */
+    private fun Solve.Request<ExecutionContext>.characterCodeOf(char: String?): Int =
+        when {
+            char == null -> -1
+            char.length > 1 -> throw RepresentationError.of(context, signature, CHARACTER_CODE)
+            else -> char[0].code
+        }
+
     /** Peeks the next character code from [channel] (`-1` at end of stream) and unifies [arg] with it, or fails on a closed channel. */
     fun Solve.Request<ExecutionContext>.peekCodeAndReply(
         channel: InputChannel<String>,
         arg: Term,
     ): Solve.Response =
         try {
-            val code = channel.peek()?.get(0)?.code ?: -1
+            val code = characterCodeOf(channel.peek())
             replyWith(mgu(arg, Integer.of(code)))
         } catch (_: IllegalStateException) {
             replyFail()
@@ -580,7 +592,7 @@ object IOPrimitiveUtils {
         arg: Term,
     ): Solve.Response =
         try {
-            val code = channel.read()?.get(0)?.code ?: -1
+            val code = characterCodeOf(channel.read())
             replyWith(mgu(arg, Integer.of(code)))
         } catch (_: IllegalStateException) {
             replyFail()
