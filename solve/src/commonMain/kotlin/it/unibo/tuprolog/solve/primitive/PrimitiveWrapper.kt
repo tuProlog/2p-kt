@@ -442,13 +442,17 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         private val MAX_CHAR = BigInteger.of(Char.MAX_VALUE.code)
 
+        /**
+         * Whether this integer is a character code this implementation can represent: a code point of Unicode's Basic
+         * Multilingual Plane, since characters are UTF-16 [Char]s.
+         */
         @JvmStatic
-        fun Integer.isCharacterCode(): Boolean = intValue !in MIN_CHAR..MAX_CHAR
+        fun Integer.isCharacterCode(): Boolean = intValue in MIN_CHAR..MAX_CHAR
 
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringTermIsCharCode(term: Term): Solve.Request<C> =
             when {
-                !term.isInteger || term.castToInteger().isCharacterCode() ->
+                !term.isInteger || !term.castToInteger().isCharacterCode() ->
                     throw RepresentationError.of(context, signature, RepresentationError.Limit.CHARACTER_CODE)
                 else -> this
             }

@@ -447,7 +447,7 @@ object IOPrimitiveUtils {
             term is Var -> this
             term !is Integer -> ensuringArgumentIsInteger(index)
             term == Integer.MINUS_ONE -> this
-            term.isCharacterCode() -> throw RepresentationError.of(context, signature, CHARACTER_CODE)
+            !term.isCharacterCode() -> throw RepresentationError.of(context, signature, CHARACTER_CODE)
             else -> this
         }
     }
