@@ -25,15 +25,15 @@ internal class SolutionFormatterImpl(
 
     private fun formatException(e: ResolutionException): String =
         "halt: ${e.message ?: "<no message>"}" +
-            e.logicStackTrace.joinToString(STACK_ITEM_SEPARATOR, STACK_ITEM_SEPARATOR) { termFormatter.format(it) }
+            e.logicStackTrace.joinToString("") { STACK_ITEM_SEPARATOR + termFormatter.format(it) }
 
     private fun formatYes(value: Solution.Yes): String =
         if (groundQueriesHaveBooleanSolution && value.query.variables.none()) {
             "yes."
         } else {
             "yes: ${termFormatter.format(value.solvedQuery)}" +
-                value.substitution.asIterable().joinToString(ASSIGNMENT_SEPARATOR, ASSIGNMENT_SEPARATOR) { (v, t) ->
-                    "${termFormatter.format(v)} = ${termFormatter.format(t)}"
+                value.substitution.asIterable().joinToString("") { (v, t) ->
+                    "$ASSIGNMENT_SEPARATOR${termFormatter.format(v)} = ${termFormatter.format(t)}"
                 }
         }
 
