@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core.testutils
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Directive
@@ -17,7 +19,6 @@ import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.format
-import kotlin.test.assertEquals
 
 object TermFormatterUtils {
     /** A named [term] along with its [expected] formatting */
@@ -250,11 +251,8 @@ object TermFormatterUtils {
         actual: Term,
     ) {
         val formatted = actual.format(this)
-        assertEquals(
-            expected,
-            formatted,
-            message =
-                """
+        withClue(
+            """
                 |Formatting 
                 |   $actual
                 |with ${this::class} should result in
@@ -263,7 +261,7 @@ object TermFormatterUtils {
                 |   $formatted
                 |is produced instead
                 |
-                """.trimMargin(),
-        )
+            """.trimMargin(),
+        ) { formatted shouldBe expected }
     }
 }

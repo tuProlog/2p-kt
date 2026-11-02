@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.exception.testutils
 
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
-import kotlin.test.assertNotEquals
-import kotlin.test.assertSame
 
 /**
  * Utils singleton to help testing [ResolutionException]
@@ -26,7 +26,7 @@ internal object TuPrologRuntimeExceptionUtils {
     /** Different instance from [aContext] with same behaviour */
     internal val aDifferentContext =
         object : ExecutionContext by aContext {}
-            .also { assertNotEquals(it, aContext) }
+            .also { aContext shouldNotBe it }
 
     /** Utility function to check if exception contains same expected values */
     internal fun assertSameMessageCauseContext(
@@ -35,8 +35,8 @@ internal object TuPrologRuntimeExceptionUtils {
         expectedContext: ExecutionContext,
         actualException: ResolutionException,
     ) {
-        assertSame(expectedMessage, actualException.message)
-        assertSame(expectedCause, actualException.cause)
-        assertSame(expectedContext, actualException.context)
+        actualException.message shouldBeSameInstanceAs expectedMessage
+        actualException.cause shouldBeSameInstanceAs expectedCause
+        actualException.context shouldBeSameInstanceAs expectedContext
     }
 }

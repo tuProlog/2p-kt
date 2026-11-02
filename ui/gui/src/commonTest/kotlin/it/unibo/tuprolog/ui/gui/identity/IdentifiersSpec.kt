@@ -1,25 +1,25 @@
 package it.unibo.tuprolog.ui.gui.identity
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import io.kotest.matchers.shouldBe
 
 class IdentifiersSpec :
     FunSpec({
         test("every-identity-rejects-a-blank-value") {
-            assertFailsWith<IllegalArgumentException> { DocumentId(" ") }
-            assertFailsWith<IllegalArgumentException> { PageId("") }
-            assertFailsWith<IllegalArgumentException> { SolverProfileId("") }
-            assertFailsWith<IllegalArgumentException> { SolverSessionId("") }
-            assertFailsWith<IllegalArgumentException> { ResolutionSessionId("") }
-            assertFailsWith<IllegalArgumentException> { EffectId("") }
-            assertFailsWith<IllegalArgumentException> { ExtensionId("") }
-            assertFailsWith<IllegalArgumentException> { FeatureId("") }
-            assertFailsWith<IllegalArgumentException> { CommandId("") }
+            shouldThrow<IllegalArgumentException> { DocumentId(" ") }
+            shouldThrow<IllegalArgumentException> { PageId("") }
+            shouldThrow<IllegalArgumentException> { SolverProfileId("") }
+            shouldThrow<IllegalArgumentException> { SolverSessionId("") }
+            shouldThrow<IllegalArgumentException> { ResolutionSessionId("") }
+            shouldThrow<IllegalArgumentException> { EffectId("") }
+            shouldThrow<IllegalArgumentException> { ExtensionId("") }
+            shouldThrow<IllegalArgumentException> { FeatureId("") }
+            shouldThrow<IllegalArgumentException> { CommandId("") }
         }
 
         test("to-string-returns-the-raw-value") {
-            assertEquals("a.pl", DocumentId("a.pl").toString())
-            assertEquals("page-1", PageId("page-1").toString())
+            DocumentId("a.pl").toString() shouldBe "a.pl"
+            PageId("page-1").toString() shouldBe "page-1"
         }
     })

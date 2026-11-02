@@ -1,35 +1,35 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
+import io.kotest.matchers.shouldBe
 
 class KotlinToJavaMappingSpec :
     FunSpec({
         test("content-of-mapping") {
-            assertEquals(Any::class, KotlinToJavaTypeMap["kotlin.Any"])
-            assertEquals(String::class, KotlinToJavaTypeMap["kotlin.String"])
-            assertEquals(CharSequence::class, KotlinToJavaTypeMap["kotlin.CharSequence"])
-            assertEquals(Throwable::class, KotlinToJavaTypeMap["kotlin.Throwable"])
-            assertEquals(Cloneable::class, KotlinToJavaTypeMap["kotlin.Cloneable"])
-            assertEquals(Number::class, KotlinToJavaTypeMap["kotlin.Number"])
-            assertEquals(Comparable::class, KotlinToJavaTypeMap["kotlin.Comparable"])
-            assertEquals(Enum::class, KotlinToJavaTypeMap["kotlin.Enum"])
-            assertEquals(Annotation::class, KotlinToJavaTypeMap["kotlin.Annotation"])
-            assertEquals(Iterable::class, KotlinToJavaTypeMap["kotlin.collections.Iterable"])
-            assertEquals(Iterator::class, KotlinToJavaTypeMap["kotlin.collections.Iterator"])
-            assertEquals(Collection::class, KotlinToJavaTypeMap["kotlin.collections.Collection"])
-            assertEquals(List::class, KotlinToJavaTypeMap["kotlin.collections.List"])
-            assertEquals(Set::class, KotlinToJavaTypeMap["kotlin.collections.Set"])
-            assertEquals(ListIterator::class, KotlinToJavaTypeMap["kotlin.collections.ListIterator"])
-            assertEquals(Map::class, KotlinToJavaTypeMap["kotlin.collections.Map"])
-            assertEquals(Map.Entry::class, KotlinToJavaTypeMap["kotlin.collections.Map.Entry"])
-            assertEquals(Boolean::class, KotlinToJavaTypeMap["kotlin.Boolean"])
-            assertEquals(Char::class, KotlinToJavaTypeMap["kotlin.Char"])
-            assertEquals(Byte::class, KotlinToJavaTypeMap["kotlin.Byte"])
-            assertEquals(Short::class, KotlinToJavaTypeMap["kotlin.Short"])
-            assertEquals(Int::class, KotlinToJavaTypeMap["kotlin.Int"])
-            assertEquals(Float::class, KotlinToJavaTypeMap["kotlin.Float"])
-            assertEquals(Long::class, KotlinToJavaTypeMap["kotlin.Long"])
-            assertEquals(Double::class, KotlinToJavaTypeMap["kotlin.Double"])
+            KotlinToJavaTypeMap["kotlin.Any"] shouldBe Any::class
+            KotlinToJavaTypeMap["kotlin.String"] shouldBe String::class
+            KotlinToJavaTypeMap["kotlin.CharSequence"] shouldBe CharSequence::class
+            KotlinToJavaTypeMap["kotlin.Throwable"] shouldBe Throwable::class
+            KotlinToJavaTypeMap["kotlin.Cloneable"] shouldBe Cloneable::class
+            KotlinToJavaTypeMap["kotlin.Number"] shouldBe Number::class
+            KotlinToJavaTypeMap["kotlin.Comparable"] shouldBe Comparable::class
+            KotlinToJavaTypeMap["kotlin.Enum"] shouldBe Enum::class
+            KotlinToJavaTypeMap["kotlin.Annotation"] shouldBe Annotation::class
+            KotlinToJavaTypeMap["kotlin.collections.Iterable"] shouldBe Iterable::class
+            KotlinToJavaTypeMap["kotlin.collections.Iterator"] shouldBe Iterator::class
+            KotlinToJavaTypeMap["kotlin.collections.Collection"] shouldBe Collection::class
+            KotlinToJavaTypeMap["kotlin.collections.List"] shouldBe List::class
+            KotlinToJavaTypeMap["kotlin.collections.Set"] shouldBe Set::class
+            KotlinToJavaTypeMap["kotlin.collections.ListIterator"] shouldBe ListIterator::class
+            KotlinToJavaTypeMap["kotlin.collections.Map"] shouldBe Map::class
+            KotlinToJavaTypeMap["kotlin.collections.Map.Entry"] shouldBe Map.Entry::class
+            KotlinToJavaTypeMap["kotlin.Boolean"] shouldBe Boolean::class
+            KotlinToJavaTypeMap["kotlin.Char"] shouldBe Char::class
+            KotlinToJavaTypeMap["kotlin.Byte"] shouldBe Byte::class
+            KotlinToJavaTypeMap["kotlin.Short"] shouldBe Short::class
+            KotlinToJavaTypeMap["kotlin.Int"] shouldBe Int::class
+            KotlinToJavaTypeMap["kotlin.Float"] shouldBe Float::class
+            KotlinToJavaTypeMap["kotlin.Long"] shouldBe Long::class
+            KotlinToJavaTypeMap["kotlin.Double"] shouldBe Double::class
         }
     })

@@ -1,7 +1,14 @@
 package it.unibo.tuprolog.solve.primitive
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
@@ -27,11 +34,6 @@ import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.unify
 import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.createPrimitiveRequest
 import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.primitive
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNull
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
 
 private typealias Request = Solve.Request<ExecutionContext>
@@ -98,36 +100,32 @@ class PrimitiveWrapperHelpersSpec :
     FunSpec({
         withTests(nameFn = { "guards/${it.id}/accepts" }, guardCases.filter { it.accepted != null }) { case ->
             val request = request(case.accepted!!)
-            assertSame(request, request.(case.guard)())
+            request.(case.guard)() shouldBeSameInstanceAs request
         }
 
         withTests(nameFn = { "guards/${it.id}/rejects" }, guardCases) { case ->
-            val error = assertFailsWith<LogicError> { request(case.rejected).(case.guard)() }
-            assertTrue(case.error.isInstance(error), "${error::class} is not a ${case.error}")
+            val error = shouldThrow<LogicError> { request(case.rejected).(case.guard)() }
+            withClue("${error::class} is not a ${case.error}") { case.error.isInstance(error).shouldBeTrue() }
         }
 
         test("unify/uses-the-context-unificator") {
             val request = request()
-            assertEquals(
-                Struct.of("f", Atom.of("a")),
-                request.unify(Struct.of("f", Var.of("X")), Struct.of("f", Atom.of("a"))),
-            )
-            assertNull(request.unify(Atom.of("a"), Atom.of("b")))
+            request.unify(Struct.of("f", Var.of("X")), Struct.of("f", Atom.of("a"))) shouldBe
+                Struct.of("f", Atom.of("a"))
+            request.unify(Atom.of("a"), Atom.of("b")).shouldBeNull()
         }
 
         test("not-implemented/raises-a-system-error") {
-            val error = assertFailsWith<SystemError> { request().notImplemented() }
-            assertTrue(error.cause is NotImplementedError, "cause: ${error.cause}")
+            val error = shouldThrow<SystemError> { request().notImplemented() }
+            withClue("cause: ${error.cause}") { error.cause.shouldBeInstanceOf<NotImplementedError>() }
         }
 
         test("wrap/by-name-and-arity") {
-            assertEquals(Signature("p", 2), PrimitiveWrapper.wrap<ExecutionContext>("p", 2, primitive).signature)
+            (PrimitiveWrapper.wrap<ExecutionContext>("p", 2, primitive).signature) shouldBe Signature("p", 2)
         }
 
         test("wrap/by-name-arity-and-vararg") {
-            assertEquals(
-                Signature("p", 1, vararg = true),
-                PrimitiveWrapper.wrap<ExecutionContext>("p", 1, true, primitive).signature,
-            )
+            (PrimitiveWrapper.wrap<ExecutionContext>("p", 1, true, primitive).signature) shouldBe
+                Signature("p", 1, vararg = true)
         }
     })

@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.exception.ResolutionException
-import kotlin.test.assertEquals
 
 /** Test class for [distinctSolutions], backing the `UniqueSolutions` flag's `on` setting. */
 class DistinctSolutionsSpec :
@@ -24,7 +24,7 @@ class DistinctSolutionsSpec :
             val two = yesWith(Atom.of("2"))
             val solutions = listOf(one, one, two, one)
 
-            assertEquals(listOf(one, two), solutions.asSequence().distinctSolutions().toList())
+            solutions.asSequence().distinctSolutions().toList() shouldBe listOf(one, two)
         }
 
         test("never-drops-no-or-halt-solutions") {
@@ -33,12 +33,12 @@ class DistinctSolutionsSpec :
             val halt = Solution.halt(query, exception())
             val solutions = listOf(one, one, no, one, halt, no)
 
-            assertEquals(listOf(one, no, halt, no), solutions.asSequence().distinctSolutions().toList())
+            solutions.asSequence().distinctSolutions().toList() shouldBe listOf(one, no, halt, no)
         }
 
         test("is-a-no-op-when-every-solved-query-is-already-distinct") {
             val solutions = listOf(yesWith(Atom.of("1")), yesWith(Atom.of("2")), yesWith(Atom.of("3")))
 
-            assertEquals(solutions, solutions.asSequence().distinctSolutions().toList())
+            solutions.asSequence().distinctSolutions().toList() shouldBe solutions
         }
     })

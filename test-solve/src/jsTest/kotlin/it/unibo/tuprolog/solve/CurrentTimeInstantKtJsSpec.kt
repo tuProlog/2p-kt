@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
 import kotlin.js.Date
-import kotlin.test.assertTrue
 
 /**
  * Test class for [currentTimeInstant] Javascript implementation
@@ -15,9 +15,7 @@ class CurrentTimeInstantKtJsSpec :
             val official = Date().getTime().toLong()
             val our = currentTimeInstant()
 
-            assertTrue {
-                our - official < TOLERANCE
-            }
+            (our - official < TOLERANCE).shouldBeTrue()
         }
     })
 

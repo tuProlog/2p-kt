@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.unify
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
 
 /**
  * Test class for [CachedUnificator]
@@ -44,7 +44,7 @@ class CachedUnificatorSpec :
             val context = Substitution.of(Var.of("X"), Atom.of("a"))
             val cached = CachedUnificator(CountingUnificator(context), 10)
 
-            assertEquals(context, cached.context)
+            cached.context shouldBe context
         }
 
         test("mgu-is-computed-only-once-for-the-same-request") {
@@ -56,8 +56,8 @@ class CachedUnificatorSpec :
             val first = cached.mgu(a, b, true)
             val second = cached.mgu(a, b, true)
 
-            assertSame(first, second)
-            assertEquals(1, decorated.mguCalls)
+            second shouldBeSameInstanceAs first
+            decorated.mguCalls shouldBe 1
         }
 
         test("mgu-is-recomputed-for-different-terms") {
@@ -70,7 +70,7 @@ class CachedUnificatorSpec :
             cached.mgu(a, b, true)
             cached.mgu(a, c, true)
 
-            assertEquals(2, decorated.mguCalls)
+            decorated.mguCalls shouldBe 2
         }
 
         test("mgu-is-recomputed-when-occur-check-flag-differs") {
@@ -82,7 +82,7 @@ class CachedUnificatorSpec :
             cached.mgu(a, b, true)
             cached.mgu(a, b, false)
 
-            assertEquals(2, decorated.mguCalls)
+            decorated.mguCalls shouldBe 2
         }
 
         test("two-arg-mgu-overload-is-cached-together-with-the-three-arg-one") {
@@ -94,7 +94,7 @@ class CachedUnificatorSpec :
             cached.mgu(a, b) // occurCheckEnabled defaults to true
             cached.mgu(a, b, true)
 
-            assertEquals(1, decorated.mguCalls)
+            decorated.mguCalls shouldBe 1
         }
 
         test("match-delegates-through-the-cached-mgu") {
@@ -106,7 +106,7 @@ class CachedUnificatorSpec :
             cached.match(a, b, true)
             cached.match(a, b, true)
 
-            assertEquals(1, decorated.mguCalls)
+            decorated.mguCalls shouldBe 1
         }
 
         test("unify-delegates-through-the-cached-mgu") {
@@ -118,7 +118,7 @@ class CachedUnificatorSpec :
             cached.unify(a, b, true)
             cached.unify(a, b, true)
 
-            assertEquals(1, decorated.mguCalls)
+            decorated.mguCalls shouldBe 1
         }
 
         test("merge-is-computed-only-once-for-the-same-request") {
@@ -130,8 +130,8 @@ class CachedUnificatorSpec :
             val first = cached.merge(s1, s2, true)
             val second = cached.merge(s1, s2, true)
 
-            assertSame(first, second)
-            assertEquals(1, decorated.mergeCalls)
+            second shouldBeSameInstanceAs first
+            decorated.mergeCalls shouldBe 1
         }
 
         test("merge-is-recomputed-when-occur-check-flag-differs") {
@@ -143,7 +143,7 @@ class CachedUnificatorSpec :
             cached.merge(s1, s2, true)
             cached.merge(s1, s2, false)
 
-            assertEquals(2, decorated.mergeCalls)
+            decorated.mergeCalls shouldBe 2
         }
 
         test("evicted-entries-are-recomputed-on-next-request") {
@@ -157,7 +157,7 @@ class CachedUnificatorSpec :
             cached.mgu(a, c, true) // capacity is 1: evicts the (a, b) entry
             cached.mgu(a, b, true) // must be recomputed
 
-            assertEquals(3, decorated.mguCalls)
+            decorated.mguCalls shouldBe 3
         }
 
         test("mgu-and-merge-share-the-same-underlying-cache-capacity") {
@@ -172,7 +172,7 @@ class CachedUnificatorSpec :
             cached.merge(s1, s2, true) // capacity is 1, shared with mgu: evicts the mgu entry
             cached.mgu(a, b, true) // must be recomputed
 
-            assertEquals(2, decorated.mguCalls)
+            decorated.mguCalls shouldBe 2
         }
 
         test("unificator-cached-factory-wraps-a-plain-unificator-directly") {
@@ -180,7 +180,7 @@ class CachedUnificatorSpec :
 
             val cached = Unificator.cached(decorated, 5) as CachedUnificator
 
-            assertSame(decorated, cached.decorated)
+            cached.decorated shouldBeSameInstanceAs decorated
         }
 
         test("unificator-cached-factory-unwraps-an-already-cached-unificator-instead-of-double-wrapping") {
@@ -189,6 +189,6 @@ class CachedUnificatorSpec :
 
             val twiceCached = Unificator.cached(onceCached, 10) as CachedUnificator
 
-            assertSame(decorated, twiceCached.decorated)
+            twiceCached.decorated shouldBeSameInstanceAs decorated
         }
     })

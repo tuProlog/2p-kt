@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve.exception.error
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.assertErrorStructCorrect
-import kotlin.test.assertEquals
 
 /**
  * Test class for [EvaluationError]
@@ -24,18 +24,15 @@ class EvaluationErrorSpec :
         val correctTypeFunctor = "evaluation_error"
 
         test("evaluation-error-type-struct-functor-correct") {
-            assertEquals(correctTypeFunctor, EvaluationError.typeFunctor)
+            EvaluationError.typeFunctor shouldBe correctTypeFunctor
         }
 
         test("evaluation-error-name-correct") {
-            assertEquals(correctTypeFunctor, aCallableTypeError.type.functor)
+            aCallableTypeError.type.functor shouldBe correctTypeFunctor
         }
 
         test("evaluation-error-type-correct") {
-            assertEquals(
-                Struct.of(correctTypeFunctor, testErrorType.toTerm()),
-                aCallableTypeError.type,
-            )
+            aCallableTypeError.type shouldBe Struct.of(correctTypeFunctor, testErrorType.toTerm())
         }
 
         test("evaluation-error-to-throw-struct-correct") {
@@ -43,6 +40,6 @@ class EvaluationErrorSpec :
         }
 
         test("evaluation-error-error-type-correct") {
-            assertEquals(testErrorType, aCallableTypeError.errorType)
+            aCallableTypeError.errorType shouldBe testErrorType
         }
     })

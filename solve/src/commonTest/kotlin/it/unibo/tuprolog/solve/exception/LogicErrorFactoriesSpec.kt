@@ -1,7 +1,13 @@
 package it.unibo.tuprolog.solve.exception
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldNotBeBlank
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
@@ -21,9 +27,6 @@ import it.unibo.tuprolog.solve.exception.error.SyntaxError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 private val context = Dummy.Context
 
@@ -166,8 +169,8 @@ private fun assertBuiltBy(
     case: DispatchCase,
     error: LogicError,
 ) {
-    assertTrue(case.expectedClass.isInstance(error), "${error::class} is not a ${case.expectedClass}")
-    assertEquals(case.type(), error.type)
+    withClue("${error::class} is not a ${case.expectedClass}") { case.expectedClass.isInstance(error).shouldBeTrue() }
+    error.type shouldBe case.type()
 }
 
 class LogicErrorFactoriesSpec :
@@ -175,7 +178,7 @@ class LogicErrorFactoriesSpec :
         withTests(nameFn = { "of/${it.id}" }, dispatchCases) { case ->
             val error = LogicError.of(context = context, type = case.type())
             assertBuiltBy(case, error)
-            assertEquals(errorStructOf(case.type()), error.errorStruct)
+            error.errorStruct shouldBe errorStructOf(case.type())
         }
 
         withTests(nameFn = { "of/custom/${it.id}" }, customCases) { case ->
@@ -187,8 +190,8 @@ class LogicErrorFactoriesSpec :
                     extraData = Atom.of("x"),
                 )
             assertBuiltBy(case, error)
-            assertEquals("custom", error.message)
-            assertEquals(errorStructOf(case.type(), Atom.of("x")), error.errorStruct)
+            error.message shouldBe "custom"
+            error.errorStruct shouldBe errorStructOf(case.type(), Atom.of("x"))
         }
 
         test("of/existence-error") {
@@ -213,48 +216,48 @@ class LogicErrorFactoriesSpec :
             val type = Struct.of("my_error", Atom.of("a"))
             val error = LogicError.of(context = context, type = type)
             val pushed = error.pushContext(context)
-            assertEquals(2, pushed.contexts.size)
-            assertEquals(type, pushed.type)
+            pushed.contexts.size shouldBe 2
+            pushed.type shouldBe type
             val updated = pushed.updateLastContext(context)
-            assertEquals(2, updated.contexts.size)
-            assertSame(context, updated.contexts.last())
-            assertEquals(type, updated.type)
+            updated.contexts.size shouldBe 2
+            updated.contexts.last() shouldBeSameInstanceAs context
+            updated.type shouldBe type
         }
 
         test("of/message-defaults-to-the-type") {
             val error = LogicError.of(context = context, type = Struct.of("my_error", Atom.of("a")))
-            assertEquals("my_error(a)", error.message)
+            error.message shouldBe "my_error(a)"
         }
 
         withTests(nameFn = { "factories/${it.id}" }, factoryCases) { case ->
             val error = case.build()
-            assertEquals(case.expectedType(), error.type)
+            error.type shouldBe case.expectedType()
             val message = error.message
-            assertTrue(!message.isNullOrBlank(), "empty message")
+            message.shouldNotBeNull().shouldNotBeBlank()
             // factories carry their message as the error's extra data, so it reaches Prolog code too
-            assertEquals(errorStructOf(case.expectedType(), Atom.of(message)), error.errorStruct)
+            error.errorStruct shouldBe errorStructOf(case.expectedType(), Atom.of(message))
         }
 
         test("factories/domain/for-argument-message") {
             val error = DomainError.forArgument(context, foo2, DomainError.Expected.ORDER, Atom.of("x"))
-            assertTrue(error.message!!.startsWith("An argument of `foo/2`"), error.message)
+            withClue(error.message) { error.message!!.startsWith("An argument of `foo/2`").shouldBeTrue() }
         }
 
         test("syntax/error-detector-points-at-the-column") {
-            assertEquals("1: ...\n2: b c.\n     ^ oops", SyntaxError.errorDetector("a.\nb c.", 2, 3, "oops"))
+            SyntaxError.errorDetector("a.\nb c.", 2, 3, "oops") shouldBe "1: ...\n2: b c.\n     ^ oops"
         }
 
         test("syntax/error-detector-on-the-first-line-has-no-context") {
-            assertEquals("1: f(\n    ^ ", SyntaxError.errorDetector("f(", 1, 2))
+            SyntaxError.errorDetector("f(", 1, 2) shouldBe "1: f(\n    ^ "
         }
 
         test("syntax/error-detector-past-the-last-line-returns-the-text") {
-            assertEquals("f(", SyntaxError.errorDetector("f(", 5, 1))
+            SyntaxError.errorDetector("f(", 5, 1) shouldBe "f("
         }
 
         test("syntax/while-parsing-clauses-shows-the-culprit-line") {
             val message = SyntaxError.whileParsingClauses(context, "a.\nb c.", 1, 2, 3, "oops").message!!
-            assertTrue(message.startsWith("Syntax error at 2:3 while parsing clause 1: oops"), message)
-            assertTrue("b c." in message, message)
+            withClue(message) { message.startsWith("Syntax error at 2:3 while parsing clause 1: oops").shouldBeTrue() }
+            withClue(message) { ("b c." in message).shouldBeTrue() }
         }
     })

@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.parser
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.parser.tokens.TokenPayload
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 private class PayloadCase(
     val id: String,
@@ -32,17 +32,17 @@ private fun payloadOf(text: String): TokenPayload = lex(text).significantTokens(
 class TokenPayloadSpec :
     FunSpec({
         withTests(nameFn = { "representation/${it.id}" }, payloads) { case ->
-            assertEquals(case.representation, payloadOf(case.text).toRepresentation())
+            payloadOf(case.text).toRepresentation() shouldBe case.representation
         }
 
         withTests(nameFn = { "representation/${it.id}/reads-back-as-the-same-payload" }, payloads) { case ->
             val payload = payloadOf(case.text)
             if (payload !is TokenPayload.CharacterCode) {
-                assertEquals(payload, payloadOf(payload.toRepresentation()))
+                payloadOf(payload.toRepresentation()) shouldBe payload
             }
         }
 
         test("representation/unknown-radix-is-rejected") {
-            assertFailsWith<IllegalArgumentException> { TokenPayload.IntegerDigits(3, "12").toRepresentation() }
+            shouldThrow<IllegalArgumentException> { TokenPayload.IntegerDigits(3, "12").toRepresentation() }
         }
     })

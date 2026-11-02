@@ -2,6 +2,10 @@ package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Cons
@@ -19,33 +23,29 @@ import it.unibo.tuprolog.utils.clearTags
 import it.unibo.tuprolog.utils.plus
 import it.unibo.tuprolog.utils.setTag
 import it.unibo.tuprolog.utils.setTags
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class SolutionMetadataSpec :
     FunSpec({
         withTests(nameFn = { "tags-stick-to-solutions/${it.id}" }, solutionCases) { case ->
             val solution = case.solution()
-            assertNull(solution.getTag<Metadata<String>>(SOME_KEY))
-            assertFalse { solution.containsTag(SOME_KEY) }
+            (solution.getTag<Metadata<String>>(SOME_KEY)).shouldBeNull()
+            solution.containsTag(SOME_KEY).shouldBeFalse()
             val tagged = solution.setTag(SOME_KEY, someValue1)
-            assertFalse { solution.containsTag(SOME_KEY) }
-            assertNull(solution.getTag<Metadata<String>>(SOME_KEY))
-            assertTrue { tagged.containsTag(SOME_KEY) }
-            assertEquals(someValue1, tagged.getTag<Metadata<String>>(SOME_KEY))
-            assertEquals(emptyMap(), solution.tags)
-            assertEquals(mapOf(SOME_KEY to someValue1), tagged.tags)
+            solution.containsTag(SOME_KEY).shouldBeFalse()
+            (solution.getTag<Metadata<String>>(SOME_KEY)).shouldBeNull()
+            tagged.containsTag(SOME_KEY).shouldBeTrue()
+            (tagged.getTag<Metadata<String>>(SOME_KEY)) shouldBe someValue1
+            solution.tags shouldBe emptyMap()
+            tagged.tags shouldBe mapOf(SOME_KEY to someValue1)
         }
 
         withTests(nameFn = { "solutions-preserve-query-tags/${it.id}" }, solutionCases) { case ->
             val solution = case.solution()
-            assertEquals(mapOf(YET_ANOTHER_KEY to someValue2), solution.query.tags)
+            solution.query.tags shouldBe mapOf(YET_ANOTHER_KEY to someValue2)
             if (solution is Solution.Yes) {
-                assertEquals(mapOf(YET_ANOTHER_KEY to someValue2), solution.solvedQuery.tags)
+                solution.solvedQuery.tags shouldBe mapOf(YET_ANOTHER_KEY to someValue2)
             } else {
-                assertNull(solution.solvedQuery)
+                solution.solvedQuery.shouldBeNull()
             }
         }
 
@@ -53,18 +53,18 @@ class SolutionMetadataSpec :
             val solution = case.solution().setTag(SOME_KEY, someValue1)
             val tags = mapOf<String, Any>(SOME_KEY to someValue2, SOME_OTHER_KEY to someOtherValue)
             val replaced = solution.replaceTags(tags)
-            assertEquals(mapOf(SOME_KEY to someValue1), solution.tags)
-            assertEquals(tags, replaced.tags)
+            solution.tags shouldBe mapOf(SOME_KEY to someValue1)
+            replaced.tags shouldBe tags
         }
 
         fun assertTaggingPreservesEquality(
             nonTagged: Solution,
             tagged: Solution,
         ) {
-            assertEquals(nonTagged, tagged)
-            assertEquals(nonTagged.hashCode(), tagged.hashCode())
-            assertTrue { nonTagged.tags.isEmpty() }
-            assertTrue { tagged.tags.isNotEmpty() }
+            tagged shouldBe nonTagged
+            tagged.hashCode() shouldBe nonTagged.hashCode()
+            nonTagged.tags.isEmpty().shouldBeTrue()
+            tagged.tags.isNotEmpty().shouldBeTrue()
         }
 
         withTests(nameFn = { "adding-tags-preserves-equality/${it.id}" }, solutionCases) { case ->
@@ -93,20 +93,20 @@ class SolutionMetadataSpec :
         withTests(nameFn = { "clearing-tags-preserves-equality/${it.id}" }, solutionCases) { case ->
             val tagged = case.solution().setTags(SOME_KEY to someValue1, SOME_OTHER_KEY to someOtherValue)
             val cleared = tagged.clearTags()
-            assertEquals(tagged, cleared)
-            assertEquals(tagged.hashCode(), cleared.hashCode())
-            assertTrue { cleared.tags.isEmpty() }
-            assertTrue { tagged.tags.isNotEmpty() }
+            cleared shouldBe tagged
+            cleared.hashCode() shouldBe tagged.hashCode()
+            cleared.tags.isEmpty().shouldBeTrue()
+            tagged.tags.isNotEmpty().shouldBeTrue()
         }
 
         withTests(nameFn = { "adding-an-existing-tag-replaces-that-tag/${it.id}" }, solutionCases) { case ->
             val tagged = case.solution().setTags(SOME_KEY to someValue1, SOME_OTHER_KEY to someOtherValue)
-            assertEquals(someValue2, tagged.addTag(SOME_KEY, someValue2).getTag<Metadata<String>>(SOME_KEY))
+            (tagged.addTag(SOME_KEY, someValue2).getTag<Metadata<String>>(SOME_KEY)) shouldBe someValue2
         }
 
         withTests(nameFn = { "setting-an-existing-tag-replaces-that-tag/${it.id}" }, solutionCases) { case ->
             val tagged = case.solution().setTags(SOME_KEY to someValue1, SOME_OTHER_KEY to someOtherValue)
-            assertEquals(someValue2, tagged.setTag(SOME_KEY, someValue2).getTag<Metadata<String>>(SOME_KEY))
+            (tagged.setTag(SOME_KEY, someValue2).getTag<Metadata<String>>(SOME_KEY)) shouldBe someValue2
         }
     })
 

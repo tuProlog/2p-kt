@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.stdlib.function
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
-import kotlin.test.assertEquals
 
 /**
  * Test class for [BitwiseOr]
@@ -15,17 +15,14 @@ import kotlin.test.assertEquals
 class BitwiseOrSpec :
     FunSpec({
         test("functor-name-correct") {
-            assertEquals(Signature("\\/", 2), BitwiseOr.signature)
+            BitwiseOr.signature shouldBe Signature("\\/", 2)
         }
 
         test("computation-correct") {
-            assertEquals(
+            BitwiseOr.computeOf(
+                Integer.of(125),
                 Integer.of(255),
-                BitwiseOr.computeOf(
-                    Integer.of(125),
-                    Integer.of(255),
-                ),
-            )
+            ) shouldBe Integer.of(255)
         }
 
         test("rejected-inputs") {

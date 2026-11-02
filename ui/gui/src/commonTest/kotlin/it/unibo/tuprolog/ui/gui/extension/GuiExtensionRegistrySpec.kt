@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.ui.gui.extension
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.ui.gui.identity.CommandId
 import it.unibo.tuprolog.ui.gui.identity.ExtensionId
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
@@ -11,9 +14,6 @@ import it.unibo.tuprolog.ui.gui.presentation.SemanticRegion
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.gui.solver.SolverProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverSessionFactory
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNull
 
 private fun extension(
     id: String,
@@ -34,21 +34,21 @@ private fun profile(id: String) =
 class GuiExtensionRegistrySpec :
     FunSpec({
         test("rejects-two-extensions-with-the-same-id") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 GuiExtensionRegistry(listOf(extension("a"), extension("a")))
             }
         }
 
         test("rejects-two-extensions-contributing-the-same-solver-profile") {
             val contributions = GuiContributions(solverProfiles = listOf(profile("shared")))
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 GuiExtensionRegistry(listOf(extension("a", contributions), extension("b", contributions)))
             }
         }
 
         test("rejects-two-extensions-contributing-the-same-feature-or-command") {
             val feature = FeatureDescriptor(FeatureId("f"), "F", FeaturePlacement(SemanticRegion.RESULTS))
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 GuiExtensionRegistry(
                     listOf(
                         extension("a", GuiContributions(features = listOf(feature))),
@@ -57,7 +57,7 @@ class GuiExtensionRegistrySpec :
                 )
             }
             val command = CommandDescriptor(CommandId("c"), "C")
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 GuiExtensionRegistry(
                     listOf(
                         extension("a", GuiContributions(commands = listOf(command))),
@@ -69,7 +69,7 @@ class GuiExtensionRegistrySpec :
 
         test("find-returns-the-extension-by-id-or-null") {
             val registry = GuiExtensionRegistry(listOf(extension("a")))
-            assertEquals(ExtensionId("a"), registry.find(ExtensionId("a"))?.id)
-            assertNull(registry.find(ExtensionId("missing")))
+            registry.find(ExtensionId("a"))?.id shouldBe ExtensionId("a")
+            registry.find(ExtensionId("missing")).shouldBeNull()
         }
     })

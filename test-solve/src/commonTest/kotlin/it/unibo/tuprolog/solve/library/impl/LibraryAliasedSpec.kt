@@ -2,11 +2,11 @@ package it.unibo.tuprolog.solve.library.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.libraryWithAliasConstructor
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 
 /**
  * Test class for aliased libraries
@@ -16,14 +16,12 @@ import kotlin.test.assertNotEquals
 class LibraryAliasedSpec :
     FunSpec({
         withTests(nameFn = { "alias-correct/${it.id}" }, LibraryUtils.allLibraryCases) { case ->
-            assertEquals(case.raw.name, makeLib(case.raw, ::libraryWithAliasConstructor).alias)
+            makeLib(case.raw, ::libraryWithAliasConstructor).alias shouldBe case.raw.name
         }
 
         withTests(nameFn = { "alias-considered-in-equality-testing/${it.id}" }, LibraryUtils.allLibraryCases) { case ->
             val (alias, opSet, theory, primitives, functions) = case.raw
-            assertNotEquals(
-                libraryWithAliasConstructor(opSet, theory, primitives, functions, alias),
-                libraryWithAliasConstructor(opSet, theory, primitives, functions, alias + "x"),
-            )
+            libraryWithAliasConstructor(opSet, theory, primitives, functions, alias + "x") shouldNotBe
+                libraryWithAliasConstructor(opSet, theory, primitives, functions, alias)
         }
     })

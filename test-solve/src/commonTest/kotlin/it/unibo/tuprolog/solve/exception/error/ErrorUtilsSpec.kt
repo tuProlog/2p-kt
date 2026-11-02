@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.exception.error
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
-import kotlin.test.assertEquals
 
 /**
  * Test class for [ErrorUtils]
@@ -19,20 +19,16 @@ class ErrorUtilsSpec :
         val defaultCustomErrorData = Atom.of("")
 
         test("standard-error-wrapper-functor-correct") {
-            assertEquals("error", ErrorUtils.ERROR_FUNCTOR)
+            ErrorUtils.ERROR_FUNCTOR shouldBe "error"
         }
 
         test("error-struct-of-with-args-creates-correct-struct") {
-            assertEquals(
-                Struct.of(ErrorUtils.ERROR_FUNCTOR, errorDescription, errorExtraData),
-                ErrorUtils.errorStructOf(errorDescription, errorExtraData),
-            )
+            ErrorUtils.errorStructOf(errorDescription, errorExtraData) shouldBe
+                Struct.of(ErrorUtils.ERROR_FUNCTOR, errorDescription, errorExtraData)
         }
 
         test("error-struct-of-with-only-first-arg-fills-extra-data-with-true") {
-            assertEquals(
-                Struct.of(ErrorUtils.ERROR_FUNCTOR, errorDescription, defaultCustomErrorData),
-                ErrorUtils.errorStructOf(errorDescription),
-            )
+            ErrorUtils.errorStructOf(errorDescription) shouldBe
+                Struct.of(ErrorUtils.ERROR_FUNCTOR, errorDescription, defaultCustomErrorData)
         }
     })

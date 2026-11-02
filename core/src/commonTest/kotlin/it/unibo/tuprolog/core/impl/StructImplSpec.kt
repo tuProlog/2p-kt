@@ -2,6 +2,8 @@ package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
@@ -18,8 +20,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Test class for [StructImpl] and [Struct]
@@ -38,22 +38,22 @@ class StructImplSpec :
             property: String,
             expected: (Struct) -> Boolean,
             actual: (Struct) -> Boolean,
-        ) = structs(property) { assertEquals(expected(it), actual(it)) }
+        ) = structs(property) { actual(it) shouldBe expected(it) }
 
         withTests(nameFn = { "functor/${it.id}" }, StructUtils.mixedStructCases) { case ->
-            assertEquals(case.functor, StructImpl(case.functor, case.args).functor)
+            StructImpl(case.functor, case.args).functor shouldBe case.functor
         }
 
         withTests(nameFn = { "args/${it.id}" }, StructUtils.mixedStructCases) { case ->
-            assertEquals(case.args, StructImpl(case.functor, case.args).args)
+            StructImpl(case.functor, case.args).args shouldBe case.args
         }
 
         withTests(nameFn = { "args-sequence/${it.id}" }, StructUtils.mixedStructCases) { case ->
-            assertEquals(case.args, StructImpl(case.functor, case.args).argsSequence.toList())
+            StructImpl(case.functor, case.args).argsSequence.toList() shouldBe case.args
         }
 
         withTests(nameFn = { "variables/${it.id}" }, StructUtils.mixedStructCases) { case ->
-            assertEquals(case.args.filter { it.isVar }, StructImpl(case.functor, case.args).variables.toList())
+            StructImpl(case.functor, case.args).variables.toList() shouldBe (case.args.filter { it.isVar })
         }
 
         test("equals-works-as-expected") {
@@ -61,8 +61,8 @@ class StructImplSpec :
             val trueAtom = AtomImpl("true")
             val trueTruth = Truth.TRUE
 
-            assertEquals<Struct>(trueStruct, trueAtom)
-            assertEquals<Struct>(trueStruct, trueTruth)
+            trueAtom.shouldBe<Struct>(trueStruct)
+            trueTruth.shouldBe<Struct>(trueStruct)
         }
 
         test("structurally-equals-works-as-expected") {
@@ -77,22 +77,22 @@ class StructImplSpec :
         structs(
             "is-functor-well-formed",
             StructUtils.mixedStructCases.filter { it.functor matches Struct.WELL_FORMED_FUNCTOR_PATTERN },
-        ) { assertTrue { it.isFunctorWellFormed } }
+        ) { it.isFunctorWellFormed.shouldBeTrue() }
 
         structs("to-string") {
             val expected =
                 (if (it.isFunctorWellFormed) it.functor else "'${it.functor}'") +
                     (if (it.arity > 0) "(${it.args.joinToString(", ")})" else "")
-            assertEquals(expected, it.toString())
+            it.toString() shouldBe expected
         }
 
         withTests(nameFn = { "is-ground/${it.id}" }, StructUtils.mixedStructCases) { case ->
-            assertEquals(case.isGround, StructImpl(case.functor, case.args).isGround)
+            StructImpl(case.functor, case.args).isGround shouldBe case.isGround
         }
 
         structs("type-checks", StructUtils.nonSpecialStructCases, TermTypeAssertionUtils::assertIsStruct)
 
-        structs("indicator") { assertEquals(Indicator.of(it.functor, it.arity), it.indicator) }
+        structs("indicator") { it.indicator shouldBe Indicator.of(it.functor, it.arity) }
 
         detects("is-clause", { it.functor == Clause.FUNCTOR }) { it.isClause }
 
@@ -156,7 +156,7 @@ class StructImplSpec :
             }
         }
 
-        structs("arity-is-args-size") { assertEquals(it.args.size, it.arity) }
+        structs("arity-is-args-size") { it.arity shouldBe it.args.size }
 
         structs("get-arg-at") { struct ->
             struct.args.forEachIndexed { index, arg ->

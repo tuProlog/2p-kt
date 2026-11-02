@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.impl.StructImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualsUsingVariablesSimpleNames
@@ -11,10 +15,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TupleUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotSame
 
 /**
  * Test class for [Struct] companion object
@@ -52,7 +52,7 @@ class StructSpec :
         }
 
         withTests(nameFn = { "of/special/${it.id}" }, StructUtils.specialStructCases) { case ->
-            assertNotEquals(StructImpl::class, Struct.of(case.functor, case.args)::class)
+            Struct.of(case.functor, case.args)::class shouldNotBe StructImpl::class
         }
 
         withTests(nameFn = { "of/non-special/${it.id}" }, StructUtils.nonSpecialStructCases) { case ->
@@ -103,13 +103,13 @@ class StructSpec :
         }
 
         test("struct-fold-without-terminal-requires-two-or-more-terms") {
-            assertFailsWith<IllegalArgumentException> { Struct.fold("f", emptySequence()) }
-            assertFailsWith<IllegalArgumentException> { Struct.fold("f", sequenceOf(Var.anonymous())) }
+            shouldThrow<IllegalArgumentException> { Struct.fold("f", emptySequence()) }
+            shouldThrow<IllegalArgumentException> { Struct.fold("f", sequenceOf(Var.anonymous())) }
             Struct.fold("f", sequenceOf(Var.anonymous(), Var.anonymous()))
         }
 
         test("struct-of-with-terminal-requires-one-or-more-terms") {
-            assertFailsWith<IllegalArgumentException> { Struct.fold("f", emptySequence(), Var.anonymous()) }
+            shouldThrow<IllegalArgumentException> { Struct.fold("f", emptySequence(), Var.anonymous()) }
             Struct.fold("f", sequenceOf(Var.anonymous()), Var.anonymous())
         }
 
@@ -142,10 +142,10 @@ class StructSpec :
             assertEqualsUsingVariablesSimpleNames(Struct.of("f", Var.anonymous()), f)
             assertStructurallyEquals(Struct.of("f", Var.anonymous()), f)
 
-            assertNotEquals(Struct.of("f", Var.of("_")), f)
-            assertNotSame(Struct.of("f", Var.of("_")), f)
-            assertNotEquals(Struct.of("f", Var.anonymous()), f)
-            assertNotSame(Struct.of("f", Var.anonymous()), f)
+            f shouldNotBe Struct.of("f", Var.of("_"))
+            f shouldNotBeSameInstanceAs Struct.of("f", Var.of("_"))
+            f shouldNotBe Struct.of("f", Var.anonymous())
+            f shouldNotBeSameInstanceAs Struct.of("f", Var.anonymous())
 
             val fX = Struct.of("f", Var.of("X"))
             val gX = Struct.of("g", Var.of("X"))
@@ -156,30 +156,30 @@ class StructSpec :
             assertEqualsUsingVariablesSimpleNames(Struct.of("f", Var.of("X")), fX)
             assertStructurallyEquals(Struct.of("f", Var.of("X")), fX)
 
-            assertNotEquals(Struct.of("f", Var.of("X")), fX)
-            assertNotSame(Struct.of("f", Var.of("X")), fX)
+            fX shouldNotBe Struct.of("f", Var.of("X"))
+            fX shouldNotBeSameInstanceAs Struct.of("f", Var.of("X"))
         }
 
         test("of-iterable/same-as-of-list") {
             val (a, b) = listOf(Atom.of("a"), Atom.of("b"))
-            assertEquals(Struct.of("f", a, b), Struct.of("f", setOf(a, b)))
+            Struct.of("f", setOf(a, b)) shouldBe Struct.of("f", a, b)
         }
 
         test("fold-iterable/right-nested") {
             val (a, b, c) = listOf(Atom.of("a"), Atom.of("b"), Atom.of("c"))
-            assertEquals(Struct.of("f", a, Struct.of("f", b, c)), Struct.fold("f", setOf(a, b, c)))
+            Struct.fold("f", setOf(a, b, c)) shouldBe Struct.of("f", a, Struct.of("f", b, c))
         }
 
         test("fold-vararg-with-terminal/right-nested") {
             val (a, b, c) = listOf(Atom.of("a"), Atom.of("b"), Atom.of("c"))
-            assertEquals(Struct.of("f", a, Struct.of("f", b, c)), Struct.fold("f", a, b, terminal = c))
+            Struct.fold("f", a, b, terminal = c) shouldBe Struct.of("f", a, Struct.of("f", b, c))
         }
 
         test("escape-functor/escapes-single-quotes-by-default") {
-            assertEquals("a\\tb\\rc\"d\\'e", Struct.escapeFunctor("a\tb\rc\"d'e"))
+            Struct.escapeFunctor("a\tb\rc\"d'e") shouldBe "a\\tb\\rc\"d\\'e"
         }
 
         test("escape-functor/escapes-double-quotes-instead") {
-            assertEquals("c\\\"d'e", Struct.escapeFunctor("c\"d'e", escapeSingleQuotes = false))
+            Struct.escapeFunctor("c\"d'e", escapeSingleQuotes = false) shouldBe "c\\\"d'e"
         }
     })

@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
+import io.kotest.matchers.booleans.shouldBeTrue
 
 class KotlinTypeRefsSpec :
     FunSpec({
@@ -11,7 +12,9 @@ class KotlinTypeRefsSpec :
             expected: Any?,
         ) {
             val result = typeRef.invoke(property)
-            assertEquals(expected, result.asValue()?.value)
+            val actual = result.asValue()?.value
+            // equals(), not shouldBe: Kotest compares numbers as IEEE values, where NaN differs from NaN
+            withClue("expected $expected, but was $actual") { (actual == expected).shouldBeTrue() }
         }
 
         test("call-static-properties-of-int") {

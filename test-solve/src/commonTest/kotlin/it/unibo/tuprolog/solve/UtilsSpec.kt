@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 
 /**
  * Test class for Utils.kt functionalities
@@ -18,16 +18,16 @@ class UtilsSpec :
 
             var sum = 0
             listOf(1, 2, 3).forEachWithLookahead { int, _ -> sum += int }
-            assertEquals(6, sum)
+            sum shouldBe 6
         }
 
         test("foreach-with-look-ahead-returns-correct-boolean-as-second-parameter") {
-            listOf(1).forEachWithLookahead { _, hasNext -> assertFalse(hasNext) }
+            listOf(1).forEachWithLookahead { _, hasNext -> hasNext.shouldBeFalse() }
 
             listOf(1, 2).forEachWithLookahead { int, hasNext ->
                 when (int) {
-                    1 -> assertTrue(hasNext)
-                    2 -> assertFalse(hasNext)
+                    1 -> hasNext.shouldBeTrue()
+                    2 -> hasNext.shouldBeFalse()
                 }
             }
         }

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.testutils
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
@@ -13,7 +14,6 @@ import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
-import kotlin.test.assertFailsWith
 
 /**
  * Characterization tests for [assertSolutionEquals], pinning down what it compares (and what it deliberately
@@ -32,7 +32,7 @@ class AssertSolutionEqualsSpec :
         fun existenceError(name: String) = ExistenceError.forProcedure(context, Signature(name, 1))
 
         fun fails(block: () -> Unit) {
-            assertFailsWith<AssertionError> { block() }
+            shouldThrow<AssertionError> { block() }
         }
 
         test("identical-yes-solutions-are-equal") {

@@ -1,17 +1,17 @@
 package it.unibo.tuprolog.solve.problog.prolog
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
-import kotlin.test.assertEquals
 
 class DefaultBuiltinsSpec :
     FunSpec({
         test("self-equality") {
-            assertEquals(ProblogLib, ProblogLib)
+            ProblogLib shouldBe ProblogLib
         }
 
         test("item-equality") {
-            assertEquals(Runtime.of(ProblogLib), Runtime.of(ProblogLib))
+            Runtime.of(ProblogLib) shouldBe Runtime.of(ProblogLib)
         }
     })

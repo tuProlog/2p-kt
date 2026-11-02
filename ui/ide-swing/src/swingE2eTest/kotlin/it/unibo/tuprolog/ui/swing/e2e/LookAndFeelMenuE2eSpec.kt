@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.ui.swing.e2e
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.ui.swing.app.installedLookAndFeels
 import org.assertj.swing.fixture.FrameFixture
 import javax.swing.JMenu
 import javax.swing.JRadioButtonMenuItem
 import javax.swing.UIManager
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /** Covers the "Look and Feel" menu: one radio item per installed look-and-feel, switching the running UI. */
 class LookAndFeelMenuE2eSpec :
@@ -26,7 +26,7 @@ class LookAndFeelMenuE2eSpec :
             }
             val active = installedLookAndFeels().first { it.className == UIManager.getLookAndFeel().javaClass.name }
             val activeItem = window.menuItem("lookAndFeelMenuItem.${active.name}").target() as JRadioButtonMenuItem
-            assertTrue(activeItem.isSelected)
+            activeItem.isSelected.shouldBeTrue()
             window.robot().pressAndReleaseKey(java.awt.event.KeyEvent.VK_ESCAPE)
         }
 
@@ -39,6 +39,6 @@ class LookAndFeelMenuE2eSpec :
             window.awaitCondition("the look-and-feel to switch to ${other.name}") {
                 UIManager.getLookAndFeel().javaClass.name == other.className
             }
-            assertEquals(other.className, UIManager.getLookAndFeel().javaClass.name)
+            UIManager.getLookAndFeel().javaClass.name shouldBe other.className
         }
     })

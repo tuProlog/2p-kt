@@ -1,24 +1,24 @@
 package it.unibo.tuprolog.ui.gui.model
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.ui.gui.identity.DocumentId
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class ModelInvariantsSpec :
     FunSpec({
         test("document-origin-rejects-blank-fields") {
-            assertFailsWith<IllegalArgumentException> { DocumentOrigin("", "ref", "name") }
-            assertFailsWith<IllegalArgumentException> { DocumentOrigin("provider", "", "name") }
-            assertFailsWith<IllegalArgumentException> { DocumentOrigin("provider", "ref", "") }
+            shouldThrow<IllegalArgumentException> { DocumentOrigin("", "ref", "name") }
+            shouldThrow<IllegalArgumentException> { DocumentOrigin("provider", "", "name") }
+            shouldThrow<IllegalArgumentException> { DocumentOrigin("provider", "ref", "") }
         }
 
         test("document-state-persisted-revision-cannot-exceed-revision") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 DocumentState(id = DocumentId("a"), displayName = "a", revision = 1, persistedRevision = 2)
             }
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 DocumentState(id = DocumentId("a"), displayName = "a", revision = -1)
             }
         }
@@ -26,15 +26,15 @@ class ModelInvariantsSpec :
         test("document-state-is-dirty-only-when-revisions-diverge") {
             val clean = DocumentState(id = DocumentId("a"), displayName = "a", revision = 2, persistedRevision = 2)
             val dirty = DocumentState(id = DocumentId("a"), displayName = "a", revision = 2, persistedRevision = 1)
-            assertFalse(clean.isDirty)
-            assertTrue(dirty.isDirty)
+            clean.isDirty.shouldBeFalse()
+            dirty.isDirty.shouldBeTrue()
         }
 
         test("page-feature-state-rejects-negative-revision") {
-            assertFailsWith<IllegalArgumentException> { PageFeatureState(revision = -1) }
+            shouldThrow<IllegalArgumentException> { PageFeatureState(revision = -1) }
         }
 
         test("scratch-page-content-rejects-negative-revision") {
-            assertFailsWith<IllegalArgumentException> { PageContent.Scratch(text = "a.", revision = -1) }
+            shouldThrow<IllegalArgumentException> { PageContent.Scratch(text = "a.", revision = -1) }
         }
     })

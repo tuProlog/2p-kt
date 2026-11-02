@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.impl.EmptyBlockImpl
 import it.unibo.tuprolog.core.impl.EmptyListImpl
-import kotlin.test.assertEquals
 
 /**
  * Test class for [Empty] and its companion object
@@ -13,10 +13,10 @@ import kotlin.test.assertEquals
 class EmptySpec :
     FunSpec({
         test("list-method-should-return-empty-list") {
-            assertEquals(EmptyListImpl(), Empty.list())
+            Empty.list() shouldBe EmptyListImpl()
         }
 
         test("block-method-should-return-empty-set") {
-            assertEquals(EmptyBlockImpl(), Empty.block())
+            Empty.block() shouldBe EmptyBlockImpl()
         }
     })

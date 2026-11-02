@@ -1,43 +1,33 @@
 package it.unibo.tuprolog.solve.stdlib.magic
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldNotBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Var
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class MagicCutSpec :
     FunSpec({
         test("magic-cut-representation") {
-            assertTrue {
-                MagicCut.toString() == MagicCut.FUNCTOR
-            }
+            MagicCut.toString() shouldBe MagicCut.FUNCTOR
         }
 
         test("magic-cut-cannot-be-created") {
-            assertTrue {
-                Atom.of("!") !is MagicCut
-            }
-            assertTrue {
-                Atom.of("¡") !is MagicCut
-            }
+            Atom.of("!").shouldNotBeInstanceOf<MagicCut>()
+            Atom.of("¡").shouldNotBeInstanceOf<MagicCut>()
         }
 
         test("magic-cut-equality-with-ordinary-cut") {
-            assertTrue {
-                Atom.of("!") == MagicCut
-            }
-            assertTrue {
-                MagicCut == Atom.of("!")
-            }
-            assertEquals(Atom.of("!").hashCode(), MagicCut.hashCode())
+            Atom.of("!") shouldBe MagicCut
+            MagicCut shouldBe Atom.of("!")
+            MagicCut.hashCode() shouldBe Atom.of("!").hashCode()
         }
 
         test("coping-magic-cut-preserves-is") {
-            assertEquals(MagicCut, MagicCut.freshCopy())
-            assertEquals(MagicCut, MagicCut.freshCopy(Scope.empty()))
-            assertEquals(MagicCut, MagicCut.freshCopy(Scope.of(Var.anonymous())))
-            assertEquals(MagicCut, MagicCut.freshCopy(Scope.of(Var.anonymous(), Var.anonymous())))
+            MagicCut.freshCopy() shouldBe MagicCut
+            MagicCut.freshCopy(Scope.empty()) shouldBe MagicCut
+            MagicCut.freshCopy(Scope.of(Var.anonymous())) shouldBe MagicCut
+            MagicCut.freshCopy(Scope.of(Var.anonymous(), Var.anonymous())) shouldBe MagicCut
         }
     })

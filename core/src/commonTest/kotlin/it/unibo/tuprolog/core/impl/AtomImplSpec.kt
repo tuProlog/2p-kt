@@ -2,6 +2,9 @@ package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
@@ -9,9 +12,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for [AtomImpl] and [Atom]
@@ -27,33 +27,33 @@ class AtomImplSpec :
         ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(AtomImpl(it.value)) }
 
         withTests(nameFn = { "functor/${it.id}" }, AtomUtils.mixedAtomCases) { case ->
-            assertEquals(case.value, AtomImpl(case.value).functor)
+            AtomImpl(case.value).functor shouldBe case.value
         }
 
-        atoms("functor-is-the-value") { assertSame(it.value, it.functor) }
+        atoms("functor-is-the-value") { it.functor shouldBeSameInstanceAs it.value }
 
         atoms("no-arguments", test = AtomUtils::assertNoArguments)
 
-        atoms("zero-arity") { assertEquals(0, it.arity) }
+        atoms("zero-arity") { it.arity shouldBe 0 }
 
-        atoms("no-variables") { assertTrue { it.variables.none() } }
+        atoms("no-variables") { it.variables.none().shouldBeTrue() }
 
         atoms("type-checks", AtomUtils.nonSpecialAtomCases, TermTypeAssertionUtils::assertIsAtom)
 
         test("empty-block-atom-detected") {
-            assertTrue(AtomImpl("{}").isEmptyBlock)
+            AtomImpl("{}").isEmptyBlock.shouldBeTrue()
         }
 
         test("empty-list-atom-detected") {
-            assertTrue(AtomImpl("[]").isEmptyList)
+            AtomImpl("[]").isEmptyList.shouldBeTrue()
         }
 
         test("true-atom-detected") {
-            assertTrue(AtomImpl("true").isTrue)
+            AtomImpl("true").isTrue.shouldBeTrue()
         }
 
         test("fail-atom-detected") {
-            assertTrue(AtomImpl("fail").isFail)
+            AtomImpl("fail").isFail.shouldBeTrue()
         }
 
         test("equals-works-as-expected") {
@@ -61,8 +61,8 @@ class AtomImplSpec :
             val trueAtom = AtomImpl("true")
             val trueTruth = Truth.TRUE
 
-            assertEquals<Struct>(trueAtom, trueStruct)
-            assertEquals<Atom>(trueAtom, trueTruth)
+            trueStruct.shouldBe<Struct>(trueAtom)
+            trueTruth.shouldBe<Atom>(trueAtom)
         }
 
         test("structurally-equals-works-as-expected") {

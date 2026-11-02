@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.ui.web
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
 import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
 import it.unibo.tuprolog.ui.gui.presentation.SemanticCategory
@@ -9,9 +13,6 @@ import it.unibo.tuprolog.ui.gui.presentation.TextPosition
 import it.unibo.tuprolog.ui.gui.presentation.TextRange
 import kotlinx.browser.document
 import org.w3c.dom.HTMLElement
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class AceEditorViewSpec :
     FunSpec({
@@ -32,13 +33,13 @@ class AceEditorViewSpec :
         test("a real Ace instance mounts and echoes back the text it is given") {
             withEditor { editor ->
                 editor.value = "p(1).\np(2)."
-                assertEquals("p(1).\np(2).", editor.value)
+                editor.value shouldBe "p(1).\np(2)."
             }
         }
 
         test("a freshly mounted editor is not focused and accepts diagnostics without throwing") {
             withEditor { editor ->
-                assertFalse(editor.isFocused)
+                editor.isFocused.shouldBeFalse()
                 editor.setDiagnostics(
                     listOf(
                         Diagnostic(
@@ -66,15 +67,15 @@ class AceEditorViewSpec :
                 )
                 editor.resize()
                 val container = document.getElementsByClassName("ace_comment")
-                assertTrue(container.length > 0, "expected an 'ace_comment' span to be rendered")
-                assertEquals("% comment", container.item(0)?.textContent)
+                withClue("expected an 'ace_comment' span to be rendered") { (container.length > 0).shouldBeTrue() }
+                container.item(0)?.textContent shouldBe "% comment"
             }
         }
 
         test("typing through Ace's own insert pipeline does not throw") {
             withEditor { editor ->
                 editor.testType("p(X) :- q(X).")
-                assertEquals("p(X) :- q(X).", editor.value)
+                editor.value shouldBe "p(X) :- q(X)."
             }
         }
     })

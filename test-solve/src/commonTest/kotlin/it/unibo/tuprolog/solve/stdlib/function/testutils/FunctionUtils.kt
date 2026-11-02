@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.stdlib.function.testutils
 
+import io.kotest.assertions.throwables.shouldThrow
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Term
@@ -11,7 +12,6 @@ import it.unibo.tuprolog.solve.function.BinaryMathFunction
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.FunctionWrapper
 import it.unibo.tuprolog.solve.function.UnaryMathFunction
-import kotlin.test.assertFailsWith
 
 /**
  * Utils singleton to help testing functions
@@ -31,13 +31,13 @@ internal object FunctionUtils {
 
     /** Utility function to assert that a unaryMathFunction rejects non integer parameters */
     internal fun assertRejectsNonIntegerParameters(unaryMathFunction: UnaryMathFunction) {
-        assertFailsWith<TypeError> { unaryMathFunction.computeOf(Real.of(2.0)) }
+        shouldThrow<TypeError> { unaryMathFunction.computeOf(Real.of(2.0)) }
     }
 
     /** Utility function to assert that a binaryMathFunction rejects non integer parameters */
     internal fun assertRejectsNonIntegerParameters(binaryMathFunction: BinaryMathFunction) {
-        assertFailsWith<TypeError> { binaryMathFunction.computeOf(Integer.of(2), Real.of(2.0)) }
-        assertFailsWith<TypeError> { binaryMathFunction.computeOf(Real.of(2.0), Integer.of(2)) }
-        assertFailsWith<TypeError> { binaryMathFunction.computeOf(Real.of(2.0), Real.of(2.0)) }
+        shouldThrow<TypeError> { binaryMathFunction.computeOf(Integer.of(2), Real.of(2.0)) }
+        shouldThrow<TypeError> { binaryMathFunction.computeOf(Real.of(2.0), Integer.of(2)) }
+        shouldThrow<TypeError> { binaryMathFunction.computeOf(Real.of(2.0), Real.of(2.0)) }
     }
 }

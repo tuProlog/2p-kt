@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.ui.gui.template
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.ui.gui.presentation.PrologSyntaxAnalyzer
-import kotlin.test.assertTrue
 
 class PrologTheoryTemplatesSpec :
     FunSpec({
@@ -12,9 +13,8 @@ class PrologTheoryTemplatesSpec :
             PrologTheoryTemplates.ALL,
         ) { template ->
             val analysis = PrologSyntaxAnalyzer.analyze(template.source, emptyList())
-            assertTrue(
-                analysis.diagnostics.isEmpty(),
-                "Template '${template.id}' failed to parse: ${analysis.diagnostics}",
-            )
+            withClue("Template '${template.id}' failed to parse: ${analysis.diagnostics}") {
+                analysis.diagnostics.isEmpty().shouldBeTrue()
+            }
         }
     })

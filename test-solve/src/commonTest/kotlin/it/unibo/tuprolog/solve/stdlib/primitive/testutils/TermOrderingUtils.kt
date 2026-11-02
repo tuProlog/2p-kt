@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.throwables.shouldThrowAny
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.dsl.logicProgramming
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
@@ -14,9 +19,6 @@ import it.unibo.tuprolog.solve.stdlib.primitive.TermNotSame
 import it.unibo.tuprolog.solve.stdlib.primitive.TermSame
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.requestCase
 import kotlin.reflect.KClass
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 internal object TermOrderingUtils {
     @Suppress("IMPLICIT_CAST_TO_ANY")
@@ -26,23 +28,37 @@ internal object TermOrderingUtils {
         expectedResult: Any,
     ) = when (expectedResult) {
         true ->
-            assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-                standardOrderRelation.implementation
-                    .solve(input)
-                    .single()
-                    .solution is Solution.Yes
+            withClue("Requesting ${input.query} should result in $expectedResult response!") {
+                (
+                    run {
+                        standardOrderRelation.implementation
+                            .solve(input)
+                            .single()
+                            .solution is Solution.Yes
+                    }
+                ).shouldBeTrue()
             }
         false ->
-            assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-                standardOrderRelation.implementation
-                    .solve(input)
-                    .single()
-                    .solution is Solution.No
+            withClue("Requesting ${input.query} should result in $expectedResult response!") {
+                (
+                    run {
+                        standardOrderRelation.implementation
+                            .solve(input)
+                            .single()
+                            .solution is Solution.No
+                    }
+                ).shouldBeTrue()
             }
         else ->
             @Suppress("UNCHECKED_CAST")
             (expectedResult as? KClass<out ResolutionException>)
-                ?.let { assertFailsWith(expectedResult) { standardOrderRelation.implementation.solve(input) } }
+                ?.let {
+                    shouldThrowAny {
+                        standardOrderRelation.implementation.solve(
+                            input,
+                        )
+                    }.shouldBeInstanceOf(expectedResult)
+                }
                 ?: fail("Bad written test data!")
     }
 

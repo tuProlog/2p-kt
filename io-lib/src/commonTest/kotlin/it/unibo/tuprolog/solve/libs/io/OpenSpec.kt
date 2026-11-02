@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.solve.libs.io
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
@@ -16,9 +19,6 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import okio.FileSystem
 import kotlin.random.Random
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 /**
  * Covers `open/3,4` (Stream selection and control), against real temp files on the host file
@@ -68,8 +68,8 @@ class OpenSpec :
                         ("get_char"("mickey", "C") and "close"("mickey"))
                 val solution = solver().solve(query).toList().single()
 
-                assertTrue(solution is Solution.Yes)
-                assertEquals(Atom.of("q"), solution.valueOf("C"))
+                solution.shouldBeInstanceOf<Solution.Yes>()
+                solution.valueOf("C") shouldBe Atom.of("q")
             }
         }
 
@@ -81,8 +81,8 @@ class OpenSpec :
                     "open"(url.toString(), "write", "S", logicListOf("alias"("mickey"))) and
                         ("put_char"("mickey", "x") and "close"("mickey"))
                 val solution = solver().solve(query).toList().single()
-                assertTrue(solution is Solution.Yes)
-                assertEquals("x", LocalFileSystem.fileSystem.read(url.toLocalPath()) { readUtf8() })
+                solution.shouldBeInstanceOf<Solution.Yes>()
+                (LocalFileSystem.fileSystem.read(url.toLocalPath()) { readUtf8() }) shouldBe "x"
             }
         }
 
@@ -118,8 +118,8 @@ class OpenSpec :
                     "open"(url.toString(), "append", "S", logicListOf("alias"("mickey"))) and
                         ("put_char"("mickey", "c") and "close"("mickey"))
                 val solution = solver().solve(query).toList().single()
-                assertTrue(solution is Solution.Yes)
-                assertEquals("abc", LocalFileSystem.fileSystem.read(url.toLocalPath()) { readUtf8() })
+                solution.shouldBeInstanceOf<Solution.Yes>()
+                (LocalFileSystem.fileSystem.read(url.toLocalPath()) { readUtf8() }) shouldBe "abc"
             }
         }
 
@@ -156,9 +156,12 @@ class OpenSpec :
                         "open"(url.toString(), "read", "S", emptyLogicList)
                     }
                 val solution = solver().solveOnce(query)
-                val error = assertIs<ExistenceError>((solution as? Solution.Halt)?.exception, "$solution")
-                assertEquals(ExistenceError.ObjectType.SOURCE_SINK, error.expectedObject)
-                assertEquals(atomOf(url.toString()), error.culprit)
+                val error =
+                    withClue(
+                        "$solution",
+                    ) { (solution as? Solution.Halt)?.exception.shouldBeInstanceOf<ExistenceError>() }
+                error.expectedObject shouldBe ExistenceError.ObjectType.SOURCE_SINK
+                error.culprit shouldBe atomOf(url.toString())
             }
         }
     })

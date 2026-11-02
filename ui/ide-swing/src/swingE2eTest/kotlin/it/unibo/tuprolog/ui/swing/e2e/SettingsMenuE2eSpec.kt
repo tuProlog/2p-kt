@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.ui.swing.e2e
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import org.assertj.swing.edt.GuiActionRunner
 import org.assertj.swing.fixture.FrameFixture
-import kotlin.test.assertEquals
 
 private const val ZOOM_DELTA = 8
 
@@ -30,7 +30,7 @@ class SettingsMenuE2eSpec :
             window.awaitCondition("the editor to go back to the default font size") {
                 editor.target().font.size == defaultSize
             }
-            assertEquals(defaultSize, editor.target().font.size)
+            editor.target().font.size shouldBe defaultSize
         }
 
         test("Delete persisted state asks for confirmation and can be cancelled") {

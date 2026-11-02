@@ -2,6 +2,7 @@ package it.unibo.tuprolog.unify
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
@@ -14,7 +15,6 @@ import it.unibo.tuprolog.unify.testutils.UnificatorUtils
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertMatchCorrect
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertMguCorrect
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertUnifiedTermCorrect
-import kotlin.test.assertEquals
 
 /**
  * Test class for [Unificator] companion object
@@ -28,35 +28,35 @@ class UnificatorSpec :
         val myExampleContext = Substitution.of("A", Atom.of("a"))
 
         test("naive-without-args-create-unification-strategy-with-empty-context") {
-            assertEquals(Substitution.empty(), Unificator.naive().context)
+            Unificator.naive().context shouldBe Substitution.empty()
         }
 
         test("passing-naive-a-context-this-will-be-the-strategy-context") {
-            assertEquals(myExampleContext, Unificator.naive(myExampleContext).context)
-            assertEquals(Substitution.failed(), Unificator.naive(Substitution.failed()).context)
+            Unificator.naive(myExampleContext).context shouldBe myExampleContext
+            Unificator.naive(Substitution.failed()).context shouldBe Substitution.failed()
         }
 
         test("strict-without-args-create-unification-strategy-with-empty-context") {
-            assertEquals(Substitution.empty(), Unificator.strict().context)
+            Unificator.strict().context shouldBe Substitution.empty()
         }
 
         test("passing-strict-a-context-this-will-be-the-strategy-context") {
-            assertEquals(myExampleContext, Unificator.strict(myExampleContext).context)
-            assertEquals(Substitution.failed(), Unificator.strict(Substitution.failed()).context)
+            Unificator.strict(myExampleContext).context shouldBe myExampleContext
+            Unificator.strict(Substitution.failed()).context shouldBe Substitution.failed()
         }
 
         test("naive-strategy-compares-numbers-by-value") {
-            assertEquals(Substitution.empty(), Unificator.naive().mgu(Integer.of(1), Real.of(1.0)))
+            Unificator.naive().mgu(Integer.of(1), Real.of(1.0)) shouldBe Substitution.empty()
         }
 
         test("strict-strategy-compares-all-data-types-with-equals") {
             val firstA = Var.of("A")
             val secondA = Var.of("A")
 
-            assertEquals(Substitution.of(firstA to secondA), Unificator.strict().mgu(firstA, secondA))
-            assertEquals(Substitution.empty(), Unificator.strict().mgu(aVar, aVar))
+            Unificator.strict().mgu(firstA, secondA) shouldBe Substitution.of(firstA to secondA)
+            Unificator.strict().mgu(aVar, aVar) shouldBe Substitution.empty()
 
-            assertEquals(Substitution.failed(), Unificator.strict().mgu(Integer.of(1), Real.of(1.0)))
+            Unificator.strict().mgu(Integer.of(1), Real.of(1.0)) shouldBe Substitution.failed()
         }
 
         val examples = UnificatorUtils.successfulUnifications + UnificatorUtils.failedUnifications

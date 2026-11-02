@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import kotlin.test.assertEquals
+import io.kotest.matchers.shouldBe
 
 private val TERMINATOR = "\r?\n".toRegex()
 
@@ -10,4 +10,4 @@ internal fun String.trimAndCorrectLineTermination(lineTerminator: String = "\n")
 fun assertSameLines(
     expected: String,
     actual: String,
-) = assertEquals(expected.trimAndCorrectLineTermination(), actual.trimAndCorrectLineTermination())
+) = actual.trimAndCorrectLineTermination() shouldBe expected.trimAndCorrectLineTermination()

@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertSame
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 
 private class CastableTermCase(
     val id: String,
@@ -38,348 +38,348 @@ class TermCastSpec :
                 override fun defaultValue(term: Term) = Unit
 
                 override fun visitVar(term: Var) {
-                    assertNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNotNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldNotBeNull()
                 }
 
                 override fun visitStruct(term: Struct) {
-                    assertNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitAtom(term: Atom) {
-                    assertNotNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNotNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldNotBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldNotBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitTruth(term: Truth) {
-                    assertNotNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNotNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNotNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldNotBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldNotBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldNotBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitInteger(term: Integer) {
-                    assertNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNotNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNotNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNotNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldNotBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldNotBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldNotBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitReal(term: Real) {
-                    assertNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNotNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNotNull(term.asNumeric())
-                    assertNotNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldNotBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldNotBeNull()
+                    term.asReal().shouldNotBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitBlock(term: Block) {
-                    assertNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNotNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldNotBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitEmptyBlock(term: EmptyBlock) {
-                    assertNotNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNotNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNotNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNotNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldNotBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldNotBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldNotBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldNotBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitCons(term: Cons) {
-                    assertNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNotNull(term.asCons())
-                    assertNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNotNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldNotBeNull()
+                    term.asConstant().shouldBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldNotBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitEmptyList(term: EmptyList) {
-                    assertNotNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNotNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNotNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNotNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldNotBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldNotBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldNotBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldNotBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitTuple(term: Tuple) {
-                    assertNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNotNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldNotBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitIndicator(term: Indicator) {
-                    assertNull(term.asAtom())
-                    assertNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNotNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldNotBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitRule(term: Rule) {
-                    assertNull(term.asAtom())
-                    assertNotNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNotNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldNotBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldNotBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitFact(term: Fact) {
-                    assertNull(term.asAtom())
-                    assertNotNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNull(term.asConstant())
-                    assertNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNotNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNotNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldNotBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldBeNull()
+                    term.asDirective().shouldBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldNotBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldNotBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
 
                 override fun visitDirective(term: Directive) {
-                    assertNull(term.asAtom())
-                    assertNotNull(term.asClause())
-                    assertNull(term.asCons())
-                    assertNull(term.asConstant())
-                    assertNotNull(term.asDirective())
-                    assertNull(term.asEmptyList())
-                    assertNull(term.asEmptyBlock())
-                    assertNull(term.asFact())
-                    assertNull(term.asIndicator())
-                    assertNull(term.asInteger())
-                    assertNull(term.asList())
-                    assertNull(term.asNumeric())
-                    assertNull(term.asReal())
-                    assertNull(term.asRule())
-                    assertNull(term.asBlock())
-                    assertNotNull(term.asStruct())
-                    assertNotNull(term.asTerm())
-                    assertNull(term.asTruth())
-                    assertNull(term.asTuple())
-                    assertNull(term.asVar())
+                    term.asAtom().shouldBeNull()
+                    term.asClause().shouldNotBeNull()
+                    term.asCons().shouldBeNull()
+                    term.asConstant().shouldBeNull()
+                    term.asDirective().shouldNotBeNull()
+                    term.asEmptyList().shouldBeNull()
+                    term.asEmptyBlock().shouldBeNull()
+                    term.asFact().shouldBeNull()
+                    term.asIndicator().shouldBeNull()
+                    term.asInteger().shouldBeNull()
+                    term.asList().shouldBeNull()
+                    term.asNumeric().shouldBeNull()
+                    term.asReal().shouldBeNull()
+                    term.asRule().shouldBeNull()
+                    term.asBlock().shouldBeNull()
+                    term.asStruct().shouldNotBeNull()
+                    term.asTerm().shouldNotBeNull()
+                    term.asTruth().shouldBeNull()
+                    term.asTuple().shouldBeNull()
+                    term.asVar().shouldBeNull()
                 }
             }
 
@@ -388,463 +388,463 @@ class TermCastSpec :
                 override fun defaultValue(term: Term) = Unit
 
                 override fun visitVar(term: Var) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertFailsWith(ClassCastException::class) { term.castToConstant() }
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToStruct() }
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertNotNull(term.castToVar())
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    shouldThrow<ClassCastException> { term.castToConstant() }
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    shouldThrow<ClassCastException> { term.castToStruct() }
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    term.castToVar().shouldNotBeNull()
                 }
 
                 override fun visitStruct(term: Struct) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertFailsWith(ClassCastException::class) { term.castToConstant() }
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    shouldThrow<ClassCastException> { term.castToConstant() }
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitAtom(term: Atom) {
-                    assertNotNull(term.castToAtom())
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertNotNull(term.castToConstant())
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    term.castToAtom().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    term.castToConstant().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitTruth(term: Truth) {
-                    assertNotNull(term.castToAtom())
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertNotNull(term.castToConstant())
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertNotNull(term.castToTruth())
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    term.castToAtom().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    term.castToConstant().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    term.castToTruth().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitInteger(term: Integer) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertNotNull(term.castToConstant())
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertNotNull(term.castToInteger())
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertNotNull(term.castToNumeric())
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToStruct() }
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    term.castToConstant().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    term.castToInteger().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    term.castToNumeric().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    shouldThrow<ClassCastException> { term.castToStruct() }
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitReal(term: Real) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertNotNull(term.castToConstant())
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertNotNull(term.castToNumeric())
-                    assertNotNull(term.castToReal())
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToStruct() }
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    term.castToConstant().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    term.castToNumeric().shouldNotBeNull()
+                    term.castToReal().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    shouldThrow<ClassCastException> { term.castToStruct() }
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitBlock(term: Block) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertFailsWith(ClassCastException::class) { term.castToConstant() }
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertNotNull(term.castToBlock())
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    shouldThrow<ClassCastException> { term.castToConstant() }
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    term.castToBlock().shouldNotBeNull()
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitEmptyBlock(term: EmptyBlock) {
-                    assertNotNull(term.castToAtom())
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertNotNull(term.castToConstant())
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertNotNull(term.castToEmptyBlock())
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertNotNull(term.castToBlock())
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    term.castToAtom().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    term.castToConstant().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    term.castToEmptyBlock().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    term.castToBlock().shouldNotBeNull()
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitCons(term: Cons) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertNotNull(term.castToCons())
-                    assertFailsWith(ClassCastException::class) { term.castToConstant() }
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertNotNull(term.castToList())
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    term.castToCons().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToConstant() }
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    term.castToList().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitEmptyList(term: EmptyList) {
-                    assertNotNull(term.castToAtom())
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertNotNull(term.castToConstant())
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertNotNull(term.castToEmptyList())
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertNotNull(term.castToList())
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    term.castToAtom().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    term.castToConstant().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    term.castToEmptyList().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    term.castToList().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitTuple(term: Tuple) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertFailsWith(ClassCastException::class) { term.castToConstant() }
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertNotNull(term.castToTuple())
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    shouldThrow<ClassCastException> { term.castToConstant() }
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    term.castToTuple().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitIndicator(term: Indicator) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertFailsWith(ClassCastException::class) { term.castToClause() }
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertFailsWith(ClassCastException::class) { term.castToConstant() }
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertNotNull(term.castToIndicator())
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    shouldThrow<ClassCastException> { term.castToClause() }
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    shouldThrow<ClassCastException> { term.castToConstant() }
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    term.castToIndicator().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitRule(term: Rule) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertNotNull(term.castToClause())
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertFailsWith(ClassCastException::class) { term.castToConstant() }
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertNotNull(term.castToRule())
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    term.castToClause().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    shouldThrow<ClassCastException> { term.castToConstant() }
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    term.castToRule().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitFact(term: Fact) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertNotNull(term.castToClause())
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertFailsWith(ClassCastException::class) { term.castToConstant() }
-                    assertFailsWith(ClassCastException::class) { term.castToDirective() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertNotNull(term.castToFact())
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertNotNull(term.castToRule())
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    term.castToClause().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    shouldThrow<ClassCastException> { term.castToConstant() }
+                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    term.castToFact().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    term.castToRule().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
                 override fun visitDirective(term: Directive) {
-                    assertFailsWith(ClassCastException::class) { term.castToAtom() }
-                    assertNotNull(term.castToClause())
-                    assertFailsWith(ClassCastException::class) { term.castToCons() }
-                    assertFailsWith(ClassCastException::class) { term.castToConstant() }
-                    assertNotNull(term.castToDirective())
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyList() }
-                    assertFailsWith(ClassCastException::class) { term.castToEmptyBlock() }
-                    assertFailsWith(ClassCastException::class) { term.castToFact() }
-                    assertFailsWith(ClassCastException::class) { term.castToIndicator() }
-                    assertFailsWith(ClassCastException::class) { term.castToInteger() }
-                    assertFailsWith(ClassCastException::class) { term.castToList() }
-                    assertFailsWith(ClassCastException::class) { term.castToNumeric() }
-                    assertFailsWith(ClassCastException::class) { term.castToReal() }
-                    assertFailsWith(ClassCastException::class) { term.castToRule() }
-                    assertFailsWith(ClassCastException::class) { term.castToBlock() }
-                    assertNotNull(term.castToStruct())
-                    assertNotNull(term.castToTerm())
-                    assertFailsWith(ClassCastException::class) { term.castToTruth() }
-                    assertFailsWith(ClassCastException::class) { term.castToTuple() }
-                    assertFailsWith(ClassCastException::class) { term.castToVar() }
+                    shouldThrow<ClassCastException> { term.castToAtom() }
+                    term.castToClause().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToCons() }
+                    shouldThrow<ClassCastException> { term.castToConstant() }
+                    term.castToDirective().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToEmptyList() }
+                    shouldThrow<ClassCastException> { term.castToEmptyBlock() }
+                    shouldThrow<ClassCastException> { term.castToFact() }
+                    shouldThrow<ClassCastException> { term.castToIndicator() }
+                    shouldThrow<ClassCastException> { term.castToInteger() }
+                    shouldThrow<ClassCastException> { term.castToList() }
+                    shouldThrow<ClassCastException> { term.castToNumeric() }
+                    shouldThrow<ClassCastException> { term.castToReal() }
+                    shouldThrow<ClassCastException> { term.castToRule() }
+                    shouldThrow<ClassCastException> { term.castToBlock() }
+                    term.castToStruct().shouldNotBeNull()
+                    term.castToTerm().shouldNotBeNull()
+                    shouldThrow<ClassCastException> { term.castToTruth() }
+                    shouldThrow<ClassCastException> { term.castToTuple() }
+                    shouldThrow<ClassCastException> { term.castToVar() }
                 }
             }
 
         val positiveTypeTester =
             object : TermVisitor<Unit> {
                 override fun defaultValue(term: Term) {
-                    assertSame(term, term.castToTerm())
-                    assertSame(term, term.asTerm())
-                    assertSame(term, term.castTo<Term>())
-                    assertSame(term, term.`as`<Term>())
+                    term.castToTerm() shouldBeSameInstanceAs term
+                    term.asTerm() shouldBeSameInstanceAs term
+                    (term.castTo<Term>()) shouldBeSameInstanceAs term
+                    (term.`as`<Term>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitVar(term: Var) {
-                    assertSame(term, term.castToVar())
-                    assertSame(term, term.asVar())
-                    assertSame(term, term.castTo<Var>())
-                    assertSame(term, term.`as`<Var>())
+                    term.castToVar() shouldBeSameInstanceAs term
+                    term.asVar() shouldBeSameInstanceAs term
+                    (term.castTo<Var>()) shouldBeSameInstanceAs term
+                    (term.`as`<Var>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitStruct(term: Struct) {
-                    assertSame(term, term.castToStruct())
-                    assertSame(term, term.asStruct())
-                    assertSame(term, term.castTo<Struct>())
-                    assertSame(term, term.`as`<Struct>())
+                    term.castToStruct() shouldBeSameInstanceAs term
+                    term.asStruct() shouldBeSameInstanceAs term
+                    (term.castTo<Struct>()) shouldBeSameInstanceAs term
+                    (term.`as`<Struct>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitAtom(term: Atom) {
-                    assertSame(term, term.castToAtom())
-                    assertSame(term, term.asAtom())
-                    assertSame(term, term.castTo<Atom>())
-                    assertSame(term, term.`as`<Atom>())
+                    term.castToAtom() shouldBeSameInstanceAs term
+                    term.asAtom() shouldBeSameInstanceAs term
+                    (term.castTo<Atom>()) shouldBeSameInstanceAs term
+                    (term.`as`<Atom>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitTruth(term: Truth) {
-                    assertSame(term, term.castToTruth())
-                    assertSame(term, term.asTruth())
-                    assertSame(term, term.castTo<Truth>())
-                    assertSame(term, term.`as`<Truth>())
+                    term.castToTruth() shouldBeSameInstanceAs term
+                    term.asTruth() shouldBeSameInstanceAs term
+                    (term.castTo<Truth>()) shouldBeSameInstanceAs term
+                    (term.`as`<Truth>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitInteger(term: Integer) {
-                    assertSame(term, term.castToInteger())
-                    assertSame(term, term.asInteger())
-                    assertSame(term, term.castTo<Integer>())
-                    assertSame(term, term.`as`<Integer>())
+                    term.castToInteger() shouldBeSameInstanceAs term
+                    term.asInteger() shouldBeSameInstanceAs term
+                    (term.castTo<Integer>()) shouldBeSameInstanceAs term
+                    (term.`as`<Integer>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitReal(term: Real) {
-                    assertSame(term, term.castToReal())
-                    assertSame(term, term.asReal())
-                    assertSame(term, term.castTo<Real>())
-                    assertSame(term, term.`as`<Real>())
+                    term.castToReal() shouldBeSameInstanceAs term
+                    term.asReal() shouldBeSameInstanceAs term
+                    (term.castTo<Real>()) shouldBeSameInstanceAs term
+                    (term.`as`<Real>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitBlock(term: Block) {
-                    assertSame(term, term.castToBlock())
-                    assertSame(term, term.asBlock())
-                    assertSame(term, term.castTo<Block>())
-                    assertSame(term, term.`as`<Block>())
+                    term.castToBlock() shouldBeSameInstanceAs term
+                    term.asBlock() shouldBeSameInstanceAs term
+                    (term.castTo<Block>()) shouldBeSameInstanceAs term
+                    (term.`as`<Block>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitEmptyBlock(term: EmptyBlock) {
-                    assertSame(term, term.castToEmptyBlock())
-                    assertSame(term, term.asEmptyBlock())
-                    assertSame(term, term.castTo<EmptyBlock>())
-                    assertSame(term, term.`as`<EmptyBlock>())
+                    term.castToEmptyBlock() shouldBeSameInstanceAs term
+                    term.asEmptyBlock() shouldBeSameInstanceAs term
+                    (term.castTo<EmptyBlock>()) shouldBeSameInstanceAs term
+                    (term.`as`<EmptyBlock>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitCons(term: Cons) {
-                    assertSame(term, term.castToCons())
-                    assertSame(term, term.asCons())
-                    assertSame(term, term.castTo<Cons>())
-                    assertSame(term, term.`as`<Cons>())
+                    term.castToCons() shouldBeSameInstanceAs term
+                    term.asCons() shouldBeSameInstanceAs term
+                    (term.castTo<Cons>()) shouldBeSameInstanceAs term
+                    (term.`as`<Cons>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitEmptyList(term: EmptyList) {
-                    assertSame(term, term.castToEmptyList())
-                    assertSame(term, term.asEmptyList())
-                    assertSame(term, term.castTo<EmptyList>())
-                    assertSame(term, term.`as`<EmptyList>())
+                    term.castToEmptyList() shouldBeSameInstanceAs term
+                    term.asEmptyList() shouldBeSameInstanceAs term
+                    (term.castTo<EmptyList>()) shouldBeSameInstanceAs term
+                    (term.`as`<EmptyList>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitTuple(term: Tuple) {
-                    assertSame(term, term.castToTuple())
-                    assertSame(term, term.asTuple())
-                    assertSame(term, term.castTo<Tuple>())
-                    assertSame(term, term.`as`<Tuple>())
+                    term.castToTuple() shouldBeSameInstanceAs term
+                    term.asTuple() shouldBeSameInstanceAs term
+                    (term.castTo<Tuple>()) shouldBeSameInstanceAs term
+                    (term.`as`<Tuple>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitIndicator(term: Indicator) {
-                    assertSame(term, term.castToIndicator())
-                    assertSame(term, term.asIndicator())
-                    assertSame(term, term.castTo<Indicator>())
-                    assertSame(term, term.`as`<Indicator>())
+                    term.castToIndicator() shouldBeSameInstanceAs term
+                    term.asIndicator() shouldBeSameInstanceAs term
+                    (term.castTo<Indicator>()) shouldBeSameInstanceAs term
+                    (term.`as`<Indicator>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitRule(term: Rule) {
-                    assertSame(term, term.castToRule())
-                    assertSame(term, term.asRule())
-                    assertSame(term, term.castTo<Rule>())
-                    assertSame(term, term.`as`<Rule>())
+                    term.castToRule() shouldBeSameInstanceAs term
+                    term.asRule() shouldBeSameInstanceAs term
+                    (term.castTo<Rule>()) shouldBeSameInstanceAs term
+                    (term.`as`<Rule>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitFact(term: Fact) {
-                    assertSame(term, term.castToFact())
-                    assertSame(term, term.asFact())
-                    assertSame(term, term.castTo<Fact>())
-                    assertSame(term, term.`as`<Fact>())
+                    term.castToFact() shouldBeSameInstanceAs term
+                    term.asFact() shouldBeSameInstanceAs term
+                    (term.castTo<Fact>()) shouldBeSameInstanceAs term
+                    (term.`as`<Fact>()) shouldBeSameInstanceAs term
                 }
 
                 override fun visitDirective(term: Directive) {
-                    assertSame(term, term.castToDirective())
-                    assertSame(term, term.asDirective())
-                    assertSame(term, term.castTo<Directive>())
-                    assertSame(term, term.`as`<Directive>())
+                    term.castToDirective() shouldBeSameInstanceAs term
+                    term.asDirective() shouldBeSameInstanceAs term
+                    (term.castTo<Directive>()) shouldBeSameInstanceAs term
+                    (term.`as`<Directive>()) shouldBeSameInstanceAs term
                 }
             }
 

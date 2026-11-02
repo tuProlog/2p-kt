@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
@@ -17,7 +18,6 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
 
 /**
  * Conformance cases for [SolverFactory]'s construction APIs (`solverOf`, `mutableSolverOf`, the `...WithDefaultBuiltins`
@@ -46,8 +46,8 @@ fun solverConstructionContract(
             inputs = Default.inputs,
             outputs = Default.outputs,
         )
-        assertEquals(true, solverType.isInstance(this))
-        assertEquals(mutable, mutableSolverType.isInstance(this))
+        solverType.isInstance(this) shouldBe true
+        mutableSolverType.isInstance(this) shouldBe mutable
     }
 
     fun Solver.asserHasCustomProperties(mutable: Boolean) {
@@ -59,7 +59,7 @@ fun solverConstructionContract(
             inputs = Dummy.inputs,
             outputs = Dummy.outputs,
         )
-        assertEquals(mutable, this is MutableSolver)
+        (this is MutableSolver) shouldBe mutable
     }
 
     fun Solver.asserHasDefaultBultinsAndProperties(mutable: Boolean) {
@@ -71,7 +71,7 @@ fun solverConstructionContract(
             inputs = Default.inputs,
             outputs = Default.outputs,
         )
-        assertEquals(mutable, this is MutableSolver)
+        (this is MutableSolver) shouldBe mutable
     }
 
     fun Solver.asserHasDefaultBultinsAndCustomProperties(mutable: Boolean) {
@@ -83,7 +83,7 @@ fun solverConstructionContract(
             inputs = Dummy.inputs,
             outputs = Dummy.outputs,
         )
-        assertEquals(mutable, this is MutableSolver)
+        (this is MutableSolver) shouldBe mutable
     }
 
     // Tests that [SolverFactory.solverOf], called with no argument, returns a [T] with every default property.

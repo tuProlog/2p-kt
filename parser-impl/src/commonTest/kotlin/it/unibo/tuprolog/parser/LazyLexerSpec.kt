@@ -1,7 +1,15 @@
 package it.unibo.tuprolog.parser
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.parser.exceptions.SourceReadException
 import it.unibo.tuprolog.parser.exceptions.TokenBufferLimitExceededException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedQuotedLiteralException
@@ -10,12 +18,6 @@ import it.unibo.tuprolog.parser.tokens.TokenKind
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class LazyLexerSpec :
     FunSpec({
@@ -46,14 +48,14 @@ class LazyLexerSpec :
                     },
                 )
 
-            assertEquals(0, reads)
-            assertEquals(TokenKind.WORD_ATOM, source.significantToken(0).kind)
-            assertEquals(1, reads)
+            reads shouldBe 0
+            source.significantToken(0).kind shouldBe TokenKind.WORD_ATOM
+            reads shouldBe 1
         }
 
         test("lexical-failures-are-deferred-until-their-token-is-requested") {
             val source = testLexer.lex(SourceText("'unterminated"))
-            assertFailsWith<UnterminatedQuotedLiteralException> { source.significantToken(0) }
+            shouldThrow<UnterminatedQuotedLiteralException> { source.significantToken(0) }
         }
 
         withTests(nameFn = {
@@ -76,12 +78,11 @@ class LazyLexerSpec :
                         },
                     ).materialize()
 
-            assertEquals(expectedTokens, actual.tokens.toList(), "chunk size $chunkSize")
-            assertEquals(
-                expectedTokens.map(expected::textOf),
-                actual.tokens.toList().map(actual::textOf),
-                "chunk size $chunkSize",
-            )
+            withClue("chunk size $chunkSize") { actual.tokens.toList() shouldBe expectedTokens }
+            withClue("chunk size $chunkSize") {
+                actual.tokens.toList().map(actual::textOf) shouldBe
+                    expectedTokens.map(expected::textOf)
+            }
         }
 
         test("streamed-session-snapshots-survive-input-release") {
@@ -96,22 +97,19 @@ class LazyLexerSpec :
                 )
             val session = testParser.openSession(input)
 
-            val first = assertNotNull(session.parseNextClause())
+            val first = session.parseNextClause().shouldNotBeNull()
             val firstRootText = first.source.text(first.root.span)
-            assertTrue(input.tokens.retainedCount <= 1)
-            val second = assertNotNull(session.parseNextClause())
-            val third = assertNotNull(session.parseNextClause())
+            (input.tokens.retainedCount <= 1).shouldBeTrue()
+            val second = session.parseNextClause().shouldNotBeNull()
+            val third = session.parseNextClause().shouldNotBeNull()
 
-            assertEquals("first.", firstRootText)
-            assertEquals("first.", first.source.text(first.root.span))
-            assertEquals("second.", second.source.text(second.root.span))
-            assertEquals("third.", third.source.text(third.root.span))
-            assertTrue(second.tokens.firstTokenId > first.tokens.firstTokenId)
-            assertEquals(
-                TokenKind.WORD_ATOM,
-                second.tokens[second.root.expression.tokenRange.startInclusive].kind,
-            )
-            assertTrue(session.isAtEnd)
+            firstRootText shouldBe "first."
+            first.source.text(first.root.span) shouldBe "first."
+            second.source.text(second.root.span) shouldBe "second."
+            third.source.text(third.root.span) shouldBe "third."
+            (second.tokens.firstTokenId > first.tokens.firstTokenId).shouldBeTrue()
+            second.tokens[second.root.expression.tokenRange.startInclusive].kind shouldBe TokenKind.WORD_ATOM
+            session.isAtEnd.shouldBeTrue()
         }
 
         test("a-hard-retention-limit-rejects-an-oversized-current-clause") {
@@ -123,14 +121,14 @@ class LazyLexerSpec :
                         maximumRetainedTokens = 3,
                     ),
                 )
-            assertFailsWith<TokenBufferLimitExceededException> { testParser.openSession(input).parseNextClause() }
+            shouldThrow<TokenBufferLimitExceededException> { testParser.openSession(input).parseNextClause() }
         }
 
         test("source-read-failures-preserve-their-cause") {
             val failure = IllegalStateException("broken source")
             val input = testLexer.lex(TextChunkSource { throw failure })
-            val error = assertFailsWith<SourceReadException> { input.significantToken(0) }
-            assertTrue(error.cause === failure)
+            val error = shouldThrow<SourceReadException> { input.significantToken(0) }
+            error.cause shouldBeSameInstanceAs failure
         }
 
         test("suspending-sessions-read-and-parse-one-clause-at-a-time") {
@@ -142,14 +140,14 @@ class LazyLexerSpec :
             val session = testParser.openSession(source, sourceId = "async.pl")
 
             val first = runSuspend { session.parseNextClause() }
-            assertNotNull(first)
-            assertFalse(session.isAtEnd)
+            first.shouldNotBeNull()
+            session.isAtEnd.shouldBeFalse()
             val second = runSuspend { session.parseNextClause() }
-            assertNotNull(second)
-            assertEquals("first.", first.source.text(first.root.span))
-            assertEquals("second.", second.source.text(second.root.span))
-            assertNull(runSuspend { session.parseNextClause() })
-            assertTrue(session.isAtEnd)
+            second.shouldNotBeNull()
+            first.source.text(first.root.span) shouldBe "first."
+            second.source.text(second.root.span) shouldBe "second."
+            (runSuspend { session.parseNextClause() }).shouldBeNull()
+            session.isAtEnd.shouldBeTrue()
         }
 
         fun chunks(vararg texts: String): SuspendingTextChunkSource {
@@ -169,32 +167,32 @@ class LazyLexerSpec :
 
         test("suspending-sessions-track-their-position") {
             val session = testParser.openSession(chunks("a.", " b."))
-            assertEquals(0, session.currentPosition.offset)
+            session.currentPosition.offset shouldBe 0
             session.parseNextClause()
-            assertEquals(2, session.currentPosition.offset)
+            session.currentPosition.offset shouldBe 2
         }
 
         test("suspending-sessions-end-on-trailing-trivia") {
             val session = testParser.openSession(chunks("a. % only a comment\n"))
-            assertNotNull(session.parseNextClause())
-            assertNull(session.parseNextClause())
-            assertTrue(session.isAtEnd)
+            session.parseNextClause().shouldNotBeNull()
+            session.parseNextClause().shouldBeNull()
+            session.isAtEnd.shouldBeTrue()
         }
 
         test("suspending-sessions-close-their-source") {
             val source = chunks("a.")
             testParser.openSession(source).close()
-            assertEquals("closed=true", source.toString())
+            source.toString() shouldBe "closed=true"
         }
 
         test("suspending-sessions-reject-a-clause-longer-than-the-retention-limit") {
             val session = testParser.openSession(chunks("f(a, b, c)."), maximumRetainedTokens = 3)
-            assertFailsWith<TokenBufferLimitExceededException> { session.parseNextClause() }
-            assertFailsWith<TokenBufferLimitExceededException> { session.parseNextClause() }
+            shouldThrow<TokenBufferLimitExceededException> { session.parseNextClause() }
+            shouldThrow<TokenBufferLimitExceededException> { session.parseNextClause() }
         }
 
         test("suspending-sessions-require-a-positive-retention-limit") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 testParser.openSession(
                     chunks("a."),
                     maximumRetainedTokens = 0,
@@ -208,7 +206,7 @@ class LazyLexerSpec :
                 object : SuspendingTextChunkSource {
                     override suspend fun readChunk(): String? = throw failure
                 }
-            val error = assertFailsWith<SourceReadException> { testParser.openSession(source).parseNextClause() }
-            assertTrue(error.cause === failure)
+            val error = shouldThrow<SourceReadException> { testParser.openSession(source).parseNextClause() }
+            error.cause shouldBeSameInstanceAs failure
         }
     })

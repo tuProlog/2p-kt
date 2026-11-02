@@ -3,9 +3,9 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import java.lang.annotation.Annotation as JavaAnnotation
 import kotlin.Annotation as KtAnnotation
 
@@ -15,8 +15,8 @@ class TypesRetrievalSpec :
             factory: TypeFactory,
             type: KClass<*>,
         ) {
-            assertEquals(type, factory.typeFromName(type.fullName))
-            assertEquals(TypeRef.of(type), factory.typeRefFromName(type.fullName))
+            factory.typeFromName(type.fullName) shouldBe type
+            factory.typeRefFromName(type.fullName) shouldBe TypeRef.of(type)
         }
 
         fun assertFactoryRetrievesKotlinTypeFromJavaName(
@@ -24,16 +24,16 @@ class TypesRetrievalSpec :
             kType: KClass<*>,
             jType: Class<*>,
         ) {
-            assertEquals(kType, factory.typeFromName(jType.name))
-            assertEquals(TypeRef.of(kType), factory.typeRefFromName(jType.name))
+            factory.typeFromName(jType.name) shouldBe kType
+            factory.typeRefFromName(jType.name) shouldBe TypeRef.of(kType)
         }
 
         fun assertFactoryRetrievesNoType(
             factory: TypeFactory,
             typeName: String,
         ) {
-            assertNull(factory.typeFromName(typeName))
-            assertNull(factory.typeRefFromName(typeName))
+            factory.typeFromName(typeName).shouldBeNull()
+            factory.typeRefFromName(typeName).shouldBeNull()
         }
 
         test("type-factory-with-custom-types") {

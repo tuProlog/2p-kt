@@ -2,15 +2,15 @@ package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.IndicatorUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 /**
  * Test class for [IndicatorImpl] and [Indicator]
@@ -32,40 +32,40 @@ class IndicatorImplSpec :
 
         indicators("arity-term") { case, indicator -> assertEqualities(case.arity, indicator.arityTerm) }
 
-        indicators("functor") { _, indicator -> assertEquals("/", indicator.functor) }
+        indicators("functor") { _, indicator -> indicator.functor shouldBe "/" }
 
-        indicators("args") { case, indicator -> assertEquals(listOf(case.name, case.arity), indicator.args) }
+        indicators("args") { case, indicator -> indicator.args shouldBe listOf(case.name, case.arity) }
 
         indicators("indicated-name", IndicatorUtils.wellFormedIndicatorCases) { case, indicator ->
-            assertEquals(case.rawName, indicator.indicatedName)
+            indicator.indicatedName shouldBe case.rawName
         }
 
         indicators("indicated-name-null", IndicatorUtils.nonWellFormedNameIndicatorCases) { _, indicator ->
-            assertEquals(null, indicator.indicatedName)
+            indicator.indicatedName shouldBe null
         }
 
         indicators("indicated-arity", IndicatorUtils.wellFormedIndicatorCases) { case, indicator ->
-            assertEquals(case.rawArity, indicator.indicatedArity)
+            indicator.indicatedArity shouldBe case.rawArity
         }
 
         indicators("indicated-arity-null", IndicatorUtils.nonWellFormedArityIndicatorCases) { _, indicator ->
-            assertEquals(null, indicator.indicatedArity)
+            indicator.indicatedArity shouldBe null
         }
 
         indicators("to-string") { case, indicator ->
-            assertEquals("${case.name}${Indicator.FUNCTOR}${case.arity}", indicator.toString())
+            indicator.toString() shouldBe "${case.name}${Indicator.FUNCTOR}${case.arity}"
         }
 
         indicators("type-checks") { _, indicator -> TermTypeAssertionUtils.assertIsIndicator(indicator) }
 
-        indicators("two-arity") { _, indicator -> assertEquals(2, indicator.arity) }
+        indicators("two-arity") { _, indicator -> indicator.arity shouldBe 2 }
 
         indicators("is-well-formed", IndicatorUtils.wellFormedIndicatorCases) { _, indicator ->
-            assertTrue { indicator.isWellFormed }
+            indicator.isWellFormed.shouldBeTrue()
         }
 
         indicators("is-not-well-formed", nonWellFormedIndicatorCases) { _, indicator ->
-            assertFalse { indicator.isWellFormed }
+            indicator.isWellFormed.shouldBeFalse()
         }
 
         indicators("fresh-copy-is-itself", IndicatorUtils.mixedIndicatorCases.filter { it.isGround }) { _, indicator ->

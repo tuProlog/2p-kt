@@ -1,17 +1,18 @@
 package it.unibo.tuprolog.core.impl
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.DirectiveUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 /**
  * Test class for [DirectiveImpl] and [Directive]
@@ -26,26 +27,26 @@ class DirectiveImplSpec :
             test: (DirectiveUtils.DirectiveCase, Directive) -> Unit,
         ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it, DirectiveImpl(it.body)) }
 
-        directives("head-null") { _, directive -> assertNull(directive.head) }
+        directives("head-null") { _, directive -> directive.head.shouldBeNull() }
 
         directives("body") { case, directive -> assertEqualities(case.body, directive.body) }
 
         directives("is-well-formed", DirectiveUtils.wellFormedDirectiveCases) { _, directive ->
-            assertTrue("$directive isWellFormed should be true") { directive.isWellFormed }
+            withClue("$directive isWellFormed should be true") { directive.isWellFormed.shouldBeTrue() }
         }
 
         directives("is-not-well-formed", DirectiveUtils.nonWellFormedDirectiveCases) { _, directive ->
-            assertFalse("$directive isWellFormed should be false") { directive.isWellFormed }
+            withClue("$directive isWellFormed should be false") { directive.isWellFormed.shouldBeFalse() }
         }
 
         directives("type-checks") { _, directive -> TermTypeAssertionUtils.assertIsDirective(directive) }
 
         directives("is-ground", DirectiveUtils.groundDirectiveCases) { _, directive ->
-            assertTrue("$directive isGround should be true") { directive.isGround }
+            withClue("$directive isGround should be true") { directive.isGround.shouldBeTrue() }
         }
 
         directives("is-not-ground", DirectiveUtils.nonGroundDirectiveCases) { _, directive ->
-            assertFalse("$directive isGround should be false") { directive.isGround }
+            withClue("$directive isGround should be false") { directive.isGround.shouldBeFalse() }
         }
 
         directives("fresh-copy-is-itself", DirectiveUtils.groundDirectiveCases) { _, directive ->
@@ -56,11 +57,11 @@ class DirectiveImplSpec :
             StructUtils.assertFreshCopyRenewsContainedVariables(directive)
         }
 
-        directives("functor") { _, directive -> assertEquals(":-", directive.functor) }
+        directives("functor") { _, directive -> directive.functor shouldBe ":-" }
 
-        directives("args") { case, directive -> assertEquals(listOf(case.body), directive.args) }
+        directives("args") { case, directive -> directive.args shouldBe listOf(case.body) }
 
         directives("to-string") { _, directive ->
-            assertEquals("${directive.functor} ${directive.body}", directive.toString())
+            directive.toString() shouldBe "${directive.functor} ${directive.body}"
         }
     })

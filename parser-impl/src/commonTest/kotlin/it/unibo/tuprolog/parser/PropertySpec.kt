@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.parser
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.tokens.TokenKind
@@ -15,9 +18,6 @@ import it.unibo.tuprolog.parser.tree.SyntaxNode
 import it.unibo.tuprolog.parser.tree.TheoryNode
 import it.unibo.tuprolog.parser.tree.VariableNode
 import kotlin.random.Random
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 class PropertySpec :
     FunSpec({
@@ -74,22 +74,20 @@ class PropertySpec :
                     }
                 val source = lex(sourceText)
                 val nonEof = source.tokens.filter { it.kind != TokenKind.END_OF_INPUT }
-                assertEquals(
-                    0,
+                (
                     nonEof
                         .first()
-                        .span.start.offset,
-                )
-                assertEquals(
-                    sourceText.length,
+                        .span.start.offset
+                ) shouldBe 0
+                (
                     nonEof
                         .last()
-                        .span.endExclusive.offset,
-                )
+                        .span.endExclusive.offset
+                ) shouldBe sourceText.length
                 nonEof.zipWithNext().forEach { (left, right) ->
-                    assertEquals(left.span.endExclusive.offset, right.span.start.offset)
+                    right.span.start.offset shouldBe left.span.endExclusive.offset
                 }
-                assertEquals(sourceText, nonEof.joinToString("") { source.textOf(it) })
+                (nonEof.joinToString("") { source.textOf(it) }) shouldBe sourceText
             }
         }
 
@@ -103,8 +101,8 @@ class PropertySpec :
                     node = operatorNode(node.leftOperand!!)
                     operatorsSeen += 1
                 }
-                assertEquals(length - 1, operatorsSeen)
-                assertIs<StructureNode>(node.leftOperand)
+                operatorsSeen shouldBe (length - 1)
+                node.leftOperand.shouldBeInstanceOf<StructureNode>()
             }
         }
 
@@ -118,8 +116,8 @@ class PropertySpec :
                     node = operatorNode(node.rightOperand!!)
                     operatorsSeen += 1
                 }
-                assertEquals(length - 1, operatorsSeen)
-                assertIs<StructureNode>(node.rightOperand)
+                operatorsSeen shouldBe (length - 1)
+                node.rightOperand.shouldBeInstanceOf<StructureNode>()
             }
         }
 
@@ -142,8 +140,8 @@ class PropertySpec :
             for (sample in samples) {
                 val first = testParser.parseExpression(lex(sample), operators)
                 val second = testParser.parseExpression(lex(sample), operators)
-                assertEquals(signature(first.root), signature(second.root))
-                assertEquals(first.semanticTokens, second.semanticTokens)
+                signature(second.root) shouldBe signature(first.root)
+                second.semanticTokens shouldBe first.semanticTokens
             }
         }
 
@@ -156,12 +154,12 @@ class PropertySpec :
             val tree = testParser.parseClause(lex("f([a + b, c * d | T], {x, y})."), operators)
 
             fun verify(node: SyntaxNode) {
-                assertTrue(node.tokenRange.startInclusive <= node.tokenRange.endExclusive)
+                (node.tokenRange.startInclusive <= node.tokenRange.endExclusive).shouldBeTrue()
                 if (node.tokenRange.startInclusive < node.tokenRange.endExclusive) {
                     val first = tree.tokens[node.tokenRange.startInclusive]
                     val last = tree.tokens[node.tokenRange.endExclusive - 1]
-                    assertEquals(first.span.start, node.span.start)
-                    assertEquals(last.span.endExclusive, node.span.endExclusive)
+                    node.span.start shouldBe first.span.start
+                    node.span.endExclusive shouldBe last.span.endExclusive
                 }
                 node.children.forEach(::verify)
             }

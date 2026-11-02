@@ -2,6 +2,9 @@ package it.unibo.tuprolog.solve.library.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
@@ -15,9 +18,6 @@ import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.libraryWithoutAliasConstructor
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 /**
  * Test class for [LibraryImpl] and [Library]
@@ -31,19 +31,19 @@ class LibraryImplSpec :
         fun LibraryUtils.LibraryCase.instance(): Library = makeLib(raw, ::libraryWithoutAliasConstructor)
 
         withTests(nameFn = { "operators-correct/${it.id}" }, cases) { case ->
-            assertEquals(case.raw.opSet, case.instance().operators)
+            case.instance().operators shouldBe case.raw.opSet
         }
 
         withTests(nameFn = { "theory-correct/${it.id}" }, cases) { case ->
-            assertEquals(case.raw.theory, Theory.of(case.instance().clauses))
+            Theory.of(case.instance().clauses) shouldBe case.raw.theory
         }
 
         withTests(nameFn = { "primitives-correct/${it.id}" }, cases) { case ->
-            assertEquals(case.raw.primitives, case.instance().primitives)
+            case.instance().primitives shouldBe case.raw.primitives
         }
 
         withTests(nameFn = { "functions-correct/${it.id}" }, cases) { case ->
-            assertEquals(case.raw.functions, case.instance().functions)
+            case.instance().functions shouldBe case.raw.functions
         }
 
         withTests(nameFn = { "contains-signature/${it.id}" }, cases) { case ->
@@ -52,9 +52,9 @@ class LibraryImplSpec :
             (
                 case.raw.theory.rules
                     .map { it.head.extractSignature() } + case.raw.primitives.keys
-            ).forEach { signature -> assertTrue { signature in libraryInstance } }
+            ).forEach { signature -> (signature in libraryInstance).shouldBeTrue() }
 
-            assertFalse { Signature("ciao", 3) in libraryInstance }
+            (Signature("ciao", 3) in libraryInstance).shouldBeFalse()
         }
 
         test("contains-signature-discards-vararg-signatures") {
@@ -66,29 +66,29 @@ class LibraryImplSpec :
                     emptyMap(),
                 )
 
-            assertTrue { Signature("f", 1, false) in library }
-            assertFalse { Signature("f", 1, true) in library }
+            (Signature("f", 1, false) in library).shouldBeTrue()
+            (Signature("f", 1, true) in library).shouldBeFalse()
         }
 
         withTests(nameFn = { "contains-operator/${it.id}" }, cases) { case ->
             val libraryInstance = case.instance()
 
-            case.raw.opSet.forEach { operator -> assertTrue { operator in libraryInstance } }
+            case.raw.opSet.forEach { operator -> (operator in libraryInstance).shouldBeTrue() }
 
-            assertFalse { Operator("ciao", Specifier.XFX, 9) in libraryInstance }
+            (Operator("ciao", Specifier.XFX, 9) in libraryInstance).shouldBeFalse()
         }
 
         withTests(nameFn = { "has-primitive/${it.id}" }, cases) { case ->
             val libraryInstance = case.instance()
 
             case.raw.primitives.keys
-                .forEach { signature -> assertTrue { libraryInstance.hasPrimitive(signature) } }
+                .forEach { signature -> libraryInstance.hasPrimitive(signature).shouldBeTrue() }
 
             (
                 case.raw.theory.rules
                     .map { it.head.extractSignature() } + Signature("ciao", 3)
             ).forEach {
-                assertFalse { libraryInstance.hasPrimitive(it) }
+                libraryInstance.hasPrimitive(it).shouldBeFalse()
             }
         }
 
@@ -98,8 +98,8 @@ class LibraryImplSpec :
             (
                 case.raw.theory.rules
                     .map { it.head.extractSignature() } + case.raw.primitives.keys
-            ).forEach { signature -> assertTrue { libraryInstance.hasProtected(signature) } }
+            ).forEach { signature -> libraryInstance.hasProtected(signature).shouldBeTrue() }
 
-            assertFalse { libraryInstance.hasProtected(Signature("ciao", 3)) }
+            libraryInstance.hasProtected(Signature("ciao", 3)).shouldBeFalse()
         }
     })

@@ -2,6 +2,7 @@
 
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
@@ -9,7 +10,6 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.MessageError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.assertEquals
 
 /** Conformance tests for a resolution exception's `logicStackTrace`: the sequence of goal [Signature]s active when the exception was raised, from the innermost failing goal to the top-level query. */
 fun stackTraceContract(
@@ -41,10 +41,8 @@ fun stackTraceContract(
                 solution,
             )
 
-            assertEquals(
-                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
-                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
-            )
+            ((solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }) shouldBe
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1)
         }
     }
 
@@ -69,10 +67,8 @@ fun stackTraceContract(
                 solution,
             )
 
-            assertEquals(
-                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
-                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
-            )
+            ((solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }) shouldBe
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1)
         }
     }
 
@@ -98,10 +94,8 @@ fun stackTraceContract(
                 solution,
             )
 
-            assertEquals(
-                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
-                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
-            )
+            ((solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }) shouldBe
+                listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1)
         }
     }
 
@@ -127,10 +121,8 @@ fun stackTraceContract(
                 solution,
             )
 
-            assertEquals(
-                listOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
-                (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
-            )
+            ((solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }) shouldBe
+                listOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1)
         }
     }
 }

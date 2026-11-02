@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.dsl.theory
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.matchers.types.shouldNotBeInstanceOf
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertIsNot
 
 class LogicProgrammingScopeWithTheoriesSpec :
     FunSpec({
@@ -23,8 +23,8 @@ class LogicProgrammingScopeWithTheoriesSpec :
                             { ruleOf(structOf("f", varOf("X")), atomOf("a")) },
                             { directiveOf(structOf("f", varOf("X"))) },
                         )
-                    assertIs<Theory>(theory)
-                    assertIsNot<MutableTheory>(theory)
+                    theory.shouldBeInstanceOf<Theory>()
+                    theory.shouldNotBeInstanceOf<MutableTheory>()
                     theoryAssertions(theory)
                 }
             }
@@ -37,11 +37,11 @@ class LogicProgrammingScopeWithTheoriesSpec :
                             { ruleOf(structOf("f", varOf("X")), atomOf("a")) },
                             { directiveOf(structOf("f", varOf("X"))) },
                         )
-                    assertIs<Theory>(theory)
-                    assertIs<MutableTheory>(theory)
+                    theory.shouldBeInstanceOf<Theory>()
+                    theory.shouldBeInstanceOf<MutableTheory>()
                     theoryAssertions(theory)
                     theory.assertZ(ruleOf(structOf("f", varOf("X")), atomOf("b")))
-                    assertEquals(4, theory.size)
+                    theory.size shouldBe 4
                 }
             }
         }

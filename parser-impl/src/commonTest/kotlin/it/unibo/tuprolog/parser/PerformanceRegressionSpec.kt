@@ -1,8 +1,9 @@
 package it.unibo.tuprolog.parser
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 
 class PerformanceRegressionSpec :
     FunSpec({
@@ -35,18 +36,18 @@ class PerformanceRegressionSpec :
                     val clause = session.parseNextClause() ?: break
                     parsedClauses += 1
                     maxRetained = maxRetained.coerceAtLeast(input.tokens.retainedCount)
-                    assertEquals("f(a,b,c,d,e).", clause.source.text(clause.root.span))
+                    clause.source.text(clause.root.span) shouldBe "f(a,b,c,d,e)."
                 }
-                assertEquals(250, parsedClauses)
+                parsedClauses shouldBe 250
                 return maxRetained to input.tokens.retainedCount
             }
 
             val (releaseMax, releaseFinal) = parseAndCollect(TokenRetention.RELEASE_COMMITTED)
             val (keepMax, keepFinal) = parseAndCollect(TokenRetention.KEEP_ALL)
 
-            assertTrue(releaseMax < keepMax)
-            assertTrue(releaseFinal < keepFinal)
-            assertTrue(releaseMax <= 64, "Expected low retained-token peak in RELEASE_COMMITTED mode")
+            (releaseMax < keepMax).shouldBeTrue()
+            (releaseFinal < keepFinal).shouldBeTrue()
+            withClue("Expected low retained-token peak in RELEASE_COMMITTED mode") { (releaseMax <= 64).shouldBeTrue() }
         }
 
         test("incremental-single-char-input-requires-only-linear-chunk-reads") {
@@ -79,7 +80,7 @@ class PerformanceRegressionSpec :
                 parsedClauses += 1
             }
 
-            assertEquals(150, parsedClauses)
-            assertTrue(reads in (text.length + 1)..(text.length + 2))
+            parsedClauses shouldBe 150
+            (reads in (text.length + 1)..(text.length + 2)).shouldBeTrue()
         }
     })

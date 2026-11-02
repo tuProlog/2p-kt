@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.dsl
 
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 /**
  * Helpers for tests exercising a [BaseLogicProgrammingScope] subtype [S] (e.g.
@@ -41,7 +41,7 @@ open class LogicProgrammingScopeTester<S : BaseLogicProgrammingScope<*>>(
         expected: T,
         actualCreator: S.() -> T,
     ) {
-        assertEquals(expected, createLogicProgrammingScope().actualCreator())
+        createLogicProgrammingScope().actualCreator() shouldBe expected
     }
 
     /**
@@ -52,7 +52,7 @@ open class LogicProgrammingScopeTester<S : BaseLogicProgrammingScope<*>>(
         expected: T,
         actualCreator: S.() -> T,
     ) {
-        assertEquals(expected, actualCreator())
+        actualCreator() shouldBe expected
     }
 
     /**
@@ -64,8 +64,8 @@ open class LogicProgrammingScopeTester<S : BaseLogicProgrammingScope<*>>(
         first: Term,
         second: Term,
     ) {
-        assertTrue(first.structurallyEquals(second))
-        assertNotEquals(first, second)
+        first.structurallyEquals(second).shouldBeTrue()
+        second shouldNotBe first
     }
 
     /**
@@ -84,9 +84,9 @@ open class LogicProgrammingScopeTester<S : BaseLogicProgrammingScope<*>>(
         second: Var,
     ) {
         for (variable in sequenceOf(first, second)) {
-            assertEquals("_", variable.name)
-            assertTrue(variable.isAnonymous)
+            variable.name shouldBe "_"
+            variable.isAnonymous.shouldBeTrue()
         }
-        assertNotEquals(`_`, `_`)
+        (`_`) shouldNotBe (`_`)
     }
 }

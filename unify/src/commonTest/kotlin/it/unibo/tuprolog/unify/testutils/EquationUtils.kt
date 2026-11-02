@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.unify.testutils
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Constant
@@ -16,8 +19,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation
-import kotlin.test.assertTrue
-import kotlin.test.fail
 import it.unibo.tuprolog.core.List.Companion as LogicList
 
 /**
@@ -244,32 +245,32 @@ internal object EquationUtils {
 
     /** Asserts that all given equations are Identities instances */
     internal fun <T : Equation> assertAllIdentities(equationSequence: Sequence<T>) =
-        assertTrue("${equationSequence.toList()} all Identities") {
-            equationSequence.all { it is Equation.Identity }
+        withClue("${equationSequence.toList()} all Identities") {
+            (equationSequence.all { it is Equation.Identity }).shouldBeTrue()
         }
 
     /** Asserts that there's no Identity in given equation sequence */
     internal fun <T : Equation> assertNoIdentities(equationSequence: Sequence<T>) =
-        assertTrue("${equationSequence.toList()} no Identity") {
-            equationSequence.none { it is Equation.Identity }
+        withClue("${equationSequence.toList()} no Identity") {
+            (equationSequence.none { it is Equation.Identity }).shouldBeTrue()
         }
 
     /** Asserts that there's at least one Contradiction in given equation sequence */
     internal fun <T : Equation> assertAnyContradiction(equationSequence: Sequence<T>) =
-        assertTrue("${equationSequence.toList()} at least one Contradiction") {
-            equationSequence.any { it is Equation.Contradiction }
+        withClue("${equationSequence.toList()} at least one Contradiction") {
+            (equationSequence.any { it is Equation.Contradiction }).shouldBeTrue()
         }
 
     /** Asserts that there's no Comparison in given equation sequence */
     internal fun <T : Equation> assertNoComparisons(equationSequence: Sequence<T>) =
-        assertTrue("${equationSequence.toList()} no Comparison") {
-            equationSequence.none { it is Equation.Comparison }
+        withClue("${equationSequence.toList()} no Comparison") {
+            (equationSequence.none { it is Equation.Comparison }).shouldBeTrue()
         }
 
     /** Asserts that there's at least one Assignment in given equation sequence */
     internal fun <T : Equation> assertAnyAssignment(equationSequence: Sequence<T>) =
-        assertTrue("${equationSequence.toList()} at least one Assignment") {
-            equationSequence.any { it is Equation.Assignment }
+        withClue("${equationSequence.toList()} at least one Assignment") {
+            (equationSequence.any { it is Equation.Assignment }).shouldBeTrue()
         }
 
     /** A function to count in how many equations will be transformed a term */

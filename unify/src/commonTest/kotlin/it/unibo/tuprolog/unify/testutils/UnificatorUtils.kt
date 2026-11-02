@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.unify.testutils
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
@@ -14,7 +16,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.unify.eq
-import kotlin.test.assertEquals
 import it.unibo.tuprolog.core.List.Companion as LogicList
 import kotlin.collections.List as KtList
 
@@ -289,7 +290,7 @@ internal object UnificatorUtils {
     ) {
         val (equationLhs, equationRhs) = case.equation.toPair()
 
-        assertEquals(case.mgu, mguStrategy(equationLhs, equationRhs), "$equationLhs=$equationRhs mgu?")
+        withClue("$equationLhs=$equationRhs mgu?") { mguStrategy(equationLhs, equationRhs) shouldBe case.mgu }
     }
 
     /** Asserts that match computed with [matchStrategy] over the equation of [case] is the expected one */
@@ -299,7 +300,9 @@ internal object UnificatorUtils {
     ) {
         val (equationLhs, equationRhs) = case.equation.toPair()
 
-        assertEquals(case.isMatching, matchStrategy(equationLhs, equationRhs), "$equationLhs=$equationRhs match?")
+        withClue(
+            "$equationLhs=$equationRhs match?",
+        ) { matchStrategy(equationLhs, equationRhs) shouldBe case.isMatching }
     }
 
     /** Asserts that unified term computed with [unifyStrategy] over the equation of [case] is the expected one */
@@ -309,6 +312,8 @@ internal object UnificatorUtils {
     ) {
         val (equationLhs, equationRhs) = case.equation.toPair()
 
-        assertEquals(case.unifiedTerm, unifyStrategy(equationLhs, equationRhs), "$equationLhs=$equationRhs unify?")
+        withClue(
+            "$equationLhs=$equationRhs unify?",
+        ) { unifyStrategy(equationLhs, equationRhs) shouldBe case.unifiedTerm }
     }
 }

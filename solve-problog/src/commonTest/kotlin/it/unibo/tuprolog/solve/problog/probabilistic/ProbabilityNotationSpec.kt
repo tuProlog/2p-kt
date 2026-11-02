@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.solve.problog.probabilistic
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.SolveOptions
@@ -9,8 +12,6 @@ import it.unibo.tuprolog.solve.probability
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import it.unibo.tuprolog.solve.setProbabilistic
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 private val operators = ProblogSolverFactory.defaultBuiltins.operators
 
@@ -56,13 +57,12 @@ class ProbabilityNotationSpec :
     FunSpec({
         withTests(nameFn = { it.id }, notations) { case ->
             val actual = probability(case.theory, case.query)
-            assertTrue(
-                TestUtils.assertEqualsDouble(actual, case.probability),
-                "expected ${case.probability}, got $actual",
-            )
+            withClue("expected ${case.probability}, got $actual") {
+                TestUtils.assertEqualsDouble(actual, case.probability).shouldBeTrue()
+            }
         }
 
         test("non-arithmetic-probability-is-rejected") {
-            assertFailsWith<TuPrologException> { probability("p::a.", "a") }
+            shouldThrow<TuPrologException> { probability("p::a.", "a") }
         }
     })

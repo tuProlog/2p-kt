@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.exception.testutils
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.HaltException
-import kotlin.test.assertEquals
 
 /**
  * Utils singleton to help testing [HaltException]
@@ -32,6 +32,6 @@ internal object HaltExceptionUtils {
             expectedContext,
             actualException,
         )
-        assertEquals(expectedExitStatus, actualException.exitStatus)
+        actualException.exitStatus shouldBe expectedExitStatus
     }
 }

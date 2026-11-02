@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.shouldBe
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
 
 actual fun internalsOf(x: () -> Any): String = x().toString()
 
@@ -13,5 +13,5 @@ actual fun <T : Any> assertClassNameIs(
     klass: KClass<T>,
     name: String,
 ) {
-    assertEquals(name, klass.qualifiedName)
+    klass.qualifiedName shouldBe name
 }

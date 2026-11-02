@@ -2,6 +2,8 @@ package it.unibo.tuprolog.solve.prolog
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
@@ -11,8 +13,6 @@ import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.assertEquals
-import kotlin.test.assertNotSame
 import it.unibo.tuprolog.core.List as LogicList
 
 private const val TIMEOUT = 10_000L
@@ -54,24 +54,23 @@ class SolverConvenienceSpec :
                     staticKb = Theory.of(Fact.of(Struct.of("f", Integer.of(1)))),
                 )
             val clone = solver.clone()
-            assertNotSame(solver, clone)
-            assertEquals(solver.staticKb, clone.staticKb)
+            clone shouldNotBeSameInstanceAs solver
+            clone.staticKb shouldBe solver.staticKb
             solver.loadStaticClauses(Fact.of(Struct.of("f", Integer.of(2))))
-            assertEquals(1, clone.solveList(Struct.of("f", Var.of("X"))).count { it.isYes })
+            (clone.solveList(Struct.of("f", Var.of("X"))).count { it.isYes }) shouldBe 1
         }
 
         test("copy/replaces-only-what-it-is-given") {
             val theory = Theory.of(Fact.of(Struct.of("f", Integer.of(1))))
             val solver = Solver.prolog.solverWithDefaultBuiltins()
             val copy = solver.copy(staticKb = theory)
-            assertEquals(theory, copy.staticKb)
-            assertEquals(solver.libraries, copy.libraries)
-            assertEquals(
-                theory,
+            copy.staticKb shouldBe theory
+            copy.libraries shouldBe solver.libraries
+            (
                 Solver.prolog
                     .solverWithDefaultBuiltins(staticKb = theory)
                     .clone()
-                    .staticKb,
-            )
+                    .staticKb
+            ) shouldBe theory
         }
     })

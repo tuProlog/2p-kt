@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.shouldBe
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
 
 actual fun internalsOf(x: () -> Any): String = JSON.stringify(x())
 
@@ -13,5 +13,5 @@ actual fun <T : Any> assertClassNameIs(
     klass: KClass<T>,
     name: String,
 ) {
-    assertEquals(klass.simpleName, name.split('.').last())
+    name.split('.').last() shouldBe klass.simpleName
 }

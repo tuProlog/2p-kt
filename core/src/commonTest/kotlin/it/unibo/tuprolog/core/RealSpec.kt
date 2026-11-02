@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.core.impl.RealImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.RealUtils
 import org.gciatto.kt.math.BigDecimal
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 /**
  * Test class for [Real] companion object
@@ -33,23 +33,23 @@ class RealSpec :
         }
 
         withTests(nameFn = { "string-matches-pattern/${it.id}" }, RealUtils.realCases) { case ->
-            assertTrue(case.string matches Real.PATTERN)
+            (case.string matches Real.PATTERN).shouldBeTrue()
         }
 
         withTests(nameFn = { "to-string-matches-pattern/${it.id}" }, RealUtils.realCases) { case ->
-            assertTrue(Real.of(case.string).toString() matches Real.PATTERN)
+            (Real.of(case.string).toString() matches Real.PATTERN).shouldBeTrue()
         }
 
         test("infinity-handling") {
-            assertFailsWith<NumberFormatException> { Real.of(Double.NEGATIVE_INFINITY) }
-            assertFailsWith<NumberFormatException> { Real.of(Double.POSITIVE_INFINITY) }
+            shouldThrow<NumberFormatException> { Real.of(Double.NEGATIVE_INFINITY) }
+            shouldThrow<NumberFormatException> { Real.of(Double.POSITIVE_INFINITY) }
 
-            assertFailsWith<NumberFormatException> { Real.of(Float.NEGATIVE_INFINITY) }
-            assertFailsWith<NumberFormatException> { Real.of(Float.POSITIVE_INFINITY) }
+            shouldThrow<NumberFormatException> { Real.of(Float.NEGATIVE_INFINITY) }
+            shouldThrow<NumberFormatException> { Real.of(Float.POSITIVE_INFINITY) }
         }
 
         test("not-a-number-handling") {
-            assertFailsWith<NumberFormatException> { Real.of(Double.NaN) }
-            assertFailsWith<NumberFormatException> { Real.of(Float.NaN) }
+            shouldThrow<NumberFormatException> { Real.of(Double.NaN) }
+            shouldThrow<NumberFormatException> { Real.of(Float.NaN) }
         }
     })

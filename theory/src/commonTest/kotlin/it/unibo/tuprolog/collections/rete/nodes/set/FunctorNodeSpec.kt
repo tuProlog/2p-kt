@@ -2,6 +2,9 @@ package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.collections.rete.generic.set.FunctorNode
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
@@ -13,9 +16,6 @@ import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeEmpty
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for [FunctorNode]
@@ -38,11 +38,11 @@ class FunctorNodeSpec :
         beforeTest { init() }
 
         test("empty-node-has-empty-children-collection") {
-            assertTrue { emptyAFunctorNode.children.isEmpty() }
+            emptyAFunctorNode.children.isEmpty().shouldBeTrue()
         }
 
         test("filled-node-has-non-empty-children-collection") {
-            assertTrue { filledAFunctorNode.children.isNotEmpty() }
+            filledAFunctorNode.children.isNotEmpty().shouldBeTrue()
         }
 
         test("clauses-correct") {
@@ -53,7 +53,7 @@ class FunctorNodeSpec :
         test("put-clause-inserts-rule") {
             emptyAFunctorNode.put(aRule)
 
-            assertEquals(aRule, emptyAFunctorNode.indexedElements.single())
+            emptyAFunctorNode.indexedElements.single() shouldBe aRule
         }
 
         test("put-clause-doesnt-insert-wrong-functor-rule") {
@@ -135,6 +135,6 @@ class FunctorNodeSpec :
 
             val independentCopy = emptyAFunctorNode.deepCopy()
 
-            assertSame(emptyAFunctorNode.indexedElements.single(), independentCopy.indexedElements.single())
+            independentCopy.indexedElements.single() shouldBeSameInstanceAs emptyAFunctorNode.indexedElements.single()
         }
     })

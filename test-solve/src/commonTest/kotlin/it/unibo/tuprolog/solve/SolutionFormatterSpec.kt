@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import kotlin.test.assertEquals
 
 /** Test class for [SolutionFormatter], focused on the `GroundQueriesHaveBooleanSolution` presentation flag. */
 class SolutionFormatterSpec :
@@ -22,14 +22,14 @@ class SolutionFormatterSpec :
             val formatter = SolutionFormatter.of()
             val solution = Solution.yes(groundQuery)
 
-            assertEquals("yes: 2 is 1 + 1\n    ", formatter.format(solution))
+            formatter.format(solution) shouldBe "yes: 2 is 1 + 1\n    "
         }
 
         test("groundQueriesHaveBooleanSolution renders a ground query's yes solution as just yes") {
             val formatter = SolutionFormatter.of(groundQueriesHaveBooleanSolution = true)
             val solution = Solution.yes(groundQuery)
 
-            assertEquals("yes.", formatter.format(solution))
+            formatter.format(solution) shouldBe "yes."
         }
 
         test("groundQueriesHaveBooleanSolution leaves a non-ground query's yes solution unaffected") {
@@ -39,12 +39,12 @@ class SolutionFormatterSpec :
                     Solution.yes(nonGroundQuery, Substitution.of(mapOf(varOf("X") to Integer.of(2))))
                 }
 
-            assertEquals("yes: 2 is 1 + 1\n    X = 2", formatter.format(solution))
+            formatter.format(solution) shouldBe "yes: 2 is 1 + 1\n    X = 2"
         }
 
         test("groundQueriesHaveBooleanSolution does not affect no or halt solutions") {
             val formatter = SolutionFormatter.of(groundQueriesHaveBooleanSolution = true)
 
-            assertEquals("no.", formatter.format(Solution.no(groundQuery)))
+            formatter.format(Solution.no(groundQuery)) shouldBe "no."
         }
     })

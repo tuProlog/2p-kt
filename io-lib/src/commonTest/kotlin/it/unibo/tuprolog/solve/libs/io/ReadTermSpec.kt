@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
@@ -14,7 +15,6 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.yes
-import kotlin.test.assertTrue
 
 /**
  * Covers `read/1,2` and `read_term/2,3` (Term input/output). `read/1,2` behave like `read_term`
@@ -60,8 +60,8 @@ class ReadTermSpec :
                 val solver = PrologSolverFactory.ioSolver(stdIn = "foo(a,b")
                 val query = "read"("T")
                 val solution = solver.solve(query).toList().single()
-                assertTrue(solution is Solution.Halt)
-                assertTrue(solution.exception is SyntaxError)
+                solution.shouldBeInstanceOf<Solution.Halt>()
+                solution.exception.shouldBeInstanceOf<SyntaxError>()
             }
         }
 

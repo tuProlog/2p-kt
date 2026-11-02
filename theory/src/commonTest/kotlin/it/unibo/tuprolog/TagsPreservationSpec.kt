@@ -1,6 +1,7 @@
 package it.unibo.tuprolog
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.collections.ClauseMultiSet
 import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.MutableClauseMultiSet
@@ -15,7 +16,6 @@ import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.setTags
-import kotlin.test.assertEquals
 
 class TagsPreservationSpec :
     FunSpec({
@@ -53,12 +53,12 @@ class TagsPreservationSpec :
                 println(formattedClause)
             }
             val pattern = logicProgramming { fact { "f"("g"("x")) } }
-            assertEquals(12, clauses.size)
+            clauses.size shouldBe 12
             for (headTagsCount in 1..2) {
                 val clausesWithHeadTagsCount =
                     clauses
                         .filter { it == pattern && it.tags.size == headTagsCount }
-                assertEquals(1, clausesWithHeadTagsCount.size)
+                clausesWithHeadTagsCount.size shouldBe 1
             }
             for (externalTagsCount in 1..2) {
                 val pattern = pattern.head
@@ -66,7 +66,7 @@ class TagsPreservationSpec :
                     clauses
                         .map { it.head }
                         .filter { it == pattern && it.tags.size == externalTagsCount }
-                assertEquals(1, clausesWithExternalTagsCount.size)
+                clausesWithExternalTagsCount.size shouldBe 1
             }
             for (middleTagsCount in 1..2) {
                 val pattern = pattern.head.asStruct().args[0]
@@ -76,7 +76,7 @@ class TagsPreservationSpec :
                         .map { it?.asStruct()?.args[0] }
                         .filterIsInstance<Struct>()
                         .filter { it == pattern && it.tags.size == middleTagsCount }
-                assertEquals(1, clausesWithMiddleTagsCount.size)
+                clausesWithMiddleTagsCount.size shouldBe 1
             }
             for (internalTagsCount in 1..2) {
                 val pattern =
@@ -93,7 +93,7 @@ class TagsPreservationSpec :
                         .map { it.args[0] }
                         .filterIsInstance<Atom>()
                         .filter { it == pattern && it.tags.size == internalTagsCount }
-                assertEquals(1, clausesWithInternalTagsCount.size)
+                clausesWithInternalTagsCount.size shouldBe 1
             }
         }
 

@@ -2,10 +2,10 @@ package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.impl.BlockImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.BlockUtils
-import kotlin.test.assertEquals
 
 /**
  * Test class for [Block] companion object
@@ -16,7 +16,7 @@ class BlockSpec :
     FunSpec({
         test("empty-returns-empty-block") {
             assertEqualities(Empty.block(), Block.empty())
-            assertEquals(Empty.block(), Block.empty())
+            Block.empty() shouldBe Empty.block()
         }
 
         test("block-of-no-vararg-terms") {
@@ -47,11 +47,11 @@ class BlockSpec :
             val nums = (0..100_000).toList()
             val block = Block.of(nums.map { Integer.of(it) })
 
-            assertEquals(nums.joinToString(", ", "{", "}"), block.toString())
+            block.toString() shouldBe nums.joinToString(", ", "{", "}")
 
             val otherBlock = block.freshCopy()
 
-            assertEquals(block.hashCode(), otherBlock.hashCode())
-            assertEquals(block, otherBlock)
+            otherBlock.hashCode() shouldBe block.hashCode()
+            otherBlock shouldBe block
         }
     })

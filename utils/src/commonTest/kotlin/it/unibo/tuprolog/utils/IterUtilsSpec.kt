@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.utils
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 @OptIn(ExperimentalKotest::class)
 private val config = PropTestConfig(seed = 1017L, iterations = 200)
@@ -80,105 +80,89 @@ class IterUtilsSpec :
             for (comparator in listOf(naturalOrder<Int>(), reverseOrder())) {
                 checkAll(config, lists) { inputs ->
                     val sorted = inputs.map { it.sortedWith(comparator) }
-                    assertEquals(sorted.flatten().sortedWith(comparator), case.merge(sorted, comparator).toList())
+                    case.merge(sorted, comparator).toList() shouldBe sorted.flatten().sortedWith(comparator)
                 }
             }
         }
 
         withTests(nameFn = { "${it.id}/is-round-robin-by-position" }, interleaveCases) { case ->
-            checkAll(config, lists) { inputs -> assertEquals(roundRobin(inputs), case.interleave(inputs).toList()) }
+            checkAll(config, lists) { inputs -> case.interleave(inputs).toList() shouldBe roundRobin(inputs) }
         }
 
         test("interleave/example") {
-            assertEquals(
-                listOf(1, 10, 100, 2, 20, 3),
-                interleave(listOf(1, 2, 3), listOf(10, 20), listOf(100)).toList(),
-            )
+            interleave(listOf(1, 2, 3), listOf(10, 20), listOf(100)).toList() shouldBe listOf(1, 10, 100, 2, 20, 3)
         }
 
         test("permutations/are-all-distinct-rearrangements") {
             checkAll(config, Arb.int(0..5)) { n ->
                 val items = (1..n).toList()
                 val permutations = items.permutations().toList()
-                assertEquals(maxOf(1, factorial(n)), permutations.size)
-                assertEquals(permutations.size, permutations.toSet().size)
-                permutations.forEach { assertEquals(items, it.sorted()) }
+                permutations.size shouldBe maxOf(1, factorial(n))
+                permutations.toSet().size shouldBe permutations.size
+                permutations.forEach { it.sorted() shouldBe items }
             }
         }
 
         test("permutations/overloads-agree") {
             val expected = listOf(1, 2, 3).permutations().toList()
-            assertEquals(expected, permutations(1, 2, 3).toList())
-            assertEquals(expected, setOf(1, 2, 3).permutations().toList())
-            assertEquals(expected, sequenceOf(1, 2, 3).permutations().toList())
+            permutations(1, 2, 3).toList() shouldBe expected
+            setOf(1, 2, 3).permutations().toList() shouldBe expected
+            sequenceOf(1, 2, 3).permutations().toList() shouldBe expected
         }
 
         test("subsequences/of-empty-is-the-empty-prefix") {
-            assertEquals(listOf(emptyList()), emptyList<Int>().subsequences().map { it.toList() }.toList())
+            (emptyList<Int>().subsequences().map { it.toList() }.toList()) shouldBe listOf(emptyList())
         }
 
         test("subsequences/are-the-growing-prefixes") {
-            assertEquals(
-                listOf(listOf(1), listOf(1, 2), listOf(1, 2, 3)),
-                subsequences(1, 2, 3).map { it.toList() }.toList(),
-            )
+            (subsequences(1, 2, 3).map { it.toList() }.toList()) shouldBe
+                listOf(listOf(1), listOf(1, 2), listOf(1, 2, 3))
         }
 
         test("drop-last/drops-only-the-last-element") {
             checkAll(config, Arb.list(Arb.int(), 0..6)) { items ->
-                assertEquals(items.dropLast(1), items.asSequence().dropLast().toList())
+                items.asSequence().dropLast().toList() shouldBe items.dropLast(1)
             }
         }
 
         test("product/squared-pairs-every-element-with-every-element") {
-            assertEquals(
-                listOf(1 to 1, 1 to 2, 2 to 1, 2 to 2),
-                sequenceOf(1, 2).squared().toList(),
-            )
-            assertEquals(listOf(2, 3, 3, 4), sequenceOf(1, 2).squared { a, b -> a + b }.toList())
+            sequenceOf(1, 2).squared().toList() shouldBe listOf(1 to 1, 1 to 2, 2 to 1, 2 to 2)
+            (sequenceOf(1, 2).squared { a, b -> a + b }.toList()) shouldBe listOf(2, 3, 3, 4)
         }
 
         test("long-indexed/pairs-elements-with-positions") {
-            assertEquals(
-                listOf(0L to "a", 1L to "b"),
-                sequenceOf("a", "b").longIndexed().map { it.index to it.value }.toList(),
-            )
+            (sequenceOf("a", "b").longIndexed().map { it.index to it.value }.toList()) shouldBe
+                listOf(0L to "a", 1L to "b")
         }
 
         test("insert-at/inserts-before-the-index") {
-            assertEquals(listOf(1, 9, 8, 2), sequenceOf(1, 2).insertAt(1, 9, 8).toList())
+            sequenceOf(1, 2).insertAt(1, 9, 8).toList() shouldBe listOf(1, 9, 8, 2)
         }
 
         test("insert-at/past-the-end-appends") {
-            assertEquals(listOf(1, 2, 9), sequenceOf(1, 2).insertAt(2, 9).toList())
-            assertEquals(listOf(1, 2, 9, 8), sequenceOf(1, 2).insertAt(5, 9, 8).toList())
+            sequenceOf(1, 2).insertAt(2, 9).toList() shouldBe listOf(1, 2, 9)
+            sequenceOf(1, 2).insertAt(5, 9, 8).toList() shouldBe listOf(1, 2, 9, 8)
         }
 
         test("assert-items-are-not-null/passes-non-null-items") {
-            assertEquals(listOf(1, 2), listOf<Int?>(1, 2).assertItemsAreNotNull())
-            assertEquals(listOf(1, 2), arrayOf<Int?>(1, 2).assertItemsAreNotNull().toList())
-            assertEquals(listOf(1, 2), sequenceOf<Int?>(1, 2).assertItemsAreNotNull().toList())
-            assertEquals(listOf(1, 2), listOf<Int?>(1, 2).asIterable().assertItemsAreNotNull().toList())
+            (listOf<Int?>(1, 2).assertItemsAreNotNull()) shouldBe listOf(1, 2)
+            (arrayOf<Int?>(1, 2).assertItemsAreNotNull().toList()) shouldBe listOf(1, 2)
+            (sequenceOf<Int?>(1, 2).assertItemsAreNotNull().toList()) shouldBe listOf(1, 2)
+            (listOf<Int?>(1, 2).asIterable().assertItemsAreNotNull().toList()) shouldBe listOf(1, 2)
         }
 
         test("assert-items-are-not-null/names-the-null-index") {
             val message = "Item at index 1 is null"
-            assertEquals(
-                message,
-                assertFailsWith<IllegalArgumentException> { listOf(1, null).assertItemsAreNotNull() }.message,
-            )
-            assertEquals(
-                message,
-                assertFailsWith<IllegalArgumentException> { arrayOf(1, null).assertItemsAreNotNull() }.message,
-            )
-            assertEquals(
-                message,
-                assertFailsWith<IllegalArgumentException> {
+            (shouldThrow<IllegalArgumentException> { listOf(1, null).assertItemsAreNotNull() }.message) shouldBe message
+            (shouldThrow<IllegalArgumentException> { arrayOf(1, null).assertItemsAreNotNull() }.message) shouldBe
+                message
+            (
+                shouldThrow<IllegalArgumentException> {
                     sequenceOf(
                         1,
                         null,
                     ).assertItemsAreNotNull().toList()
-                }.message,
-            )
+                }.message
+            ) shouldBe message
         }
     })

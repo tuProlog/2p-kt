@@ -1,11 +1,11 @@
 package it.unibo.tuprolog
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 /**
  * Exercises every entry point `:full` re-exports (see [PrologCLI], [PrologIDE], [ProblogIDE]), proving each
@@ -41,17 +41,17 @@ class LaunchersSpec :
                         System.setOut(original)
                     }
                 }
-            assertEquals(null, exit)
-            assertTrue("yes" in out.toString().lowercase())
+            exit shouldBe null
+            ("yes" in out.toString().lowercase()).shouldBeTrue()
         }
 
         test("PrologIDE launches the Swing IDE entry point") {
-            val error = assertFailsWith<IllegalStateException> { PrologIDE.main(emptyArray()) }
-            assertEquals("Cannot show the Swing IDE in a headless environment", error.message)
+            val error = shouldThrow<IllegalStateException> { PrologIDE.main(emptyArray()) }
+            error.message shouldBe "Cannot show the Swing IDE in a headless environment"
         }
 
         test("ProblogIDE launches the PLP Swing IDE entry point") {
-            val error = assertFailsWith<IllegalStateException> { ProblogIDE.main(emptyArray()) }
-            assertEquals("Cannot show the Swing IDE in a headless environment", error.message)
+            val error = shouldThrow<IllegalStateException> { ProblogIDE.main(emptyArray()) }
+            error.message shouldBe "Cannot show the Swing IDE in a headless environment"
         }
     })

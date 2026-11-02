@@ -4,15 +4,15 @@ package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.utils.addTag
 import it.unibo.tuprolog.utils.clearTags
 import it.unibo.tuprolog.utils.plus
 import it.unibo.tuprolog.utils.setTag
 import it.unibo.tuprolog.utils.setTags
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 private class TaggableSubstitutionCase(
     val id: String,
@@ -82,8 +82,8 @@ class SubstitutionsMetadataSpec :
         ) = substitutions(property) {
             val tags = mapOf(someKey to someValue1, someOtherKey to someValue2)
             val substitution = it.setTags(tags)
-            assertEquals(tags, substitution.tags)
-            assertEquals(substitution.tags, substitution.alter().tags)
+            substitution.tags shouldBe tags
+            substitution.alter().tags shouldBe substitution.tags
         }
 
         fun summingMergesTags(
@@ -93,28 +93,28 @@ class SubstitutionsMetadataSpec :
         ) = substitutions(property) {
             val tags = mapOf(someKey to someValue1, someOtherKey to someValue2)
             val substitution = it.setTags(tags)
-            assertEquals(tags, substitution.tags)
-            assertEquals(tags + other.tags, substitution.sum(other).tags)
+            substitution.tags shouldBe tags
+            substitution.sum(other).tags shouldBe (tags + other.tags)
         }
 
         substitutions("tags-stick-to-substitutions") { substitution ->
-            assertNull(substitution.getTag<SubstitutionTag<Long>>(someKey))
-            assertFalse { substitution.containsTag(someKey) }
+            (substitution.getTag<SubstitutionTag<Long>>(someKey)).shouldBeNull()
+            substitution.containsTag(someKey).shouldBeFalse()
             val tagged = substitution.setTag(someKey, someValue1)
-            assertFalse { substitution.containsTag(someKey) }
-            assertNull(substitution.getTag<SubstitutionTag<Long>>(someKey))
-            assertTrue { tagged.containsTag(someKey) }
-            assertEquals(someValue1, tagged.getTag<SubstitutionTag<Long>>(someKey))
-            assertEquals(emptyMap(), substitution.tags)
-            assertEquals(mapOf(someKey to someValue1), tagged.tags)
+            substitution.containsTag(someKey).shouldBeFalse()
+            (substitution.getTag<SubstitutionTag<Long>>(someKey)).shouldBeNull()
+            tagged.containsTag(someKey).shouldBeTrue()
+            (tagged.getTag<SubstitutionTag<Long>>(someKey)) shouldBe someValue1
+            substitution.tags shouldBe emptyMap()
+            tagged.tags shouldBe mapOf(someKey to someValue1)
         }
 
         substitutions("tags-can-be-replaced") {
             val substitution = it.setTag(someKey, someValue1)
             val tags = mapOf<String, Any>(someKey to someValue2, someOtherKey to someOtherValue)
             val replaced = substitution.replaceTags(tags)
-            assertEquals(mapOf(someKey to someValue1), substitution.tags)
-            assertEquals(tags, replaced.tags)
+            substitution.tags shouldBe mapOf(someKey to someValue1)
+            replaced.tags shouldBe tags
         }
 
         fun taggingPreservesEquality(
@@ -122,10 +122,10 @@ class SubstitutionsMetadataSpec :
             tag: Substitution.() -> Substitution,
         ) = substitutions(property) { nonTagged ->
             val tagged = nonTagged.tag()
-            assertEquals(nonTagged, tagged)
-            assertEquals(nonTagged.hashCode(), tagged.hashCode())
-            assertTrue { nonTagged.tags.isEmpty() }
-            assertTrue { tagged.tags.isNotEmpty() }
+            tagged shouldBe nonTagged
+            tagged.hashCode() shouldBe nonTagged.hashCode()
+            nonTagged.tags.isEmpty().shouldBeTrue()
+            tagged.tags.isNotEmpty().shouldBeTrue()
         }
 
         taggingPreservesEquality("adding-tags-preserves-equality") { addTag(someKey, someValue1) }
@@ -141,22 +141,22 @@ class SubstitutionsMetadataSpec :
         substitutions("clearing-tags-preserves-equality") {
             val tagged = it.setTags(someKey to someValue1, someOtherKey to someOtherValue)
             val cleared = tagged.clearTags()
-            assertEquals(tagged, cleared)
-            assertEquals(tagged.hashCode(), cleared.hashCode())
-            assertTrue { cleared.tags.isEmpty() }
-            assertTrue { tagged.tags.isNotEmpty() }
+            cleared shouldBe tagged
+            cleared.hashCode() shouldBe tagged.hashCode()
+            cleared.tags.isEmpty().shouldBeTrue()
+            tagged.tags.isNotEmpty().shouldBeTrue()
         }
 
         substitutions("adding-an-existing-tag-replaces-that-tag") {
             val tagged = it.setTags(someKey to someValue1, someOtherKey to someOtherValue)
             val replaced = tagged.addTag(someKey, someValue2)
-            assertEquals(someValue2, replaced.getTag<SubstitutionTag<Long>>(someKey))
+            (replaced.getTag<SubstitutionTag<Long>>(someKey)) shouldBe someValue2
         }
 
         substitutions("setting-an-existing-tag-replaces-that-tag") {
             val tagged = it.setTags(someKey to someValue1, someOtherKey to someOtherValue)
             val replaced = tagged.setTag(someKey, someValue2)
-            assertEquals(someValue2, replaced.getTag<SubstitutionTag<Long>>(someKey))
+            (replaced.getTag<SubstitutionTag<Long>>(someKey)) shouldBe someValue2
         }
 
         alteringPreservesTags("minus-iterable-preserves-tags") { this - listOf(X, Y, Z) }

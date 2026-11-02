@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
+import io.kotest.matchers.shouldBe
 
 class TermComparisonSpec :
     FunSpec({
@@ -36,11 +36,11 @@ class TermComparisonSpec :
 
         test("compare-to") {
             val reordered = unordered.sortedWith { a, b -> a.compareTo(b) }
-            assertEquals(ordered, reordered)
+            reordered shouldBe ordered
         }
 
         test("default-term-comparator") {
             val reordered = unordered.sortedWith(TermComparator.DefaultComparator)
-            assertEquals(ordered, reordered)
+            reordered shouldBe ordered
         }
     })
