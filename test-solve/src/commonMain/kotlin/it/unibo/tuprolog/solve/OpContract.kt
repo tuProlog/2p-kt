@@ -22,4 +22,13 @@ fun opContract(
         solverFactory.answers("op(200, xfx, [foo, bar]), current_op(P, T, foo), current_op(P, T, bar)") shouldBe
             listOf("yes: P = 200, T = xfx")
     }
+
+    scenario("op/improper-list-is-a-type-error") {
+        solverFactory.answers("op(200, xfx, [foo|bar])") shouldBe listOf("halt: type_error(list, [foo | bar])")
+    }
+
+    scenario("op/improper-list-declares-no-operator") {
+        solverFactory.answers("catch(op(200, xfx, [foo|bar]), _, true), \\+ current_op(_, _, foo)") shouldBe
+            listOf("yes")
+    }
 }
