@@ -61,18 +61,14 @@ interface Graph<T, W> : Iterable<Edge<T, W>> {
     @JsName("get")
     operator fun get(edge: Pair<Node<T>, Node<T>>): W?
 
-    /**
-     * Returns a new [Graph], with [node] added to it. Note: as currently implemented, if [node] already
-     * belongs to this graph, its existing outgoing edges are discarded in the result rather than preserved.
-     */
+    /** Returns a new [Graph], with [node] added to it; if [node] already belongs to this graph, its edges are kept. */
     @JsName("plusNode")
     operator fun plus(node: Node<T>): Graph<T, W>
 
     /**
-     * Returns a new [Graph], with [edge] added to it (implicitly adding its endpoints, if missing). Note:
-     * as currently implemented, any other outgoing edge that `edge.source` already had in this graph is
-     * discarded in the result, rather than kept alongside [edge] (unlike [MutableGraph.add], which merges
-     * the new edge in without discarding existing ones).
+     * Returns a new [Graph], with [edge] added to it (implicitly adding its endpoints, if missing), alongside the other
+     * outgoing edges of `edge.source`, like [MutableGraph.add] does. An existing edge between the same nodes is
+     * replaced, along with its weight.
      */
     @JsName("plusEdge")
     operator fun plus(edge: Edge<T, W>): Graph<T, W>
