@@ -4,6 +4,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.stdlib.primitive.Abolish
+import it.unibo.tuprolog.solve.stdlib.primitive.AddArguments
 import it.unibo.tuprolog.solve.stdlib.primitive.Arg
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticEqual
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticGreaterThan
@@ -85,6 +86,7 @@ object CommonPrimitives {
     val wrappers: Sequence<PrimitiveWrapper<*>> =
         sequenceOf(
             Abolish,
+            AddArguments,
             Arg,
             ArithmeticEqual,
             ArithmeticGreaterThan,

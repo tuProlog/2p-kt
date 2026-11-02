@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.rule.Append
 import it.unibo.tuprolog.solve.stdlib.rule.Arrow
+import it.unibo.tuprolog.solve.stdlib.rule.CallN
 import it.unibo.tuprolog.solve.stdlib.rule.CurrentPrologFlag
 import it.unibo.tuprolog.solve.stdlib.rule.Help
 import it.unibo.tuprolog.solve.stdlib.rule.Member
@@ -17,8 +18,8 @@ import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
  * Registry of every standard control-construct predicate implemented as a Prolog clause rather than a Kotlin
  * [it.unibo.tuprolog.solve.primitive.Primitive] -- e.g. `\+/1` ([it.unibo.tuprolog.solve.stdlib.rule.Not]), `;/2`
  * ([it.unibo.tuprolog.solve.stdlib.rule.Semicolon]), `->/2` ([it.unibo.tuprolog.solve.stdlib.rule.Arrow]),
- * `member/2`, `append/3`, `once/1`, and the `*_prolog_flag/2` predicates -- each implemented as a [RuleWrapper]
- * under `it.unibo.tuprolog.solve.stdlib.rule`.
+ * `member/2`, `append/3`, `once/1`, `call/2..8` ([it.unibo.tuprolog.solve.stdlib.rule.CallN]), and the
+ * `*_prolog_flag/2` predicates -- each implemented as a [RuleWrapper] under `it.unibo.tuprolog.solve.stdlib.rule`.
  *
  * Consumed by [CommonBuiltins] to populate the `prolog.lang` library's [it.unibo.tuprolog.solve.library.Library.clauses].
  */
@@ -40,7 +41,7 @@ object CommonRules {
             SetPrologFlag,
             CurrentPrologFlag,
             Help,
-        )
+        ) + CallN.wrappers
 
     /** [wrappers]' underlying [Clause]s, as consumed by [it.unibo.tuprolog.solve.library.Library.clauses]. */
     val clauses: List<Clause>

@@ -28,7 +28,7 @@ Native (Kotlin-implemented) predicates, each a `PrimitiveWrapper` (see
 | Knowledge-base manipulation | `assert/1`, `asserta/1`, `assertz/1`, `retract/1`, `retractall/1`, `abolish/1`, `clause/2` |
 | Flags & operators | `current_prolog_flag/2` (primitive form), `set_prolog_flag/2` (primitive form), `op/3`, `current_op/3` |
 | Custom key-value storage | `get_ephemeral/2`/`set_ephemeral/2`, `get_persistent/2`/`set_persistent/2`, `get_durable/2`/`set_durable/2` — three tiers of `SideEffect`-backed context data with different lifetimes |
-| Control & misc | `halt/0`, `halt/1`, `repeat/0`, `sleep/1`, `ensure_executable/1`, `write/1`, `between/3`, `reverse/2` |
+| Control & misc | `halt/0`, `halt/1`, `repeat/0`, `sleep/1`, `ensure_executable/1`, `add_arguments/3`, `write/1`, `between/3`, `reverse/2` |
 
 ## Functions (`CommonFunctions`)
 
@@ -50,12 +50,13 @@ Control constructs and a couple of list predicates defined as actual Prolog clau
 then loaded as `Clause`s into the library's theory), in `it.unibo.tuprolog.solve.stdlib.rule`:
 
 ```kotlin
---8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/CommonRules.kt:15:31"
+--8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/CommonRules.kt:17:44"
 ```
 
 - `\+/1` (`Not`) and `->/2` (`Arrow`, if-then) and `;/2` (`Semicolon`, both if-then-else and disjunction);
 - `member/2` and `append/3`, each with a base and a recursive clause;
 - `once/1`;
+- `call/2..8` (`CallN`), which call a goal with extra arguments, built by the `add_arguments/3` primitive;
 - `set_prolog_flag/2` / `current_prolog_flag/2` (the rule-level wrappers around the flag primitives).
 
 Unlike primitives and functions, these are ordinary Prolog clauses — inspectable with `clause/2` like any other
