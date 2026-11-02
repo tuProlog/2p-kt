@@ -86,6 +86,7 @@ import it.unibo.tuprolog.solve.termContract
 import it.unibo.tuprolog.solve.timeoutContract
 import it.unibo.tuprolog.solve.trueContract
 import it.unibo.tuprolog.solve.unifyContract
+import it.unibo.tuprolog.solve.univContract
 import it.unibo.tuprolog.solve.yes
 
 /** The shared solver contracts of `:test-solve`, run against [PrologSolverFactory]. */
@@ -147,6 +148,7 @@ class PrologSolverSpec :
         include(termContract(PrologSolverFactory))
         include(timeoutContract(PrologSolverFactory))
         include(trueContract(PrologSolverFactory))
+        include(univContract(PrologSolverFactory))
         include(staticFactoryContract(SolvePrologExpectations.expectations))
 
         withTests(
