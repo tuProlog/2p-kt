@@ -42,6 +42,9 @@ object Op : TernaryRelation.NonBacktrackable<ExecutionContext>("op") {
 
         ?- op(1201, xfx, foo).
         throws error(domain_error(operator_priority, 1201), _).
+
+        ?- op(200, xfx, [foo|bar]).
+        throws error(type_error(list, [foo|bar]), _).
         ```
         """.trimIndent()
 
@@ -74,6 +77,7 @@ object Op : TernaryRelation.NonBacktrackable<ExecutionContext>("op") {
         val items = names.unfoldedList
         val tail = items.last()
         if (tail is Var) throw InstantiationError.forArgument(context, signature, tail, 2)
+        if (!tail.isEmptyList) throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, names, 2)
         return items.dropLast(1).map {
             when (it) {
                 is Var -> throw InstantiationError.forArgument(context, signature, it, 2)
