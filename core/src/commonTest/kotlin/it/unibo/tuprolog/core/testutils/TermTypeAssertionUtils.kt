@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.core.testutils
 
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
@@ -20,10 +23,8 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertFalse
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertTrue
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllFalse
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllTrue
 import it.unibo.tuprolog.core.List as LogicList
 
 /**
@@ -34,12 +35,12 @@ import it.unibo.tuprolog.core.List as LogicList
 internal object TermTypeAssertionUtils {
     /** Checks passed term to be a Variable or fails otherwise */
     fun assertIsVar(any: Any) {
-        assertTrue(any is Term)
-        assertTrue(any is Var)
+        any.shouldBeInstanceOf<Term>()
+        any.shouldBeInstanceOf<Var>()
 
-        assertTrue(any.isVar)
+        any.isVar.shouldBeTrue()
 
-        assertFalse(
+        assertAllFalse(
             any.isGround,
             any.isNumber,
             any.isReal,
@@ -70,17 +71,17 @@ internal object TermTypeAssertionUtils {
 
     /** Checks passed term to be a Numeric or fails otherwise */
     private fun commonNumericAssertions(any: Any) {
-        assertTrue(any is Term)
-        assertTrue(any is Constant)
-        assertTrue(any is Numeric)
+        any.shouldBeInstanceOf<Term>()
+        any.shouldBeInstanceOf<Constant>()
+        any.shouldBeInstanceOf<Numeric>()
 
-        assertTrue(
+        assertAllTrue(
             any.isConstant,
             any.isNumber,
             any.isGround,
         )
 
-        assertFalse(
+        assertAllFalse(
             any.isVar,
             any.isClause,
             any.isDirective,
@@ -108,32 +109,32 @@ internal object TermTypeAssertionUtils {
     fun assertIsReal(any: Any) {
         commonNumericAssertions(any)
 
-        assertTrue(any is Real)
+        any.shouldBeInstanceOf<Real>()
 
-        assertTrue(any.isReal)
+        any.isReal.shouldBeTrue()
 
-        assertFalse(any.isInteger)
+        any.isInteger.shouldBeFalse()
     }
 
     /** Checks passed term to be an Integer or fails otherwise */
     fun assertIsInteger(any: Any) {
         commonNumericAssertions(any)
 
-        assertTrue(any is Integer)
+        any.shouldBeInstanceOf<Integer>()
 
-        assertTrue(any.isInteger)
+        any.isInteger.shouldBeTrue()
 
-        assertFalse(any.isReal)
+        any.isReal.shouldBeFalse()
     }
 
     /** Checks passed term to be *exactly* a Struct or fails otherwise */
     fun assertIsStruct(any: Any) {
-        assertTrue(any is Term)
-        assertTrue(any is Struct)
+        any.shouldBeInstanceOf<Term>()
+        any.shouldBeInstanceOf<Struct>()
 
-        assertTrue(any.isStruct)
+        any.isStruct.shouldBeTrue()
 
-        assertFalse(
+        assertAllFalse(
             any.isVar,
             any.isNumber,
             any.isReal,
@@ -165,19 +166,19 @@ internal object TermTypeAssertionUtils {
 
     /** Type testing common to Atom subclasses */
     private fun commonAtomAssertions(any: Any) {
-        assertTrue(any is Term)
-        assertTrue(any is Struct)
-        assertTrue(any is Constant)
-        assertTrue(any is Atom)
+        any.shouldBeInstanceOf<Term>()
+        any.shouldBeInstanceOf<Struct>()
+        any.shouldBeInstanceOf<Constant>()
+        any.shouldBeInstanceOf<Atom>()
 
-        assertTrue(
+        assertAllTrue(
             any.isStruct,
             any.isConstant,
             any.isAtom,
             any.isGround,
         )
 
-        assertFalse(
+        assertAllFalse(
             any.isNumber,
             any.isReal,
             any.isInteger,
@@ -200,9 +201,9 @@ internal object TermTypeAssertionUtils {
     fun assertIsAtom(any: Any) {
         commonAtomAssertions(any)
 
-        assertTrue(any is Atom) // to enable smart casts in kotlin
+        any.shouldBeInstanceOf<Atom>() // to enable smart casts in kotlin
 
-        assertFalse(
+        assertAllFalse(
             any.isTrue,
             any.isFail,
             any.isList,
@@ -220,11 +221,11 @@ internal object TermTypeAssertionUtils {
     fun assertIsTruth(any: Any) {
         commonAtomAssertions(any)
 
-        assertTrue(any is Truth)
+        any.shouldBeInstanceOf<Truth>()
 
-        assertTrue(any.isTrue || any.isFail)
+        (any.isTrue || any.isFail).shouldBeTrue()
 
-        assertFalse(
+        assertAllFalse(
             any.isTrue && any.isFail,
             any.isList,
             any.isBlock,
@@ -240,16 +241,16 @@ internal object TermTypeAssertionUtils {
 
     /** Checks passed term to be a Tuple or fails otherwise */
     fun assertIsTuple(any: Any) {
-        assertTrue(any is Term)
-        assertTrue(any is Struct)
-        assertTrue(any is Tuple)
+        any.shouldBeInstanceOf<Term>()
+        any.shouldBeInstanceOf<Struct>()
+        any.shouldBeInstanceOf<Tuple>()
 
-        assertTrue(
+        assertAllTrue(
             any.isStruct,
             any.isTuple,
         )
 
-        assertFalse(
+        assertAllFalse(
             any.isVar,
             any.isNumber,
             any.isReal,
@@ -280,16 +281,16 @@ internal object TermTypeAssertionUtils {
 
     /** Checks passed term to be an Indicator or fails otherwise */
     fun assertIsIndicator(any: Any) {
-        assertTrue(any is Term)
-        assertTrue(any is Struct)
-        assertTrue(any is Indicator)
+        any.shouldBeInstanceOf<Term>()
+        any.shouldBeInstanceOf<Struct>()
+        any.shouldBeInstanceOf<Indicator>()
 
-        assertTrue(
+        assertAllTrue(
             any.isStruct,
             any.isIndicator,
         )
 
-        assertFalse(
+        assertAllFalse(
             any.isTuple,
             any.isVar,
             any.isNumber,
@@ -320,18 +321,18 @@ internal object TermTypeAssertionUtils {
 
     /** Checks passed term to be a Cons or fails otherwise */
     fun assertIsCons(any: Any) {
-        assertTrue(any is Term)
-        assertTrue(any is Struct)
-        assertTrue(any is LogicList)
-        assertTrue(any is Cons)
+        any.shouldBeInstanceOf<Term>()
+        any.shouldBeInstanceOf<Struct>()
+        any.shouldBeInstanceOf<LogicList>()
+        any.shouldBeInstanceOf<Cons>()
 
-        assertTrue(
+        assertAllTrue(
             any.isStruct,
             any.isList,
             any.isCons,
         )
 
-        assertFalse(
+        assertAllFalse(
             any.isVar,
             any.isNumber,
             any.isReal,
@@ -359,16 +360,16 @@ internal object TermTypeAssertionUtils {
 
     /** Checks passed term to be a Block or fails otherwise */
     fun assertIsBlock(any: Any) {
-        assertTrue(any is Term)
-        assertTrue(any is Struct)
-        assertTrue(any is Block)
+        any.shouldBeInstanceOf<Term>()
+        any.shouldBeInstanceOf<Struct>()
+        any.shouldBeInstanceOf<Block>()
 
-        assertTrue(
+        assertAllTrue(
             any.isStruct,
             any.isBlock,
         )
 
-        assertFalse(
+        assertAllFalse(
             any.isVar,
             any.isNumber,
             any.isReal,
@@ -400,9 +401,9 @@ internal object TermTypeAssertionUtils {
     private fun commonEmptyAssertions(any: Any) {
         commonAtomAssertions(any)
 
-        assertTrue(any is Empty)
+        any.shouldBeInstanceOf<Empty>()
 
-        assertFalse(
+        assertAllFalse(
             any.isTrue,
             any.isFail,
             any is Truth,
@@ -413,15 +414,15 @@ internal object TermTypeAssertionUtils {
     fun assertIsEmptyList(any: Any) {
         commonEmptyAssertions(any)
 
-        assertTrue(any is LogicList)
-        assertTrue(any is EmptyList)
+        any.shouldBeInstanceOf<LogicList>()
+        any.shouldBeInstanceOf<EmptyList>()
 
-        assertTrue(
+        assertAllTrue(
             any.isList,
             any.isEmptyList,
         )
 
-        assertFalse(
+        assertAllFalse(
             any.isEmptyBlock,
             any.isBlock,
             any is Block,
@@ -433,15 +434,15 @@ internal object TermTypeAssertionUtils {
     fun assertIsEmptyBlock(any: Any) {
         commonEmptyAssertions(any)
 
-        assertTrue(any is Block)
-        assertTrue(any is EmptyBlock)
+        any.shouldBeInstanceOf<Block>()
+        any.shouldBeInstanceOf<EmptyBlock>()
 
-        assertTrue(
+        assertAllTrue(
             any.isEmptyBlock,
             any.isBlock,
         )
 
-        assertFalse(
+        assertAllFalse(
             any.isList,
             any.isEmptyList,
             any is LogicList,
@@ -451,16 +452,16 @@ internal object TermTypeAssertionUtils {
 
     /** Type testing common to Clause subclasses */
     private fun commonClauseAssertions(any: Any) {
-        assertTrue(any is Term)
-        assertTrue(any is Struct)
-        assertTrue(any is Clause)
+        any.shouldBeInstanceOf<Term>()
+        any.shouldBeInstanceOf<Struct>()
+        any.shouldBeInstanceOf<Clause>()
 
-        assertTrue(
+        assertAllTrue(
             any.isStruct,
             any.isClause,
         )
 
-        assertFalse(
+        assertAllFalse(
             any.isVar,
             any.isNumber,
             any.isReal,
@@ -491,10 +492,10 @@ internal object TermTypeAssertionUtils {
     fun assertIsRule(any: Any) {
         commonClauseAssertions(any)
 
-        assertTrue(any is Rule)
-        assertTrue(any.isRule)
+        any.shouldBeInstanceOf<Rule>()
+        any.isRule.shouldBeTrue()
 
-        assertFalse(
+        assertAllFalse(
             any.isDirective,
             any is Directive,
         )
@@ -504,10 +505,10 @@ internal object TermTypeAssertionUtils {
     fun assertIsDirective(any: Any) {
         commonClauseAssertions(any)
 
-        assertTrue(any is Directive)
-        assertTrue(any.isDirective)
+        any.shouldBeInstanceOf<Directive>()
+        any.isDirective.shouldBeTrue()
 
-        assertFalse(
+        assertAllFalse(
             any.isRule,
             any.isFact,
             any is Rule,
@@ -519,15 +520,15 @@ internal object TermTypeAssertionUtils {
     fun assertIsFact(any: Any) {
         commonClauseAssertions(any)
 
-        assertTrue(any is Rule)
-        assertTrue(any is Fact)
+        any.shouldBeInstanceOf<Rule>()
+        any.shouldBeInstanceOf<Fact>()
 
-        assertTrue(
+        assertAllTrue(
             any.isRule,
             any.isFact,
         )
 
-        assertFalse(
+        assertAllFalse(
             any.isDirective,
             any is Directive,
         )

@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
@@ -13,8 +16,6 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.yes
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Covers `current_input/1`, `current_output/1`, `set_input/1`, `set_output/1`, `close/1`,
@@ -67,9 +68,9 @@ class StreamControlSpec :
                                 )
                         )
                 val solution = solver.solve(query).toList().single()
-                assertTrue(solution is Solution.Yes)
-                assertEquals(Atom.of("q"), solution.valueOf("C1"))
-                assertEquals(Atom.of("w"), solution.valueOf("C2"))
+                solution.shouldBeInstanceOf<Solution.Yes>()
+                solution.valueOf("C1") shouldBe Atom.of("q")
+                solution.valueOf("C2") shouldBe Atom.of("w")
             }
         }
 
@@ -81,7 +82,7 @@ class StreamControlSpec :
                 val solver = PrologSolverFactory.ioSolver(namedInputs = mapOf(Pair("mickey", "qwerty")))
                 val query = "set_input"("mickey") and "stream_property"("_", "alias"("mickey"))
                 val solutions = solver.solve(query).toList()
-                assertTrue(solutions.single().isYes)
+                solutions.single().isYes.shouldBeTrue()
             }
         }
 
@@ -92,7 +93,7 @@ class StreamControlSpec :
                 val query = "set_output"("mickey") and "put_char"("x")
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("x", mickey.toString())
+                mickey.toString() shouldBe "x"
             }
         }
 
@@ -193,10 +194,7 @@ class StreamControlSpec :
                         .filterIsInstance<Atom>()
                         .map { it.value }
                         .toSet()
-                assertEquals(
-                    setOf("stdin", "user_input", "mickey", "stdout", "user_output", "chip", "stderr"),
-                    aliases,
-                )
+                aliases shouldBe setOf("stdin", "user_input", "mickey", "stdout", "user_output", "chip", "stderr")
             }
         }
 

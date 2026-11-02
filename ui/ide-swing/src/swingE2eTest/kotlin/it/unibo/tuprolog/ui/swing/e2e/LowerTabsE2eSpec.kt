@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.ui.swing.e2e
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import org.assertj.swing.data.TableCell
 import org.assertj.swing.fixture.FrameFixture
-import kotlin.test.assertTrue
 
 /** Covers the query-page-scoped inspector tabs below the query row: every one of them should be reachable. */
 class LowerTabsE2eSpec :
@@ -46,7 +47,7 @@ class LowerTabsE2eSpec :
             window.awaitCondition("a diagnostic to be listed", timeoutSeconds = 15) {
                 list("diagnosticsList").contents().isNotEmpty()
             }
-            assertTrue(window.list("diagnosticsList").contents().any { it.contains("ERROR", ignoreCase = true) })
+            (window.list("diagnosticsList").contents().any { it.contains("ERROR", ignoreCase = true) }).shouldBeTrue()
 
             window.list("diagnosticsList").selectItem(0)
         }
@@ -89,9 +90,17 @@ class LowerTabsE2eSpec :
 
         test("Static KB and Dynamic KB tabs are reachable read-only views") {
             window.selectLowerTab("Static KB")
-            assertTrue(!window.textBox("staticKbArea").target().isEditable)
+            window
+                .textBox("staticKbArea")
+                .target()
+                .isEditable
+                .shouldBeFalse()
 
             window.selectLowerTab("Dynamic KB")
-            assertTrue(!window.textBox("dynamicKbArea").target().isEditable)
+            window
+                .textBox("dynamicKbArea")
+                .target()
+                .isEditable
+                .shouldBeFalse()
         }
     })

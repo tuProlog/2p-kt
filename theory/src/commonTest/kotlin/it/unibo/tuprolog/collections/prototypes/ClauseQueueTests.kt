@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.collections.prototypes
 
 import io.kotest.core.spec.style.funSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.RetrieveResult
@@ -13,8 +15,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import it.unibo.tuprolog.utils.permutations
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 
 fun clauseQueueTests(
     emptyGenerator: () -> ClauseQueue,
@@ -93,7 +93,7 @@ fun clauseQueueTests(
     test("get-with-absent-clause-returns-an-empty-sequence") {
         val result = collectionGenerator(clauses)[absentClause]
 
-        assertEquals(emptyList<Clause>(), result.toList())
+        result.toList() shouldBe (emptyList<Clause>())
     }
 
     test("add-first-prepends-element") {
@@ -164,10 +164,10 @@ fun clauseQueueTests(
 
         val perm = actualClauses.permutations().iterator()
 
-        assertEquals(tester, collectionGenerator(perm.next()))
+        collectionGenerator(perm.next()) shouldBe tester
 
         while (perm.hasNext()) {
-            assertNotEquals(tester, collectionGenerator(perm.next()))
+            collectionGenerator(perm.next()) shouldNotBe tester
         }
     }
 
@@ -176,9 +176,6 @@ fun clauseQueueTests(
 
         val permutations = actualClauses.permutations().toList()
 
-        assertEquals(
-            permutations.size,
-            permutations.map { collectionGenerator(it) }.toSet().size,
-        )
+        (permutations.map { collectionGenerator(it) }.toSet().size) shouldBe permutations.size
     }
 }

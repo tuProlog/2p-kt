@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.unify
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
-import kotlin.test.assertEquals
 
 class ListUnificationSpec :
     FunSpec({
@@ -20,15 +20,13 @@ class ListUnificationSpec :
                 }
             val mgu1 = actual mguWith pattern
             val mgu2 = pattern mguWith actual
-            assertEquals(mgu1, mgu2)
+            mgu2 shouldBe mgu1
             scope.with {
-                assertEquals(
+                mgu1 shouldBe
                     Substitution.unifier(
                         varOf("H") to atomOf("a"),
                         varOf("T") to logicListOf(arrayOf("b", "c").map { atomOf(it) }),
-                    ),
-                    mgu1,
-                )
+                    )
             }
         }
 
@@ -38,15 +36,13 @@ class ListUnificationSpec :
             val pattern = scope.with { consOf(varOf("H"), varOf("T")) }
             val mgu1 = actual mguWith pattern
             val mgu2 = pattern mguWith actual
-            assertEquals(mgu1, mgu2)
+            mgu2 shouldBe mgu1
             scope.with {
-                assertEquals(
+                mgu1 shouldBe
                     Substitution.unifier(
                         varOf("H") to atomOf("a"),
                         varOf("T") to logicListOf(arrayOf("b", "c").map { atomOf(it) }),
-                    ),
-                    mgu1,
-                )
+                    )
             }
         }
     })

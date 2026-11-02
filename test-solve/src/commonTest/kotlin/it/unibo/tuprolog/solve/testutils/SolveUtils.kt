@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.testutils
 
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Substitution
@@ -18,7 +19,6 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.assertNotEquals
 import kotlin.collections.List as KtList
 
 /**
@@ -44,16 +44,16 @@ internal object SolveUtils {
     internal val varargArgumentList = anArgumentList + Truth.TRUE
 
     internal val differentLibraries by lazy {
-        Runtime.of(Library.of(alias = "test")).also { assertNotEquals(it, someLibraries) }
+        Runtime.of(Library.of(alias = "test")).also { someLibraries shouldNotBe it }
     }
     internal val differentFlags by lazy {
-        mapOf<String, Term>(Truth.TRUE.value to Truth.FAIL).also { assertNotEquals(it, someFlags) }
+        mapOf<String, Term>(Truth.TRUE.value to Truth.FAIL).also { someFlags shouldNotBe it }
     }
     internal val differentStaticKB by lazy {
-        Theory.of(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aStaticKB) }
+        Theory.of(Fact.of(Truth.TRUE)).also { aStaticKB shouldNotBe it }
     }
     internal val differentDynamicKB by lazy {
-        Theory.of(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aDynamicKB) }
+        Theory.of(Fact.of(Truth.TRUE)).also { aDynamicKB shouldNotBe it }
     }
 
     internal val solutionSubstitution = Substitution.of("A", Truth.TRUE)

@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.ui.swing.plp.e2e
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import org.assertj.swing.fixture.FrameFixture
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /** Covers the PLP-specific additions to the shared Swing IDE: its extra BDD inspector tab and templates. */
 class PlpSwingE2eSpec :
@@ -16,13 +17,13 @@ class PlpSwingE2eSpec :
 
         test("the BDD tab is registered alongside the standard ones") {
             val titles = window.tabbedPane("lowerTabs").tabTitles().map { it.removeSuffix("*") }
-            assertTrue(titles.contains("BDD"))
+            titles.contains("BDD").shouldBeTrue()
         }
 
         test("the BDD tab is registered right next to Solutions, not at the end") {
             val titles = window.tabbedPane("lowerTabs").tabTitles().map { it.removeSuffix("*") }
-            assertEquals(0, titles.indexOf("Solutions"))
-            assertTrue(titles.indexOf("BDD") < titles.indexOf("Stdin"))
+            titles.indexOf("Solutions") shouldBe 0
+            (titles.indexOf("BDD") < titles.indexOf("Stdin")).shouldBeTrue()
         }
 
         test("the BDD tab is disabled until the page's first solve") {
@@ -30,7 +31,7 @@ class PlpSwingE2eSpec :
             // part of starting a resolution -- a freshly-created, never-solved page legitimately has neither yet.
             val pane = window.tabbedPane("lowerTabs")
             val titles = pane.tabTitles().map { it.removeSuffix("*") }
-            assertTrue(!pane.target().isEnabledAt(titles.indexOf("BDD")))
+            pane.target().isEnabledAt(titles.indexOf("BDD")).shouldBeFalse()
 
             window.textBox("queryField").setText("true.")
             window.button("solveButton").click()

@@ -126,12 +126,13 @@ subprojects {
     }
 }
 
-// Kotest (#1017): Kotlin tests must not regress to kotlin.test/JUnit runners, nor call runTest inside a leaf (not
-// awaited on Kotlin/JS: use `test(...).config(coroutineTestScope = true)`). detekt's ForbiddenImport can't do this
-// here: kt-mpp's detekt tasks never scan commonMain/commonTest, where most tests live. Java tests stay on JUnit.
+// Kotest (#1017): Kotlin tests must not regress to kotlin.test (runner or assertions) or JUnit, nor call runTest inside
+// a leaf (not awaited on Kotlin/JS: use `test(...).config(coroutineTestScope = true)`). detekt's ForbiddenImport can't
+// do this here: kt-mpp's detekt tasks never scan commonMain/commonTest, where most tests live. Java tests stay on
+// JUnit.
 val legacyTestImport =
     Regex(
-        """^import (kotlin\.test\.(Test|Ignore|BeforeTest|AfterTest)|org\.junit\.|kotlinx\.coroutines\.test\.runTest)\b.*""",
+        """^import (kotlin\.test\.|org\.junit\.|kotlinx\.coroutines\.test\.runTest\b).*""",
         RegexOption.MULTILINE,
     )
 
@@ -139,7 +140,7 @@ subprojects {
     val verifyTestImports =
         tasks.register("verifyTestImports") {
             group = "verification"
-            description = "Fails on kotlin.test/JUnit runner imports or runTest in Kotlin sources (#1017)."
+            description = "Fails on kotlin.test, JUnit or runTest imports in Kotlin sources (#1017)."
             val sources = fileTree("src") { include("**/*.kt") }
             doLast {
                 val offending =

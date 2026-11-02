@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.directives
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
@@ -12,7 +13,6 @@ import it.unibo.tuprolog.core.operators.Specifier.FX
 import it.unibo.tuprolog.core.operators.Specifier.FY
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.flags.FlagStore
-import kotlin.test.assertEquals
 
 class DirectivePartitioningSpec :
     FunSpec({
@@ -51,51 +51,51 @@ class DirectivePartitioningSpec :
             val partition = theory.partition(staticByDefault = true)
 
             val expectedStatic = theory.filterNot(ruleSelector("g", 1))
-            assertEquals(expectedStatic, partition.staticClauses.toList())
+            partition.staticClauses.toList() shouldBe expectedStatic
 
             val expectedDynamic = theory.filter(ruleSelector("g", 1))
-            assertEquals(expectedDynamic, partition.dynamicClauses.toList())
+            partition.dynamicClauses.toList() shouldBe expectedDynamic
 
             val expectedIncludes = (1..2).map { "path/to/file$it.pl" }.map(Atom.Companion::of)
-            assertEquals(expectedIncludes, partition.includes)
+            partition.includes shouldBe expectedIncludes
 
             val expectedFlags = FlagStore.of((1..2).map { "flag$it" to Integer.of(it) }.toMap())
-            assertEquals(expectedFlags, partition.flagStore)
+            partition.flagStore shouldBe expectedFlags
 
             val expectedGoals = listOf("g", "f").map { Struct.of(it, Integer.of(1)) }
-            assertEquals(expectedGoals, partition.initialGoals)
+            partition.initialGoals shouldBe expectedGoals
 
             val expectedOperators =
                 OperatorSet(
                     Operator("--", FY, 300),
                     Operator("++", FX, 400),
                 )
-            assertEquals(expectedOperators, partition.operators)
+            partition.operators shouldBe expectedOperators
         }
 
         test("dynamic-partitioning") {
             val partition = theory.partition(staticByDefault = false)
 
             val expectedDynamic = theory.filterNot(ruleSelector("f", 1))
-            assertEquals(expectedDynamic, partition.dynamicClauses.toList())
+            partition.dynamicClauses.toList() shouldBe expectedDynamic
 
             val expectedStatic = theory.filter(ruleSelector("f", 1))
-            assertEquals(expectedStatic, partition.staticClauses.toList())
+            partition.staticClauses.toList() shouldBe expectedStatic
 
             val expectedIncludes = (1..2).map { "path/to/file$it.pl" }.map(Atom.Companion::of)
-            assertEquals(expectedIncludes, partition.includes)
+            partition.includes shouldBe expectedIncludes
 
             val expectedFlags = FlagStore.of((1..2).map { "flag$it" to Integer.of(it) }.toMap())
-            assertEquals(expectedFlags, partition.flagStore)
+            partition.flagStore shouldBe expectedFlags
 
             val expectedGoals = listOf("g", "f").map { Struct.of(it, Integer.of(1)) }
-            assertEquals(expectedGoals, partition.initialGoals)
+            partition.initialGoals shouldBe expectedGoals
 
             val expectedOperators =
                 OperatorSet(
                     Operator("--", FY, 300),
                     Operator("++", FX, 400),
                 )
-            assertEquals(expectedOperators, partition.operators)
+            partition.operators shouldBe expectedOperators
         }
     })

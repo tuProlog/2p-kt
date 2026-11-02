@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.collections.rete.custom
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Directive
@@ -17,10 +22,6 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.interleave
 import it.unibo.tuprolog.utils.interleaveSequences
 import it.unibo.tuprolog.utils.subsequences
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import kotlin.test.fail
 import it.unibo.tuprolog.core.List.Companion as LogicList
 import kotlin.collections.List as KtList
 import kotlin.collections.Set as KtSet
@@ -31,7 +32,7 @@ internal object ReteTreeAssertionUtils {
         actual: KtList<T>,
         message: (() -> String)? = null,
     ) {
-        assertEquals(expected, actual, message?.invoke())
+        withClue(message?.invoke()) { actual shouldBe expected }
     }
 
     fun <T> assertItemMultisetsAreEqual(
@@ -39,7 +40,7 @@ internal object ReteTreeAssertionUtils {
         actual: KtSet<T>,
         message: (() -> String)? = null,
     ) {
-        assertEquals(expected, actual, message?.invoke())
+        withClue(message?.invoke()) { actual shouldBe expected }
     }
 
     fun <T> assertItemsAreEquals(
@@ -57,7 +58,7 @@ internal object ReteTreeAssertionUtils {
         actual: Iterable<T>,
         message: (() -> String)? = null,
     ) {
-        assertEquals(expected.count(), actual.count())
+        actual.count() shouldBe expected.count()
         return assertItemMultisetsAreEqual(
             expected.toSet(),
             actual.toSet(),
@@ -80,7 +81,7 @@ internal object ReteTreeAssertionUtils {
         actual: Sequence<T>,
         message: (() -> String)? = null,
     ) {
-        assertEquals(expected.count(), actual.count())
+        actual.count() shouldBe expected.count()
         return assertItemMultisetsAreEqual(
             expected.toSet(),
             actual.toSet(),
@@ -201,12 +202,12 @@ internal object ReteTreeAssertionUtils {
     )
 
     fun assertIsEmptyAndOrdered(tree: ReteTree) {
-        assertTrue(tree.isOrdered)
+        tree.isOrdered.shouldBeTrue()
         assertIsEmpty(tree)
     }
 
     fun assertIsEmptyAndUnordered(tree: ReteTree) {
-        assertFalse(tree.isOrdered)
+        tree.isOrdered.shouldBeFalse()
         assertIsEmpty(tree)
     }
 
@@ -215,31 +216,27 @@ internal object ReteTreeAssertionUtils {
             emptySequence(),
             tree.clauses,
         )
-        assertEquals(0, tree.size)
+        tree.size shouldBe 0
     }
 
     fun assertIsNonEmpty(tree: ReteTree) {
         val size = tree.size
-        assertTrue { size > 0 }
-        assertEquals(tree.size, tree.clauses.count())
+        (size > 0).shouldBeTrue()
+        tree.clauses.count() shouldBe tree.size
     }
 
     fun assertMatches(
         expected: Term,
         actual: Term,
     ) {
-        assertTrue("$actual should match $expected") {
-            actual matches expected
-        }
+        withClue("$actual should match $expected") { (actual matches expected).shouldBeTrue() }
     }
 
     fun assertDoesNotMatch(
         expected: Term,
         actual: Term,
     ) {
-        assertFalse("$actual should not match $expected") {
-            actual matches expected
-        }
+        withClue("$actual should not match $expected") { (actual matches expected).shouldBeFalse() }
     }
 
     private fun Struct.addArguments(

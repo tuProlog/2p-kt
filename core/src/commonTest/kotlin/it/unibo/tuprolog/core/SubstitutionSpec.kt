@@ -1,16 +1,16 @@
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropFirst
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
 import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for [Substitution] companion object
@@ -24,108 +24,101 @@ class SubstitutionSpec :
         val bVar = Var.of("B")
 
         test("failed-should-return-the-failed-substitution-instance") {
-            assertEquals(Substitution.failed(), Substitution.failed())
-            assertSame(Substitution.failed(), Substitution.failed())
+            Substitution.failed() shouldBe Substitution.failed()
+            Substitution.failed() shouldBeSameInstanceAs Substitution.failed()
         }
 
         test("failed-substitution-is-failed") {
-            assertTrue(Substitution.failed().isFailed)
+            Substitution.failed().isFailed.shouldBeTrue()
         }
 
         test("failed-substitution-is-not-success") {
-            assertFalse(Substitution.failed().isSuccess)
+            Substitution.failed().isSuccess.shouldBeFalse()
         }
 
         test("empty-returns-an-empty-substitution") {
-            assertTrue(Substitution.empty().isEmpty())
+            Substitution.empty().isEmpty().shouldBeTrue()
         }
 
         test("empty-substitution-is-success") {
-            assertTrue(Substitution.empty().isSuccess)
+            Substitution.empty().isSuccess.shouldBeTrue()
         }
 
         test("empty-substitution-is-not-failed") {
-            assertFalse(Substitution.empty().isFailed)
+            Substitution.empty().isFailed.shouldBeFalse()
         }
 
         withTests(nameFn = { "as-unifier/${it.id}" }, SubstitutionUtils.mixedSubstitutionCases) { case ->
-            assertEquals(Substitution.of(case.map), case.map.asUnifier())
+            case.map.asUnifier() shouldBe Substitution.of(case.map)
         }
 
         test("as-unifier-results-in-empty-substitution-if-identity-mappings") {
-            assertEquals(Substitution.empty(), mapOf(aVar to aVar).asUnifier())
+            mapOf(aVar to aVar).asUnifier() shouldBe Substitution.empty()
         }
 
         test("as-unifier-results-in-empty-substitution-if-indirect-identity-mappings") {
-            assertEquals(Substitution.empty(), mapOf(aVar to bVar, bVar to aVar).asUnifier())
+            mapOf(aVar to bVar, bVar to aVar).asUnifier() shouldBe Substitution.empty()
         }
 
         val singleMappingCases = SubstitutionUtils.mixedSubstitutionCases.filter { it.map.size == 1 }
 
         withTests(nameFn = { "of-variable-and-term/${it.id}" }, singleMappingCases) { case ->
             val (variable, withTerm) = case.pairs.single()
-            assertEquals(Substitution.of(case.map), Substitution.of(variable, withTerm))
+            Substitution.of(variable, withTerm) shouldBe Substitution.of(case.map)
         }
 
         withTests(nameFn = { "of-string-variable-and-term/${it.id}" }, singleMappingCases) { case ->
             val (variable, withTerm) = case.pairs.single()
             val expected = Substitution.of(case.map)
             val actual = Substitution.of(variable.name, withTerm)
-            assertEquals(expected.size, actual.size)
+            actual.size shouldBe expected.size
             assertDifferentVariableExceptForName(expected.keys.single(), actual.keys.single())
-            assertEquals(expected.values.toList(), actual.values.toList())
+            actual.values.toList() shouldBe expected.values.toList()
         }
 
         withTests(nameFn = { "of-variable-term-pairs/${it.id}" }, SubstitutionUtils.mixedSubstitutionCases) { case ->
-            assertEquals(
-                Substitution.of(case.map),
-                Substitution.of(case.pairs.first(), *case.pairs.dropFirst().toTypedArray()),
-            )
+            Substitution.of(case.pairs.first(), *case.pairs.dropFirst().toTypedArray()) shouldBe
+                Substitution.of(case.map)
         }
 
         withTests(
             nameFn = { "of-variable-term-pairs-doesnt-complain-if-exact-duplicates/${it.id}" },
             SubstitutionUtils.duplicatedPairCases,
         ) { case ->
-            assertEquals(
-                Substitution.of(case.pairs.toMap()),
-                Substitution.of(case.pairs.first(), *case.pairs.dropFirst().toTypedArray()),
-            )
+            Substitution.of(case.pairs.first(), *case.pairs.dropFirst().toTypedArray()) shouldBe
+                Substitution.of(case.pairs.toMap())
         }
 
         withTests(
             nameFn = { "of-variable-term-pairs-result-in-failed-substitution-if-contradicting/${it.id}" },
             SubstitutionUtils.contradictingPairCases,
         ) { case ->
-            assertEquals(
-                Substitution.failed(),
-                Substitution.of(case.pairs.first(), *case.pairs.dropFirst().toTypedArray()),
-            )
+            Substitution.of(case.pairs.first(), *case.pairs.dropFirst().toTypedArray()) shouldBe Substitution.failed()
         }
 
         withTests(
             nameFn = { "of-iterable-variable-term-pairs/${it.id}" },
             SubstitutionUtils.mixedSubstitutionCases,
         ) { case ->
-            assertEquals(Substitution.of(case.map), Substitution.of(case.pairs))
+            Substitution.of(case.pairs) shouldBe Substitution.of(case.map)
         }
 
         withTests(
             nameFn = { "of-iterable-variable-term-pairs-doesnt-complain-if-exact-duplicates/${it.id}" },
             SubstitutionUtils.duplicatedPairCases,
         ) { case ->
-            assertEquals(Substitution.unifier(case.pairs.toMap()), Substitution.of(case.pairs))
+            Substitution.of(case.pairs) shouldBe Substitution.unifier(case.pairs.toMap())
         }
 
         withTests(
             nameFn = { "of-iterable-variable-term-pairs-result-in-failed-substitution-if-contradicting/${it.id}" },
             SubstitutionUtils.contradictingPairCases,
         ) { case ->
-            assertEquals(Substitution.failed(), Substitution.of(case.pairs))
+            Substitution.of(case.pairs) shouldBe Substitution.failed()
         }
 
         test("of-empty-iterable") {
-            assertEquals(Substitution.empty(), Substitution.of(emptyList()))
+            Substitution.of(emptyList()) shouldBe Substitution.empty()
         }
 
         test("of-substitutions") {
@@ -141,7 +134,7 @@ class SubstitutionSpec :
                 )
             val toBeTested = Substitution.of(correctInstances.first(), *correctInstances.dropFirst().toTypedArray())
 
-            assertEquals(correct, toBeTested)
+            toBeTested shouldBe correct
         }
 
         test("of-substitutions-with-always-same-substitutions-returns-them-not-duplicated") {
@@ -163,7 +156,7 @@ class SubstitutionSpec :
                         Substitution.unifier(mapOf(varOf("B") to atomOf("b"))),
                     )
 
-                assertEquals(correct, toBeTested)
+                toBeTested shouldBe correct
             }
         }
 
@@ -178,7 +171,7 @@ class SubstitutionSpec :
                         Substitution.unifier(mapOf(varOf("B") to atomOf("b"))),
                     )
 
-                assertEquals(Substitution.failed(), toBeTested)
+                toBeTested shouldBe Substitution.failed()
             }
         }
 
@@ -204,8 +197,8 @@ class SubstitutionSpec :
                     ),
                 )
 
-            assertEquals(firstComposedSecondExpected, Substitution.of(first, second))
-            assertEquals(secondComposedFirstExpected, Substitution.of(second, first))
+            Substitution.of(first, second) shouldBe firstComposedSecondExpected
+            Substitution.of(second, first) shouldBe secondComposedFirstExpected
         }
 
         test("of-implementations-return-empty-substitution-if-identity-passed-in") {
@@ -220,7 +213,7 @@ class SubstitutionSpec :
                         Substitution.of(Substitution.of(identityPairA), Substitution.of(identityPairB)),
                     )
 
-                toBeTested.forEach { assertEquals(Substitution.empty(), it) }
+                toBeTested.forEach { it shouldBe Substitution.empty() }
             }
         }
 
@@ -233,53 +226,57 @@ class SubstitutionSpec :
                 val assignment2 = unifierOf("Y" to a)
                 val assignment3 = unifierOf("Z" to a)
 
-                assertEquals(Substitution.failed(), base + assignment1)
-                assertEquals(Substitution.failed(), base + assignment2)
-                assertEquals(unifierOf("X" to a, "Y" to a, "Z" to a), base + assignment3)
+                (base + assignment1) shouldBe Substitution.failed()
+                (base + assignment2) shouldBe Substitution.failed()
+                (base + assignment3) shouldBe unifierOf("X" to a, "Y" to a, "Z" to a)
             }
         }
 
         test("when-is/dispatches-a-unifier") {
-            assertEquals("unifier", Substitution.empty().whenIs(unifier = { "unifier" }, fail = { "fail" }))
+            Substitution.empty().whenIs(unifier = { "unifier" }, fail = { "fail" }) shouldBe "unifier"
         }
 
         test("when-is/dispatches-a-failure") {
-            assertEquals("fail", Substitution.failed().whenIs(unifier = { "unifier" }, fail = { "fail" }))
+            Substitution.failed().whenIs(unifier = { "unifier" }, fail = { "fail" }) shouldBe "fail"
         }
 
         test("when-is/falls-back-to-otherwise") {
-            assertEquals("other", Substitution.failed().whenIs(unifier = { "unifier" }, otherwise = { "other" }))
+            Substitution.failed().whenIs(unifier = { "unifier" }, otherwise = { "other" }) shouldBe "other"
         }
 
         test("when-is/without-a-handler-throws") {
-            assertFailsWith<IllegalStateException> { Substitution.empty().whenIs<Unit>(fail = {}) }
+            shouldThrow<IllegalStateException> { Substitution.empty().whenIs<Unit>(fail = {}) }
         }
 
         test("cast-to-unifier/rejects-a-failure") {
-            assertFailsWith<ClassCastException> { Substitution.failed().castToUnifier() }
+            shouldThrow<ClassCastException> { Substitution.failed().castToUnifier() }
         }
 
         test("cast-to-fail/rejects-a-unifier") {
-            assertFailsWith<ClassCastException> { Substitution.empty().castToFail() }
+            shouldThrow<ClassCastException> { Substitution.empty().castToFail() }
         }
 
         test("fail/has-no-original-variables") {
-            assertNull(Substitution.failed().getOriginal(Var.of("X")))
+            Substitution.failed().getOriginal(Var.of("X")).shouldBeNull()
         }
 
         test("unifier/of-a-variable-name") {
-            assertEquals(Atom.of("a"), Substitution.unifier("X", Atom.of("a")).getByName("X"))
+            Substitution.unifier("X", Atom.of("a")).getByName("X") shouldBe Atom.of("a")
         }
 
         test("unifier/of-a-sequence") {
             val x = Var.of("X")
-            assertEquals(Atom.of("a"), Substitution.unifier(sequenceOf(x to Atom.of("a")))[x])
+            Substitution.unifier(sequenceOf(x to Atom.of("a")))[x] shouldBe Atom.of("a")
         }
 
         test("minus/several-variables") {
             val (x, y, z) = listOf(Var.of("X"), Var.of("Y"), Var.of("Z"))
             val a = Atom.of("a")
-            assertEquals(Substitution.of(z, a), Substitution.of(x to a, y to a, z to a).minus(x, y))
-            assertTrue(Substitution.failed().minus(x, y).isFailed)
+            Substitution.of(x to a, y to a, z to a).minus(x, y) shouldBe Substitution.of(z, a)
+            Substitution
+                .failed()
+                .minus(x, y)
+                .isFailed
+                .shouldBeTrue()
         }
     })

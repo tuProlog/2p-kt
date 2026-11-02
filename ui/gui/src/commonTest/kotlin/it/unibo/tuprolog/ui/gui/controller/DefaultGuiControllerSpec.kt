@@ -1,6 +1,13 @@
 package it.unibo.tuprolog.ui.gui.controller
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.ui.gui.model.DocumentOrigin
 import it.unibo.tuprolog.ui.gui.model.PageContent
 import it.unibo.tuprolog.ui.gui.model.PanelId
@@ -18,13 +25,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeout
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class DefaultGuiControllerSpec :
     FunSpec({
@@ -50,49 +50,45 @@ class DefaultGuiControllerSpec :
                 val pageB = controller.state.value.workspace.selectedPageId!!
                 controller.dispatch(PageAction.ChangeQuery(pageB, "q(Y)."))
 
-                assertNotEquals(pageA, pageB)
-                assertEquals(
-                    "p(X).",
+                pageB shouldNotBe pageA
+                (
                     controller.state.value.workspace
                         .page(pageA)
                         ?.query
-                        ?.text,
-                )
-                assertEquals(
-                    "q(Y).",
+                        ?.text
+                ) shouldBe "p(X)."
+                (
                     controller.state.value.workspace
                         .page(pageB)
                         ?.query
-                        ?.text,
-                )
+                        ?.text
+                ) shouldBe "q(Y)."
 
                 controller.dispatch(PageAction.Solve(pageA))
                 val suspendedA = controller.awaitResolution(pageA, ResolutionStatus.AWAITING_CONTINUATION)
-                assertEquals(1, suspendedA.resolution.solutions.size)
-                assertEquals(
-                    ResolutionStatus.IDLE,
+                suspendedA.resolution.solutions.size shouldBe 1
+                (
                     controller.state.value.workspace
                         .page(pageB)
                         ?.resolution
-                        ?.status,
-                )
+                        ?.status
+                ) shouldBe ResolutionStatus.IDLE
 
                 controller.dispatch(WorkspaceAction.SelectPage(pageB))
                 controller.dispatch(PageAction.Solve(pageB, ConsumptionMode.ALL))
                 val completedB = controller.awaitResolution(pageB, ResolutionStatus.COMPLETED)
-                assertEquals(1, completedB.resolution.solutions.size)
-                assertEquals(
-                    "p(X).",
+                completedB.resolution.solutions.size shouldBe 1
+                (
                     controller.state.value.workspace
                         .page(pageA)
                         ?.query
-                        ?.text,
-                )
+                        ?.text
+                ) shouldBe "p(X)."
 
                 controller.dispatch(PageAction.Next(pageA, ConsumptionMode.ALL))
                 val completedA = controller.awaitResolution(pageA, ResolutionStatus.COMPLETED)
-                assertEquals(2, completedA.resolution.solutions.size)
-                assertEquals(pageB, controller.state.value.workspace.selectedPageId)
+                completedA.resolution.solutions.size shouldBe 2
+                controller.state.value.workspace.selectedPageId shouldBe pageB
             } finally {
                 controller.shutdown()
             }
@@ -111,14 +107,16 @@ class DefaultGuiControllerSpec :
                 controller.dispatch(PageAction.ChangeQuery(pageB, "q(Y)."))
 
                 val completedA = controller.awaitResolution(pageA, ResolutionStatus.COMPLETED)
-                assertEquals(1, completedA.resolution.solutions.size)
+                completedA.resolution.solutions.size shouldBe 1
                 val foreground =
                     controller.state.value.workspace
                         .page(pageB)!!
-                assertEquals("q(Y).", foreground.query.text)
-                assertEquals(ResolutionStatus.IDLE, foreground.resolution.status)
-                assertTrue(foreground.resolution.solutions.isEmpty())
-                assertEquals(pageB, controller.state.value.workspace.selectedPageId)
+                foreground.query.text shouldBe "q(Y)."
+                foreground.resolution.status shouldBe ResolutionStatus.IDLE
+                foreground.resolution.solutions
+                    .isEmpty()
+                    .shouldBeTrue()
+                controller.state.value.workspace.selectedPageId shouldBe pageB
             } finally {
                 controller.shutdown()
             }
@@ -139,12 +137,14 @@ class DefaultGuiControllerSpec :
                 val stopped =
                     controller.state.value.workspace
                         .page(page)!!
-                assertEquals(ResolutionStatus.IDLE, stopped.resolution.status)
-                assertTrue(stopped.resolution.solutions.isEmpty())
+                stopped.resolution.status shouldBe ResolutionStatus.IDLE
+                stopped.resolution.solutions
+                    .isEmpty()
+                    .shouldBeTrue()
 
                 controller.dispatch(PageAction.Solve(page, ConsumptionMode.ALL))
                 val completed = controller.awaitResolution(page, ResolutionStatus.COMPLETED)
-                assertEquals(2, completed.resolution.solutions.size)
+                completed.resolution.solutions.size shouldBe 2
             } finally {
                 controller.shutdown()
             }
@@ -171,14 +171,14 @@ class DefaultGuiControllerSpec :
                 controller.dispatch(PageAction.ChangeQuery(pageB, "p(X)."))
                 controller.dispatch(PageAction.Solve(pageB, ConsumptionMode.ALL))
                 controller.awaitResolution(pageB, ResolutionStatus.COMPLETED)
-                assertEquals(2, factory.creationRequests.size)
+                factory.creationRequests.size shouldBe 2
 
                 controller.dispatch(DocumentAction.ChangeText(document, "p(1).\np(2)."))
                 val state = controller.state.value.workspace
-                assertEquals(SolverSessionLifecycle.STALE, state.page(pageA)?.solverSession?.lifecycle)
-                assertEquals(SolverSessionLifecycle.STALE, state.page(pageB)?.solverSession?.lifecycle)
-                assertEquals(ResolutionStatus.IDLE, state.page(pageA)?.resolution?.status)
-                assertEquals(ResolutionStatus.IDLE, state.page(pageB)?.resolution?.status)
+                state.page(pageA)?.solverSession?.lifecycle shouldBe SolverSessionLifecycle.STALE
+                state.page(pageB)?.solverSession?.lifecycle shouldBe SolverSessionLifecycle.STALE
+                state.page(pageA)?.resolution?.status shouldBe ResolutionStatus.IDLE
+                state.page(pageB)?.resolution?.status shouldBe ResolutionStatus.IDLE
             } finally {
                 controller.shutdown()
             }
@@ -205,24 +205,24 @@ class DefaultGuiControllerSpec :
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(WorkspaceAction.RequestClosePage(page))
-                assertIs<GuiEffect.ConfirmCloseDirtyPage>(closeEffect.await())
-                assertNotNull(
+                closeEffect.await().shouldBeInstanceOf<GuiEffect.ConfirmCloseDirtyPage>()
+                (
                     controller.state.value.workspace
-                        .page(page),
-                )
+                        .page(page)
+                ).shouldNotBeNull()
 
                 val reloadEffect =
                     async(
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(DocumentAction.RequestReload(document))
-                assertIs<GuiEffect.ConfirmReloadDirtyDocument>(reloadEffect.await())
+                reloadEffect.await().shouldBeInstanceOf<GuiEffect.ConfirmReloadDirtyDocument>()
 
                 controller.dispatch(WorkspaceAction.ClosePageDecisionProvided(page, CloseDecision.DISCARD))
-                assertNull(
+                (
                     controller.state.value.workspace
-                        .page(page),
-                )
+                        .page(page)
+                ).shouldBeNull()
             } finally {
                 controller.shutdown()
             }
@@ -246,14 +246,14 @@ class DefaultGuiControllerSpec :
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(WorkspaceAction.RequestClosePage(page))
-                assertIs<GuiEffect.ConfirmCloseDirtyPage>(closeEffect.await())
+                closeEffect.await().shouldBeInstanceOf<GuiEffect.ConfirmCloseDirtyPage>()
 
                 val destinationEffect =
                     async(
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(WorkspaceAction.ClosePageDecisionProvided(page, CloseDecision.SAVE))
-                assertIs<GuiEffect.PickSaveDestination>(destinationEffect.await())
+                destinationEffect.await().shouldBeInstanceOf<GuiEffect.PickSaveDestination>()
 
                 val origin = DocumentOrigin("test", "race", "race.pl")
                 val writeEffect =
@@ -261,8 +261,8 @@ class DefaultGuiControllerSpec :
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(DocumentAction.SaveDestinationSelected(document, origin))
-                val write = assertIs<GuiEffect.WriteDocument>(writeEffect.await())
-                assertEquals(1, write.revision)
+                val write = writeEffect.await().shouldBeInstanceOf<GuiEffect.WriteDocument>()
+                write.revision shouldBe 1
 
                 controller.dispatch(DocumentAction.ChangeText(document, "p(2)."))
                 controller.dispatch(
@@ -270,9 +270,9 @@ class DefaultGuiControllerSpec :
                 )
 
                 val state = controller.state.value.workspace
-                assertNotNull(state.page(page))
-                assertTrue(state.document(document)!!.isDirty)
-                assertEquals("p(2).", state.document(document)?.text)
+                state.page(page).shouldNotBeNull()
+                state.document(document)!!.isDirty.shouldBeTrue()
+                state.document(document)?.text shouldBe "p(2)."
             } finally {
                 controller.shutdown()
             }
@@ -288,14 +288,14 @@ class DefaultGuiControllerSpec :
                 controller.dispatch(PageAction.ChangeQuery(pageId, "p(X)."))
                 controller.dispatch(PageAction.Solve(pageId, ConsumptionMode.ALL))
                 val completed = controller.awaitResolution(pageId, ResolutionStatus.COMPLETED)
-                assertTrue(completed.resolution.hasUnreadChanges)
+                completed.resolution.hasUnreadChanges.shouldBeTrue()
 
                 controller.dispatch(PageAction.MarkPanelRead(pageId, PanelId.SOLUTIONS))
-                assertFalse(
+                (
                     controller.state.value.workspace
                         .page(pageId)!!
-                        .resolution.hasUnreadChanges,
-                )
+                        .resolution.hasUnreadChanges
+                ).shouldBeFalse()
             } finally {
                 controller.shutdown()
             }
@@ -317,8 +317,8 @@ class DefaultGuiControllerSpec :
                     controller.state.value.workspace
                         .page(page)!!
                         .resolution
-                assertEquals(ResolutionStatus.CANCELLED, resolution.status)
-                assertNull(resolution.error)
+                resolution.status shouldBe ResolutionStatus.CANCELLED
+                resolution.error.shouldBeNull()
             } finally {
                 controller.shutdown()
             }
@@ -342,13 +342,13 @@ class DefaultGuiControllerSpec :
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(WorkspaceAction.RequestClosePage(page))
-                assertIs<GuiEffect.ConfirmCloseDirtyPage>(closeEffect.await())
+                closeEffect.await().shouldBeInstanceOf<GuiEffect.ConfirmCloseDirtyPage>()
                 val destinationEffect =
                     async(
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(WorkspaceAction.ClosePageDecisionProvided(page, CloseDecision.SAVE))
-                assertIs<GuiEffect.PickSaveDestination>(destinationEffect.await())
+                destinationEffect.await().shouldBeInstanceOf<GuiEffect.PickSaveDestination>()
                 controller.dispatch(DocumentAction.SaveCancelled(document))
 
                 val origin = DocumentOrigin("test", "cancel-save", "cancel-save.pl")
@@ -357,18 +357,18 @@ class DefaultGuiControllerSpec :
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(DocumentAction.SaveDestinationSelected(document, origin))
-                val write = assertIs<GuiEffect.WriteDocument>(writeEffect.await())
+                val write = writeEffect.await().shouldBeInstanceOf<GuiEffect.WriteDocument>()
                 controller.dispatch(DocumentAction.SaveSucceeded(document, origin, write.revision))
 
-                assertNotNull(
+                (
                     controller.state.value.workspace
-                        .page(page),
-                )
-                assertFalse(
+                        .page(page)
+                ).shouldNotBeNull()
+                (
                     controller.state.value.workspace
                         .document(document)!!
-                        .isDirty,
-                )
+                        .isDirty
+                ).shouldBeFalse()
             } finally {
                 controller.shutdown()
             }
@@ -392,13 +392,13 @@ class DefaultGuiControllerSpec :
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(WorkspaceAction.RequestClosePage(page))
-                assertIs<GuiEffect.ConfirmCloseDirtyPage>(closeEffect.await())
+                closeEffect.await().shouldBeInstanceOf<GuiEffect.ConfirmCloseDirtyPage>()
                 val destinationEffect =
                     async(
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(WorkspaceAction.ClosePageDecisionProvided(page, CloseDecision.SAVE))
-                assertIs<GuiEffect.PickSaveDestination>(destinationEffect.await())
+                destinationEffect.await().shouldBeInstanceOf<GuiEffect.PickSaveDestination>()
                 controller.dispatch(DocumentAction.SaveFailed(document, "disk full"))
 
                 val origin = DocumentOrigin("test", "failed-save", "failed-save.pl")
@@ -407,13 +407,13 @@ class DefaultGuiControllerSpec :
                         start = CoroutineStart.UNDISPATCHED,
                     ) { withTimeout(5_000) { controller.effects.first() } }
                 controller.dispatch(DocumentAction.SaveDestinationSelected(document, origin))
-                val write = assertIs<GuiEffect.WriteDocument>(writeEffect.await())
+                val write = writeEffect.await().shouldBeInstanceOf<GuiEffect.WriteDocument>()
                 controller.dispatch(DocumentAction.SaveSucceeded(document, origin, write.revision))
 
-                assertNotNull(
+                (
                     controller.state.value.workspace
-                        .page(page),
-                )
+                        .page(page)
+                ).shouldNotBeNull()
             } finally {
                 controller.shutdown()
             }
@@ -432,21 +432,19 @@ class DefaultGuiControllerSpec :
                 val state =
                     controller.state.value.workspace
                         .page(page)!!
-                assertEquals(ResolutionStatus.IDLE, state.resolution.status)
-                assertEquals("q(Y).", state.query.text)
-                assertEquals(1, state.history.resolutions.size)
-                assertEquals(
-                    ResolutionStatus.CANCELLED,
+                state.resolution.status shouldBe ResolutionStatus.IDLE
+                state.query.text shouldBe "q(Y)."
+                state.history.resolutions.size shouldBe 1
+                (
                     state.history.resolutions
                         .single()
-                        .terminalStatus,
-                )
-                assertEquals(
-                    "p(X).",
+                        .terminalStatus
+                ) shouldBe ResolutionStatus.CANCELLED
+                (
                     state.history.resolutions
                         .single()
-                        .query,
-                )
+                        .query
+                ) shouldBe "p(X)."
             } finally {
                 controller.shutdown()
             }
@@ -474,9 +472,9 @@ class DefaultGuiControllerSpec :
                 val saved =
                     controller.state.value.workspace
                         .document(document)!!
-                assertEquals(2L, saved.persistedRevision)
-                assertEquals(second, saved.origin)
-                assertFalse(saved.isDirty)
+                saved.persistedRevision shouldBe 2L
+                saved.origin shouldBe second
+                saved.isDirty.shouldBeFalse()
             } finally {
                 controller.shutdown()
             }
@@ -499,8 +497,8 @@ class DefaultGuiControllerSpec :
                 val page =
                     controller.state.value.workspace
                         .page(pageId)!!
-                assertEquals(listOf(dialectOperator), page.solverSession.inspection.operators)
-                assertEquals(SolverSessionLifecycle.ABSENT, page.solverSession.lifecycle)
+                page.solverSession.inspection.operators shouldBe listOf(dialectOperator)
+                page.solverSession.lifecycle shouldBe SolverSessionLifecycle.ABSENT
             } finally {
                 controller.shutdown()
             }
@@ -513,10 +511,14 @@ class DefaultGuiControllerSpec :
                 val page = controller.state.value.workspace.selectedPageId!!
                 controller.dispatch(PageAction.ChangeQuery(page, "p(X)."))
                 val state = controller.state.value.workspace
-                assertIs<PageContent.Scratch>(state.page(page)?.content)
-                assertTrue(state.documents.isEmpty())
-                assertEquals("p(X).", state.page(page)?.query?.text)
-                assertFalse(state.page(page)?.title.isNullOrBlank())
+                state.page(page)?.content.shouldBeInstanceOf<PageContent.Scratch>()
+                state.documents.isEmpty().shouldBeTrue()
+                state.page(page)?.query?.text shouldBe "p(X)."
+                state
+                    .page(page)
+                    ?.title
+                    .isNullOrBlank()
+                    .shouldBeFalse()
             } finally {
                 controller.shutdown()
             }
@@ -538,16 +540,16 @@ class DefaultGuiControllerSpec :
                 val invalid =
                     controller.state.value.workspace
                         .page(pageId)!!
-                assertTrue(invalid.semanticTokens.isNotEmpty())
+                invalid.semanticTokens.isNotEmpty().shouldBeTrue()
                 val syntaxDiagnostic = invalid.diagnostics.values.single()
-                assertEquals(DiagnosticSources.SYNTAX, syntaxDiagnostic.source)
-                assertEquals(DiagnosticSeverity.ERROR, syntaxDiagnostic.severity)
+                syntaxDiagnostic.source shouldBe DiagnosticSources.SYNTAX
+                syntaxDiagnostic.severity shouldBe DiagnosticSeverity.ERROR
 
                 controller.dispatch(DocumentAction.ChangeText(documentId, "p(1)."))
                 val fixed =
                     controller.state.value.workspace
                         .page(pageId)!!
-                assertTrue(fixed.diagnostics.values.none { it.source == DiagnosticSources.SYNTAX })
+                (fixed.diagnostics.values.none { it.source == DiagnosticSources.SYNTAX }).shouldBeTrue()
             } finally {
                 controller.shutdown()
             }
@@ -564,34 +566,34 @@ class DefaultGuiControllerSpec :
                 controller.dispatch(PageAction.ChangeQuery(pageId, "q(Y)."))
                 controller.dispatch(PageAction.Solve(pageId, ConsumptionMode.ALL))
                 controller.awaitResolution(pageId, ResolutionStatus.COMPLETED)
-                assertEquals(
-                    1,
+                (
                     controller.state.value.workspace
                         .page(pageId)!!
-                        .history.resolutions.size,
-                )
+                        .history.resolutions.size
+                ) shouldBe 1
 
                 controller.dispatch(PageAction.ChangeQuery(pageId, "p(X)."))
                 controller.dispatch(PageAction.Solve(pageId))
                 val awaiting = controller.awaitResolution(pageId, ResolutionStatus.AWAITING_CONTINUATION)
-                assertEquals(1, awaiting.resolution.solutions.size)
+                awaiting.resolution.solutions.size shouldBe 1
 
                 controller.dispatch(PageAction.ClearHistory(pageId))
                 val afterClear =
                     controller.state.value.workspace
                         .page(pageId)!!
-                assertTrue(afterClear.history.resolutions.isEmpty())
-                assertEquals(ResolutionStatus.AWAITING_CONTINUATION, afterClear.resolution.status)
-                assertEquals(1, afterClear.resolution.solutions.size)
+                afterClear.history.resolutions
+                    .isEmpty()
+                    .shouldBeTrue()
+                afterClear.resolution.status shouldBe ResolutionStatus.AWAITING_CONTINUATION
+                afterClear.resolution.solutions.size shouldBe 1
 
                 controller.dispatch(PageAction.Next(pageId, ConsumptionMode.ALL))
                 controller.awaitResolution(pageId, ResolutionStatus.COMPLETED)
-                assertEquals(
-                    1,
+                (
                     controller.state.value.workspace
                         .page(pageId)!!
-                        .history.resolutions.size,
-                )
+                        .history.resolutions.size
+                ) shouldBe 1
             } finally {
                 controller.shutdown()
             }
@@ -623,10 +625,10 @@ class DefaultGuiControllerSpec :
                 val page =
                     controller.state.value.workspace
                         .page(pageId)!!
-                assertEquals(listOf("p(X).", "q(Y)."), page.query.history.entries)
-                assertEquals(listOf(restoredEntry), page.history.resolutions)
+                page.query.history.entries shouldBe listOf("p(X).", "q(Y).")
+                page.history.resolutions shouldBe listOf(restoredEntry)
                 // The live, still-being-edited query text is untouched by restoring history.
-                assertEquals("live query.", page.query.text)
+                page.query.text shouldBe "live query."
             } finally {
                 controller.shutdown()
             }

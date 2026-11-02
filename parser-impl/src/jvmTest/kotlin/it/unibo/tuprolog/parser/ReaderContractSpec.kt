@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.parser
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import java.io.Reader
 import java.io.StringReader
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class ReaderContractSpec :
     FunSpec({
@@ -36,8 +36,8 @@ class ReaderContractSpec :
         }
 
         test("non-positive-chunk-sizes-are-rejected-immediately") {
-            assertFailsWith<IllegalArgumentException> { StringReader("a").toSource(chunkSize = 0) }
-            assertFailsWith<IllegalArgumentException> { StringReader("a").toSource(chunkSize = -1) }
+            shouldThrow<IllegalArgumentException> { StringReader("a").toSource(chunkSize = 0) }
+            shouldThrow<IllegalArgumentException> { StringReader("a").toSource(chunkSize = -1) }
         }
 
         withTests(
@@ -46,14 +46,14 @@ class ReaderContractSpec :
         ) { autoClose ->
             val reader = TrackingReader("a.")
             PrologLexer.default().lex(reader.toSource(chunkSize = 1, autoClose = autoClose)).materialize()
-            assertEquals(autoClose, reader.closed)
-            assertEquals(if (autoClose) 1 else 0, reader.closeCount)
+            reader.closed shouldBe autoClose
+            reader.closeCount shouldBe (if (autoClose) 1 else 0)
         }
 
         test("empty-intermediate-reads-do-not-prematurely-end-the-source") {
             val reader = ZeroThenDataReader("abc")
             val input = PrologLexer.default().lex(reader.toSource(chunkSize = 2, autoClose = false))
-            assertEquals("abc", input.textOf(input.significantToken(0)))
+            input.textOf(input.significantToken(0)) shouldBe "abc"
         }
     })
 

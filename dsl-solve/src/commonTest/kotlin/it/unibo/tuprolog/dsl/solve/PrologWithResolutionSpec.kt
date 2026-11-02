@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.dsl.solve
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.Solution
-import kotlin.test.assertEquals
 
 class PrologWithResolutionSpec :
     FunSpec({
@@ -35,10 +35,7 @@ class PrologWithResolutionSpec :
                 }
                 // --8<-- [end:abraham-query]
 
-                assertEquals(
-                    mutableListOf("isaac", "jacob", "joseph"),
-                    actual,
-                )
+                actual shouldBe mutableListOf("isaac", "jacob", "joseph")
             }
             // --8<-- [end:abraham-family-tree]
         }

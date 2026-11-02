@@ -3,6 +3,8 @@
 package it.unibo.tuprolog.dsl.unify
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
@@ -11,8 +13,6 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.LogicProgrammingScopeTester
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class LogicProgrammingScopeWithUnificationSpec :
     FunSpec({
@@ -73,38 +73,38 @@ class LogicProgrammingScopeWithUnificationSpec :
             // --8<-- [start:unification-operators]
             test("matches") {
                 logicProgramming {
-                    assertTrue(term1 matches term2)
+                    (term1 matches term2).shouldBeTrue()
                 }
             }
 
             test("match") {
                 logicProgramming {
-                    assertTrue(match(term1, term2))
+                    match(term1, term2).shouldBeTrue()
                 }
             }
 
             test("unify") {
                 logicProgramming {
-                    assertEquals(unified, unify(term1, term2))
+                    unify(term1, term2) shouldBe unified
                 }
             }
             // --8<-- [end:unification-operators]
 
             test("unify-with") {
                 logicProgramming {
-                    assertEquals(unified, term1 unifyWith term2)
+                    (term1 unifyWith term2) shouldBe unified
                 }
             }
 
             test("mgu") {
                 logicProgramming {
-                    assertEquals(substitution, mgu(term1, term2))
+                    mgu(term1, term2) shouldBe substitution
                 }
             }
 
             test("mgu-with") {
                 logicProgramming {
-                    assertEquals(substitution, term1 mguWith term2)
+                    (term1 mguWith term2) shouldBe substitution
                 }
             }
         }

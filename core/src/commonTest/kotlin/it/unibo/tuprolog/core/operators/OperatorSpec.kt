@@ -1,18 +1,18 @@
 package it.unibo.tuprolog.core.operators
 
+import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.toTerm
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
  * Test class for [Operator]
@@ -30,15 +30,15 @@ class OperatorSpec :
         val plusOperator = Operator(plusFunctor, plusSpecifier, plusPriority)
 
         test("functor-correct") {
-            assertEquals(plusFunctor, plusOperator.functor)
+            plusOperator.functor shouldBe plusFunctor
         }
 
         test("specifier-correct") {
-            assertEquals(plusSpecifier, plusOperator.specifier)
+            plusOperator.specifier shouldBe plusSpecifier
         }
 
         test("priority-correct") {
-            assertEquals(plusPriority, plusOperator.priority)
+            plusOperator.priority shouldBe plusPriority
         }
 
         test("equals-works-as-expected") {
@@ -46,16 +46,16 @@ class OperatorSpec :
             val differentSpecifier = (Specifier.values().toSet() - plusSpecifier).first()
             val differentPriority = plusPriority + 1
 
-            assertEquals(plusOperator, plusOperator)
-            assertEquals(plusOperator, Operator(plusFunctor, plusSpecifier, differentPriority))
+            plusOperator shouldBe plusOperator
+            Operator(plusFunctor, plusSpecifier, differentPriority) shouldBe plusOperator
 
-            assertNotEquals(plusOperator, Operator(differentFunctor, plusSpecifier, plusPriority))
-            assertNotEquals(plusOperator, Operator(plusFunctor, differentSpecifier, plusPriority))
+            Operator(differentFunctor, plusSpecifier, plusPriority) shouldNotBe plusOperator
+            Operator(plusFunctor, differentSpecifier, plusPriority) shouldNotBe plusOperator
         }
 
         test("to-string-works-as-expected") {
             val correctToString = "Operator($plusPriority, $plusSpecifier, '$plusFunctor')"
-            assertEquals(correctToString, plusOperator.toString())
+            plusOperator.toString() shouldBe correctToString
         }
 
         test("compare-to-uses-priority-to-compute") {
@@ -63,16 +63,16 @@ class OperatorSpec :
             val mediumOperator = Operator("operator", Specifier.YFX, 200)
             val highOperator = Operator("operator", Specifier.YFX, 300)
 
-            assertTrue { lowOperator < mediumOperator }
-            assertTrue { mediumOperator < highOperator }
-            assertTrue { lowOperator < highOperator }
+            (lowOperator < mediumOperator).shouldBeTrue()
+            (mediumOperator < highOperator).shouldBeTrue()
+            (lowOperator < highOperator).shouldBeTrue()
 
-            assertFalse { lowOperator > mediumOperator }
-            assertFalse { mediumOperator > highOperator }
-            assertFalse { lowOperator > highOperator }
+            (lowOperator > mediumOperator).shouldBeFalse()
+            (mediumOperator > highOperator).shouldBeFalse()
+            (lowOperator > highOperator).shouldBeFalse()
 
-            assertTrue { lowOperator >= lowOperator }
-            assertTrue { lowOperator <= lowOperator }
+            (lowOperator >= lowOperator).shouldBeTrue()
+            (lowOperator <= lowOperator).shouldBeTrue()
         }
 
         test("to-term-works-as-expected") {
@@ -106,8 +106,8 @@ class OperatorSpec :
                     ),
                 )
 
-            assertEquals(plusOperator, toBeTested)
-            toBeTested?.run { assertTrue(plusOperator.compareTo(toBeTested) == 0) }
+            toBeTested shouldBe plusOperator
+            toBeTested?.run { plusOperator.compareTo(toBeTested) shouldBe 0 }
                 ?: fail("Should not be null")
         }
 
@@ -120,21 +120,21 @@ class OperatorSpec :
                 opFunctor: Term = plusFunctor.toTerm(),
             ) = Operator.fromTerm(Struct.of(functor, priority, specifier, opFunctor))
 
-            assertEquals(plusOperator, testFromTerm())
+            testFromTerm() shouldBe plusOperator
 
-            assertNull(Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusSpecifier.toTerm())))
-            assertNull(testFromTerm(functor = "ciao"))
-            assertNull(testFromTerm(priority = plusFunctor.toTerm()))
-            assertNull(testFromTerm(priority = Var.anonymous()))
-            assertNull(testFromTerm(specifier = Var.anonymous()))
-            assertNull(testFromTerm(specifier = "a".toTerm()))
-            assertNull(testFromTerm(opFunctor = Var.anonymous()))
+            Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusSpecifier.toTerm())).shouldBeNull()
+            testFromTerm(functor = "ciao").shouldBeNull()
+            testFromTerm(priority = plusFunctor.toTerm()).shouldBeNull()
+            testFromTerm(priority = Var.anonymous()).shouldBeNull()
+            testFromTerm(specifier = Var.anonymous()).shouldBeNull()
+            testFromTerm(specifier = "a".toTerm()).shouldBeNull()
+            testFromTerm(opFunctor = Var.anonymous()).shouldBeNull()
         }
 
         test("compare-to/same-priority-orders-by-specifier") {
             val yfx = Operator("+", Specifier.YFX, 500)
             val xfx = Operator("+", Specifier.XFX, 500)
-            assertEquals(yfx.specifier.compareTo(xfx.specifier), yfx.compareTo(xfx))
-            assertNotEquals(0, yfx.compareTo(xfx))
+            yfx.compareTo(xfx) shouldBe yfx.specifier.compareTo(xfx.specifier)
+            yfx.compareTo(xfx) shouldNotBe 0
         }
     })

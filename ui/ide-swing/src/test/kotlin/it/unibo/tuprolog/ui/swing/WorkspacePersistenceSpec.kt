@@ -3,6 +3,9 @@
 package it.unibo.tuprolog.ui.swing
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.ui.gui.application.buildGuiApplication
 import it.unibo.tuprolog.ui.gui.controller.PageAction
@@ -24,9 +27,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
 import kotlin.io.path.createTempDirectory
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 // Dispatchers.Default drives a throwaway CoroutineScope local to each test case; there is nothing downstream
 // to inject a dispatcher into here, unlike the production code this test exercises.
@@ -51,15 +51,14 @@ class WorkspacePersistenceSpec :
                     windowBounds = null,
                     pageFontSizes = mapOf(pageId to 22),
                 )
-            assertEquals("p(X).", snapshot.documents.single().query)
-            assertEquals(listOf("p(1)."), snapshot.documents.single().queryHistory)
-            assertEquals(22, snapshot.documents.single().fontSize)
-            assertEquals(
-                1,
+            snapshot.documents.single().query shouldBe "p(X)."
+            snapshot.documents.single().queryHistory shouldBe listOf("p(1).")
+            snapshot.documents.single().fontSize shouldBe 22
+            (
                 snapshot.documents
                     .single()
-                    .resolutions.size,
-            )
+                    .resolutions.size
+            ) shouldBe 1
             return snapshot
         }
 
@@ -74,36 +73,36 @@ class WorkspacePersistenceSpec :
 
                     val snapshot =
                         capturePersistedWorkspace(controller.state.value, fontSize = 18, windowBounds = null)
-                    assertEquals(2, snapshot.documents.size)
-                    assertEquals(18, snapshot.fontSize)
+                    snapshot.documents.size shouldBe 2
+                    snapshot.fontSize shouldBe 18
                     // The freshly-created document was never saved to disk, so it must be reported as dirty.
-                    assertTrue(snapshot.documents.any { it.dirty })
+                    (snapshot.documents.any { it.dirty }).shouldBeTrue()
 
                     val persistence = WorkspacePersistence("test-app", createTempDirectory().toFile())
                     persistence.save(snapshot)
                     val loaded = persistence.load()
-                    assertNotNull(loaded)
-                    assertEquals(snapshot, loaded)
+                    loaded.shouldNotBeNull()
+                    loaded shouldBe snapshot
 
                     val application2 = testApplication("test2")
                     application2.start()
                     try {
                         restoreWorkspace(loaded, application2.controller)
                         val pages = application2.controller.state.value.workspace.pages
-                        assertEquals(2, pages.size)
-                        assertTrue(
+                        pages.size shouldBe 2
+                        (
                             pages.any {
                                 it.content is PageContent.Scratch &&
                                     (it.content as PageContent.Scratch).text == "q(2)."
-                            },
-                        )
+                            }
+                        ).shouldBeTrue()
                         val restoredDocPage = pages.first { it.content is PageContent.DocumentReference }
                         val documentId = (restoredDocPage.content as PageContent.DocumentReference).documentId
                         val restoredDocument =
                             application2.controller.state.value.workspace
                                 .document(documentId)
-                        assertEquals("p(1).", restoredDocument?.text)
-                        assertTrue(restoredDocument?.isDirty == true)
+                        restoredDocument?.text shouldBe "p(1)."
+                        restoredDocument?.isDirty shouldBe true
                     } finally {
                         application2.close()
                     }
@@ -145,9 +144,9 @@ class WorkspacePersistenceSpec :
                         val restoredPage =
                             application2.controller.state.value.workspace.pages
                                 .single()
-                        assertEquals("p(X).", restoredPage.query.text)
-                        assertEquals(listOf("p(1)."), restoredPage.query.history.entries)
-                        assertEquals(listOf(restoredEntry), restoredPage.history.resolutions)
+                        restoredPage.query.text shouldBe "p(X)."
+                        restoredPage.query.history.entries shouldBe listOf("p(1).")
+                        restoredPage.history.resolutions shouldBe listOf(restoredEntry)
                     } finally {
                         application2.close()
                     }
@@ -160,12 +159,12 @@ class WorkspacePersistenceSpec :
         test("delete removes the persisted file and load then reports nothing saved") {
             val persistence = WorkspacePersistence("delete-test-app", createTempDirectory().toFile())
             persistence.save(PersistedWorkspace(fontSize = 18))
-            assertNotNull(persistence.load())
+            persistence.load().shouldNotBeNull()
 
-            assertTrue(persistence.delete())
+            persistence.delete().shouldBeTrue()
 
-            assertEquals(null, persistence.load())
+            persistence.load() shouldBe null
             // Deleting again (nothing left to delete) is reported, not thrown, so callers don't need to guard it.
-            assertEquals(false, persistence.delete())
+            persistence.delete() shouldBe false
         }
     })

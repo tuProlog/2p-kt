@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import it.unibo.tuprolog.utils.cursor
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
 
 /**
@@ -34,12 +34,12 @@ class ListSpec :
 
         test("empty-returns-empty-list") {
             assertEqualities(Empty.list(), LogicList.empty())
-            assertEquals(Empty.list(), LogicList.empty())
+            LogicList.empty() shouldBe Empty.list()
         }
 
         test("of-no-vararg-terms") {
             assertEqualities(Empty.list(), LogicList.of())
-            assertEquals(Empty.list(), LogicList.of())
+            LogicList.of() shouldBe Empty.list()
         }
 
         emptyTerminated("of-varargs") { LogicList.of(*it.toTypedArray()) }
@@ -48,7 +48,7 @@ class ListSpec :
             val toBeTested = LogicList.of(emptyList<Term>().asIterable())
 
             assertEqualities(Empty.list(), toBeTested)
-            assertEquals(Empty.list(), toBeTested)
+            toBeTested shouldBe Empty.list()
         }
 
         emptyTerminated("of-iterable") { LogicList.of(it.asIterable()) }
@@ -57,18 +57,18 @@ class ListSpec :
             val toBeTested = LogicList.from(emptyList<Term>().asIterable())
 
             assertEqualities(Empty.list(), toBeTested)
-            assertEquals(Empty.list(), toBeTested)
+            toBeTested shouldBe Empty.list()
         }
 
         test("from-empty-iterable-specifying-last-as-empty-list") {
             val toBeTested = LogicList.from(emptyList<Term>().asIterable(), Empty.list())
 
             assertEqualities(Empty.list(), toBeTested)
-            assertEquals(Empty.list(), toBeTested)
+            toBeTested shouldBe Empty.list()
         }
 
         test("from-empty-iterable-specifying-last") {
-            assertFailsWith<IllegalArgumentException> { LogicList.from(emptyList<Term>().asIterable(), Truth.FALSE) }
+            shouldThrow<IllegalArgumentException> { LogicList.from(emptyList<Term>().asIterable(), Truth.FALSE) }
         }
 
         pipeTerminated("from-iterable-without-last") { LogicList.from(it.asIterable()) }
@@ -79,18 +79,18 @@ class ListSpec :
             val toBeTested = LogicList.from(emptyList<Term>().asSequence())
 
             assertEqualities(Empty.list(), toBeTested)
-            assertEquals(Empty.list(), toBeTested)
+            toBeTested shouldBe Empty.list()
         }
 
         test("from-empty-sequence-specifying-last-as-empty-list") {
             val toBeTested = LogicList.from(emptyList<Term>().asSequence(), Empty.list())
 
             assertEqualities(Empty.list(), toBeTested)
-            assertEquals(Empty.list(), toBeTested)
+            toBeTested shouldBe Empty.list()
         }
 
         test("from-empty-sequence-specifying-last") {
-            assertFailsWith<IllegalArgumentException> { LogicList.from(emptyList<Term>().asSequence(), Truth.FALSE) }
+            shouldThrow<IllegalArgumentException> { LogicList.from(emptyList<Term>().asSequence(), Truth.FALSE) }
         }
 
         pipeTerminated("from-sequence-without-last") { LogicList.from(it.asSequence()) }
@@ -102,42 +102,40 @@ class ListSpec :
             val a = Atom.of("a")
             val list = LogicList.of(x, x)
             val unifier = Substitution.unifier(x, a)
-            assertEquals(
-                listOf(a, a, EmptyList()),
+            (
                 ListIterator.Substituting
                     .All(list, unifier)
                     .asSequence()
-                    .toList(),
-            )
-            assertEquals(
-                listOf(a, a),
+                    .toList()
+            ) shouldBe listOf(a, a, EmptyList())
+            (
                 ListIterator.Substituting
                     .SkippingLast(list, unifier)
                     .asSequence()
-                    .toList(),
-            )
+                    .toList()
+            ) shouldBe listOf(a, a)
         }
 
         test("skipping-last-iterator/throws-past-the-end") {
             val iterator = ListIterator.SkippingLast(LogicList.of(Atom.of("a")))
             iterator.next()
-            assertFailsWith<NoSuchElementException> { iterator.next() }
+            shouldThrow<NoSuchElementException> { iterator.next() }
         }
 
         test("lazy-partial-list/fresh-copy-renames-consistently") {
             val (x, y, z) = listOf(Var.of("X"), Var.of("Y"), Var.of("Z"))
             val list = LogicList.from(listOf<Term>(x, y, x).cursor(), z)
             val copy = list.freshCopy()
-            assertEquals(3, copy.variables.toSet().size)
-            assertEquals(copy[0], copy.castToList().toList()[2])
-            assertNotEquals(x, copy[0])
-            assertTrue(list.structurallyEquals(copy))
+            copy.variables.toSet().size shouldBe 3
+            copy.castToList().toList()[2] shouldBe copy[0]
+            copy[0] shouldNotBe x
+            list.structurallyEquals(copy).shouldBeTrue()
         }
 
         test("lazy-partial-list/keeps-its-tail-and-tags") {
             val (x, z) = listOf(Var.of("X"), Var.of("Z"))
             val list = LogicList.from(listOf<Term>(x).cursor(), z)
-            assertEquals(z, list.last)
-            assertEquals(mapOf<String, Any>("t" to 1), list.replaceTags(mapOf("t" to 1)).tags)
+            list.last shouldBe z
+            list.replaceTags(mapOf("t" to 1)).tags shouldBe mapOf<String, Any>("t" to 1)
         }
     })

@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.ui.gui.prolog
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
@@ -9,8 +11,6 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import it.unibo.tuprolog.ui.gui.solver.ResolutionStep
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
 
 class SolutionConversionsSpec :
     FunSpec({
@@ -21,10 +21,12 @@ class SolutionConversionsSpec :
 
             val step = solution.toStep("holds(X, X).", emptyList(), emptyMap(), OperatorSet.DEFAULT)
 
-            val yes = assertIs<SolutionPresentation.Yes>(assertIs<ResolutionStep.Yield>(step).solution)
-            assertEquals(1, yes.bindings.size)
-            assertEquals("X", yes.bindings.single().variable)
-            assertEquals("1", yes.bindings.single().value)
+            val yes =
+                (step.shouldBeInstanceOf<ResolutionStep.Yield>().solution)
+                    .shouldBeInstanceOf<SolutionPresentation.Yes>()
+            yes.bindings.size shouldBe 1
+            yes.bindings.single().variable shouldBe "X"
+            yes.bindings.single().value shouldBe "1"
         }
 
         test("the solved query and bindings are formatted as pretty expressions using the given operator set") {
@@ -35,9 +37,11 @@ class SolutionConversionsSpec :
 
             val step = solution.toStep("compute(X).", emptyList(), emptyMap(), OperatorSet.DEFAULT)
 
-            val yes = assertIs<SolutionPresentation.Yes>(assertIs<ResolutionStep.Yield>(step).solution)
-            assertEquals("1 + 2", yes.bindings.single().value)
-            assertEquals("compute(1 + 2)", yes.solvedQuery)
+            val yes =
+                (step.shouldBeInstanceOf<ResolutionStep.Yield>().solution)
+                    .shouldBeInstanceOf<SolutionPresentation.Yes>()
+            yes.bindings.single().value shouldBe "1 + 2"
+            yes.solvedQuery shouldBe "compute(1 + 2)"
         }
 
         test("groundQueriesHaveBooleanSolution nulls out solvedQuery for a ground query") {
@@ -53,8 +57,10 @@ class SolutionConversionsSpec :
                     groundQueriesHaveBooleanSolution = true,
                 )
 
-            val yes = assertIs<SolutionPresentation.Yes>(assertIs<ResolutionStep.Yield>(step).solution)
-            assertEquals(null, yes.solvedQuery)
+            val yes =
+                (step.shouldBeInstanceOf<ResolutionStep.Yield>().solution)
+                    .shouldBeInstanceOf<SolutionPresentation.Yes>()
+            yes.solvedQuery shouldBe null
         }
 
         test("groundQueriesHaveBooleanSolution leaves a non-ground query's solvedQuery untouched") {
@@ -71,8 +77,10 @@ class SolutionConversionsSpec :
                     groundQueriesHaveBooleanSolution = true,
                 )
 
-            val yes = assertIs<SolutionPresentation.Yes>(assertIs<ResolutionStep.Yield>(step).solution)
-            assertEquals("2 is 1 + 1", yes.solvedQuery)
+            val yes =
+                (step.shouldBeInstanceOf<ResolutionStep.Yield>().solution)
+                    .shouldBeInstanceOf<SolutionPresentation.Yes>()
+            yes.solvedQuery shouldBe "2 is 1 + 1"
         }
 
         test("groundQueriesHaveBooleanSolution defaults to false, keeping a ground query's solvedQuery") {
@@ -81,7 +89,9 @@ class SolutionConversionsSpec :
 
             val step = solution.toStep("2 is 1 + 1.", emptyList(), emptyMap(), OperatorSet.DEFAULT)
 
-            val yes = assertIs<SolutionPresentation.Yes>(assertIs<ResolutionStep.Yield>(step).solution)
-            assertEquals("2 is 1 + 1", yes.solvedQuery)
+            val yes =
+                (step.shouldBeInstanceOf<ResolutionStep.Yield>().solution)
+                    .shouldBeInstanceOf<SolutionPresentation.Yes>()
+            yes.solvedQuery shouldBe "2 is 1 + 1"
         }
     })

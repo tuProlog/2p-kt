@@ -1,8 +1,10 @@
 package it.unibo.tuprolog.core.parsing
 
+import io.kotest.assertions.withClue
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.property.PropTestConfig
 import io.kotest.property.checkAll
 import it.unibo.tuprolog.core.Scope
@@ -11,7 +13,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.TermArbs
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalKotest::class)
 private val config = PropTestConfig(seed = 1017L, iterations = 300)
@@ -36,7 +37,9 @@ private fun canonical(term: Term): Term =
 private fun assertRoundTrips(term: Term) {
     val formatted = formatter.format(term)
     val parsed = Term.parse(formatted)
-    assertTrue(canonical(parsed).equals(canonical(term), useVarCompleteName = false), "$term -> $formatted -> $parsed")
+    withClue("$term -> $formatted -> $parsed") {
+        canonical(parsed).equals(canonical(term), useVarCompleteName = false).shouldBeTrue()
+    }
 }
 
 private class TermCase(

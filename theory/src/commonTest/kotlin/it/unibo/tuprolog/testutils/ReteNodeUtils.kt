@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.testutils
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
@@ -14,9 +18,6 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import kotlin.math.min
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
  * Utils singleton for testing [ReteNode]
@@ -195,19 +196,19 @@ internal object ReteNodeUtils {
     internal fun assertReteNodeElementCount(
         reteNode: ReteNode<*, Clause>,
         expectedCount: Int,
-    ) = assertEquals(expectedCount, reteNode.indexedElements.count())
+    ) = reteNode.indexedElements.count() shouldBe expectedCount
 
     /** Asserts that rete node is empty */
     internal fun assertReteNodeEmpty(reteNode: ReteNode<*, out Clause>) {
-        assertTrue(reteNode.indexedElements.none())
-        assertTrue(reteNode.children.none())
+        reteNode.indexedElements.none().shouldBeTrue()
+        reteNode.children.none().shouldBeTrue()
     }
 
     /** Asserts that rete node clauses are the same as expected */
     internal fun assertReteNodeClausesCorrect(
         reteNode: ReteNode<*, out Clause>,
         expectedClauses: Iterable<Clause>,
-    ) = assertEquals(expectedClauses.toList(), reteNode.indexedElements.toList())
+    ) = reteNode.indexedElements.toList() shouldBe expectedClauses.toList()
 
     /** Asserts that calling [idempotentAction] onto [reteNode] results in no actual change */
     internal inline fun assertNoChangesInReteNode(
@@ -219,7 +220,7 @@ internal object ReteNodeUtils {
         @Suppress("UNCHECKED_CAST") // nothing will be inserted, so it's safe
         val idempotentActionResult = (reteNode as ReteNode<*, Clause>).idempotentAction()
 
-        assertTrue(idempotentActionResult.none())
+        idempotentActionResult.none().shouldBeTrue()
         assertReteNodeClausesCorrect(reteNode, beforeContents)
     }
 
@@ -236,7 +237,7 @@ internal object ReteNodeUtils {
         @Suppress("UNCHECKED_CAST") // nothing will be inserted, so it's safe
         val removedActual = (reteNode as ReteNode<*, Clause>).removeAction()
 
-        assertEquals(removedExpected, removedActual.toList())
+        removedActual.toList() shouldBe removedExpected
         assertReteNodeElementCount(reteNode, allClauseCount - removedExpected.count())
         assertReteNodeClausesCorrect(reteNode, remainingClausesExpected)
     }
@@ -266,7 +267,7 @@ internal object ReteNodeUtils {
             }
         val (actualRemovedList, expectedRemovedList) = checkerMap.values.flatten().unzip()
 
-        assertEquals(expectedRemovedList, actualRemovedList)
+        actualRemovedList shouldBe expectedRemovedList
 
         assertClauseHeadPartialOrderingRespected(
             allClauses - expectedRemovedList,
@@ -280,10 +281,10 @@ internal object ReteNodeUtils {
         actualClauses: Iterable<Clause>,
     ) {
 //        assertEquals(expectedClauses.toList().sorted(), reteNode.indexedElements.toList().sorted()) TODO enable after solving issue #29 and delete two below assertions
-        assertTrue("\nExpected:\t$expectedClauses\nActual:\t\t$actualClauses") {
-            expectedClauses.toList().containsAll(actualClauses.toList())
+        withClue("\nExpected:\t$expectedClauses\nActual:\t\t$actualClauses") {
+            expectedClauses.toList().containsAll(actualClauses.toList()).shouldBeTrue()
         }
-        assertTrue(actualClauses.toList().containsAll(expectedClauses.toList()))
+        actualClauses.toList().containsAll(expectedClauses.toList()).shouldBeTrue()
 
         actualClauses.forEachStructurallyEqualsHead(
             partialOrderingHeadClauseMap(expectedClauses).toMutableMap(),
@@ -292,9 +293,7 @@ internal object ReteNodeUtils {
                     entry.value.none() -> fail("Clause $clause not indexed under its head Struct")
                     entry.value.first() == clause -> entry.setValue(entry.value - clause)
                     else ->
-                        fail(
-                            "Partial ordering not respected: $clause should come after these ${entry.value - clause}",
-                        )
+                        fail("Partial ordering not respected: $clause should come after these ${entry.value - clause}")
                 }
             },
             onMissingEntry = { clause, _ -> fail("Clause $clause not expected among these: $expectedClauses") },

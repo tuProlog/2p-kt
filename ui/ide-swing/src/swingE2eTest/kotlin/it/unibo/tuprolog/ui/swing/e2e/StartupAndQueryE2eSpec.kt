@@ -1,9 +1,11 @@
 package it.unibo.tuprolog.ui.swing.e2e
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import org.assertj.swing.fixture.FrameFixture
 import java.awt.event.KeyEvent
-import kotlin.test.assertTrue
 
 /** Covers application startup and the core query-execution workflow through the real Swing UI. */
 class StartupAndQueryE2eSpec :
@@ -17,11 +19,13 @@ class StartupAndQueryE2eSpec :
         test("application starts with one untitled page and an idle status") {
             window.requireVisible()
             val titles = window.tabbedPane("editorTabs").tabTitles()
-            assertTrue(titles.size == 1, "expected exactly one initial page tab, got ${titles.toList()}")
+            withClue("expected exactly one initial page tab, got ${titles.toList()}") { titles.size shouldBe 1 }
             // SwingIdeFrame appends " •" while a page has unread panels (e.g. Stdout/Warnings never visited
             // yet), so a brand-new page's title carries it too; strip it before checking the base name.
             val title = titles[0].removeSuffix(" •")
-            assertTrue(title.startsWith("untitled-") && title.endsWith(".pl"), "unexpected title: ${titles[0]}")
+            withClue(
+                "unexpected title: ${titles[0]}",
+            ) { (title.startsWith("untitled-") && title.endsWith(".pl")).shouldBeTrue() }
             window.label("statusLabel").requireText("Idle")
             window.button("solveButton").requireText("Solve")
         }
@@ -120,6 +124,6 @@ class StartupAndQueryE2eSpec :
 
             window.button("resetButton").click()
             window.awaitCondition("status back to idle") { label("statusLabel").text() == "Idle" }
-            assertTrue(window.tree("solutionsTree").target().rowCount == 0)
+            window.tree("solutionsTree").target().rowCount shouldBe 0
         }
     })

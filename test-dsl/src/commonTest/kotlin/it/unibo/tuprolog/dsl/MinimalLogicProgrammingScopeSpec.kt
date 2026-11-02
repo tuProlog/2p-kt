@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.dsl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Cons
@@ -14,10 +18,6 @@ import it.unibo.tuprolog.dsl.PlatformSpecificValues.MINUS_THREE
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.ONE_POINT_ZERO
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.THREE_POINT_ONE_DOUBLE
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.THREE_POINT_ONE_FLOAT
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 class MinimalLogicProgrammingScopeSpec :
     FunSpec({
@@ -75,7 +75,7 @@ class MinimalLogicProgrammingScopeSpec :
                             logicListOf("X", "Y"),
                             blockOf(true, "!"),
                         )
-                    assertEquals(expected, actual)
+                    actual shouldBe expected
                 }
             }
 
@@ -83,8 +83,8 @@ class MinimalLogicProgrammingScopeSpec :
                 logicProgramming {
                     val expected = createDirectiveUnderTest()
                     val actual = directive { createDirectiveUnderTest() }
-                    assertTrue(expected.structurallyEquals(actual))
-                    assertNotEquals(expected, actual)
+                    expected.structurallyEquals(actual).shouldBeTrue()
+                    actual shouldNotBe expected
                 }
             }
 
@@ -92,8 +92,8 @@ class MinimalLogicProgrammingScopeSpec :
                 logicProgramming {
                     val expected = createRuleUnderTest()
                     val actual = rule { createRuleUnderTest() }
-                    assertTrue(expected.structurallyEquals(actual))
-                    assertNotEquals(expected, actual)
+                    expected.structurallyEquals(actual).shouldBeTrue()
+                    actual shouldNotBe expected
                 }
             }
 
@@ -101,8 +101,8 @@ class MinimalLogicProgrammingScopeSpec :
                 logicProgramming {
                     val expected = createRuleUnderTest()
                     val actual = clause { createRuleUnderTest() }
-                    assertTrue(expected.structurallyEquals(actual))
-                    assertNotEquals(expected, actual)
+                    expected.structurallyEquals(actual).shouldBeTrue()
+                    actual shouldNotBe expected
                 }
             }
 
@@ -110,8 +110,8 @@ class MinimalLogicProgrammingScopeSpec :
                 logicProgramming {
                     val expected = createFactUnderTest()
                     val actual = fact { createFactUnderTest() }
-                    assertTrue(expected.structurallyEquals(actual))
-                    assertNotEquals(expected, actual)
+                    expected.structurallyEquals(actual).shouldBeTrue()
+                    actual shouldNotBe expected
                 }
             }
 
@@ -122,8 +122,8 @@ class MinimalLogicProgrammingScopeSpec :
                         clause {
                             "parent"("X", "Y")
                         }
-                    assertTrue(expected.structurallyEquals(actual))
-                    assertNotEquals(expected, actual)
+                    expected.structurallyEquals(actual).shouldBeTrue()
+                    actual shouldNotBe expected
                 }
             }
 
@@ -131,7 +131,7 @@ class MinimalLogicProgrammingScopeSpec :
                 logicProgramming {
                     val expected = logicList("a", "b", tail = "c")
                     val actual = consOf("a", consOf("b", "c"))
-                    assertEquals(expected, actual)
+                    actual shouldBe expected
                 }
             }
 
@@ -193,13 +193,13 @@ class MinimalLogicProgrammingScopeSpec :
 
             test("var-of-equals") {
                 logicProgramming {
-                    assertEquals(varOf("X"), varOf("X"))
+                    varOf("X") shouldBe varOf("X")
                 }
             }
 
             test("var-of-underscore-equals") {
                 logicProgramming {
-                    assertEquals(varOf("_"), varOf("_"))
+                    varOf("_") shouldBe varOf("_")
                 }
             }
 
@@ -237,14 +237,14 @@ class MinimalLogicProgrammingScopeSpec :
                 logicProgramming {
                     val expected = varOf("X")
                     val actual = "X".toTerm()
-                    assertEquals(expected, actual)
+                    actual shouldBe expected
                 }
             }
 
             test("to-term-atom") {
                 logicProgramming {
                     atomOf("a").let {
-                        assertSame(it, it.toTerm())
+                        it.toTerm() shouldBeSameInstanceAs it
                     }
                 }
             }

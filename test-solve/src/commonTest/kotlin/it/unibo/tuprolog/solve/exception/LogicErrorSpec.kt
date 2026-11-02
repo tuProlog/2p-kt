@@ -2,6 +2,8 @@ package it.unibo.tuprolog.solve.exception
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.aCause
@@ -12,8 +14,6 @@ import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.aType
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.assertEqualPrologErrorData
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.assertErrorStructCorrect
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils.someExtraData
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 /**
  * Test class for [LogicError]
@@ -74,9 +74,9 @@ class LogicErrorSpec :
                     override fun pushContext(newContext: ExecutionContext): LogicError =
                         of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
                 }
-            assertNull(toBeTested.message)
-            assertNull(toBeTested.cause)
-            assertNull(toBeTested.extraData)
+            toBeTested.message.shouldBeNull()
+            toBeTested.cause.shouldBeNull()
+            toBeTested.extraData.shouldBeNull()
         }
 
         test("constructor-inserts-message-if-only-cause-specified") {
@@ -104,7 +104,7 @@ class LogicErrorSpec :
                         of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
                 }
 
-            assertEquals(aCause.toString(), logicError.message)
+            logicError.message shouldBe aCause.toString()
         }
 
         test("error-is-computed-correctly") {
@@ -149,6 +149,6 @@ class LogicErrorSpec :
         }
 
         withTests(nameFn = { "of-creates-sub-instance/${it.id}" }, LogicErrorUtils.recognizedSubTypes) { case ->
-            assertEquals(case.expectedClass, LogicError.of(context = aContext, type = case.type)::class)
+            LogicError.of(context = aContext, type = case.type)::class shouldBe case.expectedClass
         }
     })

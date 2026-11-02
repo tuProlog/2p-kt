@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.core.testutils
 
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 
 /**
  * Utils singleton to test [Var]
@@ -47,11 +47,11 @@ internal object VarUtils {
         expected: Var,
         actual: Var,
     ) {
-        assertEquals(expected.name, actual.name)
-        assertNotEquals(expected.completeName, actual.completeName)
+        actual.name shouldBe expected.name
+        actual.completeName shouldNotBe expected.completeName
 
         assertStructurallyEquals(expected, actual)
-        assertNotEquals(expected, actual)
+        actual shouldNotBe expected
     }
 
     /** Asserts that the variables are tied with each other, so are the same */
@@ -59,10 +59,10 @@ internal object VarUtils {
         expected: Var,
         actual: Var,
     ) {
-        assertEquals(expected.name, actual.name)
-        assertEquals(expected.completeName, actual.completeName)
+        actual.name shouldBe expected.name
+        actual.completeName shouldBe expected.completeName
 
         assertEqualities(expected, actual)
-        assertEquals(expected, actual)
+        actual shouldBe expected
     }
 }

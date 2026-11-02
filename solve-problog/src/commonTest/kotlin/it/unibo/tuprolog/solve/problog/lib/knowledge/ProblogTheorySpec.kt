@@ -2,6 +2,10 @@ package it.unibo.tuprolog.solve.problog.lib.knowledge
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
@@ -10,10 +14,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 private fun p(n: Int) = Struct.of("p", Integer.of(n))
 
@@ -68,39 +68,39 @@ class ProblogTheorySpec :
             nameFn = { (kind, edit) -> "${kind.id}/${edit.id}" },
             kinds.flatMap { kind -> edits.map { kind to it } },
         ) { (kind, edit) ->
-            assertEquals(edit.expected, heads(edit.apply(kind.create())))
+            heads(edit.apply(kind.create())) shouldBe edit.expected
         }
 
         withTests(nameFn = { "${it.id}/retract/missing-clause-fails" }, kinds) { kind ->
-            assertIs<RetractResult.Failure<*>>(kind.create().retract(Fact.of(p(9))))
+            kind.create().retract(Fact.of(p(9))).shouldBeInstanceOf<RetractResult.Failure<*>>()
         }
 
         withTests(nameFn = { "${it.id}/retract-all/missing-clause-fails" }, kinds) { kind ->
-            assertIs<RetractResult.Failure<*>>(kind.create().retractAll(Fact.of(p(9))))
+            kind.create().retractAll(Fact.of(p(9))).shouldBeInstanceOf<RetractResult.Failure<*>>()
         }
 
         withTests(nameFn = { "${it.id}/mutability" }, kinds) { kind ->
             val theory = kind.create()
-            assertEquals(kind.id == "mutable", theory.isMutable)
-            assertTrue(theory.toMutableTheory().isMutable)
-            assertFalse(theory.toImmutableTheory().isMutable)
-            assertEquals(heads(theory), heads(theory.toMutableTheory()))
-            assertEquals(heads(theory), heads(theory.toImmutableTheory()))
+            theory.isMutable shouldBe (kind.id == "mutable")
+            theory.toMutableTheory().isMutable.shouldBeTrue()
+            theory.toImmutableTheory().isMutable.shouldBeFalse()
+            heads(theory.toMutableTheory()) shouldBe heads(theory)
+            heads(theory.toImmutableTheory()) shouldBe heads(theory)
         }
 
         test("of/a-mutable-theory-stays-mutable") {
-            assertTrue(ProblogTheory.of(Unificator.default, Theory.of(Fact.of(p(1))).toMutableTheory()).isMutable)
+            ProblogTheory.of(Unificator.default, Theory.of(Fact.of(p(1))).toMutableTheory()).isMutable.shouldBeTrue()
         }
 
         test("of/every-overload-maps-the-clauses") {
             val u = Unificator.default
             val expected = listOf("p(1)")
-            assertEquals(expected, heads(ProblogTheory.of(u, sequenceOf(Fact.of(p(1))))))
-            assertEquals(expected, heads(ProblogTheory.of(u, { Fact.of(p(1)) })))
-            assertEquals(expected, heads(MutableProblogTheory.of(u, Fact.of(p(1)))))
-            assertEquals(expected, heads(MutableProblogTheory.of(u, sequenceOf(Fact.of(p(1))))))
-            assertEquals(expected, heads(MutableProblogTheory.of(u, { Fact.of(p(1)) })))
-            assertEquals(emptyList(), heads(ProblogTheory.empty(u)))
-            assertEquals(emptyList(), heads(MutableProblogTheory.empty(u)))
+            heads(ProblogTheory.of(u, sequenceOf(Fact.of(p(1))))) shouldBe expected
+            heads(ProblogTheory.of(u, { Fact.of(p(1)) })) shouldBe expected
+            heads(MutableProblogTheory.of(u, Fact.of(p(1)))) shouldBe expected
+            heads(MutableProblogTheory.of(u, sequenceOf(Fact.of(p(1))))) shouldBe expected
+            heads(MutableProblogTheory.of(u, { Fact.of(p(1)) })) shouldBe expected
+            heads(ProblogTheory.empty(u)) shouldBe emptyList()
+            heads(MutableProblogTheory.empty(u)) shouldBe emptyList()
         }
     })

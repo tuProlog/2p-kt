@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.theory
 
 import io.kotest.core.spec.style.funSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.dsl.unify.logicProgramming
 import it.unibo.tuprolog.dsl.unify.lp
 import it.unibo.tuprolog.theory.impl.AbstractIndexedTheory
 import it.unibo.tuprolog.theory.impl.AbstractListedTheory
 import it.unibo.tuprolog.unify.Unificator
-import kotlin.test.assertEquals
-import kotlin.test.assertNotSame
-import kotlin.test.assertSame
 import kotlin.collections.List as KtList
 
 fun theoryUnificatorTests(theoryGenerator: (Unificator, Iterable<Clause>) -> Theory) =
@@ -39,24 +39,24 @@ fun theoryUnificatorTests(theoryGenerator: (Unificator, Iterable<Clause>) -> The
         beforeTest { initialize() }
 
         test("inizialization-sets-unificator") {
-            assertEquals(unificator1, theory1.unificator)
-            assertEquals(unificator2, theory2.unificator)
+            theory1.unificator shouldBe unificator1
+            theory2.unificator shouldBe unificator2
         }
 
         test("equality-among-different-unificators") {
-            assertEquals(theory1, theory2)
-            assertEquals(theory1.hashCode(), theory2.hashCode())
+            theory2 shouldBe theory1
+            theory2.hashCode() shouldBe theory1.hashCode()
         }
 
         test("unificator-affects-get") {
             lp {
-                assertEquals(clauses, theory1["f"(X)].toList())
-                assertEquals(clauses, theory2["f"(X)].toList())
-                assertEquals(clauses.subList(1, 2), theory1["f"(1)].toList())
+                theory1["f"(X)].toList() shouldBe clauses
+                theory2["f"(X)].toList() shouldBe clauses
+                theory1["f"(1)].toList() shouldBe clauses.subList(1, 2)
                 if (theory2 is AbstractIndexedTheory) {
-                    assertEquals(clauses.subList(1, 2), theory2["f"(1)].toList())
+                    theory2["f"(1)].toList() shouldBe clauses.subList(1, 2)
                 } else {
-                    assertEquals(clauses.subList(1, 3), theory2["f"(1)].toList())
+                    theory2["f"(1)].toList() shouldBe clauses.subList(1, 3)
                 }
             }
         }
@@ -64,12 +64,12 @@ fun theoryUnificatorTests(theoryGenerator: (Unificator, Iterable<Clause>) -> The
         test("change-unificator") {
             val theory3 = theory1.setUnificator(unificator2)
             if (theory1.let { it.isMutable && it is AbstractListedTheory }) {
-                assertSame(theory1, theory3)
+                theory3 shouldBeSameInstanceAs theory1
             } else {
-                assertNotSame(theory1, theory3)
+                theory3 shouldNotBeSameInstanceAs theory1
             }
-            assertEquals(unificator2, theory3.unificator)
-            assertEquals(theory1, theory2)
-            assertEquals(theory3, theory2)
+            theory3.unificator shouldBe unificator2
+            theory2 shouldBe theory1
+            theory2 shouldBe theory3
         }
     }

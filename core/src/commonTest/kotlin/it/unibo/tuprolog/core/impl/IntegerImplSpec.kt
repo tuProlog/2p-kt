@@ -4,6 +4,10 @@ package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Integer
@@ -16,10 +20,6 @@ import it.unibo.tuprolog.core.testutils.IntegerUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 /**
  * Test class for [IntegerImpl] and [Integer]
@@ -33,27 +33,27 @@ class IntegerImplSpec :
             test: (IntegerUtils.IntegerCase, Integer) -> Unit,
         ) = withTests(nameFn = { "$property/${it.id}" }, IntegerUtils.integerCases) { test(it, IntegerImpl(it.value)) }
 
-        integers("value") { case, integer -> assertEquals(case.value, integer.value) }
+        integers("value") { case, integer -> integer.value shouldBe case.value }
 
-        integers("int-value") { case, integer -> assertEquals(case.value, integer.intValue) }
+        integers("int-value") { case, integer -> integer.intValue shouldBe case.value }
 
-        integers("decimal-value") { case, integer -> assertEquals(BigDecimal.of(case.value), integer.decimalValue) }
+        integers("decimal-value") { case, integer -> integer.decimalValue shouldBe BigDecimal.of(case.value) }
 
-        integers("to-string") { case, integer -> assertEquals(case.value.toString(), integer.toString()) }
+        integers("to-string") { case, integer -> integer.toString() shouldBe case.value.toString() }
 
         test("compare-to-works-as-expected") {
             val one = IntegerImpl(BigInteger.of(1))
             val two = IntegerImpl(BigInteger.of(2))
 
-            assertTrue(one.compareValueTo(one) == 0)
-            assertTrue(one.compareValueTo(one) >= 0)
+            one.compareValueTo(one) shouldBe 0
+            (one.compareValueTo(one) >= 0).shouldBeTrue()
 
-            assertTrue(one.compareValueTo(two) != 0)
-            assertTrue(one.compareValueTo(two) <= 0)
-            assertTrue(one.compareValueTo(two) < 0)
+            one.compareValueTo(two) shouldNotBe 0
+            (one.compareValueTo(two) <= 0).shouldBeTrue()
+            (one.compareValueTo(two) < 0).shouldBeTrue()
 
-            assertFalse(one.compareValueTo(two) >= 0)
-            assertFalse(one.compareValueTo(two) > 0)
+            (one.compareValueTo(two) >= 0).shouldBeFalse()
+            (one.compareValueTo(two) > 0).shouldBeFalse()
         }
 
         integers("type-checks") { _, integer -> TermTypeAssertionUtils.assertIsInteger(integer) }
@@ -63,10 +63,10 @@ class IntegerImplSpec :
             val oneReal = Real.of(1.0)
             val oneAtom = Atom.of("1")
 
-            assertEquals(oneInteger, oneInteger)
+            oneInteger shouldBe oneInteger
 
-            assertNotEquals<Numeric>(oneInteger, oneReal)
-            assertNotEquals<Constant>(oneInteger, oneAtom)
+            oneReal.shouldNotBe<Numeric>(oneInteger)
+            oneAtom.shouldNotBe<Constant>(oneInteger)
         }
 
         test("structurally-equals-works-as-expected") {

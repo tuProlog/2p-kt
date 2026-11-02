@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.ui.swing.e2e
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
 import org.assertj.swing.core.matcher.JButtonMatcher
 import org.assertj.swing.fixture.FrameFixture
-import kotlin.test.assertTrue
 
 /**
  * Covers the app's user-facing row/column numbering: code areas use one-based lines/columns for the caret, and
@@ -30,7 +31,7 @@ class PositionIndexingE2eSpec :
                 list("diagnosticsList").contents().isNotEmpty()
             }
             val entry = window.list("diagnosticsList").contents().single()
-            assertTrue(entry.contains("line 2, column 1"), "expected a one-based location, got: $entry")
+            withClue("expected a one-based location, got: $entry") { entry.contains("line 2, column 1").shouldBeTrue() }
         }
 
         test("the caret status label starts and stays one-based as the caret moves") {
@@ -56,6 +57,6 @@ class PositionIndexingE2eSpec :
                 label("statusLabel").text().startsWith("Resolution failed")
             }
             val message = window.label("statusLabel").text()
-            assertTrue(message.contains("2:1"), "expected a one-based location in: $message")
+            withClue("expected a one-based location in: $message") { message.contains("2:1").shouldBeTrue() }
         }
     })

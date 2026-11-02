@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 
 class JsClassNameSpec :
     FunSpec({
@@ -10,12 +10,15 @@ class JsClassNameSpec :
             val module: dynamic = js("({})")
             module.factory = "factory"
             globalThis["2p-test-solve"] = module
-
-            assertEquals("factory", JsClassName("2p-test-solve", "factory").resolve())
+            // resolve() is dynamic, and extension functions (Kotest matchers) are not callable on dynamic values
+            val resolved: Any? = JsClassName("2p-test-solve", "factory").resolve()
+            resolved shouldBe "factory"
         }
 
         test("resolves-missing-module-to-null") {
-            assertNull(JsClassName("2p-missing-test-solve", "factory").resolve())
+            // resolve() is dynamic, and extension functions (Kotest matchers) are not callable on dynamic values
+            val resolved: Any? = JsClassName("2p-missing-test-solve", "factory").resolve()
+            resolved.shouldBeNull()
         }
     })
 

@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.serialize
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
+import io.kotest.matchers.shouldBe
 
 class TermDeserializerSpec :
     FunSpec({
         test("tailed-list-serialization-in-json") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Json
 
             deserializer.assertTermDeserializationWorks(
                 "{\"fun\":\"member\",\"args\":[{\"var\":\"H\"},{\"list\":[{\"var\":\"H\"}],\"tail\":{\"var\":\"_\"}}]}",
@@ -18,7 +18,7 @@ class TermDeserializerSpec :
 
         test("tailed-list-serialization-in-yaml") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
-            assertEquals(MimeType.Yaml, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Yaml
 
             deserializer.assertTermDeserializationWorks(
                 """
@@ -37,7 +37,7 @@ class TermDeserializerSpec :
 
         test("atom-deserialization-in-json") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Json
             deserializer.assertTermDeserializationWorks("\"hello\"") {
                 atomOf("hello")
             }
@@ -48,7 +48,7 @@ class TermDeserializerSpec :
 
         test("atom-deserialization-in-yaml") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
-            assertEquals(MimeType.Yaml, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Yaml
             deserializer.assertTermDeserializationWorks("\"hello\"") {
                 atomOf("hello")
             }
@@ -59,7 +59,7 @@ class TermDeserializerSpec :
 
         test("numeric-deserialization-in-json") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Json
             deserializer.assertTermDeserializationWorks("-3") {
                 intOf("-3")
             }
@@ -70,7 +70,7 @@ class TermDeserializerSpec :
 
         test("numeric-deserialization-in-yaml") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
-            assertEquals(MimeType.Yaml, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Yaml
             deserializer.assertTermDeserializationWorks("2") {
                 intOf("2")
             }
@@ -81,7 +81,7 @@ class TermDeserializerSpec :
 
         test("list-deserialization-in-json") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Json
             deserializer.assertTermDeserializationWorks("{\"list\":[\"hello\",1,true]}") {
                 logicListOf(atomOf("hello"), numOf(1), truthOf(true))
             }
@@ -89,7 +89,7 @@ class TermDeserializerSpec :
 
         test("list-deserialization-in-yaml") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
-            assertEquals(MimeType.Yaml, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Yaml
             val actual =
                 """
                     |list:
@@ -104,7 +104,7 @@ class TermDeserializerSpec :
 
         test("block-deserialization-in-json") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Json
             deserializer.assertTermDeserializationWorks("{\"block\":[\"hello\",1, false]}") {
                 blockOf(atomOf("hello"), numOf(1), truthOf(false))
             }
@@ -112,7 +112,7 @@ class TermDeserializerSpec :
 
         test("block-deserialization-in-yaml") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
-            assertEquals(MimeType.Yaml, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Yaml
             val actual =
                 """
                     |block:
@@ -128,7 +128,7 @@ class TermDeserializerSpec :
 
         test("struct-deserialization-in-json") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Json
             deserializer.assertTermDeserializationWorks("{\"fun\":\"f\",\"args\":[\"hello\",2]}") {
                 structOf("f", atomOf("hello"), numOf(2))
             }
@@ -147,7 +147,7 @@ class TermDeserializerSpec :
 
         test("struct-deserialization-in-yaml") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
-            assertEquals(MimeType.Yaml, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Yaml
             var actual =
                 """
                     |fun: f
@@ -182,7 +182,7 @@ class TermDeserializerSpec :
         test("variables-deserialization-in-json") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
 
-            assertEquals(MimeType.Json, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Json
 
             deserializer.assertTermDeserializationWorks("{\"var\":\"X\"}") {
                 varOf("X")
@@ -192,7 +192,7 @@ class TermDeserializerSpec :
         test("variables-deserialization-in-yaml") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
 
-            assertEquals(MimeType.Yaml, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Yaml
 
             val actual =
                 """
@@ -205,7 +205,7 @@ class TermDeserializerSpec :
 
         test("constant-deserialization-in-json") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Json
             deserializer.assertTermDeserializationWorks("true") {
                 truthOf(true)
             }
@@ -216,7 +216,7 @@ class TermDeserializerSpec :
 
         test("constant-deserialization-in-yaml") {
             val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
-            assertEquals(MimeType.Yaml, deserializer.mimeType)
+            deserializer.mimeType shouldBe MimeType.Yaml
             deserializer.assertTermDeserializationWorks("true") {
                 truthOf(true)
             }

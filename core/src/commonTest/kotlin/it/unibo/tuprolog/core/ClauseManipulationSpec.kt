@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
+import io.kotest.matchers.shouldBe
 
 class ClauseManipulationSpec :
     FunSpec({
@@ -13,303 +13,147 @@ class ClauseManipulationSpec :
 
         test("set-head") {
             val otherHead = Struct.of("f", Integer.of(2))
-            assertEquals(
-                Rule.of(otherHead, directive.body),
-                directive.setHead(otherHead),
-            )
-            assertEquals(
-                Rule.of(otherHead, rule.body),
-                rule.setHead(otherHead),
-            )
-            assertEquals(
-                Fact.of(otherHead),
-                fact.setHead(otherHead),
-            )
+            directive.setHead(otherHead) shouldBe Rule.of(otherHead, directive.body)
+            rule.setHead(otherHead) shouldBe Rule.of(otherHead, rule.body)
+            fact.setHead(otherHead) shouldBe Fact.of(otherHead)
         }
 
         test("set-head-functor") {
             val otherHead = Struct.of("g", Integer.ONE)
-            assertEquals(
-                directive,
-                directive.setHeadFunctor("g"),
-            )
-            assertEquals(
-                Rule.of(otherHead, rule.body),
-                rule.setHeadFunctor("g"),
-            )
-            assertEquals(
-                Fact.of(otherHead),
-                fact.setHeadFunctor("g"),
-            )
+            directive.setHeadFunctor("g") shouldBe directive
+            rule.setHeadFunctor("g") shouldBe Rule.of(otherHead, rule.body)
+            fact.setHeadFunctor("g") shouldBe Fact.of(otherHead)
         }
 
         test("set-head-args") {
             val otherHead = Struct.of("f", Atom.of("a"), Atom.of("b"))
-            assertEquals(
-                directive,
-                directive.setHeadArgs(*otherHead.args.toTypedArray()),
-            )
-            assertEquals(
-                Rule.of(otherHead, rule.body),
-                rule.setHeadArgs(*otherHead.args.toTypedArray()),
-            )
-            assertEquals(
-                Fact.of(otherHead),
-                fact.setHeadArgs(*otherHead.args.toTypedArray()),
-            )
+            directive.setHeadArgs(*otherHead.args.toTypedArray()) shouldBe directive
+            rule.setHeadArgs(*otherHead.args.toTypedArray()) shouldBe Rule.of(otherHead, rule.body)
+            fact.setHeadArgs(*otherHead.args.toTypedArray()) shouldBe Fact.of(otherHead)
         }
 
         test("add-last-head-arg") {
             val otherHead = Struct.of("f", Integer.ONE, Atom.of("b"))
-            assertEquals(
-                directive,
-                directive.addLastHeadArg(otherHead.args.last()),
-            )
-            assertEquals(
-                Rule.of(otherHead, rule.body),
-                rule.addLastHeadArg(otherHead.args.last()),
-            )
-            assertEquals(
-                Fact.of(otherHead),
-                fact.addLastHeadArg(otherHead.args.last()),
-            )
+            directive.addLastHeadArg(otherHead.args.last()) shouldBe directive
+            rule.addLastHeadArg(otherHead.args.last()) shouldBe Rule.of(otherHead, rule.body)
+            fact.addLastHeadArg(otherHead.args.last()) shouldBe Fact.of(otherHead)
         }
 
         test("append-head-arg") {
             val otherHead = Struct.of("f", Integer.ONE, Atom.of("b"))
-            assertEquals(
-                directive,
-                directive.appendHeadArg(otherHead.args.last()),
-            )
-            assertEquals(
-                Rule.of(otherHead, rule.body),
-                rule.appendHeadArg(otherHead.args.last()),
-            )
-            assertEquals(
-                Fact.of(otherHead),
-                fact.appendHeadArg(otherHead.args.last()),
-            )
+            directive.appendHeadArg(otherHead.args.last()) shouldBe directive
+            rule.appendHeadArg(otherHead.args.last()) shouldBe Rule.of(otherHead, rule.body)
+            fact.appendHeadArg(otherHead.args.last()) shouldBe Fact.of(otherHead)
         }
 
         test("add-first-head-arg") {
             val otherHead = Struct.of("f", Atom.of("b"), Integer.ONE)
-            assertEquals(
-                directive,
-                directive.addFirstHeadArg(otherHead.args.first()),
-            )
-            assertEquals(
-                Rule.of(otherHead, rule.body),
-                rule.addFirstHeadArg(otherHead.args.first()),
-            )
-            assertEquals(
-                Fact.of(otherHead),
-                fact.addFirstHeadArg(otherHead.args.first()),
-            )
+            directive.addFirstHeadArg(otherHead.args.first()) shouldBe directive
+            rule.addFirstHeadArg(otherHead.args.first()) shouldBe Rule.of(otherHead, rule.body)
+            fact.addFirstHeadArg(otherHead.args.first()) shouldBe Fact.of(otherHead)
         }
 
         test("insert-head-arg") {
             val otherHead = Struct.of("f", Atom.of("b"), Integer.ONE)
-            assertEquals(
-                directive,
-                directive.insertHeadArg(0, otherHead[0]),
-            )
-            assertEquals(
-                Rule.of(otherHead, rule.body),
-                rule.insertHeadArg(0, otherHead[0]),
-            )
-            assertEquals(
-                Fact.of(otherHead),
-                fact.insertHeadArg(0, otherHead[0]),
-            )
+            directive.insertHeadArg(0, otherHead[0]) shouldBe directive
+            rule.insertHeadArg(0, otherHead[0]) shouldBe Rule.of(otherHead, rule.body)
+            fact.insertHeadArg(0, otherHead[0]) shouldBe Fact.of(otherHead)
         }
 
         test("head-inspection") {
-            assertEquals(
-                rule.head.args,
-                rule.headArgs.toList(),
-            )
-            assertEquals(
-                fact.head.args,
-                fact.headArgs.toList(),
-            )
-            assertEquals(
-                rule.head.arity,
-                rule.headArity,
-            )
-            assertEquals(
-                fact.head.arity,
-                fact.headArity,
-            )
+            rule.headArgs.toList() shouldBe rule.head.args
+            fact.headArgs.toList() shouldBe fact.head.args
+            rule.headArity shouldBe rule.head.arity
+            fact.headArity shouldBe fact.head.arity
 
             for (i in 0 until rule.headArity) {
-                assertEquals(rule.head[i], rule.getHeadArg(i))
+                rule.getHeadArg(i) shouldBe rule.head[i]
             }
 
             for (i in 0 until fact.headArity) {
-                assertEquals(fact.head[i], fact.getHeadArg(i))
+                fact.getHeadArg(i) shouldBe fact.head[i]
             }
         }
 
         test("set-body") {
             val otherBody = Tuple.of(Integer.ONE, Integer.of(2), Integer.of(3))
-            assertEquals(
-                Directive.of(otherBody),
-                directive.setBody(otherBody),
-            )
-            assertEquals(
-                Rule.of(rule.head, otherBody),
-                rule.setBody(otherBody),
-            )
-            assertEquals(
-                Rule.of(fact.head, otherBody),
-                fact.setBody(otherBody),
-            )
+            directive.setBody(otherBody) shouldBe Directive.of(otherBody)
+            rule.setBody(otherBody) shouldBe Rule.of(rule.head, otherBody)
+            fact.setBody(otherBody) shouldBe Rule.of(fact.head, otherBody)
         }
 
         test("set-body-items1") {
             val otherBody = Var.of("X")
-            assertEquals(
-                Directive.of(otherBody),
-                directive.setBodyItems(otherBody),
-            )
-            assertEquals(
-                Rule.of(rule.head, otherBody),
-                rule.setBodyItems(otherBody),
-            )
-            assertEquals(
-                Rule.of(fact.head, otherBody),
-                fact.setBodyItems(otherBody),
-            )
+            directive.setBodyItems(otherBody) shouldBe Directive.of(otherBody)
+            rule.setBodyItems(otherBody) shouldBe Rule.of(rule.head, otherBody)
+            fact.setBodyItems(otherBody) shouldBe Rule.of(fact.head, otherBody)
         }
 
         test("set-body-items-n") {
             Scope.empty {
                 val otherBody = tupleOf(varOf("X"), varOf("Y"))
-                assertEquals(
-                    directiveOf(otherBody),
-                    directive.setBodyItems(varOf("X"), varOf("Y")),
-                )
-                assertEquals(
-                    ruleOf(rule.head, otherBody),
-                    rule.setBodyItems(varOf("X"), varOf("Y")),
-                )
-                assertEquals(
-                    ruleOf(fact.head, otherBody),
-                    fact.setBodyItems(varOf("X"), varOf("Y")),
-                )
+                directive.setBodyItems(varOf("X"), varOf("Y")) shouldBe directiveOf(otherBody)
+                rule.setBodyItems(varOf("X"), varOf("Y")) shouldBe ruleOf(rule.head, otherBody)
+                fact.setBodyItems(varOf("X"), varOf("Y")) shouldBe ruleOf(fact.head, otherBody)
             }
         }
 
         test("add-last-body-item") {
             val otherBody = Tuple.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
-            assertEquals(
-                Directive.of(otherBody),
-                directive.addLastBodyItem(otherBody.unfoldedSequence.last()),
-            )
-            assertEquals(
-                Rule.of(rule.head, otherBody),
-                rule.addLastBodyItem(otherBody.unfoldedSequence.last()),
-            )
-            assertEquals(
-                Rule.of(fact.head, Truth.TRUE, otherBody.unfoldedSequence.last()),
-                fact.addLastBodyItem(otherBody.unfoldedSequence.last()),
-            )
+            directive.addLastBodyItem(otherBody.unfoldedSequence.last()) shouldBe Directive.of(otherBody)
+            rule.addLastBodyItem(otherBody.unfoldedSequence.last()) shouldBe Rule.of(rule.head, otherBody)
+            fact.addLastBodyItem(otherBody.unfoldedSequence.last()) shouldBe
+                Rule.of(fact.head, Truth.TRUE, otherBody.unfoldedSequence.last())
         }
 
         test("append-body-item") {
             val otherBody = Tuple.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
-            assertEquals(
-                Directive.of(otherBody),
-                directive.appendBodyItem(otherBody.unfoldedSequence.last()),
-            )
-            assertEquals(
-                Rule.of(rule.head, otherBody),
-                rule.appendBodyItem(otherBody.unfoldedSequence.last()),
-            )
-            assertEquals(
-                Rule.of(fact.head, Truth.TRUE, otherBody.unfoldedSequence.last()),
-                fact.appendBodyItem(otherBody.unfoldedSequence.last()),
-            )
+            directive.appendBodyItem(otherBody.unfoldedSequence.last()) shouldBe Directive.of(otherBody)
+            rule.appendBodyItem(otherBody.unfoldedSequence.last()) shouldBe Rule.of(rule.head, otherBody)
+            fact.appendBodyItem(otherBody.unfoldedSequence.last()) shouldBe
+                Rule.of(fact.head, Truth.TRUE, otherBody.unfoldedSequence.last())
         }
 
         test("add-first-body-item") {
             val otherBody = Tuple.of(Atom.of("c"), Atom.of("a"), Atom.of("b"))
-            assertEquals(
-                Directive.of(otherBody),
-                directive.addFirstBodyItem(otherBody.left),
-            )
-            assertEquals(
-                Rule.of(rule.head, otherBody),
-                rule.addFirstBodyItem(otherBody.left),
-            )
-            assertEquals(
-                Rule.of(fact.head, otherBody.left, Truth.TRUE),
-                fact.addFirstBodyItem(otherBody.left),
-            )
+            directive.addFirstBodyItem(otherBody.left) shouldBe Directive.of(otherBody)
+            rule.addFirstBodyItem(otherBody.left) shouldBe Rule.of(rule.head, otherBody)
+            fact.addFirstBodyItem(otherBody.left) shouldBe Rule.of(fact.head, otherBody.left, Truth.TRUE)
         }
 
         test("insert-body-item") {
             val otherBody = Tuple.of(Atom.of("c"), Atom.of("a"), Atom.of("b"))
-            assertEquals(
-                Directive.of(otherBody),
-                directive.insertBodyItem(0, otherBody.left),
-            )
-            assertEquals(
-                Rule.of(rule.head, otherBody),
-                rule.insertBodyItem(0, otherBody.left),
-            )
-            assertEquals(
-                Rule.of(fact.head, otherBody.left, Truth.TRUE),
-                fact.insertBodyItem(0, otherBody.left),
-            )
+            directive.insertBodyItem(0, otherBody.left) shouldBe Directive.of(otherBody)
+            rule.insertBodyItem(0, otherBody.left) shouldBe Rule.of(rule.head, otherBody)
+            fact.insertBodyItem(0, otherBody.left) shouldBe Rule.of(fact.head, otherBody.left, Truth.TRUE)
         }
 
         test("body-inspection") {
-            assertEquals(
-                directive.bodyAsTuple?.toList(),
-                directive.bodyItems.toList(),
-            )
-            assertEquals(
-                rule.bodyAsTuple?.toList(),
-                rule.bodyItems.toList(),
-            )
-            assertEquals(
-                fact.body,
-                fact.bodyItems.single(),
-            )
-            assertEquals(
-                directive.body.asTuple()?.size,
-                directive.bodySize,
-            )
-            assertEquals(
-                rule.body.asTuple()?.size,
-                rule.bodySize,
-            )
-            assertEquals(
-                1,
-                fact.bodySize,
-            )
+            directive.bodyItems.toList() shouldBe directive.bodyAsTuple?.toList()
+            rule.bodyItems.toList() shouldBe rule.bodyAsTuple?.toList()
+            fact.bodyItems.single() shouldBe fact.body
+            directive.bodySize shouldBe directive.body.asTuple()?.size
+            rule.bodySize shouldBe rule.body.asTuple()?.size
+            fact.bodySize shouldBe 1
 
             for (i in 0 until directive.bodySize) {
-                assertEquals(
+                directive.getBodyItem(i) shouldBe (
                     directive.bodyAsTuple
                         ?.unfoldedSequence
                         ?.drop(i)
-                        ?.first(),
-                    directive.getBodyItem(i),
+                        ?.first()
                 )
             }
 
             for (i in 0 until rule.bodySize) {
-                assertEquals(
+                rule.getBodyItem(i) shouldBe (
                     rule.bodyAsTuple
                         ?.unfoldedSequence
                         ?.drop(i)
-                        ?.first(),
-                    rule.getBodyItem(i),
+                        ?.first()
                 )
             }
 
-            assertEquals(Truth.TRUE, fact.getBodyItem(0))
+            fact.getBodyItem(0) shouldBe Truth.TRUE
         }
     })

@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.exception.error
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils
-import kotlin.test.assertEquals
 
 /**
  * Test class for [InstantiationError]
@@ -17,7 +17,7 @@ class InstantiationErrorSpec :
         val correctTypeFunctor = "instantiation_error"
 
         test("instantiation-error-type-correct") {
-            assertEquals(Atom.of(correctTypeFunctor), underTestError.type)
+            underTestError.type shouldBe Atom.of(correctTypeFunctor)
         }
 
         test("instantiation-error-to-throw-struct-correct") {
@@ -25,6 +25,6 @@ class InstantiationErrorSpec :
         }
 
         test("instantiation-error-type-struct-functor") {
-            assertEquals(correctTypeFunctor, InstantiationError.typeFunctor)
+            InstantiationError.typeFunctor shouldBe correctTypeFunctor
         }
     })

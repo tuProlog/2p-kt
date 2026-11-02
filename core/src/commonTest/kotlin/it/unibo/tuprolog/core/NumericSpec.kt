@@ -1,12 +1,14 @@
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.IntegerUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
 import org.gciatto.kt.math.BigDecimal
-import kotlin.test.assertNotEquals
 
 /**
  * Test class for [Numeric] companion object
@@ -22,7 +24,7 @@ class NumericSpec :
         ) {
             if (loggingOn) println("Object\n\t$actual\nis expected to be equal to\n\t$expected")
             try {
-                kotlin.test.assertEquals(expected, actual, message)
+                withClue(message) { actual shouldBe expected }
             } catch (e: Exception) {
                 if (loggingOn) println(e.message)
                 throw e
@@ -90,10 +92,7 @@ class NumericSpec :
             nameFn = { "integer-not-equal-to-real-even-if-same-value/${it.id}" },
             IntegerUtils.integerCases,
         ) { case ->
-            assertNotEquals<Numeric>(
-                Numeric.of(case.value),
-                Numeric.of(case.value.toDouble()),
-            )
+            Numeric.of(case.value.toDouble()).shouldNotBe<Numeric>(Numeric.of(case.value))
         }
 
         withTests(

@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.libs.io
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import okio.FileNotFoundException
 import okio.Path.Companion.toPath
 import okio.buffer
 import okio.fakefilesystem.FakeFileSystem
 import okio.use
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 /**
  * Exercises [LocalFileSystem] directly, deterministically, against an in-memory
@@ -37,7 +37,7 @@ class LocalFileSystemSpec :
 
             val text = LocalFileSystem.source(path).buffer().use { it.readUtf8() }
 
-            assertEquals("male(james1).\nfemale(catherine).\n", text)
+            text shouldBe "male(james1).\nfemale(catherine).\n"
         }
 
         test("read-bytes-from-existing-file") {
@@ -47,7 +47,7 @@ class LocalFileSystemSpec :
 
             val read = LocalFileSystem.source(path).buffer().use { it.readByteArray() }
 
-            assertEquals(bytes.toList(), read.toList())
+            read.toList() shouldBe bytes.toList()
         }
 
         test("create-and-write-file") {
@@ -55,7 +55,7 @@ class LocalFileSystemSpec :
 
             LocalFileSystem.sink(path).buffer().use { it.writeUtf8("hello") }
 
-            assertEquals("hello", fake.read(path) { readUtf8() })
+            (fake.read(path) { readUtf8() }) shouldBe "hello"
         }
 
         test("overwrite-truncates-existing-file") {
@@ -64,7 +64,7 @@ class LocalFileSystemSpec :
 
             LocalFileSystem.sink(path).buffer().use { it.writeUtf8("short") }
 
-            assertEquals("short", fake.read(path) { readUtf8() })
+            (fake.read(path) { readUtf8() }) shouldBe "short"
         }
 
         test("append-to-existing-file") {
@@ -73,7 +73,7 @@ class LocalFileSystemSpec :
 
             LocalFileSystem.appendingSink(path).buffer().use { it.writeUtf8("def") }
 
-            assertEquals("abcdef", fake.read(path) { readUtf8() })
+            (fake.read(path) { readUtf8() }) shouldBe "abcdef"
         }
 
         test("flush-output") {
@@ -85,7 +85,7 @@ class LocalFileSystemSpec :
             sink.writeUtf8("second")
             sink.close()
 
-            assertEquals("first-second", fake.read(path) { readUtf8() })
+            (fake.read(path) { readUtf8() }) shouldBe "first-second"
         }
 
         test("close-closes-the-underlying-stream") {
@@ -94,17 +94,17 @@ class LocalFileSystemSpec :
 
             sink.close()
 
-            assertFailsWith<IllegalStateException> { sink.writeUtf8("too late") }
+            shouldThrow<IllegalStateException> { sink.writeUtf8("too late") }
         }
 
         test("missing-file-fails-to-open-for-reading") {
-            assertFailsWith<FileNotFoundException> {
+            shouldThrow<FileNotFoundException> {
                 LocalFileSystem.source("/does/not/exist.pl".toPath())
             }
         }
 
         test("invalid-path-fails-to-open-for-writing") {
-            assertFailsWith<FileNotFoundException> {
+            shouldThrow<FileNotFoundException> {
                 LocalFileSystem.sink("/no/such/directory/file.txt".toPath())
             }
         }

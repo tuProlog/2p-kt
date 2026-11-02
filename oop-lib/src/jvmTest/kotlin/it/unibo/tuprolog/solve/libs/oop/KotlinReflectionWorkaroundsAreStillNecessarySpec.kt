@@ -2,11 +2,12 @@
 
 package it.unibo.tuprolog.solve.libs.oop
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class KotlinReflectionWorkaroundsAreStillNecessarySpec :
     FunSpec({
@@ -81,7 +82,7 @@ private inline fun <reified T : Throwable> assertExceptionIsThrown(action: () ->
     } catch (e: Throwable) {
         println("\t... throws ${e::class}: ${e.message}.")
         e.printStackTrace()
-        assertTrue("Expected exception type ${T::class}, actual: ${e::class}") { e is T }
+        withClue("Expected exception type ${T::class}, actual: ${e::class}") { e.shouldBeInstanceOf<T>() }
     }
 }
 

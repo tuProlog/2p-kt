@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.theory.parsing
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -25,19 +29,15 @@ import it.unibo.tuprolog.parser.exceptions.UnexpectedEndOfInputException
 import it.unibo.tuprolog.parser.exceptions.UnexpectedTokenException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedBlockCommentException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedQuotedLiteralException
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 class ClausesParserErrorSpec :
     FunSpec({
         fun assertWrapperMirrorsCause(error: ParseException) {
-            val cause = assertIs<PrologSyntaxException>(error.cause)
-            assertEquals(cause.span.start.line + 1, error.line)
-            assertEquals(cause.span.start.column + 1, error.column)
-            assertEquals(cause.offendingText, error.offendingSymbol)
-            assertEquals(cause.message, error.message)
+            val cause = error.cause.shouldBeInstanceOf<PrologSyntaxException>()
+            error.line shouldBe (cause.span.start.line + 1)
+            error.column shouldBe (cause.span.start.column + 1)
+            error.offendingSymbol shouldBe cause.offendingText
+            error.message shouldBe cause.message
         }
 
         test("syntax-and-lexical-errors-are-translated-with-clause-coordinates") {
@@ -66,20 +66,20 @@ class ClausesParserErrorSpec :
         test("parser-safety-and-ambiguity-errors-are-translated") {
             val depth = ParserOptions.DEFAULT_MAX_NESTING_DEPTH + 1
             val nested = "(".repeat(depth) + "a" + ")".repeat(depth) + "."
-            val nestingError = assertFailsWith<ParseException> { parser.parseClauses(nested) }
-            assertIs<NestingLimitExceededException>(nestingError.cause)
+            val nestingError = shouldThrow<ParseException> { parser.parseClauses(nested) }
+            nestingError.cause.shouldBeInstanceOf<NestingLimitExceededException>()
             assertWrapperMirrorsCause(nestingError)
-            assertEquals(0, nestingError.clauseIndex)
+            nestingError.clauseIndex shouldBe 0
 
             val ambiguousParser =
                 ClausesParser.withOperators(
                     Operator("~", Specifier.FX, 500),
                     Operator("~", Specifier.FY, 500),
                 )
-            val ambiguityError = assertFailsWith<ParseException> { ambiguousParser.parseClauses("~ a.") }
-            assertIs<AmbiguousOperatorUseException>(ambiguityError.cause)
+            val ambiguityError = shouldThrow<ParseException> { ambiguousParser.parseClauses("~ a.") }
+            ambiguityError.cause.shouldBeInstanceOf<AmbiguousOperatorUseException>()
             assertWrapperMirrorsCause(ambiguityError)
-            assertEquals(0, ambiguityError.clauseIndex)
+            ambiguityError.clauseIndex shouldBe 0
 
             val boundedParser =
                 ClausesParserImpl(
@@ -90,10 +90,10 @@ class ClausesParserErrorSpec :
                             maximumRetainedTokens = 3,
                         ),
                 )
-            val bufferError = assertFailsWith<ParseException> { boundedParser.parseClauses("f(a, b, c).") }
-            assertIs<TokenBufferLimitExceededException>(bufferError.cause)
+            val bufferError = shouldThrow<ParseException> { boundedParser.parseClauses("f(a, b, c).") }
+            bufferError.cause.shouldBeInstanceOf<TokenBufferLimitExceededException>()
             assertWrapperMirrorsCause(bufferError)
-            assertEquals(0, bufferError.clauseIndex)
+            bufferError.clauseIndex shouldBe 0
         }
 
         withTests(
@@ -104,24 +104,27 @@ class ClausesParserErrorSpec :
                 InvalidOperatorCase("empty-name", ":- op(500, xfx, '')."),
             ),
         ) { case ->
-            val error = assertFailsWith<ParseException> { parser.parseClauses(case.input) }
+            val error = shouldThrow<ParseException> { parser.parseClauses(case.input) }
 
-            assertEquals(0, error.clauseIndex)
-            assertEquals(1, error.line)
-            assertEquals(1, error.column)
-            assertEquals(case.input, error.input)
-            assertIs<InvalidOperatorDefinitionException>(error.cause)
-            assertTrue(error.offendingSymbol.orEmpty().contains("op"))
+            error.clauseIndex shouldBe 0
+            error.line shouldBe 1
+            error.column shouldBe 1
+            error.input shouldBe case.input
+            error.cause.shouldBeInstanceOf<InvalidOperatorDefinitionException>()
+            error.offendingSymbol
+                .orEmpty()
+                .contains("op")
+                .shouldBeTrue()
         }
 
         test("lazy-parsing-defers-errors-until-the-failing-clause-is-requested") {
             val clauses = parser.parseClausesLazily("first. second. broken(")
             val iterator = clauses.iterator()
 
-            assertEquals("first", (iterator.next() as Fact).head.functor)
-            assertEquals("second", (iterator.next() as Fact).head.functor)
-            val error = assertFailsWith<ParseException> { iterator.hasNext() }
-            assertEquals(2, error.clauseIndex)
+            (iterator.next() as Fact).head.functor shouldBe "first"
+            (iterator.next() as Fact).head.functor shouldBe "second"
+            val error = shouldThrow<ParseException> { iterator.hasNext() }
+            error.clauseIndex shouldBe 2
         }
     })
 
@@ -133,14 +136,14 @@ private inline fun <reified T : PrologSyntaxException> assertTranslatedError(
     line: Int,
     column: Int,
 ) {
-    val error = assertFailsWith<ParseException> { parser.parseClauses(input) }
-    assertEquals(input, error.input)
-    assertEquals(clauseIndex, error.clauseIndex)
-    assertEquals(line, error.line)
-    assertEquals(column, error.column)
-    val cause = assertIs<T>(error.cause)
-    assertEquals(cause.offendingText, error.offendingSymbol)
-    assertEquals(cause.message, error.message)
+    val error = shouldThrow<ParseException> { parser.parseClauses(input) }
+    error.input shouldBe input
+    error.clauseIndex shouldBe clauseIndex
+    error.line shouldBe line
+    error.column shouldBe column
+    val cause = error.cause.shouldBeInstanceOf<T>()
+    error.offendingSymbol shouldBe cause.offendingText
+    error.message shouldBe cause.message
 }
 
 private class InvalidOperatorCase(

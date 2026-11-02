@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.bdd
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertTrue
+import io.kotest.matchers.booleans.shouldBeTrue
 
 class BinaryDecisionDiagramSpec :
     FunSpec({
@@ -50,8 +50,8 @@ class BinaryDecisionDiagramSpec :
                         bddOf(ComparablePair(3, "heads2", 0.6))
                 )
             val prob = solution.probability()
-            assertTrue(prob >= 0.37 - doubleEpsilon)
-            assertTrue(prob <= 0.37 + doubleEpsilon)
+            (prob >= 0.37 - doubleEpsilon).shouldBeTrue()
+            (prob <= 0.37 + doubleEpsilon).shouldBeTrue()
         }
 
         // Test adapted from: https://dtai.cs.kuleuven.be/problog/tutorial/basic/02_bayes.html#probabilistic-clauses
@@ -71,7 +71,7 @@ class BinaryDecisionDiagramSpec :
                         and burglary.not() and earthquake
                 )
             val prob = solution.probability()
-            assertTrue(prob >= 0.58 - doubleEpsilon)
-            assertTrue(prob <= 0.58 + doubleEpsilon)
+            (prob >= 0.58 - doubleEpsilon).shouldBeTrue()
+            (prob <= 0.58 + doubleEpsilon).shouldBeTrue()
         }
     })

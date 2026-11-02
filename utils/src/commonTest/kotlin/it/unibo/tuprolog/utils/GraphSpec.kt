@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.utils
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.utils.graphs.BreadthFirst
 import it.unibo.tuprolog.utils.graphs.DepthFirst
 import it.unibo.tuprolog.utils.graphs.Graph
@@ -10,9 +13,6 @@ import it.unibo.tuprolog.utils.graphs.isAcyclic
 import it.unibo.tuprolog.utils.graphs.isTree
 import it.unibo.tuprolog.utils.graphs.nodeOf
 import it.unibo.tuprolog.utils.graphs.visitOf
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class GraphSpec :
     FunSpec({
@@ -43,12 +43,11 @@ class GraphSpec :
             }
 
         test("creation-unweighted") {
-            assertEquals(6, unweighted.size)
-            assertEquals(7, unweighted.edgesCount)
+            unweighted.size shouldBe 6
+            unweighted.edgesCount shouldBe 7
 
-            assertEquals(unweighted.nodes, listOf("a", "b", "c", "d", "e", "f").map { nodeOf(it) }.toSet())
-            assertEquals(
-                unweighted.edges,
+            unweighted.nodes shouldBe listOf("a", "b", "c", "d", "e", "f").map { nodeOf(it) }.toSet()
+            unweighted.edges shouldBe
                 setOf(
                     edgeOf(nodeOf("a"), nodeOf("b")),
                     edgeOf(nodeOf("a"), nodeOf("c")),
@@ -57,45 +56,43 @@ class GraphSpec :
                     edgeOf(nodeOf("e"), nodeOf("f")),
                     edgeOf(nodeOf("a"), nodeOf("f")),
                     edgeOf(nodeOf("f"), nodeOf("a")),
-                ),
-            )
+                )
 
-            assertTrue(nodeOf("a") in unweighted)
-            assertTrue(nodeOf("b") in unweighted)
-            assertTrue(nodeOf("c") in unweighted)
-            assertTrue(nodeOf("d") in unweighted)
-            assertTrue(nodeOf("e") in unweighted)
-            assertTrue(nodeOf("f") in unweighted)
-            assertFalse(nodeOf("g") in unweighted)
+            (nodeOf("a") in unweighted).shouldBeTrue()
+            (nodeOf("b") in unweighted).shouldBeTrue()
+            (nodeOf("c") in unweighted).shouldBeTrue()
+            (nodeOf("d") in unweighted).shouldBeTrue()
+            (nodeOf("e") in unweighted).shouldBeTrue()
+            (nodeOf("f") in unweighted).shouldBeTrue()
+            (nodeOf("g") in unweighted).shouldBeFalse()
 
-            assertTrue(edgeOf(nodeOf("a"), nodeOf("b")) in unweighted)
-            assertTrue(edgeOf(nodeOf("a"), nodeOf("c")) in unweighted)
-            assertTrue(edgeOf(nodeOf("b"), nodeOf("d")) in unweighted)
-            assertTrue(edgeOf(nodeOf("b"), nodeOf("e")) in unweighted)
-            assertTrue(edgeOf(nodeOf("e"), nodeOf("f")) in unweighted)
-            assertTrue(edgeOf(nodeOf("a"), nodeOf("f")) in unweighted)
-            assertTrue(edgeOf(nodeOf("f"), nodeOf("a")) in unweighted)
-            assertFalse(edgeOf(nodeOf("b"), nodeOf("c")) in unweighted)
-            assertFalse(edgeOf(nodeOf("d"), nodeOf("e")) in unweighted)
+            (edgeOf(nodeOf("a"), nodeOf("b")) in unweighted).shouldBeTrue()
+            (edgeOf(nodeOf("a"), nodeOf("c")) in unweighted).shouldBeTrue()
+            (edgeOf(nodeOf("b"), nodeOf("d")) in unweighted).shouldBeTrue()
+            (edgeOf(nodeOf("b"), nodeOf("e")) in unweighted).shouldBeTrue()
+            (edgeOf(nodeOf("e"), nodeOf("f")) in unweighted).shouldBeTrue()
+            (edgeOf(nodeOf("a"), nodeOf("f")) in unweighted).shouldBeTrue()
+            (edgeOf(nodeOf("f"), nodeOf("a")) in unweighted).shouldBeTrue()
+            (edgeOf(nodeOf("b"), nodeOf("c")) in unweighted).shouldBeFalse()
+            (edgeOf(nodeOf("d"), nodeOf("e")) in unweighted).shouldBeFalse()
 
-            assertTrue(unweighted.containsEdgeAmong(nodeOf("a"), nodeOf("b")))
-            assertTrue(unweighted.containsEdgeAmong(nodeOf("a"), nodeOf("c")))
-            assertTrue(unweighted.containsEdgeAmong(nodeOf("b"), nodeOf("d")))
-            assertTrue(unweighted.containsEdgeAmong(nodeOf("b"), nodeOf("e")))
-            assertTrue(unweighted.containsEdgeAmong(nodeOf("e"), nodeOf("f")))
-            assertTrue(unweighted.containsEdgeAmong(nodeOf("a"), nodeOf("f")))
-            assertTrue(unweighted.containsEdgeAmong(nodeOf("f"), nodeOf("a")))
-            assertFalse(unweighted.containsEdgeAmong(nodeOf("b"), nodeOf("c")))
-            assertFalse(unweighted.containsEdgeAmong(nodeOf("d"), nodeOf("e")))
+            unweighted.containsEdgeAmong(nodeOf("a"), nodeOf("b")).shouldBeTrue()
+            unweighted.containsEdgeAmong(nodeOf("a"), nodeOf("c")).shouldBeTrue()
+            unweighted.containsEdgeAmong(nodeOf("b"), nodeOf("d")).shouldBeTrue()
+            unweighted.containsEdgeAmong(nodeOf("b"), nodeOf("e")).shouldBeTrue()
+            unweighted.containsEdgeAmong(nodeOf("e"), nodeOf("f")).shouldBeTrue()
+            unweighted.containsEdgeAmong(nodeOf("a"), nodeOf("f")).shouldBeTrue()
+            unweighted.containsEdgeAmong(nodeOf("f"), nodeOf("a")).shouldBeTrue()
+            unweighted.containsEdgeAmong(nodeOf("b"), nodeOf("c")).shouldBeFalse()
+            unweighted.containsEdgeAmong(nodeOf("d"), nodeOf("e")).shouldBeFalse()
         }
 
         test("creation-weighted") {
-            assertEquals(6, weighted.size)
-            assertEquals(7, weighted.edgesCount)
+            weighted.size shouldBe 6
+            weighted.edgesCount shouldBe 7
 
-            assertEquals(weighted.nodes, listOf("a", "b", "c", "d", "e", "f").map { nodeOf(it) }.toSet())
-            assertEquals(
-                weighted.edges,
+            weighted.nodes shouldBe listOf("a", "b", "c", "d", "e", "f").map { nodeOf(it) }.toSet()
+            weighted.edges shouldBe
                 setOf(
                     edgeOf(nodeOf("a"), nodeOf("b"), 1),
                     edgeOf(nodeOf("a"), nodeOf("c"), 2),
@@ -104,36 +101,35 @@ class GraphSpec :
                     edgeOf(nodeOf("e"), nodeOf("f"), 6),
                     edgeOf(nodeOf("a"), nodeOf("f"), 3),
                     edgeOf(nodeOf("f"), nodeOf("a"), 3),
-                ),
-            )
+                )
 
-            assertTrue(nodeOf("a") in weighted)
-            assertTrue(nodeOf("b") in weighted)
-            assertTrue(nodeOf("c") in weighted)
-            assertTrue(nodeOf("d") in weighted)
-            assertTrue(nodeOf("e") in weighted)
-            assertTrue(nodeOf("f") in weighted)
-            assertFalse(nodeOf("g") in weighted)
+            (nodeOf("a") in weighted).shouldBeTrue()
+            (nodeOf("b") in weighted).shouldBeTrue()
+            (nodeOf("c") in weighted).shouldBeTrue()
+            (nodeOf("d") in weighted).shouldBeTrue()
+            (nodeOf("e") in weighted).shouldBeTrue()
+            (nodeOf("f") in weighted).shouldBeTrue()
+            (nodeOf("g") in weighted).shouldBeFalse()
 
-            assertTrue(edgeOf(nodeOf("a"), nodeOf("b"), 1) in weighted)
-            assertTrue(edgeOf(nodeOf("a"), nodeOf("c"), 2) in weighted)
-            assertTrue(edgeOf(nodeOf("b"), nodeOf("d"), 4) in weighted)
-            assertTrue(edgeOf(nodeOf("b"), nodeOf("e"), 5) in weighted)
-            assertTrue(edgeOf(nodeOf("e"), nodeOf("f"), 6) in weighted)
-            assertTrue(edgeOf(nodeOf("a"), nodeOf("f"), 3) in weighted)
-            assertTrue(edgeOf(nodeOf("f"), nodeOf("a"), 3) in weighted)
-            assertFalse(edgeOf(nodeOf("b"), nodeOf("c")) in weighted)
-            assertFalse(edgeOf(nodeOf("d"), nodeOf("e")) in weighted)
+            (edgeOf(nodeOf("a"), nodeOf("b"), 1) in weighted).shouldBeTrue()
+            (edgeOf(nodeOf("a"), nodeOf("c"), 2) in weighted).shouldBeTrue()
+            (edgeOf(nodeOf("b"), nodeOf("d"), 4) in weighted).shouldBeTrue()
+            (edgeOf(nodeOf("b"), nodeOf("e"), 5) in weighted).shouldBeTrue()
+            (edgeOf(nodeOf("e"), nodeOf("f"), 6) in weighted).shouldBeTrue()
+            (edgeOf(nodeOf("a"), nodeOf("f"), 3) in weighted).shouldBeTrue()
+            (edgeOf(nodeOf("f"), nodeOf("a"), 3) in weighted).shouldBeTrue()
+            (edgeOf(nodeOf("b"), nodeOf("c")) in weighted).shouldBeFalse()
+            (edgeOf(nodeOf("d"), nodeOf("e")) in weighted).shouldBeFalse()
 
-            assertTrue(weighted.containsEdgeAmong(nodeOf("a"), nodeOf("b")))
-            assertTrue(weighted.containsEdgeAmong(nodeOf("a"), nodeOf("c")))
-            assertTrue(weighted.containsEdgeAmong(nodeOf("b"), nodeOf("d")))
-            assertTrue(weighted.containsEdgeAmong(nodeOf("b"), nodeOf("e")))
-            assertTrue(weighted.containsEdgeAmong(nodeOf("e"), nodeOf("f")))
-            assertTrue(weighted.containsEdgeAmong(nodeOf("a"), nodeOf("f")))
-            assertTrue(weighted.containsEdgeAmong(nodeOf("f"), nodeOf("a")))
-            assertFalse(weighted.containsEdgeAmong(nodeOf("b"), nodeOf("c")))
-            assertFalse(weighted.containsEdgeAmong(nodeOf("d"), nodeOf("e")))
+            weighted.containsEdgeAmong(nodeOf("a"), nodeOf("b")).shouldBeTrue()
+            weighted.containsEdgeAmong(nodeOf("a"), nodeOf("c")).shouldBeTrue()
+            weighted.containsEdgeAmong(nodeOf("b"), nodeOf("d")).shouldBeTrue()
+            weighted.containsEdgeAmong(nodeOf("b"), nodeOf("e")).shouldBeTrue()
+            weighted.containsEdgeAmong(nodeOf("e"), nodeOf("f")).shouldBeTrue()
+            weighted.containsEdgeAmong(nodeOf("a"), nodeOf("f")).shouldBeTrue()
+            weighted.containsEdgeAmong(nodeOf("f"), nodeOf("a")).shouldBeTrue()
+            weighted.containsEdgeAmong(nodeOf("b"), nodeOf("c")).shouldBeFalse()
+            weighted.containsEdgeAmong(nodeOf("d"), nodeOf("e")).shouldBeFalse()
         }
 
         test("limited-pre-order-depth-first-search") {
@@ -151,8 +147,8 @@ class GraphSpec :
                     visitOf(3, nodeOf("c")),
                     visitOf(3, nodeOf("f")),
                 )
-            assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 3), nodeOf("a")).toList())
-            assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 3), nodeOf("a")).toList())
+            unweighted.asSequence(DepthFirst(maxDepth = 3), nodeOf("a")).toList() shouldBe expected
+            weighted.asSequence(DepthFirst(maxDepth = 3), nodeOf("a")).toList() shouldBe expected
         }
 
         test("pre-order-depth-first-search-on-graph-with-cycles") {
@@ -228,8 +224,8 @@ class GraphSpec :
                     visitOf(9, nodeOf("c")),
                     visitOf(9, nodeOf("f")),
                 )
-            assertEquals(expected, unweighted.asSequence(DepthFirst(maxDepth = 9), nodeOf("a")).toList())
-            assertEquals(expected, weighted.asSequence(DepthFirst(maxDepth = 9), nodeOf("a")).toList())
+            unweighted.asSequence(DepthFirst(maxDepth = 9), nodeOf("a")).toList() shouldBe expected
+            weighted.asSequence(DepthFirst(maxDepth = 9), nodeOf("a")).toList() shouldBe expected
         }
 
         test("limited-post-order-depth-first-search") {
@@ -247,14 +243,8 @@ class GraphSpec :
                     visitOf(1, nodeOf("f")),
                     visitOf(0, nodeOf("a")),
                 )
-            assertEquals(
-                expected,
-                unweighted.asSequence(DepthFirst(maxDepth = 3, postOrder = true), nodeOf("a")).toList(),
-            )
-            assertEquals(
-                expected,
-                weighted.asSequence(DepthFirst(maxDepth = 3, postOrder = true), nodeOf("a")).toList(),
-            )
+            unweighted.asSequence(DepthFirst(maxDepth = 3, postOrder = true), nodeOf("a")).toList() shouldBe expected
+            weighted.asSequence(DepthFirst(maxDepth = 3, postOrder = true), nodeOf("a")).toList() shouldBe expected
         }
 
         test("limited-breadth-first-search") {
@@ -272,8 +262,8 @@ class GraphSpec :
                     visitOf(3, nodeOf("c")),
                     visitOf(3, nodeOf("f")),
                 )
-            assertEquals(expected, unweighted.asSequence(BreadthFirst(maxDepth = 3), nodeOf("a")).toList())
-            assertEquals(expected, weighted.asSequence(BreadthFirst(maxDepth = 3), nodeOf("a")).toList())
+            unweighted.asSequence(BreadthFirst(maxDepth = 3), nodeOf("a")).toList() shouldBe expected
+            weighted.asSequence(BreadthFirst(maxDepth = 3), nodeOf("a")).toList() shouldBe expected
         }
 
         test("breadth-first-search-on-graph-with-cycles") {
@@ -349,18 +339,18 @@ class GraphSpec :
                     visitOf(9, nodeOf("c")),
                     visitOf(9, nodeOf("f")),
                 )
-            assertEquals(expected, unweighted.asSequence(BreadthFirst(maxDepth = 9), nodeOf("a")).toList())
-            assertEquals(expected, weighted.asSequence(BreadthFirst(maxDepth = 9), nodeOf("a")).toList())
+            unweighted.asSequence(BreadthFirst(maxDepth = 9), nodeOf("a")).toList() shouldBe expected
+            weighted.asSequence(BreadthFirst(maxDepth = 9), nodeOf("a")).toList() shouldBe expected
         }
 
         test("remove-node-immutable") {
             val withoutA = weighted - nodeOf("a")
-            assertTrue(withoutA.edges.flatMap { listOf(it.source, it.destination) }.none { it == nodeOf("a") })
+            (withoutA.edges.flatMap { listOf(it.source, it.destination) }.none { it == nodeOf("a") }).shouldBeTrue()
         }
 
         test("remove-node-mutable") {
             val withoutA = unweighted.toMutable().also { it -= nodeOf("a") }
-            assertTrue(withoutA.edges.flatMap { listOf(it.source, it.destination) }.none { it == nodeOf("a") })
+            (withoutA.edges.flatMap { listOf(it.source, it.destination) }.none { it == nodeOf("a") }).shouldBeTrue()
         }
 
         test("tree-check") {
@@ -370,7 +360,7 @@ class GraphSpec :
                     this -= edgeOf(nodeOf("f"), nodeOf("a"))
                 }
 
-            assertTrue(tree.isTree)
+            tree.isTree.shouldBeTrue()
         }
 
         test("acyclic-check") {
@@ -379,7 +369,7 @@ class GraphSpec :
                     this -= edgeOf(nodeOf("f"), nodeOf("a"))
                 }
 
-            assertTrue(tree.isAcyclic)
+            tree.isAcyclic.shouldBeTrue()
         }
 
         /** a -1-> b, a -2-> c, b -3-> c */
@@ -397,23 +387,23 @@ class GraphSpec :
             graph - edgeOf(nodeOf("a"), nodeOf("b"), 1)
             graph + edgeOf(nodeOf("a"), nodeOf("d"), 4)
             graph + nodeOf("a")
-            assertEquals(before, graph.edges)
+            graph.edges shouldBe before
         }
 
         test("immutable-edits/adding-an-edge-keeps-the-other-edges-of-its-source") {
             val graph = triangle() + edgeOf(nodeOf("a"), nodeOf("d"), 4)
-            assertEquals(setOf("b", "c", "d"), graph.outgoingEdges(nodeOf("a")).map { it.destination.value }.toSet())
-            assertTrue(nodeOf("d") in graph)
+            (graph.outgoingEdges(nodeOf("a")).map { it.destination.value }.toSet()) shouldBe setOf("b", "c", "d")
+            (nodeOf("d") in graph).shouldBeTrue()
         }
 
         test("immutable-edits/adding-an-existing-node-keeps-its-edges") {
-            assertEquals(2, (triangle() + nodeOf("a")).outdegree(nodeOf("a")))
+            (triangle() + nodeOf("a")).outdegree(nodeOf("a")) shouldBe 2
         }
 
         test("immutable-edits/removing-an-edge") {
             val graph = triangle() - edgeOf(nodeOf("a"), nodeOf("b"), 1)
-            assertFalse(graph.containsEdgeAmong(nodeOf("a"), nodeOf("b")))
-            assertEquals(2, graph.edgesCount)
+            graph.containsEdgeAmong(nodeOf("a"), nodeOf("b")).shouldBeFalse()
+            graph.edgesCount shouldBe 2
         }
 
         test("copies/editing-a-mutable-copy-leaves-the-original-untouched") {
@@ -421,7 +411,7 @@ class GraphSpec :
             val before = graph.edges
             graph.toMutable().also { it += edgeOf(nodeOf("a"), nodeOf("d"), 4) }
             graph.toMutable().also { it -= nodeOf("c") }
-            assertEquals(before, graph.edges)
+            graph.edges shouldBe before
         }
 
         test("copies/editing-a-mutable-graph-leaves-its-copies-untouched") {
@@ -431,30 +421,28 @@ class GraphSpec :
             val before = immutable.edges
             mutable += edgeOf(nodeOf("a"), nodeOf("d"), 4)
             mutable -= edgeOf(nodeOf("b"), nodeOf("c"), 3)
-            assertEquals(before, clone.edges)
-            assertEquals(before, immutable.edges)
+            clone.edges shouldBe before
+            immutable.edges shouldBe before
         }
 
         test("queries/degrees-and-edges") {
             val graph = triangle()
-            assertEquals(2, graph.indegree(nodeOf("c")))
-            assertEquals(2, graph.outdegree(nodeOf("a")))
-            assertEquals(0, graph.outdegree(nodeOf("z")))
-            assertEquals(setOf("a", "b"), graph.ingoingEdges(nodeOf("c")).map { it.source.value }.toSet())
-            assertEquals(3, graph[nodeOf("b") to nodeOf("c")])
-            assertTrue(edgeOf(nodeOf("a"), nodeOf("b"), 1) in graph)
-            assertFalse(edgeOf(nodeOf("a"), nodeOf("b"), 9) in graph)
-            assertEquals(3, graph.size)
-            assertEquals(graph.edges, graph.toSet())
+            graph.indegree(nodeOf("c")) shouldBe 2
+            graph.outdegree(nodeOf("a")) shouldBe 2
+            graph.outdegree(nodeOf("z")) shouldBe 0
+            (graph.ingoingEdges(nodeOf("c")).map { it.source.value }.toSet()) shouldBe setOf("a", "b")
+            graph[nodeOf("b") to nodeOf("c")] shouldBe 3
+            (edgeOf(nodeOf("a"), nodeOf("b"), 1) in graph).shouldBeTrue()
+            (edgeOf(nodeOf("a"), nodeOf("b"), 9) in graph).shouldBeFalse()
+            graph.size shouldBe 3
+            graph.toSet() shouldBe graph.edges
         }
 
         test("queries/equality-and-rendering") {
-            assertEquals(triangle(), triangle())
-            assertEquals(triangle().hashCode(), triangle().hashCode())
-            assertTrue("a -1-> b" in triangle().toString())
-            assertEquals(
-                listOf("a", "b", "c", "c"),
-                triangle().asIterable(DepthFirst(), nodeOf("a")).map { it.node.value }.toList(),
-            )
+            triangle() shouldBe triangle()
+            triangle().hashCode() shouldBe triangle().hashCode()
+            ("a -1-> b" in triangle().toString()).shouldBeTrue()
+            (triangle().asIterable(DepthFirst(), nodeOf("a")).map { it.node.value }.toList()) shouldBe
+                listOf("a", "b", "c", "c")
         }
     })

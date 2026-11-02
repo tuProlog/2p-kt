@@ -53,8 +53,7 @@ and mostly irrelevant. A few habits that generalize beyond this repo:
 
 ## Tests: Kotest conventions
 
-Every Kotlin test is a Kotest 6 spec (issue #1017). `kotlin.test` remains only as an assertion library
-(`assertEquals`, `assertTrue`, …), which Kotest leaves are free to use.
+Every Kotlin test is a Kotest 6 spec (issue #1017), and asserts with Kotest only: `kotlin.test` is not used at all.
 
 - **Wiring is automatic.** The root `build.gradle.kts` applies KSP and the Kotest Gradle plugin to every
   multiplatform module with test sources, and adds `kotest-framework-engine` and `kotest-assertions-core`
@@ -78,6 +77,18 @@ Every Kotlin test is a Kotest 6 spec (issue #1017). `kotlin.test` remains only a
   `assertEqualsUsingVariablesSimpleNames`, test-solve's `assertSolutionEquals`, …). Their equality notions
   differ on purpose, so don't collapse them into `shouldBe`. Use Kotest matchers for generic checks. Decide
   explicitly between sequence, multiset and set equality for solutions, and never relax the first two.
+- **Kotest assertions, not `kotlin.test`:** `actual shouldBe expected` (note the order), `shouldNotBe`,
+  `shouldBeSameInstanceAs`, `shouldBeNull()`/`shouldNotBeNull()`, `shouldBeInstanceOf<T>()`, `shouldThrow<E> { }`,
+  `withClue(message) { }`, `io.kotest.assertions.fail(message)`. Prefer a matcher that prints both sides
+  (`shouldBe`, `shouldContain`, `shouldBeEmpty`, …) over `(condition).shouldBeTrue()`, which only says "expected true".
+  Where `kotlin.test` and Kotest differ:
+  - `shouldBe` is not `equals()` for every type: numbers are compared as IEEE values (`NaN shouldBe NaN` fails, `1
+    shouldBe 1L` passes), exceptions by class and message, and sequences not at all (it throws). Compare a sequence
+    by content (`toList()`) or identity (`shouldBeSameInstanceAs`), and use `==` where `equals()` is the point.
+  - `shouldBeTrue()` has no contract, so `(x is T).shouldBeTrue()` doesn't smart-cast `x`. `shouldBeInstanceOf<T>()`
+    and `shouldNotBeNull()` do.
+  - Kotest matchers are extension functions, which Kotlin/JS can't call on a `dynamic` value: assign it to a typed
+    local first (`val x: Any? = dynamicValue`).
 - **Shared solver behaviours are Kotest factories** in `:test-solve` (`fun xContract(solverFactory, disabled) =
   contract(solverFactory, disabled) { ... }`, see `Contract.kt`). Inside, `case(id) { query yields { listOf(it.yes()) } }`
   is one query on a fresh solver with default built-ins, compared as an exact solution sequence. Anything else
@@ -93,8 +104,7 @@ Every Kotlin test is a Kotest 6 spec (issue #1017). `kotlin.test` remains only a
   the test has already passed.
 - **Java tests** (`*.java`) can't be Kotest specs. They stay JUnit Jupiter tests (`org.junit.jupiter.api.*`), still named `<Subject>Spec`; a shared base class is a `<Subject>Contract`.
 - **Guard:** every module's `check` runs `verifyTestImports` (root `build.gradle.kts`), which fails on
-  `kotlin.test.Test`/`Ignore`/`BeforeTest`/`AfterTest`, `org.junit.*` or `kotlinx.coroutines.test.runTest` imports
-  in Kotlin sources. detekt can't enforce this: kt-mpp's detekt tasks don't scan `commonMain`/`commonTest`.
+  any `kotlin.test.*`, `org.junit.*` or `kotlinx.coroutines.test.runTest` import in Kotlin sources. detekt can't enforce this: kt-mpp's detekt tasks don't scan `commonMain`/`commonTest`.
 - **Running one spec or case:** pass a fully qualified name to the *platform* task, e.g.
   `:core:jvmTest --tests 'it.unibo.tuprolog.core.IndicatorSpec'`, or
   `--tests 'pkg.Spec.context -- leaf'` for one nested case. Leading wildcards (`'*Spec'`) match nothing.

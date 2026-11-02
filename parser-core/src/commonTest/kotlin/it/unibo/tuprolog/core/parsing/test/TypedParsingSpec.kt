@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.core.parsing.test
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Constant
@@ -34,9 +38,6 @@ import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.core.parsing.parseAsTerm
 import it.unibo.tuprolog.core.parsing.parseAsVar
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
 
 /** `++` is not a default operator, so inputs using it only parse when an operator set is passed explicitly. */
@@ -262,7 +263,7 @@ private fun assertParsedAs(
     expected: Term,
     actual: Term,
 ) {
-    assertTrue(type.isInstance(actual), "$actual is not a ${type.simpleName}")
+    withClue("$actual is not a ${type.simpleName}") { type.isInstance(actual).shouldBeTrue() }
     assertTermsAreEqual(expected, actual)
 }
 
@@ -281,32 +282,32 @@ class TypedParsingSpec :
 
         withTests(nameFn = { "${it.id}/rejects-other-types" }, entryCases.filter { it.kind.mismatch != null }) { case ->
             val kind = case.kind
-            val error = assertFailsWith<InvalidTermTypeException> { kind.parse(case.entry, kind.mismatch!!, null) }
-            assertEquals(kind.type, error.type)
+            val error = shouldThrow<InvalidTermTypeException> { kind.parse(case.entry, kind.mismatch!!, null) }
+            error.type shouldBe kind.type
         }
 
         test("clause/promotes-a-plain-struct-to-a-fact") {
-            assertEquals(Fact.of(Struct.of("p", Atom.of("a"))), parser.parseClause("p(a)"))
-            assertEquals(Fact.of(Struct.of("p", Atom.of("a"))), "p(a)".parseAsClause())
+            parser.parseClause("p(a)") shouldBe Fact.of(Struct.of("p", Atom.of("a")))
+            "p(a)".parseAsClause() shouldBe Fact.of(Struct.of("p", Atom.of("a")))
         }
 
         test("atom/bare-operator-as-argument") {
-            assertEquals(Struct.of("f", Atom.of("+")), parser.parseTerm("f(+)"))
-            assertEquals(Struct.of("f", Atom.of("-"), Atom.of("=")), parser.parseTerm("f(-, =)"))
-            assertEquals(LogicList.of(Atom.of("+"), Atom.of("*")), parser.parseTerm("[+, *]"))
-            assertEquals(Struct.of("=", Atom.of("x"), Atom.of("-")), parser.parseTerm("x = -"))
+            parser.parseTerm("f(+)") shouldBe Struct.of("f", Atom.of("+"))
+            parser.parseTerm("f(-, =)") shouldBe Struct.of("f", Atom.of("-"), Atom.of("="))
+            parser.parseTerm("[+, *]") shouldBe LogicList.of(Atom.of("+"), Atom.of("*"))
+            parser.parseTerm("x = -") shouldBe Struct.of("=", Atom.of("x"), Atom.of("-"))
         }
 
         test("parsers-with-operators-use-them-by-default") {
             val plusPlus = Operator("++", Specifier.XFX, 700)
             val expected = Struct.of("++", Atom.of("a"), Atom.of("b"))
-            assertEquals(expected, TermParser.withOperators(plusPlus).parseTerm("a ++ b"))
-            assertEquals(expected, TermParser.withOperators(OperatorSet(plusPlus)).parseTerm("a ++ b"))
+            TermParser.withOperators(plusPlus).parseTerm("a ++ b") shouldBe expected
+            TermParser.withOperators(OperatorSet(plusPlus)).parseTerm("a ++ b") shouldBe expected
         }
 
         test("parsers-allocate-variables-in-the-given-scope") {
             val scope = Scope.of("X")
             val parsed = TermParser.withDefaultOperators(scope).parseStruct("f(X)")
-            assertEquals(scope.varOf("X"), parsed[0])
+            parsed[0] shouldBe scope.varOf("X")
         }
     })

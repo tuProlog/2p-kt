@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.integrationtests
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -10,7 +11,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllVsAll
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNoEqualities
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils.assertIsTruth
-import kotlin.test.assertTrue
 
 private class FalseCreationCase(
     val id: String,
@@ -34,7 +34,7 @@ class FalseSpec :
         withTests(nameFn = { "creates-false/${it.id}" }, creationCases) { case ->
             val created = case.create()
             assertIsTruth(created)
-            assertTrue(created.isFail)
+            created.isFail.shouldBeTrue()
         }
 
         test("equality") {

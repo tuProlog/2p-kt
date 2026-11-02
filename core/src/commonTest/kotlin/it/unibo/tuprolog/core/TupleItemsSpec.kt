@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
+import io.kotest.matchers.shouldBe
 import kotlin.collections.List as KtList
 
 class TupleItemsSpec :
@@ -10,13 +10,13 @@ class TupleItemsSpec :
 
         test("well-formed") {
             Tuple.of(nums).run {
-                assertEquals(nums, unfoldedList)
-                assertEquals(nums, unfoldedArray.toList())
-                assertEquals(nums, unfoldedSequence.toList())
-                assertEquals(nums, toList())
-                assertEquals(nums, toArray().toList())
-                assertEquals(nums, toSequence().toList())
-                assertEquals(nums, items.toList())
+                unfoldedList shouldBe nums
+                unfoldedArray.toList() shouldBe nums
+                unfoldedSequence.toList() shouldBe nums
+                toList() shouldBe nums
+                toArray().toList() shouldBe nums
+                toSequence().toList() shouldBe nums
+                items.toList() shouldBe nums
             }
         }
     })

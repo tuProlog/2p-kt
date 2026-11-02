@@ -2,10 +2,10 @@ package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.testutils.StructUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 /**
  * Test class for [Substitution.Fail] and [Substitution]
@@ -17,43 +17,43 @@ class SubstitutionFailSpec :
         val failedSubstitution = Substitution.failed()
 
         test("failed-substitution-is-empty") {
-            assertTrue(failedSubstitution.isEmpty())
+            failedSubstitution.isEmpty().shouldBeTrue()
         }
 
         test("is-failed-is-true") {
-            assertTrue(failedSubstitution.isFailed)
+            failedSubstitution.isFailed.shouldBeTrue()
         }
 
         test("is-success-is-false") {
-            assertFalse(failedSubstitution.isSuccess)
+            failedSubstitution.isSuccess.shouldBeFalse()
         }
 
         withTests(nameFn = { "apply-to-returns-null/${it.id}" }, StructUtils.mixedStructCases) { case ->
-            assertEquals(null, failedSubstitution.applyTo(Struct.of(case.functor, case.args)))
+            failedSubstitution.applyTo(Struct.of(case.functor, case.args)) shouldBe null
         }
 
         test("failed-substitution-plus-other-substitution-returns-always-failed-substitution") {
-            assertEquals(failedSubstitution, failedSubstitution + Substitution.of("A", Truth.TRUE))
-            assertEquals(failedSubstitution, Substitution.of("A", Truth.TRUE) + failedSubstitution)
+            (failedSubstitution + Substitution.of("A", Truth.TRUE)) shouldBe failedSubstitution
+            (Substitution.of("A", Truth.TRUE) + failedSubstitution) shouldBe failedSubstitution
         }
 
         test("failed-substitution-minus-other-substitution-keys-returns-always-failed-substitution") {
-            assertEquals(failedSubstitution, failedSubstitution - Substitution.empty().keys)
-            assertEquals(failedSubstitution, failedSubstitution - listOf(Var.anonymous()))
+            (failedSubstitution - Substitution.empty().keys) shouldBe failedSubstitution
+            (failedSubstitution - listOf(Var.anonymous())) shouldBe failedSubstitution
         }
 
         test("failed-substitution-minus-other-substitution-returns-always-failed-substitution") {
-            assertEquals(failedSubstitution, failedSubstitution - Substitution.empty())
-            assertEquals(failedSubstitution, failedSubstitution - failedSubstitution)
+            (failedSubstitution - Substitution.empty()) shouldBe failedSubstitution
+            (failedSubstitution - failedSubstitution) shouldBe failedSubstitution
         }
 
         test("failed-substitution-filtering-entries-returns-always-failed-substitution") {
-            assertEquals(failedSubstitution, failedSubstitution.filter { (_, _) -> true })
-            assertEquals(failedSubstitution, failedSubstitution.filter { (_, _) -> false })
+            (failedSubstitution.filter { (_, _) -> true }) shouldBe failedSubstitution
+            (failedSubstitution.filter { (_, _) -> false }) shouldBe failedSubstitution
         }
 
         test("failed-substitution-filtering-with-parameters-predicate-returns-always-failed-substitution") {
-            assertEquals(failedSubstitution, failedSubstitution.filter { _, _ -> true })
-            assertEquals(failedSubstitution, failedSubstitution.filter { _, _ -> false })
+            (failedSubstitution.filter { _, _ -> true }) shouldBe failedSubstitution
+            (failedSubstitution.filter { _, _ -> false }) shouldBe failedSubstitution
         }
     })

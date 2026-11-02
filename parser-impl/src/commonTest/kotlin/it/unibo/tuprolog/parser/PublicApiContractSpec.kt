@@ -1,6 +1,13 @@
 package it.unibo.tuprolog.parser
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.parser.exceptions.PrologSyntaxException
 import it.unibo.tuprolog.parser.exceptions.UnexpectedTokenException
 import it.unibo.tuprolog.parser.operators.Associativity
@@ -10,12 +17,6 @@ import it.unibo.tuprolog.parser.sources.SourceText
 import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
 import it.unibo.tuprolog.parser.tree.StructureNode
 import it.unibo.tuprolog.parser.tree.SyntaxKind
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class PublicApiContractSpec :
     FunSpec({
@@ -39,11 +40,11 @@ class PublicApiContractSpec :
             val input = testLexer.lex(SourceText("foo\nbar", "fragment", origin))
             val tokens = input.significantTokens()
 
-            assertEquals("fragment", input.source.id)
-            assertEquals(origin, tokens[0].span.start)
-            assertEquals(SourcePosition(103, 7, 14), tokens[0].span.endExclusive)
-            assertEquals(SourcePosition(104, 8, 0), tokens[1].span.start)
-            assertEquals(SourcePosition(107, 8, 3), tokens[1].span.endExclusive)
+            input.source.id shouldBe "fragment"
+            tokens[0].span.start shouldBe origin
+            tokens[0].span.endExclusive shouldBe SourcePosition(103, 7, 14)
+            tokens[1].span.start shouldBe SourcePosition(104, 8, 0)
+            tokens[1].span.endExclusive shouldBe SourcePosition(107, 8, 3)
         }
 
         test("source-text-and-streaming-source-agree-at-every-cr-lf-offset") {
@@ -52,61 +53,86 @@ class PublicApiContractSpec :
             val streamed = testLexer.lex(chunksOf(text, 1)).materialize().source
 
             for (offset in 0..text.length) {
-                assertEquals(materialized.positionAt(offset), streamed.positionAt(offset), "offset $offset")
+                withClue("offset $offset") { streamed.positionAt(offset) shouldBe materialized.positionAt(offset) }
             }
         }
 
         test("session-parses-multiple-terms-incrementally") {
             val session = testParser.openSession(lex("first. second. third"))
 
-            assertEquals("first", assertIs<StructureNode>(assertNotNull(session.parseNextTerm()).root).functor)
-            assertEquals("second", assertIs<StructureNode>(assertNotNull(session.parseNextTerm()).root).functor)
-            assertEquals("third", assertIs<StructureNode>(assertNotNull(session.parseNextTerm()).root).functor)
-            assertTrue(session.isAtEnd)
-            assertNull(session.parseNextTerm())
+            (
+                session
+                    .parseNextTerm()
+                    .shouldNotBeNull()
+                    .root
+                    .shouldBeInstanceOf<StructureNode>()
+                    .functor
+            ) shouldBe
+                "first"
+            (
+                session
+                    .parseNextTerm()
+                    .shouldNotBeNull()
+                    .root
+                    .shouldBeInstanceOf<StructureNode>()
+                    .functor
+            ) shouldBe
+                "second"
+            (
+                session
+                    .parseNextTerm()
+                    .shouldNotBeNull()
+                    .root
+                    .shouldBeInstanceOf<StructureNode>()
+                    .functor
+            ) shouldBe
+                "third"
+            session.isAtEnd.shouldBeTrue()
+            session.parseNextTerm().shouldBeNull()
         }
 
         test("session-term-requires-a-separator-unless-at-end-of-input") {
             val session = testParser.openSession(lex("first second."))
-            assertFailsWith<UnexpectedTokenException> { session.parseNextTerm() }
-            assertEquals(SourcePosition(0, 0, 0), session.currentPosition)
+            shouldThrow<UnexpectedTokenException> { session.parseNextTerm() }
+            session.currentPosition shouldBe SourcePosition(0, 0, 0)
         }
 
         test("session-term-uses-mutable-operator-table") {
             val session = testParser.openSession(lex("a ++ b. c ++ d."))
             session.operators.define("++", Associativity.YFX, 500)
 
-            val first = assertIs<OperatorExpressionNode>(assertNotNull(session.parseNextTerm()).root)
-            assertEquals("++", first.operator.definition.name)
+            val first =
+                session
+                    .parseNextTerm()
+                    .shouldNotBeNull()
+                    .root
+                    .shouldBeInstanceOf<OperatorExpressionNode>()
+            first.operator.definition.name shouldBe "++"
             session.operators.removeAll("++")
-            assertFailsWith<UnexpectedTokenException> { session.parseNextTerm() }
+            shouldThrow<UnexpectedTokenException> { session.parseNextTerm() }
         }
 
         test("parser-entry-points-have-distinct-contracts") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
 
-            assertEquals(SyntaxKind.STRUCTURE, testParser.parseTerm(lex("a.")).root.kind)
-            assertFailsWith<UnexpectedTokenException> { testParser.parseTerm(lex("a + b"), operators) }
-            assertEquals(
-                SyntaxKind.INFIX_OPERATOR_EXPRESSION,
-                testParser.parseExpression(lex("a + b."), operators).root.kind,
-            )
-            assertEquals(SyntaxKind.CLAUSE, testParser.parseClause(lex("a + b."), operators).root.kind)
-            assertEquals(
-                2,
+            testParser.parseTerm(lex("a.")).root.kind shouldBe SyntaxKind.STRUCTURE
+            shouldThrow<UnexpectedTokenException> { testParser.parseTerm(lex("a + b"), operators) }
+            testParser.parseExpression(lex("a + b."), operators).root.kind shouldBe SyntaxKind.INFIX_OPERATOR_EXPRESSION
+            testParser.parseClause(lex("a + b."), operators).root.kind shouldBe SyntaxKind.CLAUSE
+            (
                 testParser
                     .parseTheory(lex("a. b."))
-                    .root.clauses.size,
-            )
+                    .root.clauses.size
+            ) shouldBe 2
         }
 
         test("empty-theory-is-valid-but-empty-term-is-not") {
-            assertTrue(
+            (
                 testParser
                     .parseTheory(lex("  % comment\n"))
                     .root.clauses
-                    .isEmpty(),
-            )
-            assertFailsWith<PrologSyntaxException> { testParser.parseExpression(lex("  % comment\n")) }
+                    .isEmpty()
+            ).shouldBeTrue()
+            shouldThrow<PrologSyntaxException> { testParser.parseExpression(lex("  % comment\n")) }
         }
     })

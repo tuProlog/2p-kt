@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.prototypes
 
 import io.kotest.core.spec.style.funSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.ClauseMultiSet
 import it.unibo.tuprolog.collections.RetrieveResult
@@ -10,7 +11,6 @@ import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.utils.permutations
-import kotlin.test.assertEquals
 
 fun clauseMultiSetTests(
     emptyGenerator: () -> ClauseMultiSet,
@@ -51,16 +51,16 @@ fun clauseMultiSetTests(
         val count = collectionGenerator(clauses).count(presentClause)
         val count2 = collectionGenerator(clauses + presentClause).count(presentClause)
 
-        assertEquals(1, count)
-        assertEquals(2, count2)
+        count shouldBe 1
+        count2 shouldBe 2
     }
 
     test("counting-on-absent-clause-answer-zero") {
         val count = collectionGenerator(clauses).count(absentClause)
         val count2 = emptyCollection.count(absentClause)
 
-        assertEquals(0, count)
-        assertEquals(0, count2)
+        count shouldBe 0
+        count2 shouldBe 0
     }
 
     test("get-with-present-clause-returns-the-correct-sequence") {
@@ -72,7 +72,7 @@ fun clauseMultiSetTests(
     test("get-with-absent-clause-returns-an-empty-sequence") {
         val result = collectionGenerator(clauses)[absentClause]
 
-        assertEquals(emptyList(), result.toList())
+        result.toList() shouldBe emptyList()
     }
 
     test("equals-is-order-independent") {
@@ -82,10 +82,10 @@ fun clauseMultiSetTests(
 
         val perm = actualClauses.permutations().iterator()
 
-        assertEquals(tester, collectionGenerator(perm.next()))
+        collectionGenerator(perm.next()) shouldBe tester
 
         while (perm.hasNext()) {
-            assertEquals(tester, collectionGenerator(perm.next()))
+            collectionGenerator(perm.next()) shouldBe tester
         }
     }
 
@@ -94,9 +94,6 @@ fun clauseMultiSetTests(
 
         val permutations = actualClauses.permutations().toList()
 
-        assertEquals(
-            1,
-            permutations.map { collectionGenerator(it) }.toSet().size,
-        )
+        (permutations.map { collectionGenerator(it) }.toSet().size) shouldBe 1
     }
 }

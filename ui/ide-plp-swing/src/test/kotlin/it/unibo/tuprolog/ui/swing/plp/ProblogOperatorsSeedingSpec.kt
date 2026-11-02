@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.ui.swing.plp
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.plp.plpFeatureState
 import it.unibo.tuprolog.ui.gui.plp.plpSolverFactoryProfile
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
-import kotlin.test.assertTrue
 
 /**
  * The ProbLog solver profile's `::` operator must be known before any solver session/resolution ever runs (see
@@ -25,6 +25,6 @@ class ProblogOperatorsSeedingSpec :
                     setOf(SolverCapabilities.CANCELLATION),
                     Solution::plpFeatureState,
                 )
-            assertTrue(profile.defaultOperators.any { it.name == "::" })
+            (profile.defaultOperators.any { it.name == "::" }).shouldBeTrue()
         }
     })

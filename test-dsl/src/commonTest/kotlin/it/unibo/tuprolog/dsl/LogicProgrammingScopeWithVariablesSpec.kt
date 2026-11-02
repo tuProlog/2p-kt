@@ -3,8 +3,8 @@
 package it.unibo.tuprolog.dsl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Var
-import kotlin.test.assertEquals
 
 class LogicProgrammingScopeWithVariablesSpec :
     FunSpec({
@@ -15,7 +15,7 @@ class LogicProgrammingScopeWithVariablesSpec :
             ) {
                 val expected = varOf(letter.toString())
                 val actual = property()
-                assertEquals(expected, actual)
+                actual shouldBe expected
             }
 
             test("var-underscore") {
@@ -30,7 +30,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('A') { A }
                     val A: Var by this
-                    assertEquals(varOf("A"), A)
+                    A shouldBe varOf("A")
                 }
             }
 
@@ -38,7 +38,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('B') { B }
                     val B: Var by this
-                    assertEquals(varOf("B"), B)
+                    B shouldBe varOf("B")
                 }
             }
 
@@ -46,7 +46,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('C') { C }
                     val C: Var by this
-                    assertEquals(varOf("C"), C)
+                    C shouldBe varOf("C")
                 }
             }
 
@@ -54,7 +54,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('D') { D }
                     val D: Var by this
-                    assertEquals(varOf("D"), D)
+                    D shouldBe varOf("D")
                 }
             }
 
@@ -62,7 +62,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('E') { E }
                     val E: Var by this
-                    assertEquals(varOf("E"), E)
+                    E shouldBe varOf("E")
                 }
             }
 
@@ -70,7 +70,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('F') { F }
                     val F: Var by this
-                    assertEquals(varOf("F"), F)
+                    F shouldBe varOf("F")
                 }
             }
 
@@ -78,7 +78,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('G') { G }
                     val G: Var by this
-                    assertEquals(varOf("G"), G)
+                    G shouldBe varOf("G")
                 }
             }
 
@@ -86,7 +86,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('H') { H }
                     val H: Var by this
-                    assertEquals(varOf("H"), H)
+                    H shouldBe varOf("H")
                 }
             }
 
@@ -94,7 +94,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('I') { I }
                     val I: Var by this
-                    assertEquals(varOf("I"), I)
+                    I shouldBe varOf("I")
                 }
             }
 
@@ -102,7 +102,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('J') { J }
                     val J: Var by this
-                    assertEquals(varOf("J"), J)
+                    J shouldBe varOf("J")
                 }
             }
 
@@ -110,7 +110,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('K') { K }
                     val K: Var by this
-                    assertEquals(varOf("K"), K)
+                    K shouldBe varOf("K")
                 }
             }
 
@@ -118,7 +118,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('L') { L }
                     val L: Var by this
-                    assertEquals(varOf("L"), L)
+                    L shouldBe varOf("L")
                 }
             }
 
@@ -126,7 +126,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('M') { M }
                     val M: Var by this
-                    assertEquals(varOf("M"), M)
+                    M shouldBe varOf("M")
                 }
             }
 
@@ -134,7 +134,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('N') { N }
                     val N: Var by this
-                    assertEquals(varOf("N"), N)
+                    N shouldBe varOf("N")
                 }
             }
 
@@ -142,7 +142,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('O') { O }
                     val O: Var by this
-                    assertEquals(varOf("O"), O)
+                    O shouldBe varOf("O")
                 }
             }
 
@@ -150,7 +150,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('P') { P }
                     val P: Var by this
-                    assertEquals(varOf("P"), P)
+                    P shouldBe varOf("P")
                 }
             }
 
@@ -158,7 +158,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('Q') { Q }
                     val Q: Var by this
-                    assertEquals(varOf("Q"), Q)
+                    Q shouldBe varOf("Q")
                 }
             }
 
@@ -166,7 +166,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('R') { R }
                     val R: Var by this
-                    assertEquals(varOf("R"), R)
+                    R shouldBe varOf("R")
                 }
             }
 
@@ -174,7 +174,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('S') { S }
                     val S: Var by this
-                    assertEquals(varOf("S"), S)
+                    S shouldBe varOf("S")
                 }
             }
 
@@ -182,7 +182,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('T') { T }
                     val T: Var by this
-                    assertEquals(varOf("T"), T)
+                    T shouldBe varOf("T")
                 }
             }
 
@@ -190,7 +190,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('U') { U }
                     val U: Var by this
-                    assertEquals(varOf("U"), U)
+                    U shouldBe varOf("U")
                 }
             }
 
@@ -198,7 +198,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('V') { V }
                     val V: Var by this
-                    assertEquals(varOf("V"), V)
+                    V shouldBe varOf("V")
                 }
             }
 
@@ -206,7 +206,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('W') { W }
                     val W: Var by this
-                    assertEquals(varOf("W"), W)
+                    W shouldBe varOf("W")
                 }
             }
 
@@ -214,7 +214,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('X') { X }
                     val X: Var by this
-                    assertEquals(varOf("X"), X)
+                    X shouldBe varOf("X")
                 }
             }
 
@@ -222,7 +222,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('Y') { Y }
                     val Y: Var by this
-                    assertEquals(varOf("Y"), Y)
+                    Y shouldBe varOf("Y")
                 }
             }
 
@@ -230,7 +230,7 @@ class LogicProgrammingScopeWithVariablesSpec :
                 logicProgramming {
                     testLetter('Z') { Z }
                     val Z: Var by this
-                    assertEquals(varOf("Z"), Z)
+                    Z shouldBe varOf("Z")
                 }
             }
         }

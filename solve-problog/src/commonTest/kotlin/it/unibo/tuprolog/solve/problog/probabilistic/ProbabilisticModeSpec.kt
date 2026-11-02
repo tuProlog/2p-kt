@@ -1,6 +1,12 @@
 package it.unibo.tuprolog.solve.problog.probabilistic
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.bdd.countVariableNodes
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.SolveOptions
@@ -11,11 +17,6 @@ import it.unibo.tuprolog.solve.probability
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import it.unibo.tuprolog.solve.setProbabilistic
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class ProbabilisticModeSpec :
     FunSpec({
@@ -40,10 +41,10 @@ class ProbabilisticModeSpec :
             val solveOptions = SolveOptions.DEFAULT.setProbabilistic(false)
             val solutions = solver.solve(query, solveOptions).toList()
 
-            assertEquals(solutions.size, 4)
+            4 shouldBe solutions.size
             solutions.forEach {
-                assertEquals(it.solvedQuery, query)
-                assertEquals(1.0, it.probability)
+                query shouldBe it.solvedQuery
+                it.probability shouldBe 1.0
             }
         }
 
@@ -53,10 +54,12 @@ class ProbabilisticModeSpec :
             val solveOptions = SolveOptions.DEFAULT.setProbabilistic(true)
             val solutions = solver.solve(query, solveOptions).toList()
 
-            assertEquals(solutions.size, 1)
-            assertEquals(solutions[0].solvedQuery, query)
+            1 shouldBe solutions.size
+            query shouldBe solutions[0].solvedQuery
             val probability = solutions[0].probability
-            assertTrue(TestUtils.assertEqualsDouble(probability, 0.9744), "probability $probability is not 0.9744")
+            withClue(
+                "probability $probability is not 0.9744",
+            ) { TestUtils.assertEqualsDouble(probability, 0.9744).shouldBeTrue() }
         }
 
         test("binary-decision-diagram-probabilistic-mode-disabled") {
@@ -65,10 +68,10 @@ class ProbabilisticModeSpec :
             val solveOptions = SolveOptions.DEFAULT.setProbabilistic(false)
             val solutions = solver.solve(query, solveOptions).toList()
 
-            assertEquals(solutions.size, 4)
+            4 shouldBe solutions.size
             solutions.forEach {
-                assertFalse(it.hasBinaryDecisionDiagram)
-                assertNull(it.binaryDecisionDiagram)
+                it.hasBinaryDecisionDiagram.shouldBeFalse()
+                it.binaryDecisionDiagram.shouldBeNull()
             }
         }
 
@@ -78,12 +81,9 @@ class ProbabilisticModeSpec :
             val solveOptions = SolveOptions.DEFAULT.setProbabilistic(true)
             val solutions = solver.solve(query, solveOptions).toList()
 
-            assertEquals(solutions.size, 1)
-            assertTrue(solutions[0].hasBinaryDecisionDiagram)
-            assertNotNull(solutions[0].binaryDecisionDiagram)
-            assertEquals(
-                solutions[0].binaryDecisionDiagram!!.countVariableNodes(),
-                4,
-            )
+            1 shouldBe solutions.size
+            solutions[0].hasBinaryDecisionDiagram.shouldBeTrue()
+            solutions[0].binaryDecisionDiagram.shouldNotBeNull()
+            4 shouldBe solutions[0].binaryDecisionDiagram!!.countVariableNodes()
         }
     })

@@ -2,6 +2,9 @@ package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.collections.rete.generic.set.RootNode
 import it.unibo.tuprolog.core.Atom
@@ -16,9 +19,6 @@ import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeEmpty
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for [RootNode]
@@ -52,11 +52,11 @@ class RootNodeSpec :
         beforeTest { init() }
 
         test("empty-node-has-empty-children-collection") {
-            assertTrue { emptyRootNode.children.isEmpty() }
+            emptyRootNode.children.isEmpty().shouldBeTrue()
         }
 
         test("filled-node-has-non-empty-children-collection") {
-            assertTrue { filledRootNode.children.isNotEmpty() }
+            filledRootNode.children.isNotEmpty().shouldBeTrue()
         }
 
         test("clauses-correct") {
@@ -67,7 +67,7 @@ class RootNodeSpec :
         test("put-clause-inserts-rule") {
             emptyRootNode.put(aRule)
 
-            assertEquals(aRule, emptyRootNode.indexedElements.single())
+            emptyRootNode.indexedElements.single() shouldBe aRule
         }
 
         test("put-clause-inserts-relatively-after-by-default") {
@@ -93,7 +93,7 @@ class RootNodeSpec :
         }
 
         withTests(nameFn = { "get-clause/${it.id}" }, ReteNodeUtils.mixedClauseQueryCases) { case ->
-            assertEquals(case.expected, filledRootNode.get(case.query).toList())
+            filledRootNode.get(case.query).toList() shouldBe case.expected
         }
 
         withTests(nameFn = {
@@ -147,21 +147,21 @@ class RootNodeSpec :
 
             val independentCopy = emptyRootNode.deepCopy()
 
-            assertSame(emptyRootNode.indexedElements.single(), independentCopy.indexedElements.single())
+            independentCopy.indexedElements.single() shouldBeSameInstanceAs emptyRootNode.indexedElements.single()
         }
 
         withTests(
             nameFn = { "rete-tree-of-iterable-creates-correct-instances/${it.id}" },
             reteTreeContentCases,
         ) { case ->
-            assertEquals(correctInstance(case.clauses), ReteNode.ofSet(case.clauses))
+            ReteNode.ofSet(case.clauses) shouldBe correctInstance(case.clauses)
         }
 
         withTests(
             nameFn = { "rete-tree-of-varargs-creates-correct-instances/${it.id}" },
             reteTreeContentCases,
         ) { case ->
-            assertEquals(correctInstance(case.clauses), ReteNode.ofSet(*case.clauses.toTypedArray()))
+            ReteNode.ofSet(*case.clauses.toTypedArray()) shouldBe correctInstance(case.clauses)
         }
     })
 

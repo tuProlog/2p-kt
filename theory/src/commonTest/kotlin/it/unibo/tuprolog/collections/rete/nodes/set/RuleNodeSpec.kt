@@ -2,6 +2,9 @@ package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.collections.rete.generic.set.RuleNode
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
@@ -11,9 +14,6 @@ import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeEmpty
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for [RuleNode]
@@ -36,8 +36,8 @@ class RuleNodeSpec :
         beforeTest { init() }
 
         test("children-empty") {
-            assertTrue(emptyRuleNode.children.isEmpty())
-            assertTrue(filledRuleNode.children.isEmpty())
+            emptyRuleNode.children.isEmpty().shouldBeTrue()
+            filledRuleNode.children.isEmpty().shouldBeTrue()
         }
 
         test("clauses-correct") {
@@ -48,23 +48,23 @@ class RuleNodeSpec :
         test("put-clause-inserts-rule") {
             emptyRuleNode.put(aRule)
 
-            assertEquals(aRule, emptyRuleNode.indexedElements.single())
+            emptyRuleNode.indexedElements.single() shouldBe aRule
         }
 
         test("put-clause-inserts-after-by-default") {
             filledRuleNode.put(aRule)
 
-            assertEquals(aRule, filledRuleNode.indexedElements.last())
+            filledRuleNode.indexedElements.last() shouldBe aRule
         }
 
         test("put-clause-inserts-before-all-if-specified") {
             filledRuleNode.put(aRule, true)
 
-            assertEquals(aRule, filledRuleNode.indexedElements.first())
+            filledRuleNode.indexedElements.first() shouldBe aRule
         }
 
         withTests(nameFn = { "get-clause/${it.id}" }, ReteNodeUtils.ruleQueryCases) { case ->
-            assertEquals(case.expected, filledRuleNode.get(case.query).toList())
+            filledRuleNode.get(case.query).toList() shouldBe case.expected
         }
 
         withTests(
@@ -115,6 +115,6 @@ class RuleNodeSpec :
 
             val independentCopy = emptyRuleNode.deepCopy()
 
-            assertSame(emptyRuleNode.indexedElements.single(), independentCopy.indexedElements.single())
+            independentCopy.indexedElements.single() shouldBeSameInstanceAs emptyRuleNode.indexedElements.single()
         }
     })

@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DirectiveTestsUtils.solverInitializersWithEventsList
 import it.unibo.tuprolog.solve.SolverFactory
@@ -8,8 +11,6 @@ import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.primitives.Consult
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class IncludeSpec :
     FunSpec({
@@ -37,10 +38,8 @@ class IncludeSpec :
 
                     val expectedTheory = ExampleTheories.PARENTS + theory
 
-                    assertEquals(listOf<Any>(), events)
-                    assertTrue {
-                        expectedTheory.equals(solver.staticKb + solver.dynamicKb, useVarCompleteName = false)
-                    }
+                    events shouldBe (listOf<Any>())
+                    expectedTheory.equals(solver.staticKb + solver.dynamicKb, useVarCompleteName = false).shouldBeTrue()
                 }
             }
 
@@ -68,10 +67,8 @@ class IncludeSpec :
 
                     val expectedTheory = ExampleTheories.PARENTS + theory
 
-                    assertEquals(listOf<Any>(), events)
-                    assertTrue {
-                        expectedTheory.equals(solver.staticKb + solver.dynamicKb, useVarCompleteName = false)
-                    }
+                    events shouldBe (listOf<Any>())
+                    expectedTheory.equals(solver.staticKb + solver.dynamicKb, useVarCompleteName = false).shouldBeTrue()
                 }
             }
 
@@ -97,13 +94,11 @@ class IncludeSpec :
                 for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
                     val solver = solverOf(theory)
 
-                    assertTrue { events.size == 1 }
-                    assertTrue { events[0] is InitializationIssue }
-                    assertTrue {
-                        (events[0] as? InitializationIssue)?.message?.contains(Consult.functor) ?: false
-                    }
+                    events.size shouldBe 1
+                    events[0].shouldBeInstanceOf<InitializationIssue>()
+                    ((events[0] as? InitializationIssue)?.message?.contains(Consult.functor) ?: false).shouldBeTrue()
 
-                    assertEquals(theory, solver.staticKb + solver.dynamicKb)
+                    (solver.staticKb + solver.dynamicKb) shouldBe theory
                 }
             }
 
