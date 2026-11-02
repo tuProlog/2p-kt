@@ -16,7 +16,7 @@ object SetFlag : BinaryRelation.NonBacktrackable<ExecutionContext>("set_flag") {
         """
         `set_flag(+Name, +Value)`
         
-        Sets solver flag `Name` to the ground `Value`. For notable flags, editability and the declared admissible-value domain are enforced.
+        Sets solver flag `Name` to the ground `Value`. For notable flags, editability and the declared admissible-value domain are enforced: read-only ones such as `bounded` and `max_arity` raise a permission error. Any other `Name` creates (or updates) a custom flag: a tuProlog extension, where ISO raises a domain error (`prolog_flag`).
 
         **Examples**
 
