@@ -121,7 +121,7 @@ fun clauseContract(
     // each call returns a fresh copy of the clause, whose variables can't clash with those of an earlier copy
     scenario("clause/renames-the-clause-on-each-call") {
         solverFactory.answers(
-            "clause(s(a), (P, _)), clause(P, (s(X), t(_, Z))), X == Z",
+            "clause(s(a), (P, _)), clause(P, (s(X), t(Y, _))), X == Y",
             "s(N) :- s(M), t(N, M)",
         ) shouldBe listOf("no")
     }
