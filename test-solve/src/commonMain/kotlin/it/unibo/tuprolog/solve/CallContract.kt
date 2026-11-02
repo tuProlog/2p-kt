@@ -1,10 +1,32 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-/** Conformance tests for the ISO `call/1` built-in. */
+private val CALL_N_THEORY =
+    arrayOf(
+        "inc(N, M) :- M is N + 1",
+        "map([], _, [])",
+        "map([H|T], P, [H2|T2]) :- call(P, H, H2), map(T, P, T2)",
+        "p(1, 2, 3, 4, 5, 6, 7)",
+    )
+
+/** `call/2..8` (ISO/IEC 13211-1:1995/Cor.2:2012): queries on [CALL_N_THEORY], and their answers. */
+private val callNCases =
+    listOf(
+        "atom-goal" to ("call(inc, 1, X)" to "yes: X = 2"),
+        "compound-goal" to ("call(inc(1), X)" to "yes: X = 2"),
+        "call-as-goal" to ("call(call, inc, 1, X)" to "yes: X = 2"),
+        "higher-order-predicate" to ("map([1, 2], inc, L)" to "yes: L = [2, 3]"),
+        "seven-extra-arguments" to ("call(p, 1, 2, 3, 4, 5, 6, X)" to "yes: X = 7"),
+        "failing-goal" to ("call(inc, 1, 3)" to "no"),
+        "unbound-goal" to ("call(_, a)" to "halt: instantiation_error"),
+        "non-callable-goal" to ("call(1, a)" to "halt: type_error(callable, 1)"),
+    )
+
+/** Conformance tests for the ISO `call/1` built-in, and for `call/2..8`. */
 fun callContract(
     solverFactory: SolverFactory,
     errorSignature: Signature = Signature("call", 1),
@@ -161,5 +183,10 @@ fun callContract(
                 solutions,
             )
         }
+    }
+
+    callNCases.forEach { (id, case) ->
+        val (query, answer) = case
+        scenario("call/n/$id") { solverFactory.answers(query, *CALL_N_THEORY) shouldBe listOf(answer) }
     }
 }
