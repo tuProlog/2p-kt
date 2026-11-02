@@ -10,7 +10,10 @@ object Instances {
     val commonRules =
         Theory.of(
             Unificator.default,
-            CommonRules.wrappers.filterNot { it is CallN }.map { it.implementation }.asIterable(),
+            CommonRules.wrappers
+                .filterNot { it is CallN }
+                .map { it.implementation }
+                .asIterable(),
         )
 
     val commonRulesInJSON =

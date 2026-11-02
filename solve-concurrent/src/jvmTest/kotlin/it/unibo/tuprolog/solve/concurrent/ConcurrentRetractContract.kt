@@ -7,7 +7,8 @@ private val retractCases =
     listOf(
         "retract/retracts-an-asserted-clause" to ("assertz(f(1)), retract(f(1)), \\+ f(_)" to "yes"),
         "retract/binds-the-retracted-clause" to ("assertz(f(1)), retract(f(X))" to "yes: X = 1"),
-        "retractall/retracts-every-matching-clause" to ("assertz(f(1)), assertz(f(2)), retractall(f(_)), \\+ f(_)" to "yes"),
+        "retractall/retracts-every-matching-clause" to
+            ("assertz(f(1)), assertz(f(2)), retractall(f(_)), \\+ f(_)" to "yes"),
         "abolish/abolishes-a-dynamic-procedure" to ("assertz(foo(1)), abolish(foo/1)" to "yes"),
     )
 

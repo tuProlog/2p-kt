@@ -266,7 +266,7 @@ class TermSerializerSpec :
                 varOf("Y")
             }
         }
-    
+
         withTests(
             nameFn = { (id, mimeType) -> "unrepresentable-term/$id/${mimeType.subType}" },
             unrepresentable.flatMap { (id, term) -> listOf(MimeType.Json, MimeType.Yaml).map { Triple(id, it, term) } },

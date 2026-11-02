@@ -70,7 +70,11 @@ private val bindings =
                 "invoke_method(L, get(0), X)",
             Integer.of(1),
         ),
-        Binding("type-name-of-a-type-is-qualified", "type('java.util.ArrayList', T), type(X, T)", Atom.of("java.util.ArrayList")),
+        Binding(
+            "type-name-of-a-type-is-qualified",
+            "type('java.util.ArrayList', T), type(X, T)",
+            Atom.of("java.util.ArrayList"),
+        ),
         Binding(
             "type-name-of-a-type-resolves-back",
             "type('java.util.ArrayList', T), type(N, T), type(N, X)",

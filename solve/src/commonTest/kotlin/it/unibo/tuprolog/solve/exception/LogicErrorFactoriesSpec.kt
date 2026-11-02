@@ -267,7 +267,13 @@ class LogicErrorFactoriesSpec :
         }
 
         test("message/representation-error-without-a-cause-has-no-null") {
-            RepresentationError.of(context, foo2, RepresentationError.Limit.MAX_ARITY).message.shouldNotBeNull() shouldNotContain
+            RepresentationError
+                .of(
+                    context,
+                    foo2,
+                    RepresentationError.Limit.MAX_ARITY,
+                ).message
+                .shouldNotBeNull() shouldNotContain
                 "null"
         }
 

@@ -21,10 +21,14 @@ class TheoryDeserializationSpec :
                     MimeType.Yaml,
                 ).assertDeserializationWorks(Instances.commonRules, Instances.commonRulesInYAML)
         }
-    
+
         withTests(nameFn = { "non-clause-is-malformed-input/${it.first}" }, nonClauses) { (_, element) ->
             shouldThrow<DeobjectificationException> {
-                TheoryDeserializer.of(MimeType.Json).deserialize("[$element]").clauses.toList()
+                TheoryDeserializer
+                    .of(MimeType.Json)
+                    .deserialize("[$element]")
+                    .clauses
+                    .toList()
             }
         }
     })

@@ -421,6 +421,7 @@ fun flagsContract(
     }
 
     scenario("flags/bounded-is-read-only") {
-        solverFactory.answers("set_flag(bounded, true)") shouldBe listOf("halt: permission_error(modify, flag, bounded)")
+        solverFactory.answers("set_flag(bounded, true)") shouldBe
+            listOf("halt: permission_error(modify, flag, bounded)")
     }
 }

@@ -195,7 +195,10 @@ class WriteTermSpec :
         test("write-eq1-honours-operators-defined-at-runtime") {
             val output = StringBuilder()
             val solver = PrologSolverFactory.ioSolver(output = output)
-            solver.solveOnce("op(700, xfx, likes), writeq(likes(a, b))".parseAsStruct()).shouldBeInstanceOf<Solution.Yes>()
+            solver
+                .solveOnce(
+                    "op(700, xfx, likes), writeq(likes(a, b))".parseAsStruct(),
+                ).shouldBeInstanceOf<Solution.Yes>()
             output.toString() shouldBe "a likes b"
         }
 
