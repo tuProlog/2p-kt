@@ -41,6 +41,9 @@ object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
 
         ?- T =.. [f(a), b].
         throws error(type_error(atomic, f(a)), _).
+
+        ?- T =.. [f, a|b].
+        throws error(type_error(list, [f, a|b]), _).
         ```
         """.trimIndent()
 
@@ -59,6 +62,7 @@ object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
         val items = second.unfoldedList
         val tail = items.last()
         if (tail is Var) throw InstantiationError.forArgument(context, signature, tail, 1)
+        if (!tail.isEmptyList) throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, second, 1)
         val list = items.dropLast(1)
         val head =
             list.firstOrNull()
