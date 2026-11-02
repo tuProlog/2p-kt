@@ -14,6 +14,7 @@ import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.solve.stdlib.primitive.Abolish
+import it.unibo.tuprolog.solve.stdlib.primitive.AddArguments
 import it.unibo.tuprolog.solve.stdlib.primitive.Arg
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticEqual
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticGreaterThan
@@ -113,6 +114,7 @@ object DefaultBuiltins : ExtensionLibrary(CommonBuiltins) {
         get() =
             listOf(
                 Abolish,
+                AddArguments,
                 Arg,
                 ArithmeticEqual,
                 ArithmeticGreaterThan,
