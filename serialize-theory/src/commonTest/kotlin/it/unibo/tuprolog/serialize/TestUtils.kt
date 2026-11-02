@@ -2,7 +2,6 @@ package it.unibo.tuprolog.serialize
 
 import io.kotest.assertions.withClue
 import io.kotest.matchers.booleans.shouldBeTrue
-import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.serialize.ObjectsUtils.deeplyEqual
 import it.unibo.tuprolog.serialize.ObjectsUtils.parseAsObject
 import it.unibo.tuprolog.theory.Theory
@@ -13,23 +12,19 @@ fun <T : Theory> Serializer<T>.assertSerializationWorks(
     actual: T,
 ) {
     val expectedObj = parseAsObject(expected, mimeType)
-    val actualObj = TheoryObjectifier.default.objectify(actual)
-    withClue(
-        """
-        |Expected:
-        |   $expectedObj
-        |got instead:
-        |   $actualObj
-        |
-        """.trimMargin(),
-    ) { deeplyEqual(expectedObj, actualObj).shouldBeTrue() }
-}
-
-fun Serializer<Theory>.assertTermSerializationWorks(
-    expected: String,
-    actualGenerator: Scope.() -> Theory,
-) {
-    assertSerializationWorks(expected, Scope.empty().actualGenerator())
+    // both what the objectifier builds and what the serializer actually writes
+    val actualObjs = listOf(TheoryObjectifier.default.objectify(actual), parseAsObject(serialize(actual), mimeType))
+    actualObjs.forEach { actualObj ->
+        withClue(
+            """
+            |Expected:
+            |   $expectedObj
+            |got instead:
+            |   $actualObj
+            |
+            """.trimMargin(),
+        ) { deeplyEqual(expectedObj, actualObj).shouldBeTrue() }
+    }
 }
 
 fun <T : Theory> Deserializer<T>.assertDeserializationWorks(
@@ -48,14 +43,8 @@ fun <T : Theory> Deserializer<T>.assertDeserializationWorks(
     ) { representationsAreEqual(expected, deserialized).shouldBeTrue() }
 }
 
-fun Deserializer<Theory>.assertTermDeserializationWorks(
-    actual: String,
-    expectedGenerator: Scope.() -> Theory,
-) {
-    assertDeserializationWorks(Scope.empty().expectedGenerator(), actual)
-}
-
-private fun representationsAreEqual(
+/** Whether [t1] and [t2] have the same clauses, in the same order, up to the complete names of their variables. */
+fun representationsAreEqual(
     t1: Theory,
     t2: Theory,
 ): Boolean =
