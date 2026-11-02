@@ -12,6 +12,7 @@ private val univCases =
         "univ/number-head-with-arguments" to ("X =.. [1, b]" to "halt: type_error(atom, 1)"),
         "univ/empty-list" to ("X =.. []" to "halt: domain_error(non_empty_list, [])"),
         "univ/partial-list" to ("X =.. [foo|_]" to "halt: instantiation_error"),
+        "univ/improper-list" to ("X =.. [f, a|b]" to "halt: type_error(list, [f, a | b])"),
     )
 
 /** Conformance tests for the ISO `=../2` built-in. */
