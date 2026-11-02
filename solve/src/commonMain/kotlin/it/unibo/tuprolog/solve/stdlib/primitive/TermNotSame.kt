@@ -11,7 +11,7 @@ object TermNotSame : BinaryRelation.Predicative<ExecutionContext>("\\=@=") {
         """
         `Left \=@= Right`
         
-        Succeeds when `Left` and `Right` do not compare as equal in the standard order of terms. In the current implementation a variable is only equal to itself, so this also succeeds for variants such as `f(X)` and `f(Y)`.
+        Succeeds when `Left` and `Right` are not variants of each other (see `=@=/2`).
 
         **Examples**
 
@@ -22,8 +22,10 @@ object TermNotSame : BinaryRelation.Predicative<ExecutionContext>("\\=@=") {
         ?- f(X) \=@= f(X).
         no.
 
-        % variants are not considered the same
         ?- f(X) \=@= f(Y).
+        no.
+
+        ?- f(X, X) \=@= f(Y, Z).
         yes.
         ```
         """.trimIndent()
@@ -31,5 +33,5 @@ object TermNotSame : BinaryRelation.Predicative<ExecutionContext>("\\=@=") {
     override fun Solve.Request<ExecutionContext>.compute(
         first: Term,
         second: Term,
-    ): Boolean = first.compareTo(second) != 0
+    ): Boolean = !(first isVariantOf second)
 }
