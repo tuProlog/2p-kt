@@ -6,7 +6,9 @@ import io.kotest.datatest.withTests
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeBlank
+import io.kotest.matchers.string.shouldNotContain
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Indicator
@@ -262,5 +264,16 @@ class LogicErrorFactoriesSpec :
             val message = SyntaxError.whileParsingClauses(context, "a.\nb c.", 1, 2, 3, "oops").message!!
             withClue(message) { message.startsWith("Syntax error at 2:3 while parsing clause 1: oops").shouldBeTrue() }
             withClue(message) { ("b c." in message).shouldBeTrue() }
+        }
+
+        test("message/representation-error-without-a-cause-has-no-null") {
+            RepresentationError.of(context, foo2, RepresentationError.Limit.MAX_ARITY).message.shouldNotBeNull() shouldNotContain
+                "null"
+        }
+
+        test("message/evaluation-error-names-its-type") {
+            EvaluationError(context = context, errorType = EvaluationError.Type.ZERO_DIVISOR)
+                .message
+                .shouldNotBeNull() shouldContain "zero_divisor"
         }
     })
