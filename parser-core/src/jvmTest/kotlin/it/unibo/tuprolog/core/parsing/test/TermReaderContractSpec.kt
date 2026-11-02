@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.core.parsing.test
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.parsing.TermReader
 import java.io.Reader
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
 
 class TermReaderContractSpec :
     FunSpec({
@@ -67,26 +67,26 @@ class TermReaderContractSpec :
 
         test("reads-multiple-terms-from-one-reader") {
             val terms = TermReader.withNoOperator().readTerms("first. second. third").toList()
-            assertEquals(listOf("first", "second", "third"), terms.map { assertIs<Struct>(it).functor })
+            (terms.map { it.shouldBeInstanceOf<Struct>().functor }) shouldBe listOf("first", "second", "third")
         }
 
         test("custom-operators-are-propagated-to-the-parse-session") {
             val operators = OperatorSet(Operator("++", Specifier.YFX, 500))
             val term = TermReader.withNoOperator().readTerms("a ++ b.", operators).single()
-            val structure = assertIs<Struct>(term)
-            assertEquals("++", structure.functor)
-            assertEquals(2, structure.arity)
+            val structure = term.shouldBeInstanceOf<Struct>()
+            structure.functor shouldBe "++"
+            structure.arity shouldBe 2
         }
 
         test("returned-sequence-does-not-read-before-iteration") {
             val reader = CountingReader("first. second.")
             val terms = TermReader.withNoOperator().readTerms(reader)
-            assertEquals(0, reader.charactersRead)
+            reader.charactersRead shouldBe 0
 
             val iterator = terms.iterator()
-            assertEquals(0, reader.charactersRead)
-            assertEquals("first", assertIs<Struct>(iterator.next()).functor)
-            assertEquals(true, reader.charactersRead > 0)
+            reader.charactersRead shouldBe 0
+            (iterator.next().shouldBeInstanceOf<Struct>().functor) shouldBe "first"
+            (reader.charactersRead > 0) shouldBe true
         }
 
         test("reads-a-very-long-lazily-generated-input") {
@@ -96,13 +96,13 @@ class TermReaderContractSpec :
 
             var parsed = 0
             for (term in terms) {
-                val structure = assertIs<Struct>(term)
-                assertEquals("item", structure.functor)
-                assertEquals(parsed.toString(), structure[0].toString())
+                val structure = term.shouldBeInstanceOf<Struct>()
+                structure.functor shouldBe "item"
+                structure[0].toString() shouldBe parsed.toString()
                 parsed++
             }
 
-            assertEquals(termCount, parsed)
-            assertEquals(termCount, reader.generatedTerms)
+            parsed shouldBe termCount
+            reader.generatedTerms shouldBe termCount
         }
     })

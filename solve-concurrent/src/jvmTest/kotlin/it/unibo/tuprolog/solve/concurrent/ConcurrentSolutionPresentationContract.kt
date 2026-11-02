@@ -1,10 +1,11 @@
 package it.unibo.tuprolog.solve.concurrent
 
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.Solution
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 fun concurrentSolutionPresentationContract() =
     concurrentContract {
@@ -17,10 +18,10 @@ fun concurrentSolutionPresentationContract() =
                 val solver = solverOf(staticKb = theory)
                 val query = "append"(A, B)
                 val sol = solver.solveOnce(query)
-                assertTrue { sol is Solution.Yes }
-                assertTrue { setOf(A, B).all { it in sol.substitution.keys } }
-                assertTrue { sol.substitution[A]!! matches "seq"(`_`) }
-                assertEquals("X", (sol.substitution[B] as? Var)?.name)
+                sol.shouldBeInstanceOf<Solution.Yes>()
+                (setOf(A, B).all { it in sol.substitution.keys }).shouldBeTrue()
+                (sol.substitution[A]!! matches "seq"(`_`)).shouldBeTrue()
+                (sol.substitution[B] as? Var)?.name shouldBe "X"
             }
         }
     }

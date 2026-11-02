@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.parser
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.parser.exceptions.AmbiguousOperatorUseException
 import it.unibo.tuprolog.parser.exceptions.OperatorPriorityException
 import it.unibo.tuprolog.parser.exceptions.PrologParsingException
@@ -12,16 +16,12 @@ import it.unibo.tuprolog.parser.tree.OperatorRole
 import it.unibo.tuprolog.parser.tree.ParenthesizedExpressionNode
 import it.unibo.tuprolog.parser.tree.SemanticRole
 import it.unibo.tuprolog.parser.tree.StructureNode
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
-import kotlin.test.assertNull
 
 class OperatorParserSpec :
     FunSpec({
         test("fx-rejects-an-unparenthesized-same-priority-operand") {
             val operators = OperatorTables.of(op("pre", Associativity.FX, 200))
-            assertFailsWith<PrologParsingException> {
+            shouldThrow<PrologParsingException> {
                 parseExpression("pre pre a", operators)
             }
         }
@@ -29,12 +29,12 @@ class OperatorParserSpec :
         test("fy-accepts-same-priority-prefix-nesting") {
             val operators = OperatorTables.of(op("pre", Associativity.FY, 200))
             val root = operatorNode(parseExpression("pre pre a", operators))
-            assertIs<OperatorExpressionNode>(root.rightOperand)
+            root.rightOperand.shouldBeInstanceOf<OperatorExpressionNode>()
         }
 
         test("xf-rejects-same-priority-postfix-chaining") {
             val operators = OperatorTables.of(op("post", Associativity.XF, 200))
-            assertFailsWith<OperatorPriorityException> {
+            shouldThrow<OperatorPriorityException> {
                 parseExpression("a post post", operators)
             }
         }
@@ -42,12 +42,12 @@ class OperatorParserSpec :
         test("yf-accepts-same-priority-postfix-chaining") {
             val operators = OperatorTables.of(op("post", Associativity.YF, 200))
             val root = operatorNode(parseExpression("a post post", operators))
-            assertIs<OperatorExpressionNode>(root.leftOperand)
+            root.leftOperand.shouldBeInstanceOf<OperatorExpressionNode>()
         }
 
         test("xfx-is-non-associative") {
             val operators = OperatorTables.of(op("=", Associativity.XFX, 700))
-            assertFailsWith<OperatorPriorityException> {
+            shouldThrow<OperatorPriorityException> {
                 parseExpression("a = b = c", operators)
             }
         }
@@ -55,16 +55,16 @@ class OperatorParserSpec :
         test("xfy-associates-to-the-right") {
             val operators = OperatorTables.of(op("^", Associativity.XFY, 200))
             val root = operatorNode(parseExpression("a ^ b ^ c", operators))
-            assertEquals("^", root.operator.definition.name)
-            assertIs<StructureNode>(root.leftOperand)
-            assertIs<OperatorExpressionNode>(root.rightOperand)
+            root.operator.definition.name shouldBe "^"
+            root.leftOperand.shouldBeInstanceOf<StructureNode>()
+            root.rightOperand.shouldBeInstanceOf<OperatorExpressionNode>()
         }
 
         test("yfx-associates-to-the-left") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
             val root = operatorNode(parseExpression("a + b + c", operators))
-            assertIs<OperatorExpressionNode>(root.leftOperand)
-            assertIs<StructureNode>(root.rightOperand)
+            root.leftOperand.shouldBeInstanceOf<OperatorExpressionNode>()
+            root.rightOperand.shouldBeInstanceOf<StructureNode>()
         }
 
         test("lower-numeric-priority-binds-more-strongly") {
@@ -74,12 +74,12 @@ class OperatorParserSpec :
                     op("*", Associativity.YFX, 400),
                 )
             val root = operatorNode(parseExpression("a + b * c", operators))
-            assertEquals("+", root.operator.definition.name)
-            assertEquals("*", operatorNode(root.rightOperand!!).operator.definition.name)
+            root.operator.definition.name shouldBe "+"
+            operatorNode(root.rightOperand!!).operator.definition.name shouldBe "*"
 
             val inverse = operatorNode(parseExpression("a * b + c", operators))
-            assertEquals("+", inverse.operator.definition.name)
-            assertEquals("*", operatorNode(inverse.leftOperand!!).operator.definition.name)
+            inverse.operator.definition.name shouldBe "+"
+            operatorNode(inverse.leftOperand!!).operator.definition.name shouldBe "*"
         }
 
         test("parentheses-override-operator-priority") {
@@ -89,15 +89,15 @@ class OperatorParserSpec :
                     op("*", Associativity.YFX, 400),
                 )
             val root = operatorNode(parseExpression("(a + b) * c", operators))
-            assertEquals("*", root.operator.definition.name)
-            assertIs<ParenthesizedExpressionNode>(root.leftOperand)
+            root.operator.definition.name shouldBe "*"
+            root.leftOperand.shouldBeInstanceOf<ParenthesizedExpressionNode>()
         }
 
         test("signed-numbers-take-precedence-over-prefix-operator-interpretation") {
             val operators = OperatorTables.of(op("-", Associativity.FY, 200))
-            assertIs<NumberNode>(parseExpression("- 1", operators))
+            parseExpression("- 1", operators).shouldBeInstanceOf<NumberNode>()
             val prefix = operatorNode(parseExpression("- X", operators))
-            assertEquals(OperatorRole.PREFIX, prefix.operator.role)
+            prefix.operator.role shouldBe OperatorRole.PREFIX
         }
 
         test("infix-wins-over-postfix-when-a-right-operand-can-start") {
@@ -107,11 +107,11 @@ class OperatorParserSpec :
                     op("op", Associativity.YFX, 500),
                 )
             val infix = operatorNode(parseExpression("a op b", operators))
-            assertEquals(OperatorRole.INFIX, infix.operator.role)
+            infix.operator.role shouldBe OperatorRole.INFIX
 
             val postfix = operatorNode(parseExpression("a op", operators))
-            assertEquals(OperatorRole.POSTFIX, postfix.operator.role)
-            assertNull(postfix.rightOperand)
+            postfix.operator.role shouldBe OperatorRole.POSTFIX
+            postfix.rightOperand.shouldBeNull()
         }
 
         test("multiple-applicable-infix-definitions-are-rejected-by-default") {
@@ -121,10 +121,10 @@ class OperatorParserSpec :
                     op("op", Associativity.YFX, 500),
                 )
             val error =
-                assertFailsWith<AmbiguousOperatorUseException> {
+                shouldThrow<AmbiguousOperatorUseException> {
                     parseExpression("a op b", operators)
                 }
-            assertEquals(2, error.candidates.size)
+            error.candidates.size shouldBe 2
         }
 
         test("legacy-policy-uses-the-antlr-branch-order") {
@@ -138,24 +138,24 @@ class OperatorParserSpec :
                     op("op", Associativity.YFX, 500),
                 )
             val root = operatorNode(parser.parseExpression(lex("a op b"), operators).root)
-            assertEquals(Associativity.YFX, root.operator.definition.specifier)
+            root.operator.definition.specifier shouldBe Associativity.YFX
         }
 
         test("comma-and-pipe-can-be-operators-at-top-level") {
             val comma = OperatorTables.of(op(",", Associativity.XFY, 1000))
-            assertEquals(",", operatorNode(parseExpression("a, b", comma)).operator.definition.name)
+            operatorNode(parseExpression("a, b", comma)).operator.definition.name shouldBe ","
 
             val pipe = OperatorTables.of(op("|", Associativity.XFY, 1100))
-            assertEquals("|", operatorNode(parseExpression("a | b", pipe)).operator.definition.name)
+            operatorNode(parseExpression("a | b", pipe)).operator.definition.name shouldBe "|"
         }
 
         test("operator-nodes-expose-priority-and-semantic-role") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
             val tree = testParser.parseExpression(lex("a + b"), operators)
             val root = operatorNode(tree.root)
-            assertEquals(500, root.priority)
+            root.priority shouldBe 500
             val token = tree.tokens[root.operator.tokenId]
-            assertEquals("+", tree.lexedSource.textOf(token))
-            assertEquals(SemanticRole.INFIX_OPERATOR, tree.semanticToken(token.id)?.role)
+            tree.lexedSource.textOf(token) shouldBe "+"
+            tree.semanticToken(token.id)?.role shouldBe SemanticRole.INFIX_OPERATOR
         }
     })

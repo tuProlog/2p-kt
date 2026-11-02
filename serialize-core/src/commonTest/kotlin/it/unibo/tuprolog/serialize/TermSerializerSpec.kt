@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.serialize
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
+import io.kotest.matchers.shouldBe
 
 class TermSerializerSpec :
     FunSpec({
         test("atom-serialization-in-json") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Json
 
             serializer.assertTermSerializationWorks("\"atom\"") {
                 atomOf("atom")
@@ -21,7 +21,7 @@ class TermSerializerSpec :
         test("atom-serialization-in-yaml") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
 
-            assertEquals(MimeType.Yaml, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Yaml
 
             serializer.assertTermSerializationWorks("\"atom\"") {
                 atomOf("atom")
@@ -33,7 +33,7 @@ class TermSerializerSpec :
 
         test("numeric-serialization-in-json") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Json
 
             serializer.assertTermSerializationWorks("2") {
                 numOf(2)
@@ -47,7 +47,7 @@ class TermSerializerSpec :
         test("numeric-serialization-in-yaml") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
 
-            assertEquals(MimeType.Yaml, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Yaml
 
             serializer.assertTermSerializationWorks("3") {
                 numOf(3)
@@ -59,7 +59,7 @@ class TermSerializerSpec :
 
         test("list-serialization-in-json") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Json
 
             serializer.assertTermSerializationWorks("{\"list\":[\"hello\",false]}") {
                 logicListOf(atomOf("hello"), truthOf(false))
@@ -72,7 +72,7 @@ class TermSerializerSpec :
 
         test("tailed-list-serialization-in-json") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Json
 
             serializer.assertTermSerializationWorks(
                 "{\"fun\":\"member\",\"args\":[{\"var\":\"H\"},{\"list\":[{\"var\":\"H\"}],\"tail\":{\"var\":\"_\"}}]}",
@@ -84,7 +84,7 @@ class TermSerializerSpec :
         test("list-serialization-in-yaml") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
 
-            assertEquals(MimeType.Yaml, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Yaml
 
             var expected =
                 """
@@ -109,7 +109,7 @@ class TermSerializerSpec :
 
         test("tailed-list-serialization-in-yaml") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
-            assertEquals(MimeType.Yaml, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Yaml
 
             serializer.assertTermSerializationWorks(
                 """
@@ -128,7 +128,7 @@ class TermSerializerSpec :
 
         test("block-serialization-in-json") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Json
 
             serializer.assertTermSerializationWorks("{\"block\":[\"hello\",1]}") {
                 blockOf(atomOf("hello"), numOf(1))
@@ -138,7 +138,7 @@ class TermSerializerSpec :
         test("block-serialization-in-yaml") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
 
-            assertEquals(MimeType.Yaml, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Yaml
 
             var expected =
                 """
@@ -163,7 +163,7 @@ class TermSerializerSpec :
 
         test("struct-serialization-in-json") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Json
 
             serializer.assertTermSerializationWorks("{\"fun\":\"f\",\"args\":[\"hello\",2]}") {
                 structOf("f", atomOf("hello"), numOf(2))
@@ -173,7 +173,7 @@ class TermSerializerSpec :
         test("struct-serialization-in-yaml") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
 
-            assertEquals(MimeType.Yaml, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Yaml
 
             val expected =
                 """
@@ -192,7 +192,7 @@ class TermSerializerSpec :
 
         test("constant-serialization-in-json") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Json
 
             serializer.assertTermSerializationWorks("true") {
                 truthOf(true)
@@ -206,7 +206,7 @@ class TermSerializerSpec :
         test("constant-serialization-in-yaml") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
 
-            assertEquals(MimeType.Yaml, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Yaml
 
             serializer.assertTermSerializationWorks("true") {
                 truthOf(true)
@@ -218,7 +218,7 @@ class TermSerializerSpec :
 
         test("variables-serialization-in-json") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
-            assertEquals(MimeType.Json, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Json
 
             serializer.assertTermSerializationWorks("{\"var\":\"Y\"}") {
                 varOf("Y")
@@ -231,7 +231,7 @@ class TermSerializerSpec :
 
         test("variables-serialization-in-yaml") {
             val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
-            assertEquals(MimeType.Yaml, serializer.mimeType)
+            serializer.mimeType shouldBe MimeType.Yaml
 
             val expected =
                 """

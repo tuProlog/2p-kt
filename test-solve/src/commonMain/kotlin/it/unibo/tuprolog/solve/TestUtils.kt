@@ -7,6 +7,12 @@
 
 package it.unibo.tuprolog.solve
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.channel.Channel
@@ -23,10 +29,6 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.theory.Theory
 import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 private inline val loggingOn get() = false
 
@@ -65,7 +67,7 @@ inline fun <reified E : Throwable> assertOverFailure(
     throwExpression()
     fail("Expected an Exception to be thrown!")
 } catch (error: Throwable) {
-    assertTrue("Thrown error `${error::class}` is not of expected type `${E::class}`") { error is E }
+    withClue("Thrown error `${error::class}` is not of expected type `${E::class}`") { error.shouldBeInstanceOf<E>() }
     assertion(error as E)
 }
 
@@ -90,42 +92,43 @@ fun assertSolutionEquals(
     fun assertSameClass(
         expected: Solution,
         actual: Solution,
-    ) = assertEquals(expected::class, actual::class, reportMsg(expected, actual))
+    ) = withClue(reportMsg(expected, actual)) { actual::class shouldBe expected::class }
 
     fun assertSameQuery(
         expected: Solution,
         actual: Solution,
-    ) = assertEquals(expected.query, actual.query, reportMsg(expected, actual))
+    ) = withClue(reportMsg(expected, actual)) { actual.query shouldBe expected.query }
 
     when {
         expected is Solution.Halt -> {
             assertSameClass(expected, actual)
             assertSameQuery(expected, actual)
-            assertEquals(expected.substitution, actual.substitution, reportMsg(expected, actual, "Wrong substitution"))
-            assertTrue(reportMsg(expected, actual, "Solution is not Halt")) { actual is Solution.Halt }
-            assertEquals(
-                expected.exception::class,
-                (actual as Solution.Halt).exception::class,
-                reportMsg(expected, actual, "Wrong exception type"),
-            )
+            withClue(reportMsg(expected, actual, "Wrong substitution")) {
+                actual.substitution shouldBe
+                    expected.substitution
+            }
+            withClue(reportMsg(expected, actual, "Solution is not Halt")) { actual.shouldBeInstanceOf<Solution.Halt>() }
+            withClue(reportMsg(expected, actual, "Wrong exception type")) {
+                (actual as Solution.Halt).exception::class shouldBe
+                    expected.exception::class
+            }
             when (val expectedEx = expected.exception) {
                 is LogicError -> {
-                    assertTrue(
+                    withClue(
                         reportMsg(
                             expected,
                             actual,
                             "Exception is not LogicError",
                         ),
-                    ) { actual.exception is LogicError }
+                    ) { actual.exception.shouldBeInstanceOf<LogicError>() }
                     val actualEx = actual.exception as LogicError
-                    assertTrue(reportMsg(expected, actual, "The error structs do not match")) {
-                        expectedEx.errorStruct.equals(actualEx.errorStruct, false)
+                    withClue(reportMsg(expected, actual, "The error structs do not match")) {
+                        expectedEx.errorStruct.equals(actualEx.errorStruct, false).shouldBeTrue()
                     }
-                    assertEquals(
-                        expectedEx.message,
-                        actualEx.message,
-                        reportMsg(expected, actual, "Different messages"),
-                    )
+                    withClue(reportMsg(expected, actual, "Different messages")) {
+                        actualEx.message shouldBe
+                            expectedEx.message
+                    }
                 }
             }
         }
@@ -136,23 +139,24 @@ fun assertSolutionEquals(
             .any() -> {
             assertSameClass(expected, actual)
             assertSameQuery(expected, actual)
-            assertEquals(expected.substitution.count(), actual.substitution.count(), reportMsg(expected, actual))
-            assertEquals(expected.substitution.keys, actual.substitution.keys, reportMsg(expected, actual))
+            withClue(reportMsg(expected, actual)) { actual.substitution.count() shouldBe expected.substitution.count() }
+            withClue(reportMsg(expected, actual)) { actual.substitution.keys shouldBe expected.substitution.keys }
 
             expected.substitution.forEach { (varExpected, termExpected) ->
                 actual.substitution[varExpected]!!.let { termActual ->
-                    assertTrue(reportMsg(termExpected, termActual)) { termActual.structurallyEquals(termExpected) }
+                    withClue(
+                        reportMsg(termExpected, termActual),
+                    ) { termActual.structurallyEquals(termExpected).shouldBeTrue() }
 
                     // if the substitution contain variables, compare only names, because instances will be different
-                    assertEquals(
-                        termExpected.variables.map { it.name }.toList(),
-                        termActual.variables.map { it.name }.toList(),
-                        "Comparing variable names of expected `$expected` with `$actual`",
-                    )
+                    withClue("Comparing variable names of expected `$expected` with `$actual`") {
+                        (termActual.variables.map { it.name }.toList()) shouldBe
+                            (termExpected.variables.map { it.name }.toList())
+                    }
                 }
             }
         }
-        else -> assertEquals(expected, actual)
+        else -> actual shouldBe expected
     }
 }
 
@@ -167,7 +171,10 @@ inline fun assertSolutionEquals(
     actual: Iterable<Solution>,
     equalityAssertion: (Solution, Solution) -> Unit = ::assertSolutionEquals,
 ) {
-    assertEquals(expected.count(), actual.count(), "Expected: `${expected.toList()}`\nActual: `${actual.toList()}`")
+    withClue("Expected: `${expected.toList()}`\nActual: `${actual.toList()}`") {
+        actual.count() shouldBe
+            expected.count()
+    }
 
     expected.zip(actual).forEach { (expected, actual) -> equalityAssertion(expected, actual) }
 }
@@ -210,8 +217,11 @@ fun Solver.assertHasPredicateInAPI(
     vararg: Boolean = false,
 ) {
     val varargMsg = if (vararg) "(vararg) " else ""
-    assertTrue("Missing predicate $functor/$arity ${varargMsg}in solver API") {
-        Signature(functor, arity, vararg) in libraries
+    withClue("Missing predicate $functor/$arity ${varargMsg}in solver API") {
+        (
+            Signature(functor, arity, vararg) in
+                libraries
+        ).shouldBeTrue()
     }
     if (loggingOn) println("Solver has predicate $functor/$arity ${varargMsg}in its API")
 }
@@ -275,9 +285,9 @@ fun Solver.assertHas(
     outputs: OutputStore,
 ) {
     assertRuntimesAreEqual(libraries, this.libraries)
-    assertEquals(staticKb, this.staticKb)
-    assertEquals(dynamicKb, this.dynamicKb)
-    assertEquals(flags, this.flags)
+    this.staticKb shouldBe staticKb
+    this.dynamicKb shouldBe dynamicKb
+    this.flags shouldBe flags
     assertChannelStoresAreEquals(inputs, this.inputChannels)
     assertChannelStoresAreEquals(outputs, this.outputChannels)
 }
@@ -287,10 +297,10 @@ internal fun assertRuntimesAreEqual(
     expected: Runtime,
     actual: Runtime,
 ) {
-    assertEquals(expected.keys, actual.keys)
+    actual.keys shouldBe expected.keys
     for ((alias, e) in expected) {
         val a = actual[alias]
-        assertNotNull(a)
+        a.shouldNotBeNull()
         assertLibrariesAreEqual(e, a)
     }
 }
@@ -300,26 +310,18 @@ internal fun assertLibrariesAreEqual(
     expected: Library,
     actual: Library,
 ) {
-    assertEquals(expected.alias, actual.alias)
-    assertEquals(expected.clauses, actual.clauses)
-    assertEquals(expected.operators, actual.operators)
-    assertEquals(expected.primitives.keys, actual.primitives.keys)
+    actual.alias shouldBe expected.alias
+    actual.clauses shouldBe expected.clauses
+    actual.operators shouldBe expected.operators
+    actual.primitives.keys shouldBe expected.primitives.keys
     for ((signature, e) in expected.primitives) {
         val a = actual.primitives[signature]
-        assertEquals(
-            expected = e,
-            actual = a,
-            message = "Wrong primitive: $signature. Expected $e, actual $a.",
-        )
+        withClue("Wrong primitive: $signature. Expected $e, actual $a.") { a shouldBe e }
     }
-    assertEquals(expected.functions.keys, actual.functions.keys)
+    actual.functions.keys shouldBe expected.functions.keys
     for ((signature, e) in expected.functions) {
         val a = actual.functions[signature]
-        assertEquals(
-            expected = e,
-            actual = a,
-            message = "Wrong function: $signature. Expected $e, actual $a.",
-        )
+        withClue("Wrong function: $signature. Expected $e, actual $a.") { a shouldBe e }
     }
 }
 
@@ -328,12 +330,11 @@ internal fun <C : Channel<*>> assertChannelAreEquals(
     expected: C,
     actual: C,
 ) {
-    assertEquals(
-        expected::class,
-        actual::class,
-        message = "Wrong channel type. Expected ${expected::class}, actual ${actual::class}",
-    )
-    assertEquals(expected.isClosed, actual.isClosed)
+    withClue("Wrong channel type. Expected ${expected::class}, actual ${actual::class}") {
+        actual::class shouldBe
+            expected::class
+    }
+    actual.isClosed shouldBe expected.isClosed
 }
 
 /** Asserts that [expected] and [actual] declare the same aliases, each bound to an equal channel (see [assertChannelAreEquals]). */
@@ -341,7 +342,7 @@ internal fun <C : Channel<*>, CS : ChannelStore<*, C, CS>> assertChannelStoresAr
     expected: CS,
     actual: CS,
 ) {
-    assertEquals(expected.keys, actual.keys)
+    actual.keys shouldBe expected.keys
     for (alias in expected.keys) {
         assertChannelAreEquals(expected[alias]!!, actual[alias]!!)
     }

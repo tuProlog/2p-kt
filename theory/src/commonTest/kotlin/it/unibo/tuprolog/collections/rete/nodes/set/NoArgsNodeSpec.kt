@@ -2,6 +2,8 @@ package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.collections.rete.generic.set.NoArgsNode
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
@@ -13,8 +15,6 @@ import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeEmpty
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
 
 /**
  * Test class for [NoArgsNode]
@@ -44,7 +44,7 @@ class NoArgsNodeSpec :
         test("put-clause-inserts-rule") {
             emptyNoArgsNode.put(aRule)
 
-            assertEquals(aRule, emptyNoArgsNode.indexedElements.single())
+            emptyNoArgsNode.indexedElements.single() shouldBe aRule
         }
 
         test("put-clause-inserts-struct-headed-rule") {
@@ -52,23 +52,23 @@ class NoArgsNodeSpec :
             val aStructHeadedRule = Fact.of(Struct.of("f", Atom.of("a")))
             emptyNoArgsNode.put(aStructHeadedRule)
 
-            assertEquals(aStructHeadedRule, emptyNoArgsNode.indexedElements.single())
+            emptyNoArgsNode.indexedElements.single() shouldBe aStructHeadedRule
         }
 
         test("put-clause-inserts-after-by-default") {
             filledNoArgsNode.put(aRule)
 
-            assertEquals(aRule, filledNoArgsNode.indexedElements.last())
+            filledNoArgsNode.indexedElements.last() shouldBe aRule
         }
 
         test("put-clause-inserts-before-all-if-specified") {
             filledNoArgsNode.put(aRule, true)
 
-            assertEquals(aRule, filledNoArgsNode.indexedElements.first())
+            filledNoArgsNode.indexedElements.first() shouldBe aRule
         }
 
         withTests(nameFn = { "get-clause/${it.id}" }, ReteNodeUtils.noArgHeadedRuleCases) { case ->
-            assertEquals(case.clause, filledNoArgsNode.get(case.clause).single())
+            filledNoArgsNode.get(case.clause).single() shouldBe case.clause
         }
 
         withTests(
@@ -119,6 +119,6 @@ class NoArgsNodeSpec :
 
             val independentCopy = emptyNoArgsNode.deepCopy()
 
-            assertSame(emptyNoArgsNode.indexedElements.single(), independentCopy.indexedElements.single())
+            independentCopy.indexedElements.single() shouldBeSameInstanceAs emptyNoArgsNode.indexedElements.single()
         }
     })

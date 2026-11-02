@@ -1,13 +1,14 @@
 package it.unibo.tuprolog.dsl.solve
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /** One way of loading clauses into the scope's default solver, and which knowledge base must receive them. */
 private class LoadCase(
@@ -41,18 +42,20 @@ class KnowledgeBaseLoadingSpec :
                 val clauses = parents()
                 case.load(this, clauses)
                 val (loaded, untouched) = if (case.dynamic) dynamicKb to staticKb else staticKb to dynamicKb
-                assertEquals(clauses, loaded.clauses.toList())
-                assertTrue(untouched.isEmpty)
-                assertEquals(listOf("isaac"), childrenOfAbraham(solve("parent"("abraham", "X"))))
+                loaded.clauses.toList() shouldBe clauses
+                untouched.isEmpty.shouldBeTrue()
+                childrenOfAbraham(solve("parent"("abraham", "X"))) shouldBe listOf("isaac")
             }
         }
 
         test("solver-of/builds-an-independent-solver") {
             prolog {
                 val solver = solverOf(staticKb = Theory.of(parents()))
-                assertEquals(listOf("isaac"), childrenOfAbraham(solver.solve("parent"("abraham", "X"))))
-                assertTrue(staticKb.isEmpty, "the scope's own solver must not see the new solver's clauses")
-                assertTrue(solver.solveOnce(Atom.of("true")).isYes)
+                childrenOfAbraham(solver.solve("parent"("abraham", "X"))) shouldBe listOf("isaac")
+                withClue(
+                    "the scope's own solver must not see the new solver's clauses",
+                ) { staticKb.isEmpty.shouldBeTrue() }
+                solver.solveOnce(Atom.of("true")).isYes.shouldBeTrue()
             }
         }
     })

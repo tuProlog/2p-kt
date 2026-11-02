@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.serialize
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.serialize.ObjectsUtils.deeplyEqual
 import it.unibo.tuprolog.serialize.ObjectsUtils.parseAsObject
@@ -12,7 +14,7 @@ fun <T : Theory> Serializer<T>.assertSerializationWorks(
 ) {
     val expectedObj = parseAsObject(expected, mimeType)
     val actualObj = TheoryObjectifier.default.objectify(actual)
-    kotlin.test.assertTrue(
+    withClue(
         """
         |Expected:
         |   $expectedObj
@@ -20,7 +22,7 @@ fun <T : Theory> Serializer<T>.assertSerializationWorks(
         |   $actualObj
         |
         """.trimMargin(),
-    ) { deeplyEqual(expectedObj, actualObj) }
+    ) { deeplyEqual(expectedObj, actualObj).shouldBeTrue() }
 }
 
 fun Serializer<Theory>.assertTermSerializationWorks(
@@ -35,7 +37,7 @@ fun <T : Theory> Deserializer<T>.assertDeserializationWorks(
     actual: String,
 ) {
     val deserialized = deserialize(actual)
-    kotlin.test.assertTrue(
+    withClue(
         """
         |Expected:
         |   $expected
@@ -43,7 +45,7 @@ fun <T : Theory> Deserializer<T>.assertDeserializationWorks(
         |   $deserialized
         |
         """.trimMargin(),
-    ) { representationsAreEqual(expected, deserialized) }
+    ) { representationsAreEqual(expected, deserialized).shouldBeTrue() }
 }
 
 fun Deserializer<Theory>.assertTermDeserializationWorks(

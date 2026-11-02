@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.throwables.shouldThrowAny
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Constant
@@ -24,9 +29,6 @@ import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.solve.stdlib.primitive.Ground
 import it.unibo.tuprolog.solve.stdlib.primitive.NonVar
 import kotlin.reflect.KClass
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
-import kotlin.test.fail
 import it.unibo.tuprolog.solve.stdlib.primitive.Atom as AtomPrimitive
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 import it.unibo.tuprolog.solve.stdlib.primitive.Integer as IntegerPrimitive
@@ -176,26 +178,36 @@ internal object TypeTestingUtils {
         expectedResult: Any,
     ) = when (expectedResult) {
         true ->
-            assertTrue("Requesting ${input.query} should result in positive response!") {
-                unaryPredicate.implementation
-                    .solve(input)
-                    .single()
-                    .solution is Solution.Yes
+            withClue("Requesting ${input.query} should result in positive response!") {
+                (
+                    run {
+                        unaryPredicate.implementation
+                            .solve(input)
+                            .single()
+                            .solution is Solution.Yes
+                    }
+                ).shouldBeTrue()
             }
         false ->
-            assertTrue("Requesting ${input.query} should result in negative response!") {
-                unaryPredicate.implementation
-                    .solve(input)
-                    .single()
-                    .solution is Solution.No
+            withClue("Requesting ${input.query} should result in negative response!") {
+                (
+                    run {
+                        unaryPredicate.implementation
+                            .solve(input)
+                            .single()
+                            .solution is Solution.No
+                    }
+                ).shouldBeTrue()
             }
         else ->
             @Suppress("UNCHECKED_CAST")
             (expectedResult as? KClass<out ResolutionException>)
                 ?.let {
                     val message = "Requesting ${input.query} should result in an exception of type ${it.simpleName}"
-                    assertFailsWith(expectedResult, message) {
-                        unaryPredicate.implementation.solve(input).single()
+                    withClue(message) {
+                        shouldThrowAny {
+                            unaryPredicate.implementation.solve(input).single()
+                        }.shouldBeInstanceOf(expectedResult)
                     }
                 } ?: fail("Bad written test data!")
     }

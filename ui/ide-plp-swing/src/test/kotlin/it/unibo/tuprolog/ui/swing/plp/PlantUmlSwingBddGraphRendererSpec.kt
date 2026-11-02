@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.ui.swing.plp
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.types.shouldBeInstanceOf
 import javax.swing.JLabel
 import javax.swing.JScrollPane
-import kotlin.test.assertIs
-import kotlin.test.assertNotNull
 
 class PlantUmlSwingBddGraphRendererSpec :
     FunSpec({
@@ -20,15 +20,15 @@ class PlantUmlSwingBddGraphRendererSpec :
                 }
                 """.trimIndent()
             val component = PlantUmlSwingBddGraphRenderer.createGraphComponent(dot, "title")
-            val scrollPane = assertIs<JScrollPane>(component)
-            val label = assertIs<JLabel>(scrollPane.viewport.view)
-            assertNotNull(label.icon)
+            val scrollPane = component.shouldBeInstanceOf<JScrollPane>()
+            val label = scrollPane.viewport.view.shouldBeInstanceOf<JLabel>()
+            label.icon.shouldNotBeNull()
         }
 
         test("garbage input still renders as a blank image rather than failing") {
             val component = PlantUmlSwingBddGraphRenderer.createGraphComponent("this is not valid dot {{{", "title")
-            val scrollPane = assertIs<JScrollPane>(component)
-            val label = assertIs<JLabel>(scrollPane.viewport.view)
-            assertNotNull(label.icon)
+            val scrollPane = component.shouldBeInstanceOf<JScrollPane>()
+            val label = scrollPane.viewport.view.shouldBeInstanceOf<JLabel>()
+            label.icon.shouldNotBeNull()
         }
     })

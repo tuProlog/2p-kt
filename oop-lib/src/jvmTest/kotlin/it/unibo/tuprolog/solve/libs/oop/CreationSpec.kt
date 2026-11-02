@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -15,9 +18,6 @@ import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionExcepti
 import it.unibo.tuprolog.solve.libs.oop.primitives.NewObject3
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class CreationSpec :
     FunSpec({
@@ -36,26 +36,25 @@ class CreationSpec :
                     X,
                 )
             val solutions = solver.solveList(query)
-            assertTrue(solutions.size == 1)
+            solutions.size shouldBe 1
             when (val solution = solutions.single()) {
                 is Solution.Halt ->
                     when (val exception = solution.exception) {
                         is SystemError -> {
-                            assertTrue(exception.cause is OopRuntimeException)
-                            assertTrue(exception.cause?.cause is NullPointerException)
+                            exception.cause.shouldBeInstanceOf<OopRuntimeException>()
+                            exception.cause?.cause.shouldBeInstanceOf<NullPointerException>()
                         }
                         is RepresentationError -> {
-                            assertTrue(exception.cause is TermToObjectConversionException)
+                            exception.cause.shouldBeInstanceOf<TermToObjectConversionException>()
                         }
                         else -> fail("Unexpected exception: $exception")
                     }
                 is Solution.Yes ->
                     solver.solveOnce(query).substitution[X]?.let {
-                        assertTrue(it is ObjectRef)
-                        assertEquals(detectorType, it.`object`::class)
-                        assertEquals<Pair<*, *>?>(
+                        it.shouldBeInstanceOf<ObjectRef>()
+                        (it.`object`::class) shouldBe detectorType
+                        (it.`object` as? ConstructorOverloadDetector)?.args.shouldBe<Pair<*, *>?>(
                             case.converted to case.type,
-                            (it.`object` as? ConstructorOverloadDetector)?.args,
                         )
                     } ?: fail("Missing variable assignment in $solution: $X")
                 else -> fail("Unexpected solution: $solution")

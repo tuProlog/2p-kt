@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve.function
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.TimeDuration
@@ -16,8 +18,6 @@ import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.assertContainsCor
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.createRequest
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.defaultResponse
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.varargArgumentList
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 /**
  * Test class for [Compute.Request]
@@ -58,12 +58,12 @@ class ComputeRequestSpec :
         }
 
         test("request-constructor-complains-with-wrong-arity-and-arguments-count") {
-            assertFailsWith<IllegalArgumentException> { createRequest(arguments = emptyList()) }
-            assertFailsWith<IllegalArgumentException> { createRequest(arguments = anArgumentList + Truth.FAIL) }
+            shouldThrow<IllegalArgumentException> { createRequest(arguments = emptyList()) }
+            shouldThrow<IllegalArgumentException> { createRequest(arguments = anArgumentList + Truth.FAIL) }
         }
 
         test("request-constructor-complains-with-less-than-arity-arguments-if-vararg-signature") {
-            assertFailsWith<IllegalArgumentException> { createRequest(aVarargSignature, emptyList()) }
+            shouldThrow<IllegalArgumentException> { createRequest(aVarargSignature, emptyList()) }
         }
 
         test("request-constructor-permits-more-than-arity-arguments-if-signature-vararg") {
@@ -72,28 +72,26 @@ class ComputeRequestSpec :
 
         test("request-constructor-complains-with-negative-max-duration") {
             createRequest(executionMaxDuration = 0)
-            assertFailsWith<IllegalArgumentException> { createRequest(executionMaxDuration = -1) }
+            shouldThrow<IllegalArgumentException> { createRequest(executionMaxDuration = -1) }
         }
 
         test("request-constructor-complains-with-negative-request-issuing-instant") {
             createRequest(requestIssuingInstant = 0)
-            assertFailsWith<IllegalArgumentException> { createRequest(requestIssuingInstant = -1) }
+            shouldThrow<IllegalArgumentException> { createRequest(requestIssuingInstant = -1) }
         }
 
         test("request-computes-correctly-query-struct") {
-            assertEquals(Struct.of(aSignature.name, anArgumentList), createRequest(aSignature, anArgumentList).query)
-            assertEquals(
-                Struct.of(aVarargSignature.name, varargArgumentList),
-                createRequest(aVarargSignature, varargArgumentList).query,
-            )
+            createRequest(aSignature, anArgumentList).query shouldBe Struct.of(aSignature.name, anArgumentList)
+            createRequest(aVarargSignature, varargArgumentList).query shouldBe
+                Struct.of(aVarargSignature.name, varargArgumentList)
         }
 
         test("equals-works-as-expected") {
             val aRequest = createRequest()
-            assertEquals(aRequest.copy(), aRequest)
+            aRequest shouldBe aRequest.copy()
         }
 
         test("reply-with-creates-correct-response") {
-            assertEquals(createRequest().replyWith(aResult), defaultResponse)
+            defaultResponse shouldBe createRequest().replyWith(aResult)
         }
     })

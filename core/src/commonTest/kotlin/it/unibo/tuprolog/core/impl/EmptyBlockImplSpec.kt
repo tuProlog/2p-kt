@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 /**
  * Test class for [EmptyBlockImpl] and [EmptyBlock]
@@ -19,7 +19,7 @@ class EmptyBlockImplSpec :
         val testedObj = EmptyBlockImpl()
 
         test("empty-block-functor") {
-            assertEquals("{}", testedObj.functor)
+            testedObj.functor shouldBe "{}"
         }
 
         test("empty-arguments") {
@@ -31,11 +31,11 @@ class EmptyBlockImplSpec :
         }
 
         test("variables-empty") {
-            assertTrue { testedObj.variables.none() }
+            testedObj.variables.none().shouldBeTrue()
         }
 
         test("functor-does-not-respect-struct-regex") {
-            assertFalse(testedObj.isFunctorWellFormed)
+            testedObj.isFunctorWellFormed.shouldBeFalse()
         }
 
         test("empty-block-fresh-copy-should-return-the-instance-itself") {

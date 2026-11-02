@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.parser
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.parser.tokens.TokenKind
 import java.io.Reader
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class LongInputStressSpec :
     FunSpec({
@@ -55,15 +55,15 @@ class LongInputStressSpec :
             val session = PrologParser.default().openSession(lexed)
 
             repeat(clauseCount) { expected ->
-                val clause = assertNotNull(session.parseNextClause())
+                val clause = session.parseNextClause().shouldNotBeNull()
                 val expression = clause.root.expression
-                assertEquals(TokenKind.WORD_ATOM, clause.tokens[expression.tokenRange.startInclusive].kind)
-                assertEquals("item($expected).", clause.source.text(clause.root.span))
-                assertTrue(lexed.tokens.retainedCount <= 1)
+                clause.tokens[expression.tokenRange.startInclusive].kind shouldBe TokenKind.WORD_ATOM
+                clause.source.text(clause.root.span) shouldBe "item($expected)."
+                (lexed.tokens.retainedCount <= 1).shouldBeTrue()
             }
 
-            assertEquals(null, session.parseNextClause())
-            assertEquals(clauseCount, source.generatedClauses)
-            assertTrue(source.closed)
+            session.parseNextClause() shouldBe null
+            source.generatedClauses shouldBe clauseCount
+            source.closed.shouldBeTrue()
         }
     })

@@ -1,7 +1,14 @@
 package it.unibo.tuprolog.core.impl
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
@@ -31,13 +38,6 @@ import it.unibo.tuprolog.core.testutils.ScopeUtils.assertScopeCorrectContents
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import it.unibo.tuprolog.core.testutils.TupleUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotSame
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
 
 /**
@@ -57,21 +57,21 @@ class ScopeImplSpec :
         // Scope specific //
         // //////////////////
         test("contains-var-in-empty-scope") {
-            assertFalse { ScopeImpl(ScopeUtils.emptyScope).contains(Var.of("A")) }
+            ScopeImpl(ScopeUtils.emptyScope).contains(Var.of("A")).shouldBeFalse()
         }
 
         scopes("contains-var", ScopeUtils.nonEmptyScopeCases) { case ->
             val scope = ScopeImpl(case.scope())
-            case.scope().values.forEach { assertTrue { it in scope } }
+            case.scope().values.forEach { (it in scope).shouldBeTrue() }
         }
 
         test("contains-string-in-empty-scope") {
-            assertFalse { ScopeImpl(ScopeUtils.emptyScope).contains("A") }
+            ScopeImpl(ScopeUtils.emptyScope).contains("A").shouldBeFalse()
         }
 
         scopes("contains-string", ScopeUtils.nonEmptyScopeCases) { case ->
             val scope = ScopeImpl(case.scope())
-            case.varNames.forEach { assertTrue { it in scope } }
+            case.varNames.forEach { (it in scope).shouldBeTrue() }
         }
 
         scopes("variables") { case -> assertScopeCorrectContents(case.scope(), ScopeImpl(case.scope()).variables) }
@@ -79,13 +79,13 @@ class ScopeImplSpec :
         test("var-of-string-with-non-present-variable-name-should-insert-it-in-empty-scope") {
             val emptyScopeInstance = ScopeImpl(ScopeUtils.emptyScope)
             emptyScopeInstance.varOf("Test")
-            assertEquals(1, emptyScopeInstance.variables.count())
+            emptyScopeInstance.variables.count() shouldBe 1
         }
 
         scopes("var-of-string-with-non-present-variable-name-should-insert-it", ScopeUtils.nonEmptyScopeCases) { case ->
             val scope = ScopeImpl(case.scope())
             case.varNames.forEach { scope.varOf(it + "x") }
-            assertEquals(case.varNames.count() * 2, scope.variables.count())
+            scope.variables.count() shouldBe (case.varNames.count() * 2)
         }
 
         scopes(
@@ -94,38 +94,38 @@ class ScopeImplSpec :
         ) { case ->
             val scope = ScopeImpl(case.scope())
             case.varNames.forEach { scope.varOf(it) }
-            assertEquals(case.varNames.count(), scope.variables.count())
+            scope.variables.count() shouldBe case.varNames.count()
         }
 
         xtest("var-of-underscore-creates-always-different-anonymous-instances") {
             val emptyScopeInstance = ScopeImpl(ScopeUtils.emptyScope)
-            assertNotSame(emptyScopeInstance.varOf("_"), emptyScopeInstance.varOf("_"))
+            emptyScopeInstance.varOf("_") shouldNotBeSameInstanceAs emptyScopeInstance.varOf("_")
         }
 
         scopes("where-executes-the-given-lambda") { case ->
-            assertFailsWith<IllegalStateException> { ScopeImpl(case.scope()).where { throw IllegalStateException() } }
+            shouldThrow<IllegalStateException> { ScopeImpl(case.scope()).where { throw IllegalStateException() } }
         }
 
         scopes("where-returns-starting-scope-after-execution") { case ->
             val scope = ScopeImpl(case.scope())
-            assertSame(scope, scope.where { 1 + 2 })
+            (scope.where { 1 + 2 }) shouldBeSameInstanceAs scope
         }
 
         scopes("with-executes-given-lambda") { case ->
-            assertFailsWith<IllegalStateException> { ScopeImpl(case.scope()).with { throw IllegalStateException() } }
+            shouldThrow<IllegalStateException> { ScopeImpl(case.scope()).with { throw IllegalStateException() } }
         }
 
         scopes("with-returns-computation-results-after-execution") { case ->
             val myResult = 3
-            assertEquals(myResult, ScopeImpl(case.scope()).with { myResult })
+            (ScopeImpl(case.scope()).with { myResult }) shouldBe myResult
         }
 
         test("empty-scopes-are-equal") {
-            assertEquals(ScopeImpl(ScopeUtils.emptyScope), ScopeImpl(ScopeUtils.emptyScope))
+            ScopeImpl(ScopeUtils.emptyScope) shouldBe ScopeImpl(ScopeUtils.emptyScope)
         }
 
         scopes("scopes-with-fresh-variables-are-not-equal", ScopeUtils.nonEmptyScopeCases) { case ->
-            assertNotEquals(ScopeImpl(case.scope()), ScopeImpl(case.scope()))
+            ScopeImpl(case.scope()) shouldNotBe ScopeImpl(case.scope())
         }
 
         // /////////////////////
@@ -247,17 +247,17 @@ class ScopeImplSpec :
 
         test("anonymous") {
             TermTypeAssertionUtils.assertIsVar(ScopeImpl(ScopeUtils.emptyScope).anonymous())
-            assertTrue { ScopeImpl(ScopeUtils.emptyScope).anonymous().isAnonymous }
+            ScopeImpl(ScopeUtils.emptyScope).anonymous().isAnonymous.shouldBeTrue()
         }
 
         test("underscore-property") {
             TermTypeAssertionUtils.assertIsVar(ScopeImpl(ScopeUtils.emptyScope).`_`)
-            assertTrue { ScopeImpl(ScopeUtils.emptyScope).`_`.isAnonymous }
+            (ScopeImpl(ScopeUtils.emptyScope).`_`.isAnonymous).shouldBeTrue()
         }
 
         test("whatever") {
             TermTypeAssertionUtils.assertIsVar(ScopeImpl(ScopeUtils.emptyScope).whatever())
-            assertTrue { ScopeImpl(ScopeUtils.emptyScope).whatever().isAnonymous }
+            ScopeImpl(ScopeUtils.emptyScope).whatever().isAnonymous.shouldBeTrue()
         }
 
         withTests(nameFn = { "num-of-big-decimal/${it.id}" }, RealUtils.realCases) { case ->

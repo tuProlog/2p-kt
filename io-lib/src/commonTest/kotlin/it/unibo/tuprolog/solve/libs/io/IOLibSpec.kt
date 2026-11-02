@@ -1,20 +1,20 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.assertExamplesHold
 import it.unibo.tuprolog.solve.assertFullyDocumented
 import it.unibo.tuprolog.solve.library.Runtime
-import kotlin.test.assertEquals
 
 class IOLibSpec :
     FunSpec({
         test("self-equality") {
-            assertEquals(IOLib, IOLib)
+            IOLib shouldBe IOLib
         }
 
         test("item-equality") {
-            assertEquals(Runtime.of(IOLib), Runtime.of(IOLib))
+            Runtime.of(IOLib) shouldBe Runtime.of(IOLib)
         }
 
         test("every-item-is-documented") {

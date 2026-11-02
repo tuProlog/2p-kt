@@ -2,9 +2,9 @@ package it.unibo.tuprolog.solve.primitive
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.Signature
-import kotlin.test.assertEquals
 
 /**
  * Test class for [AbstractWrapper]
@@ -22,16 +22,16 @@ class AbstractWrapperSpec :
             )
 
         withTests(nameFn = { "signature-correct/${it.id}" }, cases) { case ->
-            assertEquals(signature, case.wrapper().signature)
+            case.wrapper().signature shouldBe signature
         }
 
         withTests(nameFn = { "functor-correct/${it.id}" }, cases) { case ->
-            assertEquals(signature.name, case.wrapper().functor)
+            case.wrapper().functor shouldBe signature.name
         }
 
         withTests(nameFn = { "description-pair-correct/${it.id}" }, cases) { case ->
             val wrapper = case.wrapper()
-            assertEquals(Pair(signature, wrapper.implementation), wrapper.descriptionPair)
+            wrapper.descriptionPair shouldBe Pair(signature, wrapper.implementation)
         }
     })
 

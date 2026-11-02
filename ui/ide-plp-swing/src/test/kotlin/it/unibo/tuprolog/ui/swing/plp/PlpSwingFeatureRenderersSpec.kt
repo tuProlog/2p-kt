@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ui.swing.plp
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.ui.gui.identity.DocumentId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.model.FeatureValue
@@ -13,7 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import javax.swing.JLabel
 import javax.swing.SwingUtilities
-import kotlin.test.assertTrue
 
 class PlpSwingFeatureRenderersSpec :
     FunSpec({
@@ -36,7 +36,7 @@ class PlpSwingFeatureRenderersSpec :
                 val panel = renderer.createComponent(context)
 
                 renderer.render(panel, page, PageFeatureState())
-                assertTrue(collectLabels(panel).any { it.contains("No binary decision diagram") })
+                (collectLabels(panel).any { it.contains("No binary decision diagram") }).shouldBeTrue()
 
                 renderer.render(
                     panel,
@@ -48,7 +48,7 @@ class PlpSwingFeatureRenderersSpec :
                         ),
                     ),
                 )
-                assertTrue(collectLabels(panel).any { it == "Binary decision diagram" })
+                (collectLabels(panel).any { it == "Binary decision diagram" }).shouldBeTrue()
             }
         }
     })

@@ -2,13 +2,13 @@ package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.impl.IntegerImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.IntegerUtils
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Test class for [Integer] companion object
@@ -49,15 +49,15 @@ class IntegerSpec :
         }
 
         withTests(nameFn = { "string-matches-pattern/${it.id}" }, IntegerUtils.integerCases) { case ->
-            assertTrue(case.string matches Integer.PATTERN)
+            (case.string matches Integer.PATTERN).shouldBeTrue()
         }
 
         withTests(nameFn = { "to-string-matches-pattern/${it.id}" }, IntegerUtils.integerCases) { case ->
-            assertTrue(Integer.of(case.string).toString() matches Integer.PATTERN)
+            (Integer.of(case.string).toString() matches Integer.PATTERN).shouldBeTrue()
         }
 
         test("decimal-and-int-values") {
-            assertEquals(BigDecimal.of(5), Integer.of(5).decimalValue)
-            assertEquals(BigInteger.of(5), Integer.of(5).intValue)
+            Integer.of(5).decimalValue shouldBe BigDecimal.of(5)
+            Integer.of(5).intValue shouldBe BigInteger.of(5)
         }
     })

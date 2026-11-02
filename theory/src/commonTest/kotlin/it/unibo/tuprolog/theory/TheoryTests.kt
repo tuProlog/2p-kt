@@ -1,7 +1,14 @@
 package it.unibo.tuprolog.theory
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.funSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.matchers.types.shouldBeSameInstanceAs
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
@@ -26,12 +33,6 @@ import it.unibo.tuprolog.testutils.TheoryUtils.ruleQueryWithVarBodyCases
 import it.unibo.tuprolog.testutils.TheoryUtils.wellFormedClauseCases
 import it.unibo.tuprolog.testutils.TheoryUtils.wellFormedClauses
 import it.unibo.tuprolog.testutils.TheoryUtils.wellFormedRuleCases
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertNotSame
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for all [Theory] subtypes
@@ -64,17 +65,17 @@ fun theoryTests(
 
     fun FreshTheoriesScope.assertTrueIfMutableFalseOtherwise(boolean: Boolean) {
         if (filledTheory is MutableTheory) {
-            assertTrue(boolean)
+            boolean.shouldBeTrue()
         } else {
-            assertFalse(boolean)
+            boolean.shouldBeFalse()
         }
     }
 
     fun FreshTheoriesScope.assertFalseIfMutableTrueOtherwise(boolean: Boolean) {
         if (filledTheory is MutableTheory) {
-            assertFalse(boolean)
+            boolean.shouldBeFalse()
         } else {
-            assertTrue(boolean)
+            boolean.shouldBeTrue()
         }
     }
 
@@ -83,9 +84,9 @@ fun theoryTests(
         second: Theory,
     ) {
         if (first is MutableTheory && second is MutableTheory) {
-            assertSame(first, second)
+            second shouldBeSameInstanceAs first
         } else if (first !is MutableTheory && second !is MutableTheory) {
-            assertNotSame(first, second)
+            second shouldNotBeSameInstanceAs first
         } else {
             throw IllegalStateException(
                 "There must be a problem: trying to compare a mutable theory with an immutable one",
@@ -94,12 +95,12 @@ fun theoryTests(
     }
 
     test("theory-complains-if-providing-not-well-formed-clauses-upon-construction") {
-        assertFailsWith<IllegalArgumentException> { theoryGenerator(notWellFormedClauses) }
+        shouldThrow<IllegalArgumentException> { theoryGenerator(notWellFormedClauses) }
     }
 
     test("clauses-correct") {
         withFreshTheories {
-            assertTrue(emptyTheory.clauses.none())
+            emptyTheory.clauses.none().shouldBeTrue()
             assertClauseHeadPartialOrderingRespected(wellFormedClauses, filledTheory.clauses)
         }
     }
@@ -109,7 +110,7 @@ fun theoryTests(
             val rules = wellFormedClauses.filterIsInstance<Rule>()
 
             assertClauseHeadPartialOrderingRespected(rules, filledTheory.rules)
-            assertTrue(emptyTheory.rules.none())
+            emptyTheory.rules.none().shouldBeTrue()
         }
     }
 
@@ -118,7 +119,7 @@ fun theoryTests(
             val directives = wellFormedClauses.filterIsInstance<Directive>()
 
             assertClauseHeadPartialOrderingRespected(directives, filledTheory.directives)
-            assertTrue(emptyTheory.directives.none())
+            emptyTheory.directives.none().shouldBeTrue()
         }
     }
 
@@ -142,7 +143,7 @@ fun theoryTests(
                     override val isEmpty: Boolean get() = notWellFormedClauses.isEmpty()
                     override val isNonEmpty: Boolean get() = !isEmpty
                 }
-            assertFailsWith<IllegalArgumentException> { filledTheory + badTheory }
+            shouldThrow<IllegalArgumentException> { filledTheory + badTheory }
         }
     }
 
@@ -169,13 +170,13 @@ fun theoryTests(
             val toBeTested = filledTheory + anIndependentFact
 
             assertTrueIfMutableFalseOtherwise(anIndependentFact in filledTheory)
-            assertTrue(anIndependentFact in toBeTested)
+            (anIndependentFact in toBeTested).shouldBeTrue()
         }
     }
 
     withTests(nameFn = { "plus-clause-complains-on-bad-clause/${it.id}" }, notWellFormedClauseCases) { case ->
         withFreshTheories {
-            assertFailsWith<IllegalArgumentException> { filledTheory + case.clause }
+            shouldThrow<IllegalArgumentException> { filledTheory + case.clause }
         }
     }
     withTests(
@@ -183,7 +184,7 @@ fun theoryTests(
         wellFormedClauseCases,
     ) { case ->
         withFreshTheories {
-            assertTrue { case.clause in filledTheory }
+            (case.clause in filledTheory).shouldBeTrue()
         }
     }
 
@@ -192,12 +193,12 @@ fun theoryTests(
         successfulRetractQueryCases,
     ) { case ->
         withFreshTheories {
-            assertTrue { case.query in filledTheory }
+            (case.query in filledTheory).shouldBeTrue()
         }
     }
     test("contains-clause-returns-false-with-non-present-clauses") {
         withFreshTheories {
-            assertFalse(anIndependentFact in filledTheory)
+            (anIndependentFact in filledTheory).shouldBeFalse()
         }
     }
 
@@ -206,7 +207,7 @@ fun theoryTests(
         failingRetractQueryCases,
     ) { case ->
         withFreshTheories {
-            assertFalse { case.query in filledTheory }
+            (case.query in filledTheory).shouldBeFalse()
         }
     }
     withTests(
@@ -214,12 +215,12 @@ fun theoryTests(
         wellFormedRuleCases,
     ) { case ->
         withFreshTheories {
-            assertTrue { case.clause.head in filledTheory }
+            (case.clause.head in filledTheory).shouldBeTrue()
         }
     }
     test("contains-struct-returns-false-if-no-matching-head-is-found") {
         withFreshTheories {
-            assertFalse(anIndependentFact.head in filledTheory)
+            (anIndependentFact.head in filledTheory).shouldBeFalse()
         }
     }
 
@@ -228,7 +229,7 @@ fun theoryTests(
         wellFormedRuleCases,
     ) { case ->
         withFreshTheories {
-            assertTrue { case.clause.head.indicator in filledTheory }
+            (case.clause.head.indicator in filledTheory).shouldBeTrue()
         }
     }
 
@@ -237,12 +238,12 @@ fun theoryTests(
         successfulRuleQueryCases,
     ) { case ->
         withFreshTheories {
-            assertTrue { case.query.head.indicator in filledTheory }
+            (case.query.head.indicator in filledTheory).shouldBeTrue()
         }
     }
     test("contains-indicator-returns-false-if-no-matching-clause-is-found") {
         withFreshTheories {
-            assertFalse(filledTheory.contains(anIndependentFact.head.indicator))
+            filledTheory.contains(anIndependentFact.head.indicator).shouldBeFalse()
         }
     }
 
@@ -251,12 +252,12 @@ fun theoryTests(
         failingRuleQueryCases,
     ) { case ->
         withFreshTheories {
-            assertFalse { case.query.head.indicator in filledTheory }
+            (case.query.head.indicator in filledTheory).shouldBeFalse()
         }
     }
     test("contains-indicator-complains-if-indicator-non-well-formed") {
         withFreshTheories {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 Indicator.of(Var.anonymous(), Var.anonymous()) in filledTheory
             }
         }
@@ -264,22 +265,22 @@ fun theoryTests(
 
     withTests(nameFn = { "get-clause/${it.id}" }, clauseQueryCases) { case ->
         withFreshTheories {
-            assertEquals(case.expected, filledTheory[case.query].toList())
+            filledTheory[case.query].toList() shouldBe case.expected
         }
     }
     withTests(nameFn = { "get-struct/${it.id}" }, ruleQueryWithVarBodyCases) { case ->
         withFreshTheories {
-            assertEquals(case.expected, filledTheory[case.query.head].toList())
+            filledTheory[case.query.head].toList() shouldBe case.expected
         }
     }
     withTests(nameFn = { "get-indicator/${it.id}" }, ruleQueryByFunctorAndArityCases) { case ->
         withFreshTheories {
-            assertEquals(case.expected, filledTheory[case.query.head.indicator].toList())
+            filledTheory[case.query.head.indicator].toList() shouldBe case.expected
         }
     }
     test("get-indicator-complains-if-indicator-non-well-formed") {
         withFreshTheories {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 filledTheory.get(Indicator.of(Var.anonymous(), Var.anonymous()))
             }
         }
@@ -296,7 +297,7 @@ fun theoryTests(
 
     withTests(nameFn = { "assert-a-clause-complains-on-bad-clause/${it.id}" }, notWellFormedClauseCases) { case ->
         withFreshTheories {
-            assertFailsWith<IllegalArgumentException> { filledTheory.assertA(case.clause) }
+            shouldThrow<IllegalArgumentException> { filledTheory.assertA(case.clause) }
         }
     }
     test("assert-a-struct") {
@@ -316,7 +317,7 @@ fun theoryTests(
             val toBeTested = filledTheory.assertA(anIndependentFact)
 
             assertTrueIfMutableFalseOtherwise(anIndependentFact in filledTheory)
-            assertTrue(anIndependentFact in toBeTested)
+            (anIndependentFact in toBeTested).shouldBeTrue()
         }
     }
 
@@ -330,7 +331,7 @@ fun theoryTests(
 
     withTests(nameFn = { "assert-z-clause-complains-on-bad-clause/${it.id}" }, notWellFormedClauseCases) { case ->
         withFreshTheories {
-            assertFailsWith<IllegalArgumentException> { filledTheory.assertZ(case.clause) }
+            shouldThrow<IllegalArgumentException> { filledTheory.assertZ(case.clause) }
         }
     }
     test("assert-z-struct") {
@@ -349,7 +350,7 @@ fun theoryTests(
             val toBeTested = filledTheory.assertZ(anIndependentFact)
 
             assertTrueIfMutableFalseOtherwise(anIndependentFact in filledTheory)
-            assertTrue(anIndependentFact in toBeTested)
+            (anIndependentFact in toBeTested).shouldBeTrue()
         }
     }
 
@@ -361,9 +362,9 @@ fun theoryTests(
             val retractResult = filledTheory.retract(case.query)
 
             if (case.expected.isEmpty()) {
-                assertTrue { retractResult is RetractResult.Failure }
+                retractResult.shouldBeInstanceOf<RetractResult.Failure<*>>()
             } else {
-                assertTrue { retractResult is RetractResult.Success }
+                retractResult.shouldBeInstanceOf<RetractResult.Success<*>>()
             }
         }
     }
@@ -373,7 +374,7 @@ fun theoryTests(
         withFreshTheories {
             val retractResult = filledTheory.retract(case.query) as RetractResult.Success
 
-            assertEquals(listOf(case.expected.first()), retractResult.clauses.toList())
+            retractResult.clauses.toList() shouldBe listOf(case.expected.first())
         }
     }
     withTests(
@@ -384,9 +385,9 @@ fun theoryTests(
             val retractResult = filledTheory.retract(case.query)
 
             if (case.expected.isEmpty()) {
-                assertTrue { retractResult is RetractResult.Failure }
+                retractResult.shouldBeInstanceOf<RetractResult.Failure<*>>()
             } else {
-                assertTrue { retractResult is RetractResult.Success }
+                retractResult.shouldBeInstanceOf<RetractResult.Success<*>>()
             }
         }
     }
@@ -396,7 +397,7 @@ fun theoryTests(
         withFreshTheories {
             val retractResult = filledTheory.retract(case.query.head) as RetractResult.Success
 
-            assertEquals(listOf(case.expected.first()), retractResult.clauses.toList())
+            retractResult.clauses.toList() shouldBe listOf(case.expected.first())
         }
     }
     test("retract-creates-new-unlinked-instance-if-successful") {
@@ -406,7 +407,7 @@ fun theoryTests(
 
             assertSameIfMutableNotSameOtherwise(filledTheory, toBeTested)
             assertFalseIfMutableTrueOtherwise(aDatabaseClause in filledTheory)
-            assertFalse(aDatabaseClause in toBeTested)
+            (aDatabaseClause in toBeTested).shouldBeFalse()
         }
     }
 
@@ -414,7 +415,7 @@ fun theoryTests(
         withFreshTheories {
             val toBeTested = filledTheory.retract(anIndependentFact).theory
 
-            assertSame(filledTheory, toBeTested) // TODO take care of mutable theories here
+            toBeTested shouldBeSameInstanceAs filledTheory // TODO take care of mutable theories here
         }
     }
 
@@ -426,9 +427,9 @@ fun theoryTests(
             val retractResult = filledTheory.retractAll(case.query)
 
             if (case.expected.isEmpty()) {
-                assertTrue { retractResult is RetractResult.Failure }
+                retractResult.shouldBeInstanceOf<RetractResult.Failure<*>>()
             } else {
-                assertTrue { retractResult is RetractResult.Success }
+                retractResult.shouldBeInstanceOf<RetractResult.Success<*>>()
             }
         }
     }
@@ -438,7 +439,7 @@ fun theoryTests(
         withFreshTheories {
             val retractResult = filledTheory.retractAll(case.query) as RetractResult.Success
 
-            assertEquals(case.expected, retractResult.clauses.toList())
+            retractResult.clauses.toList() shouldBe case.expected
         }
     }
     withTests(
@@ -449,9 +450,9 @@ fun theoryTests(
             val retractResult = filledTheory.retractAll(case.query)
 
             if (case.expected.isEmpty()) {
-                assertTrue { retractResult is RetractResult.Failure }
+                retractResult.shouldBeInstanceOf<RetractResult.Failure<*>>()
             } else {
-                assertTrue { retractResult is RetractResult.Success }
+                retractResult.shouldBeInstanceOf<RetractResult.Success<*>>()
             }
         }
     }
@@ -461,7 +462,7 @@ fun theoryTests(
         withFreshTheories {
             val retractResult = filledTheory.retractAll(case.query.head) as RetractResult.Success
 
-            assertEquals(case.expected, retractResult.clauses.toList())
+            retractResult.clauses.toList() shouldBe case.expected
         }
     }
     test("retract-all-creates-new-unlinked-instance-if-successful") {
@@ -471,7 +472,7 @@ fun theoryTests(
 
             assertSameIfMutableNotSameOtherwise(filledTheory, toBeTested)
             assertFalseIfMutableTrueOtherwise(aDatabaseClause in filledTheory)
-            assertFalse(aDatabaseClause in toBeTested)
+            (aDatabaseClause in toBeTested).shouldBeFalse()
         }
     }
 
@@ -479,7 +480,7 @@ fun theoryTests(
         withFreshTheories {
             val toBeTested = filledTheory.retractAll(anIndependentFact).theory
 
-            assertSame(filledTheory, toBeTested)
+            toBeTested shouldBeSameInstanceAs filledTheory
         }
     }
 
@@ -532,14 +533,8 @@ fun theoryTests(
 
     withTests(nameFn = { "retract-takes-unification-into-account/${it.id}" }, negativeMemberQueryCases) { case ->
         val theory = theoryGenerator(memberClause)
-        assertEquals(
-            RetractResult.Failure(theory),
-            theory.retract(case.clause),
-        )
-        assertEquals(
-            RetractResult.Failure(theory),
-            theory.retract(case.clause.head),
-        )
+        theory.retract(case.clause) shouldBe RetractResult.Failure(theory)
+        theory.retract(case.clause.head) shouldBe RetractResult.Failure(theory)
     }
     withTests(nameFn = { "nested-get-works-at-several-depth-levels/${it.id}" }, deepQueryCases) { case ->
         val theory = theoryGenerator(deepClause)

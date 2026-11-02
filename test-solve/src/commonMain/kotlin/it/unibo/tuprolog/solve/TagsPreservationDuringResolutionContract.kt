@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -7,8 +10,6 @@ import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.unify.AbstractUnificator
 import it.unibo.tuprolog.unify.Equation
 import it.unibo.tuprolog.utils.setTags
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /** Verifies that term tags (see `it.unibo.tuprolog.utils.Taggable`) attached to a theory's clauses, or to a query, survive resolution and are visible to a custom `it.unibo.tuprolog.unify.Unificator`. */
 fun tagsPreservationDuringResolutionContract(
@@ -28,7 +29,7 @@ fun tagsPreservationDuringResolutionContract(
                 // decomposes straight into per-argument equations; so tags on an intermediate struct (CLAUSE, F, G)
                 // are invisible to any Unificator, only a leaf's (X) tags are ever visible
                 val expected = if (verse == TagComparisonVerse.IGNORE || depth != Depth.X) 1 else 0
-                assertEquals(expected, solutions, "depth=$depth verse=$verse")
+                withClue("depth=$depth verse=$verse") { solutions shouldBe expected }
             }
         }
     }
@@ -41,7 +42,7 @@ fun tagsPreservationDuringResolutionContract(
         for (depth in listOf(Depth.F, Depth.G, Depth.X)) {
             for (verse in verses) {
                 val solutions = countSolutions(solverFor(depth, verse), taggedQuery(depth, tagA))
-                assertEquals(1, solutions, "depth=$depth verse=$verse")
+                withClue("depth=$depth verse=$verse") { solutions shouldBe 1 }
             }
         }
     }
@@ -59,7 +60,7 @@ fun tagsPreservationDuringResolutionContract(
                     val solutions = countSolutions(solverFor(depth, verse), taggedQuery(depth, differentTag))
                     // see testUntaggedQueryAgainstTaggedTheory: only leaf-level (X) tags are ever visible
                     val expected = if (verse == TagComparisonVerse.IGNORE || depth != Depth.X) 1 else 0
-                    assertEquals(expected, solutions, "depth=$depth tag=$differentTag verse=$verse")
+                    withClue("depth=$depth tag=$differentTag verse=$verse") { solutions shouldBe expected }
                 }
             }
         }
@@ -108,16 +109,14 @@ fun tagsPreservationDuringResolutionContract(
 
         val solutions = solver.solveList(goal).filter { it.isYes }
 
-        assertEquals(1, solutions.size)
-        assertTrue(unificator.violations.isEmpty(), "tags crossed sides: ${unificator.violations}")
-        assertTrue(
-            unificator.sawGoalOriginatedTag,
-            "goal-originated tags were never observed: they may have been lost",
-        )
-        assertTrue(
-            unificator.sawTheoryOriginatedTag,
-            "theory-originated tags were never observed: they may have been lost",
-        )
+        solutions.size shouldBe 1
+        withClue("tags crossed sides: ${unificator.violations}") { unificator.violations.isEmpty().shouldBeTrue() }
+        withClue("goal-originated tags were never observed: they may have been lost") {
+            unificator.sawGoalOriginatedTag.shouldBeTrue()
+        }
+        withClue("theory-originated tags were never observed: they may have been lost") {
+            unificator.sawTheoryOriginatedTag.shouldBeTrue()
+        }
     }
 }
 

@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.core.testutils
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.Term
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 /**
  * Utils singleton to test equality
@@ -18,23 +19,25 @@ internal object AssertionUtils {
     fun <T> List<T>.dropFirst(): List<T> = this.drop(1)
 
     /** Asserts all boolean provided are `true` */
-    fun assertTrue(vararg boolean: Boolean) =
-        assertTrue("Element at index ${boolean.indexOf(false)} expected to be `true`") { boolean.all { it } }
+    fun assertAllTrue(vararg boolean: Boolean) =
+        withClue(
+            "Element at index ${boolean.indexOf(false)} expected to be `true`",
+        ) { boolean.all { it }.shouldBeTrue() }
 
     /** Asserts all boolean provided are `false` */
-    fun assertFalse(vararg boolean: Boolean) =
-        assertTrue("Element at index ${boolean.indexOf(true)} expected to be `false`") { boolean.none { it } }
+    fun assertAllFalse(vararg boolean: Boolean) =
+        withClue(
+            "Element at index ${boolean.indexOf(true)} expected to be `false`",
+        ) { boolean.none { it }.shouldBeTrue() }
 
     /** Asserts mutual structural equality for two [Term]s */
     fun assertStructurallyEquals(
         expected: Term,
         actual: Term,
     ) {
-        assertTrue("$actual should be structurally equal to $expected, while it is not") {
-            expected structurallyEquals actual
-        }
-        assertTrue("$actual  should be structurally equal to $expected, while it is not") {
-            actual structurallyEquals expected
+        withClue("$actual should be structurally equal to $expected, while it is not") {
+            (expected structurallyEquals actual).shouldBeTrue()
+            (actual structurallyEquals expected).shouldBeTrue()
         }
     }
 
@@ -42,7 +45,7 @@ internal object AssertionUtils {
     fun assertEqualsUsingVariablesSimpleNames(
         expected: Term,
         actual: Term,
-    ) = assertTrue(
+    ) = assertAllTrue(
         expected.equals(actual, false),
         actual.equals(expected, false),
     )
@@ -51,7 +54,7 @@ internal object AssertionUtils {
     fun assertNotEqualsUsingVariablesSimpleNames(
         expected: Term,
         actual: Term,
-    ) = assertFalse(
+    ) = assertAllFalse(
         expected.equals(actual, false),
         actual.equals(expected, false),
     )
@@ -60,7 +63,7 @@ internal object AssertionUtils {
     fun assertNotStructurallyEquals(
         expected: Term,
         actual: Term,
-    ) = assertFalse(
+    ) = assertAllFalse(
         expected structurallyEquals actual,
         actual structurallyEquals expected,
     )
@@ -71,7 +74,7 @@ internal object AssertionUtils {
         actual: Term,
     ) {
         assertStructurallyEquals(expected, actual)
-        assertEquals(expected, actual)
+        actual shouldBe expected
         assertEqualsUsingVariablesSimpleNames(expected, actual)
     }
 
@@ -80,7 +83,7 @@ internal object AssertionUtils {
         expected: Term,
         actual: Term,
     ) {
-        assertNotEquals(expected, actual)
+        actual shouldNotBe expected
         assertNotStructurallyEquals(expected, actual)
         assertNotEqualsUsingVariablesSimpleNames(expected, actual)
     }

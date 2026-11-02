@@ -2,6 +2,11 @@
 
 package it.unibo.tuprolog.solve.concurrent
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
@@ -20,10 +25,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertSame
 
 private inline val loggingOn get() = false
 
@@ -205,31 +206,28 @@ class MultiSet(
 
     override fun assertingEquals(other: Any?) {
         if (this === other) {
-            assertSame(this, other)
+            other shouldBeSameInstanceAs this
             return
         }
-        assertFalse(other == null || this::class != other::class)
+        (other == null || this::class != other::class).shouldBeFalse()
 
         val actual = other as MultiSet
 
         val failMsg = "Expected solutions: ${printSolutions()} \nActual solutions: ${actual.printSolutions()}"
 
-        assertEquals(
-            solutionOccurrences.entries.count { !it.key.solution.isNo },
-            actual.solutionOccurrences.entries.count { !it.key.solution.isNo },
-            "Expected MultiSet size did not match actual MultiSet size.\n$failMsg",
-        )
+        withClue("Expected MultiSet size did not match actual MultiSet size.\n$failMsg") {
+            (actual.solutionOccurrences.entries.count { !it.key.solution.isNo }) shouldBe
+                (solutionOccurrences.entries.count { !it.key.solution.isNo })
+        }
         solutionOccurrences.forEach { (key, value) ->
             val foundValue: Int? = actual.solutionOccurrences[key]?.let { if (key.solution.isNo) 1 else it }
-            assertNotNull(
-                foundValue,
-                "Expected solution not found in actual. Missing expected solution: $key\n$failMsg",
-            )
-            assertEquals(
-                value,
-                foundValue,
-                "Expected solution count ($value) did not match actual solution count ($foundValue).\n$failMsg",
-            )
+            withClue("Expected solution not found in actual. Missing expected solution: $key\n$failMsg") {
+                foundValue.shouldNotBeNull()
+            }
+            withClue("Expected solution count ($value) did not match actual solution count ($foundValue).\n$failMsg") {
+                foundValue shouldBe
+                    value
+            }
         }
     }
 

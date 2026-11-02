@@ -1,14 +1,15 @@
 package it.unibo.tuprolog.parser
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.parser.exceptions.MalformedNumericLiteralException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedBlockCommentException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedQuotedLiteralException
 import it.unibo.tuprolog.parser.tokens.Token
 import it.unibo.tuprolog.parser.tokens.TokenKind
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class LexerBoundaryContractSpec :
     FunSpec({
@@ -39,34 +40,28 @@ class LexerBoundaryContractSpec :
 
         withTests(nameFn = { "full-stop-termination/${it.id}" }, fullStopSuffixes) { case ->
             val source = lex("a.${case.suffix}")
-            assertEquals(case.expected, source.significantTokens()[1].kind, "suffix=${case.suffix.escape()}")
+            withClue("suffix=${case.suffix.escape()}") { source.significantTokens()[1].kind shouldBe case.expected }
         }
 
         test("line-comments-terminate-at-every-supported-line-ending") {
             val atEof = lex("a % comment")
-            assertEquals(
-                listOf(TokenKind.WORD_ATOM, TokenKind.END_OF_INPUT),
-                atEof.significantTokens().map(Token::kind),
-            )
+            atEof.significantTokens().map(Token::kind) shouldBe listOf(TokenKind.WORD_ATOM, TokenKind.END_OF_INPUT)
         }
 
         withTests(nameFn = { "line-comments-terminate-at-line-ending/${it.id}" }, lineEndings) { case ->
             val input = lex("a % comment${case.ending}b")
-            assertEquals(
-                listOf(TokenKind.WORD_ATOM, TokenKind.WORD_ATOM, TokenKind.END_OF_INPUT),
-                input.significantTokens().map(Token::kind),
-            )
+            input.significantTokens().map(Token::kind) shouldBe
+                listOf(TokenKind.WORD_ATOM, TokenKind.WORD_ATOM, TokenKind.END_OF_INPUT)
         }
 
         test("empty-and-doubled-quoted-literals-are-decoded") {
             val input = lex("'' \"\" 'can''t' \"say \"\"hi\"\"\"")
             val significant = input.significantTokens().dropLast(1)
-            assertEquals(
-                listOf("", "", "can't", "say \"hi\""),
+            (
                 significant.map {
                     (it.payload as it.unibo.tuprolog.parser.tokens.TokenPayload.QuotedText).decoded
-                },
-            )
+                }
+            ) shouldBe listOf("", "", "can't", "say \"hi\"")
         }
 
         withTests(
@@ -75,18 +70,18 @@ class LexerBoundaryContractSpec :
             },
             listOf("0x", "0X", "0o", "0O", "0b", "0B"),
         ) { input ->
-            assertFailsWith<MalformedNumericLiteralException>(input) { lex(input).materialize() }
+            withClue(input) { shouldThrow<MalformedNumericLiteralException> { lex(input).materialize() } }
         }
 
         test("unterminated-constructs-remain-typed-across-chunk-boundaries/quoted-literal") {
             forEverySingleSplit("'unterminated") { source ->
-                assertFailsWith<UnterminatedQuotedLiteralException> { source.materialize() }
+                shouldThrow<UnterminatedQuotedLiteralException> { source.materialize() }
             }
         }
 
         test("unterminated-constructs-remain-typed-across-chunk-boundaries/block-comment") {
             forEverySingleSplit("/* unterminated") { source ->
-                assertFailsWith<UnterminatedBlockCommentException> { source.materialize() }
+                shouldThrow<UnterminatedBlockCommentException> { source.materialize() }
             }
         }
 
@@ -100,7 +95,7 @@ class LexerBoundaryContractSpec :
                         ).materialize(),
                 )
             forEverySingleSplit(case.text) { source ->
-                assertEquals(expected, signature(source.materialize()), "split input: ${case.text}")
+                withClue("split input: ${case.text}") { signature(source.materialize()) shouldBe expected }
             }
         }
     })

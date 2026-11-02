@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.format
@@ -142,8 +145,6 @@ import it.unibo.tuprolog.solve.stdlib.rule.Not
 import it.unibo.tuprolog.solve.stdlib.rule.Once
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 import kotlin.collections.plus as append
 
@@ -181,7 +182,7 @@ fun solverContract(
                 ),
                 solver.solve(query).toList(),
             )
-            assertTrue { observedWarnings.isEmpty() }
+            observedWarnings.isEmpty().shouldBeTrue()
 
             solver =
                 solverFactory.solverWithDefaultBuiltins(
@@ -196,9 +197,9 @@ fun solverContract(
                 listOf(query.no()),
                 solver.solve(query).toList(),
             )
-            assertEquals(1, observedWarnings.size)
-            assertTrue { observedWarnings[0] is MissingPredicate }
-            assertEquals(query.extractSignature(), (observedWarnings[0] as MissingPredicate).signature)
+            observedWarnings.size shouldBe 1
+            observedWarnings[0].shouldBeInstanceOf<MissingPredicate>()
+            (observedWarnings[0] as MissingPredicate).signature shouldBe query.extractSignature()
 
             solver =
                 solverFactory.solverWithDefaultBuiltins(
@@ -213,7 +214,7 @@ fun solverContract(
                 listOf(query.no()),
                 solver.solve(query).toList(),
             )
-            assertTrue { observedWarnings.size == 1 }
+            observedWarnings.size shouldBe 1
         }
     }
 
@@ -255,7 +256,7 @@ fun solverContract(
                 )
 
             assertSolutionEquals(expectedSolutions, solver.solve(query).toList())
-            assertEquals(mutableListOf(), observedWarnings)
+            observedWarnings shouldBe mutableListOf()
 
             solver =
                 solverFactory.solverWithDefaultBuiltins(
@@ -268,7 +269,7 @@ fun solverContract(
                 )
 
             assertSolutionEquals(expectedSolutions, solver.solve(query).toList())
-            assertEquals(mutableListOf(), observedWarnings)
+            observedWarnings shouldBe mutableListOf()
 
             solver =
                 solverFactory.solverWithDefaultBuiltins(
@@ -281,7 +282,7 @@ fun solverContract(
                 )
 
             assertSolutionEquals(expectedSolutions, solver.solve(query).toList())
-            assertEquals(mutableListOf(), observedWarnings)
+            observedWarnings shouldBe mutableListOf()
         }
     }
 
@@ -416,10 +417,7 @@ fun solverContract(
                 solutions,
             )
 
-            assertEquals(
-                terms.map { it.format(TermFormatter.default()) }.append("\n"),
-                outputs,
-            )
+            outputs shouldBe (terms.map { it.format(TermFormatter.default()) }.append("\n"))
         }
     }
 
@@ -444,10 +442,7 @@ fun solverContract(
 
             solver.standardOutput.write("e")
 
-            assertEquals(
-                listOf("a", "b", "c", "d", "\n", "e"),
-                outputs,
-            )
+            outputs shouldBe listOf("a", "b", "c", "d", "\n", "e")
         }
     }
 
@@ -1167,7 +1162,7 @@ fun solverContract(
                 solutions,
             )
 
-            assertEquals(2, solutions.size)
+            solutions.size shouldBe 2
         }
     }
 
@@ -1192,13 +1187,11 @@ fun solverContract(
                 solutions,
             )
 
-            assertEquals(
+            solver.dynamicKb.toList() shouldBe
                 listOf(
                     factOf(structOf("f", numOf(1))),
                     ruleOf(structOf("f", numOf(2)), atomOf("false")),
-                ),
-                solver.dynamicKb.toList(),
-            )
+                )
         }
     }
 
@@ -1225,11 +1218,8 @@ fun solverContract(
                 solutions,
             )
 
-            assertEquals(
-                listOf(),
-                solver.dynamicKb.toList(),
-            )
-            assertEquals(0L, solver.dynamicKb.size)
+            solver.dynamicKb.toList() shouldBe listOf()
+            solver.dynamicKb.size shouldBe 0L
         }
     }
 
@@ -1380,11 +1370,8 @@ fun solverContract(
                 solutions,
             )
 
-            assertEquals(
-                listOf(),
-                solver.dynamicKb.toList(),
-            )
-            assertEquals(0L, solver.dynamicKb.size)
+            solver.dynamicKb.toList() shouldBe listOf()
+            solver.dynamicKb.size shouldBe 0L
 
             query = retractall("f"(X))
             solutions = solver.solve(query, mediumDuration).toList()
@@ -1470,9 +1457,7 @@ private fun ContractScope.testAssert(
         )
 
         ints.forEach {
-            assertTrue {
-                "f"(it) in solver.dynamicKb
-            }
+            ("f"(it) in solver.dynamicKb).shouldBeTrue()
         }
     }
 }

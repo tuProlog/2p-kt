@@ -2,11 +2,11 @@ package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.impl.AtomImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AtomUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Test class for [Atom] companion object
@@ -62,15 +62,15 @@ class AtomSpec :
             nameFn = { "is-functor-well-formed/${it.id}" },
             AtomUtils.mixedAtomCases.filter { it.value matches Atom.ATOM_PATTERN },
         ) { case ->
-            assertTrue(Atom.of(case.value).isFunctorWellFormed)
+            Atom.of(case.value).isFunctorWellFormed.shouldBeTrue()
         }
 
         test("escape-value/always-quotes") {
-            assertEquals("'a'", Atom.escapeValue("a"))
+            Atom.escapeValue("a") shouldBe "'a'"
         }
 
         test("escape-value-if-necessary/quotes-only-ill-formed-names") {
-            assertEquals("a", Atom.escapeValueIfNecessary("a"))
-            assertEquals("'A b'", Atom.escapeValueIfNecessary("A b"))
+            Atom.escapeValueIfNecessary("a") shouldBe "a"
+            Atom.escapeValueIfNecessary("A b") shouldBe "'A b'"
         }
     })

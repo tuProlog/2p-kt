@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core.testutils
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
@@ -11,8 +13,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNoEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotEqualsUsingVariablesSimpleNames
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 /**
  * Characterization tests for [AssertionUtils], pinning down which of the three equality notions (plain,
@@ -32,7 +32,7 @@ class AssertionUtilsSpec :
             val term2 = Struct.of("f", Var.of("X"))
             assertStructurallyEquals(term1, term2)
             assertEqualsUsingVariablesSimpleNames(term1, term2)
-            assertFailsWith<AssertionError> { assertEqualities(term1, term2) }
+            shouldThrow<AssertionError> { assertEqualities(term1, term2) }
         }
 
         test("variables-with-different-names-are-structurally-equal-but-not-by-simple-name") {
@@ -40,7 +40,7 @@ class AssertionUtilsSpec :
             val term2 = Struct.of("f", Var.of("Y"))
             assertStructurallyEquals(term1, term2)
             assertNotEqualsUsingVariablesSimpleNames(term1, term2)
-            assertFailsWith<AssertionError> { assertEqualsUsingVariablesSimpleNames(term1, term2) }
+            shouldThrow<AssertionError> { assertEqualsUsingVariablesSimpleNames(term1, term2) }
         }
 
         test("different-functors-satisfy-no-equality") {
@@ -48,8 +48,8 @@ class AssertionUtilsSpec :
             val term2 = Struct.of("g", x)
             assertNoEqualities(term1, term2)
             assertNotStructurallyEquals(term1, term2)
-            assertFailsWith<AssertionError> { assertStructurallyEquals(term1, term2) }
-            assertFailsWith<AssertionError> { assertNoEqualities(term1, term1) }
+            shouldThrow<AssertionError> { assertStructurallyEquals(term1, term2) }
+            shouldThrow<AssertionError> { assertNoEqualities(term1, term1) }
         }
 
         test("assert-all-vs-all-visits-every-ordered-pair-including-self-pairs") {
@@ -57,6 +57,6 @@ class AssertionUtilsSpec :
             val b = Atom.of("b")
             val visited = mutableListOf<Pair<Atom, Atom>>()
             assertAllVsAll(listOf(a, b)) { l, r -> visited += l to r }
-            assertEquals(listOf(a to a, a to b, b to a, b to b), visited)
+            visited shouldBe listOf(a to a, a to b, b to a, b to b)
         }
     })

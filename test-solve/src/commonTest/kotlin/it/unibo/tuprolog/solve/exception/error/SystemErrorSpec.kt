@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.exception.error
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.solve.exception.testutils.LogicErrorUtils
-import kotlin.test.assertEquals
 
 /**
  * Test class for [SystemError]
@@ -17,7 +17,7 @@ class SystemErrorSpec :
         val correctTypeFunctor = "system_error"
 
         test("system-error-type-correct") {
-            assertEquals(Atom.of(correctTypeFunctor), underTestError.type)
+            underTestError.type shouldBe Atom.of(correctTypeFunctor)
         }
 
         test("system-error-to-throw-struct-correct") {
@@ -25,6 +25,6 @@ class SystemErrorSpec :
         }
 
         test("system-error-type-struct-functor") {
-            assertEquals(correctTypeFunctor, SystemError.typeFunctor)
+            SystemError.typeFunctor shouldBe correctTypeFunctor
         }
     })

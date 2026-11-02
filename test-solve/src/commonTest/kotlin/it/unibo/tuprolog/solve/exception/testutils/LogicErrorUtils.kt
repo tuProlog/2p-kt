@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.exception.testutils
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -11,7 +12,6 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
 
 /**
  * Utils singleton to help testing [LogicError]
@@ -68,17 +68,16 @@ internal object LogicErrorUtils {
             expectedContext,
             actualException,
         )
-        assertEquals(expectedType, actualException.type)
-        assertEquals(expectedExtraData, actualException.extraData)
+        actualException.type shouldBe expectedType
+        actualException.extraData shouldBe expectedExtraData
     }
 
     /** Asserts that [LogicError.errorStruct] returns correctly constructed structure */
     internal fun assertErrorStructCorrect(logicError: LogicError) {
-        assertEquals(
+        logicError.errorStruct shouldBe (
             logicError.extraData
                 ?.let { errorStructOf(logicError.type, it) }
-                ?: errorStructOf(logicError.type),
-            logicError.errorStruct,
+                ?: errorStructOf(logicError.type)
         )
     }
 }

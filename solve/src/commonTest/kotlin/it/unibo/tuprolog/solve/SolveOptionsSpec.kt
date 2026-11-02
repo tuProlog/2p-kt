@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.SolveOptions.Companion.ALL_SOLUTIONS
 import it.unibo.tuprolog.solve.SolveOptions.Companion.MAX_TIMEOUT
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 private class OptionsCase(
     val id: String,
@@ -32,39 +32,39 @@ class SolveOptionsSpec :
     FunSpec({
         withTests(nameFn = { "factories/${it.id}" }, factoryCases) { case ->
             val options = case.options
-            assertEquals(case.lazy, options.isLazy)
-            assertEquals(!case.lazy, options.isEager)
-            assertEquals(case.limit, options.limit)
-            assertEquals(case.limit != ALL_SOLUTIONS, options.isLimited)
-            assertEquals(case.timeout, options.timeout)
-            assertEquals(emptyMap(), options.customOptions)
+            options.isLazy shouldBe case.lazy
+            options.isEager shouldBe !case.lazy
+            options.limit shouldBe case.limit
+            options.isLimited shouldBe (case.limit != ALL_SOLUTIONS)
+            options.timeout shouldBe case.timeout
+            options.customOptions shouldBe emptyMap()
         }
 
         test("setters-return-modified-copies") {
             val original = SolveOptions.allLazily()
             val modified = original.setLazy(false).setLimit(2).setTimeout(10)
-            assertEquals(SolveOptions.someEagerlyWithTimeout(2, 10), modified)
-            assertEquals(SolveOptions.allLazily(), original)
+            modified shouldBe SolveOptions.someEagerlyWithTimeout(2, 10)
+            original shouldBe SolveOptions.allLazily()
         }
 
         test("custom-options/of") {
             val options = SolveOptions.of(true, MAX_TIMEOUT, ALL_SOLUTIONS, "a" to 1, "b" to 2)
-            assertEquals(mapOf("a" to 1, "b" to 2), options.customOptions)
+            options.customOptions shouldBe mapOf("a" to 1, "b" to 2)
         }
 
         test("custom-options/set-replaces-add-merges") {
             val options = SolveOptions.allLazily().setOption("a", 1).addOption("b", 2)
-            assertEquals(mapOf("a" to 1, "b" to 2), options.customOptions)
-            assertEquals(mapOf("a" to 3, "b" to 2), options.addOptions(mapOf("a" to 3)).customOptions)
-            assertEquals(mapOf("c" to 4), options.setOptions(mapOf("c" to 4)).customOptions)
-            assertEquals(mapOf("a" to 5, "b" to 2), options.setOption("a", 5).customOptions)
+            options.customOptions shouldBe mapOf("a" to 1, "b" to 2)
+            options.addOptions(mapOf("a" to 3)).customOptions shouldBe mapOf("a" to 3, "b" to 2)
+            options.setOptions(mapOf("c" to 4)).customOptions shouldBe mapOf("c" to 4)
+            options.setOption("a", 5).customOptions shouldBe mapOf("a" to 5, "b" to 2)
         }
 
         test("invalid/zero-limit") {
-            assertFailsWith<IllegalArgumentException> { SolveOptions.someLazily(0) }
+            shouldThrow<IllegalArgumentException> { SolveOptions.someLazily(0) }
         }
 
         test("invalid/negative-timeout") {
-            assertFailsWith<IllegalArgumentException> { SolveOptions.allLazilyWithTimeout(-1) }
+            shouldThrow<IllegalArgumentException> { SolveOptions.allLazilyWithTimeout(-1) }
         }
     })

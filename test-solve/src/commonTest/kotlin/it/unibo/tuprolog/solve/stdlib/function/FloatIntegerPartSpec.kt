@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.stdlib.function
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FloatFunctionUtils
@@ -40,7 +41,7 @@ private fun <T> assertEquals(
         )
     }
 
-    kotlin.test.assertEquals(expected, actual)
+    actual shouldBe expected
 
     if (loggingOn) println("".padEnd(80, '-'))
 }

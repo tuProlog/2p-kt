@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.dsl.solve
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.Solution
-import kotlin.test.assertEquals
 
 class NQueensSpec :
     FunSpec({
@@ -57,7 +57,7 @@ class NQueensSpec :
 
         test("n-queens") {
             nQueens(4).forEachIndexed { i, actual ->
-                assertEquals(solutions[i], actual)
+                actual shouldBe solutions[i]
             }
         }
     })

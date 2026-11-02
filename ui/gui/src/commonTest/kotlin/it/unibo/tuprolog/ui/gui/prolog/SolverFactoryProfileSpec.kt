@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.ui.gui.prolog
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.ui.gui.identity.DocumentId
@@ -12,8 +14,6 @@ import it.unibo.tuprolog.ui.gui.solver.ResolutionStep
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
 import it.unibo.tuprolog.ui.gui.solver.SolverSessionCreationRequest
 import it.unibo.tuprolog.ui.gui.solver.SolverSignal
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 
 class SolverFactoryProfileSpec :
@@ -28,7 +28,7 @@ class SolverFactoryProfileSpec :
                 )
             // No SolverSessionCreationRequest ever handed to profile.factory here: defaultOperators must already
             // reflect the factory's own operators (OperatorSet.DEFAULT + its defaultBuiltins) eagerly and for free.
-            assertTrue(profile.defaultOperators.isNotEmpty())
+            profile.defaultOperators.isNotEmpty().shouldBeTrue()
         }
 
         test("solver-profile-exposes-and-refreshes-inspector-state").config(coroutineTestScope = true) {
@@ -56,26 +56,34 @@ class SolverFactoryProfileSpec :
                     ),
                 )
 
-            assertTrue(SolverCapabilities.OPERATORS_INSPECTION in session.capabilities)
-            assertTrue(session.snapshot.operators.isNotEmpty())
-            assertTrue(session.snapshot.flags.isNotEmpty())
-            assertTrue(session.snapshot.libraries.isNotEmpty())
+            (SolverCapabilities.OPERATORS_INSPECTION in session.capabilities).shouldBeTrue()
+            session.snapshot.operators
+                .isNotEmpty()
+                .shouldBeTrue()
+            session.snapshot.flags
+                .isNotEmpty()
+                .shouldBeTrue()
+            session.snapshot.libraries
+                .isNotEmpty()
+                .shouldBeTrue()
             val prologLang = session.snapshot.libraries.first { it.alias == "prolog.lang" }
-            assertTrue(prologLang.help.isNotBlank())
-            assertTrue("arity" in prologLang.documentation.getValue("functor/3"))
-            assertTrue("priority `500`" in prologLang.documentationOf(OperatorPresentation("+", 500, "YFX"))!!)
-            assertTrue(session.snapshot.staticKnowledgeBase.contains("p(a)"))
+            prologLang.help.isNotBlank().shouldBeTrue()
+            ("arity" in prologLang.documentation.getValue("functor/3")).shouldBeTrue()
+            ("priority `500`" in prologLang.documentationOf(OperatorPresentation("+", 500, "YFX"))!!).shouldBeTrue()
+            session.snapshot.staticKnowledgeBase
+                .contains("p(a)")
+                .shouldBeTrue()
 
             val step =
                 session.openResolution(ResolutionRequest(pageId, "p(X).", 1.seconds, emptyMap(), "")).next()
-            assertIs<ResolutionStep.Yield>(step)
-            assertTrue(step.signals.isNotEmpty())
+            step.shouldBeInstanceOf<ResolutionStep.Yield>()
+            step.signals.isNotEmpty().shouldBeTrue()
 
             val outputStep =
                 session
                     .openResolution(
                         ResolutionRequest(pageId, "write(hello).", 1.seconds, emptyMap(), ""),
                     ).next()
-            assertTrue(outputStep.signals.filterIsInstance<SolverSignal.Stdout>().any { "hello" in it.text })
+            (outputStep.signals.filterIsInstance<SolverSignal.Stdout>().any { "hello" in it.text }).shouldBeTrue()
         }
     })

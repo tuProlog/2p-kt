@@ -2,7 +2,10 @@ package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Tuple
@@ -13,10 +16,6 @@ import it.unibo.tuprolog.core.testutils.BlockUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for [BlockImpl] and [Block]
@@ -31,23 +30,23 @@ class BlockImplSpec :
             test: (BlockUtils.BlockCase, Block) -> Unit,
         ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it, BlockImpl(it.tupleWrapped)) }
 
-        blocks("functor") { _, block -> assertEquals("{}", block.functor) }
+        blocks("functor") { _, block -> block.functor shouldBe "{}" }
 
         blocks("args") { case, block -> assertEqualities(case.tupleWrapped, block.args.first()) }
 
-        blocks("unfolded-list") { case, block -> assertEquals(case.elements, block.unfoldedList) }
+        blocks("unfolded-list") { case, block -> block.unfoldedList shouldBe case.elements }
 
-        blocks("unfolded-sequence") { case, block -> assertEquals(case.elements, block.unfoldedSequence.toList()) }
+        blocks("unfolded-sequence") { case, block -> block.unfoldedSequence.toList() shouldBe case.elements }
 
-        blocks("unfolded-array") { case, block -> assertEquals(case.elements, block.unfoldedArray.toList()) }
+        blocks("unfolded-array") { case, block -> block.unfoldedArray.toList() shouldBe case.elements }
 
-        blocks("to-string") { case, block -> assertEquals("{${case.elements.joinToString(", ")}}", block.toString()) }
+        blocks("to-string") { case, block -> block.toString() shouldBe "{${case.elements.joinToString(", ")}}" }
 
         blocks("type-checks") { _, block -> TermTypeAssertionUtils.assertIsBlock(block) }
 
-        blocks("is-ground", BlockUtils.groundBlockCases) { _, block -> assertTrue { block.isGround } }
+        blocks("is-ground", BlockUtils.groundBlockCases) { _, block -> block.isGround.shouldBeTrue() }
 
-        blocks("is-not-ground", BlockUtils.nonGroundBlockCases) { _, block -> assertFalse { block.isGround } }
+        blocks("is-not-ground", BlockUtils.nonGroundBlockCases) { _, block -> block.isGround.shouldBeFalse() }
 
         test("unfold/yields-the-block-then-each-nested-tuple-then-the-last-item") {
             val (a, b, c) = listOf("a", "b", "c").map { Atom.of(it) }
@@ -58,14 +57,14 @@ class BlockImplSpec :
         }
 
         test("empty-block-detected") {
-            assertTrue(BlockImpl(null).isEmptyBlock)
+            BlockImpl(null).isEmptyBlock.shouldBeTrue()
         }
 
-        blocks("to-list") { case, block -> assertEquals(case.elements, block.toList()) }
+        blocks("to-list") { case, block -> block.toList() shouldBe case.elements }
 
-        blocks("to-array") { case, block -> assertEquals(case.elements, block.toArray().toList()) }
+        blocks("to-array") { case, block -> block.toArray().toList() shouldBe case.elements }
 
-        blocks("to-sequence") { case, block -> assertEquals(case.elements, block.toSequence().toList()) }
+        blocks("to-sequence") { case, block -> block.toSequence().toList() shouldBe case.elements }
 
         blocks("fresh-copy-is-itself", BlockUtils.groundBlockCases) { _, block ->
             ConstantUtils.assertFreshCopyIsItself(block)
@@ -80,7 +79,7 @@ class BlockImplSpec :
 
             assertAllVsAll(blockWithSameVarName.args) { anElement, anotherElement ->
                 assertEqualities(anElement, anotherElement)
-                assertSame(anElement, anotherElement)
+                anotherElement shouldBeSameInstanceAs anElement
             }
 
             val blockCopied = blockWithSameVarName.freshCopy()

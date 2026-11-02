@@ -1,30 +1,30 @@
 package it.unibo.tuprolog.utils
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 
 class OptionalSpec :
     FunSpec({
         test("some/filter-keeps-or-drops-the-value") {
-            assertEquals(Optional.some(2), Optional.some(2).filter { it > 1 })
-            assertSame(Optional.None, Optional.some(2).filter { it > 5 })
+            (Optional.some(2).filter { it > 1 }) shouldBe Optional.some(2)
+            (Optional.some(2).filter { it > 5 }) shouldBeSameInstanceAs Optional.None
         }
 
         test("some/as-a-sequence-and-a-string") {
-            assertEquals(listOf(2), Optional.some(2).toSequence().toList())
-            assertEquals("Some(2)", Optional.some(2).toString())
+            Optional.some(2).toSequence().toList() shouldBe listOf(2)
+            Optional.some(2).toString() shouldBe "Some(2)"
         }
 
         test("none/stays-none") {
             val none = Optional.none<Int>()
-            assertSame(Optional.None, none.filter { true })
-            assertEquals(emptyList(), none.toSequence().toList())
-            assertEquals("None", none.toString())
+            (none.filter { true }) shouldBeSameInstanceAs Optional.None
+            none.toSequence().toList() shouldBe emptyList()
+            none.toString() shouldBe "None"
         }
 
         test("of/a-null-is-none") {
-            assertSame(Optional.None, Optional.of<Int>(null))
-            assertEquals(Optional.some(1), Optional.of(1))
+            (Optional.of<Int>(null)) shouldBeSameInstanceAs Optional.None
+            Optional.of(1) shouldBe Optional.some(1)
         }
     })

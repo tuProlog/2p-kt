@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.solve.primitive
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.solve.assertOverFailure
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringAllArgumentsAreInstantiated
@@ -12,9 +14,6 @@ import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.primiti
 import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.allCases
 import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.notMatchingCases
 import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.withMatchingCases
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertSame
 
 /**
  * Test class for [PrimitiveWrapper]
@@ -29,12 +28,13 @@ class PrimitiveWrapperSpec :
 
         withMatchingCases("accepts") { case ->
             val wrapper = createPrimitiveWrapper(case.signature, primitive)
-            assertEquals(defaultPrimitiveResult, wrapper.implementation.solve(case.request(::createPrimitiveRequest)))
+            wrapper.implementation.solve(case.request(::createPrimitiveRequest)) shouldBeSameInstanceAs
+                defaultPrimitiveResult
         }
 
         withTests(nameFn = { "rejects/${it.id}" }, notMatchingCases) { case ->
             val wrapper = createPrimitiveWrapper(case.signature, primitive)
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 wrapper.implementation.solve(case.request(::createPrimitiveRequest))
             }
         }
@@ -44,12 +44,12 @@ class PrimitiveWrapperSpec :
             groundCases,
         ) { case ->
             val request = case.request(::createPrimitiveRequest)
-            assertSame(request, request.ensuringAllArgumentsAreInstantiated())
+            request.ensuringAllArgumentsAreInstantiated() shouldBeSameInstanceAs request
         }
 
         withTests(nameFn = { "ensuring-all-arguments-instantiated/throws/${it.id}" }, nonGroundCases) { case ->
             val request = case.request(::createPrimitiveRequest)
-            assertFailsWith<InstantiationError> { request.ensuringAllArgumentsAreInstantiated() }
+            shouldThrow<InstantiationError> { request.ensuringAllArgumentsAreInstantiated() }
         }
 
         withTests(nameFn = { "ensuring-all-arguments-instantiated/error-data/${it.id}" }, nonGroundCases) { case ->
@@ -57,7 +57,7 @@ class PrimitiveWrapperSpec :
             assertOverFailure<InstantiationError>(
                 { request.ensuringAllArgumentsAreInstantiated() },
             ) { error ->
-                assertSame(request.context, error.context)
+                error.context shouldBeSameInstanceAs request.context
             }
         }
     })

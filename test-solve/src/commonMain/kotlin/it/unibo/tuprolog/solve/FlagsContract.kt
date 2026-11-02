@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.DomainError
@@ -16,10 +21,6 @@ import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.primitive.CurrentFlag
 import it.unibo.tuprolog.solve.stdlib.primitive.SetFlag
 import it.unibo.tuprolog.utils.indexed
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 /** Conformance tests for the `current_flag/2` and `set_flag/2` built-ins (`current_prolog_flag/2` and `set_prolog_flag/2` are deprecated aliases kept for ISO naming compatibility), and for the [it.unibo.tuprolog.solve.flags.FlagStore] they operate on: default values, admissible values, error cases (non-atom names, unbound names/values, out-of-domain values), and the ability to both read and write flags that are not part of the built-in set. */
 fun flagsContract(
@@ -35,7 +36,7 @@ fun flagsContract(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertEquals(LastCallOptimization.ON, LastCallOptimization.defaultValue)
+            LastCallOptimization.defaultValue shouldBe LastCallOptimization.ON
 
             val query = current_flag(LastCallOptimization.name, LastCallOptimization.ON)
 
@@ -55,7 +56,7 @@ fun flagsContract(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertEquals(Unknown.WARNING, Unknown.defaultValue)
+            Unknown.defaultValue shouldBe Unknown.WARNING
 
             val query = current_flag(Unknown.name, Unknown.WARNING)
 
@@ -95,10 +96,10 @@ fun flagsContract(
 
             val solutions = solver.solve(current_flag(F, `_`), shortDuration).toList()
 
-            assertTrue { solutions.isNotEmpty() }
+            solutions.isNotEmpty().shouldBeTrue()
 
             for (sol in solutions.filterIsInstance<Solution.Yes>()) {
-                assertTrue { sol.substitution[F] is Atom }
+                sol.substitution[F].shouldBeInstanceOf<Atom>()
             }
 
             for (term in listOf(5, "f"("x"), 2.3).map { it.toTerm() }) {
@@ -143,7 +144,7 @@ fun flagsContract(
             for (flag in listOf("a", "b", "c")) {
                 val solver = solverFactory.solverWithDefaultBuiltins()
 
-                assertFalse { solver.flags.containsKey(flag) }
+                solver.flags.containsKey(flag).shouldBeFalse()
 
                 val query = current_flag(flag, V)
 
@@ -162,7 +163,7 @@ fun flagsContract(
             val solver = solverFactory.solverWithDefaultBuiltins()
             val defaultFlags = solver.flags.mapKeys { (k, _) -> k.toTerm() }
 
-            assertTrue { defaultFlags.isNotEmpty() }
+            defaultFlags.isNotEmpty().shouldBeTrue()
 
             val query = current_flag(F, X)
 
@@ -173,7 +174,7 @@ fun flagsContract(
                     .map { it.substitution[F]!! to it.substitution[X]!! }
                     .toMap()
 
-            assertEquals(defaultFlags, selectedFlags)
+            selectedFlags shouldBe defaultFlags
         }
     }
 
@@ -216,7 +217,7 @@ fun flagsContract(
 
             val query = set_flag(LastCallOptimization.name, truthOf(true))
 
-            assertFalse { LastCallOptimization.admissibleValues.contains(truthOf(true)) }
+            LastCallOptimization.admissibleValues.contains(truthOf(true)).shouldBeFalse()
 
             assertSolutionEquals(
                 listOf(
@@ -274,7 +275,7 @@ fun flagsContract(
             for ((value, flag) in listOf("a", "b", "c").asSequence().indexed()) {
                 val solver = solverFactory.solverWithDefaultBuiltins()
 
-                assertFalse { solver.flags.containsKey(flag) }
+                solver.flags.containsKey(flag).shouldBeFalse()
 
                 val query = set_flag(flag, value) and current_flag(flag, X)
 
@@ -283,7 +284,7 @@ fun flagsContract(
                     solver.solveOnce(query, shortDuration),
                 )
 
-                assertEquals(value.toTerm(), solver.flags[flag])
+                solver.flags[flag] shouldBe value.toTerm()
             }
         }
     }
@@ -298,7 +299,7 @@ fun flagsContract(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertEquals(ShowWildCardVariablesInSolutions.ON, ShowWildCardVariablesInSolutions.defaultValue)
+            ShowWildCardVariablesInSolutions.defaultValue shouldBe ShowWildCardVariablesInSolutions.ON
 
             val query = current_flag(ShowWildCardVariablesInSolutions.name, ShowWildCardVariablesInSolutions.ON)
 
@@ -318,7 +319,7 @@ fun flagsContract(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertEquals(UniqueSolutions.OFF, UniqueSolutions.defaultValue)
+            UniqueSolutions.defaultValue shouldBe UniqueSolutions.OFF
 
             val query = current_flag(UniqueSolutions.name, UniqueSolutions.OFF)
 
@@ -339,7 +340,7 @@ fun flagsContract(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertEquals(GroundQueriesHaveBooleanSolution.OFF, GroundQueriesHaveBooleanSolution.defaultValue)
+            GroundQueriesHaveBooleanSolution.defaultValue shouldBe GroundQueriesHaveBooleanSolution.OFF
 
             val query = current_flag(GroundQueriesHaveBooleanSolution.name, GroundQueriesHaveBooleanSolution.OFF)
 
@@ -360,9 +361,9 @@ fun flagsContract(
 
             val solution = solver.solveOnce(query, shortDuration)
 
-            assertTrue(solution.isYes)
-            assertEquals(Atom.of("lino"), solution.valueOf("X"))
-            assertEquals(Atom.of("joey"), solution.valueOf("_P"))
+            solution.isYes.shouldBeTrue()
+            solution.valueOf("X") shouldBe Atom.of("lino")
+            solution.valueOf("_P") shouldBe Atom.of("joey")
         }
     }
 
@@ -383,9 +384,9 @@ fun flagsContract(
 
             val solution = solver.solveOnce(query, shortDuration)
 
-            assertTrue(solution.isYes)
-            assertEquals(Atom.of("lino"), solution.valueOf("X"))
-            assertNull(solution.valueOf("_P"))
+            solution.isYes.shouldBeTrue()
+            solution.valueOf("X") shouldBe Atom.of("lino")
+            solution.valueOf("_P").shouldBeNull()
         }
     }
 
@@ -397,7 +398,7 @@ fun flagsContract(
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = member(X, logicListOf(1, 1, 1))
 
-            assertEquals(3, solver.solveList(query, shortDuration).count { it.isYes })
+            (solver.solveList(query, shortDuration).count { it.isYes }) shouldBe 3
         }
     }
 
@@ -411,7 +412,7 @@ fun flagsContract(
                 )
             val query = member(X, logicListOf(1, 1, 1))
 
-            assertEquals(1, solver.solveList(query, shortDuration).count { it.isYes })
+            (solver.solveList(query, shortDuration).count { it.isYes }) shouldBe 1
         }
     }
 }

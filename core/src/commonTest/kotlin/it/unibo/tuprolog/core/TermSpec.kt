@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNull
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 import kotlin.collections.List as KtList
 
 private class CompoundCase(
@@ -47,33 +47,39 @@ class TermSpec :
         ) = withTests(nameFn = { "$property/${it.id}" }, compoundCases) { test(it) }
 
         compounds("substitution-apply-to-returns-null-with-failed-substitution") {
-            assertNull(Substitution.failed().applyTo(it.compound))
+            Substitution.failed().applyTo(it.compound).shouldBeNull()
         }
 
         compounds("term-apply-throw-exception-with-failed-substitution") {
-            val e = assertFailsWith<SubstitutionApplicationException> { it.compound.apply(Substitution.failed()) }
-            assertSame(it.compound, e.term)
-            assertEquals(Substitution.failed(), e.substitution)
+            val e = shouldThrow<SubstitutionApplicationException> { it.compound.apply(Substitution.failed()) }
+            e.term shouldBeSameInstanceAs it.compound
+            e.substitution shouldBe Substitution.failed()
         }
 
         compounds("term-get-throw-exception-with-failed-substitution") {
-            val e = assertFailsWith<SubstitutionApplicationException> { it.compound[Substitution.failed()] }
-            assertSame(it.compound, e.term)
-            assertEquals(Substitution.failed(), e.substitution)
+            val e = shouldThrow<SubstitutionApplicationException> { it.compound[Substitution.failed()] }
+            e.term shouldBeSameInstanceAs it.compound
+            e.substitution shouldBe Substitution.failed()
         }
 
-        compounds("substitution-apply-to-preserves-type") { assertEquals(it.expected, sub.applyTo(it.compound)) }
+        compounds("substitution-apply-to-preserves-type") { sub.applyTo(it.compound) shouldBe it.expected }
 
-        compounds("term-apply-preserves-type") { assertEquals(it.expected, it.compound.apply(sub)) }
+        compounds("term-apply-preserves-type") { it.compound.apply(sub) shouldBe it.expected }
 
-        compounds("term-get-preserves-type") { assertEquals(it.expected, it.compound[sub]) }
+        compounds("term-get-preserves-type") { it.compound[sub] shouldBe it.expected }
 
         compounds("term-fresh-copy-preserves-type") {
-            assertTrue { it.compound.freshCopy().equals(it.compound, useVarCompleteName = false) }
+            it.compound
+                .freshCopy()
+                .equals(it.compound, useVarCompleteName = false)
+                .shouldBeTrue()
         }
 
         compounds("term-fresh-copy-with-scope-preserves-type") {
-            assertTrue { it.compound.freshCopy(Scope.of("Y")).equals(it.compound, useVarCompleteName = false) }
+            it.compound
+                .freshCopy(Scope.of("Y"))
+                .equals(it.compound, useVarCompleteName = false)
+                .shouldBeTrue()
         }
     })
 

@@ -4,6 +4,10 @@ package it.unibo.tuprolog.core.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Real
@@ -13,10 +17,6 @@ import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import org.gciatto.kt.math.BigDecimal
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 /**
  * Test class for [RealImpl] and [Real]
@@ -30,27 +30,27 @@ class RealImplSpec :
             test: (RealUtils.RealCase, Real) -> Unit,
         ) = withTests(nameFn = { "$property/${it.id}" }, RealUtils.realCases) { test(it, RealImpl(it.value)) }
 
-        reals("value") { case, real -> assertEquals(case.value, real.value) }
+        reals("value") { case, real -> real.value shouldBe case.value }
 
-        reals("decimal-value") { case, real -> assertEquals(case.value, real.decimalValue) }
+        reals("decimal-value") { case, real -> real.decimalValue shouldBe case.value }
 
-        reals("int-value") { case, real -> assertEquals(case.value.toBigInteger(), real.intValue) }
+        reals("int-value") { case, real -> real.intValue shouldBe case.value.toBigInteger() }
 
-        reals("to-string") { case, real -> assertEquals(Real.toStringEnsuringDecimal(case.value), real.toString()) }
+        reals("to-string") { case, real -> real.toString() shouldBe Real.toStringEnsuringDecimal(case.value) }
 
         test("compare-to-works-as-expected") {
             val oneDotOne = RealImpl(BigDecimal.of(1.1))
             val oneDotTwentyTwo = RealImpl(BigDecimal.of(1.22f))
 
-            assertTrue(oneDotOne.compareValueTo(oneDotOne) == 0)
-            assertTrue(oneDotOne.compareValueTo(oneDotOne) >= 0)
+            oneDotOne.compareValueTo(oneDotOne) shouldBe 0
+            (oneDotOne.compareValueTo(oneDotOne) >= 0).shouldBeTrue()
 
-            assertTrue(oneDotOne.compareValueTo(oneDotTwentyTwo) != 0)
-            assertTrue(oneDotOne.compareValueTo(oneDotTwentyTwo) <= 0)
-            assertTrue(oneDotOne.compareValueTo(oneDotTwentyTwo) < 0)
+            oneDotOne.compareValueTo(oneDotTwentyTwo) shouldNotBe 0
+            (oneDotOne.compareValueTo(oneDotTwentyTwo) <= 0).shouldBeTrue()
+            (oneDotOne.compareValueTo(oneDotTwentyTwo) < 0).shouldBeTrue()
 
-            assertFalse(oneDotOne.compareValueTo(oneDotTwentyTwo) >= 0)
-            assertFalse(oneDotOne.compareValueTo(oneDotTwentyTwo) > 0)
+            (oneDotOne.compareValueTo(oneDotTwentyTwo) >= 0).shouldBeFalse()
+            (oneDotOne.compareValueTo(oneDotTwentyTwo) > 0).shouldBeFalse()
         }
 
         reals("type-checks") { _, real -> TermTypeAssertionUtils.assertIsReal(real) }
@@ -59,9 +59,9 @@ class RealImplSpec :
             val oneReal = RealImpl(BigDecimal.of(1.1))
             val oneAtom = Atom.of("1.1")
 
-            assertEquals(oneReal, oneReal)
+            oneReal shouldBe oneReal
 
-            assertNotEquals<Constant>(oneReal, oneAtom)
+            oneAtom.shouldNotBe<Constant>(oneReal)
         }
 
         test("structurally-equals-works-as-expected") {

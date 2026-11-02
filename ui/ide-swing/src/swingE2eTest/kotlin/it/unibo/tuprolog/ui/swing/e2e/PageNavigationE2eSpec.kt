@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.ui.swing.e2e
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.shouldBe
 import org.assertj.swing.fixture.FrameFixture
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /** Covers creating, selecting, and closing pages, and that per-page state does not leak across tabs. */
 class PageNavigationE2eSpec :
@@ -20,7 +20,7 @@ class PageNavigationE2eSpec :
             window.awaitCondition("a second page tab to appear") {
                 tabbedPane("editorTabs").tabTitles().size == 2
             }
-            assertEquals(1, window.tabbedPane("editorTabs").target().selectedIndex)
+            window.tabbedPane("editorTabs").target().selectedIndex shouldBe 1
         }
 
         test("File New scratch page adds a scratch-named page") {
@@ -63,7 +63,15 @@ class PageNavigationE2eSpec :
 
             window.awaitCondition("no pages left") { tabbedPane("editorTabs").tabTitles().isEmpty() }
             window.label("statusLabel").requireText("No page")
-            assertTrue(!window.textBox("queryField").target().isEnabled)
-            assertTrue(!window.button("solveButton").target().isEnabled)
+            window
+                .textBox("queryField")
+                .target()
+                .isEnabled
+                .shouldBeFalse()
+            window
+                .button("solveButton")
+                .target()
+                .isEnabled
+                .shouldBeFalse()
         }
     })

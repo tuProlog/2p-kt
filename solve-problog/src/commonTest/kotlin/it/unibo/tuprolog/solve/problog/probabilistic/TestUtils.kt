@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.solve.problog.probabilistic
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.scopes.FunSpecRootScope
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
@@ -10,9 +13,6 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import it.unibo.tuprolog.solve.setProbabilistic
 import it.unibo.tuprolog.theory.Theory
 import kotlin.math.abs
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-
 typealias ExpectedSolution = Pair<Struct, Double>
 
 /** A named [query], expected to yield at least the [solutions] with their probabilities */
@@ -61,29 +61,32 @@ internal object TestUtils {
 
         var currentActual: ExpectedSolution? = null
         var currentExpected: ExpectedSolution? = null
-        assertTrue(
-            expectedSolutions.size <= solutions.size,
-            "Actual solutions size should be larger or equal than the expected one",
-        )
-        assertFalse(
-            expectedSolutions
-                .any { s ->
-                    !solutions.any { sol ->
-                        val solution =
-                            ExpectedSolution(
-                                sol.solvedQuery,
-                                sol.probability,
-                            )
-                        currentActual = solution
-                        currentExpected = s
-                        s.first == solution.first &&
-                            assertEqualsDouble(
-                                s.second,
-                                solution.second,
-                            )
+        withClue("Actual solutions size should be larger or equal than the expected one") {
+            (
+                expectedSolutions.size <=
+                    solutions.size
+            ).shouldBeTrue()
+        }
+        withClue("""Failed to assert expected solution: expected=$currentExpected, actual=$currentActual""") {
+            (
+                expectedSolutions
+                    .any { s ->
+                        !solutions.any { sol ->
+                            val solution =
+                                ExpectedSolution(
+                                    sol.solvedQuery,
+                                    sol.probability,
+                                )
+                            currentActual = solution
+                            currentExpected = s
+                            s.first == solution.first &&
+                                assertEqualsDouble(
+                                    s.second,
+                                    solution.second,
+                                )
+                        }
                     }
-                },
-            """Failed to assert expected solution: expected=$currentExpected, actual=$currentActual""",
-        )
+            ).shouldBeFalse()
+        }
     }
 }

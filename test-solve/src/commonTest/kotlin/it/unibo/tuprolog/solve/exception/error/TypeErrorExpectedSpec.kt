@@ -1,14 +1,15 @@
 package it.unibo.tuprolog.solve.exception.error
 
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertSame
-import kotlin.test.fail
 
 /**
  * Test class for [TypeError.Expected]
@@ -20,46 +21,42 @@ class TypeErrorExpectedSpec :
         val expectedTypes = TypeError.Expected.entries
 
         withTests(nameFn = { "to-term/${it.id}" }, expectedTypes) { expected ->
-            assertEquals(Atom.of(expected.toString()), expected.toTerm())
+            expected.toTerm() shouldBe Atom.of(expected.toString())
         }
 
         withTests(nameFn = { "of-returns-predefined-instance/${it.id}" }, expectedTypes) { expected ->
-            assertSame(expected, TypeError.Expected.of(expected.toString()))
-            assertSame(expected, TypeError.Expected.of(expected.toString().uppercase()))
+            TypeError.Expected.of(expected.toString()) shouldBeSameInstanceAs expected
+            TypeError.Expected.of(expected.toString().uppercase()) shouldBeSameInstanceAs expected
         }
 
         test("type-error-expected-of-throws-exception-if-name-is-unknown") {
-            try {
-                TypeError.Expected.of("dummy")
-                fail()
-            } catch (e: IllegalArgumentException) {
-                // ok
-            } catch (e: IllegalStateException) {
-                // ok
+            shouldThrowAny { TypeError.Expected.of("dummy") }.let {
+                (
+                    it is IllegalArgumentException ||
+                        it is IllegalStateException
+                ).shouldBeTrue()
             }
         }
 
         test("type-error-expected-constants-are-predefined-instances") {
-            assertSame(TypeError.Expected.CALLABLE, TypeError.Expected.of("callable"))
+            TypeError.Expected.of("callable") shouldBeSameInstanceAs TypeError.Expected.CALLABLE
         }
 
         withTests(nameFn = { "from-term-returns-predefined-instance/${it.id}" }, expectedTypes) { expected ->
             val name = expected.toString()
-            assertSame(expected, TypeError.Expected.fromTerm(Atom.of(name))!!)
-            assertSame(expected, TypeError.Expected.fromTerm(Atom.of(name.uppercase()))!!)
-            assertSame(expected, TypeError.Expected.fromTerm(expected.toTerm())!!)
+            TypeError.Expected.fromTerm(Atom.of(name))!! shouldBeSameInstanceAs expected
+            TypeError.Expected.fromTerm(Atom.of(name.uppercase()))!! shouldBeSameInstanceAs expected
+            TypeError.Expected.fromTerm(expected.toTerm())!! shouldBeSameInstanceAs expected
         }
 
         test("type-error-expected-enum-from-term-complains-for-incorrect-terms") {
-            assertNull(TypeError.Expected.fromTerm(Struct.of("callable", Var.anonymous())))
-            assertNull(TypeError.Expected.fromTerm(Var.of("CALLABLE")))
-            try {
-                TypeError.Expected.fromTerm(Atom.of("ciao"))
-                fail()
-            } catch (e: IllegalArgumentException) {
-                // ok
-            } catch (e: IllegalStateException) {
-                // ok
+            TypeError.Expected.fromTerm(Struct.of("callable", Var.anonymous())).shouldBeNull()
+            TypeError.Expected.fromTerm(Var.of("CALLABLE")).shouldBeNull()
+            shouldThrowAny { TypeError.Expected.fromTerm(Atom.of("ciao")) }.let {
+                (
+                    it is IllegalArgumentException ||
+                        it is IllegalStateException
+                ).shouldBeTrue()
             }
         }
     })

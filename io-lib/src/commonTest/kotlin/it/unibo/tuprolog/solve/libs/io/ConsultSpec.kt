@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.assertHasPredicateInAPI
@@ -9,8 +12,6 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.primitives.Consult
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class ConsultSpec :
     FunSpec({
@@ -24,17 +25,17 @@ class ConsultSpec :
                         otherLibraries = Runtime.of(IOLib),
                         staticKb = canaryTheory,
                     )
-                assertEquals(canaryTheory, solver.staticKb)
+                solver.staticKb shouldBe canaryTheory
                 val query = consult(url.toString())
                 val solutions = solver.solve(query).toList()
                 try {
-                    assertTrue { solutions.size == 1 }
-                    assertTrue { solutions.single() is Solution.Yes }
+                    solutions.size shouldBe 1
+                    solutions.single().shouldBeInstanceOf<Solution.Yes>()
                 } catch (e: AssertionError) {
                     throw AssertionError("Unexpected solutions: $solutions")
                 }
                 val expectedTheory = canaryTheory + ExampleTheories.PARENTS
-                assertTrue { expectedTheory.equals(solver.staticKb, useVarCompleteName = false) }
+                expectedTheory.equals(solver.staticKb, useVarCompleteName = false).shouldBeTrue()
             }
         }
 
@@ -46,21 +47,20 @@ class ConsultSpec :
                         otherLibraries = Runtime.of(IOLib),
                         staticKb = canaryTheory,
                     )
-                assertEquals(canaryTheory, solver.staticKb)
+                solver.staticKb shouldBe canaryTheory
                 val query = consult(url.toString())
                 val solutions = solver.solve(query).toList()
                 try {
-                    assertTrue { solutions.size == 1 }
+                    solutions.size shouldBe 1
                     solutions.single().let {
-                        assertTrue { it is Solution.Halt }
-                        val solution = it as Solution.Halt
-                        assertTrue { solution.exception is SyntaxError }
+                        val solution = it.shouldBeInstanceOf<Solution.Halt>()
+                        solution.exception.shouldBeInstanceOf<SyntaxError>()
                         println(solution.exception)
                     }
                 } catch (e: AssertionError) {
                     throw AssertionError("Unexpected solutions: $solutions")
                 }
-                assertTrue { canaryTheory.equals(solver.staticKb, useVarCompleteName = false) }
+                canaryTheory.equals(solver.staticKb, useVarCompleteName = false).shouldBeTrue()
             }
         }
 
@@ -72,21 +72,20 @@ class ConsultSpec :
                         otherLibraries = Runtime.of(IOLib),
                         staticKb = canaryTheory,
                     )
-                assertEquals(canaryTheory, solver.staticKb)
+                solver.staticKb shouldBe canaryTheory
                 val query = consult(url.toString())
                 val solutions = solver.solve(query).toList()
                 try {
-                    assertTrue { solutions.size == 1 }
+                    solutions.size shouldBe 1
                     solutions.single().let {
-                        assertTrue { it is Solution.Halt }
-                        val solution = it as Solution.Halt
-                        assertTrue { solution.exception is SystemError }
+                        val solution = it.shouldBeInstanceOf<Solution.Halt>()
+                        solution.exception.shouldBeInstanceOf<SystemError>()
                         println(solution.exception)
                     }
                 } catch (e: AssertionError) {
                     throw AssertionError("Unexpected solutions: $solutions")
                 }
-                assertTrue { canaryTheory.equals(solver.staticKb, useVarCompleteName = false) }
+                canaryTheory.equals(solver.staticKb, useVarCompleteName = false).shouldBeTrue()
             }
         }
 
@@ -95,7 +94,7 @@ class ConsultSpec :
                 solverFactory.solverWithDefaultBuiltins(
                     otherLibraries = Runtime.of(IOLib),
                 )
-            assertEquals(IOLib, solver.libraries[IOLib.alias])
+            solver.libraries[IOLib.alias] shouldBe IOLib
             solver.assertHasPredicateInAPI(Consult)
         }
 

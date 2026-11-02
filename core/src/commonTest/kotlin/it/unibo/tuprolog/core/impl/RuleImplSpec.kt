@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.core.impl
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Truth
@@ -10,9 +14,6 @@ import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.RuleUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 /**
  * Test class for [RuleImpl] and [Rule]
@@ -32,22 +33,22 @@ class RuleImplSpec :
         rules("body") { case, rule -> assertEqualities(case.body, rule.body) }
 
         rules("is-well-formed", RuleUtils.wellFormedRuleCases) { _, rule ->
-            assertTrue("$rule isWellFormed should be true") { rule.isWellFormed }
+            withClue("$rule isWellFormed should be true") { rule.isWellFormed.shouldBeTrue() }
         }
 
         rules("is-not-well-formed", RuleUtils.nonWellFormedRuleCases) { _, rule ->
-            assertFalse("$rule isWellFormed should be false") { rule.isWellFormed }
+            withClue("$rule isWellFormed should be false") { rule.isWellFormed.shouldBeFalse() }
         }
 
         rules("type-checks") { _, rule -> TermTypeAssertionUtils.assertIsRule(rule) }
 
         test("fact-detected") {
-            assertTrue(RuleImpl(Atom.of("hey"), Truth.TRUE).isFact)
+            RuleImpl(Atom.of("hey"), Truth.TRUE).isFact.shouldBeTrue()
         }
 
-        rules("is-ground", RuleUtils.groundRuleCases) { _, rule -> assertTrue { rule.isGround } }
+        rules("is-ground", RuleUtils.groundRuleCases) { _, rule -> rule.isGround.shouldBeTrue() }
 
-        rules("is-not-ground", RuleUtils.nonGroundRuleCases) { _, rule -> assertFalse { rule.isGround } }
+        rules("is-not-ground", RuleUtils.nonGroundRuleCases) { _, rule -> rule.isGround.shouldBeFalse() }
 
         rules("fresh-copy-is-itself", RuleUtils.groundRuleCases) { _, rule ->
             ConstantUtils.assertFreshCopyIsItself(rule)
@@ -57,9 +58,9 @@ class RuleImplSpec :
             StructUtils.assertFreshCopyRenewsContainedVariables(rule)
         }
 
-        rules("functor") { _, rule -> assertEquals(":-", rule.functor) }
+        rules("functor") { _, rule -> rule.functor shouldBe ":-" }
 
-        rules("args") { case, rule -> assertEquals(listOf(case.head, case.body), rule.args) }
+        rules("args") { case, rule -> rule.args shouldBe listOf(case.head, case.body) }
 
-        rules("to-string") { _, rule -> assertEquals("${rule.head} ${rule.functor} ${rule.body}", rule.toString()) }
+        rules("to-string") { _, rule -> rule.toString() shouldBe "${rule.head} ${rule.functor} ${rule.body}" }
     })

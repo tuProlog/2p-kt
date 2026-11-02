@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.parser
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
 import it.unibo.tuprolog.parser.tree.BlockNode
@@ -11,7 +12,6 @@ import it.unibo.tuprolog.parser.tree.StructureNode
 import it.unibo.tuprolog.parser.tree.SyntaxNodeVisitor
 import it.unibo.tuprolog.parser.tree.TheoryNode
 import it.unibo.tuprolog.parser.tree.VariableNode
-import kotlin.test.assertEquals
 
 /** Renders a tree as nested node kinds, relying on the visitor's default dispatch for everything else. */
 private object KindsVisitor : SyntaxNodeVisitor<String> {
@@ -37,9 +37,6 @@ class SyntaxNodeVisitorSpec :
         test("default-dispatch/reaches-every-node-kind") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
             val theory = testParser.parseTheory(lex("f([a], {b}, (c), 1, X). a + b."), operators).root
-            assertEquals(
-                "struct(list(atom), block(atom), atom, number, var) op(atom, atom)",
-                KindsVisitor.visit(theory),
-            )
+            KindsVisitor.visit(theory) shouldBe "struct(list(atom), block(atom), atom, number, var) op(atom, atom)"
         }
     })

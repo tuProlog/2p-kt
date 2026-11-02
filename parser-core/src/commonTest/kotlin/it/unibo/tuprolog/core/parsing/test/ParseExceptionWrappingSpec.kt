@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.core.parsing.test
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -24,9 +27,6 @@ import it.unibo.tuprolog.parser.exceptions.UnexpectedEndOfInputException
 import it.unibo.tuprolog.parser.exceptions.UnexpectedTokenException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedBlockCommentException
 import it.unibo.tuprolog.parser.exceptions.UnterminatedQuotedLiteralException
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
 
 class ParseExceptionWrappingSpec :
     FunSpec({
@@ -100,13 +100,13 @@ private inline fun <reified T : PrologSyntaxException> assertWrapped(
     column: Int,
     offending: String? = null,
 ) {
-    val wrapper = assertFailsWith<ParseException> { parser.parseTerm(input) }
-    val cause = assertIs<T>(wrapper.cause)
+    val wrapper = shouldThrow<ParseException> { parser.parseTerm(input) }
+    val cause = wrapper.cause.shouldBeInstanceOf<T>()
 
-    assertEquals(input, wrapper.input)
-    assertEquals(line, wrapper.line)
-    assertEquals(column, wrapper.column)
-    assertEquals(offending, wrapper.offendingSymbol)
-    assertEquals(cause.offendingText, wrapper.offendingSymbol)
-    assertEquals(cause.message, wrapper.message)
+    wrapper.input shouldBe input
+    wrapper.line shouldBe line
+    wrapper.column shouldBe column
+    wrapper.offendingSymbol shouldBe offending
+    wrapper.offendingSymbol shouldBe cause.offendingText
+    wrapper.message shouldBe cause.message
 }

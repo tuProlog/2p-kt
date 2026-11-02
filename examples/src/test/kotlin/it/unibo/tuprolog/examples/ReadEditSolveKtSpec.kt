@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.examples
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.theory.parsing.ClausesReader
-import kotlin.test.assertEquals
 
 class ReadEditSolveKtSpec :
     FunSpec({
@@ -23,7 +23,7 @@ class ReadEditSolveKtSpec :
                     val value = solution.substitution.getByName("X")
                     val valueAsBigInteger = value?.asInteger()?.value
                     val actualValue = valueAsBigInteger?.toInt()
-                    assertEquals(30, actualValue)
+                    actualValue shouldBe 30
                 }
             }
         }
@@ -41,7 +41,7 @@ class ReadEditSolveKtSpec :
                 val value = solution.substitution.getByName("X")
                 val valueAsBigInteger = value?.asInteger()?.value
                 val actualValue = valueAsBigInteger?.toInt()
-                assertEquals(30, actualValue)
+                actualValue shouldBe 30
             }
         }
     })

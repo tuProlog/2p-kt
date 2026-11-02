@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.parsing.test
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
@@ -12,16 +13,15 @@ import it.unibo.tuprolog.core.parsing.parseAsReal
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.core.parsing.parseAsTerm
 import it.unibo.tuprolog.core.parsing.parseAsVar
-import kotlin.test.assertIs
 
 class TermParserExtensionsContractSpec :
     FunSpec({
         test("string-convenience-functions-delegate-to-typed-parser-api") {
-            assertIs<Atom>("atom".parseAsAtom())
-            assertIs<Var>("Variable".parseAsVar())
-            assertIs<Integer>("42".parseAsInteger())
-            assertIs<Real>("3.25".parseAsReal())
-            assertIs<Struct>("f(a)".parseAsStruct())
-            assertIs<Struct>("f(a)".parseAsTerm())
+            "atom".parseAsAtom().shouldBeInstanceOf<Atom>()
+            "Variable".parseAsVar().shouldBeInstanceOf<Var>()
+            "42".parseAsInteger().shouldBeInstanceOf<Integer>()
+            "3.25".parseAsReal().shouldBeInstanceOf<Real>()
+            "f(a)".parseAsStruct().shouldBeInstanceOf<Struct>()
+            "f(a)".parseAsTerm().shouldBeInstanceOf<Struct>()
         }
     })

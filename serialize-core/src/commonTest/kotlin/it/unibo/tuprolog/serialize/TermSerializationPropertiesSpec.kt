@@ -1,14 +1,15 @@
 package it.unibo.tuprolog.serialize
 
+import io.kotest.assertions.withClue
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.property.PropTestConfig
 import io.kotest.property.checkAll
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.testutils.TermArbs
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalKotest::class)
 private val config = PropTestConfig(seed = 1017L, iterations = 300)
@@ -17,7 +18,9 @@ private val config = PropTestConfig(seed = 1017L, iterations = 300)
 private fun MimeType.assertRoundTrips(term: Term) {
     val serialized = TermSerializer.of(this).serialize(term)
     val deserialized = TermDeserializer.of(this).deserialize(serialized)
-    assertTrue(deserialized.equals(term, useVarCompleteName = false), "$term -> $serialized -> $deserialized")
+    withClue("$term -> $serialized -> $deserialized") {
+        deserialized.equals(term, useVarCompleteName = false).shouldBeTrue()
+    }
 }
 
 private class TermCase(

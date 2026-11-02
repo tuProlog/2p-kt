@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -7,7 +9,6 @@ import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.unify.Unificator
-import kotlin.test.assertTrue
 
 private val EXAMPLE_BLOCK = Regex("```prolog\\n([\\s\\S]*?)```")
 
@@ -52,7 +53,7 @@ fun assertExamplesHold(
                 }
             }
         }
-    assertTrue(problems.isEmpty(), "Wrong documentation examples:\n${problems.joinToString("\n")}")
+    withClue("Wrong documentation examples:\n${problems.joinToString("\n")}") { problems.isEmpty().shouldBeTrue() }
 }
 
 /** The `.`-terminated sentences of this block, without the final `.`, skipping blank and `%` comment lines. */

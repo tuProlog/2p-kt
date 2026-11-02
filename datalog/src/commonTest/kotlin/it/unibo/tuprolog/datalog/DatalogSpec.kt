@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.datalog
 
+import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.datalog.exception.DatalogViolationException
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class DatalogSpec :
     FunSpec({
@@ -14,19 +14,19 @@ class DatalogSpec :
             theory: Theory,
             error: DatalogViolationException,
         ) {
-            assertFalse(theory.isDatalog)
+            theory.isDatalog.shouldBeFalse()
             try {
                 theory.ensureIsDatalog()
                 fail("Expected DatalogViolationException, while none was thrown")
             } catch (e: DatalogViolationException) {
-                assertEquals(error, e)
+                e shouldBe error
             }
         }
 
         test("compound-terms-detection") {
             Instances.theoryWithCompoundTerms.let {
                 val rule = it.rules.first()
-                assertFalse(rule.hasNoCompound)
+                rule.hasNoCompound.shouldBeFalse()
                 val error: DatalogViolationException? =
                     try {
                         rule.ensureHasNoCompound()
@@ -41,7 +41,7 @@ class DatalogSpec :
         test("head-variables-outside-non-negated-literals-detection") {
             Instances.theoryWithFreeVariablesInTheHead.let {
                 val rule = it.rules.first()
-                assertFalse(rule.allHeadVariablesInNonNegatedLiterals)
+                rule.allHeadVariablesInNonNegatedLiterals.shouldBeFalse()
                 val error: DatalogViolationException? =
                     try {
                         rule.ensureAllHeadVariablesInNonNegatedLiterals()
@@ -56,7 +56,7 @@ class DatalogSpec :
         test("free-variables-in-negated-literals-detection") {
             Instances.theoryWithFreeVariablesInNegatedBodyLiterals.let {
                 val rule = it.rules.first()
-                assertFalse(rule.allNegatedLiteralsVariablesInNonNegatedLiteralsToo)
+                rule.allNegatedLiteralsVariablesInNonNegatedLiteralsToo.shouldBeFalse()
                 val error: DatalogViolationException? =
                     try {
                         rule.ensureAllNegatedLiteralsVariablesInNonNegatedLiteralsToo()
@@ -70,7 +70,7 @@ class DatalogSpec :
 
         test("recursion-detection") {
             Instances.theoryWithRecursion.let {
-                assertFalse(it.isNonRecursive)
+                it.isNonRecursive.shouldBeFalse()
                 val error: DatalogViolationException? =
                     try {
                         it.ensureIsNonRecursive()
@@ -86,7 +86,7 @@ class DatalogSpec :
             Instances.datalogTheory.let {
                 println(it.callGraph)
                 it.ensureIsDatalog()
-                assertTrue(it.isDatalog)
+                it.isDatalog.shouldBeTrue()
             }
         }
     })

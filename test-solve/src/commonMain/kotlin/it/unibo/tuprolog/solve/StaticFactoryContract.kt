@@ -2,12 +2,12 @@
 
 package it.unibo.tuprolog.solve
 
+import io.kotest.assertions.fail
 import io.kotest.core.spec.style.funSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.Info
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNotSame
-import kotlin.test.fail
 
 /** Conformance tests for `Solver.prolog`/`Solver.problog`, the static factory properties on [Solver]'s companion object that locate a concrete [SolverFactory] implementation at runtime (via a service-loading mechanism) without the caller needing a compile-time dependency on the implementing module. */
 fun staticFactoryContract(expectations: Expectations) =
@@ -42,14 +42,14 @@ private fun testStaticSolverFactoryShouldWork(
     `class`: String,
     factory: () -> SolverFactory,
 ) {
-    assertNotNull(factory())
+    factory().shouldNotBeNull()
     val solver = factory().solverOf()
-    assertNotNull(solver)
+    solver.shouldNotBeNull()
     assertClassNameIs(solver::class, `class`)
-    assertNotNull(factory().newBuilder())
-    assertNotSame(factory().newBuilder(), factory().newBuilder())
+    factory().newBuilder().shouldNotBeNull()
+    factory().newBuilder() shouldNotBeSameInstanceAs factory().newBuilder()
     val solver2 = factory().newBuilder().build()
-    assertNotNull(solver2)
+    solver2.shouldNotBeNull()
     assertClassNameIs(solver2::class, `class`)
 }
 
@@ -67,9 +67,6 @@ private fun testStaticFactoryShouldFail(
         }
     } catch (e: IllegalStateException) {
         // ... in any case, if it fails, an IllegalStateException should be thrown
-        assertEquals(
-            true,
-            e.message?.startsWith("No viable implementation for SolverFactory"),
-        )
+        e.message?.startsWith("No viable implementation for SolverFactory") shouldBe true
     }
 }

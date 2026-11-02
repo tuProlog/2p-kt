@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.utils.itemWiseEquals
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 class BigListSpec :
     FunSpec({
@@ -23,47 +23,50 @@ class BigListSpec :
         }
 
         test("big-lists-contains-a-lot-of-items") {
-            assertTrue {
-                itemWiseEquals(nums.asSequence().map { Integer.of(it) } + EmptyList(), list1.unfoldedSequence)
-            }
-            assertTrue { itemWiseEquals(nums.asSequence().map { Integer.of(it) }, list1.toSequence()) }
+            itemWiseEquals(
+                nums.asSequence().map { Integer.of(it) } + EmptyList(),
+                list1.unfoldedSequence,
+            ).shouldBeTrue()
+            itemWiseEquals(nums.asSequence().map { Integer.of(it) }, list1.toSequence()).shouldBeTrue()
 
-            assertTrue { itemWiseEquals(nums.asSequence().map { Integer.of(it) } + X, list2.unfoldedSequence) }
-            assertTrue { itemWiseEquals(nums.asSequence().map { Integer.of(it) } + X, list2.toSequence()) }
+            itemWiseEquals(nums.asSequence().map { Integer.of(it) } + X, list2.unfoldedSequence).shouldBeTrue()
+            itemWiseEquals(nums.asSequence().map { Integer.of(it) } + X, list2.toSequence()).shouldBeTrue()
         }
 
         test("big-lists-can-be-represented-as-long-strins") {
-            assertEquals(nums.joinToString(", ", "[", "]"), list1.toString())
-            assertEquals(nums.joinToString(", ", "[", " | $X]"), list2.toString())
+            list1.toString() shouldBe nums.joinToString(", ", "[", "]")
+            list2.toString() shouldBe nums.joinToString(", ", "[", " | $X]")
         }
 
         test("big-lists-can-be-compared") {
             val otherList1 = list1.freshCopy()
-            assertEquals(list1.hashCode(), otherList1.hashCode())
-            assertEquals(list1, otherList1)
+            otherList1.hashCode() shouldBe list1.hashCode()
+            otherList1 shouldBe list1
 
             val otherList2 = list2.freshCopy()
-            assertNotEquals(list2.hashCode(), otherList2.hashCode())
-            assertNotEquals(list2, otherList2)
+            otherList2.hashCode() shouldNotBe list2.hashCode()
+            otherList2 shouldNotBe list2
         }
 
         test("big-lists-support-counting-via-size-property") {
-            assertEquals(nums.size, list1.size)
-            assertEquals(nums.size + 1, list2.size)
+            list1.size shouldBe nums.size
+            list2.size shouldBe (nums.size + 1)
         }
 
         test("big-lists-support-ground-check") {
-            assertTrue { list1.isGround }
-            assertFalse { list2.isGround }
+            list1.isGround.shouldBeTrue()
+            list2.isGround.shouldBeFalse()
         }
 
         test("big-lists-support-application-of-substitutions1") {
-            assertTrue {
-                itemWiseEquals(
-                    (nums.asSequence() + nums.asSequence()).map { Integer.of(it) },
-                    list2[Substitution.unifier(X, list1)].castToList().toSequence(),
-                )
-            }
+            (
+                run {
+                    itemWiseEquals(
+                        (nums.asSequence() + nums.asSequence()).map { Integer.of(it) },
+                        list2[Substitution.unifier(X, list1)].castToList().toSequence(),
+                    )
+                }
+            ).shouldBeTrue()
         }
 
         test("big-lists-support-application-of-substitutions2") {
@@ -71,12 +74,14 @@ class BigListSpec :
             val half1 = (0 until n).asSequence().map { Integer.of(it) }
             val half2 = (n + 1..MAX).asSequence().map { Integer.of(it) }
             val list = List.of(half1 + X + half2)
-            assertTrue {
-                itemWiseEquals(
-                    nums.asSequence().map { Integer.of(it) },
-                    list.apply(Substitution.unifier(X, Integer.of(n))).castToList().toSequence(),
-                )
-            }
+            (
+                run {
+                    itemWiseEquals(
+                        nums.asSequence().map { Integer.of(it) },
+                        list.apply(Substitution.unifier(X, Integer.of(n))).castToList().toSequence(),
+                    )
+                }
+            ).shouldBeTrue()
         }
     })
 

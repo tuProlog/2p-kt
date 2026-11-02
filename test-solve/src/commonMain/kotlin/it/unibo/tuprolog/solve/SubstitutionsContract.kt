@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.flags.FlagStore
@@ -7,8 +9,6 @@ import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.solve.flags.invoke
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
 
 /** Conformance tests for how a resolved [Solution]'s substitution treats variables that do not directly appear in the original query ("uninteresting" variables, introduced only by intermediate goals/clause bodies), and for the [it.unibo.tuprolog.solve.flags.TrackVariables] flag that controls whether they are kept visible to a custom primitive during resolution. */
 fun substitutionsContract(
@@ -41,9 +41,9 @@ fun substitutionsContract(
             val solver = solverFactory.solverOf(staticKb = TestingClauseTheories.callsWithVariablesTheory)
             val query = "a"(X)
             val solution = solver.solveOnce(query)
-            assertIs<Solution.Yes>(solution)
-            assertEquals(1, solution.substitution.size)
-            assertEquals(intOf(1), solution.substitution[X])
+            solution.shouldBeInstanceOf<Solution.Yes>()
+            solution.substitution.size shouldBe 1
+            solution.substitution[X] shouldBe intOf(1)
         }
     }
 }
@@ -76,8 +76,8 @@ private fun ContractScope.testVariablesTracking(tracking: Boolean) {
         val query = "p"(A, B, C)
         solver.solveOnce(query)
     }
-    assertEquals(setOf("A", "B", "C"), inspections[0])
-    assertEquals(setOf("D"), inspections[1])
-    assertEquals(setOf("E"), inspections[2])
-    assertEquals(setOf("A", "B", "C", "E") + if (tracking) setOf("D") else emptySet(), inspections[3])
+    inspections[0] shouldBe setOf("A", "B", "C")
+    inspections[1] shouldBe setOf("D")
+    inspections[2] shouldBe setOf("E")
+    inspections[3] shouldBe (setOf("A", "B", "C", "E") + if (tracking) setOf("D") else emptySet())
 }

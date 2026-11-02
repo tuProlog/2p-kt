@@ -1,10 +1,11 @@
 package it.unibo.tuprolog.ui.swing.e2e
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import org.assertj.swing.core.matcher.JButtonMatcher
 import org.assertj.swing.fixture.FrameFixture
 import javax.swing.JTextArea
-import kotlin.test.assertTrue
 
 /** Covers every menu bar entry: File, Edit, Search, and Help. */
 class MenusE2eSpec :
@@ -37,13 +38,13 @@ class MenusE2eSpec :
         test("File properties shows the current page's metadata") {
             window.clickMenuItem("filePropertiesMenuItem")
             val info = window.optionPane().requireInformationMessage()
-            assertTrue(
+            (
                 info
                     .target()
                     .message
                     .toString()
-                    .contains("Encoding: UTF-8"),
-            )
+                    .contains("Encoding: UTF-8")
+            ).shouldBeTrue()
             info.okButton().click()
         }
 
@@ -65,7 +66,7 @@ class MenusE2eSpec :
             window.clickMenuItem("selectAllMenuItem")
 
             val queryField = window.textBox("queryField").target()
-            assertTrue(queryField.selectedText == "member(X, [1, 2]).")
+            queryField.selectedText shouldBe "member(X, [1, 2])."
         }
 
         test("Search Find opens and can be dismissed") {
@@ -93,26 +94,30 @@ class MenusE2eSpec :
             dialog.button(JButtonMatcher.withText("OK")).click()
 
             val editor = window.textBox("pageEditor").target() as JTextArea
-            assertTrue(editor.getLineOfOffset(editor.caretPosition) == 2)
+            editor.getLineOfOffset(editor.caretPosition) shouldBe 2
         }
 
         test("Help About shows the application's info dialog") {
             window.clickMenuItem("aboutMenuItem")
             val info = window.optionPane().requireInformationMessage()
-            assertTrue(
+            (
                 info
                     .target()
                     .message
                     .toString()
-                    .contains("tuProlog IDE"),
-            )
+                    .contains("tuProlog IDE")
+            ).shouldBeTrue()
             info.okButton().click()
         }
 
         test("Help Report an issue includes a status report and can be closed") {
             window.clickMenuItem("reportIssueMenuItem")
             val optionPane = window.optionPane()
-            assertTrue(optionPane.textBox("reportIssueReportArea").text().contains("tuProlog IDE"))
+            optionPane
+                .textBox("reportIssueReportArea")
+                .text()
+                .contains("tuProlog IDE")
+                .shouldBeTrue()
             optionPane.buttonWithText("Close").click()
         }
     })

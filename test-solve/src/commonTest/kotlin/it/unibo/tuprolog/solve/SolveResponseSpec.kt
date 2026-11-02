@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSolution
 import it.unibo.tuprolog.solve.testutils.SolveUtils.someSideEffects
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 /**
  * Test class for [Solve.Response]
@@ -19,18 +19,18 @@ class SolveResponseSpec :
             Solve.Response(aSolution, aSideEffectManager, someSideEffects)
 
         test("response-inserted-data-correct") {
-            assertEquals(aSolution, aResponse.solution)
-            assertEquals(aSideEffectManager, aResponse.sideEffectManager)
-            assertEquals(someSideEffects, aResponse.sideEffects)
+            aResponse.solution shouldBe aSolution
+            aResponse.sideEffectManager shouldBe aSideEffectManager
+            aResponse.sideEffects shouldBe someSideEffects
         }
 
         test("response-default-values-correct") {
             val toBeTested = Solve.Response(aSolution)
 
-            assertNull(toBeTested.sideEffectManager)
+            toBeTested.sideEffectManager.shouldBeNull()
         }
 
         test("equals-works-as-expected") {
-            assertEquals(aResponse.copy(), aResponse)
+            aResponse shouldBe aResponse.copy()
         }
     })

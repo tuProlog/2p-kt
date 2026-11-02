@@ -1,7 +1,13 @@
 package it.unibo.tuprolog.parser
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.parser.exceptions.PrologParsingException
 import it.unibo.tuprolog.parser.operators.Associativity
 import it.unibo.tuprolog.parser.operators.OperatorTables
@@ -18,125 +24,119 @@ import it.unibo.tuprolog.parser.tree.StructureKind
 import it.unibo.tuprolog.parser.tree.StructureNode
 import it.unibo.tuprolog.parser.tree.SyntaxKind
 import it.unibo.tuprolog.parser.tree.VariableNode
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class ParserTermSpec :
     FunSpec({
         test("parses-signed-integers-even-with-trivia-after-the-sign") {
-            val node = assertIs<NumberNode>(parseTerm("- /* sign */ 0xff"))
-            assertEquals(NumberKind.HEX_INTEGER, node.numberKind)
-            assertEquals(-1, node.sign)
-            assertEquals(16, node.radix)
-            assertEquals("ff", node.digits)
-            assertEquals(0, node.span.start.offset)
-            assertEquals(17, node.span.endExclusive.offset)
+            val node = parseTerm("- /* sign */ 0xff").shouldBeInstanceOf<NumberNode>()
+            node.numberKind shouldBe NumberKind.HEX_INTEGER
+            node.sign shouldBe -1
+            node.radix shouldBe 16
+            node.digits shouldBe "ff"
+            node.span.start.offset shouldBe 0
+            node.span.endExclusive.offset shouldBe 17
         }
 
         test("parses-real-numbers") {
-            val node = assertIs<NumberNode>(parseTerm("+1.25e-2"))
-            assertEquals(NumberKind.REAL, node.numberKind)
-            assertEquals(SyntaxKind.REAL, node.kind)
-            assertEquals(1, node.sign)
-            assertEquals("1.25e-2", node.digits)
+            val node = parseTerm("+1.25e-2").shouldBeInstanceOf<NumberNode>()
+            node.numberKind shouldBe NumberKind.REAL
+            node.kind shouldBe SyntaxKind.REAL
+            node.sign shouldBe 1
+            node.digits shouldBe "1.25e-2"
         }
 
         test("distinguishes-anonymous-and-named-variables") {
-            assertTrue(assertIs<VariableNode>(parseTerm("_")).isAnonymous)
-            assertFalse(assertIs<VariableNode>(parseTerm("_X")).isAnonymous)
+            (parseTerm("_").shouldBeInstanceOf<VariableNode>().isAnonymous).shouldBeTrue()
+            (parseTerm("_X").shouldBeInstanceOf<VariableNode>().isAnonymous).shouldBeFalse()
         }
 
         test("parses-ordinary-and-quoted-structures") {
-            val atom = assertIs<StructureNode>(parseTerm("foo"))
-            assertEquals(StructureKind.ORDINARY, atom.structureKind)
-            assertEquals("foo", atom.functor)
-            assertTrue(atom.arguments.isEmpty())
+            val atom = parseTerm("foo").shouldBeInstanceOf<StructureNode>()
+            atom.structureKind shouldBe StructureKind.ORDINARY
+            atom.functor shouldBe "foo"
+            atom.arguments.isEmpty().shouldBeTrue()
 
-            val structure = assertIs<StructureNode>(parseTerm("'a b'(X, 1)"))
-            assertEquals(StructureKind.SINGLE_QUOTED, structure.structureKind)
-            assertEquals("a b", structure.functor)
-            assertEquals(2, structure.arguments.size)
+            val structure = parseTerm("'a b'(X, 1)").shouldBeInstanceOf<StructureNode>()
+            structure.structureKind shouldBe StructureKind.SINGLE_QUOTED
+            structure.functor shouldBe "a b"
+            structure.arguments.size shouldBe 2
         }
 
         test("double-quoted-text-is-a-zero-arity-structure-only") {
-            val node = assertIs<StructureNode>(parseTerm("\"text\""))
-            assertEquals(StructureKind.DOUBLE_QUOTED, node.structureKind)
-            assertEquals("text", node.functor)
-            assertFailsWith<PrologParsingException> { parseTerm("\"text\"(x)") }
+            val node = parseTerm("\"text\"").shouldBeInstanceOf<StructureNode>()
+            node.structureKind shouldBe StructureKind.DOUBLE_QUOTED
+            node.functor shouldBe "text"
+            shouldThrow<PrologParsingException> { parseTerm("\"text\"(x)") }
         }
 
         withTests(nameFn = { "parses-truth/$it" }, listOf("true", "false", "fail")) { truth ->
-            val node = assertIs<StructureNode>(parseTerm(truth))
-            assertEquals(StructureKind.TRUTH, node.structureKind)
-            assertEquals(truth, node.functor)
+            val node = parseTerm(truth).shouldBeInstanceOf<StructureNode>()
+            node.structureKind shouldBe StructureKind.TRUTH
+            node.functor shouldBe truth
         }
 
         test("parses-cut-and-empty-forms") {
-            assertEquals(StructureKind.CUT, assertIs<StructureNode>(parseTerm("!")).structureKind)
-            assertEquals(StructureKind.EMPTY_LIST, assertIs<StructureNode>(parseTerm("[ ]")).structureKind)
-            assertEquals(StructureKind.EMPTY_BLOCK, assertIs<StructureNode>(parseTerm("{\n}")).structureKind)
+            (parseTerm("!").shouldBeInstanceOf<StructureNode>().structureKind) shouldBe StructureKind.CUT
+            (parseTerm("[ ]").shouldBeInstanceOf<StructureNode>().structureKind) shouldBe StructureKind.EMPTY_LIST
+            (parseTerm("{\n}").shouldBeInstanceOf<StructureNode>().structureKind) shouldBe StructureKind.EMPTY_BLOCK
         }
 
         test("parses-proper-and-improper-lists") {
-            val proper = assertIs<ListNode>(parseTerm("[a, b, c]"))
-            assertEquals(3, proper.items.size)
-            assertNull(proper.tail)
+            val proper = parseTerm("[a, b, c]").shouldBeInstanceOf<ListNode>()
+            proper.items.size shouldBe 3
+            proper.tail.shouldBeNull()
 
-            val improper = assertIs<ListNode>(parseTerm("[a, b | Tail]"))
-            assertEquals(2, improper.items.size)
-            assertIs<VariableNode>(improper.tail)
+            val improper = parseTerm("[a, b | Tail]").shouldBeInstanceOf<ListNode>()
+            improper.items.size shouldBe 2
+            improper.tail.shouldBeInstanceOf<VariableNode>()
         }
 
         test("parses-non-empty-blocks") {
-            val block = assertIs<BlockNode>(parseTerm("{a, f(X), 1}"))
-            assertEquals(3, block.items.size)
+            val block = parseTerm("{a, f(X), 1}").shouldBeInstanceOf<BlockNode>()
+            block.items.size shouldBe 3
         }
 
         test("parenthesized-expressions-are-atomic-to-their-surroundings") {
             val operators = OperatorTables.of(op("=", Associativity.XFX, 700))
-            val node = assertIs<ParenthesizedExpressionNode>(parseTerm("(a = b)", operators))
-            assertEquals(0, node.priority)
-            assertEquals(700, node.expression.priority)
+            val node = parseTerm("(a = b)", operators).shouldBeInstanceOf<ParenthesizedExpressionNode>()
+            node.priority shouldBe 0
+            node.expression.priority shouldBe 700
         }
 
         test("operators-can-be-used-as-explicit-zero-arity-functors") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
-            val node = assertIs<StructureNode>(parseTerm("(+)", operators))
-            assertEquals(StructureKind.EXPLICIT_OPERATOR, node.structureKind)
-            assertEquals("+", node.functor)
+            val node = parseTerm("(+)", operators).shouldBeInstanceOf<StructureNode>()
+            node.structureKind shouldBe StructureKind.EXPLICIT_OPERATOR
+            node.functor shouldBe "+"
         }
 
         test("non-prefix-operators-can-be-used-as-functor-applications") {
             val operators = OperatorTables.of(op("rel", Associativity.XFX, 700))
-            val node = assertIs<StructureNode>(parseTerm("rel(a, b)", operators))
-            assertEquals("rel", node.functor)
-            assertEquals(2, node.arguments.size)
+            val node = parseTerm("rel(a, b)", operators).shouldBeInstanceOf<StructureNode>()
+            node.functor shouldBe "rel"
+            node.arguments.size shouldBe 2
         }
 
         test("a-prefix-operator-followed-by-parentheses-is-parsed-as-prefix-syntax") {
             val operators = OperatorTables.of(op("not", Associativity.FY, 900))
             val node = operatorNode(parseExpression("not(a)", operators))
-            assertEquals(OperatorRole.PREFIX, node.operator.role)
-            assertIs<ParenthesizedExpressionNode>(node.rightOperand)
+            node.operator.role shouldBe OperatorRole.PREFIX
+            node.rightOperand.shouldBeInstanceOf<ParenthesizedExpressionNode>()
         }
 
         test("argument-commas-remain-delimiters-when-comma-is-an-operator") {
             val operators = OperatorTables.of(op(",", Associativity.XFY, 1000))
-            val node = assertIs<StructureNode>(parseTerm("f(a, b)", operators))
-            assertEquals(2, node.arguments.size)
-            assertTrue(node.arguments.none { it is OperatorExpressionNode })
+            val node = parseTerm("f(a, b)", operators).shouldBeInstanceOf<StructureNode>()
+            node.arguments.size shouldBe 2
+            (node.arguments.none { it is OperatorExpressionNode }).shouldBeTrue()
         }
 
         test("parenthesized-comma-expressions-remain-available-inside-arguments") {
             val operators = OperatorTables.of(op(",", Associativity.XFY, 1000))
-            val node = assertIs<StructureNode>(parseTerm("f((a, b))", operators))
-            assertEquals(1, node.arguments.size)
-            val parenthesized = assertIs<ParenthesizedExpressionNode>(node.arguments.single())
-            assertIs<OperatorExpressionNode>(parenthesized.expression)
+            val node = parseTerm("f((a, b))", operators).shouldBeInstanceOf<StructureNode>()
+            node.arguments.size shouldBe 1
+            val parenthesized = node.arguments.single().shouldBeInstanceOf<ParenthesizedExpressionNode>()
+            parenthesized.expression.shouldBeInstanceOf<OperatorExpressionNode>()
         }
 
         test("semantic-tokens-distinguish-functors-from-argument-delimiters") {
@@ -144,7 +144,7 @@ class ParserTermSpec :
             val significant = tree.lexedSource.significantTokens()
             val f = significant.first { tree.lexedSource.textOf(it) == "f" }
             val comma = significant.first { it.kind == TokenKind.COMMA }
-            assertEquals(SemanticRole.FUNCTOR, tree.semanticToken(f.id)?.role)
-            assertEquals(SemanticRole.ARGUMENT_DELIMITER, tree.semanticToken(comma.id)?.role)
+            tree.semanticToken(f.id)?.role shouldBe SemanticRole.FUNCTOR
+            tree.semanticToken(comma.id)?.role shouldBe SemanticRole.ARGUMENT_DELIMITER
         }
     })

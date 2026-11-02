@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.ui.swing
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.ui.swing.app.applyLookAndFeel
 import it.unibo.tuprolog.ui.swing.app.installedLookAndFeels
 import javax.swing.UIManager
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class LookAndFeelSpec :
     FunSpec({
@@ -25,28 +25,28 @@ class LookAndFeelSpec :
         afterTest { restoreOriginal() }
 
         test("every installed look-and-feel is reported") {
-            assertTrue(installedLookAndFeels().isNotEmpty())
+            installedLookAndFeels().isNotEmpty().shouldBeTrue()
         }
 
         test("applying a known look-and-feel switches to it and reports success") {
             val target = installedLookAndFeels().first { it.className != originalLookAndFeel }
 
-            assertTrue(applyLookAndFeel(target.name))
+            applyLookAndFeel(target.name).shouldBeTrue()
 
-            assertEquals(target.className, UIManager.getLookAndFeel().javaClass.name)
+            UIManager.getLookAndFeel().javaClass.name shouldBe target.className
         }
 
         test("applying an unknown look-and-feel name fails without changing anything") {
-            assertFalse(applyLookAndFeel("not-a-real-look-and-feel"))
+            applyLookAndFeel("not-a-real-look-and-feel").shouldBeFalse()
 
-            assertEquals(originalLookAndFeel, UIManager.getLookAndFeel().javaClass.name)
+            UIManager.getLookAndFeel().javaClass.name shouldBe originalLookAndFeel
         }
 
         test("look-and-feel name matching is case-insensitive") {
             val target = installedLookAndFeels().first { it.className != originalLookAndFeel }
 
-            assertTrue(applyLookAndFeel(target.name.uppercase()))
+            applyLookAndFeel(target.name.uppercase()).shouldBeTrue()
 
-            assertEquals(target.className, UIManager.getLookAndFeel().javaClass.name)
+            UIManager.getLookAndFeel().javaClass.name shouldBe target.className
         }
     })

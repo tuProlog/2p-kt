@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.solve.library.Library
-import kotlin.test.assertTrue
 
 private const val FRAGMENT_SEPARATOR = "\n\n---\n\n"
 
@@ -34,7 +35,9 @@ fun assertFullyDocumented(library: Library) {
                 else -> null
             }
         } + listOfNotNull("library help: missing or too minimal".takeUnless { library.help.hasDescription() })
-    assertTrue(problems.isEmpty(), "Poorly documented items of ${library.alias}:\n${problems.joinToString("\n")}")
+    withClue("Poorly documented items of ${library.alias}:\n${problems.joinToString("\n")}") {
+        problems.isEmpty().shouldBeTrue()
+    }
 }
 
 private fun String.hasDescription(): Boolean = substringAfter("\n\n", "").trim().length >= MIN_DESCRIPTION_LENGTH

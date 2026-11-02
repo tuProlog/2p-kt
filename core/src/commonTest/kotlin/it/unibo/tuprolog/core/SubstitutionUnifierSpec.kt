@@ -2,14 +2,15 @@ package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 /**
  * Test class for [Substitution.unifier] and [Substitution]
@@ -45,31 +46,31 @@ class SubstitutionUnifierSpec :
                     anotherVar to Integer.of(2),
                     bVar to xAtom,
                 )
-            assertTrue { unifier.getByName("A") is Integer }
-            assertTrue { unifier.getByName("B") is Atom }
-            assertNull(unifier.getByName("C"))
+            unifier.getByName("A").shouldBeInstanceOf<Integer>()
+            unifier.getByName("B").shouldBeInstanceOf<Atom>()
+            unifier.getByName("C").shouldBeNull()
         }
 
         test("unifier-constructor-returns-empty-unifier-if-identity-mappings-detected") {
-            assertEquals(Substitution.unifier(emptyMap()), Substitution.unifier(mapOf(aVar to aVar)))
+            Substitution.unifier(mapOf(aVar to aVar)) shouldBe Substitution.unifier(emptyMap())
         }
 
         test("unifier-constructor-returns-empty-unifier-if-circular-identity-mappings-detected") {
-            assertEquals(Substitution.unifier(emptyMap()), Substitution.unifier(mapOf(aVar to bVar, bVar to aVar)))
+            Substitution.unifier(mapOf(aVar to bVar, bVar to aVar)) shouldBe Substitution.unifier(emptyMap())
         }
 
         test("unifier-constructor-returns-trimmed-variable-chain") {
             val correct = Substitution.unifier(mapOf(aVar to xAtom, bVar to xAtom))
             val toBeTested = Substitution.unifier(mapOf(aVar to bVar, bVar to xAtom))
-            assertEquals(correct, toBeTested)
+            toBeTested shouldBe correct
         }
 
         withTests(nameFn = { "is-success-is-true/${it.id}" }, substitutionCases) { case ->
-            assertTrue { case.substitution.isSuccess }
+            case.substitution.isSuccess.shouldBeTrue()
         }
 
         withTests(nameFn = { "is-failed-is-false/${it.id}" }, substitutionCases) { case ->
-            assertFalse { case.substitution.isFailed }
+            case.substitution.isFailed.shouldBeFalse()
         }
 
         withTests(
@@ -85,7 +86,7 @@ class SubstitutionUnifierSpec :
         ) { case ->
             val expected = case.build(Var.of("A"))
             val actual = aVarToXAtomSubstitution.applyTo(case.build(Var.of("A")))
-            assertNotEquals(expected, actual)
+            actual shouldNotBe expected
             assertStructurallyEquals(expected, actual)
         }
 
@@ -97,12 +98,10 @@ class SubstitutionUnifierSpec :
         }
 
         test("equals-works-as-expected") {
-            assertEquals(Substitution.unifier(mapOf(aVar to xAtom)), Substitution.unifier(mapOf(aVar to xAtom)))
-            assertNotEquals(
-                Substitution.unifier(mapOf(Var.of("A") to xAtom)),
-                Substitution.unifier(mapOf(Var.of("A") to xAtom)),
-            )
-            assertNotEquals(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
+            Substitution.unifier(mapOf(aVar to xAtom)) shouldBe Substitution.unifier(mapOf(aVar to xAtom))
+            Substitution.unifier(mapOf(Var.of("A") to xAtom)) shouldNotBe
+                Substitution.unifier(mapOf(Var.of("A") to xAtom))
+            bVarToXAtomSubstitution shouldNotBe aVarToXAtomSubstitution
         }
 
         test("plus-other-substitution-puts-substitutions-together") {
@@ -110,7 +109,7 @@ class SubstitutionUnifierSpec :
                 Substitution.of((aVarToXAtomSubstitution.entries + bVarToXAtomSubstitution.entries).map { it.toPair() })
             val toBeTested = aVarToXAtomSubstitution + bVarToXAtomSubstitution
 
-            assertEquals(correct, toBeTested)
+            toBeTested shouldBe correct
         }
 
         test("plus-other-substitution-replaces-present-variables") {
@@ -121,11 +120,11 @@ class SubstitutionUnifierSpec :
             val correct = Substitution.of(xVar to myAtom, yVar to myAtom)
             val toBeTested = Substitution.of(xVar to yVar) + Substitution.of(yVar to myAtom)
 
-            assertEquals(correct, toBeTested)
+            toBeTested shouldBe correct
         }
 
         test("plus-other-substitution-is-idempotent-if-same-substitution") {
-            assertEquals(aVarToXAtomSubstitution, aVarToXAtomSubstitution + aVarToXAtomSubstitution)
+            (aVarToXAtomSubstitution + aVarToXAtomSubstitution) shouldBe aVarToXAtomSubstitution
         }
 
         test("plus-other-substitution-contradicting-base-one-returns-failed-substitution") {
@@ -135,13 +134,13 @@ class SubstitutionUnifierSpec :
                     bVarToXAtomSubstitution + Substitution.of(bVar to Truth.TRUE),
                 )
 
-            toBeTested.forEach { assertEquals(Substitution.failed(), it) }
+            toBeTested.forEach { it shouldBe Substitution.failed() }
         }
 
         withTests(nameFn = { "plus-failed-substitution-return-failed-substitution/${it.id}" }, substitutionCases) {
             val substitution = it.substitution
-            assertEquals(Substitution.failed(), substitution + Substitution.failed())
-            assertEquals(Substitution.failed(), Substitution.failed() + substitution)
+            (substitution + Substitution.failed()) shouldBe Substitution.failed()
+            (Substitution.failed() + substitution) shouldBe Substitution.failed()
         }
 
         test("plus-compliance-with-composition-defined-in-standard-prolog") {
@@ -164,50 +163,46 @@ class SubstitutionUnifierSpec :
                     ),
                 )
 
-            assertEquals(firstComposedSecondExpected, first + second)
-            assertEquals(secondComposedFirstExpected, second + first)
+            (first + second) shouldBe firstComposedSecondExpected
+            (second + first) shouldBe secondComposedFirstExpected
         }
 
         test("minus-variables-iterable-removes-correct-bindings") {
             val correct = aVarToXAtomSubstitution
             val toBeTested = (aVarToXAtomSubstitution + bVarToXAtomSubstitution) - listOf(bVar)
 
-            assertEquals(correct, toBeTested)
+            toBeTested shouldBe correct
         }
 
         test("minus-variable-iterable-with-no-common-variable-does-nothing") {
-            assertEquals(aVarToXAtomSubstitution, aVarToXAtomSubstitution - listOf(bVar))
+            (aVarToXAtomSubstitution - listOf(bVar)) shouldBe aVarToXAtomSubstitution
         }
 
         test("minus-other-substitution-removes-correct-bindings") {
             val correct = aVarToXAtomSubstitution
             val toBeTested = (aVarToXAtomSubstitution + bVarToXAtomSubstitution) - bVarToXAtomSubstitution
 
-            assertEquals(correct, toBeTested)
+            toBeTested shouldBe correct
         }
 
         test("minus-other-substitution-with-no-common-variables-does-nothing") {
-            assertEquals(aVarToXAtomSubstitution, aVarToXAtomSubstitution - bVarToXAtomSubstitution)
+            (aVarToXAtomSubstitution - bVarToXAtomSubstitution) shouldBe aVarToXAtomSubstitution
         }
 
         test("minus-failed-substitution-does-nothing") {
-            assertEquals(aVarToXAtomSubstitution, aVarToXAtomSubstitution - Substitution.failed())
+            (aVarToXAtomSubstitution - Substitution.failed()) shouldBe aVarToXAtomSubstitution
         }
 
         test("filter-map-entry-returns-only-correct-bindings") {
-            assertEquals(
-                aVarToXAtomSubstitution,
-                (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { (`var`, _) -> `var` == aVar },
-            )
-            assertEquals(Substitution.empty(), bVarToXAtomSubstitution.filter { (`var`, _) -> `var` == aVar })
+            ((aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { (`var`, _) -> `var` == aVar }) shouldBe
+                aVarToXAtomSubstitution
+            (bVarToXAtomSubstitution.filter { (`var`, _) -> `var` == aVar }) shouldBe Substitution.empty()
         }
 
         test("filter-predicate-returns-only-correct-bindings") {
-            assertEquals(
-                aVarToXAtomSubstitution,
-                (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { `var`, _ -> `var` == aVar },
-            )
-            assertEquals(Substitution.empty(), bVarToXAtomSubstitution.filter { `var`, _ -> `var` == aVar })
+            ((aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { `var`, _ -> `var` == aVar }) shouldBe
+                aVarToXAtomSubstitution
+            (bVarToXAtomSubstitution.filter { `var`, _ -> `var` == aVar }) shouldBe Substitution.empty()
         }
 
         test("get-returns-last-bound-term-in-the-variable-chain") {
@@ -217,6 +212,6 @@ class SubstitutionUnifierSpec :
 
             val toBeTested = Substitution.of(xVar to yVar) + Substitution.of(yVar to myAtom)
 
-            assertEquals(myAtom, toBeTested[xVar])
+            toBeTested[xVar] shouldBe myAtom
         }
     })

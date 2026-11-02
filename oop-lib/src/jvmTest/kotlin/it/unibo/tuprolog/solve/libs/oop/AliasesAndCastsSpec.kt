@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -12,9 +16,6 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.library.Runtime
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 private val operators = OOPLib.operators + Solver.prolog.defaultBuiltins.operators
 
@@ -108,15 +109,15 @@ class AliasesAndCastsSpec :
     FunSpec({
         withTests(nameFn = { "binds/${it.id}" }, bindings) { case ->
             val solution = solve(case.query)
-            assertIs<Solution.Yes>(solution, case.query)
-            assertEquals(case.expected, solution.substitution.getByName("X"))
+            withClue(case.query) { solution.shouldBeInstanceOf<Solution.Yes>() }
+            solution.substitution.getByName("X") shouldBe case.expected
         }
 
         withTests(nameFn = { "raises/${it.id}" }, failures) { case ->
             val solution = solve(case.query)
-            assertIs<Solution.Halt>(solution, case.query)
+            withClue(case.query) { solution.shouldBeInstanceOf<Solution.Halt>() }
             val error = (solution.exception as LogicError).errorStruct[0]
-            assertTrue(error.toString().startsWith(case.error), "$error")
+            withClue("$error") { error.toString().startsWith(case.error).shouldBeTrue() }
         }
 
         test("cast-to-an-unbound-type/enumerates-the-admissible-types-and-their-supertypes") {
@@ -128,12 +129,12 @@ class AliasesAndCastsSpec :
                     .map { it.substitution[t] }
                     .toList()
             listOf(Long::class, Int::class, Number::class, Any::class).forEach {
-                assertTrue(TypeRef.of(it) in types, "$it in $types")
+                withClue("$it in $types") { (TypeRef.of(it) in types).shouldBeTrue() }
             }
-            assertEquals(types.size, types.toSet().size)
+            types.toSet().size shouldBe types.size
         }
 
         test("cast-of-an-unbound-term/is-null") {
-            assertEquals(ObjectRef.NULL, solve("cast(X, T, R)").substitution.getByName("R"))
+            solve("cast(X, T, R)").substitution.getByName("R") shouldBe ObjectRef.NULL
         }
     })

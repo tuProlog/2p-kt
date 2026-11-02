@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import okio.FileSystem
 import kotlin.random.Random
-import kotlin.test.assertEquals
 
 /**
  * End-to-end coverage for the `open/3,4`-backed local file write and append behavior (via
@@ -47,7 +47,7 @@ class OpenLocalFileSpec :
                 flush()
             }
 
-            assertEquals("hello from open(File, write, S)", url.readAllViaChannel())
+            url.readAllViaChannel() shouldBe "hello from open(File, write, S)"
         }
 
         test("open-for-write-truncates-existing-content") {
@@ -62,7 +62,7 @@ class OpenLocalFileSpec :
                 flush()
             }
 
-            assertEquals("short", url.readAllViaChannel())
+            url.readAllViaChannel() shouldBe "short"
         }
 
         test("open-for-append-adds-to-existing-content") {
@@ -77,6 +77,6 @@ class OpenLocalFileSpec :
                 flush()
             }
 
-            assertEquals("abcdef", url.readAllViaChannel())
+            url.readAllViaChannel() shouldBe "abcdef"
         }
     })

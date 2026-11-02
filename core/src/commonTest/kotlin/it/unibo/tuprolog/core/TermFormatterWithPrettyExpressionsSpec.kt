@@ -2,12 +2,12 @@ package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.testutils.TermFormatterUtils
 import it.unibo.tuprolog.core.testutils.TermFormatterUtils.assertProperlyFormats
-import kotlin.test.assertEquals
 
 private class PostfixCase(
     val id: String,
@@ -33,7 +33,7 @@ class TermFormatterWithPrettyExpressionsSpec :
             ),
         ) { case ->
             val operators = OperatorSet(Operator("!", case.specifier, 200), Operator("-", Specifier.FY, 200))
-            assertEquals(case.expected, TermFormatter.prettyExpressions(operators).format(case.term))
+            TermFormatter.prettyExpressions(operators).format(case.term) shouldBe case.expected
         }
 
         withTests(
@@ -49,6 +49,6 @@ class TermFormatterWithPrettyExpressionsSpec :
                     TermFormatter.VarFormat.COMPLETE_NAME,
                     TermFormatter.OpFormat.IGNORE_OPERATORS,
                 )
-            assertEquals(case.second, formatter.format(case.first))
+            formatter.format(case.first) shouldBe case.second
         }
     })

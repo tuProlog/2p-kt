@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.solve.prolog
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
@@ -83,9 +87,6 @@ import it.unibo.tuprolog.solve.timeoutContract
 import it.unibo.tuprolog.solve.trueContract
 import it.unibo.tuprolog.solve.unifyContract
 import it.unibo.tuprolog.solve.yes
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 /** The shared solver contracts of `:test-solve`, run against [PrologSolverFactory]. */
 class PrologSolverSpec :
@@ -156,24 +157,25 @@ class PrologSolverSpec :
                 PrologSolverFactory
                     .solverWithDefaultBuiltins()
                     .solveOnce(Struct.of(functor, Integer.of(1), Integer.of(2)))
-            assertIs<TypeError>((solution as? Solution.Halt)?.exception, "$functor: $solution")
+            withClue("$functor: $solution") { (solution as? Solution.Halt)?.exception.shouldBeInstanceOf<TypeError>() }
         }
 
         test("op/priority-above-1200-is-domain-error") {
             val goal = Struct.of("op", Integer.of(1201), Atom.of("xfx"), Atom.of("foo"))
             val solution = Solver.prolog.solverWithDefaultBuiltins().solveOnce(goal)
-            val error = assertIs<DomainError>((solution as? Solution.Halt)?.exception, "$solution")
-            assertEquals(DomainError.Expected.OPERATOR_PRIORITY, error.expectedDomain)
-            assertEquals(Integer.of(1201), error.culprit)
+            val error =
+                withClue("$solution") { (solution as? Solution.Halt)?.exception.shouldBeInstanceOf<DomainError>() }
+            error.expectedDomain shouldBe DomainError.Expected.OPERATOR_PRIORITY
+            error.culprit shouldBe Integer.of(1201)
         }
 
         test("variant-operators/comparisons-are-infix-operators") {
             val solver = Solver.prolog.solverWithDefaultBuiltins()
 
             fun solveText(goal: String) = solver.solveOnce(Struct.parse(goal, solver.operators))
-            assertTrue(solveText("f(a, X) =@= f(a, X)").isYes)
-            assertTrue(solveText("f(a) \\=@= f(b)").isYes)
-            assertTrue(solveText("X = (a =@= b), X =.. ['=@=', a, b]").isYes)
+            solveText("f(a, X) =@= f(a, X)").isYes.shouldBeTrue()
+            solveText("f(a) \\=@= f(b)").isYes.shouldBeTrue()
+            solveText("X = (a =@= b), X =.. ['=@=', a, b]").isYes.shouldBeTrue()
         }
 
         // arithmetic results the host cannot represent must raise evaluation errors rather than crash the solver
@@ -182,14 +184,21 @@ class PrologSolverSpec :
                 Solver.prolog
                     .solverWithDefaultBuiltins()
                     .solveOnce(Struct.of("is", Var.of("X"), case.expression))
-            val halt = assertIs<Solution.Halt>(solution, "${case.expression}")
-            assertEquals(case.type, assertIs<EvaluationError>(halt.exception).errorType, "${case.expression}")
+            val halt = withClue("${case.expression}") { solution.shouldBeInstanceOf<Solution.Halt>() }
+            withClue("${case.expression}") {
+                (halt.exception.shouldBeInstanceOf<EvaluationError>().errorType) shouldBe
+                    case.type
+            }
         }
 
         test("arithmetic/power-to-negative-integer-is-fractional") {
             val goal = Struct.of("is", Var.of("X"), Struct.of("**", Integer.of(2), Integer.of(-1)))
-            val solution = assertIs<Solution.Yes>(Solver.prolog.solverWithDefaultBuiltins().solveOnce(goal))
-            assertEquals(Real.of(0.5), solution.substitution.values.single())
+            val solution =
+                Solver.prolog
+                    .solverWithDefaultBuiltins()
+                    .solveOnce(goal)
+                    .shouldBeInstanceOf<Solution.Yes>()
+            solution.substitution.values.single() shouldBe Real.of(0.5)
         }
 
         test("substitution-merging/substitutions-are-merged-after-primitives") {

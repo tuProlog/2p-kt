@@ -3,12 +3,12 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class ChannelToSequenceSpec :
     FunSpec({
@@ -16,10 +16,10 @@ class ChannelToSequenceSpec :
             multiRunConcurrentTest {
                 val channel: Channel<String> = Channel()
                 val emptySeq = channel.toSequence(this)
-                assertTrue(channel.close())
-                assertTrue(emptySeq.none())
-                assertTrue(channel.isClosedForReceive)
-                assertTrue(channel.isClosedForSend)
+                channel.close().shouldBeTrue()
+                emptySeq.none().shouldBeTrue()
+                channel.isClosedForReceive.shouldBeTrue()
+                channel.isClosedForSend.shouldBeTrue()
             }
         }
 
@@ -28,9 +28,9 @@ class ChannelToSequenceSpec :
                 val channel: Channel<String> = Channel()
                 channel.close()
                 val seq = channel.toSequence(this)
-                assertTrue(seq.count() == 0)
-                assertTrue(channel.isClosedForReceive)
-                assertTrue(channel.isClosedForSend)
+                seq.count() shouldBe 0
+                channel.isClosedForReceive.shouldBeTrue()
+                channel.isClosedForSend.shouldBeTrue()
             }
         }
 
@@ -44,9 +44,9 @@ class ChannelToSequenceSpec :
                     channel.close()
                 }
                 val set = channel.toSequence(this).toSet()
-                assertEquals(setOf("a", "b", "c"), set)
-                assertTrue(channel.isClosedForReceive)
-                assertTrue(channel.isClosedForSend)
+                set shouldBe setOf("a", "b", "c")
+                channel.isClosedForReceive.shouldBeTrue()
+                channel.isClosedForSend.shouldBeTrue()
             }
         }
 
@@ -61,7 +61,7 @@ class ChannelToSequenceSpec :
                     channel.close()
                 }
                 val seq = channel.toSequence(this)
-                seq.forEachIndexed { index, s -> assertEquals("$index", s) }
+                seq.forEachIndexed { index, s -> s shouldBe "$index" }
             }
         }
     })

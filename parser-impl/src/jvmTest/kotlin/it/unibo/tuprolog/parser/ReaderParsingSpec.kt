@@ -2,12 +2,12 @@ package it.unibo.tuprolog.parser
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.parser.tree.StructureNode
 import java.io.Reader
 import java.io.StringReader
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class ReaderParsingSpec :
     FunSpec({
@@ -15,9 +15,9 @@ class ReaderParsingSpec :
             val reader = CountingReader("first. second.")
             val input = PrologLexer.default().lex(reader.toSource(chunkSize = 1))
 
-            assertEquals(0, reader.charactersRead)
-            assertEquals("first", input.textOf(input.significantToken(0)))
-            assertTrue(reader.charactersRead < reader.textLength)
+            reader.charactersRead shouldBe 0
+            input.textOf(input.significantToken(0)) shouldBe "first"
+            (reader.charactersRead < reader.textLength).shouldBeTrue()
         }
 
         withTests(
@@ -30,16 +30,16 @@ class ReaderParsingSpec :
                     parser.openSession(lexedSource)
                 }
 
-            assertEquals(0, reader.charactersRead)
-            val first = assertNotNull(session.parseNextClause())
-            assertTrue(reader.charactersRead < reader.textLength)
-            assertEquals("first", (first.root.expression as StructureNode).functor)
+            reader.charactersRead shouldBe 0
+            val first = session.parseNextClause().shouldNotBeNull()
+            (reader.charactersRead < reader.textLength).shouldBeTrue()
+            (first.root.expression as StructureNode).functor shouldBe "first"
 
-            assertNotNull(session.parseNextClause())
-            assertNotNull(session.parseNextClause())
-            assertTrue(session.isAtEnd)
-            assertEquals(reader.textLength, reader.charactersRead)
-            assertEquals(autoClose, reader.closed)
+            session.parseNextClause().shouldNotBeNull()
+            session.parseNextClause().shouldNotBeNull()
+            session.isAtEnd.shouldBeTrue()
+            reader.charactersRead shouldBe reader.textLength
+            reader.closed shouldBe autoClose
         }
 
         test("parser-convenience-functions-accept-readers") {
@@ -48,8 +48,8 @@ class ReaderParsingSpec :
                 buildParserFor(reader) { parser, lexedSource ->
                     parser.parseTheory(lexedSource)
                 }
-            assertEquals(2, tree.root.clauses.size)
-            assertEquals("a.\nb.", tree.source.text(tree.source.start.offset, tree.source.endExclusive.offset))
+            tree.root.clauses.size shouldBe 2
+            tree.source.text(tree.source.start.offset, tree.source.endExclusive.offset) shouldBe "a.\nb."
         }
     })
 

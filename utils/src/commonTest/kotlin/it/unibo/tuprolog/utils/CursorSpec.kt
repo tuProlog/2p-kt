@@ -1,35 +1,38 @@
 package it.unibo.tuprolog.utils
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 
 class CursorSpec :
     FunSpec({
         fun <T> testCursor(cursor: Cursor<out T>) {
             var current: Cursor<out T> = cursor
             while (!current.isOver) {
-                assertTrue { current.hasNext }
-                assertFalse { current.isOver }
-                assertNotNull(current.current)
-                assertSame(current.current, current.current)
-                assertTrue {
-                    @Suppress("USELESS_IS_CHECK")
-                    current.next is Cursor<out T>
-                }
+                current.hasNext.shouldBeTrue()
+                current.isOver.shouldBeFalse()
+                current.current.shouldNotBeNull()
+                current.current shouldBeSameInstanceAs current.current
+                (
+                    run {
+                        @Suppress("USELESS_IS_CHECK")
+                        current.next is Cursor<out T>
+                    }
+                ).shouldBeTrue()
                 println(current.current)
                 current = current.next
             }
-            assertFalse { current.hasNext }
-            assertTrue { current.isOver }
-            assertNull(current.current)
-            assertSame(current.current, current.current)
-            assertFailsWith(NoSuchElementException::class) {
+            current.hasNext.shouldBeFalse()
+            current.isOver.shouldBeTrue()
+            current.current.shouldBeNull()
+            current.current shouldBeSameInstanceAs current.current
+            shouldThrow<NoSuchElementException> {
                 current.next
             }
         }
@@ -42,21 +45,19 @@ class CursorSpec :
             val iterActual = actual.iterator()
             val iterExpected = expected.iterator()
             while (iterExpected.hasNext()) {
-                assertTrue("The cursor has only $i items, while more are expected") {
-                    iterActual.hasNext()
+                withClue(
+                    "The cursor has only $i items, while more are expected",
+                ) { iterActual.hasNext().shouldBeTrue() }
+                withClue("Items with index ${i - 1} does not correspond") {
+                    iterActual.next() shouldBe
+                        iterExpected.next()
                 }
-                assertEquals(
-                    iterExpected.next(),
-                    iterActual.next(),
-                    "Items with index ${i - 1} does not correspond",
-                )
                 i++
             }
-            assertEquals(
-                iterExpected.hasNext(),
-                iterActual.hasNext(),
-                "The cursor has more than $i items, while $i are expected",
-            )
+            withClue("The cursor has more than $i items, while $i are expected") {
+                iterActual.hasNext() shouldBe
+                    iterExpected.hasNext()
+            }
         }
 
         val items = 1..10
@@ -115,7 +116,7 @@ class CursorSpec :
                     .map { it * 2 }
             testCursor(cursor)
             assertCursorContains(cursor, items.map { it * 2 })
-            assertEquals(items.count(), x)
+            x shouldBe items.count()
         }
 
         test("stress-mapping") {
@@ -128,10 +129,10 @@ class CursorSpec :
                         x++
                         it + 1
                     }
-                assertTrue { x <= items.count() * (i + 1) }
+                (x <= items.count() * (i + 1)).shouldBeTrue()
             }
             testCursor(cursor)
             assertCursorContains(cursor, items.map { it + n })
-            assertEquals(items.count() * n, x)
+            x shouldBe (items.count() * n)
         }
     })
