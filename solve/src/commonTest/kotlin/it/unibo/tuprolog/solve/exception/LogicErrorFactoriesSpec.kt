@@ -44,6 +44,9 @@ private val dispatchCases =
         DispatchCase("instantiation-error", InstantiationError::class) { atomOf("instantiation_error") },
         DispatchCase("system-error", SystemError::class) { atomOf("system_error") },
         DispatchCase("syntax-error", SyntaxError::class) { atomOf("syntax_error") },
+        DispatchCase("syntax-error-with-description", SyntaxError::class) {
+            structOf("syntax_error", atomOf("oops"))
+        },
         DispatchCase("message-error", MessageError::class) { atomOf("") },
         DispatchCase("representation-error", RepresentationError::class) {
             structOf("representation_error", atomOf("max_arity"))
@@ -153,15 +156,15 @@ private val factoryCases =
         FactoryCase("type/of", { TypeError.of(context, TypeError.Expected.ATOM, Integer.of(1), "not an atom") }) {
             structOf("type_error", atomOf("atom"), intOf(1))
         },
-        FactoryCase("syntax/of", { SyntaxError.of(context, "oops") }) { atomOf("syntax_error") },
+        FactoryCase("syntax/of", { SyntaxError.of(context, "oops") }) { structOf("syntax_error", atomOf("oops")) },
         FactoryCase("syntax/while-parsing-term", { SyntaxError.whileParsingTerm(context, "f(", 1, 3, "oops") }) {
-            atomOf("syntax_error")
+            structOf("syntax_error", atomOf("oops"))
         },
         FactoryCase(
             "syntax/while-parsing-clauses",
             { SyntaxError.whileParsingClauses(context, "a.\nb c.", 1, 2, 3, "oops") },
         ) {
-            atomOf("syntax_error")
+            structOf("syntax_error", atomOf("oops"))
         },
     )
 
